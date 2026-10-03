@@ -1,0 +1,27 @@
+{
+  "name": "Illustrative Mars 21-day blackout, one frame per minute",
+  "forward": {
+    "payload_bytes": 1024,
+    "evidence_frames": 1,
+    "additional_frames_per_day": 1440,
+    "blackout_seconds": 1814400,
+    "backlog_frames": 0,
+    "backlog_bytes": 0,
+    "usable_bytes_per_second": 100000,
+    "contact_window_seconds": 3600,
+    "one_way_seconds": 1320
+  },
+  "return": {
+    "payload_bytes": 1024,
+    "evidence_frames": 1,
+    "additional_frames_per_day": 0,
+    "blackout_seconds": 0,
+    "backlog_frames": 0,
+    "backlog_bytes": 0,
+    "usable_bytes_per_second": 100000,
+    "contact_window_seconds": 3600,
+    "one_way_seconds": 1320
+  },
+  "maturity_blocks": 6,
+  "assumed_block_seconds": 600
+}

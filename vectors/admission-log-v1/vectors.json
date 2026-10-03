@@ -1,0 +1,441 @@
+{
+  "payload_sha256": "81df87f16fd34479cfeea631b7c3d0388a560bb5d5b4dc42a6be8ef6d1d78018",
+  "payload": {
+    "format": "rld-admission-log-v1",
+    "status": "STATE_PRIMITIVE_ONLY_NOT_LEDGER_ROUTE_VALUE_CAP_0",
+    "limits": {
+      "confirmations": "32",
+      "max_lag_epochs": "2",
+      "max_checkpoint_entries": "512",
+      "max_header_entries": "256"
+    },
+    "cases": [
+      {
+        "case_id": "A01",
+        "operation": "availability_root",
+        "input": {
+          "records": [
+            {
+              "entry_id": "18630a951a003e3e490dfca88e38f05fb60d008562b9248c8e3a145f1ec0ebd8",
+              "locator_commitment": "12b74d58bbf7150162de2034d6d85d68715fc0a79df103e878a851b8c051588d",
+              "declared_bytes": "3072"
+            },
+            {
+              "entry_id": "a648c6be7cab1673ef7b58244ddb601ae2c3b28883213259a0c1cc627533dab1",
+              "locator_commitment": "2833023c8a691f0a8b8e530830b7a9379d9fb042d61866f04d7739c62def6208",
+              "declared_bytes": "1024"
+            },
+            {
+              "entry_id": "81514025f554d5b464ad2c9d5947609d2243cbb120729229f7e9938be036b7ba",
+              "locator_commitment": "0f7077b8277b9720c3f010d287b4a90d2830e66cb1677f6a4ea2abc02b2eed7e",
+              "declared_bytes": "2048"
+            }
+          ]
+        },
+        "claims": [
+          "availability root binds entry, locator and declared bytes"
+        ],
+        "input_hash": "c3ed8333d505ba18e1b74b84125305d9e37246cc588d1c0dadb14c60e3ca39ed",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "availability_root": "e5a6591bf3dcd77adf92ba0b337f462c5c901b189cb68d54359c668debdf9db5"
+        }
+      },
+      {
+        "case_id": "A02",
+        "operation": "header_work",
+        "input": {
+          "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        "claims": [
+          "maximum target has zero integer work"
+        ],
+        "input_hash": "1a407b046c9e8d7e58771444abba20da87354c70d788d85fc7fd75e3598064a2",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "header_work": "0"
+        }
+      },
+      {
+        "case_id": "A03",
+        "operation": "header_work",
+        "input": {
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        "claims": [
+          "half-range target has one work unit"
+        ],
+        "input_hash": "0e5e48d81c7de2c22d96c2a73cc31cd6c2c9b65cee5bf75b2a64910998e19b94",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "header_work": "1"
+        }
+      },
+      {
+        "case_id": "A04",
+        "operation": "target_adjustment",
+        "input": {
+          "previous": "1000",
+          "counts": [
+            "64",
+            "64",
+            "64",
+            "64"
+          ],
+          "minimum": "100",
+          "maximum": "10000"
+        },
+        "claims": [
+          "64 observed headers keep target stable"
+        ],
+        "input_hash": "19187f99c0f2b28ce84125673de5c4cb108ca49919c5e6de8e9e44c07d028869",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "next_target": "1000"
+        }
+      },
+      {
+        "case_id": "A05",
+        "operation": "target_adjustment",
+        "input": {
+          "previous": "1000",
+          "counts": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "minimum": "100",
+          "maximum": "10000"
+        },
+        "claims": [
+          "four-times target easing cap is exact"
+        ],
+        "input_hash": "c29725cb0001e51d1cbfe25f2515913b0d51ae5ef87f9a04dcb61a5d13aa4eec",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "next_target": "4000"
+        }
+      },
+      {
+        "case_id": "A06",
+        "operation": "target_adjustment",
+        "input": {
+          "previous": "1000",
+          "counts": [
+            "256",
+            "256",
+            "256",
+            "256"
+          ],
+          "minimum": "100",
+          "maximum": "10000"
+        },
+        "claims": [
+          "quarter target tightening cap is exact"
+        ],
+        "input_hash": "4797d2646a35ad92427295313f81d7244e9443f1dd08895c977310a38561c4df",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "next_target": "250"
+        }
+      },
+      {
+        "case_id": "A07",
+        "operation": "fork_choice",
+        "input": {
+          "branches": [
+            {
+              "name": "low-work",
+              "era": "0",
+              "work": "10",
+              "header_id": "3ebfd4d40805e8dc89626f519201a3834b677c51a6c2eda17696e1a7d4d1a6a6"
+            },
+            {
+              "name": "high-id",
+              "era": "0",
+              "work": "11",
+              "header_id": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            },
+            {
+              "name": "winner",
+              "era": "0",
+              "work": "11",
+              "header_id": "0000000000000000000000000000000000000000000000000000000000000001"
+            }
+          ]
+        },
+        "claims": [
+          "era then work then lower raw id selects one branch"
+        ],
+        "input_hash": "7b74b6a8ded1ced1e63dcba66a08b0a2b576c290d615f078616de724736e50ef",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "winner": "winner",
+          "header_id": "0000000000000000000000000000000000000000000000000000000000000001"
+        }
+      },
+      {
+        "case_id": "A08",
+        "operation": "checkpoint_batch",
+        "input": {
+          "header_entry_counts": [
+            "256",
+            "256",
+            "1"
+          ],
+          "label_prefix": "bounded",
+          "available": true,
+          "observed_epoch": "8",
+          "committed_epoch": "10"
+        },
+        "claims": [
+          "checkpoint consumes complete headers and stops at 512 entries"
+        ],
+        "input_hash": "c44d3f9c4fdbbbcb71a02ac047d36d36136a6ebeaeabf98a890e5cd9094eb85b",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "selected_headers": "2",
+          "selected_entries": "512",
+          "entries_root": "f50a12c7928eac8eee782481c1e2344db3ac673471cf184b677e92bc44c8a2e3",
+          "availability_root": "1494075149073dd1de29d47a8b13b1b408ea98336db02327f4fa844903371a04"
+        }
+      },
+      {
+        "case_id": "A09",
+        "operation": "censorship_timeline",
+        "input": {
+          "first_seen_epoch": "5",
+          "tick_epochs": [
+            "6",
+            "7",
+            "8"
+          ],
+          "resolution_epoch": "8",
+          "challenge_tick": "9",
+          "valid_resolution": true,
+          "entry_id": "fe14ee1660b9868bbfad65e2c970c00732d304b8c7d376c19cecd03e4bb79492",
+          "checkpoint_id": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "initial_asset_root": "1df5d57660019ef22fe7dba08adf2b7b6f67e62fcb63079e73774a1078944911"
+        },
+        "claims": [
+          "lag three stalls",
+          "resolution plus one challenge epoch clears",
+          "last value eligible root is protected while stalled"
+        ],
+        "input_hash": "ea768b1b17214e3ff935758d1604b59fe5174e6901a66e9658c2e4e5f93ed0d1",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "status": "HEALTHY",
+          "protected_asset_root": "6a8986cb49985120fab40193c6404a2acd1c36697ccaa74e31ecae8d2524a588",
+          "event_hashes": [
+            "69dc518dddc658ffebd99595496e5d39bb7437acf516b4b131ffed56c4c15662",
+            "0494d36aec3659eb46656a8c2e75e3a735e72febc59e127935f9f4fd030d371e",
+            "13f4348a7019164937d0cff90da9f479cee237dc1470183e03bf221fd5671ff2"
+          ],
+          "history_length": "3"
+        }
+      },
+      {
+        "case_id": "A10",
+        "operation": "ancestry_duplicate",
+        "input": {
+          "same_ancestry": false
+        },
+        "claims": [
+          "same signed entry may occur on competing forks"
+        ],
+        "input_hash": "1645bab4d6a946f54603cb943d6f2763b5d39ac464ecdbaa39aaebc920648866",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "accepted_on_competing_fork": true
+        }
+      },
+      {
+        "case_id": "A11",
+        "operation": "delayed_target",
+        "input": {
+          "initial_target": "1000",
+          "counts": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "minimum": "100",
+          "maximum": "10000",
+          "decision_epoch": "1",
+          "stalled_epoch": "3",
+          "resumed_epoch": "4"
+        },
+        "claims": [
+          "target freezes during ledger stall and activates after progress resumes"
+        ],
+        "input_hash": "b48f65f9b5795acee017ad943aba66ae7432a2f5ae6259d010f2ba0dac68be6b",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_output": {
+          "activation_epoch": "3",
+          "during_stall": "1000",
+          "after_resume": "4000"
+        }
+      },
+      {
+        "case_id": "R01",
+        "operation": "availability_root",
+        "input": {
+          "records": [
+            {
+              "entry_id": "18630a951a003e3e490dfca88e38f05fb60d008562b9248c8e3a145f1ec0ebd8",
+              "locator_commitment": "12b74d58bbf7150162de2034d6d85d68715fc0a79df103e878a851b8c051588d",
+              "declared_bytes": "3072"
+            },
+            {
+              "entry_id": "18630a951a003e3e490dfca88e38f05fb60d008562b9248c8e3a145f1ec0ebd8",
+              "locator_commitment": "12b74d58bbf7150162de2034d6d85d68715fc0a79df103e878a851b8c051588d",
+              "declared_bytes": "3072"
+            }
+          ]
+        },
+        "claims": [
+          "duplicate availability entry is rejected"
+        ],
+        "input_hash": "d8612e5437320bd70d53532f3c0d958335855f94704ada34cd3e79e3f1859628",
+        "expected_accept": false,
+        "expected_first_error": "ERR_DUPLICATE_OR_NULLIFIER",
+        "expected_output": {}
+      },
+      {
+        "case_id": "R02",
+        "operation": "checkpoint_batch",
+        "input": {
+          "header_entry_counts": [
+            "513"
+          ],
+          "label_prefix": "oversized",
+          "available": true,
+          "observed_epoch": "8",
+          "committed_epoch": "8"
+        },
+        "claims": [
+          "one header cannot exceed 256 entries"
+        ],
+        "input_hash": "5d63b3e0195b4c5c683f5b8ad034a446c4ae1f5389d276f390a0a6be2164dd06",
+        "expected_accept": false,
+        "expected_first_error": "ERR_ENVELOPE_LIMIT",
+        "expected_output": {}
+      },
+      {
+        "case_id": "R03",
+        "operation": "checkpoint_batch",
+        "input": {
+          "header_entry_counts": [
+            "1"
+          ],
+          "label_prefix": "unavailable",
+          "available": false,
+          "observed_epoch": "8",
+          "committed_epoch": "8"
+        },
+        "claims": [
+          "unavailable data cannot enter a checkpoint"
+        ],
+        "input_hash": "bc509448b81d1aa38c3954673d1227e8b4f5cce92a43b961ab1bde221c0a625f",
+        "expected_accept": false,
+        "expected_first_error": "ERR_RESOURCE_OR_AVAILABILITY",
+        "expected_output": {}
+      },
+      {
+        "case_id": "R04",
+        "operation": "checkpoint_batch",
+        "input": {
+          "header_entry_counts": [
+            "1"
+          ],
+          "label_prefix": "lagged",
+          "available": true,
+          "observed_epoch": "8",
+          "committed_epoch": "11"
+        },
+        "claims": [
+          "ledger lag above two epochs is rejected"
+        ],
+        "input_hash": "0785b724281c4b955b0b397e58d6afa7c7671e69fdc5c9cbf7eaf8683a9c3e54",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_output": {}
+      },
+      {
+        "case_id": "R05",
+        "operation": "target_adjustment",
+        "input": {
+          "previous": "99",
+          "counts": [
+            "64",
+            "64",
+            "64",
+            "64"
+          ],
+          "minimum": "100",
+          "maximum": "10000"
+        },
+        "claims": [
+          "previous target outside immutable bounds is rejected"
+        ],
+        "input_hash": "ac9c59afc6a997ac68f40a2cb35f97fc2efa424245ee3497c5a92b7d77a6e9ee",
+        "expected_accept": false,
+        "expected_first_error": "ERR_CONTEXT_MISMATCH",
+        "expected_output": {}
+      },
+      {
+        "case_id": "R06",
+        "operation": "ancestry_duplicate",
+        "input": {
+          "same_ancestry": true
+        },
+        "claims": [
+          "one ancestry cannot repeat an entry"
+        ],
+        "input_hash": "bd6b955f6de7117e41a58223d52c7e7f128ff8423095b956f432028d3e20399c",
+        "expected_accept": false,
+        "expected_first_error": "ERR_DUPLICATE_OR_NULLIFIER",
+        "expected_output": {}
+      },
+      {
+        "case_id": "R07",
+        "operation": "censorship_timeline",
+        "input": {
+          "first_seen_epoch": "5",
+          "tick_epochs": [
+            "6",
+            "7",
+            "8"
+          ],
+          "resolution_epoch": "8",
+          "challenge_tick": "9",
+          "valid_resolution": false,
+          "entry_id": "fe14ee1660b9868bbfad65e2c970c00732d304b8c7d376c19cecd03e4bb79492",
+          "checkpoint_id": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "initial_asset_root": "1df5d57660019ef22fe7dba08adf2b7b6f67e62fcb63079e73774a1078944911"
+        },
+        "claims": [
+          "administrator cannot clear without per-entry resolution"
+        ],
+        "input_hash": "d3673a4f30ef7b727ece219436ce4b889a7412732e723bb0fbfebecb65110f5f",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "expected_output": {}
+      }
+    ]
+  }
+}

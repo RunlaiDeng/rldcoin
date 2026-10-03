@@ -1,0 +1,9 @@
+{
+  "head": {
+    "sequence": 132,
+    "height": 130,
+    "state_root": "6355d864e667688495f872158dc57af904c68bd9e76ce515d99296b6d405c24a",
+    "last_record_hash": "bd13654241f129bf319eef1ec1a83013374d6052fa40697911786551f70953bd"
+  },
+  "checksum": "06e0f9431a3c5147e8fc39cbdf62f4c9e96cd6ddb2356b79c86d01d309759577"
+}

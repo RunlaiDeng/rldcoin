@@ -1,0 +1,12 @@
+{
+  "name": "rldcoin",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev": "pnpm --dir apps/web dev",
+    "build": "pnpm --dir apps/web build",
+    "start": "pnpm --dir apps/web start",
+    "typecheck": "pnpm --dir apps/web typecheck"
+  }
+}
+

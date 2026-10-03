@@ -1,0 +1,8 @@
+/.tools/
+/out/
+/states/
+/.tlc/
+/*.st
+/*.fp
+/*.tmp
+/MC.out

@@ -1,0 +1,35 @@
+# syntax=docker/dockerfile:1.7
+FROM rust:1.98-bookworm AS builder
+WORKDIR /src
+ARG CARGO_REGISTRIES_CRATES_IO_INDEX=sparse+https://rsproxy.cn/index/
+ENV CARGO_REGISTRIES_CRATES_IO_INDEX=${CARGO_REGISTRIES_CRATES_IO_INDEX} \
+    CARGO_HTTP_TIMEOUT=600 \
+    CARGO_HTTP_LOW_SPEED_LIMIT=1
+COPY Cargo.toml Cargo.lock rust-toolchain.toml ./
+COPY deploy/cargo-config.toml /usr/local/cargo/config.toml
+COPY crates ./crates
+COPY vectors ./vectors
+COPY spec ./spec
+COPY docs/spec ./docs/spec
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,target=/usr/local/cargo/git,sharing=locked \
+    --mount=type=cache,target=/src/target,sharing=locked \
+    cargo build --locked --release --bin rldd --bin rld --bin rld-sim \
+    && cp /src/target/release/rldd /tmp/rldd \
+    && cp /src/target/release/rld /tmp/rld \
+    && cp /src/target/release/rld-sim /tmp/rld-sim
+
+FROM debian:bookworm-slim AS runner
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /tmp/rldd /usr/local/bin/rldd
+COPY --from=builder /tmp/rld /usr/local/bin/rld
+COPY --from=builder /tmp/rld-sim /usr/local/bin/rld-sim
+RUN useradd --system --uid 10001 --create-home rld \
+    && mkdir -p /data \
+    && chown rld:rld /data
+USER rld
+WORKDIR /home/rld
+EXPOSE 7845
+ENTRYPOINT ["rldd"]

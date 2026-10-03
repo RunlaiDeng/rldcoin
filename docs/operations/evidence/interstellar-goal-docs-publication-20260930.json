@@ -1,0 +1,195 @@
+{
+  "date": "2026-09-30",
+  "protocol_commit": "b30c5326ea6c24f76d2a21365d89d82841f465bd",
+  "website_commit": "06358f10d7a6456f863319b0d926b93cb39b12b2",
+  "artifact_checks": [
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/README.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "31ddae0c85f84c9c568ab764e0a6efc775b0fd25e97469874722296e28ce70c8",
+      "expected": "31ddae0c85f84c9c568ab764e0a6efc775b0fd25e97469874722296e28ce70c8",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/SHA256SUMS",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "3a7d5bbefc9fcf7d716d99427c1c665ed5fa2a034e135247a3de9ad14610a375",
+      "expected": "3a7d5bbefc9fcf7d716d99427c1c665ed5fa2a034e135247a3de9ad14610a375",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/crates/rld-value-successor/src/bin/rld-earth-destination-node/offline_tests.rs",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "42abce818db430f73afce0fa66b6bd4edc73eb5f45fb650b0b3634788223ae4f",
+      "expected": "42abce818db430f73afce0fa66b6bd4edc73eb5f45fb650b0b3634788223ae4f",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/PLAN_STATUS.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "e4e685438efcc613f0be1183e13bc94c8ddea2e886e0811137671cef9e3e0c60",
+      "expected": "e4e685438efcc613f0be1183e13bc94c8ddea2e886e0811137671cef9e3e0c60",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/PLAN_STATUS_HISTORY_2026-09-30.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "ecc32c8cb872af0309da10da3425ccdac3a55f1063e18e49fd5e4bb98720351b",
+      "expected": "ecc32c8cb872af0309da10da3425ccdac3a55f1063e18e49fd5e4bb98720351b",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/RLDCOIN_MASTER_PLAN.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "ca5deed2eea3638e8208a4ce9f52b71985b76b97e189880b61886c53e165f69c",
+      "expected": "ca5deed2eea3638e8208a4ce9f52b71985b76b97e189880b61886c53e165f69c",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/RLDCOIN_MASTER_PLAN_HISTORY_2026-09-30.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "9bd7d1e71c625072fec845c566c2562be3073ef93c664b212dae6e303221ff6d",
+      "expected": "9bd7d1e71c625072fec845c566c2562be3073ef93c664b212dae6e303221ff6d",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/operations/evidence/interstellar-purpose-mesh-20260930.json",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "9365350517b322cd76bfe9511bb3396728b2b0818096bc9ddac84aeedba24e1e",
+      "expected": "9365350517b322cd76bfe9511bb3396728b2b0818096bc9ddac84aeedba24e1e",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/operations/evidence/interstellar-purpose-source-20260930.json",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "eafb55067f72f1fd0068c3fb1664927b28be7586bd806a0aec6d2bd7c19b1858",
+      "expected": "eafb55067f72f1fd0068c3fb1664927b28be7586bd806a0aec6d2bd7c19b1858",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/operations/evidence/interstellar-purpose-verification-20260930.json",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "8db290a3773a058bc3e7ca772a92ede6ecf71aae1a0fee67f0ede887f4223bc8",
+      "expected": "8db290a3773a058bc3e7ca772a92ede6ecf71aae1a0fee67f0ede887f4223bc8",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/operations/evidence/interstellar-value-model-20260930.json",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "3e9d24dcd996bcbcfcba4b3614cf2a8bc01b3a8c28300e11069ac70e9f2fd107",
+      "expected": "3e9d24dcd996bcbcfcba4b3614cf2a8bc01b3a8c28300e11069ac70e9f2fd107",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/research/INTERSTELLAR_PAYMENT_SUITABILITY_2026-09-30.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "25ebfb8c01832b796b494c62abecff3e6f2bedb2f7218c85ae9b2b76433d256f",
+      "expected": "25ebfb8c01832b796b494c62abecff3e6f2bedb2f7218c85ae9b2b76433d256f",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/docs/research/patches/interstellar-disconnected-source-20260930.patch",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "2d2ebc9e0cfba8ffc4de964f1254061fad2c5ad844673e06aac67350e5c70e32",
+      "expected": "2d2ebc9e0cfba8ffc4de964f1254061fad2c5ad844673e06aac67350e5c70e32",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/document-alignment-verification.json",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "7d12ccfc251cb2119c5fbc68b8cc1a2040ec887b6713c664d96dca1fdedb4b94",
+      "expected": "7d12ccfc251cb2119c5fbc68b8cc1a2040ec887b6713c664d96dca1fdedb4b94",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/research/2026-09-30/goal-alignment/tools/interstellar_value_model.py",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "6b1f0cc03a65dcf9a25b3a03c3963cbe88e4be0988f7173deb5fb973d2ed10f8",
+      "expected": "6b1f0cc03a65dcf9a25b3a03c3963cbe88e4be0988f7173deb5fb973d2ed10f8",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/MASTER_PLAN.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "7327efa114bbcf33093e1e25a53dfd4a82b1e4a15566b5dc22d442f77823f6cd",
+      "expected": "7327efa114bbcf33093e1e25a53dfd4a82b1e4a15566b5dc22d442f77823f6cd",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/README.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "39aace6907527b4af674493e5b73519ea4589a31f45c762df01caec4f8f0d01a",
+      "expected": "39aace6907527b4af674493e5b73519ea4589a31f45c762df01caec4f8f0d01a",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/SHA256SUMS.current-docs-20260930",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "c89ddd3997e6df6d8255aaa6887c3bc4c6a3cf21cb98abb2686d841fe3dba9dc",
+      "expected": "c89ddd3997e6df6d8255aaa6887c3bc4c6a3cf21cb98abb2686d841fe3dba9dc",
+      "matches": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RunlaiDeng/rldcoin-genesis/b30c5326ea6c24f76d2a21365d89d82841f465bd/archive/MASTER_PLAN_BEFORE_GOAL_ALIGNMENT_20260930.md",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "sha256": "98ba2cfc5426e9cc811cbff176226438c7e5181d349c337e20036bd3b4f37ea0",
+      "expected": "98ba2cfc5426e9cc811cbff176226438c7e5181d349c337e20036bd3b4f37ea0",
+      "matches": true
+    },
+    {
+      "url": "https://rldcoin.com/documents/rldcoin-whitepaper.md",
+      "status": 200,
+      "content_type": "text/markdown; charset=utf-8",
+      "sha256": "ca6dd9703742cc97599612bc24a4323a829bf138bd38be6b88594ee476dde04f",
+      "expected": "ca6dd9703742cc97599612bc24a4323a829bf138bd38be6b88594ee476dde04f",
+      "matches": true
+    },
+    {
+      "url": "https://rldcoin.com/documents/rldcoin-whitepaper.pdf",
+      "status": 200,
+      "content_type": "application/pdf",
+      "sha256": "c7a6d15679e8ea90685c9abde162dd33630371140528d3ff4c3ec2d42c89b80b",
+      "expected": "c7a6d15679e8ea90685c9abde162dd33630371140528d3ff4c3ec2d42c89b80b",
+      "matches": true
+    }
+  ],
+  "production_page": {
+    "status": 200,
+    "version_1_9": true,
+    "requirements_present": true,
+    "target_contract_present": true,
+    "correct_research_link": true,
+    "retirement_visible": true
+  },
+  "all_bytes_match": true,
+  "claimed_scope": "published documents only; no protocol adoption or physical route",
+  "checks": {
+    "website_existing_tests_passed": 6,
+    "typecheck": "PASS",
+    "production_build": "PASS",
+    "pdf_visual_pages_reviewed": 21,
+    "desktop_mobile_contents": "PASS",
+    "document_I1_I12_alignment": "PASS",
+    "published_bytes_checked": 21,
+    "test_protocol_or_old_signed_artifacts_adopted": false
+  }
+}

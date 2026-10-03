@@ -1,0 +1,20 @@
+[package]
+name = "rld-cross-region"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rld-core = { path = "../rld-core" }
+rld-pow = { path = "../rld-pow" }
+anyhow.workspace = true
+clap.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+
+[[bin]]
+name = "rldcourier-candidate"
+path = "src/main.rs"

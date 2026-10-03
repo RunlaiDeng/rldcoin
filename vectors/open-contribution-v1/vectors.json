@@ -1,0 +1,2953 @@
+{
+  "payload_sha256": "0c88b0b4e22237005dba15c6c27e000e4d719c495e3e475761a2c6f4a7e3e813",
+  "payload": {
+    "format": "rld-open-contribution-v1",
+    "model_status": "NOT_RUNTIME_ACTIVE_VALUE_CAP_0",
+    "schema_registry": [
+      {
+        "schema": "BaselineAccessWorkV1",
+        "schema_id": "1064",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "parent_header",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "ledger_anchor_block",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "ledger_anchor_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "entries_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "entries_count",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "suite_id",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "target",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "nonce",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "output_hash",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "expiry_anchor_height",
+            "kind": "U128",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "PermissionlessAdmissionEntryV1",
+        "schema_id": "1065",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "kind",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "participant_key",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "owner_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "program_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "challenge_id",
+            "kind": "HASH32",
+            "conditional": true
+          },
+          {
+            "id": 15,
+            "name": "payload_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "locator_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "declared_bytes",
+            "kind": "U64",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "expiry_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "entry_signature",
+            "kind": "BYTES",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "PermissionlessAdmissionHeaderV1",
+        "schema_id": "1066",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "admission_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "log_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "parent_header",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "ledger_anchor_block",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "access_work_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "entries_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "entries_count",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "cumulative_work",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "prior_era_terminal",
+            "kind": "HASH32",
+            "conditional": true
+          }
+        ]
+      },
+      {
+        "schema": "VerifiableWorkProgramV1",
+        "schema_id": "1067",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "family",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "program_version",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "input_generator_hash",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "verifier_hash",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "vector_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "max_input_bytes",
+            "kind": "U64",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "max_result_bytes",
+            "kind": "U64",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "max_proof_bytes",
+            "kind": "U64",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "max_verify_units",
+            "kind": "U64",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "work_per_ticket",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 20,
+            "name": "receipt_ticket_cap",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 21,
+            "name": "epoch_ticket_cap",
+            "kind": "U64",
+            "conditional": false
+          },
+          {
+            "id": 22,
+            "name": "maturity_epochs",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 23,
+            "name": "lifetime_epochs",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 24,
+            "name": "responsibility_epochs",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 25,
+            "name": "retention_epochs",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 26,
+            "name": "activation_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 27,
+            "name": "sunset_height",
+            "kind": "U128",
+            "conditional": true
+          },
+          {
+            "id": 28,
+            "name": "activation_evidence",
+            "kind": "HASH32",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "ContributionChallengeV1",
+        "schema_id": "1068",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "program_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "participation_entry_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "participant_key",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "owner_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "input_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "anchor_state_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "future_beacon",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "open_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "close_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "result_deadline",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 20,
+            "name": "challenge_nullifier",
+            "kind": "HASH32",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "VerifiedContributionReceiptV1",
+        "schema_id": "1069",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "challenge_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "participant_key",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "owner_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "result_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "proof_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "availability_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "result_entry_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "completed_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "verified_work_units",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "verification_trace_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 20,
+            "name": "work_nullifier",
+            "kind": "HASH32",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "VerifiedContributionTicketV1",
+        "schema_id": "106a",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "receipt_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "child_index",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "participant_key",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "owner_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "family",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "program_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "issued_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "mature_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "expiry_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "responsibility_end_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 20,
+            "name": "state",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 21,
+            "name": "ticket_nullifier",
+            "kind": "HASH32",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "DeferredServiceClaimV1",
+        "schema_id": "106b",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "receipt_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "owner_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "budget_reservation_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "startup_pool_position",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "max_amount",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "issued_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "executable_after_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "expiry_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "state",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "claim_nullifier",
+            "kind": "HASH32",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "ContributionEpochDescriptorV1",
+        "schema_id": "106c",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "prior_descriptor",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "snapshot_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "snapshot_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "beacon",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "milestone",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "founder_special_slots",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "member_count",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "member_records",
+            "kind": "BYTES",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "ticket_nullifier_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 20,
+            "name": "leader_schedule_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 21,
+            "name": "total_slots",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 22,
+            "name": "quorum_slots",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 23,
+            "name": "activation_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 24,
+            "name": "exit_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 25,
+            "name": "evidence_end_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 26,
+            "name": "client_set_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 27,
+            "name": "control_evidence_root",
+            "kind": "HASH32",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "BootstrapAuthorityTransitionV1",
+        "schema_id": "106d",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "milestone",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "prior_transition",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "founder_keyset_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "founder_special_slots",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "minimum_external_groups",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "minimum_client_implementations",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "minimum_fault_domains",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "effective_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "responsibility_end_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "offline_test_kind",
+            "kind": "U8",
+            "conditional": false
+          },
+          {
+            "id": 20,
+            "name": "offline_test_evidence",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 21,
+            "name": "state",
+            "kind": "U8",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "AdmissionCheckpointV1",
+        "schema_id": "106e",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "admission_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "header_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "log_height",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "cumulative_work",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "confirmations",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "descendant_work",
+            "kind": "BYTES32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "entries_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "availability_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 18,
+            "name": "observed_ledger_epoch",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 19,
+            "name": "committed_ledger_epoch",
+            "kind": "U128",
+            "conditional": false
+          }
+        ]
+      },
+      {
+        "schema": "ContributionRejectionProofV1",
+        "schema_id": "106f",
+        "fields": [
+          {
+            "id": 1,
+            "name": "network_domain",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 2,
+            "name": "zone_id",
+            "kind": "TEXT",
+            "conditional": false
+          },
+          {
+            "id": 3,
+            "name": "currency_genesis",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 4,
+            "name": "protocol_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 5,
+            "name": "crypto_era",
+            "kind": "U128",
+            "conditional": false
+          },
+          {
+            "id": 10,
+            "name": "checkpoint_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 11,
+            "name": "entry_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 12,
+            "name": "rejection_code",
+            "kind": "U16",
+            "conditional": false
+          },
+          {
+            "id": 13,
+            "name": "program_id",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 14,
+            "name": "prestate_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 15,
+            "name": "verification_trace_root",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 16,
+            "name": "evidence_commitment",
+            "kind": "HASH32",
+            "conditional": false
+          },
+          {
+            "id": 17,
+            "name": "applied_height",
+            "kind": "U128",
+            "conditional": false
+          }
+        ]
+      }
+    ],
+    "command_tags": {
+      "28": "COMMIT_ADMISSION_CHECKPOINT",
+      "29": "OPEN_CONTRIBUTION_CHALLENGE",
+      "30": "FINALIZE_CONTRIBUTION_RESULT",
+      "31": "REJECT_CONTRIBUTION_RESULT",
+      "32": "ADVANCE_CONTRIBUTION_EPOCH",
+      "33": "ADVANCE_BOOTSTRAP_AUTHORITY",
+      "34": "RECORD_CONTRIBUTION_MISCONDUCT",
+      "35": "SETTLE_DEFERRED_SERVICE_CLAIM"
+    },
+    "object_vectors": [
+      {
+        "schema": "BaselineAccessWorkV1",
+        "schema_id": "1064",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "parent_header": "e47125968b3b71049fbc4802d1e40a71ea1359decfabacf70b34588037d4ff0c",
+          "ledger_anchor_block": "7413fd279058ad2088b061d719fbf59d90cd5e509a08ab0d11746b91d7c01c4c",
+          "ledger_anchor_height": "100",
+          "entries_root": "87d05cd08817497883161da4d8a323c8986b6aa1c1fdff34d53fc824dec598b2",
+          "entries_count": "1",
+          "suite_id": "1",
+          "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "nonce": "9",
+          "output_hash": "fd7d85d990dc729f450201c87b24903625b73a61555672e5c04068667977c36e",
+          "expiry_anchor_height": "132"
+        },
+        "wire_hex": "524c445700011064000f0001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a0600000020e47125968b3b71049fbc4802d1e40a71ea1359decfabacf70b34588037d4ff0c000b06000000207413fd279058ad2088b061d719fbf59d90cd5e509a08ab0d11746b91d7c01c4c000c050000001000000000000000000000000000000064000d060000002087d05cd08817497883161da4d8a323c8986b6aa1c1fdff34d53fc824dec598b2000e03000000020001000f0300000002000100100700000020ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff001105000000100000000000000000000000000000000900120600000020fd7d85d990dc729f450201c87b24903625b73a61555672e5c04068667977c36e0013050000001000000000000000000000000000000084",
+        "wire_sha256": "cfe6043af727c0e2894bd245115b963708ab37b5739b1090a56e5bd25d4bdaf4",
+        "subject_id": "86afb9e8748a73167366f2bf47988f7bee04ba6576b010ab6151be9907288597"
+      },
+      {
+        "schema": "PermissionlessAdmissionEntryV1",
+        "schema_id": "1065",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "kind": "1",
+          "participant_key": "49a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3",
+          "owner_commitment": "4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581",
+          "program_id": "1310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8",
+          "payload_commitment": "239f59ed55e737c77147cf55ad0c1b030b6d7ee748a7426952f9b852d5a935e5",
+          "locator_commitment": "64b36c4d06e4a51707b252b851f1d374a10c1fe5b89851922e4c79f711d42e68",
+          "declared_bytes": "1024",
+          "expiry_height": "140",
+          "entry_signature": "6ffe08ea7e188aa12c73e9015c0284fa774e2212ba298f83bc69685d2f3b35a411e67579d6801f6140073ae326cc1bf3968f14a49eef00c822b9f1c30d578f03"
+        },
+        "wire_hex": "524c445700011065000e0001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a020000000101000b070000002049a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3000c06000000204c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581000d06000000201310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8000f0600000020239f59ed55e737c77147cf55ad0c1b030b6d7ee748a7426952f9b852d5a935e50010060000002064b36c4d06e4a51707b252b851f1d374a10c1fe5b89851922e4c79f711d42e68001104000000080000000000000400001205000000100000000000000000000000000000008c001309000000406ffe08ea7e188aa12c73e9015c0284fa774e2212ba298f83bc69685d2f3b35a411e67579d6801f6140073ae326cc1bf3968f14a49eef00c822b9f1c30d578f03",
+        "wire_sha256": "5da3903d345f81030ba1213876ceb58c093600edfcccb43173e107135697dc17",
+        "subject_id": "99c62d8365218e862e15338f4274a7e6cf006b156509baa13c2113e1fe01c275",
+        "signing_subject": "dc2711e9f77faf136221978b13f78a0a049f1ae6e935d0d7b36f6266ad21fa2d"
+      },
+      {
+        "schema": "PermissionlessAdmissionHeaderV1",
+        "schema_id": "1066",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "admission_era": "0",
+          "log_height": "1",
+          "parent_header": "e47125968b3b71049fbc4802d1e40a71ea1359decfabacf70b34588037d4ff0c",
+          "ledger_anchor_block": "7413fd279058ad2088b061d719fbf59d90cd5e509a08ab0d11746b91d7c01c4c",
+          "access_work_id": "e585054ddcc83b55ab5a2753f66c3ff0489348b7e57d7a9e3f9ccff7a4a70c65",
+          "entries_root": "87d05cd08817497883161da4d8a323c8986b6aa1c1fdff34d53fc824dec598b2",
+          "entries_count": "1",
+          "cumulative_work": "0000000000000000000000000000000000000000000000000000000000000001"
+        },
+        "wire_hex": "524c445700011066000d0001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a050000001000000000000000000000000000000000000b050000001000000000000000000000000000000001000c0600000020e47125968b3b71049fbc4802d1e40a71ea1359decfabacf70b34588037d4ff0c000d06000000207413fd279058ad2088b061d719fbf59d90cd5e509a08ab0d11746b91d7c01c4c000e0600000020e585054ddcc83b55ab5a2753f66c3ff0489348b7e57d7a9e3f9ccff7a4a70c65000f060000002087d05cd08817497883161da4d8a323c8986b6aa1c1fdff34d53fc824dec598b2001003000000020001001107000000200000000000000000000000000000000000000000000000000000000000000001",
+        "wire_sha256": "dcc0adf7c1abac6eaee50ef1b9d67ac6fbe741729f372595f49c8c7d289aa9fa",
+        "subject_id": "054dc990e37f176e1da34f058b3a05312973cb2d0bf3ec5a53fd8541d2f909b5"
+      },
+      {
+        "schema": "VerifiableWorkProgramV1",
+        "schema_id": "1067",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "family": "1",
+          "program_version": "1",
+          "input_generator_hash": "97496ee1700254dac1c42a378c2598bd663e0f104048517a026d7d0b050e3920",
+          "verifier_hash": "88c9eae68eb300b2971a2bec9e5a26ff4179fd661d6b7d861e4c6557b9aaee14",
+          "vector_root": "29a6a5e3c39862766d200557894f42fe0afed05234816b0ca9cbb59bbc1d6023",
+          "max_input_bytes": "1048576",
+          "max_result_bytes": "1048576",
+          "max_proof_bytes": "2097152",
+          "max_verify_units": "1000000",
+          "work_per_ticket": "1000",
+          "receipt_ticket_cap": "32",
+          "epoch_ticket_cap": "8192",
+          "maturity_epochs": "2",
+          "lifetime_epochs": "16",
+          "responsibility_epochs": "32",
+          "retention_epochs": "64",
+          "activation_height": "1",
+          "activation_evidence": "b15526c9c0e75acea3d1f8055de216c85f0330baf8604e13d8c6ce90fb90d6d7"
+        },
+        "wire_hex": "524c44570001106700170001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a020000000101000b03000000020001000c060000002097496ee1700254dac1c42a378c2598bd663e0f104048517a026d7d0b050e3920000d060000002088c9eae68eb300b2971a2bec9e5a26ff4179fd661d6b7d861e4c6557b9aaee14000e060000002029a6a5e3c39862766d200557894f42fe0afed05234816b0ca9cbb59bbc1d6023000f040000000800000000001000000010040000000800000000001000000011040000000800000000002000000012040000000800000000000f424000130500000010000000000000000000000000000003e8001403000000020020001504000000080000000000002000001603000000020002001703000000020010001803000000020020001903000000020040001a050000001000000000000000000000000000000001001c0600000020b15526c9c0e75acea3d1f8055de216c85f0330baf8604e13d8c6ce90fb90d6d7",
+        "wire_sha256": "24b6e3a6932c6c9d6889c75c60c411bc74359d11d05ca37df877d3f5575c62e9",
+        "subject_id": "7bb59962a47ae1bf26bcb50ac7b730ef6612d18392ccfbd6a59b81d25ddd069d"
+      },
+      {
+        "schema": "ContributionChallengeV1",
+        "schema_id": "1068",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "program_id": "1310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8",
+          "participation_entry_id": "3ea38fc3209511ada089b1bf44dc7ff7bc20da7b740b458375682d38b4e9fe40",
+          "participant_key": "49a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3",
+          "owner_commitment": "4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581",
+          "input_commitment": "c96c6d5be8d08a12e7b5cdc1b207fa6b2430974c86803d8891675e76fd992c20",
+          "anchor_state_root": "6d6fdf5e632ee33925d535647dbbfa5558f0cfb98aa53fb454096190f06a52e9",
+          "future_beacon": "6578a2b60a08536e14c32c98016f77493fa091f5c75c691b9a44828ea98af923",
+          "open_height": "120",
+          "close_height": "130",
+          "result_deadline": "140",
+          "challenge_nullifier": "112d7c09b7c6d6c38b65a6db3480e5ae9074b7b8eaaf9c560fad6e91955610ff"
+        },
+        "wire_hex": "524c44570001106800100001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a06000000201310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8000b06000000203ea38fc3209511ada089b1bf44dc7ff7bc20da7b740b458375682d38b4e9fe40000c070000002049a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3000d06000000204c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581000e0600000020c96c6d5be8d08a12e7b5cdc1b207fa6b2430974c86803d8891675e76fd992c20000f06000000206d6fdf5e632ee33925d535647dbbfa5558f0cfb98aa53fb454096190f06a52e9001006000000206578a2b60a08536e14c32c98016f77493fa091f5c75c691b9a44828ea98af92300110500000010000000000000000000000000000000780012050000001000000000000000000000000000000082001305000000100000000000000000000000000000008c00140600000020112d7c09b7c6d6c38b65a6db3480e5ae9074b7b8eaaf9c560fad6e91955610ff",
+        "wire_sha256": "06c00b7f604bc74b1f857a57d48990d347aa63eab76bd17d5e09799000e8845a",
+        "subject_id": "27b90a06ca7dd9b1f74aadc5d0e243d5d9103328e7b27e691000dfeaaca964e6"
+      },
+      {
+        "schema": "VerifiedContributionReceiptV1",
+        "schema_id": "1069",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "challenge_id": "2dd00bd77e0222ced882665481a9c1d9f907309d16e05ed007a1ea63928477a9",
+          "participant_key": "49a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3",
+          "owner_commitment": "4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581",
+          "result_commitment": "f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68",
+          "proof_commitment": "c1cda26362828b69266512052b97cb3729e3b052e4ade47c0a1e3383defe73c7",
+          "availability_commitment": "f95dac581e9b439c58abf51a6c8c091f8e0aac8c0fb06f0cbca10fc8ac361330",
+          "result_entry_id": "aabf91f5276307d2ed3905f7f720f2343737b278e63bf1dd5bba4ff2a75e49bd",
+          "completed_height": "135",
+          "verified_work_units": "1000",
+          "verification_trace_root": "eafe895eb8119e6e5d06463590b2ef81b3651c157d5c8e18f1889186c7fd0ac0",
+          "work_nullifier": "8b16d87ed1dd750306a91f5da52d33b9b15a8ef088eb072708fa5053bda79269"
+        },
+        "wire_hex": "524c44570001106900100001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a06000000202dd00bd77e0222ced882665481a9c1d9f907309d16e05ed007a1ea63928477a9000b070000002049a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3000c06000000204c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581000d0600000020f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68000e0600000020c1cda26362828b69266512052b97cb3729e3b052e4ade47c0a1e3383defe73c7000f0600000020f95dac581e9b439c58abf51a6c8c091f8e0aac8c0fb06f0cbca10fc8ac36133000100600000020aabf91f5276307d2ed3905f7f720f2343737b278e63bf1dd5bba4ff2a75e49bd001105000000100000000000000000000000000000008700120500000010000000000000000000000000000003e800130600000020eafe895eb8119e6e5d06463590b2ef81b3651c157d5c8e18f1889186c7fd0ac0001406000000208b16d87ed1dd750306a91f5da52d33b9b15a8ef088eb072708fa5053bda79269",
+        "wire_sha256": "5cf83b91dc4867e31b76036ddebc89f0c5148d1479c6905fd10bd5ed2cc69cf8",
+        "subject_id": "14524e653920a002fc7f1c7dbc40c643b77d2138fd57b4f1a489965dbca9357f"
+      },
+      {
+        "schema": "VerifiedContributionTicketV1",
+        "schema_id": "106a",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "receipt_id": "6f32860910ca0fb2a20c7fda143666b09dbf8db5238195c90a586fb542ff0cad",
+          "child_index": "0",
+          "participant_key": "49a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3",
+          "owner_commitment": "4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581",
+          "family": "1",
+          "program_id": "1310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8",
+          "issued_height": "136",
+          "mature_epoch": "12",
+          "expiry_epoch": "26",
+          "responsibility_end_epoch": "42",
+          "state": "1",
+          "ticket_nullifier": "36753d4c2a5944d59cd4e26c9621f23571ef3265a756cdaa29ce26a0f5a85cea"
+        },
+        "wire_hex": "524c44570001106a00110001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a06000000206f32860910ca0fb2a20c7fda143666b09dbf8db5238195c90a586fb542ff0cad000b03000000020000000c070000002049a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd3000d06000000204c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581000e020000000101000f06000000201310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d80010050000001000000000000000000000000000000088001105000000100000000000000000000000000000000c001205000000100000000000000000000000000000001a001305000000100000000000000000000000000000002a00140200000001010015060000002036753d4c2a5944d59cd4e26c9621f23571ef3265a756cdaa29ce26a0f5a85cea",
+        "wire_sha256": "9445875747d0043d5bacc62714c5d945cfeeb3828fdf5a643ba0a3d1d01549ea",
+        "subject_id": "c8c4512a5f5eb021bf267b5ec2c0463d6c0ccc2fd10bff761bc642f600eec063"
+      },
+      {
+        "schema": "DeferredServiceClaimV1",
+        "schema_id": "106b",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "receipt_id": "6f32860910ca0fb2a20c7fda143666b09dbf8db5238195c90a586fb542ff0cad",
+          "owner_commitment": "4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581",
+          "budget_reservation_id": "0af96a8ed622a394e8b2a239284ee46e9a7a7b0ec38191bbd08571b171118dd6",
+          "startup_pool_position": "0688a848bf502cd07e0e6cbcf91ce4db53369d29f5027d2558532a1aaa70f12e",
+          "max_amount": "25",
+          "issued_height": "136",
+          "executable_after_epoch": "20",
+          "expiry_epoch": "40",
+          "state": "1",
+          "claim_nullifier": "19b348b85bb25a0cc0657adf389a07a237f0a50930ae168cefd09c46f653e684"
+        },
+        "wire_hex": "524c44570001106b000f0001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a06000000206f32860910ca0fb2a20c7fda143666b09dbf8db5238195c90a586fb542ff0cad000b06000000204c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581000c06000000200af96a8ed622a394e8b2a239284ee46e9a7a7b0ec38191bbd08571b171118dd6000d06000000200688a848bf502cd07e0e6cbcf91ce4db53369d29f5027d2558532a1aaa70f12e000e050000001000000000000000000000000000000019000f0500000010000000000000000000000000000000880010050000001000000000000000000000000000000014001105000000100000000000000000000000000000002800120200000001010013060000002019b348b85bb25a0cc0657adf389a07a237f0a50930ae168cefd09c46f653e684",
+        "wire_sha256": "c940daa215b79b45cacd2d330da74f6f4fc657eb20b959b32f6be45cc471b9ea",
+        "subject_id": "34e5c7810077a119fe6b9e68d3fe037370acf3baf8178d26f3bd6fb59d6f0a31"
+      },
+      {
+        "schema": "ContributionEpochDescriptorV1",
+        "schema_id": "106c",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "epoch": "10",
+          "prior_descriptor": "51f9329218f538ff605b46de4ab47d22662f5e1a992fd536630535a597a6fe12",
+          "snapshot_height": "200",
+          "snapshot_root": "16a0eeb0791b6c92451fd284dd9f599e0a7dbe7f6ebea6e2d2d06c7f74aec112",
+          "beacon": "dbd4c39579391cfef28fa8c4de68ba88f87c931ea286728a4502b5ac6841dd23",
+          "milestone": "0",
+          "founder_special_slots": "1000",
+          "member_count": "1",
+          "member_records": "49a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd30fcd568a5cb9bdb4677b69354b11ee415af8f784519cff3da49a26f84eaee7f203e8004e907502fc110b6e92c4a98acf3307ac577d35bdc5d61102185de1b52eaa6700000000000000000000000000000007",
+          "ticket_nullifier_root": "b2a3b01bcf7a62bb253889dccfc9501514397c0909fe6665cca5ddc7872e93e3",
+          "leader_schedule_root": "68cdac6785346bf5aca00e6c4e2b42f095a5cdb95e4744a35640ca3c1873325e",
+          "total_slots": "1000",
+          "quorum_slots": "667",
+          "activation_height": "201",
+          "exit_height": "300",
+          "evidence_end_height": "400",
+          "client_set_root": "8f4d9088121acfab37f4a5875ef93c8a89e1489f1fc3b4367a1ce950a44f23e8",
+          "control_evidence_root": "f7856688de95f917c4e36f1170c4fae4696299589767ec3856b9e98573d1a036"
+        },
+        "wire_hex": "524c44570001106c00170001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a05000000100000000000000000000000000000000a000b060000002051f9329218f538ff605b46de4ab47d22662f5e1a992fd536630535a597a6fe12000c0500000010000000000000000000000000000000c8000d060000002016a0eeb0791b6c92451fd284dd9f599e0a7dbe7f6ebea6e2d2d06c7f74aec112000e0600000020dbd4c39579391cfef28fa8c4de68ba88f87c931ea286728a4502b5ac6841dd23000f0200000001000010030000000203e80011030000000200010012090000007249a4d6b2ebc239f615860bb0aee1c86da086f7328f66fcc26eab3399c439dcd30fcd568a5cb9bdb4677b69354b11ee415af8f784519cff3da49a26f84eaee7f203e8004e907502fc110b6e92c4a98acf3307ac577d35bdc5d61102185de1b52eaa670000000000000000000000000000000700130600000020b2a3b01bcf7a62bb253889dccfc9501514397c0909fe6665cca5ddc7872e93e30014060000002068cdac6785346bf5aca00e6c4e2b42f095a5cdb95e4744a35640ca3c1873325e0015030000000203e800160300000002029b00170500000010000000000000000000000000000000c9001805000000100000000000000000000000000000012c0019050000001000000000000000000000000000000190001a06000000208f4d9088121acfab37f4a5875ef93c8a89e1489f1fc3b4367a1ce950a44f23e8001b0600000020f7856688de95f917c4e36f1170c4fae4696299589767ec3856b9e98573d1a036",
+        "wire_sha256": "f1ae0fd268ddbf480f16689a9cf4c9e8f764d1977a09784b2a767d2993731de5",
+        "subject_id": "5eb86c21a784a602f81fc2c2b66e990ec47fcd51e840198b0fffeb68e6c53acd"
+      },
+      {
+        "schema": "BootstrapAuthorityTransitionV1",
+        "schema_id": "106d",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "milestone": "1",
+          "prior_transition": "f5f41625a669092751d5558a05b6f860b9c06bbd9465d2e85258eaf5c4602216",
+          "founder_keyset_commitment": "390855f6538cfe1c2f898c69d52c79dfaadf0efdfe48308017709af025b1c478",
+          "founder_special_slots": "1000",
+          "minimum_external_groups": "1",
+          "minimum_client_implementations": "1",
+          "minimum_fault_domains": "1",
+          "effective_epoch": "11",
+          "responsibility_end_epoch": "43",
+          "offline_test_kind": "0",
+          "offline_test_evidence": "2f01d2b4fdc69303b92dea0b2e6fca19cd0a240573cc3f3238c3b242cee91b67",
+          "state": "1"
+        },
+        "wire_hex": "524c44570001106d00110001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a020000000101000b0600000020f5f41625a669092751d5558a05b6f860b9c06bbd9465d2e85258eaf5c4602216000c0600000020390855f6538cfe1c2f898c69d52c79dfaadf0efdfe48308017709af025b1c478000d030000000203e8000e03000000020001000f0200000001010010020000000101001105000000100000000000000000000000000000000b001205000000100000000000000000000000000000002b0013020000000100001406000000202f01d2b4fdc69303b92dea0b2e6fca19cd0a240573cc3f3238c3b242cee91b670015020000000101",
+        "wire_sha256": "a457957372d68d110347fb0c929a2a8228afef4430a713762989f19d813c8054",
+        "subject_id": "241ab5a6426dc964cd98b1f2eac75586fc527cf4db479fe1fa0fe7ae2dcdac72"
+      },
+      {
+        "schema": "AdmissionCheckpointV1",
+        "schema_id": "106e",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "admission_era": "0",
+          "header_id": "1e0584a25d9f43bf5cbd0aec01eb1af2220ed085b4e7f1837b0d89958cae353a",
+          "log_height": "64",
+          "cumulative_work": "0000000000000000000000000000000000000000000000000000000000000040",
+          "confirmations": "32",
+          "descendant_work": "0000000000000000000000000000000000000000000000000000000000000020",
+          "entries_root": "87d05cd08817497883161da4d8a323c8986b6aa1c1fdff34d53fc824dec598b2",
+          "availability_root": "ffc8a69dfc495d3beb391fd6e3df7bdc82359f3742e6ec307704cff29adb8566",
+          "observed_ledger_epoch": "8",
+          "committed_ledger_epoch": "10"
+        },
+        "wire_hex": "524c44570001106e000f0001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a050000001000000000000000000000000000000000000b06000000201e0584a25d9f43bf5cbd0aec01eb1af2220ed085b4e7f1837b0d89958cae353a000c050000001000000000000000000000000000000040000d07000000200000000000000000000000000000000000000000000000000000000000000040000e03000000020020000f070000002000000000000000000000000000000000000000000000000000000000000000200010060000002087d05cd08817497883161da4d8a323c8986b6aa1c1fdff34d53fc824dec598b200110600000020ffc8a69dfc495d3beb391fd6e3df7bdc82359f3742e6ec307704cff29adb85660012050000001000000000000000000000000000000008001305000000100000000000000000000000000000000a",
+        "wire_sha256": "488c8676bf785bf2b3e6394b502327a82193fab9cf5fa07b8355c427cb047c39",
+        "subject_id": "70d077c80cd884328cc37b85369cf7bac25307f19cfaaf58aa1e3867fbdc2963"
+      },
+      {
+        "schema": "ContributionRejectionProofV1",
+        "schema_id": "106f",
+        "source": {
+          "network_domain": "rld-mainnet",
+          "zone_id": "earth-0",
+          "currency_genesis": "f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb6",
+          "protocol_era": "7",
+          "crypto_era": "1",
+          "checkpoint_id": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "entry_id": "923fe53966c6cd9343e11af776cd4b05be315ea4b200b02e4d5dfb0f929b73bf",
+          "rejection_code": "9",
+          "program_id": "1310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8",
+          "prestate_root": "cec785b40d47f67654c8b66b4a513164665cd347912cfa24cf196f4c0888c05f",
+          "verification_trace_root": "be79fe9e71dd296df28b84e4b3827d39829623a0138d12a419c1dfa29f065572",
+          "evidence_commitment": "d17336422fa72ecad38397e22c22742486b67e956c24c37f16a81cd9665e0443",
+          "applied_height": "205"
+        },
+        "wire_hex": "524c44570001106f000d0001010000000b726c642d6d61696e6e65740002010000000765617274682d3000030600000020f4fbcca123cce314942868856388c6204499a092f7d03771b37c5a80966bebb600040500000010000000000000000000000000000000070005050000001000000000000000000000000000000001000a060000002047320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef000b0600000020923fe53966c6cd9343e11af776cd4b05be315ea4b200b02e4d5dfb0f929b73bf000c03000000020009000d06000000201310ca2c8932dbd118668bd97442558a3e1f546b5e15c69699dfbd6024f548d8000e0600000020cec785b40d47f67654c8b66b4a513164665cd347912cfa24cf196f4c0888c05f000f0600000020be79fe9e71dd296df28b84e4b3827d39829623a0138d12a419c1dfa29f06557200100600000020d17336422fa72ecad38397e22c22742486b67e956c24c37f16a81cd9665e044300110500000010000000000000000000000000000000cd",
+        "wire_sha256": "5e1fb4a0cf7df87681093ff58591a4207bb93e7e1497783c7e160d4fcb59d613",
+        "subject_id": "4d10622a9e66d309d919ef9af1ac93c401673b1cc6a691fdf4a072377a630709"
+      }
+    ],
+    "cases": [
+      {
+        "case_id": "A01",
+        "operation": "genesis",
+        "input": {
+          "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        "input_hash": "1a407b046c9e8d7e58771444abba20da87354c70d788d85fc7fd75e3598064a2",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {
+          "model_output": "b46f302f2547bc10fa453323f842e7888230967551df72f91577936209d5cc24"
+        },
+        "expected_prestate_root": "70318fa4b44ba655f359f4c31224c90d21a73797931fb06a5755182a6fbe5c1c",
+        "expected_poststate_root": "4a49504ae7453b3452f8238d3afaae67bc39615d3e943ffcea8d31c7b6dc5f6f",
+        "claims": [
+          "empty admission head is assetless"
+        ],
+        "expected_output": {
+          "entries_root": "4e37088f62827d2d516158c65acfa85345e5c98e1635428a560396e6a6d5436f",
+          "header_work": "0",
+          "admission_era": "0",
+          "log_height": "0"
+        }
+      },
+      {
+        "case_id": "A02",
+        "operation": "batch",
+        "input": {
+          "count": "128",
+          "label_prefix": "A02-participation-"
+        },
+        "input_hash": "4f93dfb671aa2436b028b72bec899df34b8bc3fa2b708f05f95f11928bd04b08",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {
+          "model_output": "0e28aee89828032debbcf3e37ea7a5cd9e3ee450dbfe87c25bb2981a246d1f98"
+        },
+        "expected_prestate_root": "a5ba3af076ba70bf9735abd7eaea0fdf155e9da4b4218a95a6f519dbbfd7f97d",
+        "expected_poststate_root": "dddf542848c6235d996ef0dc2a267073afbad8a8c7bdbc69f3a60f97309967b9",
+        "claims": [
+          "128-entry root and access work are deterministic"
+        ],
+        "expected_output": {
+          "entries_root": "c48831fcb54c4d269ef480fd11b1146dde458b9a2f10b785c9c6182ac94d399c",
+          "access_work_output": "bd2fcea513a3174cafe2b61138f98bdbe916170475f46c1349f525c6249abe31",
+          "access_work_id": "f31f132e24256850d3826a5b04ca1018906cda5ccdad9e6ec90b82cb82076b55",
+          "count": "128"
+        }
+      },
+      {
+        "case_id": "A03",
+        "operation": "branch",
+        "input": {
+          "branches": [
+            {
+              "name": "lower-work",
+              "era": "0",
+              "work": "10",
+              "header_id": "15a96df451bc0a51daf4efea2e8775435482dd35ebdad47742d16d5e5e7579df"
+            },
+            {
+              "name": "winner",
+              "era": "0",
+              "work": "11",
+              "header_id": "47daaf5c6ffe96780c8ae0237919c06b1927ddf04ad35b8ec212f23e334cb299"
+            },
+            {
+              "name": "tie-lower-id",
+              "era": "0",
+              "work": "11",
+              "header_id": "0000000000000000000000000000000000000000000000000000000000000001"
+            }
+          ]
+        },
+        "input_hash": "536ac123135bfabb2f4a8a0c7493ac988b05b02b1e1f767fa5bdf0dd1c8003b0",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "9c2de067cfcf0210c812b55883e3d8abfac6f5ac6afbf7dee94a21a98d2bbf3c",
+        "expected_poststate_root": "5a26ae0833b18e0e38b0e806fdf79b7a0bf539e7970eef99244739fd4a34805a",
+        "claims": [
+          "higher cumulative work wins before raw id"
+        ],
+        "expected_output": {
+          "selected": "tie-lower-id",
+          "header_id": "0000000000000000000000000000000000000000000000000000000000000001"
+        }
+      },
+      {
+        "case_id": "A04",
+        "operation": "checkpoint",
+        "input": {
+          "confirmations": "32",
+          "descendant_work": "32",
+          "floor": "32",
+          "available": true,
+          "observed_epoch": "8",
+          "committed_epoch": "10"
+        },
+        "input_hash": "a0e4e4f38a8e83b8f079f74d6bed6a802ee4d31ce81b021795e9156efb20089d",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "76fcca2a854b1e715020247a9aa3062047cfa5e1132dde88bce01d5f795b5cf8",
+        "expected_poststate_root": "83b3549c27e503e0036393416db11fb49ecf1f50fc5b87888fec0144ee8f4982",
+        "claims": [
+          "32 descendants and lag two are accepted"
+        ],
+        "expected_output": {
+          "committable": true,
+          "confirmations": "32",
+          "lag": "2"
+        }
+      },
+      {
+        "case_id": "A05",
+        "operation": "workflow",
+        "input": {
+          "verified_units": "1000",
+          "work_per_ticket": "1000",
+          "receipt_cap": "32",
+          "remaining_epoch_cap": "8",
+          "receipt_id": "c715db006492dc3c38e87a6d68a0a4f4a217310729cfb65ac6057a56a5b3fbea"
+        },
+        "input_hash": "7e38110ec167f7d983ed8cf1d98875daec9c86f9c9335068d5edca066d5cb113",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "34cbdc0b3c1cd1931023c156206421a6b36765bb2116986fad079009cfd62773",
+        "expected_poststate_root": "f8666c711f33c87398668cb503844b509c6c850af96bec96ed075ef91b1d6e06",
+        "claims": [
+          "one verified unit issues one non-transferable ticket"
+        ],
+        "expected_output": {
+          "challenge_nullifier": "8eb494eb15093a667cb6539f18a9bb1101765a879491c3027cee6881721a5ab6",
+          "work_nullifier": "bf8e0c856e9134657bdc2c34337064896bdcc07eb899b9092de64f39769acffa",
+          "issued_tickets": "1",
+          "ticket_nullifiers": [
+            "fa463676089218657e578e43144391bad9b4cc13ece14445e9a82aa6b8a0a7c8"
+          ],
+          "claim": null
+        }
+      },
+      {
+        "case_id": "A06",
+        "operation": "workflow",
+        "input": {
+          "verified_units": "1000",
+          "work_per_ticket": "1000",
+          "receipt_cap": "32",
+          "remaining_epoch_cap": "8",
+          "receipt_id": "e940a080c198015477588fe1cb7317e638fadae912eb8d184b6c62d58337bbfe",
+          "budget_reservation_id": "b11db88a79cf775b4c181c0b211214ee5c4181c5e2766143abcb1d906bd3445b",
+          "owner_commitment": "7f79b0a70c3db9745bac9e4751f0fdfa1d26038ee35daf78206710331c391fb3"
+        },
+        "input_hash": "af47e2f574bd65adfe796d2214812971c181954576ea867ee7669f7318aa30d5",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "f3f826c2a6041b7d252a77e42c79fb42a70f62ada71d0efc3265b3aec7ae71a4",
+        "expected_poststate_root": "fc074d3669617a50a913821bfcad25577f3107b1c14ab712432f9b8d350477e4",
+        "claims": [
+          "prior exact budget creates ticket and claim atomically"
+        ],
+        "expected_output": {
+          "challenge_nullifier": "8eb494eb15093a667cb6539f18a9bb1101765a879491c3027cee6881721a5ab6",
+          "work_nullifier": "bf8e0c856e9134657bdc2c34337064896bdcc07eb899b9092de64f39769acffa",
+          "issued_tickets": "1",
+          "ticket_nullifiers": [
+            "03338dca823822b605ad51b6ab19f895a2e7439e0e793fa4a7bf485c4e4a9061"
+          ],
+          "claim": "fe8ffa9ba39f0f90f2c58284a896bd968f76764ba62bdfbbf1a5a8a4cde39e88"
+        }
+      },
+      {
+        "case_id": "A07",
+        "operation": "workflow",
+        "input": {
+          "verified_units": "2000",
+          "work_per_ticket": "1000",
+          "receipt_cap": "1",
+          "remaining_epoch_cap": "8",
+          "receipt_id": "e16eaa490a6f27ec2f22b2df2b8c71ad502a80bf3866fd9a6c8cac68f3162721"
+        },
+        "input_hash": "a1c3e43a16837558dc909adaf770dabd3aba2dfbf53b0ab07ea654ce53fc3042",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "8d44c693bdd2b0ada3c25eeb8f0aeeaccf27cb1380586be0a165e374e499e3c2",
+        "expected_poststate_root": "58f3e7f2322057251b7f5340f1ab1740d5bd313d21c9b15c876a7dae964dae4a",
+        "claims": [
+          "no budget creates tickets only",
+          "receipt cap is enforced"
+        ],
+        "expected_output": {
+          "challenge_nullifier": "8eb494eb15093a667cb6539f18a9bb1101765a879491c3027cee6881721a5ab6",
+          "work_nullifier": "bf8e0c856e9134657bdc2c34337064896bdcc07eb899b9092de64f39769acffa",
+          "issued_tickets": "1",
+          "ticket_nullifiers": [
+            "7d439d23daa905c5575bd1946d463099a2d4483d488502ad251ee5497f7c57f6"
+          ],
+          "claim": null
+        }
+      },
+      {
+        "case_id": "A08",
+        "operation": "committee",
+        "input": {
+          "milestones": [
+            "M0",
+            "M2",
+            "M3",
+            "M4",
+            "M5"
+          ],
+          "candidate_count": "1000",
+          "control_groups": "25",
+          "families": "5",
+          "ticket_prefix": "A08-ticket-",
+          "beacon": "12799b2bcd8aa732dd066194aea7bd4a84e0feaec2251de0dbe2c95b43333d5c"
+        },
+        "input_hash": "ed537e0fd23b033f9661d22a7ed23f2894fdc72590b25486318efa4ab2a77153",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "1a1b1930a2078f9a0566f39834f0c388afd147ea86bc5aa774c7368fcdc24c4c",
+        "expected_poststate_root": "9c454554989721dec39cc0216f1e478d0e8a6c4998b3f7fbacddf7d3b4a604d8",
+        "claims": [
+          "founder slots descend 1000 750 500 250 0",
+          "external tickets are score-selected under 100/300 caps"
+        ],
+        "expected_output": {
+          "committees": {
+            "M0": {
+              "founder_slots": "1000",
+              "external_slots": "0",
+              "selected_count": "1000",
+              "control_group_count": "25",
+              "max_control_slots": "40",
+              "family_slots": {
+                "1": "200",
+                "2": "200",
+                "3": "200",
+                "4": "200",
+                "5": "200"
+              },
+              "member_records_sha256": "a482a863fd6d4c8f37f65bab64b7683312d139dfdb7ad62ed0d66c0b858d8767",
+              "ticket_nullifier_root": "efff5901a1e3b854b46a198dddbfb0776516a7e06c8347522ac1efe6b4f316da",
+              "leader_schedule_root": "4e2e20fa2c766b1e5c11d97894255ae3930a192d251a86d1ccf0179319454522"
+            },
+            "M2": {
+              "founder_slots": "750",
+              "external_slots": "250",
+              "selected_count": "250",
+              "control_group_count": "25",
+              "max_control_slots": "15",
+              "family_slots": {
+                "1": "51",
+                "2": "47",
+                "3": "55",
+                "4": "48",
+                "5": "49"
+              },
+              "member_records_sha256": "6d92ddb987c90f3ee8ba729a86c243e76584c1f951c01fb8d2670a75af69fae6",
+              "ticket_nullifier_root": "15b8a4897fce284ed37434d10e36ffcc8ff45460826c77661d2e9cad51ccc838",
+              "leader_schedule_root": "4e2e20fa2c766b1e5c11d97894255ae3930a192d251a86d1ccf0179319454522"
+            },
+            "M3": {
+              "founder_slots": "500",
+              "external_slots": "500",
+              "selected_count": "500",
+              "control_group_count": "25",
+              "max_control_slots": "24",
+              "family_slots": {
+                "1": "97",
+                "2": "98",
+                "3": "102",
+                "4": "100",
+                "5": "103"
+              },
+              "member_records_sha256": "66ea36c04606a5e88f2fea7fc490f7b361f6c5658ae159c1939bc9cfab4c29f5",
+              "ticket_nullifier_root": "ea681751aae8fd8f98adb366b15eacc1a8a93983e9a1cb0e03cfe613ca8251c0",
+              "leader_schedule_root": "4e2e20fa2c766b1e5c11d97894255ae3930a192d251a86d1ccf0179319454522"
+            },
+            "M4": {
+              "founder_slots": "250",
+              "external_slots": "750",
+              "selected_count": "750",
+              "control_group_count": "25",
+              "max_control_slots": "33",
+              "family_slots": {
+                "1": "148",
+                "2": "146",
+                "3": "153",
+                "4": "148",
+                "5": "155"
+              },
+              "member_records_sha256": "143d0854a80ea0ad661b709487174c1c4799690eec0c48bc7a113c3c022ca899",
+              "ticket_nullifier_root": "99b5eb9b9cf38fb92fc2f3df3cc5f4e4be0e0666de1151608d50743f743e1928",
+              "leader_schedule_root": "4e2e20fa2c766b1e5c11d97894255ae3930a192d251a86d1ccf0179319454522"
+            },
+            "M5": {
+              "founder_slots": "0",
+              "external_slots": "1000",
+              "selected_count": "1000",
+              "control_group_count": "25",
+              "max_control_slots": "40",
+              "family_slots": {
+                "1": "200",
+                "2": "200",
+                "3": "200",
+                "4": "200",
+                "5": "200"
+              },
+              "member_records_sha256": "a482a863fd6d4c8f37f65bab64b7683312d139dfdb7ad62ed0d66c0b858d8767",
+              "ticket_nullifier_root": "a47f6aed2921194d4be59920ecb0be5835195aa79f2c8c1be6546f8f8f990c13",
+              "leader_schedule_root": "4e2e20fa2c766b1e5c11d97894255ae3930a192d251a86d1ccf0179319454522"
+            }
+          },
+          "total_slots": "1000",
+          "quorum_slots": "667"
+        }
+      },
+      {
+        "case_id": "A09",
+        "operation": "offline",
+        "input": {
+          "milestones": [
+            "M2",
+            "M3"
+          ],
+          "external_slots": {
+            "M2": "250",
+            "M3": "500"
+          }
+        },
+        "input_hash": "a55ee3a33fcc0d648c060b5a6abee4bd56b10659df23a008f2dd276af16c7830",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "9614c5205d96ed516f7ff22a3167f5b2894f5d6ed8f1c336bcd7ef857f2b65d2",
+        "expected_poststate_root": "af704d933fb0c33e0c8c1ee2a31a5982edcba19b4eea913b7760c7ca42240120",
+        "claims": [
+          "founder offline at M2 and M3 safely halts"
+        ],
+        "expected_output": {
+          "results": {
+            "M2": "SAFE_HALT",
+            "M3": "SAFE_HALT"
+          }
+        }
+      },
+      {
+        "case_id": "A10",
+        "operation": "offline",
+        "input": {
+          "milestones": [
+            "M4",
+            "M5"
+          ],
+          "external_slots": {
+            "M4": "750",
+            "M5": "1000"
+          }
+        },
+        "input_hash": "3fba5765c86298f4d9e884facf0a2dc97232e663887a4ab3988eb4f21c054d7d",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "f5d0d8466186accd014a6acaca532defb479aa024e7e435ab02860bf29e4d30e",
+        "expected_poststate_root": "348198c68e7bc89ce2caca9f612b40e8c75ea3970033005d71276a197aa1c73e",
+        "claims": [
+          "founder offline at M4 and M5 retains at least 667 external slots"
+        ],
+        "expected_output": {
+          "results": {
+            "M4": "CONTINUE_FINALITY",
+            "M5": "CONTINUE_FINALITY"
+          }
+        }
+      },
+      {
+        "case_id": "A11",
+        "operation": "claim_settlement",
+        "input": {
+          "reserve_before": "1000",
+          "circulating_before": "9000",
+          "amount": "25",
+          "value_cap": "1"
+        },
+        "input_hash": "fa9a6869850b037c1086b945e5e11fc7a862e3937e1247aba960b04cf5888bdb",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "e42a74c9dff35a00ac442a3c9845dba4b5cc3f0dc2f6fffbb3c7e7c5eefb4108",
+        "expected_poststate_root": "4b267eb77fc515856dda0949aee696cc5ab5a5a9a50a2526d16362705141d220",
+        "claims": [
+          "pure cap1 settlement conserves fixed supply"
+        ],
+        "expected_output": {
+          "reserve_after": "975",
+          "circulating_after": "9025",
+          "supply_before": "10000",
+          "supply_after": "10000"
+        }
+      },
+      {
+        "case_id": "A12",
+        "operation": "reorg",
+        "input": {
+          "finalized_asset_root": "d07fb1c05b77d014ad911cf7248713301625be496e0209fb511d34bec52032fc",
+          "old_tip": "8bd3937ceb5dcc5fb2bc8d61f7d43df2e87a82a2e8e76eacff74c63f71b931f9",
+          "new_tip": "00a715d214c713c676d55d7afca83efbdf41a88ab83bf187126a56a8b33c2d1e"
+        },
+        "input_hash": "b8c1af8f32974bd592597b903929881a469364521fbc2b4cb08efe545689eba2",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "6e867c635bf2104530b257c5c9c7d369efc9e59918f0100e0b89e3fd52c55684",
+        "expected_poststate_root": "e966be23a654aacb483ea811d027f20040631f6b8a674d176d6d14148c5d0033",
+        "claims": [
+          "admission reorg cannot mutate finalized asset root"
+        ],
+        "expected_output": {
+          "asset_root_before": "d07fb1c05b77d014ad911cf7248713301625be496e0209fb511d34bec52032fc",
+          "asset_root_after": "d07fb1c05b77d014ad911cf7248713301625be496e0209fb511d34bec52032fc",
+          "unfinalized_branch_changed": true
+        }
+      },
+      {
+        "case_id": "A13",
+        "operation": "bounds",
+        "input": {
+          "previous_target": "3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",
+          "observed": "64",
+          "minimum_target": "0000000000000000000000000000000000000000000000000000000000000001",
+          "maximum_target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        "input_hash": "8c3d9c9ea35e7b49a6a8f1e83146544482d2e13439a22705cac619aa805e40c8",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "189bdb0b1382cb5d51403502414d6c3454e410827ffdd42e3a23d83219e940ba",
+        "expected_poststate_root": "1112fac032fb13565af99805aac1f40f9b91b062124efa78ebda584778bb3cff",
+        "claims": [
+          "u128 and u256 upper bounds use checked exact arithmetic"
+        ],
+        "expected_output": {
+          "next_target": "3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",
+          "u128_max": "340282366920938463463374607431768211455",
+          "u256_max": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+        }
+      },
+      {
+        "case_id": "A14",
+        "operation": "rollover",
+        "input": {
+          "terminal_cumulative_work": "ffffffffffffffff000000000000000000000000000000000000000000000000",
+          "ledger_finalized": true,
+          "prior_era": "7"
+        },
+        "input_hash": "639036868e6cdc1d275412d1f92aa14c010a15bfaf932fb860f8284d8fa2976f",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "01270620f440c30f73b7d5502249ddfb8edbca60384f8d65c92acef951fe54b7",
+        "expected_poststate_root": "56d41eb1559a577745d735a7e578946a977d8ef254a543685eb69084fab76546",
+        "claims": [
+          "rollover requires threshold and ledger finality"
+        ],
+        "expected_output": {
+          "rollover_legal": true,
+          "successor_era": "8"
+        }
+      },
+      {
+        "case_id": "R01-envelope-limit",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "envelope_over_limit"
+          ]
+        },
+        "input_hash": "16cd28748dda2e1adebd9449db476374470d43500feae13921d067094db6c3d0",
+        "expected_accept": false,
+        "expected_first_error": "ERR_ENVELOPE_LIMIT",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "40994cf78d6459747e37c4a7db58d91e51cbd6ea378373f4e2f2f5fc00324e3b",
+        "expected_poststate_root": "40994cf78d6459747e37c4a7db58d91e51cbd6ea378373f4e2f2f5fc00324e3b",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R02-unknown-schema",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "unknown_schema"
+          ]
+        },
+        "input_hash": "e8c00305268a25f0d39f7d4877640da7be583a419d293909a68e6e700575037b",
+        "expected_accept": false,
+        "expected_first_error": "ERR_NON_CANONICAL_WIRE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "0d1d3e0fb4cf1defd7662f439325ad126db88b918e71e2aed18547e35d259e52",
+        "expected_poststate_root": "0d1d3e0fb4cf1defd7662f439325ad126db88b918e71e2aed18547e35d259e52",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R03-duplicate-field",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "duplicate_field"
+          ]
+        },
+        "input_hash": "0cef49adfec30bc121a45ae49ec2387d38278c4055e9bb0ca3f637572ac710b7",
+        "expected_accept": false,
+        "expected_first_error": "ERR_NON_CANONICAL_WIRE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "7d77d0ab85d0c8da30ae7569f01a3297525780294be1086e72fabc33acde000f",
+        "expected_poststate_root": "7d77d0ab85d0c8da30ae7569f01a3297525780294be1086e72fabc33acde000f",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R04-out-of-order-field",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "out_of_order_field"
+          ]
+        },
+        "input_hash": "951d5ddda0222c6d2261f108c7cc53fbccc6fc4cf5c5209104c4dddec1afc39d",
+        "expected_accept": false,
+        "expected_first_error": "ERR_NON_CANONICAL_WIRE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "a9a06c70265d2051becf12f8ff61858f11c35e7992369f9e3580db4ce4309da7",
+        "expected_poststate_root": "a9a06c70265d2051becf12f8ff61858f11c35e7992369f9e3580db4ce4309da7",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R05-missing-field",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "missing_field"
+          ]
+        },
+        "input_hash": "076623ac4179fcf7d8b28a5f063fe30937499e287a8a0d008624e6fa6fb889f5",
+        "expected_accept": false,
+        "expected_first_error": "ERR_NON_CANONICAL_WIRE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "59ecefb7f0b1f508db164ec7df3b64e39813971489d3385bde90a3cea211f082",
+        "expected_poststate_root": "59ecefb7f0b1f508db164ec7df3b64e39813971489d3385bde90a3cea211f082",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R06-non-nfc",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "non_nfc_text"
+          ]
+        },
+        "input_hash": "1e699609d2511914425be279ba6c0aa9fc580195b5931946df84d580eada509c",
+        "expected_accept": false,
+        "expected_first_error": "ERR_NON_CANONICAL_WIRE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "efb7598cd9a3009fa6852c2b1c855707ab3501b4e928060e5e199b29363258c9",
+        "expected_poststate_root": "efb7598cd9a3009fa6852c2b1c855707ab3501b4e928060e5e199b29363258c9",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R07-trailing-bytes",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "trailing_bytes"
+          ]
+        },
+        "input_hash": "a56aa68046b4e9fe1894f2f7a7fc1555f7b1294b5ad18a4e70ec609390086834",
+        "expected_accept": false,
+        "expected_first_error": "ERR_NON_CANONICAL_WIRE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "9c8a740942aec0315b89d8b4a25abeb55868cb4f73e82048188ad0abf4817d28",
+        "expected_poststate_root": "9c8a740942aec0315b89d8b4a25abeb55868cb4f73e82048188ad0abf4817d28",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R08-context",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "context_mismatch"
+          ]
+        },
+        "input_hash": "f90a41e21616644cd9cfd125d92a3bf836740225781264cbafa38216a0e2a4fb",
+        "expected_accept": false,
+        "expected_first_error": "ERR_CONTEXT_MISMATCH",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "ea0b5e62a871c3f713e44b3853732e9c13220fc145ca6b3003648663ff5b0300",
+        "expected_poststate_root": "ea0b5e62a871c3f713e44b3853732e9c13220fc145ca6b3003648663ff5b0300",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R09-parent",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "wrong_parent"
+          ]
+        },
+        "input_hash": "a1477a4aa5309a6f077a57475339afe0950019b42fc462f2b0a62f322f3b6748",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "ee4c20474d893cf4b6855b27ceb13ee75c62025eb77c87205d0fa22677669b3e",
+        "expected_poststate_root": "ee4c20474d893cf4b6855b27ceb13ee75c62025eb77c87205d0fa22677669b3e",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R10-prestate",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "wrong_prestate"
+          ]
+        },
+        "input_hash": "b46e78659f7abddb56aca98414533e8d426c5aaca692324e1506b8f9b791927f",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "de7a75d55fe7861e6d88df3dc6ccfe097afe05bc853593ac988c6908bb58ec52",
+        "expected_poststate_root": "de7a75d55fe7861e6d88df3dc6ccfe097afe05bc853593ac988c6908bb58ec52",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R11-anchor",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "wrong_anchor"
+          ]
+        },
+        "input_hash": "f09824e1552ddb94dd828922c818d1553d9938b316d1888a999b7447e4dea399",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "e10a2c77335a073efd6833ec7a6271fcf441f70473af9cbf538e46fd8d55aebe",
+        "expected_poststate_root": "e10a2c77335a073efd6833ec7a6271fcf441f70473af9cbf538e46fd8d55aebe",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R12-bad-signature",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "bad_signature"
+          ]
+        },
+        "input_hash": "66f1c3fc2f218d42881ef360cec5270d30b08ec786f2d27b7aa889bec422998d",
+        "expected_accept": false,
+        "expected_first_error": "ERR_AUTHENTICATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "e781bddd669498cb3bd35f369891aabe1c2b1a2d5b80b48370d276f160c272cd",
+        "expected_poststate_root": "e781bddd669498cb3bd35f369891aabe1c2b1a2d5b80b48370d276f160c272cd",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R13-small-order",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "small_order_key"
+          ]
+        },
+        "input_hash": "56d4280a7a9458cf333ca81854c522175056a8c48f8ab0809e71dfd3e00d0460",
+        "expected_accept": false,
+        "expected_first_error": "ERR_AUTHENTICATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "8dba09f24e482aeaacad6488e6b18556a2524ef1f8a1bab9df99c25af221e820",
+        "expected_poststate_root": "8dba09f24e482aeaacad6488e6b18556a2524ef1f8a1bab9df99c25af221e820",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R14-noncanonical-scalar",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "noncanonical_scalar"
+          ]
+        },
+        "input_hash": "8156de89a02ff27e5d2e3928301715d6ed013ce82e8c523bbe00bbf80aa5dde8",
+        "expected_accept": false,
+        "expected_first_error": "ERR_AUTHENTICATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "7f1c28889435a0869bd47fea0b00586fad79beb04608e4fe6fabb0dd5da2f96d",
+        "expected_poststate_root": "7f1c28889435a0869bd47fea0b00586fad79beb04608e4fe6fabb0dd5da2f96d",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R15-entry-root",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "bad_entry_root"
+          ]
+        },
+        "input_hash": "9ad68c65608666713f34027226ae1edabf9ea9077fd41aeca7a5c72717931db4",
+        "expected_accept": false,
+        "expected_first_error": "ERR_RESOURCE_OR_AVAILABILITY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "af879460893d9f66c2a342ce774107946541ac69380cb8fec0670ffbccc9f591",
+        "expected_poststate_root": "af879460893d9f66c2a342ce774107946541ac69380cb8fec0670ffbccc9f591",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R16-invalid-work",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "invalid_access_work"
+          ]
+        },
+        "input_hash": "61759efd4a616edfbad3c44928f202ee6d4d95935bf8669530cc373e3d8e0809",
+        "expected_accept": false,
+        "expected_first_error": "ERR_WORK_OR_PROOF",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "274a28e01b31eff0e69692cdd53ceb5b1aa1a6e9c28d55ba30a23300d449fdb3",
+        "expected_poststate_root": "274a28e01b31eff0e69692cdd53ceb5b1aa1a6e9c28d55ba30a23300d449fdb3",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R17-work-overflow",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "cumulative_work_overflow"
+          ]
+        },
+        "input_hash": "96d16c61488892ad24124caf8e78264b0e29121010087d48be3a8f47474ad27c",
+        "expected_accept": false,
+        "expected_first_error": "ERR_WORK_OR_PROOF",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "757ff79deeaf6baa0da5419c95b0862f4b1eb07a3ff752597486ee150b88339c",
+        "expected_poststate_root": "757ff79deeaf6baa0da5419c95b0862f4b1eb07a3ff752597486ee150b88339c",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R18-target-range",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "target_out_of_range"
+          ]
+        },
+        "input_hash": "fb10bb2c0ea7a08d5c337d143ae8087237c654476a2d6b7384a03ed263d650a8",
+        "expected_accept": false,
+        "expected_first_error": "ERR_WORK_OR_PROOF",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "f97ec85d01ab13ae55bf15f1ffa8fc5969c90828e742bb698f8098e969852f81",
+        "expected_poststate_root": "f97ec85d01ab13ae55bf15f1ffa8fc5969c90828e742bb698f8098e969852f81",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R19-shallow-confirmation",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "shallow_confirmation"
+          ]
+        },
+        "input_hash": "bccfcca42046040ed01a5db60dfaf5c0a4a2e2b534da5c4e012b83b418b1495f",
+        "expected_accept": false,
+        "expected_first_error": "ERR_RESOURCE_OR_AVAILABILITY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "95e6ffcb11e5673887fab5020f98df219673ecdcf26d722ce2bb070d561ffaf7",
+        "expected_poststate_root": "95e6ffcb11e5673887fab5020f98df219673ecdcf26d722ce2bb070d561ffaf7",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R20-data-unavailable",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "data_unavailable"
+          ]
+        },
+        "input_hash": "2d0aa811a831abfbcd9d1d370f2957d55f050446aa7b43f24a0b916baff226ec",
+        "expected_accept": false,
+        "expected_first_error": "ERR_RESOURCE_OR_AVAILABILITY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "0a407934a9f27d4db49391eed3fa0f21eae07d6f9c0a09e21d4fc6a9dd0f7dd0",
+        "expected_poststate_root": "0a407934a9f27d4db49391eed3fa0f21eae07d6f9c0a09e21d4fc6a9dd0f7dd0",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R21-duplicate-work",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "duplicate_work_nullifier"
+          ]
+        },
+        "input_hash": "bef7fd89d574e0cfd7f4f1e2fc66364e05c10e3bb9a205bbad28455afd6f0d48",
+        "expected_accept": false,
+        "expected_first_error": "ERR_DUPLICATE_OR_NULLIFIER",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "9b3d8ef05e35a181e90dd91c98969fc04b0b4712c702c80e02295a45c6736922",
+        "expected_poststate_root": "9b3d8ef05e35a181e90dd91c98969fc04b0b4712c702c80e02295a45c6736922",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R22-seed-preselection",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "seed_preselection"
+          ]
+        },
+        "input_hash": "bd6dae55f94e1e6de4deac743d77a497627babeb66685c54fb35d458ecc48579",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PROGRAM_OR_WINDOW",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "b06d3d81791111787996999153b3c06b2393553f71e1734cec3c0e2916b383d0",
+        "expected_poststate_root": "b06d3d81791111787996999153b3c06b2393553f71e1734cec3c0e2916b383d0",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R23-expired-challenge",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "expired_challenge"
+          ]
+        },
+        "input_hash": "6384fb94b6300da92055543fde184bf8d8d345e22d9b144476fbf887e6807784",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PROGRAM_OR_WINDOW",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "e5efa0cce6277ffb0193ba4fb507bf0011ea044bc4f02717c39ebaf1f62cccc9",
+        "expected_poststate_root": "e5efa0cce6277ffb0193ba4fb507bf0011ea044bc4f02717c39ebaf1f62cccc9",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R24-unbounded-verifier",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "unbounded_verification"
+          ]
+        },
+        "input_hash": "8e3be62d860ea973f14e488f9221cc9cbfef272b1c0510c6b671001ee45de6b5",
+        "expected_accept": false,
+        "expected_first_error": "ERR_RESOURCE_OR_AVAILABILITY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "4023074d59b8b1dc2e1c41e59987f061cf8ed0a94f41a6afdb96d50e57a97d3f",
+        "expected_poststate_root": "4023074d59b8b1dc2e1c41e59987f061cf8ed0a94f41a6afdb96d50e57a97d3f",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R25-subjective-program",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "subjective_program"
+          ]
+        },
+        "input_hash": "e86306258159f91740185e0d8bd58bb52db7e12e5b53ed7a0cc43854491136b0",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PROGRAM_OR_WINDOW",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "ac9b00cdbb0d4e58bb1c567cdd2845ee42bb40490347ff8cc9cadf506576b8b6",
+        "expected_poststate_root": "ac9b00cdbb0d4e58bb1c567cdd2845ee42bb40490347ff8cc9cadf506576b8b6",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R26-ticket-early",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "ticket_too_early"
+          ]
+        },
+        "input_hash": "1815b3fb516406a11a3f16d17f1c9f0ab160ca5ae03baf8a129ee6e57b9b1273",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PROGRAM_OR_WINDOW",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "3ebbb479dd032f6b8cb15187cce5966dcb6dbf0137047618af601340a59af758",
+        "expected_poststate_root": "3ebbb479dd032f6b8cb15187cce5966dcb6dbf0137047618af601340a59af758",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R27-ticket-expired",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "ticket_expired"
+          ]
+        },
+        "input_hash": "cb51330736ee3c9fcfcbaf3ec17dc16b16bbeb8ee0664145a9ad57cce838a61a",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PROGRAM_OR_WINDOW",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "79b079298eefb6578108a2573a8a4276528e1660df8bccd0bd05708292d8a80a",
+        "expected_poststate_root": "79b079298eefb6578108a2573a8a4276528e1660df8bccd0bd05708292d8a80a",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R28-ticket-reuse",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "ticket_reuse"
+          ]
+        },
+        "input_hash": "4596a29cfb9836674622e618ea3909700b75a7d8d2ef0b47d269864807e090bf",
+        "expected_accept": false,
+        "expected_first_error": "ERR_DUPLICATE_OR_NULLIFIER",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "7c0791ae9510db8b64fc98ead64160bb4ae15a2e057b75f106c134bba22674a4",
+        "expected_poststate_root": "7c0791ae9510db8b64fc98ead64160bb4ae15a2e057b75f106c134bba22674a4",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R29-family-cap",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "family_slot_cap"
+          ]
+        },
+        "input_hash": "3ff2fc5d9be6f14f2b6602c3596e985f2e4927c0e70f3fd8f73f8a3164214a3d",
+        "expected_accept": false,
+        "expected_first_error": "ERR_QUOTA_OR_CONCENTRATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "86f7dbd6757d816bf2cedc1643cb556c326a365dd784f96517300d7c37ccae46",
+        "expected_poststate_root": "86f7dbd6757d816bf2cedc1643cb556c326a365dd784f96517300d7c37ccae46",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R30-control-cap",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "control_group_slot_cap"
+          ]
+        },
+        "input_hash": "d7de805ec1499b2bbdf9ae4ca6aad7a8f401a91bdaa8b6f0e47d706d99d228cc",
+        "expected_accept": false,
+        "expected_first_error": "ERR_QUOTA_OR_CONCENTRATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "69bd4ae78f88940ebe85b37feea64bcaf2604fb3998479ab254301894ebe0d4e",
+        "expected_poststate_root": "69bd4ae78f88940ebe85b37feea64bcaf2604fb3998479ab254301894ebe0d4e",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R31-committee-underfill",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "committee_underfilled"
+          ]
+        },
+        "input_hash": "c6226fa809fd9e7aae90b872b23d42fc53d69c698bf9e387b2cdae356330f837",
+        "expected_accept": false,
+        "expected_first_error": "ERR_QUOTA_OR_CONCENTRATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "5e61d36c217aea5f50501bc6b2d7ae6e0f41dda2f29b4c57884f5cc3482cc861",
+        "expected_poststate_root": "5e61d36c217aea5f50501bc6b2d7ae6e0f41dda2f29b4c57884f5cc3482cc861",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R32-quorum",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "quorum_below_667"
+          ]
+        },
+        "input_hash": "0508b86a9690f63546f4dfeaacb244e5110ef9fdfc26f4fe04c2cfd560ff9644",
+        "expected_accept": false,
+        "expected_first_error": "ERR_QUOTA_OR_CONCENTRATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "9667862f1291dfda03234dff63b6ca2d12286e2a7176232f680172d4cc5fea6c",
+        "expected_poststate_root": "9667862f1291dfda03234dff63b6ca2d12286e2a7176232f680172d4cc5fea6c",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R33-milestone-skip",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "milestone_skip"
+          ]
+        },
+        "input_hash": "23049055efdffae7b667f3e4a25cac33a8eae9998d3158a61f9fe4e1d9ee79e3",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "89e36a463b7dbea1c0a2d3fce5d1e4a589b84adb7ebe9b93fa268d49787bf96e",
+        "expected_poststate_root": "89e36a463b7dbea1c0a2d3fce5d1e4a589b84adb7ebe9b93fa268d49787bf96e",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R34-milestone-rollback",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "milestone_rollback"
+          ]
+        },
+        "input_hash": "a1e19bb20d4b470e14813f061a3ec3d47e5e710c7222e373037a6092084e69e3",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "7a36ed07a96bd2bf391dc64814111e1f9de77b82a2570a931b0c3586ebe25d6c",
+        "expected_poststate_root": "7a36ed07a96bd2bf391dc64814111e1f9de77b82a2570a931b0c3586ebe25d6c",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R35-founder-restore",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "founder_authority_restore"
+          ]
+        },
+        "input_hash": "e172981d964280140fb1a92ba8f0822bbf6944882c79f35f0ed9c0093b8fd815",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "d35e0c425db491abe31c4d7ea35e5cc77cb3f22bea64c1d7b2a374df28ff3dc4",
+        "expected_poststate_root": "d35e0c425db491abe31c4d7ea35e5cc77cb3f22bea64c1d7b2a374df28ff3dc4",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R36-rld-buys-ticket",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "rld_purchase_ticket"
+          ]
+        },
+        "input_hash": "f35181f960524d5b8a9891df629ee42209fd417fbd61e3942175edc35e575290",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "82745026de0ad66250cd0ab31574e8fc7cd549aade4977e85efbb754acc38fc1",
+        "expected_poststate_root": "82745026de0ad66250cd0ab31574e8fc7cd549aade4977e85efbb754acc38fc1",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R37-missing-budget",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "missing_budget"
+          ]
+        },
+        "input_hash": "41392119e9974b17ae54917726e9110467c6cb648689b3dd4106e4a34d7c68ea",
+        "expected_accept": false,
+        "expected_first_error": "ERR_BUDGET_OR_SUPPLY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "3c3ebcd2893cd2550ea99cd14a109290fe929cb11dba754d57d9c1078bd5cba1",
+        "expected_poststate_root": "3c3ebcd2893cd2550ea99cd14a109290fe929cb11dba754d57d9c1078bd5cba1",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R38-claim-transfer",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "claim_transfer"
+          ]
+        },
+        "input_hash": "2d8a1270c9a8c493f5c48b86f6cb211f099f7d8783c300d98b245bd8f0d83a9d",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "b0af19a860c32c2e3dcad833c106d6b2705034062c9d3dd7b0f60b885f7dfdea",
+        "expected_poststate_root": "b0af19a860c32c2e3dcad833c106d6b2705034062c9d3dd7b0f60b885f7dfdea",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R39-claim-replay",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "claim_replay"
+          ]
+        },
+        "input_hash": "ddabc5ac15abf795b225b0af5094c6eaabcbd1dacd8450093ac5f456ee6bd337",
+        "expected_accept": false,
+        "expected_first_error": "ERR_DUPLICATE_OR_NULLIFIER",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "aa1c31e1979a991bcc4b6e876330a3893e639598dfbf4439f35213f0e824d4b7",
+        "expected_poststate_root": "aa1c31e1979a991bcc4b6e876330a3893e639598dfbf4439f35213f0e824d4b7",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R40-value-cap-0",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "value_cap_0_settlement"
+          ]
+        },
+        "input_hash": "3b0052f475aa1e500e15f8b9991868ed9f34ff3d7f55124f9e6536d89ecdf8dd",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "5e24dd020b79575c824fa5d7b447dcd862da6b5aee8526681bb4d5810cea7696",
+        "expected_poststate_root": "5e24dd020b79575c824fa5d7b447dcd862da6b5aee8526681bb4d5810cea7696",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R41-supply-change",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "supply_change"
+          ]
+        },
+        "input_hash": "7dc69d4552637974fabb9aca82e04b4edc2d7f1e679ec26017f2ec5083ee0550",
+        "expected_accept": false,
+        "expected_first_error": "ERR_BUDGET_OR_SUPPLY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "f42ddc68ba8042f8ca2ddec73ca3eecdbb9fc85470a5f4e5bdea855bcf395961",
+        "expected_poststate_root": "f42ddc68ba8042f8ca2ddec73ca3eecdbb9fc85470a5f4e5bdea855bcf395961",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R42-cross-domain",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "cross_domain_replay"
+          ]
+        },
+        "input_hash": "4737fd542b51cb4e49596e0a7f4ed87def118a59d2622f9bb2795d71843ea2de",
+        "expected_accept": false,
+        "expected_first_error": "ERR_WORK_OR_PROOF",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "01088f4e03889d73d6d56b7431627468a51106a020c4bbd6420848ebdbd0917c",
+        "expected_poststate_root": "01088f4e03889d73d6d56b7431627468a51106a020c4bbd6420848ebdbd0917c",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R43-unactivated-tag",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "unactivated_tag"
+          ]
+        },
+        "input_hash": "ba9eda142320705ff059552f0267af44aaafd8b22d086a8ad7c0483de452bc85",
+        "expected_accept": false,
+        "expected_first_error": "ERR_FEATURE_NOT_ACTIVATED",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "a7a9e6e6f2f8554af94d2f10e95dc8bf7ee3d9d5c851ab608c0268a0ee9f8f4e",
+        "expected_poststate_root": "a7a9e6e6f2f8554af94d2f10e95dc8bf7ee3d9d5c851ab608c0268a0ee9f8f4e",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R44-first-error-envelope-before-wire",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "envelope_over_limit",
+            "unknown_schema"
+          ]
+        },
+        "input_hash": "bd7dd10e2d1a04b722e0e286db826c7d8c4156fba4256b4ad76937c0a952dae0",
+        "expected_accept": false,
+        "expected_first_error": "ERR_ENVELOPE_LIMIT",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "4b39d42f5bcbedc47943bbbfc417df09c0723aebc9b644ca803bec85752f0c3d",
+        "expected_poststate_root": "4b39d42f5bcbedc47943bbbfc417df09c0723aebc9b644ca803bec85752f0c3d",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R45-first-error-auth-before-work",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "bad_signature",
+            "invalid_access_work"
+          ]
+        },
+        "input_hash": "bcbf51a9a0ae5bd4ff21562e6375a8256d903449b6615eb607366c91184b65ff",
+        "expected_accept": false,
+        "expected_first_error": "ERR_AUTHENTICATION",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "9cddb632fc1eab97ba82ebde39b79fd019c123bdf3a0e142bc1e7c8ab766391a",
+        "expected_poststate_root": "9cddb632fc1eab97ba82ebde39b79fd019c123bdf3a0e142bc1e7c8ab766391a",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      },
+      {
+        "case_id": "R46-first-error-resource-before-duplicate",
+        "operation": "reject",
+        "input": {
+          "faults": [
+            "data_unavailable",
+            "duplicate_work_nullifier"
+          ]
+        },
+        "input_hash": "5717c05de182d69dabfb1e4a35cf355fe5cfd8ed09c3de54c8f517c8b1399bf7",
+        "expected_accept": false,
+        "expected_first_error": "ERR_RESOURCE_OR_AVAILABILITY",
+        "expected_wire_hashes": {},
+        "expected_prestate_root": "91f977ce65b04e61b1420958dbf36f4176723c250fe0139ab95d3e2f362ca776",
+        "expected_poststate_root": "91f977ce65b04e61b1420958dbf36f4176723c250fe0139ab95d3e2f362ca776",
+        "claims": [
+          "first error follows frozen priority"
+        ],
+        "expected_output": {}
+      }
+    ]
+  }
+}

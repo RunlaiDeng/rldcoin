@@ -1,0 +1,83 @@
+name: RLDcoin CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  wire-conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.98.0
+      - run: make -C tools/independent-verifier test
+      - run: tools/verify-open-contribution-v1.sh
+      - run: python3 -B -m unittest discover -s tools/source-evidence -v
+      - run: bash -n deploy/m0-mainnet.sh deploy/verify-m0-mainnet.sh
+      - run: python3 -B tools/m0-lifecycle/test_checkpoint_sync.py
+      - run: cd vectors/m0-genesis-v3 && shasum -a 256 -c manifest.json.sha256
+      - run: python3 -B tools/upgrade-intent-draft/vectors.py --check
+      - run: python3 -B tools/upgrade-command-wire/vectors.py --check
+      - run: python3 -B tools/upgrade-migration/vectors.py --check
+      - run: python3 -B -m unittest discover -s tools/implementation-source -v
+      - run: python3 -B tools/m0-genesis-v3/verify_manifest.py vectors/m0-genesis-v3/manifest.json --exercise-negatives
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.98.0
+          components: rustfmt, clippy
+      - run: cargo fmt --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: RLD_NODE_STAGED_FIXTURE_OUT=target/m0-node-staged RLD_SMALL_STAGED_PROOF_FIXTURE_OUT=target/m0-small-staged-proof RLD_LARGE_STAGED_PROOF_FIXTURE_OUT=target/m0-large-staged-proof RLD_NODE_OBLIGATION_FIXTURE_OUT=target/m0-node-obligation-fixtures RLD_OBLIGATION_PROGRESS_FIXTURE_OUT=target/m0-obligation-fixture RLD_IMPOSSIBLE_RECEIPT_FIXTURE_OUT=target/m0-impossible-receipt-fixture RLD_NODE_RECEIPT_FIXTURE_OUT=target/m0-node-receipt-fixture RLD_OBSERVATION_AGED_HISTORY_OUT=target/m0-observation-progress.jsonl RLD_FINALIZED_INCLUSION_FIXTURE_OUT=target/m0-inclusion-fixture RLD_RECONCILIATION_FIXTURE_OUT=target/m0-reconciliation-fixture cargo test --workspace --locked
+      - run: cargo run --locked -p rld-cli --bin rld-genesis -- verify --manifest vectors/m0-genesis-v3/manifest.json
+      - run: python3 -B tools/implementation-source/verify_cli.py --binary target/debug/rld-genesis --report target/implementation-source.json
+      - run: python3 -B tools/upgrade-command-wire/verify_cli.py --binary target/debug/rld-genesis --report target/upgrade-schedule-inspection.json
+      - run: python3 -B tools/upgrade-migration/verify_cli.py --binary target/debug/rld-genesis --report target/upgrade-migration-descriptor.json
+      - run: cd vectors/m0-semantic-replay-v1 && shasum -a 256 -c SHA256SUMS
+      - run: python3 -B tools/m0-semantic-replay/verify_cli.py --binary target/debug/rld-genesis
+      - run: python3 -B tools/m0-admission-inclusion/verify_cli.py --binary target/debug/rld-genesis --fixture target/m0-inclusion-fixture --report target/m0-admission-inclusion.json
+      - run: python3 -B tools/m0-admission-reconciliation/verify_cli.py --binary target/debug/rld-genesis --fixture target/m0-reconciliation-fixture --report target/m0-admission-reconciliation.json
+      - run: cargo build --locked -p rld-node -p rld-signer -p rld-witness --bins
+      - run: python3 -B tools/m0-node-obligations/verify_services.py --binary target/debug/rldd --witness-binary target/debug/rld-witness --fixtures target/m0-node-obligation-fixtures --report target/m0-node-obligations.json
+      - run: python3 -B tools/m0-admission-obligations/verify_services.py --signer-binary target/debug/rld-signer --witness-binary target/debug/rld-witness --fixture target/m0-obligation-fixture --node-binary target/debug/rldd --impossible-node-fixture target/m0-impossible-receipt-fixture --report target/m0-obligations.json
+      - run: python3 -B tools/m0-node-receipts/verify_services.py --binary target/debug/rldd --witness-binary target/debug/rld-witness --fixture target/m0-node-receipt-fixture --report target/m0-node-receipts.json
+      - run: python3 -B tools/m0-role-admission/verify_services.py --signer-binary target/debug/rld-signer --witness-binary target/debug/rld-witness --progress-history target/m0-observation-progress.jsonl --report target/m0-role-admission.json
+      - run: python3 -m pip install cryptography==50.0.1
+      - run: cargo build --locked --release -p rld-signer -p rld-witness
+      - run: python3 -B tools/m0-role-admission/verify_staged_services.py --signer-binary target/release/rld-signer --witness-binary target/release/rld-witness --fixture target/m0-large-staged-proof --report target/m0-staged-proof.json
+      - run: python3 -B tools/m0-role-admission/verify_staged_services.py --signer-binary target/release/rld-signer --witness-binary target/release/rld-witness --fixture target/m0-small-staged-proof --faults --report target/m0-staged-proof-faults.json
+      - run: python3 -B tools/m0-node-staged/test_measured_process.py
+      - run: python3 -B tools/m0-node-staged/test_storage_measurement.py
+      - run: python3 -B tools/m0-node-staged/test_run_lifecycle.py
+      - run: python3 -B tools/m0-node-staged/verify_services.py --binary target/debug/rldd --signer-binary target/release/rld-signer --witness-binary target/release/rld-witness --fixtures target/m0-node-staged --history-change --report target/m0-node-staged.json
+      - run: python3 -B tools/m0-node-staged/verify_services.py --binary target/debug/rldd --signer-binary target/release/rld-signer --witness-binary target/release/rld-witness --fixtures target/m0-node-staged --next-heartbeat-history target/m0-observation-progress.jsonl --report target/m0-node-staged-main-head.json
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm build

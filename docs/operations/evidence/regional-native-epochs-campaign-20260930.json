@@ -1,0 +1,374 @@
+{
+  "all_normal_checkpoints_use_persisted_native_signer_agents": true,
+  "authenticated_conflict_id": "2039b4dbac83ad709ab728cf77f65e36407face2860661de87cc5038fc2e2453",
+  "checks": [
+    {
+      "conserved": true,
+      "issued": "100",
+      "liquid_including_immature_and_fees": "100",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "200",
+      "liquid_including_immature_and_fees": "200",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "stale signer backup rejected by retained latest head; exact current journal restored"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "joint old/new four-signature epoch activated with same currency and value state"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "170",
+      "pending_exports": "130",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "170",
+      "pending_exports": "130",
+      "phase": "earth:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "170",
+      "pending_exports": "130",
+      "phase": "contact:earth->proxima"
+    },
+    {
+      "attack": "wrong destination",
+      "result": {
+        "reason": "regional candidate rejected: wrong source, destination or checkpoint",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "attack": "duplicate import",
+      "result": {
+        "reason": "regional candidate rejected: permanent import tombstone rejects replay",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "attack": "immature payment",
+      "result": {
+        "reason": "regional candidate rejected: immature input",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "attack": "mature input lacking local finality",
+      "result": {
+        "reason": "regional candidate rejected: onward export requires local finality",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "221",
+      "pending_exports": "79",
+      "phase": "proxima:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "221",
+      "pending_exports": "79",
+      "phase": "proxima:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "221",
+      "pending_exports": "79",
+      "phase": "contact:proxima->andromeda"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:checkpoint with durable signer locks"
+    },
+    {
+      "attack": "missing second owner signature",
+      "result": {
+        "reason": "regional candidate rejected: every input owner must authorize",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "andromeda:checkpoint with durable signer locks"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "Earth unused during remote payments and onward value; return pending"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "contact:andromeda->proxima"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "contact:proxima->earth"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "attack": "cyclic replay at origin",
+      "result": {
+        "reason": "regional candidate rejected: permanent import tombstone rejects replay",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "signed incident propagated to proxima; no refund"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "signed incident propagated to andromeda; no refund"
+    },
+    {
+      "attack": "mature returned asset depends on faulted Proxima",
+      "result": {
+        "reason": "regional candidate rejected: input depends on quarantined finality; retained assets cannot be newly spent or exported",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "attack": "faulted local finality prevents new blocks",
+      "result": {
+        "reason": "regional candidate rejected: local region has authenticated conflicting finality; new operations are quarantined",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "damaged incident repaired; same quarantine and conservation"
+    }
+  ],
+  "conflict_propagation_and_dependency_quarantine_verified": true,
+  "consensus_scope": "append-only mined histories, durable signer locks with caller-retained heads and joint unanimous epoch handoff; public fixture keys, no BFT view change or authorized release of quarantined exposures",
+  "currency": "8aafb0c96f74ca35e897e7813a70677146ab7c1c1da8b268b367cfe56d54197a",
+  "damaged_incident_recovered_without_unfreezing": true,
+  "direct_earth_to_andromeda_export": "9cf4d0f0130661af2a81399a0a84808f95edbc24cd14580785fd53338ed4e20c",
+  "earth_retained_quarantined_return_amount": "74",
+  "earth_validator_epoch": "6da2f3e260164135d643efd1d79071a41a57db3a7605a145f8208a04124981df",
+  "format": "RLD-REGIONAL-NATIVE-FIXTURE-CAMPAIGN-V1",
+  "implementation": "59c8b50d8bd93d2cc7e56c87e5de086563d36a3cd1829bb61b7c7e045f5e7bcc",
+  "independent_operators": false,
+  "joint_epoch_handoff_and_offline_relay_verified": true,
+  "limits": {
+    "blocks_per_region": 256,
+    "journal_bytes": 8388608,
+    "snapshots": 64
+  },
+  "live_rld": false,
+  "logical_years_or_physical_aging_tested": false,
+  "mainnet_authorized": false,
+  "native_cli_process_invocations": 128,
+  "new_return_export": "7321992d6ebf6a31e422dee920a36c23d4de207f170ed6ccb5acad7156d21018",
+  "onward_export": "c503edf1b02553c3629cee94cc86ec562f085f174ea38528a216159bb88a63c7",
+  "original_export": "7e033fb7aba4fd3cae763daa24401e8e054771625ad0db3c2f8d8e5b2199ac3c",
+  "owners": 6,
+  "physical_route_verified": false,
+  "region_validator_keys_distinct": true,
+  "regions": 3,
+  "result": "PASS_BOUNDED_NATIVE_CLI_CAMPAIGN",
+  "source_http_used": false,
+  "stale_signer_backup_refused_with_surviving_external_pin": true,
+  "unimplemented": [
+    "native mesh automation and real contact adapter",
+    "fork selection and independent regional BFT qualification",
+    "consensus conflict resolution and independent recovery authority",
+    "channels and reservations",
+    "BFT validator reconfiguration and cryptographic horizon",
+    "external rollback root and independent archives"
+  ]
+}

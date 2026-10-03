@@ -1,0 +1,37 @@
+{
+  "name": "Illustrative Mars 21-day blackout, one frame per minute",
+  "result": "BUDGET_CONSTRAINTS_EXCEEDED",
+  "route_qualified": false,
+  "production_rules_changed": false,
+  "limits": {
+    "max_payload_bytes": 3145728,
+    "max_queue_bytes": 268435456,
+    "max_queue_frames": 4096
+  },
+  "forward": {
+    "frame_bytes": 1872,
+    "new_frames_during_blackout": 30240,
+    "peak_retained_frames": 30241,
+    "peak_retained_bytes": 56611152,
+    "serialization_seconds": 567,
+    "blocking_constraints": [
+      "QUEUE_FRAME_LIMIT"
+    ],
+    "queue_copies_after_send": 30241,
+    "arrival_after_phase_start_seconds": null
+  },
+  "return": {
+    "frame_bytes": 1872,
+    "new_frames_during_blackout": 0,
+    "peak_retained_frames": 1,
+    "peak_retained_bytes": 1872,
+    "serialization_seconds": 1,
+    "blocking_constraints": [],
+    "queue_copies_after_send": 1,
+    "arrival_after_phase_start_seconds": 1321
+  },
+  "conditional_round_trip_seconds": null,
+  "conditional_round_trip_years": null,
+  "scope": "stationary one-batch planning estimate; excludes source finalization, destination inclusion delay, outages after contact, retries and node replay time; block interval is an assumption, not a deadline; courier retains sent copies",
+  "input_sha256": "6e9ba983266ffcc23c916b0e10b1c9a8dcce5fb34316ccfabb5c0651df3b01e6"
+}

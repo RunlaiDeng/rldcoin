@@ -1,0 +1,287 @@
+{
+  "checks": [
+    {
+      "conserved": true,
+      "issued": "100",
+      "liquid_including_immature_and_fees": "100",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "200",
+      "liquid_including_immature_and_fees": "200",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "170",
+      "pending_exports": "130",
+      "phase": "earth:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "170",
+      "pending_exports": "130",
+      "phase": "earth:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "170",
+      "pending_exports": "130",
+      "phase": "contact:earth->proxima"
+    },
+    {
+      "attack": "wrong destination",
+      "result": {
+        "reason": "regional candidate rejected: wrong source, destination or checkpoint",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "attack": "duplicate import",
+      "result": {
+        "reason": "regional candidate rejected: permanent import tombstone rejects replay",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "attack": "immature payment",
+      "result": {
+        "reason": "regional candidate rejected: immature input",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "attack": "mature input lacking local finality",
+      "result": {
+        "reason": "regional candidate rejected: onward export requires local finality",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "250",
+      "pending_exports": "50",
+      "phase": "proxima:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "221",
+      "pending_exports": "79",
+      "phase": "proxima:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "221",
+      "pending_exports": "79",
+      "phase": "proxima:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "221",
+      "pending_exports": "79",
+      "phase": "contact:proxima->andromeda"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:checkpoint"
+    },
+    {
+      "attack": "missing second owner signature",
+      "result": {
+        "reason": "regional candidate rejected: every input owner must authorize",
+        "rejected": true
+      },
+      "unchanged_state": true
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "andromeda:block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "andromeda:checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "Earth unused during remote payments and onward value; return pending"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "contact:andromeda->proxima"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "226",
+      "pending_exports": "74",
+      "phase": "contact:proxima->earth"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid_including_immature_and_fees": "300",
+      "pending_exports": "0",
+      "phase": "earth:block"
+    },
+    {
+      "attack": "cyclic replay at origin",
+      "result": {
+        "reason": "regional candidate rejected: permanent import tombstone rejects replay",
+        "rejected": true
+      },
+      "unchanged_state": true
+    }
+  ],
+  "consensus_scope": "append-only mined histories and unanimous checkpoints; public fixture signer keys, no BFT view change or conflicting-certificate recovery",
+  "currency": "78b997e7773fe7adc3ad324fb4abc5c6726590ef9e30141fd750e9abe28befb4",
+  "direct_earth_to_andromeda_export": "432d866b51fb30a4f315bc7f11461ebacf9a620778263b7295ed96a1ebe60b04",
+  "format": "RLD-REGIONAL-NATIVE-FIXTURE-CAMPAIGN-V1",
+  "implementation": "bea27fa1f7fdf6f3e084d9c65dd17a39f69886f93627ffd7fe80fa6069afc67d",
+  "independent_operators": false,
+  "limits": {
+    "blocks_per_region": 256,
+    "journal_bytes": 8388608,
+    "snapshots": 64
+  },
+  "live_rld": false,
+  "logical_years_or_physical_aging_tested": false,
+  "mainnet_authorized": false,
+  "native_cli_process_invocations": 52,
+  "new_return_export": "9a7030997281906f0c7836e333fc51c205c76636238a9fa84e836ac618195ea7",
+  "onward_export": "3f7bc0b385885a8fac9f13575afa8708c4a48f09c0663591877342c67a092e22",
+  "original_export": "b9945ceaa7b9f120d9d08f2cb24e66b6bcb620da94b83f279af81e1dd5fe9e3a",
+  "owners": 5,
+  "physical_route_verified": false,
+  "region_validator_keys_distinct": true,
+  "regions": 3,
+  "result": "PASS_BOUNDED_NATIVE_CLI_CAMPAIGN",
+  "source_http_used": false,
+  "unimplemented": [
+    "native mesh automation and real contact adapter",
+    "fork selection and independent regional BFT qualification",
+    "conflicting certificate quarantine and dependency recovery",
+    "channels and reservations",
+    "validator epochs and cryptographic horizon",
+    "external rollback root and independent archives"
+  ]
+}

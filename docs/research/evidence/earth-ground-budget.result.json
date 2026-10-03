@@ -1,0 +1,35 @@
+{
+  "name": "Illustrative Earth batch",
+  "result": "BUDGET_FITS_ASSUMPTIONS",
+  "route_qualified": false,
+  "production_rules_changed": false,
+  "limits": {
+    "max_payload_bytes": 3145728,
+    "max_queue_bytes": 268435456,
+    "max_queue_frames": 4096
+  },
+  "forward": {
+    "frame_bytes": 1872,
+    "new_frames_during_blackout": 0,
+    "peak_retained_frames": 160,
+    "peak_retained_bytes": 299520,
+    "serialization_seconds": 3,
+    "blocking_constraints": [],
+    "queue_copies_after_send": 160,
+    "arrival_after_phase_start_seconds": 3
+  },
+  "return": {
+    "frame_bytes": 1872,
+    "new_frames_during_blackout": 0,
+    "peak_retained_frames": 101,
+    "peak_retained_bytes": 189072,
+    "serialization_seconds": 2,
+    "blocking_constraints": [],
+    "queue_copies_after_send": 101,
+    "arrival_after_phase_start_seconds": 2
+  },
+  "conditional_round_trip_seconds": 3605,
+  "conditional_round_trip_years": 0.00011423555656957437,
+  "scope": "stationary one-batch planning estimate; excludes source finalization, destination inclusion delay, outages after contact, retries and node replay time; block interval is an assumption, not a deadline; courier retains sent copies",
+  "input_sha256": "d1fb795a3901fa76137685496705e5a9486cfaff7da61b202c92e552ce81867d"
+}

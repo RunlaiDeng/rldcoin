@@ -1,0 +1,28 @@
+[package]
+name = "rld-pow"
+version = "0.3.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rld-core = { path = "../rld-core" }
+anyhow.workspace = true
+clap.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+ed25519-dalek.workspace = true
+rand.workspace = true
+axum.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+zeroize = "=1.9.0"
+argon2 = "0.5.3"
+chacha20poly1305 = "0.10.1"
+rpassword = "7.4.0"
+
+[[bin]]
+name = "rld-earth-genesis"
+path = "src/main.rs"

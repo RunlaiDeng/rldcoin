@@ -1,0 +1,9 @@
+# Earth source finality
+
+An adopted Earth destination pins the exact source adoption ID and four sorted validator public keys in its genesis context. It accepts `FinalizedImport { bundle, certificate }`; an ordinary `Import` cannot create value. A source checkpoint requires at least 12 selected-chain confirmations before signing.
+
+The certificate signs canonical `FinalityStatement` JSON under `RLD-EARTH-SOURCE-FINALITY\0`. It commits the source chain ID, adopted genesis anchor, Earth value adoption ID, checkpoint block ID and height, source state root, cumulative work and prior certificate ID. All four adopted validators sign. The source checks selected ancestry, depth, fields and signatures before durably installing the certificate. It thereafter rejects a branch conflicting with the highest installed checkpoint, even if the competing branch has greater work. Later certificates must advance to a higher descendant block.
+
+The destination verifies the certificate against replayed source blocks and checks that the export checkpoint is its ancestor. It requires its source mirror to have installed a checkpoint at least as recent on the same branch. Per-key signer locks are durable and bind the source chain, adoption and previous signed statement. The locks must be backed up; replacing them with empty files for the same keys can permit equivocation.
+
+These rules assume all four keys do not sign conflicting histories and every value-serving source node enforces finality. Current keys have one owner, so this is operator finality. A contradiction is an incident requiring value service to stop and an explicit public resolution. No automatic reversal of destination spending is safe. Destination reorganizations remain probabilistic, and source finality does not finalize destination blocks.

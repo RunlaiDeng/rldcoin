@@ -1,0 +1,27 @@
+{
+  "name": "Illustrative stationary 4.25-light-year route, finite retained batch",
+  "forward": {
+    "payload_bytes": 1024,
+    "evidence_frames": 160,
+    "additional_frames_per_day": 0,
+    "blackout_seconds": 0,
+    "backlog_frames": 0,
+    "backlog_bytes": 0,
+    "usable_bytes_per_second": 100000,
+    "contact_window_seconds": 3600,
+    "one_way_seconds": 134119800
+  },
+  "return": {
+    "payload_bytes": 1024,
+    "evidence_frames": 101,
+    "additional_frames_per_day": 0,
+    "blackout_seconds": 0,
+    "backlog_frames": 0,
+    "backlog_bytes": 0,
+    "usable_bytes_per_second": 100000,
+    "contact_window_seconds": 3600,
+    "one_way_seconds": 134119800
+  },
+  "maturity_blocks": 6,
+  "assumed_block_seconds": 600
+}

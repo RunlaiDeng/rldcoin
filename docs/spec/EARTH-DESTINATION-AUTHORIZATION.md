@@ -1,0 +1,7 @@
+# Earth destination genesis authorization
+
+The destination genesis starts with zero native RLD issuance. It pins one source Earth chain, its empty signed genesis, adopted value rules and four source-finality keys. It also pins the source trust policy and the destination's own PoW identity.
+
+`DestinationGenesisAuthorizationStatement` is compact canonical JSON in declared field order. Its format is `RLD-EARTH-DESTINATION-GENESIS-AUTHORIZATION`; its signing preimage is that ASCII domain, a zero byte and the canonical statement JSON. The statement binds this file's SHA-256, the destination genesis, destination-context hash, source preview ID and exact implementation source commitment. A separately pinned destination signer signs it with Ed25519. A node checks the exact accepted statement ID and signer key before creating destination value state; different genesis, source, context, rule, source bytes, signature or noncanonical file fails closed.
+
+An authorization is an identity and operator consent record. Actual imports additionally require a unique source export proof and unanimous source-finality certificate covering at least 12 selected-chain confirmations. Imported value matures after six destination blocks; source and destination replay must verify it again on restart. One owner's signature does not establish independent review or protect against compromise of all four source-finality keys.

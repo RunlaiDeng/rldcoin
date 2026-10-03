@@ -1,0 +1,22 @@
+[package]
+name = "rld-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "rld"
+path = "src/main.rs"
+
+[[bin]]
+name = "rld-genesis"
+path = "src/bin/rld-genesis.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+hex.workspace = true
+rld-core = { path = "../rld-core" }
+serde.workspace = true
+serde_json.workspace = true

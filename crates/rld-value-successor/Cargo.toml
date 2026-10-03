@@ -1,0 +1,25 @@
+[package]
+name = "rld-value-successor"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rld-core = { path = "../rld-core" }
+rld-pow = { path = "../rld-pow" }
+rld-fast-payments = { path = "../rld-fast-payments" }
+rld-cross-region = { path = "../rld-cross-region" }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+hex.workspace = true
+anyhow.workspace = true
+axum.workspace = true
+clap.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+zeroize = "=1.9.0"
+
+[dev-dependencies]
+ed25519-dalek.workspace = true

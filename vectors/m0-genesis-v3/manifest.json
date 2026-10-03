@@ -1,0 +1,90 @@
+{
+  "declaration": {
+    "format_version": "RLD-M0-GENESIS-MANIFEST-V3",
+    "network_phase": "M0_NETWORK_BIRTH",
+    "descriptor": {
+      "zone_id": "zone-b20dae8b719ab9698980",
+      "display_name": "V3-DISPOSABLE-CLI-ONLY",
+      "genesis_root": "6fac128f043fc6dd3eee5c3ff32ae6c9489ab5a7180aaed5035d4ad1b84d6f65",
+      "identity_version": 2,
+      "identity_hash_suite": "SHA-256",
+      "network_domain": "rldcoin:mainnet:v1",
+      "anchor_supply": "100000000000000000000000000000000000",
+      "genesis_validator_keys": [
+        "8139770ea87d175f56a35466c34c7ecccb8d8a91b4ee37a25df60f5b8fc9b394",
+        "ed4928c628d1c2c6eae90338905995612959273a5c63f93636c14614ac8737d1",
+        "ca93ac1705187071d67b83c7ff0efe8108e8ec4530575d7726879333dbdabe7c",
+        "6e7a1cdd29b0b78fd13af4c5598feff4ef2a97166e3ca6f2e4fbfccd80505bf1"
+      ],
+      "genesis_notary_keys": [
+        "8a875fff1eb38451577acd5afee405456568dd7c89e090863a0557bc7af49f17",
+        "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+        "1398f62c6d1a457c51ba6a4b5f3dbd2f69fca93216218dc8997e416bd17d93ca",
+        "fd1724385aa0c75b64fb78cd602fa1d991fdebf76b13c58ed702eac835e9f618"
+      ],
+      "currency_genesis_root": "a1d281a5dbd2cc88375d352676df80ed0355e2f9220f26672e452c5512e0f282",
+      "validator_keys": [
+        "8139770ea87d175f56a35466c34c7ecccb8d8a91b4ee37a25df60f5b8fc9b394",
+        "ed4928c628d1c2c6eae90338905995612959273a5c63f93636c14614ac8737d1",
+        "ca93ac1705187071d67b83c7ff0efe8108e8ec4530575d7726879333dbdabe7c",
+        "6e7a1cdd29b0b78fd13af4c5598feff4ef2a97166e3ca6f2e4fbfccd80505bf1"
+      ],
+      "notary_keys": [
+        "8a875fff1eb38451577acd5afee405456568dd7c89e090863a0557bc7af49f17",
+        "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+        "1398f62c6d1a457c51ba6a4b5f3dbd2f69fca93216218dc8997e416bd17d93ca",
+        "fd1724385aa0c75b64fb78cd602fa1d991fdebf76b13c58ed702eac835e9f618"
+      ],
+      "protocol_era": 1,
+      "crypto_era": 1,
+      "testnet": false
+    },
+    "genesis_state_root": "2d02adbed125b0b185946d605a8fb19973bc6a4d2058ef98adb7442928624060",
+    "founder_public_key": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+    "control_group_id": "synthetic-known-fixture",
+    "admission_genesis": {
+      "context": {
+        "network_domain": "rldcoin:mainnet:v1",
+        "zone_id": "zone-b20dae8b719ab9698980",
+        "currency_genesis": "a1d281a5dbd2cc88375d352676df80ed0355e2f9220f26672e452c5512e0f282",
+        "protocol_era": 1,
+        "crypto_era": 1
+      },
+      "config": {
+        "minimum_target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "maximum_target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "genesis_target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "confirmation_work_floor": "0000000000000000000000000000000000000000000000000000000000000020",
+        "contribution_epoch_mapping": {
+          "ledger_height_origin": 0,
+          "contribution_epoch_origin": 0,
+          "ledger_blocks_per_contribution_epoch": 64
+        }
+      },
+      "benchmark_report_sha256": "abababababababababababababababababababababababababababababababab",
+      "genesis_header": "681e7dd7ddc23fa5629dcf56abc2a6f805ebab275e89cc8f5279b57bd8bae66e"
+    },
+    "upgrade_constitution": {
+      "format_version": "RLD-M0-UPGRADE-CONSTITUTION-V1",
+      "fixed_supply_runlai": "100000000000000000000000000000000000",
+      "runlai_per_rld": "1000000000000000000000000",
+      "bootstrap_upgrade_value_cap": "VALUE_CAP_0",
+      "founder_special_slot_ceiling": [
+        1000,
+        1000,
+        750,
+        500,
+        250,
+        0
+      ],
+      "minimum_activation_delay_epochs": 2,
+      "current_committee_finality_required": true,
+      "preserve_existing_obligations": true,
+      "replace_genesis_allowed": false,
+      "restore_founder_weight_allowed": false,
+      "value_activation_requires_m5_and_safety_case": true
+    }
+  },
+  "manifest_sha256": "a8bb9ebc1d3246725325ce93974b0efde21d76ee1494091978314b46e7014118",
+  "founder_signature": "e26eda2e8771768c5f480436011592c64bd4d9dbff719bbfe9cd3bed61a85e8e840547a10346ffca69827f7cf8275ebc2a8031a517823e95cd8b71c01235f907"
+}

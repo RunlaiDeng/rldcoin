@@ -1,0 +1,236 @@
+{
+  "format": "rld-admission-ledger-control-v1",
+  "payload": {
+    "cases": [
+      {
+        "case_id": "C01",
+        "expected_accept": true,
+        "expected_first_error": null,
+        "mutation": "accept"
+      },
+      {
+        "case_id": "C02",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "mutation": "schedule_activation_epoch"
+      },
+      {
+        "case_id": "C03",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "mutation": "schedule_target"
+      },
+      {
+        "case_id": "C04",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "mutation": "activation_active_target"
+      },
+      {
+        "case_id": "C05",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "mutation": "activation_consumed_count"
+      },
+      {
+        "case_id": "C06",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "mutation": "rollover_below_threshold"
+      },
+      {
+        "case_id": "C07",
+        "expected_accept": false,
+        "expected_first_error": "ERR_TRANSITION_OR_VALUE_CAP",
+        "mutation": "rollover_zero_state_root"
+      },
+      {
+        "case_id": "C08",
+        "expected_accept": false,
+        "expected_first_error": "ERR_PARENT_OR_PRESTATE",
+        "mutation": "zero_accumulator_input"
+      }
+    ],
+    "claims": {
+      "formal_command_route": false,
+      "independent_target_arithmetic_and_fact_hashes": true,
+      "main_wal_commit_association": false,
+      "runtime_tag28": false,
+      "value_cap": 0
+    },
+    "config": {
+      "genesis_target": "0100000000000000000000000000000000000000000000000000000000000000",
+      "maximum_target": "1000000000000000000000000000000000000000000000000000000000000000",
+      "minimum_target": "0010000000000000000000000000000000000000000000000000000000000000"
+    },
+    "empty_accumulator": "2e038292119eab82ed2df1c8408f4749f644f1905a267fc46ad74d1d3dd2461f",
+    "expected_final_state": {
+      "active_target": "0400000000000000000000000000000000000000000000000000000000000000",
+      "fact_accumulator": "0ad57b0b9aac49e04885cf1a9b4a752b2caf0424fd68e282910b81ac54ca7674",
+      "fact_count": "6",
+      "prior_fact_accumulator": "cf8797843dad884eff9ad6acc0483e6402a43f215b2634f258ea1a9773c757ec",
+      "scheduled_target_count": 1
+    },
+    "rollover_threshold": "ffffffffffffffff000000000000000000000000000000000000000000000000",
+    "status": "CONTROL_FACT_HASH_AND_STATE_ONLY_RUNTIME_TAG28_DISABLED_VALUE_CAP_0",
+    "steps": [
+      {
+        "completed_epoch_header_counts": [
+          16,
+          32,
+          64,
+          128
+        ],
+        "decision_epoch": "40",
+        "expected_accumulator": "ac403fb205051a947b7c40e1813ad2943c7608f4425fdb73e3d0f4473559fa72",
+        "expected_fact": {
+          "activation_epoch": "42",
+          "completed_epoch_header_counts": [
+            16,
+            32,
+            64,
+            128
+          ],
+          "decision_epoch": "40",
+          "kind": "TARGET_SCHEDULE",
+          "target": "0155555555555555555555555555555555555555555555555555555555555555"
+        },
+        "expected_fact_hash": "ef6eefe750dcd6163b3737c5e6a8003792052afb277f3cf4170346bd9d3bc29b",
+        "expected_state": {
+          "active_target": "0100000000000000000000000000000000000000000000000000000000000000",
+          "fact_accumulator": "ac403fb205051a947b7c40e1813ad2943c7608f4425fdb73e3d0f4473559fa72",
+          "fact_count": "1",
+          "prior_fact_accumulator": "2e038292119eab82ed2df1c8408f4749f644f1905a267fc46ad74d1d3dd2461f",
+          "scheduled_target_count": 1
+        },
+        "kind": "TARGET_SCHEDULE"
+      },
+      {
+        "completed_epoch_header_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "decision_epoch": "41",
+        "expected_accumulator": "daf24a72d6e00472f0d65bb438915a327e7bf86609caea45d6d4b0fb019da20a",
+        "expected_fact": {
+          "activation_epoch": "43",
+          "completed_epoch_header_counts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "decision_epoch": "41",
+          "kind": "TARGET_SCHEDULE",
+          "target": "0400000000000000000000000000000000000000000000000000000000000000"
+        },
+        "expected_fact_hash": "ebb1a096f1c9b16f74e431e95e45cb14aac657ca7f201d6bb58edb9ca5d7c61e",
+        "expected_state": {
+          "active_target": "0100000000000000000000000000000000000000000000000000000000000000",
+          "fact_accumulator": "daf24a72d6e00472f0d65bb438915a327e7bf86609caea45d6d4b0fb019da20a",
+          "fact_count": "2",
+          "prior_fact_accumulator": "ac403fb205051a947b7c40e1813ad2943c7608f4425fdb73e3d0f4473559fa72",
+          "scheduled_target_count": 2
+        },
+        "kind": "TARGET_SCHEDULE"
+      },
+      {
+        "expected_accumulator": "416b22dabad2c5ec230ff7352243946caed20be30531a5cdd69855b6e49f89e3",
+        "expected_fact": {
+          "active_target": "0155555555555555555555555555555555555555555555555555555555555555",
+          "consumed_schedule_count": 1,
+          "kind": "TARGET_ACTIVATION",
+          "ledger_epoch": "42",
+          "prior_target": "0100000000000000000000000000000000000000000000000000000000000000"
+        },
+        "expected_fact_hash": "5c80a6cb75d3430e4995a2c16f00f8f062d484bf44236fabdb642a784dba8d04",
+        "expected_state": {
+          "active_target": "0155555555555555555555555555555555555555555555555555555555555555",
+          "fact_accumulator": "416b22dabad2c5ec230ff7352243946caed20be30531a5cdd69855b6e49f89e3",
+          "fact_count": "3",
+          "prior_fact_accumulator": "daf24a72d6e00472f0d65bb438915a327e7bf86609caea45d6d4b0fb019da20a",
+          "scheduled_target_count": 1
+        },
+        "kind": "TARGET_ACTIVATION",
+        "ledger_epoch": "42"
+      },
+      {
+        "expected_accumulator": "066201e276de377a4e01e153b79c7f45a6d0a04541dfd17ddb36360df7a466e6",
+        "expected_fact": {
+          "active_target": "0400000000000000000000000000000000000000000000000000000000000000",
+          "consumed_schedule_count": 1,
+          "kind": "TARGET_ACTIVATION",
+          "ledger_epoch": "43",
+          "prior_target": "0155555555555555555555555555555555555555555555555555555555555555"
+        },
+        "expected_fact_hash": "9713e3c7c35cf0260923143ee8154ae8b9e8af98264162a19a9ff3e4551ef329",
+        "expected_state": {
+          "active_target": "0400000000000000000000000000000000000000000000000000000000000000",
+          "fact_accumulator": "066201e276de377a4e01e153b79c7f45a6d0a04541dfd17ddb36360df7a466e6",
+          "fact_count": "4",
+          "prior_fact_accumulator": "416b22dabad2c5ec230ff7352243946caed20be30531a5cdd69855b6e49f89e3",
+          "scheduled_target_count": 0
+        },
+        "kind": "TARGET_ACTIVATION",
+        "ledger_epoch": "43"
+      },
+      {
+        "completed_epoch_header_counts": [
+          512,
+          256,
+          128,
+          64
+        ],
+        "decision_epoch": "44",
+        "expected_accumulator": "cf8797843dad884eff9ad6acc0483e6402a43f215b2634f258ea1a9773c757ec",
+        "expected_fact": {
+          "activation_epoch": "46",
+          "completed_epoch_header_counts": [
+            512,
+            256,
+            128,
+            64
+          ],
+          "decision_epoch": "44",
+          "kind": "TARGET_SCHEDULE",
+          "target": "0155555555555555555555555555555555555555555555555555555555555555"
+        },
+        "expected_fact_hash": "a4bea2b54b3ea9a11f9c17813281509c94b9f2707948bac1424fe772f9ae8923",
+        "expected_state": {
+          "active_target": "0400000000000000000000000000000000000000000000000000000000000000",
+          "fact_accumulator": "cf8797843dad884eff9ad6acc0483e6402a43f215b2634f258ea1a9773c757ec",
+          "fact_count": "5",
+          "prior_fact_accumulator": "066201e276de377a4e01e153b79c7f45a6d0a04541dfd17ddb36360df7a466e6",
+          "scheduled_target_count": 1
+        },
+        "kind": "TARGET_SCHEDULE"
+      },
+      {
+        "expected_accumulator": "0ad57b0b9aac49e04885cf1a9b4a752b2caf0424fd68e282910b81ac54ca7674",
+        "expected_fact": {
+          "finalized_ledger_state_root": "076036351f9707da60b2cb1b4a017abe41b61ebde1aa49a624f8580a5c9bfd3e",
+          "kind": "ROLLOVER_AUTHORIZATION",
+          "successor_era": "9",
+          "terminal_cumulative_work": "ffffffffffffffff000000000000000000000000000000000000000000000000",
+          "terminal_header": "20942e8fcc790a5808d4ea6fb0171feaf0cfd4307fc6dc9eb3ff33a29e96e8ab"
+        },
+        "expected_fact_hash": "5fae1696ebb3d4abe8d0683c5590d5bda9fa6a96038c65eb1d8919ec860cd484",
+        "expected_state": {
+          "active_target": "0400000000000000000000000000000000000000000000000000000000000000",
+          "fact_accumulator": "0ad57b0b9aac49e04885cf1a9b4a752b2caf0424fd68e282910b81ac54ca7674",
+          "fact_count": "6",
+          "prior_fact_accumulator": "cf8797843dad884eff9ad6acc0483e6402a43f215b2634f258ea1a9773c757ec",
+          "scheduled_target_count": 1
+        },
+        "finalized_ledger_state_root": "076036351f9707da60b2cb1b4a017abe41b61ebde1aa49a624f8580a5c9bfd3e",
+        "kind": "ROLLOVER_AUTHORIZATION",
+        "successor_era": "9",
+        "terminal_cumulative_work": "ffffffffffffffff000000000000000000000000000000000000000000000000",
+        "terminal_header": "20942e8fcc790a5808d4ea6fb0171feaf0cfd4307fc6dc9eb3ff33a29e96e8ab"
+      }
+    ]
+  },
+  "payload_sha256": "2af83f9d4fac0f087b74d78e2e1f8dd3093dc502aa366e288178054fbd564367"
+}

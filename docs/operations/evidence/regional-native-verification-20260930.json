@@ -1,0 +1,32 @@
+{
+  "format": "RLD-REGIONAL-CANDIDATE-VERIFICATION-V1",
+  "date": "2026-09-30",
+  "result": "PASS_LOCAL_BOUNDED_CANDIDATE",
+  "platform": "Darwin arm64",
+  "rust": "1.98.0",
+  "tests": 15,
+  "tests_passed": true,
+  "strict_clippy_all_targets_passed": true,
+  "fixture_cli_invocations": 52,
+  "base_implementation_source": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "candidate_implementation": "bea27fa1f7fdf6f3e084d9c65dd17a39f69886f93627ffd7fe80fa6069afc67d",
+  "fixture_currency": "78b997e7773fe7adc3ad324fb4abc5c6726590ef9e30141fd750e9abe28befb4",
+  "independent_review": false,
+  "deployed_to_testnet": false,
+  "deployed_to_mainnet": false,
+  "signed_networks_modified": false,
+  "protocol_qualified": false,
+  "physical_route_qualified": false,
+  "archive_rebuild_verified": true,
+  "core_scope": "separately built supplemental native generic regional ledger; incompatible fixture format",
+  "unresolved": [
+    "native mesh automation and real contact adapter",
+    "fork selection and independent regional BFT qualification",
+    "conflicting certificate quarantine and dependency recovery",
+    "channels and reservations",
+    "validator epochs and cryptographic horizon",
+    "external rollback root and independent archives"
+  ],
+  "archive_rebuilt_tests_passed": 15,
+  "archive_campaign_report_matches_exactly": true
+}

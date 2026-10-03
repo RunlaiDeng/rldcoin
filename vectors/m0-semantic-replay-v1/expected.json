@@ -1,0 +1,7 @@
+{
+  "expected_height": "2",
+  "expected_state_root": "a74db34e85cf305796aeaf915f1a2de89e03eea54fcbad1814c38a217ee0edf5",
+  "live_authorization": false,
+  "manifest_sha256": "a8bb9ebc1d3246725325ce93974b0efde21d76ee1494091978314b46e7014118",
+  "scope": "PUBLIC_KNOWN_SEED_DISPOSABLE_FIXTURE"
+}

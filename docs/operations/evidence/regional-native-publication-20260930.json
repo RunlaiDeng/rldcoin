@@ -1,0 +1,198 @@
+{
+  "format": "RLD-REGIONAL-NATIVE-PUBLICATION-VERIFICATION-V1",
+  "commit": "7ac071851ca4ed829c5abba12582ec2e3cc6ede9",
+  "remote_main_matches": true,
+  "files_verified": 31,
+  "all_sha256_match": true,
+  "files": [
+    {
+      "path": "research/2026-09-30/regional-native-v1/PLAN_STATUS.zh-CN.md",
+      "sha256": "ac3e7c7eccbbc92e4fb832717cf2d84ef12ff99be82470675e2fbf2873eede78",
+      "bytes": 4826,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/README.md",
+      "sha256": "04cc7c19605303526c1d1dc1e1927f022085de23827434605db9b5b553c002e4",
+      "bytes": 3103,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/SPEC.zh-CN.md",
+      "sha256": "836f00a11a1dd5a722f2d0c240cb4f81ec9e3ffcaf8abdb73d56aeee11f0f4c8",
+      "bytes": 7605,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/base-source-manifest.json",
+      "sha256": "20848cd672795d3c6fd3e6d1d56a85b1ff5744620a762d266d6c79cd5c5b3d60",
+      "bytes": 30728,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/campaign-report.json",
+      "sha256": "6bd93a9bffbab2ee5b33a288dd8c61eacbbbed4fbf0c8fd70aa7c31578df7572",
+      "bytes": 8105,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/source.tar.gz",
+      "sha256": "6f5df3a4f35943cb70c7a75fa40d53240973407dd62e2d42cf735027c6502d34",
+      "bytes": 1131504,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/supplemental-source-manifest.json",
+      "sha256": "694970b84f011c9a4f4ef384471d42c9e9e66edabc1e54f651b97c34766f1245",
+      "bytes": 1653,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/Cargo.lock",
+      "sha256": "a14c44d34d066955c06ed9cfff2fb1d410b3a53378caf0f3c023ccfead32e22e",
+      "bytes": 15359,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/Cargo.toml",
+      "sha256": "baffd5d1a03b04253f32f5d4ae5ffae8d7db8161e50dee2ed256e79f7a1a6607",
+      "bytes": 450,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/README.md",
+      "sha256": "c83dfc26c3b8496deaab5e20fdc6b909de7d364a8b813565812c470e7e0ed375",
+      "bytes": 5007,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/build.rs",
+      "sha256": "0dfa707932e52dd116add44b14d4837cdeb771972290d37981d65ee6e2115cfa",
+      "bytes": 1322,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/src/bin/fixture-campaign.rs",
+      "sha256": "d6cc947f00ffb77826180cd5ace30cb0be4995b94e3199b8d5bd0d8a864bf88d",
+      "bytes": 16386,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/src/lib.rs",
+      "sha256": "88a8ef5d9a3b95b7a0faa4ba53f6d5a368a223350928b527693932d3c715b988",
+      "bytes": 28654,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/src/main.rs",
+      "sha256": "2cda6582113323038e900d4cf44a7524824b163e197ebf4e53e1fb37a80a786c",
+      "bytes": 3672,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/src/storage.rs",
+      "sha256": "7978a8fd4c7d1cb33c713868afa2ee93fc14133678e51cab26f38f7229db6d3e",
+      "bytes": 7720,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/tools/regional-ledger/src/tests.rs",
+      "sha256": "60a7ca4250c526f548ff72262e1fa6652279ac179f966d2562ba97db67f4a48a",
+      "bytes": 23051,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/verification.json",
+      "sha256": "0151fe47f4cf04935053ed0e68cbf49b90159fe9358972fce5f67f40d5459899",
+      "bytes": 1359,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-v1/SHA256SUMS",
+      "sha256": "1f4ba4f02fc6f3315786a80935d260e0ae0f41335f59ec0cbdbae63d0e20775f",
+      "bytes": 1598,
+      "verified": true
+    },
+    {
+      "path": "MASTER_PLAN.md",
+      "sha256": "d265ca4417cc06f2a21fc70df5c117552fc40cba29b55c7970e865b2d8a8c2cd",
+      "bytes": 14393,
+      "verified": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "df1bacea39390118c5394ac99c4d0b7a04c3dfc947f7db1ab5efc5a4340a1790",
+      "bytes": 2850,
+      "verified": true
+    },
+    {
+      "path": "earth/NODE-GUIDE.md",
+      "sha256": "2716b950df3932d7e2a2e9311930d9d690fcca694c7c9de56e27538bc6979236",
+      "bytes": 10644,
+      "verified": true
+    },
+    {
+      "path": "earth/README.md",
+      "sha256": "72cc163298875b05fbf00c8a606cda9e2b4447a92d4020cacf15c574baf431a8",
+      "bytes": 1062,
+      "verified": true
+    },
+    {
+      "path": "earth/SHA256SUMS.peer-tools",
+      "sha256": "34bae4b7d9a552ccb899808f6ec1bf6774ec7294433cb18bf45f1bc57ea886fd",
+      "bytes": 1282,
+      "verified": true
+    },
+    {
+      "path": "earth/testnet-20260930/README.md",
+      "sha256": "2d2463f6ce5ea41dd2803428f6de7595cb34c2be81efc2de5663ba6e5a416cfd",
+      "bytes": 6639,
+      "verified": true
+    },
+    {
+      "path": "earth/testnet-20260930/SHA256SUMS",
+      "sha256": "7d7f9c28117263e2db19eb2708c64bd231b7fe6869cf77f727bd45c14ff434e0",
+      "bytes": 4884,
+      "verified": true
+    },
+    {
+      "path": "earth/testnet-20260930/TEST-TO-MAINNET.zh-CN.md",
+      "sha256": "9a06f056ca5f5701f81f35fd6cf694933473baf1302d7d53ec6436fb9466c346",
+      "bytes": 9426,
+      "verified": true
+    },
+    {
+      "path": "earth/tools/README.md",
+      "sha256": "ad3d21e573f2c386caf20459503754894e8fa023edba69afc2c975eafbf7ea95",
+      "bytes": 2033,
+      "verified": true
+    },
+    {
+      "path": "index.html",
+      "sha256": "2502ca688723cccd6e95c7750ff8e95dada2877ea6ee2bd382428797652a2b64",
+      "bytes": 1166,
+      "verified": true
+    },
+    {
+      "path": "archive/MASTER_PLAN_BEFORE_GOAL_ALIGNMENT_20260930.md",
+      "sha256": "98ba2cfc5426e9cc811cbff176226438c7e5181d349c337e20036bd3b4f37ea0",
+      "bytes": 14599,
+      "verified": true
+    },
+    {
+      "path": "research/2026-09-30/goal-alignment/SHA256SUMS",
+      "sha256": "c9fcb95827295745ea18a3ed6b300d41d702e451c3cd397b9f4a288456fc0545",
+      "bytes": 1618,
+      "verified": true
+    },
+    {
+      "path": "SHA256SUMS.current-docs-20260930",
+      "sha256": "15175c6ce1e7c79497ec4ff74db61f4796cb5716cd5d17c6732e7d2cf82f9deb",
+      "bytes": 1245,
+      "verified": true
+    }
+  ],
+  "public_url": "https://github.com/RunlaiDeng/rldcoin-genesis/tree/main/research/2026-09-30/regional-native-v1",
+  "mainnet_authorized": false,
+  "protocol_qualified": false
+}
