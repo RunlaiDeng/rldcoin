@@ -38,6 +38,10 @@ def executed_controller_binding(stage, run, controller_source=None, controller_m
     if controller_source is None:
         if sha(stage/'tools/regional_bft_sustained_campaign.py')!=run['drill_source_sha256']:
             raise ValueError('executed drill source differs')
+        if run.get('controller_native_receipt_observation_policy') is not None or run.get('receipt_probe_source_sha256') is not None:
+            if (run['controller_native_receipt_observation_policy']!='fresh_native_replica_rotation_1_2_3_0'
+                    or run.get('receipt_probe_source_sha256')!=sha(stage/'tools/regional_native_receipt_probe.py')):
+                raise ValueError('executed receipt probe differs')
         return None
     if any(p.is_symlink() for path in (controller_source,controller_manifest) for p in [path,*path.parents]):
         raise ValueError('controller symlink refused')
@@ -69,6 +73,12 @@ def executed_controller_binding(stage, run, controller_source=None, controller_m
     executed={'drill_source_sha256':'tools/regional_bft_sustained_campaign.py',
               'value_auditor_sha256':'tools/regional_ground_value.py',
               'contact_meter_sha256':'tools/regional_ground_relay.py'}
+    if ('tools/regional_native_receipt_probe.py' in names
+            or run.get('controller_native_receipt_observation_policy') is not None
+            or run.get('receipt_probe_source_sha256') is not None):
+        if run.get('controller_native_receipt_observation_policy')!='fresh_native_replica_rotation_1_2_3_0':
+            raise ValueError('explicit receipt observation policy required')
+        executed['receipt_probe_source_sha256']='tools/regional_native_receipt_probe.py'
     for field,name in executed.items():
         if name not in names or run.get(field)!=sha(source/name):
             raise ValueError('executed controller component differs: '+field)

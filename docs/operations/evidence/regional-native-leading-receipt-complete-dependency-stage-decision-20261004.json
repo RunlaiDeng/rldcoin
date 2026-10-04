@@ -1,9 +1,9 @@
 {
-  "format": "RLD-NATIVE-LEADING-RECEIPT-OBSERVATION-STAGE-DECISION-V1",
+  "format": "RLD-NATIVE-LEADING-RECEIPT-COMPLETE-DEPENDENCY-STAGE-DECISION-V1",
   "fixture_only": true,
   "live_rld": false,
   "active_hypothesis": "a_fixed_lagging_native_replica_can_report_immature_while_another_fully_verified_compatible_certified_native_prefix_already_has_the_exact_recipient_output_mature",
-  "minimum_discriminator": "one_fresh_zero_issuance_signed_native_fixture_with_actual_certified_import_and_two_explicit_compatible_native_prefixes_leading_mature_and_fixed_lagging_immature_no_previous_failed_store_copied_or_opened",
+  "minimum_discriminator": "fresh signed zero-issuance directories; missing source checkpoint refuses unchanged; complete source checkpoint allows catchup; fixed replica height 2 versus compatible certified mature height 3; actual rotating Native reads",
   "component_attempt_budget": 1,
   "component_attempts_used": 1,
   "component_budget_seconds": 180,
@@ -12,11 +12,13 @@
   "prior_stopped_timing_sha256": "00d2c147b51e80a70bb422c4b526915f698a381f5cc4fd2f49ae393199218d9b",
   "pass_branch": "define_native_authenticated_replica_observation_policy_and_minimum_counterexamples_before_any_controller_change_or_full_scope",
   "failure_branch": "retain_fresh_component_and_select_command_timing_or_native_reception_minimum_counterexample_no_unchanged_repeat",
-  "exit": "actual_native_fixed_immature_and_compatible_leading_mature_or_falsification_or_component_budget",
+  "exit": "dependency/certified-prefix/receipt counterexample or falsification or 180 seconds",
   "does_not_authorize_signing_from_a_receipt_or_discovered_route": true,
   "does_not_change_original_full_profile_600_stage_60_round_24_height_maturity_quorums_capacity_or_keyless_drain": true,
   "full_fault_attempt_budget_currently_zero": true,
   "new_full_scope_authorized": false,
   "failed_reports_roots_original_requests_and_heads_preserved": true,
-  "no_mainnet_real_funds_accounts_or_external_contact_authority": true
+  "no_mainnet_real_funds_accounts_or_external_contact_authority": true,
+  "prior_constructed_fixture_failure_sha256": "66e2e0038ccc3278295db7d45d4b665b3825ef2b40c442d709881980f09b190e",
+  "changed_construction": "new replica receives complete source evidence before import-certificate catchup; missing-dependency rejection is first checked without store mutation"
 }

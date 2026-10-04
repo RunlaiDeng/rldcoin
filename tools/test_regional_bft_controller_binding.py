@@ -85,6 +85,24 @@ class ControllerBindingTests(unittest.TestCase):
         self.save_manifest()
         self.assertTrue(self.bind()['complete_inventory_verified'])
 
+    def test_rotating_probe_requires_exact_policy_and_complete_executed_source(self):
+        name='tools/regional_native_receipt_probe.py'
+        path=self.controller/name;path.write_bytes(b'fresh rotating native read selection\n')
+        self.manifest=self.inventory();self.save_manifest()
+        run=dict(self.run,receipt_probe_source_sha256=self.digest(path),
+                 controller_native_receipt_observation_policy='fresh_native_replica_rotation_1_2_3_0')
+        result=self.bind(run)
+        self.assertEqual(result['executed_components']['receipt_probe_source_sha256'],name)
+        for field,value in [('receipt_probe_source_sha256','0'*64),
+                            ('controller_native_receipt_observation_policy','unknown')]:
+            with self.subTest(field=field),self.assertRaises(ValueError):self.bind(dict(run,**{field:value}))
+        for field in ('receipt_probe_source_sha256','controller_native_receipt_observation_policy'):
+            changed=dict(run);del changed[field]
+            with self.subTest(missing=field),self.assertRaises(ValueError):self.bind(changed)
+        self.manifest['files']=[row for row in self.manifest['files'] if row['path']!=name]
+        self.manifest['file_count']-=1;self.save_manifest(recommit=True)
+        with self.assertRaises(ValueError):self.bind(run)
+
     def test_default_binding_requires_exact_node_stage_drill(self):
         original = dict(drill_source_sha256=self.digest(self.stage / self.drill))
         self.assertIsNone(verifier.executed_controller_binding(self.stage, original))

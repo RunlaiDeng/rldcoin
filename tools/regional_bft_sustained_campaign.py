@@ -22,6 +22,7 @@ import time
 
 from regional_ground_value import audit_certified_prefixes
 from regional_ground_relay import MeteredRelay
+from regional_native_receipt_probe import NativeReplicaReceiptProbe
 
 
 def digest(path):
@@ -246,6 +247,8 @@ class FaultRelay:
 
 def execute(args, joint=False):
     drill_source_sha256=digest(Path(__file__))
+    receipt_probe_source=Path(NativeReplicaReceiptProbe.__init__.__code__.co_filename)
+    receipt_probe_source_sha256=digest(receipt_probe_source)
     tools = args.runtime_tools.resolve()
     sys.path.insert(0, str(tools))
     import interstellar_mesh as mesh
@@ -342,7 +345,7 @@ def execute(args, joint=False):
             self.offered, self.events, self.samples, self.signed = [], [], [], {}
             self.original_ledgers, self.paused_keys = {}, []
             self.started = time.monotonic()
-            self.receipt_probe = NativeReceiptProbe()
+            self.receipt_probe = NativeReplicaReceiptProbe()
             # Rewrite only operator-configured private paths into the fresh copy.
             for p in root.glob('mesh-config-*.json'):
                 config = mesh.load(p, 65536)
@@ -500,7 +503,7 @@ def execute(args, joint=False):
                     for key in self.region_keys(name):self.start(key)
                 def mature_retained():
                     return self.receipt_probe.attempt(
-                        lambda:self.cli('proxima',1,'wallet-receipt','--file',receipt_path),
+                        lambda replica:self.cli('proxima',replica,'wallet-receipt','--file',receipt_path),
                         lambda result:result['expected']==expected and result['original_output_spendable_now']
                             and result['local_finality_covers_import'] and not result['quarantined'])
                 receipt=self.wait(mature_retained,'retained signed payment reaches native maturity without replacement',args.phase_timeout)
@@ -547,7 +550,7 @@ def execute(args, joint=False):
             receipt_path = self.file('sustained-receipt-expectation', expected)
             def mature():
                 return self.receipt_probe.attempt(
-                    lambda:self.cli('proxima', 1, 'wallet-receipt', '--file', receipt_path),
+                    lambda replica:self.cli('proxima', replica, 'wallet-receipt', '--file', receipt_path),
                     lambda receipt:receipt['expected']==expected and receipt['original_output_spendable_now']
                         and receipt['local_finality_covers_import'] and not receipt['quarantined'])
             receipt = self.wait(mature, 'retained new export imports uniquely and matures after contact restoration', args.phase_timeout)
@@ -645,6 +648,8 @@ def execute(args, joint=False):
                     for p in source.rglob('*') if p.is_file()) and len(source_observations) == len([p for p in source.rglob('*') if p.is_file()])
     if not unchanged:failure=failure or 'sealed fixture source changed during its isolated-copy experiment'
     if digest(Path(__file__))!=drill_source_sha256:failure=failure or 'executed drill source changed during the run'
+    if digest(receipt_probe_source)!=receipt_probe_source_sha256:
+        failure=failure or 'executed receipt probe changed during the run'
     report = {'format': 'RLD-JOINT-BFT-SUSTAINED-GROUND-CAMPAIGN-V1' if joint else 'RLD-REGIONAL-BFT-SUSTAINED-GROUND-CAMPAIGN-V3', 'fixture_only': True, 'live_rld': False,
               'completed': failure is None and result.get('completed', False), 'failure': failure,
               'mode':'retained_payment_recovery' if recovery else 'fresh_fault_profile',
@@ -675,8 +680,11 @@ def execute(args, joint=False):
                       fault_events=campaign.events, conservation_checks=campaign.checks, observations=campaign.observations,
                       phase_samples=campaign.samples, ciphertext_fault_relays=[relay.report() for relay in campaign.fault_relays],
                       native_cli_calls=campaign.calls, node_process_starts=campaign.starts,
-                      controller_native_receipt_probe_interval_seconds=NativeReceiptProbe.interval_seconds,
+                      controller_native_receipt_probe_interval_seconds=NativeReplicaReceiptProbe.interval_seconds,
                       controller_native_receipt_probe_attempts=campaign.receipt_probe.attempts,
+                      controller_native_receipt_observation_policy='fresh_native_replica_rotation_1_2_3_0',
+                      receipt_probe_source_sha256=receipt_probe_source_sha256,
+                      receipt_observation_is_all_replica_agreement=False,
                       owned_process_cleanup_verified=cleanup_ok)
         report.update(all_explicit_contact_streams_metered=bool(campaign.contact_meters),
                       explicit_contact_stream_meters=[meter.report() for meter in campaign.contact_meters.values()],

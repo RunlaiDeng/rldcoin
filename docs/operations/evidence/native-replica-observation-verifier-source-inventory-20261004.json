@@ -1,0 +1,29 @@
+{
+  "format": "RLD-NATIVE-REPLICA-OBSERVATION-FROZEN-SOURCE-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "file_count": 3,
+  "files": [
+    {
+      "path": "tools/test_regional_bft_controller_binding.py",
+      "size_bytes": 11246,
+      "sha256": "399b83f6e0a2629dec5a892f14ff116cd9ae1c9ec22f8124ceede79bc23c1631"
+    },
+    {
+      "path": "tools/verify_regional_bft_joint_sustained.py",
+      "size_bytes": 196,
+      "sha256": "03f4d22582126cf1309e227ff0390f6852cb05f4af20e82b6e058e3dd9af1a44"
+    },
+    {
+      "path": "tools/verify_regional_bft_sustained.py",
+      "size_bytes": 18187,
+      "sha256": "44462d8d084d3e913686545ed1ad312df2c4898885103070757265dc943b6059"
+    }
+  ],
+  "source_set_sha256": "43977d1517f823843f503d33d0b3eb3162a081f0b19e6a5e258bf8528f22bae3",
+  "node_source_set_sha256": "7e729cd692769b9bdafc40171ab423306ab4ed5da098e7302e7f2ae186e99a3c",
+  "separate_controller_source_set_sha256": "c2540450de582272086288842821568a249894d034c9982ef6ccfc41ba6d9ba2",
+  "native_node_runtime_unchanged": true,
+  "native_cold_replay_custody_and_all_recipient_checks_unchanged": true,
+  "failed_or_recovery_profile_cannot_qualify": true
+}
