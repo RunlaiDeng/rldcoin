@@ -6,8 +6,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from regional_ground_resources import canonical
-from verify_ground_metered_observations import check_log,check_meters,edges,sample_summary,storage_summary
+from regional_ground_resources import CHILD_CPU_FORMAT,canonical
+from verify_ground_metered_observations import check_log,check_meters,edges,sample_summary,storage_summary,child_cpu_summary
 
 
 class MeteredEvidenceTests(unittest.TestCase):
@@ -90,6 +90,54 @@ class MeteredEvidenceTests(unittest.TestCase):
         self.assertEqual(result['mesh_proxima_0']['sampled_max_logical_file_bytes'],100)
         for change in ({'available':1},{'files':True},{'atomic_snapshot':True}):
             with self.assertRaises(ValueError):storage_summary([dict(storage=[dict(first,**change)])])
+
+    def child_samples(self):
+        header=dict(format=CHILD_CPU_FORMAT,observer_binding={'exited_child_cpu_sha256':'a'*64},
+                    measured=dict(own_plus_exited_child_cpu_requested=True,child_process_tree=False))
+        base=dict(label='owned_parent',available=True,monotonic_start=1,monotonic_end=2,
+                  own_cpu_lifetime_seconds=1,own_plus_exited_children_cpu_lifetime_seconds=3,
+                  own_plus_exited_children_one_core_percent=None,non_atomic_exited_children_estimate_seconds=2,
+                  observation_includes_all_live_child_cpu=False,live_child_rss_measured=False,
+                  Native_command_census_verified=False,atomic_snapshot=False)
+        later=dict(base,monotonic_start=3,monotonic_end=4,own_plus_exited_children_cpu_lifetime_seconds=5,
+                   own_plus_exited_children_one_core_percent=100,non_atomic_exited_children_estimate_seconds=4)
+        def sample(row):return dict(monotonic_start=row['monotonic_start']-0.1,
+                                   monotonic_end=row['monotonic_end']+0.1,
+                                   processes=[dict(label='owned_parent')],own_plus_exited_child_cpu=[row])
+        return header,[sample(base),sample(later)]
+
+    def test_child_cpu_summary_recomputes_delta_and_never_adds_overlapping_totals(self):
+        header,samples=self.child_samples();result=child_cpu_summary(header,samples)
+        self.assertEqual(result['processes']['owned_parent']['sampled_max_own_plus_exited_one_core_percent'],100)
+        self.assertEqual(result['processes']['owned_parent']['available_samples'],2)
+        self.assertFalse(result['overlapping_parent_child_totals_added'])
+        self.assertFalse(result['full_live_child_CPU_RSS_covered'])
+
+    def test_child_unknowns_cannot_be_filled_and_gap_cannot_reuse_previous_delta(self):
+        header,samples=self.child_samples();unknown=copy.deepcopy(samples[-1])
+        row=unknown['own_plus_exited_child_cpu'][0];row['available']=False
+        for k in ('own_cpu_lifetime_seconds','own_plus_exited_children_cpu_lifetime_seconds',
+                  'own_plus_exited_children_one_core_percent','non_atomic_exited_children_estimate_seconds'):row[k]=None
+        result=child_cpu_summary(header,[unknown]);entry=result['processes']['owned_parent']
+        self.assertIsNone(entry['sampled_max_own_plus_exited_one_core_percent'])
+        self.assertIsNone(entry['sampled_max_exited_children_lifetime_seconds'])
+        self.assertEqual(entry['unknown_samples'],1)
+        row['own_cpu_lifetime_seconds']=0
+        with self.assertRaisesRegex(ValueError,'invented'):child_cpu_summary(header,[unknown])
+        row['own_cpu_lifetime_seconds']=None
+        with self.assertRaisesRegex(ValueError,'discontinuous'):child_cpu_summary(header,[samples[0],unknown,samples[1]])
+
+    def test_child_scope_labels_bounds_times_and_changed_cpu_refuse(self):
+        header,samples=self.child_samples()
+        with self.assertRaisesRegex(ValueError,'explicit V2'):child_cpu_summary({},samples)
+        for change in ({'label':'private/path'},{'available':1},{'live_child_rss_measured':True},
+                       {'monotonic_end':10},{'own_plus_exited_children_one_core_percent':99},
+                       {'own_plus_exited_children_cpu_lifetime_seconds':float('nan')},
+                       {'non_atomic_exited_children_estimate_seconds':1}):
+            altered=copy.deepcopy(samples);altered[1]['own_plus_exited_child_cpu'][0].update(change)
+            with self.assertRaises(ValueError):child_cpu_summary(header,altered)
+        altered=copy.deepcopy(samples);altered[0]['own_plus_exited_child_cpu']*=33
+        with self.assertRaisesRegex(ValueError,'process labels'):child_cpu_summary(header,altered)
 
 
 if __name__=='__main__':unittest.main()

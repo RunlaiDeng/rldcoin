@@ -70,6 +70,11 @@ macOS 子进程 CPU 观察另有能力检查：`ps -S` 未通过实际退出子�
 它没有接入本次旧采样，不得回填其数值；活跃子进程 CPU/RSS、Native 命令普查、
 跨平台以及完整节点成本仍未完成。
 
+后续已将该观察接入采集器的显式 V2 模式，独立头部绑定观察源码并核对内核启动锚。
+真实父进程在三次采集中显示退出子进程增量约 0.518 CPU 秒，实际停止后返回未知；
+36 项组件及 11 项日志核验通过。这些仅验证可测量工具，未接入旧 92 样本、
+未重启任何节点或升级失败范围。原始能力报告保留旧源码身份，后续报告各自绑定新字节。
+
 证据：`regional-ground-metered-joint-fault-fresh-20261004.json`、
 `regional-ground-metered-resource-observations-20261004.json`、
 `regional-ground-metered-joint-fault-failed-cold-observations-20261004.json`、
@@ -79,3 +84,5 @@ macOS 子进程 CPU 观察另有能力检查：`ps -S` 未通过实际退出子�
 `regional-ground-metered-fault-current-proxima-path-observations-20261004.json`、
 `regional-ground-metered-retained-timing-observations-20261004.json`、
 `regional-ground-child-cpu-capability-20261004.json`。
+后续工具：`regional-ground-child-cpu-recorder-checks-20261004.json`、
+`regional-ground-child-cpu-log-binding-20261004.json`。

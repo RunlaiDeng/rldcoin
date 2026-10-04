@@ -9,7 +9,7 @@ import json
 import math
 from pathlib import Path
 
-from regional_ground_resources import MAX_LINE, MAX_LOG, MAX_RECORDS, canonical, digest, require, source_binding
+from regional_ground_resources import CHILD_CPU_FORMAT, HEX, LABEL, MAX_LINE, MAX_LOG, MAX_RECORDS, canonical, digest, require, source_binding
 
 
 def edges():
@@ -71,7 +71,75 @@ def check_log(path,expected_exit=0):
                 and math.isfinite(end) and end>=start and (prior is None or start>=prior),
                 'resource sample time order differs')
         prior=end
+    child_cpu_summary(rows[0],samples)
     return rows,samples
+
+
+def child_cpu_summary(header,samples):
+    enabled=header.get('format')==CHILD_CPU_FORMAT
+    if not enabled:
+        require(all('own_plus_exited_child_cpu' not in row for row in samples),
+                'child CPU records require explicit V2 observation scope')
+        return dict(requested=False,processes={})
+    binding=header.get('observer_binding',{})
+    require(type(binding) is dict and set(binding)=={'exited_child_cpu_sha256'}
+            and type(binding['exited_child_cpu_sha256']) is str
+            and HEX.fullmatch(binding['exited_child_cpu_sha256']) is not None
+            and header['measured']['own_plus_exited_child_cpu_requested'] is True
+            and header['measured']['child_process_tree'] is False,'bounded child CPU observer binding required')
+    result={};previous={}
+    amounts=('own_cpu_lifetime_seconds','own_plus_exited_children_cpu_lifetime_seconds',
+             'own_plus_exited_children_one_core_percent','non_atomic_exited_children_estimate_seconds')
+    for sample in samples:
+        rows=sample.get('own_plus_exited_child_cpu')
+        processes=sample.get('processes')
+        require(type(processes) is list and len(processes)<=32
+                and len({row['label'] for row in processes})==len(processes),
+                'bounded unique parent process scope required')
+        require(type(rows) is list and len(rows)<=32
+                and {row['label'] for row in rows}=={row['label'] for row in processes}
+                and len({row['label'] for row in rows})==len(rows),'exact explicit child CPU process labels required')
+        for row in rows:
+            label=row['label']
+            require(type(label) is str and LABEL.fullmatch(label) is not None and type(row['available']) is bool,
+                    'typed child CPU availability and public label required')
+            require(all(row[k] is False for k in ('observation_includes_all_live_child_cpu','live_child_rss_measured',
+                    'Native_command_census_verified','atomic_snapshot')),'child CPU scope cannot claim full node costs')
+            if label not in result:
+                require(len(result)<32,'retained child CPU registration bound reached')
+                result[label]=dict(available_samples=0,unknown_samples=0,
+                                  sampled_max_own_plus_exited_one_core_percent=None,
+                                  sampled_max_exited_children_lifetime_seconds=None)
+            entry=result[label]
+            if not row['available']:
+                require(all(row[k] is None for k in amounts),'unknown child CPU cannot supply invented amounts')
+                entry['unknown_samples']+=1;previous.pop(label,None)
+                continue
+            start,end=row['monotonic_start'],row['monotonic_end']
+            require(all(type(x) in (float,int) and math.isfinite(x) for x in (start,end))
+                    and sample['monotonic_start']<=start<=end<=sample['monotonic_end'],
+                    'child CPU observation interval differs')
+            cpu=row[amounts[1]];child=row[amounts[3]];percent=row[amounts[2]];own=row[amounts[0]]
+            require(all(type(x) in (float,int) and math.isfinite(x) and x>=0 for x in (own,cpu,child))
+                    and cpu+.02>=own and child<=cpu+.02,'finite inclusive child CPU amounts required')
+            old=previous.get(label)
+            if old is None:
+                require(percent is None,'first or discontinuous child CPU percentage must be unknown')
+            else:
+                old_end,old_cpu,old_child=old
+                require(end>old_end and cpu>=old_cpu and child>=old_child
+                        and type(percent) in (float,int) and math.isfinite(percent)
+                        and math.isclose(percent,100*(cpu-old_cpu)/(end-old_end),rel_tol=1e-9,abs_tol=1e-9),
+                        'child CPU delta or counter regression differs')
+            previous[label]=(end,cpu,child)
+            entry['available_samples']+=1
+            entry['sampled_max_exited_children_lifetime_seconds']=max(
+                entry['sampled_max_exited_children_lifetime_seconds'] or 0,child)
+            if percent is not None:entry['sampled_max_own_plus_exited_one_core_percent']=max(
+                entry['sampled_max_own_plus_exited_one_core_percent'] or 0,percent)
+    return dict(requested=True,observer_sha256=binding['exited_child_cpu_sha256'],processes=result,
+                overlapping_parent_child_totals_added=False,full_live_child_CPU_RSS_covered=False,
+                Native_command_census_verified=False)
 
 
 def sample_summary(samples):
@@ -180,6 +248,7 @@ def verify(args):
                 resource_report_sha256=digest(args.resource_report)[0],directed_contact_meters=22,
                 phase_native_value_observations=len(checks),resource_samples=len(samples),
                 storage_sample_maxima=storage_summary(samples),
+                exited_child_cpu_observations=child_cpu_summary(rows[0],samples),
                 verifier_sha256=digest(Path(__file__))[0],
                 total_hop_ciphertext_bytes_forwarded=sum(row['ciphertext_bytes_forwarded'] for row in run['explicit_contact_stream_meters']),
                 transport_bytes_do_not_prove_ledger_delivery=True,continuous_resource_peaks_measured=False,

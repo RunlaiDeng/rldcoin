@@ -209,6 +209,43 @@ class ResourceTests(unittest.TestCase):
         process.wait()
         self.assertFalse(anchor.sample()['available'])
 
+    def test_optional_child_cpu_binds_helper_and_keeps_unknowns_and_bounds(self):
+        from regional_ground_child_cpu import ExitedChildCpu
+        first=dict(start='start',command_sha256='a'*64,cpu_seconds=1,rss_bytes=100)
+        with patch.object(resources,'process_read',return_value=first):
+            process=resources.Process('owned_parent',123)
+        recorder=resources.Recorder(self.log,self.binding,[process],[],1,exited_child_cpu=True)
+        self.addCleanup(recorder.close)
+        unknown=dict(label='owned_parent',available=False,own_plus_exited_children_cpu_lifetime_seconds=None)
+        with patch.object(resources,'process_read',return_value=first), \
+             patch.object(ExitedChildCpu,'sample',return_value=unknown):
+            recorder.sample()
+        rows=[json.loads(line) for line in self.log.read_bytes().splitlines()]
+        self.assertEqual(rows[0]['format'],resources.CHILD_CPU_FORMAT)
+        self.assertEqual(rows[0]['observer_binding']['exited_child_cpu_sha256'],
+                         resources.digest(Path(resources.__file__).with_name('regional_ground_child_cpu.py'))[0])
+        self.assertFalse(rows[0]['measured']['child_process_tree'])
+        self.assertEqual(rows[1]['own_plus_exited_child_cpu'],[unknown])
+        before=self.log.read_bytes()
+        recorder.processes.append(process)
+        with self.assertRaisesRegex(ValueError,'registered sample scope'):recorder.sample()
+        self.assertEqual(before,self.log.read_bytes())
+        recorder.processes[:]=[resources.Process.__new__(resources.Process)]
+        replacement=recorder.processes[0]
+        replacement.label='owned_parent';replacement.pid=456;replacement.identity=process.identity;replacement.previous=None
+        with patch.object(resources,'process_read',return_value=first), \
+             self.assertRaisesRegex(ValueError,'another process anchor'):recorder.sample()
+        self.assertEqual(before,self.log.read_bytes())
+
+    def test_default_mode_does_not_load_child_backend_or_change_observation_scope(self):
+        recorder=self.recorder()
+        recorder.sample()
+        rows=[json.loads(line) for line in self.log.read_bytes().splitlines()]
+        self.assertEqual(rows[0]['format'],resources.FORMAT)
+        self.assertFalse(rows[0]['measured']['own_plus_exited_child_cpu_requested'])
+        self.assertNotIn('own_plus_exited_child_cpu',rows[1])
+        self.assertEqual(rows[0]['observer_binding'],{})
+
 
 if __name__ == '__main__':
     unittest.main()

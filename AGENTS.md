@@ -816,3 +816,9 @@ RSS/CPU samples exclude full Native-child costs. The optional macOS child-CPU
 observer uses SDK rusage V1 and checked Mach timebase conversion; ps -S and an
 assumed nanosecond conversion failed real capability checks. It cannot backfill
 old logs, measure live-child RSS, classify Native commands or grant freshness.
+
+Optional resource-log V2 binds the child-CPU helper and keeps at most 32 original
+process anchors, including the first valid kernel start observation. Changed
+anchors/counters or disappearance remain unknown. Never add overlapping
+parent/child totals or backfill frozen V1 logs; a diagnostic reaped-child pass
+does not qualify node load, active children, fsync or Native command coverage.

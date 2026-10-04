@@ -50,36 +50,43 @@ def inclusive_read(pid):
 
 class ExitedChildCpu:
     def __init__(self, process):
-        self.process=process
+        self.pid,self.label,self.identity=process.pid,process.label,process.identity
         self.previous=None
+        self.kernel_start=None
 
     def sample(self):
         try:
             before=time.monotonic()
-            own=process_read(self.process.pid)
-            combined=inclusive_read(self.process.pid)
-            require((own['start'],own['command_sha256'])==self.process.identity
-                    and (combined['start'],combined['command_sha256'])==self.process.identity,
+            own=process_read(self.pid)
+            combined=inclusive_read(self.pid)
+            require((own['start'],own['command_sha256'])==self.identity
+                    and (combined['start'],combined['command_sha256'])==self.identity,
                     'process identity changed during inclusive observation')
+            kernel_start=combined['process_start_abstime']
+            require(type(kernel_start) is int and kernel_start>0
+                    and (self.kernel_start is None or kernel_start==self.kernel_start),
+                    'kernel process start changed')
             end=time.monotonic()
             require(combined['cpu_seconds']+.02>=own['cpu_seconds'],'inclusive CPU observation regressed')
+            child_cpu=combined['exited_children_cpu_seconds']
             percent=None
             if self.previous is not None:
-                old_at,old_cpu=self.previous
-                require(end>old_at and combined['cpu_seconds']>=old_cpu,'inclusive CPU counter or time regressed')
+                old_at,old_cpu,old_child_cpu=self.previous
+                require(end>old_at and combined['cpu_seconds']>=old_cpu and child_cpu>=old_child_cpu,
+                        'inclusive CPU counter or time regressed')
                 percent=100*(combined['cpu_seconds']-old_cpu)/(end-old_at)
-            self.previous=(end,combined['cpu_seconds'])
-            return dict(label=self.process.label,available=True,monotonic_start=before,monotonic_end=end,
+            self.kernel_start=kernel_start
+            self.previous=(end,combined['cpu_seconds'],child_cpu)
+            return dict(label=self.label,available=True,monotonic_start=before,monotonic_end=end,
                         own_cpu_lifetime_seconds=own['cpu_seconds'],
                         own_plus_exited_children_cpu_lifetime_seconds=combined['cpu_seconds'],
                         own_plus_exited_children_one_core_percent=percent,
-                        non_atomic_exited_children_estimate_seconds=combined.get('exited_children_cpu_seconds',
-                            max(0,combined['cpu_seconds']-own['cpu_seconds'])),
+                        non_atomic_exited_children_estimate_seconds=child_cpu,
                         observation_includes_all_live_child_cpu=False,live_child_rss_measured=False,
                         Native_command_census_verified=False,atomic_snapshot=False)
         except (OSError,ValueError,subprocess.SubprocessError):
             self.previous=None
-            return dict(label=self.process.label,available=False,reason='unsupported_changed_or_unavailable',
+            return dict(label=self.label,available=False,reason='unsupported_changed_or_unavailable',
                         own_cpu_lifetime_seconds=None,own_plus_exited_children_cpu_lifetime_seconds=None,
                         own_plus_exited_children_one_core_percent=None,
                         non_atomic_exited_children_estimate_seconds=None,

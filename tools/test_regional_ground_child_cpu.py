@@ -21,7 +21,8 @@ class ChildCpuTests(unittest.TestCase):
 
     def test_matching_parent_delta_and_exited_cpu_preserve_scope(self):
         own=dict(start='start',command_sha256='a'*64,cpu_seconds=1)
-        first=dict(own,cpu_seconds=3);second=dict(own,cpu_seconds=5)
+        first=dict(own,cpu_seconds=3,process_start_abstime=100,exited_children_cpu_seconds=2)
+        second=dict(first,cpu_seconds=5,exited_children_cpu_seconds=4)
         with patch('regional_ground_child_cpu.process_read',return_value=own), \
              patch('regional_ground_child_cpu.inclusive_read',side_effect=[first,second]), \
              patch('regional_ground_child_cpu.time.monotonic',side_effect=[0,1,2,3]):
@@ -34,12 +35,34 @@ class ChildCpuTests(unittest.TestCase):
 
     def test_pid_change_unavailable_and_counter_regression_return_unknown(self):
         own=dict(start='start',command_sha256='a'*64,cpu_seconds=1)
-        for later in (dict(own,start='other'),dict(own,command_sha256='b'*64),dict(own,cpu_seconds=0),ValueError('missing')):
+        combined=dict(own,process_start_abstime=100,exited_children_cpu_seconds=0)
+        for later in (dict(combined,start='other'),dict(combined,command_sha256='b'*64),dict(combined,cpu_seconds=0),ValueError('missing')):
             with patch('regional_ground_child_cpu.process_read',return_value=own), \
                  patch('regional_ground_child_cpu.inclusive_read',side_effect=[later]):
                 row=ExitedChildCpu(self.anchor()).sample()
             self.assertFalse(row['available'])
             self.assertIsNone(row['own_plus_exited_children_cpu_lifetime_seconds'])
+
+    def test_kernel_start_and_exited_counter_changes_remain_unknown(self):
+        own=dict(start='start',command_sha256='a'*64,cpu_seconds=1)
+        first=dict(own,cpu_seconds=3,process_start_abstime=100,exited_children_cpu_seconds=2)
+        for changed in (dict(first,process_start_abstime=101),
+                        dict(first,cpu_seconds=4,exited_children_cpu_seconds=1)):
+            with patch('regional_ground_child_cpu.process_read',return_value=own), \
+                 patch('regional_ground_child_cpu.inclusive_read',side_effect=[first,changed,first]):
+                observer=ExitedChildCpu(self.anchor())
+                self.assertTrue(observer.sample()['available'])
+                self.assertFalse(observer.sample()['available'])
+                again=observer.sample()
+                self.assertTrue(again['available'])
+                self.assertIsNone(again['own_plus_exited_children_one_core_percent'])
+
+    def test_anchor_fields_are_retained_and_never_adopt_mutated_process(self):
+        anchor=self.anchor();observer=ExitedChildCpu(anchor);anchor.pid=456;anchor.label='changed'
+        with patch('regional_ground_child_cpu.process_read',side_effect=ValueError('absent')) as read:
+            row=observer.sample()
+        read.assert_called_once_with(123)
+        self.assertEqual(row['label'],'owned_test')
 
     @unittest.skipUnless(platform.system()=='Darwin','backend verified on macOS only')
     def test_real_owned_parent_reaps_cpu_child_and_os_retains_its_time(self):

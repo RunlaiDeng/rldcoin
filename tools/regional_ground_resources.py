@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 
 FORMAT = 'RLD-GROUND-RESOURCE-SAMPLES-V1'
+CHILD_CPU_FORMAT = 'RLD-GROUND-RESOURCE-SAMPLES-V2'
 MAX_RECORDS = 4096
 MAX_LOG = 32 * 1024 * 1024
 MAX_LINE = 64 * 1024
@@ -163,7 +164,7 @@ class Storage:
 
 
 class Recorder:
-    def __init__(self, output, binding, processes, stores, interval):
+    def __init__(self, output, binding, processes, stores, interval, *, exited_child_cpu=False):
         require(type(binding) is dict and set(binding) == {'source_set_sha256', 'source_files',
                 'binary_sha256', 'sampler_sha256'} and type(binding['source_files']) is int
                 and 0 < binding['source_files'] <= MAX_ENTRIES
@@ -172,11 +173,18 @@ class Recorder:
                 'bounded public source binding required')
         require(1 <= interval <= 60 and len(processes) <= 32 and len(stores) <= 32
                 and len(processes) + len(stores) > 0, 'bounded sampler scope required')
+        require(type(exited_child_cpu) is bool,'explicit child CPU observation mode required')
         labels = [item.label for item in processes + stores]
         require(len(labels) == len(set(labels)), 'duplicate sample labels')
         require(all(not output.resolve().is_relative_to(item.path) for item in stores),
                 'sample log cannot be inside observed storage')
         self.processes, self.stores, self.interval = processes, stores, interval
+        self.exited_child_cpu,self.child_observers=exited_child_cpu,{}
+        observer_binding={}
+        if exited_child_cpu:
+            from regional_ground_child_cpu import ExitedChildCpu
+            self.child_cpu_factory=ExitedChildCpu
+            observer_binding={'exited_child_cpu_sha256':digest(Path(__file__).with_name('regional_ground_child_cpu.py'))[0]}
         self.stream = None
         self.records, self.size, self.previous_digest, self.previous_end = 0, 0, None, None
         fd = os.open(output, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
@@ -187,11 +195,13 @@ class Recorder:
                 os.fsync(directory_fd)
             finally:
                 os.close(directory_fd)
-            self.write(dict(kind='header', format=FORMAT, binding=binding,
+            self.write(dict(kind='header', format=CHILD_CPU_FORMAT if exited_child_cpu else FORMAT, binding=binding,
+                observer_binding=observer_binding,
                 interval_seconds=interval, fixture_only=True, live_rld=False,
                 scope={'processes':[p.label for p in processes], 'storage':[s.label for s in stores]},
                 measured={'explicit_process_cpu_rss':True, 'storage_metadata_samples':True,
                           'native_value':False, 'wire_bytes':False, 'fsync_latency':False,
+                          'own_plus_exited_child_cpu_requested':exited_child_cpu,
                           'continuous_peaks':False, 'child_process_tree':False},
                 qualification=False, native_authority=False))
         except BaseException:
@@ -211,15 +221,30 @@ class Recorder:
         self.size += len(line)
 
     def sample(self):
+        labels=[item.label for item in self.processes+self.stores]
+        require(len(self.processes)<=32 and len(self.stores)<=32 and len(labels)==len(set(labels))
+                and all(LABEL.fullmatch(label) is not None for label in labels),'bounded registered sample scope required')
         start = time.monotonic()
         gap = None if self.previous_end is None else start - self.previous_end
         processes = [p.sample() for p in self.processes]
         stores = [s.sample() for s in self.stores]
+        extra={}
+        if self.exited_child_cpu:
+            children=[]
+            for process in self.processes:
+                retained=self.child_observers.get(process.label)
+                if retained is None:
+                    require(len(self.child_observers)<32,'child CPU registration bound reached')
+                    retained=(process,self.child_cpu_factory(process))
+                    self.child_observers[process.label]=retained
+                require(retained[0] is process,'child CPU label cannot adopt another process anchor')
+                children.append(retained[1].sample())
+            extra['own_plus_exited_child_cpu']=children
         end = time.monotonic()
         self.write(dict(kind='sample', monotonic_start=start, monotonic_end=end,
                         elapsed_sampling_seconds=end-start, unsampled_gap_seconds=gap,
                         interval_overrun=end-start > self.interval or (gap is not None and gap > self.interval * 1.5),
-                        processes=processes, storage=stores, native_value_observation=None))
+                        processes=processes, storage=stores, native_value_observation=None,**extra))
         self.previous_end = end
 
     def close(self):
@@ -240,12 +265,14 @@ def main():
     parser.add_argument('--storage', action='append', default=[], metavar='LABEL=DIRECTORY')
     parser.add_argument('--interval', type=float, default=10)
     parser.add_argument('--duration', type=float, default=60)
+    parser.add_argument('--exited-child-cpu',action='store_true',
+                        help='Request macOS parent plus exited-child CPU; live-child CPU/RSS remain incomplete')
     args = parser.parse_args()
     require(0 < args.duration <= 3600, 'bounded standalone observation duration required')
     binding = source_binding(args.manifest, args.source, args.binary, args.expected_source, args.expected_binary)
     processes = [Process(label, int(pid)) for label, pid in (item.split('=', 1) for item in args.process)]
     stores = [Storage(label, Path(path)) for label, path in (item.split('=', 1) for item in args.storage)]
-    recorder = Recorder(args.output, binding, processes, stores, args.interval)
+    recorder = Recorder(args.output, binding, processes, stores, args.interval,exited_child_cpu=args.exited_child_cpu)
     started = time.monotonic()
     try:
         while True:

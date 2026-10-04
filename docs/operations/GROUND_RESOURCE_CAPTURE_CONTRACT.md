@@ -36,6 +36,17 @@ Runtime、Native 开启/恢复/签署、Mesh 锁或钱包，不采用任何调�
 CPU 为进程累计时间及相邻有效观察的单核百分比，RSS 为观察时驻留字节。
 短命子进程未自动覆盖；秒级 `ps` 启动时间/命令摘要不是独立进程身份或保管证明。
 
+可选 `--exited-child-cpu` / `Recorder(..., exited_child_cpu=True)` 使用独立 V2 日志，
+头部绑定 `regional_ground_child_cpu.py` 的精确字节；默认模式仍只观察主进程 CPU/RSS。
+macOS SDK rusage V1/Mach timebase 返回主进程及已退出子进程的累计 CPU，
+不需捕捉每个短命子进程的 PID。每个观察器保留原 PID/命令/启动锚及首个有效内核启动值；
+后续内核启动改变、退出、读取失败或 CPU 计数回退返回未知，间隔百分比重置。
+初次非原子身份观察仍不是独立身份保证；不能接纳另一个锚替代原标签。
+最多保留 32 个进程观察器，动态注册同样受上限约束；输出仍无 argv、PID 或私有路径。
+V2 日志核验逐项重算百分比与未知/采样最大值，不相加可能重叠的父子累计量。
+活跃子进程 CPU/RSS、Native 命令普查、系统总 CPU 和实际 fsync 成本仍未覆盖。
+旧 V1 日志和已冻结控制器保持原字节，绝不回填子进程 CPU 或改变旧失败判定。
+
 存储仅遍历显式目录的元数据，逐路径计数完整文件的逻辑长度；不读节点/钱包内容。
 扫描拒绝符号链接、特殊文件、目录替换和超过 4,096 个目录项的观察；失败项全部为未知。
 这是采集器工作预算，不改变任何 Native/档案容量。活跃写入可能使样本不一致；
@@ -101,3 +112,7 @@ CLI 正常终止仅表示观察循环完成，`campaign_passed` 为 null。
 失败日志终止码不能用成功模式接受。目录采样最大值与缺测逐项重算，不能捏造零或全树资源。
 独立的 `regional_ground_child_cpu.py` 已通过 macOS 实际退出子进程能力检查；
 SDK V1 ABI 与 Mach timebase 转换逐次核对，只覆盖累计已退出子进程 CPU，不回填此次旧日志。
+后续 Recorder 接入通过 36 项组件及 11 项日志关联检查；实际自有父进程三次采集
+观察退出子进程约 0.518 CPU 秒，停止后保留未知。组件及日志证据见
+`evidence/regional-ground-child-cpu-recorder-checks-20261004.json` 和
+`evidence/regional-ground-child-cpu-log-binding-20261004.json`，不计作新节点负载范围通过。
