@@ -1,0 +1,38 @@
+{
+  "format": "RLD-FAIR-CARRIAGE-DELIVERY-SEQUENCE-V1",
+  "workflow_terminal": true,
+  "phases": [
+    {
+      "phase": "ordinary-cycle-cold",
+      "exit_code": 0,
+      "duration_seconds": 807.142,
+      "log_sha256": "6cfd0eef2921d9a629011a158f684840d7b938aa61c9bedbbc0a5343dc4a3146"
+    },
+    {
+      "phase": "full-fault-cold",
+      "exit_code": 1,
+      "duration_seconds": 912.029,
+      "log_sha256": "1a47c012cfdbe57a2e9214b241048c6651810e122bd6f92fe84f150e52bf47db"
+    },
+    {
+      "phase": "failed-stopped",
+      "exit_code": 0,
+      "duration_seconds": 260.205,
+      "log_sha256": "5aea100069f1fb9d02680426577374b6a8096f79caf3d6478650cc4e23489dac"
+    },
+    {
+      "phase": "failed-owner-heads",
+      "exit_code": 0,
+      "duration_seconds": 2.108,
+      "log_sha256": "161d274ef7ee0d7ea581bb8854883e41ccf9797f825a2d513b11b250c05810d2"
+    }
+  ],
+  "fresh_fault_profile_completed": false,
+  "failed_profile_not_resumed": true,
+  "cycle_report_sha256": "43b0aa14c5f1714306d486bfc55f1f59adc0e7ca7f6cd64c2980cbebe7056a5c",
+  "cycle_cold_report_sha256": "565c2f2799a9b3c683ca68263ad3b9ca6630e14637fc269a6a41540dfcd44950",
+  "fault_report_sha256": "04b3001f881fb2e09c71eacbf667b5f9d56e4610616c43f3b331e1413da77c28",
+  "runner_sha256": "328f44572a877ffbae353e06e4805298fee184d86aab07aff22fbeea1ac7b971",
+  "fixture_only": true,
+  "live_rld": false
+}
