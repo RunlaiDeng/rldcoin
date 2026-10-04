@@ -39,9 +39,14 @@
 每节点最多 40 个有效历史重发时，一个目的节点在预定 120 秒观察窗内仍未收到消息，
 另外两个分别约 3 秒和 33 秒收到。四个真实进程正常退出，原失败账本及成功运输基线逐字节不变。
 这是可反驳的运输压力失败复现，尚未证明原完整范围只有这一根因，也不是完整故障通过。
-同一旧实现加入只读调度/拒收观测后复测约 17 秒通过，40 包预算实际只生成到 15–16 包即结束。
-两次运输包随机 ID 与进程交错未固定，观测钩子也可能改变时序。这是排队/时序敏感的失败证据，
-目前单一根因和稳定旧败/新过仍未证明；没有实现推测性修复，也没有另起完整资格运行。
+同一旧实现加入只读调度/拒收观测后曾复测约 17 秒通过；该次随机包 ID 与进程交错未固定。
+现已固定初始档案、每节点 32 个预排队历史包以及随后运输包的 nonce 序列，TLS/挑战随机性不变：
+旧实现最近邻约 55.899 秒认证，两个更远目的节点在原定 120 秒内未收到。
+候选改动仅让普通广播和出口发布进入已有公平运输锁入口，原锁等待、网络时限及认证不变；
+同一固定输入试验最近邻约 12.976 秒认证，中间节点约 49.987 秒认证，最远仍未收到，
+**最小候选仍失败，未合入主源码，未启动新完整资格或发布**。候选及两个停止后的诊断原件保留。
+固定测试包只改变诊断输入的 nonce；不改变 TLS、挑战、原生签署、法定人数、价值或保管状态。
+下一项可反驳检查是每目的地/完整帧队列的公平转发，先固定旧败/候选过再推进完整交付。
 
 原失败日志显示当前提案目的节点首次观测相差 79–95 秒，晚于部分节点的下一轮。
 最后缺失的超时消息只在发送端有约 6 秒观测窗，不能仅凭它断言运输永久停滞。
@@ -79,7 +84,9 @@
 `regional-timeout-carriage-four-process-ablation-20261004.json`、
 `regional-dynamic-carriage-four-process-ablation-20261004.json`、
 `regional-dynamic-carriage-four-process-traced-20261004.json`、
-`regional-dynamic-carriage-scheduling-observations-20261004.json`。
+`regional-dynamic-carriage-scheduling-observations-20261004.json`、
+`regional-fixed-carriage-four-process-20261004.json`、
+`regional-coordinated-enqueue-four-process-20261004.json`。
 
 此前详细历史已原样归档：[历史状态记录](operations/history/PLAN_STATUS_before_delivery_focus_20261004_8403d16a68dc.md)。
 归档 SHA-256：`8403d16a68dc6adbd2be3afdfd1afda843ac1cfd0e1a6e114912457465db203c`。所有历史失败、签署证据及私有目录继续保留。
