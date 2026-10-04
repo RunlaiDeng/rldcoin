@@ -1,0 +1,22 @@
+{
+  "format": "RLD-NATIVE-LEADING-RECEIPT-OBSERVATION-STAGE-DECISION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "active_hypothesis": "a_fixed_lagging_native_replica_can_report_immature_while_another_fully_verified_compatible_certified_native_prefix_already_has_the_exact_recipient_output_mature",
+  "minimum_discriminator": "one_fresh_zero_issuance_signed_native_fixture_with_actual_certified_import_and_two_explicit_compatible_native_prefixes_leading_mature_and_fixed_lagging_immature_no_previous_failed_store_copied_or_opened",
+  "component_attempt_budget": 1,
+  "component_attempts_used": 0,
+  "component_budget_seconds": 180,
+  "source_set_sha256": "7e729cd692769b9bdafc40171ab423306ab4ed5da098e7302e7f2ae186e99a3c",
+  "binary_sha256": "e5f72ec41f2801c4fca20d85f7e067a1c73cbd3a67548bfcd3694c3f8e0c9c77",
+  "prior_stopped_timing_sha256": "00d2c147b51e80a70bb422c4b526915f698a381f5cc4fd2f49ae393199218d9b",
+  "pass_branch": "define_native_authenticated_replica_observation_policy_and_minimum_counterexamples_before_any_controller_change_or_full_scope",
+  "failure_branch": "retain_fresh_component_and_select_command_timing_or_native_reception_minimum_counterexample_no_unchanged_repeat",
+  "exit": "actual_native_fixed_immature_and_compatible_leading_mature_or_falsification_or_component_budget",
+  "does_not_authorize_signing_from_a_receipt_or_discovered_route": true,
+  "does_not_change_original_full_profile_600_stage_60_round_24_height_maturity_quorums_capacity_or_keyless_drain": true,
+  "full_fault_attempt_budget_currently_zero": true,
+  "new_full_scope_authorized": false,
+  "failed_reports_roots_original_requests_and_heads_preserved": true,
+  "no_mainnet_real_funds_accounts_or_external_contact_authority": true
+}

@@ -55,8 +55,32 @@ Mesh Node 租约，在第二次实际有界拒绝后解除控制屏障；剩余�
 不启动旧失败源；Node/驱动同上，独立 fault controller `20d5427a...`、
 停止 verifier `4bb57a09...`。假设是新尝试位置在原故障条件下允许唯一导入、
 成熟及无钥证书排空。阶段仍 600 秒、轮 60 秒、上限 24 高度，预算一、已用一。
-当前未终态，普通成功没有授予其资格。失败保存原件，不同条件不能误称
-原失败恢复通过，也不原样重复或替换付款；停止后才进行对应严格核验。
+826.144 秒后，原 600 秒唯一导入/成熟门槛耗尽，完整范围失败。缺席领导者、
+隔离当地认证与追赶通过，不能算整个范围通过；全部节点停止。失败预算已用完，
+严格失败停止核验 264.871 秒通过：12 Native/4 recipient/4 custody、2,015 完整
+信封/4,515 档案，所有私有字节/权限不变。E17/P13/A16；净额 9 在 Proxima 11
+导入、13 成熟，四份 Native 收款均可花费。三份原请求已纳入当地账本、预留零。
+这不使窗口内失败通过；后续无钥排空未执行，也没有新的完整故障资格。
+失败保存原件，不同条件不能误称原失败恢复通过，也不原样重复或替换付款。
+
+## 停止成熟与窗口内失败的最小时间判别
+
+一次 2.724 秒只读判别关联完整冷认证高度 13 的同一 block/state 与私有链日志。
+Native 审计结束早于控制器 duration 取样，而成熟等待晚于接触恢复及请求文件发布；
+按这些源码顺序及毫秒取整裕量，得出保守最早截止界 `167091.041383625`。
+它是单侧界，不是伪造的精确截止时间。Native 本地 Finalized 入队晚于 finalize；
+完整接收标记晚于正常 bft-sync 安装完整已认证当地快照。
+
+0/2/3 号副本对应标记在该界前约 19.936/26.770/11.255 秒，证明这些 Native 点
+已在原窗口内达到相同高度 13。固定探测的 1 号没有同样的截止前标记，收到完整
+证书的标记在该界后约 1.446 秒；安装先于该标记，故不能反向断言安装也晚。
+14 个日志实例的所有已提供间隔没有事件淘汰/拒绝；未知间隔与最终未发布尾部仍未知，
+多实例不是额外节点或完整连续覆盖。每次 Native receipt 探测结果未记录，不能重建。
+
+两个观察器预检失败（独立读取模块缺失、缩进错误）原脚本/日志保留；前者在事件关联
+前拒绝，后者在解析时拒绝。独立只读链读取器补齐并绑定后，实际判别预算一、已用一。
+源码、Native、原窗口、成熟和所有失败源未改。下一步须先用新鲜 Native 认证的兼容
+领先成熟/固定滞后前缀建立最小观察模型，再决定控制器行为；没有新完整范围授权。
 
 证据：`regional-ordinary-lease-overlap-component-20261004.json`、
 `regional-outbound-peer-phase-window-observations-20261004.json`、
@@ -70,4 +94,9 @@ Mesh Node 租约，在第二次实际有界拒绝后解除控制屏障；剩余�
 `regional-outbound-peer-phase-ordinary-stage-outcome-20261004.json`、
 `regional-outbound-peer-phase-three-region-cycle-20261004.json`、
 `regional-outbound-peer-phase-three-region-cold-20261004.json`、
-`regional-outbound-peer-phase-joint-fault-stage-decision-20261004.json`（均在本目录 evidence 内）。
+`regional-outbound-peer-phase-joint-fault-stage-decision-20261004.json`、
+`regional-outbound-peer-phase-joint-fault-stage-outcome-20261004.json`、
+`regional-outbound-peer-phase-joint-fault-failed-cold-observations-20261004.json`、
+`regional-outbound-peer-phase-joint-fault-owner-head-observations-20261004.json`、
+`regional-outbound-peer-phase-postcold-stage-decision-20261004.json`、
+`regional-outbound-peer-phase-native-maturity-cutoff-observations-20261004.json`（均在本目录 evidence 内）。
