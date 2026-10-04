@@ -1,0 +1,44 @@
+{
+  "format": "RLD-FROZEN-WHITEPAPER-IMPLEMENTATION-TARGET-RECEIPT-V1",
+  "task": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "acknowledged_at_utc": "2026-10-04T17:27:24.491183+00:00",
+  "frozen_markdown_sha256": "c906076c09bb01fedd179d2b3a2ccfbf2bd168fa093ccb15842381783d69a6c0",
+  "frozen_pdf_sha256": "f825439e6e18aa96245bc6fb65fc03f98a1071fa6d31ecff65c696dc4f6da8e4",
+  "local_exact_bytes_checked": true,
+  "remote_republication_or_body_regeneration_performed": false,
+  "audit_commit": "425acdd4e6cf8d13dde4042b74ce72e0f8bbd7eb",
+  "authoritative_files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "95032310006588b51d3e2b6e170669fd18c7029432bc815058a114effc0d0301"
+    },
+    {
+      "path": "docs/RLDCOIN_MASTER_PLAN.md",
+      "sha256": "8ec48f4e31d5b1573d101c8eff2103e69cfe480106f41b45b5db0c226afc1f23"
+    },
+    {
+      "path": "docs/WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md",
+      "sha256": "bf2a13a84232f30c21132c7e10736635327dbd4a662b59de16e0ee3790ad22f4"
+    },
+    {
+      "path": "docs/WHITEPAPER_FREEZE_RECEIPT.json",
+      "sha256": "e3151052c6772eda2f97f258ded83ea510e8ac7aca86e825aa87f5e5a56bd805"
+    }
+  ],
+  "mandatory_acceptance": [
+    "S1-S18",
+    "R1-R24",
+    "I1-I12",
+    "A-G",
+    "N1-N10",
+    "P1-P8"
+  ],
+  "implementation_owner": "/root",
+  "fixture_owner": "/root",
+  "document_receipt_not_protocol_adoption_or_qualification": true,
+  "no_current_fixture_limit_lowers_normative_target": true,
+  "protocol_suite_key_epoch_evolution_and_requalification_required": true,
+  "future_body_defects_recorded_separately_with_owner_decision_required": true,
+  "mainnet_funds_accounts_permissions_or_external_contacts_authorized": false,
+  "website_work_required": false
+}

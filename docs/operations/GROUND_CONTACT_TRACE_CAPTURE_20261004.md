@@ -226,3 +226,34 @@ Native/core 字节未变；默认驱动实际重建，528 项完整回归 286.38
 `evidence/regional-separate-fault-controller-verifier-source-20261004.json`、
 `evidence/regional-controller-observation-binding-checks-20261004.json`、
 `evidence/regional-pending-observation-stage-decision-20261004.json`。
+
+### 冻结目标采用及新普通范围终态
+
+已读取根 AGENTS、主计划、实施验收映射及冻结 receipt；本地正文/PDF 字节与用户
+提供的完整 `c906076c...` / `f825439e...` 哈希相同。明确采用全部 S1–S18/R1–R24/
+I1–I12/A–G/N1–N10/P1–P8，未改正文、PDF 或官网；技术版本仍须演进。此 receipt
+仅确认目标已收到，不签署货币采用、主网、真实资金或独立/物理资格。
+
+修正独立控制器的单次普通范围已终止：循环 724.131 秒和严格冷核验 60.450 秒通过，
+E11/P4/A4，初次/再转出/新返程均由完整 Native 收款证据证明成熟；12 Native、
+12 收款、4 保管、788 完整信封、1,760 档案，300/300/0、私有字节/权限不变。
+Node/二进制/控制器 `67ad71...` / `3019b6...` / `50259a...` 匹配，不重跑。
+原停止进程已以会话终态及实际进程清单核对，无并行普通范围。
+
+下一活动假设：在原有限联合故障配置下，有界空闲 ordinary 优先不会阻塞新测试
+出口的实际目标保管、唯一导入和成熟，且缺席 leader、远方隔离当地付款、追赶和
+无钥证书 drain 保持正确。最小必要判别为一次新的完整有限 scope；预算 1，原
+600 秒阶段/60 秒轮/24 高度/成熟/票数/容量不变；封存本次成功来源后只用新的
+隔离副本。旧 failed scope/owner 请求保持未变。完整流程加严格 cold 才通过这个
+有限范围；无目标保管则判别实际路径及租约/验证/选择成本，已有保管但未导入/
+成熟则判别 Native 接收/当地共识，缺观察则未知并缩小反例。禁止同条件重跑、
+重签旧请求、替代付款、退款或延长门槛。此新scope不是旧失败根因的唯一证明。
+
+新 fault 使用已冻结 `20d542...` 控制器与分别核对来源的 `4bb57a...` 冷核验器，
+完整 Native/custody/档案检查未减少。可选 live 追踪保持原环、32 actor 及采样
+边界；未知/末尾未发布事件仍未知，不把记录数量当资格。
+
+依据：`evidence/regional-frozen-whitepaper-target-adoption-20261004.json`、
+`evidence/regional-pending-observation-three-region-cycle-20261004.json`、
+`evidence/regional-pending-observation-three-region-cold-20261004.json`、
+`evidence/regional-bounded-preference-joint-fault-stage-decision-20261004.json`。

@@ -1,0 +1,22 @@
+{
+  "format": "RLD-PENDING-OBSERVATION-FRESH-CYCLE-START-V1",
+  "started_at_utc": "2026-10-04T16:35:15.413506+00:00",
+  "scope_started": true,
+  "completed": false,
+  "new_controller_attempt_budget": 1,
+  "new_controller_attempts_started": 1,
+  "controller_source_set_sha256": "50259ae2b36b96272e8676f7a0630fc314d7b34d1a25891b6a7f9e2f707640d2",
+  "node_source_set_sha256": "67ad71f18be1578005caab76689297d7b12f8ba1d46c9e804bc72ced6fd2d858",
+  "node_binary_sha256": "3019b6d9072673c0c05c99bc8d4f43bcd5998bda0a53e98c7c9d1e919be4f713",
+  "node_source_and_binary_unchanged": true,
+  "actual_controller_import_preflight_passed": true,
+  "private_fresh_root_created": true,
+  "prior_failed_scope_not_resumed": true,
+  "prior_failed_cold_report_sha256": "1f87a62fd5478f8166d6f62379349704adbf00ba3adc7fe94aefbb66f2fe8824",
+  "trace_default_off": true,
+  "full_fault_scope_started": false,
+  "all_original_deadlines_maturity_quorum_capacity_preserved": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "physical_or_independent_qualification": false
+}
