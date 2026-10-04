@@ -118,10 +118,11 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
         let reserve = channel::command(
             &h.node.chain,
             &h.node.trust,
-            channels::Action::Reserve {
+            channels::Action::ReserveBudget {
                 channel: cid,
                 input,
                 fee_limit: Amount(3),
+                max_fee: h.node.chain.ledger.coins[&input].payment.amount,
             },
             Some(10),
             &[10],
@@ -227,7 +228,14 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
         assert_eq!(state.as_ref(), &receipt.next);
         assert_eq!(*original, close_height);
         assert_eq!(*deadline, close_height + channels::WINDOW);
-        assert!(!book.reserves.contains_key(&receipt.statement.reserve));
+        assert_eq!(
+            book.reserves[&receipt.statement.reserve]
+                .budget
+                .as_ref()
+                .unwrap()
+                .spent,
+            Amount(3)
+        );
     }
     assert_eq!(
         book.channels.len(),

@@ -207,6 +207,7 @@ impl Receipt {
             .reserves
             .get(&s.reserve)
             .ok_or("receipt fee reserve absent or consumed")?;
+        reserve.receipt_coverage(e.challenge_fee)?;
         require(
             reserve.channel == e.channel
                 && reserve.allocated <= snapshot.statement.height
@@ -458,6 +459,10 @@ pub(crate) fn watch(node: &Store, miner: String, expected_head: Hash) -> Result<
                 .get(&receipt.statement.reserve)
                 .ok_or("accepted receipt reserve absent or consumed")?;
             let fee = receipt.statement.expected.challenge_fee;
+            require(
+                reserve.remaining_fee()? >= fee,
+                "accepted receipt cumulative fee authority exhausted",
+            )?;
             require(
                 reserve.channel == channel
                     && reserve.allocated <= node.chain.height()

@@ -1,0 +1,194 @@
+{
+  "format": "RLD-CHANNEL-FEE-BUDGET-MODEL-CHECKS-V1",
+  "completed": true,
+  "exit_code": 0,
+  "duration_seconds": 0.043,
+  "model_sha256": "47ff2ce72ebab79f1254f7236699517eb66fe0123a0adc5a2ccd336484f2b02c",
+  "controller_sha256": "d9a288377bb059d944eaf376fd96994341fb24a93b3aadfd8f32102ab00a0c7b",
+  "log_sha256": "616c5f07e1b19f8b217ee5170d60ff5888513acaff531e5e16a9d15ba4c74ba6",
+  "result": {
+    "policy": "RLD-CHANNEL-RETAINED-FEE-BUDGET-MODEL-V1",
+    "legacy_counterexample": {
+      "q0": 0,
+      "q1": 1,
+      "q2": 2,
+      "reserve_original": 100000,
+      "fee": 1,
+      "liquid_change": 99999,
+      "locked_after_q1": 0,
+      "q2_covered": false
+    },
+    "distinct_legacy_counterexample": {
+      "q1_targets_q2_reserve": true,
+      "q2_covered_after_one_use": false,
+      "actual_selected_root": "root-q2",
+      "fee": 1,
+      "change": 99999
+    },
+    "native_window": 2016,
+    "native_commands": 16,
+    "native_worst_fee_budget_at_limit_3": 96768,
+    "native_maximum_challenge_commands": 32256,
+    "exhaustive_samples": [
+      {
+        "states": 2,
+        "edges": 1,
+        "window": 1,
+        "commands": 1,
+        "fee_limit": 1
+      },
+      {
+        "states": 3,
+        "edges": 2,
+        "window": 1,
+        "commands": 1,
+        "fee_limit": 2
+      },
+      {
+        "states": 4,
+        "edges": 3,
+        "window": 1,
+        "commands": 1,
+        "fee_limit": 3
+      },
+      {
+        "states": 3,
+        "edges": 2,
+        "window": 1,
+        "commands": 2,
+        "fee_limit": 1
+      },
+      {
+        "states": 6,
+        "edges": 6,
+        "window": 1,
+        "commands": 2,
+        "fee_limit": 2
+      },
+      {
+        "states": 9,
+        "edges": 12,
+        "window": 1,
+        "commands": 2,
+        "fee_limit": 3
+      },
+      {
+        "states": 4,
+        "edges": 3,
+        "window": 1,
+        "commands": 3,
+        "fee_limit": 1
+      },
+      {
+        "states": 10,
+        "edges": 12,
+        "window": 1,
+        "commands": 3,
+        "fee_limit": 2
+      },
+      {
+        "states": 16,
+        "edges": 27,
+        "window": 1,
+        "commands": 3,
+        "fee_limit": 3
+      },
+      {
+        "states": 4,
+        "edges": 3,
+        "window": 2,
+        "commands": 1,
+        "fee_limit": 1
+      },
+      {
+        "states": 8,
+        "edges": 8,
+        "window": 2,
+        "commands": 1,
+        "fee_limit": 2
+      },
+      {
+        "states": 12,
+        "edges": 15,
+        "window": 2,
+        "commands": 1,
+        "fee_limit": 3
+      },
+      {
+        "states": 9,
+        "edges": 8,
+        "window": 2,
+        "commands": 2,
+        "fee_limit": 1
+      },
+      {
+        "states": 27,
+        "edges": 36,
+        "window": 2,
+        "commands": 2,
+        "fee_limit": 2
+      },
+      {
+        "states": 45,
+        "edges": 84,
+        "window": 2,
+        "commands": 2,
+        "fee_limit": 3
+      },
+      {
+        "states": 16,
+        "edges": 15,
+        "window": 2,
+        "commands": 3,
+        "fee_limit": 1
+      },
+      {
+        "states": 64,
+        "edges": 96,
+        "window": 2,
+        "commands": 3,
+        "fee_limit": 2
+      },
+      {
+        "states": 112,
+        "edges": 243,
+        "window": 2,
+        "commands": 3,
+        "fee_limit": 3
+      }
+    ],
+    "exhaustive_states": 354,
+    "exhaustive_edges": 576,
+    "refusals": [
+      "legacy wrong channel",
+      "legacy repeated root",
+      "small cumulative ceiling cannot support reliable new receipt",
+      "legacy one-use cannot authorize new receive",
+      "legacy cannot authorize successor retention",
+      "underfunded amount",
+      "immature",
+      "wrong channel",
+      "stale successor",
+      "above per-fee limit",
+      "canonical bool amount",
+      "amount overflow",
+      "settle at deadline",
+      "same sequence",
+      "challenge after deadline",
+      "quarantined dependencies",
+      "repeat settlement",
+      "settled channel challenge",
+      "deadline overflow",
+      "exhausted native successor stops new receive",
+      "stale receiver cannot spend"
+    ],
+    "original_native_source_modified": false,
+    "actual_native_crypto_or_history_qualified": false,
+    "ideal_owner_state_and_finality_authentication_assumed": true,
+    "independent_custody_latest_or_liveness_qualified": false,
+    "whole_protocol_complete": false
+  },
+  "native_implemented": false,
+  "old_native_R_CH_FEE_01_still_failed": true,
+  "whole_protocol_complete": false
+}

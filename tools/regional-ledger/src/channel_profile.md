@@ -1,4 +1,4 @@
-# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V7
+# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V8
 
 Fresh no-value admission only. Both native BFT-value-channel and segmented-
 value-channel admissions sign the exact content identity of this profile,
@@ -102,7 +102,7 @@ a backup. Combined partials grant no acceptance, ledger credit or new funds.
 Incomplete creation refuses unchanged; no restore, independent freshness,
 copied-key concurrency, monitoring/inclusion or physical qualification follows.
 
-V7 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
+V8 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
 sign the mandatory funding witness key; absent policy refuses funding and is read-only for the owner
 service, never a fallback. The witness key differs from parties, authority and
 regional validators. Its separate private OS-locked journal fully authenticates
@@ -120,7 +120,7 @@ finality or issuance authority. The same-process same-host ground role separatio
 does not qualify independent service/custody, common/witness rollback, copied
 witness keys, independent anti-rollback hardware or adversarial raw-key signing.
 
-V7 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
+V8 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
 funding-selected cosignature. Every new funding selects a separate role. Native
 receipt, Close and Challenge authenticate both complete actual owner signatures
 and that role; receipts bind the exact complete invoice. Original inception
@@ -152,3 +152,23 @@ is local policy, not new consensus or independent freshness authority.
 The signed window, fees, original reserve delegation, quorums and limits remain.
 Actual full-window/fault liveness, incident observation and physical/independent
 qualification remain mandatory. Fresh source-bound no-value fixtures only.
+
+V8 adds RLD-NATIVE-CHANNEL-FEE-BUDGET-V1 via explicit ReserveBudget owner
+authorization, binding the exact mature input, channel, per-challenge fee limit
+and cumulative max_fee. Legacy one-use Reserve remains one-use and cannot
+authorize reliable fast receipts or protected successors. Challenge spends only
+the actual fee from both balance and cumulative ceiling; unused balance stays
+in E under the exact original authorization/root, even when the fee ceiling is
+exhausted. Original input amount equals current protected amount plus cumulative
+fees. Every successor carries complete provenance. Settlement after the original
+deadline returns remaining balance exactly once; no zero output or refund of fees.
+
+New reliable receipts require one exact mature budget with remaining protected
+amount and owner ceiling covering fee_limit * 2016 * MAX_COMMANDS(16), under
+checked cap arithmetic. This bounds every possible fee debit through the original
+window, including multiple ordered challenges per block. It is an amount coverage
+policy, not a minimum16 reserve count, raised capacity, fee or monetary parameter.
+It does not guarantee quorum/inclusion against censorship or last-block latency.
+Raw-key compromise, independent custody, rollback, reorganization and actual full
+window/history remain unqualified. New source/currency only, no old authorization
+or private-state/value conversion.

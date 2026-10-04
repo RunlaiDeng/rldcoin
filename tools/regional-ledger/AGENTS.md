@@ -197,3 +197,18 @@ Do not increase capacity/minimum reserve counts, refund principal or rewrite
 failed evidence. Develop the next complete fee-authorization model first under
 REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md; changed source requires fresh signed
 no-value currency/fixture, never old state or custody migration.
+
+V8 adds explicit ReserveBudget owner authority, never deriving reusable budget
+from legacy one-use Reserve. Keep exact original input/root/authorization and
+complete provenance; native replay derives original_amount, spent and remaining
+coin amount. Challenge spends only the fee within BOTH per-fee and cumulative
+max_fee; unused balance stays E until settlement. Retain exhausted/zero records
+within existing bounds, skip zero settlement outputs, never refund spent fees.
+Receipt acceptance requires one exact mature budget with both current amount
+and remaining owner ceiling covering fee_limit *2016 *native MAX_COMMANDS(16),
+checked under the cap. This is monetary coverage, not minimum16 pots, changed
+fees/bounds or an inclusion guarantee. Original c/deadline and quorums remain.
+The old V7 one-use failure stays failed; V8 fixes the tested native trajectory
+but does not qualify independent custody, actual full window, Runtime/TLS faults,
+long history or censorship. Fresh source/currency only. See the complete scope
+and next falsifiable Runtime gate in REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md.

@@ -585,3 +585,118 @@ fn native_channel_real_onward_lineage_and_authenticated_incident_cannot_be_laund
     )
     .is_ok());
 }
+
+#[test]
+fn native_channel_fee_budget_exhaustion_zero_remainder_and_exact_settlement_keep_owner_ceiling() {
+    // Real typed native signature/value boundary contexts, not 2016 ordinary blocks.
+    for ceiling in [Amount(3), Amount(100)] {
+        let f = Fixture::new();
+        let d = declaration(&f);
+        let safe = conflict::Safety::default();
+        let book = c::Book::default();
+        let value = f.earth.ledger.clone();
+        let ids = inputs(&value);
+        let open = action(
+            &d,
+            c::Action::Open {
+                witness: Some(public(12)),
+                inputs: vec![ids[0]],
+                parties: parties(),
+                capacity: Amount(60),
+                initial: [Amount(60), Amount::ZERO],
+                change: vec![Payment {
+                    owner: public(10),
+                    amount: Amount(39),
+                }],
+                fee: Amount(1),
+            },
+            Some(10),
+            &[10, 11],
+        );
+        let channel = open.intent.id().unwrap();
+        let h = book.head(&value, &d).unwrap();
+        let (book, value, h) = run(&f, &d, &safe, &book, &value, &open, 5, h).unwrap();
+        let reserve = action(
+            &d,
+            c::Action::ReserveBudget {
+                channel,
+                input: ids[1],
+                fee_limit: ceiling,
+                max_fee: ceiling,
+            },
+            Some(10),
+            &[10],
+        );
+        let (book, value, h) = run(&f, &d, &safe, &book, &value, &reserve, 5, h).unwrap();
+        let mut altered = book.clone();
+        altered
+            .reserves
+            .get_mut(&ids[1])
+            .unwrap()
+            .budget
+            .as_mut()
+            .unwrap()
+            .max_fee = Amount(101);
+        assert!(altered.audit(&value, &d).is_err());
+        let mut altered = book.clone();
+        altered
+            .reserves
+            .get_mut(&ids[1])
+            .unwrap()
+            .budget
+            .as_mut()
+            .unwrap()
+            .format = "other".into();
+        assert!(altered.audit(&value, &d).is_err());
+        let close = action(
+            &d,
+            c::Action::Close {
+                channel,
+                state: Box::new(state(&d, channel, 0, 60, 0)),
+                fee_input: ids[2],
+                fee: Amount(1),
+            },
+            Some(10),
+            &[10],
+        );
+        let (book, value, h) = run(&f, &d, &safe, &book, &value, &close, 5, h).unwrap();
+        let challenge = action(
+            &d,
+            c::Action::Challenge {
+                channel,
+                state: Box::new(state(&d, channel, 1, 20, 40)),
+                reserve: ids[1],
+                fee: ceiling,
+            },
+            None,
+            &[],
+        );
+        let (book, value, h) = run(&f, &d, &safe, &book, &value, &challenge, 6, h).unwrap();
+        let r = &book.reserves[&ids[1]];
+        assert_eq!(r.budget.as_ref().unwrap().spent, ceiling);
+        assert_eq!(
+            r.coin.payment.amount.checked_add(ceiling).unwrap(),
+            Amount(100)
+        );
+        assert_eq!(r.authorization, reserve.clone().into());
+        let over = action(
+            &d,
+            c::Action::Challenge {
+                channel,
+                state: Box::new(state(&d, channel, 2, 19, 41)),
+                reserve: ids[1],
+                fee: Amount(1),
+            },
+            None,
+            &[],
+        );
+        assert!(run(&f, &d, &safe, &book, &value, &over, 7, h).is_err());
+        assert_eq!(book.head(&value, &d).unwrap(), h);
+        let settle = action(&d, c::Action::Settle { channel }, None, &[]);
+        assert!(run(&f, &d, &safe, &book, &value, &settle, 2021, h).is_err());
+        let (book, value, h) = run(&f, &d, &safe, &book, &value, &settle, 2022, h).unwrap();
+        assert_eq!(buckets(&book, &value), (Amount(300), Amount::ZERO));
+        assert!(book.reserves.is_empty());
+        assert!(run(&f, &d, &safe, &book, &value, &settle, 2023, h).is_err());
+    }
+}

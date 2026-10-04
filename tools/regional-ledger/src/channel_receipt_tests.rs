@@ -74,10 +74,11 @@ fn top_up(node: &mut Store, channel: Hash, limit: u128) -> Hash {
     let reserve = command(
         &node.chain,
         &node.trust,
-        c::Action::Reserve {
+        c::Action::ReserveBudget {
             channel,
             input,
             fee_limit: Amount(limit),
+            max_fee: node.chain.ledger.coins[&input].payment.amount,
         },
         Some(10),
         &[10],
@@ -251,12 +252,16 @@ fn native_channel_watch_discrimination_accepted_higher_state_keyless_challenge_p
     assert_eq!(book.channels[&channel].terms().unwrap().1, Amount(60));
     assert_eq!(
         before_locked.checked_sub(book.locked().unwrap()).unwrap(),
-        ledger.channel_state.as_ref().unwrap().book.reserves[&reserve.unwrap()]
-            .coin
-            .payment
-            .amount
+        Amount(3)
     );
-    assert!(!book.reserves.contains_key(&reserve.unwrap()));
+    assert_eq!(
+        book.reserves[&reserve.unwrap()]
+            .budget
+            .as_ref()
+            .unwrap()
+            .spent,
+        Amount(3)
+    );
     let (issued, liquid, escrow, outbound) =
         conservation_with_escrow(&[node.chain.clone()]).unwrap();
     assert_eq!(issued, add(add(liquid, escrow).unwrap(), outbound).unwrap());
@@ -591,7 +596,7 @@ fn native_channel_receipt_publication_failure_keeps_pending_residue_and_never_ac
 }
 
 #[test]
-fn native_channel_watch_highest_complete_history_stale_head_and_consumed_exact_reserve() {
+fn native_channel_fee_budget_preserves_highest_coverage_after_older_challenge_and_cold_replay() {
     let (root, mut node, channel, reserve) = setup(Some(3));
     let initial = initial(&node, channel);
     let first = receipt(&node, reserve.unwrap(), 1, initial.clone(), 10, None);
@@ -659,8 +664,8 @@ fn native_channel_watch_highest_complete_history_stale_head_and_consumed_exact_r
     assert_eq!(node.chain.ledger, before);
     assert_eq!(head(&root), pinned);
     assert!(!watch.signing_keys_used && !watch.inclusion_guaranteed);
-    // A historical higher state can consume the chosen reserve. Never invent
-    // another fee delegation or refund the accepted off-chain payment.
+    // Original V7 failed here: one-use q1 consumed q2's selected reserve.
+    // The new explicit budget keeps the exact remaining protected balance.
     let partial_challenge = command(
         &node.chain,
         &node.trust,
@@ -676,31 +681,134 @@ fn native_channel_watch_highest_complete_history_stale_head_and_consumed_exact_r
     selected(&mut node, vec![partial_challenge]);
     let now = head(&root);
     let watch = node.channel_watch(public(10), now).unwrap();
-    assert!(watch.commands.is_empty());
-    assert_eq!(watch.observations.len(), 1);
+    assert_eq!(watch.commands.len(), 1);
     assert_eq!(watch.observations[0].accepted_sequence, 2);
     assert_eq!(watch.observations[0].closing_sequence, 1);
-    assert!(watch.observations[0]
-        .diagnostic
+    assert!(watch.observations[0].diagnostic.is_none());
+    let reserve_now = &node
+        .chain
+        .ledger
+        .channel_state
         .as_ref()
         .unwrap()
-        .contains("consumed"));
+        .book
+        .reserves[&reserve.unwrap()];
+    assert_eq!(reserve_now.budget.as_ref().unwrap().spent, Amount(1));
+    let original = reserve_now.budget.as_ref().unwrap().original_amount;
+    assert_eq!(
+        reserve_now
+            .coin
+            .payment
+            .amount
+            .checked_add(Amount(1))
+            .unwrap(),
+        original
+    );
     assert_eq!(head(&root), now);
+    selected(&mut node, watch.commands);
+    let final_head = head(&root);
+    let final_reserve = &node
+        .chain
+        .ledger
+        .channel_state
+        .as_ref()
+        .unwrap()
+        .book
+        .reserves[&reserve.unwrap()];
+    assert_eq!(final_reserve.budget.as_ref().unwrap().spent, Amount(4));
+    assert_eq!(
+        final_reserve
+            .coin
+            .payment
+            .amount
+            .checked_add(Amount(4))
+            .unwrap(),
+        original
+    );
+    let expected = node.chain.ledger.clone();
     drop(node);
     let node = Store::open_pinned(
         &root.join("earth"),
         &public(1),
         second.statement.expected.currency,
-        now,
+        final_head,
     )
     .unwrap();
+    assert_eq!(node.chain.ledger, expected);
     assert!(node
-        .channel_watch(public(10), now)
+        .channel_watch(public(10), final_head)
         .unwrap()
         .commands
         .is_empty());
     println!(
-        "highest receipt and consumed-reserve refusal cold verified; retained {}",
+        "q1 then highest q2 protected budget/fees cold verified; retained {}",
         root.display()
     );
+}
+
+#[test]
+fn native_channel_fee_budget_receipt_refuses_legacy_and_small_ceiling_without_mutation() {
+    let (root, mut node, channel, _) = setup(None);
+    let mut roots = Vec::new();
+    for ceiling in [
+        None,
+        Some(Amount(3)),
+        Some(c::receipt_fee_coverage(Amount(3)).unwrap()),
+    ] {
+        let input = *node
+            .chain
+            .ledger
+            .coins
+            .iter()
+            .find(|(_, coin)| {
+                coin.payment.owner == public(10)
+                    && coin.mature <= node.chain.height() + 1
+                    && coin.channel_dependencies.is_empty()
+            })
+            .unwrap()
+            .0;
+        let action = match ceiling {
+            None => c::Action::Reserve {
+                channel,
+                input,
+                fee_limit: Amount(3),
+            },
+            Some(max_fee) => c::Action::ReserveBudget {
+                channel,
+                input,
+                fee_limit: Amount(3),
+                max_fee,
+            },
+        };
+        let reserve = command(&node.chain, &node.trust, action, Some(10), &[10]);
+        selected(&mut node, vec![reserve]);
+        roots.push(input);
+    }
+    certify(&mut node);
+    let before = node.chain.ledger.clone();
+    let pinned = head(&root);
+    for input in &roots[..2] {
+        let incoming = receipt(&node, *input, 1, initial(&node, channel), 10, None);
+        assert!(accept(&mut node, &root, incoming).is_err());
+        assert_eq!(node.chain.ledger, before);
+        assert_eq!(head(&root), pinned);
+    }
+    let incoming = receipt(&node, roots[2], 1, initial(&node, channel), 10, None);
+    let result = accept(&mut node, &root, incoming).unwrap();
+    assert_eq!(node.chain.ledger, before);
+    assert_eq!(result.accepted_sequence, 1);
+    assert_eq!(c::receipt_fee_coverage(Amount(3)).unwrap(), Amount(96768));
+    assert!(c::receipt_fee_coverage(Amount::TOTAL_SUPPLY).is_err());
+    assert!(c::receipt_fee_coverage(Amount::ZERO).is_err());
+    let head = head(&root);
+    drop(node);
+    let node = Store::open_pinned(
+        &root.join("earth"),
+        &public(1),
+        result.receipt.statement.expected.currency,
+        head,
+    )
+    .unwrap();
+    assert_eq!(node.chain.ledger, before);
+    println!("legacy/insufficient cumulative ceiling refused; single selected sufficient pot cold verified {}",root.display());
 }

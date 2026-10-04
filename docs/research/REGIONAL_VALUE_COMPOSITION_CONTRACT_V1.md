@@ -432,3 +432,14 @@ accepted 状态随后失去费用覆盖。Watcher 的诊断与账本守恒不是
 先模型判别完整费用授权，不提高储备最低数量/上限，不退款或重签旧 fixture。
 见[完整实现与失败契约](REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md)。自动 Runtime
 完整网络/故障/2016历史、独立 latest/custody、所有 S/R/I/A-G/N/P 仍需验收。
+
+## V8 显式累计费用授权，保留未用预算
+
+独立模型执行旧single/distinct-pot失败，原V7真实q1耗尽q2反例不改。
+新ReserveBudget以完整owner签署明确max_fee；每次Challenge只付fee，余额
+保留E与原始授权/root/full provenance，累计spent受签署ceiling约束；settlement
+才返未用金额。新receipt检查2016*16*fee_limit的最坏余额/授权覆盖量，不是
+16储备最低条数/增容/提高每次fee，不声称克服审查或末块响应延迟。
+36 focused/build/strict、新源native两次q1/q2和完整CLI/cold通过；精确failed
+observer/fixture保留，不复跑未变长checks。旧184仅按相同未变分支来源复用，
+不冒称新身份全部220重跑。[完整规则、限制及下一主线](REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md)。

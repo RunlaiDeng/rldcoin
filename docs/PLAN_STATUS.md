@@ -6,9 +6,10 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-当前源绑定开发已推进到 V7 原生通道 watcher / BFT 自动候选；
-[R-CH-FEE-01](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md) 费用覆盖反例仍
-未通过，不能把 watcher、历史普通/fault scope 或守恒称为全部协议安全完成。
+当前源绑定开发已推进到 V8 明确累计费用预算及原生 watcher / BFT 自动候选；
+[R-CH-FEE-01](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md) 旧费用覆盖失败保留；
+[V8候选](research/REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md)只修复已测native路径，
+完整故障/窗口/独立安全仍未通过，不能把有限scope或守恒称为全部协议完成。
 
 ## 已完成的近期交付
 
@@ -449,3 +450,18 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 最终来源 `4110ffc4...` / binary `57dd7cd9...`，见
 [准确结果及未通过项](operations/evidence/regional-native-channel-watch-outcome-20261005.json)。
 旧价值库VALUE-STRICT-01仍OPEN，地区strict不替代；冻结正文/PDF/官网不变。
+
+## 2026-10-05 V8 显式费用预算及最高状态覆盖
+
+原V7 R-CH-FEE-01失败仍保留。V8新owner授权绑定累计max_fee及原input；
+每次只支出fee，剩余保护金额继续E直到settlement。充分新receipt还须核对
+原2016*16 native slot的最坏费额覆盖，不增加16储备最低数/容量或每次fee。
+36 focused/build/无豁免strict终态通过，q1后q2原生挑战/完整cold/BFT候选检查
+通过；首CLI控制器旧钥断言失败，准确原件保留，更新控制器仅新目录通过。
+尚未完成Runtime/TLS实际看守/完整窗口/持续fault/独立安全及S/R/I/A-G/N/P。
+见[准确新授权与失败边界](research/REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md)。
+
+V8最终来源 `c2b5e8bc...` / binary `838873ba...`：36 focused/strict/build79.902秒，
+83步实际CLI24.334秒均终态通过；184未变共享分支引用V7来源4110ffc4的原证据，
+未复跑，不能说220项都在新身份重跑。首47步失败10.578秒原件保持。
+[源绑定结果/复用边界](operations/evidence/regional-native-channel-fee-budget-outcome-20261005.json)。

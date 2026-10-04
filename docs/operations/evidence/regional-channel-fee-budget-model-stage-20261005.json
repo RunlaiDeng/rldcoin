@@ -1,0 +1,10 @@
+{
+  "format": "RLD-CHANNEL-FEE-BUDGET-MODEL-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "network_campaigns": 0,
+  "model_sha256": "daa72cf55773e7c003e021f31d15db29f9afd6ffa0d58ae390f50e52291307ab",
+  "prior_native_source": "4110ffc46e80f80a83ac0f4d2ead624efe1137abfe1f4644f8c01e7533438ad2",
+  "hypothesis": "Explicit new owner cumulative fee ceiling and retained unused E preserve fee coverage for every eligible native slot under unchanged window/MAX_COMMANDS/per-fee limit. Legacy one-use cannot supply this authority.",
+  "exit": "one model terminal, invariant failure/refusal or120seconds; preserve all prior fixtures and reports"
+}

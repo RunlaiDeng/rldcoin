@@ -1,11 +1,12 @@
 //! Native typed signature/value kernel; no block/custody/storage activation.
 //! Inputs must come from ordinary full native replay, never a decoded cache.
 use super::*;
-pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V7";
+pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V8";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
-pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V7";
-pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V7";
+pub const FEE_BUDGET_FORMAT: &str = "RLD-NATIVE-CHANNEL-FEE-BUDGET-V1";
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V8";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V8";
 pub fn is_profile(rules: &str) -> bool {
     rules == BFT_RULES || rules == SEGMENTED_RULES
 }
@@ -116,6 +117,14 @@ pub enum Action {
         channel: Hash,
         input: Hash,
         fee_limit: Amount,
+    },
+    /// New explicit cumulative authorization. Legacy one-use Reserve never
+    /// supplies permission to retain a spendable successor budget.
+    ReserveBudget {
+        channel: Hash,
+        input: Hash,
+        fee_limit: Amount,
+        max_fee: Amount,
     },
     Close {
         channel: Hash,
@@ -323,6 +332,53 @@ pub struct Reservation {
     pub fee_limit: Amount,
     pub authorization: Box<SignedAction>,
     pub allocated: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub budget: Option<Box<FeeBudget>>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FeeBudget {
+    pub format: String,
+    pub original_amount: Amount,
+    pub max_fee: Amount,
+    pub spent: Amount,
+}
+/// Conditional worst-window fee exposure, not an inclusion guarantee. Counts
+/// the unchanged native command bound, not the four companion proposal slots.
+pub fn receipt_fee_coverage(fee_limit: Amount) -> Result<Amount> {
+    require(!fee_limit.is_zero(), "positive fee limit required")?;
+    let amount = fee_limit
+        .0
+        .checked_mul(u128::from(WINDOW))
+        .and_then(|v| v.checked_mul(MAX_COMMANDS as u128))
+        .ok_or("fee coverage overflow")?;
+    require(
+        amount <= Amount::TOTAL_SUPPLY.0,
+        "fee coverage exceeds supply cap",
+    )?;
+    Ok(Amount(amount))
+}
+impl Reservation {
+    pub(crate) fn remaining_fee(&self) -> Result<Amount> {
+        let budget = self
+            .budget
+            .as_ref()
+            .ok_or("legacy one-use reserve has no cumulative authority")?;
+        budget
+            .max_fee
+            .checked_sub(budget.spent)
+            .map_err(|e| e.to_string())
+    }
+    pub(crate) fn receipt_coverage(&self, fee: Amount) -> Result<()> {
+        let required = receipt_fee_coverage(self.fee_limit)?;
+        require(
+            fee.0 > 0
+                && fee <= self.fee_limit
+                && self.coin.payment.amount >= required
+                && self.remaining_fee()? >= required,
+            "receipt lacks explicit worst-window cumulative fee coverage",
+        )
+    }
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -473,17 +529,53 @@ impl Book {
             require(
                 !matches!(escrow.phase, Phase::Settled { .. })
                     && !ledger.coins.contains_key(ident)
-                    && r.coin.payment.amount.0 > 0
                     && r.fee_limit.0 > 0
-                    && r.fee_limit <= r.coin.payment.amount
                     && parties.contains(&r.coin.payment.owner)
                     && r.coin.dependencies.len() <= MAX_SNAPSHOTS,
                 "reservation ownership/amount/index",
             )?;
+            let authorized = match (&r.authorization.intent.action, &r.budget) {
+                (
+                    Action::Reserve {
+                        channel,
+                        input,
+                        fee_limit,
+                    },
+                    None,
+                ) => {
+                    *channel == r.channel
+                        && *input == *ident
+                        && *fee_limit == r.fee_limit
+                        && r.coin.payment.amount.0 > 0
+                        && r.fee_limit <= r.coin.payment.amount
+                }
+                (
+                    Action::ReserveBudget {
+                        channel,
+                        input,
+                        fee_limit,
+                        max_fee,
+                    },
+                    Some(b),
+                ) => {
+                    *channel == r.channel
+                        && *input == *ident
+                        && *fee_limit == r.fee_limit
+                        && *max_fee == b.max_fee
+                        && b.format == FEE_BUDGET_FORMAT
+                        && b.original_amount.0 > 0
+                        && b.original_amount <= Amount::TOTAL_SUPPLY
+                        && r.fee_limit <= b.max_fee
+                        && b.max_fee <= b.original_amount
+                        && b.spent <= b.max_fee
+                        && r.coin.payment.amount.checked_add(b.spent).ok()
+                            == Some(b.original_amount)
+                }
+                _ => false,
+            };
             require(
-                matches!(&r.authorization.intent.action, Action::Reserve { channel, input, fee_limit }
-                if *channel == r.channel && *input == *ident && *fee_limit == r.fee_limit),
-                "retained complete reservation authorization",
+                authorized,
+                "retained complete reservation authorization/remaining budget",
             )?;
             require(
                 r.authorization.intent.rules == declaration.rules
@@ -535,7 +627,8 @@ impl Book {
     pub(crate) fn retained_dependencies(&self, ledger: &Ledger, action: &Action) -> BTreeSet<Hash> {
         let (channel, inputs): (Option<Hash>, Vec<Hash>) = match action {
             Action::Open { inputs, .. } => (None, inputs.clone()),
-            Action::Reserve { channel, input, .. } => (Some(*channel), vec![*input]),
+            Action::Reserve { channel, input, .. }
+            | Action::ReserveBudget { channel, input, .. } => (Some(*channel), vec![*input]),
             Action::Close {
                 channel, fee_input, ..
             } => (Some(*channel), vec![*fee_input]),
@@ -566,7 +659,8 @@ impl Book {
     ) -> BTreeSet<Hash> {
         let (channel, inputs): (Option<Hash>, Vec<Hash>) = match action {
             Action::Open { inputs, .. } => (None, inputs.clone()),
-            Action::Reserve { channel, input, .. } => (Some(*channel), vec![*input]),
+            Action::Reserve { channel, input, .. }
+            | Action::ReserveBudget { channel, input, .. } => (Some(*channel), vec![*input]),
             Action::Close {
                 channel, fee_input, ..
             } => (Some(*channel), vec![*fee_input]),
@@ -599,7 +693,8 @@ impl Book {
                 coin_ids.extend(inputs.iter().copied());
                 None
             }
-            Action::Reserve { channel, input, .. } => {
+            Action::Reserve { channel, input, .. }
+            | Action::ReserveBudget { channel, input, .. } => {
                 coin_ids.push(*input);
                 Some(*channel)
             }
@@ -786,6 +881,12 @@ impl Book {
                 channel,
                 input: ident,
                 fee_limit,
+            }
+            | Action::ReserveBudget {
+                channel,
+                input: ident,
+                fee_limit,
+                ..
             } => {
                 let escrow = self
                     .channels
@@ -793,6 +894,20 @@ impl Book {
                     .ok_or("unknown reservation channel")?;
                 let (parties, _, _) = escrow.terms()?;
                 let coin = input(ledger, *ident, height)?.clone();
+                let budget = if let Action::ReserveBudget { max_fee, .. } = &intent.action {
+                    require(
+                        *max_fee >= *fee_limit && *max_fee <= coin.payment.amount,
+                        "explicit owner cumulative ceiling exceeds mature input",
+                    )?;
+                    Some(Box::new(FeeBudget {
+                        format: FEE_BUDGET_FORMAT.into(),
+                        original_amount: coin.payment.amount,
+                        max_fee: *max_fee,
+                        spent: Amount::ZERO,
+                    }))
+                } else {
+                    None
+                };
                 require(
                     matches!(escrow.phase, Phase::Open)
                         && parties.contains(&coin.payment.owner)
@@ -822,6 +937,7 @@ impl Book {
                         fee_limit: *fee_limit,
                         authorization: Box::new(command.clone()),
                         allocated: height,
+                        budget,
                     },
                 );
             }
@@ -920,7 +1036,7 @@ impl Book {
                     "higher state on a close successor through absolute deadline",
                 )?;
                 escrow.verify_state(state, *channel, context.declaration)?;
-                let r = self
+                let mut r = self
                     .reserves
                     .get(reserve)
                     .ok_or("fee reserve absent or used")?
@@ -935,21 +1051,36 @@ impl Book {
                     .amount
                     .checked_sub(*fee)
                     .map_err(|e| e.to_string())?;
-                self.reserves.remove(reserve);
                 fee_output(ledger, tx, *fee, context, maturity, deps, channel_deps)?;
-                if !change.is_zero() {
-                    ledger.output_with_channels(
-                        tx,
-                        0,
-                        Payment {
-                            owner: r.coin.payment.owner,
-                            amount: change,
-                        },
-                        height,
-                        height,
-                        deps,
-                        channel_deps,
+                if let Some(budget) = &mut r.budget {
+                    budget.spent = budget.spent.checked_add(*fee).map_err(|e| e.to_string())?;
+                    require(
+                        budget.spent <= budget.max_fee,
+                        "cumulative owner fee ceiling exhausted",
                     )?;
+                    r.coin.payment.amount = change;
+                    r.coin.dependencies = deps.clone();
+                    r.coin.channel_dependencies = channel_deps.clone();
+                    // Preserve original complete authorization and its root.
+                    // Even a zero remainder stays as a bounded exhausted record
+                    // until settlement. No liquid change or new signing right.
+                    self.reserves.insert(*reserve, r);
+                } else {
+                    self.reserves.remove(reserve);
+                    if !change.is_zero() {
+                        ledger.output_with_channels(
+                            tx,
+                            0,
+                            Payment {
+                                owner: r.coin.payment.owner,
+                                amount: change,
+                            },
+                            height,
+                            height,
+                            deps,
+                            channel_deps,
+                        )?;
+                    }
                 }
                 let escrow = self.channels.get_mut(channel).ok_or("unknown channel")?;
                 escrow.dependencies = deps.clone();
@@ -1003,15 +1134,17 @@ impl Book {
                     .map(|(id, r)| (*id, r.clone()))
                     .collect();
                 for (i, (ident, r)) in reserves.iter().enumerate() {
-                    ledger.output_with_channels(
-                        tx,
-                        32 + i as u32,
-                        r.coin.payment.clone(),
-                        height,
-                        height,
-                        deps,
-                        channel_deps,
-                    )?;
+                    if !r.coin.payment.amount.is_zero() {
+                        ledger.output_with_channels(
+                            tx,
+                            32 + i as u32,
+                            r.coin.payment.clone(),
+                            height,
+                            height,
+                            deps,
+                            channel_deps,
+                        )?;
+                    }
                     self.reserves.remove(ident);
                 }
                 let retained = self.channels.get_mut(channel).ok_or("unknown channel")?;
