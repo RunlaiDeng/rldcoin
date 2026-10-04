@@ -339,6 +339,204 @@ fn index(node: &Store) -> Result<Replay> {
     )?;
     Ok(result)
 }
+
+/// Read-only native observation for a caller-pinned current store. Complete
+/// ordered history is replayed; neither a serialized plan nor a cached sequence
+/// can authorize a challenge. Inclusion still needs ordinary block finality.
+#[derive(Debug, Serialize)]
+pub struct Watch {
+    pub format: &'static str,
+    pub currency: Hash,
+    pub region: Hash,
+    pub history_head: Hash,
+    pub parent_height: u64,
+    pub parent_block: Hash,
+    pub commands: Vec<Command>,
+    pub observations: Vec<WatchObservation>,
+    pub ledger_unchanged: bool,
+    pub signing_keys_used: bool,
+    pub inclusion_guaranteed: bool,
+    pub independent_latest_protection: bool,
+    pub live_rld: bool,
+}
+#[derive(Debug, Serialize)]
+pub struct WatchObservation {
+    pub channel: Hash,
+    pub accepted_receipt: Hash,
+    pub accepted_sequence: u64,
+    pub closing_sequence: u64,
+    pub close_height: u64,
+    pub deadline: u64,
+    pub challenge_ready: bool,
+    pub diagnostic: Option<String>,
+}
+/// Existing companion proposals have four command slots; preserve that budget.
+pub const WATCH_SLOTS: usize = 4;
+pub(crate) fn watch(node: &Store, miner: String, expected_head: Hash) -> Result<Watch> {
+    node.require_storage_head(expected_head)?;
+    require(
+        c::is_profile(&node.trust.region(node.chain.region)?.rules),
+        "channel watch requires explicit value-channel admission",
+    )?;
+    validate_ed25519_public_key(&miner)?;
+    let history = index(node)?;
+    let mut result = Watch {
+        format: "RLD-NATIVE-CHANNEL-WATCH-V1",
+        currency: node.trust.currency()?,
+        region: node.chain.region,
+        history_head: expected_head,
+        parent_height: node.chain.height(),
+        parent_block: node.chain.tip()?,
+        commands: vec![],
+        observations: vec![],
+        ledger_unchanged: true,
+        signing_keys_used: false,
+        inclusion_guaranteed: false,
+        independent_latest_protection: false,
+        live_rld: false,
+    };
+    let Some(native) = &node.chain.ledger.channel_state else {
+        return Ok(result);
+    };
+    native.declaration.verify(&node.trust, node.chain.region)?;
+    let mut closing = native
+        .book
+        .channels
+        .iter()
+        .filter_map(|(channel, escrow)| {
+            let c::Phase::Closing {
+                state,
+                close_height,
+                deadline,
+            } = &escrow.phase
+            else {
+                return None;
+            };
+            let receipt = history.latest.get(channel)?;
+            let accepted = &history.accepted[receipt];
+            (accepted.next.statement.sequence > state.statement.sequence).then_some((
+                *deadline,
+                *channel,
+                *close_height,
+                state.statement.sequence,
+                *receipt,
+            ))
+        })
+        .collect::<Vec<_>>();
+    closing.sort(); // earliest absolute deadline first, then exact channel ID
+    let next_height = node
+        .chain
+        .height()
+        .checked_add(1)
+        .ok_or("watch height overflow")?;
+    let mut projected = node.chain.ledger.clone();
+    for (deadline, channel, close_height, closing_sequence, receipt_id) in closing {
+        let receipt = &history.accepted[&receipt_id];
+        let attempted = (|| -> Result<Command> {
+            require(
+                next_height > close_height && next_height <= deadline,
+                "absolute challenge window exhausted",
+            )?;
+            require(
+                result.commands.len() < WATCH_SLOTS,
+                "four watch slots occupied; retain evidence for next candidate",
+            )?;
+            receipt.check_safety(node)?;
+            let current = projected
+                .channel_state
+                .as_ref()
+                .ok_or("watch projected channel missing")?;
+            let escrow = current
+                .book
+                .channels
+                .get(&channel)
+                .ok_or("watch channel missing")?;
+            escrow.verify_state(&receipt.next, channel, &current.declaration)?;
+            let reserve = current
+                .book
+                .reserves
+                .get(&receipt.statement.reserve)
+                .ok_or("accepted receipt reserve absent or consumed")?;
+            let fee = receipt.statement.expected.challenge_fee;
+            require(
+                reserve.channel == channel
+                    && reserve.allocated <= node.chain.height()
+                    && reserve.coin.mature <= node.chain.height()
+                    && fee >= MIN_CHALLENGE_FEE
+                    && reserve.fee_limit >= fee
+                    && reserve.coin.payment.amount >= fee,
+                "accepted receipt reserve no longer adequately mature/delegated",
+            )?;
+            Ok(Command::Channel(Box::new(c::NativeCommand {
+                declaration: current.declaration.clone(),
+                action: c::SignedAction {
+                    intent: c::Intent {
+                        rules: current.declaration.rules,
+                        currency: current.declaration.currency,
+                        region: current.declaration.region,
+                        nonce: node.chain.height(),
+                        valid_through: next_height,
+                        actor: None,
+                        previous: Some(current.book.head(&projected, &current.declaration)?),
+                        action: c::Action::Challenge {
+                            channel,
+                            state: Box::new(receipt.next.clone()),
+                            reserve: receipt.statement.reserve,
+                            fee,
+                        },
+                    },
+                    approvals: vec![],
+                },
+            })))
+        })()
+        .and_then(|command| {
+            let mut proposed = result.commands.clone();
+            proposed.push(command.clone());
+            node.safety.check(&node.chain, &proposed, &node.evidence)?;
+            // Full shared owner/value/finality/domain execution, on copies only.
+            node.chain
+                .execute(&proposed, &miner, &node.trust, &node.evidence)?;
+            // Next intent pins the prefix BEFORE the one block reward, not
+            // Chain::execute's final ledger containing that reward.
+            let Command::Channel(body) = &command else {
+                return Err("watch command type".into());
+            };
+            projected = c::execute_native(
+                &projected,
+                body,
+                &c::Context {
+                    declaration: &body.declaration,
+                    trust: &node.trust,
+                    evidence: &node.evidence,
+                    safety: &node.safety,
+                    height: next_height,
+                    miner: &miner,
+                },
+            )?;
+            Ok(command)
+        });
+        let (challenge_ready, diagnostic) = match attempted {
+            Ok(command) => {
+                result.commands.push(command);
+                (true, None)
+            }
+            Err(error) => (false, Some(error)),
+        };
+        result.observations.push(WatchObservation {
+            channel,
+            accepted_receipt: receipt_id,
+            accepted_sequence: receipt.next.statement.sequence,
+            closing_sequence,
+            close_height,
+            deadline,
+            challenge_ready,
+            diagnostic,
+        });
+    }
+    // A bad/history/incident read cannot be turned into an empty passing plan.
+    node.require_storage_head(expected_head)?;
+    Ok(result)
+}
 /// No first signing, key input or ledger debit. Store checks its OS lock,
 /// health and separately supplied current storage head before calling this.
 pub(crate) fn accept(

@@ -381,6 +381,13 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    /// Reconstruct keyless challenge candidates from complete accepted history.
+    ChannelWatch {
+        #[arg(long)]
+        miner: String,
+        #[arg(long)]
+        expected_head: String,
+    },
     ChannelWitnessSeal {
         #[arg(long)]
         witness_dir: PathBuf,
@@ -857,6 +864,7 @@ fn run() -> Result<()> {
         }
         Action::HistoryCheck { expected_head }
         | Action::ChannelReceiptAccept { expected_head, .. }
+        | Action::ChannelWatch { expected_head, .. }
         | Action::ChannelWitnessSeal { expected_head, .. }
         | Action::ChannelWitnessRecoverSeal { expected_head, .. }
         | Action::ChannelWitnessInit { expected_head, .. }
@@ -1451,6 +1459,17 @@ fn run() -> Result<()> {
                 serde_json::to_string(&signed).map_err(|e| e.to_string())?
             );
         }
+        Action::ChannelWatch {
+            miner,
+            expected_head,
+        } => println!(
+            "{}",
+            serde_json::to_string(&store.channel_watch(
+                miner,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?
+            )?)
+            .map_err(|e| e.to_string())?
+        ),
         Action::ChannelReceiptAccept {
             file,
             expectation,

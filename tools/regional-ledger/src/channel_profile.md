@@ -1,4 +1,4 @@
-# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V6
+# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V7
 
 Fresh no-value admission only. Both native BFT-value-channel and segmented-
 value-channel admissions sign the exact content identity of this profile,
@@ -102,7 +102,7 @@ a backup. Combined partials grant no acceptance, ledger credit or new funds.
 Incomplete creation refuses unchanged; no restore, independent freshness,
 copied-key concurrency, monitoring/inclusion or physical qualification follows.
 
-V6 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
+V7 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
 sign the mandatory funding witness key; absent policy refuses funding and is read-only for the owner
 service, never a fallback. The witness key differs from parties, authority and
 regional validators. Its separate private OS-locked journal fully authenticates
@@ -120,7 +120,7 @@ finality or issuance authority. The same-process same-host ground role separatio
 does not qualify independent service/custody, common/witness rollback, copied
 witness keys, independent anti-rollback hardware or adversarial raw-key signing.
 
-V6 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
+V7 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
 funding-selected cosignature. Every new funding selects a separate role. Native
 receipt, Close and Challenge authenticate both complete actual owner signatures
 and that role; receipts bind the exact complete invoice. Original inception
@@ -138,3 +138,17 @@ ordered native receipt replay additionally retains the exact prior authorization
 statement. Each envelope still fully authenticates before equality/deduplication.
 Private owner review and witness advance/seal verify those original births before
 signing, without inferring latest state from a public digest or copied backup.
+
+V7 adds read-only native challenge watching from the complete ordered accepted
+receipt history. Exact caller-pinned native heads guard explicit observation;
+the normal BFT candidate observes its locked current head locally. It selects
+only a strictly higher accepted complete state, its exact still-mature chosen
+reserve and its signed fee budget. Every command passes the shared native
+execution on staged copies. Challenges occupy the existing four proposal slots,
+earliest absolute deadline first; incoming stale submissions remain retained.
+Blocked, expired or capacity-deferred observations never grant inclusion, remove
+evidence or refund value. No fresh owner/witness signature is used. Selection
+is local policy, not new consensus or independent freshness authority.
+The signed window, fees, original reserve delegation, quorums and limits remain.
+Actual full-window/fault liveness, incident observation and physical/independent
+qualification remain mandatory. Fresh source-bound no-value fixtures only.

@@ -297,6 +297,13 @@ impl Store {
             live_rld: false,
         })
     }
+    pub fn channel_watch(
+        &self,
+        miner: String,
+        expected_head: Hash,
+    ) -> Result<crate::channel_receipt::Watch> {
+        crate::channel_receipt::watch(self, miner, expected_head)
+    }
     pub fn create(
         dir: &Path,
         bootstrap: Bootstrap,
@@ -729,6 +736,27 @@ impl Store {
     }
     pub fn bft_candidate(&self, commands: Vec<Command>, miner: String) -> Result<Snapshot> {
         crate::bft::Context::current(self)?;
+        let commands = if self.trust.region(self.chain.region)?.rules == channels::BFT_RULES {
+            // Ordinary startup already calls this native candidate path. This
+            // current-head read is a locked local observation, not an independent
+            // freshness witness or permission to first-sign an owner response.
+            let head = crate::history::manifest(&self.dir)?.head()?;
+            let mut watched = self.channel_watch(miner.clone(), head)?.commands;
+            let automatic = watched.len();
+            for command in commands {
+                // Exact complete typed equality only; no body/hash-only auth.
+                if !watched.contains(&command) {
+                    watched.push(command);
+                }
+            }
+            require(
+                automatic == 0 || watched.len() <= crate::channel_receipt::WATCH_SLOTS,
+                "automatic challenges occupy existing four candidate slots",
+            )?;
+            watched
+        } else {
+            commands
+        };
         self.safety.check(&self.chain, &commands, &self.evidence)?;
         let mut block = self
             .chain

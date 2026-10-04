@@ -1,4 +1,4 @@
-# RLD-REGIONAL-CHANNEL-KERNEL-V6
+# RLD-REGIONAL-CHANNEL-KERNEL-V7
 
 Native signature/value component only. This is not a complete protocol profile,
 ordinary node activation, signing custody, incident resolution or value migration.
@@ -73,7 +73,7 @@ a backup. Combined partials grant no acceptance, ledger credit or new funds.
 Incomplete creation refuses unchanged; no restore, independent freshness,
 copied-key concurrency, monitoring/inclusion or physical qualification follows.
 
-V6 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
+V7 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
 sign the mandatory funding witness key; absent policy refuses funding and is read-only for the owner
 service, never a fallback. The witness key differs from parties, authority and
 regional validators. Its separate private OS-locked journal fully authenticates
@@ -91,7 +91,7 @@ finality or issuance authority. The same-process same-host ground role separatio
 does not qualify independent service/custody, common/witness rollback, copied
 witness keys, independent anti-rollback hardware or adversarial raw-key signing.
 
-V6 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
+V7 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
 funding-selected cosignature. Every new funding selects a separate role. Native
 receipt, Close and Challenge authenticate both complete actual owner signatures
 and that role; receipts bind the exact complete invoice. Original inception

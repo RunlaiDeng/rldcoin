@@ -418,3 +418,17 @@ conflict/cold也检查完整proof。见证签署的起点承诺不是独立最�
 [完整角色与边界](REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md)、
 [实现结果](../operations/evidence/regional-native-channel-state-witness-outcome-20261005.json)及
 [最终内容身份](../operations/evidence/regional-native-channel-state-witness-final-label-outcome-20261005.json)。
+
+## V7 自动原生看守及未通过的费用覆盖
+
+在 fresh signed V7 profile 下，完整 ordered native accepted-receipt 重放现在
+为历史低状态 Close 生成无钥 Challenge，使用准确当前 chosen reserve/fee。
+普通 BFT candidate 优先加入、完整 native prepare/commit/finalize 决定纳入；
+所有金额/成熟/票数/c+2016/容量不变。双通道有序前驱、stale caller head、
+普通 CLI 删除钥文件后显式挑战与冷重放有真实行为证据。
+
+R-CH-FEE-01仍未通过：合法旧挑战可先消费 one-use chosen reserve，最高
+accepted 状态随后失去费用覆盖。Watcher 的诊断与账本守恒不是付款安全。
+先模型判别完整费用授权，不提高储备最低数量/上限，不退款或重签旧 fixture。
+见[完整实现与失败契约](REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md)。自动 Runtime
+完整网络/故障/2016历史、独立 latest/custody、所有 S/R/I/A-G/N/P 仍需验收。

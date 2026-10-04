@@ -177,6 +177,107 @@ fn accept(node: &mut Store, root: &std::path::Path, receipt: r::Receipt) -> Resu
 }
 
 #[test]
+fn native_channel_watch_discrimination_accepted_higher_state_keyless_challenge_preserves_deadline()
+{
+    let (root, mut node, channel, reserve) = setup(Some(3));
+    let prior = initial(&node, channel);
+    let paid = receipt(&node, reserve.unwrap(), 1, prior.clone(), 10, None);
+    let ledger = node.chain.ledger.clone();
+    accept(&mut node, &root, paid.clone()).unwrap();
+    assert_eq!(ledger, node.chain.ledger);
+    let fee_input = *node
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, coin)| {
+            coin.payment.owner == public(10) && coin.mature <= node.chain.height() + 1
+        })
+        .unwrap()
+        .0;
+    let close = command(
+        &node.chain,
+        &node.trust,
+        c::Action::Close {
+            channel,
+            state: Box::new(prior),
+            fee_input,
+            fee: Amount(1),
+        },
+        Some(10),
+        &[10],
+    );
+    selected(&mut node, vec![close]);
+    let closing_height = node.chain.height();
+    let before_locked = node
+        .chain
+        .ledger
+        .channel_state
+        .as_ref()
+        .unwrap()
+        .book
+        .locked()
+        .unwrap();
+    // No owner/witness key or fresh signature is used after the old Close.
+    let challenge = command(
+        &node.chain,
+        &node.trust,
+        c::Action::Challenge {
+            channel,
+            state: Box::new(paid.next.clone()),
+            reserve: reserve.unwrap(),
+            fee: Amount(3),
+        },
+        None,
+        &[],
+    );
+    let Command::Channel(body) = &challenge else {
+        panic!()
+    };
+    assert!(body.action.intent.actor.is_none() && body.action.approvals.is_empty());
+    selected(&mut node, vec![challenge]);
+    let book = &node.chain.ledger.channel_state.as_ref().unwrap().book;
+    let c::Phase::Closing {
+        state,
+        close_height,
+        deadline,
+    } = &book.channels[&channel].phase
+    else {
+        panic!()
+    };
+    assert_eq!(state.as_ref(), &paid.next);
+    assert_eq!(*close_height, closing_height);
+    assert_eq!(*deadline, closing_height + c::WINDOW);
+    assert_eq!(book.channels[&channel].terms().unwrap().1, Amount(60));
+    assert_eq!(
+        before_locked.checked_sub(book.locked().unwrap()).unwrap(),
+        ledger.channel_state.as_ref().unwrap().book.reserves[&reserve.unwrap()]
+            .coin
+            .payment
+            .amount
+    );
+    assert!(!book.reserves.contains_key(&reserve.unwrap()));
+    let (issued, liquid, escrow, outbound) =
+        conservation_with_escrow(&[node.chain.clone()]).unwrap();
+    assert_eq!(issued, add(add(liquid, escrow).unwrap(), outbound).unwrap());
+    let retained = head(&root);
+    let expected = node.chain.ledger.clone();
+    drop(node);
+    let reopened = Store::open_pinned(
+        &root.join("earth"),
+        &public(1),
+        paid.statement.expected.currency,
+        retained,
+    )
+    .unwrap();
+    assert_eq!(reopened.chain.ledger, expected);
+    println!(
+        "keyless challenge after accepted receipt; cold replay verified; fixture retained: {}",
+        root.display()
+    );
+}
+
+#[test]
 fn native_channel_receipt_missing_insufficient_immature_and_topup_follow_actual_fee_rule() {
     let (root, mut node, channel, _) = setup(None);
     let before = node.chain.ledger.clone();
@@ -487,4 +588,119 @@ fn native_channel_receipt_publication_failure_keeps_pending_residue_and_never_ac
     .is_err());
     assert!(!root.join("image").exists());
     fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn native_channel_watch_highest_complete_history_stale_head_and_consumed_exact_reserve() {
+    let (root, mut node, channel, reserve) = setup(Some(3));
+    let initial = initial(&node, channel);
+    let first = receipt(&node, reserve.unwrap(), 1, initial.clone(), 10, None);
+    accept(&mut node, &root, first.clone()).unwrap();
+    let second = receipt(
+        &node,
+        reserve.unwrap(),
+        2,
+        first.next.clone(),
+        2,
+        Some(first.id().unwrap()),
+    );
+    accept(&mut node, &root, second.clone()).unwrap();
+    assert!(node.channel_watch(public(10), Hash::ZERO).is_err());
+    assert!(node
+        .channel_watch(public(10), head(&root))
+        .unwrap()
+        .commands
+        .is_empty());
+    let fee_input = *node
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, coin)| {
+            coin.payment.owner == public(10) && coin.mature <= node.chain.height() + 1
+        })
+        .unwrap()
+        .0;
+    let close = command(
+        &node.chain,
+        &node.trust,
+        c::Action::Close {
+            channel,
+            state: Box::new(initial),
+            fee_input,
+            fee: Amount(1),
+        },
+        Some(10),
+        &[10],
+    );
+    let stale = head(&root);
+    selected(&mut node, vec![close]);
+    assert!(node.channel_watch(public(10), stale).is_err());
+    let before = node.chain.ledger.clone();
+    let pinned = head(&root);
+    let watch = node.channel_watch(public(10), pinned).unwrap();
+    assert_eq!(watch.commands.len(), 1);
+    let Command::Channel(body) = &watch.commands[0] else {
+        panic!()
+    };
+    let c::Action::Challenge {
+        state,
+        reserve: chosen,
+        fee,
+        ..
+    } = &body.action.intent.action
+    else {
+        panic!()
+    };
+    assert_eq!(state.as_ref(), &second.next);
+    assert_eq!(*chosen, reserve.unwrap());
+    assert_eq!(*fee, Amount(3));
+    assert!(body.action.approvals.is_empty() && body.action.intent.actor.is_none());
+    assert_eq!(node.chain.ledger, before);
+    assert_eq!(head(&root), pinned);
+    assert!(!watch.signing_keys_used && !watch.inclusion_guaranteed);
+    // A historical higher state can consume the chosen reserve. Never invent
+    // another fee delegation or refund the accepted off-chain payment.
+    let partial_challenge = command(
+        &node.chain,
+        &node.trust,
+        c::Action::Challenge {
+            channel,
+            state: Box::new(first.next),
+            reserve: reserve.unwrap(),
+            fee: Amount(1),
+        },
+        None,
+        &[],
+    );
+    selected(&mut node, vec![partial_challenge]);
+    let now = head(&root);
+    let watch = node.channel_watch(public(10), now).unwrap();
+    assert!(watch.commands.is_empty());
+    assert_eq!(watch.observations.len(), 1);
+    assert_eq!(watch.observations[0].accepted_sequence, 2);
+    assert_eq!(watch.observations[0].closing_sequence, 1);
+    assert!(watch.observations[0]
+        .diagnostic
+        .as_ref()
+        .unwrap()
+        .contains("consumed"));
+    assert_eq!(head(&root), now);
+    drop(node);
+    let node = Store::open_pinned(
+        &root.join("earth"),
+        &public(1),
+        second.statement.expected.currency,
+        now,
+    )
+    .unwrap();
+    assert!(node
+        .channel_watch(public(10), now)
+        .unwrap()
+        .commands
+        .is_empty());
+    println!(
+        "highest receipt and consumed-reserve refusal cold verified; retained {}",
+        root.display()
+    );
 }

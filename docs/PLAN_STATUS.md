@@ -6,6 +6,10 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
+当前源绑定开发已推进到 V7 原生通道 watcher / BFT 自动候选；
+[R-CH-FEE-01](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md) 费用覆盖反例仍
+未通过，不能把 watcher、历史普通/fault scope 或守恒称为全部协议安全完成。
+
 ## 已完成的近期交付
 
 **历史有限基线通过，仅适用于 quiet-broadcast 冻结来源 `8831a634...`、二进制 `72cb9d5f...`：
@@ -425,3 +429,23 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 公开仓库仍为已验证 v55；v56 材料完整延后保存。不发布微优化或失败变体。
 失败状态、签署证据及私有头不改变；不恢复失败范围为通过、不迁移价值、不提高上限或剪除证据。
 独立运营、物理链路、长期断连/历史、跨设备保管及真正跨星际资格仍未完成。
+
+## 2026-10-05 V7 原生自动挑战及费用安全失败
+
+原生 watcher 现在从完整 accepted-receipt 历史重建最高状态、核验准确储备和
+签署费额、按绝对deadline/原四slots构造无钥Challenge。普通V7 BFT candidate
+优先携带，完整原生 quorum/finality决定纳入；本地head观察不是独立最新权威。
+34 focused/build/无豁免strict终止通过，双通道native实际certificate/cold重放
+通过；新鲜无价值CLI在owner/witness钥文件删除后执行watch/普通mine/cold。
+原试验与S11/2016/full-fault/独立/物理资格保持分开。
+
+**R-CH-FEE-01 OPEN / 未通过：** Native实际接受q1/q2后，合法Challenge(q1)
+会消费最高q2选择的one-use reserve。Watcher报告覆盖丧失，不能保护q2；
+这不是成熟/守恒或调度通过能代替的安全资格。禁止以该receipt接受为生产安全
+付款采用。下一一次120秒模型先判别完整费用授权，原账本/余额/失败不迁移、
+不退款、不增加16储备最低门槛。[准确契约/反例](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md)。
+共享回归因实际BFT候选路径改变一次300秒，184项于221.791秒终止通过；
+准确来源共218项native行为、无豁免strict/build及70步CLI通过，不启动network。
+最终来源 `4110ffc4...` / binary `57dd7cd9...`，见
+[准确结果及未通过项](operations/evidence/regional-native-channel-watch-outcome-20261005.json)。
+旧价值库VALUE-STRICT-01仍OPEN，地区strict不替代；冻结正文/PDF/官网不变。

@@ -175,3 +175,25 @@ count within unchanged 256/8-MiB witness bounds. No private journal/key is publi
 Full rollback, copied witness keys, independent service/custody, watcher/inclusion,
 full challenge window/reorganization/history and physical/crypto qualification
 remain open. See REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md under research.
+
+V7 adds complete native receipt-history watching and ordinary value-BFT candidate
+challenge priority under fresh explicit admissions. Reconstruct accepted history
+from genesis; explicit observation pins the caller's current storage head, while
+the ordinary keyless candidate observes only its locked local current head.
+Neither grants independent freshness or first-signing authority. Select only the
+highest accepted complete state, its exact currently mature chosen reserve and
+signed fee. Stage ordered challenge prefixes before block issuance, verify the
+complete combined commands through normal native execution, and keep the
+existing four companion slots, quorums, deadlines and bounds. Candidate generation
+never debits; actual certification/finality still decides inclusion. Preserve
+blocked diagnostics, stale submissions and historical receipts.
+
+The actual V7 R-CH-FEE-01 counterexample remains OPEN: a valid older higher-state
+challenge can consume the one-use reserve selected by the highest accepted
+receipt. Honest automatic watching does not prove coverage against that race;
+receipt acceptance is not qualified for safe production payment. Choosing another
+reserve is not a proven repair because current delegation is channel-wide.
+Do not increase capacity/minimum reserve counts, refund principal or rewrite
+failed evidence. Develop the next complete fee-authorization model first under
+REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md; changed source requires fresh signed
+no-value currency/fixture, never old state or custody migration.
