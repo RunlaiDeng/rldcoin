@@ -1,0 +1,144 @@
+{
+  "format": "RLD-OUTBOUND-PEER-PERIODIC-LEASE-PHASE-COMPONENT-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "label": "candidate",
+  "tcp_source_sha256": "c7e3e1c6b26f01504ffead747b85512ca8a254ba9d7d12a754b9cf27997c7b63",
+  "mesh_source_sha256": "90bd87e3c86ae81c2e329ce44bbcd3f77e9fef825bc8402c2312ac920db1dc29",
+  "observer_sha256": "6c4c46ac8d39921ba2ef12e969dec8bf50552dfa326a245cc38fdf2a4636ebd1",
+  "actual_pinned_TLS": true,
+  "actual_single_outgoing_owner": true,
+  "actual_competing_TCP_mesh_leases": true,
+  "controlled_periodic_lease_not_measured_Native_CPU": true,
+  "passes": 4,
+  "maximum_outbound_contacts_per_pass": 4,
+  "ordinary_lock_attempt_seconds": 0.2,
+  "socket_attempt_seconds": 3.0,
+  "attempt_orders": [
+    [
+      {
+        "peer_slot": 0,
+        "success": false
+      },
+      {
+        "peer_slot": 1,
+        "success": false
+      },
+      {
+        "peer_slot": 2,
+        "success": true
+      },
+      {
+        "peer_slot": 3,
+        "success": true
+      }
+    ],
+    [
+      {
+        "peer_slot": 1,
+        "success": false
+      },
+      {
+        "peer_slot": 2,
+        "success": false
+      },
+      {
+        "peer_slot": 3,
+        "success": true
+      },
+      {
+        "peer_slot": 0,
+        "success": true
+      }
+    ],
+    [
+      {
+        "peer_slot": 2,
+        "success": false
+      },
+      {
+        "peer_slot": 3,
+        "success": false
+      },
+      {
+        "peer_slot": 0,
+        "success": true
+      },
+      {
+        "peer_slot": 1,
+        "success": true
+      }
+    ],
+    [
+      {
+        "peer_slot": 3,
+        "success": false
+      },
+      {
+        "peer_slot": 0,
+        "success": false
+      },
+      {
+        "peer_slot": 1,
+        "success": true
+      },
+      {
+        "peer_slot": 2,
+        "success": true
+      }
+    ]
+  ],
+  "competing_lease_records": [
+    {
+      "seconds": 0.40165783299016766,
+      "controlled_barrier": true
+    },
+    {
+      "seconds": 0.4015041250095237,
+      "controlled_barrier": true
+    },
+    {
+      "seconds": 0.40117900000768714,
+      "controlled_barrier": true
+    },
+    {
+      "seconds": 0.40127987498999573,
+      "controlled_barrier": true
+    }
+  ],
+  "actual_receipt_checks": [
+    {
+      "peer_slot": 0,
+      "destination_actual_exact_receipt": true,
+      "source_actual_exact_receipt": true
+    },
+    {
+      "peer_slot": 1,
+      "destination_actual_exact_receipt": true,
+      "source_actual_exact_receipt": true
+    },
+    {
+      "peer_slot": 2,
+      "destination_actual_exact_receipt": true,
+      "source_actual_exact_receipt": true
+    },
+    {
+      "peer_slot": 3,
+      "destination_actual_exact_receipt": true,
+      "source_actual_exact_receipt": true
+    }
+  ],
+  "unique_serviced_peers": 4,
+  "sender_pass_error_counts": [
+    2,
+    2,
+    2,
+    2
+  ],
+  "all_owned_threads_and_sockets_closed": true,
+  "no_native_ledger_wallet_signing_or_failed_fixture_calls": true,
+  "private_generated_state_not_published": true,
+  "full_fault_unique_cause_proven": false,
+  "duration_seconds": 2.1338431669864804
+}

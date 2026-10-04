@@ -11,6 +11,7 @@ import copy
 import errno
 from bisect import bisect_right
 from contextlib import contextmanager
+from math import gcd
 import datetime
 import hashlib
 import os
@@ -687,7 +688,14 @@ class Server:
         if peers:
             offset=self.cursor%len(peers)
             chosen=(peers[offset:]+peers[:offset])[:MAX_OUTBOUND_PER_TICK]
-            self.cursor=(self.cursor+len(chosen))%len(peers)
+            # The whole batch can repeatedly start at the same peer (four
+            # configured peers / four slots), aligning that peer with periodic
+            # local contention. A coprime stride visits every batch position;
+            # it changes scheduling only, never the pinned peer set or bounds.
+            stride=len(chosen)
+            while gcd(stride,len(peers))!=1:
+                stride+=1
+            self.cursor=(self.cursor+stride)%len(peers)
             for peer in chosen:
                 if not self.running:
                     break
