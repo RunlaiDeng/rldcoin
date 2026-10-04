@@ -39,6 +39,8 @@ pub struct Commitment {
     pub imports: IndexRoot,
     pub minted: Amount,
     pub received: Amount,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub channel_state: Option<Hash>,
 }
 impl Commitment {
     pub fn from_ledger(ledger: &Ledger) -> Result<Self> {
@@ -55,6 +57,11 @@ impl Commitment {
             imports: index_root(Collection::Imports, &ledger.imports)?,
             minted: ledger.minted,
             received: ledger.received,
+            channel_state: ledger
+                .channel_state
+                .as_deref()
+                .map(channels::NativeState::commitment)
+                .transpose()?,
         })
     }
     pub fn hash(&self) -> Result<Hash> {

@@ -115,11 +115,25 @@ pub struct Admission {
     pub currency: Hash,
     pub region: String,
     pub rules: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub value_rules: Option<Hash>,
     pub validators: Vec<String>,
     pub signature: String,
 }
 impl Admission {
     pub fn bytes(&self) -> Result<Vec<u8>> {
+        if let Some(value_rules) = self.value_rules {
+            return encode(
+                "value-channel-admission-v1",
+                &(
+                    self.currency,
+                    &self.region,
+                    &self.rules,
+                    value_rules,
+                    &self.validators,
+                ),
+            );
+        }
         encode(
             "admission",
             &(self.currency, &self.region, &self.rules, &self.validators),
@@ -134,7 +148,12 @@ impl Admission {
             self.currency == currency.id()?
                 && (self.rules == DOMAIN
                     || bft::is_profile(&self.rules)
-                    || self.rules == segmented::RULES)
+                    || segmented::is_profile(&self.rules))
+                && if channels::is_profile(&self.rules) {
+                    self.value_rules == Some(channels::profile_hash()?)
+                } else {
+                    self.value_rules.is_none()
+                }
                 && self.validators.len() == 4
                 && self.validators.windows(2).all(|v| v[0] < v[1]),
             "wrong admission identity, rules or validator set",
@@ -175,6 +194,22 @@ impl Trust {
             labels.contains(&package.currency.origin),
             "origin admission missing",
         )?;
+        if package
+            .admissions
+            .iter()
+            .any(|a| channels::is_profile(&a.rules))
+        {
+            require(
+                package
+                    .admissions
+                    .iter()
+                    .any(|a| a.region == package.currency.origin && channels::is_profile(&a.rules))
+                    && package.currency.cap == Amount::TOTAL_SUPPLY
+                    && package.currency.block_reward
+                        == rld_pow::subsidy(1).map_err(|e| e.to_string())?,
+                "channel currency requires exact origin reserve-era issuance admission",
+            )?;
+        }
         Ok(Self {
             binding: id("verified-trust", &(&package.currency, &regions))?,
             currency: package.currency.clone(),
@@ -242,6 +277,7 @@ pub enum Command {
     Spend(Box<SignedIntent>),
     Import { snapshot: Hash, export: Hash },
     Reconfigure(Box<joint_epoch::Plan>),
+    Channel(Box<channels::NativeCommand>),
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -270,12 +306,17 @@ pub struct Ledger {
     pub imports: BTreeMap<Hash, Hash>,
     pub minted: Amount,
     pub received: Amount,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub channel_state: Option<Box<channels::NativeState>>,
 }
 impl Ledger {
     pub fn root(&self) -> Result<Hash> {
         state_proof::Commitment::from_ledger(self)?.hash()
     }
     pub fn audit(&self) -> Result<()> {
+        if let Some(state) = &self.channel_state {
+            return state.book.audit(self, &state.declaration);
+        }
         require(
             self.coins.len() <= MAX_COINS
                 && self.exports.len() <= MAX_COINS
@@ -524,7 +565,7 @@ impl VerifiedEvidence {
         if let Some((_, (old, _))) = latest {
             require(
                 statement.height > old.statement.height
-                    && (trust.region(statement.region)?.rules == segmented::RULES
+                    && (crate::segmented::is_profile(&trust.region(statement.region)?.rules)
                         || snapshot.blocks.starts_with(&old.blocks)),
                 "checkpoint fork or rollback",
             )?;
@@ -555,7 +596,7 @@ impl VerifiedEvidence {
             snapshot.statement.currency == trust.currency()? && snapshot.blocks.len() <= MAX_BLOCKS,
             "replay extension identity or block bound",
         )?;
-        if trust.region(snapshot.statement.region)?.rules == segmented::RULES {
+        if crate::segmented::is_profile(&trust.region(snapshot.statement.region)?.rules) {
             return segmented::replay(snapshot, trust, self);
         }
         let mut chain = if let Some(previous) = snapshot.statement.previous {
@@ -702,7 +743,7 @@ impl Chain {
             currency: trust.currency()?,
             prefix_height: 0,
             prefix_tip: region,
-            segmented: trust.region(region)?.rules == segmented::RULES,
+            segmented: crate::segmented::is_profile(&trust.region(region)?.rules),
             blocks: vec![],
             ledger: Ledger::default(),
             finalized: None,
@@ -943,9 +984,18 @@ pub fn mine(block: &mut Block) -> Result<()> {
 /// Evidence-set accounting, not a global live balance oracle. Input chains must
 /// be compatible replayed histories; historical exports are counted only once.
 pub fn conservation(chains: &[Chain]) -> Result<(Amount, Amount, Amount)> {
+    let (issued, liquid, escrow, pending) = conservation_with_escrow(chains)?;
+    require(
+        escrow.is_zero(),
+        "legacy three-bucket query cannot omit channel escrow",
+    )?;
+    Ok((issued, liquid, pending))
+}
+pub fn conservation_with_escrow(chains: &[Chain]) -> Result<(Amount, Amount, Amount, Amount)> {
     let mut regions = BTreeSet::new();
     let mut issued = Amount::ZERO;
     let mut liquid = Amount::ZERO;
+    let mut escrow = Amount::ZERO;
     let mut exports = BTreeMap::new();
     let mut imports = BTreeSet::new();
     for chain in chains {
@@ -954,6 +1004,9 @@ pub fn conservation(chains: &[Chain]) -> Result<(Amount, Amount, Amount)> {
             "duplicate region in accounting",
         )?;
         chain.ledger.audit()?;
+        if let Some(state) = &chain.ledger.channel_state {
+            escrow = add(escrow, state.book.locked()?)?;
+        }
         issued = add(issued, chain.ledger.minted)?;
         liquid = add(
             liquid,
@@ -980,10 +1033,10 @@ pub fn conservation(chains: &[Chain]) -> Result<(Amount, Amount, Amount)> {
         .filter(|(id, _)| !imports.contains(id))
         .map(|(_, e)| e.recipient.amount))?;
     require(
-        issued == add(liquid, pending)?,
+        issued == add(add(liquid, escrow)?, pending)?,
         "global evidence-set conservation failure",
     )?;
-    Ok((issued, liquid, pending))
+    Ok((issued, liquid, escrow, pending))
 }
 pub mod bft;
 mod bft_epoch;

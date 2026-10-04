@@ -109,6 +109,9 @@ impl Record {
                             CompactCommand::Import { snapshot, export }
                         }
                         Command::Reconfigure(plan) => CompactCommand::Reconfigure(plan),
+                        Command::Channel(_) => {
+                            return Err("compact stream V1 cannot encode channel commands".into())
+                        }
                     });
                 }
                 let h = block.header;

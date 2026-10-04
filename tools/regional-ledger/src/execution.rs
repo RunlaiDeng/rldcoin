@@ -18,6 +18,7 @@ impl Execution<'_> {
         finalized: Option<Hash>,
     ) -> Result<Ledger> {
         evidence.check_trust(trust)?;
+        channels::validate_profile(self.ledger, trust, self.region)?;
         require(commands.len() <= MAX_COMMANDS, "command bound")?;
         require(
             complete || (commands.len() == 1 && matches!(commands[0], Command::Spend(_))),
@@ -39,6 +40,24 @@ impl Execution<'_> {
         let mut ledger = (*self.ledger).clone();
         for command in commands {
             match command {
+                Command::Channel(command) => {
+                    require(
+                        complete && command.declaration.region == self.region,
+                        "channel command requires complete local authorization",
+                    )?;
+                    ledger = channels::execute_native(
+                        &ledger,
+                        command,
+                        &channels::Context {
+                            declaration: &command.declaration,
+                            trust,
+                            evidence,
+                            safety: &conflict::Safety::default(),
+                            height,
+                            miner,
+                        },
+                    )?;
+                }
                 Command::Reconfigure(plan) => {
                     crate::joint_epoch::validate_command(
                         plan,
@@ -216,7 +235,19 @@ impl Execution<'_> {
                 .cap
                 .checked_sub(ledger.minted)
                 .map_err(|e| e.to_string())?;
-            let reward = remaining.min(trust.currency.block_reward);
+            let reward = if channels::is_profile(&trust.region(self.region)?.rules) {
+                require(
+                    ledger.minted == Amount(rld_pow::cumulative_emission(self.height as u128)),
+                    "origin reserve differs from fully replayed selected height",
+                )?;
+                rld_pow::subsidy(height as u128).map_err(|e| e.to_string())?
+            } else {
+                remaining.min(trust.currency.block_reward)
+            };
+            require(
+                reward <= remaining,
+                "origin reward exceeds remaining reserve",
+            )?;
             if !reward.is_zero() {
                 let tx = id("issuance", &(self.region, height, self.tip))?;
                 ledger.output(

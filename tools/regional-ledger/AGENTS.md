@@ -1,6 +1,7 @@
 # Regional value composition
 
-The ordinary regional ledger has no channel/fee-reserve value bucket. The
+The ordinary regional ledger now has an explicitly admitted channel/fee-reserve
+bucket for the new native ground value-channel profiles. The
 executable model in `../value_composition_model.py` and the contract in
 `../../docs/research/REGIONAL_VALUE_COMPOSITION_CONTRACT_V1.md` are mathematical
 inputs for implementation, not authenticated native state or an adopted profile.
@@ -8,16 +9,30 @@ Its oracle booleans and search bounds never authorize a block or relax native
 limits. Preserve the old single-unit model and frozen fixture evidence.
 
 `src/channels.rs` is a separate typed native signature/value kernel under
-authority-signed `RLD-REGIONAL-CHANNEL-KERNEL-V1`, not an ordinary block or
-wallet command. It stages copies of fully native-replayed inputs, checks the
+authority-signed `RLD-REGIONAL-CHANNEL-KERNEL-V1`. Its standalone API stages
+copies of fully native-replayed inputs and checks the
 separately retained exact latest head and never signs or persists custody.
 Its U/E audit, source declaration, complete state/owner signatures, native
 snapshot provenance, one-use reserve and c+1 through c+2016 challenge checks
 are component evidence only. Serialized Book/head observations cannot
 initialize authority. Same-sequence state conflicts, paid descendants,
-mandatory adequately reserved receipt acceptance and ordinary state-root/
-replay/wallet/storage integration remain open. Do not expose this component
-as a live signing, acceptance or restore service before those paths qualify.
+mandatory adequately reserved receipt acceptance and wallet signing/custody
+remain open. Do not expose this as a live owner signing or restore service.
+
+The separate `RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V1` and
+`RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V1` admissions sign the exact
+`src/channel_profile.md`, kernel and reserve-era issuance identities under a
+new admission domain. Legacy admissions refuse value_rules/channel commands.
+The ordinary shared execution, complete NativeState state commitment and
+genesis/history replay retain E, complete source/party signatures and signed
+prior action heads. The latter is a block dependency, never independent latest
+freshness for first signing/recovery. New currencies require the exact 10^35
+cap and normative origin issuance; old constant-reward fixtures stay scoped.
+BFT remains ordered 3-of-4 with fixed membership, segmented unanimous stays
+4-of-4. Epoch/stream profiles do not silently adopt channels or lower thresholds.
+Existing bounds and every stopped failed fixture remain. Kernel/ordinary
+samples do not qualify same-sequence incidents, full paid descendants, invoice
+acceptance, owner signing, long BFT history or independent/physical operation.
 
 Adding native channels requires explicit new currency/admission/rule identity;
 legacy profiles must refuse the new commands. Bind exact funding, parties,

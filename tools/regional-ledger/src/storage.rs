@@ -53,7 +53,7 @@ impl Journal {
     ) -> Result<(Trust, VerifiedEvidence, Chain)> {
         encode("journal", self)?;
         let trust = Trust::verify(&self.bootstrap, authority, pin)?;
-        let segmented = trust.region(self.region)?.rules == crate::segmented::RULES;
+        let segmented = crate::segmented::is_profile(&trust.region(self.region)?.rules);
         require(
             if segmented {
                 self.event_prefix.len() <= crate::history::MAX_FILES

@@ -35,8 +35,11 @@ refuse. Quarantined dependencies forbid all new transitions. A separately
 retained exact latest component head is required before evaluation; a newly
 observed or reconstructed head is not an independent freshness witness.
 
-The kernel only verifies existing signatures and stages value in process. It
-does not sign, release an owner response, persist a ledger, accept a block or
-initialize state from a serialized cache. Ordinary shared replay, state-root,
-wallet/caller custody, global incident/descendant and durable recovery paths
-require separate integration and qualification before node activation.
+The standalone kernel verifies existing signatures and stages value in process.
+It does not sign, release an owner response or initialize serialized state.
+The separate explicit native value-channel profile integrates this kernel into
+ordinary blocks, state commitments and complete history replay, requiring an
+action-signed prior native head. That deterministic replay dependency is not an
+independent freshness witness for signing. Wallet/caller custody, complete
+incident/paid-descendant policy and independent recovery still require separate
+implementation and qualification before live adoption.

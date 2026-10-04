@@ -238,6 +238,11 @@ fn calculate(
         imports: indexes[2].root(Collection::Imports)?,
         minted: ledger.minted,
         received: ledger.received,
+        channel_state: ledger
+            .channel_state
+            .as_deref()
+            .map(channels::NativeState::commitment)
+            .transpose()?,
     };
     state.hash()?;
     let prepared = selected.map(|k| indexes[position(k)].prepared());

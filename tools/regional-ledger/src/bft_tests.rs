@@ -17,6 +17,9 @@ impl Harness {
     }
     fn with_rules(rules: &str) -> Self {
         let mut package = bootstrap();
+        if channels::is_profile(rules) {
+            package = super::channel_integration::package(rules);
+        }
         for a in &mut package.admissions {
             a.rules = rules.into();
             a.signature = signature(1, &a.bytes().unwrap());
@@ -154,6 +157,8 @@ mod joint_activation;
 mod joint_network;
 #[path = "joint_roles_tests.rs"]
 mod joint_roles;
+#[path = "channel_bft_tests.rs"]
+mod value_channels;
 fn forged_proposal(h: &Harness, snapshot: Snapshot) -> Proposal {
     let mut p = Proposal {
         round: 0,

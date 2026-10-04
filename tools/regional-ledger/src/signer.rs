@@ -65,7 +65,7 @@ impl Request {
                     .iter()
                     .map(|b| b.header.clone())
                     .collect::<Vec<_>>();
-                if trust.region(binding.region)?.rules == crate::segmented::RULES {
+                if crate::segmented::is_profile(&trust.region(binding.region)?.rules) {
                     crate::segmented::shape(snapshot, trust)?;
                     crate::segmented::headers(&snapshot.statement, &headers, trust)?;
                     for block in &snapshot.blocks {
@@ -203,16 +203,17 @@ impl Journal {
                     }
                 }
                 if let Some(previous) = last {
-                    let prefix =
-                        if trust.region(self.binding.region)?.rules == crate::segmented::RULES {
-                            snapshot.base == Some(previous.statement.id()?)
-                                && snapshot.blocks.first().is_some_and(|block| {
-                                    block.header.height == previous.statement.height + 1
-                                        && block.header.parent == previous.statement.block
-                                })
-                        } else {
-                            snapshot.blocks.starts_with(&previous.blocks)
-                        };
+                    let prefix = if crate::segmented::is_profile(
+                        &trust.region(self.binding.region)?.rules,
+                    ) {
+                        snapshot.base == Some(previous.statement.id()?)
+                            && snapshot.blocks.first().is_some_and(|block| {
+                                block.header.height == previous.statement.height + 1
+                                    && block.header.parent == previous.statement.block
+                            })
+                    } else {
+                        snapshot.blocks.starts_with(&previous.blocks)
+                    };
                     require(
                         snapshot.statement.height > previous.statement.height
                             && prefix

@@ -20,6 +20,7 @@ fn action(d: &c::Declaration, step: c::Action, actor: Option<u8>, seeds: &[u8]) 
         nonce: 0,
         valid_through: u64::MAX,
         actor: actor.map(public),
+        previous: None,
         action: step,
     };
     let mut approvals = seeds

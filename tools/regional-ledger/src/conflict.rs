@@ -37,7 +37,7 @@ impl CertifiedHistory {
     }
     pub fn verify(&self, trust: &Trust) -> Result<()> {
         require(
-            trust.region(self.statement.region)?.rules != crate::segmented::RULES
+            !crate::segmented::is_profile(&trust.region(self.statement.region)?.rules)
                 || self.epochs.is_empty(),
             "segmented incident cannot invent an epoch handoff",
         )?;
@@ -191,6 +191,21 @@ impl Safety {
         self.check_region(chain.region)?;
         for command in commands {
             match command {
+                Command::Channel(command) => {
+                    let empty = channels::Book::default();
+                    let book = chain
+                        .ledger
+                        .channel_state
+                        .as_ref()
+                        .map(|s| &s.book)
+                        .unwrap_or(&empty);
+                    let deps =
+                        book.retained_dependencies(&chain.ledger, &command.action.intent.action);
+                    require(
+                        !self.affected(&deps, evidence)?,
+                        "channel depends on quarantined finality",
+                    )?;
+                }
                 Command::Reconfigure(_) => {} // Local-region quarantine was checked above.
                 Command::Spend(signed) => {
                     for input in &signed.intent.inputs {

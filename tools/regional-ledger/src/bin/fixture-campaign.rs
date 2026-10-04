@@ -80,8 +80,8 @@ impl Campaign {
             self.chain("proxima")?,
             self.chain("andromeda")?,
         ];
-        let (issued, liquid, pending) = conservation(&chains)?;
-        self.checks.push(json!({"phase":phase,"issued":issued,"liquid_including_immature_and_fees":liquid,"pending_exports":pending,"conserved":true}));
+        let (issued, liquid, escrow, pending) = conservation_with_escrow(&chains)?;
+        self.checks.push(json!({"phase":phase,"issued":issued,"liquid_including_immature_and_fees":liquid,"channel_escrow_and_reserves":escrow,"pending_exports":pending,"conserved":true}));
         Ok(())
     }
     fn mine(&mut self, region: &str, commands: Vec<Command>) -> Result<()> {
@@ -426,6 +426,7 @@ fn run() -> Result<()> {
                 currency: pin,
                 region: region.into(),
                 rules: "RLD-REGIONAL-FIXTURE-V1".into(),
+                value_rules: None,
                 validators: seeds(region).into_iter().map(public).collect(),
                 signature: String::new(),
             };

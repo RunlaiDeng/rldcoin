@@ -3,6 +3,8 @@ use ed25519_dalek::SigningKey;
 use rld_core::sign_bytes;
 use std::path::PathBuf;
 use storage::Store;
+#[path = "channel_integration_tests.rs"]
+mod channel_integration;
 #[path = "channel_tests.rs"]
 mod channel_kernel;
 fn public(seed: u8) -> String {
@@ -40,6 +42,7 @@ fn bootstrap() -> Bootstrap {
                 currency: currency.id().unwrap(),
                 region: region.into(),
                 rules: DOMAIN.into(),
+                value_rules: None,
                 validators: keys().into_iter().map(public).collect(),
                 signature: String::new(),
             };

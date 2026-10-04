@@ -20,7 +20,7 @@ pub fn has_epochs(rules: &str) -> bool {
     rules == EPOCH_RULES || is_joint(rules)
 }
 pub fn is_profile(rules: &str) -> bool {
-    rules == RULES || has_epochs(rules)
+    rules == RULES || rules == channels::BFT_RULES || has_epochs(rules)
 }
 pub const MAX_ROUNDS: u64 = 32;
 pub const MAX_RECORDS: usize = 128;

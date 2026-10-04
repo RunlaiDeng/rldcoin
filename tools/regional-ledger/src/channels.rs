@@ -4,6 +4,21 @@ use super::*;
 pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V1";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V1";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V1";
+pub fn is_profile(rules: &str) -> bool {
+    rules == BFT_RULES || rules == SEGMENTED_RULES
+}
+pub fn profile_hash() -> Result<Hash> {
+    id(
+        "native-channel-profile-v1",
+        &(
+            include_str!("channel_profile.md"),
+            rules_hash(),
+            rld_pow::issuance_rules_hash(),
+        ),
+    )
+}
 pub fn rules_hash() -> Hash {
     let mut bytes = format!("{FORMAT}\0").into_bytes();
     bytes.extend(include_bytes!("channel_rules.md"));
@@ -111,6 +126,8 @@ pub struct Intent {
     pub nonce: u64,
     pub valid_through: u64,
     pub actor: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub previous: Option<Hash>,
     pub action: Action,
 }
 impl Intent {
@@ -126,6 +143,71 @@ impl Intent {
 pub struct SignedAction {
     pub intent: Intent,
     pub approvals: Vec<Approval>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct NativeCommand {
+    pub declaration: Declaration,
+    pub action: SignedAction,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct NativeState {
+    pub declaration: Declaration,
+    pub book: Book,
+}
+impl NativeState {
+    pub fn commitment(&self) -> Result<Hash> {
+        id("native-channel-state-v1", self)
+    }
+}
+pub(crate) fn validate_profile(ledger: &Ledger, trust: &Trust, region: Hash) -> Result<()> {
+    if let Some(state) = &ledger.channel_state {
+        require(
+            is_profile(&trust.region(region)?.rules),
+            "legacy ledger cannot carry channel state",
+        )?;
+        state.declaration.verify(trust, region)?;
+        state.book.audit(ledger, &state.declaration)?;
+    }
+    Ok(())
+}
+pub(crate) fn execute_native(
+    ledger: &Ledger,
+    command: &NativeCommand,
+    context: &Context<'_>,
+) -> Result<Ledger> {
+    require(
+        is_profile(&context.trust.region(command.declaration.region)?.rules)
+            && context.declaration == &command.declaration,
+        "channel command requires explicit value admission",
+    )?;
+    command
+        .declaration
+        .verify(context.trust, command.action.intent.region)?;
+    validate_profile(ledger, context.trust, command.declaration.region)?;
+    let empty = Book::default();
+    let book = if let Some(state) = &ledger.channel_state {
+        require(
+            state.declaration == command.declaration,
+            "retained channel declaration differs",
+        )?;
+        &state.book
+    } else {
+        &empty
+    };
+    let previous = command
+        .action
+        .intent
+        .previous
+        .ok_or("signed prior native channel head required")?;
+    let (book, mut ledger, _) = book.execute(ledger, &command.action, context, previous)?;
+    ledger.channel_state = Some(Box::new(NativeState {
+        declaration: command.declaration.clone(),
+        book,
+    }));
+    ledger.audit()?;
+    Ok(ledger)
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -386,7 +468,38 @@ impl Book {
             &(declaration, ledger, self),
         )
     }
-    fn dependencies(&self, ledger: &Ledger, action: &Action) -> Result<BTreeSet<Hash>> {
+    /// Incident screening of the block's retained ancestors. References born
+    /// earlier in this same ordered block are authenticated by shared native
+    /// execution; their ancestors are screened at that earlier transition.
+    /// Missing references here never authorize anything or waive execution.
+    pub(crate) fn retained_dependencies(&self, ledger: &Ledger, action: &Action) -> BTreeSet<Hash> {
+        let (channel, inputs): (Option<Hash>, Vec<Hash>) = match action {
+            Action::Open { inputs, .. } => (None, inputs.clone()),
+            Action::Reserve { channel, input, .. } => (Some(*channel), vec![*input]),
+            Action::Close {
+                channel, fee_input, ..
+            } => (Some(*channel), vec![*fee_input]),
+            Action::Challenge { channel, .. } | Action::Settle { channel } => {
+                (Some(*channel), vec![])
+            }
+        };
+        let mut deps = BTreeSet::new();
+        for input in inputs {
+            if let Some(coin) = ledger.coins.get(&input) {
+                deps.extend(&coin.dependencies);
+            }
+        }
+        if let Some(channel) = channel {
+            if let Some(escrow) = self.channels.get(&channel) {
+                deps.extend(&escrow.dependencies);
+            }
+            for r in self.reserves.values().filter(|r| r.channel == channel) {
+                deps.extend(&r.coin.dependencies);
+            }
+        }
+        deps
+    }
+    pub(crate) fn dependencies(&self, ledger: &Ledger, action: &Action) -> Result<BTreeSet<Hash>> {
         let mut deps = BTreeSet::new();
         let mut coin_ids = vec![];
         let channel = match action {

@@ -55,6 +55,7 @@ impl Fixture {
             currency: pin,
             region: "earth".into(),
             rules: rules.into(),
+            value_rules: None,
             validators: seeds().into_iter().map(public).collect(),
             signature: String::new(),
         };

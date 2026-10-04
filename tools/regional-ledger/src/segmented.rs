@@ -2,9 +2,12 @@
 //! Only a previously fully executed exact certificate supplies a prefix state.
 use super::*;
 pub const RULES: &str = "RLD-REGIONAL-SEGMENTED-UNANIMOUS-FIXTURE-V1";
+pub fn is_profile(rules: &str) -> bool {
+    rules == RULES || rules == channels::SEGMENTED_RULES
+}
 
 pub(crate) fn shape(snapshot: &Snapshot, trust: &Trust) -> Result<()> {
-    if trust.region(snapshot.statement.region)?.rules != RULES {
+    if !is_profile(&trust.region(snapshot.statement.region)?.rules) {
         return require(
             snapshot.base.is_none(),
             "legacy/BFT snapshot cannot adopt segmented history",
@@ -61,7 +64,7 @@ pub(crate) fn replay(
 /// This never executes value or authorizes adoption of a sender's ledger.
 pub(crate) fn headers(statement: &Statement, headers: &[Header], trust: &Trust) -> Result<()> {
     require(
-        trust.region(statement.region)?.rules == RULES
+        is_profile(&trust.region(statement.region)?.rules)
             && statement.epoch == epoch::Registry::initial(trust, statement.region)?
             && !headers.is_empty()
             && headers.len() <= MAX_BLOCKS,

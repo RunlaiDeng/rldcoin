@@ -419,7 +419,7 @@ fn segmented_journal(journal: &Journal) -> Result<bool> {
         .iter()
         .find(|a| a.id().ok() == Some(journal.region))
         .ok_or("history region missing from bootstrap")?;
-    Ok(region.rules == crate::segmented::RULES)
+    Ok(crate::segmented::is_profile(&region.rules))
 }
 fn event_page(
     dir: &Path,

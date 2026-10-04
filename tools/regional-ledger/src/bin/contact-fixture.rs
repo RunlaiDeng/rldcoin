@@ -112,6 +112,7 @@ fn run() -> Result<()> {
                             "RLD-REGIONAL-FIXTURE-V1"
                         }
                         .into(),
+                        value_rules: None,
                         validators,
                         signature: String::new(),
                     };
