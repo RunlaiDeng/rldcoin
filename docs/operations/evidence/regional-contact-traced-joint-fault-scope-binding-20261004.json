@@ -1,0 +1,45 @@
+{
+  "format": "RLD-GROUND-CONTACT-TRACE-FINITE-SCOPE-BINDING-V1",
+  "fixture_only": true,
+  "completed": false,
+  "source_set_sha256": "2309a18199c5e7714017b56780001cbdf2527c57b574cc759d09d83ebc9f4c57",
+  "binary_sha256": "a4f5e23204f1a8d7d76545d95f88bd556a4ba7e8f5905b77c52529b02d4cb979",
+  "cycle_report_sha256": "4d515a5ad47260a3860e016b59c805f827e1045c7fb29d18f984480ead3286ff",
+  "cycle_cold_report_sha256": "64e0196c9903ecab83d7fd34bb7a090cdfba9657fef946a26b32c05795714850",
+  "controller_source_set_sha256": "20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7",
+  "controller_files": [
+    {
+      "path": "tools/regional_bft_sustained_campaign.py",
+      "size_bytes": 46580,
+      "sha256": "e1f40d01243c968762ecfeabeb74316e07d4a62a1300fd9e630d3417b45cd0e1"
+    },
+    {
+      "path": "tools/regional_ground_value.py",
+      "size_bytes": 7132,
+      "sha256": "fe461c755d0af1d487d62056af55305515ad78cd7d005f4dbae9254e31ba22a5"
+    },
+    {
+      "path": "tools/regional_ground_relay.py",
+      "size_bytes": 6752,
+      "sha256": "3f4181f73fbf0c9ca80603088080ebc0e1a1e26fbeff0112a85825b5694d898c"
+    },
+    {
+      "path": "tools/regional_ground_resources.py",
+      "size_bytes": 13098,
+      "sha256": "3f95dd62868dfbe9d2669d399bfe28dee56ccfd5e92ed9b75f08f4bf12bc59e7"
+    }
+  ],
+  "controller_manifest_previous_node_binding_not_current_authority": true,
+  "actual_node_source_and_binary_explicitly_pinned": true,
+  "observer_sha256": "8701ae434362a5489ce3e5c79b1a8a3f954c4f1daba59825966a09bbc8dd3062",
+  "wrapper_sha256": "0a357287b9177b7cfdd3ec98b508bd13360f170738dea1275f668fd092458212",
+  "phase_timeout_seconds": 600,
+  "round_timeout_seconds": 60,
+  "stop_height": 24,
+  "single_new_full_scope_budget": 1,
+  "scope_started": true,
+  "scope_passed": false,
+  "trace_enabled_explicitly": true,
+  "old_failed_stores_not_resumed": true,
+  "physical_or_independent_qualification": false
+}

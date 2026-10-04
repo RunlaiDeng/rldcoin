@@ -74,3 +74,27 @@ Native 反例中，无效信封虽然可获得运输回执，仍不产生 Native
 重建/回归证据：`evidence/regional-contact-trace-frozen-source-20261004.json`、
 `evidence/regional-contact-trace-frozen-checks-20261004.json`、
 `evidence/regional-contact-trace-runtime-custody-20261004.json`。
+
+## 普通循环终态及单次故障判别启动
+
+同一冻结来源的普通三地区付款返程 757.729 秒通过，停止冷核验 63.199 秒通过；
+E11/P4/A4、issued/liquid/pending 300/300/0，12 Native、12 收款、4 时代保管、
+1,792 档案，私有字节/权限不变。Node 共启动 56 个实例，原地面条件/门槛未放宽。
+
+原观察器的精确路径字符串检查未接受默认驱动中的 `../` 拼写，零实例不等于零事件。
+没有修改或重启协议进程；独立只读补充观察先核对本任务已启动控制器的父进程及完整参数，
+按实际文件路径确认相同冻结脚本，且明确从晚附加时刻开始。它记录 32 个实例、
+6,022 项缺失事件和 427 个观察间隙；原预设 32 实例上限没有提升。
+完整普通循环追踪覆盖为 false，这些部分元数据不能复原遗漏部分或归因 H-service。
+付款结果来自完整原生认证循环及停止核验，二者结论不同。
+
+原观察器及补充观察原件全部保留。预算内唯一新的完整有限故障判别已经启动，
+使用已修正的实际路径识别，从拥有的控制器启动时开始观察；预定原控制器只启动
+12 个伴随进程实例，32 实例观察上限仍不变。原 600 秒阶段、60 秒轮、24 高度、
+票数、成熟与容量不变。现只声明已启动，不声明通过、H-service 归因或完整覆盖。
+若再次观察缺失，按既定分支缩小反例，不重复完整范围。
+
+循环及覆盖证据：`evidence/regional-contact-trace-three-region-cycle-20261004.json`、
+`evidence/regional-contact-trace-three-region-cold-20261004.json`、
+`evidence/regional-contact-trace-three-region-observer-coverage-20261004.json`。
+活动范围绑定：`evidence/regional-contact-traced-joint-fault-scope-binding-20261004.json`。
