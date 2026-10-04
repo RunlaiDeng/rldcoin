@@ -782,3 +782,13 @@ Native signer/caller-head check remains mandatory. No evidence/limits are
 removed/raised. Five targeted checks, complete process regression and component
 Runtime custody do not qualify ordinary payments, full faults or independent
 operation; changed Python needs an exact rebuilt driver and fresh no-value scopes.
+
+The separate `regional_ground_resources.py` observer binds the complete frozen
+source inventory and exact binary, without changing node runtime or opening
+Native/transport custody. Explicit process CPU/RSS and directory metadata are
+non-atomic samples; missing/changed processes, refused scans and gaps remain
+unknown. Its exclusive bounded private log is not a ledger, freshness or peak
+proof. Native value, per-hop bytes and short-lived child coverage remain absent
+until an authenticated fresh controller explicitly supplies them. Never count
+the diagnostic sleep child/stopped-directory observation as sustained load or
+restart a passed/failed fixture for sampling. Preserve the original limits.

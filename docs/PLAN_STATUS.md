@@ -63,6 +63,13 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 现有网站测试、类型检查、生产构建及本地桌面/移动显示通过。主计划对应版本同步，
 没有发布、部署或改写任何冻结运行来源；文档对齐不提供 I1–I12 的完整资格。
 
+第 1 个后续门槛已有[资源采集契约](operations/GROUND_RESOURCE_CAPTURE_CONTRACT.md)与
+独立只读采集工具；15 项检查及 2.275 秒实际 CLI 诊断通过，完整来源/二进制字节绑定，
+三个进程/存储样本、私有日志关联和原目录 7,219 份文件元数据不变均已核验。
+诊断进程是本次拥有的短命 sleep 子进程，存储为一个停止的通过样本目录；
+没有启动节点或 Native，没有新增持续负载资格。原生价值、每跳字节和完整短命子进程
+覆盖仍待接入；明确保留未知和采样间隙，不将样本最大值当作持续峰值。
+
 ## 证据与发布边界
 
 主资格证据：`operations/evidence/regional-fair-carriage-source-inventory-20261004.json`、
@@ -76,6 +83,7 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 `regional-quiet-broadcast-three-region-cold-20261004.json`。
 故障范围：`regional-quiet-broadcast-joint-fault-fresh-20261004.json`、
 `regional-quiet-broadcast-joint-fault-cold-20261004.json`；资源：`regional-quiet-broadcast-ground-resource-baseline-20261004.json`。
+资源采集组件：`regional-ground-resource-capture-checks-20261004.json`，不替代新增负载范围。
 此前诊断和来源：[原样保留状态](operations/history/PLAN_STATUS_before_qualified_quiet_broadcast_20261004_1a0a9f7774e5.md)。
 
 公开仓库仍为已验证 v55；v56 材料完整延后保存。不发布微优化或失败变体。
