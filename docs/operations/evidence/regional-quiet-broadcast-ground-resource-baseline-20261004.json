@@ -1,0 +1,156 @@
+{
+  "format": "RLD-GROUND-BASELINE-RESOURCE-AND-GATE-OBSERVATION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "same_host_same_controller": true,
+  "source_set_sha256": "8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199",
+  "source_files": 388,
+  "binary_sha256": "72cb9d5fc7dc3adc17de17cbd53317c252b1962ae9db7b109292e2b1bb946d16",
+  "report_bindings": [
+    {
+      "path": "regional-quiet-broadcast-three-region-cycle-20261004.json",
+      "sha256": "bbbf33d4e97ef4e737ec6acd7873ae7786f08a18d5a3ad07b40aef453b3a75b9"
+    },
+    {
+      "path": "regional-quiet-broadcast-three-region-cold-20261004.json",
+      "sha256": "309bef9f476e4b671285bf1069e6aa717dbe84a87cd862d97b1eefe0185aa37a"
+    },
+    {
+      "path": "regional-quiet-broadcast-joint-fault-fresh-20261004.json",
+      "sha256": "5f8e890e02d4b928d4597c2f9840440122523fb688d1a2c676c1f791611b4427"
+    },
+    {
+      "path": "regional-quiet-broadcast-joint-fault-cold-20261004.json",
+      "sha256": "fda67e5d6d0a8a4f3a264b4115764e3eb21ae679f1ab0ed6bed1355b93e6658d"
+    }
+  ],
+  "ordinary_and_full_finite_fault_and_stopped_cold_passed": true,
+  "native_unchanged_184_checks_reused_not_rerun": true,
+  "process_checks": 491,
+  "runtime_custody_phases": 3,
+  "ground_host_architecture": "arm64",
+  "ordinary_runner_seconds": 673.309,
+  "ordinary_cold_seconds": 60.35,
+  "fault_runner_seconds": 881.112,
+  "fault_internal_seconds": 879.725,
+  "fault_cold_seconds": 240.974,
+  "fault_phase_observations": [
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 5.012,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 5.823,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 5.826,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 2.71,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 3.311,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 3.535,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 2.927,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 3.752,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 4.986,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 3.355,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 3.127,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "three voters progress past offline parent-12 leader",
+      "elapsed_seconds": 238.139,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "both isolated remote regions continue local certified progress",
+      "elapsed_seconds": 0.007,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 5.228,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "offline validator catches up through pinned TLS",
+      "elapsed_seconds": 18.951,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "retained new export imports uniquely and matures after contact restoration",
+      "elapsed_seconds": 447.298,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "keyless fixture pause drains complete native certificates",
+      "elapsed_seconds": 54.802,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "native_conservation": {
+    "issued": "300",
+    "liquid": "300",
+    "in_transit": "0",
+    "conserved": true
+  },
+  "final_heights": {
+    "earth": 13,
+    "proxima": 15,
+    "andromeda": 14
+  },
+  "terminal_transport_archives": 4268,
+  "terminal_max_archive_files": 702,
+  "terminal_max_archive_bytes": 73815666,
+  "terminal_total_archive_bytes": 719363766,
+  "terminal_complete_bft_envelopes": 1934,
+  "terminal_max_bft_envelopes": 176,
+  "terminal_max_combined_bft_state_bytes": 2313626,
+  "sampled_max_active_transport_packets": 31,
+  "sampled_optional_native_telemetry_unknowns": 3,
+  "sampling_is_not_continuous_high_water": true,
+  "throughput_or_latency_percentiles_measured": false,
+  "wall_clock_is_ground_only": true,
+  "existing_bounds_unchanged": true,
+  "private_fixtures_unchanged_during_cold": true,
+  "old_failed_profiles_preserved_not_requalified": true,
+  "sustained_BFT_liveness_qualified": false,
+  "long_history_qualified": false,
+  "cross_device_custody_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false,
+  "resources_and_gates_claimed_complete": false
+}

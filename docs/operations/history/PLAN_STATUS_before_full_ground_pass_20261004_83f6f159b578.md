@@ -4,7 +4,7 @@
 总目标：[I1–I12 完整主计划](RLDCOIN_MASTER_PLAN.md)；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-## 已完成的近期交付
+## 当前唯一近期交付
 
 **同一冻结实现：普通三地区付款返程、原定完整有限故障范围、严格停止冷核验全部通过。**
 保持原成熟高度、票数、容量、24 高度上限、600 秒阶段窗口和实际 60 秒轮超时。
@@ -27,7 +27,7 @@
 四个 Proxima 收款检查均为 VERIFIED_EVIDENCE_PENDING_IMPORT，未导入、成熟或可花费。
 兼容前缀守恒 issued 300 / liquid 290 / pending_exports 10；Native 候选试算不足半秒。
 
-## 当前通过实现与验证范围
+## 当前实现与正在验证的范围
 
 当前候选运行来源 `8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199`，
 388 份完整冻结清单，Native/core 逐字节未变；默认启动程序精确重建，构建 37.96 秒。
@@ -47,21 +47,12 @@
 全新普通三地区付款返程 **673.309 秒通过**，干净停止与严格冷核验 **60.350 秒通过**。
 E11/P4/A4 四副本一致；12 原生重放、12 收款、4 时代保管、788 完整 BFT 信封及
 1,744 档案核验通过。兼容前缀守恒 issued/liquid 300、in_transit 0，私有字节/权限不变。
-原定完整有限故障范围 **881.112 秒通过**，严格停止冷核验 **240.974 秒通过**。
-缺席 leader、隔离当地付款、追赶、新出口唯一导入成熟及暂停签署排空均通过。
-E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 完整 BFT 信封、
-4,268 档案通过，守恒 300/300/0，私有文件不变。**本轮唯一近期交付已经完成。**
+已从这份成功停止样本开启同一源码的原定完整有限故障范围；故障终止及冷资格仍未证明。
 旧失败目录、支付、保管和证据均未改写或迁移；没有恢复旧失败范围或计作通过。
-后续按 [资源预算与剩余门槛](operations/GROUND_RESOURCE_AND_GATE_MATRIX.md) 推进；
-一次有限故障成功不资格持续负载、长期历史、独立/跨设备保管或物理路线。
 
 此前运输四进程诊断本身未调用本次修改的 `Runtime.broadcast`，仍保留原失败判定，
 没有补记为压力通过；不靠改写该模型证明修复。当前资格取决于完整真实 Runtime
 回归及新普通/故障范围，不提高原成熟高度、票数、容量、24 高度上限或 600/60 秒窗口。
-
-白皮书已按用户要求完成本地 **1.12** 修订，网页/PDF 标签同步；23 页 PDF 逐页版面、
-现有网站测试、类型检查、生产构建及本地桌面/移动显示通过。主计划对应版本同步，
-没有发布、部署或改写任何冻结运行来源；文档对齐不提供 I1–I12 的完整资格。
 
 ## 证据与发布边界
 
@@ -74,8 +65,6 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 `regional-qualified-quiet-broadcast-frozen-checks-20261004.json`、`regional-qualified-quiet-broadcast-source-inventory-20261004.json`。
 普通范围：`regional-quiet-broadcast-three-region-cycle-20261004.json`、
 `regional-quiet-broadcast-three-region-cold-20261004.json`。
-故障范围：`regional-quiet-broadcast-joint-fault-fresh-20261004.json`、
-`regional-quiet-broadcast-joint-fault-cold-20261004.json`；资源：`regional-quiet-broadcast-ground-resource-baseline-20261004.json`。
 此前诊断和来源：[原样保留状态](operations/history/PLAN_STATUS_before_qualified_quiet_broadcast_20261004_1a0a9f7774e5.md)。
 
 公开仓库仍为已验证 v55；v56 材料完整延后保存。不发布微优化或失败变体。

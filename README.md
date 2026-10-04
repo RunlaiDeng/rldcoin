@@ -8,11 +8,15 @@ Obsolete mainnet materials are excluded from this project and its completion evi
 ## Current implementation and verification
 
 The [current status](docs/PLAN_STATUS.md) records exact source versions, successful
-and failed runs, cold verification and remaining gates. The latest October 3
-transport scheduler candidate passed 295 process checks but failed the third
-ordinary owner payment after two validator handoffs; it is not a full-cycle pass.
-Earlier ground candidates have separately scoped twelve-node, three-region value
-cycles and finite fault evidence; their results do not qualify changed versions.
+and failed runs, cold verification and remaining gates. The exact October 4
+frozen ground source passed 491 process checks, three Runtime custody phases,
+the ordinary three-region owner-payment return, the original complete finite
+fault scope and both strict stopped cold verifications. The final compatible
+prefixes conserve 300 fixture units with no pending exports. These are same-host,
+same-controller results; earlier failed sources remain failed. See the
+[resource and remaining-gate matrix](docs/operations/GROUND_RESOURCE_AND_GATE_MATRIX.md).
+Changed versions, sustained Byzantine/load behavior, overlapping handoffs,
+independent custody and physical routes need separate qualification.
 
 The [regional native candidate](tools/regional-ledger/README.md) implements
 owner-authorized payments, conservation, independent regional finality, permanent
