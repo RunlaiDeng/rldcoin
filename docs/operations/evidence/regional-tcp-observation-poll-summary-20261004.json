@@ -1,0 +1,436 @@
+{
+  "format": "RLD-TCP-OBSERVATION-POLL-DIAGNOSTIC-SUMMARY-V1",
+  "workflow_terminal": true,
+  "same_complete_frame_and_declared_nonce_input": true,
+  "cases": [
+    {
+      "case": "old",
+      "source_set_sha256": "7c5b78c85d1b50640ce2d783fd752d7c818387e9be4ddcae3bb208003d4c4c61",
+      "report_sha256": "25ce5c4f131995fc485e7b6b653bd14a959687de94e260db7ac6acfe492b91cb",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            37.477586
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            37.598167
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 130.967,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.20199,
+            0.409684,
+            1.1386,
+            0.813894
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "actor": 0,
+          "observation_sha256": "32854f9ba6073dc18345d5f7a8c500bef71f83c33565bbfbbcbedc952be1da92",
+          "critical_admission_refusal_causes": {},
+          "critical_admission_refusal_observations": []
+        },
+        {
+          "actor": 1,
+          "observation_sha256": "9d1aafd21d4e07933315d935fba42b9297fbf2d7a6551ac5e46d2ca326d480cd",
+          "critical_admission_refusal_causes": {
+            "ordinary": 53
+          },
+          "critical_admission_refusal_observations": [
+            {
+              "opened": false,
+              "seconds": 0.200572,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.202156,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            }
+          ]
+        },
+        {
+          "actor": 2,
+          "observation_sha256": "f37227c8c5d2f0640ea8417cc844f0271c32aeb5e7ba962ffe2a302f135cdc32",
+          "critical_admission_refusal_causes": {
+            "ordinary": 93,
+            "ordinary-intent": 8,
+            "outgoing": 38
+          },
+          "critical_admission_refusal_observations": [
+            {
+              "opened": false,
+              "seconds": 0.200539,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.203167,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.222959,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.200564,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.201087,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.200966,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "observation_sha256": "2412bc5c083f06446b0ce563368bb27e3f1f4b623ea36d9b1b3b67d5853c925c",
+          "critical_admission_refusal_causes": {},
+          "critical_admission_refusal_observations": []
+        }
+      ]
+    },
+    {
+      "case": "new",
+      "source_set_sha256": "063776d38056319878c3372863a7bfe883c2af9d62abc0e106009e04f00ba024",
+      "report_sha256": "77160f1ec2643846a4842c19ffabf8617685e675661a599609f1e8f89d7badc0",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            null
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            null
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 130.767,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.774023,
+            1.129228,
+            1.820374,
+            0.200341
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "actor": 0,
+          "observation_sha256": "8d85319e1591859f948bf363b6c12e156a64f93b644e11907933dd02ce9f757f",
+          "critical_admission_refusal_causes": {},
+          "critical_admission_refusal_observations": []
+        },
+        {
+          "actor": 1,
+          "observation_sha256": "cc77abf015f478518a290fb7fdcd1208643b22b36051356a3cca63c14aa62ec8",
+          "critical_admission_refusal_causes": {},
+          "critical_admission_refusal_observations": []
+        },
+        {
+          "actor": 2,
+          "observation_sha256": "6ebb9aa7c1095075b92e7a34f6f812d6c3661e522b0ad0201ff84d8aa7c6a55d",
+          "critical_admission_refusal_causes": {
+            "ordinary": 127,
+            "outgoing": 163,
+            "ordinary-intent": 1,
+            "tcp-role-order": 1
+          },
+          "critical_admission_refusal_observations": [
+            {
+              "opened": false,
+              "seconds": 0.201979,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.205034,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.201606,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.200324,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.200425,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "inbound",
+                "ordinary_intent": false,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.206511,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.201308,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.202188,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.201943,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "inbound",
+                "ordinary_intent": true,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.200983,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "ordinary",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "ordinary",
+                "tcp_waiters": 0
+              }
+            },
+            {
+              "opened": false,
+              "seconds": 0.20067,
+              "error_type": "BlockingIOError",
+              "error_errno": 35,
+              "snapshot": {
+                "last_class": "tcp",
+                "last_tcp_role": "outbound",
+                "ordinary_intent": true,
+                "owner": "outgoing",
+                "tcp_waiters": 1
+              }
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "observation_sha256": "ba8a04a457a34a8824f2ac13b01fb0c1ff0c9c4128dcb36014a7865f1ab50505",
+          "critical_admission_refusal_causes": {},
+          "critical_admission_refusal_observations": []
+        }
+      ]
+    }
+  ],
+  "specific_checks_actually_run": 3,
+  "specific_check_failures": 0,
+  "specific_log_sha256": "495d1c8277fc6f8129ead42ef38c6d83815501c8d31ee39a37f362d1125fa873",
+  "specific_test_sha256": "a350af6fcf2665cc4a4237f7e93e2607bd69c9b6d1f09f703d52b8c60abbe05a",
+  "repeated_tcp_poll_does_not_rewrite_exact_active_state_or_preparation_positions": true,
+  "completion_only_archive_retention_and_unreceipted_transit_preserved": true,
+  "spool_poll_refuses_without_rewrite": true,
+  "ordinary_service_progress_and_durable_tcp_preparation_unchanged": true,
+  "both_full_transport_pressure_gates_failed": true,
+  "not_an_end_to_end_performance_pass": true,
+  "native_core_unchanged": true,
+  "candidate_not_integrated_or_published": true,
+  "no_new_full_fault_profile_started": true,
+  "all_original_failed_sources_and_test_setup_retained_unchanged": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "not_full_fault_or_independent_or_physical_qualification": true,
+  "runner_sha256": "9bfe2d7ea982745594c9f4c3fb9a8e86b9e4b8c6eeed38dc1d1ed29f1ba82dbb"
+}
