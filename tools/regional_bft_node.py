@@ -445,7 +445,10 @@ class Runtime:
         pairs=[(self.state['messages'].content(ident),ident,peer)
                for ident in messages for peer in sorted(peers-{self.node_id})]
         # Deduplicate from the durable mesh itself across enqueue response loss.
-        with mesh.Node(self.transport) as node:
+        # Service startup installs the same fair local lease used by receive
+        # selection. Standalone controller fixtures retain direct mesh access.
+        carriage_node=getattr(self, 'carriage_node', None)
+        with (carriage_node() if carriage_node is not None else mesh.Node(self.transport)) as node:
             retained=set()
             for summary in node.summaries().values():
                 if summary['source']==node.id and summary['kind']=='regional-bft':

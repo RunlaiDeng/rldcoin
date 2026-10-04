@@ -429,6 +429,29 @@ class Server:
     def selection_mesh_node(self, deadline):
         return self._local_mesh_node(deadline,True)
 
+    @contextmanager
+    def ordinary_mesh_node(self):
+        """Ordinary transport work uses the existing bounded fair lease.
+
+        A lock refusal retains this live thread's selection intent for its
+        next attempt, as the Service receive selector already does. Native
+        work/socket I/O stay outside; waiting never grants custody.
+        """
+        self.request_selection();node=None
+        try:
+            with self.selection_mesh_node(time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS) as selected:
+                node=selected
+                yield node
+        except OSError as error:
+            if node is None and error.errno not in (errno.EAGAIN,errno.EWOULDBLOCK):
+                self.finish_selection()
+            raise
+        except BaseException:
+            if node is None:self.finish_selection()
+            raise
+        finally:
+            if node is not None:self.finish_selection()
+
     def serve(self):
         while self.running:
             try:

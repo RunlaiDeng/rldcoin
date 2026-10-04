@@ -743,3 +743,18 @@ is serialization-only and grants no ledger/signing/freshness rights. Keep all
 custody, origin, incidents and bounds unchanged. Changed Native requires fresh
 signed no-value genesis/currency and directories, never old balances/custody;
 format or component cost alone does not pass Native/ordinary/fault qualification.
+
+
+Ordinary outgoing BFT/contact enqueue uses the existing bounded local selection
+lease. An OS-lock refusal keeps only the live thread's pending selection intent;
+success or terminal failure releases it. Socket/Native work stays outside the
+mesh lock, and waiting never grants custody. Transit carriage rotates exact
+checked destination/frame families within the unchanged recent/history classes
+and four-slot bound. At most 512 primitive process-local positions / 4 MiB are
+retained; no position authenticates evidence or grants ledger rights. A missing
+class hint uses the existing durable whole-class cursor; new warm families do
+not reset that class. Selected positions advance only after durable preparation.
+Cold opens, altered evidence, restart and capacity misses retain full normal
+checks and every signed packet. This transport repair needs an exact rebuilt
+default driver and fresh no-value ordinary/fault scopes; a minimal transport
+pass or regression count cannot qualify the full fault profile.

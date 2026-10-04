@@ -135,6 +135,7 @@ class Service:
                 mesh.require(miner is None, 'BFT validator cannot use uncertified import mining')
                 from regional_bft_node import Runtime
                 self.bft = Runtime(native,config,bft_config)
+                self.bft.carriage_node = self.tcp.ordinary_mesh_node
                 if parallel_carriage:
                     from regional_carriage_worker import Worker
                     self.carriage = Worker(self.tcp)
@@ -309,7 +310,7 @@ class Service:
                     raw = wire.canonical(value)
                     frame, _ = wire.inspect_frame(raw)
                     mesh.require(frame['source_chain_id'] == self.region and frame['destination_chain_id'] == offer['destination'], 'outgoing native route changed')
-                    with mesh.Node(self.config) as node:
+                    with self.tcp.ordinary_mesh_node() as node:
                         # Inspect retained packets to reconcile enqueue-after-
                         # crash, without a fragile external "already sent" flag.
                         retained = set()

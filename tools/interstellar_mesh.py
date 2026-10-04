@@ -63,6 +63,35 @@ MAX_VERIFIED_ARCHIVE_INDEX_BYTES = 4 * 1024 * 1024
 _verified_archive_index = None
 _verified_archive_index_lock = threading.Lock()
 
+# Bounded process-local scheduling positions, never authentication or custody.
+# Only primitive namespace, destination, complete-frame and packet IDs survive.
+MAX_CARRIAGE_POSITIONS = 512
+MAX_CARRIAGE_POSITION_BYTES = 4 * 1024 * 1024
+_carriage_positions = OrderedDict()
+_carriage_position_lock = threading.Lock()
+_carriage_position_bytes = 0
+
+def carriage_position(key):
+    with _carriage_position_lock:
+        row=_carriage_positions.get(key)
+        if row is not None:
+            _carriage_positions.move_to_end(key)
+            return row[0]
+    return None
+
+def remember_carriage_position(key, value):
+    global _carriage_position_bytes
+    size=len(repr((key,value)).encode('utf-8'))
+    with _carriage_position_lock:
+        old=_carriage_positions.pop(key,None)
+        if old is not None:_carriage_position_bytes-=old[1]
+        if size<=MAX_CARRIAGE_POSITION_BYTES and MAX_CARRIAGE_POSITIONS>0:
+            _carriage_positions[key]=(value,size);_carriage_position_bytes+=size
+        while _carriage_positions and (len(_carriage_positions)>MAX_CARRIAGE_POSITIONS
+                or _carriage_position_bytes>MAX_CARRIAGE_POSITION_BYTES):
+            _,(_,removed)=_carriage_positions.popitem(last=False)
+            _carriage_position_bytes-=removed
+
 
 def require(ok, message):
     if not ok:
@@ -906,17 +935,64 @@ class Node:
             if ident not in state['receipts'] and ident not in values:values.append(ident)
         state['recent_transits']=values[-MAX_RECENT_TRANSITS:] if MAX_RECENT_TRANSITS else []
 
+    def carriage_position_domain(self):
+        return (str(self.root),self.network,self.id,VERSION,TRANSIT_SCHEDULER,
+                MAX_MESSAGES,MAX_NODES,MAX_CONTACTS,MAX_HOPS,MAX_BATCH,
+                evidence.FORMAT,evidence.DOMAIN,evidence.MAX_FRAME,evidence.MAX_PAYLOAD,
+                MAX_CARRIAGE_POSITIONS,MAX_CARRIAGE_POSITION_BYTES,
+                tuple((p,tuple(sorted(c.items()))) for p,c in sorted(self.contacts.items())))
+
     def transit_groups(self, peer):
         pending=sorted(self.state['messages'])
-        recent=set(self.state['recent_transits'])
-        groups=[]
+        recent=set(self.state['recent_transits']);groups=[]
+        domain=self.carriage_position_domain()
         for name,selected in (('recent_transit_cursors',True),('history_transit_cursors',False)):
-            items=[ident for ident in pending if (ident in recent)==selected]
-            after=self.state[name][peer]
-            start=0 if after is None or not items else bisect_right(items,after)%len(items)
-            groups.append(items[start:]+items[:start])
+            buckets={}
+            for ident in pending:
+                if (ident in recent)!=selected:continue
+                # Node open authenticated every complete transit and its exact
+                # signed frame binding. These rows choose carriage only; each
+                # eligible selected transit still takes ordinary validation.
+                transit=self.state['messages'][ident]
+                route=transit['routing']['body']
+                bucket=(transit['packet']['body']['destination'],route['frame_id'])
+                buckets.setdefault(bucket,[]).append(ident)
+            keys=sorted(buckets);last=carriage_position((domain,peer,name,'ring'))
+            missing=[bucket for bucket in keys
+                     if carriage_position((domain,peer,name,bucket)) is None]
+            for bucket in missing:
+                remember_carriage_position((domain,peer,name,bucket),
+                                            self.state[name][peer] or '')
+            if last is None:
+                # A cold/missing/evicted scheduling hint must retain the
+                # original durable whole-class rotation for this preparation.
+                # Initialize only primitive positions from its checked cursor;
+                # no unchecked packet/header or authority is retained.
+                items=[ident for ident in pending if (ident in recent)==selected]
+                after=self.state[name][peer]
+                offset=0 if after is None or not items else bisect_right(items,after)%len(items)
+                groups.append(items[offset:]+items[:offset])
+                continue
+            start=0 if not keys else bisect_right(keys,last)%len(keys)
+            keys=keys[start:]+keys[:start];rows=[]
+            for bucket in keys:
+                items=buckets[bucket]
+                after=carriage_position((domain,peer,name,bucket))
+                offset=0 if after=='' else bisect_right(items,after)%len(items)
+                rows.append(items[offset:]+items[:offset])
+            groups.append([items[index] for index in range(max(map(len,rows),default=0))
+                           for items in rows if index<len(items)])
         if self.state['transit_class_steps'][peer]%2:groups.reverse()
         return groups
+
+    def remember_carriage(self, peer, bundle):
+        domain=self.carriage_position_domain();recent=set(self.state['recent_transits'])
+        for transit in bundle['body']['transits']:
+            ident=transit['routing']['body']['packet_id']
+            name='recent_transit_cursors' if ident in recent else 'history_transit_cursors'
+            bucket=(transit['packet']['body']['destination'],transit['routing']['body']['frame_id'])
+            remember_carriage_position((domain,peer,name,bucket),ident)
+            remember_carriage_position((domain,peer,name,'ring'),bucket)
 
     def transit_order(self, peer):
         groups=self.transit_groups(peer)
@@ -1126,6 +1202,9 @@ class Node:
             updated['transit_class_steps'][peer]=(updated['transit_class_steps'][peer]+1)%(2**63)
         if updated != self.state:atomic(self.path, updated)
         self.state = updated
+        # Advance optional positions only after durable ordinary preparation.
+        # Eviction/restart forgets hints and never deletes retained packets.
+        self.remember_carriage(peer,bundle)
         return bundle
 
     def tick(self):
