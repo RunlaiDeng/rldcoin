@@ -4,6 +4,7 @@ use rld_regional_ledger_candidate::{
     storage::{read_json, Store},
     *,
 };
+use sha2::{Digest, Sha256};
 use std::path::PathBuf;
 #[derive(Parser)]
 #[command(about = "Fixture-only generic regional ledger; no mainnet or remote HTTP")]
@@ -48,6 +49,16 @@ enum Action {
         file: PathBuf,
     },
     BftNetworkCheck {
+        #[arg(long)]
+        file: PathBuf,
+    },
+    /// Bounded full cold authentication only; no ledger installation or signing.
+    BftNetworkCheckBatch {
+        #[arg(long)]
+        file: PathBuf,
+    },
+    /// Full bounded live authentication only; no ledger installation or signing.
+    BftNetworkInspectBatch {
         #[arg(long)]
         file: PathBuf,
     },
@@ -128,6 +139,13 @@ enum Action {
     BftEpochActivate {
         #[arg(long)]
         file: PathBuf,
+    },
+    BftEpochActivateObserved {
+        #[arg(long)]
+        file: PathBuf,
+        /// Select an ordered proof from this exact fully authenticated envelope.
+        #[arg(long)]
+        carried_index: Option<usize>,
     },
     BftInit {
         #[arg(long)]
@@ -217,6 +235,17 @@ enum Action {
     Status,
     /// Replay a private bounded archive from pinned genesis; never adopt a store.
     HistoryStreamCheck {
+        #[arg(long)]
+        bootstrap: PathBuf,
+        #[arg(long)]
+        region: String,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
+    /// Check compact read-only history; reconstruct and replay every native block.
+    HistoryStreamCompactCheck {
         #[arg(long)]
         bootstrap: PathBuf,
         #[arg(long)]
@@ -477,15 +506,26 @@ fn run() -> Result<()> {
         ref region,
         ref file,
         ref expected_head,
+    }
+    | Action::HistoryStreamCompactCheck {
+        ref bootstrap,
+        ref region,
+        ref file,
+        ref expected_head,
     } = action
     {
         let genesis = read_json::<Bootstrap>(bootstrap)?;
         let expected = Hash::from_hex(expected_head).map_err(|e| e.to_string())?;
-        let head =
-            stream_replay::check_archive(file, &genesis, &args.authority, pin, region, expected)?;
+        let compact = matches!(action, Action::HistoryStreamCompactCheck { .. });
+        let head = if compact {
+            stream_archive::check_archive(file, &genesis, &args.authority, pin, region, expected)?
+        } else {
+            stream_replay::check_archive(file, &genesis, &args.authority, pin, region, expected)?
+        };
         println!(
             "{}",
             serde_json::json!({"head":head,"genesis_and_every_native_block_replayed":true,
+            "compact_archive":compact,
             "ledger_adopted":false,"signing_or_wallet_custody_restored":false,
             "incident_quarantine_reconciled":false,"ordinary_node_storage_upgraded":false,
             "independent_latest_anchor_qualified":false,"long_history_qualified":false,
@@ -684,6 +724,9 @@ fn run() -> Result<()> {
         )?;
     }
     let mut store = match &action {
+        Action::BftNetworkCheckBatch { .. } | Action::BftNetworkInspectBatch { .. } => {
+            Store::open_inspection(&args.dir, &args.authority, pin)?
+        }
         Action::HistoryCheck { expected_head } => Store::open_pinned(
             &args.dir,
             &args.authority,
@@ -693,7 +736,9 @@ fn run() -> Result<()> {
         _ => Store::open(&args.dir, &args.authority, pin)?,
     };
     match action {
-        Action::HistoryStreamCheck { .. } => unreachable!("handled before opening a native store"),
+        Action::HistoryStreamCheck { .. } | Action::HistoryStreamCompactCheck { .. } => {
+            unreachable!("handled before opening a native store")
+        }
         Action::BftPendingImports => {
             let commands = store
                 .journal
@@ -738,6 +783,36 @@ fn run() -> Result<()> {
                 "{}",
                 serde_json::json!({"message_id":ident,"currency":pin,"region":store.chain.region,"value":envelope.value()?,"evidence":envelope.evidence,"epochs":envelope.carried_epochs(),"verified":true,"ledger_changed":false})
             );
+        }
+        Action::BftNetworkCheckBatch { file } => {
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let wires: Vec<bft_network::WireEnvelope> =
+                serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let checked = bft_network::check_cold_batch(wires, &store)?;
+            println!(
+                "{}",
+                serde_json::json!({"format":bft_network::COLD_BATCH_FORMAT,
+                    "currency":pin,"region":store.chain.region,
+                    "request_sha256":Hash(Sha256::digest(&raw).into()),
+                    "results":checked,"verified":true,"ledger_changed":false,
+                    "signing_authority":false})
+            );
+        }
+        Action::BftNetworkInspectBatch { file } => {
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let wires: Vec<bft_network::WireEnvelope> =
+                serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let checked = bft_network::inspect_live_batch(wires, &store)?;
+            let response = serde_json::json!({"format":bft_network::LIVE_BATCH_FORMAT,
+                "currency":pin,"region":store.chain.region,
+                "request_sha256":Hash(Sha256::digest(&raw).into()),
+                "results":checked,"verified":true,"ledger_changed":false,
+                "signing_authority":false});
+            let output = serde_json::to_vec(&response).map_err(|e| e.to_string())?;
+            if output.len() > MAX_BYTES {
+                return Err("live network batch response exceeds bound".into());
+            }
+            println!("{}", String::from_utf8(output).map_err(|e| e.to_string())?);
         }
         Action::BftNetworkPack { file } => {
             let envelope: bft_network::Envelope = read_json(&file)?;
@@ -810,6 +885,25 @@ fn run() -> Result<()> {
             };
             let eid = bft_network::activate(&mut store, *proof, envelope.evidence)?;
             println!("{}", serde_json::json!({"epoch":eid}));
+        }
+        Action::BftEpochActivateObserved {
+            file,
+            carried_index,
+        } => {
+            let raw = storage::read_bytes(&file, contact::MAX_PAYLOAD)?;
+            let wire: bft_network::WireEnvelope =
+                serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let envelope = wire.expand()?;
+            let observation = bft_network::activate_observed(
+                &mut store,
+                envelope,
+                carried_index,
+                Hash(Sha256::digest(&raw).into()),
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&observation).map_err(|e| e.to_string())?
+            );
         }
         Action::BftInitObservation => println!(
             "{}",

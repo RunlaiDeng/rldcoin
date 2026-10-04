@@ -1003,6 +1003,7 @@ pub mod signer;
 mod state_index;
 pub mod state_proof;
 pub mod storage;
+pub mod stream_archive;
 pub mod stream_replay;
 #[cfg(test)]
 mod tests;

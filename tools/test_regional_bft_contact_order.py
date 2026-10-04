@@ -1,0 +1,72 @@
+"""Real native phase custody must reach the ordinary outgoing attempt this tick.
+
+The socket attempt is intercepted; native signing, head/outbox persistence,
+envelope packing, mesh enqueue and complete frame authentication are real.
+"""
+import os
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+import interstellar_mesh as mesh
+import interstellar_transfer as wire
+from regional_bft_network_campaign import Campaign
+from regional_contact_campaign import public
+from regional_contact_node import Native, Service
+
+BINARY = Path(os.environ.get('RLD_CONTACT_BINARY', str(Path(__file__).parent/'regional-ledger/target/debug/rld-regional-ledger-candidate'))).resolve()
+
+
+class ContactOrderTests(unittest.TestCase):
+    def test_fresh_commit_is_durable_and_queued_before_the_only_outgoing_attempt(self):
+        with tempfile.TemporaryDirectory(prefix='rld-bft-contact-order-') as temporary:
+            campaign = Campaign(BINARY, Path(temporary).resolve()/'fixture')
+            service = None
+            try:
+                native = Native(BINARY, campaign.node('earth', 1), public(1), campaign.currency)
+                service = Service(native, mesh.load(campaign.root/'mesh-config-1.json', 65536), None,
+                                  bft_config=campaign.root/'bft-config-1.json',parallel_carriage=False)
+                runtime = service.bft
+                candidate = campaign.cli('earth', 1, 'bft-candidate', '--miner', public(10),
+                                         '--commands', campaign.file('commands', []))
+                proposal = campaign.sign('earth', 0, {'Propose':dict(round=0, snapshot=candidate, timeout=None)})['message']['Proposal']
+                votes = [campaign.sign('earth', n, {'Prepare':proposal})['message'] for n in (0, 2, 3)]
+                for message in [{'Proposal':proposal}, *votes]:
+                    runtime.retain(runtime.envelope({'Signed':message}), sync=False)
+                observations = []
+                def outgoing():
+                    status = runtime.signer_status()
+                    commits = [i for i, body, _, local in runtime.state['messages'].bodies()
+                               if local and body.get('Signed', {}).get('Vote', {}).get('phase') == 'Commit']
+                    self.assertEqual(status['records'], 2)
+                    self.assertEqual(len(commits), 1)
+                    self.assertIsNone(runtime.head['pending'])
+                    self.assertIsNone(runtime.head['outbox'])
+                    self.assertEqual(status['head'], runtime.head['head'])
+                    content = runtime.state['messages'].content(commits[0])
+                    with mesh.Node(service.config) as node:
+                        packets = [i for i, summary in node.summaries().items()
+                                   if summary['source'] == node.id and summary['export_id'] == content]
+                        self.assertTrue(packets)
+                        for ident in packets:
+                            _, raw, _ = mesh.transit_check(node.transit(ident), node.network)
+                            frame, payload = wire.inspect_frame(raw)
+                            self.assertEqual(frame['export_id'], content)
+                            runtime.with_json('bft-network-check', wire.decode_json(payload))
+                    observations.append(status['records'])
+                    return dict(errors=[])
+                with patch.object(service.tcp, 'tick', side_effect=outgoing):
+                    report = service.tick()
+                    service.tick()
+                self.assertEqual(observations, [2, 2])
+                self.assertEqual(report['consensus']['native_records'], 2)
+                self.assertEqual(native.call('status')['height'], 0)
+                self.assertEqual(report['errors'], [])
+            finally:
+                if service is not None: service.close()
+                campaign.cleanup()
+
+
+if __name__ == '__main__':
+    unittest.main()

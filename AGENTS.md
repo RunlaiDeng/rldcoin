@@ -505,3 +505,230 @@ Stop/join outgoing and every inbound worker before releasing service custody;
 socket deadlines do not bound local verification CPU. Fresh directories only;
 preserve failed source, pending value and queues. Real TLS/component barriers
 do not qualify ordinary payment, full faults, independent custody or physics.
+
+The bounded enqueue candidate publishes one ordinary selection of at most four
+complete packets/routes in one atomic state write, adopting memory only after
+publication succeeds. Validate the entire batch and local receipt capacity;
+no partial acknowledgment grants custody. Publication failure requires closing
+and cold reopening: an exact complete batch may already be retained after
+response loss. Deduplicate only from authenticated durable source carriage,
+never reset signer/caller heads or replace reserved requests. Empty BFT broadcast
+keeps its cursor and does not rewrite Runtime; nonempty successful selections
+retain the original four-step cursor rule and all existing bounds/deadlines.
+Local metadata selection is not Native authority. Fresh private fixtures only;
+component write-count/CPU observations do not qualify ordinary payment or faults.
+
+Single-frame transit authentication may reuse only the header just fully
+authenticated from the exact immutable raw frame in that same operation.
+Packet signature/schema/base64/network binding, receipt-route and every ordered
+hop/contact check remain complete; public packet_check keeps its original
+return shape. No header/payload survives in a witness. Existing 512 immutable
+visited-node tuples and exact canonical/domain/limit/cold/eviction rules stay
+unchanged. New helper source requires its own fresh ground run and full checks;
+do not change a running frozen source or reuse failed custody/value.
+
+One process-local ordinary-selection preference may belong only to the actual
+Service thread. A 0.2-second failed selection remains unknown and may retain
+that intent until its next fully authenticated selection; TCP threads use the
+same original local wait budget to yield, granting no custody on timeout.
+Close the acquired Node and clear intent before Native processing. No marker
+is serialized or changes locks, signer/caller heads, peer pins or Native rights.
+Unfinished preference can defer TCP attempts, never infer an acknowledgment;
+successful selection still allows independent carriage during Native CPU.
+Other processes remain outside this scheduling hint. Fatal corruption refuses,
+and stop clears intent while still joining all actual custody workers. Fresh
+fixtures/full qualification required; receipt-positive gaps and local barriers
+do not reconstruct exact past scheduling or prove a unique failure cause.
+
+With an actual live independent outgoing owner, an inbound TCP reply may carry
+only the local advertisement, current signed inventory and retained receipts for
+its exact incoming packets after complete receive/fsync. Keep it within 64 KiB
+and the original wire limit; do not advance carriage cursors or prepare reverse
+transits in that reply. The actual worker carries all reverse/history/discovery
+evidence under ordinary durable scheduling. Unowned servers retain duplex
+responses. Fresh challenge/exact-exchange authentication and source-local reply
+custody before suppression remain mandatory; failure preserves evidence and
+grants no Native rights. Fresh fixtures, not failed-value/custody migration.
+
+Private transit scheduler V4 labels at most 32 actual newly retained unreceipted
+packet IDs, never repeated/archived packets. Per-peer recent/history ID successors
+skip ineligible rows within each class before interleaving the original four
+slots; single-item wire budgets alternate
+the leading class. Publish class cursors before I/O. Metadata grants no custody
+or Native rights; evicted/completed labels never prune signed evidence. V3 private
+stores/identities refuse unchanged. Fresh ground directories/pins are mandatory;
+all admission, archive, wire, authentication and Native limits remain unchanged.
+
+The native executable embeds its build checkout's companion path through
+`CARGO_MANIFEST_DIR`; a new PYTHONPATH does not override the launched script's
+own directory. Rebuild from the exact frozen source for ordinary lifecycle or
+wallet-app qualification, even when Native/Core source hashes are unchanged.
+Verify the embedded path and actual launched entry. Reused native CLI component
+checks do not establish execution of a different checkout's companion.
+
+The local mesh-turn candidate shares one process-local admission lease between
+ordinary selection and TCP contexts. After full Node open, pending classes get
+alternating preference; actual outgoing demand and live inbound handlers also
+alternate. Only the actual live outgoing owner may retain demand after timeout;
+closed handlers cannot leave tickets. At most two inbound plus one outgoing
+waiters; clear dead demand and stop markers, join actual custody workers. Release
+the lease after Node close and ordinary intent before Native CPU. Original 0.2
+second acquisition/three-second socket bounds remain; full validation CPU is
+separate. No serialized marker, unchecked evidence cache or authority is added.
+Direct startup/broadcast/other-process lock users remain outside this hint.
+
+Local Mesh admission shutdown has a typed stopping refusal. The ordinary main
+loop may treat only that refusal as graceful after its actual SIGINT/SIGTERM
+handler stopped the loop. Without that signal it still fails; other evidence,
+Native and custody errors never become graceful. Finish existing Node custody
+and join actual workers before releasing service ownership; do not catch broad
+ValueError to hide shutdown failures. Frozen failed fixtures remain stopped.
+
+Three-region terminal reports are written only after all owned-process cleanup.
+Retain a process handle until its wait is terminal, and retain original stage
+errors separately from cleanup errors. Unknown ownership and earlier unclean
+shutdown cannot count as completed after an empty final cleanup. Existing
+reports refuse before fixture creation; cleanup grants no Native or wallet rights.
+
+Fresh three-region setup retains separate public/config inspection anchors and
+binds their original digest in terminal reports. Stopped cold verification
+requires exact completed/clean/owned terminal gates and the full setup inventory
+before MeshInspection; never derive anchors from inspected private identities
+or open a normal Node for cold transport qualification. Old unanchored reports
+refuse without conversion; keep full Native, caller-head, envelope and archive
+authentication. Component setup checks do not qualify an ordinary value cycle.
+
+Owned TCP replies may carry authenticated retained receipts requested by the
+just-durably-received exact signed peer inventory, without reverse transits.
+Keep the original 16-receipt/64-KiB reply bounds and immediate packet priority.
+Rotate only actually selected requested IDs using at most one nullable private
+process-local hint per configured TCP peer; restart forgets hints, not evidence.
+Do not advance ordinary durable carriage cursors. Inventory, receipt, hash and
+hint confer no Native acceptance, signing or refund rights. Failed local receive
+cannot advance the hint or acknowledge custody; source suppression still requires
+actual durable local reception of the verified reply.
+
+Within one complete transit-authentication operation, compute the exact signed
+packet digest once and reuse it across the fully verified source route and hops.
+Only after transit_check succeeds may local active-store ownership compare its
+map key with that exact transit's authenticated source-route packet ID and its
+last visited node with the actual local node. Unchecked route or metadata hashes
+never grant ownership. Keep the existing immutable visited-node-only witness,
+full cold/miss/changed-byte/limit authentication and all Native/custody bounds.
+
+Ordinary active-state raw admission may compute canonical image size once within
+the same complete bounded decoding operation. Own the decoded object, check the
+entire canonical bytes against the exact raw input, and use only that raw length;
+the object-unpack path must compute its own complete canonical length. Never
+accept a supplied length, digest or cached object as admission. Retain full
+schema, pool/reference/orphan, complete object, expanded-transit and subsequent
+Node authentication. Successful storage decoding cannot authorize a signature.
+
+The cold-start batch candidate authenticates at most four complete retained BFT envelopes per Native inspection call, within the unchanged 8-MiB input and 3-MiB per-envelope limits. Pending incident guards refuse before recovery. Bind exact request bytes/domain and every ordered result; return only after all complete envelopes pass. Python reconstructs one bounded envelope at a time. Live receive authentication/sync before deduplication and separate custody heads remain unchanged. This changes Native implementation: fresh no-value signed genesis/currency and fresh directories only; old failed profiles/value remain untouched. It is not ordinary payment/fault or independent qualification.
+
+After complete Native cold authentication and custody recovery, startup may reuse a retained complete envelope only by comparing its entire canonical underlying Proposal/Vote/Timeout response to the actual original Native journal response. A 512-message/128-KiB process-local digest/ID hint never replaces that full comparison; source/binding/limit changes rebuild and capacity falls back. Prefer existing local carriage, preserve original bytes and all journals, and keep missing responses/fences on the full Native construction path. Every later received envelope still authenticates and synchronizes before deduplication. This is startup carriage only, not new signing/value/custody or payment/fault qualification.
+
+Native wallet journals use Rust typed-struct JSON field order, not the Python mesh canonical serializer. A stopped verifier may read bounded duplicate-free metadata for comparison only; full native wallet history/owner validation and the separately retained caller head remain mandatory. Refuse wallet.next before wallet-view, which could otherwise recover a pending publication. Bind a corrected controller's separate complete source manifest while preserving the original runtime source, binary, failed verifier log and private state; never silently rewrite a frozen campaign to fit later verification.
+
+The finite role launch-all comparison starts ordinary actors before individually validating current-PID cold readiness, retaining owned processes on launch/readiness failure. Original 300-second startup and 600-second progress gates remain; use only the original successful stopped source with complete pinned verifier/source manifests, never a failed drill. Controller startup selection is not general BFT liveness or an ordinary runtime upgrade.
+
+Joint-cycle slot telemetry can be explicitly unknown under Native lock contention. Require the complete Native active epoch, exact selected plan and actual replayed replica agreement first. A known slot must equal the configured new slot; accept missing optional fields only with explicit progress_observation_available=false and a bounded nonempty diagnostic, without fabricated height/round/slot. Record unknown as null; never infer signing rights or initialize custody from telemetry.
+
+Fault-controller transport samples retain null counters when optional mesh selection is unavailable. TCP lock counters are independently optional. Sampling must still execute the independent complete native conservation audit; unknown transport telemetry grants no custody, receipt, ledger or progress qualification. Preserve failed reports and pending owner requests, and use a new private drill from the exact successful stopped cycle rather than resuming a failed copy.
+
+The separate stopped BFT batch verifier uses the existing native four-envelope/8-MiB cold inspection, never Runtime startup, signing, recovery or sync. Temporary request files stay outside the inspected private source; preserve whole-source byte/permission/head checks. Every envelope still requires full native authentication and exact request/domain/ordered-result binding; batch refusal cannot become partial success or fall back to unchecked metadata.
+
+Repeated retained BFT bodies still require complete Native envelope authentication, certified dependency synchronization and full carried epoch-proof handling before deduplication. After those checks, an already retained body may return without repeating role advance/custody reconciliation. Ordinary tick must re-read Native membership and reconcile pending responses/caller heads before any signing; new bodies retain immediate advance. Preserve original complete bytes, and only promote the retained local-carriage flag after authentication. This is scheduling, never cached authorization or proof-variant authentication elision; use fresh no-value fixtures for its new ordinary runtime.
+
+The activation-observation candidate authenticates the entire original bounded envelope before selecting an exact carried index and running ordinary Native activation. Return the same locked store's ordered installed proofs bound to exact request bytes, currency/region/index and explicit no-signing/no-independent-freshness flags; every certificate variant still takes Native activation and retains original selected bytes. Python may omit redundant proof/pack/post-observation calls only after this strict binding, never use a hash/cache as authority or fall back to an older binary. Keep the 3-MiB wire/8-MiB logical-and-response/16-epoch bounds. Add the new mutating command to controller authority guards. Changed Native source requires fresh signed no-value genesis/currency and separate full verification.
+
+An exact Native durable-prepare-lock refusal is not a phase advance. Alternate scheduling requires the exact pending request, no outbox, recover-only reconciliation and an unchanged separately retained Native head; a recovered response or changed/missing caller state refuses. Do not clear locks, reset timers, invent a replacement proposal or swallow unrelated errors. Continue only the original eligible Native timeout, retaining its complete high QC. Pass all retained three/four ordered timeout voters to the already-bounded Native codec so a fourth high QC is not omitted; every signature/context/high QC remains authenticated, and Prepare/Commit thresholds and original deadlines stay fixed. Qualify the changed ordinary runtime with fresh private fixtures and the exact newly compiled default driver.
+
+Within Runtime's private role tick entry, the first repeated voter observation may be deferred only to the immediately following fresh Native context/signer/head check. Pending handoffs must check the actual voter head before further fence/readiness actions; standalone role tick/advance retain immediate checks. Pending response recovery, outbox release and native creation checks remain unchanged. Do not retain/reuse an observation or adopt a changed head; no signing/timeout may precede that fresh check. This is ordinary scheduling only, requiring a fresh exact compiled driver and new private no-value fixtures.
+
+Fresh fault copies must retain a separate complete public/config inspection
+inventory after operator rebinding and before any ordinary startup. Source public
+keys come only from the exact successful cycle's authenticated setup anchors;
+never derive cold anchors from copied private identities. Bind both original and
+new digests in the terminal report, preserve the inherited file, and use strict
+MeshInspection for full-fault cold transport. Old unanchored fault reports refuse
+unchanged; later diagnostic or controller fixes cannot retrofit qualification.
+
+Fault-controller receipt probes may wait two local seconds between full native
+reads to limit interference with the ordinary gateway's OS lock. Skipped probes
+return false and retain only the next-read timestamp/count, never a receipt,
+ledger or head. Every pass still needs the current exact native expectation and
+maturity/finality/quarantine checks. Keep original phase/height bounds and fault
+scope; fresh stopped/cold evidence, never a failed restart, determines the result.
+
+Within one complete mesh receive, coalesce only actual fsync of exact already
+fully authenticated retained archive file paths and their containing directory.
+Flush every distinct file and each directory before state publication or custody
+reply; each archive occurrence still fully authenticates. The private set is
+bounded by existing receipt/transit capacities and disappears on every success
+or refusal. No across-call sync witness, directory-only custody or acknowledgment
+on failure. Standalone archive sync remains immediate. Preserve all failed
+fixtures and qualify this changed Python runtime with a new exact compiled driver
+and fresh private no-value ordinary scopes; Native/Core and bounds stay unchanged.
+
+The separate compact stream archive binds exact verified currency/region/complete
+admission trust in its first canonical record. Omit only repeated header/intent
+currency and region fields, reconstruct complete native blocks and ordered owner
+signatures, then use the existing genesis-derived native execution cursor. No
+serialized ledger, unchecked dictionary or digest initializes state. Complete
+evidence, both compact/expanded 8-MiB record bounds, 256-MiB private archive,
+256 observations/64 verified anchors/4,096 permanent-map entries remain. Old and
+compact archive formats refuse without fallback. This read-only codec neither
+adopts an ordinary store nor reconciles incidents/restores custody; BFT and local
+epoch handoff refuse. Changed native source needs fresh signed no-value fixtures,
+never migration; actual beyond-era replay and independent/ordinary long history
+remain separate qualifications.
+
+Live BFT inspection batches authenticate every complete envelope under one
+read-only native store opening before any batch synchronization or retention.
+Keep four receive slots, ordinary frame order and fair novel/background rotation.
+Each request/response stays 8 MiB and each wire 3 MiB. Only the exact expanded
+response capacity refusal may split read-only inspection; authenticate all split
+results before mutation, with no bad-proof/incident/unknown-command fallback.
+Return complete expanded evidence and epochs under exact request/domain binding;
+results stay operation-local. Original bytes/local flags, native sync/activation,
+fresh signing membership and separate caller heads remain mandatory. Changed
+native source needs fresh signed no-value fixtures, never old custody/value.
+
+A failed multi-envelope receive retains no batch mutation and schedules the next
+tick's selected BFT frames as separate full native inspections. One process-local
+bit keeps four fair receive slots; no same-operation bad-proof fallback or cached
+authority. Valid traffic must progress despite a repeatedly rejected envelope.
+
+Explicit one-way directory contacts use `RLD-CONTACT-SPOOL-ONEWAY-V1` and exactly
+one pinned peer plus private inbox or outbox. Advertise only outgoing neighbors;
+receiving never invents a reverse edge. Exchange/receive enforce configured roles,
+and strict cold inspection checks setup-time public/config anchors and retained
+outgoing directions without reading identities. All ordinary authentication,
+durable custody, queue/archive/hop/frame bounds and pending value remain intact.
+A mechanical carrier's file transfer is not destination custody, ledger acceptance
+or physical qualification. No file-age refund/expiry or TCP downgrade. New Python
+runtime requires fresh private no-value scopes and an exact compiled driver;
+Native/source evidence stays unchanged, old fixtures and failures stay retained.
+
+The streamed frame commitment candidate constructs the exact ordinary canonical
+JSON SHA-256/length from fully encoded metadata and an ASCII frame needing no JSON
+escaping. Unsafe encodings/shapes retain the complete canonical path; canonical
+Base64 and all packet/route/hop/receipt/Native checks remain mandatory. No cross-call
+frame/header/payload or authority is retained. Active disk/wire/commitment bytes,
+transit witness domain/limits and capacities remain identical. Measure ordinary
+state decode/validation separately from strict cold inspection's archive reads;
+neither stopped CPU nor a selected retained route reconstructs live fault timing.
+Changed Python requires a new exact compiled driver and fresh ordinary scopes,
+never old failed value/custody, longer deadlines or a claimed full-fault pass.
+
+The ordinary disjoint joint loop may consume its just-completed full Native voter
+head observation only inside the exact private loop operation, bound to Runtime,
+complete signing binding and complete caller head. Immutable observation/scope
+bytes total at most 8 MiB; other operations/runtimes, changed caller fields,
+tighter limits, keyless synthetic status and capacity misses use normal queries.
+Never retain it across loops or persist/recover it. Normal fresh pre-sign Native
+head queries and atomic Native expected-head/membership/lock/value checks remain.
+Startup, direct ceremony, incoming activation and role paths keep their original
+checks. Changed Python needs an exact new driver and fresh no-value scopes;
+component savings do not qualify a failed full profile or independent custody.

@@ -300,14 +300,25 @@ impl Store {
         Ok(store)
     }
     pub fn open(dir: &Path, authority: &str, pin: Hash) -> Result<Self> {
-        Self::open_internal(dir, authority, pin, None)
+        Self::open_internal(dir, authority, pin, None, true)
+    }
+    /// Open and replay under the ordinary OS lock without incident recovery.
+    /// This observation supplies no independent latest-state protection.
+    pub fn open_inspection(dir: &Path, authority: &str, pin: Hash) -> Result<Self> {
+        Self::open_internal(dir, authority, pin, None, false)
     }
     /// The caller must retain the latest exact head outside this rollback domain.
     /// Check under the native OS lock before any incident reconciliation or replay.
     pub fn open_pinned(dir: &Path, authority: &str, pin: Hash, head: Hash) -> Result<Self> {
-        Self::open_internal(dir, authority, pin, Some(head))
+        Self::open_internal(dir, authority, pin, Some(head), true)
     }
-    fn open_internal(dir: &Path, authority: &str, pin: Hash, head: Option<Hash>) -> Result<Self> {
+    fn open_internal(
+        dir: &Path,
+        authority: &str,
+        pin: Hash,
+        head: Option<Hash>,
+        reconcile: bool,
+    ) -> Result<Self> {
         safe_dir(dir)?;
         ensure_not_restoring(dir)?;
         let lock_path = dir.join("LOCK");
@@ -322,6 +333,12 @@ impl Store {
             .open(lock_path)
             .map_err(io)?;
         lock.try_lock().map_err(|e| e.to_string())?;
+        if !reconcile {
+            require(
+                read_guard(dir)?.is_zero(),
+                "cold inspection has a pending incident; explicit recovery required",
+            )?;
+        }
         let Loaded {
             journal,
             trust,
@@ -345,6 +362,7 @@ impl Store {
         };
         let pending = read_guard(dir)?;
         if !pending.is_zero() {
+            require(reconcile, "cold inspection refuses incident reconciliation")?;
             require(store.conflicts.iter().any(|p|p.id().ok()==Some(pending)),"pending authenticated incident is not durably retained; recovery proof is required")?;
             store.commit(store.journal.clone())?;
             write_guard(dir, Hash::ZERO)?;
