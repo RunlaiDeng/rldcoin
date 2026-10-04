@@ -1,0 +1,43 @@
+{
+  "format": "RLD-NATIVE-REPLICA-OBSERVATION-JOINT-FAULT-STAGE-OUTCOME-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": true,
+  "attempt_budget": 1,
+  "attempts_used": 1,
+  "source_set_sha256": "7e729cd692769b9bdafc40171ab423306ab4ed5da098e7302e7f2ae186e99a3c",
+  "binary_sha256": "e5f72ec41f2801c4fca20d85f7e067a1c73cbd3a67548bfcd3694c3f8e0c9c77",
+  "controller_source_set_sha256": "c2540450de582272086288842821568a249894d034c9982ef6ccfc41ba6d9ba2",
+  "verifier_source_set_sha256": "43977d1517f823843f503d33d0b3eb3162a081f0b19e6a5e258bf8528f22bae3",
+  "run_report_sha256": "2e3be09445474fea96ec885266e9e85038a1cc561addb15cf83ce8b1d1d9bdba",
+  "cold_report_sha256": "d5f09e25b2e37939a88b8120ef9be19ac8e70118c210b5f191e605b68f479fa3",
+  "owner_report_sha256": "81c1cef616272f45dad2c00a54d6f0e2c2ecb53a7a812dedec786218fc939c6e",
+  "live_report_sha256": "9c702e764c58aab3386d04f63f7c8edd2fd782aad2cc82c975cc17094d9edde4",
+  "runtime_duration_seconds": 757.088,
+  "native_receipt_attempts": 172,
+  "import_height": 12,
+  "maturity_height": 14,
+  "final_heights": {
+    "earth": 16,
+    "proxima": 14,
+    "andromeda": 14
+  },
+  "native_replays": 12,
+  "recipient_checks": 4,
+  "joint_custody_checks": 4,
+  "complete_envelopes_authenticated": 1940,
+  "archives_authenticated": 4348,
+  "conservation": {
+    "issued": "300",
+    "liquid": "300",
+    "in_transit": "0",
+    "conserved": true
+  },
+  "all_private_fixture_files_unchanged": true,
+  "original_owner_requests_included_and_reservations_zero": true,
+  "original_phase_round_height_maturity_quorum_capacity_and_keyless_drain_unchanged": true,
+  "qualification": "exact no-value same-host finite missing-leader/contact-outage/local-payment/import-maturity/keyless-drain scope only",
+  "old_failed_scopes_remain_failed": true,
+  "no_controlled_speed_comparison_or_unique_old_failure_cause_claim": true,
+  "full_protocol_sustained_bft_long_history_independent_custody_physical_mainnet_qualified": false
+}

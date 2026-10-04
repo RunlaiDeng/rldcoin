@@ -1,0 +1,18 @@
+{
+  "format": "RLD-WHITEPAPER-ISSUANCE-ADJUDICATION-STAGE-DECISION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "active_hypothesis": "existing PoW cumulative_emission/subsidy disagrees with frozen section-6 front-loaded floor-half reserve recurrence at incomplete eras with a nonzero remainder and late odd reserves",
+  "normative_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "minimum_discriminator": "exact existing Rust subsidy/cumulative implementation versus independent section-6 integer recurrence at first remainder era, odd reserve and final one-unit era; no node or signing runtime",
+  "source_file": "crates/rld-pow/src/lib.rs",
+  "source_sha256": "bb6f5952ba106d8df7d75928020a65e6074f15ada3cef6c979a106cc07e879e3",
+  "attempt_budget": 1,
+  "attempts_started": 0,
+  "build_and_component_budget_seconds": 240,
+  "exit": "exact source bound mismatch or agreement/refusal or budget",
+  "pass_branch": "new explicit immutable issuance rule identity and native checked-integer repair with normative boundary/partial/full-era/tail vectors; fresh signed fixture required for any changed implementation qualification",
+  "failure_branch": "retain build/refusal evidence and select smallest alternate discriminator without unchanged repeat",
+  "existing_frozen_sources_stores_tests_and_failures_unchanged": true,
+  "no_mainnet_value_adoption_or_body_change": true
+}
