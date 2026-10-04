@@ -1,0 +1,35 @@
+{
+  "format": "RLD-VALUE-COMPOSITION-MODEL-OUTCOME-V1",
+  "native_implementation_changed": false,
+  "retained_exact_native_source_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+  "retained_native_source_files": 171,
+  "model_contract_files_sha256": {
+    "tools/value_composition_model.py": "2599f7b341ac9d2e334552f45d8dfc03e8120b4fc1fcd56bfc1ac1da7fa02c93",
+    "tools/test_value_composition_model.py": "ca3a304df190351925662c9bd9456addd020065a14342076d397c3c8b5ace98a",
+    "tools/regional-ledger/AGENTS.md": "28be4725ff67ecd0f843be85d5ccb213a531ac90a1701291ec50e157daf7f032",
+    "docs/research/REGIONAL_VALUE_COMPOSITION_CONTRACT_V1.md": "c820efee28abceba687861c399ff884b1841dbbbb5b58a61d3e9f28b74f57e2b",
+    "docs/PLAN_STATUS.md": "3707ce50a8ee2c866222d05eef7f3dca3194b2678fb7ce161a762b7a4a401acf"
+  },
+  "report_sha256": {
+    "regional-value-composition-model-stage-20261004.json": "197806f055e74fb871f43b5caef37d04ee8490bbbcc7f349e574187d5168a007",
+    "regional-value-composition-model-checks-20261004.json": "13525021ca07b21cba8c6059bc5aee7d54f3a865803806b5cbd13fc52ff129a1",
+    "regional-value-composition-countermodels-20261004.json": "e9f62e55b4d1c05d5ec2659beda830e8766f6fa1aafa0cbebcb7946a06d4e743"
+  },
+  "prior_model_sha256": "6b1f0cc03a65dcf9a25b3a03c3963cbe88e4be0988f7173deb5fb973d2ed10f8",
+  "composition_model_guards_passed": true,
+  "rollback_freshness_counterexample_found": true,
+  "native_refinement_complete": false,
+  "whole_protocol_complete": false,
+  "no_node_or_signature_fixture_scope_started": true,
+  "frozen_body_pdf_website_unchanged": true,
+  "old_failed_profiles_and_owner_requests_unchanged": true,
+  "next_native_discriminator": "Exact new-admission mixed channel/fee carry, all-input provenance and caller/latest head; malformed witness/amount/owner or old state refuses before debit/head change.",
+  "qualification_limits": [
+    "oracle authentication is assumed",
+    "finite prefix search only",
+    "general fork suffix and same-sequence state conflicts not modeled",
+    "independent latest-state/custody unresolved",
+    "native channels not implemented",
+    "complete executable profile and protocol proof incomplete"
+  ]
+}

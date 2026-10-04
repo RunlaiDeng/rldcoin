@@ -1,0 +1,21 @@
+{
+  "format": "RLD-VALUE-COMPOSITION-MODEL-STAGE-V1",
+  "normative_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "prior_model_sha256": "6b1f0cc03a65dcf9a25b3a03c3963cbe88e4be0988f7173deb5fb973d2ed10f8",
+  "active_hypothesis": "An explicit amount/provenance transition model can preserve mutually exclusive U/E/T and prevent contamination laundering through mixed change/fees/channel settlement, including deferred finalized import, without treating history or receipts as new assets.",
+  "minimum_discriminator": "Actual executable transition traces with mixed-source transfer/export/import/channel/reserve/challenge/settlement plus deliberate dropped-provenance/refund/duplicate-credit counterexamples; independent checked graph/accounting reconstruction after every transition.",
+  "implementation_owner": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "attempt_budget": 1,
+  "check_budget_seconds": 120,
+  "exit": "Model checks and counterexamples terminate, any refusal, or 120 seconds; no identical rerun",
+  "native_source_change": false,
+  "live_nodes": false,
+  "model_only": true,
+  "whole_protocol_qualification": false,
+  "no_new_funds_or_physical_qualification": true,
+  "attempts_started": 1,
+  "source_sha256": {
+    "tools/value_composition_model.py": "2599f7b341ac9d2e334552f45d8dfc03e8120b4fc1fcd56bfc1ac1da7fa02c93",
+    "tools/test_value_composition_model.py": "ca3a304df190351925662c9bd9456addd020065a14342076d397c3c8b5ace98a"
+  }
+}
