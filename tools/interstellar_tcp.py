@@ -306,11 +306,13 @@ class Server:
         self.refused_connections=0
         self.local_lock_retries=0
         self.local_lock_exhaustions=0
-        # One ordinary foreground selection intent, scheduling only. A failed
-        # bounded attempt keeps it until that thread next gets a selection;
-        # TCP threads cannot repeatedly reacquire ahead of the pending reader.
+        # Retry ownership survives bounded refusal; idle ownership is not a
+        # perpetual scheduling grant. Only an active acquisition or its brief
+        # post-refusal window gives ordinary selection priority over TCP.
         self.selection_owner=None
         self.selection_purpose=None
+        self.selection_attempt_owner=None
+        self.selection_preference_until=0.0
         self.local_mesh_owner=None
         self.last_mesh_class=None
         self.last_tcp_role=None
@@ -364,6 +366,7 @@ class Server:
             mesh.require(self.selection_owner is threading.current_thread(),
                          'ordinary mesh selection owner differs')
             self.selection_owner=None;self.selection_purpose=None
+            self.selection_preference_until=0.0
 
     def _claim_mesh_turn(self, ordinary):
         current=threading.current_thread()
@@ -378,6 +381,8 @@ class Server:
                 deferred=self.last_mesh_class=='ordinary' and bool(self.tcp_mesh_waiters)
             else:
                 deferred=(self.selection_owner is not None and self.selection_owner is not current
+                          and (self.selection_attempt_owner is self.selection_owner
+                               or time.monotonic()<self.selection_preference_until)
                           and self.last_mesh_class!='ordinary')
                 outgoing=current is self.outbound_owner
                 other_out=self.outbound_owner in self.tcp_mesh_waiters and not outgoing
@@ -401,7 +406,12 @@ class Server:
         # lock, within the original connection deadline and a separate bound.
         until=min(deadline,time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS)
         node=None;lease=False;exhausted=False;current=threading.current_thread()
-        if not ordinary:
+        if ordinary:
+            with self.guard:
+                mesh.require(self.selection_owner is current,'ordinary mesh selection owner differs')
+                mesh.require(self.selection_attempt_owner is None,'ordinary mesh attempt already active')
+                self.selection_attempt_owner=current
+        else:
             with self.guard:
                 self.tcp_mesh_waiters={thread for thread in self.tcp_mesh_waiters if thread.is_alive()}
                 mesh.require(current in self.tcp_mesh_waiters or len(self.tcp_mesh_waiters)<MAX_WORKERS+1,
@@ -434,7 +444,12 @@ class Server:
                 if node is not None:node.close()
             finally:
                 if lease:self._release_mesh_turn()
-                if not ordinary:
+                if ordinary:
+                    with self.guard:
+                        self.selection_attempt_owner=None
+                        self.selection_preference_until=(time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS
+                            if exhausted and self.running and self.selection_owner is current else 0.0)
+                else:
                     with self.guard:
                         # Only actual live runtime owners retain demand after a
                         # bounded refusal. The input owner must still have its
@@ -769,6 +784,7 @@ class Server:
         self.input_wake.set()
         with self.guard:
             self.selection_owner=None;self.selection_purpose=None
+            self.selection_preference_until=0.0
             self.tcp_mesh_waiters.clear()
         self.socket.close()
         if hasattr(self,'thread') and self.thread.ident is not None:

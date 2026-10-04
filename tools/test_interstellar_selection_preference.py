@@ -32,7 +32,9 @@ class SelectionPreferenceTests(unittest.TestCase):
             try:
                 with server.mesh_node(time.monotonic()+tcp.ATTEMPT_SECONDS):return 'incorrectly acquired'
             except OSError as error:return error.errno,time.monotonic()-start
-        kind,result=self.foreign(attempt);self.assertEqual(kind,'ok')
+        with server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):
+            kind,result=self.foreign(attempt)
+        self.assertEqual(kind,'ok')
         self.assertEqual(result[0],errno.EAGAIN);self.assertLess(result[1],1)
         self.assertEqual((self.f.root/'earth/mesh-state.json').read_bytes(),before)
         self.assertIs(server.selection_owner,threading.current_thread())
@@ -52,9 +54,11 @@ class SelectionPreferenceTests(unittest.TestCase):
         source=self.f.servers['earth'];destination=self.f.servers['proxima']
         raw=wire.make_frame('source-finality','1'*64,'2'*64,'4'*64,b'{"ground_fixture":true}')
         with mesh.Node(self.f.configs['earth']) as node:ident=node.enqueue(raw,self.f.ids['proxima'])
-        destination.request_selection();result=source.tick()
+        destination.request_selection()
+        with destination.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS) as held:
+            result=source.tick()
+            self.assertNotIn(ident,held.receipts())
         self.assertTrue(result['errors']);self.assertNotIn(ident,source.suppressed(self.f.ids['proxima']))
-        with mesh.Node(self.f.configs['proxima']) as node:self.assertNotIn(ident,node.receipts())
         with mesh.Node(self.f.configs['earth']) as node:self.assertIn(ident,node.state['messages'])
         destination.finish_selection();result=source.tick();self.assertEqual(result['errors'],[])
         with mesh.Node(self.f.configs['proxima']) as node:

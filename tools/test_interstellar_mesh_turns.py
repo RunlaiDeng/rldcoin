@@ -36,11 +36,11 @@ class MeshTurnTests(unittest.TestCase):
     def tcp_open(self):
         with self.server.mesh_node(time.monotonic()+tcp.ATTEMPT_SECONDS) as node:return node.id
 
-    def test_repeated_foreground_requests_allow_tcp_then_reclaim_ordinary_turn(self):
+    def test_idle_foreground_requests_allow_repeated_tcp_and_preserve_retry_owner(self):
         self.selection();self.server.request_selection()
         self.assertEqual(self.foreign(self.tcp_open),self.f.ids['earth'])
-        blocked=self.foreign(self.tcp_open)
-        self.assertIsInstance(blocked,BlockingIOError);self.assertEqual(blocked.errno,errno.EAGAIN)
+        self.assertEqual(self.foreign(self.tcp_open),self.f.ids['earth'])
+        self.assertIs(self.server.selection_owner,threading.current_thread())
         with self.server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):pass
         self.server.finish_selection()
         self.assertIsNone(self.server.local_mesh_owner)
@@ -62,9 +62,11 @@ class MeshTurnTests(unittest.TestCase):
                 attempted.set();resume.wait(5)
                 results.append(self.tcp_open())
             except BaseException as error:results.append(error)
+        holder=self.f.node('earth')
         thread=threading.Thread(target=outgoing);self.server.claim_outbound(thread);thread.start()
         try:
             self.assertTrue(attempted.wait(5));self.assertIn(thread,self.server.tcp_mesh_waiters)
+            holder.close();holder=None
             with self.server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):pass
             self.server.finish_selection();self.server.request_selection()
             with self.assertRaises(BlockingIOError):
@@ -75,6 +77,7 @@ class MeshTurnTests(unittest.TestCase):
             with self.server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):pass
             self.server.finish_selection()
         finally:
+            if holder is not None:holder.close()
             resume.set();thread.join(5)
             if self.server.selection_owner is threading.current_thread():self.server.finish_selection()
             self.server.release_outbound(thread)
@@ -82,7 +85,8 @@ class MeshTurnTests(unittest.TestCase):
 
     def test_closed_inbound_attempt_leaves_no_future_ticket_or_custody(self):
         self.server.request_selection();before=(self.f.root/'earth/mesh-state.json').read_bytes()
-        error=self.foreign(self.tcp_open)
+        with self.server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):
+            error=self.foreign(self.tcp_open)
         self.assertIsInstance(error,BlockingIOError)
         self.assertEqual(self.server.tcp_mesh_waiters,set());self.assertIsNone(self.server.local_mesh_owner)
         self.assertEqual((self.f.root/'earth/mesh-state.json').read_bytes(),before)
@@ -116,6 +120,46 @@ class MeshTurnTests(unittest.TestCase):
         finally:
             ready.set()
             if owner.ident is not None:owner.join(5)
+            if inbound.ident is not None:inbound.join(5)
+            if self.server.selection_owner is threading.current_thread():self.server.finish_selection()
+            self.server.release_outbound(owner)
+
+    def test_failed_ordinary_attempt_keeps_brief_priority_then_both_tcp_roles_progress(self):
+        held=threading.Event();release=threading.Event();released=threading.Event();results=[]
+        def outgoing():
+            try:
+                with self.server.mesh_node(time.monotonic()+tcp.ATTEMPT_SECONDS):
+                    held.set();self.assertTrue(release.wait(5))
+                released.set()
+                for _ in range(2):results.append(('out',self.tcp_open()))
+            except BaseException as error:results.append(('out',error));released.set()
+        owner=threading.Thread(target=outgoing);self.server.claim_outbound(owner);owner.start()
+        inbound=threading.Thread(target=lambda:results.append(('in',self.tcp_open())))
+        try:
+            self.assertTrue(held.wait(5));self.server.request_selection()
+            with self.assertRaises(BlockingIOError):
+                with self.server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):
+                    self.fail('actual TCP lease bypassed')
+            self.assertIsNone(self.server.selection_attempt_owner)
+            self.assertGreater(self.server.selection_preference_until,time.monotonic())
+            inbound.start()
+            deadline=time.monotonic()+0.1
+            while time.monotonic()<deadline:
+                with self.server.guard:waiting=inbound in self.server.tcp_mesh_waiters
+                if waiting:break
+                time.sleep(0.001)
+            self.assertTrue(waiting)
+            release.set();self.assertTrue(released.wait(1))
+            # The actual failed acquisition's short preference covers this gap.
+            with self.server.selection_mesh_node(time.monotonic()+tcp.MAX_LOCAL_LOCK_WAIT_SECONDS):
+                self.assertEqual(results,[])
+            self.server.finish_selection()
+            owner.join(5);inbound.join(5)
+            self.assertFalse(owner.is_alive());self.assertFalse(inbound.is_alive())
+            self.assertCountEqual([role for role,_ in results],['in','out','out'])
+            self.assertTrue(all(value==self.f.ids['earth'] for _,value in results))
+        finally:
+            release.set();owner.join(5)
             if inbound.ident is not None:inbound.join(5)
             if self.server.selection_owner is threading.current_thread():self.server.finish_selection()
             self.server.release_outbound(owner)

@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "observer_assertion_failure": "packet ID compared to complete transit digest suppression set",
+  "actual_first_TLS_reply_and_both_durable_receipts_checked": true,
+  "private_fixture_retained": true,
+  "owned_threads_and_sockets_closed_by_finally": true,
+  "second_exchange_not_attempted": true,
+  "script_sha256": "d31cc34e53626d36ea77b4ec4d25d9592ea846ecf45e0cf89e24dd573a94ffd8"
+}

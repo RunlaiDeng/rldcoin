@@ -155,3 +155,38 @@ P11 当前父块有 18 个本地完整信封、54 条目的路径，42 条目标
 测量，不能为得到通过降低这些要求。
 
 证据：`evidence/regional-idle-ordinary-intent-component-20261004.json`。
+
+### 空闲意图的有界优先修复
+
+保留 ordinary owner/purpose 作为原线程重试权；新增进程内实际尝试标记与短暂优先
+截止。只有当前实际争用，或真实 EAGAIN 结束后原有 0.2 秒窗口，才给予 ordinary
+优先；实际 Node 租约仍保护完整验证到关闭。成功、终止与关闭清除优先；两 TCP
+角色和 ordinary/TCP 交替、原锁/socket/槽/认证/fsync 上限均不变。短暂让锁窗口
+避免立即被连续 TCP 重抢，不能宣称任意 CPU/线程时序下的无条件饥饿自由。
+
+第二份组件先发生真实 OS 锁 EAGAIN，释放锁后让同一 owner 在锁外等待窗口过期，
+两次固定 TLS 交换都实际取得目标和来源持久收据，来源以完整 transit 摘要确认
+抑制；owner/purpose 始终保留，随后同一普通选择成功。约 0.696 秒完成，全部
+拥有线程/socket 关闭，无 Native/钱包/旧状态调用。首次观察断言错误地把 packet ID
+同 transit 摘要比较，在第一次双端持久收据之后中止；失败私有现场与报告保留，
+修正观察断言后用新目录重验，并未改变协议实现或用该失败宣称成功。
+
+工作来源相关 50 项回归通过；新增真实 TCP 长租约使普通尝试 EAGAIN 后短暂让锁，
+普通重试完成，两 TCP 角色随后各取得实际 Node。审阅指出测试应等待入站 waiter
+注册且不能把租约释放后的 append 顺序当成授予顺序，已固定屏障并比较角色次数。
+精确来源 396 文件冻结为 `67ad71f18be1578005caab76689297d7b12f8ba1d46c9e804bc72ced6fd2d858`，
+Native/core 字节未变；默认驱动实际重建，528 项完整回归 286.381 秒、三个 Runtime
+保管边界 3.592 秒通过；184 Native/strict 检查复用逐字节未变来源证据。两组件判别预算用完，
+本阶段反例行为修复；尚未启动新的普通循环或完整故障资格，旧失败保持失败。
+
+证据：`evidence/regional-bounded-ordinary-preference-component-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-observer-failure-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-source-inventory-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-stage-decision-20261004.json`。
+
+完整核验：`evidence/regional-bounded-ordinary-preference-frozen-checks-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-runtime-custody-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-oneway-default-native-lifecycle-20261004.json`。
+下一单次普通循环使用精确重建驱动、新签无价值 genesis 与全新目录，默认追踪关闭；
+只有循环/严格停止冷核验通过后才决定新的有限故障预算，当前完整故障预算仍为零。
+若普通循环失败，保留现场并按停止核验/新反例判别，不原样重复。
