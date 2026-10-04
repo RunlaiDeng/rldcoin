@@ -1,0 +1,108 @@
+{
+  "format": "RLD-GROUND-MESH-STOPPED-ALLOCATION-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199",
+  "strict_stopped_report_sha256": "9433a82f001cdee0ddb2dde08c9898fdc64e49f410a5d73ec372662068a64d19",
+  "observer_sha256": "00492fd71d0b7ca71b08245dbed7ab65586cd100194276f7123736a4ac912afe",
+  "selected_replica": "proxima_1",
+  "tracemalloc_frames": 1,
+  "retained_trace_top": [
+    {
+      "source": "python_standard_library",
+      "line": 361,
+      "retained_bytes": 12993187,
+      "allocation_count": 19260
+    },
+    {
+      "source": "tools/interstellar_transfer.py",
+      "line": 39,
+      "retained_bytes": 1252690,
+      "allocation_count": 1
+    },
+    {
+      "source": "tools/interstellar_transfer.py",
+      "line": 47,
+      "retained_bytes": 684168,
+      "allocation_count": 3668
+    },
+    {
+      "source": "tools/interstellar_transfer.py",
+      "line": 43,
+      "retained_bytes": 234432,
+      "allocation_count": 3663
+    },
+    {
+      "source": "tools/interstellar_mesh.py",
+      "line": 325,
+      "retained_bytes": 69464,
+      "allocation_count": 929
+    },
+    {
+      "source": "tools/interstellar_mesh.py",
+      "line": 311,
+      "retained_bytes": 64512,
+      "allocation_count": 504
+    },
+    {
+      "source": "tools/interstellar_frame_digest.py",
+      "line": 50,
+      "retained_bytes": 53760,
+      "allocation_count": 512
+    },
+    {
+      "source": "python_standard_library",
+      "line": 337,
+      "retained_bytes": 49712,
+      "allocation_count": 994
+    },
+    {
+      "source": "tools/interstellar_mesh.py",
+      "line": 312,
+      "retained_bytes": 48864,
+      "allocation_count": 509
+    },
+    {
+      "source": "tools/interstellar_mesh.py",
+      "line": 625,
+      "retained_bytes": 47616,
+      "allocation_count": 496
+    },
+    {
+      "source": "python_standard_library",
+      "line": 202,
+      "retained_bytes": 31184,
+      "allocation_count": 199
+    },
+    {
+      "source": "tools/interstellar_mesh.py",
+      "line": 313,
+      "retained_bytes": 24704,
+      "allocation_count": 386
+    }
+  ],
+  "first_probe_post_close_measurement_was_before_context_exit": true,
+  "first_probe_report_not_qualification": true,
+  "first_probe_sha256": "b6a7da1400740501efea50e96316285f78e6444ce322d3e36b77559ef36ff7aa",
+  "current_traced_bytes_after_authenticated_open": 15588681,
+  "peak_traced_bytes": 51304088,
+  "current_traced_bytes_after_close_and_collection": 1915908,
+  "peak_traced_bytes_after_close": 51304088,
+  "diagnostic_RSS_high_water_before_bytes": 197574656,
+  "diagnostic_RSS_high_water_after_bytes": 322584576,
+  "diagnostic_wall_seconds": 10.859209542017197,
+  "diagnostic_process_cpu_seconds": 10.791519000000001,
+  "active_transits": 31,
+  "retained_transport_receipts": 515,
+  "archived_records": 496,
+  "full_private_bytes_unchanged": true,
+  "external_public_anchors_used": true,
+  "private_identity_not_loaded": true,
+  "no_native_or_runtime_open_signing_recovery_or_head_adoption": true,
+  "allocation_tracing_changes_memory_and_timing": true,
+  "stopped_inspection_not_live_Node_cost": true,
+  "cache_leak_or_propagation_cause_proved": false,
+  "full_live_node_resources_covered": false,
+  "full_fault_profile_remains_failed": true
+}

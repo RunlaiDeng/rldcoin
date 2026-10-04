@@ -116,3 +116,9 @@ SDK V1 ABI 与 Mach timebase 转换逐次核对，只覆盖累计已退出子进
 观察退出子进程约 0.518 CPU 秒，停止后保留未知。组件及日志证据见
 `evidence/regional-ground-child-cpu-recorder-checks-20261004.json` 和
 `evidence/regional-ground-child-cpu-log-binding-20261004.json`，不计作新节点负载范围通过。
+
+进一步完成停止 Native 命令、薄运输持久化路径及只读分配探针，见
+[资源成本判别与下一活动假设](GROUND_RESOURCE_COST_DECISION_20261004.md)。
+`regional_ground_fsync.py` 只能显式安装在新的地面诊断进程，记录该进程内 os.fsync
+函数调用墙钟，不连接或修改已运行节点；不覆盖 Rust/其他进程的同步。
+指标失败保留未知且原同步行为不变。此薄路径与 Native 冷调用不关闭全节点/持续负载门槛。

@@ -75,6 +75,11 @@ macOS 子进程 CPU 观察另有能力检查：`ps -S` 未通过实际退出子�
 36 项组件及 11 项日志核验通过。这些仅验证可测量工具，未接入旧 92 样本、
 未重启任何节点或升级失败范围。原始能力报告保留旧源码身份，后续报告各自绑定新字节。
 
+后续成本探针否定了“512 个 witness 保留完整帧解释高 RSS”的猜测，
+保留了停止 Native 命令、薄运输 fsync 和修正后分配观察；详见
+[有预算的判别与下一活动假设](GROUND_RESOURCE_COST_DECISION_20261004.md)。
+其决定是先取得普通选择/接触/目标回执的实时链，不能据停止快照继续优化或重跑故障范围。
+
 证据：`regional-ground-metered-joint-fault-fresh-20261004.json`、
 `regional-ground-metered-resource-observations-20261004.json`、
 `regional-ground-metered-joint-fault-failed-cold-observations-20261004.json`、
