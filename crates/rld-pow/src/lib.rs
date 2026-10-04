@@ -19,6 +19,7 @@ pub type Result<T> = std::result::Result<T, String>;
 pub const BLOCK_SECONDS: u64 = 600;
 pub const RETARGET_BLOCKS: usize = 144;
 pub const HALVING_BLOCKS: u128 = 200_000;
+pub const ISSUANCE_RULES: &str = "RLD-ISSUANCE-RESERVE-ERA-V1";
 pub const COINBASE_MATURITY: u128 = 100;
 pub const MAX_TRANSACTIONS: usize = 128;
 pub const MAX_BLOCK_BYTES: usize = 256 * 1024;
@@ -115,28 +116,79 @@ pub fn target_limit() -> Work {
     Work([u64::MAX, u64::MAX, u64::MAX, 0x00ff_ffff_ffff_ffff])
 }
 
-/// Exact cumulative distribution avoids either exceeding the cap or leaving
-/// rounding dust inaccessible. Each successive era releases half the remainder;
-/// its final single runlai is released over the last nonempty era.
+/// Content identity of the separately specified issuance component. A digest
+/// alone grants no genesis, issuance, finality or migration authority.
+pub fn issuance_rules_hash() -> Hash {
+    let mut bytes = ISSUANCE_RULES.as_bytes().to_vec();
+    bytes.push(0);
+    bytes.extend(include_bytes!(
+        "../../../docs/spec/RESERVE-ERA-ISSUANCE-V1.md"
+    ));
+    hash(&bytes)
+}
+
+/// Section-6 budget: floor-half, except the final zero/one-unit reserve.
+pub fn era_budget(reserve: Amount) -> Result<Amount> {
+    check(
+        reserve.0 <= TOTAL_SUPPLY_RUNLAI,
+        "issuance reserve exceeds cap",
+    )?;
+    Ok(Amount(if reserve.0 < 2 {
+        reserve.0
+    } else {
+        reserve.0 / 2
+    }))
+}
+
+/// The first remainder slots get one extra unit. A reserve is an era-start
+/// quantity, never a wall-clock balance or a remote issuance observation.
+pub fn era_reward(reserve: Amount, slot: u128) -> Result<Amount> {
+    check(slot < HALVING_BLOCKS, "issuance slot exceeds era")?;
+    let budget = era_budget(reserve)?.0;
+    let extra = u128::from(slot < budget % HALVING_BLOCKS);
+    (budget / HALVING_BLOCKS)
+        .checked_add(extra)
+        .map(Amount)
+        .ok_or_else(|| "issuance reward overflow".into())
+}
+
+/// Cumulative issuance for the actually selected origin block count. Fixed
+/// constants bound all arithmetic by the cap; no decoded ledger seeds this
+/// calculation. At most 118 era steps are needed for the fixed 10^35 reserve,
+/// even for a u128::MAX height. Genesis and completed zero-reserve eras mint 0.
 pub fn cumulative_emission(blocks: u128) -> u128 {
     let era = blocks / HALVING_BLOCKS;
     let offset = blocks % HALVING_BLOCKS;
-    if era >= 128 {
-        return TOTAL_SUPPLY_RUNLAI;
+    let mut remaining = TOTAL_SUPPLY_RUNLAI;
+    for _ in 0..era {
+        if remaining == 0 {
+            break;
+        }
+        let budget = era_budget(Amount(remaining))
+            .expect("fixed reserve is bounded")
+            .0;
+        remaining = remaining
+            .checked_sub(budget)
+            .expect("budget cannot exceed reserve");
     }
-    let remaining = TOTAL_SUPPLY_RUNLAI >> era as u32;
-    if remaining == 0 {
-        return TOTAL_SUPPLY_RUNLAI;
-    }
-    let budget = remaining - (remaining >> 1);
-    let partial =
-        (budget / HALVING_BLOCKS) * offset + ((budget % HALVING_BLOCKS) * offset) / HALVING_BLOCKS;
-    TOTAL_SUPPLY_RUNLAI - remaining + partial
+    let budget = era_budget(Amount(remaining))
+        .expect("fixed reserve is bounded")
+        .0;
+    let partial = (budget / HALVING_BLOCKS)
+        .checked_mul(offset)
+        .and_then(|value| value.checked_add(offset.min(budget % HALVING_BLOCKS)))
+        .expect("partial era cannot exceed its bounded budget");
+    TOTAL_SUPPLY_RUNLAI
+        .checked_sub(remaining)
+        .and_then(|value| value.checked_add(partial))
+        .expect("cumulative issuance cannot exceed fixed cap")
 }
 pub fn subsidy(sequence: u128) -> Result<Amount> {
-    check(sequence > 0, "no reward at transition")?;
+    let previous = sequence.checked_sub(1).ok_or("no reward at transition")?;
     Ok(Amount(
-        cumulative_emission(sequence) - cumulative_emission(sequence - 1),
+        cumulative_emission(sequence)
+            .checked_sub(cumulative_emission(previous))
+            .ok_or("nonmonotonic issuance")?,
     ))
 }
 

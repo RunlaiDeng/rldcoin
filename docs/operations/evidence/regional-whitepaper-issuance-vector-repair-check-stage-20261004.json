@@ -1,0 +1,25 @@
+{
+  "format": "RLD-WHITEPAPER-ISSUANCE-REPAIR-CHECK-STAGE-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "attempt_budget": 1,
+  "attempts_started": 1,
+  "build_and_test_budget_seconds": 300,
+  "source_sha256": {
+    "crates/rld-pow/src/lib.rs": "9cbf1c7f9d0331b9f99618f01cd9749a8fce33a020842eedbb8afec98ab47353",
+    "crates/rld-pow/src/tests.rs": "418b7dc08047064faabd9d5faf4a54a3413d32b117e69fc336ce2deab4b5f6ac",
+    "crates/rld-value-successor/src/adoption.rs": "b64c0723442797e9f31e9ec3e64bb79df84c2faba5244c5422d3eb34efd5bcb5",
+    "docs/spec/RESERVE-ERA-ISSUANCE-V1.md": "83ff6f6e31f57312f29ce1b45c41188925ccc4af0466346bd81cd36397393a79",
+    "docs/spec/EARTH-VALUE-ADOPTION.md": "91628b194a0f6ab20048f5e963e83c8b99c958cfb293768df454226cf8063099",
+    "docs/spec/EARTH-VALUE-RULES.md": "5c62dee4323986b786f2910e535260f18a718c1a8213805ff21ef69a9fd6323c",
+    "vectors/reserve-era-issuance-v1.json": "b4511954720bfb6f6ff5dd2be0d56f8f1d32cf298bd4c73929f3f3a6a4788720",
+    "spec/reserve_era_issuance_v1.py": "a00a91977b54055e77034b13281990a409455e2a661b82dffc00b3133b13c2c0",
+    "vectors/earth-pow-reserve-era-v1/vectors.json": "96533661b1c3e639877af952cfe14c1037e83ec10e7ede6730c68f13c2b4127f"
+  },
+  "prior_test_compile_refusal_sha256": "e91afc14df2f11948eb34bea461af3859e96205b1c861f0a2af9465cb8c90128",
+  "prior_refusal": "previous Native suite failed legacy emission vector; retained legacy vector and created separately bound new reference/vector format",
+  "exit": "both affected crate library test suites terminate or refusal or 300 seconds",
+  "new_issuance_and_adoption_domain_rule_only": true,
+  "old_frozen_node_sources_fixtures_stores_unchanged": true,
+  "whole_protocol_or_long_history_or_new_signed_fixture_qualified": false
+}

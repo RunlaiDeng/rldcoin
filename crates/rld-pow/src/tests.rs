@@ -104,6 +104,96 @@ fn emission_is_exact_capped_and_not_a_genesis_allocation() {
     assert_eq!(cumulative_emission(u128::MAX), TOTAL_SUPPLY_RUNLAI);
     assert!(subsidy(0).is_err());
 }
+
+#[test]
+fn issuance_matches_independent_pre_repair_whitepaper_vectors() {
+    let vectors: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../vectors/reserve-era-issuance-v1.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        vectors["component_sha256"].as_str().unwrap(),
+        issuance_rules_hash().to_hex()
+    );
+    for row in vectors["vectors"].as_array().unwrap() {
+        let height: u128 = row["height"].as_str().unwrap().parse().unwrap();
+        let total: u128 = row["cumulative"].as_str().unwrap().parse().unwrap();
+        let reward: u128 = row["reward"].as_str().unwrap().parse().unwrap();
+        assert_eq!(cumulative_emission(height), total, "height {height}");
+        if height > 0 {
+            assert_eq!(subsidy(height).unwrap().0, reward, "height {height}");
+        }
+    }
+}
+
+#[test]
+fn issuance_floor_half_and_front_loaded_dust_cover_each_complete_era() {
+    for (reserve, budget, first, later, next) in [
+        (0, 0, 0, 0, 0),
+        (1, 1, 1, 0, 0),
+        (2, 1, 1, 0, 1),
+        (3, 1, 1, 0, 2),
+        (400003, 200001, 2, 1, 200002),
+        (
+            TOTAL_SUPPLY_RUNLAI,
+            TOTAL_SUPPLY_RUNLAI / 2,
+            250_000 * rld_core::RUNLAI_PER_RLD,
+            250_000 * rld_core::RUNLAI_PER_RLD,
+            TOTAL_SUPPLY_RUNLAI / 2,
+        ),
+    ] {
+        assert_eq!(era_budget(Amount(reserve)).unwrap(), Amount(budget));
+        assert_eq!(era_reward(Amount(reserve), 0).unwrap(), Amount(first));
+        assert_eq!(era_reward(Amount(reserve), 1).unwrap(), Amount(later));
+        assert_eq!(
+            era_reward(Amount(reserve), HALVING_BLOCKS - 1).unwrap(),
+            Amount(later)
+        );
+        let issued = (0..HALVING_BLOCKS)
+            .map(|slot| era_reward(Amount(reserve), slot).unwrap().0)
+            .try_fold(0u128, |sum, reward| sum.checked_add(reward))
+            .unwrap();
+        assert_eq!(issued, budget);
+        assert_eq!(reserve.checked_sub(issued).unwrap(), next);
+    }
+    assert!(era_budget(Amount(TOTAL_SUPPLY_RUNLAI + 1)).is_err());
+    assert!(era_reward(Amount(TOTAL_SUPPLY_RUNLAI + 1), 0).is_err());
+    assert!(era_reward(Amount(1), HALVING_BLOCKS).is_err());
+    assert!(era_reward(Amount(1), u128::MAX).is_err());
+    assert_eq!(subsidy(u128::MAX).unwrap(), Amount::ZERO);
+}
+
+#[test]
+fn issuance_complete_boundaries_retain_odd_reserve_and_final_single_unit() {
+    let mut reserve = TOTAL_SUPPLY_RUNLAI;
+    for era in 0..130 {
+        let start = era * HALVING_BLOCKS;
+        assert_eq!(cumulative_emission(start), TOTAL_SUPPLY_RUNLAI - reserve);
+        let budget = if reserve < 2 { reserve } else { reserve / 2 };
+        assert_eq!(
+            cumulative_emission(start + HALVING_BLOCKS) - cumulative_emission(start),
+            budget
+        );
+        assert_eq!(
+            subsidy(start + 1).unwrap(),
+            era_reward(Amount(reserve), 0).unwrap()
+        );
+        reserve -= budget;
+    }
+    assert_eq!(reserve, 0);
+    // With 10^35 units, era 117 begins with exactly one unit. It is released
+    // at its first selected block, rather than the end of an earlier era.
+    assert_eq!(
+        cumulative_emission(117 * HALVING_BLOCKS),
+        TOTAL_SUPPLY_RUNLAI - 1
+    );
+    assert_eq!(subsidy(117 * HALVING_BLOCKS + 1).unwrap(), Amount(1));
+    assert_eq!(subsidy(117 * HALVING_BLOCKS + 2).unwrap(), Amount::ZERO);
+    assert_eq!(
+        cumulative_emission(117 * HALVING_BLOCKS + 1),
+        TOTAL_SUPPLY_RUNLAI
+    );
+}
 #[test]
 fn actual_work_credits_miner_and_rejects_tampering_atomically() {
     let owner = generate_identity();
@@ -498,11 +588,18 @@ fn bounded_header_window_matches_full_history_across_two_retargets() {
 
 #[test]
 fn independent_python_vectors_match_wide_heights_work_hashes_and_emission() {
-    let v: serde_json::Value =
-        serde_json::from_str(include_str!("../../../vectors/earth-pow/vectors.json")).unwrap();
+    let v: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../vectors/earth-pow-reserve-era-v1/vectors.json"
+    ))
+    .unwrap();
+    assert_eq!(v["format"], "RLD-EARTH-POW-RESERVE-ERA-V1-VECTORS");
+    assert_eq!(v["issuance_rules_sha256"], issuance_rules_hash().to_hex());
     for c in v["emission"].as_array().unwrap() {
         let n: u128 = c["blocks"].as_str().unwrap().parse().unwrap();
         assert_eq!(cumulative_emission(n).to_string(), c["cumulative_runlai"]);
+        if n > 0 {
+            assert_eq!(subsidy(n).unwrap().0.to_string(), c["reward_runlai"]);
+        }
     }
     for c in v["work"].as_array().unwrap() {
         let target = Work::from_hex(c["target"].as_str().unwrap()).unwrap();
@@ -514,6 +611,20 @@ fn independent_python_vectors_match_wide_heights_work_hashes_and_emission() {
         v["header"]["canonical_hex"]
     );
     assert_eq!(header.id().unwrap().to_hex(), v["header"]["block_id"]);
+    // Retain legacy bytes as historical vectors; they do not qualify this
+    // component. At the final single-unit era they intentionally disagree.
+    let old: serde_json::Value =
+        serde_json::from_str(include_str!("../../../vectors/earth-pow/vectors.json")).unwrap();
+    let tail = old["emission"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["blocks"] == "23400000")
+        .unwrap();
+    assert_ne!(
+        cumulative_emission(23400000).to_string(),
+        tail["cumulative_runlai"]
+    );
 }
 
 #[test]

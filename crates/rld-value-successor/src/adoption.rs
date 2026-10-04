@@ -7,7 +7,7 @@ use rld_core::{verify_bytes, AdmissionHash32 as Hash};
 use rld_pow::{transition::Adoption, transition::Approval, Chain};
 use serde::{Deserialize, Serialize};
 
-pub const FORMAT: &str = "RLD-EARTH-SUCCESSOR-ADOPTION";
+pub const FORMAT: &str = "RLD-EARTH-SUCCESSOR-ADOPTION-ISSUANCE-V1";
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -23,6 +23,7 @@ pub struct EarthSuccessorAdoptionStatement {
     pub transition_preview_id: Hash,
     pub successor_rules_sha256: Hash,
     pub successor_source_sha256: Hash,
+    pub issuance_rules_sha256: Hash,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -62,11 +63,12 @@ impl EarthSuccessorAdoptionStatement {
             transition_preview_id: preview.id()?,
             successor_rules_sha256: preview.successor_spec_sha256,
             successor_source_sha256: preview.successor_source_sha256,
+            issuance_rules_sha256: rld_pow::issuance_rules_hash(),
         })
     }
 
     pub fn signing_bytes(&self) -> Result<Vec<u8>> {
-        let mut bytes = b"RLD-EARTH-SUCCESSOR-ADOPTION\0".to_vec();
+        let mut bytes = b"RLD-EARTH-SUCCESSOR-ADOPTION-ISSUANCE-V1\0".to_vec();
         bytes.extend(serde_json::to_vec(self).map_err(|error| error.to_string())?);
         Ok(bytes)
     }
@@ -185,6 +187,53 @@ mod tests {
             .is_err());
         assert!(valid
             .verify(genesis, b"[ ]", &v1_adoption, &v1, &preview, accepted)
+            .is_err());
+        assert_eq!(
+            valid.statement.issuance_rules_sha256,
+            rld_pow::issuance_rules_hash()
+        );
+        let mut missing_identity = serde_json::to_value(&valid.statement).unwrap();
+        missing_identity
+            .as_object_mut()
+            .unwrap()
+            .remove("issuance_rules_sha256");
+        assert!(
+            serde_json::from_value::<EarthSuccessorAdoptionStatement>(missing_identity).is_err()
+        );
+        // Even all four valid current-key signatures cannot substitute another
+        // issuance identity for the exact component selected by these rules.
+        let mut wrong = valid.clone();
+        wrong.statement.issuance_rules_sha256 = Hash([7; 32]);
+        wrong.approvals = approvals(&wrong.statement.signing_bytes().unwrap());
+        assert!(wrong
+            .verify(
+                genesis,
+                history,
+                &v1_adoption,
+                &v1,
+                &preview,
+                wrong.statement.id().unwrap()
+            )
+            .is_err());
+        let mut old_domain = valid.clone();
+        let mut old_bytes = b"RLD-EARTH-SUCCESSOR-ADOPTION\0".to_vec();
+        old_bytes.extend(serde_json::to_vec(&old_domain.statement).unwrap());
+        old_domain.approvals = approvals(&old_bytes);
+        assert!(old_domain
+            .verify(genesis, history, &v1_adoption, &v1, &preview, accepted)
+            .is_err());
+        let mut old_format = valid.clone();
+        old_format.statement.format = "RLD-EARTH-SUCCESSOR-ADOPTION".into();
+        old_format.approvals = approvals(&old_format.statement.signing_bytes().unwrap());
+        assert!(old_format
+            .verify(
+                genesis,
+                history,
+                &v1_adoption,
+                &v1,
+                &preview,
+                old_format.statement.id().unwrap()
+            )
             .is_err());
     }
 }

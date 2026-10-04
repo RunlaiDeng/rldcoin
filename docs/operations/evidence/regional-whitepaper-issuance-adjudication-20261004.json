@@ -1,0 +1,163 @@
+{
+  "format": "RLD-WHITEPAPER-ISSUANCE-ADJUDICATION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": true,
+  "source_sha256": "bb6f5952ba106d8df7d75928020a65e6074f15ada3cef6c979a106cc07e879e3",
+  "probe_sha256": "b426d0426e9d676ec018a55ee3b922ce30b3050e622ccff623707fa3f8d48a53",
+  "budget_seconds": 240,
+  "attempt_budget": 1,
+  "attempts_used": 1,
+  "no_node_signing_or_old_store_open": true,
+  "compiled_original_rust_functions_actually_run": true,
+  "library_sha256": "e13398cd39f945eb17bc8881cc588d3c76440b757f774447b78ee47df5bdcb63",
+  "probe_binary_sha256": "e987c279f670160041d9df9265b1b956d2bec562adad70e868ce8622e063eed2",
+  "build_log_sha256": "1ecea8d405ce137adf419e0251655c519bd01a56a4101ab76a21d0928821353f",
+  "prior_full_source_sha256": "bb6f5952ba106d8df7d75928020a65e6074f15ada3cef6c979a106cc07e879e3",
+  "vectors": [
+    {
+      "height": "0",
+      "actual_cumulative": "0",
+      "expected_cumulative": "0",
+      "actual_reward": "0",
+      "expected_reward": "0",
+      "matches": true
+    },
+    {
+      "height": "1",
+      "actual_cumulative": "250000000000000000000000000000",
+      "expected_cumulative": "250000000000000000000000000000",
+      "actual_reward": "250000000000000000000000000000",
+      "expected_reward": "250000000000000000000000000000",
+      "matches": true
+    },
+    {
+      "height": "200000",
+      "actual_cumulative": "50000000000000000000000000000000000",
+      "expected_cumulative": "50000000000000000000000000000000000",
+      "actual_reward": "250000000000000000000000000000",
+      "expected_reward": "250000000000000000000000000000",
+      "matches": true
+    },
+    {
+      "height": "200001",
+      "actual_cumulative": "50000125000000000000000000000000000",
+      "expected_cumulative": "50000125000000000000000000000000000",
+      "actual_reward": "125000000000000000000000000000",
+      "expected_reward": "125000000000000000000000000000",
+      "matches": true
+    },
+    {
+      "height": "5800000",
+      "actual_cumulative": "99999999813735485076904296875000000",
+      "expected_cumulative": "99999999813735485076904296875000000",
+      "actual_reward": "931322574615478515625",
+      "expected_reward": "931322574615478515625",
+      "matches": true
+    },
+    {
+      "height": "5800001",
+      "actual_cumulative": "99999999813735950738191604614257812",
+      "expected_cumulative": "99999999813735950738191604614257813",
+      "actual_reward": "465661287307739257812",
+      "expected_reward": "465661287307739257813",
+      "matches": false
+    },
+    {
+      "height": "5800002",
+      "actual_cumulative": "99999999813736416399478912353515625",
+      "expected_cumulative": "99999999813736416399478912353515626",
+      "actual_reward": "465661287307739257813",
+      "expected_reward": "465661287307739257813",
+      "matches": false
+    },
+    {
+      "height": "7000000",
+      "actual_cumulative": "99999999997089616954326629638671875",
+      "expected_cumulative": "99999999997089616954326629638671875",
+      "actual_reward": "14551915228366851807",
+      "expected_reward": "14551915228366851806",
+      "matches": false
+    },
+    {
+      "height": "7000001",
+      "actual_cumulative": "99999999997089624230284243822097778",
+      "expected_cumulative": "99999999997089624230284243822097779",
+      "actual_reward": "7275957614183425903",
+      "expected_reward": "7275957614183425904",
+      "matches": false
+    },
+    {
+      "height": "7200000",
+      "actual_cumulative": "99999999998544808477163314819335938",
+      "expected_cumulative": "99999999998544808477163314819335937",
+      "actual_reward": "7275957614183425904",
+      "expected_reward": "7275957614183425903",
+      "matches": false
+    },
+    {
+      "height": "7200001",
+      "actual_cumulative": "99999999998544812115142121911048889",
+      "expected_cumulative": "99999999998544812115142121911048889",
+      "actual_reward": "3637978807091712951",
+      "expected_reward": "3637978807091712952",
+      "matches": false
+    },
+    {
+      "height": "23200000",
+      "actual_cumulative": "99999999999999999999999999999999999",
+      "expected_cumulative": "99999999999999999999999999999999998",
+      "actual_reward": "1",
+      "expected_reward": "0",
+      "matches": false
+    },
+    {
+      "height": "23200001",
+      "actual_cumulative": "99999999999999999999999999999999999",
+      "expected_cumulative": "99999999999999999999999999999999999",
+      "actual_reward": "0",
+      "expected_reward": "1",
+      "matches": false
+    },
+    {
+      "height": "23400000",
+      "actual_cumulative": "100000000000000000000000000000000000",
+      "expected_cumulative": "99999999999999999999999999999999999",
+      "actual_reward": "1",
+      "expected_reward": "0",
+      "matches": false
+    },
+    {
+      "height": "23400001",
+      "actual_cumulative": "100000000000000000000000000000000000",
+      "expected_cumulative": "100000000000000000000000000000000000",
+      "actual_reward": "0",
+      "expected_reward": "1",
+      "matches": false
+    },
+    {
+      "height": "23600000",
+      "actual_cumulative": "100000000000000000000000000000000000",
+      "expected_cumulative": "100000000000000000000000000000000000",
+      "actual_reward": "0",
+      "expected_reward": "0",
+      "matches": true
+    },
+    {
+      "height": "340282366920938463463374607431768211455",
+      "actual_cumulative": "100000000000000000000000000000000000",
+      "expected_cumulative": "100000000000000000000000000000000000",
+      "actual_reward": "0",
+      "expected_reward": "0",
+      "matches": true
+    }
+  ],
+  "mismatches": 10,
+  "normative_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "recompile_and_native_fixture_qualification_required_for_successor": true,
+  "duration_seconds": 41.786,
+  "prior_compiled_implementation_source_commitment": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "prior_compiled_source_files": 167,
+  "complete_prior_compiled_source_and_library_retained": true,
+  "prior_compiled_source_manifest_sha256": "eafb55067f72f1fd0068c3fb1664927b28be7586bd806a0aec6d2bd7c19b1858"
+}

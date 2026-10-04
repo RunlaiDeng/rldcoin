@@ -1,0 +1,19 @@
+{
+  "format": "RLD-ISSUANCE-FRESH-SIGNED-FIXTURE-STAGE-V1",
+  "attempt_budget": 1,
+  "attempts_started": 1,
+  "total_budget_seconds": 240,
+  "probe_source_sha256": "2a154710d683f88cd70e5125f08074b6f034df1b4125dc8a57899b276a64fee7",
+  "fixture_only": true,
+  "live_rld": false,
+  "hypothesis": "The repaired source admits only its newly signed zero-issuance genesis/rule identity, executes the first actual reward, and a fresh keyless process reconstructs that result without a ledger cache.",
+  "discriminator": "Fresh genesis and both exact four-validator adoptions; wrong component/old domain signed proofs refuse; actual first block and invalid tail; separate cold native process.",
+  "exit": "Success of creation and cold replay, any refusal, or total 240 seconds.",
+  "excludes": [
+    "200000-block history",
+    "regional constant-reward fixture migration",
+    "independent custody",
+    "mainnet",
+    "whole protocol"
+  ]
+}
