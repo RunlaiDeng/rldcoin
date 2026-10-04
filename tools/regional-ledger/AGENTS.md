@@ -15,9 +15,9 @@ separately retained exact latest head and never signs or persists custody.
 Its U/E audit, source declaration, complete state/owner signatures, native
 snapshot provenance, one-use reserve and c+1 through c+2016 challenge checks
 are component evidence only. Serialized Book/head observations cannot
-initialize authority. Same-sequence state conflicts, paid descendants,
-mandatory adequately reserved receipt acceptance and wallet signing/custody
-remain open. Do not expose this as a live owner signing or restore service.
+initialize authority. This V1 history does not qualify incident handling.
+Mandatory adequately reserved receipt acceptance, automatic state observation
+and wallet channel signing/custody remain open. Do not expose this as a live owner signing or restore service.
 
 The separate `RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V1` and
 `RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V1` admissions sign the exact
@@ -30,7 +30,7 @@ freshness for first signing/recovery. New currencies require the exact 10^35
 cap and normative origin issuance; old constant-reward fixtures stay scoped.
 BFT remains ordered 3-of-4 with fixed membership, segmented unanimous stays
 4-of-4. Epoch/stream profiles do not silently adopt channels or lower thresholds.
-Existing bounds and every stopped failed fixture remain. Kernel/ordinary
+Existing bounds and every stopped failed fixture remain. These historical V1
 samples do not qualify same-sequence incidents, full paid descendants, invoice
 acceptance, owner signing, long BFT history or independent/physical operation.
 
@@ -57,3 +57,27 @@ state/value/custody migration. Check the shared ordinary execution path, typed
 BFT submission/reception, wallet review/recovery, incident exposure, capacity
 and cold replay before any broader lifecycle qualification. Keep existing
 thresholds, history/evidence bounds and stopped failed sources intact.
+
+The separate V2 value-channel admissions and kernel explicitly bind complete
+channel-funding provenance and `RLD-NATIVE-CHANNEL-CONFLICT-V1` notices. Coins,
+exports, escrow and reserves carry complete checkpoint/channel identity unions
+with a combined 64-reference limit. Full ordinary genesis replay derives every
+identity. Open adds its own signed intent identity to capacity, change and fees;
+remote imports, onward payments and all channel transforms propagate it.
+
+A channel notice fully replays its self-contained signed funding evidence and
+requires two complete valid party-signed states at one sequence with different
+allocations. Every envelope still authenticates before duplicate suppression.
+Finality and channel notices share the unchanged 16-incident directory, guard
+and manifest index. Native contact V3 carries complete notices and refuses V2
+without fallback. Full cold replay and exact recover-only incident publication
+preserve every liability and damaged residue. A notice never selects payouts,
+clears quarantine, rolls value back or refunds a prior debit.
+
+Local samples cover retained capacity/reserves, fees/change, cross-region
+onward/return, a child channel, unrelated payments, pinned restart, proof
+corruption, private image restore and combined capacity refusal. They do not
+qualify automatic off-chain incident observation, adequately reserved receipt
+acceptance, first signing/custody, full network faults, independent freshness,
+physical links or whole-protocol completion. Changed source always requires
+fresh signed no-value fixtures, never reuse prior balances or custody.

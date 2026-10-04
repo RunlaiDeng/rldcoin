@@ -17,6 +17,7 @@ fn ledger(count: usize) -> Ledger {
                 },
                 created: 1,
                 mature: 3,
+                channel_dependencies: BTreeSet::new(),
                 dependencies: BTreeSet::new(),
             },
         );
@@ -126,6 +127,7 @@ fn exact_record_fields_collections_and_counters_never_reuse_another_value() {
             },
             destination_fee: Amount(2),
             height: 5,
+            channel_dependencies: BTreeSet::new(),
             dependencies: BTreeSet::from([key(99)]),
         },
     );

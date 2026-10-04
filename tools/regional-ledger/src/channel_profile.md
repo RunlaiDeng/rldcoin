@@ -1,4 +1,4 @@
-# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V1
+# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V2
 
 Fresh no-value admission only. Both native BFT-value-channel and segmented-
 value-channel admissions sign the exact content identity of this profile,
@@ -34,8 +34,30 @@ minted+received equals liquid+escrow+historical outbound after every block.
 Local authenticated incidents stop dependent new transitions without deleting
 liabilities. All newly generated channel outputs inherit complete lineage.
 
-No invoice receipt/signing, same-sequence equivocation resolution, cross-device
+No invoice receipt/signing, automatic same-sequence observation or incident
+resolution, cross-device
 custody, independent latest protection, BFT long history, full protocol or
 physical route qualification follows from this ground admission. Those remain
 mandatory further implementation and acceptance work. Stream archive V1 and
 legacy compact commands refuse channels; no omitted evidence or fallback.
+
+Every native coin, export, escrow and reserve carries the complete union of
+channel funding identities as well as certified checkpoint dependencies. The
+combined dependency count remains at most 64. Open adds its own exact signed
+funding identity to capacity, change and fees; all later transforms, including
+remote import fees, propagate that identity. A retained incident blocks dependent
+new transitions while keeping every U/E/T amount and permanent import intact.
+
+RLD-NATIVE-CHANNEL-CONFLICT-V1 pairs two complete, correctly ordered two-party
+signed states of one sequence with different payout statements. Its complete
+funding evidence replays from pinned genesis and authenticates the actual parties,
+capacity, declaration and channel identity at the named certified checkpoint.
+A missing funding prefix, invalid signature or non-conserving state refuses.
+It selects neither distribution and never authorizes a refund or resolution.
+
+Finality and channel incidents share the original 16-record guard/index/archive
+limit. Every received pair and every retained cold proof is fully authenticated,
+including alternate envelopes with the same incident ID. Existing proof bytes
+remain immutable. Native contact V3 carries complete incidents; V2 refuses
+without fallback. Payload, journal, history and archive bounds stay unchanged.
+Local caller-head pins do not establish independent latest-state protection.

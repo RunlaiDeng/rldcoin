@@ -1,9 +1,9 @@
 //! Native application boundary for the existing bounded evidence carriage.
 //! Mesh identity, advertisements and transport receipts never grant ledger rights.
 use super::*;
-use crate::{conflict::Conflict, storage::Store};
+use crate::{conflict::Incident, storage::Store};
 use base64::{engine::general_purpose::STANDARD, Engine};
-pub const FORMAT: &str = "RLD-REGIONAL-CONTACT-V2";
+pub const FORMAT: &str = "RLD-REGIONAL-CONTACT-V3";
 pub const FRAME_FORMAT: &str = "RLD-INTERREGION-EVIDENCE-V1";
 pub const MAX_PAYLOAD: usize = 3 * 1024 * 1024;
 pub const MAX_FRAME: usize = 4 * 1024 * 1024 + 4096;
@@ -19,7 +19,7 @@ pub struct Bundle {
     pub snapshot: Hash,
     pub export: Hash,
     pub evidence: Evidence,
-    pub incidents: Vec<Conflict>,
+    pub incidents: Vec<Incident>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -31,7 +31,7 @@ struct WireBundle {
     snapshot: Hash,
     export: Hash,
     evidence: crate::carriage::CarriedEvidence,
-    incidents: Vec<Conflict>,
+    incidents: Vec<Incident>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

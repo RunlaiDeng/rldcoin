@@ -19,6 +19,7 @@ fn sample(count: usize) -> Ledger {
                 },
                 created: 1,
                 mature: 3,
+                channel_dependencies: BTreeSet::new(),
                 dependencies: BTreeSet::new(),
             },
         );
@@ -56,6 +57,7 @@ fn roots_bind_all_collections_counters_records_and_exact_query() {
         },
         destination_fee: Amount(2),
         height: 5,
+        channel_dependencies: BTreeSet::new(),
         dependencies: BTreeSet::from([key(80)]),
     };
     ledger.exports.insert(key(20), export.clone());

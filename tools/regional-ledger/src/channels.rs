@@ -1,11 +1,11 @@
 //! Native typed signature/value kernel; no block/custody/storage activation.
 //! Inputs must come from ordinary full native replay, never a decoded cache.
 use super::*;
-pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V1";
+pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V2";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
-pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V1";
-pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V1";
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V2";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V2";
 pub fn is_profile(rules: &str) -> bool {
     rules == BFT_RULES || rules == SEGMENTED_RULES
 }
@@ -23,6 +23,18 @@ pub fn rules_hash() -> Hash {
     let mut bytes = format!("{FORMAT}\0").into_bytes();
     bytes.extend(include_bytes!("channel_rules.md"));
     Hash(Sha256::digest(bytes).into())
+}
+pub(crate) fn dependency_bound(
+    snapshots: &BTreeSet<Hash>,
+    channels: &BTreeSet<Hash>,
+) -> Result<()> {
+    require(
+        snapshots
+            .len()
+            .checked_add(channels.len())
+            .is_some_and(|n| n <= MAX_SNAPSHOTS),
+        "complete snapshot/channel dependency bound",
+    )
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -231,10 +243,12 @@ pub struct Escrow {
     pub funding: Box<SignedAction>,
     pub opened: u64,
     pub dependencies: BTreeSet<Hash>,
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub channel_dependencies: BTreeSet<Hash>,
     pub phase: Phase,
 }
 impl Escrow {
-    fn terms(&self) -> Result<(&[String; 2], Amount, [Amount; 2])> {
+    pub(crate) fn terms(&self) -> Result<(&[String; 2], Amount, [Amount; 2])> {
         match &self.funding.intent.action {
             Action::Open {
                 parties,
@@ -245,18 +259,19 @@ impl Escrow {
             _ => Err("channel lacks complete funding terms".into()),
         }
     }
-    fn verify_state(
+    pub(crate) fn verify_state(
         &self,
         state: &SignedState,
         channel: Hash,
         declaration: &Declaration,
     ) -> Result<()> {
-        let (parties, capacity, _) = self.terms()?;
+        let (parties, capacity, initial) = self.terms()?;
         let statement = &state.statement;
         require(
             statement.currency == declaration.currency
                 && statement.region == declaration.region
                 && statement.channel == channel
+                && (statement.sequence != 0 || statement.payouts == initial)
                 && sum(statement.payouts.iter().copied())? == capacity,
             "channel state identity or capacity differs",
         )?;
@@ -319,6 +334,12 @@ impl Book {
         sum(self.reserves.values().map(|r| r.coin.payment.amount)).and_then(|r| add(value, r))
     }
     pub fn audit(&self, ledger: &Ledger, declaration: &Declaration) -> Result<()> {
+        for coin in ledger.coins.values() {
+            dependency_bound(&coin.dependencies, &coin.channel_dependencies)?;
+        }
+        for export in ledger.exports.values() {
+            dependency_bound(&export.dependencies, &export.channel_dependencies)?;
+        }
         require(
             self.channels
                 .len()
@@ -330,6 +351,11 @@ impl Book {
             "channel/permanent record bound",
         )?;
         for (channel, escrow) in &self.channels {
+            dependency_bound(&escrow.dependencies, &escrow.channel_dependencies)?;
+            require(
+                escrow.channel_dependencies.contains(channel),
+                "escrow omits its native channel identity",
+            )?;
             require(
                 escrow.funding.intent.id()? == *channel
                     && escrow.funding.intent.rules == declaration.rules
@@ -405,6 +431,7 @@ impl Book {
         }
         let mut counts = BTreeMap::<Hash, usize>::new();
         for (ident, r) in &self.reserves {
+            dependency_bound(&r.coin.dependencies, &r.coin.channel_dependencies)?;
             let escrow = self
                 .channels
                 .get(&r.channel)
@@ -499,6 +526,38 @@ impl Book {
         }
         deps
     }
+    pub(crate) fn retained_channel_dependencies(
+        &self,
+        ledger: &Ledger,
+        action: &Action,
+    ) -> BTreeSet<Hash> {
+        let (channel, inputs): (Option<Hash>, Vec<Hash>) = match action {
+            Action::Open { inputs, .. } => (None, inputs.clone()),
+            Action::Reserve { channel, input, .. } => (Some(*channel), vec![*input]),
+            Action::Close {
+                channel, fee_input, ..
+            } => (Some(*channel), vec![*fee_input]),
+            Action::Challenge { channel, .. } | Action::Settle { channel } => {
+                (Some(*channel), vec![])
+            }
+        };
+        let mut deps = BTreeSet::new();
+        for input in inputs {
+            if let Some(c) = ledger.coins.get(&input) {
+                deps.extend(&c.channel_dependencies);
+            }
+        }
+        if let Some(channel) = channel {
+            deps.insert(channel);
+            if let Some(c) = self.channels.get(&channel) {
+                deps.extend(&c.channel_dependencies);
+            }
+            for r in self.reserves.values().filter(|r| r.channel == channel) {
+                deps.extend(&r.coin.channel_dependencies);
+            }
+        }
+        deps
+    }
     pub(crate) fn dependencies(&self, ledger: &Ledger, action: &Action) -> Result<BTreeSet<Hash>> {
         let mut deps = BTreeSet::new();
         let mut coin_ids = vec![];
@@ -576,6 +635,12 @@ impl Book {
         validate_ed25519_public_key(context.miner)?;
         context.safety.check_region(intent.region)?;
         let deps = self.dependencies(ledger, &intent.action)?;
+        let mut channel_deps = self.retained_channel_dependencies(ledger, &intent.action);
+        if matches!(intent.action, Action::Open { .. }) {
+            channel_deps.insert(intent.id()?);
+        }
+        dependency_bound(&deps, &channel_deps)?;
+        context.safety.check_channels(&channel_deps)?;
         for dependency in &deps {
             context
                 .safety
@@ -583,7 +648,7 @@ impl Book {
         }
         let mut book = self.clone();
         let mut value = ledger.clone();
-        book.apply(&mut value, command, context, &deps)?;
+        book.apply(&mut value, command, context, &deps, &channel_deps)?;
         let head = book.head(&value, context.declaration)?;
         Ok((book, value, head))
     }
@@ -593,6 +658,7 @@ impl Book {
         command: &SignedAction,
         context: &Context<'_>,
         deps: &BTreeSet<Hash>,
+        channel_deps: &BTreeSet<Hash>,
     ) -> Result<()> {
         let intent = &command.intent;
         let tx = intent.id()?;
@@ -643,15 +709,24 @@ impl Book {
                     ledger.coins.remove(ident);
                 }
                 for (i, p) in change.iter().enumerate() {
-                    ledger.output(tx, i as u32, p.clone(), height, height, deps)?;
+                    ledger.output_with_channels(
+                        tx,
+                        i as u32,
+                        p.clone(),
+                        height,
+                        height,
+                        deps,
+                        channel_deps,
+                    )?;
                 }
-                fee_output(ledger, tx, *fee, context, maturity, deps)?;
+                fee_output(ledger, tx, *fee, context, maturity, deps, channel_deps)?;
                 self.channels.insert(
                     tx,
                     Escrow {
                         funding: Box::new(command.clone()),
                         opened: height,
                         dependencies: deps.clone(),
+                        channel_dependencies: channel_deps.clone(),
                         phase: Phase::Open,
                     },
                 );
@@ -682,12 +757,12 @@ impl Book {
                     &intent.bytes()?,
                 )?;
                 ledger.coins.remove(ident);
-                self.channels
-                    .get_mut(channel)
-                    .ok_or("missing channel")?
-                    .dependencies = deps.clone();
+                let carried = self.channels.get_mut(channel).ok_or("missing channel")?;
+                carried.dependencies = deps.clone();
+                carried.channel_dependencies = channel_deps.clone();
                 let mut retained = coin;
                 retained.dependencies = deps.clone();
+                retained.channel_dependencies = channel_deps.clone();
                 self.reserves.insert(
                     *ident,
                     Reservation {
@@ -741,9 +816,9 @@ impl Book {
                     .checked_add(WINDOW)
                     .ok_or("channel deadline overflow")?;
                 ledger.coins.remove(fee_input);
-                fee_output(ledger, tx, *fee, context, maturity, deps)?;
+                fee_output(ledger, tx, *fee, context, maturity, deps, channel_deps)?;
                 if !change.is_zero() {
-                    ledger.output(
+                    ledger.output_with_channels(
                         tx,
                         0,
                         Payment {
@@ -753,10 +828,12 @@ impl Book {
                         height,
                         height,
                         deps,
+                        channel_deps,
                     )?;
                 }
                 let escrow = self.channels.get_mut(channel).ok_or("unknown channel")?;
                 escrow.dependencies = deps.clone();
+                escrow.channel_dependencies = channel_deps.clone();
                 escrow.phase = Phase::Closing {
                     state: state.clone(),
                     close_height: height,
@@ -808,9 +885,9 @@ impl Book {
                     .checked_sub(*fee)
                     .map_err(|e| e.to_string())?;
                 self.reserves.remove(reserve);
-                fee_output(ledger, tx, *fee, context, maturity, deps)?;
+                fee_output(ledger, tx, *fee, context, maturity, deps, channel_deps)?;
                 if !change.is_zero() {
-                    ledger.output(
+                    ledger.output_with_channels(
                         tx,
                         0,
                         Payment {
@@ -820,10 +897,12 @@ impl Book {
                         height,
                         height,
                         deps,
+                        channel_deps,
                     )?;
                 }
                 let escrow = self.channels.get_mut(channel).ok_or("unknown channel")?;
                 escrow.dependencies = deps.clone();
+                escrow.channel_dependencies = channel_deps.clone();
                 if let Phase::Closing { state: best, .. } = &mut escrow.phase {
                     *best = state.clone();
                 }
@@ -852,7 +931,7 @@ impl Book {
                 for (i, (owner, amount)) in parties.iter().zip(&state.statement.payouts).enumerate()
                 {
                     if !amount.is_zero() {
-                        ledger.output(
+                        ledger.output_with_channels(
                             tx,
                             i as u32,
                             Payment {
@@ -862,6 +941,7 @@ impl Book {
                             height,
                             height,
                             deps,
+                            channel_deps,
                         )?;
                     }
                 }
@@ -872,18 +952,20 @@ impl Book {
                     .map(|(id, r)| (*id, r.clone()))
                     .collect();
                 for (i, (ident, r)) in reserves.iter().enumerate() {
-                    ledger.output(
+                    ledger.output_with_channels(
                         tx,
                         32 + i as u32,
                         r.coin.payment.clone(),
                         height,
                         height,
                         deps,
+                        channel_deps,
                     )?;
                     self.reserves.remove(ident);
                 }
                 let retained = self.channels.get_mut(channel).ok_or("unknown channel")?;
                 retained.dependencies = deps.clone();
+                retained.channel_dependencies = channel_deps.clone();
                 retained.phase = Phase::Settled {
                     state: state.clone(),
                     close_height: *close_height,
@@ -902,9 +984,10 @@ fn fee_output(
     context: &Context<'_>,
     maturity: u64,
     deps: &BTreeSet<Hash>,
+    channel_deps: &BTreeSet<Hash>,
 ) -> Result<()> {
     if !fee.is_zero() {
-        ledger.output(
+        ledger.output_with_channels(
             tx,
             16,
             Payment {
@@ -914,6 +997,7 @@ fn fee_output(
             context.height,
             maturity,
             deps,
+            channel_deps,
         )?;
     }
     Ok(())

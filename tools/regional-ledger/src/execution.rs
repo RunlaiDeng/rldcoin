@@ -81,12 +81,14 @@ impl Execution<'_> {
                     )?;
                     let mut owners = BTreeSet::new();
                     let mut deps = BTreeSet::new();
+                    let mut channel_deps = BTreeSet::new();
                     let mut total = Amount::ZERO;
                     for input in &intent.inputs {
                         let coin = ledger.coins.get(input).ok_or("input absent or spent")?;
                         require(height >= coin.mature, "immature input")?;
                         owners.insert(coin.payment.owner.clone());
                         deps.extend(&coin.dependencies);
+                        channel_deps.extend(&coin.channel_dependencies);
                         total = add(total, coin.payment.amount)?;
                     }
                     if complete {
@@ -142,6 +144,7 @@ impl Execution<'_> {
                                     destination_fee: intent.destination_fee,
                                     height,
                                     dependencies: deps.clone(),
+                                    channel_dependencies: channel_deps.clone(),
                                 },
                             );
                         }
@@ -159,10 +162,18 @@ impl Execution<'_> {
                         ledger.coins.remove(input);
                     }
                     for (i, payment) in intent.outputs.iter().enumerate() {
-                        ledger.output(tx, i as u32, payment.clone(), height, height, &deps)?;
+                        ledger.output_with_channels(
+                            tx,
+                            i as u32,
+                            payment.clone(),
+                            height,
+                            height,
+                            &deps,
+                            &channel_deps,
+                        )?;
                     }
                     if !intent.fee.is_zero() {
-                        ledger.output(
+                        ledger.output_with_channels(
                             tx,
                             16,
                             Payment {
@@ -172,6 +183,7 @@ impl Execution<'_> {
                             height,
                             maturity,
                             &deps,
+                            &channel_deps,
                         )?;
                     }
                 }
@@ -191,6 +203,7 @@ impl Execution<'_> {
                         "permanent import tombstone rejects replay",
                     )?;
                     let mut deps = record.dependencies.clone();
+                    let channel_deps = record.channel_dependencies.clone();
                     deps.insert(*snapshot);
                     for dependency in &deps {
                         evidence.snapshot(*dependency)?;
@@ -200,7 +213,7 @@ impl Execution<'_> {
                         .amount
                         .checked_sub(record.destination_fee)
                         .map_err(|e| e.to_string())?;
-                    ledger.output(
+                    ledger.output_with_channels(
                         *export,
                         0,
                         Payment {
@@ -210,9 +223,10 @@ impl Execution<'_> {
                         height,
                         maturity,
                         &deps,
+                        &channel_deps,
                     )?;
                     if !record.destination_fee.is_zero() {
-                        ledger.output(
+                        ledger.output_with_channels(
                             *export,
                             16,
                             Payment {
@@ -222,6 +236,7 @@ impl Execution<'_> {
                             height,
                             maturity,
                             &deps,
+                            &channel_deps,
                         )?;
                     }
                     ledger.received = add(ledger.received, record.recipient.amount)?;

@@ -3,6 +3,36 @@
 //! signer safety failure. Neither branch is installed by an incident proof.
 use super::*;
 pub const MAX_INCIDENTS: usize = 16;
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Incident {
+    Finality(Box<Conflict>),
+    Channel(Box<channel_conflict::Conflict>),
+}
+impl From<Conflict> for Incident {
+    fn from(proof: Conflict) -> Self {
+        Self::Finality(Box::new(proof))
+    }
+}
+impl From<channel_conflict::Conflict> for Incident {
+    fn from(proof: channel_conflict::Conflict) -> Self {
+        Self::Channel(Box::new(proof))
+    }
+}
+impl Incident {
+    pub fn id(&self) -> Result<Hash> {
+        match self {
+            Self::Finality(p) => p.id(),
+            Self::Channel(p) => p.id(),
+        }
+    }
+    pub fn verify(&self, trust: &Trust) -> Result<()> {
+        match self {
+            Self::Finality(p) => p.verify(trust),
+            Self::Channel(p) => p.verify(trust),
+        }
+    }
+}
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct CertifiedHistory {
@@ -142,6 +172,7 @@ impl Conflict {
 #[derive(Clone, Default, Debug, Serialize)]
 pub struct Safety {
     pub regions: BTreeMap<Hash, BTreeSet<Hash>>,
+    pub channels: BTreeMap<Hash, BTreeSet<Hash>>,
 }
 #[derive(Debug, Serialize)]
 pub struct Exposure {
@@ -150,8 +181,45 @@ pub struct Exposure {
     pub affected_historical_exports: Vec<Hash>,
     pub retained_historical_export_amount: Amount,
     pub refunds_or_balance_reversals: bool,
+    pub quarantined_channels: Vec<Hash>,
+    pub retained_channel_capacity: Amount,
+    pub quarantined_reserves: Vec<Hash>,
+    pub retained_reserve_amount: Amount,
 }
 impl Safety {
+    pub fn from_incidents(proofs: &[Incident], trust: &Trust) -> Result<Self> {
+        require(
+            proofs.len() <= MAX_INCIDENTS,
+            "combined incident count bound",
+        )?;
+        let mut result = Self::default();
+        for proof in proofs {
+            proof.verify(trust)?;
+            match proof {
+                Incident::Finality(p) => {
+                    result
+                        .regions
+                        .entry(p.region())
+                        .or_default()
+                        .insert(p.id()?);
+                }
+                Incident::Channel(p) => {
+                    result
+                        .channels
+                        .entry(p.channel)
+                        .or_default()
+                        .insert(p.id()?);
+                }
+            }
+        }
+        Ok(result)
+    }
+    pub(crate) fn check_channels(&self, deps: &BTreeSet<Hash>) -> Result<()> {
+        require(
+            !deps.iter().any(|c| self.channels.contains_key(c)),
+            "value depends on authenticated conflicting channel states",
+        )
+    }
     pub fn from_conflicts(conflicts: &[Conflict], trust: &Trust) -> Result<Self> {
         require(conflicts.len() <= MAX_INCIDENTS, "incident count bound")?;
         let mut result = Self::default();
@@ -201,6 +269,10 @@ impl Safety {
                         .unwrap_or(&empty);
                     let deps =
                         book.retained_dependencies(&chain.ledger, &command.action.intent.action);
+                    self.check_channels(&book.retained_channel_dependencies(
+                        &chain.ledger,
+                        &command.action.intent.action,
+                    ))?;
                     require(
                         !self.affected(&deps, evidence)?,
                         "channel depends on quarantined finality",
@@ -210,12 +282,14 @@ impl Safety {
                 Command::Spend(signed) => {
                     for input in &signed.intent.inputs {
                         if let Some(coin) = chain.ledger.coins.get(input) {
+                            self.check_channels(&coin.channel_dependencies)?;
                             require(!self.affected(&coin.dependencies,evidence)?,"input depends on quarantined finality; retained assets cannot be newly spent or exported")?;
                         }
                     }
                 }
                 Command::Import { snapshot, export } => {
                     let record = evidence.export(*snapshot, *export)?;
+                    self.check_channels(&record.channel_dependencies)?;
                     require(
                         !self
                             .regions
@@ -235,15 +309,47 @@ impl Safety {
         let mut exports = vec![];
         let mut exported = Amount::ZERO;
         for (id, coin) in &chain.ledger.coins {
-            if local || self.affected(&coin.dependencies, evidence)? {
+            if local
+                || self.affected(&coin.dependencies, evidence)?
+                || self.check_channels(&coin.channel_dependencies).is_err()
+            {
                 coins.push(*id);
                 amount = add(amount, coin.payment.amount)?;
             }
         }
         for (id, record) in &chain.ledger.exports {
-            if local || self.affected(&record.dependencies, evidence)? {
+            if local
+                || self.affected(&record.dependencies, evidence)?
+                || self.check_channels(&record.channel_dependencies).is_err()
+            {
                 exports.push(*id);
                 exported = add(exported, record.recipient.amount)?;
+            }
+        }
+        let mut quarantined_channels = vec![];
+        let mut capacity = Amount::ZERO;
+        let mut reserves = vec![];
+        let mut reserved = Amount::ZERO;
+        if let Some(state) = &chain.ledger.channel_state {
+            for (cid, escrow) in &state.book.channels {
+                if local
+                    || self.affected(&escrow.dependencies, evidence)?
+                    || self.check_channels(&escrow.channel_dependencies).is_err()
+                {
+                    quarantined_channels.push(*cid);
+                    if !matches!(escrow.phase, channels::Phase::Settled { .. }) {
+                        capacity = add(capacity, escrow.terms()?.1)?;
+                    }
+                }
+            }
+            for (rid, r) in &state.book.reserves {
+                if local
+                    || self.affected(&r.coin.dependencies, evidence)?
+                    || self.check_channels(&r.coin.channel_dependencies).is_err()
+                {
+                    reserves.push(*rid);
+                    reserved = add(reserved, r.coin.payment.amount)?;
+                }
             }
         }
         Ok(Exposure {
@@ -252,6 +358,10 @@ impl Safety {
             affected_historical_exports: exports,
             retained_historical_export_amount: exported,
             refunds_or_balance_reversals: false,
+            quarantined_channels,
+            retained_channel_capacity: capacity,
+            quarantined_reserves: reserves,
+            retained_reserve_amount: reserved,
         })
     }
 }

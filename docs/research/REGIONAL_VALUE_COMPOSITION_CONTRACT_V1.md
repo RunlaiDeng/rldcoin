@@ -195,3 +195,57 @@ profile 哈希 `6da1555427cadbd8ff9b5a06bf5468b55ea0ad50b6bd5b258b3dc30ecb3b6c42
 再接所有者独立签署/恢复和充分储备收据。当前结果没有验证真实 2016 个
 普通区块后的结算、完整跨地区通道付款/故障、独立 custody 或最新保护。
 核心 171 文件 `de74cf78...` 未改，原发行有效证据复用；其余全部冻结目标仍未完成。
+
+## 原生通道事故与全资金谱系：V2 ground candidate
+
+后续来源 `05ac7769...` / implementation `a608bb58...` 使用新签署的
+BFT/segmented value-channel V2 准入，完整 profile 哈希 `ecc6a0fb...`，
+执行核规则 `5dae337b...`。旧来源、失败 fixture、签署头及余额保留，
+不迁移或追加资格。完整规范身份见[事故结果记录](../operations/evidence/regional-native-channel-conflict-outcome-20261004.json)。
+
+原生 Coin/Export/Escrow/Reservation 保留完整 checkpoint 与 channel funding
+身份并集，合计至多 64 个引用。Open 将准确签署 intent 身份加入容量、找零、
+费用；储备、关闭、挑战、结算及普通 Spend/Import 均传播完整并集，
+不能借支付、费用、再进口或开后代通道洗掉污染。每个身份由共享原生完整
+创世重放产生，同行字段、缓存或 state root 本身不提供权限。
+
+`RLD-NATIVE-CHANNEL-CONFLICT-V1` 携带完整自包含 funding Evidence、
+确切认证 checkpoint，以及同序号、不同 payout 的两个完整双方签署状态。
+原生重新验证创世、全部资金来源/终局/所有者执行及真实 parties/capacity/声明，
+再认证双方状态；省略来源、错 anchor、签名损坏、同状态、不同序号或金额
+不守恒均拒绝，头/价值/事故文件不变。它不选择任一分配，不抹去 U/E/T
+负债、不退款或解除隔离。重复 ID 的后续坏签名仍须认证并拒绝，原件保持。
+
+通道与原有 finality 事故共用原 16 条 guard/index/私有镜像边界，
+native contact V3 携带完整证明并拒绝 V2，无 fallback。第 17 条准确新证明
+拒绝，保留已存 16 条及准确 pending guard，随后开库拒绝。原 8 MiB/256 block/
+64 checkpoint/3 MiB wire/4096 history files/256 MiB history archive 界限保持。
+
+实际新签零分配普通样本验证容量/储备隔离及无关 mature input 支付；
+Earth→Proxima→Earth 来回、两地费用和找零继续携带祖先身份，
+Proxima 后代通道容量也被隔离，所有兼容链仍守恒。新事故的 malformed
+contact 不改头，有效事故后保留既有永久进口和全部负债。另存旧头拒绝，
+真实关库/重启保留隔离；损坏事故拒绝，只有准确完整证明的 recover-only
+能保留 damaged residue 后恢复读取；私有 seal/fresh-target restore 全重放
+事故且旧头拒绝，不复制 key/wallet/signer/caller custody。
+
+首次编译因测试把 Manifest.head 当字段及漏 Box 拒绝，没有运行 fixture；
+修正后的第一行为范围为 11 通过、1 失败：返程输入缺本地 finality，原生
+按原规则拒绝。原失败源码/私有 fixture 保留；新 fixture 增加真实原生四签
+checkpoint，未改成熟、票数或返程权限。后续 13 行为通过而严格静态检查
+拒绝过大的事故 enum；仅将两个 typed variant 放入 Box，序列化完整原件
+保持。最终 13 行为及严格静态检查 19.716 秒通过。源码逐字节 guard 不变，
+其余受影响 184 原生回归另用一次 300 秒，在 224.694 秒通过，
+跳过已过 13 行为/strict。同一最终来源共 197 项通过。
+
+有限结论：原生明确提交完整通道事故及已测试后代隔离实现了相应行为。
+自动观察/生成 off-chain 冲突、强制充分储备的 receipt acceptance/top-up、
+所有者独立首次签署/恢复、真实 2016 普通区块结算、完整默认网络故障、
+独立最新状态/跨设备/长期历史/PQC/物理路线及完整冻结目标仍未完成。
+核心 171 文件与冻结正文/PDF/receipt 不变，原有效发行来源证据复用。
+
+下一可证伪假设：普通收款方只有在原生全重放的准确 channel、完整双方签署
+状态及至少 16 个准确、成熟、未消费且足额的费用储备同时满足后才接受
+付款收据；不足、过期/旧头、坏状态或占用储备时拒绝且不改变任何价值。
+先定义准确 fee/receipt/owner-custody 新契约与最小反例，再在新无价值来源
+推进；既有网络 campaign 预算保持零，不以报告或活动计作完成。

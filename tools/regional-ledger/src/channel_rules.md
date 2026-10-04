@@ -1,4 +1,4 @@
-# RLD-REGIONAL-CHANNEL-KERNEL-V1
+# RLD-REGIONAL-CHANNEL-KERNEL-V2
 
 Native signature/value component only. This is not a complete protocol profile,
 ordinary node activation, signing custody, incident resolution or value migration.
@@ -40,6 +40,14 @@ It does not sign, release an owner response or initialize serialized state.
 The separate explicit native value-channel profile integrates this kernel into
 ordinary blocks, state commitments and complete history replay, requiring an
 action-signed prior native head. That deterministic replay dependency is not an
-independent freshness witness for signing. Wallet/caller custody, complete
-incident/paid-descendant policy and independent recovery still require separate
+independent freshness witness for signing. Wallet/caller custody, automatic
+incident observation, invoice acceptance and independent recovery still require separate
 implementation and qualification before live adoption.
+
+Outputs retain the full certified-checkpoint and channel-funding identity union;
+their combined bound is 64. Open includes its exact identity. Capacity, reserve,
+fee, change, settlement and ordinary Spend/Import outputs carry that union.
+A fully authenticated same-sequence channel conflict quarantines all dependent
+new transitions without changing retained liabilities. Its self-contained native
+funding checkpoint and both party signatures are mandatory; no hash-only proof
+or automatic resolution is allowed.

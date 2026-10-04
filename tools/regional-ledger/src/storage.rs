@@ -1,7 +1,7 @@
 //! Bounded full native replay from immutable pages; locked fsync/rename head.
 //! An external monotonic checkpoint is still required against old-backup rollback.
 use super::*;
-use crate::conflict::{CertifiedHistory, Conflict, Safety, MAX_INCIDENTS};
+use crate::conflict::{CertifiedHistory, Conflict, Incident, Safety, MAX_INCIDENTS};
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Write},
@@ -178,7 +178,7 @@ pub struct Store {
     pub evidence: VerifiedEvidence,
     pub chain: Chain,
     pub safety: Safety,
-    pub conflicts: Vec<Conflict>,
+    pub conflicts: Vec<Incident>,
     authority: String,
     pin: Hash,
     healthy: bool,
@@ -194,7 +194,7 @@ struct Loaded {
     trust: Trust,
     evidence: VerifiedEvidence,
     chain: Chain,
-    conflicts: Vec<Conflict>,
+    conflicts: Vec<Incident>,
     safety: Safety,
 }
 fn load_image(dir: &Path, authority: &str, pin: Hash, head: Option<Hash>) -> Result<Loaded> {
@@ -487,7 +487,8 @@ impl Store {
         journal.events.push(Event::Block(Box::new(block)));
         self.commit(journal)
     }
-    pub fn observe_conflict(&mut self, proof: Conflict) -> Result<Hash> {
+    pub fn observe_conflict<P: Into<Incident>>(&mut self, proof: P) -> Result<Hash> {
+        let proof = proof.into();
         require(
             self.healthy,
             "store requires replay after persistence failure",
@@ -510,7 +511,7 @@ impl Store {
         }
         let mut conflicts = self.conflicts.clone();
         conflicts.push(proof.clone());
-        let safety = Safety::from_conflicts(&conflicts, &self.trust)?;
+        let safety = Safety::from_incidents(&conflicts, &self.trust)?;
         // Persist a separately bounded immutable proof before changing the
         // journal. Reopening finds a valid orphan if interrupted between writes.
         let result = publish_incident(&self.dir, &proof, iid, &self.trust);
@@ -901,7 +902,7 @@ fn read_incidents(
     journal: &Journal,
     trust: &Trust,
     ignore: Option<Hash>,
-) -> Result<(Vec<Conflict>, Safety)> {
+) -> Result<(Vec<Incident>, Safety)> {
     let path = dir.join("incidents");
     safe_dir(&path)?;
     let mut conflicts = vec![];
@@ -917,7 +918,7 @@ fn read_incidents(
         {
             continue;
         }
-        let proof: Conflict = read_json(&entry.path())?;
+        let proof: Incident = read_json(&entry.path())?;
         proof.verify(trust)?;
         let iid = proof.id()?;
         require(
@@ -931,15 +932,15 @@ fn read_incidents(
         journal.incident_ids.is_subset(&ids),
         "indexed incident is missing; refuse recovery",
     )?;
-    let safety = Safety::from_conflicts(&conflicts, trust)?;
+    let safety = Safety::from_incidents(&conflicts, trust)?;
     Ok((conflicts, safety))
 }
-fn publish_incident(dir: &Path, proof: &Conflict, iid: Hash, trust: &Trust) -> Result<()> {
+fn publish_incident(dir: &Path, proof: &Incident, iid: Hash, trust: &Trust) -> Result<()> {
     let path = dir.join("incidents");
     safe_dir(&path)?;
     let final_path = path.join(format!("{}.json", iid.to_hex()));
     if final_path.exists() {
-        let saved: Conflict = read_json(&final_path)?;
+        let saved: Incident = read_json(&final_path)?;
         require(saved.id()? == iid, "immutable incident mismatch")?;
         saved.verify(trust)?;
         return Ok(());
@@ -982,7 +983,13 @@ fn write_guard(dir: &Path, iid: Hash) -> Result<()> {
 }
 /// Retry the exact authenticated proof named by a failed/pending guard. This
 /// never clears safety state or removes an incident, and takes the same lock.
-pub fn recover_incident(dir: &Path, authority: &str, pin: Hash, proof: Conflict) -> Result<()> {
+pub fn recover_incident<P: Into<Incident>>(
+    dir: &Path,
+    authority: &str,
+    pin: Hash,
+    proof: P,
+) -> Result<()> {
+    let proof = proof.into();
     safe_dir(dir)?;
     ensure_not_restoring(dir)?;
     let lock_path = dir.join("LOCK");
@@ -1015,7 +1022,11 @@ pub fn recover_incident(dir: &Path, authority: &str, pin: Hash, proof: Conflict)
     )?;
     write_guard(dir, iid)?;
     let target = dir.join("incidents").join(format!("{}.json", iid.to_hex()));
-    if target.exists() && read_json::<Conflict>(&target).ok().as_ref() != Some(&proof) {
+    if target.exists()
+        && !read_json::<Incident>(&target)
+            .ok()
+            .is_some_and(|p| p.id().ok() == Some(iid) && p.verify(&trust).is_ok())
+    {
         let meta = fs::symlink_metadata(&target).map_err(io)?;
         require(
             meta.is_file() && !meta.file_type().is_symlink() && meta.len() <= MAX_BYTES as u64,

@@ -219,9 +219,12 @@ fn authenticated_incidents_in_contacts_are_retained_and_prevent_new_credit() {
     let (_, mut bundle) = Frame::unpack(&raw).unwrap();
     let f = Fixture::new();
     let proof = conflict_proof(&f);
-    bundle.incidents.push(proof.clone());
+    bundle.incidents.push(proof.clone().into());
     let mut forged = bundle.clone();
-    forged.incidents[0].left.approvals[0].signature = "00".into();
+    let conflict::Incident::Finality(ref mut p) = forged.incidents[0] else {
+        panic!()
+    };
+    p.left.approvals[0].signature = "00".into();
     assert!(target
         .contact_apply(&Frame::pack(&forged).unwrap(), Some(public(10)))
         .is_err());

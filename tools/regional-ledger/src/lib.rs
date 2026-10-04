@@ -286,6 +286,8 @@ pub struct Coin {
     pub created: u64,
     pub mature: u64,
     pub dependencies: BTreeSet<Hash>,
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub channel_dependencies: BTreeSet<Hash>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -297,6 +299,8 @@ pub struct Export {
     pub destination_fee: Amount,
     pub height: u64,
     pub dependencies: BTreeSet<Hash>,
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub channel_dependencies: BTreeSet<Hash>,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -314,6 +318,12 @@ impl Ledger {
         state_proof::Commitment::from_ledger(self)?.hash()
     }
     pub fn audit(&self) -> Result<()> {
+        for coin in self.coins.values() {
+            channels::dependency_bound(&coin.dependencies, &coin.channel_dependencies)?;
+        }
+        for export in self.exports.values() {
+            channels::dependency_bound(&export.dependencies, &export.channel_dependencies)?;
+        }
         if let Some(state) = &self.channel_state {
             return state.book.audit(self, &state.declaration);
         }
@@ -339,6 +349,20 @@ impl Ledger {
         mature: u64,
         deps: &BTreeSet<Hash>,
     ) -> Result<()> {
+        self.output_with_channels(tx, index, payment, height, mature, deps, &BTreeSet::new())
+    }
+    #[allow(clippy::too_many_arguments)] // Exact immutable lineage accompanies every value output.
+    fn output_with_channels(
+        &mut self,
+        tx: Hash,
+        index: u32,
+        payment: Payment,
+        height: u64,
+        mature: u64,
+        deps: &BTreeSet<Hash>,
+        channel_deps: &BTreeSet<Hash>,
+    ) -> Result<()> {
+        channels::dependency_bound(deps, channel_deps)?;
         validate_ed25519_public_key(&payment.owner)?;
         require(payment.amount.0 > 0, "zero output")?;
         let key = id("output", &(tx, index))?;
@@ -350,6 +374,7 @@ impl Ledger {
                 created: height,
                 mature,
                 dependencies: deps.clone(),
+                channel_dependencies: channel_deps.clone(),
             },
         );
         Ok(())
@@ -1042,6 +1067,7 @@ pub mod bft;
 mod bft_epoch;
 pub mod bft_network;
 pub mod carriage;
+pub mod channel_conflict;
 pub mod channels;
 pub mod conflict;
 pub mod contact;

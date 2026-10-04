@@ -101,6 +101,31 @@ NativeState 承诺，共享重放执行签署 prior head 的动作；新 origin 
 独立最新保护、PQC/历史/物理等全部目标仍未完成。见
 [普通通道集成结果](operations/evidence/regional-native-channel-integration-outcome-20261004.json)。
 
+本主线后续 V2 来源 `05ac7769...`、implementation `a608bb58...`、签署
+profile `ecc6a0fb...` 实现通道同序号冲突的完整资金来源/双方签名证据。
+Coin/Export/Escrow/Reservation 的 checkpoint 与 channel identity 并集总界限
+仍为 64，原生 Open/费用/找零/储备/挑战/结算/跨区进口及返程完整传播。
+真实普通 Earth→Proxima→Earth 及后代通道样本中，事故隔离相关容量、
+储备、费用和支付后代，保留全部负债与永久进口；无关成熟输入仍能付款。
+后续同 ID 坏签名拒绝，原事故字节不改；另存旧头拒绝，真实关库/重开、
+损坏证明拒绝与准确 recover-only 保留残片、私有 seal/fresh restore 通过。
+Finality/channel 合计原 16 事故界限保持，第 17 条拒绝并保留准确 pending
+guard 和原 16 原件，随后开库拒绝；native contact V3 无降级接入完整证明。
+
+首编译拒绝、第一行为范围返程缺当地终局（11 过/1 失败）、后续严格检查
+拒绝过大 enum 均保留。新 fixture 补真实原生四签 finality，未降低门槛；
+enum 改为 Box 保持完整 JSON 字节语义。最终 13 行为及严格检查 19.716 秒通过，
+另 184 回归跳过已过范围，用单次 300 秒预算在 224.694 秒通过。
+同一最终来源共 197 检查通过，核心 171 文件和冻结正文/PDF/receipt 未变，
+旧失败 fixture 原件不变，网络 campaign 新预算仍为零。
+这仅是明确提交通道事故与已测后代隔离的同机原生资格；自动 off-chain
+冲突观察、强制充分储备的 receipt/top-up、所有者首次签署/恢复、真实 2016
+普通区块结算、完整网络故障、独立/PQC/历史/物理与全部目标仍未完成。
+下一反例针对少于 16 或不足/占用/不成熟储备、旧头及无效状态的收据拒绝，
+先定义准确新 fee/receipt/custody 契约再推进。见
+[通道事故结果](operations/evidence/regional-native-channel-conflict-outcome-20261004.json)与
+[原生组合合同](research/REGIONAL_VALUE_COMPOSITION_CONTRACT_V1.md)。
+
 当前父块 Prepare 的已认证停止观察显示约 40.180 秒来源等待，其间 20 次准备因本地争用拒绝。
 四固定邻居、四尝试槽的旧游标每轮起点不变。实际 TLS 周期争用反例只服务 2/4 邻居；
 仅改变起点的互素步长后，同样四轮取得 4/4 双端精确持久收据。该受控租约不是 Native CPU，

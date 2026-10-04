@@ -3,6 +3,8 @@ use ed25519_dalek::SigningKey;
 use rld_core::sign_bytes;
 use std::path::PathBuf;
 use storage::Store;
+#[path = "channel_conflict_tests.rs"]
+mod channel_conflicts;
 #[path = "channel_integration_tests.rs"]
 mod channel_integration;
 #[path = "channel_tests.rs"]

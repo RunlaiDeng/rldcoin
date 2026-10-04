@@ -720,7 +720,7 @@ fn run() -> Result<()> {
             &args.dir,
             &args.authority,
             pin,
-            read_json(file)?,
+            read_json::<rld_regional_ledger_candidate::conflict::Incident>(file)?,
         )?;
     }
     let mut store = match &action {
@@ -1418,7 +1418,9 @@ fn run() -> Result<()> {
             println!("{}", serde_json::json!({"installed_checkpoint":sid}));
         }
         Action::Incident { file } => {
-            let iid = store.observe_conflict(read_json(&file)?)?;
+            let iid = store.observe_conflict(read_json::<
+                rld_regional_ledger_candidate::conflict::Incident,
+            >(&file)?)?;
             println!(
                 "{}",
                 serde_json::json!({"durable_incident":iid,"quarantined_regions":store.safety.regions,"ledger_changed":false})
