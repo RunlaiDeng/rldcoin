@@ -806,3 +806,13 @@ counts. They never terminate TLS, retain decoded payloads or issue custody/ledge
 receipts. Counter failure is unknown, not zero. Separate observer/controller
 freezing does not rewrite the qualified node source. Short-lived Native resource
 coverage, continuous value/oldest-request waits and physical bytes remain open.
+
+The all-hop metered observation preserves a failed full finite scope: its net-9
+payment imported at Proxima 13 but stopped at 14 below maturity 15. Exact stopped
+cold and owner/head checks passed without changing bytes or recovery. Never
+count conservation/import, completed measurement binding or that cold check as
+fault success; retain the source, journals and 600-second failure. The observed
+RSS/CPU samples exclude full Native-child costs. The optional macOS child-CPU
+observer uses SDK rusage V1 and checked Mach timebase conversion; ps -S and an
+assumed nanosecond conversion failed real capability checks. It cannot backfill
+old logs, measure live-child RSS, classify Native commands or grant freshness.

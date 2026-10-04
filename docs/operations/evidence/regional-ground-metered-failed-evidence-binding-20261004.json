@@ -1,0 +1,170 @@
+{
+  "format": "RLD-GROUND-METERED-EVIDENCE-BINDING-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed_finite_metered_scope_and_stopped_cold_bound": false,
+  "completed_failed_scope_observation_bound": true,
+  "failed_profile_remains_failed": true,
+  "source_set_sha256": "8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199",
+  "controller_source_set_sha256": "20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7",
+  "run_report_sha256": "adc12b3635b14a49eceb1b4caa7bce7ef3c347ebf59f6872451f263d75ff3f4e",
+  "cold_report_sha256": "9433a82f001cdee0ddb2dde08c9898fdc64e49f410a5d73ec372662068a64d19",
+  "resource_report_sha256": "b242b984bf0e22db5306eb46db03b16f98c0e108793cf7fb46a9d6779f2b41b7",
+  "directed_contact_meters": 22,
+  "phase_native_value_observations": 3,
+  "resource_samples": 92,
+  "storage_sample_maxima": {
+    "mesh_earth_0": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 360,
+      "sampled_max_logical_file_bytes": 50405325
+    },
+    "mesh_earth_1": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 618,
+      "sampled_max_logical_file_bytes": 64825170
+    },
+    "mesh_earth_2": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 647,
+      "sampled_max_logical_file_bytes": 57908416
+    },
+    "mesh_earth_3": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 443,
+      "sampled_max_logical_file_bytes": 52458608
+    },
+    "mesh_proxima_0": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 434,
+      "sampled_max_logical_file_bytes": 73840260
+    },
+    "mesh_proxima_1": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 686,
+      "sampled_max_logical_file_bytes": 81281376
+    },
+    "mesh_proxima_2": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 636,
+      "sampled_max_logical_file_bytes": 79204924
+    },
+    "mesh_proxima_3": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 439,
+      "sampled_max_logical_file_bytes": 71989454
+    },
+    "mesh_andromeda_0": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 460,
+      "sampled_max_logical_file_bytes": 78468048
+    },
+    "mesh_andromeda_1": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 698,
+      "sampled_max_logical_file_bytes": 84651347
+    },
+    "mesh_andromeda_2": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 660,
+      "sampled_max_logical_file_bytes": 80416706
+    },
+    "mesh_andromeda_3": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 438,
+      "sampled_max_logical_file_bytes": 75155357
+    },
+    "bft_earth_0": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 2,
+      "sampled_max_logical_file_bytes": 2377599
+    },
+    "bft_earth_1": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 2376813
+    },
+    "bft_earth_2": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 2376414
+    },
+    "bft_earth_3": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 3705692
+    },
+    "bft_proxima_0": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1517715
+    },
+    "bft_proxima_1": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1269178
+    },
+    "bft_proxima_2": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1269992
+    },
+    "bft_proxima_3": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1442569
+    },
+    "bft_andromeda_0": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1371723
+    },
+    "bft_andromeda_1": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1854661
+    },
+    "bft_andromeda_2": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1696811
+    },
+    "bft_andromeda_3": {
+      "available_samples": 92,
+      "unknown_samples": 0,
+      "sampled_max_files": 3,
+      "sampled_max_logical_file_bytes": 1351142
+    }
+  },
+  "verifier_sha256": "464f5e308ea78b0cd43eeb9a19d96fd8f64780695e06432eda97bec8d4c1bbe2",
+  "total_hop_ciphertext_bytes_forwarded": 4938970911,
+  "transport_bytes_do_not_prove_ledger_delivery": true,
+  "continuous_resource_peaks_measured": false,
+  "short_lived_native_children_complete": false,
+  "sustained_BFT_liveness_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false
+}

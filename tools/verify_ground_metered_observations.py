@@ -44,7 +44,8 @@ def check_meters(rows):
                 'meter scope or bounds differ')
 
 
-def check_log(path):
+def check_log(path,expected_exit=0):
+    require(type(expected_exit) is int and expected_exit in (0,1),'explicit observation exit scope required')
     require(not path.is_symlink() and path.is_file() and path.stat().st_size<=MAX_LOG
             and path.stat().st_mode&0o777==0o600,'bounded private resource log required')
     rows=[];previous=None
@@ -59,7 +60,7 @@ def check_log(path):
                     and canonical(row)+b'\n'==line,'exact canonical resource log chain differs')
             rows.append(row);previous=hashlib.sha256(line).hexdigest()
     require(rows and rows[0]['kind']=='header' and rows[-1]['kind']=='terminal'
-            and rows[-1]['observation_completed'] is True and rows[-1]['controller_exit_code']==0
+            and rows[-1]['observation_completed'] is True and rows[-1]['controller_exit_code']==expected_exit
             and rows[-1]['qualification'] is False,'complete observation terminal required')
     samples=[row for row in rows if row['kind']=='sample']
     require(samples,'actual resource samples required')
@@ -83,15 +84,40 @@ def sample_summary(samples):
         interval_overruns=sum(row['interval_overrun'] for row in samples))
 
 
+def storage_summary(samples):
+    result={}
+    for sample in samples:
+        for row in sample['storage']:
+            entry=result.setdefault(row['label'],dict(available_samples=0,unknown_samples=0,
+                                                      sampled_max_files=None,sampled_max_logical_file_bytes=None))
+            require(type(row['available']) is bool,'typed storage availability required')
+            if not row['available']:
+                require(row['files'] is None and row['logical_file_bytes'] is None,
+                        'unavailable storage cannot supply invented amounts')
+                entry['unknown_samples']+=1
+                continue
+            require(type(row['files']) is int and row['files']>=0
+                    and type(row['logical_file_bytes']) is int and row['logical_file_bytes']>=0
+                    and row['atomic_snapshot'] is False,'non-atomic bounded storage metadata required')
+            entry['available_samples']+=1
+            entry['sampled_max_files']=max(entry['sampled_max_files'] or 0,row['files'])
+            entry['sampled_max_logical_file_bytes']=max(entry['sampled_max_logical_file_bytes'] or 0,row['logical_file_bytes'])
+    return result
+
+
 def verify(args):
     run=json.loads(args.run_report.read_bytes());cold=json.loads(args.cold_report.read_bytes())
     resources=json.loads(args.resource_report.read_bytes());supplement=json.loads(args.controller_manifest.read_bytes())
     node=json.loads(args.node_manifest.read_bytes())
-    require(run['completed'] is True and run['failure'] is None and run['fresh_fault_profile_completed'] is True
-            and run['mode']=='fresh_fault_profile' and run['owned_process_cleanup_verified'] is True
+    failed=getattr(args,'failed_scope_observation',False)
+    require(type(failed) is bool,'explicit failed observation scope required')
+    outcome=(run['completed'] is False and type(run['failure']) is str and bool(run['failure'])
+             and run['fresh_fault_profile_completed'] is False) if failed else (
+             run['completed'] is True and run['failure'] is None and run['fresh_fault_profile_completed'] is True)
+    require(outcome and run['mode']=='fresh_fault_profile' and run['owned_process_cleanup_verified'] is True
             and run['sealed_source_state_unchanged'] is True and run['all_explicit_contact_streams_metered'] is True
             and run['maximum_local_stop_height']==24 and run['phase_observation_bound_seconds']==600,
-            'completed exact newly metered finite fault scope required')
+            'exact stopped newly metered scope outcome required')
     binding=source_binding(args.node_manifest,args.node_source,args.binary,node['source_set_sha256'],supplement['node_binary_sha256'])
     require(hashlib.sha256(canonical(supplement['files'])).hexdigest()==supplement['source_set_sha256'],
             'controller source inventory commitment differs')
@@ -104,11 +130,25 @@ def verify(args):
     require(run['drill_source_sha256']==sources['regional_bft_sustained_campaign.py']
             and run['value_auditor_sha256']==sources['regional_ground_value.py']
             and run['contact_meter_sha256']==sources['regional_ground_relay.py'], 'executed controller/helper binding differs')
-    require(cold['format']=='RLD-JOINT-SUSTAINED-COLD-VERIFICATION-V1'
-            and cold['run_report_sha256']==digest(args.run_report)[0]
+    if failed:
+        require(cold['format']=='RLD-JOINT-FAULT-FAILED-STOPPED-OBSERVATION-V1'
+            and cold['completed'] is True and cold['failed_profile_remains_failed'] is True
+            and cold['fresh_full_fault_profile_completed'] is False
+            and cold['failed_report_sha256']==digest(args.run_report)[0]
             and cold['source_set_sha256']==run['runtime_source_set_sha256']==binding['source_set_sha256']
             and cold['binary_sha256']==binding['binary_sha256'] and len(cold['native_replays'])==12
-            and len(cold['recipient_checks'])==4 and len(cold['joint_custody_reads'])==4
+            and len(cold['recipient_observations'])==4 and len(cold['joint_custody_reads'])==4
+            and all(cold[key] is True for key in ('all_private_files_unchanged','actual_owned_processes_stopped',
+                'no_runtime_startup_signing_recovery_or_head_adoption','strict_transport_read_only_entry_used',
+                'transport_inspection_private_identity_not_loaded','all_transport_archives_cold_verified')),
+            'exact complete failed stopped observation required')
+    else:
+      require(cold['format']=='RLD-JOINT-SUSTAINED-COLD-VERIFICATION-V1'
+            and cold['run_report_sha256']==digest(args.run_report)[0]
+            and cold['source_set_sha256']==run['runtime_source_set_sha256']==binding['source_set_sha256']
+            and cold['binary_sha256']==binding['binary_sha256'] and type(cold['native_replays']) is int
+            and cold['native_replays']==12 and type(cold['recipient_checks']) is int
+            and cold['recipient_checks']==4 and len(cold['joint_custody_reads'])==4
             and all(cold[key] is True for key in ('native_replicas_agree','new_export_debit_retained',
                 'unique_import_and_original_output_maturity_verified','all_private_fixture_files_unchanged',
                 'strict_transport_read_only_entry_used','transport_inspection_private_identity_not_loaded',
@@ -120,7 +160,7 @@ def verify(args):
             and len(row['native_read_transcript'])==15
             and hashlib.sha256(canonical(row['native_read_transcript'])).hexdigest()==row['native_read_transcript_sha256']
             for row in checks),'bound Native value observation transcript required')
-    rows,samples=check_log(args.private_log)
+    rows,samples=check_log(args.private_log,expected_exit=1 if failed else 0)
     require(all(resources[key]==value for key,value in sample_summary(samples).items()),
             'resource summary differs from complete retained samples')
     require(rows[0]['binding']['source_set_sha256']==binding['source_set_sha256']
@@ -132,11 +172,15 @@ def verify(args):
             and resources['private_log_sha256']==digest(args.private_log)[0] and resources['samples']==len(samples),
             'exact resource log/source/run bindings required')
     return dict(format='RLD-GROUND-METERED-EVIDENCE-BINDING-V1',fixture_only=True,live_rld=False,
-                completed_finite_metered_scope_and_stopped_cold_bound=True,
+                completed_finite_metered_scope_and_stopped_cold_bound=not failed,
+                completed_failed_scope_observation_bound=failed,
+                failed_profile_remains_failed=failed,
                 source_set_sha256=binding['source_set_sha256'],controller_source_set_sha256=supplement['source_set_sha256'],
                 run_report_sha256=digest(args.run_report)[0],cold_report_sha256=digest(args.cold_report)[0],
                 resource_report_sha256=digest(args.resource_report)[0],directed_contact_meters=22,
                 phase_native_value_observations=len(checks),resource_samples=len(samples),
+                storage_sample_maxima=storage_summary(samples),
+                verifier_sha256=digest(Path(__file__))[0],
                 total_hop_ciphertext_bytes_forwarded=sum(row['ciphertext_bytes_forwarded'] for row in run['explicit_contact_stream_meters']),
                 transport_bytes_do_not_prove_ledger_delivery=True,continuous_resource_peaks_measured=False,
                 short_lived_native_children_complete=False,sustained_BFT_liveness_qualified=False,
@@ -148,6 +192,8 @@ def main():
     for name in ('run_report','cold_report','resource_report','private_log','controller_manifest','controller_source',
                  'node_manifest','node_source','binary','report'):
         parser.add_argument('--'+name.replace('_','-'),type=Path,required=True)
+    parser.add_argument('--failed-scope-observation',action='store_true',
+                        help='Bind an actual stopped failure without changing its failed qualification')
     args=parser.parse_args()
     require(not args.report.exists() and not args.report.is_symlink(),'retain existing measurement verification report')
     value=verify(args)

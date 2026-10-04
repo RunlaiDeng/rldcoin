@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from regional_ground_resources import canonical
-from verify_ground_metered_observations import check_log,check_meters,edges,sample_summary
+from verify_ground_metered_observations import check_log,check_meters,edges,sample_summary,storage_summary
 
 
 class MeteredEvidenceTests(unittest.TestCase):
@@ -37,9 +37,9 @@ class MeteredEvidenceTests(unittest.TestCase):
             rows=self.meters();rows[0].update(change)
             with self.assertRaises(ValueError):check_meters(rows)
 
-    def log(self, root, changes=None, truncate=False):
+    def log(self, root, changes=None, truncate=False,exit_code=0):
         rows=[dict(kind='header'),dict(kind='sample',monotonic_start=1,monotonic_end=2),
-              dict(kind='terminal',observation_completed=True,controller_exit_code=0,qualification=False)]
+              dict(kind='terminal',observation_completed=True,controller_exit_code=exit_code,qualification=False)]
         if changes:rows[1].update(changes)
         lines=[];previous=None
         for index,row in enumerate(rows):
@@ -52,6 +52,14 @@ class MeteredEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             rows,samples=check_log(self.log(Path(temporary)))
             self.assertEqual(len(samples),1)
+            self.assertFalse(rows[-1]['qualification'])
+
+    def test_failed_terminal_requires_explicit_failed_scope_and_cannot_count_as_pass(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path=self.log(Path(temporary),exit_code=1)
+            with self.assertRaisesRegex(ValueError,'complete observation terminal'):check_log(path)
+            rows,samples=check_log(path,expected_exit=1)
+            self.assertEqual(rows[-1]['controller_exit_code'],1)
             self.assertFalse(rows[-1]['qualification'])
 
     def test_truncated_replaced_chain_and_reversed_times_refuse(self):
@@ -70,6 +78,18 @@ class MeteredEvidenceTests(unittest.TestCase):
         self.assertIsNone(result['sampled_max_single_process_one_core_cpu_percent'])
         self.assertEqual(result['unknown_process_samples'],1)
         self.assertEqual(result['unknown_storage_samples'],1)
+
+    def test_per_directory_maxima_preserve_unknown_and_non_atomic_scope(self):
+        unknown=dict(label='mesh_earth_0',available=False,files=None,logical_file_bytes=None,atomic_snapshot=False)
+        first=dict(label='mesh_proxima_0',available=True,files=4,logical_file_bytes=100,atomic_snapshot=False)
+        later=dict(first,files=5,logical_file_bytes=90)
+        result=storage_summary([dict(storage=[unknown,first]),dict(storage=[unknown,later])])
+        self.assertIsNone(result['mesh_earth_0']['sampled_max_files'])
+        self.assertEqual(result['mesh_earth_0']['unknown_samples'],2)
+        self.assertEqual(result['mesh_proxima_0']['sampled_max_files'],5)
+        self.assertEqual(result['mesh_proxima_0']['sampled_max_logical_file_bytes'],100)
+        for change in ({'available':1},{'files':True},{'atomic_snapshot':True}):
+            with self.assertRaises(ValueError):storage_summary([dict(storage=[dict(first,**change)])])
 
 
 if __name__=='__main__':unittest.main()

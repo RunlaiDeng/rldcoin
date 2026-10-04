@@ -1,0 +1,39 @@
+{
+  "format": "RLD-JOINT-FAULT-FAILED-OWNER-HEAD-OBSERVATIONS-V1",
+  "failed_run_report_sha256": "adc12b3635b14a49eceb1b4caa7bce7ef3c347ebf59f6872451f263d75ff3f4e",
+  "source_set_sha256": "8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199",
+  "binary_sha256": "72cb9d5fc7dc3adc17de17cbd53317c252b1962ae9db7b109292e2b1bb946d16",
+  "observer_sha256": "19d7d7b932396a31b7b9878426f7587c2581edb4897ea99555285886fdb26e88",
+  "owner_payments": [
+    {
+      "region": "earth",
+      "exact_original_request_bound": true,
+      "latest_separate_wallet_head_matches": true,
+      "full_native_owner_signing_height_replay": true,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0"
+    },
+    {
+      "region": "proxima",
+      "exact_original_request_bound": true,
+      "latest_separate_wallet_head_matches": true,
+      "full_native_owner_signing_height_replay": true,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0"
+    },
+    {
+      "region": "andromeda",
+      "exact_original_request_bound": true,
+      "latest_separate_wallet_head_matches": true,
+      "full_native_owner_signing_height_replay": true,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0"
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "no_signing_recovery_replacement_or_refund": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "fresh_full_fault_profile_completed": false,
+  "duration_seconds": 1.03
+}
