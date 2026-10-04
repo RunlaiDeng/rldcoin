@@ -10,90 +10,52 @@
 保持原成熟高度、票数、容量、24 高度上限、600 秒阶段窗口和实际 60 秒轮超时。
 组件速度、运输收件和测试数量均不替代付款资格。
 
-## 当前证据与阻塞
+## 已有资格与失败原件
 
-冻结来源 `7c5b78c85d1b50640ce2d783fd752d7c818387e9be4ddcae3bb208003d4c4c61`，
-387 份完整清单。Native/core 与先前已核验源码逐字节相同；默认启动程序精确重建。
-运输修复及六项冷启动/锁回归已按明确清单合入主仓库 `06660aa`；未发布。
+运行来源 `7c5b78c85d1b50640ce2d783fd752d7c818387e9be4ddcae3bb208003d4c4c61`，
+387 份完整清单；Native/core 与此前已核验源码逐字节相同，默认启动程序精确重建。
+运输修复及六项冷启动/锁回归已按明确清单合入 `06660aa`，未发布。
 
 | 检查 | 实际结果 | 判定 |
 | --- | --- | --- |
-| 固定排队输入、四真实进程 | 旧实现 120 秒未交付；候选全部 40 输入/节点完成排入，控制标记至三个目标原生认证最多 31.367 秒 | 最小运输修复通过，非完整故障资格 |
-| 最终冻结回归 | 486 过程检查及 3 实际 Runtime 保管阶段通过；184 Native/strict 明确引用相同 Native/core 的先前证据 | 回归通过 |
-| 同来源普通三地区返程 | 743.120 秒；地球离线期间 onward/返程；12 原生、12 收款、4 时代保管及 1,728 档案冷核验通过；issued/liquid 300、in_transit 0 | 同机有限普通循环通过 |
-| 原定完整有限故障范围 | 912.029 秒；缺席 leader、隔离当地付款、离线追赶通过；接触恢复后新出口未在 600 秒内导入成熟 | **整个范围失败，原件保留，不恢复为通过** |
-| 失败范围严格停止核验 | 高度 Earth 14/Proxima 12/Andromeda 16；12 原生、1,989 完整 BFT 信封、4,369 档案、4 时代保管通过；私有字节/权限不变 | 核验失败状态，不替代资格 |
-| 原始 owner 请求 | 三份均 INCLUDED_IN_LOCAL_LEDGER、预留零；各自最新独立头及签署高度重放匹配 | 不替换，不退款 |
+| 冻结回归 | 486 过程检查、3 实际 Runtime 保管阶段通过；184 Native/strict 引用相同 Native/core 的既有证据 | 回归通过 |
+| 普通三地区返程 | 743.120 秒；12 原生、12 收款、4 时代保管、1,728 档案冷核验；issued/liquid 300、in_transit 0 | 同机有限循环通过 |
+| 原定完整有限故障范围 | 912.029 秒；缺席 leader、隔离当地付款、追赶通过；恢复后新出口未在 600 秒内导入成熟 | **整个范围失败，原件保留** |
+| 失败范围严格停止核验 | E14/P12/A16；12 原生、1,989 完整 BFT 信封、4,369 档案、4 时代保管通过，私有字节/权限不变 | 核验失败状态，不替代资格 |
+| 三份原始 owner 请求 | INCLUDED_IN_LOCAL_LEDGER、预留零；各自独立最新头及签署高度重放匹配 | 不替换，不退款 |
 
-当前四个 Proxima 收款检查均为 VERIFIED_EVIDENCE_PENDING_IMPORT，未导入、未成熟、
-不可花费。最高兼容前缀守恒 issued 300 / liquid 290 / pending_exports 10。
-Native 候选试算总耗时不足半秒，不据此猜测修补试算速度。
+四个 Proxima 收款检查均为 VERIFIED_EVIDENCE_PENDING_IMPORT，未导入、成熟或可花费。
+兼容前缀守恒 issued 300 / liquid 290 / pending_exports 10；Native 候选试算不足半秒。
 
-当前父级 12 的 11 份本地签署信封、33 个目的副本中，24 份已完整交付。
-Proxima-2 的 Commit 在发送端有 132 秒日志观测，仍未交付 Proxima-0/1；
-同一 Prepare 的远端副本经 Proxima-1 到达 Proxima-0，发给 Proxima-1 自身的副本却未到。
-源/目的日志并非同时采样，负时差不能解释为逆因果，也不能把短观测窗当永久停滞。
-多种完整原生证据的四真实进程压力对照均失败：原版、分层目的地轮转、
-新旧帧交替以及本地 CPU 时限修复均未在原 60 秒内完成所有目标，未启动新的完整资格范围。
-这些试验和私有现场独立保留；分层轮转的单项通过不计为实际转发通过。
+## 当前阻塞与本轮结论
 
-另外，两独立进程用同一个精确包复现了已收到的认证请求在完整本地验证超过 socket
-时限后被拒绝落盘。局部候选移除验证完成后的 socket 时限检查，并在每次锁尝试前
-拒绝过期准入；旧版无保管，新版 3.434 秒后真实落盘及原生认证。3 秒 socket、
-0.2 秒锁等待不变；发送端超时、无回执、原包保留。三项专项回归旧版两项失败、新版
-全部通过。这是注入时序边界的有限对照，候选未合入主运行代码，不能宣称已解决完整阻塞。
-提前登记仍活着的入站线程调度需求也通过相同精确包的双进程边界对照：旧版重复
-普通处理后拒绝入站；新版 0.367 秒完成实际落盘、原生认证及发送端持久回执。
-29 项现有 TCP 回归通过；原多证据压力对照仍失败，候选未合入。
-诊断脚本曾在接收争用后跳过后续发送，真实服务却继续原生与发送阶段；已保留原结果，
-修正后的相同输入旧/新版四进程对照都把每节点 40 个输入全部排入，但三个目标均未
-完成关键原生认证，整个压力门槛失败。停止后外部公钥运输检查及关键完整信封原生认证
-通过，私有字节/权限不变；活动队列最高 123，低于未改变的 256 准入上限。
-三份关键包仍在源 actor-3；发给 actor-0 的包已在中继 actor-2，但未到 actor-1/0，
-目标回执不存在。这是有限运输诊断，不替代真实普通启动或全故障范围。
-同输入逐包对照进一步确认：原运行来源的关键包 12 次被实际选入发送批次，
-12 次均收到对端拒收；精确原包重选最大间隔接近 40 秒。就绪线程 FIFO、失败包半批
-重试、目的地分层轮转与重试组合均未通过整体压力门槛。重试对最近目标原生认证约
-17 秒，组合约 8 秒；远端仍未完成，所有节点各 40 个输入已排入，所有进程正常停止。
+关键包实际选入发送批次仍遭拒收。已认证外层请求会在打开本地存储前，因普通或发送
+线程占用、保留调度意图而耗尽原 0.2 秒等待；外层认证不代表完整运输或原生认证。
+分层轮转、重试、CPU/socket 边界、活线程准入及观察轮询的有限诊断均独立保留。
+局部检查通过不算完整压力或故障通过；未合入这些候选，也未启动新的完整资格范围。
 
-接收端详细记录确认，关键已认证外层请求在打开本地存储之前因普通/发送线程占用或保留
-普通调度意图而等待，约 0.2 秒后按原上限拒绝；这项观察不是原生完整信封验证失败。
-外层签署请求声明、真实运输落盘、签署回包、发送端本地回包保管和目的回执继续分开。
-本轮变体全部私有保留，未合入或发布；不提高时限、票数、成熟高度、容量，不剪除证据。
-TCP 专用观察轮询候选省去仅为诊断游标而重写完整活动帧的操作，仍完整打开核验、
-执行完成记录归档和状态检查，实际发送准备与普通服务进度照常持久化。三项专项检查
-通过：重复轮询活动字节/传输位置不变，完成记录归档且保留未确认转发，拒绝文件流
-轮询而不重写。然而匹配四进程对照旧/新均失败；每节点 40 输入已排入，新版三个目标
-均未完成关键原生认证，不能当成端到端优化通过。候选仍独立保留，不合入或发布。
-下一步检查本地操作占用和待重试调度意图如何让已认证完整请求失去接收机会；
-先得到相同输入实际旧失败/新通过，再完整回归与资格，不靠元数据替代认证或保管。
+本轮原生空闲窗口候选在同一精确包、两个真实进程中复现旧失败/新通过：接收一份完整
+请求后实际落盘及原生认证，第二份拒绝，普通线程随后正常继续。发送端只核验回包，
+没有本地回包保管或目的回执，原包保留。socket 3 秒、锁等待 0.2 秒不变。
+相同 40 种完整证据、四进程压力对照仍失败：旧版三个目标均未完成；候选最近目标
+69.303 秒完成原生认证，另两目标未完成。双方每节点 40 输入全部排入、进程正常停止。
+停止核验八份运输存储通过；完整关键原生信封核验通过，所有私有字节/权限不变。
+源和最近中继仍保留发往两个远端的原包，两个远端均没有目的回执。
+候选不合入、不发布。实际 Node 打开采样显示热态成本主要在活动图解码/展开和完整
+传输身份检查；采样含额外开销，不当成实时延迟或吞吐证明。下一步量出实际
+普通/发送/接收操作的锁持有区间，先证明对应真实输入旧失败/新通过，再完整资格。
 
-## 开发与发布边界
+## 证据与发布边界
 
-公开仓库仍为已验证 v55；v56 材料完整延后保存，当前不发布微优化或失败变体。
-失败状态、旧冻结包、所有签署证据和私有头原样保留。无 Runtime 重启失败账本、
-无恢复首次签署、替换原始付款、退款、迁移价值、提高上限或剪除证据。
-独立运营、物理链路、长期断连/历史、跨设备保管及真正跨星际资格仍未完成。
-
-完整当前证据：`docs/operations/evidence/regional-fair-carriage-source-inventory-20261004.json`、
+主资格证据：`operations/evidence/regional-fair-carriage-source-inventory-20261004.json`、
 `regional-qualified-fair-carriage-frozen-checks-20261004.json`、
-`regional-fair-carriage-three-region-cycle-20261004.json`、
-`regional-fair-carriage-three-region-cold-20261004.json`、
-`regional-fair-carriage-joint-fault-fresh-20261004.json`、
-`regional-fair-carriage-joint-fault-failed-cold-observations-20261004.json`、
-`regional-fair-carriage-joint-fault-owner-head-observations-20261004.json`、
-`regional-fair-carriage-fault-current-proxima-path-observations-20261004.json`、
-`regional-fair-carriage-fault-log-timeline-20261004.json`。
+`regional-fair-carriage-three-region-cycle-20261004.json`、`regional-fair-carriage-three-region-cold-20261004.json`、
+`regional-fair-carriage-joint-fault-fresh-20261004.json`、`regional-fair-carriage-joint-fault-failed-cold-observations-20261004.json`、
+`regional-fair-carriage-joint-fault-owner-head-observations-20261004.json`。
+本轮：`operations/evidence/regional-native-idle-admission-summary-20261004.json`、
+`regional-native-idle-admission-stopped-review-20261004.json`、`regional-native-idle-stopped-mesh-open-cost-20261004.json`。
+此前诊断和来源：[原样保留状态](operations/history/PLAN_STATUS_before_native_idle_result_20261004_fd5fa9f7b1a2.md)。
 
-此前详史：[原样历史记录](operations/history/PLAN_STATUS_before_delivery_focus_20261004_8403d16a68dc.md)。
-本轮诊断详史：[此前状态原文](operations/history/PLAN_STATUS_before_fair_carriage_fault_result_20261004_2fb5b6d7e1ec.md)。
-原失败 f49 来源及更早失败均独立保留，不混计为本次样本。
-新增诊断汇总：`operations/evidence/regional-carriage-late-custody-and-diverse-pressure-summary-20261004.json`。
-
-入站边界与模型校核：`operations/evidence/regional-live-inbound-demand-boundary-summary-20261004.json`。
-
-修正模型停止对照：`operations/evidence/regional-service-stage-separated-carriage-stopped-comparison-20261004.json`。
-
-逐包接收准入：`operations/evidence/regional-exact-carriage-admission-summary-20261004.json`。
-
-TCP 观察轮询对照：`operations/evidence/regional-tcp-observation-poll-summary-20261004.json`。
+公开仓库仍为已验证 v55；v56 材料完整延后保存。不发布微优化或失败变体。
+失败状态、签署证据及私有头不改变；不恢复失败范围为通过、不迁移价值、不提高上限或剪除证据。
+独立运营、物理链路、长期断连/历史、跨设备保管及真正跨星际资格仍未完成。

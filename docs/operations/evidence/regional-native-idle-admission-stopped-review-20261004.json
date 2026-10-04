@@ -1,0 +1,157 @@
+{
+  "format": "RLD-NATIVE-IDLE-STOPPED-REVIEW-V1",
+  "completed": true,
+  "rows": [
+    {
+      "case": "old",
+      "actor": 0,
+      "report_sha256": "9766713043a224c1f1bc6a7b9cf4b977c51656b73a0ce42841298399dde013d8",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 0,
+      "critical_distinct_complete_envelopes_native_verified": 0,
+      "critical_packets": [],
+      "active_transits": 72,
+      "active_receipts": 0,
+      "archive_records": 250
+    },
+    {
+      "case": "old",
+      "actor": 1,
+      "report_sha256": "9766713043a224c1f1bc6a7b9cf4b977c51656b73a0ce42841298399dde013d8",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 0,
+      "critical_distinct_complete_envelopes_native_verified": 0,
+      "critical_packets": [],
+      "active_transits": 103,
+      "active_receipts": 4,
+      "archive_records": 409
+    },
+    {
+      "case": "old",
+      "actor": 2,
+      "report_sha256": "9766713043a224c1f1bc6a7b9cf4b977c51656b73a0ce42841298399dde013d8",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 0,
+      "critical_distinct_complete_envelopes_native_verified": 0,
+      "critical_packets": [],
+      "active_transits": 109,
+      "active_receipts": 4,
+      "archive_records": 399
+    },
+    {
+      "case": "old",
+      "actor": 3,
+      "report_sha256": "9766713043a224c1f1bc6a7b9cf4b977c51656b73a0ce42841298399dde013d8",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 3,
+      "critical_distinct_complete_envelopes_native_verified": 1,
+      "critical_packets": [
+        {
+          "destination_actor": 2,
+          "exact_packet_sha256": "126d6ce88a2b800fa276381a1dc2d7f064bfad85e7af43c2d5a0a0b15e1a8c3b",
+          "has_authenticated_destination_receipt": false
+        },
+        {
+          "destination_actor": 1,
+          "exact_packet_sha256": "2e8f76a4ff87380fc6f7316af7280f953cf3202f8ae800fb73965c916c12f1c3",
+          "has_authenticated_destination_receipt": false
+        },
+        {
+          "destination_actor": 0,
+          "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+          "has_authenticated_destination_receipt": false
+        }
+      ],
+      "active_transits": 71,
+      "active_receipts": 0,
+      "archive_records": 238
+    },
+    {
+      "case": "new",
+      "actor": 0,
+      "report_sha256": "ee61fd5e3f0bca425ef47b9122401717188fc97e3610a010d1c459ed68e96ed2",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 0,
+      "critical_distinct_complete_envelopes_native_verified": 0,
+      "critical_packets": [],
+      "active_transits": 72,
+      "active_receipts": 0,
+      "archive_records": 234
+    },
+    {
+      "case": "new",
+      "actor": 1,
+      "report_sha256": "ee61fd5e3f0bca425ef47b9122401717188fc97e3610a010d1c459ed68e96ed2",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 0,
+      "critical_distinct_complete_envelopes_native_verified": 0,
+      "critical_packets": [],
+      "active_transits": 115,
+      "active_receipts": 0,
+      "archive_records": 396
+    },
+    {
+      "case": "new",
+      "actor": 2,
+      "report_sha256": "ee61fd5e3f0bca425ef47b9122401717188fc97e3610a010d1c459ed68e96ed2",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 3,
+      "critical_distinct_complete_envelopes_native_verified": 1,
+      "critical_packets": [
+        {
+          "destination_actor": 2,
+          "exact_packet_sha256": "126d6ce88a2b800fa276381a1dc2d7f064bfad85e7af43c2d5a0a0b15e1a8c3b",
+          "has_authenticated_destination_receipt": true
+        },
+        {
+          "destination_actor": 1,
+          "exact_packet_sha256": "2e8f76a4ff87380fc6f7316af7280f953cf3202f8ae800fb73965c916c12f1c3",
+          "has_authenticated_destination_receipt": false
+        },
+        {
+          "destination_actor": 0,
+          "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+          "has_authenticated_destination_receipt": false
+        }
+      ],
+      "active_transits": 85,
+      "active_receipts": 0,
+      "archive_records": 402
+    },
+    {
+      "case": "new",
+      "actor": 3,
+      "report_sha256": "ee61fd5e3f0bca425ef47b9122401717188fc97e3610a010d1c459ed68e96ed2",
+      "public_anchor_full_mesh_inspection": true,
+      "critical_transits": 3,
+      "critical_distinct_complete_envelopes_native_verified": 1,
+      "critical_packets": [
+        {
+          "destination_actor": 2,
+          "exact_packet_sha256": "126d6ce88a2b800fa276381a1dc2d7f064bfad85e7af43c2d5a0a0b15e1a8c3b",
+          "has_authenticated_destination_receipt": true
+        },
+        {
+          "destination_actor": 1,
+          "exact_packet_sha256": "2e8f76a4ff87380fc6f7316af7280f953cf3202f8ae800fb73965c916c12f1c3",
+          "has_authenticated_destination_receipt": false
+        },
+        {
+          "destination_actor": 0,
+          "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+          "has_authenticated_destination_receipt": false
+        }
+      ],
+      "active_transits": 74,
+      "active_receipts": 3,
+      "archive_records": 241
+    }
+  ],
+  "duration_seconds": 42.351,
+  "all_private_bytes_and_permissions_unchanged": true,
+  "only_critical_complete_native_envelopes_checked_not_every_bft_envelope": true,
+  "no_runtime_signing_recovery_or_ledger_change": true,
+  "failed_pressure_remains_failed": true,
+  "not_full_fault_independent_or_physical_qualification": true,
+  "runner_sha256": "2bd26f74f47bffdf19c968e3b22ead2b7a88e04cde3b90457229e2e975780cbd"
+}
