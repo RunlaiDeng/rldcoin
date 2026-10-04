@@ -18,10 +18,20 @@ Status只能序列化，字段私有；它不能授予签名、freshness、membe
 这保持既有中断发布行为，并不新增恢复权限。所有Native OS锁、caller头、签署预留、证据、
 origin/readiness/时代/incident/owner/value及容量门槛保持。完整JSON字段和原输出顺序保持。
 
-新增实际Native回归待执行：持久prepare-QC锁、输出与原完整核验字节一致、持锁时第二打开拒绝；
-真实头前进后旧头不能授权下一次签署；已认证中断扩展输出绑定最终head/state；改变签名和
-损坏中断字节拒绝且不改写原件。完整184原生、strict、480过程、新driver与全新普通/cold/fault
-必须分别执行；目前只完成源码修改和格式检查，没有构建/测试或速度提升资格结论。
+新增真实 Native 回归已通过：持久 prepare-QC 锁、输出与原完整核验字节一致、持锁时第二打开拒绝；
+真实头前进后旧头不能授权下一次签署；已认证中断扩展输出绑定最终 head/state；改变签名和
+损坏中断字节拒绝且不改写原件。完整 184 原生、strict、完整 480 过程、3 Runtime 保管及
+新 driver 已实际执行通过。全新普通/cold/fault 是单独的交付关卡，目前正在普通三地区实验。
 
 本改动未提高任何历史、记录、容量、成熟、round、票数或时间限制，不具备长历史、独立保管、
 掉电/跨设备或物理星际资格。所有旧失败、源码、报告和私有状态保留；I1–I12仍未完成。
+
+后续实际检查：[386冻结报告](evidence/regional-bft-open-status-frozen-checks-20261004.json)
+精确重建39.102秒、strict13.962秒、184原生69.482秒、完整480过程293.031秒、
+3真实Runtime保管3.925秒通过；原生/strict不复用。新driver
+[四Native单向离线付款/cold](evidence/regional-bft-open-status-oneway-default-native-lifecycle-20261004.json)
+4.129秒/48完整签名交换通过，显式unanimous控制者样本，不是自主BFT全故障资格。
+[两个独立新genesis的组件测量](evidence/regional-bft-open-status-fresh-component-comparison-20261004.json)
+各31真实Native timeout记录、6轮交错查询，全私有字节/权限保持，旧/新status均值
+0.023160/0.015039秒。高度0、没有块/owner支付或普通liveness，不把这个组件样本外推
+到旧故障、普通吞吐或长期历史。新的三地区ordinary/cold正在全新私有范围运行。

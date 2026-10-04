@@ -32,3 +32,25 @@ changed caller heads in installed and pending-handoff branches, and standalone
 head refusal. Their execution, fresh default-driver build, ordinary owner-payment,
 stopped cold and fault scopes are pending. This scheduling change does not
 qualify sustained fault liveness, independent custody or interstellar operation.
+
+The separately frozen 368-file source subsequently passed
+[15 related actual-native cases](evidence/regional-role-tick-head-related-checks-20261004.json)
+in 34.000 seconds, its [new exact default-driver build and 438 process cases](evidence/regional-role-tick-head-frozen-checks-20261004.json)
+in 38.701/261.150 seconds, and [three actual custody cases](evidence/regional-role-tick-head-runtime-custody-20261004.json)
+in 3.392 seconds. The unchanged 173 native/strict checks were reused, not rerun.
+Ordinary owner-payment/cold and finite missing-leader scopes have not started;
+the full-fault controller contention candidate runs separately with the original
+revision-38 ordinary runtime. Its result cannot qualify this role-tick runtime.
+
+The fresh five-carrier, two-handoff, three-era owner payment sample actually
+completed: runner 510.795 seconds, Native report 509.906, complete stopped cold
+105.384 and keyless absence 0.873. Five Native histories, 866 complete envelopes,
+2435 transport archives and 11 separate custody groups were authenticated with
+all private files unchanged. Final height 14, mature recipient availability 10
+and 300 = liquid 300 are verified. Two nullable slots retain eight absent paths.
+This is not a controlled performance comparison, finite missing-leader/full fault,
+independent owner/cross-device custody or physical-link qualification.
+
+[Revision 43](https://github.com/RunlaiDeng/rldcoin-genesis/tree/5017c457ad4126878a63182e55b05b5e02f951bd/research/2026-10-04/regional-role-tick-v43)
+publishes the exact 368-member source and scoped evidence; all 19 reviewed remote
+files match their exact committed bytes. Generated private custody is excluded.

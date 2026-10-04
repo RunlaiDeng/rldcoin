@@ -46,3 +46,51 @@ unchanged and unexecuted as an ordinary candidate. The next freeze also includes
 the already tested controller public-anchor/receipt-probe fixes, so fresh fault
 scopes retain their pre-start inspection anchors instead of reverting to older
 unanchored controller behavior. Native/Core and ordinary bounds remain unchanged.
+
+The combined 372-file candidate is frozen at source set
+`dc957e53ef7e82d7d2600ec7743502c3a4ab015d704172981fd3d35984a3a2ac`.
+Its exact new compiled default driver build passed in 38.811 seconds, all 454
+process cases in 264.376 seconds and three actual Runtime custody cases in
+3.239 seconds. Native/Core 89 files are byte-identical; prior 173 Native tests and
+strict checks are explicitly reused, not rerun. Actual binary SHA-256 is
+`b22ee978df480a3f8bbbfcb468cc3c75a2f52e9812f63c2570df4d9310cbff2a`.
+A fresh three-region ordinary payment/onward/value-return and exact stopped cold
+sequence has started. Its outcome, fault scope and any performance improvement
+remain unqualified until actual terminal evidence. Existing failed states remain
+unchanged. The initial 370-file freeze is retained without ordinary execution.
+
+The exact 372-source ordinary three-region cycle subsequently passed in
+773.560 seconds and its complete stopped cold in 66.444 seconds. Twelve replicas
+reached Earth/Proxima/Andromeda heights 11/4/4; issuance 300 equals liquid 300 with
+no unresolved exports. Initial debit remains spent. Cold authenticated twelve
+Native histories/recipient checks, four joint custody groups, 784 complete
+envelopes and 1856 transport archives under strict setup anchors; all private
+files remain unchanged. [Revision 44](https://github.com/RunlaiDeng/rldcoin-genesis/tree/33a1983c393dffe150be11abfbb132b8045cee60/research/2026-10-04/regional-custody-sync-v44)
+is published with [14 exact remote file verifications](evidence/regional-custody-sync-v44-publication-verification-20261004.json).
+The fresh finite complete joint fault scope has started only from this exact
+successful cycle/cold; its original 600-second phases and height 24 remain.
+No complete fault or controlled performance improvement is claimed yet.
+
+The subsequent [fresh complete joint fault scope](evidence/regional-custody-sync-retry1-joint-fault-fresh-20261004.json)
+failed its original 600-second restored-contact import/maturity gate; runner
+duration was 876.011 seconds (report 874.612). Owned cleanup and the sealed
+successful source remained intact. Stopped compatible Native prefixes reached
+Earth 15, Proxima 12 and Andromeda 13, with issuance 300 = liquid 300 + unresolved
+0 and four exports/four imports. These observations do not retroactively pass
+the failed gate or unexecuted later fault stages. Strict anchored stopped
+envelope/transport/custody and owner-head diagnosis is underway. The successful
+ordinary cycle/publication above remains separately scoped; the full fault
+profile remains failed and no performance improvement is established.
+
+The actual stopped observer subsequently passed in 258.735 runner seconds
+(report 256.838): twelve Native histories, 1924 complete envelopes, 4294 transport
+archive records and four joint custody groups under both retained setup anchors.
+All private bytes/permissions stayed unchanged. All four Proxima receipts remain
+IMPORT_ACCEPTED_IMMATURE: import height 12, required maturity 14, current 12,
+remaining 9 and not currently spendable. Three exact owner signing-height/head
+observations passed in 1.965 runner seconds (report 1.039), each
+INCLUDED_IN_LOCAL_LEDGER with reserved amount zero. No signing, recovery,
+replacement or refund occurred. [Revision 45](https://github.com/RunlaiDeng/rldcoin-genesis/tree/718021fe5a5afd07756e10f772f6c03badc0e0a8/research/2026-10-04/regional-custody-fault-stopped-v45)
+is published and [all 11 remote files are byte-verified](evidence/regional-custody-fault-stopped-v45-publication-verification-20261004.json).
+The unchanged reviewed revision-44 archive is explicitly reused; no private
+fixture/state was published and the complete fault profile remains failed.

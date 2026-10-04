@@ -43,5 +43,26 @@ Use a new exact compiled ordinary driver and fresh private no-value transport/
 fixture directories for this changed Python runtime. Preserve old fixtures and
 failures without migration. Native consensus/source identity and signed evidence
 formats remain unchanged. The new directional schema is explicit; old runtimes
-refuse it. Component and actual ordinary lifecycle/cold qualification are pending
-until the currently active revision-47 fault scope stops and checks execute.
+refuse it.
+
+The [seven component/default lifecycle checks](evidence/interstellar-oneway-spool-retry2-frozen-checks-20261004.json)
+passed in 4.737 seconds; the [actual four-node ordinary sample](evidence/interstellar-oneway-retry2-default-native-lifecycle-20261004.json)
+took 3.754 seconds, with 44 exact signed mechanical transfers. The source stopped
+completely during native recipient import and a local payment of 50; source calls
+were zero and source journal bytes remained unchanged. Receipt knowledge returned
+through a separate carrier. Four complete native cold replays and strict setup
+public/config transport inspection preserved all private bytes and permissions.
+Conservation was issuance 300, unresolved exports zero. Three actual Runtime
+persistence/reopen custody checks passed separately in 3.277 seconds.
+
+The first complete 469-case run had only a test parent-directory setup error;
+its unchanged 462 process cases and six directed component cases passed. A second
+seven-case run rejected an old PID observation at actual restart; the test now
+waits for the newly started process's own observation, without deleting the old
+status. The final seven passed. Both failed sources/logs/private fixtures remain
+retained. Only test code changed after the new production runtime build; production
+and Native/Core bytes match exactly, so that compiled driver is reused. The 462
+unchanged process cases and 181 Native/strict cases are explicitly reused, not
+rerun. These results do not claim a final single 469-case run or upgrade the
+separately failed BFT fault scope. Frozen source guidance preserves its original
+pre-check wording; published package status and these reports record the result.

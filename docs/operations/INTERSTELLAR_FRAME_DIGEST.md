@@ -33,3 +33,13 @@ custody. Never raise the 0.2-second acquisition, three-second socket, 600-second
 campaign or existing admission/archive/history/wire bounds to obtain a pass.
 The component candidate and measured savings do not qualify BFT liveness,
 independent custody, power loss, physical stellar links or I1–I12 completion.
+
+The [exact 384-file build and 475 complete process checks](evidence/regional-frame-stream-frozen-checks-20261004.json)
+passed, along with three actual custody cases and a fresh four-node directed
+unanimous offline-source native payment/cold sample. Native/Core exactly match
+revision 47; its 181 Native/strict cases are reused, not rerun. The new default
+driver embeds this frozen source. The fresh three-region BFT cycle and full fault
+qualification remain separate and uncompleted. Published revision 50 preserves
+that distinction; frozen guidance retains its original pre-check wording.
+
+2026-10-04：该精确384文件运行时的新三地区joint ordinary完整价值返程实际736.749秒通过，严格停止cold65.780秒通过（12原生/12recipient/4单独caller保管组，784完整BFT消息、1824运输归档；全部私有字节与权限不变，300=300+0）。新的完整故障范围从这个成功源独立启动，仍未通过；有限同机循环不改变任何独立、物理、长历史或I1–I12资格。冻结源码继续保留其原文。
