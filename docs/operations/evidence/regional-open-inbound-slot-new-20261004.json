@@ -1,0 +1,42 @@
+{
+  "format": "RLD-OPEN-INBOUND-SLOT-ACTUAL-TWO-PROCESS-V1",
+  "queue_occupied_before_third": 1,
+  "third_full_challenge_and_exact_signed_refusal_authenticated": true,
+  "third_failure_phase": null,
+  "third_error_type": null,
+  "original_total_inbound_slots": 2,
+  "completed": true,
+  "source_set_sha256": "b85a01c2d634048383e9d43c34b4293053399409e56349346a98d743adbcca42",
+  "runner_sha256": "1b6b802a280814646a6f47aa8c8907f7d4990de4d3d3f347d11f5e304c998776",
+  "worker_sha256": "f52cf1577454342dfaa37c1890f8088d8d24fa66f69ba1cdfd9aece608442644",
+  "critical_envelope_sha256": "15f89c4437a5c63d202924558e231d21e2295f4f303478731124d577c63a473c",
+  "exact_packet_sha256": "e241be5a6e782e44e0135f381d77873fd44c39a839b8e4a7bd70cdcf823ade6a",
+  "separate_receiver_process": true,
+  "receiver_exit_code": 0,
+  "receiver_durable_packet_and_native_authentication": true,
+  "sender_retains_original_packet": true,
+  "sender_destination_receipt": false,
+  "authenticated_reply_successes": [
+    false,
+    false
+  ],
+  "ordinary_reclaimed_after_window": true,
+  "original_socket_seconds": 3.0,
+  "original_local_lock_wait_seconds": 0.2,
+  "actual_ordinary_os_mesh_lock_held_across_requests": true,
+  "receiver_deferred_input": {
+    "active": false,
+    "completed": 1,
+    "pending": 0,
+    "queue_grants_custody": false,
+    "received": 1,
+    "rejected": 0,
+    "shares_original_inbound_slots": true
+  },
+  "sender_does_not_adopt_reply_custody": true,
+  "socket_attempt_elapsed_seconds": 0.675,
+  "receiver_authentication_seconds_from_send": 0.918,
+  "native_failed_source_and_compatible_test_setup_unchanged": true,
+  "no_runtime_signing_recovery_or_ledger_change": true,
+  "not_full_fault_or_independent_qualification": true
+}

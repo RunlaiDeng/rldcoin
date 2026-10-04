@@ -1,0 +1,938 @@
+{
+  "format": "RLD-OPEN-INBOUND-SLOT-DIAGNOSTIC-SUMMARY-V1",
+  "completed": true,
+  "boundaries": [
+    {
+      "kind": "pending-receive-boundary",
+      "actual_two_process_old_fail_new_pass": true,
+      "cases": [
+        {
+          "case": "old",
+          "report_sha256": "496710bd62e6a4f83bc2fc8c8d5af94bd1298a38f729be75c3b492ad502096c1",
+          "observations": {
+            "format": "RLD-PENDING-RECEIVE-ACTUAL-TWO-PROCESS-V1",
+            "completed": true,
+            "source_set_sha256": "323380508ee882b0a5f476fa1bea9f9bbaf05a6b5d93329acfe83af6959d134f",
+            "runner_sha256": "66a6547f5c99b6de9a08af4f4917e268d119d2c49bb20462100c280c9c7cadcb",
+            "worker_sha256": "b29a0aa3924898b2f8cda70e7fb3285d04c8c62352a6f29a7daff3518ab736ed",
+            "marker_complete_frame_sha256": "6d1451b7d72e453df8dbb9dfb2a3b766fa5edc16b2f06484536d1cae6ae34ae0",
+            "receiver_exit_code": 0,
+            "initial_real_os_lock_refusal": true,
+            "real_pinned_tls_challenge_and_signed_request": true,
+            "exact_reply_authenticated": true,
+            "caller_does_not_adopt_reply_bundle": true,
+            "no_native_runtime_signing_recovery_or_ledger_change": true,
+            "original_native_failed_source_and_transport_setup_unchanged": true,
+            "not_full_fault_or_independent_qualification": true,
+            "actual_receive_review_completed": false,
+            "actual_tcp_waiter_observed": true,
+            "carriage_refused_for_pending_receive": false,
+            "explicit_receive_cpu_boundary_seconds": 0.35,
+            "marker_exact_packet_sha256": null,
+            "marker_full_native_authenticated": false,
+            "original_local_lock_wait_seconds": 0.2,
+            "original_socket_seconds": 3.0,
+            "warm_actual_transport_receipt_exists": true
+          }
+        },
+        {
+          "case": "new",
+          "report_sha256": "89f807d44ab485242c1c26ae565331b0beac10091322bdeb8ca2a2f0ce1098a5",
+          "observations": {
+            "format": "RLD-PENDING-RECEIVE-ACTUAL-TWO-PROCESS-V1",
+            "completed": true,
+            "source_set_sha256": "ae8f5d0ebc302b0716ccde9afd7a7062e158e30f73020089e7ff22612df1cce8",
+            "runner_sha256": "20c342842f3151da2f3cc40cf7e19a9696ccbfc9c4c73552029b715628f08d88",
+            "worker_sha256": "b29a0aa3924898b2f8cda70e7fb3285d04c8c62352a6f29a7daff3518ab736ed",
+            "marker_complete_frame_sha256": "6d1451b7d72e453df8dbb9dfb2a3b766fa5edc16b2f06484536d1cae6ae34ae0",
+            "receiver_exit_code": 0,
+            "initial_real_os_lock_refusal": true,
+            "real_pinned_tls_challenge_and_signed_request": true,
+            "exact_reply_authenticated": true,
+            "caller_does_not_adopt_reply_bundle": true,
+            "no_native_runtime_signing_recovery_or_ledger_change": true,
+            "original_native_failed_source_and_transport_setup_unchanged": true,
+            "not_full_fault_or_independent_qualification": true,
+            "actual_receive_review_completed": true,
+            "actual_tcp_waiter_observed": true,
+            "carriage_refused_for_pending_receive": true,
+            "explicit_receive_cpu_boundary_seconds": 0.35,
+            "marker_exact_packet_sha256": "069e0a13ab073fc5bddf72b46a50bafee860d825537ecfa3da6d2e48ba25533b",
+            "marker_full_native_authenticated": true,
+            "original_local_lock_wait_seconds": 0.2,
+            "original_socket_seconds": 3.0,
+            "warm_actual_transport_receipt_exists": true
+          }
+        }
+      ]
+    },
+    {
+      "kind": "open-inbound-slot",
+      "actual_two_process_old_fail_new_pass": true,
+      "cases": [
+        {
+          "case": "old",
+          "report_sha256": "36f153477f8b283edbb687e3a78299d75751213eebaabbecd5f28ba6f5492e61",
+          "observations": {
+            "format": "RLD-OPEN-INBOUND-SLOT-ACTUAL-TWO-PROCESS-V1",
+            "queue_occupied_before_third": 2,
+            "third_full_challenge_and_exact_signed_refusal_authenticated": false,
+            "third_failure_phase": "tls-connect",
+            "third_error_type": "SSLEOFError",
+            "original_total_inbound_slots": 2,
+            "completed": true,
+            "source_set_sha256": "ae8f5d0ebc302b0716ccde9afd7a7062e158e30f73020089e7ff22612df1cce8",
+            "runner_sha256": "5e397306593caa6a396a67b4304ac01dc376ab41fb1295b588e317942222d23c",
+            "worker_sha256": "f52cf1577454342dfaa37c1890f8088d8d24fa66f69ba1cdfd9aece608442644",
+            "critical_envelope_sha256": "15f89c4437a5c63d202924558e231d21e2295f4f303478731124d577c63a473c",
+            "exact_packet_sha256": "e241be5a6e782e44e0135f381d77873fd44c39a839b8e4a7bd70cdcf823ade6a",
+            "separate_receiver_process": true,
+            "receiver_exit_code": 0,
+            "receiver_durable_packet_and_native_authentication": true,
+            "sender_retains_original_packet": true,
+            "sender_destination_receipt": false,
+            "authenticated_reply_successes": [
+              false,
+              false
+            ],
+            "ordinary_reclaimed_after_window": true,
+            "original_socket_seconds": 3.0,
+            "original_local_lock_wait_seconds": 0.2,
+            "actual_ordinary_os_mesh_lock_held_across_requests": true,
+            "receiver_deferred_input": {
+              "active": false,
+              "completed": 1,
+              "pending": 1,
+              "queue_grants_custody": false,
+              "received": 2,
+              "rejected": 0,
+              "shares_original_inbound_slots": true
+            },
+            "sender_does_not_adopt_reply_custody": true,
+            "socket_attempt_elapsed_seconds": 0.528,
+            "receiver_authentication_seconds_from_send": 0.76,
+            "native_failed_source_and_compatible_test_setup_unchanged": true,
+            "no_runtime_signing_recovery_or_ledger_change": true,
+            "not_full_fault_or_independent_qualification": true
+          }
+        },
+        {
+          "case": "new",
+          "report_sha256": "87cd015d7105373fa3740e11ccaa80721511c062fa0b9cafb8e308262038edd9",
+          "observations": {
+            "format": "RLD-OPEN-INBOUND-SLOT-ACTUAL-TWO-PROCESS-V1",
+            "queue_occupied_before_third": 1,
+            "third_full_challenge_and_exact_signed_refusal_authenticated": true,
+            "third_failure_phase": null,
+            "third_error_type": null,
+            "original_total_inbound_slots": 2,
+            "completed": true,
+            "source_set_sha256": "b85a01c2d634048383e9d43c34b4293053399409e56349346a98d743adbcca42",
+            "runner_sha256": "1b6b802a280814646a6f47aa8c8907f7d4990de4d3d3f347d11f5e304c998776",
+            "worker_sha256": "f52cf1577454342dfaa37c1890f8088d8d24fa66f69ba1cdfd9aece608442644",
+            "critical_envelope_sha256": "15f89c4437a5c63d202924558e231d21e2295f4f303478731124d577c63a473c",
+            "exact_packet_sha256": "e241be5a6e782e44e0135f381d77873fd44c39a839b8e4a7bd70cdcf823ade6a",
+            "separate_receiver_process": true,
+            "receiver_exit_code": 0,
+            "receiver_durable_packet_and_native_authentication": true,
+            "sender_retains_original_packet": true,
+            "sender_destination_receipt": false,
+            "authenticated_reply_successes": [
+              false,
+              false
+            ],
+            "ordinary_reclaimed_after_window": true,
+            "original_socket_seconds": 3.0,
+            "original_local_lock_wait_seconds": 0.2,
+            "actual_ordinary_os_mesh_lock_held_across_requests": true,
+            "receiver_deferred_input": {
+              "active": false,
+              "completed": 1,
+              "pending": 0,
+              "queue_grants_custody": false,
+              "received": 1,
+              "rejected": 0,
+              "shares_original_inbound_slots": true
+            },
+            "sender_does_not_adopt_reply_custody": true,
+            "socket_attempt_elapsed_seconds": 0.675,
+            "receiver_authentication_seconds_from_send": 0.918,
+            "native_failed_source_and_compatible_test_setup_unchanged": true,
+            "no_runtime_signing_recovery_or_ledger_change": true,
+            "not_full_fault_or_independent_qualification": true
+          }
+        }
+      ]
+    }
+  ],
+  "reciprocal_pending_carriage_regression_report_sha256": "68ec97058e0ee3920e523f094c95211025c359ff5727e805eb7aba86932966be",
+  "reciprocal_pending_carriage_actual_enqueue_and_full_native_authentication": true,
+  "matched_pressure_cases": [
+    {
+      "case": "socket-phase-old",
+      "report_sha256": "9b6759203bce1a5d3c9e53eb6ad4487133fb9949df891e7a6c2dcc052438eada",
+      "source_set_sha256": "323380508ee882b0a5f476fa1bea9f9bbaf05a6b5d93329acfe83af6959d134f",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            80.023238,
+            null,
+            null
+          ],
+          "destination_native_authentication_seconds": [
+            80.1361,
+            null,
+            null
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 131.014,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.479986,
+            0.404181,
+            2.60449,
+            0.201414
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "actor": 0,
+          "observation_sha256": "813f61f5563dd955fe6a0f9094f44c60ee780bfeedc8363302958bce075d71a4",
+          "completed_outgoing_passes": 197,
+          "refused_connections": 0,
+          "deferred_input": {
+            "active": false,
+            "completed": 26,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 26,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 0,
+          "authenticated_outer_critical_requests": 38,
+          "actual_durable_critical_custody_events": 8,
+          "critical_preopen_refusals": 30,
+          "socket_failure_counts": [],
+          "critical_preparations": []
+        },
+        {
+          "actor": 1,
+          "observation_sha256": "ddb7092050b4b68d125ac8b330a01433f44e2e9ec58d2e27b514b5a6adc903af",
+          "completed_outgoing_passes": 120,
+          "refused_connections": 79,
+          "deferred_input": {
+            "active": true,
+            "completed": 24,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 25,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 8,
+          "authenticated_outer_critical_requests": 7,
+          "actual_durable_critical_custody_events": 1,
+          "critical_preopen_refusals": 6,
+          "socket_failure_counts": [
+            {
+              "phase": "reply-check",
+              "error_type": "ValueError",
+              "count": 7
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "0c32a162c2cc2562d20088aa67256909e0c79ee68057cb3fa2e6dba078c2539d"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "4e0ee86f73f2ef2770902c087d2ce4e6252f2d9b49cd46ee842e0fdda32c9c8d"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "1d7ca3378af0f7b9d52854c539c0868391b2c0581283a07de072d6dde9121921"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "d77dbfbdecf1f5eb1fa65d795184b5f5640f54a2fa98ec490b32a689a90d528c"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "d8e24aae601a1a4015d4eed43e964ed195ddf28e998d419263febce51412e7a6"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "c6e1a713a0c65129b043882400eb85ba795a404bd87fdca785037b0ea5514c23"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "de17152f6ac97694572ac448c52bb6b0bc5805234327b5b5cab5fa057e84ded1"
+            },
+            {
+              "peer": 0,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "5a34e93b155f36f8d677d7103ceb6d9b4e473af0c7d5409d940a745e04af2f35"
+            }
+          ]
+        },
+        {
+          "actor": 2,
+          "observation_sha256": "dd023898477d1aff0829c3134a695b4939048668066c5fad43a5800d8c5ac208",
+          "completed_outgoing_passes": 122,
+          "refused_connections": 62,
+          "deferred_input": {
+            "active": true,
+            "completed": 22,
+            "pending": 1,
+            "queue_grants_custody": false,
+            "received": 24,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 1,
+          "authenticated_outer_critical_requests": 30,
+          "actual_durable_critical_custody_events": 3,
+          "critical_preopen_refusals": 27,
+          "socket_failure_counts": [
+            {
+              "phase": "reply-check",
+              "error_type": "ValueError",
+              "count": 1
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 1,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "6c240d224c22d2e812f534c098321a42dbfbbe3ffd46236a599756d0b26a4b19"
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "observation_sha256": "78e7f5d7f93e333aab28244e9c5e61462450f2a8e983f7bb295ea438c7078b57",
+          "completed_outgoing_passes": 193,
+          "refused_connections": 8,
+          "deferred_input": {
+            "active": true,
+            "completed": 28,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 29,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 8,
+          "authenticated_outer_critical_requests": 0,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 0,
+          "socket_failure_counts": [
+            {
+              "phase": "reply-check",
+              "error_type": "ValueError",
+              "count": 4
+            },
+            {
+              "phase": "tls-connect",
+              "error_type": "ConnectionResetError",
+              "count": 3
+            },
+            {
+              "phase": "tls-connect",
+              "error_type": "SSLEOFError",
+              "count": 1
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 2,
+              "destinations": [
+                2,
+                1
+              ],
+              "exchange_sha256": "84c9438d4d3530431a320dfb6446c93496bc0f1ee179526d4ae7ba956b1aa9d8"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "ad1f637ab12dbfc5444975d6d7d89ead37005696f20ce57ff197245619e41e83"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                2
+              ],
+              "exchange_sha256": "2f17faf5171242f20bacd45ad385efbd8e624912ef542b07270cf444328dc9ff"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "7a439f6dab0c02bd8e50f07443c4e523f6077f7040867a5de19302c5fe2ef93c"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "8c01fd11ed9b524add39b2242077d67e0fe55b63165a91edf62314bb834212da"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "ddfb8363b8f1adc4d930592ce71a6e37edbf06b86afa1a1920032394dcf72152"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "51e58d5775b95627d6862c328df18fdcc2a8e773f5853c39d525b892432c8166"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "ab1f08447da2dfca96387ffbe28e21d7fe6122f2ec2bfcff3674f24393299489"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "socket-phase-new",
+      "report_sha256": "7181e49a9291f4307a3be111945ba1cce5ae219c7b07111fd5f58d06605a8230",
+      "source_set_sha256": "ae8f5d0ebc302b0716ccde9afd7a7062e158e30f73020089e7ff22612df1cce8",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            8.202739
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            8.302872
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 130.398,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.202338,
+            0.403366,
+            0.402745,
+            0.200738
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "actor": 0,
+          "observation_sha256": "7aa54a3fd11e099c8b51971cdcbfe5cb65ad4810f7f38adf82424a3fb2679faa",
+          "completed_outgoing_passes": 214,
+          "refused_connections": 4,
+          "deferred_input": {
+            "active": true,
+            "completed": 32,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 33,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 0,
+          "authenticated_outer_critical_requests": 0,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 0,
+          "socket_failure_counts": [],
+          "critical_preparations": []
+        },
+        {
+          "actor": 1,
+          "observation_sha256": "8cb040d5faca91a772c24510dd0327462e83ee4918f99a1604a988d484404d9e",
+          "completed_outgoing_passes": 126,
+          "refused_connections": 54,
+          "deferred_input": {
+            "active": true,
+            "completed": 28,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 29,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 0,
+          "authenticated_outer_critical_requests": 0,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 0,
+          "socket_failure_counts": [],
+          "critical_preparations": []
+        },
+        {
+          "actor": 2,
+          "observation_sha256": "768afce96f9b867a7f834a7f04e4f1c231c7490af8653ddcbc1a8fe8f36a397c",
+          "completed_outgoing_passes": 133,
+          "refused_connections": 54,
+          "deferred_input": {
+            "active": false,
+            "completed": 28,
+            "pending": 1,
+            "queue_grants_custody": false,
+            "received": 29,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 1,
+          "authenticated_outer_critical_requests": 10,
+          "actual_durable_critical_custody_events": 1,
+          "critical_preopen_refusals": 9,
+          "socket_failure_counts": [
+            {
+              "phase": "tls-connect",
+              "error_type": "ConnectionResetError",
+              "count": 1
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 1,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "81f15d0aa99a9cc17f37ab0575c5c8cd8d17b5bf3540869b6423b39a41312bf8"
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "observation_sha256": "fd8b3d78ce33d77d81703e01ccc0c2c41a38a8cf54436760f5bf3bbac72be4ef",
+          "completed_outgoing_passes": 209,
+          "refused_connections": 4,
+          "deferred_input": {
+            "active": false,
+            "completed": 31,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 31,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 9,
+          "authenticated_outer_critical_requests": 0,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 0,
+          "socket_failure_counts": [
+            {
+              "phase": "reply-check",
+              "error_type": "ValueError",
+              "count": 1
+            },
+            {
+              "phase": "tls-connect",
+              "error_type": "ConnectionResetError",
+              "count": 5
+            },
+            {
+              "phase": "tls-connect",
+              "error_type": "SSLEOFError",
+              "count": 3
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 2,
+              "destinations": [
+                2,
+                1
+              ],
+              "exchange_sha256": "1e6eb826c76502f477236f5a957b65152487c35a7e1833716f40d2af934b6907"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "4f5dd67d0d5f625d7b671a0cc41b031d44722cf6867f33252a4e968d4ddff47d"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "64dbfc786e61c5f82c50c3068332c37abc65377a1b43725011f7a24f6a39d909"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "7560a5e57b0a0cecabf35781b9926005cedaacc81b0109cc1dbdba9b1e341460"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "3e6593a31d2e36190a7eb9d5a26c639fa2b25ba805ae6a35a769ad4c18a93001"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "1fac333fdef14224a9ade04f71abf01cc56844b6f16dd5e940bdbed6fcd0534b"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "67e9270a6462280fa98aebeb03cbe4e5cc1a08ea2bac84b045b6432cb6701e8a"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "241fda298a93bde997867b718af2591378f22e28de6ccf44c0dce13006752b80"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "ca2ee9effa36d7a56b809d3cfaa3fc42804334bfae0a43e4bea40dbe142c97ea"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "open-inbound-slot-pressure",
+      "report_sha256": "dda3080b9d62f0677f304a46543833365c51b7a72a990c35699ef469ad5e4fc4",
+      "source_set_sha256": "b85a01c2d634048383e9d43c34b4293053399409e56349346a98d743adbcca42",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            43.292462
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            43.427254
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 132.907,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.202036,
+            0.402759,
+            1.228191,
+            0.204431
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "actor": 0,
+          "observation_sha256": "7a36727e967ef0576f0df656dd43dc2f778daa4544e245be1bde811e12349e19",
+          "completed_outgoing_passes": 174,
+          "refused_connections": 0,
+          "deferred_input": {
+            "active": false,
+            "completed": 27,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 27,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 0,
+          "authenticated_outer_critical_requests": 0,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 0,
+          "socket_failure_counts": [],
+          "critical_preparations": []
+        },
+        {
+          "actor": 1,
+          "observation_sha256": "35496038e6de0d0cda912ca9d8c2c4b8835c493b91d1aab4a5e69b7e1fa409f4",
+          "completed_outgoing_passes": 126,
+          "refused_connections": 0,
+          "deferred_input": {
+            "active": false,
+            "completed": 28,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 28,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 0,
+          "authenticated_outer_critical_requests": 2,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 2,
+          "socket_failure_counts": [],
+          "critical_preparations": []
+        },
+        {
+          "actor": 2,
+          "observation_sha256": "e1bffa065575710d2ca95ba136ea3dac4f4320cc76a2b68205c5601f964a459a",
+          "completed_outgoing_passes": 128,
+          "refused_connections": 7,
+          "deferred_input": {
+            "active": true,
+            "completed": 29,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 30,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 2,
+          "authenticated_outer_critical_requests": 30,
+          "actual_durable_critical_custody_events": 5,
+          "critical_preopen_refusals": 25,
+          "socket_failure_counts": [
+            {
+              "phase": "reply-check",
+              "error_type": "ValueError",
+              "count": 2
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 1,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "cbcb3652b05871f6fa4fd66f1effa38591d7cf0f2bd5612b8c7816087ef17bce"
+            },
+            {
+              "peer": 1,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "e7411dba6aae0f3f425caaf4487ff17b44d0cf714c16b30324682d84e957ef1f"
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "observation_sha256": "d244e0db6b36ccece2c014071a587aa01ef96b8d8af16eb49ebf460ca357c77c",
+          "completed_outgoing_passes": 178,
+          "refused_connections": 0,
+          "deferred_input": {
+            "active": true,
+            "completed": 25,
+            "pending": 0,
+            "queue_grants_custody": false,
+            "received": 26,
+            "rejected": 0,
+            "shares_original_inbound_slots": true
+          },
+          "prepared_critical_batches": 9,
+          "authenticated_outer_critical_requests": 0,
+          "actual_durable_critical_custody_events": 0,
+          "critical_preopen_refusals": 0,
+          "socket_failure_counts": [
+            {
+              "phase": "reply-check",
+              "error_type": "ValueError",
+              "count": 8
+            },
+            {
+              "phase": "tls-connect",
+              "error_type": "ConnectionResetError",
+              "count": 1
+            }
+          ],
+          "critical_preparations": [
+            {
+              "peer": 2,
+              "destinations": [
+                2,
+                1
+              ],
+              "exchange_sha256": "1c6a6e016e08af6828aab4309e1404e5f549554875a2f853716e9fee9df265ef"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "653469d1765166cc227d8d6669d72e76b5b237fdcc93ea2e48e28a7dd263c411"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                2
+              ],
+              "exchange_sha256": "9408ab2dc92dc0731d37775bef8a0e7e20be42c51c1bc1a98cbbec550b05985c"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "9637eb12d61704cbc32b0450e778220c1c66736171634c1aab1ee9f2337147ad"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "c2464a3cf9d5ca393cd6cdafcdf0e2089e1dceed333b54b2bf9aff25fdc38b82"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "1754b1de3d17c2dd221664e858e04c7e622ea30d02952e308327dea3a309ff8c"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "b763fb44155573d6f040317c30192dd47051f362431e5b0cb39696b792c94f9a"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                1
+              ],
+              "exchange_sha256": "8c28c8ecba5b0c19702442128e2121d3bbc93a074b87e328c19d36fdc5ae1a73"
+            },
+            {
+              "peer": 2,
+              "destinations": [
+                0
+              ],
+              "exchange_sha256": "85385b04bbd0e8a8e5edf005450a38dcbb067f0aee0ccea462bb31c008d56ee5"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "all_pressure_gates_failed": true,
+  "stopped_review_sha256": "7472c72ec3e0f58d554b4285c80fe79a414f07593f8471de15c28c133cc8c6b2",
+  "stopped_full_mesh_stores_checked": 12,
+  "only_critical_complete_native_envelopes_checked_not_all_bft": true,
+  "native_core_unchanged": true,
+  "candidates_not_integrated_or_published": true,
+  "no_new_full_fault_profile_started": true,
+  "total_inbound_slots_still_two": true,
+  "deferred_unacknowledged_inputs_share_original_slots": true,
+  "no_bounds_raised_no_signed_evidence_pruned_no_value_migration": true,
+  "request_trace_claims_reset_each_call": true,
+  "trace_metadata_grants_no_authority": true,
+  "compatible_test_transport_key_copy_not_independent_custody": true,
+  "no_runtime_signing_recovery_or_ledger_installation": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "not_full_fault_independent_or_physical_qualification": true,
+  "runner_sha256": "9e019f2e3febf82fe3d743545fd8fb57e83ed58a57aef387fde0d69dfcdceb1e"
+}
