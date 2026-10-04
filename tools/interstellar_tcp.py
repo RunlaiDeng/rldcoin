@@ -285,6 +285,12 @@ class Server:
         self.outbound_owner=None
         self.connections=set()
         self.workers=set()
+        # These immutable inputs occupy the original two inbound slots. They
+        # are not durable custody, receipts, a replay cache or Native authority.
+        # Restart forgets them; every source retained its unacknowledged packet.
+        self.input_pending=[];self.input_active=None
+        self.input_wake=threading.Event();self.input_failure=None
+        self.input_received=0;self.input_completed=0;self.input_rejected=0
         self.observations={}
         # Optimization only: a verified reply proves this exact exchange was
         # durably held by this configured next hop. Keep all original carriage,
@@ -302,6 +308,7 @@ class Server:
         # bounded attempt keeps it until that thread next gets a selection;
         # TCP threads cannot repeatedly reacquire ahead of the pending reader.
         self.selection_owner=None
+        self.selection_purpose=None
         self.local_mesh_owner=None
         self.last_mesh_class=None
         self.last_tcp_role=None
@@ -315,9 +322,14 @@ class Server:
             self.socket.settimeout(0.1)
             self.address=self.socket.getsockname()
             self.thread=threading.Thread(target=self.serve,name='rld-tcp-contact-listener',daemon=True)
+            self.input_thread=threading.Thread(target=self.consume_inputs,
+                name='rld-tcp-deferred-input',daemon=True)
+            # Own the input consumer before accepting any connection. Partial
+            # startup must stop and join every thread actually started.
+            self.input_thread.start()
             self.thread.start()
         except BaseException:
-            self.socket.close()
+            self.close()
             raise
 
     def mark(self,peer,direction,success):
@@ -332,20 +344,24 @@ class Server:
         with self.guard:
             return set(self.accepted_transits.get(peer,set()))
 
-    def request_selection(self):
+    def request_selection(self, purpose='receive'):
+        mesh.require(purpose in ('receive','carriage'),'ordinary selection purpose differs')
         current=threading.current_thread()
         with self.guard:
             if not self.running:
                 raise MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
             mesh.require(self.selection_owner is None or self.selection_owner is current,
                          'ordinary mesh selection already has another owner')
-            self.selection_owner=current
+            if (self.selection_owner is current and self.selection_purpose!=purpose):
+                raise BlockingIOError(errno.EAGAIN,
+                    'ordinary other-purpose retry pending; retain evidence')
+            self.selection_owner=current;self.selection_purpose=purpose
 
     def finish_selection(self):
         with self.guard:
             mesh.require(self.selection_owner is threading.current_thread(),
                          'ordinary mesh selection owner differs')
-            self.selection_owner=None
+            self.selection_owner=None;self.selection_purpose=None
 
     def _claim_mesh_turn(self, ordinary):
         current=threading.current_thread()
@@ -418,9 +434,13 @@ class Server:
                 if lease:self._release_mesh_turn()
                 if not ordinary:
                     with self.guard:
-                        # Only the actual long-lived outgoing owner can retain
-                        # demand after timeout. Closed socket handlers cannot.
-                        if not (exhausted and current is self.outbound_owner and current.is_alive() and self.running):
+                        # Only actual live runtime owners retain demand after a
+                        # bounded refusal. The input owner must still have its
+                        # exact unacknowledged job; closed handlers leave none.
+                        owned_input=(current is getattr(self,'input_thread',None)
+                                     and self.input_active is not None)
+                        if not (exhausted and (current is self.outbound_owner or owned_input)
+                                and current.is_alive() and self.running):
                             self.tcp_mesh_waiters.discard(current)
 
     def mesh_node(self, deadline):
@@ -437,7 +457,7 @@ class Server:
         next attempt, as the Service receive selector already does. Native
         work/socket I/O stay outside; waiting never grants custody.
         """
-        self.request_selection();node=None
+        self.request_selection('carriage');node=None
         try:
             with self.selection_mesh_node(time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS) as selected:
                 node=selected
@@ -461,7 +481,8 @@ class Server:
             except OSError:
                 break
             with self.guard:
-                if len(self.workers)>=MAX_WORKERS:
+                occupied=len(self.workers)+len(self.input_pending)+(self.input_active is not None)
+                if occupied>=MAX_WORKERS:
                     self.refused_connections+=1
                     connection.close()
                     continue
@@ -472,7 +493,7 @@ class Server:
                 worker.start()
 
     def handle(self,connection):
-        tracked=connection
+        tracked=connection;deferred=None
         try:
             deadline=time.monotonic()+ATTEMPT_SECONDS
             if not self.insecure:
@@ -490,7 +511,7 @@ class Server:
             value=receive(connection,deadline)
             body=check_request(value,self.network,self.id,self.peers,hello['body']['nonce'])
             peer=body['node_id']
-            accepted,bundle=False,None
+            accepted,bundle=False,None;node=None
             try:
                 with self.mesh_node(deadline) as node:
                     mesh.require(node.id==self.id,'TCP runtime identity changed')
@@ -506,7 +527,16 @@ class Server:
                     else:
                         bundle=outgoing(node,peer,self.suppressed(peer))
                 self.mark(peer,'inbound',True)
-            except (OSError,ValueError):
+            except (OSError,ValueError) as error:
+                # Only an actual pre-open lock refusal transfers this live,
+                # authenticated request to a separate input scheduler. Reply
+                # refusal remains unchanged; queueing never acknowledges it.
+                if (node is None and isinstance(error,BlockingIOError)
+                        and error.errno in (errno.EAGAIN,errno.EWOULDBLOCK)):
+                    raw=wire.canonical(value)
+                    mesh.require(len(raw)<=MAX_WIRE,'deferred input wire bound')
+                    deferred=(self.network,self.id,peer,self.peers[peer].get('tls_cert_sha256'),
+                              hello['body']['nonce'],raw)
                 accepted,bundle=False,None
                 self.mark(peer,'inbound',False)
             response=mesh.sign(self.key,'tcp-response',{'format':mesh.VERSION,'adapter':ADAPTER,'network':self.network,
@@ -521,6 +551,71 @@ class Server:
             with self.guard:
                 self.connections.discard(tracked)
                 self.workers.discard(threading.current_thread())
+                occupied=len(self.workers)+len(self.input_pending)+(self.input_active is not None)
+                # Unacknowledged deferred inputs may use only one of the two
+                # original inbound slots. Keep a slot available for a fresh
+                # authenticated connection; refused sources retain originals.
+                deferred_count=len(self.input_pending)+(self.input_active is not None)
+                if (deferred is not None and self.running and occupied<MAX_WORKERS
+                        and deferred_count<MAX_WORKERS-1):
+                    self.input_pending.append(deferred)
+                    self.input_received=min(self.input_received+1,2**63-1)
+                    self.input_wake.set()
+
+    def consume_inputs(self):
+        """Retry bounded unacknowledged input, never a closed handler's ticket.
+
+        Each local attempt keeps the original 0.2-second acquisition bound.
+        Only this actual live owner retains demand after a bounded refusal,
+        while its exact unacknowledged job remains active. Every retry checks
+        the complete request and transits before fsync. No later reply is made.
+        """
+        try:
+            while self.running:
+                with self.guard:
+                    if self.input_active is None and self.input_pending:
+                        self.input_active=self.input_pending.pop(0)
+                    job=self.input_active
+                    self.input_wake.clear()
+                if job is None:
+                    self.input_wake.wait(0.25)
+                    continue
+                retry=False;complete=False
+                try:
+                    network,recipient,peer,pin,nonce,raw=job
+                    mesh.require(network==self.network and recipient==self.id
+                        and peer in self.peers and self.peers[peer].get('tls_cert_sha256')==pin
+                        and type(raw) is bytes and len(raw)<=MAX_WIRE,
+                        'deferred input runtime/configuration binding differs')
+                    # Own a new decoded object for this attempt, from the
+                    # complete bounded original request; no decoded witness.
+                    body=check_request(wire.decode_json(raw),network,recipient,self.peers,nonce)
+                    with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
+                        mesh.require(node.id==recipient and node.network==network,
+                                     'deferred input local identity changed')
+                        node.receive(body['bundle'],peer)
+                    complete=True
+                except BlockingIOError as error:
+                    retry=error.errno in (errno.EAGAIN,errno.EWOULDBLOCK)
+                except (OSError,ValueError,KeyError,TypeError,RecursionError):
+                    pass  # No custody acknowledgment; originals stay at source.
+                finally:
+                    # Decoded request/closed Node belong to this attempt only.
+                    # The active immutable original input still binds retries.
+                    body=None;raw=None;node=None
+                if not retry:
+                    with self.guard:
+                        mesh.require(self.input_active is job,'deferred input owner differs')
+                        self.input_active=None
+                        self.tcp_mesh_waiters.discard(threading.current_thread())
+                        name='input_completed' if complete else 'input_rejected'
+                        setattr(self,name,min(getattr(self,name)+1,2**63-1))
+                job=None
+                self.input_wake.wait(0.25)
+        except BaseException as error:
+            with self.guard:self.input_failure=type(error).__name__
+        finally:
+            with self.guard:self.tcp_mesh_waiters.discard(threading.current_thread())
 
     def claim_outbound(self, owner):
         with self.guard:
@@ -614,16 +709,21 @@ class Server:
 
     def report(self):
         with self.guard:
-            return {'observations':copy.deepcopy(self.observations),'refused_connections':self.refused_connections,
+            mesh.require(self.input_failure is None,'deferred input worker failed; retain source evidence')
+            return {'deferred_input':{'pending':len(self.input_pending),'active':self.input_active is not None,
+                'received':self.input_received,'completed':self.input_completed,'rejected':self.input_rejected,
+                'shares_original_inbound_slots':True,'queue_grants_custody':False},
+                'observations':copy.deepcopy(self.observations),'refused_connections':self.refused_connections,
                 'local_lock_retries':self.local_lock_retries,'local_lock_exhaustions':self.local_lock_exhaustions}
 
     def close(self):
         self.running=False
+        self.input_wake.set()
         with self.guard:
-            self.selection_owner=None
+            self.selection_owner=None;self.selection_purpose=None
             self.tcp_mesh_waiters.clear()
         self.socket.close()
-        if hasattr(self,'thread'):
+        if hasattr(self,'thread') and self.thread.ident is not None:
             self.thread.join()
         with self.guard:
             connections=list(self.connections)
@@ -638,3 +738,9 @@ class Server:
             # Socket waits are bounded independently of local signature/file
             # verification CPU. Keep service custody until every worker exits.
             worker.join()
+        if hasattr(self,'input_thread') and self.input_thread.ident is not None:
+            self.input_thread.join()
+        with self.guard:
+            # Unacknowledged in-flight input can be forgotten on shutdown; its
+            # original signed carriage remains at source. Stored evidence stays.
+            self.input_pending.clear();self.input_active=None

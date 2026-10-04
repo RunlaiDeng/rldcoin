@@ -758,3 +758,27 @@ Cold opens, altered evidence, restart and capacity misses retain full normal
 checks and every signed packet. This transport repair needs an exact rebuilt
 default driver and fresh no-value ordinary/fault scopes; a minimal transport
 pass or regression count cannot qualify the full fault profile.
+
+The bounded deferred-contact and quiet-broadcast candidate separates pending
+ordinary receive/carriage intent. Only a pre-open authenticated lock refusal may
+retain the complete immutable unacknowledged request. At most one deferred input
+shares the original two inbound slots with real socket workers; queueing never
+acknowledges custody. Recheck the exact network/node/peer/pin/request on every
+attempt, discard decoded bodies/closed Nodes after that attempt, and run normal
+Node receive/fsync. Only the actual live consumer with its exact active input may
+retain bounded scheduling demand. Closed handlers leave none; input termination,
+startup failure and actual shutdown clear/join owned demand and workers. Retained
+source carriage remains required; no delayed reply or Native authority is made.
+
+After complete Native cold/receive authentication, Runtime broadcast may retain
+one process-local canonical local-envelope/recipient inventory, within 4 MiB,
+512 messages and existing contact limits. Bind complete runtime/native/transport
+scope and validation limits. Only after the normal durable Mesh path confirmed
+all recipient pairs may exact inventory equality postpone an empty Mesh reread
+for at most four local seconds or sixteen calls. Changes, misses, capacity,
+periodic probes, failures and restart take full normal checks. Store no decoded
+ledger/proof authority; every received envelope, dependency/epoch sync and fresh
+Native signer/caller-head check remains mandatory. No evidence/limits are
+removed/raised. Five targeted checks, complete process regression and component
+Runtime custody do not qualify ordinary payments, full faults or independent
+operation; changed Python needs an exact rebuilt driver and fresh no-value scopes.

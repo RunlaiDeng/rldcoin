@@ -28,6 +28,9 @@ FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
 MAX_MESSAGES = 512
 MAX_STATE = 32*1024*1024
+MAX_BROADCAST_HINT_BYTES = 4*1024*1024
+MAX_BROADCAST_QUIET_SECONDS = 4.0
+MAX_BROADCAST_QUIET_CALLS = 16
 
 
 def private(path, directory=False, missing=False):
@@ -46,6 +49,7 @@ def private(path, directory=False, missing=False):
 class Runtime:
     def __init__(self, native, transport, path):
         self._signed_query_ready = False
+        self._broadcast_quiet = None
         self.observation = Observation()
         self.native, self.transport = native, transport
         self.failed = False
@@ -156,6 +160,7 @@ class Runtime:
             raise
 
     def close(self):
+        self._broadcast_quiet = None
         self._signed_query_ready = False
         self._signed_query_index = None
         for descriptor in self.extra_locks:os.close(descriptor)
@@ -438,36 +443,60 @@ class Runtime:
                     envelope_id=mesh.digest(envelope),body_id=mesh.digest(envelope['body']))
 
     def broadcast(self):
-        # Read immutable, already native-checked local metadata before taking
-        # the transport lock. Neither these rows nor dedup grants authority.
+        # Retained complete envelopes were Native authenticated on cold open or
+        # receipt. This hint schedules carriage only, never Native validation,
+        # dependency synchronization, caller-head checks or signing.
         messages=sorted(i for i,_,_,local in self.state['messages'].bodies() if local)
         peers=self.joint.relay_peers if self.format==ROLE_FORMAT else set(self.peers.values())
-        pairs=[(self.state['messages'].content(ident),ident,peer)
-               for ident in messages for peer in sorted(peers-{self.node_id})]
-        # Deduplicate from the durable mesh itself across enqueue response loss.
-        # Service startup installs the same fair local lease used by receive
-        # selection. Standalone controller fixtures retain direct mesh access.
-        carriage_node=getattr(self, 'carriage_node', None)
+        recipients=sorted(peers-{self.node_id})
+        rows=[(self.state['messages'].content(ident),ident) for ident in messages]
+        inventory=None
+        if (getattr(self,'_retained_native_authenticated',False)
+                and len(rows)<=MAX_MESSAGES and len(recipients)<=mesh.MAX_CONTACTS):
+            raw=wire.canonical({'format':self.format,'binding':self.binding,
+                'native':[self.native.authority,self.native.currency,str(self.native.ledger)],
+                'region':self.region,'node_id':self.node_id,'transport':self.transport,
+                'domains':[NETWORK,mesh.VERSION],
+                'limits':[MAX_MESSAGES,MAX_STATE,wire.MAX_PAYLOAD,mesh.MAX_MESSAGES,
+                          mesh.MAX_BATCH,mesh.MAX_PACKET_BATCH,mesh.MAX_CONTACTS,
+                          MAX_BROADCAST_HINT_BYTES,MAX_BROADCAST_QUIET_SECONDS,
+                          MAX_BROADCAST_QUIET_CALLS],
+                'local_complete_envelope_ids':rows,'recipients':recipients})
+            if len(raw)<=MAX_BROADCAST_HINT_BYTES:inventory=raw
+        quiet=getattr(self,'_broadcast_quiet',None)
+        if (inventory is not None and quiet is not None and inventory==quiet[0]
+                and time.monotonic()-quiet[1]<MAX_BROADCAST_QUIET_SECONDS
+                and quiet[2]<MAX_BROADCAST_QUIET_CALLS):
+            self._broadcast_quiet=(inventory,quiet[1],quiet[2]+1)
+            return
+        # A miss, capacity fallback, changed scope, periodic probe or failure
+        # takes the original complete Mesh path. No hint survives a failed read,
+        # enqueue, close or companion publication. Restart always starts cold.
+        self._broadcast_quiet=None
+        pairs=[(content,ident,peer) for content,ident in rows for peer in recipients]
+        carriage_node=getattr(self,'carriage_node',None)
         with (carriage_node() if carriage_node is not None else mesh.Node(self.transport)) as node:
             retained=set()
             for summary in node.summaries().values():
                 if summary['source']==node.id and summary['kind']=='regional-bft':
                     retained.add((summary['export_id'],summary['destination']))
             pending=[pair for pair in pairs if (pair[0],pair[2]) not in retained]
-            # Already enqueued archive messages must not consume the entire
-            # selection batch and delay a newly persisted vote for many ticks.
-            # Rotate only unsent message/recipient pairs, preserving every byte.
             if pending:
                 offset=self.state['cursor']%len(pending)
-                pending=(pending[offset:]+pending[:offset])[:4]
-            if not pending:
-                return
-            batch=[]
-            for content,ident,peer in pending:
-                payload=self.state['messages'].payload(ident)
-                batch.append((wire.make_frame('regional-bft',self.region,self.region,content,payload),peer))
-            node.enqueue_batch(batch)
-        self.save(dict(self.state,cursor=(self.state['cursor']+4)%(2**63)))
+                batch_pairs=(pending[offset:]+pending[:offset])[:4]
+                batch=[]
+                for content,ident,peer in batch_pairs:
+                    payload=self.state['messages'].payload(ident)
+                    batch.append((wire.make_frame('regional-bft',self.region,self.region,content,payload),peer))
+                node.enqueue_batch(batch)
+                retained.update((content,peer) for content,_,peer in batch_pairs)
+            complete=all((content,peer) in retained for content,_,peer in pairs)
+        if pending:self.save(dict(self.state,cursor=(self.state['cursor']+4)%(2**63)))
+        # Complete Native envelope metadata is immutable in Messages. Equality
+        # of this bounded inventory can postpone only an empty Mesh reread,
+        # after the original durable path confirmed every recipient pair.
+        if inventory is not None and complete:
+            self._broadcast_quiet=(inventory,time.monotonic(),0)
 
     def signed(self, context, round_number, kind, phase=None, value=None):
         # Only a completed Runtime cold open enables this lookup. Immutable
