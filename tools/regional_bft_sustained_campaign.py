@@ -20,6 +20,9 @@ import sys
 import threading
 import time
 
+from regional_ground_value import audit_certified_prefixes
+from regional_ground_relay import MeteredRelay
+
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -333,6 +336,8 @@ def execute(args, joint=False):
             self.offline_earth = None
             self.processes, self.logs, self.configs, self.observations = {}, [], {}, []
             self.ports, self.node_ids, self.fingerprints, self.relays = {}, {}, {}, []
+            self.contact_meters = {}
+            self.fault_relays = []
             self.currency, self.implementation = previous['currency'], previous['implementation']
             self.offered, self.events, self.samples, self.signed = [], [], [], {}
             self.original_ledgers, self.paused_keys = {}, []
@@ -358,11 +363,29 @@ def execute(args, joint=False):
                         mesh.require(state['height'] == previous['replica_heights'][name][n], 'sealed native prefix differs')
                         self.regions[name] = state['region']
                         if n == 1: self.original_ledgers[name] = state['ledger']
-                forward = FaultRelay(('127.0.0.1', self.ports['proxima', 1]))
-                self.relays.append(forward)
-                reverse = FaultRelay(('127.0.0.1', self.ports['earth', 1]))
-                self.relays.append(reverse)
                 id_keys = {value: key for key, value in self.node_ids.items()}
+                if getattr(args, 'meter_contacts', False):
+                    for key in self.ports:
+                        config = mesh.load(root/f'mesh-config-{key[0]}-{key[1]}.json', 65536)
+                        for contact in config['contacts']:
+                            other = id_keys[contact['peer']]
+                            mesh.require(contact['tls_cert_sha256'] == self.fingerprints[other],
+                                         'explicit meter target TLS pin differs')
+                            mesh.require((key,other) not in self.contact_meters and len(self.contact_meters) < 32,
+                                         'bounded unique explicit meter edge required')
+                            cut = {key,other} == {('earth',1),('proxima',1)}
+                            meter = MeteredRelay(('127.0.0.1',self.ports[other]),
+                                f'{key[0]}_{key[1]}_to_{other[0]}_{other[1]}',enabled=not cut)
+                            self.contact_meters[key,other] = meter
+                            self.relays.append(meter)
+                    forward = self.contact_meters[('earth',1),('proxima',1)]
+                    reverse = self.contact_meters[('proxima',1),('earth',1)]
+                else:
+                    forward = FaultRelay(('127.0.0.1', self.ports['proxima', 1]))
+                    self.relays.append(forward)
+                    reverse = FaultRelay(('127.0.0.1', self.ports['earth', 1]))
+                    self.relays.append(reverse)
+                self.fault_relays = [forward, reverse]
                 for name in ('earth', 'proxima', 'andromeda'):
                     for n, seed in enumerate(seeds(name)):
                         key = name, n
@@ -372,8 +395,11 @@ def execute(args, joint=False):
                             other = id_keys[contact['peer']]
                             mesh.require(contact['tls_cert_sha256'] == self.fingerprints[other], 'retained neighbor TLS pin differs')
                             contact['host'], contact['port'] = '127.0.0.1', self.ports[other]
-                            if key == ('earth', 1) and other == ('proxima', 1): contact['port'] = forward.port
-                            if key == ('proxima', 1) and other == ('earth', 1): contact['port'] = reverse.port
+                            if self.contact_meters:
+                                contact['port'] = self.contact_meters[key,other].port
+                            else:
+                                if key == ('earth', 1) and other == ('proxima', 1): contact['port'] = forward.port
+                                if key == ('proxima', 1) and other == ('earth', 1): contact['port'] = reverse.port
                         self.file(path.stem, config)
                         bft = mesh.load(root/f'bft-config-{name}-{n}.json', 65536)
                         for field in ('state', 'signer_dir', 'head_file', 'key_file'):
@@ -438,32 +464,7 @@ def execute(args, joint=False):
             # A lagging fixed replica can omit a debit already in another
             # certified prefix. Verify compatible prefixes, then count each
             # region's highest observed certified ledger exactly once.
-            ledgers=[];heights={}
-            for name in ('earth','proxima','andromeda'):
-                states=[self.cli(name,n,'status') for n in range(4)]
-                heights[name]=[s['height'] for s in states]
-                index=max(range(4),key=lambda n:states[n]['height']);highest=states[index]
-                proof=self.cli(name,index,'proof')
-                snapshots=[s for s in proof['snapshots'] if s['statement']['region']==self.regions[name]
-                           and s['statement']['height']==highest['height'] and s['statement']['block']==highest['tip']]
-                mesh.require(len(snapshots)>=1,'observed highest native prefix lacks its exact complete certificate')
-                blocks=snapshots[0]['blocks']
-                mesh.require(len(blocks)==highest['height'],'certified native block prefix differs')
-                for state in states:
-                    tip=highest['tip'] if state['height']==highest['height'] else blocks[state['height']]['header']['parent']
-                    mesh.require(state['tip']==tip,'native replica is not a prefix of highest observed certified history')
-                ledgers.append(highest['ledger'])
-            issued=sum(int(l['minted']) for l in ledgers)
-            liquid=sum(int(c['payment']['amount']) for l in ledgers for c in l['coins'].values())
-            pending=sum(int(e['recipient']['amount']) for l in ledgers for e in l['exports'].values())-sum(int(l['received']) for l in ledgers)
-            mesh.require(issued==liquid+pending and pending>=0,'highest certified prefix conservation failed')
-            self.checks.append({'phase':phase,'issued':str(issued),'liquid':str(liquid),'pending_exports':str(pending),
-                                'observed_export_count':sum(len(l['exports']) for l in ledgers),
-                                'observed_import_count':sum(len(l['imports']) for l in ledgers),
-                                'unresolved_export_count':len(set(e for l in ledgers for e in l['exports'])
-                                                            -set(e for l in ledgers for e in l['imports'])),
-                                'conserved':True,'compatible_prefixes_verified':True,'replica_heights':heights,
-                                'scope':'highest observed certified prefix per region; not all-replica agreement'})
+            self.checks.append(dict(audit_certified_prefixes(self.cli, self.regions, self.currency), phase=phase))
 
         def sample(self, phase):
             values=[]
@@ -474,6 +475,11 @@ def execute(args, joint=False):
                                'sampled_errors': observed['errors']})
             self.samples.append({'phase': phase, 'elapsed_seconds': round(time.monotonic()-self.started, 3), 'nodes': values})
             self.audit(phase)
+            if self.contact_meters:
+                counters = [meter.report() for meter in self.contact_meters.values()]
+                mesh.require(all(row['metric_counters_available'] for row in counters),
+                             'explicit contact metric counters unavailable')
+                self.samples[-1]['explicit_contact_stream_counters'] = counters
 
         def run(self):
             if recovery:
@@ -527,7 +533,7 @@ def execute(args, joint=False):
                 mesh.require(sum(int(c['payment']['amount']) for c in ledger['coins'].values() if c['payment']['owner'] == public(recipient)) == 1,
                              'isolated remote local payment missing')
             mesh.require(expected['export'] not in self.cli('proxima', 1, 'status')['ledger']['imports'], 'disconnected contact fabricated import')
-            mesh.require(all(relay.report()['refused_connections'] > 0 for relay in self.relays), 'contact outage did not refuse actual attempts')
+            mesh.require(all(relay.report()['refused_connections'] > 0 for relay in self.fault_relays), 'contact outage did not refuse actual attempts')
             self.sample('certified export stays deducted while interregion contact is cut; remote local payments continue')
             self.events.append({'kind': 'validator_offline', 'region': 'earth', 'replica': 0,
                                 'starting_height': previous['replica_heights']['earth'][0], 'missing_leader_successor': self.offline_gate,
@@ -667,11 +673,21 @@ def execute(args, joint=False):
     if campaign is not None:
         report.update(duration_seconds=round(time.monotonic()-campaign.started, 3), offered_owner_requests=campaign.offered,
                       fault_events=campaign.events, conservation_checks=campaign.checks, observations=campaign.observations,
-                      phase_samples=campaign.samples, ciphertext_fault_relays=[relay.report() for relay in campaign.relays],
+                      phase_samples=campaign.samples, ciphertext_fault_relays=[relay.report() for relay in campaign.fault_relays],
                       native_cli_calls=campaign.calls, node_process_starts=campaign.starts,
                       controller_native_receipt_probe_interval_seconds=NativeReceiptProbe.interval_seconds,
                       controller_native_receipt_probe_attempts=campaign.receipt_probe.attempts,
                       owned_process_cleanup_verified=cleanup_ok)
+        report.update(all_explicit_contact_streams_metered=bool(campaign.contact_meters),
+                      explicit_contact_stream_meters=[meter.report() for meter in campaign.contact_meters.values()],
+                      value_auditor_sha256=digest(Path(audit_certified_prefixes.__code__.co_filename)),
+                      contact_meter_sha256=digest(Path(MeteredRelay.__init__.__code__.co_filename)),
+                      continuous_value_or_resource_peaks_measured=False,
+                      physical_wire_bytes_measured=False)
+        if campaign.contact_meters and not all(meter.report()['metric_counters_available'] for meter in campaign.contact_meters.values()):
+            failure = failure or 'explicit contact metric counters unavailable'
+            report.update(completed=False,fresh_fault_profile_completed=False,
+                          retained_payment_recovery_completed=False,failure=failure)
     args.report.write_text(json.dumps(report, indent=2)+'\n')
     mesh.require(unchanged, 'sealed fixture source changed during its isolated-copy experiment')
     print(json.dumps({'completed': report['completed'], 'failure': failure, 'sealed_source_unchanged': unchanged}), flush=True)
@@ -694,6 +710,8 @@ def main():
     parser.add_argument('--joint-cycle',action='store_true',help='Explicit stopped preconfigured joint cycle; never inferred')
     parser.add_argument('--cycle-cold-report',type=Path)
     parser.add_argument('--cycle-source-manifest',type=Path)
+    parser.add_argument('--meter-contacts',action='store_true',
+                        help='Explicit loopback ciphertext meter per configured directed hop; fresh scope only')
     args = parser.parse_args()
     if (args.resume_report is None)!=(args.resume_source_manifest is None):
         parser.error('retained-payment recovery requires both prior failed report and its exact source manifest')

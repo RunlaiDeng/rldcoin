@@ -70,6 +70,14 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 没有启动节点或 Native，没有新增持续负载资格。原生价值、每跳字节和完整短命子进程
 覆盖仍待接入；明确保留未知和采样间隙，不将样本最大值当作持续峰值。
 
+随后接入有限故障控制器的原生价值审计（原十二 status/三 proof 调用不增加）：
+完整认证响应与兼容检查点关联，分别记录未交付毛额/净额，拒绝重复或不匹配导入。
+原生/流/资源 29 项、相关控制器 23 项、度量绑定 6 项检查通过；真实停止样本的
+15 次原生读取通过，300/300/0 与全部 7,219 份私有文件字节/权限不变。
+显式全跳计量使用独立冻结控制器来源 `20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7`，
+节点来源/二进制未变。新增 22 配置方向有限故障与十秒资源采集正在运行；
+结果尚未完成，不能计作新增范围或持续负载通过。原范围与旧失败保持原判定。
+
 ## 证据与发布边界
 
 主资格证据：`operations/evidence/regional-fair-carriage-source-inventory-20261004.json`、
@@ -84,6 +92,8 @@ E13/P15/A14 四副本一致；12 原生、4 新收款、4 时代保管、1,934 �
 故障范围：`regional-quiet-broadcast-joint-fault-fresh-20261004.json`、
 `regional-quiet-broadcast-joint-fault-cold-20261004.json`；资源：`regional-quiet-broadcast-ground-resource-baseline-20261004.json`。
 资源采集组件：`regional-ground-resource-capture-checks-20261004.json`，不替代新增负载范围。
+原生/流接入组件：`regional-ground-value-stream-components-20261004.json`；
+冻结控制器清单：`regional-ground-metered-controller-source-20261004.json`。
 此前诊断和来源：[原样保留状态](operations/history/PLAN_STATUS_before_qualified_quiet_broadcast_20261004_1a0a9f7774e5.md)。
 
 公开仓库仍为已验证 v55；v56 材料完整延后保存。不发布微优化或失败变体。

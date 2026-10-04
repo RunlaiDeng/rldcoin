@@ -792,3 +792,17 @@ proof. Native value, per-hop bytes and short-lived child coverage remain absent
 until an authenticated fresh controller explicitly supplies them. Never count
 the diagnostic sleep child/stopped-directory observation as sustained load or
 restart a passed/failed fixture for sampling. Preserve the original limits.
+
+Ground value observations consume only the executing controller's normal fully
+replayed Native status/proof responses, never serialized Python state or telemetry.
+Bind the exact certified currency/region/block/state and compatible replica
+prefixes; count a debit in a leading replica, unique destination imports and
+gross/net pending separately. A digest/observation grants no spendability,
+freshness or signing authority. Normal status is not a general no-recovery
+inspection entry; stopped guards and pending-incident restrictions still apply.
+The optional all-contact loopback meters retain original peer/certificate pins,
+two workers/four-second carriage/64-MiB connection bounds, and exact partial send
+counts. They never terminate TLS, retain decoded payloads or issue custody/ledger
+receipts. Counter failure is unknown, not zero. Separate observer/controller
+freezing does not rewrite the qualified node source. Short-lived Native resource
+coverage, continuous value/oldest-request waits and physical bytes remain open.
