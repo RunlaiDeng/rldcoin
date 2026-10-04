@@ -121,10 +121,43 @@ enum 改为 Box 保持完整 JSON 字节语义。最终 13 行为及严格检查
 这仅是明确提交通道事故与已测后代隔离的同机原生资格；自动 off-chain
 冲突观察、强制充分储备的 receipt/top-up、所有者首次签署/恢复、真实 2016
 普通区块结算、完整网络故障、独立/PQC/历史/物理与全部目标仍未完成。
-下一反例针对少于 16 或不足/占用/不成熟储备、旧头及无效状态的收据拒绝，
+上一轮下一步将 16 上限误写成收据最低数量；按冻结 §7 纠正为足额成熟
+挑战储备，原核/事故检查并未实施该错误门槛。下一反例针对不足/占用/
+不成熟储备、旧头及无效状态的收据拒绝，
 先定义准确新 fee/receipt/custody 契约再推进。见
 [通道事故结果](operations/evidence/regional-native-channel-conflict-outcome-20261004.json)与
 [原生组合合同](research/REGIONAL_VALUE_COMPOSITION_CONTRACT_V1.md)。
+
+同一主线完成 V3 收据接受，来源 `ef4e853b...`、implementation `40582c17...`、
+profile `905c2d87...`。新 native receipt 把双方前后状态和双方发票签名绑定
+准确 amount delta、checkpoint、chosen reserve、预算和上一 receipt/state。
+当前认证 open funding、另存 exact storage head、当地 invoice expectation、
+正常事故/完整谱系检查同时满足后才接受；一笔成熟储备需独立支付该预算。
+原 native 挑战费整数下限仍为 1 runlai；收款方可钉更高且双方签署的预算。
+实际预算 3 的缺/不足储备拒绝，成熟 top-up 后两笔储备就可接受，纠正
+此前动态下一步的“最低 16”错误；16 是原容量上限，冻结正文 §7 未改。
+
+接受先持久追加普通 native history event 再响应，U/E/T 账面不变。
+精确重试逐完整 envelope 认证并返回原历史 receipt，不接受另一付款；
+同 ID 坏签名拒绝；完整同序号不同分配收到后保留原生事故，隔离原负债。
+普通重开从创世重放最高已接受状态、发票去重和准确 prior link，
+私有 image 恢复保留 receipt；旧头、坏 journal tail 和 publication 残留拒绝。
+第 256 receipt 全部真实双签、分页持久化及冷重放通过，第 257 拒绝；
+contacts/receipts 共用原 256 上限，分页/逻辑/事件/档案界限保持。
+
+首次字段引用编译失败、第一容量 fixture 把 256 event 放进巨型 tail
+被原 16-event 分页限制拒绝（18 过/1 失败）均保留，失败私有根未改。
+新 fixture 按原整页规则持久化，19 行为及 strict 70.665 秒通过。
+同来源实际 CLI 新签零分配 init、ordinary open/reserve/certification、
+接受/落盘、旧头拒绝、逐进程重开重试、坏签名拒绝 20 steps / 2.598 秒通过。
+另 184 受影响回归跳过已过范围，单次 300 秒预算内 242.398 秒通过；
+同一来源合计 203 检查通过，核心 171 与冻结正文/PDF/receipt 未改。
+没有第一 owner signing 服务或独立 caller custody/最高已签序号资格；
+最高已接受与已签署仍有区别。看守/包含、重组、全回滚/复制钥匙、
+实际 2016 区块结算、完整默认网络/独立/PQC/历史/物理与全部目标未完成。
+下一主线为 purpose-bound 首次状态/发票签署、最高签署序号及 exact response
+恢复的原生保管契约和反例。网络 campaign 新预算仍为零。见
+[原生收据结果](operations/evidence/regional-native-channel-receipt-outcome-20261004.json)。
 
 当前父块 Prepare 的已认证停止观察显示约 40.180 秒来源等待，其间 20 次准备因本地争用拒绝。
 四固定邻居、四尝试槽的旧游标每轮起点不变。实际 TLS 周期争用反例只服务 2/4 邻居；

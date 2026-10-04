@@ -245,7 +245,66 @@ checkpoint，未改成熟、票数或返程权限。后续 13 行为通过而严
 核心 171 文件与冻结正文/PDF/receipt 不变，原有效发行来源证据复用。
 
 下一可证伪假设：普通收款方只有在原生全重放的准确 channel、完整双方签署
-状态及至少 16 个准确、成熟、未消费且足额的费用储备同时满足后才接受
+状态及一笔准确、成熟、未消费且足额的费用储备同时满足后才接受
 付款收据；不足、过期/旧头、坏状态或占用储备时拒绝且不改变任何价值。
 先定义准确 fee/receipt/owner-custody 新契约与最小反例，再在新无价值来源
 推进；既有网络 campaign 预算保持零，不以报告或活动计作完成。
+
+上述下一步数量要求已纠正：先前动态记录误将 16 条储备的容量上限写为
+最低接受数量。冻结 §7 只要求准确成熟储备足以支付挑战费用，原 V2
+执行/冲突样本没有接受收据或实现该错误门槛。原结果报告与哈希保留，
+纠错另记在 `regional-native-channel-receipt-stage-20261004.json`，不改冻结正文。
+
+## 发票收据的普通原生持久接受：V3 ground candidate
+
+新来源 `ef4e853b...` / implementation `40582c17...` 使用 BFT/segmented
+value-channel V3；完整 profile `905c2d87...`、执行核 `0578e6f0...`。
+`RLD-NATIVE-CHANNEL-RECEIPT-V1` 完整保留两个前后双方签署状态和双方
+签署的发票声明，声明绑定 payer/recipient、准确金额差、checkpoint、
+储备 ID、挑战费用预算及前一收据/状态 ID。新接受仅发生于准确当前认证
+open channel，另存 current storage head 与当地 invoice expectation 必须匹配。
+
+现有挑战费用整数下限为 1 runlai；收款方可钉住更高且双方签署的预算。
+一笔准确、成熟、未消费的原生储备需以其实际授权 fee_limit 完整覆盖预算。
+不是至少 16 笔；也不能把无法在一次原生 challenge 使用的小储备加总。
+原生 Reserve 是所有者授权的成熟 top-up，容量和已有分配不变。
+实际零储备/不足、未成熟 top-up、坏状态/发票签名、金额差不符、零预算、
+错 profile/状态摘要、重复发票、替换最高状态/缺前一收据均拒绝。
+足额 top-up 后两笔储备即可接受预算 3 的收据，明确反证错误的“最低 16”。
+
+接受把完整签署收据写入普通 immutable event pages/有界 tail，先持久化
+再响应，账面 U/E/T 不改变。重开与冷重放从创世逐事件认证 funding、
+状态/发票和准确 prior link，重建最高已接受序号及唯一发票；没有缓存
+序号或摘要初始化权限。精确同状态/同发票重试逐 envelope 认证，返回
+原保留的历史收据，`new_fast_payment_accepted=false`，不记另一付款。
+坏的后续同 ID 签名不改头，完整同序号不同分配收据生成持久原生事故，
+保留原收据与全部负债，阻止后续污染收据；历史重试也不声称新的覆盖。
+
+第一次编译错引用 checkpoint.tip 字段而拒绝，源/日志保留，无 fixture
+启动；修正为原有 block 字段。第一行为范围 18 过/1 失败：一次提交
+256 receipt 的巨型 tail 违反原 16-event 分页界限，失败源码/私有根保留。
+新 fixture 按现有整页持续持久化，完整 256 双方签署事件的原生认证/冷
+重放通过，257 拒绝且原头/事件/金额保持。Contact/receipt 合计限额 256，
+事件页、逻辑 8 MiB、snapshot/active blocks/objects/archive 上限均未抬高。
+
+最终 19 通道行为及严格检查 70.665 秒通过。独立冻结 Python fixture
+controller 仅用公开测试 seed；在同一 Source/binary 上实际 CLI init、
+普通纳入/认证、收据接受/落盘、旧头拒绝、每次独立进程重开、原始重试
+及同 ID 坏签名拒绝 2.598 秒通过。CLI `channel-receipt-accept` 开库也先
+检查 caller exact storage head，不先采用/恢复一个未锚定的头。
+私有 ledger image 完整重放收据/序号；无效新 journal tail 和 publication
+失败均不改变金额/已接受头，原 journal.next 保留并拒绝 archive seal。
+
+这些结果只证明有限原生收据接受及所列过程边界，不是新的 U 余额、独立
+最新保护或首次 owner signing 服务。最高“已接受”与最高“已签署”须区别；
+双方实际签署/看守/调用者保管、全回滚/复制钥匙、reorganization、实际
+2016-block settlement、默认网络 fault/独立/PQC/历史/物理仍为必需门槛。
+下一主线是具备独立 caller head、durable exact response 和 purpose 的原生
+channel owner signing/receiver/watcher custody；需要明确签署/恢复契约和
+反例，不从签署测试向量推断服务已实现。网络 campaign 预算继续为零。
+
+本轮其余 184 受影响 Native 回归，在单次 300 秒范围内 242.398 秒通过，
+跳过已通过 19 通道行为/strict 与 CLI；同一最终来源共 203 Native 检查通过。
+核心 171 文件 `de74cf78...` 及新冻结正文/PDF/receipt 字节未变，原发行
+证据复用。完整原件、精确来源、失败与尚未获得资格的范围见
+[收据结果](../operations/evidence/regional-native-channel-receipt-outcome-20261004.json)。

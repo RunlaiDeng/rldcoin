@@ -1,4 +1,4 @@
-# RLD-REGIONAL-CHANNEL-KERNEL-V2
+# RLD-REGIONAL-CHANNEL-KERNEL-V3
 
 Native signature/value component only. This is not a complete protocol profile,
 ordinary node activation, signing custody, incident resolution or value migration.
@@ -51,3 +51,10 @@ A fully authenticated same-sequence channel conflict quarantines all dependent
 new transitions without changing retained liabilities. Its self-contained native
 funding checkpoint and both party signatures are mandatory; no hash-only proof
 or automatic resolution is allowed.
+
+The separate invoice receipt event authenticates both exact channel states and
+both parties' signatures over the complete invoice, amount, checkpoint, chosen
+reserve, fee budget and previous receipt/state IDs. The challenge rule's floor
+remains one runlai; a receiver can pin a larger signed budget. One actual mature
+unconsumed reservation must cover that entire budget and its owner delegation.
+The 16-reserve limit is a maximum, never a minimum for receipt acceptance.

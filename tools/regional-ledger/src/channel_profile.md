@@ -1,4 +1,4 @@
-# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V2
+# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V3
 
 Fresh no-value admission only. Both native BFT-value-channel and segmented-
 value-channel admissions sign the exact content identity of this profile,
@@ -34,7 +34,7 @@ minted+received equals liquid+escrow+historical outbound after every block.
 Local authenticated incidents stop dependent new transitions without deleting
 liabilities. All newly generated channel outputs inherit complete lineage.
 
-No invoice receipt/signing, automatic same-sequence observation or incident
+No first channel owner signing/custody, general off-chain observation or incident
 resolution, cross-device
 custody, independent latest protection, BFT long history, full protocol or
 physical route qualification follows from this ground admission. Those remain
@@ -61,3 +61,28 @@ including alternate envelopes with the same incident ID. Existing proof bytes
 remain immutable. Native contact V3 carries complete incidents; V2 refuses
 without fallback. Payload, journal, history and archive bounds stay unchanged.
 Local caller-head pins do not establish independent latest-state protection.
+
+RLD-NATIVE-CHANNEL-RECEIPT-V1 is an ordered ordinary native history event,
+retaining complete original state and invoice signatures before acknowledgment.
+It never creates U/E/T money or a block debit. Both parties sign the exact invoice,
+recipient/payer, amount, complete prior/next state identities, previous receipt,
+current certified checkpoint, chosen reserve and receiver-pinned challenge budget.
+Native replay verifies both states, exact conserved allocation delta, highest
+accepted state and unique invoice. The first prior is the signed initial state.
+The existing challenge fee floor is one positive runlai; optional larger signed
+receiver budgets require one entire adequate mature delegated reserve, never
+an unexecutable sum of smaller one-use reserves. No fee market/inclusion or
+watchtower coverage guarantee follows. Owner-authorized ordinary Reserve adds
+a new mature top-up without altering capacity or signed payout allocations.
+
+New acceptance requires the caller's separately retained exact current native
+storage head and exact local invoice expectation, current selected certified
+open-channel state and normal incident checks. Every full retry authenticates
+before suppression; it returns the immutable historical receipt, never a new
+payment, current coverage claim or reconstructed fee. Conflicting complete
+same-sequence receipt states retain a native incident and quarantine descendants.
+Cold replay streams all receipt events from genesis; no saved highest-sequence
+cache grants authority. Contact and receipt records share the unchanged total
+256 bound; events use existing page/logical/event/file bounds. Older formats
+and values do not migrate. Current local heads still cannot prove all-state/head
+rollback, independent freshness, first signing or copied-key protection.

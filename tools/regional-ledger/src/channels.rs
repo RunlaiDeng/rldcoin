@@ -1,11 +1,11 @@
 //! Native typed signature/value kernel; no block/custody/storage activation.
 //! Inputs must come from ordinary full native replay, never a decoded cache.
 use super::*;
-pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V2";
+pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V3";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
-pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V2";
-pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V2";
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V3";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V3";
 pub fn is_profile(rules: &str) -> bool {
     rules == BFT_RULES || rules == SEGMENTED_RULES
 }

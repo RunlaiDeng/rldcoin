@@ -1068,6 +1068,7 @@ mod bft_epoch;
 pub mod bft_network;
 pub mod carriage;
 pub mod channel_conflict;
+pub mod channel_receipt;
 pub mod channels;
 pub mod conflict;
 pub mod contact;

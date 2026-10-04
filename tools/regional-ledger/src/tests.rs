@@ -9,6 +9,8 @@ mod channel_conflicts;
 mod channel_integration;
 #[path = "channel_tests.rs"]
 mod channel_kernel;
+#[path = "channel_receipt_tests.rs"]
+mod channel_receipts;
 fn public(seed: u8) -> String {
     hex::encode(
         SigningKey::from_bytes(&[seed; 32])

@@ -81,3 +81,34 @@ qualify automatic off-chain incident observation, adequately reserved receipt
 acceptance, first signing/custody, full network faults, independent freshness,
 physical links or whole-protocol completion. Changed source always requires
 fresh signed no-value fixtures, never reuse prior balances or custody.
+
+The separate V3 channel/fee-reserve admissions and kernel additionally bind
+`RLD-NATIVE-CHANNEL-RECEIPT-V1`. A receipt contains complete previous/next
+jointly signed states and both parties' invoice signatures. The invoice pins
+exact payer/recipient, amount delta, certified checkpoint, chosen mature reserve,
+fee budget and prior accepted receipt/state. New acceptance checks the caller's
+separately retained latest native storage head, exact current selected certified
+open funding and normal incident/provenance safety. Existing positive-integer
+challenge fee floor is one runlai; a receiver may pin a larger jointly signed
+budget. One chosen reserve must individually fund it under its actual owner's
+delegation. Sixteen reserves is only the existing maximum, never an acceptance
+minimum, and smaller reserve sums do not authorize a nonexistent combined fee.
+
+Acceptance durably appends an ordinary native history event before returning.
+The event grants no U/E/T credit or block debit. Native cold replay streams
+complete history and authenticates every state, invoice and ordered prior link,
+rebuilding highest accepted sequence and invoice uniqueness; no cached sequence
+authorizes progress. Full exact retries authenticate before returning the
+original historical receipt without fresh acceptance or fee reconstruction.
+Complete conflicting same-sequence incoming receipts retain a native incident
+and quarantine affected liabilities; malformed later envelopes do not.
+
+Contacts and receipts share the unchanged total 256-record bound. Receipt
+events respect the existing 16-event pages, bounded tail, event/logical/file
+and archival limits. A 256-event unsealed tail is a real refusal, never a reason
+to raise a limit. Source/fixture changes require fresh signed no-value genesis;
+prior failed stores, signed value and custody remain untouched. Receipt
+acceptance and explicit same-sequence detection do not qualify first owner
+signing, highest signed sequence custody, all-state/head rollback, copied keys,
+monitoring/inclusion, reorganization, full network faults or independent/physical
+operation. Local externally supplied heads are not independent latest proof.

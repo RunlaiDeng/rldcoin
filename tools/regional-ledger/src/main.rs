@@ -373,6 +373,14 @@ enum Action {
         #[arg(long)]
         file: PathBuf,
     },
+    ChannelReceiptAccept {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expectation: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     WalletCombine {
         #[arg(long)]
         file: PathBuf,
@@ -727,7 +735,8 @@ fn run() -> Result<()> {
         Action::BftNetworkCheckBatch { .. } | Action::BftNetworkInspectBatch { .. } => {
             Store::open_inspection(&args.dir, &args.authority, pin)?
         }
-        Action::HistoryCheck { expected_head } => Store::open_pinned(
+        Action::HistoryCheck { expected_head }
+        | Action::ChannelReceiptAccept { expected_head, .. } => Store::open_pinned(
             &args.dir,
             &args.authority,
             pin,
@@ -1313,6 +1322,19 @@ fn run() -> Result<()> {
                 serde_json::to_string(&signed).map_err(|e| e.to_string())?
             );
         }
+        Action::ChannelReceiptAccept {
+            file,
+            expectation,
+            expected_head,
+        } => println!(
+            "{}",
+            serde_json::to_string(&store.accept_channel_receipt(
+                read_json(&file)?,
+                &read_json(&expectation)?,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?
+            )?)
+            .map_err(|e| e.to_string())?
+        ),
         Action::WalletReceipt { file } => println!(
             "{}",
             serde_json::to_string(&wallet::receipt(&store, read_json(&file)?)?)

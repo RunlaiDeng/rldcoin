@@ -13,6 +13,7 @@ pub enum Event {
     Block(Box<Block>),
     Finalize(Hash),
     Epoch(Hash),
+    ChannelReceipt(Box<crate::channel_receipt::Receipt>),
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -73,9 +74,15 @@ impl Journal {
             evidence.install_epoch(proof.clone(), &trust)?;
         }
         let mut chain = Chain::new(self.region, &trust)?;
+        let mut receipts = crate::channel_receipt::Replay::default();
         for event in crate::history::events(dir, self)? {
             let event = event?;
-            self.replay_event(&mut chain, &trust, &evidence, event)?;
+            if let Event::ChannelReceipt(receipt) = event {
+                receipt.verify_selected(&chain, &trust, &evidence)?;
+                receipts.record(*receipt)?;
+            } else {
+                self.replay_event(&mut chain, &trust, &evidence, event)?;
+            }
         }
         if crate::bft::is_profile(&trust.region(chain.region)?.rules) && chain.height() > 0 {
             let finality = evidence.snapshot(
@@ -89,8 +96,11 @@ impl Journal {
             )?;
         }
         require(
-            self.contact_records.len() <= crate::contact::MAX_CONTACTS,
-            "native contact record bound",
+            self.contact_records
+                .len()
+                .checked_add(receipts.len())
+                .is_some_and(|n| n <= crate::contact::MAX_CONTACTS),
+            "combined native contact/receipt record bound",
         )?;
         for (ident, record) in &self.contact_records {
             require(
@@ -110,6 +120,7 @@ impl Journal {
         event: Event,
     ) -> Result<()> {
         match event {
+            Event::ChannelReceipt(receipt) => receipt.verify_selected(chain, trust, evidence)?,
             Event::Block(block) => chain.accept(*block, trust, evidence)?,
             Event::Finalize(id) => {
                 require(
@@ -241,6 +252,43 @@ pub(crate) fn verify_pinned_image(
     Ok(())
 }
 impl Store {
+    pub fn accept_channel_receipt(
+        &mut self,
+        receipt: crate::channel_receipt::Receipt,
+        expected: &crate::channel_receipt::Expectation,
+        expected_head: Hash,
+    ) -> Result<crate::channel_receipt::Accepted> {
+        require(
+            self.healthy,
+            "store requires replay after persistence failure",
+        )?;
+        require(
+            !expected_head.is_zero()
+                && crate::history::manifest(&self.dir)?.head()? == expected_head,
+            "separately retained exact current native storage head required for receipt acceptance",
+        )?;
+        let before = self.chain.ledger.clone();
+        let (receipt, exact_retry) = crate::channel_receipt::accept(self, receipt, expected)?;
+        require(
+            self.chain.ledger == before,
+            "receipt changed monetary ledger",
+        )?;
+        Ok(crate::channel_receipt::Accepted {
+            format: crate::channel_receipt::FORMAT,
+            receipt_id: receipt.id()?,
+            accepted_sequence: receipt.next.statement.sequence,
+            receipt,
+            history_head: crate::history::manifest(&self.dir)?.head()?,
+            exact_retry,
+            new_fast_payment_accepted: !exact_retry,
+            historical_funded_state: true,
+            monetary_ledger_unchanged: true,
+            on_chain_balance_credit: false,
+            independent_latest_state_protection: false,
+            monitoring_or_inclusion_guarantee: false,
+            live_rld: false,
+        })
+    }
     pub fn create(
         dir: &Path,
         bootstrap: Bootstrap,
