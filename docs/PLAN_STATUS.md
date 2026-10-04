@@ -44,10 +44,11 @@
 - 五项针对性检查以及 **491 项完整过程回归、三个实际 Runtime 保管阶段全部通过**。
   Native 的 184 项测试/strict 检查引用相同 Native/core 的既有证据，本轮明确未重跑。
 
-全新普通三地区付款往返及严格停止冷核验正在运行，终止和资格尚未证明。已观察到
-十二节点启动、三地区邻接发现及 Earth 初始发行成熟阶段推进；不把当前日志当作
-终止/冷核验/完整付款通过。只有成功停止与全套冷核验通过后，才开启同一源码的
-原定完整有限故障范围。旧失败目录、支付、保管和证据均未改写或迁移。
+全新普通三地区付款返程 **673.309 秒通过**，干净停止与严格冷核验 **60.350 秒通过**。
+E11/P4/A4 四副本一致；12 原生重放、12 收款、4 时代保管、788 完整 BFT 信封及
+1,744 档案核验通过。兼容前缀守恒 issued/liquid 300、in_transit 0，私有字节/权限不变。
+已从这份成功停止样本开启同一源码的原定完整有限故障范围；故障终止及冷资格仍未证明。
+旧失败目录、支付、保管和证据均未改写或迁移；没有恢复旧失败范围或计作通过。
 
 此前运输四进程诊断本身未调用本次修改的 `Runtime.broadcast`，仍保留原失败判定，
 没有补记为压力通过；不靠改写该模型证明修复。当前资格取决于完整真实 Runtime
@@ -62,6 +63,8 @@
 `regional-fair-carriage-joint-fault-owner-head-observations-20261004.json`。
 本轮：`operations/evidence/regional-qualified-quiet-broadcast-component-summary-20261004.json`、
 `regional-qualified-quiet-broadcast-frozen-checks-20261004.json`、`regional-qualified-quiet-broadcast-source-inventory-20261004.json`。
+普通范围：`regional-quiet-broadcast-three-region-cycle-20261004.json`、
+`regional-quiet-broadcast-three-region-cold-20261004.json`。
 此前诊断和来源：[原样保留状态](operations/history/PLAN_STATUS_before_qualified_quiet_broadcast_20261004_1a0a9f7774e5.md)。
 
 公开仓库仍为已验证 v55；v56 材料完整延后保存。不发布微优化或失败变体。
