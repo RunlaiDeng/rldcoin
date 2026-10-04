@@ -1,0 +1,28 @@
+{
+  "format": "RLD-TIMEOUT-CARRIAGE-FOUR-PROCESS-ABLATION-V1",
+  "completed": true,
+  "source_set_sha256": "f49c183bb61a4a0a8871c81e9707b1a7830cb803fa4905f1d63d03e7d7989feb",
+  "strict_failed_cold_sha256": "20383ab370d2a48775d0c71b7961bf8c8ae9729e8c2915d085472fbd181a9b8b",
+  "runner_sha256": "37f201904c9f19b0ad1e34855597d7d611b2fa095c6ccb0aa0fe9b30230ed7b9",
+  "worker_sha256": "3a078f304859ff0589946b2c5e8d87b69f56f08eca10e0f9dfed2db8fa4f3457",
+  "four_actual_processes": true,
+  "historical_seed_packets": 441,
+  "critical_full_envelope_sha256": "d6162dd20de8ba66044d8b1b9ad66475def7c8b8e28674507b7544a002597e19",
+  "critical_destinations_received_and_native_authenticated": true,
+  "complete_timeout_certificate_native_authenticated": true,
+  "trial_seconds": 81.691,
+  "trial_bound_seconds": 180,
+  "transport_socket_and_lock_bounds_unchanged": true,
+  "original_private_state_unchanged": true,
+  "no_native_signing_recovery_runtime_or_ledger_installation": true,
+  "fresh_mesh_tls_directories": true,
+  "not_a_fresh_full_fault_pass": true,
+  "all_owned_processes_stopped": true,
+  "owned_process_exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "independent_or_physical_qualification": false
+}

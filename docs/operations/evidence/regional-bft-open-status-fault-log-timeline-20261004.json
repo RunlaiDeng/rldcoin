@@ -1,0 +1,1470 @@
+{
+  "format": "RLD-STOPPED-FAULT-LOG-TIMELINE-V1",
+  "completed": true,
+  "authenticated_path_report_sha256": "b192b90dcc6cd6cf1a15dcbfea4a11d75fe7c5bfd646ca49096619f52df4701b",
+  "source_set_sha256": "f49c183bb61a4a0a8871c81e9707b1a7830cb803fa4905f1d63d03e7d7989feb",
+  "logs": [
+    {
+      "region": "proxima",
+      "replica": 0,
+      "bytes": 24490030,
+      "sha256": "e3c15a32397163268f08e490aec3d635b110e7a2a07b7649c7922221cb334dc5",
+      "complete_log_observations": 1607
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "bytes": 31584698,
+      "sha256": "55bbb8b47a52ff4b92fccbca1c23cc4e66bea90d47fa47bfc113466ccbe13998",
+      "complete_log_observations": 1496
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "bytes": 29532667,
+      "sha256": "ef38986b8a926e11eb0f7c7433944b0c5e4a99295d8cd4aee15aad173eb0086b",
+      "complete_log_observations": 1525
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "bytes": 25845708,
+      "sha256": "936f84ab389be3c0bd6faffcd362391a33912e874d26ab59e2df88448d3778f5",
+      "complete_log_observations": 1649
+    }
+  ],
+  "rows": [
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097109,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097115,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 6
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097109,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097115,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097179,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 70
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097109,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097115,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097179,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097180,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 71
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791096985,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096992,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 7
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791096985,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096992,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097127,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 142
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791096985,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096992,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097121,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097126,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 141
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Commit",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097023,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 8
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "phase": "Commit",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097179,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 164
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "phase": "Commit",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097179,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097180,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 165
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097170,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097160,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 10
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 1,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097160,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097167,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 7
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 1,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097160,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097167,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097174,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 14
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097027,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096970,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 57
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096970,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097121,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 151
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096970,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096980,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096991,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 21
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097073,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097071,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 2
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097071,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097127,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 56
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097071,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097167,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097174,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 103
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097209,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097199,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097113,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 96
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097155,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": null,
+          "first_reported_round": null
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097113,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 42
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097113,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097117,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 4
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791096970,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096967,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096928,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 42
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097005,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": null,
+          "first_reported_round": null
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096928,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 77
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096928,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096933,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 5
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097023,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096991,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 32
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096991,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 24
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096991,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097000,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 9
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097023,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097005,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": null,
+          "first_reported_round": null
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096928,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 95
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Proposal",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096967,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096928,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 39
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Proposal",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096928,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096933,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 5
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097209,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097199,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097133,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097130,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 79
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Proposal",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097155,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": null,
+          "first_reported_round": null
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097133,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097130,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 25
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Proposal",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097133,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097130,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 3
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097112,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097083,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097063,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097056,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 56
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097083,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097063,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097056,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 27
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 0,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097063,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097056,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 7
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791096970,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096967,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096940,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096937,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 33
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791096967,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096940,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096937,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 30
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791096940,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096937,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 3
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097255,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": null
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097255,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": null
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "round": 1,
+      "locations": [
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097255,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        }
+      ],
+      "source_to_destination_first_observation_seconds": null
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Commit",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097023,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097005,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096996,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 27
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "phase": "Commit",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097015,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097005,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096996,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 19
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "phase": "Commit",
+      "round": 0,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097005,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791096996,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 0
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 9
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 1,
+      "locations": [
+        {
+          "replica": 0,
+          "first_seen_unix": 1791097170,
+          "last_seen_unix": 1791097259,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097155,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": null,
+          "first_reported_round": null
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097153,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097135,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 35
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 1,
+      "locations": [
+        {
+          "replica": 1,
+          "first_seen_unix": 1791097155,
+          "last_seen_unix": 1791097260,
+          "first_reported_height": null,
+          "first_reported_round": null
+        },
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097144,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097135,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 20
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "round": 1,
+      "locations": [
+        {
+          "replica": 2,
+          "first_seen_unix": 1791097144,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 2
+        },
+        {
+          "replica": 3,
+          "first_seen_unix": 1791097135,
+          "last_seen_unix": 1791097261,
+          "first_reported_height": 10,
+          "first_reported_round": 1
+        }
+      ],
+      "source_to_destination_first_observation_seconds": 9
+    }
+  ],
+  "reported_round_transitions": {
+    "0": [
+      {
+        "observed_at_unix": 1791096918,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791096920,
+        "height": 10,
+        "round": 0,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791096983,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791097105,
+        "height": 10,
+        "round": 2,
+        "unknown": false
+      }
+    ],
+    "1": [
+      {
+        "observed_at_unix": 1791096915,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791096917,
+        "height": 10,
+        "round": 0,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791097068,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      }
+    ],
+    "2": [
+      {
+        "observed_at_unix": 1791096914,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791096917,
+        "height": 10,
+        "round": 0,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791096987,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791097109,
+        "height": 10,
+        "round": 2,
+        "unknown": false
+      }
+    ],
+    "3": [
+      {
+        "observed_at_unix": 1791096924,
+        "height": 10,
+        "round": 0,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791097053,
+        "height": 10,
+        "round": 1,
+        "unknown": false
+      },
+      {
+        "observed_at_unix": 1791097251,
+        "height": 10,
+        "round": 2,
+        "unknown": false
+      }
+    ]
+  },
+  "observations_not_ledger_or_signing_authority": true,
+  "no_runtime_native_calls_recovery_or_identity_load": true,
+  "original_logs_unchanged": true,
+  "duration_seconds": 0.388
+}

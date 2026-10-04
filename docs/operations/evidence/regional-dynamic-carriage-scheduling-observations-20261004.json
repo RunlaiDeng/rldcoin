@@ -1,0 +1,99 @@
+{
+  "format": "RLD-DYNAMIC-CARRIAGE-SCHEDULING-OBSERVATIONS-V1",
+  "completed": true,
+  "unmodified_runtime_source_set_sha256": "f49c183bb61a4a0a8871c81e9707b1a7830cb803fa4905f1d63d03e7d7989feb",
+  "first_pressure_report_sha256": "409b0fdab7bd8a9a2ff59816a0ba1bface68093fa2b1affd769c3910f0f0fdfd",
+  "traced_pressure_report_sha256": "e22e47aab93398286fcc710aaa7553f67fae4ea7f2341492193fca624536d7bc",
+  "old_unmodified_runtime_pass_and_fail_observed": true,
+  "exact_packet_nonces_and_process_interleavings_not_held_constant": true,
+  "observer_hooks_return_original_results": true,
+  "additional_observation_may_change_timing": true,
+  "single_cause_or_fix_not_proven": true,
+  "no_runtime_patch_or_new_full_qualification_started": true,
+  "stopped_cursor_probe_critical_eligible_in_fourth_preparation": true,
+  "stopped_cursor_probe_is_controller_observation_not_ordinary_tcp_qualification": true,
+  "rows": [
+    {
+      "replica": 0,
+      "observation_sha256": "724401daa13fa7a2e0be4933e4a6cc8d60d326d79fdc9b74a86c658e48a119b3",
+      "loop_count": 28,
+      "local_lock_exhaustions": 15,
+      "local_lock_retries": 722,
+      "last_tcp_error_count": 0,
+      "critical_preparation_observations": [],
+      "native_authenticated_seconds": 16.637904
+    },
+    {
+      "replica": 1,
+      "observation_sha256": "476811b0c0af1998f09419a7790356e596cd55128a5d11213879a8a1f9541f80",
+      "loop_count": 24,
+      "local_lock_exhaustions": 40,
+      "local_lock_retries": 1552,
+      "last_tcp_error_count": 2,
+      "critical_preparation_observations": [
+        {
+          "seconds_after_source_injection": 15.778888,
+          "destinations": [
+            0
+          ],
+          "next_peer": 0
+        }
+      ],
+      "native_authenticated_seconds": 13.527528
+    },
+    {
+      "replica": 2,
+      "observation_sha256": "5bc581310d76e8018d11a92312a30cbf97c174c589bb9b9746ecdbfe59993041",
+      "loop_count": 23,
+      "local_lock_exhaustions": 33,
+      "local_lock_retries": 1365,
+      "last_tcp_error_count": 1,
+      "critical_preparation_observations": [
+        {
+          "seconds_after_source_injection": 12.348623,
+          "destinations": [
+            1
+          ],
+          "next_peer": 1
+        },
+        {
+          "seconds_after_source_injection": 14.681846,
+          "destinations": [
+            0
+          ],
+          "next_peer": 1
+        }
+      ],
+      "native_authenticated_seconds": 2.667061
+    },
+    {
+      "replica": 3,
+      "observation_sha256": "30d729959e215b4fc06ec20d33379c2c6b65a82f5c4632abea9d6ce346734f16",
+      "loop_count": 23,
+      "local_lock_exhaustions": 21,
+      "local_lock_retries": 932,
+      "last_tcp_error_count": 0,
+      "critical_preparation_observations": [
+        {
+          "seconds_after_source_injection": 0.296965,
+          "destinations": [
+            0,
+            2,
+            1
+          ],
+          "next_peer": 2
+        },
+        {
+          "seconds_after_source_injection": 1.69845,
+          "destinations": [
+            0,
+            2,
+            1
+          ],
+          "next_peer": 2
+        }
+      ],
+      "native_authenticated_seconds": null
+    }
+  ]
+}

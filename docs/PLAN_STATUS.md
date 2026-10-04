@@ -33,11 +33,22 @@
 一份进入下一轮所需的超时消息只留在发送者，三个目的节点都无完整消息及目的收件。
 其余 15 份已完整交付。前一实现停在高度 12 的失败仍独立保留，不混计为同一次样本。
 
-当前实验：四个真实进程、全新 mesh/TLS 目录，用原有认证消息构造历史运输负载，
-检查这份关键超时消息交付及原生认证。原失败账本只用于只读认证，绝不启动 Runtime、
-恢复响应、首次签署、安装账本或迁移价值。若运输试验通过，则该负载假设被削弱，
-继续定位普通运行中的具体延迟；若失败，先证明最小修复在同一复现中通过，再运行完整资格。
+四个真实进程的静态档案实验已通过：441 条历史运输记录下，关键完整消息最终交付、
+原生认证及超时证书组合成功。其约 82 秒还包含历史认证队列，不能视为单纯网络延迟。
+进一步控制了已认证历史队列：无持续流量时三个目的节点在 8.521 秒内完成认证；
+每节点最多 40 个有效历史重发时，一个目的节点在预定 120 秒观察窗内仍未收到消息，
+另外两个分别约 3 秒和 33 秒收到。四个真实进程正常退出，原失败账本及成功运输基线逐字节不变。
+这是可反驳的运输压力失败复现，尚未证明原完整范围只有这一根因，也不是完整故障通过。
+同一旧实现加入只读调度/拒收观测后复测约 17 秒通过，40 包预算实际只生成到 15–16 包即结束。
+两次运输包随机 ID 与进程交错未固定，观测钩子也可能改变时序。这是排队/时序敏感的失败证据，
+目前单一根因和稳定旧败/新过仍未证明；没有实现推测性修复，也没有另起完整资格运行。
+
+原失败日志显示当前提案目的节点首次观测相差 79–95 秒，晚于部分节点的下一轮。
+最后缺失的超时消息只在发送端有约 6 秒观测窗，不能仅凭它断言运输永久停滞。
 当前进程仅 6 次候选试算、总耗时约 0.34 秒，不支持历史提交试算是主要瓶颈；不据此补丁。
+所有实验保持原失败账本只读，不启动其 Runtime、恢复响应、首次签署、安装账本或迁移价值。
+静态实验使用新 mesh/TLS；后续控制试验仅复制成功运输诊断的同格式私有测试目录，
+保留全部签署档案及测试密钥，不代表新保管或独立运营资格。
 
 冻结清单沿用了错误的 20 秒轮超时描述，12 份实际配置与普通报告均为 60 秒。
 [精确配置哈希说明](operations/evidence/regional-current-round-timeout-metadata-20261004.json)
@@ -63,7 +74,12 @@
 `regional-bft-open-status-joint-fault-fresh-20261004.json`、
 `regional-bft-open-status-joint-fault-failed-cold-observations-20261004.json`、
 `regional-bft-open-status-joint-fault-owner-head-observations-20261004.json`、
-`regional-bft-open-status-fault-current-proxima-path-observations-20261004.json`。
+`regional-bft-open-status-fault-current-proxima-path-observations-20261004.json`、
+`regional-bft-open-status-fault-log-timeline-20261004.json`、
+`regional-timeout-carriage-four-process-ablation-20261004.json`、
+`regional-dynamic-carriage-four-process-ablation-20261004.json`、
+`regional-dynamic-carriage-four-process-traced-20261004.json`、
+`regional-dynamic-carriage-scheduling-observations-20261004.json`。
 
 此前详细历史已原样归档：[历史状态记录](operations/history/PLAN_STATUS_before_delivery_focus_20261004_8403d16a68dc.md)。
 归档 SHA-256：`8403d16a68dc6adbd2be3afdfd1afda843ac1cfd0e1a6e114912457465db203c`。所有历史失败、签署证据及私有目录继续保留。

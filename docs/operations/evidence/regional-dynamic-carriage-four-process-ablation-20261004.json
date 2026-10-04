@@ -1,0 +1,107 @@
+{
+  "format": "RLD-DYNAMIC-CARRIAGE-FOUR-PROCESS-ABLATION-V1",
+  "completed": true,
+  "source_set_sha256": "f49c183bb61a4a0a8871c81e9707b1a7830cb803fa4905f1d63d03e7d7989feb",
+  "runner_sha256": "47b369c1e669eb3a7f2fc94105e84c9983102660bc4dca21a7d5fef03e3da405",
+  "worker_sha256": "de19d6d79423e178365901256e384117858581f9f166f92723e00cca75efbbbb",
+  "strict_failed_cold_sha256": "20383ab370d2a48775d0c71b7961bf8c8ae9729e8c2915d085472fbd181a9b8b",
+  "static_baseline_report_sha256": "817c59f742b34c8edfd90ae8a79b1287ae5692fcdd8c7d298c56291fd6be6ed7",
+  "critical_full_envelope_sha256": "15f89c4437a5c63d202924558e231d21e2295f4f303478731124d577c63a473c",
+  "original_body_signatures_unchanged": true,
+  "variant_has_one_exact_duplicate_snapshot_reference": true,
+  "variant_native_authenticated_before_trial": true,
+  "declared_round_observation_seconds": 60,
+  "declared_trial_bound_seconds": 120,
+  "real_four_processes_per_trial": true,
+  "original_failed_native_and_successful_transport_fixture_unchanged": true,
+  "compatible_test_transport_key_copy_not_independent_custody": true,
+  "no_native_runtime_signing_recovery_or_ledger_installation": true,
+  "no_bounds_evidence_or_value_changes": true,
+  "not_a_full_fault_profile": true,
+  "results": [
+    {
+      "label": "control",
+      "completed": true,
+      "traffic_budget_per_node": 0,
+      "generated_replay_packets": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "injection_queued": true,
+      "destination_transport_seconds": [
+        8.375801,
+        7.245894,
+        2.310314
+      ],
+      "destination_native_authentication_seconds": [
+        8.520806,
+        7.338063,
+        2.436373
+      ],
+      "within_original_60_second_round": true,
+      "trial_seconds": 12.356,
+      "process_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "last_worker_seconds": [
+        0.495817,
+        1.219626,
+        1.482914,
+        0.858768
+      ],
+      "error_counts": [
+        1,
+        4,
+        5,
+        2
+      ]
+    },
+    {
+      "label": "ongoing_replay",
+      "completed": false,
+      "traffic_budget_per_node": 40,
+      "generated_replay_packets": [
+        40,
+        40,
+        40,
+        40
+      ],
+      "injection_queued": true,
+      "destination_transport_seconds": [
+        33.082154,
+        null,
+        2.963356
+      ],
+      "destination_native_authentication_seconds": [
+        33.182077,
+        null,
+        3.056031
+      ],
+      "within_original_60_second_round": false,
+      "trial_seconds": 130.408,
+      "process_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "last_worker_seconds": [
+        0.202261,
+        1.03929,
+        1.464619,
+        0.657175
+      ],
+      "error_counts": [
+        7,
+        8,
+        8,
+        8
+      ]
+    }
+  ]
+}
