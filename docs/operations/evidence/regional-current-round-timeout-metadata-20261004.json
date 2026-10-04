@@ -1,0 +1,85 @@
+{
+  "format": "RLD-ROUND-TIMEOUT-METADATA-ERRATUM-V1",
+  "source_set_sha256": "f49c183bb61a4a0a8871c81e9707b1a7830cb803fa4905f1d63d03e7d7989feb",
+  "frozen_manifest_sha256": "aa585451278e67d37e5ce34a9b3dba6c6bf3ac57d7e8af87584813fe5774deaa",
+  "cycle_report_sha256": "e2e5765e51fefc82a333819322001ee422bd6670d8b8082503e1fabd15cb9da4",
+  "incorrect_inherited_manifest_description_seconds": 20,
+  "actual_configured_seconds": 60,
+  "configurations": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "config_sha256": "d444ba1e869d529792830978f058a1b72fa463bbc5b367b407032dab1b564945",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "config_sha256": "97e53ae2a74950b0fde6bd39e1ab2f1f57bb760f8b63066c87fd36cbf69800dc",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "config_sha256": "92a08adf95e907271cf0c16bc8484b2956fa9d30e64c86bea2d6404f709a6da6",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "config_sha256": "b323b649ea5311cc8e2195889396545d39545a4efe2be19accda8f79034e96ed",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "config_sha256": "3e1668d867810a43a0ab5a03b9ad27e762123ad49d8092a187ddfb10846d7fd8",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "config_sha256": "0e4b1940de11c3e6c383d162de77f1b9adbc778a566bdaa6e5e72ef4cbe9d835",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "config_sha256": "29a85f1c8512fc50d3c18e730b95f20ad733bc61e1f0ce4da3f1572088c7bf1b",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "config_sha256": "651301825fd8e44a4c81185e22bb7570894988702d4fad5be8bfe127939ebb7d",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "config_sha256": "49e56a29301e9a809e3b142a69d1ea07c1a493076d9be5b4137b3074fbd0be85",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "config_sha256": "cf31cdfd6861587d44ffe5db6ab72d4afd7c867fb5a76c519ff4fda1ca55900b",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "config_sha256": "f1cc5750ad6fd5e7ed861721a888f216b258b6a21d0c76b668dd81735432b894",
+      "actual_round_timeout_seconds": 60
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "config_sha256": "c345cb71b726e389bad1ace421ac9bf33c9bf08ac6419caf2b9720bd681dec6a",
+      "actual_round_timeout_seconds": 60
+    }
+  ],
+  "frozen_manifest_unchanged": true,
+  "no_private_state_or_identity_published": true,
+  "no_qualification_claim": true
+}
