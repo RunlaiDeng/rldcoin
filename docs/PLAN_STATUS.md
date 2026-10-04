@@ -46,8 +46,13 @@ Proxima-2 的 Commit 在发送端有 132 秒日志观测，仍未交付 Proxima-
 普通处理后拒绝入站；新版 0.367 秒完成实际落盘、原生认证及发送端持久回执。
 29 项现有 TCP 回归通过；原多证据压力对照仍失败，候选未合入。
 诊断脚本曾在接收争用后跳过后续发送，真实服务却继续原生与发送阶段；已保留原结果，
-新对照按真实服务分离阶段，并保留接收争用的原调度意图。先验证这个修正模型，
-再定位未交付路径；相同输入实际旧失败/新通过之后才能进入完整回归与资格。
+修正后的相同输入旧/新版四进程对照都把每节点 40 个输入全部排入，但三个目标均未
+完成关键原生认证，整个压力门槛失败。停止后外部公钥运输检查及关键完整信封原生认证
+通过，私有字节/权限不变；活动队列最高 123，低于未改变的 256 准入上限。
+三份关键包仍在源 actor-3；发给 actor-0 的包已在中继 actor-2，但未到 actor-1/0，
+目标回执不存在。这是有限运输诊断，不替代真实普通启动或全故障范围。
+下一步核对未确认发送的精确重选间隔与入站准入窗口；不得把稀疏重选当永久丢失，
+相同输入实际旧失败/新通过之后才能进入完整回归与资格。
 
 ## 开发与发布边界
 
@@ -72,3 +77,5 @@ Proxima-2 的 Commit 在发送端有 132 秒日志观测，仍未交付 Proxima-
 新增诊断汇总：`operations/evidence/regional-carriage-late-custody-and-diverse-pressure-summary-20261004.json`。
 
 入站边界与模型校核：`operations/evidence/regional-live-inbound-demand-boundary-summary-20261004.json`。
+
+修正模型停止对照：`operations/evidence/regional-service-stage-separated-carriage-stopped-comparison-20261004.json`。

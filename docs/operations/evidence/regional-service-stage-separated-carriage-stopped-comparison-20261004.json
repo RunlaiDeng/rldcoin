@@ -1,0 +1,252 @@
+{
+  "format": "RLD-SERVICE-STAGE-SEPARATED-CARRIAGE-STOPPED-COMPARISON-V1",
+  "workflow_terminal": true,
+  "corrected_model_retains_selection_demand_and_continues_native_carriage": true,
+  "old_and_new_same_exact_native_frames_and_packet_nonce_input": true,
+  "results": [
+    {
+      "label": "old",
+      "report_sha256": "677b863c7131b19aeabbe529276278744941785eb7ddf1c8ce6740df4a58e4e3",
+      "source_set_sha256": "7c5b78c85d1b50640ce2d783fd752d7c818387e9be4ddcae3bb208003d4c4c61",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            null
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            null
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 132.198,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.201456,
+            2.062132,
+            1.296426,
+            0.979993
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "stopped_transport_native_observations": [
+        {
+          "actor": 0,
+          "active_messages": 72,
+          "active_receipts": 0,
+          "archive_entries": 222,
+          "active_admission_capacity": 256,
+          "critical_records": []
+        },
+        {
+          "actor": 1,
+          "active_messages": 120,
+          "active_receipts": 0,
+          "archive_entries": 373,
+          "active_admission_capacity": 256,
+          "critical_records": []
+        },
+        {
+          "actor": 2,
+          "active_messages": 123,
+          "active_receipts": 0,
+          "archive_entries": 370,
+          "active_admission_capacity": 256,
+          "critical_records": [
+            {
+              "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+              "destination_actor": 0,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [
+                3
+              ],
+              "complete_envelope_native_authenticated": true
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "active_messages": 76,
+          "active_receipts": 0,
+          "archive_entries": 221,
+          "active_admission_capacity": 256,
+          "critical_records": [
+            {
+              "exact_packet_sha256": "126d6ce88a2b800fa276381a1dc2d7f064bfad85e7af43c2d5a0a0b15e1a8c3b",
+              "destination_actor": 2,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [],
+              "complete_envelope_native_authenticated": true
+            },
+            {
+              "exact_packet_sha256": "2e8f76a4ff87380fc6f7316af7280f953cf3202f8ae800fb73965c916c12f1c3",
+              "destination_actor": 1,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [],
+              "complete_envelope_native_authenticated": true
+            },
+            {
+              "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+              "destination_actor": 0,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [
+                2
+              ],
+              "complete_envelope_native_authenticated": true
+            }
+          ]
+        }
+      ],
+      "private_bytes_permissions_unchanged": true
+    },
+    {
+      "label": "new",
+      "report_sha256": "5a153af65ee015f4f4f2326e49ac5177253ffbb8dbd23ec9a34f127fc8c10297",
+      "source_set_sha256": "72dd98fb085ca038f224b5d1d8e36bdf00c6a1fa20bc1059952481a35a1ad088",
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            40,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            null
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            null
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 131.788,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.200474,
+            1.471328,
+            0.43014,
+            0.214651
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ],
+      "stopped_transport_native_observations": [
+        {
+          "actor": 0,
+          "active_messages": 67,
+          "active_receipts": 0,
+          "archive_entries": 239,
+          "active_admission_capacity": 256,
+          "critical_records": []
+        },
+        {
+          "actor": 1,
+          "active_messages": 108,
+          "active_receipts": 0,
+          "archive_entries": 401,
+          "active_admission_capacity": 256,
+          "critical_records": []
+        },
+        {
+          "actor": 2,
+          "active_messages": 105,
+          "active_receipts": 0,
+          "archive_entries": 407,
+          "active_admission_capacity": 256,
+          "critical_records": [
+            {
+              "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+              "destination_actor": 0,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [
+                3
+              ],
+              "complete_envelope_native_authenticated": true
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "active_messages": 74,
+          "active_receipts": 0,
+          "archive_entries": 251,
+          "active_admission_capacity": 256,
+          "critical_records": [
+            {
+              "exact_packet_sha256": "126d6ce88a2b800fa276381a1dc2d7f064bfad85e7af43c2d5a0a0b15e1a8c3b",
+              "destination_actor": 2,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [],
+              "complete_envelope_native_authenticated": true
+            },
+            {
+              "exact_packet_sha256": "2e8f76a4ff87380fc6f7316af7280f953cf3202f8ae800fb73965c916c12f1c3",
+              "destination_actor": 1,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [],
+              "complete_envelope_native_authenticated": true
+            },
+            {
+              "exact_packet_sha256": "c1f70469cf7846925cc1a860268bf47bd51abc04fe3601fd4df9b83520c4fc4b",
+              "destination_actor": 0,
+              "destination_transport_receipt_retained": false,
+              "exact_packet_in_peer_signed_inventory": [
+                2
+              ],
+              "complete_envelope_native_authenticated": true
+            }
+          ]
+        }
+      ],
+      "private_bytes_permissions_unchanged": true
+    }
+  ],
+  "original_failed_native_and_compatible_transport_setup_unchanged": true,
+  "no_runtime_recovery_signing_head_adoption_or_ledger_installation": true,
+  "peer_inventory_is_scheduling_observation_not_custody": true,
+  "no_new_full_fault_profile_started": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "not_full_fault_or_independent_or_physical_qualification": true,
+  "runner_sha256": "376222516e473c27e090ff40c226c59c56c3eeac756cd6b368c7aafddd53c5fe"
+}
