@@ -53,6 +53,12 @@ P2 Prepare 到 P1 留在 P2；P3 Prepare 到 P0 已到 P2；
 P0 Timeout 到 P2/P3 已到 P1。该停止快照将缺口定位到尚未取得目标保管的路径，
 不能推出当时服务时间、首次失败位置或计量器的因果影响，也不能手工补票继续失败范围。
 
+原状态文件中的有界诊断环另保留四进程最近 41/28/22/22 次接触迭代，
+其中 23/14/15/11 次选中零项；这些保留迭代的最大墙钟时间为 2.319301 秒。
+每进程已经淘汰 3,775–4,064 个旧事件，不能据此复原完整实时轨迹、推算最老等待
+或归因所有零选择。并行 TCP 时间仍为 null，不把它与串行阶段相加；
+这些诊断时间也不替代 Native 子进程 CPU、fsync 或源状态的原生认证。
+
 后续须定位完整已签控制消息在普通调度、实际接触和 Native 接受之间的停留，
 同时完成 CPU/内存、fsync 与未交付等待预算。先取得真实路径/分配与服务成本证据，
 不凭 RSS 推断缓存泄漏或 CPU 原因，不用新微优化版本代替持续负载/长期历史门槛。
@@ -71,4 +77,5 @@ macOS 子进程 CPU 观察另有能力检查：`ps -S` 未通过实际退出子�
 `regional-ground-metered-joint-fault-owner-head-observations-20261004.json`、
 `regional-ground-metered-proxima-stopped-parent-observations-20261004.json`、
 `regional-ground-metered-fault-current-proxima-path-observations-20261004.json`、
+`regional-ground-metered-retained-timing-observations-20261004.json`、
 `regional-ground-child-cpu-capability-20261004.json`。
