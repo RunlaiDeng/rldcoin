@@ -32,7 +32,7 @@ pub(super) fn parties() -> [String; 2] {
     parties.sort();
     parties
 }
-pub(super) fn command(
+pub(crate) fn command(
     chain: &Chain,
     trust: &Trust,
     action: c::Action,

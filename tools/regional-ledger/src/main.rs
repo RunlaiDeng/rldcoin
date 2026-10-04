@@ -381,6 +381,58 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    ChannelOwnerInit {
+        #[arg(long)]
+        owner_dir: PathBuf,
+        #[arg(long)]
+        owner: String,
+        #[arg(long)]
+        channel: String,
+        #[arg(long)]
+        expected_head: String,
+    },
+    ChannelOwnerPrepare {
+        #[arg(long)]
+        owner_dir: PathBuf,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_owner_head: String,
+        #[arg(long)]
+        expected_head: String,
+    },
+    ChannelOwnerSign {
+        #[arg(long)]
+        owner_dir: PathBuf,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        key_file: PathBuf,
+        #[arg(long)]
+        review: String,
+        #[arg(long)]
+        expected_owner_head: String,
+        #[arg(long)]
+        expected_head: String,
+    },
+    ChannelOwnerRecover {
+        #[arg(long)]
+        owner_dir: PathBuf,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        review: String,
+        #[arg(long)]
+        expected_owner_head: String,
+        #[arg(long)]
+        expected_head: String,
+    },
+    ChannelOwnerCombine {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     WalletCombine {
         #[arg(long)]
         file: PathBuf,
@@ -736,7 +788,12 @@ fn run() -> Result<()> {
             Store::open_inspection(&args.dir, &args.authority, pin)?
         }
         Action::HistoryCheck { expected_head }
-        | Action::ChannelReceiptAccept { expected_head, .. } => Store::open_pinned(
+        | Action::ChannelReceiptAccept { expected_head, .. }
+        | Action::ChannelOwnerInit { expected_head, .. }
+        | Action::ChannelOwnerPrepare { expected_head, .. }
+        | Action::ChannelOwnerSign { expected_head, .. }
+        | Action::ChannelOwnerRecover { expected_head, .. }
+        | Action::ChannelOwnerCombine { expected_head, .. } => Store::open_pinned(
             &args.dir,
             &args.authority,
             pin,
@@ -1335,6 +1392,97 @@ fn run() -> Result<()> {
             )?)
             .map_err(|e| e.to_string())?
         ),
+        Action::ChannelOwnerInit {
+            owner_dir,
+            owner,
+            channel,
+            expected_head,
+        } => {
+            let agent = channel_owner::Agent::create(
+                &owner_dir,
+                &store,
+                Hash::from_hex(&channel).map_err(|e| e.to_string())?,
+                owner,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::json!({"binding":agent.binding(),"owner_head":agent.head()?,"initial_request":agent.initial_request(&store)?,"retain_head_separately":true,"first_signed":false,"live_rld":false})
+            );
+        }
+        Action::ChannelOwnerPrepare {
+            owner_dir,
+            file,
+            expected_owner_head,
+            expected_head,
+        } => {
+            let request: channel_owner::Request = read_json(&file)?;
+            let agent = channel_owner::Agent::open(&owner_dir, &store)?;
+            let review = agent.prepare(
+                &store,
+                &request,
+                Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::json!({"binding":agent.binding(),"request":request,"review":review,"owner_head":agent.head()?,"signed_or_reserved":false,"live_rld":false})
+            );
+        }
+        Action::ChannelOwnerSign {
+            owner_dir,
+            file,
+            key_file,
+            review,
+            expected_owner_head,
+            expected_head,
+        } => {
+            let response = channel_owner::Agent::open(&owner_dir, &store)?.sign(
+                &store,
+                read_json(&file)?,
+                &key_file,
+                Hash::from_hex(&review).map_err(|e| e.to_string())?,
+                Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&response).map_err(|e| e.to_string())?
+            );
+        }
+        Action::ChannelOwnerRecover {
+            owner_dir,
+            file,
+            review,
+            expected_owner_head,
+            expected_head,
+        } => {
+            let response = channel_owner::Agent::open(&owner_dir, &store)?.recover(
+                &store,
+                &read_json(&file)?,
+                Hash::from_hex(&review).map_err(|e| e.to_string())?,
+                Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&response).map_err(|e| e.to_string())?
+            );
+        }
+        Action::ChannelOwnerCombine {
+            file,
+            expected_head,
+        } => {
+            let combined = channel_owner::combine(
+                &store,
+                read_json(&file)?,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&combined).map_err(|e| e.to_string())?
+            );
+        }
         Action::WalletReceipt { file } => println!(
             "{}",
             serde_json::to_string(&wallet::receipt(&store, read_json(&file)?)?)

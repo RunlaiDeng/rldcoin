@@ -308,3 +308,75 @@ channel owner signing/receiver/watcher custody；需要明确签署/恢复契约
 核心 171 文件 `de74cf78...` 及新冻结正文/PDF/receipt 字节未变，原发行
 证据复用。完整原件、精确来源、失败与尚未获得资格的范围见
 [收据结果](../operations/evidence/regional-native-channel-receipt-outcome-20261004.json)。
+
+## 通道所有者首次签署：V4 地面保管组件
+
+V4 来源 `e2357a40...` / implementation `89bcf211...`、profile `6b51d0ca...`
+实现 `RLD-NATIVE-CHANNEL-OWNER-V1`。每个私有目录分别钉用途、准确
+currency/region/channel/profile/实际 owner；持有 OS 锁，保留初始状态及
+递增状态/发票的自身部分批准，持久化后才返回。没有保存或代签对手批准。
+初始化仍为 unsigned；准备/审核不签署、不给新币，也不接受收据。
+
+初始状态由完整原生认证的 open funding 派生；付款审核要求完整双方 prior
+状态、正确金额差、当前准确认证 checkpoint、足额成熟实际储备及正常事故
+谱系资格。unsigned review 是专用非授权路径：普通块、事故、收据接受及
+冷历史仍必须验证全部签名；单一部分、坏签名或 unsigned 收据不能接受。
+两个 owner 各自签署 state 和准确 invoice；native combine 完整认证双方，
+组合仍不改变账面，之后需原有收据接受。
+
+同目录最高“已签署”状态先落盘，不能以“尚未收款接受”撤销；下一付款必须
+提供与其准确一致的完整 prior state/receipt link 和新 invoice。journal 从完整
+保留记录重算链，完整校验每份签名、native prefix/epoch/finality、purpose、
+observation、prior-head 和 invoice；没有序号缓存授予权限。
+旧 owner/native head、不同或遗漏最高状态、坏 prior、错 key/purpose 拒绝。
+关闭之后新签署拒绝，准确恢复仅返回历史响应，不声称新付款或当前覆盖。
+
+`owner.next` 是准确一条已签响应的候选扩展。普通 open 只验证而不促进；
+正常 prepare/sign 在 pending 下拒绝。显式 recover-only 不读 key、不能首次
+签署：先绑定准确 reviewed request 与当前/最后一条 predecessor caller head，
+完整认证保留扩展，fsync 文件及 promote 后目录再释放原始 partial。坏签名、
+缺响应、错 review/head 不促进。CREATING/RESTORING 标记不允许打开或覆盖，
+publication 失败不返回批准、使该句柄拒绝继续，残留保持。
+原 128 记录与 8 MiB owner 上限不提高、不丢最高状态。
+
+首次编译因本模块 IO formatter 缺失和测试 review 名称遮蔽，4.660 秒拒绝，
+完整源/日志保留且未启动 fixture。修复后的 25 native channel 行为与全部
+targets 严格检查单次 180 秒预算内 50.408 秒通过。实际独立 CLI subprocess
+新签零分配 fixture：原生创建/审核/双方首次签署/组合/接受、删除测试 key 后
+keyless 原始恢复、单份/坏签名/unsigned 接受拒绝、同序号再签及旧头拒绝，
+42 steps / 5.605 秒通过，普通 U/E/T 始终不变。没有迁移旧值或保管。
+
+**仍不具备 owner 唯一 inception 与独立最新保护。** 本实现的锁与最高序号
+是 per-directory；新的同 key/channel 目录没有认证“从未有过旧保管”的证据。
+不能据此把 fresh create 当 restore、把幸存 caller head 可拒旧库推广成复制钥匙/
+全回滚安全，或宣称 S11 完成。后续先用同准确 native view、幸存旧 owner head
+和另一 fresh 目录判别是否还能首次签出矛盾 partial；若能，禁止扩大资格，
+实现不可绕过的 native inception/原 caller 续用契约再测试。native 元数据摘要
+不能成为 ledger、签署或独立新鲜度授权。
+
+通道 Open/Reserve/Close/Challenge action 的 native owner service、wallet-app
+pending/caller 头发布流程、完整加密 channel custody backup/recovery、真实
+process/power interruption、看守/包含、重组/实际窗口、全部网络/历史/PQC/
+独立/物理资格仍需继续。旧 `rld-value-successor` 严格检查独立保持
+`VALUE-STRICT-01 / OPEN`，本地区库 all-targets strict 不替代它。
+
+同一最终来源其余 184 shared Native 回归单次 300 秒预算内 222.917 秒通过，
+跳过已过的 25 行为/strict/CLI，同来源共 209 Native 检查。
+核心 171 文件及冻结正文/PDF/receipt 未改，原发行证据继续复用。
+
+**创建缺口已实际证伪，不是未观察猜测。** 一次全新无价值 fixture 的独立
+controller 在同一原生认证视图、原 owner 最新头和旧私有日志仍存活时，
+另一 fresh 目录仍能用同测试 key 初始化，然后首次签出序号 1 / 分配 40/20；
+原有效自身部分批准同为序号 1 / 分配 50/10。两份 own state 签名实际验证
+通过，counterparty 未重置、第二 receipt 未接受、所有账面与旧头保持。
+该 6.170 秒反例的 completed 只表示已观察到失败，不表示 inception 安全通过。
+完整新源/私有 fixture 保留；不能把209回归与正常CLI通过称为 S11/独立保管通过。
+
+下一可证伪假设：幸存 caller head 下，另一同 owner/channel 目录不能消除
+原最高签署状态；缺独立最新见证时保持只读。先定义完整 authenticated
+inception/continuation 与 witness 的 authority、用途、scope、conflict/failclosed
+契约，拒绝自证环、hash-only 以及从 birth/备份观察自行采用最新头；再开发
+准确 reset 拒绝及原保管续用/恢复。变更 native 来源必须新签无价值 fixture。
+单次新 focused/strict 180 秒，单次必要实际CLI反例120秒，网络 campaign预算0；
+遇失败/完成/预算即停，保留原件，不能降低规则或原样再试。
+实际反例与所有边界见[所有者签署结果](../operations/evidence/regional-native-channel-owner-outcome-20261005.json)。

@@ -2,15 +2,15 @@ use super::*;
 use crate::{channel_receipt as r, channels as c};
 use channel_integration::{command, funding, parties, signed_state};
 use std::{fs, os::unix::fs::PermissionsExt};
-fn selected(node: &mut Store, commands: Vec<Command>) {
+pub(crate) fn selected(node: &mut Store, commands: Vec<Command>) {
     let mut block = node.template(commands, public(10)).unwrap();
     mine(&mut block).unwrap();
     node.accept(block).unwrap();
 }
-fn certify(node: &mut Store) {
+pub(crate) fn certify(node: &mut Store) {
     node.finalize(checkpoint(&node.chain, &node.trust)).unwrap();
 }
-fn setup(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>) {
+pub(crate) fn setup(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>) {
     let root = fs::canonicalize(std::env::temp_dir())
         .unwrap()
         .join(format!(
@@ -72,7 +72,7 @@ fn initial(node: &Store, channel: Hash) -> c::SignedState {
         [Amount(60), Amount::ZERO],
     )
 }
-fn receipt(
+pub(crate) fn receipt(
     node: &Store,
     reserve: Hash,
     invoice: u64,
@@ -133,7 +133,7 @@ fn sign_invoice(receipt: &mut r::Receipt) {
         .collect();
     receipt.approvals.sort_by(|a, b| a.key.cmp(&b.key));
 }
-fn head(root: &std::path::Path) -> Hash {
+pub(crate) fn head(root: &std::path::Path) -> Hash {
     history::manifest(&root.join("earth"))
         .unwrap()
         .head()

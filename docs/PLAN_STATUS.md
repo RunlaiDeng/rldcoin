@@ -1,6 +1,6 @@
 # RLDCOIN 当前交付状态
 
-更新：2026-10-04。仅全新无价值地面测试候选；退役主网、旧余额和失败保管不迁移。
+更新：2026-10-05。仅全新无价值地面测试候选；退役主网、旧余额和失败保管不迁移。
 总目标：[冻结白皮书实施验收](WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md)的 S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8，
 以用户授权编辑修订的正文 `2ba62421...` / PDF `c59f9fe8...` 及[冻结记录](WHITEPAPER_FREEZE_RECEIPT.json)为准；
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
@@ -162,6 +162,29 @@ contacts/receipts 共用原 256 上限，分页/逻辑/事件/档案界限保持
 下一主线为 purpose-bound 首次状态/发票签署、最高签署序号及 exact response
 恢复的原生保管契约和反例。网络 campaign 新预算仍为零。见
 [原生收据结果](operations/evidence/regional-native-channel-receipt-outcome-20261004.json)。
+
+V4 原生 owner 签署组件来源 `e2357a40...` / implementation `89bcf211...`，
+在单独私有日志中先持久化自身 initial/state/invoice partial，再返回响应。
+准确 current native/owner heads、完整 funding/prior state、金额差和成熟储备
+必须满足；另一份同序号请求、坏签名/头、未完成创建和发布残留拒绝。
+keyless recover-only 只促进准确已签的一条 pending response，普通 open 不促进，
+缺签名不首次签。两实际 owner partial 经 native combine 后仍需完整 receipt
+接受，普通账面不变；只给一份或 unsigned 不能接受。
+首次 compile 的局部 IO/review错误保留；修正后25 native行为及all-targets
+strict 50.408秒、实际CLI42steps/5.605秒通过；余184回归单次300秒内
+222.917秒通过，已过25/strict/CLI未重复，共209检查。旧价值库
+`VALUE-STRICT-01` 仍独立 OPEN，无 production豁免，冻结正文/PDF不变。
+
+**同来源的 owner 创建安全仍失败。** 最小新目录反例6.170秒确认：原最新
+头/日志仍存在、native view不变，同key的新目录仍能签另一序号1分配
+40/20的有效own partial，原partial为50/10。对手未重置、第二收据未接受，
+账面与旧头保持；反例完成不能称inception/防重置通过。现有锁/最高序号仅
+保护一个目录，不能把fresh create当合格restore或声称S11成立。
+下一主线绑定完整原保管inception/continuation与独立最新见证；缺见证只读。
+新source后单次180秒focused/strict及一次120秒必要CLI判别，网络预算0；
+普通wallet-app、channel action signing、encrypted channel backup、真实中断/
+重组/看守/完整窗口/网络/PQC/独立/历史/物理继续未完成。见
+[所有者签署及失败反例](operations/evidence/regional-native-channel-owner-outcome-20261005.json)。
 
 当前父块 Prepare 的已认证停止观察显示约 40.180 秒来源等待，其间 20 次准备因本地争用拒绝。
 四固定邻居、四尝试槽的旧游标每轮起点不变。实际 TLS 周期争用反例只服务 2/4 邻居；

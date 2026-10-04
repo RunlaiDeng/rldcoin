@@ -252,6 +252,14 @@ pub(crate) fn verify_pinned_image(
     Ok(())
 }
 impl Store {
+    pub(crate) fn require_storage_head(&self, expected: Hash) -> Result<()> {
+        require(
+            self.healthy
+                && !expected.is_zero()
+                && crate::history::manifest(&self.dir)?.head()? == expected,
+            "healthy native store and separately retained exact current storage head required",
+        )
+    }
     pub fn accept_channel_receipt(
         &mut self,
         receipt: crate::channel_receipt::Receipt,

@@ -6,19 +6,19 @@ use storage::Store;
 #[path = "channel_conflict_tests.rs"]
 mod channel_conflicts;
 #[path = "channel_integration_tests.rs"]
-mod channel_integration;
+pub(crate) mod channel_integration;
 #[path = "channel_tests.rs"]
 mod channel_kernel;
 #[path = "channel_receipt_tests.rs"]
-mod channel_receipts;
-fn public(seed: u8) -> String {
+pub(crate) mod channel_receipts;
+pub(crate) fn public(seed: u8) -> String {
     hex::encode(
         SigningKey::from_bytes(&[seed; 32])
             .verifying_key()
             .to_bytes(),
     )
 }
-fn signature(seed: u8, bytes: &[u8]) -> String {
+pub(crate) fn signature(seed: u8, bytes: &[u8]) -> String {
     sign_bytes(&hex::encode([seed; 32]), bytes).unwrap()
 }
 fn keys() -> Vec<u8> {

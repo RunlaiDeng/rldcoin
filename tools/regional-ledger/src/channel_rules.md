@@ -1,4 +1,4 @@
-# RLD-REGIONAL-CHANNEL-KERNEL-V3
+# RLD-REGIONAL-CHANNEL-KERNEL-V4
 
 Native signature/value component only. This is not a complete protocol profile,
 ordinary node activation, signing custody, incident resolution or value migration.
@@ -58,3 +58,17 @@ reserve, fee budget and previous receipt/state IDs. The challenge rule's floor
 remains one runlai; a receiver can pin a larger signed budget. One actual mature
 unconsumed reservation must cover that entire budget and its owner delegation.
 The 16-reserve limit is a maximum, never a minimum for receipt acceptance.
+
+The separate RLD-NATIVE-CHANNEL-OWNER-V1 purpose binds exact currency, region,
+profile, channel and owner. One separately locked private journal per actual
+party retains initial and increasing state plus invoice partials before release.
+Every historical partial fully authenticates its complete native-replayed
+funding/prior state and exact observed checkpoint; subsequent signing binds
+the exact highest own signed state and previous receipt with unique invoices.
+Only explicit recover-only may fsync/promote an exact already signed one-record
+tail under the caller's retained transition head. No key is read in recovery.
+Each journal retains at most 128 records / 8 MiB; no records are discarded.
+Current native and owner heads must be separately supplied, never adopted from
+a backup. Combined partials grant no acceptance, ledger credit or new funds.
+Incomplete creation refuses unchanged; no restore, independent freshness,
+copied-key concurrency, monitoring/inclusion or physical qualification follows.

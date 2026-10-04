@@ -1,4 +1,4 @@
-# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V3
+# RLD-NATIVE-VALUE-CHANNEL-PROFILE-V4
 
 Fresh no-value admission only. Both native BFT-value-channel and segmented-
 value-channel admissions sign the exact content identity of this profile,
@@ -34,7 +34,7 @@ minted+received equals liquid+escrow+historical outbound after every block.
 Local authenticated incidents stop dependent new transitions without deleting
 liabilities. All newly generated channel outputs inherit complete lineage.
 
-No first channel owner signing/custody, general off-chain observation or incident
+No independent channel owner custody, general off-chain observation or incident
 resolution, cross-device
 custody, independent latest protection, BFT long history, full protocol or
 physical route qualification follows from this ground admission. Those remain
@@ -85,4 +85,19 @@ Cold replay streams all receipt events from genesis; no saved highest-sequence
 cache grants authority. Contact and receipt records share the unchanged total
 256 bound; events use existing page/logical/event/file bounds. Older formats
 and values do not migrate. Current local heads still cannot prove all-state/head
-rollback, independent freshness, first signing or copied-key protection.
+rollback, independent freshness or copied-key protection. The separately
+defined native ground owner service below is not independent custody qualification.
+
+The separate RLD-NATIVE-CHANNEL-OWNER-V1 purpose binds exact currency, region,
+profile, channel and owner. One separately locked private journal per actual
+party retains initial and increasing state plus invoice partials before release.
+Every historical partial fully authenticates its complete native-replayed
+funding/prior state and exact observed checkpoint; subsequent signing binds
+the exact highest own signed state and previous receipt with unique invoices.
+Only explicit recover-only may fsync/promote an exact already signed one-record
+tail under the caller's retained transition head. No key is read in recovery.
+Each journal retains at most 128 records / 8 MiB; no records are discarded.
+Current native and owner heads must be separately supplied, never adopted from
+a backup. Combined partials grant no acceptance, ledger credit or new funds.
+Incomplete creation refuses unchanged; no restore, independent freshness,
+copied-key concurrency, monitoring/inclusion or physical qualification follows.

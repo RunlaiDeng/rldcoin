@@ -60,6 +60,27 @@ impl Receipt {
     /// Authenticates the complete already-native-replayed certified observation.
     /// Historical validity grants no present coverage, spendability or freshness.
     pub(crate) fn verify_anchor(&self, trust: &Trust, evidence: &VerifiedEvidence) -> Result<()> {
+        self.verify_anchor_inner(trust, evidence, true)
+    }
+    /// Non-authorizing owner review only. Never used by receipt acceptance,
+    /// history replay, block execution or conflict authentication.
+    pub(crate) fn verify_unsigned_anchor(
+        &self,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+    ) -> Result<()> {
+        require(
+            self.next.approvals.is_empty() && self.approvals.is_empty(),
+            "owner draft must contain no next-state or invoice approvals",
+        )?;
+        self.verify_anchor_inner(trust, evidence, false)
+    }
+    fn verify_anchor_inner(
+        &self,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+        complete: bool,
+    ) -> Result<()> {
         encode("complete-channel-receipt", self)?;
         evidence.check_trust(trust)?;
         let s = &self.statement;
@@ -103,7 +124,11 @@ impl Receipt {
             "receipt payer/recipient must be exact different channel parties",
         )?;
         escrow.verify_state(&self.prior, e.channel, &native.declaration)?;
-        escrow.verify_state(&self.next, e.channel, &native.declaration)?;
+        if complete {
+            escrow.verify_state(&self.next, e.channel, &native.declaration)?;
+        } else {
+            escrow.verify_statement(&self.next.statement, e.channel, &native.declaration)?;
+        }
         require(
             s.previous_state == state_id(&self.prior)?
                 && s.next_state == state_id(&self.next)?
@@ -126,12 +151,15 @@ impl Receipt {
                     == Some(self.next.statement.payouts[recipient]),
             "invoice amount differs from exact conserved party allocation delta",
         )?;
-        require(
-            self.approvals.len() == 2 && self.approvals.iter().map(|a| &a.key).eq(parties.iter()),
-            "complete ordered joint invoice receipt approvals required",
-        )?;
-        for approval in &self.approvals {
-            verify_bytes(&approval.key, &s.bytes()?, &approval.signature)?;
+        if complete {
+            require(
+                self.approvals.len() == 2
+                    && self.approvals.iter().map(|a| &a.key).eq(parties.iter()),
+                "complete ordered joint invoice receipt approvals required",
+            )?;
+            for approval in &self.approvals {
+                verify_bytes(&approval.key, &s.bytes()?, &approval.signature)?;
+            }
         }
         let reserve = native
             .book
@@ -154,6 +182,9 @@ impl Receipt {
         evidence: &VerifiedEvidence,
     ) -> Result<()> {
         self.verify_anchor(trust, evidence)?;
+        self.check_selected(chain, evidence)
+    }
+    pub(crate) fn check_selected(&self, chain: &Chain, evidence: &VerifiedEvidence) -> Result<()> {
         let s = &self.statement;
         let checkpoint = evidence.snapshot(s.checkpoint)?;
         require(
@@ -166,7 +197,7 @@ impl Receipt {
             "receipt requires exact currently selected certified native observation",
         )
     }
-    fn check_safety(&self, node: &Store) -> Result<()> {
+    pub(crate) fn check_safety(&self, node: &Store) -> Result<()> {
         let e = &self.statement.expected;
         node.safety.check_region(e.region)?;
         let native = node

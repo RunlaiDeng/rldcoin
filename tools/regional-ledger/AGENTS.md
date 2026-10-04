@@ -112,3 +112,31 @@ acceptance and explicit same-sequence detection do not qualify first owner
 signing, highest signed sequence custody, all-state/head rollback, copied keys,
 monitoring/inclusion, reorganization, full network faults or independent/physical
 operation. Local externally supplied heads are not independent latest proof.
+
+The V4 value-channel admissions/kernel bind the separate
+`RLD-NATIVE-CHANNEL-OWNER-V1` ground service. Each private locked directory pins
+purpose, exact profile/currency/region/channel and one actual funded party.
+Retain that party's own initial-state and increasing state/invoice partials
+before response release. Payment review authenticates the complete prior state,
+exact native certified observation, amount delta and adequate mature reserve;
+it never authorizes receipt acceptance or a block. Full native combine/accept
+still requires both actual parties. Subsequent signing must bind the exact
+highest signed state and previous receipt with unique invoices, even when the
+previous partial has not been accepted as a payment.
+
+Native and owner caller heads remain separate and explicitly supplied. Normal
+open never promotes `owner.next`; explicit keyless recover-only can fsync and
+promote one fully authenticated exact retained signed extension under the caller
+transition head. Missing/malformed response, old head, incomplete creation or
+failed persistence refuses; retain residue. All historical request/approval
+bytes and observed native prefixes fully validate before any response. Keep
+128 records / 8 MiB per owner journal; no pruning or highest-sequence cache.
+
+This is per-directory custody. Current fresh-directory creation does not prove
+that the same owner/channel never had another journal: copied keys, fresh-key
+provenance, unique native inception and independent latest/common-rollback
+protection remain open. Do not treat a new directory as qualified restoration
+or declare S11 satisfied. Channel action signing, wallet-app caller integration,
+encrypted complete channel-custody backup, actual process/power interruption,
+watcher/inclusion, reorganization/full-window/history, network and independent
+physical qualifications still need their own implementation and evidence.

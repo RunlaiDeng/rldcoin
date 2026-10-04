@@ -1,11 +1,11 @@
 //! Native typed signature/value kernel; no block/custody/storage activation.
 //! Inputs must come from ordinary full native replay, never a decoded cache.
 use super::*;
-pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V3";
+pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V4";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
-pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V3";
-pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V3";
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V4";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V4";
 pub fn is_profile(rules: &str) -> bool {
     rules == BFT_RULES || rules == SEGMENTED_RULES
 }
@@ -265,8 +265,21 @@ impl Escrow {
         channel: Hash,
         declaration: &Declaration,
     ) -> Result<()> {
-        let (parties, capacity, initial) = self.terms()?;
-        let statement = &state.statement;
+        self.verify_statement(&state.statement, channel, declaration)?;
+        let (parties, _, _) = self.terms()?;
+        actors(
+            &state.approvals,
+            &parties.iter().cloned().collect(),
+            &state.statement.bytes()?,
+        )
+    }
+    pub(crate) fn verify_statement(
+        &self,
+        statement: &StateStatement,
+        channel: Hash,
+        declaration: &Declaration,
+    ) -> Result<()> {
+        let (_, capacity, initial) = self.terms()?;
         require(
             statement.currency == declaration.currency
                 && statement.region == declaration.region
@@ -274,11 +287,6 @@ impl Escrow {
                 && (statement.sequence != 0 || statement.payouts == initial)
                 && sum(statement.payouts.iter().copied())? == capacity,
             "channel state identity or capacity differs",
-        )?;
-        actors(
-            &state.approvals,
-            &parties.iter().cloned().collect(),
-            &statement.bytes()?,
         )
     }
 }
