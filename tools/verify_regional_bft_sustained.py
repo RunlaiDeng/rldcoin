@@ -31,6 +31,52 @@ def files(root):
     return result
 
 
+def executed_controller_binding(stage, run, controller_source=None, controller_manifest=None):
+    """Bind a separately frozen executed controller; never substitute node authority."""
+    if (controller_source is None) != (controller_manifest is None):
+        raise ValueError('both controller source and manifest required')
+    if controller_source is None:
+        if sha(stage/'tools/regional_bft_sustained_campaign.py')!=run['drill_source_sha256']:
+            raise ValueError('executed drill source differs')
+        return None
+    if any(p.is_symlink() for path in (controller_source,controller_manifest) for p in [path,*path.parents]):
+        raise ValueError('controller symlink refused')
+    source=controller_source.resolve()
+    if controller_manifest.stat().st_size>8*1024*1024:
+        raise ValueError('bounded controller manifest required')
+    manifest=json.loads(controller_manifest.read_text())
+    rows=manifest['files']
+    if not isinstance(rows,list) or not 1<=len(rows)<=4096:
+        raise ValueError('bounded controller inventory required')
+    commitment=hashlib.sha256(json.dumps(rows,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+    if commitment!=manifest['source_set_sha256'] or manifest['fixture_only'] is not True or manifest['live_rld'] is not False:
+        raise ValueError('controller inventory commitment/domain differs')
+    names=set()
+    for row in rows:
+        name=row['path'];relative=Path(name)
+        if relative.is_absolute() or relative.as_posix()!=name or '..' in relative.parts or name in names:
+            raise ValueError('controller inventory path differs')
+        names.add(name);path=source/relative
+        if (not path.resolve().is_relative_to(source) or any(p.is_symlink() for p in [path,*path.parents])
+                or not path.is_file() or path.stat().st_size!=row['size_bytes'] or sha(path)!=row['sha256']):
+            raise ValueError('frozen controller source changed: '+name)
+    retained=set()
+    for path in source.rglob('*'):
+        if path.is_symlink():raise ValueError('controller symlink refused')
+        if path.is_file():retained.add(path.relative_to(source).as_posix())
+    if retained!=names or manifest.get('file_count',len(rows))!=len(rows):
+        raise ValueError('complete controller inventory differs')
+    executed={'drill_source_sha256':'tools/regional_bft_sustained_campaign.py',
+              'value_auditor_sha256':'tools/regional_ground_value.py',
+              'contact_meter_sha256':'tools/regional_ground_relay.py'}
+    for field,name in executed.items():
+        if name not in names or run.get(field)!=sha(source/name):
+            raise ValueError('executed controller component differs: '+field)
+    return dict(source_set_sha256=commitment,manifest_sha256=sha(controller_manifest),
+                complete_inventory_verified=True,executed_components=dict(executed),
+                controller_manifest_node_pin_not_used_as_native_authority=True)
+
+
 def verify(args, joint=False):
     stage=args.source.resolve();root=args.root.resolve();binary=args.binary.resolve()
     manifest=json.loads(args.manifest.read_text());run=json.loads(args.run_report.read_text())
@@ -41,8 +87,8 @@ def verify(args, joint=False):
         p=stage/entry['path']
         if not p.resolve().is_relative_to(stage) or any(q.is_symlink() for q in [p,*p.parents]) or not p.is_file() or p.stat().st_size!=entry['size_bytes'] or sha(p)!=entry['sha256']:
             raise ValueError('frozen source changed: '+entry['path'])
-    if sha(stage/'tools/regional_bft_sustained_campaign.py')!=run['drill_source_sha256']:
-        raise ValueError('executed drill source differs')
+    controller_binding=executed_controller_binding(stage,run,
+        getattr(args,'controller_source',None),getattr(args,'controller_manifest',None))
     expected_format='RLD-JOINT-BFT-SUSTAINED-GROUND-CAMPAIGN-V1' if joint else 'RLD-REGIONAL-BFT-SUSTAINED-GROUND-CAMPAIGN-V3'
     if run['format']!=expected_format:raise ValueError('explicit fault profile differs')
     if not (run['completed'] and run['fixture_only'] and not run['live_rld']
@@ -175,6 +221,7 @@ def verify(args, joint=False):
             'joint_missing_leader_certificate':joint_view_change,
             'within_recorded_observation_bounds':all(p['elapsed_seconds']<=p['observation_bound_seconds'] for p in run['observations']),
             'sustained_BFT_liveness_qualified':False,'independent_operators_qualified':False,'cross_host_qualified':False,'power_loss_qualified':False,'physical_route_qualified':False}
+    if controller_binding is not None:report['separate_controller_binding']=controller_binding
     args.report.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'cold_verified':True,'native_replays':12,'authenticated_archive_records':sum(r['archived_records'] for r in archive_rows)}))
 
@@ -182,6 +229,7 @@ def verify(args, joint=False):
 def main(joint=False):
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('source','manifest','run-report','binary','root','report'):parser.add_argument('--'+name,type=Path,required=True)
+    for name in ('controller-source','controller-manifest'):parser.add_argument('--'+name,type=Path)
     args=parser.parse_args()
     try:verify(args,joint=joint)
     except Exception as error:

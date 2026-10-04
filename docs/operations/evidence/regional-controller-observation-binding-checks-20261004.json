@@ -1,0 +1,49 @@
+{
+  "format": "RLD-CONTROLLER-OBSERVATION-BINDING-CHECKS-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "phases": [
+    {
+      "scope": "binding",
+      "tests": 18,
+      "duration_seconds": 0.057,
+      "passed": true,
+      "log_sha256": "81fc78e335b27d4a66a37aab1b89a3a8ae6f3707fd905c6d13cffa1b07fa1c68"
+    },
+    {
+      "scope": "pending",
+      "tests": 8,
+      "duration_seconds": 0.041,
+      "passed": true,
+      "log_sha256": "95d1c8f31c1f53a4d2b892f8c4df74b11200a51212a69e23650230f7e5965142"
+    },
+    {
+      "scope": "related_cold",
+      "tests": 45,
+      "duration_seconds": 1.409,
+      "passed": true,
+      "log_sha256": "2aef4dec6143d723d99b25a8ab9c6c961f60863aca1898c82ed943da7ab1ae39"
+    },
+    {
+      "scope": "related_campaign",
+      "tests": 16,
+      "duration_seconds": 0.618,
+      "passed": true,
+      "log_sha256": "300b9232875e7aef6edc6eaa6e50354811230b7be681deaa3b701abfb61b241e"
+    }
+  ],
+  "final_tests_passed": 87,
+  "node_source_set_sha256": "67ad71f18be1578005caab76689297d7b12f8ba1d46c9e804bc72ced6fd2d858",
+  "node_binary_sha256": "3019b6d9072673c0c05c99bc8d4f43bcd5998bda0a53e98c7c9d1e919be4f713",
+  "node_runtime_and_native_unchanged": true,
+  "cycle_controller_source_set_sha256": "50259ae2b36b96272e8676f7a0630fc314d7b34d1a25891b6a7f9e2f707640d2",
+  "separate_verifier_source_set_sha256": "4bb57a09e076b25ac6d74f3c1dde0352cf8f2e8fc8f8372a4d6987ad9c4ead09",
+  "retained_null_counterexample_sha256": "3f0ededea5187527501909c1a785d4e2b032f654b48a093c2925b537d07d10c9",
+  "actual_separate_controller_component_sha256": "2c6bc8738e963b1d2c10382dca827b86da15e402cc69d6309a71d95542218dc1",
+  "source_ancestor_symlink_negative_checks_passed": true,
+  "initial_related_check_missing_binary_environment_preserved": true,
+  "failed_cycle_still_failed": true,
+  "failed_cold_report_sha256": "1f87a62fd5478f8166d6f62379349704adbf00ba3adc7fe94aefbb66f2fe8824",
+  "no_new_full_fault_qualification": true
+}

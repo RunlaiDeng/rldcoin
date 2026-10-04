@@ -1,0 +1,29 @@
+{
+  "format": "RLD-SEPARATE-FAULT-CONTROLLER-VERIFIER-SOURCE-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "file_count": 3,
+  "files": [
+    {
+      "path": "tools/test_regional_bft_controller_binding.py",
+      "size_bytes": 9919,
+      "sha256": "291ecea9b792a6d7e74b6dcccc981a39f6e50f56db0889bf785b5b1c030b521e"
+    },
+    {
+      "path": "tools/verify_regional_bft_joint_sustained.py",
+      "size_bytes": 196,
+      "sha256": "03f4d22582126cf1309e227ff0390f6852cb05f4af20e82b6e058e3dd9af1a44"
+    },
+    {
+      "path": "tools/verify_regional_bft_sustained.py",
+      "size_bytes": 17276,
+      "sha256": "f291f88bd6cd5a068d5703898b4a4d428ab6f8ed0dc37f173cbd6f07073a99a4"
+    }
+  ],
+  "source_set_sha256": "4bb57a09e076b25ac6d74f3c1dde0352cf8f2e8fc8f8372a4d6987ad9c4ead09",
+  "node_source_set_sha256": "67ad71f18be1578005caab76689297d7b12f8ba1d46c9e804bc72ced6fd2d858",
+  "separate_controller_source_set_sha256": "20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7",
+  "node_runtime_not_modified": true,
+  "native_cold_replay_and_custody_checks_unchanged": true,
+  "failed_or_recovery_profile_cannot_qualify": true
+}

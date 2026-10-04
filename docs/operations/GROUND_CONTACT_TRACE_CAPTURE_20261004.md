@@ -190,3 +190,39 @@ Native/core 字节未变；默认驱动实际重建，528 项完整回归 286.38
 下一单次普通循环使用精确重建驱动、新签无价值 genesis 与全新目录，默认追踪关闭；
 只有循环/严格停止冷核验通过后才决定新的有限故障预算，当前完整故障预算仍为零。
 若普通循环失败，保留现场并按停止核验/新反例判别，不原样重复。
+
+### 新普通范围的控制器观察失败与独立修复
+
+第一份默认关闭追踪的新普通范围在 346.082 秒后失败并干净停止；已达 E8/P4/A0，
+32 次正常启动。保留的仙女座副本 1 状态明确 `native_observation_available=false`
+且观察为 null；原控制器 pending 谓词直接下标造成 TypeError，未完成价值返程。
+31.436 秒严格停止检查通过：12 原生、4 收款观察、4 时代保管、492 完整信封、
+1,088 运输档案；私有字节和权限完全未变。没有恢复或改写其值/头/失败报告。
+
+控制器现在只把不可用或 null 的可选观察返回为等待未知；仍需全部四副本正常
+观察与原有每条出口记录判据，不制造高度/导入，不重置 600 秒截止。原状态字节
+对照证实旧谓词抛错、新谓词返回未知；8 项冻结控制器检查及 16 项相关检查通过。
+节点来源 `67ad71...` 与二进制 `3019b6...` 保持逐字节不变，控制器三文件单独冻结
+`50259ae2b36b96272e8676f7a0630fc314d7b34d1a25891b6a7f9e2f707640d2`；
+执行其入口使实际导入 corrected Campaign，其他依赖固定到原节点来源。
+
+下一完整有限故障的停止核验发现独立控制器来源绑定缺口，提前修复：默认路径
+仍要求节点目录中精确 drill；显式分离路径核对完整控制器清单、全部规范路径及
+父目录无链接、实际 drill/价值审计/密文计量三个摘要，再执行全部原冷检查。旧
+控制器 manifest 的历史节点 pin 不提供 Native 权。分离核验三文件冻结
+`4bb57a09e076b25ac6d74f3c1dde0352cf8f2e8fc8f8372a4d6987ad9c4ead09`；
+18 项冻结检查与 45 项相关检查通过，同一旧失败仍在原生阶段前被拒绝。首次相关
+检查缺少测试所需二进制环境，原日志保留；补齐准确冻结二进制后通过，无代码降级。
+
+新控制器单次普通范围预算为 1；只有完整返程及严格冷核验通过后，才决定新有限
+故障范围，当前故障预算仍为零。若失败，保留原件、停止冷核验并换最小判别；
+不得原样重复、改付款、抬上限、放宽成熟或把历史失败回写为通过。
+
+证据：`evidence/regional-bounded-ordinary-preference-three-region-cycle-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-three-region-failed-cold-observations-20261004.json`、
+`evidence/regional-bounded-ordinary-preference-pending-observation-counterexample-20261004.json`、
+`evidence/regional-retained-pending-observation-component-20261004.json`、
+`evidence/regional-pending-observation-cycle-controller-source-20261004.json`、
+`evidence/regional-separate-fault-controller-verifier-source-20261004.json`、
+`evidence/regional-controller-observation-binding-checks-20261004.json`、
+`evidence/regional-pending-observation-stage-decision-20261004.json`。

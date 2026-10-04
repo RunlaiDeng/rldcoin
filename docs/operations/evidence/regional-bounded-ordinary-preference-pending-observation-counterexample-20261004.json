@@ -1,0 +1,45 @@
+{
+  "format": "RLD-PENDING-OBSERVATION-NULL-COUNTEREXAMPLE-V1",
+  "completed_counterexample": true,
+  "fixture_only": true,
+  "failed_cycle_preserved": true,
+  "telemetry_not_native_ledger_authority": true,
+  "failed_cycle_report_sha256": "bea97f4e517a684327d4eda5cbe276131f06a38150876c4d8be570c3d614bdbd",
+  "andromeda_stopped_status_metadata": [
+    {
+      "replica": 0,
+      "status_sha256": "13d5d3f4b95ff4d6bf8d6dd2149453d1bbaf982c61959f944af40f8300218356",
+      "native_observation_available": true,
+      "native_observation_is_null": false,
+      "consensus_progress_available": null,
+      "errors_recorded": 0
+    },
+    {
+      "replica": 1,
+      "status_sha256": "d5413ab36a8c587b53210d1496f552a19781e861f71ebd6d28554542de5859b1",
+      "native_observation_available": false,
+      "native_observation_is_null": true,
+      "consensus_progress_available": null,
+      "errors_recorded": 2
+    },
+    {
+      "replica": 2,
+      "status_sha256": "17ddeceb8ee47adc7f5656f8808860277c5fb2d9c053c37b8590528e93710638",
+      "native_observation_available": true,
+      "native_observation_is_null": false,
+      "consensus_progress_available": null,
+      "errors_recorded": 0
+    },
+    {
+      "replica": 3,
+      "status_sha256": "55b90444d2d462b85a3e484e0014d5e690402651bd8b0f235844a5e0e670bf54",
+      "native_observation_available": true,
+      "native_observation_is_null": false,
+      "consensus_progress_available": null,
+      "errors_recorded": 0
+    }
+  ],
+  "exception": "TypeError: None native_observation subscripted by ordinary controller pending predicate",
+  "native_authority_not_reconstructed_from_status": true,
+  "failed_profile_not_upgraded": true
+}

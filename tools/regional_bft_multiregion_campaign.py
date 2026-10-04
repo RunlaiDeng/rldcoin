@@ -179,7 +179,9 @@ class Campaign(NetworkCampaign):
 
     def pending(self,name,eid):
         for key in self.region_keys(name):
-            value=self.observation(key)['native_observation']
+            observed=self.observation(key)
+            value=observed['native_observation']
+            if observed.get('native_observation_available') is not True or value is None:return False
             records=[r for r in value['contacts'] if r['export']==eid]
             if not records or not all(r['evidence_verified'] and not r['import_accepted'] for r in records):return False
         return True

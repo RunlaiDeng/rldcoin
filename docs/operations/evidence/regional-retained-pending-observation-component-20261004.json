@@ -1,0 +1,15 @@
+{
+  "format": "RLD-RETAINED-PENDING-OBSERVATION-COMPONENT-V1",
+  "completed": true,
+  "fixture_only": true,
+  "original_predicate_actual_TypeError": true,
+  "corrected_predicate_same_saved_null_bytes_returns_unknown_false": true,
+  "saved_process_id_comparison_only_not_live_process_freshness": true,
+  "status_sha256": "d5413ab36a8c587b53210d1496f552a19781e861f71ebd6d28554542de5859b1",
+  "old_controller_sha256": "6bf573c175c72cc292ecb1681a2f76109840304a39fb0fb7d304609bb4d087a4",
+  "new_controller_sha256": "3cbb5473b2e32acdf2b8bd0822f9c43dcdd6380531d46ef44395f7ff6a426f49",
+  "failed_source_not_restarted_or_changed": true,
+  "no_native_wallet_signing_or_runtime_calls": true,
+  "payment_value_not_authorized_from_metadata": true,
+  "producer_sha256": "b98a8d6d481a4d820c4807a265870171c4db6bf852a67fec003f8ace37d8dcd1"
+}
