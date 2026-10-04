@@ -45,6 +45,14 @@ Native、默认二进制、票数、成熟、容量、600 秒阶段/60 秒轮/24
 独立 signer/caller 头匹配，pending/outbox 均无遗留。该观察源于已完全冷认证的原信封，
 不组合证书、不安装区块、不证明具体实时调度原因，也不把缺签解释为异常签署许可。
 
+后续只读路径检查完成，四份 Proxima 运输状态重新认证且私有字节不变：
+5 份当前父块本地完整信封形成 15 条目标路径，7 条目标已保留完全相同信封，
+其余 8 条既无目标回执、也无目标 BFT 信封。源与中继仍保留待传包。
+其中 P1 Prepare 到 P2/P3 留在 P1；P2 Proposal/Prepare 到 P0 留在 P2；
+P2 Prepare 到 P1 留在 P2；P3 Prepare 到 P0 已到 P2；
+P0 Timeout 到 P2/P3 已到 P1。该停止快照将缺口定位到尚未取得目标保管的路径，
+不能推出当时服务时间、首次失败位置或计量器的因果影响，也不能手工补票继续失败范围。
+
 后续须定位完整已签控制消息在普通调度、实际接触和 Native 接受之间的停留，
 同时完成 CPU/内存、fsync 与未交付等待预算。先取得真实路径/分配与服务成本证据，
 不凭 RSS 推断缓存泄漏或 CPU 原因，不用新微优化版本代替持续负载/长期历史门槛。
@@ -62,4 +70,5 @@ macOS 子进程 CPU 观察另有能力检查：`ps -S` 未通过实际退出子�
 `regional-ground-metered-failed-evidence-binding-20261004.json`、
 `regional-ground-metered-joint-fault-owner-head-observations-20261004.json`、
 `regional-ground-metered-proxima-stopped-parent-observations-20261004.json`、
+`regional-ground-metered-fault-current-proxima-path-observations-20261004.json`、
 `regional-ground-child-cpu-capability-20261004.json`。

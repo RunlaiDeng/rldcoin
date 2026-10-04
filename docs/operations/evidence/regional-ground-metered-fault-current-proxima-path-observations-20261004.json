@@ -1,0 +1,1037 @@
+{
+  "format": "RLD-JOINT-LOOP-STOPPED-CURRENT-PROXIMA-PATH-OBSERVATIONS-V1",
+  "completed": true,
+  "source_set_sha256": "8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199",
+  "strict_stopped_report_sha256": "9433a82f001cdee0ddb2dde08c9898fdc64e49f410a5d73ec372662068a64d19",
+  "observer_sha256": "cf71ae450cc2e3878c58baef9491e63d156db662e2e64c3a3c759dae7d328945",
+  "native_current_parent_heights": {
+    "0": 14,
+    "1": 14,
+    "2": 14,
+    "3": 14
+  },
+  "selected_local_envelopes": 5,
+  "rows": [
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "strict_native_source_height": 14,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "65e487206f895e057a93b467f2c6f1a66dacd1bcedb68df19ac494c94c3c9d34",
+      "signed_body_id": "027d7153731593851c520ac677bc0482d35ff64f341c54e5c8291490ad72e0b9",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "bdce4a2f7a0009474c88713a21aad97c572c8053d487aeee4f7a45fa7e8d2d60",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "bdce4a2f7a0009474c88713a21aad97c572c8053d487aeee4f7a45fa7e8d2d60",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "strict_native_source_height": 14,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "65e487206f895e057a93b467f2c6f1a66dacd1bcedb68df19ac494c94c3c9d34",
+      "signed_body_id": "027d7153731593851c520ac677bc0482d35ff64f341c54e5c8291490ad72e0b9",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "3b576e592e30ef54500918747ebfc5aad2af1ad536a91d42248c141e677447f9",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "3b576e592e30ef54500918747ebfc5aad2af1ad536a91d42248c141e677447f9",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "strict_native_source_height": 14,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "65e487206f895e057a93b467f2c6f1a66dacd1bcedb68df19ac494c94c3c9d34",
+      "signed_body_id": "027d7153731593851c520ac677bc0482d35ff64f341c54e5c8291490ad72e0b9",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "2b3e0157ce14c7917f77ac6e7e90f8a0b393f736049b40dda5b56014f944076d",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "2b3e0157ce14c7917f77ac6e7e90f8a0b393f736049b40dda5b56014f944076d",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "2611b2c27b5955024a5238afb4ecf56a906a710ddad5bc67aec3b5fa58a2795f",
+      "signed_body_id": "730363fb3ed0b063ba78b9dcd189a14055368cbe789fdaeb5b967dc31914d173",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "a4a6a9b6808196497c396f87f47bc15aad709788c444d9be9c1b7080c07db4d4",
+          "visited_nodes": [
+            "proxima-1",
+            "proxima-0"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "a4a6a9b6808196497c396f87f47bc15aad709788c444d9be9c1b7080c07db4d4",
+          "visited_nodes": [
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "2611b2c27b5955024a5238afb4ecf56a906a710ddad5bc67aec3b5fa58a2795f",
+      "signed_body_id": "730363fb3ed0b063ba78b9dcd189a14055368cbe789fdaeb5b967dc31914d173",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "cbdf3a37e6012f8d41603c1adaeedde6caf89a136e2cf80722bd8d81e85817da",
+          "visited_nodes": [
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "2611b2c27b5955024a5238afb4ecf56a906a710ddad5bc67aec3b5fa58a2795f",
+      "signed_body_id": "730363fb3ed0b063ba78b9dcd189a14055368cbe789fdaeb5b967dc31914d173",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "448c5dcabaf2fc0e86b0fc306adcd45f9c8a8d8c11d366a5437bfab3aa66c4d3",
+          "visited_nodes": [
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "strict_native_source_height": 14,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "e551575af450ccf16ec4026c104f08176fd620884b0aec5dbf27218ce8de7ff2",
+      "signed_body_id": "2a80ef26eb131512d3da735bc80af47efc6540377a193f9c3f5553c8e58f4df7",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "8339a5a5a51162b02e1af0acfc77b755c3607a685200fddf1ea9c5ed559de061",
+          "visited_nodes": [
+            "proxima-2"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-1",
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-1",
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "strict_native_source_height": 14,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "e551575af450ccf16ec4026c104f08176fd620884b0aec5dbf27218ce8de7ff2",
+      "signed_body_id": "2a80ef26eb131512d3da735bc80af47efc6540377a193f9c3f5553c8e58f4df7",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "02844be75ee58c8109e223cd3f021d048c5f3e2cb96ab2f4188750c8d49b2742",
+          "visited_nodes": [
+            "proxima-2",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 2,
+          "packet_id": "02844be75ee58c8109e223cd3f021d048c5f3e2cb96ab2f4188750c8d49b2742",
+          "visited_nodes": [
+            "proxima-2"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "strict_native_source_height": 14,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "e551575af450ccf16ec4026c104f08176fd620884b0aec5dbf27218ce8de7ff2",
+      "signed_body_id": "2a80ef26eb131512d3da735bc80af47efc6540377a193f9c3f5553c8e58f4df7",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "bb135f54105841129c9a59c5e6d8b8d8c99e8401241ec04a65e55b14672f9b0e",
+          "visited_nodes": [
+            "proxima-2"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 3,
+          "packet_id": "bb135f54105841129c9a59c5e6d8b8d8c99e8401241ec04a65e55b14672f9b0e",
+          "visited_nodes": [
+            "proxima-2",
+            "proxima-3"
+          ],
+          "destination_receipt_retained": true,
+          "active": false,
+          "candidate_route": [
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "c4ae4a2953837c75a5e7e23cd073fc1a0afa364713fcacf5b9e11c0b76b495e7",
+      "signed_body_id": "9a86e9e7b3f6f0855b02768a2127ea1d8f4fce26acc270957c51141b3ed296c9",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "1736c24692f7ec262f6803d93e2955da412a172a2298e2fff4a762ceae512d57",
+          "visited_nodes": [
+            "proxima-2"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-1",
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-1",
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "c4ae4a2953837c75a5e7e23cd073fc1a0afa364713fcacf5b9e11c0b76b495e7",
+      "signed_body_id": "9a86e9e7b3f6f0855b02768a2127ea1d8f4fce26acc270957c51141b3ed296c9",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "59e5829dc08cc66fdcf72d95db387eb19aa69524af0f51744f9a1a0464f3f3fa",
+          "visited_nodes": [
+            "proxima-2"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "c4ae4a2953837c75a5e7e23cd073fc1a0afa364713fcacf5b9e11c0b76b495e7",
+      "signed_body_id": "9a86e9e7b3f6f0855b02768a2127ea1d8f4fce26acc270957c51141b3ed296c9",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "448250e4103a0d4f5e2edadabfbac7729c577bf8dab8267ed0f037acb36c5ea6",
+          "visited_nodes": [
+            "proxima-2"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 3,
+          "packet_id": "448250e4103a0d4f5e2edadabfbac7729c577bf8dab8267ed0f037acb36c5ea6",
+          "visited_nodes": [
+            "proxima-2",
+            "proxima-3"
+          ],
+          "destination_receipt_retained": true,
+          "active": false,
+          "candidate_route": [
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "e3260a2813ecd7eeb8862d68ffb4db73eebaef63573f19bcf32178f202edd15f",
+      "signed_body_id": "c20c5bc5a249dab9d883ce23743f108dc3ba31e2ce2eb943ada629e9ca2bf4ab",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "0ead1f21d9e0840277899369aba0490b292a4d3bfcd51e26e8583ef252248473",
+          "visited_nodes": [
+            "proxima-3",
+            "proxima-2"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-1",
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-1",
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 3,
+          "packet_id": "0ead1f21d9e0840277899369aba0490b292a4d3bfcd51e26e8583ef252248473",
+          "visited_nodes": [
+            "proxima-3"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-3",
+            "proxima-2",
+            "proxima-1",
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-3",
+                "proxima-2",
+                "proxima-1",
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "e3260a2813ecd7eeb8862d68ffb4db73eebaef63573f19bcf32178f202edd15f",
+      "signed_body_id": "c20c5bc5a249dab9d883ce23743f108dc3ba31e2ce2eb943ada629e9ca2bf4ab",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "7424a10a6836e6f303bf78137a6a46a86c29c7bc29d78050fcace7e9e57751da",
+          "visited_nodes": [
+            "proxima-3",
+            "proxima-2",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 2,
+          "packet_id": "7424a10a6836e6f303bf78137a6a46a86c29c7bc29d78050fcace7e9e57751da",
+          "visited_nodes": [
+            "proxima-3",
+            "proxima-2"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-2",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 3,
+          "packet_id": "7424a10a6836e6f303bf78137a6a46a86c29c7bc29d78050fcace7e9e57751da",
+          "visited_nodes": [
+            "proxima-3"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-3",
+            "proxima-2",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-3",
+                "proxima-2",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "strict_native_source_height": 14,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "e3260a2813ecd7eeb8862d68ffb4db73eebaef63573f19bcf32178f202edd15f",
+      "signed_body_id": "c20c5bc5a249dab9d883ce23743f108dc3ba31e2ce2eb943ada629e9ca2bf4ab",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "0785ce796bcd90e8ee17fc6e110ba99a92fa4828e8a1b5500312a1d2ff80901a",
+          "visited_nodes": [
+            "proxima-3",
+            "proxima-2"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-3",
+              "candidate_route": [
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 3,
+          "packet_id": "0785ce796bcd90e8ee17fc6e110ba99a92fa4828e8a1b5500312a1d2ff80901a",
+          "visited_nodes": [
+            "proxima-3"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-3",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-3",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "no_native_calls_runtime_recovery_signing_or_identity_load": true,
+  "configuration_public_anchors_authenticated": true,
+  "packet_and_receipt_authentication": true,
+  "retained_complete_native_envelopes_authenticated_by_prior_strict_cold": true,
+  "metadata_routes_not_contact_custody_or_authority": true,
+  "full_fault_profile_remains_failed": true,
+  "duration_seconds": 22.544
+}
