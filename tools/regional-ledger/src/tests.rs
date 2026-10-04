@@ -3,6 +3,8 @@ use ed25519_dalek::SigningKey;
 use rld_core::sign_bytes;
 use std::path::PathBuf;
 use storage::Store;
+#[path = "channel_tests.rs"]
+mod channel_kernel;
 fn public(seed: u8) -> String {
     hex::encode(
         SigningKey::from_bytes(&[seed; 32])

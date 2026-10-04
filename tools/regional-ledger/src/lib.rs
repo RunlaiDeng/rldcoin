@@ -989,6 +989,7 @@ pub mod bft;
 mod bft_epoch;
 pub mod bft_network;
 pub mod carriage;
+pub mod channels;
 pub mod conflict;
 pub mod contact;
 pub mod epoch;
