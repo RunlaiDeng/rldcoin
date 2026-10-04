@@ -732,3 +732,14 @@ head queries and atomic Native expected-head/membership/lock/value checks remain
 Startup, direct ceremony, incoming activation and role paths keep their original
 checks. Changed Python needs an exact new driver and fresh no-value scopes;
 component savings do not qualify a failed full profile or independent custody.
+
+The native BFT status candidate may serialize the exact fully verified State from
+its same OS-locked journal open, with the retained Agent lock and exact final
+head/binding/creation. No Agent cache, decoded status base or across-open reuse;
+normal signing still verifies the current journal and exact expected head.
+Interrupted publication still fully verifies both journals and exact extension
+before fsync/rename; a failed publication returns no status. Private typed Status
+is serialization-only and grants no ledger/signing/freshness rights. Keep all
+custody, origin, incidents and bounds unchanged. Changed Native requires fresh
+signed no-value genesis/currency and directories, never old balances/custody;
+format or component cost alone does not pass Native/ordinary/fault qualification.

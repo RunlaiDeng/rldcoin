@@ -854,6 +854,17 @@ pub struct Agent {
     pub journal: Journal,
     healthy: bool,
 }
+/// Read-only result of the full journal validation in the same locked open.
+/// No decoded status can initialize a journal or authorize a signature.
+#[derive(Serialize)]
+pub struct Status {
+    binding: Binding,
+    creation: Observation,
+    external_rollback_anchor_qualified: bool,
+    head: Hash,
+    records: usize,
+    state: State,
+}
 #[derive(Debug, Serialize)]
 pub struct Signed {
     pub message: Message,
@@ -945,13 +956,30 @@ impl Agent {
         Ok(agent)
     }
     pub fn open(dir: &Path, node: &Store) -> Result<Self> {
+        Self::open_state(dir, node).map(|(agent, _)| agent)
+    }
+    /// Keep the actual signer lock alive alongside its exact verified observation.
+    /// Signing still independently revalidates the current journal and expected head.
+    pub fn open_with_status(dir: &Path, node: &Store) -> Result<(Self, Status)> {
+        let (agent, state) = Self::open_state(dir, node)?;
+        let status = Status {
+            head: agent.journal.head()?,
+            binding: agent.journal.binding.clone(),
+            state,
+            records: agent.journal.records.len(),
+            creation: agent.journal.creation.clone(),
+            external_rollback_anchor_qualified: false,
+        };
+        Ok((agent, status))
+    }
+    fn open_state(dir: &Path, node: &Store) -> Result<(Self, State)> {
         let lock = lock(dir)?;
         let journal: Journal = serde_json::from_slice(&crate::keystore::private_read(
             &dir.join("bft.json"),
             MAX_BYTES,
         )?)
         .map_err(|_| "invalid BFT journal")?;
-        journal.state(node)?;
+        let mut state = journal.state(node)?;
         let mut agent = Self {
             dir: dir.into(),
             _lock: lock,
@@ -963,7 +991,7 @@ impl Agent {
             let proposed: Journal =
                 serde_json::from_slice(&crate::keystore::private_read(&next, MAX_BYTES)?)
                     .map_err(|_| "invalid interrupted BFT journal")?;
-            proposed.state(node)?;
+            let proposed_state = proposed.state(node)?;
             require(
                 proposed.binding == agent.journal.binding
                     && proposed.creation == agent.journal.creation
@@ -976,8 +1004,9 @@ impl Agent {
             fs::rename(next, dir.join("bft.json")).map_err(io)?;
             File::open(dir).map_err(io)?.sync_all().map_err(io)?;
             agent.journal = proposed;
+            state = proposed_state;
         }
-        Ok(agent)
+        Ok((agent, state))
     }
     fn persist(&self, journal: &Journal) -> Result<()> {
         let bytes = serde_json::to_vec(journal).map_err(|_| "BFT journal encoding")?;

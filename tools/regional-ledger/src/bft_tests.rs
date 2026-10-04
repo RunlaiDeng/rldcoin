@@ -686,6 +686,117 @@ fn native_persistence_failure_and_exact_interrupted_signer_commit() {
 }
 
 #[test]
+fn locked_status_binds_full_native_lock_and_refuses_later_stale_head() {
+    let mut h = Harness::new();
+    let proposal = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
+    let prepare = h.prepare(&proposal, &[0, 1, 2]);
+    h.sign(
+        1,
+        Request::Commit {
+            proposal: Box::new(proposal),
+            prepared: prepare,
+        },
+    );
+    let dir = h.root.join(format!("signer-{}", h.seeds[1]));
+    let retained = fs::read(dir.join("bft.json")).unwrap();
+    let expected = serde_json::json!({
+        "head": h.agents[1].journal.head().unwrap(),
+        "binding": h.agents[1].journal.binding,
+        "state": h.agents[1].journal.state(&h.node).unwrap(),
+        "records": h.agents[1].journal.records.len(),
+        "creation": h.agents[1].journal.creation,
+        "external_rollback_anchor_qualified": false,
+    });
+    drop(h.agents.remove(1));
+    let (mut opened, status) = Agent::open_with_status(&dir, &h.node).unwrap();
+    assert_eq!(
+        serde_json::to_value(&status).unwrap().to_string(),
+        expected.to_string()
+    );
+    assert!(expected["state"]["lock"].is_object());
+    assert!(Agent::open_with_status(&dir, &h.node).is_err());
+    assert_eq!(fs::read(dir.join("bft.json")).unwrap(), retained);
+    let context = Context::current(&h.node).unwrap();
+    let old = opened.journal.head().unwrap();
+    let request = Request::Timeout {
+        context: context.clone(),
+        round: 0,
+    };
+    opened
+        .sign(
+            &h.node,
+            request,
+            Some(&h.root.join(format!("key-{}.json", h.seeds[1]))),
+            old,
+        )
+        .unwrap();
+    let advanced = fs::read(dir.join("bft.json")).unwrap();
+    assert!(opened
+        .sign(
+            &h.node,
+            Request::Timeout { context, round: 1 },
+            Some(&h.root.join(format!("key-{}.json", h.seeds[1]))),
+            old
+        )
+        .is_err());
+    assert_eq!(fs::read(dir.join("bft.json")).unwrap(), advanced);
+}
+
+#[test]
+fn locked_status_matches_exact_authenticated_interrupted_extension() {
+    let mut h = Harness::new();
+    let dir = h.root.join(format!("signer-{}", h.seeds[0]));
+    let before = fs::read(dir.join("bft.json")).unwrap();
+    let context = Context::current(&h.node).unwrap();
+    h.sign(0, Request::Timeout { context, round: 0 });
+    let next = fs::read(dir.join("bft.json")).unwrap();
+    let expected = serde_json::json!({
+        "head": h.agents[0].journal.head().unwrap(),
+        "binding": h.agents[0].journal.binding,
+        "state": h.agents[0].journal.state(&h.node).unwrap(),
+        "records": h.agents[0].journal.records.len(),
+        "creation": h.agents[0].journal.creation,
+        "external_rollback_anchor_qualified": false,
+    });
+    drop(h.agents.remove(0));
+    fs::write(dir.join("bft.json"), before).unwrap();
+    crate::keystore::private_create(&dir.join("bft.next"), &next).unwrap();
+    let (opened, status) = Agent::open_with_status(&dir, &h.node).unwrap();
+    assert_eq!(
+        serde_json::to_value(&status).unwrap().to_string(),
+        expected.to_string()
+    );
+    assert_eq!(
+        opened.journal.head().unwrap().to_hex(),
+        expected["head"].as_str().unwrap()
+    );
+    assert_eq!(fs::read(dir.join("bft.json")).unwrap(), next);
+    assert!(!dir.join("bft.next").exists());
+}
+
+#[test]
+fn locked_status_rejects_changed_signature_and_invalid_interrupted_bytes_without_rewrite() {
+    let mut h = Harness::new();
+    let dir = h.root.join(format!("signer-{}", h.seeds[0]));
+    let context = Context::current(&h.node).unwrap();
+    h.sign(0, Request::Timeout { context, round: 0 });
+    let original = fs::read(dir.join("bft.json")).unwrap();
+    let mut altered: serde_json::Value = serde_json::from_slice(&original).unwrap();
+    altered["records"][0]["message"]["Timeout"]["approval"]["signature"] =
+        serde_json::json!("00".repeat(64));
+    let damaged = serde_json::to_vec(&altered).unwrap();
+    drop(h.agents.remove(0));
+    fs::write(dir.join("bft.json"), &damaged).unwrap();
+    assert!(Agent::open_with_status(&dir, &h.node).is_err());
+    assert_eq!(fs::read(dir.join("bft.json")).unwrap(), damaged);
+    fs::write(dir.join("bft.json"), &original).unwrap();
+    crate::keystore::private_create(&dir.join("bft.next"), &damaged).unwrap();
+    assert!(Agent::open_with_status(&dir, &h.node).is_err());
+    assert_eq!(fs::read(dir.join("bft.json")).unwrap(), original);
+    assert_eq!(fs::read(dir.join("bft.next")).unwrap(), damaged);
+}
+
+#[test]
 fn typed_network_carriage_verifies_native_domain_parent_and_phase_without_mutation() {
     use crate::bft_network::{Body, Envelope, FORMAT};
     let mut h = Harness::new();

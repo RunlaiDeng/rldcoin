@@ -1060,10 +1060,10 @@ fn run() -> Result<()> {
             );
         }
         Action::BftStatus { signer_dir } => {
-            let agent = bft::Agent::open(&signer_dir, &store)?;
+            let (_agent, status) = bft::Agent::open_with_status(&signer_dir, &store)?;
             println!(
                 "{}",
-                serde_json::json!({"head":agent.journal.head()?,"binding":agent.journal.binding,"state":agent.journal.state(&store)?,"records":agent.journal.records.len(),"creation":agent.journal.creation,"external_rollback_anchor_qualified":false})
+                serde_json::to_value(&status).map_err(|e| e.to_string())?
             );
         }
         Action::BftCandidate { commands, miner } => {

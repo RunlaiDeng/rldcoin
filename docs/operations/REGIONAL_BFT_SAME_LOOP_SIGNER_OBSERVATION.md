@@ -38,7 +38,24 @@ exact expected head、当前会员、时代、锁、完整 owner/value/evidence�
 
 实际 Native fixture 回归覆盖每轮仅一次 active-head 查询且下一轮重新查询、scope/head
 变化、收紧限额/超容量、实际 Native signer 头提前变化时拒绝 first-sign，以及真实 Runtime
-cold reopen。新默认 driver 的精确重建、完整过程检查及全新普通循环/故障/cold 资格仍待
-分别完成；这些局部回归不能代替它们。新 Python 运行时需要全新私有无价值范围。
+cold reopen。[27真实API过程](evidence/regional-joint-loop-api-process-regression-20261004.json)
+55.062秒通过；其API binary的Native/Core与新源准确相同，但该运行不核验新默认driver。
+
+首轮480过程实际全跑，仅旧AST请求序列夹具缺少新增global，出现22错误；保留首轮失败
+源、报告及log。只修正`bft_tick_fixture.py`后冻结385文件，新默认driver实际重建38.587秒，
+[32受影响/default过程](evidence/regional-joint-loop-retry1-frozen-checks-20261004.json)7.174秒通过；
+明确复用首轮448已过项，总480组合覆盖，不能冒称最终单次完整480通过。3实际保管3.282秒
+及四Native单向离线付款/cold3.700秒通过。181 Native及strict检查明确复用同原生源，不重跑。
+[修订53公开及16文件/385归档成员远端核验](evidence/regional-joint-loop-v53-publication-verification-20261004.json)
+已完成；全新三地区ordinary循环正在运行，完整cycle/fullfault/cold仍待。新Python运行时使用
+全新私有无价值范围，局部通过不替代完整资格。
 旧失败源、报告和私有现场保持；不迁移 value/custody，不放宽期限、容量、成熟或票数。
 I1–I12、独立保管、长期历史和真实星际物理链路仍未完成。
+
+2026-10-04后续：[新三地区ordinary返程](evidence/regional-joint-loop-retry1-three-region-cycle-20261004.json)
+实际663.986秒及[完整停止cold](evidence/regional-joint-loop-retry1-three-region-cold-20261004.json)
+64.977秒通过；12Native/12recipient/4joint保管组、775完整BFT信封/1808归档，全部私有文件
+字节/权限保持，300=300+0。Earth全停时onward/new-return继续、controller权力调用0。
+[修订54公开远端核验](evidence/regional-joint-loop-cycle-v54-publication-verification-20261004.json)
+8文件逐字节通过，沿用未变53源归档。新fullfault已从成功停止源复制至全新私有目录运行，
+原600秒/24高度关卡不变，尚不记fullfault/cold通过；52失败及所有旧现场保持。
