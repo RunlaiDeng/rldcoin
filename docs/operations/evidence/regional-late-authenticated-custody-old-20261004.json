@@ -1,0 +1,23 @@
+{
+  "format": "RLD-LATE-AUTHENTICATED-CUSTODY-TWO-PROCESS-V1",
+  "completed": true,
+  "source_set_sha256": "7c5b78c85d1b50640ce2d783fd752d7c818387e9be4ddcae3bb208003d4c4c61",
+  "runner_sha256": "0b4854ef214d0f2364a14f93cc8533d85a3262930f7f7142b59b35e499a213c8",
+  "worker_sha256": "4191146ff89c7e46d9aae5327b9c52b05a7387153bc64bd9e25119a1ce74316a",
+  "critical_envelope_sha256": "15f89c4437a5c63d202924558e231d21e2295f4f303478731124d577c63a473c",
+  "exact_packet_sha256": "254d6f04beeb318400f85c9aee7638d0b51f3bd97179ba0ded220b5dab41d5f0",
+  "separate_receiver_process": true,
+  "receiver_exit_code": 0,
+  "receiver_durable_packet_and_native_authentication": false,
+  "sender_retains_original_packet": true,
+  "sender_destination_receipt": false,
+  "sender_socket_success": false,
+  "original_socket_seconds": 3.0,
+  "original_local_lock_wait_seconds": 0.2,
+  "injected_post_validated_open_boundary_delay_seconds": 3.25,
+  "socket_attempt_elapsed_seconds": 3.041,
+  "receiver_authentication_seconds_from_send": null,
+  "native_failed_source_and_compatible_test_setup_unchanged": true,
+  "no_runtime_signing_recovery_or_ledger_change": true,
+  "not_full_fault_or_independent_qualification": true
+}

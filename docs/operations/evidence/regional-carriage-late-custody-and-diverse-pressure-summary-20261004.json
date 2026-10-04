@@ -1,0 +1,239 @@
+{
+  "format": "RLD-CARRIAGE-DIAGNOSTIC-CONSOLIDATION-V1",
+  "workflow_terminal": true,
+  "late_custody_matched_two_process_old_fail_new_pass": true,
+  "exact_packet_sha256": "254d6f04beeb318400f85c9aee7638d0b51f3bd97179ba0ded220b5dab41d5f0",
+  "old_report_sha256": "d8f0b56e68aa95c53cd8674953e91995213af019e72d5f159040e1b38cf7c7ea",
+  "new_report_sha256": "178062f6bc8c7666e4f3d4c04c2118bbe2358becaf71ad017d97f2f7731a8edc",
+  "source_set_sha256": "e6cc8d770e6a5a07986adcfc3a3d7c94f701f3d861097ecdee1708100aa02487",
+  "native_core_unchanged": true,
+  "source_differences": [
+    "tools/interstellar_tcp.py"
+  ],
+  "original_socket_seconds": 3,
+  "original_local_lock_wait_seconds": 0.2,
+  "post_admission_validation_may_finish_after_socket_expiry": true,
+  "expired_lock_admission_cannot_open_storage": true,
+  "no_missing_reply_suppression_or_destination_receipt": true,
+  "old_specific_tests": {
+    "actually_run": 3,
+    "failures": 2,
+    "log_sha256": "7a7c74a8b3f435824f4a9e7197e3666e11922034d9ec7b4d2756ac630aa30f21"
+  },
+  "new_specific_tests": {
+    "actually_run": 3,
+    "failures": 0,
+    "log_sha256": "6a13e8450b164599e3fa055a725e0d45767a462ebf53a125f9e2c241861ffd08"
+  },
+  "specific_test_sha256": "758ef494368c3674d633b8cc06e8a2e749c892f26686902916e790781e378426",
+  "test_observations_overlapped_local_cpu_deadline_pressure_trial": true,
+  "diverse_pressure_gate_passed": false,
+  "pressure": [
+    {
+      "report": "regional-diverse-family-carriage-old-20261004.json",
+      "sha256": "524f6c72ef14b902c5b753d65e1755d85cafc4d48fb5996815ac249f64c79c60",
+      "source_set_sha256": "7c5b78c85d1b50640ce2d783fd752d7c818387e9be4ddcae3bb208003d4c4c61",
+      "gate_passed": false,
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            28,
+            40,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            56.386325,
+            11.360513
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            56.489454,
+            11.460685
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 133.423,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            1.332413,
+            0.403801,
+            1.917118,
+            0.203084
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "report": "regional-diverse-family-carriage-new-20261004.json",
+      "sha256": "4078f3a177221f8ef45775259015fe3a86df5d7b3ae010a7403c65e45612ffee",
+      "source_set_sha256": "4f7597258dd27bb16ff576c65dc78cc2e79aa46dc14d2b874b556cf88ac67598",
+      "gate_passed": false,
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            16,
+            32,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            45.26721,
+            34.590883
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            45.395186,
+            34.710879
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 130.816,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.200408,
+            0.967553,
+            0.93694,
+            0.948588
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "report": "regional-eligible-peer-frame-family-carriage-20261004.json",
+      "sha256": "ffa6be4d69a215b1edb9e78eeb1b94868a6d29e19be1de52f0a47b92975a05cd",
+      "source_set_sha256": "6d1169f0a939607fc6b31a9b186534aa6f21d2d61255d8fd51f2991d3fd506e3",
+      "gate_passed": false,
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            39,
+            32,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            46.149472,
+            2.029717
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            46.24659,
+            2.134952
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 131.622,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.201472,
+            1.970637,
+            1.849095,
+            1.319882
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "report": "regional-local-cpu-deadline-diverse-carriage-20261004.json",
+      "sha256": "7a4a5fdb97bf3b6674b1d9157eee9e1c943495c51c8cab9a6b2d2a977658da10",
+      "source_set_sha256": "e6cc8d770e6a5a07986adcfc3a3d7c94f701f3d861097ecdee1708100aa02487",
+      "gate_passed": false,
+      "results": [
+        {
+          "label": "fixed_seed32_pressure",
+          "completed": false,
+          "traffic_budget_per_node": 40,
+          "generated_replay_packets": [
+            40,
+            35,
+            38,
+            40
+          ],
+          "injection_queued": true,
+          "destination_transport_seconds": [
+            null,
+            null,
+            28.675423
+          ],
+          "destination_native_authentication_seconds": [
+            null,
+            null,
+            28.801145
+          ],
+          "within_original_60_second_round": false,
+          "trial_seconds": 130.278,
+          "process_exit_codes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "last_worker_seconds": [
+            0.874506,
+            1.189652,
+            1.176155,
+            0.869375
+          ],
+          "error_counts": [
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ]
+    }
+  ],
+  "no_fresh_full_profile_started_for_failed_minima": true,
+  "candidate_runtime_not_integrated": true,
+  "original_failed_sources_not_resumed": true,
+  "not_full_fault_or_independent_or_physical_qualification": true,
+  "fixture_only": true,
+  "live_rld": false
+}
