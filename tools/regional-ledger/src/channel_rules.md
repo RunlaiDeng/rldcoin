@@ -1,4 +1,4 @@
-# RLD-REGIONAL-CHANNEL-KERNEL-V4
+# RLD-REGIONAL-CHANNEL-KERNEL-V5
 
 Native signature/value component only. This is not a complete protocol profile,
 ordinary node activation, signing custody, incident resolution or value migration.
@@ -72,3 +72,21 @@ Current native and owner heads must be separately supplied, never adopted from
 a backup. Combined partials grant no acceptance, ledger credit or new funds.
 Incomplete creation refuses unchanged; no restore, independent freshness,
 copied-key concurrency, monitoring/inclusion or physical qualification follows.
+
+V5 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V1. Both parties
+sign the optional funding witness key; absent policy is read-only for the owner
+service, never a fallback. The witness key differs from parties, authority and
+regional validators. Its separate private OS-locked journal fully authenticates
+every signed complete owner birth/extension from native genesis-derived funding.
+Existing owner inception cannot be replaced by another directory; new signing
+requires separately retained current native, owner and witness heads and exact
+full owner-journal agreement. Own signature response persists first, then the
+complete witness extension signs/persists before any response release. Failure
+returns no partial. First witness completion on a previously retained owner
+response is explicit and requires the witness key; keyless recovery cannot first
+attest. Pending witness promotion is explicit, exact and fully authenticated.
+Witness entries remain bounded at 256 and combined bytes at 8 MiB; all owner,
+evidence and monetary limits remain. Witness statements grant no ledger, value,
+finality or issuance authority. The same-process same-host ground role separation
+does not qualify independent service/custody, common/witness rollback, copied
+witness keys, independent anti-rollback hardware or adversarial raw-key signing.

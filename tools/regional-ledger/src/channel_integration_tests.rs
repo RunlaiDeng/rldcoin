@@ -108,6 +108,7 @@ pub(super) fn funding(chain: &Chain, trust: &Trust) -> Command {
         chain,
         trust,
         c::Action::Open {
+            witness: None,
             inputs: vec![*input],
             parties: parties(),
             capacity: Amount(60),

@@ -380,3 +380,20 @@ inception/continuation 与 witness 的 authority、用途、scope、conflict/fai
 单次新 focused/strict 180 秒，单次必要实际CLI反例120秒，网络 campaign预算0；
 遇失败/完成/预算即停，保留原件，不能降低规则或原样再试。
 实际反例与所有边界见[所有者签署结果](../operations/evidence/regional-native-channel-owner-outcome-20261005.json)。
+
+
+## V5 有界签署见证与发布前验证
+
+V4 目录重置反例仍失败；后继V5通过签署funding明确见证用途，完整原生认证
+birth/advance与独立留存三头约束公开owner API。缺见证只读；相同保管起点不能
+创建新目录。见证失败保留own原响应，无钥恢复不能首次见证确认。另一个最小
+真实执行反例发现错误owner头已发布pending witness；修复在发布前完整验证
+caller/响应/所属，并拒其他owner请求发布它。合成pending不是实际进程/电源故障。
+
+最终来源 `b40fdba7...` 的29 focused/build/strict及49实际CLI步骤通过；184未受
+影响回归通过于修复前 `f4815c09...`，不冒称最终源码213全部重跑。每失败来源、
+日志/私有fixture及初始strict/编译拒绝保留。接收方/state-action仍缺完整见证
+proof，同机服务约束不证明独立最新、全部rollback/copied keys或S11完成。
+下条权限/最新边界、预算及未完成义务详见
+[地面见证契约](REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md)与
+[准确源绑定结果](../operations/evidence/regional-native-channel-witness-outcome-20261005.json)。

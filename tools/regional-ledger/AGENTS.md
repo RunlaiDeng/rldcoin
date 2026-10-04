@@ -140,3 +140,20 @@ or declare S11 satisfied. Channel action signing, wallet-app caller integration,
 encrypted complete channel-custody backup, actual process/power interruption,
 watcher/inclusion, reorganization/full-window/history, network and independent
 physical qualifications still need their own implementation and evidence.
+
+V5 ground channel custody pins a separate witness role in fully signed funding.
+Missing policy or live separately retained native/owner/witness heads refuses the
+public owner service. Its bounded signed private journal authenticates complete
+owner births and extensions from native replay; an existing inception cannot be
+recreated in a new directory. Bare owner APIs refuse. Persist both original owner
+response and witness extension before release; witness failure never rolls back
+that response. Explicit first witness completion reads only the witness key;
+keyless recovery cannot first attest. Validate all caller heads and complete
+response ownership before promoting either pending journal; another owner's
+request cannot promote a pending witness. Preserve failed publication residue.
+Owner 128/8-MiB and witness 256/8-MiB bounds remain. This is a same-host service
+gate, not independent latest/copy-key/common-rollback qualification. Receipt and
+state-action proofs do not yet carry witness authority. Never substitute a
+returned witness hash for such proof or infer S11 completion. See the exact
+contract in ../../docs/research/REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md;
+new source requires fresh signed no-value fixtures, never old custody/value.

@@ -11,6 +11,15 @@ pub(crate) fn certify(node: &mut Store) {
     node.finalize(checkpoint(&node.chain, &node.trust)).unwrap();
 }
 pub(crate) fn setup(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>) {
+    setup_policy(limit, None)
+}
+pub(crate) fn setup_witness(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>) {
+    setup_policy(limit, Some(public(12)))
+}
+fn setup_policy(
+    limit: Option<u128>,
+    witness: Option<String>,
+) -> (PathBuf, Store, Hash, Option<Hash>) {
     let root = fs::canonicalize(std::env::temp_dir())
         .unwrap()
         .join(format!(
@@ -26,7 +35,20 @@ pub(crate) fn setup(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>)
     for _ in 0..3 {
         selected(&mut node, vec![]);
     }
-    let open = funding(&node.chain, &node.trust);
+    let mut open = funding(&node.chain, &node.trust);
+    if let Command::Channel(native) = &mut open {
+        if let c::Action::Open { witness: key, .. } = &mut native.action.intent.action {
+            *key = witness;
+        }
+        native.action.approvals = [10, 11]
+            .iter()
+            .map(|seed| Approval {
+                key: public(*seed),
+                signature: signature(*seed, &native.action.intent.bytes().unwrap()),
+            })
+            .collect();
+        native.action.approvals.sort_by(|a, b| a.key.cmp(&b.key));
+    }
     let Command::Channel(ref native) = open else {
         panic!()
     };

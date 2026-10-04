@@ -16,17 +16,20 @@ fn key(root: &Path, seed: u8) -> PathBuf {
 }
 fn owners(root: &Path, node: &Store, channel: Hash) -> (Agent, Agent) {
     (
-        Agent::create(&root.join("alice"), node, channel, public(10), head(root)).unwrap(),
-        Agent::create(&root.join("bob"), node, channel, public(11), head(root)).unwrap(),
+        Agent::create_component(&root.join("alice"), node, channel, public(10), head(root))
+            .unwrap(),
+        Agent::create_component(&root.join("bob"), node, channel, public(11), head(root)).unwrap(),
     )
 }
 fn sign(agent: &mut Agent, node: &Store, root: &Path, request: Request, seed: u8) -> Response {
     let owner_head = agent.head().unwrap();
     let native = head(root);
-    let reviewed = agent.prepare(node, &request, owner_head, native).unwrap();
+    let reviewed = agent
+        .prepare_component(node, &request, owner_head, native)
+        .unwrap();
     let path = root.join(format!("key-{seed}.json"));
     agent
-        .sign(node, request, &path, reviewed, owner_head, native)
+        .sign_component(node, request, &path, reviewed, owner_head, native)
         .unwrap()
 }
 fn start(root: &Path, node: &Store, a: &mut Agent, b: &mut Agent) -> c::SignedState {
@@ -86,7 +89,7 @@ fn native_channel_owner_two_real_partial_signers_combine_accept_restart_and_keyl
     let mut b = Agent::open(&root.join("bob"), &node).unwrap();
     fs::remove_file(root.join("key-10.json")).unwrap();
     let recovered = a
-        .recover(&node, &request, reviewed_request, ah, nh)
+        .recover_component(&node, &request, reviewed_request, ah, nh)
         .unwrap();
     assert!(recovered.recovered_exact_response && !recovered.first_signed_this_call);
     assert_eq!(recovered.partial.request, request);
@@ -100,7 +103,7 @@ fn native_channel_owner_two_real_partial_signers_combine_accept_restart_and_keyl
     ));
     let reviewed = review(a.binding(), &next).unwrap();
     let bytes = fs::read(root.join("alice/owner.json")).unwrap();
-    assert!(a.recover(&node, &next, reviewed, ah, nh).is_err());
+    assert!(a.recover_component(&node, &next, reviewed, ah, nh).is_err());
     assert_eq!(fs::read(root.join("alice/owner.json")).unwrap(), bytes);
     key(&root, 10);
     let second = finish(&node, &root, &mut a, &mut b, next);
@@ -135,9 +138,11 @@ fn native_channel_owner_highest_signed_not_accepted_locks_conflicts_and_malforme
     assert!(r.verify_anchor(&node.trust, &node.evidence).is_err());
     let alternate = draft(receipt(&node, reserve.unwrap(), 2, initial, 20, None));
     let disk = fs::read(root.join("alice/owner.json")).unwrap();
-    assert!(a.prepare(&node, &alternate, ah, head(&root)).is_err());
     assert!(a
-        .sign(
+        .prepare_component(&node, &alternate, ah, head(&root))
+        .is_err());
+    assert!(a
+        .sign_component(
             &node,
             alternate.clone(),
             &root.join("key-10.json"),
@@ -167,7 +172,9 @@ fn native_channel_owner_highest_signed_not_accepted_locks_conflicts_and_malforme
         Some(complete.id().unwrap()),
     );
     next.prior.approvals[0].signature = "00".into();
-    assert!(a.prepare(&node, &draft(next), ah, head(&root)).is_err());
+    assert!(a
+        .prepare_component(&node, &draft(next), ah, head(&root))
+        .is_err());
     let next = draft(receipt(
         &node,
         reserve.unwrap(),
@@ -176,7 +183,7 @@ fn native_channel_owner_highest_signed_not_accepted_locks_conflicts_and_malforme
         -1,
         None,
     ));
-    assert!(a.prepare(&node, &next, ah, head(&root)).is_err());
+    assert!(a.prepare_component(&node, &next, ah, head(&root)).is_err());
     let previous_id = complete.id().unwrap();
     let next = draft(receipt(
         &node,
@@ -186,7 +193,7 @@ fn native_channel_owner_highest_signed_not_accepted_locks_conflicts_and_malforme
         -1,
         Some(previous_id),
     ));
-    assert!(a.prepare(&node, &next, ah, head(&root)).is_err());
+    assert!(a.prepare_component(&node, &next, ah, head(&root)).is_err());
     assert_eq!(fs::read(root.join("alice/owner.json")).unwrap(), disk);
     drop(a);
     drop(b);
@@ -212,16 +219,18 @@ fn native_channel_owner_pending_exact_response_requires_explicit_keyless_recover
     let mut a = Agent::open(&root.join("alice"), &node).unwrap();
     assert!(a.pending.is_some());
     assert_eq!(fs::read(root.join("alice/owner.json")).unwrap(), previous);
-    assert!(a.prepare(&node, &request, old, head(&root)).is_err());
     assert!(a
-        .recover(&node, &request, Hash::ZERO, old, head(&root))
+        .prepare_component(&node, &request, old, head(&root))
         .is_err());
     assert!(a
-        .recover(&node, &request, reviewed, Hash::ZERO, head(&root))
+        .recover_component(&node, &request, Hash::ZERO, old, head(&root))
+        .is_err());
+    assert!(a
+        .recover_component(&node, &request, reviewed, Hash::ZERO, head(&root))
         .is_err());
     assert!(root.join("alice/owner.next").exists());
     let exact = a
-        .recover(&node, &request, reviewed, old, head(&root))
+        .recover_component(&node, &request, reviewed, old, head(&root))
         .unwrap();
     assert_eq!(exact.partial, response.partial);
     assert_eq!(exact.owner_head, response.owner_head);
@@ -233,7 +242,7 @@ fn native_channel_owner_pending_exact_response_requires_explicit_keyless_recover
     next.statement.expected.invoice = Hash([7; 32]);
     let next = Request::Payment(next);
     assert!(a
-        .recover(
+        .recover_component(
             &node,
             &next,
             review(a.binding(), &next).unwrap(),
@@ -273,7 +282,7 @@ fn native_channel_owner_stale_owner_native_heads_wrong_key_purpose_and_incomplet
     let current = a.head().unwrap();
     let request = a.initial_request(&node).unwrap();
     assert!(a
-        .recover(
+        .recover_component(
             &node,
             &request,
             review(a.binding(), &request).unwrap(),
@@ -292,13 +301,17 @@ fn native_channel_owner_stale_owner_native_heads_wrong_key_purpose_and_incomplet
     drop(a);
     crate::keystore::private_create(&root.join("alice/CREATING"), b"interrupted creation").unwrap();
     assert!(Agent::open(&root.join("alice"), &node).is_err());
-    assert!(Agent::create(&root.join("alice"), &node, channel, public(10), head(&root)).is_err());
+    assert!(
+        Agent::create_component(&root.join("alice"), &node, channel, public(10), head(&root))
+            .is_err()
+    );
     assert_eq!(initial.statement.sequence, 0);
     let mut c =
-        Agent::create(&root.join("other"), &node, channel, public(10), head(&root)).unwrap();
+        Agent::create_component(&root.join("other"), &node, channel, public(10), head(&root))
+            .unwrap();
     let req = c.initial_request(&node).unwrap();
     assert!(c
-        .sign(
+        .sign_component(
             &node,
             req.clone(),
             &root.join("key-11.json"),
@@ -321,7 +334,7 @@ fn native_channel_owner_missing_reserve_and_current_closed_funding_never_sign_bu
     let initial = start(&root, &node, &mut a, &mut b);
     let request = draft(receipt(&node, Hash([9; 32]), 1, initial.clone(), 10, None));
     assert!(a
-        .prepare(&node, &request, a.head().unwrap(), head(&root))
+        .prepare_component(&node, &request, a.head().unwrap(), head(&root))
         .is_err());
     let initial_req = a.journal.records[0].partial.request.clone();
     let ah = a.head().unwrap();
@@ -351,15 +364,20 @@ fn native_channel_owner_missing_reserve_and_current_closed_funding_never_sign_bu
     );
     selected(&mut node, vec![close]);
     certify(&mut node);
-    assert!(a.prepare(&node, &request, ah, head(&root)).is_err());
     assert!(a
-        .recover(&node, &initial_req, reviewed, ah, before)
+        .prepare_component(&node, &request, ah, head(&root))
+        .is_err());
+    assert!(a
+        .recover_component(&node, &initial_req, reviewed, ah, before)
         .is_err());
     let exact = a
-        .recover(&node, &initial_req, reviewed, ah, head(&root))
+        .recover_component(&node, &initial_req, reviewed, ah, head(&root))
         .unwrap();
     assert!(!exact.first_signed_this_call);
-    assert!(Agent::create(&root.join("later"), &node, channel, public(10), head(&root)).is_err());
+    assert!(
+        Agent::create_component(&root.join("later"), &node, channel, public(10), head(&root))
+            .is_err()
+    );
     drop(a);
     drop(b);
     drop(node);
@@ -412,7 +430,7 @@ fn native_channel_owner_publication_failure_no_ack_and_capacity_retains_highest_
     let reviewed = review(a.binding(), &request).unwrap();
     let raw = fs::read(root.join("alice/owner.json")).unwrap();
     assert!(a
-        .sign(
+        .sign_component(
             &node,
             request,
             &root.join("key-10.json"),
@@ -423,14 +441,15 @@ fn native_channel_owner_publication_failure_no_ack_and_capacity_retains_highest_
         .is_err());
     assert_eq!(fs::read(root.join("alice/owner.json")).unwrap(), raw);
     let mut other =
-        Agent::create(&root.join("other"), &node, channel, public(10), head(&root)).unwrap();
+        Agent::create_component(&root.join("other"), &node, channel, public(10), head(&root))
+            .unwrap();
     let request = other.initial_request(&node).unwrap();
     let reviewed = review(other.binding(), &request).unwrap();
     let before = other.head().unwrap();
     crate::keystore::private_create(&root.join("other/owner.next"), b"unchanged failure residue")
         .unwrap();
     assert!(other
-        .sign(
+        .sign_component(
             &node,
             request.clone(),
             &root.join("key-10.json"),
@@ -441,7 +460,7 @@ fn native_channel_owner_publication_failure_no_ack_and_capacity_retains_highest_
         .is_err());
     assert!(!other.healthy && other.journal.records.is_empty());
     assert!(other
-        .recover(&node, &request, reviewed, before, head(&root))
+        .recover_component(&node, &request, reviewed, before, head(&root))
         .is_err());
     assert_eq!(
         fs::read(root.join("other/owner.next")).unwrap(),

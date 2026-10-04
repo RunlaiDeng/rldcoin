@@ -381,7 +381,21 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    ChannelWitnessInit {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        witness: String,
+        #[arg(long)]
+        expected_head: String,
+    },
     ChannelOwnerInit {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        expected_witness_head: String,
+        #[arg(long)]
+        witness_key_file: PathBuf,
         #[arg(long)]
         owner_dir: PathBuf,
         #[arg(long)]
@@ -393,6 +407,10 @@ enum Action {
     },
     ChannelOwnerPrepare {
         #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        expected_witness_head: String,
+        #[arg(long)]
         owner_dir: PathBuf,
         #[arg(long)]
         file: PathBuf,
@@ -402,6 +420,12 @@ enum Action {
         expected_head: String,
     },
     ChannelOwnerSign {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        expected_witness_head: String,
+        #[arg(long)]
+        witness_key_file: PathBuf,
         #[arg(long)]
         owner_dir: PathBuf,
         #[arg(long)]
@@ -416,6 +440,28 @@ enum Action {
         expected_head: String,
     },
     ChannelOwnerRecover {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        expected_witness_head: String,
+        #[arg(long)]
+        owner_dir: PathBuf,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        review: String,
+        #[arg(long)]
+        expected_owner_head: String,
+        #[arg(long)]
+        expected_head: String,
+    },
+    ChannelOwnerFinishWitness {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        expected_witness_head: String,
+        #[arg(long)]
+        witness_key_file: PathBuf,
         #[arg(long)]
         owner_dir: PathBuf,
         #[arg(long)]
@@ -789,6 +835,8 @@ fn run() -> Result<()> {
         }
         Action::HistoryCheck { expected_head }
         | Action::ChannelReceiptAccept { expected_head, .. }
+        | Action::ChannelWitnessInit { expected_head, .. }
+        | Action::ChannelOwnerFinishWitness { expected_head, .. }
         | Action::ChannelOwnerInit { expected_head, .. }
         | Action::ChannelOwnerPrepare { expected_head, .. }
         | Action::ChannelOwnerSign { expected_head, .. }
@@ -1392,22 +1440,47 @@ fn run() -> Result<()> {
             )?)
             .map_err(|e| e.to_string())?
         ),
+        Action::ChannelWitnessInit {
+            witness_dir,
+            witness,
+            expected_head,
+        } => {
+            let role = channel_owner::witness::Witness::create(
+                &witness_dir,
+                &store,
+                witness,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::json!({"witness_head": role.head()?, "retain_head_separately": true, "independent_operations_qualified": false})
+            );
+        }
         Action::ChannelOwnerInit {
             owner_dir,
             owner,
             channel,
             expected_head,
+            witness_dir,
+            witness_key_file,
+            expected_witness_head,
         } => {
-            let agent = channel_owner::Agent::create(
+            let mut witness = channel_owner::witness::Witness::open(&witness_dir, &store)?;
+            let agent = channel_owner::Agent::create_witnessed(
                 &owner_dir,
                 &store,
                 Hash::from_hex(&channel).map_err(|e| e.to_string())?,
                 owner,
                 Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                &mut witness,
+                (
+                    &witness_key_file,
+                    Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
+                ),
             )?;
             println!(
                 "{}",
-                serde_json::json!({"binding":agent.binding(),"owner_head":agent.head()?,"initial_request":agent.initial_request(&store)?,"retain_head_separately":true,"first_signed":false,"live_rld":false})
+                serde_json::json!({"binding":agent.binding(),"owner_head":agent.head()?,"initial_request":agent.initial_request(&store)?,"witness_head":witness.head()?,"retain_heads_separately":true,"first_signed":false,"live_rld":false,"independent_operations_qualified":false})
             );
         }
         Action::ChannelOwnerPrepare {
@@ -1415,35 +1488,52 @@ fn run() -> Result<()> {
             file,
             expected_owner_head,
             expected_head,
+            witness_dir,
+            expected_witness_head,
         } => {
             let request: channel_owner::Request = read_json(&file)?;
+            let witness = channel_owner::witness::Witness::open(&witness_dir, &store)?;
             let agent = channel_owner::Agent::open(&owner_dir, &store)?;
-            let review = agent.prepare(
+            let review = agent.prepare_witnessed(
                 &store,
                 &request,
-                Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
-                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                (
+                    Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                    Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                ),
+                &witness,
+                Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
             )?;
             println!(
                 "{}",
-                serde_json::json!({"binding":agent.binding(),"request":request,"review":review,"owner_head":agent.head()?,"signed_or_reserved":false,"live_rld":false})
+                serde_json::json!({"binding":agent.binding(),"request":request,"review":review,"owner_head":agent.head()?,"witness_head":witness.head()?,"signed_or_reserved":false,"live_rld":false})
             );
         }
         Action::ChannelOwnerSign {
             owner_dir,
             file,
-            key_file,
             review,
             expected_owner_head,
             expected_head,
+            witness_dir,
+            expected_witness_head,
+            key_file,
+            witness_key_file,
         } => {
-            let response = channel_owner::Agent::open(&owner_dir, &store)?.sign(
+            let mut witness = channel_owner::witness::Witness::open(&witness_dir, &store)?;
+            let input = channel_owner::witness::Reviewed {
+                request: read_json(&file)?,
+                review: Hash::from_hex(&review).map_err(|e| e.to_string())?,
+                owner_head: Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                native_head: Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            };
+            let response = channel_owner::Agent::open(&owner_dir, &store)?.sign_witnessed(
                 &store,
-                read_json(&file)?,
+                input,
                 &key_file,
-                Hash::from_hex(&review).map_err(|e| e.to_string())?,
-                Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
-                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                &mut witness,
+                &witness_key_file,
+                Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
             )?;
             println!(
                 "{}",
@@ -1456,13 +1546,50 @@ fn run() -> Result<()> {
             review,
             expected_owner_head,
             expected_head,
+            witness_dir,
+            expected_witness_head,
         } => {
-            let response = channel_owner::Agent::open(&owner_dir, &store)?.recover(
+            let mut witness = channel_owner::witness::Witness::open(&witness_dir, &store)?;
+            let input = channel_owner::witness::Reviewed {
+                request: read_json(&file)?,
+                review: Hash::from_hex(&review).map_err(|e| e.to_string())?,
+                owner_head: Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                native_head: Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            };
+            let response = channel_owner::Agent::open(&owner_dir, &store)?.recover_witnessed(
                 &store,
-                &read_json(&file)?,
-                Hash::from_hex(&review).map_err(|e| e.to_string())?,
-                Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
-                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                &input,
+                &mut witness,
+                Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&response).map_err(|e| e.to_string())?
+            );
+        }
+        Action::ChannelOwnerFinishWitness {
+            owner_dir,
+            file,
+            review,
+            expected_owner_head,
+            expected_head,
+            witness_dir,
+            expected_witness_head,
+            witness_key_file,
+        } => {
+            let mut witness = channel_owner::witness::Witness::open(&witness_dir, &store)?;
+            let input = channel_owner::witness::Reviewed {
+                request: read_json(&file)?,
+                review: Hash::from_hex(&review).map_err(|e| e.to_string())?,
+                owner_head: Hash::from_hex(&expected_owner_head).map_err(|e| e.to_string())?,
+                native_head: Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            };
+            let response = channel_owner::Agent::open(&owner_dir, &store)?.finish_witness(
+                &store,
+                &input,
+                &mut witness,
+                &witness_key_file,
+                Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
             )?;
             println!(
                 "{}",

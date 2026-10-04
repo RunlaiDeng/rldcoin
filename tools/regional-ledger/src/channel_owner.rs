@@ -357,7 +357,7 @@ pub struct Agent {
     healthy: bool,
 }
 impl Agent {
-    pub fn create(
+    fn create_component(
         dir: &Path,
         node: &Store,
         channel: Hash,
@@ -492,7 +492,7 @@ impl Agent {
         )?;
         self.journal.validate(node)
     }
-    pub fn prepare(
+    fn prepare_component(
         &self,
         node: &Store,
         request: &Request,
@@ -515,8 +515,10 @@ impl Agent {
     }
     /// Recovery never reads a key or signs. A predecessor head is accepted only
     /// for the last exact retained response, never for a different request.
-    pub fn recover(
-        &mut self,
+    /// Validate both caller transition and complete retained response without
+    /// publishing either custody journal. Witness recovery calls this first.
+    fn recovery_preview(
+        &self,
         node: &Store,
         request: &Request,
         reviewed: Hash,
@@ -541,6 +543,31 @@ impl Agent {
                     && (head == self.head()? || head == candidate.head()?),
                 "pending recovery needs exact retained response and caller transition head",
             )?;
+        }
+        let target = self.pending.as_ref().unwrap_or(&self.journal);
+        let (n, record) = target
+            .records
+            .iter()
+            .enumerate()
+            .find(|(_, r)| r.partial.request == *request && r.review == reviewed)
+            .ok_or("exact owner response absent; recovery cannot first-sign")?;
+        require(
+            head == target.head()?
+                || (n + 1 == target.records.len() && head == record.previous_head),
+            "recovery refuses stale owner head",
+        )?;
+        response(target, record, true)
+    }
+    fn recover_component(
+        &mut self,
+        node: &Store,
+        request: &Request,
+        reviewed: Hash,
+        head: Hash,
+        native_head: Hash,
+    ) -> Result<Response> {
+        let retained = self.recovery_preview(node, request, reviewed, head, native_head)?;
+        if let Some(candidate) = &self.pending {
             File::open(self.dir.join("owner.next"))
                 .map_err(io)?
                 .sync_all()
@@ -550,22 +577,9 @@ impl Agent {
             self.journal = candidate.clone();
             self.pending = None;
         }
-        let current = self.head()?;
-        let (n, record) = self
-            .journal
-            .records
-            .iter()
-            .enumerate()
-            .find(|(_, r)| r.partial.request == *request && r.review == reviewed)
-            .ok_or("exact owner response absent; recovery cannot first-sign")?;
-        require(
-            head == current
-                || (n + 1 == self.journal.records.len() && head == record.previous_head),
-            "recovery refuses stale owner head",
-        )?;
-        response(&self.journal, record, true)
+        Ok(retained)
     }
-    pub fn sign(
+    fn sign_component(
         &mut self,
         node: &Store,
         request: Request,
@@ -577,7 +591,7 @@ impl Agent {
         // Explicit recovery uses a separate method; signing cannot promote a tail.
         self.current(node, head, native_head)?;
         require(
-            reviewed == self.prepare(node, &request, head, native_head)?,
+            reviewed == self.prepare_component(node, &request, head, native_head)?,
             "owner review differs from exact current request",
         )?;
         require(
@@ -685,3 +699,6 @@ pub fn combine(node: &Store, mut parts: Vec<Partial>, native_head: Hash) -> Resu
 #[cfg(test)]
 #[path = "channel_owner_tests.rs"]
 mod tests;
+
+#[path = "channel_witness.rs"]
+pub mod witness;

@@ -186,6 +186,36 @@ strict 50.408秒、实际CLI42steps/5.605秒通过；余184回归单次300秒内
 重组/看守/完整窗口/网络/PQC/独立/历史/物理继续未完成。见
 [所有者签署及失败反例](operations/evidence/regional-native-channel-owner-outcome-20261005.json)。
 
+## V5 通道签署见证：有限地面实现
+
+来源 `b40fdba7...` / implementation `e5062c65...`、binary `8ddd9641...`。
+完整 funding 的实际 owner/双方签名指定单独 witness role；公开签署服务要求
+分别留存的 native/owner/witness 头与完整认证保管扩展。原 inception 已在见证
+留存时，同钥新目录拒绝；无 policy/头或旧 owner backup 拒绝。先持久保存 own
+原签名，再见证准确扩展，完成后释放响应；见证失败不回滚/退款。显式首次
+见证确认不读 owner key，无钥恢复不能补首次见证批准。
+
+首轮29行为通过但strict因8处测试简写告警失败，未豁免；修正/API接入后
+29+build+strict 56.945秒，实际入口7.492秒通过。余184回归在该旧V5来源
+`f4815c09...` 单次222.899秒通过，不能说在最终来源全部重跑通过。
+后续3.119秒最小反例观察到错误owner头返回拒绝但已发布pending witness，
+安全失败与新私有fixture保留。修复将所有caller/完整响应/所属检查前置；
+一次preview返回值编译拒绝1.324秒也保留，未启动fixture。最终准确来源上
+29行为/build/无豁免all-targets strict 48.575秒通过；全新实际入口49步骤
+8.371秒通过：错owner头后两日志/pending不变、准确无钥恢复、同钥reset拒绝、
+见证失败后禁止补签及显式完成、两party完整收据接受/重试且货币账面不变。
+只改三处通道保管/测试文件，未重复184项未受影响长历史检查或任何网络长测。
+
+此见证角色同机/同进程，receipt及Close/Challenge尚不携完整见证认证，
+返回witness_head不授予资金权限。实际中断、独立保管/全回滚/copied keys、
+长期见证容量/轮换、wallet-app/完整加密channel备份、full faults/历史/物理
+仍未资格，S11及整个协议未完成。旧V4 reset与旧完整故障不会被本通过替换；
+`VALUE-STRICT-01` 仍独立未通过，冻结正文/PDF/官网不变。
+下一可证伪主线为完整receiver/state proof的见证角色/inception/native认证，
+先模型/最小判别单次120秒/1次、网络0；不能只加入hash或降级旧profile。
+[准确结果与失败](operations/evidence/regional-native-channel-witness-outcome-20261005.json)，
+[权限与恢复契约](research/REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md)。
+
 当前父块 Prepare 的已认证停止观察显示约 40.180 秒来源等待，其间 20 次准备因本地争用拒绝。
 四固定邻居、四尝试槽的旧游标每轮起点不变。实际 TLS 周期争用反例只服务 2/4 邻居；
 仅改变起点的互素步长后，同样四轮取得 4/4 双端精确持久收据。该受控租约不是 Native CPU，

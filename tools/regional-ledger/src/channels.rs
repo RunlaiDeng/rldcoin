@@ -1,11 +1,11 @@
 //! Native typed signature/value kernel; no block/custody/storage activation.
 //! Inputs must come from ordinary full native replay, never a decoded cache.
 use super::*;
-pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V4";
+pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V5";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
-pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V4";
-pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V4";
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V5";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V5";
 pub fn is_profile(rules: &str) -> bool {
     rules == BFT_RULES || rules == SEGMENTED_RULES
 }
@@ -101,6 +101,8 @@ pub struct SignedState {
 #[serde(deny_unknown_fields)]
 pub enum Action {
     Open {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        witness: Option<String>,
         inputs: Vec<Hash>,
         parties: [String; 2],
         capacity: Amount,
@@ -676,6 +678,7 @@ impl Book {
             .ok_or("channel fee maturity overflow")?;
         match &intent.action {
             Action::Open {
+                witness,
                 inputs,
                 parties,
                 capacity,
@@ -683,6 +686,19 @@ impl Book {
                 change,
                 fee,
             } => {
+                if let Some(key) = witness {
+                    validate_ed25519_public_key(key)?;
+                    require(
+                        !parties.contains(key)
+                            && key != &context.trust.currency.authority
+                            && !context
+                                .trust
+                                .region(context.declaration.region)?
+                                .validators
+                                .contains(key),
+                        "freshness witness must use a separate admitted role key",
+                    )?;
+                }
                 require(
                     !inputs.is_empty()
                         && inputs.len() <= 16
