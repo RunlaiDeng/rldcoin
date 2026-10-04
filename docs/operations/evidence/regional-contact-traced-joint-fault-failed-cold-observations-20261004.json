@@ -1,0 +1,553 @@
+{
+  "format": "RLD-JOINT-FAULT-FAILED-STOPPED-OBSERVATION-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "failed_profile_remains_failed": true,
+  "fresh_full_fault_profile_completed": false,
+  "failed_report_sha256": "dd4899f2dfdcdb55f8db9da12914ed78ce278966cdeaa729f7f804a7aa8c8199",
+  "controller_source_set_sha256": "20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7",
+  "source_set_sha256": "2309a18199c5e7714017b56780001cbdf2527c57b574cc759d09d83ebc9f4c57",
+  "binary_sha256": "a4f5e23204f1a8d7d76545d95f88bd556a4ba7e8f5905b77c52529b02d4cb979",
+  "observer_sha256": "644b206e488a4ad30c490ccbbb144784b7e243b1019a070478003a86a89edeb5",
+  "native_replays": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "height": 13,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 2,
+      "import_count": 1
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "height": 13,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 2,
+      "import_count": 1
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "height": 13,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 2,
+      "import_count": 1
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "height": 13,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 2,
+      "import_count": 1
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "height": 11,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "height": 11,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "height": 11,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "height": 11,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "height": 12,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "height": 12,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "height": 12,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "height": 12,
+      "full_native_genesis_replay": true,
+      "separate_original_head_matches": true,
+      "export_count": 1,
+      "import_count": 1
+    }
+  ],
+  "recipient_observations": [
+    {
+      "replica": 0,
+      "height": 11,
+      "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+      "expected": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "source": "b87dbed4f74e88f59dcf9a617f2549ea1a0850e3adc444875ad6526a06117e8b",
+        "destination": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "export": "d53fa9497eeb8046cb98e9b5a31dbb18ce318da84b9d41193fde8a1e4fcc90ea",
+        "recipient": "d54207da194977dcf46adbfec2bc2e75b52d5a8a42184fedfdc00024f0e3e8da",
+        "net_amount": "9"
+      },
+      "pin": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "region": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "height": 11,
+        "tip": "0024cce8b6c21dcad1a178a5522b84493aff37970c79ee48d455ebb00631caf9",
+        "state": "e93b7e0c7b51d3de20fefb5383413d7ac759dfc327fbcad2a66b4eb9b015999f",
+        "epoch": "5762751666d355bac7006453f8206c64f1129a5ae5a9c4ad4551f6b3375e840e",
+        "finality": "9b0738670226195c32241c2cf78bb921ad501484d076b203cc071d112e7a5f8c",
+        "local_journal_and_incidents": "c098cd2f1ec9a02acb0bdeeeadedd7e01dbc9dbcd59d6d40f1b0e8460187ca97"
+      },
+      "verified_source_checkpoint": "eb1a595268bb64bfdf1ac16a66ce2bca96ee615055a23164347175eaf378eafe",
+      "evidence_verified": true,
+      "import_accepted": false,
+      "import_height": null,
+      "mature_height": null,
+      "maturity_reached": false,
+      "original_output_remaining": "0",
+      "original_output_spendable_now": false,
+      "local_finality_covers_import": false,
+      "quarantined": false,
+      "state": "VERIFIED_EVIDENCE_PENDING_IMPORT",
+      "transport_receipt_checked": false,
+      "remote_current_state_known": false,
+      "live_rld": false
+    },
+    {
+      "replica": 1,
+      "height": 11,
+      "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+      "expected": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "source": "b87dbed4f74e88f59dcf9a617f2549ea1a0850e3adc444875ad6526a06117e8b",
+        "destination": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "export": "d53fa9497eeb8046cb98e9b5a31dbb18ce318da84b9d41193fde8a1e4fcc90ea",
+        "recipient": "d54207da194977dcf46adbfec2bc2e75b52d5a8a42184fedfdc00024f0e3e8da",
+        "net_amount": "9"
+      },
+      "pin": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "region": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "height": 11,
+        "tip": "0024cce8b6c21dcad1a178a5522b84493aff37970c79ee48d455ebb00631caf9",
+        "state": "e93b7e0c7b51d3de20fefb5383413d7ac759dfc327fbcad2a66b4eb9b015999f",
+        "epoch": "5762751666d355bac7006453f8206c64f1129a5ae5a9c4ad4551f6b3375e840e",
+        "finality": "9b0738670226195c32241c2cf78bb921ad501484d076b203cc071d112e7a5f8c",
+        "local_journal_and_incidents": "ad72ea97daaa09d9967c359f338d8e12d4d056461ed46095a0de49aa5ef65f55"
+      },
+      "verified_source_checkpoint": "eb1a595268bb64bfdf1ac16a66ce2bca96ee615055a23164347175eaf378eafe",
+      "evidence_verified": true,
+      "import_accepted": false,
+      "import_height": null,
+      "mature_height": null,
+      "maturity_reached": false,
+      "original_output_remaining": "0",
+      "original_output_spendable_now": false,
+      "local_finality_covers_import": false,
+      "quarantined": false,
+      "state": "VERIFIED_EVIDENCE_PENDING_IMPORT",
+      "transport_receipt_checked": false,
+      "remote_current_state_known": false,
+      "live_rld": false
+    },
+    {
+      "replica": 2,
+      "height": 11,
+      "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+      "expected": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "source": "b87dbed4f74e88f59dcf9a617f2549ea1a0850e3adc444875ad6526a06117e8b",
+        "destination": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "export": "d53fa9497eeb8046cb98e9b5a31dbb18ce318da84b9d41193fde8a1e4fcc90ea",
+        "recipient": "d54207da194977dcf46adbfec2bc2e75b52d5a8a42184fedfdc00024f0e3e8da",
+        "net_amount": "9"
+      },
+      "pin": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "region": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "height": 11,
+        "tip": "0024cce8b6c21dcad1a178a5522b84493aff37970c79ee48d455ebb00631caf9",
+        "state": "e93b7e0c7b51d3de20fefb5383413d7ac759dfc327fbcad2a66b4eb9b015999f",
+        "epoch": "5762751666d355bac7006453f8206c64f1129a5ae5a9c4ad4551f6b3375e840e",
+        "finality": "9b0738670226195c32241c2cf78bb921ad501484d076b203cc071d112e7a5f8c",
+        "local_journal_and_incidents": "2d5f27578b47d5d06176a6f2d2f0a78536592e53b78bf5bdd9e26d108ec06515"
+      },
+      "verified_source_checkpoint": "eb1a595268bb64bfdf1ac16a66ce2bca96ee615055a23164347175eaf378eafe",
+      "evidence_verified": true,
+      "import_accepted": false,
+      "import_height": null,
+      "mature_height": null,
+      "maturity_reached": false,
+      "original_output_remaining": "0",
+      "original_output_spendable_now": false,
+      "local_finality_covers_import": false,
+      "quarantined": false,
+      "state": "VERIFIED_EVIDENCE_PENDING_IMPORT",
+      "transport_receipt_checked": false,
+      "remote_current_state_known": false,
+      "live_rld": false
+    },
+    {
+      "replica": 3,
+      "height": 11,
+      "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+      "expected": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "source": "b87dbed4f74e88f59dcf9a617f2549ea1a0850e3adc444875ad6526a06117e8b",
+        "destination": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "export": "d53fa9497eeb8046cb98e9b5a31dbb18ce318da84b9d41193fde8a1e4fcc90ea",
+        "recipient": "d54207da194977dcf46adbfec2bc2e75b52d5a8a42184fedfdc00024f0e3e8da",
+        "net_amount": "9"
+      },
+      "pin": {
+        "currency": "00589df66861248e6e100c4ae590c4cac9e54e0528528490464d3dbdd023f23d",
+        "region": "c6d67cc09cd6cb7368908c69931250f30c263fa8f81fc39488f318b750193613",
+        "height": 11,
+        "tip": "0024cce8b6c21dcad1a178a5522b84493aff37970c79ee48d455ebb00631caf9",
+        "state": "e93b7e0c7b51d3de20fefb5383413d7ac759dfc327fbcad2a66b4eb9b015999f",
+        "epoch": "5762751666d355bac7006453f8206c64f1129a5ae5a9c4ad4551f6b3375e840e",
+        "finality": "9b0738670226195c32241c2cf78bb921ad501484d076b203cc071d112e7a5f8c",
+        "local_journal_and_incidents": "6640a173a2b3c16877a0a17dfa88d2536101700eea51546d3a3f431cbbf50071"
+      },
+      "verified_source_checkpoint": "eb1a595268bb64bfdf1ac16a66ce2bca96ee615055a23164347175eaf378eafe",
+      "evidence_verified": true,
+      "import_accepted": false,
+      "import_height": null,
+      "mature_height": null,
+      "maturity_reached": false,
+      "original_output_remaining": "0",
+      "original_output_spendable_now": false,
+      "local_finality_covers_import": false,
+      "quarantined": false,
+      "state": "VERIFIED_EVIDENCE_PENDING_IMPORT",
+      "transport_receipt_checked": false,
+      "remote_current_state_known": false,
+      "live_rld": false
+    }
+  ],
+  "retained_envelopes": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 144,
+      "distinct_complete_snapshots": 23,
+      "retained_state_bytes": 2302246,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 22606723,
+      "full_native_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 144,
+      "distinct_complete_snapshots": 23,
+      "retained_state_bytes": 2301862,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 22508387,
+      "full_native_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 143,
+      "distinct_complete_snapshots": 23,
+      "retained_state_bytes": 2287098,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 22226527,
+      "full_native_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 143,
+      "distinct_complete_snapshots": 23,
+      "retained_state_bytes": 2287032,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 22206061,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 147,
+      "distinct_complete_snapshots": 37,
+      "retained_state_bytes": 1068745,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 29144559,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 146,
+      "distinct_complete_snapshots": 37,
+      "retained_state_bytes": 1065471,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 28827030,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 144,
+      "distinct_complete_snapshots": 37,
+      "retained_state_bytes": 1043212,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 28121092,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 143,
+      "distinct_complete_snapshots": 37,
+      "retained_state_bytes": 1043878,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 27829148,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 148,
+      "distinct_complete_snapshots": 34,
+      "retained_state_bytes": 1027195,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 29639507,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 149,
+      "distinct_complete_snapshots": 34,
+      "retained_state_bytes": 1030135,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 29868215,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 150,
+      "distinct_complete_snapshots": 34,
+      "retained_state_bytes": 1033264,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 30152471,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 148,
+      "distinct_complete_snapshots": 34,
+      "retained_state_bytes": 1014866,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 29592725,
+      "full_native_authentication": true
+    }
+  ],
+  "transport_archives": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "archived_records": 192,
+      "retained_files": 331,
+      "retained_bytes": 38082576,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "archived_records": 457,
+      "retained_files": 612,
+      "retained_bytes": 45401793,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "archived_records": 461,
+      "retained_files": 616,
+      "retained_bytes": 45335763,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "archived_records": 272,
+      "retained_files": 420,
+      "retained_bytes": 40794967,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "archived_records": 224,
+      "retained_files": 369,
+      "retained_bytes": 50661884,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "archived_records": 432,
+      "retained_files": 588,
+      "retained_bytes": 55077946,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "archived_records": 383,
+      "retained_files": 532,
+      "retained_bytes": 52539010,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "archived_records": 208,
+      "retained_files": 341,
+      "retained_bytes": 44213982,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "archived_records": 240,
+      "retained_files": 396,
+      "retained_bytes": 56020131,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "archived_records": 416,
+      "retained_files": 580,
+      "retained_bytes": 59185723,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "archived_records": 397,
+      "retained_files": 559,
+      "retained_bytes": 58538958,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "archived_records": 224,
+      "retained_files": 375,
+      "retained_bytes": 53230042,
+      "full_cold_authentication": true
+    }
+  ],
+  "joint_custody_reads": [
+    {
+      "replica": 0,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 0,
+      "keyless_nonparticipant": true,
+      "old_fence_retained": false,
+      "no_first_signing": true
+    },
+    {
+      "replica": 1,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 1,
+      "keyless_nonparticipant": false,
+      "old_fence_retained": true,
+      "no_first_signing": true
+    },
+    {
+      "replica": 2,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 1,
+      "keyless_nonparticipant": false,
+      "old_fence_retained": true,
+      "no_first_signing": true
+    },
+    {
+      "replica": 3,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 1,
+      "keyless_nonparticipant": false,
+      "old_fence_retained": true,
+      "no_first_signing": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "actual_owned_processes_stopped": true,
+  "no_runtime_startup_signing_recovery_or_head_adoption": true,
+  "strict_transport_read_only_entry_used": true,
+  "transport_inspection_private_identity_not_loaded": true,
+  "all_transport_archives_cold_verified": true,
+  "mesh_inspection_anchors_sha256": "e9fd386201c50011ab5d7f44001cb5618e6d2209dfda3260a11eaf04c93be90c",
+  "source_mesh_inspection_anchors_sha256": "af3ac803d470ff28b1e68190e818ff0908fb60d962c96130ae4665de2720ad3f",
+  "independent_custody_qualified": false,
+  "duration_seconds": 213.504
+}

@@ -98,3 +98,60 @@ E11/P4/A4、issued/liquid/pending 300/300/0，12 Native、12 收款、4 时代�
 `evidence/regional-contact-trace-three-region-cold-20261004.json`、
 `evidence/regional-contact-trace-three-region-observer-coverage-20261004.json`。
 活动范围绑定：`evidence/regional-contact-traced-joint-fault-scope-binding-20261004.json`。
+
+## 单次完整范围终态与本阶段决定
+
+该范围在原 600 秒窗口内未导入成熟，失败；外围 894.190 秒后全部拥有的协议进程
+停止。兼容认证前缀停止 E13/P11/A12，issued/liquid/pending-gross 为 300/290/10，
+pending-net 为 9；四收件方均 VERIFIED_EVIDENCE_PENDING_IMPORT。
+213.504 秒严格停止核验通过：12 原生、4 收款、4 时代保管、1,749 完整 BFT 信封、
+3,906 运输档案，所有私有字节和权限未变。三份原 owner 请求均 INCLUDED_IN_LOCAL_LEDGER，
+各自最新独立头及完整签署高度重放匹配，预留零；不恢复、替换、退款或迁移它们。
+
+12 个实际 actor 日志的完整规范字节链、来源/二进制/观察器/设置锚绑定均已核对。
+所有环从事件 1 收集，无淘汰和拒绝；52 个启动身份不匹配样本和退出时未知明确保留。
+最终尚未发布到状态文件的内存尾部仍不可观测，因此零环丢失不等于完整最终尾覆盖。
+所有认证与完整当前信封关联来自本次严格冷证据，不靠元数据摘要授权。
+
+P11 当前父块有 18 个本地完整信封、54 条目的路径，42 条目标保留精确信封；
+其余 12 条目标信封和目标回执均不存在。三条缺失路径的中间实际保管到首次普通
+转发准备分别约 31.533、34.397、64.313 秒；来源一条 Timeout 包入队到首次准备
+约 88.318 秒。源 P0 的一个 round-0 Prepare 包已准备 66 次、发送 60 次；
+中间 P1 实际保管 23 次（含 deferred），但只准备转发两次、发送一次，P2 拒绝了
+这次入站而未取得保管。这条精确路径支持 H-service 的目标保管之前分支。
+后期 round-2 包可能接近停止边界；它们缺失不能单独证明长期饥饿。
+
+**H-service 的范围判别完成，具体调度/验证原因仍未证明。** 对这 12 条认证缺失路径，
+没有证据支持目标已保管后的 Native 遗漏。不能由总拒绝次数或等待区间推断哪条
+局部公平租约、历史选择或验证 CPU 是原因；不能把一次新失败恢复为完整资格。
+一次完整判别预算已用完，下一方法限定为本地转交反例：区分实际 Mesh 占用与
+未占用时保留的 ordinary/TCP 选择需求。先用精确现有调度函数及真实固定 TLS
+小样本，最多两个组件对照；若反例不存在则切换验证 CPU/包选择的操作成本探针，
+不以更多完整范围或放宽原门槛来替代归因。新修复必须由该反例证明行为变化后再决定
+必要的资格范围；这份失败和其请求/所有头始终保留。
+
+终态证据：`evidence/regional-contact-traced-joint-fault-fresh-20261004.json`、
+`evidence/regional-contact-traced-joint-fault-failed-cold-observations-20261004.json`、
+`evidence/regional-contact-traced-joint-fault-owner-head-observations-20261004.json`、
+`evidence/regional-contact-traced-fault-current-proxima-path-observations-20261004.json`、
+`evidence/regional-contact-traced-current-proxima-live-wait-reconciliation-20261004.json`、
+`evidence/regional-contact-traced-joint-fault-stage-decision-20261004.json`。
+
+### 最小转交反例已执行
+
+第一份真实固定 TLS 对照在约 0.559 秒完成：实际 OS mesh 锁首先使前台 ordinary
+选择尝试按原边界拒绝，随后释放该锁，并让拥有选择意图的前台线程在 Mesh 外
+等待一个受控屏障。此时 `local_mesh_owner` 为 null，但保留的 ordinary 意图仍使
+实际请求遭 custody refusal，延迟接收器也未保管。前台重新尝试选择并清除意图后，
+同一完整已认证请求在延迟接收器中实际持久保管；来源以新请求重试并实际保管回执。
+拥有的线程/socket 全部关闭，没有 Native、钱包、签署或旧现场调用。
+
+这证实调度允许“没有实际 Mesh 租约，却因空闲保留意图拒绝接触”这一可复现行为。
+屏障是受控的锁外暂停，不是本轮 Native CPU 测量；它尚未证明 31–64 秒等待的全部
+原因。下一修复应保留 ordinary 选择的 owner/purpose、真实尝试的公平性、两 TCP 槽、
+所有验证及实际 fsync，同时使锁外暂停不无限阻断可用 Mesh 的接触工作。
+组件对照预算最多两份，首份已用；先由修复后的同一反例证明行为变化，不启动新的
+完整故障范围。若改变调度不能同时保留原实际选择/保管回归，就退出该方案并切换
+测量，不能为得到通过降低这些要求。
+
+证据：`evidence/regional-idle-ordinary-intent-component-20261004.json`。

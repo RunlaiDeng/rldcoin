@@ -1,0 +1,394 @@
+{
+  "format": "RLD-OWNED-CAMPAIGN-CONTACT-TRACE-OBSERVATIONS-V1",
+  "fixture_only": true,
+  "source_binding": {
+    "source_set_sha256": "2309a18199c5e7714017b56780001cbdf2527c57b574cc759d09d83ebc9f4c57",
+    "source_files": 396,
+    "binary_sha256": "a4f5e23204f1a8d7d76545d95f88bd556a4ba7e8f5905b77c52529b02d4cb979",
+    "sampler_sha256": "bbf1ac8e5e00d802d03c20a8ad6d4cca263d3ecb47373e33a6cd9a263e8330b4"
+  },
+  "observer_sha256": "8701ae434362a5489ce3e5c79b1a8a3f954c4f1daba59825966a09bbc8dd3062",
+  "producer_instances": 12,
+  "logs": [
+    {
+      "label": "contact_earth_1_0",
+      "counts": {
+        "samples": 881,
+        "unknown_status_pid_mismatch": 7,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 6
+      },
+      "stages": {
+        "contact_start": 310,
+        "contact_failed": 2365,
+        "native_envelope_received": 118,
+        "source_enqueued": 45,
+        "outgoing_prepared": 585,
+        "outgoing_failed": 570,
+        "request_sent": 301,
+        "peer_custody_authenticated": 54,
+        "reply_local_custody": 15,
+        "destination_receipt_observed": 12,
+        "request_authenticated": 823,
+        "local_transport_custody": 81,
+        "destination_receipt_retained": 46,
+        "inbound_refused": 742,
+        "deferred_attempt": 1896,
+        "deferred_local_custody": 263
+      },
+      "private_log_sha256": "75cfa923e9d58195f4c1f31e42db930de931caba6f3d548b3031997289159316",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_earth_2_1",
+      "counts": {
+        "samples": 874,
+        "unknown_status_pid_mismatch": 6,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 6
+      },
+      "stages": {
+        "request_authenticated": 1494,
+        "local_transport_custody": 155,
+        "destination_receipt_retained": 70,
+        "contact_failed": 1988,
+        "native_envelope_received": 123,
+        "contact_start": 264,
+        "outgoing_prepared": 617,
+        "outgoing_failed": 597,
+        "request_sent": 519,
+        "peer_custody_authenticated": 55,
+        "reply_local_custody": 20,
+        "destination_receipt_observed": 14,
+        "inbound_refused": 1339,
+        "deferred_attempt": 3849,
+        "deferred_local_custody": 542,
+        "source_enqueued": 39
+      },
+      "private_log_sha256": "08016d3bb97291d2a9749e150e943550d99568845c14433dc62923356c9a5637",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_earth_3_2",
+      "counts": {
+        "samples": 867,
+        "unknown_status_pid_mismatch": 6,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 6
+      },
+      "stages": {
+        "request_authenticated": 57,
+        "local_transport_custody": 19,
+        "destination_receipt_retained": 46,
+        "contact_failed": 1242,
+        "native_envelope_received": 124,
+        "outgoing_prepared": 1378,
+        "contact_start": 446,
+        "request_sent": 1358,
+        "peer_custody_authenticated": 144,
+        "reply_local_custody": 65,
+        "destination_receipt_observed": 9,
+        "source_enqueued": 42,
+        "outgoing_failed": 1313,
+        "inbound_refused": 38,
+        "deferred_attempt": 137,
+        "deferred_local_custody": 27
+      },
+      "private_log_sha256": "dca1fe902b83e7de1529fb59e5d34ccc45fbd24197ebaf261417363123e26c98",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_proxima_0_3",
+      "counts": {
+        "samples": 861,
+        "unknown_status_pid_mismatch": 2,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 5
+      },
+      "stages": {
+        "contact_start": 617,
+        "contact_failed": 1136,
+        "native_envelope_received": 117,
+        "source_enqueued": 84,
+        "outgoing_prepared": 1502,
+        "request_sent": 1359,
+        "peer_custody_authenticated": 121,
+        "reply_local_custody": 81,
+        "destination_receipt_observed": 28,
+        "request_authenticated": 108,
+        "local_transport_custody": 54,
+        "destination_receipt_retained": 105,
+        "outgoing_failed": 1421,
+        "inbound_refused": 54,
+        "deferred_attempt": 140,
+        "deferred_local_custody": 51
+      },
+      "private_log_sha256": "da32cb32545460b3a4452bdf09f8703fac31c78542b07d7eeb10b56f0e1773b0",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_proxima_1_4",
+      "counts": {
+        "samples": 859,
+        "unknown_status_pid_mismatch": 3,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 5
+      },
+      "stages": {
+        "contact_start": 351,
+        "contact_failed": 2443,
+        "native_envelope_received": 115,
+        "request_authenticated": 2185,
+        "local_transport_custody": 201,
+        "destination_receipt_retained": 184,
+        "source_enqueued": 81,
+        "outgoing_prepared": 367,
+        "outgoing_failed": 324,
+        "request_sent": 337,
+        "peer_custody_authenticated": 105,
+        "reply_local_custody": 43,
+        "destination_receipt_observed": 34,
+        "inbound_refused": 1984,
+        "deferred_attempt": 3411,
+        "deferred_local_custody": 597
+      },
+      "private_log_sha256": "70c697b4d816891b16e5fcc6d28c108edefd76a15c4d3c883c94853136f3ad84",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_proxima_2_5",
+      "counts": {
+        "samples": 856,
+        "unknown_status_pid_mismatch": 4,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 5
+      },
+      "stages": {
+        "request_authenticated": 1311,
+        "local_transport_custody": 237,
+        "destination_receipt_retained": 126,
+        "contact_start": 432,
+        "native_envelope_received": 114,
+        "outgoing_prepared": 1071,
+        "outgoing_failed": 1018,
+        "contact_failed": 1741,
+        "source_enqueued": 81,
+        "request_sent": 850,
+        "peer_custody_authenticated": 122,
+        "reply_local_custody": 53,
+        "destination_receipt_observed": 44,
+        "inbound_refused": 1074,
+        "deferred_attempt": 2346,
+        "deferred_local_custody": 490
+      },
+      "private_log_sha256": "7b656fd7321692cabc29dafa27a6807be43a0c98f058206b81b0b31f607d75b2",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_proxima_3_6",
+      "counts": {
+        "samples": 852,
+        "unknown_status_pid_mismatch": 3,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 5
+      },
+      "stages": {
+        "request_authenticated": 125,
+        "local_transport_custody": 55,
+        "destination_receipt_retained": 111,
+        "contact_start": 544,
+        "native_envelope_received": 115,
+        "contact_failed": 1095,
+        "source_enqueued": 78,
+        "outgoing_prepared": 1089,
+        "request_sent": 1082,
+        "peer_custody_authenticated": 186,
+        "reply_local_custody": 96,
+        "destination_receipt_observed": 18,
+        "outgoing_failed": 993,
+        "inbound_refused": 70,
+        "deferred_attempt": 182,
+        "deferred_local_custody": 56
+      },
+      "private_log_sha256": "7cdd9c714c44ba9e741740170b1829925afab1dd6a003c95c2ce3ccb57d3643f",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_andromeda_0_7",
+      "counts": {
+        "samples": 849,
+        "unknown_status_pid_mismatch": 4,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 4
+      },
+      "stages": {
+        "contact_start": 513,
+        "contact_failed": 1172,
+        "native_envelope_received": 118,
+        "source_enqueued": 96,
+        "outgoing_prepared": 1387,
+        "outgoing_failed": 1295,
+        "request_sent": 1296,
+        "peer_custody_authenticated": 181,
+        "reply_local_custody": 92,
+        "request_authenticated": 157,
+        "inbound_refused": 91,
+        "deferred_attempt": 290,
+        "deferred_local_custody": 79,
+        "destination_receipt_retained": 145,
+        "local_transport_custody": 66,
+        "destination_receipt_observed": 15
+      },
+      "private_log_sha256": "2a6390ee67556ec333503a2e50ae036832dfdc18c02a924620f5b2567737931e",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_andromeda_1_8",
+      "counts": {
+        "samples": 845,
+        "unknown_status_pid_mismatch": 5,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 4
+      },
+      "stages": {
+        "request_authenticated": 1827,
+        "local_transport_custody": 262,
+        "destination_receipt_retained": 174,
+        "contact_start": 372,
+        "native_envelope_received": 122,
+        "contact_failed": 2032,
+        "outgoing_prepared": 499,
+        "outgoing_failed": 456,
+        "inbound_refused": 1565,
+        "deferred_attempt": 3220,
+        "source_enqueued": 81,
+        "deferred_local_custody": 605,
+        "request_sent": 463,
+        "peer_custody_authenticated": 145,
+        "reply_local_custody": 43,
+        "destination_receipt_observed": 29
+      },
+      "private_log_sha256": "07a6fe08e5edef496660d7612f79a47f58d775130d92fea28f95a9ffbd18692b",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_andromeda_2_9",
+      "counts": {
+        "samples": 840,
+        "unknown_status_pid_mismatch": 4,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 4
+      },
+      "stages": {
+        "contact_start": 418,
+        "contact_failed": 1700,
+        "native_envelope_received": 125,
+        "request_authenticated": 1320,
+        "local_transport_custody": 236,
+        "destination_receipt_retained": 140,
+        "outgoing_prepared": 853,
+        "request_sent": 730,
+        "peer_custody_authenticated": 150,
+        "outgoing_failed": 832,
+        "source_enqueued": 78,
+        "inbound_refused": 1084,
+        "deferred_attempt": 2618,
+        "deferred_local_custody": 495,
+        "reply_local_custody": 21,
+        "destination_receipt_observed": 18
+      },
+      "private_log_sha256": "32fee6e8c1863e152019c32077b61a21fa8a18fd4541cf6b4c48695d4b92ef0c",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_andromeda_3_10",
+      "counts": {
+        "samples": 836,
+        "unknown_status_pid_mismatch": 3,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 4
+      },
+      "stages": {
+        "request_authenticated": 193,
+        "local_transport_custody": 67,
+        "destination_receipt_retained": 157,
+        "contact_start": 548,
+        "contact_failed": 1112,
+        "inbound_refused": 124,
+        "deferred_attempt": 243,
+        "native_envelope_received": 121,
+        "deferred_local_custody": 90,
+        "source_enqueued": 84,
+        "outgoing_prepared": 1029,
+        "request_sent": 1010,
+        "outgoing_failed": 935,
+        "peer_custody_authenticated": 153,
+        "reply_local_custody": 94,
+        "destination_receipt_observed": 11
+      },
+      "private_log_sha256": "84d0bd0db73413eef78540d599d94db4e71c834114462efe3a578b2f85235e8a",
+      "private_log_mode_0600": true
+    },
+    {
+      "label": "contact_earth_0_11",
+      "counts": {
+        "samples": 631,
+        "unknown_status_pid_mismatch": 5,
+        "missed_events": 0,
+        "rejected_observations": 0,
+        "unknown_producer_observation_unavailable": 4
+      },
+      "stages": {
+        "request_authenticated": 66,
+        "local_transport_custody": 30,
+        "destination_receipt_retained": 63,
+        "contact_start": 403,
+        "contact_failed": 891,
+        "native_envelope_received": 166,
+        "source_enqueued": 3,
+        "outgoing_prepared": 382,
+        "request_sent": 361,
+        "outgoing_failed": 358,
+        "inbound_refused": 36,
+        "deferred_attempt": 138,
+        "deferred_local_custody": 33,
+        "peer_custody_authenticated": 45,
+        "reply_local_custody": 24,
+        "destination_receipt_observed": 1
+      },
+      "private_log_sha256": "b3bab84a8b7b09a037f01acc156c8241b508e027230dbf7535c7ca97d7ef7137",
+      "private_log_mode_0600": true
+    }
+  ],
+  "observer_gap_counts": {},
+  "max_sample_wall_seconds": 1.277115083008539,
+  "elapsed_seconds": 894.0901564999949,
+  "setup_anchor_sha256": "e9fd386201c50011ab5d7f44001cb5618e6d2209dfda3260a11eaf04c93be90c",
+  "private_logs_not_published": true,
+  "protocol_control_on_observer_failure": false,
+  "native_or_custody_authority": false,
+  "complete_child_process_CPU_or_RSS": false,
+  "H_service_cause_resolved": false,
+  "full_fault_profile_qualified": false,
+  "controller_source_set_sha256": "20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7",
+  "controller_manifest_node_pin_is_previous_baseline": true,
+  "actual_node_source_and_binary_bound_by_source_binding": true,
+  "run_report_sha256": "dd4899f2dfdcdb55f8db9da12914ed78ce278966cdeaa729f7f804a7aa8c8199",
+  "controller_exit_code": 1,
+  "actual_scope_completed": false,
+  "owned_process_cleanup_verified": true,
+  "collector_started_with_owned_controller": true,
+  "ordinary_thresholds_deadlines_and_capacity_unchanged": true,
+  "runner_sha256": "0a357287b9177b7cfdd3ec98b508bd13360f170738dea1275f668fd092458212"
+}

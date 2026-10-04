@@ -1,0 +1,27 @@
+{
+  "format": "RLD-IDLE-ORDINARY-INTENT-TLS-COUNTEREXAMPLE-V1",
+  "completed": true,
+  "fixture_only": true,
+  "source_set_sha256": "2309a18199c5e7714017b56780001cbdf2527c57b574cc759d09d83ebc9f4c57",
+  "tcp_source_sha256": "11b089b8efe7fef3df957992d91e1ddb27f6a656b08db38e77a91f0233458444",
+  "observer_sha256": "78dc81e21666bd63fbc4c5c7450ad034fe51db885331a080baef20e14c7fdfe9",
+  "actual_pinned_TLS": true,
+  "real_OS_mesh_lock_refusal": true,
+  "controlled_outside_lock_foreground_pause": true,
+  "actual_Native_CPU_not_executed_or_measured": true,
+  "failed_profile_cause_not_proven": true,
+  "no_native_ledger_or_wallet_calls": true,
+  "private_fixture_not_published": true,
+  "owned_threads_and_sockets_closed": true,
+  "elapsed_seconds": 0.55869212502148,
+  "result": {
+    "no_local_mesh_lease_held_before_request": true,
+    "first_attempt_seconds": 0.2218388750043232,
+    "destination_receipt_before_foreground_retry": false,
+    "source_reported_custody_refusal": true,
+    "idle_intent_still_retained": true,
+    "no_local_mesh_lease_held_after_refusal": true,
+    "actual_deferred_destination_custody_after_retry": true,
+    "source_actual_local_receipt_after_fresh_retry": true
+  }
+}
