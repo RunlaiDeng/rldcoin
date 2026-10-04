@@ -397,3 +397,24 @@ proof，同机服务约束不证明独立最新、全部rollback/copied keys或S
 下条权限/最新边界、预算及未完成义务详见
 [地面见证契约](REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md)与
 [准确源绑定结果](../operations/evidence/regional-native-channel-witness-outcome-20261005.json)。
+
+
+## V6 接收/结算共同认证完整见证状态
+
+新profile的funding必须选择单独角色，完整state必须双方+完整见证授权；Native
+receipt还绑定准确invoice、前后原始inceptions及上一完整授权声明。组合草稿
+没有授权。Witness V2以全原生原始birth/已确认最高own partials签署并持久seal，
+保留每个seal原限额内；失败不返回，无钥只恢复准确已有seal。原生Close/Challenge/
+conflict/cold也检查完整proof。见证签署的起点承诺不是独立最新/私有custody证明。
+
+215 native行为检查通过于 `0e76e12c...`；最终 `02a15cfc...` 只纠正两处规范版本
+标签，所有Rust/Cargo/build/test字节相同。新身份strict/build及全新56步CLI通过，
+未复跑215或旧network长测试，不冒称全部最终身份重跑。新款无价值genesis，
+不迁移旧profile/值/保管。每一观察器/编译/资金选择失败保留。原限额、票数、
+费用、成熟、c+1..c+2016窗口/义务不降低。三头/同机签署不是S11/独立/全回滚资格。
+
+历史有效较旧状态仍可进入关闭窗口；下一主线为native最高已接受完整状态的
+自动watch/委托fee challenge/普通纳入，不能用proof本身声称已有看守。见
+[完整角色与边界](REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md)、
+[实现结果](../operations/evidence/regional-native-channel-state-witness-outcome-20261005.json)及
+[最终内容身份](../operations/evidence/regional-native-channel-state-witness-final-label-outcome-20261005.json)。

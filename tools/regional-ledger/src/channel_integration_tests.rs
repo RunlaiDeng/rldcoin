@@ -27,7 +27,7 @@ pub(super) fn declaration(chain: &Chain, trust: &Trust) -> c::Declaration {
     d.authority_signature = signature(1, &d.bytes().unwrap());
     d
 }
-pub(super) fn parties() -> [String; 2] {
+pub(crate) fn parties() -> [String; 2] {
     let mut parties = [public(10), public(11)];
     parties.sort();
     parties
@@ -70,7 +70,7 @@ pub(crate) fn command(
         action: c::SignedAction { intent, approvals },
     }))
 }
-pub(super) fn signed_state(
+pub(crate) fn signed_state(
     chain: &Chain,
     trust: &Trust,
     channel: Hash,
@@ -93,22 +93,31 @@ pub(super) fn signed_state(
         .collect();
     approvals.sort_by(|a, b| a.key.cmp(&b.key));
     c::SignedState {
+        witness: Some(crate::channel_state_witness::fixture(
+            &statement,
+            parties(),
+            None,
+        )),
         statement,
         approvals,
     }
 }
-pub(super) fn funding(chain: &Chain, trust: &Trust) -> Command {
+pub(crate) fn funding(chain: &Chain, trust: &Trust) -> Command {
     let (input, coin) = chain
         .ledger
         .coins
         .iter()
-        .find(|(_, c)| c.payment.owner == public(10) && c.mature <= chain.height() + 1)
+        .find(|(_, c)| {
+            c.payment.owner == public(10)
+                && c.mature <= chain.height() + 1
+                && c.payment.amount >= Amount(61)
+        })
         .unwrap();
     command(
         chain,
         trust,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: vec![*input],
             parties: parties(),
             capacity: Amount(60),

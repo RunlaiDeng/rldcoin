@@ -4,7 +4,7 @@ use crate::tests::{
     public,
 };
 use std::os::unix::fs::PermissionsExt;
-fn key(root: &Path, seed: u8) -> PathBuf {
+pub(super) fn key(root: &Path, seed: u8) -> PathBuf {
     let p = root.join(format!("fixture-{seed}.json"));
     fs::write(
         &p,
@@ -14,7 +14,7 @@ fn key(root: &Path, seed: u8) -> PathBuf {
     fs::set_permissions(&p, fs::Permissions::from_mode(0o600)).unwrap();
     p
 }
-fn sign(
+pub(super) fn sign(
     a: &mut Agent,
     w: &mut Witness,
     node: &Store,
@@ -82,8 +82,17 @@ fn native_channel_witness_two_owners_original_continuation_keyless_restart_and_r
     .unwrap() else {
         panic!()
     };
+    let wh = w.head().unwrap();
+    let Combined::Initial(initial) = w
+        .seal(&node, Combined::Initial(initial), &wk, (head(&root), wh))
+        .unwrap()
+        .combined
+    else {
+        panic!()
+    };
     let mut r = receipt(&node, reserve.unwrap(), 1, initial, 10, None);
     r.next.approvals.clear();
+    r.next.witness = None;
     r.approvals.clear();
     let req = Request::Payment(Box::new(r));
     let one = sign(&mut a, &mut w, &node, &root, req.clone(), 10);
@@ -97,6 +106,16 @@ fn native_channel_witness_two_owners_original_continuation_keyless_restart_and_r
         panic!()
     };
     assert_eq!(r.next.statement.sequence, 1);
+    assert!(r.verify_anchor(&node.trust, &node.evidence).is_err());
+    let wh = w.head().unwrap();
+    let Combined::Payment(sealed) = w
+        .seal(&node, Combined::Payment(r), &wk, (head(&root), wh))
+        .unwrap()
+        .combined
+    else {
+        panic!()
+    };
+    sealed.verify_anchor(&node.trust, &node.evidence).unwrap();
     let wh = w.head().unwrap();
     assert!(Agent::create_witnessed(
         &root.join("reset"),
@@ -143,7 +162,7 @@ fn native_channel_witness_two_owners_original_continuation_keyless_restart_and_r
 fn native_channel_witness_missing_policy_role_head_or_original_state_is_readonly() {
     let (root, node, channel, _) = setup(None);
     let wk = key(&root, 12);
-    let mut w = Witness::create(&root.join("witness"), &node, public(12), head(&root)).unwrap();
+    let mut w = Witness::create(&root.join("witness"), &node, public(13), head(&root)).unwrap();
     let wh = w.head().unwrap();
     assert!(Agent::create_witnessed(
         &root.join("alice"),

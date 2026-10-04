@@ -634,7 +634,7 @@ impl Agent {
         response(&self.journal, &record, false)
     }
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub enum Combined {
     Initial(c::SignedState),
@@ -642,12 +642,17 @@ pub enum Combined {
 }
 /// Full native signatures are mandatory. Two partials are only construction;
 /// combine never accepts a payment or changes money/native storage heads.
-pub fn combine(node: &Store, mut parts: Vec<Partial>, native_head: Hash) -> Result<Combined> {
+pub fn combine(node: &Store, parts: Vec<Partial>, native_head: Hash) -> Result<Combined> {
     node.require_storage_head(native_head)?;
+    combine_inner(node, parts, true)
+}
+fn combine_inner(node: &Store, mut parts: Vec<Partial>, current: bool) -> Result<Combined> {
     require(parts.len() == 2, "both actual owner partials required")?;
     for p in &parts {
         p.verify(node)?;
-        p.request.check_current(node, &p.binding)?;
+        if current {
+            p.request.check_current(node, &p.binding)?;
+        }
     }
     parts.sort_by(|a, b| a.binding.owner.cmp(&b.binding.owner));
     let a = &parts[0];
@@ -664,6 +669,7 @@ pub fn combine(node: &Store, mut parts: Vec<Partial>, native_head: Hash) -> Resu
             let signed = c::SignedState {
                 statement: state.clone(),
                 approvals,
+                witness: None,
             };
             let native = node
                 .chain
@@ -671,7 +677,7 @@ pub fn combine(node: &Store, mut parts: Vec<Partial>, native_head: Hash) -> Resu
                 .channel_state
                 .as_ref()
                 .ok_or("native funding absent")?;
-            native.book.channels[&state.channel].verify_state(
+            native.book.channels[&state.channel].verify_parties(
                 &signed,
                 state.channel,
                 &native.declaration,
@@ -689,8 +695,10 @@ pub fn combine(node: &Store, mut parts: Vec<Partial>, native_head: Hash) -> Resu
                         .ok_or("invoice approval absent".into())
                 })
                 .collect::<Result<_>>()?;
-            receipt.verify_selected(&node.chain, &node.trust, &node.evidence)?;
-            receipt.check_safety(node)?;
+            receipt.verify_party_anchor(&node.trust, &node.evidence)?;
+            if current {
+                receipt.check_safety(node)?;
+            }
             Ok(Combined::Payment(Box::new(receipt)))
         }
     }

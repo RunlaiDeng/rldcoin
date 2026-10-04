@@ -1,11 +1,11 @@
 //! Native typed signature/value kernel; no block/custody/storage activation.
 //! Inputs must come from ordinary full native replay, never a decoded cache.
 use super::*;
-pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V5";
+pub const FORMAT: &str = "RLD-REGIONAL-CHANNEL-KERNEL-V6";
 pub const WINDOW: u64 = 2016;
 pub const MAX_RESERVES: usize = 16;
-pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V5";
-pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V5";
+pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V6";
+pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V6";
 pub fn is_profile(rules: &str) -> bool {
     rules == BFT_RULES || rules == SEGMENTED_RULES
 }
@@ -96,6 +96,8 @@ impl StateStatement {
 pub struct SignedState {
     pub statement: StateStatement,
     pub approvals: Vec<Approval>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub witness: Option<Box<crate::channel_state_witness::Proof>>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -262,6 +264,27 @@ impl Escrow {
         }
     }
     pub(crate) fn verify_state(
+        &self,
+        state: &SignedState,
+        channel: Hash,
+        declaration: &Declaration,
+    ) -> Result<()> {
+        self.verify_parties(state, channel, declaration)?;
+        let (parties, _, _) = self.terms()?;
+        let key = match &self.funding.intent.action {
+            Action::Open {
+                witness: Some(key), ..
+            } => key,
+            _ => return Err("signed funding witness role missing".into()),
+        };
+        state
+            .witness
+            .as_ref()
+            .ok_or("complete state witness authorization missing")?
+            .verify(&state.statement, parties, key)
+    }
+    /// Construction-only complete party check, never block/receipt authorization.
+    pub(crate) fn verify_parties(
         &self,
         state: &SignedState,
         channel: Hash,
@@ -686,6 +709,10 @@ impl Book {
                 change,
                 fee,
             } => {
+                require(
+                    witness.is_some(),
+                    "new channel funding requires explicit witness role",
+                )?;
                 if let Some(key) = witness {
                     validate_ed25519_public_key(key)?;
                     require(

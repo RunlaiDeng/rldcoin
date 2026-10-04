@@ -50,6 +50,11 @@ fn state(d: &c::Declaration, channel: Hash, sequence: u64, a: u128, b: u128) -> 
         .collect::<Vec<_>>();
     approvals.sort_by(|a, b| a.key.cmp(&b.key));
     c::SignedState {
+        witness: Some(crate::channel_state_witness::fixture(
+            &statement,
+            parties(),
+            None,
+        )),
         statement,
         approvals,
     }
@@ -105,7 +110,7 @@ fn native_channel_funding_reserve_close_challenge_settle_conserve_and_keep_head(
     let open = action(
         &d,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: vec![ids[0]],
             parties: parties(),
             capacity: Amount(60),
@@ -224,7 +229,7 @@ fn native_channel_complete_owners_domains_and_failures_are_atomic() {
     let open = action(
         &d,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: selected,
             parties: parties(),
             capacity: Amount(80),
@@ -281,7 +286,7 @@ fn native_channel_unused_reserve_returns_once_and_overflow_refuses() {
     let open = action(
         &d,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: vec![ids[0]],
             parties: parties(),
             capacity: Amount(100),
@@ -364,7 +369,7 @@ fn native_channel_reservation_capacity_refuses_atomically_without_pruning() {
     let open = action(
         &d,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: vec![original[1]],
             parties: parties(),
             capacity: Amount(100),
@@ -473,7 +478,7 @@ fn native_channel_real_onward_lineage_and_authenticated_incident_cannot_be_laund
     let open = action(
         &d,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: selected,
             parties: parties(),
             capacity: Amount(150),
@@ -554,7 +559,7 @@ fn native_channel_real_onward_lineage_and_authenticated_incident_cannot_be_laund
     let other = action(
         &d,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: vec![unrelated],
             parties: parties(),
             capacity: Amount(80),

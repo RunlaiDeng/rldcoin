@@ -1,0 +1,7 @@
+{
+  "format": "RLD-CHANNEL-STATE-WITNESS-GAP-DIAGNOSTIC-REFUSAL-V1",
+  "completed": false,
+  "failure": "Recorded receipt is the complete object; receipt_id is its ID. Signature checks succeeded but observer compared the wrong field. No native fixture opened/mutated.",
+  "controller_sha256": "6879dbd5e9309bb0ce9cb8abfa400f824f02659220be21338cc49738d77e2967",
+  "source_changed": false
+}

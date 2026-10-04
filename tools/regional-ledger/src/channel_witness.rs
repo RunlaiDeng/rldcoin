@@ -2,7 +2,7 @@
 //! complete owner creation/extension; its current journal is checked before a
 //! new owner signature. Metadata never initializes native monetary state.
 use super::*;
-pub const FORMAT: &str = "RLD-NATIVE-CHANNEL-WITNESS-V1";
+pub const FORMAT: &str = "RLD-NATIVE-CHANNEL-WITNESS-V2";
 pub const MAX_ENTRIES: usize = crate::contact::MAX_CONTACTS;
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -18,6 +18,7 @@ struct WitnessBinding {
 enum Payload {
     Birth(Box<Journal>),
     Advance(Box<Record>),
+    Seal(Box<seal::SealRecord>),
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -120,6 +121,7 @@ impl WitnessJournal {
                     owners.insert(slot(&j.binding)?, *j.clone());
                 }
                 Payload::Advance(record) => {
+                    seal::request_inceptions(node, &owners, &record.partial.request)?;
                     let owner = owners
                         .get_mut(&slot(&record.partial.binding)?)
                         .ok_or("witness owner inception absent")?;
@@ -130,6 +132,7 @@ impl WitnessJournal {
                     owner.records.push(*record.clone());
                     owner.validate(node)?;
                 }
+                Payload::Seal(record) => seal::validate(node, &self.binding, &owners, record)?,
             }
             prefix.entries.push(e.clone());
         }
@@ -294,6 +297,7 @@ impl Witness {
         let exact_last = match &last.payload {
             Payload::Birth(b) => **b == *j,
             Payload::Advance(r) => j.records.last() == Some(r.as_ref()),
+            Payload::Seal(_) => false,
         };
         require(
             expected == target.head()? || (expected == last.previous && exact_last),
@@ -439,6 +443,7 @@ impl Agent {
     ) -> Result<Hash> {
         let (head, native_head) = heads;
         w.exact_owner(node, &self.journal, whead)?;
+        seal::request_inceptions(node, &w.current(node, whead)?, request)?;
         self.prepare_component(node, request, head, native_head)
     }
     pub fn sign_witnessed(
@@ -457,6 +462,7 @@ impl Agent {
             native_head,
         } = input;
         w.exact_owner(node, &self.journal, whead)?;
+        seal::request_inceptions(node, &w.current(node, whead)?, &request)?;
         let response = self.sign_component(node, request, key, reviewed, head, native_head)?;
         w.append(
             node,
@@ -558,4 +564,9 @@ impl Agent {
 
 #[cfg(test)]
 #[path = "channel_witness_tests.rs"]
-mod tests;
+pub(super) mod tests;
+
+#[path = "channel_seal.rs"]
+mod seal;
+
+pub use seal::Sealed;

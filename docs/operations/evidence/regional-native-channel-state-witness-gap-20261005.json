@@ -1,0 +1,20 @@
+{
+  "format": "RLD-NATIVE-CHANNEL-STATE-WITNESS-GAP-V1",
+  "completed": true,
+  "recorded_native_acceptance_gap_observed": true,
+  "native_new_campaign_started": false,
+  "prior_exact_source": "b40fdba72c38ac1d7e84ed319a8ae9a51e3ab5cab10631528b3b0030668db06f",
+  "prior_binary_sha256": "8ddd9641fd2bc41923aadb8ba0c78bc4dfb660f64bffd1d0bdcb6e5341e84c5b",
+  "bound_native_cli_report_sha256": "62d7905671e51518cbfdd90a130e52907334f0cf313d8042239acd4ddb3642ca",
+  "bound_native_receipt_bytes_sha256": "fdd2a607917e7b70edbbb1f78e2cbb87d25e20b96be830245fc319b4efb1541d",
+  "complete_both_owner_state_signatures_verified": true,
+  "signed_funding_selects_witness": true,
+  "receipt_state_proof_has_no_witness_authorization": true,
+  "native_recorded_receipt_acceptance": true,
+  "repeated_tests_or_old_fixture_runtime_startups": 0,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "duration_seconds": 0.004,
+  "safety_gap_resolved": false,
+  "next": "New native state proof and durable witness seal must authenticate funding-selected role, exact complete state and invoice, original owner inceptions and native replay. New unsigned/unwitnessed party bodies are construction only. No proof digest alone authorizes value."
+}

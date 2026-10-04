@@ -1,0 +1,7 @@
+{
+  "format": "RLD-CHANNEL-STATE-WITNESS-GAP-DIAGNOSTIC-REFUSAL-V1",
+  "completed": false,
+  "failure": "Independent signature check used a mistaken domain channel-off-chain-state-v1. Actual native domain in channels.rs is channel-state-v1. No native fixture opened or mutated.",
+  "controller_sha256": "33e017b7e7453cc8fe6b01965cab2094ea9a5a1ccbb829d554e47b9b2b0acf20",
+  "source_changed": false
+}

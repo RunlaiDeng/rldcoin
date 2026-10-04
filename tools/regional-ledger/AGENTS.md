@@ -157,3 +157,21 @@ state-action proofs do not yet carry witness authority. Never substitute a
 returned witness hash for such proof or infer S11 completion. See the exact
 contract in ../../docs/research/REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md;
 new source requires fresh signed no-value fixtures, never old custody/value.
+
+V6 is a fresh incompatible state-witness candidate. Funding must choose a
+separate role; every native state used by receipt/Close/Challenge requires
+complete actual-party signatures and its complete role cosignature. Receipts
+bind the exact invoice and preserve original inception assertions; native receipt
+history pins the previous complete authorization statement. These assertions
+are signed by the funding-selected witness, not independent proof of private
+custody or latest state. Construction returns an unwitnessed unauthorized draft.
+Witness V2 retains exact original births, owner advances and seals. First seal
+requires both matching highest witness-confirmed native owner responses and
+current separately retained native/witness heads; a higher unconfirmed owner
+response cannot be sealed. Duplicate historical seals use explicit keyless
+recovery, never new signing. Pending seal recovery authenticates the exact full
+body and caller transition before publication; it cannot first-sign. All seals
+count within unchanged 256/8-MiB witness bounds. No private journal/key is public.
+Full rollback, copied witness keys, independent service/custody, watcher/inclusion,
+full challenge window/reorganization/history and physical/crypto qualification
+remain open. See REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md under research.

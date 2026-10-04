@@ -60,7 +60,7 @@ impl Receipt {
     /// Authenticates the complete already-native-replayed certified observation.
     /// Historical validity grants no present coverage, spendability or freshness.
     pub(crate) fn verify_anchor(&self, trust: &Trust, evidence: &VerifiedEvidence) -> Result<()> {
-        self.verify_anchor_inner(trust, evidence, true)
+        self.verify_anchor_inner(trust, evidence, true, true)
     }
     /// Non-authorizing owner review only. Never used by receipt acceptance,
     /// history replay, block execution or conflict authentication.
@@ -70,16 +70,28 @@ impl Receipt {
         evidence: &VerifiedEvidence,
     ) -> Result<()> {
         require(
-            self.next.approvals.is_empty() && self.approvals.is_empty(),
+            self.next.approvals.is_empty()
+                && self.next.witness.is_none()
+                && self.approvals.is_empty(),
             "owner draft must contain no next-state or invoice approvals",
         )?;
-        self.verify_anchor_inner(trust, evidence, false)
+        self.verify_anchor_inner(trust, evidence, false, false)
+    }
+    /// Construction-only body authentication for the native witness sealer.
+    pub(crate) fn verify_party_anchor(
+        &self,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+    ) -> Result<()> {
+        require(self.next.witness.is_none(), "unwitnessed draft required")?;
+        self.verify_anchor_inner(trust, evidence, true, false)
     }
     fn verify_anchor_inner(
         &self,
         trust: &Trust,
         evidence: &VerifiedEvidence,
         complete: bool,
+        witnessed: bool,
     ) -> Result<()> {
         encode("complete-channel-receipt", self)?;
         evidence.check_trust(trust)?;
@@ -124,8 +136,37 @@ impl Receipt {
             "receipt payer/recipient must be exact different channel parties",
         )?;
         escrow.verify_state(&self.prior, e.channel, &native.declaration)?;
-        if complete {
+        if complete && witnessed {
             escrow.verify_state(&self.next, e.channel, &native.declaration)?;
+            require(
+                self.prior
+                    .witness
+                    .as_ref()
+                    .ok_or("prior witness absent")?
+                    .statement
+                    .inceptions
+                    == self
+                        .next
+                        .witness
+                        .as_ref()
+                        .ok_or("next witness absent")?
+                        .statement
+                        .inceptions,
+                "receipt replaces original witness owner inceptions",
+            )?;
+            require(
+                self.next
+                    .witness
+                    .as_ref()
+                    .ok_or("state witness absent")?
+                    .statement
+                    .invoice
+                    .as_ref()
+                    == Some(s),
+                "witness invoice differs from exact receiver receipt",
+            )?;
+        } else if complete {
+            escrow.verify_parties(&self.next, e.channel, &native.declaration)?;
         } else {
             escrow.verify_statement(&self.next.statement, e.channel, &native.declaration)?;
         }
@@ -243,7 +284,9 @@ impl Replay {
             let old = &self.accepted[previous];
             require(
                 s.previous_receipt == Some(*previous)
-                    && receipt.prior.statement == old.next.statement,
+                    && receipt.prior.statement == old.next.statement
+                    && receipt.prior.witness.as_ref().map(|p| &p.statement)
+                        == old.next.witness.as_ref().map(|p| &p.statement),
                 "receipt omits/replaces the exact latest accepted channel state",
             )?;
         } else {

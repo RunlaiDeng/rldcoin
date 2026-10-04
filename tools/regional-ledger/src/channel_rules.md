@@ -1,4 +1,4 @@
-# RLD-REGIONAL-CHANNEL-KERNEL-V5
+# RLD-REGIONAL-CHANNEL-KERNEL-V6
 
 Native signature/value component only. This is not a complete protocol profile,
 ordinary node activation, signing custody, incident resolution or value migration.
@@ -73,8 +73,8 @@ a backup. Combined partials grant no acceptance, ledger credit or new funds.
 Incomplete creation refuses unchanged; no restore, independent freshness,
 copied-key concurrency, monitoring/inclusion or physical qualification follows.
 
-V5 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V1. Both parties
-sign the optional funding witness key; absent policy is read-only for the owner
+V6 ground signing custody requires RLD-NATIVE-CHANNEL-WITNESS-V2. Both parties
+sign the mandatory funding witness key; absent policy refuses funding and is read-only for the owner
 service, never a fallback. The witness key differs from parties, authority and
 regional validators. Its separate private OS-locked journal fully authenticates
 every signed complete owner birth/extension from native genesis-derived funding.
@@ -90,3 +90,22 @@ evidence and monetary limits remain. Witness statements grant no ledger, value,
 finality or issuance authority. The same-process same-host ground role separation
 does not qualify independent service/custody, common/witness rollback, copied
 witness keys, independent anti-rollback hardware or adversarial raw-key signing.
+
+V6 native states require a complete RLD-NATIVE-CHANNEL-STATE-WITNESS-V1
+funding-selected cosignature. Every new funding selects a separate role. Native
+receipt, Close and Challenge authenticate both complete actual owner signatures
+and that role; receipts bind the exact complete invoice. Original inception
+commitments are witness-signed assertions, not independent freshness proofs.
+Native combination produces an unauthorized draft only. Durable witness seal
+requires both exact latest retained owner requests; it authenticates original
+births and complete native prefixes before signing/persistence/response. Keyless
+seal recovery never first-signs. Witness V2 retains every seal within the same
+256 entries/8 MiB; all other bounds/parameters remain. Same-host service and
+state cosignatures do not qualify independent custody, common rollback, copied
+witness keys, full challenges/windows/history, faults or physical routes.
+
+Both receipt states preserve the same original witness-attested inceptions;
+ordered native receipt replay additionally retains the exact prior authorization
+statement. Each envelope still fully authenticates before equality/deduplication.
+Private owner review and witness advance/seal verify those original births before
+signing, without inferring latest state from a public digest or copied backup.

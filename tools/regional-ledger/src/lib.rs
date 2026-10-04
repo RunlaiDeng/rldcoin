@@ -1070,6 +1070,7 @@ pub mod carriage;
 pub mod channel_conflict;
 pub mod channel_owner;
 pub mod channel_receipt;
+pub mod channel_state_witness;
 pub mod channels;
 pub mod conflict;
 pub mod contact;

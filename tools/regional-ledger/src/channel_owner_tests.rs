@@ -43,10 +43,17 @@ fn start(root: &Path, node: &Store, a: &mut Agent, b: &mut Agent) -> c::SignedSt
     else {
         panic!()
     };
+    let mut s = s;
+    s.witness = Some(crate::channel_state_witness::fixture(
+        &s.statement,
+        crate::tests::channel_integration::parties(),
+        None,
+    ));
     s
 }
 fn draft(mut r: r::Receipt) -> Request {
     r.next.approvals.clear();
+    r.next.witness = None;
     r.approvals.clear();
     Request::Payment(Box::new(r))
 }
@@ -58,7 +65,13 @@ fn finish(node: &Store, root: &Path, a: &mut Agent, b: &mut Agent, request: Requ
     else {
         panic!()
     };
-    *r
+    let mut r = *r;
+    r.next.witness = Some(crate::channel_state_witness::fixture(
+        &r.next.statement,
+        crate::tests::channel_integration::parties(),
+        Some(r.statement.clone()),
+    ));
+    r
 }
 #[test]
 fn native_channel_owner_two_real_partial_signers_combine_accept_restart_and_keyless_recover() {

@@ -337,7 +337,7 @@ fn native_channel_conflict_remote_return_fees_child_capacity_and_contact_authent
         &remote.chain,
         &remote.trust,
         c::Action::Open {
-            witness: None,
+            witness: Some(public(12)),
             inputs: vec![child_input],
             parties: parties(),
             capacity: Amount(10),

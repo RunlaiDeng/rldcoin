@@ -216,6 +216,37 @@ strict 50.408秒、实际CLI42steps/5.605秒通过；余184回归单次300秒内
 [准确结果与失败](operations/evidence/regional-native-channel-witness-outcome-20261005.json)，
 [权限与恢复契约](research/REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md)。
 
+## V6 完整通道状态见证：原生授权接入
+
+最终来源 `02a15cfc...` / implementation `406c2631...` / binary `52fab24e...`。
+新资金条款强制单独 witness role；两实际 parties 与完整 witness proof 共同
+认证 state，receipt 逐字绑定 invoice 与原始 inception。Close/Challenge 和
+conflict/cold路径共享此验证；原生receipt历史固定上一完整授权声明。
+普通combine只构造未授权草稿。Witness V2在原256项/8MiB内保留双方原native
+birth/advance与seal，确认完全相同的最高已见证请求；更高未确认 own response
+不能seal。无钥recover-seal只恢复准确已签正文，坏body/头不发布pending。
+
+V5录制 native通过的party-only收据已只读验证真实双方签名/ID和精确来源；
+它确实缺witness proof，新版真实入口拒绝这类草稿。原观察器两处域/返回字段
+错误、两次测试helper编译拒绝及一次30/31资金构造下溢均保留；修复是选择
+实际够61单位的input，不按新currency改变的coin ID顺序假定金额，未改参数。
+源 `0e76e12c...` 上31 focused/build/strict 63.667秒、184剩余回归221.956秒
+及56步全新实际入口11.763秒通过，共215 native检查。最终审阅只改两处签署
+规则V5→V6文字标签，所有Rust/Cargo/build/tests字节完全相同；复用215证据，
+没有称最终identity又跑215。新身份重建/无豁免strict3.473秒及56步全新入口
+11.305秒通过：拒缺见证/坏proof、完整持久seal接受、删钥恢复，无货币credit。
+
+原128/8MiB owner、256/8MiB witness（含seal）、共识/费用/成熟/2016窗口/所有
+其他容量保持，网络长scope0。Witness签署的inception承诺并非独立私有保管或
+绝对最新证明；旧有效状态仍可能进入关闭窗口，不能声称已自动watch/challenge。
+旧完整故障/reset继续失败，旧价值库VALUE-STRICT-01仍独立未通过；S11、全协议/
+独立/全回滚/copied keys、长期容量/续证、watcher/inclusion/完整窗口、物理仍未资格。
+下一可证伪主线：已接受较高状态面对低状态Close，使用原成熟授权reserve构造
+无钥native挑战并正常纳入；最小新模型/反例120秒/1次、网络0，保留原规则与失败。
+[V6实现及失败](operations/evidence/regional-native-channel-state-witness-outcome-20261005.json)，
+[最终内容身份与复用边界](operations/evidence/regional-native-channel-state-witness-final-label-outcome-20261005.json)，
+[权限契约](research/REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md)。
+
 当前父块 Prepare 的已认证停止观察显示约 40.180 秒来源等待，其间 20 次准备因本地争用拒绝。
 四固定邻居、四尝试槽的旧游标每轮起点不变。实际 TLS 周期争用反例只服务 2/4 邻居；
 仅改变起点的互素步长后，同样四轮取得 4/4 双端精确持久收据。该受控租约不是 Native CPU，

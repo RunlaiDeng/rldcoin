@@ -381,6 +381,28 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    ChannelWitnessSeal {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        expected_witness_head: String,
+        #[arg(long)]
+        key_file: PathBuf,
+    },
+    ChannelWitnessRecoverSeal {
+        #[arg(long)]
+        witness_dir: PathBuf,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        expected_witness_head: String,
+    },
     ChannelWitnessInit {
         #[arg(long)]
         witness_dir: PathBuf,
@@ -835,6 +857,8 @@ fn run() -> Result<()> {
         }
         Action::HistoryCheck { expected_head }
         | Action::ChannelReceiptAccept { expected_head, .. }
+        | Action::ChannelWitnessSeal { expected_head, .. }
+        | Action::ChannelWitnessRecoverSeal { expected_head, .. }
         | Action::ChannelWitnessInit { expected_head, .. }
         | Action::ChannelOwnerFinishWitness { expected_head, .. }
         | Action::ChannelOwnerInit { expected_head, .. }
@@ -1440,6 +1464,50 @@ fn run() -> Result<()> {
             )?)
             .map_err(|e| e.to_string())?
         ),
+        Action::ChannelWitnessSeal {
+            witness_dir,
+            file,
+            expected_head,
+            expected_witness_head,
+            key_file,
+        } => {
+            let mut role = channel_owner::witness::Witness::open(&witness_dir, &store)?;
+            let body: channel_owner::Combined = read_json(&file)?;
+            let output = role.seal(
+                &store,
+                body,
+                &key_file,
+                (
+                    Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                    Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
+                ),
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&output).map_err(|e| e.to_string())?
+            );
+        }
+        Action::ChannelWitnessRecoverSeal {
+            witness_dir,
+            file,
+            expected_head,
+            expected_witness_head,
+        } => {
+            let mut role = channel_owner::witness::Witness::open(&witness_dir, &store)?;
+            let body: channel_owner::Combined = read_json(&file)?;
+            let output = role.recover_seal(
+                &store,
+                &body,
+                (
+                    Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                    Hash::from_hex(&expected_witness_head).map_err(|e| e.to_string())?,
+                ),
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&output).map_err(|e| e.to_string())?
+            );
+        }
         Action::ChannelWitnessInit {
             witness_dir,
             witness,

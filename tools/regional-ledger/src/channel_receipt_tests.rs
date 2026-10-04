@@ -11,7 +11,7 @@ pub(crate) fn certify(node: &mut Store) {
     node.finalize(checkpoint(&node.chain, &node.trust)).unwrap();
 }
 pub(crate) fn setup(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>) {
-    setup_policy(limit, None)
+    setup_policy(limit, Some(public(12)))
 }
 pub(crate) fn setup_witness(limit: Option<u128>) -> (PathBuf, Store, Hash, Option<Hash>) {
     setup_policy(limit, Some(public(12)))
@@ -143,6 +143,11 @@ pub(crate) fn receipt(
         approvals: vec![],
     };
     sign_invoice(&mut result);
+    result.next.witness = Some(crate::channel_state_witness::fixture(
+        &result.next.statement,
+        parties,
+        Some(result.statement.clone()),
+    ));
     result
 }
 fn sign_invoice(receipt: &mut r::Receipt) {
@@ -154,6 +159,11 @@ fn sign_invoice(receipt: &mut r::Receipt) {
         })
         .collect();
     receipt.approvals.sort_by(|a, b| a.key.cmp(&b.key));
+    receipt.next.witness = Some(crate::channel_state_witness::fixture(
+        &receipt.next.statement,
+        parties(),
+        Some(receipt.statement.clone()),
+    ));
 }
 pub(crate) fn head(root: &std::path::Path) -> Hash {
     history::manifest(&root.join("earth"))
