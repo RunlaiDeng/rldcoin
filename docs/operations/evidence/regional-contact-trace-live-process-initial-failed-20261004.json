@@ -1,0 +1,23 @@
+{
+  "format": "RLD-GROUND-CONTACT-TRACE-LIVE-FAILED-V1",
+  "completed": false,
+  "fixture_only": true,
+  "source_set_sha256": "3c270788a5d0c19fcad439a9fe7d28b6948c7b457c739d7d263b8a46e680c712",
+  "observer_sha256": "fc4c32204f907eac9484d673272f25692814fd57be2e53d9a6544961b5f2c1b2",
+  "private_trace_log_sha256": "acb9dc3c2d8298659f57ce5557ec20fb1d5d6327c08680272b6fa12708a2f267",
+  "private_status_sha256": "75d265247dcba76d8edaac318c2e5ad79be76144c53fc30ae02cf6dbb48c4c0b",
+  "bounded_observation_seconds": 30,
+  "unknown_samples": 130,
+  "retained_producer_sequence": 621,
+  "retained_producer_evicted_events": 493,
+  "producer_trace_available": true,
+  "failure": "collector_accepted_no_live_sample",
+  "original_identity_anchor_not_retained": true,
+  "identity_startup_race_not_proven": true,
+  "component_native_reception_unobserved": true,
+  "missing_live_observation_cannot_prove_delivery_absence": true,
+  "H_service_cause_resolved": false,
+  "full_fault_scope_completed": false,
+  "owned_process_terminal": true,
+  "private_log_not_published": true
+}

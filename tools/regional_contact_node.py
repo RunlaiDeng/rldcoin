@@ -98,8 +98,9 @@ def startup_config(native, path=None):
 
 
 class Service:
-    def __init__(self, native, config, miner, listen=('127.0.0.1',0), insecure_tcp=False, bft_config=None, parallel_carriage=True):
+    def __init__(self, native, config, miner, listen=('127.0.0.1',0), insecure_tcp=False, bft_config=None, parallel_carriage=True, contact_trace=None):
         self.native, self.config, self.miner = native, config, miner
+        self.contact_trace=contact_trace
         self.lock = None
         self.tcp = None
         self.bft = None
@@ -130,11 +131,13 @@ class Service:
                 mesh.require(node.state['adverts'][node.id]['body']['region'] == self.region,
                     'local mesh label differs from native ledger identity')
             mesh.atomic(self.path, self.progress)
-            self.tcp = tcp.Server(config,listen,insecure=insecure_tcp)
+            self.tcp = (tcp.Server(config,listen,insecure=insecure_tcp,contact_trace=contact_trace) if contact_trace is not None
+                        else tcp.Server(config,listen,insecure=insecure_tcp))
             if bft_config is not None:
                 mesh.require(miner is None, 'BFT validator cannot use uncertified import mining')
                 from regional_bft_node import Runtime
                 self.bft = Runtime(native,config,bft_config)
+                if contact_trace is not None:self.bft.contact_trace=contact_trace
                 self.bft.carriage_node = self.tcp.ordinary_mesh_node
                 if parallel_carriage:
                     from regional_carriage_worker import Worker
@@ -272,6 +275,8 @@ class Service:
                 try:
                     self.bft.receive_many([raw for _,raw in pending_bft])
                     self.bft_seen.update(packet_id for packet_id,_ in pending_bft)
+                    if self.contact_trace is not None:
+                        for packet_id,raw in pending_bft:self.contact_trace.native_received(packet_id,raw)
                 except (OSError,ValueError,subprocess.TimeoutExpired) as error:
                     if len(pending_bft)>1:self.bft_individual_retry=True
                     errors.append(str(error))
@@ -372,6 +377,7 @@ class Service:
                               native_seconds=stage_seconds['native_receive_and_outgoing'],
                               consensus_seconds=stage_seconds['consensus'])
             report['bft_observation'] = observation.snapshot()
+        if self.contact_trace is not None:report['contact_trace']=self.contact_trace.snapshot()
         mesh.atomic(self.root / 'regional-contact-status.json', report)
         return report
 
@@ -395,7 +401,13 @@ def main():
     parts=args.listen.split(':')
     mesh.require(len(parts)==2 and parts[1].isdigit(), 'TCP listener must be literal IPv4:port')
     listen=mesh.tcp_endpoint(parts[0],int(parts[1]),listening=True)
-    service = Service(native, config, args.miner,listen,args.insecure_tcp,args.bft_config)
+    trace_mode=os.environ.get('RLD_GROUND_CONTACT_TRACE','0')
+    mesh.require(trace_mode in ('0','1'),'explicit ground contact trace mode required')
+    trace=None
+    if trace_mode=='1':
+        from regional_contact_trace import ContactTrace
+        trace=ContactTrace()
+    service = Service(native, config, args.miner,listen,args.insecure_tcp,args.bft_config,contact_trace=trace)
     running = True
     def stop(*_):
         nonlocal running
@@ -415,10 +427,10 @@ def main():
                     raise
                 break
             # Only material changes print; the on-disk observation is refreshed.
-            comparable = {k: v for k, v in result.items() if k not in ('observed_at_unix', 'bft_observation')}
+            comparable = {k: v for k, v in result.items() if k not in ('observed_at_unix', 'bft_observation','contact_trace')}
             comparable['transport'] = {k: v for k, v in result['transport'].items() if k != 'observed_at_unix'}
             if comparable != previous:
-                print(json.dumps({k:v for k,v in result.items() if k != 'bft_observation'}), flush=True)
+                print(json.dumps({k:v for k,v in result.items() if k not in ('bft_observation','contact_trace')}), flush=True)
                 previous = comparable
             deadline = time.monotonic() + args.interval
             while running and time.monotonic() < deadline:

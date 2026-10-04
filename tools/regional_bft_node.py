@@ -488,7 +488,12 @@ class Runtime:
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
                     batch.append((wire.make_frame('regional-bft',self.region,self.region,content,payload),peer))
-                node.enqueue_batch(batch)
+                identifiers=node.enqueue_batch(batch)
+                trace=getattr(self,'contact_trace',None)
+                if trace is not None:
+                    for ident,(content,_,peer) in zip(identifiers,batch_pairs):
+                        trace.event('source_enqueued',peer,packet_id=ident,envelope_id=content,
+                            frame_id=node.state['messages'][ident]['routing']['body']['frame_id'])
                 retained.update((content,peer) for content,_,peer in batch_pairs)
             complete=all((content,peer) in retained for content,_,peer in pairs)
         if pending:self.save(dict(self.state,cursor=(self.state['cursor']+4)%(2**63)))

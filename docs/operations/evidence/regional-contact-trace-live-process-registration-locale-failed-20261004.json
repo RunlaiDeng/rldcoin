@@ -1,0 +1,14 @@
+{
+  "format": "RLD-GROUND-TRACE-REGISTRATION-LOCALE-FAILED-V1",
+  "fixture_only": true,
+  "completed": false,
+  "observer_sha256": "c71c8be993280f203fbe3d0ce79af1d7e6d8e331d73b72e6418d85d588d47e5e",
+  "failure": "cross_locale_command_digest_comparison",
+  "live_observation_loop_entered": false,
+  "owned_process_terminal": true,
+  "private_fixture_not_resumed": true,
+  "nonledger_child_reproducer_passed": true,
+  "Chinese_path_OS_command_rendering_differs_by_locale": true,
+  "scope": "observer_registration_only",
+  "H_service_unresolved": true
+}

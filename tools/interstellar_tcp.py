@@ -260,7 +260,8 @@ def check_response(value, network, requester, peer, sent):
 
 
 class Server:
-    def __init__(self,config,listen=('127.0.0.1',0),insecure=False):
+    def __init__(self,config,listen=('127.0.0.1',0),insecure=False,*,contact_trace=None):
+        self.contact_trace=contact_trace
         self.config=copy.deepcopy(config)
         with mesh.Node(config) as node:
             self.id,self.network,self.key=node.id,node.network,node.key
@@ -280,6 +281,7 @@ class Server:
                 self.context.load_cert_chain(path)
                 self.context.num_tickets=0
         self.running=True
+        if contact_trace is not None:contact_trace.bind(self.network,self.id)
         self.guard=threading.Lock()
         self.outbound_guard=threading.Lock()
         self.outbound_owner=None
@@ -511,11 +513,21 @@ class Server:
             value=receive(connection,deadline)
             body=check_request(value,self.network,self.id,self.peers,hello['body']['nonce'])
             peer=body['node_id']
+            trace=self.contact_trace
+            trace_rows=trace.packet_rows(body['bundle']) if trace is not None else ()
+            if trace is not None:trace.packets('request_authenticated',peer,trace_rows,nonce=body['nonce'])
             accepted,bundle=False,None;node=None
+            destination_receipts=()
             try:
                 with self.mesh_node(deadline) as node:
                     mesh.require(node.id==self.id,'TCP runtime identity changed')
                     node.receive(body['bundle'],peer)
+                    if trace is not None:
+                        retained=node.receipts()
+                        destination_receipts=tuple((ident,frame) for ident,frame in trace_rows
+                            if ident in retained and retained[ident]['body']['node_id']==self.id)
+                        trace.packets('local_transport_custody',peer,trace_rows,nonce=body['nonce'])
+                        trace.packets('destination_receipt_retained',peer,destination_receipts,nonce=body['nonce'])
                     accepted=True  # receive fsyncs its complete verified state first.
                     with self.guard:
                         independent=self.outbound_owner is not None and self.outbound_owner.is_alive()
@@ -539,6 +551,8 @@ class Server:
                               hello['body']['nonce'],raw)
                 accepted,bundle=False,None
                 self.mark(peer,'inbound',False)
+                if trace is not None:trace.packets('inbound_refused',peer,trace_rows,
+                    nonce=body['nonce'],error_class=type(error).__name__)
             response=mesh.sign(self.key,'tcp-response',{'format':mesh.VERSION,'adapter':ADAPTER,'network':self.network,
                 'node_id':self.id,'to':peer,'nonce':body['nonce'],'challenge':body['challenge'],
                 'exchange_id':mesh.digest(body['bundle']),
@@ -590,11 +604,22 @@ class Server:
                     # Own a new decoded object for this attempt, from the
                     # complete bounded original request; no decoded witness.
                     body=check_request(wire.decode_json(raw),network,recipient,self.peers,nonce)
+                    trace=self.contact_trace
+                    trace_rows=trace.packet_rows(body['bundle']) if trace is not None else ()
+                    if trace is not None:trace.packets('deferred_attempt',peer,trace_rows,nonce=body['nonce'])
+                    destination_receipts=()
                     with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
                         mesh.require(node.id==recipient and node.network==network,
                                      'deferred input local identity changed')
                         node.receive(body['bundle'],peer)
+                        if trace is not None:
+                            retained=node.receipts()
+                            destination_receipts=tuple((ident,frame) for ident,frame in trace_rows
+                                if ident in retained and retained[ident]['body']['node_id']==self.id)
                     complete=True
+                    if trace is not None:
+                        trace.packets('deferred_local_custody',peer,trace_rows,nonce=body['nonce'])
+                        trace.packets('destination_receipt_retained',peer,destination_receipts,nonce=body['nonce'])
                 except BlockingIOError as error:
                     retry=error.errno in (errno.EAGAIN,errno.EWOULDBLOCK)
                 except (OSError,ValueError,KeyError,TypeError,RecursionError):
@@ -651,6 +676,7 @@ class Server:
             for peer in chosen:
                 if not self.running:
                     break
+                trace=self.contact_trace;trace_rows=();failure_stage='prepare';count=0
                 try:
                     c=self.peers[peer]
                     with self.guard:
@@ -665,22 +691,38 @@ class Server:
                     with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
                         mesh.require(node.id==self.id,'TCP runtime identity changed')
                         prepared=outgoing(node,peer,self.suppressed(peer))
+                    if trace is not None:
+                        trace_rows=trace.packet_rows(prepared)
+                        trace.packets('outgoing_prepared',peer,trace_rows,attempt=count)
+                        trace.event('contact_start',peer,attempt=count)
+                    failure_stage='connect'
                     # No mesh lock is held across connect/write/read.
                     deadline=time.monotonic()+ATTEMPT_SECONDS
                     connection=(socket.create_connection((c['host'],c['port']),timeout=ATTEMPT_SECONDS) if self.insecure else
                         client_connect((c['host'],c['port']),c['tls_cert_sha256'],self.network,peer,deadline))
                     with connection:
+                        failure_stage='challenge'
                         nonce=check_challenge(receive(connection,deadline),self.network,peer,c.get('tls_cert_sha256'))
                         sent=bind_request(self.key,self.network,self.id,peer,nonce,prepared)
+                        failure_stage='send'
                         send(connection,sent,deadline)
+                        if trace is not None:trace.packets('request_sent',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
+                        failure_stage='response'
                         response=receive(connection,deadline)
+                    failure_stage='response_authentication'
                     bundle=check_response(response,self.network,self.id,peer,sent)
+                    if trace is not None:trace.packets('peer_custody_authenticated',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
                     # The socket is closed and its authenticated reply is now
                     # local input. Use a fresh bounded lock attempt, never infer
                     # local custody from the remote reply or expired deadline.
+                    failure_stage='reply_local_custody'
+                    receipt_rows=()
                     with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
                         mesh.require(node.id==self.id,'TCP runtime identity changed')
                         node.receive(bundle,peer)
+                        if trace is not None:
+                            receipts=node.receipts()
+                            receipt_rows=tuple((ident,frame) for ident,frame in trace_rows if ident in receipts)
                     # Only after exact nonce/challenge/exchange verification and
                     # complete local reply custody. A lost/refused reply retries.
                     with self.guard:
@@ -691,9 +733,15 @@ class Server:
                             # safely resends retained evidence, never drops it.
                             self.accepted_transits.pop(peer,None)
                     self.mark(peer,'outbound',True)
+                    if trace is not None:trace.packets('reply_local_custody',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
+                    if trace is not None:trace.packets('destination_receipt_observed',peer,receipt_rows,attempt=count,nonce=sent['body']['nonce'])
                 except (OSError,ValueError,KeyError,TypeError,RecursionError) as error:
                     self.mark(peer,'outbound',False)
                     errors.append(str(error)[:256])
+                    if trace is not None:
+                        trace.packets('outgoing_failed',peer,trace_rows,attempt=count,
+                            failure_stage=failure_stage,error_class=type(error).__name__)
+                        trace.event('contact_failed',peer,attempt=count,failure_stage=failure_stage,error_class=type(error).__name__)
         return self.observation(errors)
 
     def observation(self, errors=()):
