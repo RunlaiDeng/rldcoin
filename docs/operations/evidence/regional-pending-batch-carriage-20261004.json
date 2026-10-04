@@ -1,0 +1,68 @@
+{
+  "format": "RLD-FIXED-CARRIAGE-FOUR-PROCESS-ABLATION-V1",
+  "seed_packets_per_node": 32,
+  "fixed_packet_nonces_and_initial_archives": true,
+  "tls_and_challenge_randomness_unchanged": true,
+  "completed": true,
+  "source_set_sha256": "2013a1ef24b90d7c8cc598b33c398b37721d50be4840d86428553592dafc80fb",
+  "runner_sha256": "55d58e6eb67a73e4443a427dffee9f94398849c98918dd5a13aefe0b5b67549f",
+  "worker_sha256": "b84ce869f0578260fb6002e64634a24b0b61c76fc3baa20cda2643b443938cff",
+  "strict_failed_cold_sha256": "20383ab370d2a48775d0c71b7961bf8c8ae9729e8c2915d085472fbd181a9b8b",
+  "static_baseline_report_sha256": "817c59f742b34c8edfd90ae8a79b1287ae5692fcdd8c7d298c56291fd6be6ed7",
+  "critical_full_envelope_sha256": "15f89c4437a5c63d202924558e231d21e2295f4f303478731124d577c63a473c",
+  "original_body_signatures_unchanged": true,
+  "variant_has_one_exact_duplicate_snapshot_reference": true,
+  "variant_native_authenticated_before_trial": true,
+  "declared_round_observation_seconds": 60,
+  "declared_trial_bound_seconds": 120,
+  "real_four_processes_per_trial": true,
+  "original_failed_native_and_successful_transport_fixture_unchanged": true,
+  "compatible_test_transport_key_copy_not_independent_custody": true,
+  "no_native_runtime_signing_recovery_or_ledger_installation": true,
+  "no_bounds_evidence_or_value_changes": true,
+  "not_a_full_fault_profile": true,
+  "results": [
+    {
+      "label": "fixed_seed32_pressure",
+      "completed": true,
+      "traffic_budget_per_node": 40,
+      "generated_replay_packets": [
+        40,
+        40,
+        40,
+        40
+      ],
+      "injection_queued": true,
+      "destination_transport_seconds": [
+        17.10766,
+        22.492089,
+        1.683719
+      ],
+      "destination_native_authentication_seconds": [
+        17.201735,
+        22.583378,
+        1.781872
+      ],
+      "within_original_60_second_round": true,
+      "trial_seconds": 85.851,
+      "process_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "last_worker_seconds": [
+        0.506628,
+        1.194127,
+        1.508633,
+        0.200122
+      ],
+      "error_counts": [
+        8,
+        8,
+        8,
+        8
+      ]
+    }
+  ]
+}

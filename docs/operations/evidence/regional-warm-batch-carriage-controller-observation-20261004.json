@@ -1,0 +1,16 @@
+{
+  "format": "RLD-WARM-CARRIAGE-CONTROLLER-OBSERVATION-V1",
+  "completed": true,
+  "transport_report_sha256": "741989ac631ef5b000755b799ea01d868ca64d28f6e2e63081bc37c847d4d2a5",
+  "controller_marker_sha256": "e099344195f0a236c74bad0821b6efb239a8607728e2dd36f4702a1d09b97c7b",
+  "source_queue_delay_seconds": 3.075818,
+  "native_authentication_seconds_from_controller_marker": [
+    25.783302,
+    31.366786,
+    17.720937
+  ],
+  "within_original_60_second_round": true,
+  "same_host_filesystem_timestamp_not_authority": true,
+  "all_scheduled_inputs_enqueued": true,
+  "not_full_fault_profile": true
+}
