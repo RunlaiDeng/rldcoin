@@ -28,6 +28,17 @@ jobs:
         with:
           toolchain: 1.98.0
           components: rustfmt, clippy
+      - name: Cache compiled outputs and public dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: ${{ runner.os }}-${{ runner.arch }}-rust-1.98.0-native-workspace-debug-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('Cargo.toml', 'rust-toolchain.toml', 'crates/**', 'vectors/**', 'spec/**', 'docs/spec/**') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-rust-1.98.0-native-workspace-debug-${{ hashFiles('Cargo.lock') }}-
       - run: cargo fmt --all --check
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo test --workspace --locked
@@ -40,6 +51,19 @@ jobs:
         with:
           toolchain: 1.98.0
           components: rustfmt, clippy
+      - name: Cache compiled outputs and public dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            tools/regional-ledger/target
+          key: ${{ runner.os }}-${{ runner.arch }}-rust-1.98.0-regional-native-debug-${{ hashFiles('tools/regional-ledger/Cargo.lock') }}-${{ hashFiles('tools/regional-ledger/Cargo.toml', 'tools/regional-ledger/build.rs', 'tools/regional-ledger/src/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'crates/**', 'vectors/**', 'spec/**', 'docs/spec/**') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-rust-1.98.0-regional-native-debug-${{ hashFiles('tools/regional-ledger/Cargo.lock') }}-
+      - name: Create existing unit fixture parent
+        run: mkdir -p tmp
       - run: cargo fmt --manifest-path tools/regional-ledger/Cargo.toml --check
       - run: cargo clippy --manifest-path tools/regional-ledger/Cargo.toml --all-targets --locked -- -D warnings
       - run: cargo test --manifest-path tools/regional-ledger/Cargo.toml --locked

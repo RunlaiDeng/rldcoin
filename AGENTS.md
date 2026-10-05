@@ -1051,3 +1051,21 @@ synthetic parameters. Actual missing leader derives fromE8/key0 at9. Original
 600stage/60round/24heights/E27-P24-A24/maturity2/3of4/capacities remain. Full fault,
 Source66/2016/long-history/independent/physical and legacy value strict stay OPEN.
 See regional-paged-fault-native-preparation-outcome-20261005.json.
+
+
+Hybrid workflow adopted locally: original source-smoke controller7f3d6e39 and
+three fixed33eb1c364public implementation-source files/archive973c10c8 match the
+coordinator's prior Mac/Linux2test observations0.070/0.115seconds. Reuse them only
+for transfer/stdlib compatibility; no Rust/heavy speed or protocol qualification.
+CI adds two public dependency/compiled-output caches and existing regional tmp
+parent. Keys include fixed1.98/OS/arch/job/workspace/debug/locks plus full Core
+identity/regional rule files; all original checks/triggers/read-only permissions
+remain. No normal CI run,push,SSH,server install/service change or cleanup this
+turn. Mac keeps current Native89fault main line and existing target per workspace/
+profile; actual qualifying CLI/source/controller/evidence bind separately. The
+extra local_incremental_check proposal is deferred: its source snapshot omits
+Native non-Rust rules/Core identity inputs and some probes omit explicit migrated
+cwd. Continue existing bounded check entries, not a weaker stability claim. All
+old sealed/stopped inventories and current668prepared files/freeze unchanged.
+Full fault and legacy value strict remainOPEN. See HYBRID_BUILD_TEST_WORKFLOW.md
+and hybrid-workflow-local-adoption-20261005.json.

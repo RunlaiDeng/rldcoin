@@ -1,0 +1,96 @@
+{
+  "format": "RLD-HYBRID-WORKFLOW-LOCAL-ADOPTION-V1",
+  "recorded_at_utc": "2026-10-05T16:39:58.142634+00:00",
+  "completed": true,
+  "base_commit": "fbc12c34fe01025c8115179d2a2aaf03c51920a8",
+  "adopted_files_sha256": {
+    "tools/hybrid_source_smoke.py": "7f3d6e391accbd970fab7a448e6bb50b3faa327cbe98f91a38fbb8e4ff70cb57",
+    "docs/operations/HYBRID_BUILD_TEST_WORKFLOW.md": "5e89b5a92d7787ee497e041231b8b1b8d1477a1830e5566cd46fcbd849e61135",
+    ".github/workflows/ci.yml": "6be98da0c96ed2e7d774ae39791eb4f75db15929fd20872a4d3b27151f4cd800"
+  },
+  "proposed_files_sha256": {
+    "tools/hybrid_source_smoke.py": "7f3d6e391accbd970fab7a448e6bb50b3faa327cbe98f91a38fbb8e4ff70cb57",
+    "docs/operations/HYBRID_BUILD_TEST_WORKFLOW.md": "dbdafa057e8f0b9fe1d571a2770cff8ec5586ce840c31091ae5a62b3af520eca",
+    ".github/workflows/ci.yml": "22df9508de02afc2bca53d9cd9d4ac83dcb915151fac45d54db35cce7f9fa825"
+  },
+  "coordinator_outcome_sha256": "3a6cb47c573ac77324c8436ca0bb2f833707bee36bd20e946bfc9adba63d964d",
+  "source_archive_sha256": "973c10c8e82267d00100aa93dcf8cc50440d61ef605428d173247ad58ad7d520",
+  "fixed_export_commit": "33eb1c3641af5e11cff44d6955627205def8aec7",
+  "archive_members": "Three exact reviewed ordinary Python files plus two empty directories; no symlinks/hardlinks/extra files; actual archive/member/fixed Git blob/controller hashes verified locally without extraction",
+  "controller_reused_byte_for_byte": true,
+  "source_files_sha256": {
+    "test_verify.py": "ad6393de9d1ab70d5fe3e1bb35aa39a2c10916e0889f7823a8bdf41f36c92ebc",
+    "verify.py": "00fa95bff6a458ee46a227ba5654bab2722ab395f49b192886d6de6ca1d731dc",
+    "verify_cli.py": "719a650ae3567129414bda5307419f21ee783f908597ac799c0a96fedd08f92a"
+  },
+  "prior_local_smoke": {
+    "exit_code": 0,
+    "seconds": 0.07030579200363718,
+    "python": "3.14.7",
+    "architecture": "arm64"
+  },
+  "prior_remote_smoke": {
+    "exit_code": 0,
+    "seconds": 0.1153368940576911,
+    "python": "3.12.3",
+    "architecture": "x86_64",
+    "basis": "User-authorized coordinator outcome; no new SSH or remote observation this turn"
+  },
+  "remote_rust_or_heavy_benchmark_qualified": false,
+  "remote_heavy_gate": "Closed by current owner local-only decision; retain previous two-test smoke only",
+  "ci_review": {
+    "yaml_parses": true,
+    "original_jobs_checks_triggers_permissions_unchanged": true,
+    "permissions": {
+      "contents": "read"
+    },
+    "cache_steps_added": 2,
+    "regional_existing_fixture_tmp_parent_added": true,
+    "complete_core_and_regional_rules_source_in_cache_keys": true,
+    "namespace": "hostOS/arch/toolchain1.98/job/workspace/debug/lockfiles/complete implementation source",
+    "restore_is_acceleration_only_not_authority": true,
+    "credentials_or_private_state_paths_cached": false,
+    "actual_ci_run_observed": false,
+    "ci_success_claimed": false
+  },
+  "local_cache_policy": {
+    "core_target": "/Users/galaxy/GitHub/rldcoin/target",
+    "regional_target": "/Users/galaxy/GitHub/rldcoin/tools/regional-ledger/target",
+    "toolchain": "1.98.0-aarch64-apple-darwin installed; read-only rustup list",
+    "profiles": "debug/release within existing per-workspace targets; do not create a target copy per fixture/attempt",
+    "qualifying_release_binary_outside_disposable_incremental": true,
+    "qualifying_release_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e"
+  },
+  "selected_local_runner_adopted": false,
+  "selected_local_runner_proposal_sha256": "5fd5b6ffc0f8accdda0d2057bd6f09c22a774cc48caa7ff4c6f80e2b4a0597c0",
+  "selected_local_runner_review": "Proposal omits non-Rust regional rule/source files and full Core identity dependencies; git/version/rustup subprocesses lack explicit migrated cwd. Use existing author-owned bounded source/binary/controller-pinned checks until these are fixed and verified.",
+  "local_review_checks": [
+    "AST parse and CLI help0",
+    "actual source archive and member/fixed Git blob/controller SHA256 match",
+    "YAML parsing and exact original job/check/permission preservation",
+    "complete cache source boundaries",
+    "Native89/Core171/protected Python/freeze and all retained old/sealed/new668private inventories unchanged"
+  ],
+  "initial_review_assertion": "First read-only archive assertion expected file members only and omitted two empty directory records; corrected exact directory allowlist without extraction or changing the archive; no fixture/Native invocation",
+  "native_preparation_checks_sha256": "ca5e3068d3ce0c222910feab5b9d27331aa4f66538dc54c746c22b387ca97f1c",
+  "native_preparation_retained_inventory_sha256": "d9b5df0a18c8412ceb6bf28db05ee1bd9e3e8c406f6657464bcc1a9ec1ed346b",
+  "old_private_native_source_freeze_unchanged": true,
+  "new_ssh_calls": 0,
+  "new_native_calls": 0,
+  "new_tests": 0,
+  "new_builds": 0,
+  "long_tests_repeated": 0,
+  "pushes": 0,
+  "server_or_service_changes": 0,
+  "cleanup_or_trash_changes": 0,
+  "full_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "goal_status": "active",
+  "whole_goal_completed": false,
+  "frozen_body": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "next_protocol_scope": "Existing prepared-source binding once120/network0/first-sign0/recovery0, then only justified complete full-fault scope with original600/60/24/maturity/quorum/capacity; hybrid tooling is not protocol qualification",
+  "owner_execution_decision": "Explicit later owner decision: local-only incremental/cache/layered checks; no Rust installation, expanded remote operation or new server creation/purchase",
+  "coordinator_permanent_cache_deletion_receipt_sha256": "06f15efbf7f42ccdcd07d2e60da56cf4ce27e93ec730808206de6bdd48eb69c2",
+  "coordinator_cleanup_scope": "User separately confirmed two exact Trash bundles; this author read outcome hash only, did not repeat deletion/rescan/retest"
+}
