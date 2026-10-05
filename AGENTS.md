@@ -992,3 +992,18 @@ successor and keeps original quotas. Wrong source/head/profile/layout/cap refuse
 No Native/Runtime open, private copying or first-signing during that model scope.
 Only its reviewed contract and counterexamples can support preparing a separate
 network budget. See regional-paged-ordinary-cycle-pinned-cold-v4-outcome-20261005.
+
+
+Explicit paged fault scope model passed4.396s/once120 and composed fixed-head
+Native inspection passed6.060s/once120. Preserve original5050 stopped files and
+all old seals. Inspection permits only history-check with the exact retained
+head, explicit new project cwd and bounded deadline; signer/wallet custody is
+never opened and no Native status/recovery/init is permitted. Reuse original1606
+full-envelope/custody evidence only under unchanged full source/inventory; this
+is not independent latest protection or full fault rights. Native89/default
+Runtime remain unchanged. Next once120s network0/native0 immutable fault launch
+spec requires fresh no-value setup and independent Native qualification before
+any network scope. Do not copy or advance original stopped custody as a writable
+template, relabel old reports or relax original600/60/24/maturity/quorum/capacity.
+First unexpected result/source/private mutation, discrimination or budget exits.
+See regional-paged-fault-preflight-outcome-20261005.json and exact contract.

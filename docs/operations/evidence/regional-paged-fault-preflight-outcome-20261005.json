@@ -1,0 +1,219 @@
+{
+  "format": "RLD-PAGED-FAULT-PREFLIGHT-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T15:58:10.952442+00:00",
+  "completed": true,
+  "actual_code": {
+    "tools/regional_paged_fault_scope.py": "b8228c7173e1093ba7d38c15d44cb0250ccdcd1e25632da4f0d67fc66b074c5b",
+    "tools/test_regional_paged_fault_scope.py": "843eba0d4b89646a85f49ac2c68a90815af04e855aee9965f0a185c41e827243",
+    "tools/regional_paged_fault_preflight.py": "e47fc11a2764def290aa8cf39428bdefffe5b95cd32340ab94c0081b804f17ac",
+    "tools/test_regional_paged_fault_preflight.py": "6812562a4a2f15f2e5133cd839d9fc2135f0012702ae0ea4f9d3e17ca699c185"
+  },
+  "model_checks_sha256": "d1b8c6ba55e1f28bc0e55639141a6261e80c0b15f6766a5b2786db18bd25d155",
+  "model_budget_seconds": 120,
+  "model_duration_seconds": 4.396,
+  "model_tests": {
+    "completed": true,
+    "duration_seconds": 2.676,
+    "unit_tests": 5,
+    "real_stopped_scope_validated": true,
+    "negative_refusals": [
+      "wrong checks",
+      "wrong stage",
+      "wrong inventory",
+      "wrong currency",
+      "wrong implementation",
+      "wrong native_source",
+      "wrong binary",
+      "wrong core_manifest",
+      "wrong replica history_head",
+      "wrong replica caller_head",
+      "wrong replica key",
+      "wrong replica region_id",
+      "wrong replica height",
+      "zero retained Native head",
+      "ordered custody slots changed",
+      "missing custody slot",
+      "wrong owner_heads",
+      "wrong owner_intents",
+      "relaxed caps",
+      "relaxed round",
+      "recovery mode report",
+      "failed source report",
+      "unclean service report",
+      "legacy admission",
+      "pending caller",
+      "old flat custody format",
+      "incomplete owner approvals",
+      "changed private inventory"
+    ],
+    "missing_leader_gates": {
+      "earth": [
+        13,
+        10,
+        11,
+        12
+      ],
+      "proxima": [
+        9,
+        10,
+        7,
+        8
+      ],
+      "andromeda": [
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    "current_heights": {
+      "earth": [
+        9,
+        9,
+        9,
+        9
+      ],
+      "proxima": [
+        6,
+        6,
+        6,
+        6
+      ],
+      "andromeda": [
+        8,
+        8,
+        8,
+        8
+      ]
+    },
+    "native_calls": 0,
+    "network_starts": 0,
+    "private_copies": 0,
+    "first_signs": 0,
+    "old5050files_unchanged": true,
+    "negative_inventory_scan_witness_is_not_authority": true,
+    "scope_is_not_native_authentication": true,
+    "full_fault_qualified": false
+  },
+  "preflight_checks_sha256": "0d6a6c5aeef18eb7bd79f8cb2cea95dc7e536a326cb9f5c828dcdff2f2c01508",
+  "preflight_budget_seconds": 120,
+  "preflight_duration_seconds": 6.06,
+  "preflight_tests": {
+    "completed": true,
+    "duration_seconds": 4.318,
+    "unit_tests": 3,
+    "native_pinned_history_checks": 12,
+    "native_stale_head_refusals": 1,
+    "native_calls": 13,
+    "native_timings": [
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.151294
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.145722
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.140548
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.148046
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.143651
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.08386
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.081162
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.083805
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.199528
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.144554
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.188114
+      },
+      {
+        "command": "history-check",
+        "elapsed_seconds": 0.141432
+      }
+    ],
+    "negative_refusals": [
+      "last Native response height",
+      "last Native response region",
+      "last Native response history_head",
+      "last Native response currency",
+      "last Native response logical_native_replay_complete",
+      "last Native response independent_latest_state_anchor_qualified",
+      "last Native response fixture_only",
+      "last Native response live_rld",
+      "actual stale nonzero Native head"
+    ],
+    "late_bad_response_no_partial_success": true,
+    "all5050sourcefiles_unchanged": true,
+    "prior_full1606_envelopes_and_custody_evidence_reused_exactly": true,
+    "signer_wallet_custody_opened": false,
+    "network_starts": 0,
+    "private_copies": 0,
+    "first_signs": 0,
+    "signing_authority": false,
+    "independent_freshness": false,
+    "full_fault_qualified": false
+  },
+  "native_source_unchanged": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "native_implementation_unchanged": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "binary": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "actual_scope": "Read-only exact stopped E9/P6/A8 full-inventory/source/owner/caller scope model plus12fixed-head full-genesis Native inspections;1real stale-head refusal. No signer/wallet status or Native custody open.",
+  "prior_complete_envelope_custody_evidence_reused": "Source89 original1606 phase-total full-envelope/custody/owner evidence reused only under exact unchanged whole5050private inventory and source. New model/preflight do not independently requalify those checks.",
+  "ordinary_runtime_and_native_source": "unchanged; new modules are explicit read-only model/preflight only, not installed as ordinary startup or fault campaign",
+  "stored_head_semantics": "Separately saved native local integrity observations and pinned original caller/owner responses; no independent latest-state or rollback qualification",
+  "original_limits": "600stage/60round/24new heights per region/E27-P24-A24 caps/maturity2/3-of-4/all wire-object-history-archive bounds unchanged",
+  "old_failed_success_private_and_freeze_unchanged": true,
+  "native_failed_fixture_opened": false,
+  "network_started": false,
+  "private_custody_copied": false,
+  "signer_wallet_custody_opened": false,
+  "whole_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "goal_status": "active",
+  "persistent_cwd": "old UI repair item; all commands explicit /Users/galaxy/GitHub/rldcoin",
+  "frozen_body": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_old_hash_reference": "Unchanged predecessor in active goal; report to original thread/dynamic record, parent delivery unconfirmed; no autonomous edit",
+  "finder_cleanup": "Human coordinator informational receipt only; no new cleanup, tests or private-state changes for Finder metadata",
+  "next_scope": {
+    "budget_seconds": 120,
+    "attempts": 1,
+    "network_budget": 0,
+    "native_budget": 0,
+    "hypothesis": "An explicit paged fault launch-spec can select the exact current Source89 profile and bounded missing-leader stage without copying/advancing stopped source custody or emitting Native consensus commands; incomplete source provenance, unsafe authority/caller/transport roles and any relaxed budget/cap refuse.",
+    "minimum": "Implement and review immutable launch specifications and refusal counterexamples for fresh no-value fault setup versus exact retained successful observations. Do not use frozen source stores as writable templates or relabel their reports. Fresh genesis/custody needs its own explicit setup/Native qualification before any network run.",
+    "exit": "First unexpected acceptance or private/source mutation, complete discriminator or120seconds. No unchanged retry, legacy fallback, network startup or signing in this scope.",
+    "remaining_decision": "A real fault driver needs a separately reviewed fresh setup and current-source native/owner/fullcold contract; no full fault budget yet."
+  },
+  "remaining": [
+    "Full current fault profile",
+    "Source66 complete dependency/capacity and2016 challenge",
+    "Long-history/independent freshness/custody/physical/PQ",
+    "All normative S/R/I/A-G/N/P qualifications"
+  ],
+  "whole_goal_completed": false
+}

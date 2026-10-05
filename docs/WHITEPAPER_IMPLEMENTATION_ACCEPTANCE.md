@@ -204,3 +204,30 @@ cap必须拒绝。首不符/完整判别/120秒退出；通过合同与反例之
 VALUE-STRICT-01两告警/120.019秒未通过，原触发/120诊断或300修复/无豁免标准保留，
 本次未触旧库或实际构建阻塞，不重复已有strict。
 [准确来源、终态、反例和下一判别](operations/evidence/regional-paged-ordinary-cycle-pinned-cold-v4-outcome-20261005.json)。
+
+
+## 2026-10-05 停止范围模型及固定头原生预检接入
+
+新增显式只读paged fault scope与preflight。模型一次120秒实际4.396秒exit0，
+五机械边界/当前真实5050文件全清单与Native/Core171/Python/实际CLI/12头/原
+3owner绑定；28错误源/头/成员/保管布局/旧profile/预算上限/pending/owner等拒绝。
+缺席leader gate按原四成员key序，从E9/P6/A8推导分别13,10,11,12 /9,10,7,8 /
+9,10,11,12，均是实际未来parent leader的后继，不是旧7/4/4固定门槛。
+
+独立接入范围一次120秒实际6.060秒exit0：3新IO/拒绝/期限回归，12Native完整
+固定头genesis replay与1真实旧非零头拒绝；只允许history-check --expected-head，
+明确新project cwd/无私有stdin/单call<=30秒且总预算120。最后一份Native响应的
+height/region/head/currency/fullreplay/独立最新/fixture/live错误均不释放部分成功。
+从未调用status/bft-status/wallet-view/init/recovery，Native未打开signer/wallet
+保管，未启动网络/复制/first-sign。原1606信封/custody/owner有效证据只在整5050
+文件/全部源完全相同下复用，不重复长测。所有旧封存/freeze/旧价值基线未变。
+
+这只完成范围选择及实际只读预检；普通Runtime/Native源码未改，新模块未替代
+普通启动或故障驱动，保留本机头不是独立最新保护。原600/60/24新增高度/E27-P24-
+A24/成熟票数/容量不变；完整fault/2016/source66/长期/独立/physical/PQ仍OPEN。
+下一一次120秒network0/native0不可变fault launch-spec和错误权限/头/路径/配置
+反例：明确新无价值setup与只读旧成功观察的边界，不复制或推进原停止保管作模板。
+新genesis/custody须独立setup/Native验收后才准备网络预算；首不符/完整判别/预算退出。
+不为Finder结案展开清理或测试。goal active/显式新workdir/冻结规范及旧goal哈希引用
+待协调保持；VALUE-STRICT-01独立OPEN，原120诊断/300修复/无豁免标准不改。
+[实现、接入验收及下一范围](operations/evidence/regional-paged-fault-preflight-outcome-20261005.json)。
