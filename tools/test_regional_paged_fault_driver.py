@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
-from regional_paged_fault_driver import Driver, NativeReadBusy, observation_height, compatible, statement_id, retain_original_objects
+from regional_paged_fault_driver import Driver, NativeReadBusy, NativeReceiptNotObserved, receipt_not_observed, observation_height, compatible, statement_id, retain_original_objects
 from regional_paged_fault_launch import Config, PHASES, SLOTS
 from regional_paged_fault_scope import REGIONS
 from regional_paged_fault_prepared import Bound
@@ -172,6 +172,53 @@ class Tests(unittest.TestCase):
         bad=copy.deepcopy(newer);bad['bft-records/pages/old.json']=['different-but-authenticated-variant',2]
         with self.assertRaises(ValueError):retain_original_objects(old,bad,'bft-records/stream.json')
         with self.assertRaises(ValueError):retain_original_objects(old,newer,'not-a-retained-manifest')
+
+    def test_exact_missing_native_receipt_is_unknown_never_authentication_success(self):
+        diagnostic='regional candidate rejected: wallet has no independently verified evidence for this export\n'
+        self.assertTrue(receipt_not_observed('wallet-receipt',1,diagnostic))
+        for command,code,error in [('status',1,diagnostic),('wallet-receipt',2,diagnostic),
+            ('wallet-receipt',True,diagnostic),('wallet-receipt',1,diagnostic+'bad signature'),
+            ('wallet-receipt',1,'regional candidate rejected: wallet receipt domain mismatch'),
+            ('wallet-receipt',1,'regional candidate rejected: invalid checkpoint proof')]:
+            with self.subTest(command=command,error=error):self.assertFalse(receipt_not_observed(command,code,error))
+        driver=Driver.__new__(Driver);driver.remaining=lambda:1;driver.observations=lambda:{};driver.record=lambda *a,**kw:None
+        seen=[]
+        def read(_):
+            seen.append(1)
+            if len(seen)==1:raise NativeReceiptNotObserved('no retained evidence at this replica yet')
+            return 'actual later fresh observation'
+        with patch('regional_paged_fault_driver.time.sleep'):
+            self.assertEqual(driver.wait('receipt',read),'actual later fresh observation')
+        self.assertEqual(len(seen),2)
+
+    def test_actual_call_path_reproduces_absence_refusal_and_keeps_bad_proof_fatal(self):
+        from types import SimpleNamespace
+        driver=Driver.__new__(Driver);driver.project=PROJECT;driver.root=PROJECT/'tmp/unused-no-native';driver.authority='1'*64
+        driver.currency='2'*64;driver.configs={(PHASES[0],'proxima',0):Config(PHASES[0],'proxima',0,True,b'{}',b'{}',('/not-run',))}
+        driver.calls=[];driver.remaining=lambda:1;driver.write_counts={}
+        def respond(message):
+            def fake_run(*args,**kw):kw['stderr'].write(message);return SimpleNamespace(returncode=1)
+            return fake_run
+        diagnostic=b'regional candidate rejected: wallet has no independently verified evidence for this export\n'
+        with patch('regional_paged_fault_driver.subprocess.run',respond(diagnostic)):
+            with self.assertRaises(NativeReceiptNotObserved):driver.call('proxima',0,'wallet-receipt','--file','not-run')
+            with self.assertRaises(ValueError) as error:driver.call('proxima',0,'status')
+            self.assertNotIsInstance(error.exception,NativeReceiptNotObserved)
+        with patch('regional_paged_fault_driver.subprocess.run',respond(b'regional candidate rejected: invalid checkpoint proof\n')):
+            with self.assertRaises(ValueError) as error:driver.call('proxima',0,'wallet-receipt','--file','not-run')
+            self.assertNotIsInstance(error.exception,NativeReceiptNotObserved)
+        self.assertFalse(driver.write_counts);self.assertEqual(len(driver.calls),3)
+
+    def test_later_error_after_2048bytes_cannot_be_hidden_by_absence_prefix(self):
+        from types import SimpleNamespace
+        driver=Driver.__new__(Driver);driver.project=PROJECT;driver.root=PROJECT/'tmp/unused-no-native';driver.authority='1'*64
+        driver.currency='2'*64;driver.configs={(PHASES[0],'proxima',0):Config(PHASES[0],'proxima',0,True,b'{}',b'{}',('/not-run',))}
+        driver.calls=[];driver.remaining=lambda:1;driver.write_counts={}
+        diagnostic=b'regional candidate rejected: wallet has no independently verified evidence for this export'+b' '*3000+b'\ninvalid checkpoint proof\n'
+        def fake_run(*args,**kw):kw['stderr'].write(diagnostic);return SimpleNamespace(returncode=1)
+        with patch('regional_paged_fault_driver.subprocess.run',fake_run):
+            with self.assertRaises(ValueError) as error:driver.call('proxima',0,'wallet-receipt','--file','not-run')
+            self.assertNotIsInstance(error.exception,NativeReceiptNotObserved)
 
 
 if __name__=='__main__':unittest.main()

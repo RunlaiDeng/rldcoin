@@ -445,3 +445,33 @@ failure remainsfailed; failure seals attempted fresh currency with no reopen/
 re-sign/recovery/refund/replacement. No fullfaultstarted at this checkpoint.
 See operations/evidence/regional-paged-fault-terminal-outcome-20261005.json;
 VALUE-STRICT-01/independent/long-history/physical/allgoal remainOPEN.
+
+
+Latest actual complete paged fault attempt FAILED213.822seconds/once600(exit1,
+not budget exhaustion). Offline Earth0original native/voter/caller bytes stayed
+unchanged, online3passed certified missing-leader9with view-change>round0, two
+isolated original local payments were included, and original Earth0caught up9
+before both contacts restored. First fresh Native receipt query at Proxima0
+then returned exact no-evidence-yet refusal; the old controller aborted. All12
+owned ordinary nodes exited0 and both opaque relays stopped, no forced kill.
+Three original owner responses/heads and3492stopped files/source remain sealed.
+Last live9/9/8observations are not final cold authority; no failed Native/Runtime
+reopen/recover/cold/sign/refund/replacement. FullfaultremainsFAILED/OPEN.
+
+The measured controller observation gap is fixed separately: only wallet-receipt,
+exit1and the exact whole no-evidence diagnostic is unknown, with fresh replica
+rotation/unchanged totaldeadline. Native wallet.rs589domain/source check followed
+by absence in both authenticated contact records and imports confirms this
+branch. All other proof/domain/command/code/combined refusals remainfatal.
+Read entire bounded64KiBstderr before display truncation; a later bad-proof
+suffix beyond2048bytes cannot be hidden. Changed driver11counterexamples passed
+2.452seconds/once120exit0, Native/socket/Runtime/first-sign0; initial10test2.709
+source/report retained independently. Native89/release CLI unchanged; all old,
+new failed3492files/source/freeze unchanged. Next genuinely fresh zero-allocation
+genesis/currency and separate12Native/voter/caller/owner/mesh/TLS custody once180,
+then corrected driver/terminal/source/binary/controller binding before one
+necessary original600/60/24/E27-P24-A24/maturity2/quorum3/full-capacity fault scope.
+Never reopen the prior failed currency or reuse its signed payment. See
+operations/evidence/regional-paged-full-fault-outcome-20261005.json and
+regional-paged-fault-receipt-observation-fix-outcome-20261005.json. VALUE-STRICT-01/
+Source66/2016/long-history/independent/physical/allgoal remainOPEN.

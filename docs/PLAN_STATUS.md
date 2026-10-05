@@ -6,6 +6,10 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
+最新完整fault：**213.822秒失败并封存**；收款证据尚未到达被旧controller误判为致命错误。
+已窄修复精确缺证据观察，11相关反例2.452秒通过；原Native/CLI未改，旧失败未恢复。
+下一范围必须新无价值创世/保管，原600/60/24/成熟/票数/容量保持；完整fault仍未通过。
+
 当前来源 `89408f5a...` / implementation `8a361699...` / release binary `a45387fa...`：
 **普通六阶段完整闭环510.455秒/原600秒有限通过**；四E9/四P6/四A8，全部成熟、
 1606阶段合计完整信封/原heads/12Native/最终守恒，27Services正常退出。
@@ -1018,3 +1022,33 @@ failure remainsfailed; failure seals attempted fresh currency with no reopen/
 re-sign/recovery/refund/replacement. No fullfaultstarted at this checkpoint.
 See operations/evidence/regional-paged-fault-terminal-outcome-20261005.json;
 VALUE-STRICT-01/independent/long-history/physical/allgoal remainOPEN.
+
+
+Latest actual complete paged fault attempt FAILED213.822seconds/once600(exit1,
+not budget exhaustion). Offline Earth0original native/voter/caller bytes stayed
+unchanged, online3passed certified missing-leader9with view-change>round0, two
+isolated original local payments were included, and original Earth0caught up9
+before both contacts restored. First fresh Native receipt query at Proxima0
+then returned exact no-evidence-yet refusal; the old controller aborted. All12
+owned ordinary nodes exited0 and both opaque relays stopped, no forced kill.
+Three original owner responses/heads and3492stopped files/source remain sealed.
+Last live9/9/8observations are not final cold authority; no failed Native/Runtime
+reopen/recover/cold/sign/refund/replacement. FullfaultremainsFAILED/OPEN.
+
+The measured controller observation gap is fixed separately: only wallet-receipt,
+exit1and the exact whole no-evidence diagnostic is unknown, with fresh replica
+rotation/unchanged totaldeadline. Native wallet.rs589domain/source check followed
+by absence in both authenticated contact records and imports confirms this
+branch. All other proof/domain/command/code/combined refusals remainfatal.
+Read entire bounded64KiBstderr before display truncation; a later bad-proof
+suffix beyond2048bytes cannot be hidden. Changed driver11counterexamples passed
+2.452seconds/once120exit0, Native/socket/Runtime/first-sign0; initial10test2.709
+source/report retained independently. Native89/release CLI unchanged; all old,
+new failed3492files/source/freeze unchanged. Next genuinely fresh zero-allocation
+genesis/currency and separate12Native/voter/caller/owner/mesh/TLS custody once180,
+then corrected driver/terminal/source/binary/controller binding before one
+necessary original600/60/24/E27-P24-A24/maturity2/quorum3/full-capacity fault scope.
+Never reopen the prior failed currency or reuse its signed payment. See
+operations/evidence/regional-paged-full-fault-outcome-20261005.json and
+regional-paged-fault-receipt-observation-fix-outcome-20261005.json. VALUE-STRICT-01/
+Source66/2016/long-history/independent/physical/allgoal remainOPEN.

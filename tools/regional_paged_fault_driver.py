@@ -145,6 +145,15 @@ class NativeReadBusy(ValueError):
     """Only a reported native OS lock is unknown; other refusals remain failures."""
 
 
+class NativeReceiptNotObserved(ValueError):
+    """Only exact Native no-evidence-yet observation; never verified receipt."""
+
+
+def receipt_not_observed(command, code, diagnostic):
+    return (command=='wallet-receipt' and type(code) is int and code==1
+        and diagnostic.strip()=='regional candidate rejected: wallet has no independently verified evidence for this export')
+
+
 class Driver:
     def __init__(self, project, bound, deadline, account):
         require(type(bound) is Bound and bound.native_history_checks==12
@@ -196,12 +205,14 @@ class Driver:
                 '--authority',self.authority,'--currency',self.currency,command,*map(str,args)],
                 cwd=self.project,input=None,stdout=output,stderr=errors,timeout=min(30,self.remaining()),check=False)
             require(output.tell()<=8*1024**2 and errors.tell()<=65536,'controller Native output capacity')
-            errors.seek(0);diagnostic=errors.read(2048).decode(errors='replace')
+            errors.seek(0);diagnostic=errors.read(65536).decode(errors='replace')
             self.calls.append(dict(command=command,region=label,index=n,exit_code=result.returncode,
                 wall_seconds=round(time.monotonic()-started,6)))
             if result.returncode!=0 and command in READS and any(t in diagnostic for t in ('already locked','lock contention')):
                 raise NativeReadBusy('Native observation OS lock unavailable')
-            require(result.returncode==0,'controller Native refusal: '+diagnostic)
+            if receipt_not_observed(command,result.returncode,diagnostic):
+                raise NativeReceiptNotObserved('Native receipt evidence not observed at this replica')
+            require(result.returncode==0,'controller Native refusal: '+diagnostic[:2048])
             output.seek(0);answer=decode_native_json(output.read(8*1024**2+1))
         if command in WRITES:self.write_counts[command]+=1
         return answer
@@ -309,7 +320,7 @@ class Driver:
         while self.remaining()>0:
             heights=self.observations()
             try:value=check(heights)
-            except NativeReadBusy:value=False
+            except (NativeReadBusy,NativeReceiptNotObserved):value=False
             if value:self.record('phase-discriminator',observation=label);return value
             time.sleep(min(.2,self.remaining()))
 
