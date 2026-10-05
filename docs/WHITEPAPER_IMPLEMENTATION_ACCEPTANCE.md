@@ -231,3 +231,34 @@ A24/成熟票数/容量不变；完整fault/2016/source66/长期/独立/physical
 不为Finder结案展开清理或测试。goal active/显式新workdir/冻结规范及旧goal哈希引用
 待协调保持；VALUE-STRICT-01独立OPEN，原120诊断/300修复/无豁免标准不改。
 [实现、接入验收及下一范围](operations/evidence/regional-paged-fault-preflight-outcome-20261005.json)。
+
+
+## 2026-10-05 完整故障启动配置与实际资金前置反例
+
+新增不可变四阶段48配置：缺席Earth0且双向E/P断联（11节点）、原离线节点追赶、
+恢复后原export唯一导入/成熟、无钥排空及全cold（均12节点）。完整scope保留当地
+付款、非零轮缺席leader证书、离线Native/voter/caller字节不变、真实TLS拒绝尝试、
+原请求/debit/import/终态守恒；只描述新无价值setup，不复制旧5050文件或失败货币。
+两个透明故障relay端口保留邻居身份/端到端TLS pin；无钥用不存在的key路径，
+实际钥匙文件/独立保管和头不改。原600stage/60round/24新增/E27-P24-A24/成熟票数/
+容量/5秒cleanup保持；当前配置字节本身不授予Native/network/signing权限。
+
+首次once120审查3.406秒失败，现有venv Python标准leaf symlink被路径规则拒绝；
+Native/fixture/network0，五机械回归通过但整范围未通过。原source/test确切字节
+已按原stage SHA恢复保留到独立私有source-only目录，原helper/controller/报告不改。
+窄修正固定实际解释器SHA、保留venv执行路径，不放宽parent/custody/config/fixture
+symlink规则；新once120实际4.177秒exit0：6回归与真实旧source审查，48配置完整，
+各phase11/12/12/12，synthetic plannedE8/P5/A5及gate9明确不代表实际Native准备。
+
+另已反证旧fault owner20奖励输入假设：Native只有origin发行，旧ordinary收款owner
+11/12/13及远端fee miner keys2..5，远端20未有准备资金，不能据旧height/owner名付款。
+下一一次180秒network0全新12Native/12voter/caller准备：从零分配genesis，仅原生
+发行，原owner10 local95给source13及两个gross3出口给remote20/net2，各真实成熟；
+证明source13>=11与两remote20>=2的明确实际input IDs/fullNative/conservation/保管，
+实际新mesh/TLS公钥/cert/endpoint pins及fresh-root来源后再绑定配置。控制器准备
+证书/接触不计普通网络或完整fault通过，不盲用synthetic blueprint；首失败/完成/
+180退出，整失败currency封存，不恢复/重签/退款/替换/原样重跑。计划8/5/5不是authority。
+Native89/defaultRuntime未改，旧全部失败/成功/freeze/旧价值基线保持；当前fault及
+2016/source66/长期/独立/PQ/physical和全部规范资格仍OPEN。VALUE-STRICT-01仍
+独立OPEN，原触发/120诊断或300修复/无豁免标准不变，本次未触旧库或实际构建阻塞。
+[实际配置、失败修复与下一原生准备](operations/evidence/regional-paged-full-fault-launch-outcome-20261005.json)。

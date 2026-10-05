@@ -1007,3 +1007,22 @@ any network scope. Do not copy or advance original stopped custody as a writable
 template, relabel old reports or relax original600/60/24/maturity/quorum/capacity.
 First unexpected result/source/private mutation, discrimination or budget exits.
 See regional-paged-fault-preflight-outcome-20261005.json and exact contract.
+
+
+The immutable fresh full-fault launch blueprint implements48configs and the full
+missing-leader/isolation/local payments/catchup/restored maturity/keyless/cold scope.
+First3.406s launch review failed on the venv Python leaf symlink before any Native/
+fixture/network. Preserve exact original sources (hash-bound private source-only
+copy), helper/controller/reports. Narrow explicit resolved-interpreter hash pin with
+original venv invocation passed4.177s/once120 and6regressions; all custody/config/root
+and Python parent symlinks still refuse. Synthetic currency/TLS/height blueprint
+inputs grant no launch authority. Origin-only issuance falsifies legacy remote20
+reward funding. Next once180s network0 fresh12Native/voter/caller fixture must prove
+actual source13>=11 and remote20>=2 mature inputs from genesis/native local95 and
+net2imports, full Native custody/conservation and actual fresh mesh/TLS provenance.
+Do not copy or advance original5050files, old failures or private custody. Fresh-root
+absence/provenance must bind actual prepared configuration, never assume existing
+root safe or blindly launch placeholders. First failure/discrimination/budget exits,
+seal failed currency; no unchanged retry/recovery/refund/re-sign. Original full fault
+600/60/24/maturity/quorum/capacity remains; no network budget launched yet.
+See regional-paged-full-fault-launch-outcome-20261005.json and exact full contract.

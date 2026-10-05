@@ -1,0 +1,12 @@
+{
+  "format": "RLD-FAILED-LAUNCH-SOURCE-RETENTION-V1",
+  "original_stage_sha256": "3bc5f840f1639a5294d009f1427864de3c7b0153bf8e68968f8ae72d35cbe054",
+  "original_source_sha256": {
+    "tools/regional_paged_fault_launch.py": "e5aeace03b662fff525f1654676372e374e4f2cc4f78f8a8bf048a76855bbce6",
+    "tools/test_regional_paged_fault_launch.py": "d56556c134586fc9bb5210c3078419dfb10c56da2e31f4a84b157b8fcef0249d"
+  },
+  "exact_hash_matches_original_stage": true,
+  "failed_scope_remains_failed": true,
+  "native_fixture_created": false,
+  "private_source_only_not_custody": true
+}
