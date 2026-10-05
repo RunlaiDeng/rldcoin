@@ -1000,3 +1000,21 @@ source/Native/port preflight, then one justified original600total full scope.
 Failed currency never reopens/signs/refunds/replaces. Independent/physical/
 long-history/Source66/2016/VALUE-STRICT-01/allgoal remainOPEN. See
 operations/evidence/regional-paged-fault-driver-retention-outcome-20261005.json.
+
+
+Full-fault terminal helper now refuses successful bodies with cleanup failures,
+remaining owned processes/relays, expired whole-body/cold deadline or missing/
+duplicate actual12cold slots. Only sanitized qualified counts leave the private
+raw identity/custody report. Four terminal counterexamples passed2.073seconds/
+once120exit0, with Native/socket/Runtime/first-sign0 and old/current668/98private
+inventories/source/freeze unchanged. Read-only process probe found no eligible
+active fixture (unrelated nonUTF8argv required tolerant decoding; no restart).
+Next exact one justified Source89fresh-preparation fullfault under original
+600total/60round/24heights/E27-P24-A24/maturity2/quorum3/allcapacities: offline
+Earth0through actual gate9, both directed Earth/Proxima cuts, isolated actual
+payments, offline catchup, restoration/9net original maturity, keyless restart/
+all12fixed-head/full-envelope/mesh/owner/custody/conservation. Every earlier
+failure remainsfailed; failure seals attempted fresh currency with no reopen/
+re-sign/recovery/refund/replacement. No fullfaultstarted at this checkpoint.
+See operations/evidence/regional-paged-fault-terminal-outcome-20261005.json;
+VALUE-STRICT-01/independent/long-history/physical/allgoal remainOPEN.
