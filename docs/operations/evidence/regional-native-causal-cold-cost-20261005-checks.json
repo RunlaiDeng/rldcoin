@@ -1,0 +1,71 @@
+{
+  "format": "RLD-NATIVE-CAUSAL-COLD-COST-CHECKS-V1",
+  "completed": false,
+  "duration_seconds": 26.347,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "exit_code": 1,
+  "budget_exhausted": false,
+  "helper_terminal": true,
+  "cleanup_error": null,
+  "source_commitment": "4e2331b4cf44015c7da829d4710e7b09577ba893664ebec2802e0daf2d356ead",
+  "implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+  "cli_binary_sha256": "d8c2af0dcf5fca5fd4de517a4f7a92444e151dd91cdb68a79aa897b07cbc37a7",
+  "stage_sha256": "71f511fee0da04a2bf1b3247297b55106c498509be239f022182b13204392637",
+  "controller_sha256": "13b4854e60ea727d6cb716ac2541c4881c20d9abc569b3cb3cdca9a494b394b1",
+  "helper_sha256": "ad3136b47d4608d88aae141f3957e227a5c55316b69dfdd9fcd49424b6df68ea",
+  "log_sha256": "5ecc308bd3d3de25d2d7c477ce39ebef5d0fb03d29ecdb951869b62349dab13a",
+  "result": null,
+  "last_native_controller_steps": [
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 15.488,
+      "region": "andromeda",
+      "height": 4,
+      "commands": 1,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 17.491,
+      "region": "earth",
+      "height": 5,
+      "commands": 1,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 19.317,
+      "region": "earth",
+      "height": 6,
+      "commands": 0,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 21.506,
+      "region": "earth",
+      "height": 7,
+      "commands": 0,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-causal-leg",
+      "elapsed_seconds": 21.761,
+      "leg": 2,
+      "source": "andromeda",
+      "gross": "2",
+      "destination": "earth",
+      "net": "1",
+      "import_height": 5,
+      "mature_height": 7,
+      "only_controller_native_fixture": true
+    }
+  ],
+  "old_private_source_freeze_report_pins_unchanged": true,
+  "old_native_runtime_opened": false,
+  "network_starts": 0,
+  "ordinary_full_cycle_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_completed": false
+}

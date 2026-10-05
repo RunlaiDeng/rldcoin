@@ -921,3 +921,22 @@ cost discriminator in the current outcome; use measured opening/authentication
 cost to select a bounded Native cold stream/aggregate or independent maturity
 fence. Every complete later envelope still authenticates; never serialize a
 ledger/cache as authority or raise4-envelope/8MiB/512/history/archive bounds.
+
+
+The first offline causal cost scope failed26.347s because Native serde field
+order differs from canonical mesh state. Seal the whole
+`native-causal-cold-cost-private-20261005` currency and167 files; never reopen
+Native/Runtime, recover, resign/refund or migrate it. The bounded fixture Native
+JSON reader fixes syntax only, not native authority or active-path custody.
+The changed fresh offline scope passed27.816s at E7/P4/A4 with3 ledgers/12
+voter-caller journals/3 owners and no Runtime/network. Four singleton versus
+one original complete batch0.318651/0.078273s are small-sample costs; process
+startup/open/authentication reuse were not isolated. Later bad certificates,
+missing dependencies and fifth inputs refuse. No old600s or full-cycle/fault
+qualification follows. Next explicit read-only cold plan must pin an independently
+retained exact latest head under Native OS lock/full-genesis replay, refuse
+incidents without recovery, authenticate every complete later envelope and
+release no partial success. Keep4 envelopes/8MiB per batch,3MiB wire and512
+total. Changed Native needs fresh signed zero-allocation fixtures. Current
+cost outcome binds once300s focused-source/strict plus once120s fresh CLI
+budgets, network/full-cycle/fault budget0, and failure/terminal exit conditions.

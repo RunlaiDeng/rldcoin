@@ -718,3 +718,34 @@ V8最终来源 `c2b5e8bc...` / binary `838873ba...`：36 focused/strict/build79.
 83步实际CLI24.334秒均终态通过；184未变共享分支引用V7来源4110ffc4的原证据，
 未复跑，不能说220项都在新身份重跑。首47步失败10.578秒原件保持。
 [源绑定结果/复用边界](operations/evidence/regional-native-channel-fee-budget-outcome-20261005.json)。
+
+
+## 2026-10-05 原生因果冷核验成本与驱动读取修复
+
+首一次120秒离线范围26.347秒因把Rust字段顺序误作mesh状态canonical排序而失败，
+整个167文件currency封存，不再打开Native/Runtime或恢复/重签/退款。独立有界
+Native JSON读取修复只处理语法；重复字段、非有限/溢出数、静态符号链接和超限
+拒绝，三回归exit0及0.087秒真实队列反例通过，不能授予原生权威。
+
+驱动修正后的全新零分配离线范围一次120秒，27.816秒exit0；无Runtime/网络。
+完整原生E6→P5→A3→E1实际进口/成熟，最终E7/P4/A4、三ledger、12独立voter/caller
+及三原owner，I=U=1.75×10^30、E=0。四完整单份0.318651秒对原四份批量
+0.078273秒（4.071倍），六独立停止查询0.463866秒；坏后certificate、缺因果依赖
+和第五份越界均拒绝，原生/owner/voter/caller字节未变。旧7672文件及报告/freeze
+pin不变，当前自有进程0；172文件成功小样本另存私有停止inventory。
+启动/open/同过程完整认证重用成本未分离，不能解释旧E11/P7/A9深度或唯一600秒
+原因，也不能证明新普通cycle/fault；26.347/600.666失败仍失败。
+
+下一可证伪假设：一次固定独立最新头/OS锁/full-genesis只读Native入口逐批完整
+认证可减少重复进程/开库成本，而坏后信封、旧head、incident、输入变化仍整体拒绝，
+不释放部分成功。准备explicit bounded cold plan，每批原4份/8MiB、wire3MiB、
+总512保持；摘要只绑定输入，无serialized ledger权威，不恢复incident或签署。
+一次300秒源码/编译/focused strict，再一次120秒新来源全新零分配CLI等价/拒绝/
+私有字节检查，网络cycle/fault预算0。首失败/完整判别/预算退出。改变Native须
+新身份和全部全新签署fixture；旧来源证据保留原scope，不能自动继承资格。
+
+原goal已读回active，持久cwd仍旧为界面待修，所有命令显式新workdir。规范采用
+AGENTS/receipt的正文2ba62421/PDFc59f9fe8和全部S/R/I/A–G/N/P；goal旧前继哈希
+引用在本原线程/动态记录报告，父线程传达未确认，不改冻结正文/PDF/官网。
+VALUE-STRICT-01/完整cycle/fault/2016/source66/post64/独立/PQ/physical继续OPEN。
+[准确来源、成本与下一判别](operations/evidence/regional-native-causal-cold-cost-outcome-20261005.json)。

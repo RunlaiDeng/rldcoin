@@ -136,3 +136,17 @@ Native OS锁/准确caller head/full genesis replay，每完整信封仍独立认
 4/8MiB与512总数不变；无serialized cache authority。否则改独立原生成熟停止栅栏
 或更小typed timing模型。首次失败/完成/120秒退出，不原样复跑、加预算或免认证。
 VALUE-STRICT-01/完整cycle/完整fault/2016/source66/post64/独立/PQ/physical仍OPEN。
+
+
+## 2026-10-05 原生因果冷核验成本与驱动读取修复
+
+离线驱动读取首26.347秒失败封存；独立严格Native JSON读取修复及三回归后，
+全新120秒范围27.816秒exit0：E7/P4/A4、三ledger/12voter-caller/三原owner，
+完整因果进口成熟及I=U、坏后证书/缺依赖/第五份越界拒绝、私有字节未变。
+四单份0.318651秒对原四份批量0.078273秒；小controller样本不替代普通完整周期、
+故障、旧600.666秒失败或唯一成本诊断。下一explicit只读cold plan需独立最新头/
+Native锁/full-genesis、每完整信封认证及incident拒绝；原4/8MiB/wire3MiB/总512
+不变，一次300秒focused源码strict+一次120秒新来源fresh CLI，网络budget0。
+goal active/持久旧cwd待修/显式新workdir；当前freeze及全部验收目标保持，旧goal
+哈希引用已在本线程/动态记录报告，父线程传达未确认。VALUE-STRICT-01仍OPEN。
+[详细结果和退出标准](operations/evidence/regional-native-causal-cold-cost-outcome-20261005.json)。
