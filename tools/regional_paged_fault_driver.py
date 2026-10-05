@@ -145,6 +145,17 @@ class NativeReadBusy(ValueError):
     """Only a reported native OS lock is unknown; other refusals remain failures."""
 
 
+NATIVE_BUSY_DIAGNOSTICS = frozenset((
+    'regional candidate rejected: lock acquisition failed because the operation would block',
+    'regional candidate rejected: BFT signer is already locked',
+    'regional candidate rejected: complete stream already locked',
+))
+
+
+def native_read_busy(command, code, diagnostic):
+    return command in READS and type(code) is int and code==1 and diagnostic.strip() in NATIVE_BUSY_DIAGNOSTICS
+
+
 class NativeReceiptNotObserved(ValueError):
     """Only exact Native no-evidence-yet observation; never verified receipt."""
 
@@ -208,7 +219,7 @@ class Driver:
             errors.seek(0);diagnostic=errors.read(65536).decode(errors='replace')
             self.calls.append(dict(command=command,region=label,index=n,exit_code=result.returncode,
                 wall_seconds=round(time.monotonic()-started,6)))
-            if result.returncode!=0 and command in READS and any(t in diagnostic for t in ('already locked','lock contention')):
+            if native_read_busy(command,result.returncode,diagnostic):
                 raise NativeReadBusy('Native observation OS lock unavailable')
             if receipt_not_observed(command,result.returncode,diagnostic):
                 raise NativeReceiptNotObserved('Native receipt evidence not observed at this replica')

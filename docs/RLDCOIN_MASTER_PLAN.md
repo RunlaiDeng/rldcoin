@@ -475,3 +475,28 @@ Never reopen the prior failed currency or reuse its signed payment. See
 operations/evidence/regional-paged-full-fault-outcome-20261005.json and
 regional-paged-fault-receipt-observation-fix-outcome-20261005.json. VALUE-STRICT-01/
 Source66/2016/long-history/independent/physical/allgoal remainOPEN.
+
+
+Latest second paged full fault FAILED163.892seconds/once600(exit1, not budget
+exhaustion): actual Native status Earth1returned exact std1.98WouldBlock diagnostic
+which the old controller substring classifier missed. All11ordinary nodes exited0,
+both opaque relays stopped;2954files and exact driver0cc272/helper/controller
+source remain sealed. Three original owner responses/heads retained. No restored
+recipient maturity or fullcold was reached; no first-receipt fix real-fault pass.
+The earlier213.822failure/3492files stays failed and untouched. Fresh receipt-v5
+preparation33.872/once180was a historical setup pass only; that currency now stays
+closed with this failure. Never reopen/recover/re-sign/refund/replace either.
+
+Exact lock observation fix3a266c40passed13counterexamples plus actual independent
+installed Rust1.98OS-lock reproducer4.374seconds/once120exit0. Only exact known
+whole diagnostic/integer1/readonly commands can become unknown; signing/queue,
+later bad proof/domain, combined or permission errors remainfatal. No Native
+ledger/runtime/socket/firstsign/recoverycalls; original Native89/CLIunchanged.
+All failed/private/source/freeze bindings unchanged. Next genuinely fresh signed
+zero-allocation genesis/currency/custody once180, then one justified original
+600total/60round/24heights/E27-P24-A24/maturity2/quorum3/full-capacity scope.
+Exit first error/deadline or all12actual Native/custody/value/cold complete; failed
+currency seals forever. VALUE-STRICT-01/Source66/2016/long-history/independent/
+physical/allgoal remainOPEN. Evidence: operations/evidence/regional-paged-full-
+fault-receipt-v2-outcome-20261005.json and regional-paged-fault-lock-observation-
+fix-outcome-20261005.json.

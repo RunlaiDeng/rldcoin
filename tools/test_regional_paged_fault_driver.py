@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
-from regional_paged_fault_driver import Driver, NativeReadBusy, NativeReceiptNotObserved, receipt_not_observed, observation_height, compatible, statement_id, retain_original_objects
+from regional_paged_fault_driver import Driver, NativeReadBusy, NativeReceiptNotObserved, receipt_not_observed, native_read_busy, NATIVE_BUSY_DIAGNOSTICS, observation_height, compatible, statement_id, retain_original_objects
 from regional_paged_fault_launch import Config, PHASES, SLOTS
 from regional_paged_fault_scope import REGIONS
 from regional_paged_fault_prepared import Bound
@@ -219,6 +219,34 @@ class Tests(unittest.TestCase):
         with patch('regional_paged_fault_driver.subprocess.run',fake_run):
             with self.assertRaises(ValueError) as error:driver.call('proxima',0,'wallet-receipt','--file','not-run')
             self.assertNotIsInstance(error.exception,NativeReceiptNotObserved)
+
+    def test_only_exact_known_native_read_lock_diagnostics_are_unknown(self):
+        for diagnostic in NATIVE_BUSY_DIAGNOSTICS:
+            self.assertTrue(native_read_busy('status',1,diagnostic+'\n'))
+            self.assertTrue(native_read_busy('bft-status',1,diagnostic))
+            for command,code,text in [('wallet-sign',1,diagnostic),('bft-submit',1,diagnostic),
+                ('status',2,diagnostic),('status',True,diagnostic),('status',1,diagnostic+'\nbad signature'),
+                ('status',1,'regional candidate rejected: invalid proof: already locked'),
+                ('status',1,'regional candidate rejected: Permission denied (os error 13)')]:
+                with self.subTest(command=command,text=text):self.assertFalse(native_read_busy(command,code,text))
+
+    def test_actual_read_adapter_handles_would_block_without_hiding_bad_proof_or_writes(self):
+        from types import SimpleNamespace
+        driver=Driver.__new__(Driver);driver.project=PROJECT;driver.root=PROJECT/'tmp/unused-no-native';driver.authority='1'*64
+        driver.currency='2'*64;driver.configs={(PHASES[0],'earth',1):Config(PHASES[0],'earth',1,True,b'{}',b'{}',('/not-run',))}
+        driver.calls=[];driver.remaining=lambda:1;driver.write_counts={}
+        diagnostic=b'regional candidate rejected: lock acquisition failed because the operation would block\n'
+        def respond(message):
+            def fake_run(*args,**kw):kw['stderr'].write(message);return SimpleNamespace(returncode=1)
+            return fake_run
+        with patch('regional_paged_fault_driver.subprocess.run',respond(diagnostic)):
+            with self.assertRaises(NativeReadBusy):driver.call('earth',1,'status')
+            with self.assertRaises(ValueError) as error:driver.call('earth',1,'wallet-sign')
+            self.assertNotIsInstance(error.exception,NativeReadBusy)
+        with patch('regional_paged_fault_driver.subprocess.run',respond(diagnostic+b' '*3000+b'invalid checkpoint proof\n')):
+            with self.assertRaises(ValueError) as error:driver.call('earth',1,'status')
+            self.assertNotIsInstance(error.exception,NativeReadBusy)
+        self.assertFalse(driver.write_counts)
 
 
 if __name__=='__main__':unittest.main()
