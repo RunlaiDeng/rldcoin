@@ -842,3 +842,22 @@ goal active，采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…。
 
 VALUE-STRICT-01两基线及120秒耗尽继续OPEN，原120诊断/300修复触发未满足，不被地区strict替代。S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、长期/PQ/独立/物理均保持。goal active，采用AGENTS与freeze receipt正文2ba62421…/PDFc59f9fe8…/receipt86821d19…；goal c906/f825仅前继引用，已报告不改正文。所有命令显式新rldcoin，持久cwd仍UI待修；冻结白皮书/官网/远端/权限/资金/清理不扩大。
 证据：[实际内核、原nonce和完整只读校验行为](operations/evidence/regional-bft-preparation-nonce-validation-outcome-20261006.json)。
+
+## 2026-10-06 实际状态读取优化及新四CLI终态
+
+完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152封存、receive-v7原600/616.052秒/6657封存及全部旧失败不变。原收款成熟、keyless drain、all12完整cold/守恒未完成；历史“全部通过”只指当时明确来源和有限scope。本次没有新增600范围。
+
+约定一次60加载分解 **PASS1.932秒**：准确slot1全图18906614bytes/62共享帧/86active，两次完整加载canonical占44.602%/44.088%，超过预设20%。实际修改`tools/interstellar_active_state.py`，image/framepool只在当前调用复用既有escape-free大帧编码；完整保存canonical字节、frame ID、原expanded size/digest及普通签署/route/schema/容量保持，不保留checked state/frame缓存或权威捷径。协议/存储版本和界限未改，Native89/Core171/实际CLI未改。
+
+一次60相关回归 **PASS0.667秒/25项/exit0**：既有active-state/frame-digest及4新wire oracle/每ASCII逃逸/Unicode/fallback/变化/大图检查，包含全新地面Mesh签署、fsync和原两SIGKILL边界；Native/Runtime/Socket0，不能称所有动作均模型。另一次60准确旧四图 **PASS6.414秒**：baseline/candidate全图字节、所有frame hashes、重建完整state、pack原字节一致，完整unbound签署/库存校验通过；6解码负例和重新pack的坏签名仍拒绝，1615私有字节未变。两次反向顺序读取比较中位数缩短25.1%–27.7%，slot1约.172→.124秒，超过预设10%；仅同机停后有限wall成本，不是现场CPU/付款提速。
+
+一次120最终来源/驱动绑定 **PASS36.095秒**：helper除新scope/identity名外整段text/AST控制流相同，controller仅当前资格绑定及来源metadata；22处stop/round/maturity/head/owner/custody/full8/守恒/journal变异拒绝。完整192Python来源f2a65520…、Native89/Core171/实际CLI分别绑定，48私有inventory未变；无实际helper/Native/Runtime/socket/sign启动。411源码文件独立source-only保存，没有复制currency/保管/钥或binary。
+
+条件一次必要全新`active-bytes-v8`已实际执行，仍 **FAIL原180耗尽/199.190秒含停止及封存**：helper1/ScopeDeadline，四CLI exit0，无guardian/forced/cleanup/source-pin错误；1888私有文件封存、来源保留。禁止重开/恢复/复签/退款/复制失败currency。最后伴随13/13/13/13不等于Native终态；mature15/all8原生固定头/完整envelope/caller/owner/守恒未完成。读取优化单独不足以完成该有限成熟gate，不能改预算或重跑未变范围。全部自有PID77023/77418–77421已核验不存在，无活动自有测试。
+
+停后一次120只读 **PASS6.003秒**：844签署档案索引、26active receipts、97完整相关运输副本认证，1888字节未变；关闭journal13952行/5166006canonical字节、共同完整前缀142.531秒。最长准确Native尝试.273971秒；两Timeout receipt→selected等待5.663/6.706秒，selected→attempt未达到预设5秒。31正向存留、14源已发布而缺目的保管、3源尚未发布（source1 round1 Commit的三个目的）；停后原next batch会选这3项，不能重建它们早前排队/现场调度。一个source2→1 Prepare首准备38.804秒、之前17成功准备/14pre-open BlockingIOError达到预设16判别门槛；这只是选择下一反例，非已证实饥饿或唯一根因。
+
+下一仅一次60离线/read-only准确nonce与重访反例：原三个直连未保管Prepare（1→2 round0/1、2→1 round0）分别按准确packet/frame/peer/attempt/nonce匹配所有已记录prepare/send/refusal/deferred/custody，计算两次出现之间或最后失败后≥16成功同peer准备且≥60秒的重访缺口。达到才进入原route/transit_groups/exchange/prepare内核的明确模型资格/轮转反例；若反复接收拒绝，则转原两slot deferred admission/lease模型；缺必要counterpart或live资格保持unknown。保留source1晚Commit3pending，不能由缺日志归因。首来源/字节/角色/关联/负例/库存不一致、有限准确案例完毕或原60退出；未启动，新180/full600预算均0。
+
+VALUE-STRICT-01两基线及120秒耗尽保持OPEN，旧value/PoW/lock/Core源未变，原120诊断/300修复触发未满足，不被地区strict替代。全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及长期/PQ/独立/物理门槛不减。goal active，采用冻结2ba62421…/c59f9fe8…/receipt86821d19…，goal旧c906/f825仅前继引用不自主改。所有命令显式新rldcoin，持久cwd仍UI待修；冻结正文/PDF/官网、服务器、资金、账号权限和清理范围不扩大。
+证据：[实际代码、有限回归、准确字节及全部终态](operations/evidence/regional-bft-active-load-and-live-outcome-20261006.json)。

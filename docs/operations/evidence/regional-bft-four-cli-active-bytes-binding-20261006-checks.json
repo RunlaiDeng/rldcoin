@@ -1,0 +1,114 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 36.094707,
+  "stage_sha256": "f6e2a256e67c8c934aafd5481f90c8384341cc8ec56f302acb7cf7f1b587802a",
+  "controller_sha256": "0c2dd3468a27126d4d08226483360313e88be93b6258f22145ce19859aaf8e49",
+  "result": {
+    "helper_entire_ast_and_control_flow_identical_after_literal_scope_rename": true,
+    "controller_entire_ast_identical_except_current_qualification_binding_and_metadata": true,
+    "forbidden_changes_rejected": [
+      {
+        "source": "helper",
+        "changed": "stop_height=15"
+      },
+      {
+        "source": "helper",
+        "changed": "round_timeout=60"
+      },
+      {
+        "source": "helper",
+        "changed": "for _ in range(12):"
+      },
+      {
+        "source": "helper",
+        "changed": "receipt['mature_height']==15"
+      },
+      {
+        "source": "helper",
+        "changed": "if heights==[15]*4:break"
+      },
+      {
+        "source": "helper",
+        "changed": "cli.stop_all();assert cli.clean_terminal()"
+      },
+      {
+        "source": "helper",
+        "changed": "assert inventory(p.root)==cold_before"
+      },
+      {
+        "source": "helper",
+        "changed": "bound['head']"
+      },
+      {
+        "source": "helper",
+        "changed": "owner['pending'] is None"
+      },
+      {
+        "source": "helper",
+        "changed": "assert issued==int(p.currency['block_reward'])*4==liquid"
+      },
+      {
+        "source": "helper",
+        "changed": "receipt['original_output_spendable_now'] is False"
+      },
+      {
+        "source": "helper",
+        "changed": "trace_readback=verify_journal("
+      },
+      {
+        "source": "controller",
+        "changed": "deadline=start+180"
+      },
+      {
+        "source": "controller",
+        "changed": "owner_sign_budget=1"
+      },
+      {
+        "source": "controller",
+        "changed": "maturity=2"
+      },
+      {
+        "source": "controller",
+        "changed": "quorum=3"
+      },
+      {
+        "source": "controller",
+        "changed": "absolute_height_cap=24"
+      },
+      {
+        "source": "controller",
+        "changed": "original_mesh_lock_wait_seconds=.2"
+      },
+      {
+        "source": "controller",
+        "changed": "custody_copy_budget=0"
+      },
+      {
+        "source": "controller",
+        "changed": "result['full_fixed_head_native_cold']==8"
+      },
+      {
+        "source": "controller",
+        "changed": "result['native_conservation']"
+      },
+      {
+        "source": "controller",
+        "changed": "not guardian['guardian_stop_used']"
+      }
+    ],
+    "python_files": 192,
+    "native_files": 89,
+    "core_files": 171,
+    "private_inventory_count": 48,
+    "all_private_inventory_bytes_unchanged": true,
+    "original_owner_preparation_and_all8_cold_exact": true,
+    "original180_60round_24height_maturity2_quorum3_and_all_bounds_preserved": true,
+    "no_actual_helper_or_controller_executed": true
+  },
+  "failure": null,
+  "real_native_runtime_socket_sign_calls": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -8,7 +8,7 @@ import copy
 import hashlib
 import re
 import interstellar_transfer as wire
-from interstellar_frame_digest import commitment
+from interstellar_frame_digest import commitment, packet_body_bytes
 
 STORAGE = 'RLD-CONTACT-ACTIVE-SHARED-FRAME-V1'
 FRAME = 'RLD-CONTACT-ACTIVE-FRAME-V1'
@@ -26,7 +26,27 @@ def identifier(value):
 
 
 def digest(value):
-    return hashlib.sha256(wire.canonical(value)).hexdigest()
+    return hashlib.sha256(packet_body_bytes(value)).hexdigest()
+
+
+def image_bytes(image, *, max_messages):
+    """Exact canonical image, with operation-local large frame encoding.
+
+    Frame strings use the existing escape-free encoder; unsupported values
+    retain the ordinary complete canonical path. No checked state or frame
+    bytes survive this call, and unpack still validates every original field.
+    """
+    if (type(image) is not dict
+            or set(image) != {'format', 'network', 'node_id', 'state', 'frames'}
+            or type(image['frames']) is not dict
+            or len(image['frames']) > max_messages
+            or any(type(ref) is not str for ref in image['frames'])):
+        return wire.canonical(image)
+    frames = b'{' + b','.join(wire.canonical(ref) + b':' + packet_body_bytes(obj)
+                             for ref, obj in sorted(image['frames'].items())) + b'}'
+    return b'{' + b','.join(wire.canonical(key) + b':'
+                           + (frames if key == 'frames' else wire.canonical(image[key]))
+                           for key in sorted(image)) + b'}'
 
 
 def bounds(state, max_messages):
@@ -42,7 +62,7 @@ def pack(state, *, max_state, max_messages, max_transit):
     network,node=bounds(state,max_messages);records={};frames={};exact_frames={}
     image=dict(format=STORAGE,network=network,node_id=node,
                state=dict(state,messages=records),frames=frames)
-    size=len(wire.canonical(image))
+    size=len(image_bytes(image, max_messages=max_messages))
     require(size<=max_state,'durable state capacity reached; retain previous state')
     for ident,transit in state['messages'].items():
         identifier(ident)
@@ -59,7 +79,7 @@ def pack(state, *, max_state, max_messages, max_transit):
         if ref is None:
             obj=dict(format=FRAME,network=network,node_id=node,frame=frame);ref=digest(obj)
             require(ref not in frames,'active frame collision')
-            size+=len(wire.canonical(ref))+1+len(wire.canonical(obj))+(1 if frames else 0)
+            size+=len(wire.canonical(ref))+1+len(packet_body_bytes(obj))+(1 if frames else 0)
             frames[ref]=obj;exact_frames[frame]=ref
         meta=copy.deepcopy(transit);del meta['packet']['body']['frame']
         entry=dict(transit=meta,frame=ref,expanded_size_bytes=complete_size,
@@ -67,7 +87,7 @@ def pack(state, *, max_state, max_messages, max_transit):
         size+=len(wire.canonical(ident))+1+len(wire.canonical(entry))+(1 if records else 0)
         require(size<=max_state,'durable state capacity reached; retain previous state')
         records[ident]=entry
-    require(len(wire.canonical(image))==size,'active state accounting differs')
+    require(len(image_bytes(image, max_messages=max_messages))==size,'active state accounting differs')
     return image
 
 
@@ -75,13 +95,13 @@ def decode(raw, *, network, node_id, max_state, max_messages, max_transit):
     """Own decoded data; authenticate exact canonical bytes and bounds once."""
     require(type(raw) is bytes and len(raw)<=max_state, 'active state byte capacity exceeded')
     image=wire.decode_json(raw)
-    require(raw==wire.canonical(image), 'noncanonical state JSON')
+    require(raw==image_bytes(image, max_messages=max_messages), 'noncanonical state JSON')
     return _unpack(image, image_size=len(raw), network=network, node_id=node_id,
                    max_state=max_state, max_messages=max_messages, max_transit=max_transit)
 
 
 def unpack(image, *, network, node_id, max_state, max_messages, max_transit):
-    return _unpack(image, image_size=len(wire.canonical(image)), network=network,
+    return _unpack(image, image_size=len(image_bytes(image, max_messages=max_messages)), network=network,
                    node_id=node_id, max_state=max_state, max_messages=max_messages,
                    max_transit=max_transit)
 

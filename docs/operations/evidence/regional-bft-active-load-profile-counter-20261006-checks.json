@@ -1,0 +1,103 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 1.932168,
+  "helper_exit_code": 0,
+  "stage_sha256": "0f506ea03e8c669cbc3711057973e5cb4151778c01e597e882d67b4699be8b9f",
+  "helper_sha256": "61b7e826b46eacd289808de2821fbff2697624a03d067d50a0a7cd3b8050ce6c",
+  "controller_sha256": "4dcd694e60ca3e363328fc6bcc4d01242fadf603a446c7e0a07a7cf41f51c8d5",
+  "log_sha256": "32baf86790b63e849f73eadd662b4fd1241eb007dc7e1dd33f31c6433e84bb52",
+  "result": {
+    "completed": true,
+    "decision": "canonical-cost-candidate",
+    "duration_seconds": 1.79072,
+    "full_fault_qualified": false,
+    "native_runtime_meshnode_socket_signing_recovery_custody_publication": 0,
+    "old_live_scheduling_not_reconstructed": true,
+    "predeclared_share_threshold": 0.2,
+    "private1615_files_unchanged": true,
+    "profiles": [
+      {
+        "active_packets": 86,
+        "canonical_share_of_load": 0.446019,
+        "complete_image_bytes": 18906614,
+        "complete_load_wall_seconds": 0.18562,
+        "complete_signed_validation_wall_seconds": 0.645464,
+        "frame_pool_objects": 62,
+        "nonoverlapping_canonical_wall_seconds": 0.08279,
+        "profile": {
+          "canonical_frame_pool": {
+            "calls": 62,
+            "wall_seconds": 0.038345
+          },
+          "canonical_image": {
+            "calls": 1,
+            "wall_seconds": 0.041719
+          },
+          "canonical_other": {
+            "calls": 1978,
+            "wall_seconds": 0.002726
+          },
+          "expanded_commitment_includes_small_canonical": {
+            "calls": 86,
+            "wall_seconds": 0.036251
+          },
+          "json_decode": {
+            "calls": 1,
+            "wall_seconds": 0.023696
+          },
+          "read_file": {
+            "calls": 1,
+            "wall_seconds": 0.002318
+          }
+        },
+        "profile_nested_commitment_time_not_additive": true,
+        "round": 1
+      },
+      {
+        "active_packets": 86,
+        "canonical_share_of_load": 0.440882,
+        "complete_image_bytes": 18906614,
+        "complete_load_wall_seconds": 0.181694,
+        "complete_signed_validation_wall_seconds": 0.075165,
+        "frame_pool_objects": 62,
+        "nonoverlapping_canonical_wall_seconds": 0.080106,
+        "profile": {
+          "canonical_frame_pool": {
+            "calls": 62,
+            "wall_seconds": 0.037489
+          },
+          "canonical_image": {
+            "calls": 1,
+            "wall_seconds": 0.039877
+          },
+          "canonical_other": {
+            "calls": 1978,
+            "wall_seconds": 0.00274
+          },
+          "expanded_commitment_includes_small_canonical": {
+            "calls": 86,
+            "wall_seconds": 0.037122
+          },
+          "json_decode": {
+            "calls": 1,
+            "wall_seconds": 0.022343
+          },
+          "read_file": {
+            "calls": 1,
+            "wall_seconds": 0.002413
+          }
+        },
+        "profile_nested_commitment_time_not_additive": true,
+        "round": 2
+      }
+    ],
+    "wall_not_cpu_or_live_benchmark": true,
+    "whole_goal_completed": false,
+    "wrong_network_refusals": 2
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

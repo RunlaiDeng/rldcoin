@@ -1,0 +1,17 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 0.666889,
+  "exit_code": 0,
+  "error": null,
+  "stage_sha256": "6e03a81eab5c036479a971cf062d079e9b7c727d897d21a1f0e02d45b922b4cb",
+  "controller_sha256": "268fd58b84b8bef9644ee1347ff140716c10cfad20b8dbe8c321de63138f0094",
+  "log_sha256": "dc2f0416edd0ac87fe72091a036e541b8d6c57f23b58356406bcca410d97bd12",
+  "log_tail": ".........................\n----------------------------------------------------------------------\nRan 25 tests in 0.541s\n\nOK\n",
+  "production_source_changed": true,
+  "native_runtime_old_meshnode_value_starts": 0,
+  "fresh_ground_transport_keys_fs_sync_and_sigkill_cases": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

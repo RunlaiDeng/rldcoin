@@ -1,5 +1,6 @@
 """Fresh no-value transport storage; complete signatures still checked by Node."""
 import copy
+import base64
 import hashlib
 import tempfile
 import os
@@ -159,6 +160,58 @@ raise AssertionError('unreachable acknowledgment')
             self.path.write_bytes(raw)
             with self.assertRaises(ValueError):self.f.node('earth')
             self.assertEqual(self.path.read_bytes(),raw)
+
+
+class CanonicalImageTests(unittest.TestCase):
+    def image(self, frame):
+        return dict(format=codec.STORAGE, network='a'*64, node_id='b'*64,
+                    state={'label': '\\"星际', 'frames': ['a', None, True]},
+                    frames={'z': dict(format=codec.FRAME, frame=frame,
+                                      network='a'*64, node_id='b'*64),
+                            'a': {'frame': 'AA==', 'label': '☃'}})
+
+    def assert_exact(self, image):
+        expected=wire.canonical(image)
+        self.assertEqual(codec.image_bytes(image, max_messages=mesh.MAX_MESSAGES), expected)
+        for value in image.get('frames', {}).values():
+            self.assertEqual(codec.digest(value), hashlib.sha256(wire.canonical(value)).hexdigest())
+
+    def test_exact_wire_oracle_with_every_ascii_escape_unicode_and_nonstring_frames(self):
+        for frame in [chr(c) for c in range(128)] + ['中文', '', None, 12, ['AA==']]:
+            with self.subTest(frame=frame):
+                image=self.image(frame)
+                self.assert_exact(image)
+                self.assert_exact(dict(reversed(list(image.items()))))
+
+    def test_changed_pool_metadata_and_frame_never_reuse_a_previous_image(self):
+        image=self.image('YWJj');original=wire.canonical(image)
+        self.assert_exact(image)
+        for change in (lambda v:v['frames']['z'].update(frame='YWFh'),
+                       lambda v:v['frames']['z'].update(network='c'*64),
+                       lambda v:v['state'].update(cursor=19)):
+            changed=copy.deepcopy(image);change(changed)
+            self.assertNotEqual(codec.image_bytes(changed,max_messages=256),original)
+            self.assert_exact(changed)
+        self.assertEqual(codec.image_bytes(image,max_messages=256),original)
+
+    def test_unsupported_image_and_tightened_pool_bound_use_original_canonical_path(self):
+        for image in ({}, [], {'frames': []}, dict(self.image('AA=='), extra='x')):
+            self.assertEqual(codec.image_bytes(image,max_messages=256),wire.canonical(image))
+        image=self.image('AA==')
+        with patch.object(codec,'packet_body_bytes',side_effect=AssertionError('bounded fast path')):
+            self.assertEqual(codec.image_bytes(image,max_messages=1),wire.canonical(image))
+
+    def test_large_frame_keeps_exact_bytes_without_full_frame_json_encoding(self):
+        frame=base64.b64encode(b'ground fixture'*75000).decode();image=self.image(frame)
+        expected=wire.canonical(image);expected_digest=hashlib.sha256(wire.canonical(image['frames']['z'])).hexdigest()
+        canonical=wire.canonical
+        def metadata_only(value):
+            if value is image or value is image['frames'] or value is image['frames']['z'] or value is frame:
+                raise AssertionError('large canonical frame reencoded')
+            return canonical(value)
+        with patch.object(wire,'canonical',side_effect=metadata_only):
+            self.assertEqual(codec.image_bytes(image,max_messages=256),expected)
+            self.assertEqual(codec.digest(image['frames']['z']),expected_digest)
 
 
 if __name__=='__main__':unittest.main()
