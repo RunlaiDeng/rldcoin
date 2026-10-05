@@ -232,3 +232,16 @@ release全新120秒scope32.956秒完成E7/P4/A4因果成熟、原heads/owner字�
 不继承，全部完整目标和旧价值strict保持OPEN。下一明确外部head的停止适配器
 一次120秒、网络budget0，不恢复失败currency。freeze/全部规范/active goal不变。
 [完整范围及失败原件](operations/evidence/regional-native-cold-plan-outcome-20261005.json)。
+
+
+## 2026-10-05 明确固定头的停止适配器
+
+明确传入单独保留的latest head，先原生完整历史检查，再完整有序信封的pinned
+计划；无head采样/adopt、Runtime构造、恢复或新签署。一次120秒2.961秒通过
+8新+12原回归及5真实完整信封/59引用/12准确共享快照，坏后证书、缺依赖、
+错误retained value、旧/零头及超前高度拒绝，原208文件/所有旧失败/freeze保持。
+原生Source89/release未变；普通启动路径未采用pinned模式。新六阶段驱动0.038秒
+静态审查通过、未启动；下一一次原600秒/60轮/每区24新增高度/成熟票数容量保持的
+全新普通完整周期，仅明确保留的本机头观察，不宣称独立最新保护，fault budget0。
+首失败/完整判别/预算退出；旧失败及旧价值strict和完整规范资格仍OPEN。
+[准确scope和驱动审查](operations/evidence/regional-pinned-stopped-adapter-outcome-20261005.json)。

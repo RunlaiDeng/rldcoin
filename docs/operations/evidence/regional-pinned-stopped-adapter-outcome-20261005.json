@@ -1,0 +1,350 @@
+{
+  "format": "RLD-PINNED-STOPPED-ADAPTER-OUTCOME-V1",
+  "completed": true,
+  "actual_change": [
+    "tools/regional_bft_pinned_cold.py",
+    "tools/verify_regional_bft_stopped_batch.py",
+    "tools/test_regional_bft_pinned_cold.py"
+  ],
+  "native_source_unchanged": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "native_implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "cli_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "python_bindings": {
+    "tools/regional_bft_pinned_cold.py": "37137516d61d952c921a2558a055ff5be7a54af63457b9be82a2243c682e5f32",
+    "tools/verify_regional_bft_stopped_batch.py": "da7773d9e21b6ae21c40328787e4452f4412c39162022d5d9853615230effd84",
+    "tools/test_regional_bft_pinned_cold.py": "b24f01e0d2a1e0d6760e61fbdfa3940c2ce70fdb52de95e2f860bc82d11b3304"
+  },
+  "tests": {
+    "new_mechanical": 8,
+    "original_cold_batch": 7,
+    "original_stopped": 5,
+    "native_crypto_is_separate_from_fake_tests": true
+  },
+  "actual_scope": {
+    "format": "RLD-PINNED-STOPPED-ADAPTER-CHECKS-V1",
+    "completed": true,
+    "duration_seconds": 2.961,
+    "budget_seconds": 120,
+    "attempts": 1,
+    "failed_step": null,
+    "steps": [
+      {
+        "step": 0,
+        "exit_code": 0,
+        "seconds": 0.242,
+        "budget_exhausted": false,
+        "terminal": true,
+        "log_sha256": "a3368a96609729e1369d057dfefa6cbe072afa751335d84019542cf280c86090"
+      },
+      {
+        "step": 1,
+        "exit_code": 0,
+        "seconds": 0.133,
+        "budget_exhausted": false,
+        "terminal": true,
+        "log_sha256": "4190e6532da5d52050bd5ea71ff40310f4ffe0846610b4b159650675a5a9c2b2"
+      },
+      {
+        "step": 2,
+        "exit_code": 0,
+        "seconds": 0.133,
+        "budget_exhausted": false,
+        "terminal": true,
+        "log_sha256": "d1aaab86fa02d87997171aeb3220b40f5e28046ec4d1674848f9ec5f589f297c"
+      },
+      {
+        "step": 3,
+        "exit_code": 0,
+        "seconds": 1.694,
+        "budget_exhausted": false,
+        "terminal": true,
+        "log_sha256": "090b52a2cf184843a37cfd8056bb789a97bbdd45d36b1fed94294f744d515508"
+      }
+    ],
+    "result": {
+      "completed": true,
+      "seconds": 1.606,
+      "ordinary_runtime_or_network_starts": 0,
+      "new_owner_or_voter_signatures": 0,
+      "current_native_height": 4,
+      "source_bound_native_currency_unchanged": true,
+      "retained_complete_envelopes": 5,
+      "complete_snapshot_references": 59,
+      "shared_exact_complete_snapshots": 12,
+      "retained_state_bytes": 162070,
+      "expanded_envelope_bytes": 606511,
+      "legacy_stopped_seconds": 0.225191,
+      "pinned_stopped_seconds": 0.196752,
+      "pinned_stopped_result": {
+        "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+        "messages_authenticated": 5,
+        "distinct_complete_snapshots": 12,
+        "retained_state_bytes": 162070,
+        "state_limit_bytes": 33554432,
+        "expanded_envelope_bytes_authenticated": 606511,
+        "full_native_authentication": true,
+        "native_inspection_mode": "explicit pinned complete-envelope plan",
+        "history_head": "a0ac9654442628395354c6834b90b326ff2ad19a4283696e59d2d4755eca2708",
+        "native_batches": 2,
+        "implicit_head_adoption": false
+      },
+      "negative": [
+        {
+          "kind": "later-full-bad-certificate",
+          "diagnostic": "native rejected: regional candidate rejected: signature error: Verification equation was not satisfied",
+          "native_calls": [
+            {
+              "command": "history-check",
+              "success": true,
+              "seconds": 0.037395
+            },
+            {
+              "command": "bft-network-check-plan",
+              "success": false,
+              "seconds": 0.076155
+            }
+          ],
+          "retention_bytes_unchanged": true
+        },
+        {
+          "kind": "later-missing-causal-dependency",
+          "diagnostic": "native rejected: regional candidate rejected: checkpoint is stale, conflicting or missing predecessor",
+          "native_calls": [
+            {
+              "command": "history-check",
+              "success": true,
+              "seconds": 0.041454
+            },
+            {
+              "command": "bft-network-check-plan",
+              "success": false,
+              "seconds": 0.076252
+            }
+          ],
+          "retention_bytes_unchanged": true
+        },
+        {
+          "kind": "retained-value-differs",
+          "diagnostic": "pinned cold Native retained value differs",
+          "native_calls": [
+            {
+              "command": "history-check",
+              "success": true,
+              "seconds": 0.039708
+            },
+            {
+              "command": "bft-network-check-plan",
+              "success": true,
+              "seconds": 0.132659
+            }
+          ],
+          "retention_bytes_unchanged": true
+        },
+        {
+          "kind": "stale-separate-native-head",
+          "diagnostic": "native rejected: regional candidate rejected: complete stream exact latest head/count",
+          "native_calls": [
+            {
+              "command": "history-check",
+              "success": false,
+              "seconds": 0.011049
+            }
+          ],
+          "retention_bytes_unchanged": true
+        },
+        {
+          "kind": "zero-separate-native-head",
+          "diagnostic": "explicit nonzero latest history head required",
+          "native_calls": [],
+          "retention_bytes_unchanged": true
+        },
+        {
+          "kind": "retained-height-ahead-of-pinned-native",
+          "diagnostic": "BFT retained observation exceeds native state",
+          "native_calls": [
+            {
+              "command": "history-check",
+              "success": true,
+              "seconds": 0.039257
+            }
+          ],
+          "retention_bytes_unchanged": true
+        }
+      ],
+      "all_original208_private_files_unchanged": true,
+      "positive_retention_unchanged": true,
+      "native_message_ids_are_expanded_envelope_ids_not_python_body_ids": true,
+      "native_calls": [
+        {
+          "command": "history-check",
+          "success": true,
+          "seconds": 0.041311
+        },
+        {
+          "command": "proof",
+          "success": true,
+          "seconds": 0.074076
+        },
+        {
+          "command": "bft-network-pack",
+          "success": true,
+          "seconds": 0.077391
+        },
+        {
+          "command": "bft-network-pack",
+          "success": true,
+          "seconds": 0.041823
+        },
+        {
+          "command": "bft-network-pack",
+          "success": true,
+          "seconds": 0.041576
+        },
+        {
+          "command": "bft-network-pack",
+          "success": true,
+          "seconds": 0.041451
+        },
+        {
+          "command": "bft-network-check-batch",
+          "success": true,
+          "seconds": 0.124644
+        },
+        {
+          "command": "bft-network-check-batch",
+          "success": true,
+          "seconds": 0.040984
+        },
+        {
+          "command": "bft-network-check-batch",
+          "success": true,
+          "seconds": 0.128072
+        },
+        {
+          "command": "bft-network-check-batch",
+          "success": true,
+          "seconds": 0.075019
+        },
+        {
+          "command": "history-check",
+          "success": true,
+          "seconds": 0.041151
+        },
+        {
+          "command": "bft-network-check-plan",
+          "success": true,
+          "seconds": 0.13231
+        },
+        {
+          "command": "history-check",
+          "success": true,
+          "seconds": 0.037395
+        },
+        {
+          "command": "bft-network-check-plan",
+          "success": false,
+          "seconds": 0.076155
+        },
+        {
+          "command": "history-check",
+          "success": true,
+          "seconds": 0.041454
+        },
+        {
+          "command": "bft-network-check-plan",
+          "success": false,
+          "seconds": 0.076252
+        },
+        {
+          "command": "history-check",
+          "success": true,
+          "seconds": 0.039708
+        },
+        {
+          "command": "bft-network-check-plan",
+          "success": true,
+          "seconds": 0.132659
+        },
+        {
+          "command": "history-check",
+          "success": false,
+          "seconds": 0.011049
+        },
+        {
+          "command": "history-check",
+          "success": true,
+          "seconds": 0.039257
+        }
+      ],
+      "independent_freshness_or_custody_qualified": false,
+      "ordinary_cycle_fault_qualified": false
+    },
+    "stage_sha256": "641ffd47668df8bba34fbe1ae411c0449360358f8a9641e8beb936ec57117bff",
+    "controller_sha256": "90cf2b65886b912aa86998062ab35039e277b8beaa3e6f88a96a9ed3e4a594a1",
+    "helper_sha256": "f6e33cf06f8235efb829bba0b62b546cdff5732aa9dcd89ac97ecbd90ef978c1",
+    "native_source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+    "native_implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+    "cli_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+    "old_private_report_source_freeze_pins_unchanged": true,
+    "old_failed_native_runtime_opened": false,
+    "network_starts": 0,
+    "new_native_owner_voter_signatures": 0,
+    "legacy_value_strict": "OPEN",
+    "ordinary_cycle_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "caller_head_semantics": "Caller supplies separately retained exact latest native head; pinned history-check authenticates current height/tip before checking retention, Native plan rechecks same head under lock. Never sample/adopt a head, recover custody or construct Runtime. This sample pins previously retained native observations; it does not qualify independent latest-state protection.",
+  "native_message_id_semantics": "Native returned IDs identify complete expanded typed envelopes, distinct from Python retained body IDs; exact raw ordered batch digests and ordered row value checks bind the response. No Python ID reconstruction used as authority.",
+  "ordinary_startup": "unchanged existing cold-batch path; explicit stopped-only mode adopted only by new unlaunched Source89 driver",
+  "stopped_private_files": 15,
+  "stopped_private_inventory_sha256": "310766b3fedcd047f040bda52d4056a95aa062c57ff90aaf18a5e08e88c76f54",
+  "active_own_processes": 0,
+  "driver_review": {
+    "format": "RLD-PINNED-ORDINARY-DRIVER-REVIEW-V1",
+    "completed": true,
+    "budget_seconds": 20,
+    "attempts": 1,
+    "seconds": 0.038,
+    "driver_sha256": "5e267b954e3919bd13efd112e95e58749cc5cdcb227b4303b09a3fcc61e458a5",
+    "old_candidate_sha256": "6dfcbf44aaa3c17a37bc1414e0b94ff9c639c4b2006bdfcb8c230017ccbc69ee",
+    "source_identity_sha256": "7cd894fec368b220e331739d0c1733cb2693c4887b68eb5e9df2c699c48bb39f",
+    "pinned_stopped_checks_sha256": "da6b85ebe8c7e8de0f92832cbae4e454d56897352929103cd7afd4ff7e43071c",
+    "native_source": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+    "binary": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+    "explicit_workdir": true,
+    "fresh_root_absent": true,
+    "explicit_retained_head_reloaded_and_bound": true,
+    "no_mismatch_refresh_fallback": true,
+    "controller_head_observation_is_not_independent_latest_qualification": true,
+    "original600_60_24_maturity_quorum_capacity_kept": true,
+    "cleanup_seconds": 5,
+    "cleanup_not_qualification_extension": true,
+    "no_fixture_or_services_started": true,
+    "native_calls": 0,
+    "semantic_no_recovery_or_legacy_fixture_rewrite": true,
+    "remaining": "Static review is not Runtime, launch, fullcold, maturity, fault or current512 distinct-message capacity qualification.",
+    "next_scope": {
+      "budget_seconds": 600,
+      "attempts": 1,
+      "round_seconds": 60,
+      "max_new_heights_per_region": 24,
+      "services_total": 27,
+      "max_services_parallel": 5,
+      "genesis_currency_all_custody": "fresh zero allocation Source89 only",
+      "hypothesis": "Fixed receiving stop eligibility plus explicit fixed-head complete cold plan lets all six ordinary stages and full final12-Native/owner accounting terminate inside original600s without requiring transport silence or skipping authentication.",
+      "exit": "First genuine Native/owner/maturity/head/proof/capacity or unclean terminal failure, complete six-stage fullcold/conservation or600s. Preserve all signed requests and entire failed currency, no re-sign/refund/recovery/unchanged repeat.",
+      "fault_budget": 0
+    },
+    "legacy_value_strict": "OPEN",
+    "whole_goal_completed": false
+  },
+  "prior_failures_remain_failed": true,
+  "legacy_value_strict": "OPEN",
+  "goal_status": "active",
+  "persistent_cwd": "old UI repair item; every project command explicit /Users/galaxy/GitHub/rldcoin",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "frozen_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "goal_predecessor_hash_reference": "Reported in original thread/dynamic records; parent delivery unconfirmed; frozen bytes unchanged",
+  "whole_goal_completed": false
+}

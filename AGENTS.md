@@ -958,3 +958,19 @@ closed: never reopen/recover them. Preserve all original bounds and proof bytes.
 Next once120s pinned stopped-adapter check requires caller-supplied separately
 retained exact latest head; never infer independent freshness by sampling it.
 Network/cycle/fault budget0, old failures and full normative gates remain open.
+
+
+The explicit stopped pinned adapter first authenticates caller-supplied retained
+latest head by Native history-check, uses its actual height/tip for retention
+review, then checks every complete batch under the same fixed head. Empty state
+also checks that head. It never samples/adopts a head, starts Runtime, recovers
+or signs. Ordinary startup stays on its prior cold path. The2.961s bound120s
+component passed8 new/12 existing tests and5 real complete envelopes; old208
+successful bytes and all sealed failures unchanged. These are small read-only
+Source89 observations, not independent latest-state/custody or full fault rights.
+The fresh six-stage pinned-cold v4 driver has only static0.038s review, no services
+started. Its next once600s original ordinary cycle keeps60s rounds/24 new heights
+per region/maturity/quorums/capacity/5s bounded cleanup; full cold and original
+owner requests are mandatory. Explicitly retained post-stop Native observations
+are local integrity pins, never independent latest protection. First failure,
+full discrimination or budget exits; fault budget0. See stopped-adapter outcome.

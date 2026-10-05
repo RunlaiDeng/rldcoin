@@ -787,3 +787,32 @@ CLI额外两个新零高度Native targets只测pending marker及坏retained inci
 网络cycle/fault budget0。当前成功Native root仅可distinct只读，两个注入incident
 目标和旧失败currency禁止Native/Runtime打开；必要时新夹具，不迁移价值。
 [准确源码、结果、失败和下一范围](operations/evidence/regional-native-cold-plan-outcome-20261005.json)。
+
+
+## 2026-10-05 明确固定头的停止适配器
+
+新显式停止入口先使用调用者传入的独立保留非零history head做完整Native history-check，
+从该结果取得当前height/tip，再重建准确原信封，原4份/8MiB分批、512总份数/
+256MiB处理及archive上限；通过原生固定头计划全认证后才报告完整成功。空表仍须
+固定头原生检查。没有自动采样/adopt、Runtime构造、保管恢复或新签署；旧入口和
+普通启动cold-batch路径保持原行为。Native message IDs是完整展开原生信封ID，
+不是Python body hash；用整个有序批字节摘要和有序value/数量/域/头/响应flags绑定。
+
+一次120秒范围2.961秒exit0：八新机械边界、七原cold-batch、五原stopped回归；
+另五真实完整Finalized/submission信封，59snapshot refs/12共享准确完整快照，
+162070状态字节/606511展开字节。原Native Source89/implementation8a361699及
+release binarya45387fa未变；原成功三地区208文件只读未变，未打开旧失败或注入
+incident目录。后置坏完整证书、缺因果依赖、retained value错误、旧/零头和超过
+pinned Native的height均拒绝，所有状态字节未变。小样本旧0.225191秒/新0.196752秒
+不是旧A9/356信封成本或完整普通/fault性能证明，独立最新保护/保管仍未资格。
+
+新六阶段Source89驱动静态审查一次20秒，实际0.038秒通过，未启动fixture/服务。
+源/二进制/新genesis及全部保管、显式新cwd、原600/60/每区24新增高度、成熟/票数/
+容量、停止谓词和bounded5秒cleanup保持；停止后明确保存head观察再读回传入pinned
+checker，不能把该本机观察称独立最新保护，也没有不匹配后的刷新回退。
+下一一次原600秒普通E100→P99→A97→E95六阶段及全部成熟/fullcold/12Native/
+owner/最终守恒判别；最高5服务/共27启动，fault budget0。首真正Native/owner/
+成熟/head/proof/capacity或非干净终态失败、完整判别或预算退出；保留整个失败
+currency/原请求，不恢复重签退款、加预算或原样重跑。旧全部失败、VALUE-STRICT-01、
+完整cycle/fault/2016/source66/长期/独立/PQ/physical及全部规范目标仍OPEN。
+[准确实现、证据与下一范围](operations/evidence/regional-pinned-stopped-adapter-outcome-20261005.json)。

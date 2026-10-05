@@ -6,9 +6,24 @@ from types import SimpleNamespace
 import interstellar_mesh as mesh
 from regional_bft_cold_batch import check_retained
 from regional_bft_retention import FORMAT, unpack_state
+from regional_bft_pinned_cold import checked_history, check_retained_pinned
 
 
 def verify_stopped_state(native, config, current, root):
+    return _verify_stopped_state(native, config, current, root)
+
+
+def verify_stopped_state_pinned(native, config, root, expected_history_head):
+    """Explicit external head; current height/tip come from pinned Native replay.
+
+    No unpinned sampling, Runtime creation, response recovery or head adoption.
+    Empty retained state still requires an actual pinned Native history check.
+    """
+    current = checked_history(native, expected_history_head)
+    return _verify_stopped_state(native, config, current, root, expected_history_head)
+
+
+def _verify_stopped_state(native, config, current, root, expected_history_head=None):
     from regional_bft_node import private, MAX_STATE
     directory = Path(config['state'])
     mesh.require(directory.resolve().is_relative_to(root.resolve()), 'BFT retention path escapes fixture')
@@ -34,11 +49,20 @@ def verify_stopped_state(native, config, current, root):
     # The existing Native batch checks every complete envelope and binds exact
     # request bytes, ordered values, domain and nonmutating response flags.
     total = sum(len(state['messages'].payload(ident)) for ident in state['messages'])
+    pinned = None
     with tempfile.TemporaryDirectory(prefix='rld-stopped-bft-batch-') as scratch:
-        check_retained(SimpleNamespace(root=Path(scratch), native=native,
-                                       region=current['region'], state=state))
+        request = SimpleNamespace(root=Path(scratch).resolve(), native=native,
+                                  region=current['region'], state=state)
+        if expected_history_head is None:
+            check_retained(request)
+        else:
+            pinned = check_retained_pinned(request, expected_history_head)
     return {'retention_format': FORMAT, 'messages_authenticated': len(state['messages']),
             'distinct_complete_snapshots': len(state['messages']._snapshots),
             'retained_state_bytes': path.stat().st_size, 'state_limit_bytes': MAX_STATE,
             'expanded_envelope_bytes_authenticated': total, 'full_native_authentication': True,
-            'native_inspection_mode': 'bounded complete-envelope batch'}
+            'native_inspection_mode': 'bounded complete-envelope batch' if pinned is None
+            else 'explicit pinned complete-envelope plan',
+            **({} if pinned is None else {'history_head': expected_history_head,
+                                         'native_batches': pinned['batches'],
+                                         'implicit_head_adoption': False})}
