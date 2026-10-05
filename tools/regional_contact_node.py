@@ -177,12 +177,19 @@ class Service:
         mesh.require(type(rows) is list and 0 < len(rows) <= MAX_PER_TICK,
                      'BFT receive batch count outside bound')
         try:
+            if self.contact_trace is not None:
+                for packet_id, raw in rows:
+                    self.contact_trace.native_stage('native_receive_attempt', packet_id, raw)
             self.bft.receive_many([raw for _, raw in rows])
             self.bft_seen.update(packet_id for packet_id, _ in rows)
             if self.contact_trace is not None:
                 for packet_id, raw in rows:
                     self.contact_trace.native_received(packet_id, raw)
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:
+            if self.contact_trace is not None:
+                for packet_id, raw in rows:
+                    self.contact_trace.native_stage('native_receive_refused', packet_id, raw,
+                                                    error_class=type(error).__name__)
             if len(rows) > 1:
                 self.bft_individual_retry = True
             errors.append(str(error))
@@ -292,6 +299,8 @@ class Service:
                         packet, raw, _ = mesh.transit_check(transit, node.network)
                         mesh.receipt_matches(receipts[ident], transit)
                         received.append((ident, raw))
+                        if self.contact_trace is not None and summaries[ident]['kind'] == 'regional-bft':
+                            self.contact_trace.native_stage('native_receive_selected', ident, raw)
                     except (OSError, ValueError) as error:
                         errors.append(str(error))
                         rejected.append({'packet_id': ident, 'reason': str(error)})

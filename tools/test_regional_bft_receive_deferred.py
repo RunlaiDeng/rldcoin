@@ -15,7 +15,7 @@ class ReceiveDeferredTests(unittest.TestCase):
         service.bft = SimpleNamespace(receive_many=Mock(side_effect=error))
         service.bft_seen = {'previous'}
         service.bft_individual_retry = False
-        service.contact_trace = SimpleNamespace(native_received=Mock())
+        service.contact_trace = SimpleNamespace(native_received=Mock(), native_stage=Mock())
         return service
 
     def receive(self, service, count=2):
@@ -40,6 +40,8 @@ class ReceiveDeferredTests(unittest.TestCase):
                                     and not v['signing_authority'] for v in deferred))
                 self.assertEqual(service.bft_seen, {'previous'})
                 service.contact_trace.native_received.assert_not_called()
+                stages = [call.args[0] for call in service.contact_trace.native_stage.call_args_list]
+                self.assertEqual(stages, ['native_receive_attempt']*2 + ['native_receive_refused']*2)
                 self.assertTrue(service.bft_individual_retry)
 
     def test_next_success_checks_complete_original_bytes_before_seen_credit(self):
@@ -51,6 +53,9 @@ class ReceiveDeferredTests(unittest.TestCase):
         self.assertEqual(service.bft_seen, {'previous', '0', '1'})
         self.assertEqual(service.bft.receive_many.call_count, 2)
         self.assertEqual(service.contact_trace.native_received.call_count, 2)
+        self.assertEqual([call.args[0] for call in service.contact_trace.native_stage.call_args_list],
+                         ['native_receive_attempt']*2 + ['native_receive_refused']*2
+                         + ['native_receive_attempt']*2)
 
     def test_altered_proof_after_deferral_still_rejects(self):
         service = self.service(NativeRefusal('bft-network-inspect-batch', 1, BUSY))
@@ -86,6 +91,13 @@ class ReceiveDeferredTests(unittest.TestCase):
         self.assertEqual(len(rejected), 1)
         self.assertEqual(deferred, [])
         self.assertFalse(service.bft_individual_retry)
+
+    def test_trace_disabled_keeps_complete_native_validation_and_seen_behavior(self):
+        service = self.service()
+        service.contact_trace = None
+        errors, rejected, deferred = self.receive(service)
+        self.assertEqual((errors, rejected, deferred), ([], [], []))
+        self.assertEqual(service.bft_seen, {'previous', '0', '1'})
 
 
 if __name__ == '__main__':

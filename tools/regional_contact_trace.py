@@ -24,7 +24,8 @@ HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce'}
 STAGES={'source_enqueued','outgoing_prepared','contact_start','request_sent','peer_custody_authenticated',
         'reply_local_custody','outgoing_failed','contact_failed','request_authenticated','local_transport_custody',
         'destination_receipt_retained','inbound_refused','deferred_attempt','deferred_local_custody',
-        'destination_receipt_observed','native_envelope_received'}
+        'destination_receipt_observed','native_envelope_received','native_receive_selected',
+        'native_receive_attempt','native_receive_refused'}
 
 
 def check_fields(stage,peer,fields):
@@ -86,9 +87,15 @@ class ContactTrace:
         for packet_id,frame_id in rows:self.event(stage,peer,packet_id=packet_id,frame_id=frame_id,**fields)
 
     def native_received(self,packet_id,raw):
+        self.native_stage('native_envelope_received',packet_id,raw)
+
+    def native_stage(self,stage,packet_id,raw,**fields):
+        """Selection/attempt/refusal are observations, never Native acceptance."""
         try:
+            mesh.require(stage in {'native_envelope_received','native_receive_selected',
+                                   'native_receive_attempt','native_receive_refused'},'native trace stage')
             header,_=wire.inspect_frame(raw)
-            self.event('native_envelope_received',packet_id=packet_id,envelope_id=header['export_id'])
+            self.event(stage,packet_id=packet_id,envelope_id=header['export_id'],**fields)
         except Exception:self.reject()
 
     def snapshot(self):

@@ -1,5 +1,6 @@
 """Actual bounded file writes versus the retained lifetime-row counterexample."""
 import hashlib
+import copy
 import os
 from pathlib import Path
 import tempfile
@@ -9,7 +10,7 @@ from types import SimpleNamespace
 
 import interstellar_transfer as wire
 from regional_contact_trace import ContactTrace, MAX_EVENTS
-from regional_contact_trace_journal import TraceJournal
+from regional_contact_trace_journal import TraceJournal, verify_journal
 from regional_contact_trace_window import TraceWindow
 
 
@@ -65,6 +66,10 @@ class JournalTests(unittest.TestCase):
         self.assertEqual(view['journal_sha256'], hashlib.sha256(raw).hexdigest())
         self.assertNotIn(b'never-retain', raw)
         self.assertFalse(view['authority'])
+        checked = verify_journal(self.path, view, network=self.network, slots=self.slots)
+        self.assertEqual(checked['events'], 8193)
+        self.assertTrue(checked['complete_collected_prefix'])
+        self.assertFalse(checked['native_ledger_authority'])
 
     def test_same_aggregate_byte_bound_refuses_across_individually_small_batches(self):
         self.traces[0].event('contact_start')
@@ -169,6 +174,61 @@ class JournalTests(unittest.TestCase):
             self.assertTrue(journal.failed)
         finally:
             journal.close()
+
+    def closed_four(self):
+        for i in range(4):
+            self.traces[i].event('contact_start')
+            self.sample(i)
+        self.journal.close()
+        return self.journal.snapshot()
+
+    def test_readback_requires_external_scope_owners_closed_success_and_original_bound(self):
+        view = self.closed_four()
+        for field, value in (('network', 'b'*64), ('closed', False), ('failed', True),
+                             ('authority', True), ('canonical_byte_limit', 99999999),
+                             ('slots', {i: (500+i, self.slots[i][1]) for i in range(4)})):
+            bad = copy.deepcopy(view); bad[field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                verify_journal(self.path, bad, network=self.network, slots=self.slots)
+        loaded = wire.decode_json(wire.canonical(view))
+        self.assertEqual(verify_journal(self.path, loaded, network=self.network,
+                                       slots=self.slots)['events'], 4)
+
+    def test_rehashed_missing_duplicate_reordered_or_noncanonical_rows_still_refuse(self):
+        view = self.closed_four()
+        original = self.path.read_bytes()
+        rows = original.splitlines(keepends=True)
+        # A claimant can recompute a diagnostic hash; continuity must separately
+        # refuse malformed streams rather than granting authority from the hash.
+        for mode in ('missing', 'removed-entire-stream', 'duplicate', 'wrong-sequence', 'noncanonical', 'partial'):
+            changed = list(rows)
+            if mode == 'missing':
+                # Preserve a higher per-slot sequence after dropping its start.
+                value = wire.decode_json(changed[0]); value['sequence'] = 2
+                changed[0] = wire.canonical(value)+b'\n'
+            if mode == 'removed-entire-stream': del changed[0]
+            if mode == 'duplicate': changed.append(changed[0])
+            if mode == 'wrong-sequence':
+                value = wire.decode_json(changed[0]); value['sequence'] = True
+                changed[0] = wire.canonical(value)+b'\n'
+            if mode == 'noncanonical': changed[0] = b' '+changed[0]
+            if mode == 'partial': changed[-1] = changed[-1][:-1]
+            data = b''.join(changed); self.path.write_bytes(data)
+            bad = copy.deepcopy(view)
+            bad.update(journal_sha256=hashlib.sha256(data).hexdigest(), journal_bytes=len(data),
+                       canonical_event_bytes=len(data)+1, persisted_events=len(changed))
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                verify_journal(self.path, bad, network=self.network, slots=self.slots)
+        self.path.write_bytes(original)
+
+    def test_missing_samples_remain_unknown_and_a_declared_gap_refuses_complete_readback(self):
+        self.journal.sample(0, None, now=1)
+        view = self.closed_four()
+        result = verify_journal(self.path, view, network=self.network, slots=self.slots)
+        self.assertEqual(result['missing_status_samples'][0], 1)
+        view['intervals_complete'][0] = False
+        with self.assertRaisesRegex(ValueError, 'gaps cannot be repaired'):
+            verify_journal(self.path, view, network=self.network, slots=self.slots)
 
 
 if __name__ == '__main__':

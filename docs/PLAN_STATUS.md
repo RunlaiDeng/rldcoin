@@ -8,6 +8,23 @@
 
 
 
+## 2026-10-06 实际收件边界与逐批追踪终态
+
+完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152封存、receive-v7原600/616.052秒/6657封存及全部旧失败不变。原收款成熟、keyless drain、all12完整cold/守恒未完成。本次没有新增600范围。
+
+新增完整逐行journal读回：外部绑定四owner/network，准确canonical标量/总字节/hash/最终每slot游标，缺口、复算hash后的删行/duplicate、失败或未关闭均拒绝完整声明。私有普通FourCLI接入原launch/observe/停止留存，原owner导入准备及full8冷验区域逐字节相同；一次120模型 **PASS33.959秒/15项**，8处改助手拒绝，46旧私有inventory未变。保持原V1诊断8192总行；独立新profile只替换该诊断总行界，保留8MiB总canonical/128producer/原deadline/无权威及全部协议容量。
+
+实际opt-in Service在完整Mesh包/receipt检查后记录selected，在不变的完整Native batch前记录attempt，原拒绝记录refused；received仍只能在Native成功后。收件选择、原完整字节/校验/seen/重试不改，关闭追踪行为保持。首42模型整组 **FAIL34.054秒/原60**：模型缺原五字段封套，原codec正确拒绝；代码/失败保留。仅修正模型封套及原SHA256export绑定，四受影响模型 **PASS33.777秒/一次60**，实际codec/Service.tick/journal文件I/O、Native/mesh/OS所有者为模型，真实进程/socket/sign均0；原42不能改PASS。
+
+启动前来源差异断言一次失败保留：旧168Python登记不含部分既有fixture模块/测试。全新范围完整绑定根tools/*.py共192文件，Native89/Core171/实际CLI未改；旧登记/有限证据不重写，不授予较强旧来源资格。10处完整驱动变异拒绝后，只分配一次必要新180诊断。
+
+该实际 **trace-journal-receive-v7仍FAIL：原180耗尽，199.770秒含停止/封存**，helper1/ScopeDeadline，四CLI exit0，无guardian/forced/cleanup错误；1615私有文件和292公开源码文件保留，失败currency永不重开/恢复/复签/退款/复制。伴随高度13/13/13/13不等于Native终态；成熟15/full8冷验/caller/owner/守恒未完成。新profile已实际保存并关闭12448行/4619454canonical字节，四流连续、failed=false，unknown保留；没有原8192行终止，不授权账本或完整现场未来。
+
+准确一次120只读判别 **PASS6.534秒**：637签名档案索引、67完整相关运输副本、6active receipts认证，1615字节未变，共同完整前缀142.135秒。最长准确Native尝试0.300265秒；保管到selected有5.589/6.270秒，selected到attempt没有达到预设5秒。较长关键等待在运输前段：Prepare2→1入队到receipt63.811秒、Prepare3→0为120.364秒，随后原生尝试约0.22秒。另两准确直接peer目标首次prepare60.469/69.052秒，前缀内各一次；失败stage标为response_authentication不独自证明坏签名或唯一拒绝根因。不能把停后cursor/cache或缺日志当作旧现场选择重建。
+
+下一仅一次120离线/read-only精确selector/route/字节反例，在原四包/256active/32recent/20MiB及现有hint/peer边界下，区分历史交通/失败/suppression导致的准备等待与真实route/byte资格；模型输入和未知旧live状态明确分开，旧签署证据复用、不打开Node/Native/Runtime、不读取旧钥或签署。首不一致/最小判别/原期限退出；有反例才选最小修复，没有则保留未知并收窄原nonce/拒绝input证据。新180/full600预算当前均0，禁止未变长重跑。VALUE-STRICT-01及全部S/R/I/A–G/N/P/长期/PQ/独立/物理仍OPEN；goal active，冻结2ba62421/c59f9fe8/receipt86821d19采用，goal c906/f825仅前继引用。旧cwd仍UI待修；所有命令显式新rldcoin，白皮书/官网/服务器/资金/权限/清理不扩大。
+证据：[实际源码行为、全部终态与下一最小判别](operations/evidence/regional-bft-receive-trace-journal-outcome-20261006.json)。
+
 ## 2026-10-06 真实追踪终态与有界逐批诊断修复
 
 完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152封存，receive-v7原600/616.052秒/6657封存及全部旧失败不变。有限隔离/当地付款/追赶不能替代原收款成熟、keyless drain、all12完整cold/守恒；本次没有新增600范围。
