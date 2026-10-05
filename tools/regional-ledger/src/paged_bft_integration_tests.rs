@@ -9,13 +9,13 @@ struct Pins {
     signers: Vec<Hash>,
     wallet: Hash,
 }
-fn retain(root: &Path, n: usize, head: Hash) {
+pub(super) fn retain(root: &Path, n: usize, head: Hash) {
     let next = root.join(format!("caller-{n}.next"));
     crate::keystore::private_create(&next, &head.0).unwrap();
     fs::rename(next, root.join(format!("caller-{n}.head"))).unwrap();
     fs::File::open(root).unwrap().sync_all().unwrap();
 }
-fn sign(h: &mut Harness, n: usize, request: Request) -> bft::Signed {
+pub(super) fn sign(h: &mut Harness, n: usize, request: Request) -> bft::Signed {
     let raw = crate::keystore::private_read(&h.root.join(format!("caller-{n}.head")), 32).unwrap();
     assert_eq!(*raw, h.heads[n].0);
     let signed = h.agents[n]
@@ -30,7 +30,7 @@ fn sign(h: &mut Harness, n: usize, request: Request) -> bft::Signed {
     h.heads[n] = signed.head;
     signed
 }
-fn certify(h: &mut Harness, commands: Vec<crate::Command>) -> Snapshot {
+pub(super) fn certify(h: &mut Harness, commands: Vec<crate::Command>) -> Snapshot {
     let snapshot = h.node.bft_candidate(commands, public(10)).unwrap();
     let c = Context::current(&h.node).unwrap();
     let keys = h.seeds.iter().copied().map(public).collect::<Vec<_>>();
@@ -91,6 +91,10 @@ fn paged_native_integration_cold_child() {
     let before = inventory(&root);
     let node =
         Store::open_pinned(&root.join("node"), &public(1), pins.currency, pins.native).unwrap();
+    assert_eq!(
+        fs::read(root.join("caller-native.head")).unwrap(),
+        pins.native.0
+    );
     assert_eq!(node.chain.height(), 65);
     assert_eq!(node.blocks().unwrap().count(), 65);
     for (n, seed) in pins.seeds.iter().enumerate() {
@@ -104,6 +108,7 @@ fn paged_native_integration_cold_child() {
     }
     let owner = crate::wallet_agent::Agent::open(&root.join("owner-wallet"), &node).unwrap();
     assert_eq!(owner.journal.head().unwrap(), pins.wallet);
+    assert_eq!(fs::read(root.join("caller-4.head")).unwrap(), pins.wallet.0);
     owner.view(&node, pins.wallet).unwrap();
     assert!(node
         .chain
@@ -142,6 +147,7 @@ fn paged_store_and_four_native_signers_cross_record_and_active_boundaries_with_f
             )
             .unwrap();
             let old = wallet.journal.head().unwrap();
+            retain(&h.root, 4, old);
             let prepared = wallet
                 .prepare(
                     &h.node,
@@ -171,6 +177,7 @@ fn paged_store_and_four_native_signers_cross_record_and_active_boundaries_with_f
                 )
                 .unwrap();
             owner_head = signed.wallet_head;
+            retain(&h.root, 4, owner_head);
             owner = Some(wallet);
             signed.commands
         } else {
@@ -225,6 +232,12 @@ fn paged_store_and_four_native_signers_cross_record_and_active_boundaries_with_f
     .unwrap();
     retain(&h.root, 0, recovered.head);
     h.heads[0] = recovered.head;
+    super::paged_capacity_attacks::reject_later_signature_and_missing_page(&h, 128);
+    crate::keystore::private_create(
+        &h.root.join("caller-native.head"),
+        &h.node.storage_head().unwrap().0,
+    )
+    .unwrap();
     let pins = Pins {
         currency: h.node.trust.currency().unwrap(),
         native: h.node.storage_head().unwrap(),
@@ -258,5 +271,5 @@ fn paged_store_and_four_native_signers_cross_record_and_active_boundaries_with_f
         String::from_utf8_lossy(&output.stderr)
     );
     println!("{}", String::from_utf8_lossy(&output.stdout));
-    println!("paged-integration finite_complete height65 actual_signatures585 wallet99_mature=true actual_sigkill=false full_fault=false elapsed={:.3}",started.elapsed().as_secs_f64());
+    println!("paged-integration finite_complete height65 actual_signatures585_plus1_recovered_timeout wallet99_mature=true later_corruption_and_missing_page_refused=true actual_sigkill=false full_fault=false elapsed={:.3}",started.elapsed().as_secs_f64());
 }

@@ -1,6 +1,6 @@
 # 普通BFT完整历史/签署日志的共用原生保留层
 
-状态：**普通Store/Agent写入、完整历史锁重放及显式原响应恢复已接入；首次300秒集成预算耗尽，容量/新进程/完整窗口资格仍OPEN**。
+状态：**普通Store/Agent分页、原响应恢复及新profile有限65高度/四signer>128/新进程cold已验证；旧失败保留，完整窗口/远程价值/独立资格仍OPEN**。
 目标保持[完整历史合同](REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)及
 [分页保留模型](REGIONAL_BFT_PAGED_HISTORY_MODEL_V1.md)。这是完整原生集成的一步，
 不能将测试该层更多记录视为解决原第65检查点或128-record签署门槛。
@@ -333,3 +333,42 @@ owner付款/分别caller heads及pinned完整same-process cold；编译等待计
 签名前及释放前完整history/incident检查，另行全新fixture验证。不能用成本
 判别充当跨128/65、新进程、完整2016窗口或完整fault通过。原600/60/max24/
 成熟/票数/容量全部不改，legacy strict、独立/长期/physical义务继续OPEN。
+
+
+## 单次游标复用及有限真实跨界完成（2026-10-05）
+
+成本样本39.930秒通过：10高度/90真实签名，两完整重放占25.738秒签署的83.04%。
+单次调用内复用完整认证cursor，新record仍单独完整执行/验签。Native历史在
+首次审查前从genesis执行一次；签名前、发布前和发布后必须重新读取确切header/
+完整stream bytes，并完整复核incident集合/guard及当前原生选择。没有磁盘或
+跨调用ledger/state缓存。发布后核验失败保留原响应并令signer unhealthy。
+
+首14.441秒对抗检查失败，确认Stream.visit只验证内存manifest/tail，后来磁盘
+manifest被改坏仍被接受。共用层现先逐字节核对磁盘完整canonical manifest，再
+验证页/head/容量。新53.651秒范围通过canonical坏清单、原生六种cursor攻击、
+旧坏vote/历史、三个原响应恢复边界、10高度付款cold/头及CLI/strict。签署25.738
+降至18.287秒（此同机有限样本减少28.95%，不是普遍性能保证）。准确相同
+production来源的优化构建判别61.789秒含首次编译，90签署3.707秒，约为未优化
+20.27%；坏签名/后续原生篡改及cold仍拒绝，未改认证/源码或原协议预算。
+
+首次新优化集成118.279秒失败于夹具路径objects/pages错误；实际native65及
+四journal147/146/146/146、原timeout恢复/坏signature已完成，cold未运行。
+原件不打开、不改称通过。纠正路径的新最小真实页判别22.643秒通过，生产
+未变。随后一次全新修正集成103.160秒完成：65实际高度/活动64、585 BFT签署
+和1原响应恢复；>128处完整hash自洽坏签名/缺页/陈旧caller拒绝，新进程从
+genesis完整验证Native、四signer及钱包99成熟/分别retained heads，全部私有
+库存hash/mode/size/mtime未变。final源85文件`f34e58af93aa...`/implementation
+`cccef5267782...`，core171/旧main/冻结paper/PDF/receipt不改。复用精确同源的
+最小判别CLI/strict；没有最终全suite重跑或主程序/Runtime资格。
+[七范围、精确来源及旧失败](../operations/evidence/regional-native-paged-cursor-capacity-20261005-outcome.json)。
+
+下一H-paged-remote-crossing：源65活动界之后的新export能否形成完整有界native
+contact依赖闭包，在全新admitted destination真实import并成熟。先实现可审
+fixture，再一次180秒/1次release（编译等待计入）、网络0：四真实源signers到65，
+owner export66、native packing/check、目的区认证/import/maturity和完整pinned
+cold。首真实proof/capacity/authorization拒绝、完整有限判别或180秒退出，保留
+来源/私有现场。所有4096/256MiB/8MiB/3MiB/64checkpoint/256block及原600/60/
+max24/成熟/票数/2016不改。局部历史通过不代表远程完整授权；闭包不足须记录
+原生反例并建显式compact-complete authority模型，不能截断或从cache授予价值。
+完整窗口/通道receipt anchors、ordinary Native/TLS/fault、epoch/role paging/
+image/restore、独立保管/最新性、长期/crypto/physical及VALUE-STRICT-01仍OPEN。

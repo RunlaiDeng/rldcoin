@@ -314,3 +314,35 @@ The old V7 one-use failure stays failed; V8 fixes the tested native trajectory
 but does not qualify independent custody, actual full window, Runtime/TLS faults,
 long history or censorship. Fresh source/currency only. See the complete scope
 and next falsifiable Runtime gate in REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md.
+
+
+The current paged signing cursor remains local to one invocation. Fully execute
+all native history and original signer records before request review; authenticate
+and execute the complete new record separately. Before key use, before publication
+and after publication, reread exact native header/current stream bytes and fully
+check selected state plus retained incidents/guard. Shared Stream.visit compares
+the actual disk manifest to exact locked current canonical bytes before consumers;
+an in-memory tail cannot hide disk corruption. No cursor/state crosses calls or
+initializes cold/recovery. Post-publication failure retains original response and
+marks the signer unhealthy; separate caller recovery is still mandatory.
+
+Source85 finite capacity integration passed103.160seconds under optimized library
+tests:65 actual certified heights,585 BFT signatures plus1 recovered original
+timeout, all four journals>128, active64, mature owner99, hash-consistent later
+bad signature/missing page/stale head refusal, and fresh-process complete pinned
+native/four-signers/wallet cold with private inventory unchanged. It does not
+qualify old profiles, main executable, full2016 window, transport, actual crash,
+independent custody or epoch paging. Old source81 300.033 timeout and source85
+118.279 fixture-path failure remain failed; never reopen those private fixtures.
+Final test-only path/source changes reuse exact unchanged production checks;
+current source CLI/strict binding is from the22.643second minimum path correction.
+Legacy VALUE-STRICT-01 independently remains OPEN; no package uses that library.
+
+Next native contact/value gate is one fresh180-second release component, network0:
+source four signers through65, owner export at66, complete bounded native contact
+closure, admitted destination import/maturity and full pinned cold. First actual
+proof/capacity/auth refusal, full finite discrimination or180seconds exits. Keep
+all original wire/logical/snapshot/history bounds and owner/caller state; a local
+65-height pass cannot authorize incomplete remote evidence. If proof cannot fit,
+retain the exact refusal and design explicit compact-complete authority; never
+truncate evidence, trust cached ledgers, refund or qualify an adopted network.

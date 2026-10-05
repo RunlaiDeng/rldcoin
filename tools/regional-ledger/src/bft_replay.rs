@@ -222,6 +222,16 @@ impl<'a> PagedReplay<'a> {
             .ok_or("paged signer count overflow")?;
         Ok(())
     }
+    /// No cursor/state survives this invocation. Native history and every old
+    /// signer record have executed before a clone can review the new request.
+    pub(super) fn authenticate_current(&mut self, expected: Hash) -> Result<State> {
+        require(
+            self.head == expected,
+            "paged BFT exact complete caller head differs",
+        )?;
+        self.history.check_complete(self.node)?;
+        Ok(self.state.clone())
+    }
     pub(super) fn finish(self, expected: Hash) -> Result<State> {
         require(
             self.head == expected,

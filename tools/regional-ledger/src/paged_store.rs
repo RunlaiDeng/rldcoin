@@ -653,6 +653,8 @@ pub(crate) struct Historical<'a> {
     records: crate::retained_pages::Records<'a, Record>,
     pending: Option<Record>,
     last_requested: u64,
+    scope: Scope,
+    storage_head: Hash,
 }
 impl Historical<'_> {
     pub(crate) fn at(&mut self, height: u64) -> Result<(&Trust, &VerifiedEvidence, &Chain)> {
@@ -686,12 +688,32 @@ impl Historical<'_> {
         ))
     }
     pub(crate) fn finish(mut self, node: &Store) -> Result<()> {
+        self.check_complete(node)
+    }
+    /// Complete native execution happens once per cursor. Every subsequent
+    /// boundary rechecks exact retained bytes, header, selection and incidents.
+    pub(crate) fn check_complete(&mut self, node: &Store) -> Result<()> {
         if let Some(record) = self.pending.take() {
             self.replay.apply(&record)?;
         }
-        for record in self.records {
+        for record in self.records.by_ref() {
             self.replay.apply(&record?)?;
         }
+        let stream = node
+            .paged
+            .as_ref()
+            .ok_or("native historical stream missing")?;
+        require(
+            stream.storage_head() == self.storage_head,
+            "native stream changed within signing invocation",
+        )?;
+        stream.require_scope(&self.scope)?;
+        require(
+            read_header(&node.dir)?.scope(&self.replay.trust)? == self.scope,
+            "native immutable header changed within signing invocation",
+        )?;
+        stream.visit(self.storage_head, |_| Ok(()))?;
+        self.last_requested = self.replay.chain.height();
         require(
             node.healthy && read_guard(&node.dir)?.is_zero(),
             "paged signing history cannot release state with pending native incident",
@@ -730,11 +752,16 @@ impl Store {
             .paged
             .as_ref()
             .ok_or("paged signing history requires native stream")?;
+        let scope = header.scope(&replay.trust)?;
+        stream.require_scope(&scope)?;
+        let storage_head = stream.storage_head();
         Ok(Historical {
             replay,
-            records: stream.records(stream.storage_head())?,
+            records: stream.records(storage_head)?,
             pending: None,
             last_requested: 0,
+            scope,
+            storage_head,
         })
     }
 }

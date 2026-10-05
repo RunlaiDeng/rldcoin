@@ -1284,3 +1284,7 @@ pub(crate) use replay::tests::compare_all_prefixes;
 
 #[path = "paged_bft_agent.rs"]
 mod paged_agent;
+
+#[cfg(test)]
+#[path = "paged_sign_cost.rs"]
+pub(crate) mod sign_cost;

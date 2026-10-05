@@ -101,6 +101,16 @@ health/guard/full事故重验后9.942秒受影响范围通过，不打开原失�
 保留所有失败；最终新增测试定义/CLI编译/地区lib-tests strict4.326秒通过，
 主binary未重建、旧价值strict独立OPEN。下一一次60秒/最多10本地高度只区分
 双完整replay、请求/签名、落盘及Store成本；不原样重复300范围或改网络预算。
+后续成本39.930秒明确双重完整replay占签署83.04%，同调用cursor复用及磁盘
+manifest缺口修复53.651秒通过必要回归；首14.441秒缺口失败保留。最终源85
+文件`f34e58af93aa...`的全新优化集成103.160秒通过Native65/四signer均>128/
+活动64、99付款成熟、原响应恢复、>128坏签名/缺页/陈旧头拒绝及新进程完整
+cold，私有库存不变。旧300.033耗尽、新118.279夹具路径失败依旧失败；路径
+最小修正22.643秒通过后才新建完整fixture，未复活旧现场。
+[准确七范围和来源](operations/evidence/regional-native-paged-cursor-capacity-20261005-outcome.json)
+仅有限native library集成，不是主binary/完整窗口或故障资格。下一一次180秒
+区分65之后新export完整contact证据、目的区真实import/maturity及cold；原
+logical/wire/history容量、600/60/max24/2016及VALUE-STRICT-01义务不变。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

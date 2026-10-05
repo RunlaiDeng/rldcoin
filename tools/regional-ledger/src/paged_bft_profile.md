@@ -54,3 +54,12 @@ All retained orphans/residue and publication peak remain within existing bounds.
 Recheck complete native history/incident guard before releasing the original
 response. Real interruption, power loss and cross-device recovery remain gates. No epoch handoff, concurrent copied-key,
 common rollback, independent latest head or cross-device qualification is granted.
+
+Within one ordinary signing invocation, a single genesis-derived replay cursor
+may authenticate the complete old native/signer streams before reviewing a new
+request. It must fully authenticate/execute the new original record, reread exact
+retained native bytes/header and complete incident/selection state before key use,
+before publication and before response release. Byte changes refuse; unchanged
+bytes inherit only this invocation's completed authentication. No cursor, ledger
+or lock witness is serialized, retained across calls, or used to initialize cold
+state. Full cold/recovery replay and all original bounds remain mandatory.

@@ -589,3 +589,32 @@ fn committed_response_recovery_at_exact_file_limit_needs_no_new_commit_file() {
     assert_eq!(inventory(&root), retained);
     eprintln!("committed-response exact4096 file arithmetic passes; private orphans unchanged; storage-signature fixture only, no native BFT authority");
 }
+
+#[test]
+fn held_stream_refuses_changed_canonical_disk_manifest_without_rewrite() {
+    let root = private_root();
+    let scope = fixture_scope(Purpose::Ledger);
+    let dir = root.join("ledger");
+    let mut stream = Stream::<Record>::create(&dir, scope.clone()).unwrap();
+    let old = stream.storage_head();
+    let head = stream
+        .append(&[record(&scope, 0, Hash::ZERO)], old)
+        .unwrap();
+    let mut changed = stream.manifest.clone();
+    changed.head = Hash([7; 32]);
+    // Preserve the complete original bytes; the malicious replacement itself
+    // remains canonical typed JSON, so syntax rejection cannot mask the gate.
+    keystore::private_create(
+        &root.join("original-manifest"),
+        &bytes(&stream.manifest).unwrap(),
+    )
+    .unwrap();
+    fs::write(dir.join(MANIFEST), bytes(&changed).unwrap()).unwrap();
+    let before = inventory(&root);
+    assert!(stream
+        .visit(head, |_| Ok(()))
+        .unwrap_err()
+        .contains("disk manifest differs"));
+    assert_eq!(stream.storage_head(), head);
+    assert_eq!(inventory(&root), before);
+}

@@ -1255,3 +1255,12 @@ mod paged_recovery;
 
 #[path = "paged_bft_integration_tests.rs"]
 mod paged_integration;
+
+#[path = "paged_bft_cost_tests.rs"]
+mod paged_cost;
+
+#[path = "paged_bft_cursor_tests.rs"]
+mod paged_cursor;
+
+#[path = "paged_bft_capacity_attacks.rs"]
+mod paged_capacity_attacks;

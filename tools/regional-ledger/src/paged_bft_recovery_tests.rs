@@ -1,7 +1,7 @@
 use super::retained_native_replay::inventory;
 use super::*;
 
-fn copy_private(source: &Path, target: &Path) {
+pub(super) fn copy_private(source: &Path, target: &Path) {
     fs::create_dir(target).unwrap();
     #[cfg(unix)]
     {

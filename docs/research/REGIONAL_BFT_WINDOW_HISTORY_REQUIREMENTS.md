@@ -1,6 +1,6 @@
 # 普通 BFT 通道窗口的完整历史与签署保留
 
-状态：**签署/完整窗口实现缺口；新明确分页规则的Store有限65高度样本通过**。
+状态：**新明确分页profile真实Store65/四signer>128/新进程cold有限集成已通过；完整窗口及远程价值资格仍OPEN**。
 旧普通V8 Native实际在第65检查点拒绝；原生签署日志
 的实际容量门槛及重放CPU归因尚未验证。I7/I10、S11/S16/S17、R10/R11/R22
 仍未完成。本记录约束后续新profile设计，不能修改冻结正文/PDF或旧signed规则。
@@ -125,3 +125,14 @@ guard/full事故重验修复后9.942秒affected范围通过。没有8/65长测�
 真实eviction签署/新进程或完整窗口资格，准确源及下一恢复gate见
 [Agent结果](../operations/evidence/regional-native-paged-agent-outcome-20261005.json)。
 原定300秒仍等待完整中断recover-only实现，不把正常页写入当保管恢复完成。
+
+
+2026-10-05 后续新profile的真实签署容量门槛已在单次103.160秒范围跨越：
+Native65、四journal147/146/146/146及1原timeout恢复、活动64、付款成熟，
+>128坏signature/缺档/旧caller拒绝和新进程完整cold通过。只适用于85文件源
+`f34e58af93aa...`，不是旧V8/legacy容量放宽或整体窗口证明。原300.033秒
+耗尽及新夹具路径118.279秒失败保留；精确成本/修复/全部来源见
+[结果](../operations/evidence/regional-native-paged-cursor-capacity-20261005-outcome.json)。
+完整2016窗口/settlement与receipt锚、跨地区65之后完整价值证据、ordinary
+Runtime/TLS/fault、epoch/长期/独立保管继续未完成。下一180秒native remote
+crossing判别按共用层文档执行，不能由本地分页容量通过替代。

@@ -214,9 +214,26 @@ impl Agent {
         key_file: Option<&Path>,
         expected: Hash,
     ) -> Result<Signed> {
-        let mut state = self.paged_state(node)?;
+        #[cfg(test)]
+        let mut cost = crate::bft::sign_cost::Clock::new();
+        require(
+            self.healthy,
+            "paged signer unhealthy; retain publication residue",
+        )?;
+        let h = header(&self.dir)?;
+        require(
+            h.journal == self.journal,
+            "paged signer in-memory immutable header differs",
+        )?;
+        let scope = h.scope(node)?;
         let head = self.head()?;
         let stream = self.paged.as_ref().ok_or("paged signer stream missing")?;
+        stream.require_scope(&scope)?;
+        let mut replay = replay::PagedReplay::new(&h.journal, node, scope.initial()?)?;
+        stream.visit(head, |record| replay.push(record))?;
+        let mut state = replay.authenticate_current(head)?;
+        #[cfg(test)]
+        cost.mark(0);
         let count = stream.record_count();
         let mut position = 0u64;
         let mut retained = None;
@@ -227,11 +244,14 @@ impl Agent {
             position += 1;
             Ok(())
         })?;
+        #[cfg(test)]
+        cost.mark(1);
         if let Some((n, r)) = retained {
             require(
                 expected == head || (n + 1 == count && expected == r.previous_head),
                 "paged exact retry has stale separate caller head",
             )?;
+            replay.authenticate_current(head)?;
             return Ok(Signed {
                 message: r.message,
                 previous_head: r.previous_head,
@@ -269,6 +289,8 @@ impl Agent {
             )?;
         }
         let mut message = state.apply(&request, &self.journal.binding.key, node)?;
+        // Recheck retained native bytes/guard after request execution, before key use.
+        replay.authenticate_current(head)?;
         message.set_approval(crate::signer::read_and_sign(
             key_file.ok_or("new paged BFT vote requires explicit private key")?,
             &self.journal.binding.key,
@@ -280,16 +302,19 @@ impl Agent {
             request,
             message: message.clone(),
         };
-        let h = header(&self.dir)?;
-        let scope = h.scope(node)?;
-        let mut replay = replay::PagedReplay::new(&h.journal, node, scope.initial()?)?;
-        self.paged
-            .as_ref()
-            .ok_or("paged signer stream missing")?
-            .visit(head, |r| replay.push(r))?;
+        #[cfg(test)]
+        cost.mark(2);
+        require(
+            header(&self.dir)?.scope(node)? == scope,
+            "paged signer immutable header changed within invocation",
+        )?;
+        // Only this new complete original record is executed again. Every old
+        // record/native event already authenticated in the still-local cursor.
         replay.push(&record)?;
         let next = crate::retained_pages::next_head(head, count, &record)?;
-        replay.finish(next)?;
+        replay.authenticate_current(next)?;
+        #[cfg(test)]
+        cost.mark(3);
         let outside_bytes = (crate::keystore::private_read(&self.dir.join(HEADER), MAX_BYTES)?
             .len()
             + crate::keystore::private_read(&self.dir.join("LOCK"), 16)?.len())
@@ -303,10 +328,33 @@ impl Agent {
             self.healthy = false;
             return Err(e);
         }
+        // A post-publication failure retains the original signed record and
+        // refuses response release; separate caller recovery remains mandatory.
+        let release = (|| {
+            require(
+                header(&self.dir)?.scope(node)? == scope,
+                "paged signer header changed before response release",
+            )?;
+            self.paged
+                .as_ref()
+                .ok_or("paged signer stream missing")?
+                .visit(next, |_| Ok(()))?;
+            replay.finish(next)?;
+            Ok(())
+        })();
+        if let Err(error) = release {
+            self.healthy = false;
+            return Err(error);
+        }
         require(
             self.head()? == next,
             "paged signer durable response head differs",
         )?;
+        #[cfg(test)]
+        {
+            cost.mark(4);
+            cost.finish();
+        }
         Ok(Signed {
             message,
             previous_head: head,
@@ -323,5 +371,44 @@ impl Agent {
             .as_mut()
             .expect("fresh paged fixture")
             .interrupt_at(boundary);
+    }
+}
+
+#[cfg(test)]
+impl Agent {
+    /// Read-only adversarial probe of the same local cursor used by signing.
+    /// Fixture signatures never persist a vote or update caller/storage heads.
+    pub(crate) fn probe_local_cursor(
+        &self,
+        node: &Store,
+        request: Request,
+        approval: impl FnOnce(&Message) -> Approval,
+        after_old: impl FnOnce(),
+        after_new: impl FnOnce(),
+    ) -> Result<State> {
+        let h = header(&self.dir)?;
+        let scope = h.scope(node)?;
+        let head = self.head()?;
+        let mut replay = replay::PagedReplay::new(&h.journal, node, scope.initial()?)?;
+        self.paged
+            .as_ref()
+            .ok_or("probe requires paged signer")?
+            .visit(head, |record| replay.push(record))?;
+        let mut state = replay.authenticate_current(head)?;
+        let mut message = state.apply(&request, &h.journal.binding.key, node)?;
+        message.set_approval(approval(&message));
+        let record = Record {
+            previous_head: head,
+            observation: Observation::current(node)?,
+            request,
+            message,
+        };
+        after_old();
+        // Mirrors the mandatory pre-key/append complete byte and incident check.
+        replay.authenticate_current(head)?;
+        replay.push(&record)?;
+        let next = crate::retained_pages::next_head(head, self.record_count() as u64, &record)?;
+        after_new();
+        replay.finish(next)
     }
 }

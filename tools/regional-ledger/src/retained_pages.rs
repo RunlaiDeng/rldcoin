@@ -285,12 +285,17 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             "incomplete complete stream publication; retain residue",
         )?;
         root_inventory(&self.dir)?;
+        let manifest_raw = bytes(&self.manifest)?;
+        require(
+            *keystore::private_read(&self.dir.join(MANIFEST), MAX_BYTES)? == manifest_raw,
+            "complete stream retained disk manifest differs from locked current bytes",
+        )?;
         require(
             self.manifest.pages.len() <= history::MAX_FILES && self.manifest.tail.len() < PAGE,
             "complete stream page/tail capacity",
         )?;
         let (files, retained) = usage(&self.dir.join(OBJECTS))?;
-        let manifest_bytes = bytes(&self.manifest)?.len() as u64;
+        let manifest_bytes = manifest_raw.len() as u64;
         require(
             files
                 .checked_add(2)
