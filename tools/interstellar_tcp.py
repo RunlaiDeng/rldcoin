@@ -23,6 +23,7 @@ import time
 
 import interstellar_mesh as mesh
 import interstellar_transfer as wire
+from interstellar_mesh_cost import MeshCosts
 
 
 class MeshRuntimeStopping(ValueError):
@@ -307,6 +308,7 @@ class Server:
         self.refused_connections=0
         self.local_lock_retries=0
         self.local_lock_exhaustions=0
+        self.mesh_costs=MeshCosts()
         # Retry ownership survives bounded refusal; idle ownership is not a
         # perpetual scheduling grant. Only an active acquisition or its brief
         # post-refusal window gives ordinary selection priority over TCP.
@@ -358,9 +360,13 @@ class Server:
             mesh.require(self.selection_owner is None or self.selection_owner is current,
                          'ordinary mesh selection already has another owner')
             if (self.selection_owner is current and self.selection_purpose!=purpose):
+                costs=getattr(self,'mesh_costs',None)
+                if costs is not None:costs.record(purpose,'purpose',0.0,False)
                 raise BlockingIOError(errno.EAGAIN,
                     'ordinary other-purpose retry pending; retain evidence')
             self.selection_owner=current;self.selection_purpose=purpose
+            costs=getattr(self,'mesh_costs',None)
+            if costs is not None:costs.record(purpose,'purpose',0.0,True)
 
     def finish_selection(self):
         with self.guard:
@@ -407,6 +413,10 @@ class Server:
         # lock, within the original connection deadline and a separate bound.
         until=min(deadline,time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS)
         node=None;lease=False;exhausted=False;current=threading.current_thread()
+        costs=getattr(self,'mesh_costs',None)
+        role=(self.selection_purpose if ordinary else 'tcp-outbound' if current is self.outbound_owner
+              else 'tcp-input' if current is getattr(self,'input_thread',None) else 'tcp-handler')
+        attempt_started=time.monotonic();open_started=None;acquired=False
         if ordinary:
             with self.guard:
                 mesh.require(self.selection_owner is current,'ordinary mesh selection owner differs')
@@ -422,7 +432,12 @@ class Server:
             while node is None:
                 try:
                     self._claim_mesh_turn(ordinary);lease=True
-                    try:node=mesh.Node(self.config,nonblocking=True)
+                    try:
+                        open_started=time.monotonic();opened=False
+                        try:
+                            node=mesh.Node(self.config,nonblocking=True);opened=True
+                        finally:
+                            if costs is not None:costs.record(role,'open',time.monotonic()-open_started,opened)
                     except BaseException:
                         self._release_mesh_turn();lease=False
                         raise
@@ -437,13 +452,21 @@ class Server:
             with self.guard:
                 self.last_mesh_class='ordinary' if ordinary else 'tcp'
                 if not ordinary:self.last_tcp_role='outbound' if current is self.outbound_owner else 'inbound'
+            acquired=True
+            if costs is not None:costs.record(role,'acquire',time.monotonic()-attempt_started,True)
             # Ordinary's bound covers lock attempts, not full validation CPU.
             if not ordinary:mesh.require(time.monotonic()<deadline,'TCP local attempt deadline reached; retain evidence')
             yield node
         finally:
             try:
-                if node is not None:node.close()
+                if node is not None:
+                    closed=False
+                    try:node.close();closed=True
+                    finally:
+                        if costs is not None:costs.record(role,'hold',time.monotonic()-open_started,closed)
             finally:
+                if costs is not None and not acquired:
+                    costs.record(role,'acquire',time.monotonic()-attempt_started,False)
                 if lease:self._release_mesh_turn()
                 if ordinary:
                     with self.guard:
@@ -785,7 +808,8 @@ class Server:
                 'received':self.input_received,'completed':self.input_completed,'rejected':self.input_rejected,
                 'shares_original_inbound_slots':True,'queue_grants_custody':False},
                 'observations':copy.deepcopy(self.observations),'refused_connections':self.refused_connections,
-                'local_lock_retries':self.local_lock_retries,'local_lock_exhaustions':self.local_lock_exhaustions}
+                'local_lock_retries':self.local_lock_retries,'local_lock_exhaustions':self.local_lock_exhaustions,
+                'mesh_lease_costs':self.mesh_costs.snapshot()}
 
     def close(self):
         self.running=False

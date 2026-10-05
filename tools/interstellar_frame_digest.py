@@ -12,6 +12,26 @@ SAFE_ASCII = bytes(c for c in range(32, 127) if c not in (34, 92))
 PATH = ('packet', 'body', 'frame')
 
 
+def packet_body_bytes(body):
+    """Exact signature bytes, with no retained object or authentication shortcut.
+
+    Only an escape-free bounded ASCII frame bypasses JSON's large-string
+    encoder. Metadata uses the ordinary canonical encoder. Unsupported values
+    take that original complete path, including its original errors.
+    """
+    if (not isinstance(body, dict) or 'frame' not in body
+            or any(type(k) is not str for k in body)):
+        return wire.canonical(body)
+    value = body['frame']
+    if type(value) is not str or not value.isascii() or len(value) > wire.MAX_FRAME * 2:
+        return wire.canonical(body)
+    frame = value.encode('ascii')
+    if frame.translate(None, SAFE_ASCII):
+        return wire.canonical(body)
+    left, right = _split(body, ('frame',))
+    return left + frame + right
+
+
 def _split(value, path):
     if not path:
         return b'"', b'"'

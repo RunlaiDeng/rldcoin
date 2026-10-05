@@ -1,0 +1,1011 @@
+{
+  "format": "RLD-BFT-MESH-LEASE-AND-PACKET-BYTES-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T20:09:49.334940+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_status": "active",
+  "adopted_whitepaper_markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "adopted_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "goal_text_predecessor_hashes_not_rewritten": true,
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "latest_whole_full_fault": "receive-v7 FAIL original600/616.052includingcleanup;6657sealed. runtime-v4 original600/612.570/6152 remainsFAIL; every olderFAIL retained.",
+  "diagnostics": {
+    "regional-bft-control-delivery-counter-20261005": {
+      "checks_file": "regional-bft-control-delivery-counter-20261005-checks.json",
+      "checks_sha256": "49ed75ac7a4525a01008d67da0796ed09d8673dcae4bd164cf3bfef4b403b40e",
+      "completed": false,
+      "duration_seconds": 1.010293,
+      "exit_code": 1
+    },
+    "regional-bft-control-delivery-counter-v2-20261005": {
+      "checks_file": "regional-bft-control-delivery-counter-v2-20261005-checks.json",
+      "checks_sha256": "04418a0be0606eea7a1ed8a20fff94bdb77c5a3b440667b60175794694edfc24",
+      "completed": false,
+      "duration_seconds": 3.501944,
+      "exit_code": 1
+    },
+    "regional-bft-control-delivery-counter-v3-20261005": {
+      "checks_file": "regional-bft-control-delivery-counter-v3-20261005-checks.json",
+      "checks_sha256": "2694370cbd81ac81fdea464ffec5decb43f57473d1103335f8eaeab158c9f69f",
+      "completed": true,
+      "duration_seconds": 3.722571,
+      "exit_code": 0
+    },
+    "regional-mesh-lease-cost-model-20261005": {
+      "checks_file": "regional-mesh-lease-cost-model-20261005-checks.json",
+      "checks_sha256": "8f64007f59145c793b56a64286a7e039d4042462ccb8a56fb35db348fa9188f3",
+      "completed": true,
+      "duration_seconds": 3.4305,
+      "exit_code": 0
+    },
+    "regional-bft-mesh-lease-cost-service-v1-20261005": {
+      "checks_file": "regional-bft-mesh-lease-cost-service-v1-20261005-checks.json",
+      "checks_sha256": "846d00e411c743907b65bab8e54c71747d61bb74934ae1183dfde6afdc49623f",
+      "completed": false,
+      "duration_seconds": 188.418,
+      "exit_code": 1
+    },
+    "regional-mesh-readonly-validation-cost-20261005": {
+      "checks_file": "regional-mesh-readonly-validation-cost-20261005-checks.json",
+      "checks_sha256": "922bc96ba8f2bf044d576300313fa54451e23fb0002027ad0efc4ffc3fad1481",
+      "completed": false,
+      "duration_seconds": 0.048122,
+      "exit_code": 1
+    },
+    "regional-mesh-readonly-validation-cost-v2-20261005": {
+      "checks_file": "regional-mesh-readonly-validation-cost-v2-20261005-checks.json",
+      "checks_sha256": "ac9184ce26ae9da1ba29a78cc289944c6c4829773f67d99c574685a8c8c4ef7b",
+      "completed": true,
+      "duration_seconds": 1.706538,
+      "exit_code": 0
+    },
+    "regional-mesh-readonly-validation-profile-20261005": {
+      "checks_file": "regional-mesh-readonly-validation-profile-20261005-checks.json",
+      "checks_sha256": "df2d62ac47d86a3a0de7dc8a6d9b088c6c9145b40264b4cc0b6afb9cfc928380",
+      "completed": true,
+      "duration_seconds": 1.105503,
+      "exit_code": 0
+    },
+    "regional-packet-body-byte-model-20261005": {
+      "checks_file": "regional-packet-body-byte-model-20261005-checks.json",
+      "checks_sha256": "2e011f5bdf630eb4ae255ac20f5bc71ae9d811f046d2629cfd3c7bdf7e68c78c",
+      "completed": true,
+      "duration_seconds": 0.292112,
+      "exit_code": 0
+    },
+    "regional-packet-body-byte-regression-20261005": {
+      "checks_file": "regional-packet-body-byte-regression-20261005-checks.json",
+      "checks_sha256": "bb53a6c52dd5b891b2ae0a6b83038cd0315d7e8a974e4a19406743be03f8603f",
+      "completed": false,
+      "duration_seconds": 2.644632,
+      "exit_code": 1
+    },
+    "regional-packet-body-byte-regression-v2-20261005": {
+      "checks_file": "regional-packet-body-byte-regression-v2-20261005-checks.json",
+      "checks_sha256": "fceca67613cd673621e89e8b5ed59b169eb2145b2468bef12c1305f5881807ce",
+      "completed": true,
+      "duration_seconds": 2.622595,
+      "exit_code": 0
+    }
+  },
+  "current_service_terminal": {
+    "format": "RLD-BFT-MESH-LEASE-COST-SERVICE-CHECKS-V1",
+    "completed": false,
+    "budget_seconds": 180,
+    "attempts_used": 1,
+    "duration_seconds": 188.418,
+    "helper_exit_code": 1,
+    "helper_terminal": true,
+    "budget_exhausted": true,
+    "forced_helper": false,
+    "pin_error": null,
+    "stage_sha256": "5b3a1071574405b92642e18f26e17ab3ee9a28e3e1322e6a95429ae279d5d905",
+    "log_sha256": "84c26b01e03c1d52812b77b5dfba69d5dda6f95fc7c403af29906a99a0dfaf76",
+    "helper_sha256": "4143ac06a4c6269a23bab4f9f0ad536ada24e950c6db3f6ff07022f46f05704f",
+    "controller_sha256": "715f7ad5302382ea7630572ddc53a69e4f51bca68778f88e3c01deea1c83c124",
+    "binding_source_sha256": "1327a6c487bbbed7243525a50664f02f71c0cc77a0a9f5dc950d9aedb2a98cf0",
+    "companion_source_commitment": "e9f459389880bd39fe059892bdee5f99ca3192d4f40f197faf03a8cf3e7b18f4",
+    "stopped_inventory_sha256": "673426fc6b0473adbf57e4f83876fc754355828717765a547f1f895bf2251dbc",
+    "stopped_files": 873,
+    "result": {
+      "completed": false,
+      "failure": "TimeoutError: original180second service component deadline",
+      "cleanup_failures": [],
+      "services_and_owned_threads_stopped": true,
+      "failed_currency_never_reopen": true,
+      "whole_full_fault_qualified": false,
+      "whole_goal_completed": false
+    },
+    "old_private_source_binary_freeze_unchanged": true,
+    "failed_currency_sealed": true,
+    "failed_currency_never_reopen": true,
+    "full_fault_qualified": false,
+    "legacy_value_strict": "OPEN",
+    "whole_goal_completed": false
+  },
+  "cost_aggregates": {
+    "receive": {
+      "purpose": {
+        "calls": 83,
+        "failures": 16,
+        "total_seconds": 0.0,
+        "max_seconds": 0.0
+      },
+      "acquire": {
+        "calls": 67,
+        "failures": 29,
+        "total_seconds": 19.121426,
+        "max_seconds": 0.708608
+      },
+      "open": {
+        "calls": 38,
+        "failures": 0,
+        "total_seconds": 11.958811,
+        "max_seconds": 0.7086
+      },
+      "hold": {
+        "calls": 38,
+        "failures": 0,
+        "total_seconds": 25.500615,
+        "max_seconds": 1.726989
+      }
+    },
+    "carriage": {
+      "purpose": {
+        "calls": 82,
+        "failures": 29,
+        "total_seconds": 0.0,
+        "max_seconds": 0.0
+      },
+      "acquire": {
+        "calls": 53,
+        "failures": 18,
+        "total_seconds": 14.826521,
+        "max_seconds": 0.661874
+      },
+      "open": {
+        "calls": 35,
+        "failures": 0,
+        "total_seconds": 9.207464,
+        "max_seconds": 0.579701
+      },
+      "hold": {
+        "calls": 35,
+        "failures": 0,
+        "total_seconds": 18.86776,
+        "max_seconds": 1.255711
+      }
+    },
+    "tcp-outbound": {
+      "purpose": {
+        "calls": 0,
+        "failures": 0,
+        "total_seconds": 0.0,
+        "max_seconds": 0.0
+      },
+      "acquire": {
+        "calls": 1188,
+        "failures": 275,
+        "total_seconds": 188.190767,
+        "max_seconds": 0.954835
+      },
+      "open": {
+        "calls": 913,
+        "failures": 0,
+        "total_seconds": 121.408248,
+        "max_seconds": 0.914486
+      },
+      "hold": {
+        "calls": 913,
+        "failures": 0,
+        "total_seconds": 191.762447,
+        "max_seconds": 1.207439
+      }
+    },
+    "tcp-input": {
+      "purpose": {
+        "calls": 0,
+        "failures": 0,
+        "total_seconds": 0.0,
+        "max_seconds": 0.0
+      },
+      "acquire": {
+        "calls": 222,
+        "failures": 127,
+        "total_seconds": 76.355624,
+        "max_seconds": 0.965675
+      },
+      "open": {
+        "calls": 95,
+        "failures": 0,
+        "total_seconds": 44.113143,
+        "max_seconds": 0.818643
+      },
+      "hold": {
+        "calls": 95,
+        "failures": 0,
+        "total_seconds": 84.323406,
+        "max_seconds": 1.609659
+      }
+    },
+    "tcp-handler": {
+      "purpose": {
+        "calls": 0,
+        "failures": 0,
+        "total_seconds": 0.0,
+        "max_seconds": 0.0
+      },
+      "acquire": {
+        "calls": 547,
+        "failures": 165,
+        "total_seconds": 66.404304,
+        "max_seconds": 0.855593
+      },
+      "open": {
+        "calls": 382,
+        "failures": 0,
+        "total_seconds": 27.597415,
+        "max_seconds": 0.855581
+      },
+      "hold": {
+        "calls": 382,
+        "failures": 0,
+        "total_seconds": 58.845644,
+        "max_seconds": 1.46737
+      }
+    }
+  },
+  "cost_semantics": "Wall time, not CPU. Hold includes open/close; acquire includes open. Totals across nodes/threads/stages overlap and cannot be summed as scope elapsed or exclusive cause. Initial constructor before metrics not measured.",
+  "readonly_delivery_counter": {
+    "active_receipts_authenticated": 111,
+    "complete_relevant_transport_copies_authenticated": 44,
+    "completed": true,
+    "control_path_observations": [
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 3,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 3,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 0,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Commit",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": "Commit",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "not-source-published",
+        "phase": "Commit",
+        "round": 0,
+        "source": 1,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 0,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 3,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 1,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 1,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 1,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 2,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 2,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 2,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 0,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 3,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "native-retained",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": null,
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Timeout",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": null,
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Timeout",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": null,
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      }
+    ],
+    "distinct_stored_commit_keys": 2,
+    "distinct_stored_prepare_keys": 3,
+    "duration_seconds": 3.605319,
+    "final_native_state_known": false,
+    "full_archive_index_entries_authenticated": 160,
+    "full_cold_performed": false,
+    "full_fault_qualified": false,
+    "mesh_node_opens": 0,
+    "missing_next_view_timeouts": [
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Timeout",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": 0,
+        "source": 1,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Timeout",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": null,
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      }
+    ],
+    "missing_prepares_for_noncommitting_nodes": [
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "destination-custody-native-retention-missing",
+        "phase": "Prepare",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      }
+    ],
+    "native_signature_or_ledger_authority_granted": false,
+    "native_starts": 0,
+    "negative_checks": [
+      "wrong-network",
+      "altered-signature",
+      "altered-receipt"
+    ],
+    "next_round_leader_node": 2,
+    "private_818_files_unchanged": true,
+    "private_exact_paths_sha256": "476d2eacf3ff579e8d8b0b38ab8a3805cba62b876beced71f57832019dfa3942",
+    "recovery": 0,
+    "runtime_starts": 0,
+    "server_starts": 0,
+    "signing": 0,
+    "sockets": 0,
+    "whole_goal_completed": false
+  },
+  "readonly_witness_counter": {
+    "all_times_wall_and_cpu_separately_measured": true,
+    "completed": true,
+    "duration_seconds": 1.617971,
+    "full_fault_qualified": false,
+    "identity_or_key_reads": 0,
+    "mesh_node_opens": 0,
+    "native_ledger_authority_granted": false,
+    "native_starts": 0,
+    "negative_check": "changed-signed-index-refused",
+    "observations": [
+      {
+        "archive_entries": 32,
+        "archive_entry_calls": 32,
+        "archive_entry_seconds": 0.020233,
+        "cpu_seconds": 0.465783,
+        "node": 1,
+        "wall_seconds": 0.468612
+      },
+      {
+        "archive_entries": 32,
+        "archive_entry_calls": 0,
+        "archive_entry_seconds": 0,
+        "cpu_seconds": 0.070772,
+        "node": 1,
+        "wall_seconds": 0.07145
+      },
+      {
+        "archive_entries": 64,
+        "archive_entry_calls": 64,
+        "archive_entry_seconds": 0.040126,
+        "cpu_seconds": 0.320297,
+        "node": 2,
+        "wall_seconds": 0.322777
+      },
+      {
+        "archive_entries": 32,
+        "archive_entry_calls": 32,
+        "archive_entry_seconds": 0.020125,
+        "cpu_seconds": 0.088976,
+        "node": 1,
+        "wall_seconds": 0.089426
+      },
+      {
+        "archive_entries": 32,
+        "archive_entry_calls": 0,
+        "archive_entry_seconds": 0,
+        "cpu_seconds": 0.069275,
+        "node": 1,
+        "wall_seconds": 0.069613
+      }
+    ],
+    "private_873_files_unchanged": true,
+    "recovery": 0,
+    "runtime_starts": 0,
+    "serial_stopped_sample_not_live_open_cost": true,
+    "server_starts": 0,
+    "signing": 0,
+    "singleton_alternating_store_reverification_reproduced": true,
+    "sockets": 0,
+    "whole_goal_completed": false
+  },
+  "readonly_cold_profile": {
+    "archive_entry_calls": 32,
+    "archive_entry_seconds": 0.021935,
+    "completed": true,
+    "duration_seconds": 1.021614,
+    "full_fault_qualified": false,
+    "identity_or_key_reads": 0,
+    "inclusive_times_overlap": true,
+    "mesh_node_opens": 0,
+    "native_ledger_authority_granted": false,
+    "native_starts": 0,
+    "one_serial_cold_sample_not_live_node_open": true,
+    "private_873_files_unchanged": true,
+    "profile_has_overhead": true,
+    "recovery": 0,
+    "runtime_starts": 0,
+    "server_starts": 0,
+    "signing": 0,
+    "sockets": 0,
+    "top_exclusive_functions": [
+      {
+        "exclusive_seconds": 0.143221,
+        "function": "iterencode",
+        "inclusive_seconds": 0.143221,
+        "line": 207,
+        "module": "encoder.py",
+        "primitive_calls": 849,
+        "total_calls": 849
+      },
+      {
+        "exclusive_seconds": 0.086765,
+        "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+        "inclusive_seconds": 0.086765,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 378,
+        "total_calls": 378
+      },
+      {
+        "exclusive_seconds": 0.080161,
+        "function": "raw_decode",
+        "inclusive_seconds": 0.100324,
+        "line": 351,
+        "module": "decoder.py",
+        "primitive_calls": 201,
+        "total_calls": 201
+      },
+      {
+        "exclusive_seconds": 0.050818,
+        "function": "<built-in method binascii.a2b_base64>",
+        "inclusive_seconds": 0.050818,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 134,
+        "total_calls": 134
+      },
+      {
+        "exclusive_seconds": 0.035009,
+        "function": "<built-in method binascii.b2a_base64>",
+        "inclusive_seconds": 0.035009,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 134,
+        "total_calls": 134
+      },
+      {
+        "exclusive_seconds": 0.022719,
+        "function": "<built-in method _hashlib.openssl_sha256>",
+        "inclusive_seconds": 0.022719,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 779,
+        "total_calls": 779
+      },
+      {
+        "exclusive_seconds": 0.020163,
+        "function": "unique",
+        "inclusive_seconds": 0.020163,
+        "line": 42,
+        "module": "interstellar_transfer.py",
+        "primitive_calls": 83633,
+        "total_calls": 83633
+      },
+      {
+        "exclusive_seconds": 0.011965,
+        "function": "<method 'translate' of 'bytes' objects>",
+        "inclusive_seconds": 0.011965,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 67,
+        "total_calls": 67
+      },
+      {
+        "exclusive_seconds": 0.007823,
+        "function": "<method 'update' of '_hashlib.HASH' objects>",
+        "inclusive_seconds": 0.007823,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 201,
+        "total_calls": 201
+      },
+      {
+        "exclusive_seconds": 0.005329,
+        "function": "_packet_frame_check",
+        "inclusive_seconds": 0.346186,
+        "line": 281,
+        "module": "interstellar_mesh.py",
+        "primitive_calls": 67,
+        "total_calls": 67
+      },
+      {
+        "exclusive_seconds": 0.004031,
+        "function": "<method 'decode' of 'bytes' objects>",
+        "inclusive_seconds": 0.004031,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 335,
+        "total_calls": 335
+      },
+      {
+        "exclusive_seconds": 0.003005,
+        "function": "<method 'encode' of 'str' objects>",
+        "inclusive_seconds": 0.003005,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 3146,
+        "total_calls": 3146
+      },
+      {
+        "exclusive_seconds": 0.002367,
+        "function": "verify",
+        "inclusive_seconds": 0.137805,
+        "line": 244,
+        "module": "interstellar_mesh.py",
+        "primitive_calls": 378,
+        "total_calls": 378
+      },
+      {
+        "exclusive_seconds": 0.002083,
+        "function": "inspect_frame",
+        "inclusive_seconds": 0.176847,
+        "line": 120,
+        "module": "interstellar_transfer.py",
+        "primitive_calls": 67,
+        "total_calls": 67
+      },
+      {
+        "exclusive_seconds": 0.001868,
+        "function": "<built-in method ed25519.from_public_bytes>",
+        "inclusive_seconds": 0.001868,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 378,
+        "total_calls": 378
+      },
+      {
+        "exclusive_seconds": 0.001838,
+        "function": "dumps",
+        "inclusive_seconds": 0.147106,
+        "line": 185,
+        "module": "__init__.py",
+        "primitive_calls": 2189,
+        "total_calls": 2189
+      },
+      {
+        "exclusive_seconds": 0.001586,
+        "function": "<method 'fullmatch' of 're.Pattern' objects>",
+        "inclusive_seconds": 0.001586,
+        "line": 0,
+        "module": "~",
+        "primitive_calls": 2860,
+        "total_calls": 2860
+      },
+      {
+        "exclusive_seconds": 0.001116,
+        "function": "encode",
+        "inclusive_seconds": 0.144927,
+        "line": 185,
+        "module": "encoder.py",
+        "primitive_calls": 2189,
+        "total_calls": 2189
+      },
+      {
+        "exclusive_seconds": 0.001037,
+        "function": "canonical",
+        "inclusive_seconds": 0.149854,
+        "line": 37,
+        "module": "interstellar_transfer.py",
+        "primitive_calls": 2189,
+        "total_calls": 2189
+      },
+      {
+        "exclusive_seconds": 0.000869,
+        "function": "hex32",
+        "inclusive_seconds": 0.002164,
+        "line": 105,
+        "module": "interstellar_mesh.py",
+        "primitive_calls": 1966,
+        "total_calls": 1966
+      }
+    ],
+    "total_profile_exclusive_seconds": 0.495704,
+    "validation_cpu_seconds": 0.492394,
+    "validation_wall_seconds": 0.495742,
+    "whole_goal_completed": false
+  },
+  "implementation": {
+    "change": "Operation-local exact canonical packet signature-input bytes bypass only bounded escape-free ASCII frame encoding; original metadata encoding/fallback, complete signatures/schema/routing/frame/Native/caller checks unchanged. No new cache, persistence, custody or authority.",
+    "source_sha256": {
+      "tools/interstellar_mesh.py": "4588ad5ce28822609d8e085a67d499902e332c336f063dff4d6b50a4f48305d9",
+      "tools/interstellar_frame_digest.py": "5952262117a183120adb847adacc6a91f362b5a4bf44928e6fad4072df12d581",
+      "tools/interstellar_tcp.py": "fe4cb828270a508a3a815ba287737b145eb7fafb3101284bb36c2cfc86f9b86c",
+      "tools/interstellar_mesh_cost.py": "d33f4856ebd9f4012c7605b5b04d154ed93de116f1aa93650878d4380b045758",
+      "tools/test_interstellar_packet_body_bytes.py": "208ead95942a63d9cc8dfcbd3bc9e7ac52e6891d62f419e0523805ed3f59fb4e",
+      "tools/test_interstellar_mesh_cost.py": "f34b650f09b724ae009317e39be837f1c1b95fd73cbf4dbfc4bdd1da93d5cae1"
+    },
+    "lease_cost_model_tests": 22,
+    "packet_byte_related_tests": 13,
+    "packet_exact_regression": {
+      "candidate_median_seconds": 0.022379,
+      "candidate_samples_seconds": [
+        0.022084,
+        0.022596,
+        0.022962,
+        0.021727,
+        0.022379
+      ],
+      "complete_signed_packet_bodies_compared": 108,
+      "completed": true,
+      "duration_seconds": 2.525946,
+      "encoding_microcomparison_not_live_or_fullfault_speed": true,
+      "encoding_samples_per_path": 5,
+      "encoding_speed_ratio": 2.927231,
+      "exact_signature_input_bytes_equal": true,
+      "full_fault_qualified": false,
+      "full_readonly_validation": [
+        {
+          "archive_entries_authenticated": 32,
+          "node": 1,
+          "wall_seconds": 0.449088
+        },
+        {
+          "archive_entries_authenticated": 64,
+          "node": 2,
+          "wall_seconds": 0.311929
+        }
+      ],
+      "identity_or_key_reads": 0,
+      "mesh_node_opens": 0,
+      "native_ledger_authority_granted": false,
+      "native_starts": 0,
+      "ordinary_median_seconds": 0.065509,
+      "ordinary_samples_seconds": [
+        0.065303,
+        0.063135,
+        0.065835,
+        0.065987,
+        0.065509
+      ],
+      "paired_orders_alternated": true,
+      "private_873_files_unchanged": true,
+      "recovery": 0,
+      "runtime_starts": 0,
+      "serial_encoding_improvement_observed": true,
+      "server_starts": 0,
+      "signing": 0,
+      "sockets": 0,
+      "unchanged_complete_signatures_verified": true,
+      "whole_goal_completed": false
+    }
+  },
+  "failed_source_archive": {
+    "files": 163,
+    "manifest_sha256": "c45e0a6f5f63219ad8bcaf3f0c030e94def6189cf93bb4fea6679e5cf13e8ce0",
+    "private_fixture_copied": false
+  },
+  "next_scope": {
+    "hypothesis": "Exact packet signature-input encoding reduction removes measured repeated JSON large-string work without new cache authority. A genuinely fresh ordinary four-Service finite gate should deliver current Prepare/Commit/Timeout envelopes and reach native import13/mature15 within original180. A microcomparison alone cannot establish that behavior.",
+    "budget_seconds": 180,
+    "attempt_budget": 1,
+    "started": false,
+    "setup": "Fresh zero-allocation signed genesis/currency and8Native separate voter/caller/owner/mesh/TLS directories; four Services in one helper on same host, not independent operators/processes. No failed custody/value reuse. Bind changed complete Python source, unchangedNative89, actualCLI and independent controller before start.",
+    "required": "Actual ordinary full-envelope receive after TLS/authenticated transport, import13/maturity15/net2 on four replicas, all8fixed-head native/full-envelope/caller/owner/conservation cold; no controller consensus/carriage afterstartup.",
+    "unchanged": {
+      "round_seconds": 60,
+      "maturity_blocks": 2,
+      "quorum": 3,
+      "height_cap": 24,
+      "mesh_active": 256,
+      "mesh_archive_files": 4096,
+      "mesh_archive_bytes": 268435456,
+      "native_blocks": 256,
+      "native_snapshots": 64
+    },
+    "exit": "First exact source/byte/owner/caller/signature/capacity/order mismatch, all required native/cold/value checks, or original180deadline. Failure stops owned processes and seals currency permanently; no reopen/recovery/resign/refund/replacement/unchanged retry.",
+    "decision_on_pass": "Finite candidate gate only; consider necessary full original600 scope with explicit current source/binary/controller qualification. No600 currently allocated.",
+    "decision_on_fail": "Keep failed gate, identify actual first delivery/lease/native boundary from measurements; no deadline increase or unchanged rerun."
+  },
+  "all_failed_currencies_never_reopened": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "legacy_value_strict": "OPEN: large_enum_variant/bool_assert_comparison and120timeout, no changed old-value-library trigger; no exemption",
+  "all_S_R_I_A_G_N_P_and_history_PQ_independent_physical_gates": "OPEN",
+  "persistent_cwd": "UI repair pending; every project command explicitly uses /Users/galaxy/GitHub/rldcoin",
+  "site_and_frozen_body_pdf_unchanged": true
+}

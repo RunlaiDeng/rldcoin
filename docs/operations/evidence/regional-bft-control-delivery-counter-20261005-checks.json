@@ -1,0 +1,18 @@
+{
+  "format": "RLD-BFT-CONTROL-DELIVERY-COUNTER-V1",
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 1.010293,
+  "helper_exit_code": 1,
+  "budget_exhausted": false,
+  "stage_sha256": "314cdef3c9051d4d0fa5d8db00425f1c301d90703185690ac224fd303a4c411e",
+  "log_sha256": "cab7b8290cd3320b63c001049830b2e14b2d438beca1e25972c9d41da99f4129",
+  "controller_sha256": "bcbf2997dc121e836b701d9957cd62b1cc27c7a49039c45ef62ae8cf51e5ce24",
+  "helper_sha256": "164924ed3821e0d153121479227e917645ef744835c8a2ea4f3c246cc5f31757",
+  "binding_source_sha256": "1327a6c487bbbed7243525a50664f02f71c0cc77a0a9f5dc950d9aedb2a98cf0",
+  "stopped_inventory_sha256": "8babde9889cf4261695527f0e986577466be17fdd0abc42f78ed79fd4226476d",
+  "result": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

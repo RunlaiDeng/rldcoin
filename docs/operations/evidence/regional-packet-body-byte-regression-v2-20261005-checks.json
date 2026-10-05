@@ -1,0 +1,68 @@
+{
+  "format": "RLD-PACKET-BODY-BYTE-REGRESSION-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "diagnostic_attempts_total": 2,
+  "duration_seconds": 2.622595,
+  "total_diagnostic_seconds": 5.267227,
+  "helper_exit_code": 0,
+  "failure": null,
+  "result": {
+    "candidate_median_seconds": 0.022379,
+    "candidate_samples_seconds": [
+      0.022084,
+      0.022596,
+      0.022962,
+      0.021727,
+      0.022379
+    ],
+    "complete_signed_packet_bodies_compared": 108,
+    "completed": true,
+    "duration_seconds": 2.525946,
+    "encoding_microcomparison_not_live_or_fullfault_speed": true,
+    "encoding_samples_per_path": 5,
+    "encoding_speed_ratio": 2.927231,
+    "exact_signature_input_bytes_equal": true,
+    "full_fault_qualified": false,
+    "full_readonly_validation": [
+      {
+        "archive_entries_authenticated": 32,
+        "node": 1,
+        "wall_seconds": 0.449088
+      },
+      {
+        "archive_entries_authenticated": 64,
+        "node": 2,
+        "wall_seconds": 0.311929
+      }
+    ],
+    "identity_or_key_reads": 0,
+    "mesh_node_opens": 0,
+    "native_ledger_authority_granted": false,
+    "native_starts": 0,
+    "ordinary_median_seconds": 0.065509,
+    "ordinary_samples_seconds": [
+      0.065303,
+      0.063135,
+      0.065835,
+      0.065987,
+      0.065509
+    ],
+    "paired_orders_alternated": true,
+    "private_873_files_unchanged": true,
+    "recovery": 0,
+    "runtime_starts": 0,
+    "serial_encoding_improvement_observed": true,
+    "server_starts": 0,
+    "signing": 0,
+    "sockets": 0,
+    "unchanged_complete_signatures_verified": true,
+    "whole_goal_completed": false
+  },
+  "helper_sha256": "6a87032795f237d8cb1d5b0c546d1345291516bb415753aebf099eefa9e8a5a6",
+  "stage_sha256": "94e7bb5b09c610f68f560ca43ba15e795b31ee8b6ed07d7af2cb4e2e72fe47df",
+  "log_sha256": "88728223d9f4f242523d477427d116ed011d9236c448551d5214322f9844e154",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

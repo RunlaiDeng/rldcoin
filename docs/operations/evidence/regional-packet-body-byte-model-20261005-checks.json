@@ -1,0 +1,13 @@
+{
+  "format": "RLD-PACKET-BODY-BYTE-MODEL-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.292112,
+  "helper_exit_code": 0,
+  "stage_sha256": "b3d419b4d1b4d2e08a1fea1cbc7b8ef136c6effe4755aff85675abab92499496",
+  "log_sha256": "4b399e4c37c36c3afe4eb932f92a5023cdf04ffb1053670c609483fb097f6b11",
+  "log_summary": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.011s\n\nOK\n..........\n----------------------------------------------------------------------\nRan 10 tests in 0.050s\n\nOK\n",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

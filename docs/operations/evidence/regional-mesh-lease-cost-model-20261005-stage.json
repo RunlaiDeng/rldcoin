@@ -1,0 +1,20 @@
+{
+  "format": "RLD-MESH-LEASE-COST-MODEL-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "Fixed20cell/8KiB process-local measurements distinguish purpose refusals, bounded acquisition, full Node open and hold/close costs without changing ordinary/TCP lease ownership, original errors,0.2second lock-attempt/3second socket limits or granting custody.",
+  "source_sha256": {
+    "tools/interstellar_tcp.py": "fe4cb828270a508a3a815ba287737b145eb7fafb3101284bb36c2cfc86f9b86c",
+    "tools/interstellar_mesh_cost.py": "d33f4856ebd9f4012c7605b5b04d154ed93de116f1aa93650878d4380b045758",
+    "tools/test_interstellar_mesh_cost.py": "f34b650f09b724ae009317e39be837f1c1b95fd73cbf4dbfc4bdd1da93d5cae1"
+  },
+  "models": [
+    "test_interstellar_mesh_cost",
+    "test_interstellar_mesh_turns",
+    "test_interstellar_selection_preference"
+  ],
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "new_ground_tls_fixtures": true,
+  "old_failed_fixture_opens": 0
+}

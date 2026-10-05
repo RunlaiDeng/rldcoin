@@ -1452,3 +1452,37 @@ allgoal/independent/history/PQ/physical OPEN; goalactive, frozenbody/site untouc
 Persistent cwd remains UI repair; every command explicitly uses newrldcoin workdir.
 Goal text stillc906/f825 predecessors; current adopted authority2ba62421/c59f9fe8.
 See docs/operations/evidence/regional-bft-carriage-priority-outcome-20261005.json.
+
+
+2026-10-05 exact818 readonly delivery counter v3 passes3.723s after two retained
+helper failures (3attempts8.235s total): source1Prepare/source3Timeout already
+transport-custodied at2 but complete Native envelope absent; source1Timeout→2 not
+published.160archiveindex/111active receipts/44complete transport copies fully
+verify. NoNative replay/newQC/missing live cursor reconstruction. Current20cell
+8KiB wall-cost instrumentation22models pass; new four-Service original180 gate
+FAIL188.418/873sealed, owned services/threads stopped/forced[]/cleanup[]; no15
+maturity/full8cold/conservation. Full runtime-v4/6152 and receive-v7/6657 plus all
+olderFAILs remainfailed. No failed Native/Runtime/Node custody opens or recovery.
+Receive67acquires29fail/carriage53acquires18fail, holds max1.727/1.256seconds.
+Overlapping wall costs include open/close, not exclusiveCPU or unique causality.
+Readonly singleton witness cross-store counter shows32/64archive rechecks only
+.020–.040s; keep one-witness rule. Cold profile JSON encoder .143/signatures.087s
+selects exact-byte encoding work. First wrong Python environment failure .048s
+retained; corrected counter1.707s, twoattempts1.755s; coldprofile1.106s pass.
+Actual packet verification now uses operation-local exact signature-input bytes
+for bounded escape-free ASCII frame; ordinary metadata/fallback and all full
+signatures/frame/routing/Native/caller checks remain.13models.292s and108exact
+stopped-packet byte/signature/full-readonly-store regression pass; encoding median
+.065509→.022379s only microcomparison, not live/fullfault speed. First reporter
+round-shadow failure2.645s retained; corrected2.623s, twoattempts5.267s total.
+873privatebytes unchanged;163publicsource/entry/report files archived without
+fixture copy. Next bind current fullPython/unchangedNative89/actualCLI/controller,
+then only one fresh8Native/fourService samehost/samehelper original180 finite gate:
+actual import13/mature15/net2 plus all8fixedheads/fullenvelopes/owner/caller/value
+cold; no controller consensus/carriage afterstartup. Preserve60round/2maturity/
+3quorum/24cap/allbounds. Exit mismatch/fullchecks/deadline; failure seals, no reopen/
+resign/refund/replacement/unchangedretry. Not started; no600 allocated. Fullgoal/
+VALUE-STRICT-01/history/PQ/independent/physical OPEN; goalactive/frozenpaper/site
+unchanged, goaltext predecessor hashes reported, persistentcwd UI pending and
+allcommands explicit newworkdir. See
+operations/evidence/regional-bft-mesh-lease-and-packet-bytes-outcome-20261005.json.

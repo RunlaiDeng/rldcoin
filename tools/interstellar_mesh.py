@@ -26,6 +26,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey,
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, PublicFormat, NoEncryption
 import interstellar_transfer as evidence
 import interstellar_active_state as active_state
+import interstellar_frame_digest as frame_digest
 
 VERSION = 'RLD-CONTACT-MESH-V3'
 SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
@@ -249,7 +250,8 @@ def verify(value, kind, network):
     require(isinstance(value['signature'], str) and re.fullmatch(r'[0-9a-f]{128}', value['signature']), 'invalid signature encoding')
     try:
         Ed25519PublicKey.from_public_bytes(bytes.fromhex(public)).verify(
-            bytes.fromhex(value['signature']), (VERSION + '\0' + kind + '\0').encode() + evidence.canonical(body))
+            bytes.fromhex(value['signature']), (VERSION + '\0' + kind + '\0').encode()
+            + (frame_digest.packet_body_bytes(body) if kind == 'packet' else evidence.canonical(body)))
     except InvalidSignature as error:
         raise ValueError('invalid signature') from error
     require(body.get('node_id') == node_id(public), 'node identity mismatch')

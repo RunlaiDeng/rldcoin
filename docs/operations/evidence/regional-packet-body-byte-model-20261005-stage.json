@@ -1,0 +1,17 @@
+{
+  "format": "RLD-PACKET-BODY-BYTE-MODEL-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "recorded_at_utc": "2026-10-05T20:08:00.042502+00:00",
+  "hypothesis": "Measured large-string JSON encoding can be avoided for packet signature input while preserving exact complete canonical bytes. Existing metadata encoder plus bounded escape-free ASCII frame bytes must agree across hostile shapes/escapes, tighter limits and full signature/transport negatives.",
+  "exit": "First exact byte or signature/transport regression, completed relevant models, or original120deadline; no Native/old fixture/custody/socket.",
+  "source_sha256": {
+    "tools/interstellar_mesh.py": "4588ad5ce28822609d8e085a67d499902e332c336f063dff4d6b50a4f48305d9",
+    "tools/interstellar_frame_digest.py": "5952262117a183120adb847adacc6a91f362b5a4bf44928e6fad4072df12d581",
+    "tools/test_interstellar_packet_body_bytes.py": "208ead95942a63d9cc8dfcbd3bc9e7ac52e6891d62f419e0523805ed3f59fb4e",
+    "tools/test_interstellar_frame_digest.py": "610da02116a18fcfe14997b5ebeef6592df0550962dd0f6d1e4570aa0472c3f7",
+    "tools/test_interstellar_single_frame_auth.py": "65e4d1a8395de91ad9ee39e7b47630d2e0fe4020ba7431b6cdf46c95ff0ecbb0"
+  },
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
