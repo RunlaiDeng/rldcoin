@@ -1,0 +1,21 @@
+diff --git a/tmp/default-relay-20260930/test_bft_paged_history_model-initial-failed-20261005.py b/tools/test_bft_paged_history_model.py
+index fb5862aee..7a4965538 100644
+--- a/tmp/default-relay-20260930/test_bft_paged_history_model-initial-failed-20261005.py
++++ b/tools/test_bft_paged_history_model.py
+@@ -109,0 +110 @@ class PagedHistory(unittest.TestCase):
++        operation = {'kind': 'export', 'id': 'never-authenticated-certificate', 'amount': 1}
+@@ -111 +112,3 @@ class PagedHistory(unittest.TestCase):
+-                 'height': 81, 'parent': ledger.tip, 'actions': []}
++                 'height': 81, 'parent': ledger.tip,
++                 'actions': [{'operation': operation,
++                              'authorization': auth.issue('owner', 'model-owner', operation)}]}
+@@ -112,0 +116 @@ class PagedHistory(unittest.TestCase):
++        self.assertNotIn(m.canonical(forged['commit'][0]), auth.statements)
+@@ -115,0 +120,7 @@ class PagedHistory(unittest.TestCase):
++        # Registering this exact statement in the trusted ideal oracle changes
++        # the authentication premise. Identical formerly-authenticated bytes
++        # must not be mislabeled as a forgery (the initial test fixture did so).
++        certificate(block, auth)
++        accepted, _ = m.replay(archive, changed_heads, issued, auth)
++        self.assertEqual(accepted.height, 81)
++        self.assertEqual(accepted.transit['never-authenticated-certificate'], 1)

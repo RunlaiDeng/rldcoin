@@ -93,3 +93,12 @@ context/candidate0.226924秒。sign占这些独立计时总额81.4769%，不是�
 规则不改。一个设计模型及其有限判别预算120秒、一次；模型不是Native/crypto/
 完整2016普通运行资格。明确counter及安全模型后，才在新signed genesis/profile
 下实施ordinary Store、BFT signer、钱包/证据所需完整规则，不仅另做只读verifier。
+
+该模型门槛已产生[可执行模型和准确局限](REGIONAL_BFT_PAGED_HISTORY_MODEL_V1.md)。
+完整2018模型高度/12108签署记录保留，887文件/24013495字节，活动64/128；
+七个有限行为组通过，首次整体scope因攻击fixture误把已认证相同字节当伪造而
+10.700秒退出1，原失败保留。改用不同未认证完整提案的单项30秒scope在0.579秒
+通过；模型源和其余方法未变，来源绑定复用，未重复轨迹或宣称完整suite重跑。
+这是理想认证/单era/价值子集与抽象出版模型，不是Native或独立custody资格。
+下一门槛为新明确原生规则下普通Store与BFT signer共同分页，一次300秒组件
+判别（实现完成后执行、含编译、无network），旧64/128及全部旧失败不改变。

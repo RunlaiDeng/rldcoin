@@ -38,6 +38,13 @@ snapshot bound拒绝且原生/磁盘不变；2016窗口未改，普通窗口结�
 新改变方法12高度成本样本24.715秒通过完整cold/四signer/caller heads；Native
 sign占独立计时81.4769%，内部成本未分开，未验证128-record门槛。
 [完整历史/锁设计义务、成本归因边界和下一可执行模型](research/REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)。
+后续[可执行完整保留模型](research/REGIONAL_BFT_PAGED_HISTORY_MODEL_V1.md)实际完成
+2018模型高度/12108签署记录、887文件/约24MB及64/128活动边界；绝对2016窗口、
+费用与永久ID保留。首次整体10.700秒失败于攻击fixture误把已认证相同原文当伪造，
+保留未通过；更换未认证完整提案后单项0.579秒通过，原模型及七方法结果按准确
+未变来源复用，未重复长轨迹。密码/发行/完整价值/出版均有明确模型前提，
+Native第65检查点/128签署容量及真实2016资格仍OPEN。下一实现同时处理普通
+Native Store与BFT signer的新规则，不降低旧bound或用只读verifier替代。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付
