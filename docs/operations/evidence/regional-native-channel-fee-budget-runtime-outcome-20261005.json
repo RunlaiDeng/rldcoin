@@ -1,0 +1,119 @@
+{
+  "format": "RLD-CHANNEL-FEE-BUDGET-RUNTIME-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T00:07:42.624110+00:00",
+  "implementation_base_commit": "ab2586de16ffc4ef65be63b06eda4b1d699f0b88",
+  "milestone": "Actual ordinary one-leader cold startup and real ticks automatically propose native highest accepted channel receipt challenge without owner/witness keys or controller challenge injection; no debit or finalization.",
+  "completed_one_leader_milestone": true,
+  "three_runtime_finalization_completed": false,
+  "native_source_changed": false,
+  "node_source_changed": false,
+  "regional_source_commitment": "c2b5e8bccd707e8f6d74193d488d24dace8453a3339e0c2a09c6db89d8b808a3",
+  "implementation_identity": "ec6f496020310cda80f82a2865b78114305ffc7825e34c1666f58f1ed7ce34d1",
+  "kernel_rules_hash": "0d76dcdef6f68e107961d3049c33fcb65ac2fbe95fd27feafa40245a05cc4caf",
+  "value_profile_rules_hash": "480e0f73a80294642dde600c1fac282d9da02270e228ab0847974e7d61c36d96",
+  "binary_sha256": "838873ba542703392db98d3fa411bd2f4a9f43837c9493073bc6fdcd6ed5fb3a",
+  "core_171_file_manifest_verified_unchanged": true,
+  "core_source_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+  "proof_scope": {
+    "fresh_isolated_signed_zero_allocation_fixture": true,
+    "public_fixture_keys_only": true,
+    "initialization_and_close_controller_certified": true,
+    "runtime_controller_challenge_vote_or_certificate_injection": false,
+    "ordinary_leader_source_full_cold_native_authentication": true,
+    "real_ticks": 3,
+    "proposal_height": 7,
+    "unchanged_ledger_height": 6,
+    "highest_sequence": 2,
+    "challenge_fee": "3",
+    "no_fee_debit_until_certification": true,
+    "owner_and_witness_key_files_absent": true,
+    "original_close_height": 6,
+    "deadline": 2022,
+    "window_blocks": 2016,
+    "maximum_height": 24,
+    "round_timeout_seconds": 60,
+    "native_full_cold_latest_pinned_replay": true,
+    "full_fault_or_tls_physical_window_qualification": false
+  },
+  "attempts": [
+    {
+      "stage": "regional-native-channel-fee-budget-runtime-20261005-stage.json",
+      "stage_sha256": "410d6dce25572f423002212af9aa598d7ee7982b5011e2e0680fb9e2fc75e6c8",
+      "checks": "regional-native-channel-fee-budget-runtime-20261005-checks.json",
+      "checks_sha256": "4be06b33f37925f3a0b00721bd23d0f4ac0e096f0212b348dbe9b5f324a3b364",
+      "controller_sha256": "251f0a5bea4a7a142616469556a95f7155a1918506471221b3bb4db47c232b67",
+      "completed": false,
+      "duration_seconds": 41.693,
+      "failure": "ValueError: noncanonical JSON",
+      "total_budget_seconds": 120
+    },
+    {
+      "stage": "regional-native-channel-fee-budget-runtime-retry1-20261005-stage.json",
+      "stage_sha256": "fe5304a3b74b17d5451fdba6b0e751063a154fbe9bae756596965778756cde9b",
+      "checks": "regional-native-channel-fee-budget-runtime-retry1-20261005-checks.json",
+      "checks_sha256": "56092b6ee706188dfd577fb4c93f37fe4e9aa96f0effb7dfff6c96ff51d8029c",
+      "controller_sha256": "b80e0d03f6fda2be4584ca76d4617b76bdb8c7d2868baa3aa6c82cb127e9c1f9",
+      "completed": false,
+      "duration_seconds": 120.017,
+      "failure": "TimeoutError: single Runtime fixture 120-second budget exhausted",
+      "total_budget_seconds": 120
+    },
+    {
+      "stage": "regional-native-channel-fee-budget-runtime-leader-20261005-stage.json",
+      "stage_sha256": "af4ba326fc4f54beaec7753b52494649f904b055fa617ddf99c63c6feea8c25e",
+      "checks": "regional-native-channel-fee-budget-runtime-leader-20261005-checks.json",
+      "checks_sha256": "49a23fbeaea1a43093306871eea4de7619f7bca7c0038e6cbfa752234fa04827",
+      "controller_sha256": "bfbbc37ac90db9e00d0cbd9d9af1ecb927a623de07600a5cd49200330f519a50",
+      "completed": true,
+      "duration_seconds": 70.186,
+      "failure": null,
+      "total_budget_seconds": 120
+    }
+  ],
+  "terminal_failures_preserved": true,
+  "no_old_private_fixture_restart": true,
+  "no_new_network_campaign_or_long_test": true,
+  "strict_evidence_reused": {
+    "checks": "regional-native-channel-fee-budget-implementation-checks-20261005.json",
+    "checks_sha256": "56d0641abe26aad087dd12f266ead112a5647b40fca3c93e00b3db88cee7ec75",
+    "source_exactly_unchanged": true,
+    "new_strict_run": false
+  },
+  "legacy_value_strict": {
+    "id": "VALUE-STRICT-01",
+    "status": "OPEN / not passed",
+    "source_sha256": {
+      "crates/rld-value-successor/src/destination/pow.rs": "a4bb07011aa719d5429529dcff4a59baaf56c6ae47766dcea1e6728f5b41eb77",
+      "crates/rld-value-successor/src/destination/pow/tests.rs": "032ae054565f05e31351b0eacea75ef6f9dee8e6916782327f60b97193c25c04"
+    },
+    "new_diagnosis_or_fix": false,
+    "trigger_fired": false,
+    "diagnosis_budget_seconds": 120,
+    "fix_verification_budget_seconds": 300,
+    "no_production_waiver": true
+  },
+  "authority": {
+    "markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+    "pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+    "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "mandatory": "S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8",
+    "body_pdf_site_modified": false
+  },
+  "next": {
+    "hypothesis": "Three admitted ordinary Runtime voters authenticate only newly produced complete current-context envelopes through normal receive, preserve original heads/prepared locks, and certify the automatically selected highest receipt challenge once.",
+    "minimal_changed_method": "Fresh isolated BFT fixture; remove redundant controller delivery of already cold-authenticated historical envelopes. Never skip native cold startup or incoming native authentication; no controller-created Challenge, votes, quorum or certificates after Runtime start.",
+    "measured_budget_basis": "Fresh setup + three complete Runtime cold starts took 102.151 seconds; one leader proposal added about 7.842 seconds. Additional quorum/finality native work needs an explicit budget rather than another unchanged 120-second broad sample.",
+    "attempt_budget": 1,
+    "total_budget_seconds": 180,
+    "network_long_campaign_budget": 0,
+    "exit": "Unexpected refusal, full actual three-of-four finalization with pinned native replay and exactly one fee debit, or 180 seconds. Stop and preserve all state; no unchanged retry or capacity/deadline/quorum relaxation.",
+    "open_gates": [
+      "ordinary three-of-four finalization",
+      "TLS/contact scheduling and fault load",
+      "high-QC adversarial dynamics",
+      "full 2016 window",
+      "independent/cross-device custody",
+      "long history and crypto/physical qualification"
+    ]
+  }
+}

@@ -6,10 +6,13 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-当前源绑定开发已推进到 V8 明确累计费用预算及原生 watcher / BFT 自动候选；
+当前源绑定开发已推进到 V8 明确累计费用预算、原生 watcher及实际普通领导者自动挑战提案；
 [R-CH-FEE-01](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md) 旧费用覆盖失败保留；
 [V8候选](research/REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md)只修复已测native路径，
 完整故障/窗口/独立安全仍未通过，不能把有限scope或守恒称为全部协议完成。
+2026-10-05 最小普通 Runtime leader 样本70.186秒通过自动q2提案且未扣款；
+首配置拒绝41.693秒及三Runtime范围120.017秒耗尽仍未通过。三取四实际纳入/TLS仍待验；
+[完整终态和下一一次180秒判别](operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)，不重复旧长测或降低冷认证/锁/期限。
 
 ## 已完成的近期交付
 

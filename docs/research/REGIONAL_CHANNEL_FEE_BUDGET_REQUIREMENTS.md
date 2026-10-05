@@ -93,13 +93,42 @@ fault验收仍OPEN。持续2016窗口/200000历史、真实Runtime/TLS无钥最�
 费用峰值/新fee规则/跨设备、PQ/crypto、物理与全部协议目标仍需完成。
 旧价值库VALUE-STRICT-01未通过，地区strict不替代，源码未改，不加豁免。
 
-下一假设：普通V8 admitted BFT Runtime收到完整已认证通道提交并在本地
-durable接受较高receipt后，普通启动/领导者调度应选择并认证费用预算挑战，
-无需controller注入挑战或读取owner/witness钥；完整transport与native custody
-仍分开。先在新source绑定的最小Runtime/native集成样本一次120秒、网络长
-campaign=0判别。由实际counterexample选择修复，不为了过检查跳过high-QC锁、
-旧caller-head或源绑定/完整authentication。终态/失败/预算即退出，保留原样。
-不能重复原600秒stage/60秒轮/24高度或将旧fault/profile结果继承为新资格。
+### 普通领导者自动提案：最小实际范围已通过
+
+2026-10-05，native来源 `c2b5e8bc...` / binary `838873ba...` 未变。
+首个全新BFT样本41.693秒在Runtime配置读入拒绝：controller用了native-style
+非排序JSON，严格mesh配置要求canonical JSON。原配置/来源/失败目录保留，
+独立字节比对确认schema值相同；只在新目录改用现有 `mesh.atomic` 写配置。
+这不是协议反例，也没有完成普通启动。
+
+第二个新样本三个Runtime分别于62.476、83.044、102.151秒完成原有完整冷认证；
+controller先搬运其历史完整信封，120.017秒预算耗尽，未观察到最高状态提案。
+此范围仍未通过。未提高预算重跑同一历史搬运方法，也未取消native冷认证。
+
+判别改为一个当前合法leader、全新四副本/原生投票目录准备、普通启动和真实
+时钟的tick。一次120秒范围在70.186秒通过：冷启动61.362秒，三次普通tick
+于69.204秒自动提出高度7、q2、费用3的Challenge；controller没有调用Runtime
+candidate/sign/quorum、没有注入Challenge，owner/W钥文件已不存在。
+提案保留实际完整q2 witness/state与原储备，原生ledger仍高度6、q0、spent0；
+c=6、deadline2022不变，最终exact latest head完整冷重放通过。
+这证明普通自动提案，**不是三取四纳入、TLS/full fault/full window通过**。
+setup六个旧块/Close由controller真实3/4认证，不能冒充Runtime自动认证。
+同源码36项/strict/build与旧准确分支证据继续复用，没有再做已通过长测。
+
+下一假设：三个普通admitted Runtime仅接收新产生当前context的完整认证信封，
+应由自身生成prepare/commit/certification并把自动q2挑战实际纳入。原有完整冷
+认证、high-QC锁、separate caller heads及每个收到的信封native认证全保留；
+只是移除controller对已经冷认证历史的重复搬运，不替代ordinary接触链资格。
+全新isolated签署无价值fixture一次180秒，长网络campaign=0；该预算单列依据
+为已测setup+三个冷启动102.151秒及leader提案另约7.842秒，尚需quorum/finality。
+不得原样再跑前120秒范围或放宽冷认证、60秒轮、24高度、2016窗口、票数/容量。
+遇拒绝、180秒或实际3/4最终纳入且exactly一次fee debit与pinned冷重放即退出，
+失败保留原目录，不重签/退款/复活。原600秒stage的完整scope不受这短探针影响。
+
+[Runtime判别及预算退出](../operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)
+保存三个来源绑定终态和独立配置拒绝；首两次未通过不由最后小范围通过替代。
+核心171文件、冻结正文/PDF/receipt和旧价值库两文件均再次验证原字节。
+VALUE-STRICT-01仍OPEN，本轮未触及该库/发布包，未触发诊断或修复检查。
 
 最终83步实际CLI在24.334秒终止通过，完整来源绑定与复用边界见
 [实施结果](../operations/evidence/regional-native-channel-fee-budget-outcome-20261005.json)。
