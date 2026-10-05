@@ -23,6 +23,7 @@ from regional_bft_cold_batch import check_retained as check_cold_retained
 from regional_bft_live_batch import inspect as inspect_live_batch
 from regional_bft_joint_epoch import JointEpoch, JointLoopStatus, FORMAT as JOINT_FORMAT, signed_body
 from regional_bft_joint_roles import RoleJoint, FORMAT as ROLE_FORMAT, readonly_head
+from regional_native_startup import Inspection
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
@@ -51,7 +52,7 @@ class Runtime:
         self._signed_query_ready = False
         self._broadcast_quiet = None
         self.observation = Observation()
-        self.native, self.transport = native, transport
+        self.native, self.transport = Inspection(native), transport
         self.failed = False
         self.lock = self.head_lock = None
         self.extra_locks = []
@@ -94,7 +95,7 @@ class Runtime:
                 info = os.fstat(fd)
                 mesh.require(stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid() and not info.st_mode & 0o077 and info.st_nlink == 1, 'BFT runtime lock invalid')
                 fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
-            current = native.call('bft-context')
+            current = self.native.call('bft-context')
             self.region = current['context']['region']
             validators = config['validators']
             if roles:
@@ -158,6 +159,9 @@ class Runtime:
         except BaseException:
             self.close()
             raise
+        finally:
+            # Live ticks retain their original lock-refusal/unknown semantics.
+            self.native = native
 
     def close(self):
         self._broadcast_quiet = None

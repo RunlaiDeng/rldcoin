@@ -20,7 +20,11 @@
 live164.517秒、总303.651秒，原60秒轮/24高度/2016窗口未变，无控制器搬运。
 首42.973秒启动锁拒绝/未完成启动退出仍未通过；后续仅改变新样本controller
 启动观察次序，源码未变，不能宣称已修复或唯一诊断该产品startup风险。
-下一一次120秒实际OS锁最小判别，不重复已通过TLS长scope。
+实际OS锁最小反例0.170秒成立；窄read-only startup等待修复后13项当前源检查
+及新V8真实Native入口/无钥BFT构造通过，普通live不改等待/头策略。
+首次stale helper setup拒绝仍未通过，helper来源修复后换全新fixture验证；
+[修复绑定和下一有限缺席leader门槛](research/REGIONAL_NATIVE_STARTUP_CONTENTION_REQUIREMENTS.md)。
+没有原样重跑旧TLS或full fault范围。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

@@ -1,0 +1,25 @@
+{
+  "format": "RLD-NATIVE-STARTUP-HELPER-SOURCE-BINDING-REPAIR-V1",
+  "old_helper_sha256": "f687855bc9973738db6085526cc02f2669d1cbf92639cc0b50ac5c68a95faf95",
+  "new_helper_sha256": "7c588b9d8a0ddc53851f12966157bbfdd8a90f04cf3ce717e1302850d8f92dce",
+  "native_binary_sha256": "838873ba542703392db98d3fa411bd2f4a9f43837c9493073bc6fdcd6ed5fb3a",
+  "native_binary_and_source_unchanged": true,
+  "first_checks": "regional-native-startup-inspection-fix-20261005-checks.json",
+  "first_checks_completed": false,
+  "first_unit_results": "5 passed; 8 Native fixture setup errors before startup waiting was exercised",
+  "reason": "Stale contact-fixture emitted an untrusted implementation. All source checks and native main bytes matched; helper rebuilt from that same reviewed native source.",
+  "build_command": [
+    "cargo",
+    "build",
+    "--bin",
+    "contact-fixture",
+    "--locked",
+    "--offline"
+  ],
+  "build_normal_exit_code": 0,
+  "build_seconds": 1.48,
+  "new_test_fixture_only": true,
+  "new_verification_budget_seconds": 180,
+  "new_attempt_budget": 1,
+  "full_network_campaign_budget": 0
+}

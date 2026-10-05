@@ -165,14 +165,12 @@ prepare/commit保证原生BFT证明。fee各扣3，剩余+spent=original，c6/d2
 route或全部S/R/I/A–G/N/P资格。所有此前失败、旧owner请求和余额不迁移。
 VALUE-STRICT-01仍OPEN，旧价值库与其两处基线未改，地区strict不替代。
 
-下一可证伪假设：独立的benign Native store OS锁持有本身足以让当前ordinary
-startup观察拒绝；放锁后相同新签无价值store仍有效且字节不变。只用全新
-原生store、实际OS锁和startup/contact read，不启动投票、owner请求、网络或
-旧fixture，一次120秒，终态/反证/预算即退出。若成立，针对明确read-only
-startup观察的精确lock-refusal做有界等待；不重试signing、自动recover/adopt
-head、fake authority或绕过Native认证。若不成立保留原因未知，换最小判别；
-不重复本次已通过TLS循环。startup gating已解决本实验干扰，并未修复产品
-在其他读进程竞争时的startup拒绝风险。
+启动风险随后已完成真实OS锁反例和窄代码修复：反例0.170秒；精确readonly
+startup等待，最多共享3秒失败/延迟及128锁拒绝，mutations不重试，普通live
+恢复原Native对象/unknown策略。13项当前源检查7.652秒及新V8真Native入口/
+无钥BFT构造1.374秒通过；首次五项逻辑通过/八项stale helper setup拒绝仍
+未通过，helper准确绑定后仅换新fixture验证。Native/core/freeze均未变，
+没有新full TLS或fault通过。见[原生启动锁合同与下一有限缺席leader门槛](REGIONAL_NATIVE_STARTUP_CONTENTION_REQUIREMENTS.md)。
 
 [Runtime判别及预算退出](../operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)
 保存三个来源绑定终态和独立配置拒绝；首两次未通过不由最后小范围通过替代。

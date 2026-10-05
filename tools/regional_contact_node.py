@@ -21,6 +21,7 @@ import time
 import interstellar_mesh as mesh
 import interstellar_tcp as tcp
 import interstellar_transfer as wire
+from regional_native_startup import Inspection
 
 FORMAT = 'RLD-REGIONAL-CONTACT-NODE-V1'
 MAX_PER_TICK = 4
@@ -70,7 +71,7 @@ def startup_config(native, path=None):
     An empty contact set means waiting for a real contact, never an invented
     reachable peer. Default initialization is serialized across startup races.
     """
-    observation = native.call('contact-status')
+    observation = Inspection(native).call('contact-status')
     mesh.require(observation['currency'] == native.currency, 'startup currency mismatch')
     if path is not None:
         return mesh.load(path, 64 * 1024)
@@ -114,7 +115,7 @@ class Service:
         try:
             self.lock = os.open(self.root / '.regional-contact-service.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
             fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            observation = native.call('contact-status')
+            observation = Inspection(native).call('contact-status')
             self.region = observation['region']
             mesh.require(observation['currency'] == native.currency and config['network'] == native.currency,
                 'native/transport currency network binding mismatch')
