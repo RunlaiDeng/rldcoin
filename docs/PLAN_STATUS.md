@@ -20,6 +20,13 @@ batch回归通过。全新无网络原生组件10.319秒/一次180通过：实�
 [终态与下一普通重试判别](operations/evidence/regional-bft-candidate-lock-fix-outcome-20261005.json)。
 历史“全部通过”仅指当段源码/有限scope，不能覆盖后续失败或全部验收。
 
+普通锁忙重试范围已在73.838秒/一次180通过：单helper内4个实际Service/Runtime，
+同机pinnedTLS；实际持锁无提案/无原heads变更，下一正常tick提案含精确Import，
+四收款import1/mature3/net2可花。122完整信封/8固定头Native/caller/owner/fullmesh/
+1e30守恒cold、私有字节未变；Services/线程停止，534文件封存。源出口和4controller
+证书为准备，非默认CLI/独立进程/跨主机/fullfault资格。
+[下一必要原预算完整范围](operations/evidence/regional-bft-candidate-service-outcome-20261005.json)。
+
 当前来源 `89408f5a...` / implementation `8a361699...` / release binary `a45387fa...`：
 **普通六阶段完整闭环510.455秒/原600秒有限通过**；四E9/四P6/四A8，全部成熟、
 1606阶段合计完整信封/原heads/12Native/最终守恒，27Services正常退出。

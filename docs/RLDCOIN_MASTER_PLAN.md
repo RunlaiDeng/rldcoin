@@ -596,3 +596,24 @@ Current body2ba62421/PDFc59f9fe8and S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8 adopte
 goal text retains superseded predecessor hashes; frozen paper/site unchanged.
 See operations/evidence/regional-paged-full-fault-async-v5-outcome-20261005.json and
 operations/evidence/regional-bft-candidate-lock-fix-outcome-20261005.json.
+
+
+2026-10-05 candidate-lock ordinary Service gate passed73.838seconds/once180exit0.
+One helper hosted4actual Service/Runtime instances with ordinary pinnedTLS workers;
+no standalone Native node CLI startup or independent host/process qualification.
+Fresh8Native custody;4source setup certificates/contact carriage only. Actual
+blocked leader trial released no Proposal/native/signer/caller change; next normal
+tick signed the exact Import. All4import1/mature3/net2spendable;122complete retained
+envelopes/8fixed-head Native/8caller+owner/fullmesh/native1e30conservation cold pass,
+private bytes unchanged. Services/allownedthreads stopped;534files sealed.
+This changed source is qualified only for that finite ordinary mechanism. Old
+6152/6128and every full failure stayFAILED; no unique full root cause is proved.
+
+Next genuinely fresh signed zero-allocation Native/TLS/custody preparation once180,
+then at most one necessary original600body/cold fullfault under qualified changed
+Python source/current Native89binary/driver/controller binding. Actual original9net
+maturity/keylessdrain/all12cold/conservation mandatory;60round/24newheights/E27-P24-
+A24/maturity2/quorum3/capacity unchanged. Exit first failure/full invariants/deadline;
+failed currency seals/no reopen/recovery/resign/refund/copy/unchanged repeat.
+Goalactive; allgoal/VALUE-STRICT-01/2016/history/independent/PQ/physical OPEN.
+See operations/evidence/regional-bft-candidate-service-outcome-20261005.json.
