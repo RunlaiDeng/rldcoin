@@ -172,6 +172,41 @@ class Service:
             os.close(self.lock)
             self.lock = None
 
+    def receive_bft_batch(self, rows, errors, rejected, deferred):
+        """A local lock cannot establish envelope invalidity or acceptance."""
+        mesh.require(type(rows) is list and 0 < len(rows) <= MAX_PER_TICK,
+                     'BFT receive batch count outside bound')
+        try:
+            self.bft.receive_many([raw for _, raw in rows])
+            self.bft_seen.update(packet_id for packet_id, _ in rows)
+            if self.contact_trace is not None:
+                for packet_id, raw in rows:
+                    self.contact_trace.native_received(packet_id, raw)
+        except (OSError, ValueError, subprocess.TimeoutExpired) as error:
+            if len(rows) > 1:
+                self.bft_individual_retry = True
+            errors.append(str(error))
+            # Authenticate all complete bytes again on retry. No bft_seen hint
+            # or negative proof decision may be released from this refusal.
+            if (isinstance(error, NativeRefusal)
+                    and error.command in ('bft-network-inspect-batch',
+                                          'bft-network-check', 'bft-sync', 'bft-context')
+                    and type(error.exit_code) is int and error.exit_code == 1
+                    and error.diagnostic.strip() in (
+                        'regional candidate rejected: lock acquisition failed because the operation would block',
+                        'regional candidate rejected: complete stream already locked',
+                    )):
+                deferred.extend(dict(packet_id=packet_id,
+                                     stage='native-validation-pending',
+                                     command=error.command, exit_code=error.exit_code,
+                                     diagnostic=error.diagnostic.strip(),
+                                     ledger_acceptance_known=False,
+                                     signing_authority=False)
+                                for packet_id, _ in rows)
+            else:
+                rejected.extend(dict(packet_id=packet_id, reason=str(error))
+                                for packet_id, _ in rows)
+
     @contextmanager
     def selection_node(self):
         self.tcp.request_selection()
@@ -241,7 +276,7 @@ class Service:
         stage_started = time.monotonic()
         received, routes, adverts = [], {}, {}
         errors = list(socket_observation['errors']) if socket_observation is not None else []
-        rejected = []
+        rejected, deferred = [], []
         selected=[]
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
@@ -285,14 +320,7 @@ class Service:
             def flush_bft():
                 if not pending_bft:return
                 try:
-                    self.bft.receive_many([raw for _,raw in pending_bft])
-                    self.bft_seen.update(packet_id for packet_id,_ in pending_bft)
-                    if self.contact_trace is not None:
-                        for packet_id,raw in pending_bft:self.contact_trace.native_received(packet_id,raw)
-                except (OSError,ValueError,subprocess.TimeoutExpired) as error:
-                    if len(pending_bft)>1:self.bft_individual_retry=True
-                    errors.append(str(error))
-                    rejected.extend({'packet_id':packet_id,'reason':str(error)} for packet_id,_ in pending_bft)
+                    self.receive_bft_batch(pending_bft, errors, rejected, deferred)
                 finally:pending_bft.clear()
             for packet_id, raw in received:
                 try:
@@ -377,7 +405,8 @@ class Service:
             'relay_enabled': True, 'local_import_mining_enabled': self.miner is not None,
             'observed_at_unix': int(time.time()), 'transport': transport,
             'native_observation': native_observation, 'native_observation_available': native_observation is not None,
-            'applied': applied, 'rejected': rejected, 'errors': errors[:16], 'fixture_only': True,
+            'applied': applied, 'rejected': rejected, 'deferred': deferred,
+            'errors': errors[:16], 'fixture_only': True,
             'consensus': consensus,
             'physical_route_verified': False, 'independent_operators': False,
             'transport_receipt_is_payment_authority': False, 'remote_current_state_known': False}

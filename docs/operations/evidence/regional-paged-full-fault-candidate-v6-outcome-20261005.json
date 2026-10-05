@@ -1,0 +1,97 @@
+{
+  "format": "RLD-PAGED-FULL-FAULT-OUTCOME-V6",
+  "recorded_at_utc": "2026-10-05T18:35:45.251713+00:00",
+  "completed": false,
+  "budget_seconds": 600,
+  "attempts_used": 1,
+  "duration_seconds": 292.352,
+  "exit_code": 1,
+  "budget_exhausted": false,
+  "checks_sha256": "69246b959887f8f76c9325b88a57b8c0523e0491593ae9224571a750bf4c4e6c",
+  "stage_sha256": "48268bac68b63325beb34301304699dfdfcc80f7737b8113a66b02a8d46c4dd5",
+  "native_source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "actual_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "companion_source_commitment": "31f1e07c9e06eb678b5f3bf1d2f12bc42b6103f150c39aa9b75f2682d4277b56",
+  "result": {
+    "attempted_owner_signs": 3,
+    "body_and_full_cold_within_original_deadline": false,
+    "cleanup_failure": null,
+    "completed": false,
+    "failed_currency_never_reopen": true,
+    "failure": "ValueError: ordinary Native rejected a complete envelope",
+    "format": "RLD-PAGED-FULL-FAULT-TERMINAL-V1",
+    "full_fault_qualified": false,
+    "legacy_value_strict": "OPEN",
+    "owned_processes_stopped": true,
+    "owned_relays_stopped": true,
+    "released_owner_responses": 3,
+    "whole_goal_completed": false
+  },
+  "phase_discriminators": [
+    {
+      "kind": "phase-discriminator",
+      "observation": "missing-leader9 plus isolated two original local payments; no new import",
+      "phase": "isolated-missing-leader"
+    },
+    {
+      "kind": "phase-discriminator",
+      "observation": "offline original validator catches up while both contacts stay cut",
+      "phase": "offline-catchup"
+    }
+  ],
+  "restored_contacts_event_present": true,
+  "actual_receipt_query_count": 38,
+  "receipt_categories": {
+    "NATIVE_READ_BUSY": 22,
+    "NATIVE_RECEIPT_NOT_OBSERVED": 16
+  },
+  "complete_native_receipt_responses": 0,
+  "actual_recipient_import_maturity_unknown": true,
+  "rejected_observations": [
+    {
+      "slot": "proxima-1",
+      "reason": "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+      "packet_id_retained_privately": true
+    }
+  ],
+  "rejected_native_command_and_exit_not_retained": true,
+  "exact_full_native_diagnostic_not_retained_in_old_service_report": true,
+  "unknown_is_not_proved_bad_proof": true,
+  "owned_ordinary_node_exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "stopped_files": 4136,
+  "stopped_inventory_sha256": "20e8660befda5b43f4e19a21e68f18fde4ff28c3cf65fc469bc8d0780ff4fa4b",
+  "exact_failed_source_archive_sha256": {
+    "regional_contact_node.py": "9f1fb3d906a8632a621d6e2283af9aba26fc4fadd61cb848691a387139023005",
+    "regional_paged_fault_prepared.py": "05d8a979b3a24d38ddc4f024eb63500ebbf5ac624b4f1e29c30b0b92b75b3993",
+    "observe-paged-fault-full-candidate-v6-20261005.py": "1ec97f1a183c88186d20d93a0d89be2f1dd8163be34b33c59c9facba4e1a42d4",
+    "exact-source-retained.json": "98583c06e192b0c1bd4cdb7533cc31b7623ace0bad4a6d438600f56f7c962177",
+    "regional_paged_fault_terminal.py": "49f3c5a19c2b1abd87f7148a0b56ce29cff6547cea9bb924e74ef3aeee4384b7",
+    "regional_bft_node.py": "4cd91497220d2b50cb3f10aa9457cfa4a6cbfc9d8c3cc47e4564083c865c9639",
+    "test_regional_paged_fault_driver.py": "facb44250e320fe92067b39bd90dd591e8aa97f663967ddac47cb6f71d027b4d",
+    "check-paged-fault-full-candidate-v6-20261005.py": "13b766c5a35381ede1e822dabeaa9a6ceac88693c0c9f1ad0b0a0a9f87cc0c68",
+    "regional_paged_fault_driver.py": "74468bb15c433fe2c3bd8de18d19413395b82886631231cf0e3bf833b03d4d5d"
+  },
+  "failed_whole_currency_sealed": true,
+  "no_failed_native_runtime_reopen": true,
+  "all_prior_full_failures_remain_failed": true,
+  "preparation_candidate_v9_historical_setup_pass_only": true,
+  "old_private_source_freeze_unchanged": true,
+  "full_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_completed": false,
+  "next": "Once120 offline retained-source Service flush counterexample: complete typed action/exit/diagnostic can distinguish transient native receive-check lock from invalid envelope. A lost old action/exit cannot be reconstructed. Preserve proof/command/unknown refusal fatal paths and no bft_seen/ledger/head credit on deferral; no further fullscope in this stage."
+}

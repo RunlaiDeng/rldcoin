@@ -1313,3 +1313,37 @@ A24/maturity2/quorum3/capacity unchanged. Exit first failure/full invariants/dea
 failed currency seals/no reopen/recovery/resign/refund/copy/unchanged repeat.
 Goalactive; allgoal/VALUE-STRICT-01/2016/history/independent/PQ/physical OPEN.
 See operations/evidence/regional-bft-candidate-service-outcome-20261005.json.
+
+
+2026-10-05 sixth fullfault FAILED292.352seconds/once600exit1, not budget exhausted.
+Isolation original payments/missing-leader9/offlinecatchup passed, contacts restored;
+ordinary Service labeled a complete envelope rejected with native OS-lock text.
+Original action/exit/complete diagnostic were not retained; do not reconstruct
+those or infer a bad proof.38receipt calls=22lock/16no-evidence/0complete response;
+actual final import/maturity/keyless/full12cold/conservation unknown/notcompleted.
+All12nodes exited0/relays stopped/noforcedkill;4136files/exact changed source sealed.
+All previous failures remainfailed; no failed Native/Runtime/recovery/resign/refund.
+Candidate-v9setup42.089pass is historical preparation only, currency now closed.
+
+Narrow new Service receive source reports typed exact known candidate-independent
+validation/sync native lock as deferred, not envelope rejection. Complete action/
+integerexit1/full bounded diagnostic required; no bft_seen/trace/ledger/signing
+credit, no signed-byte deletion. Subsequent retry runs full Native authentication
+again, including later bad proof; wrong action/exit/combined diagnostics and all
+other refusals remainrejected. Partial prior Native progress never rolls back.
+Retained original production flush AST counter confirms the misclassification;
+new5models+13complete batch regressions passed0.024seconds, actual Native/Runtime/
+socket/sign0. Initial system-Python diagnostic entry lacked cryptography and did
+not execute; existing pinned venv corrected it without installing or repeating
+passed regressions. Actual old rejected command/exit remainsunknown.
+
+Next once180/one genuinely fresh8Native/4ordinary Service receive-lock gate:
+actual locked full inspect must defer without rejection/seen/caller credit; after
+unlock exact complete original bytes must natively authenticate, ordinary import
+1/mature3/net2 and full8Native/envelope/mesh/heads/owner/conservation cold complete.
+Source4cert/contact setup only,60round/maturity2/quorum3/capacities unchanged. Exit
+first mismatch/full behavior/deadline; failure seals/no unchanged600retry or bound
+increase. No further fullscope in this stage. Goalactive/allgoal/fullfault/strict/
+2016/history/independent/PQ/physicalOPEN. Current paper/site/cwd limitations unchanged.
+See operations/evidence/regional-paged-full-fault-candidate-v6-outcome-20261005.json
+and operations/evidence/regional-bft-receive-defer-outcome-20261005.json.

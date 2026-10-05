@@ -1,0 +1,35 @@
+{
+  "format": "RLD-BFT-RECEIVE-DEFER-STAGE-V1",
+  "recorded_at_utc": "2026-10-05T18:38:00.103378+00:00",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "Retained production flush marks an exact native receive-check lock as invalid envelope. Typed complete action/exit/diagnostic can defer local validation with complete bytes still pending; wrong action/code/altered proof must still reject.",
+  "discriminator": "Retained actual flush AST with typed NativeRefusal reproduces rejection. New batch tests check no seen/trace credit on deferral and full-byte retry before success, later invalid proof and long suffix remain rejection. No Native/Runtime/socket/custody access.",
+  "exit": "First model/source/binding error, complete discriminating regressions or120seconds; no fullscope retry.",
+  "old_production_flush_sha256": "9f1fb3d906a8632a621d6e2283af9aba26fc4fadd61cb848691a387139023005",
+  "new_source_sha256": "652376a0e05c5c5646d34d181000678228bdc139806b0f9fc1720d3b3c71e4d0",
+  "test_sha256": "54497f7c33d64e2e24b50dc173e5f7021937a9ab6411d813bd3185dcab288dbb",
+  "failed_inventory_sha256": "20e8660befda5b43f4e19a21e68f18fde4ff28c3cf65fc469bc8d0780ff4fa4b",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "old_production_counterexample_confirmed": true,
+  "original_failed_received_native_command_or_exit_not_reconstructed": true,
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "sockets": 0,
+  "first_signs": 0,
+  "full_fault_qualified": false,
+  "first_environment_entry_failure": {
+    "exit_code": 1,
+    "diagnostic": "ModuleNotFoundError: No module named 'cryptography'",
+    "native_calls": 0,
+    "corrected": "Existing pinned project venv; no install or model retest"
+  },
+  "changed_regressions_already_executed_at_this_source": {
+    "tests": 18,
+    "exit_code": 0,
+    "test_seconds": 0.024,
+    "model_tests": 5,
+    "related_batch_tests": 13,
+    "repeat_tests": 0
+  }
+}
