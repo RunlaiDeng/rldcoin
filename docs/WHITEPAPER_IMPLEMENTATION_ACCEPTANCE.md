@@ -880,3 +880,46 @@ all4import13/mature15/net2及全8固定头/完整信封/mesh/caller/owner/守恒
 PDFc59f9fe8/receipt86821d19，goal前继哈希仅报告。冻结正文/官网/服务器/资金/权限/
 清理不扩大，持久cwd仍UI待修，全部工具项目命令显式新rldcoin workdir。
 证据：[实际范围、成本反例与档案行修复](operations/evidence/regional-bft-inbound-archive-outcome-20261006.json)。
+
+## 2026-10-06 满档案TLS通过，四CLI仍失败，动态运输模型判别
+
+完整fault仍FAIL/OPEN，runtime-v4原600/612.570秒/6152与receive-v7原600/616.052秒/
+6657及所有旧失败保留。新满档案TLS一次60内10.519秒通过：每端64完整签名档案，
+目的新增16行；准确原request nonce/packet在竞争下持久保管，停止后全144档案/
+transit/frame/receipt与源包核验，299文件封存，线程全部停止。无Native/value资格。
+
+条件四普通CLI仍FAIL，原180耗尽/191.836秒含收尾，helper1，四进程exit0，guardian未用/
+forced[]/cleanup[]，1650文件封存，172公开源文件独立保留、无保管复制。最后记录Native
+与companion高度均13，原import13、要求mature15；最终Native未知，full8固定头cold、
+完整信封/owner/caller/守恒未完成。失败不重开Native/Runtime/Node，不恢复/复签/退款。
+原60round/24height/maturity2/quorum3/全部容量未变；不分配新180/600或延长deadline。
+
+准确停止1650只读运输判别6.366秒通过：661档案行/2active receipt/93相关完整副本签名
+认证，所有源consensus发布pending0，但一些当前包已发布、目的保管/完整信封缺失。
+该判别不重放Native，不把transport签名或retained body当ledger权威/唯一现场根因。
+只读decode成本判别1.438秒通过，但原commitment/decode比值.357527混入后续transit验证，
+仅是decode内该成本的保守上界；按独立scope correction收窄声明，不能当实际独占share。
+上界仍低于预设.5，未选codec修改，未重跑。库存分类与简单当前帧优先级对照未改善/
+出现漏选，均不采用；未重建现场process-local抑制/位置，不作因果或资格声明。
+
+实际新增test_interstellar_carriage_churn.py：3项一次120内37.343秒通过；全新三节点spool
+模型48历史包/2指定包、每轮4新frame、24轮、原四槽/256active/512position/4MiB位置等
+界限，真实Mesh接收/fsync及signed reply本地保管后才使用模型hop suppression。正常位置
+第4轮、每轮丢失位置第15轮实际目的receipt/原frame匹配，源包保留，坏后续签名拒绝。
+42私有地面文件保留。真实transport keys/sign/fsync，有界无socket/Native/Runtime/原生
+owner签署；有限成功调用模型不资格真实锁竞争/60秒轮/付款/fullfault，也不证明现场
+位置缓存丢失。生产源码未改；新163Python绑定仅多此模型，实际两live范围仍绑定162。
+
+下一条可证伪假设：两个已固定邻居的中间carrier，在真实TLS及普通receive/carriage竞争
+下，可能暴露两端单邻居组件未覆盖的运输服务边界。只分配一次60秒全新三peer地面
+组件，每peer64签名档案，中间2固定邻居，每个实际outbound owner及普通选择；保持
+2inbound/.2lock/3socket/4packet/highwater32/batch16/512position/4MiB。要求两hop准确
+完整transit/frame/receipt、原nonce保管关联、源包保留、完整mesh cold/干净关闭；首
+错误/trace缺区间/完成/原deadline退出并保留终态。无Native/旧failed/value；未启动。
+真实服务有具体拒绝/饥饿反例后才选修复，不凭缺日志，也不重复未变180/600。
+
+VALUE-STRICT-01独立OPEN，旧value源未变，无诊断/修复触发或告警豁免。全部S/R/I/A–G/
+N/P/长期/PQ/独立/物理门槛仍OPEN。goal active，采用2ba62421/c59f9fe8/receipt86821d19；
+goal正文c906/f825只是前继引用，已报告不改。冻结白皮书/官网、服务器、资金、权限/
+清理不扩大；持久cwd仍UI待修，工具项目命令显式新rldcoin。
+证据：[真实终态、运输边界与新动态模型](operations/evidence/regional-bft-loaded-tls-churn-outcome-20261006.json)。

@@ -1,0 +1,20 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 37.343285,
+  "helper_exit_code": 0,
+  "helper_terminal": true,
+  "budget_exhausted": false,
+  "forced_helper": false,
+  "test_count": 3,
+  "stage_sha256": "65b8b4c5d9f34389fe78be6020f92fbe5c28f93b7cc150d796686db81c9d804d",
+  "controller_sha256": "d7a1870ae014d9a5814c5b2729ea8af2a536135b763d418ff5b2291cf87f4d35",
+  "log_sha256": "0913efe13acc3644fa4ca055fec652e85ef60c03f3c3575d64e206f94d391fde",
+  "stopped_inventory_sha256": "0f5566de2f7e2fe41319a5d78baaf7be83436336916daabb9871b60d26a3463f",
+  "stopped_files": 42,
+  "log_summary": "test_cold_positions_under_authenticated_churn_and_exact_suppression (test_interstellar_carriage_churn.CarriageChurnTests.test_cold_positions_under_authenticated_churn_and_exact_suppression) ... churn-result test_cold_positions_under_authenticated_churn_and_exact_suppression delivery_round 15\nok\ntest_later_bad_signature_refuses_after_real_custody_and_warm_position (test_interstellar_carriage_churn.CarriageChurnTests.test_later_bad_signature_refuses_after_real_custody_and_warm_position) ... ok\ntest_warm_positions_under_authenticated_churn_and_exact_suppression (test_interstellar_carriage_churn.CarriageChurnTests.test_warm_positions_under_authenticated_churn_and_exact_suppression) ... churn-result test_warm_positions_under_authenticated_churn_and_exact_suppression delivery_round 4\nok\n\n----------------------------------------------------------------------\nRan 3 tests in 37.166s\n\nOK\n",
+  "fresh_ground_private_retained": true,
+  "native_payment_or_full_fault_qualified": false,
+  "whole_goal_completed": false
+}

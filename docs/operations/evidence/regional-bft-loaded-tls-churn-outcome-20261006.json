@@ -1,0 +1,177 @@
+{
+  "format": "RLD-BFT-LOADED-TLS-CHURN-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T21:37:44.243772+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_status": "active",
+  "previous_goal_turn_classification": "progress:actual archive witness repair committed with74related and235row readonly regression; changed source selected next necessary actual gate",
+  "adopted_markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "adopted_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_predecessor_hashes_reported_not_rewritten": true,
+  "reports": {
+    "regional-bft-inbound-archive-tls-v2-20261006": {
+      "completed": true,
+      "duration_seconds": 10.51913,
+      "helper_exit_code": 0,
+      "checks_sha256": "9a947cab20cb494de7a440834d614f801c11a8faa61aec6e682b9ff3c5a903c2"
+    },
+    "regional-bft-four-cli-service-v3-20261006": {
+      "completed": false,
+      "duration_seconds": 191.836,
+      "helper_exit_code": 1,
+      "checks_sha256": "4adff032d5f2cf7a9d20e82e5e6da18a472ae548668f1e9cefd42d2e3cad1151"
+    },
+    "regional-bft-four-cli-frontier-v3-20261006": {
+      "completed": true,
+      "duration_seconds": 6.366114,
+      "helper_exit_code": 0,
+      "checks_sha256": "9f0eef45ede53e06c0742bbfe80ca0d18ad49737ae3196c653d6ce9719c05ed5"
+    },
+    "regional-bft-active-decode-cost-20261006": {
+      "completed": true,
+      "duration_seconds": 1.437988,
+      "helper_exit_code": 0,
+      "checks_sha256": "de0b7d1e86fe544c71f6e13b6ab2c55d3a37f3e211ba5e9275350be7e4dfcab3"
+    },
+    "regional-bft-carriage-churn-model-20261006": {
+      "completed": true,
+      "duration_seconds": 37.343285,
+      "helper_exit_code": 0,
+      "checks_sha256": "c5e6ccb937ea44ebae956e64a6b1a9a83b601ef6dbeb7459c57a35c961e3d005"
+    }
+  },
+  "actual_loaded_tls": {
+    "completed": true,
+    "original_budget_seconds": 60,
+    "duration_seconds": 10.51913,
+    "preloaded_signed_archived_rows_per_peer": 64,
+    "new_destination_signed_rows": 16,
+    "full_cold_archives": 144,
+    "exact_original_request_nonce_packet_custody_verified": true,
+    "actual_two_outgoing_owners_and_fresh_handlers": true,
+    "private_bytes_unchanged": true,
+    "all_threads_stopped": true,
+    "sealed_files": 299,
+    "inventory_sha256": "63d54e33013dfbbe429724bda76b85e1fa5aad7cd23f84fd8f67ae392fa6c9b3",
+    "native_or_runtime_or_native_value_signing": 0,
+    "full_fault_qualified": false
+  },
+  "actual_four_cli": {
+    "completed": false,
+    "original_budget_seconds": 180,
+    "budget_exhausted": true,
+    "duration_seconds_including_closure_and_seal": 191.836,
+    "helper_exit_code": 1,
+    "all_owned_four_exit0": true,
+    "guardian_used": false,
+    "forced_owned_processes": [],
+    "cleanup_failures": [],
+    "last_recorded_native_heights": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "last_observed_import_heights": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "required_mature_height": 15,
+    "final_native_state_known": false,
+    "full8fixed_head_cold_completed": false,
+    "conservation_completed": false,
+    "sealed_files": 1650,
+    "inventory_sha256": "ccca3195d2e83428a9c1f387be81f88bc486d9e5e744486a39cad3dd9332fb18",
+    "source_only_archive_files": 172,
+    "source_manifest_sha256": "c8a8c72fcdd76932dcc41a69b2f679465f8b8e46f4413b3a6f756cf014c34568",
+    "failed_currency_never_reopen": true
+  },
+  "falsified_hypothesis": "The exact archive-entry reuse repair plus passing loadedTLS is insufficient to finish this fresh4CLI import maturity/full8cold underoriginal180. Do not infer a unique cause or slower/faster service from one run.",
+  "exact_stopped_transport_discriminator": {
+    "duration_seconds": 6.366114,
+    "archive_index_signatures_authenticated": 661,
+    "active_receipts_authenticated": 2,
+    "complete_relevant_transport_copies_authenticated": 93,
+    "all_source_consensus_carriage_pending_pairs": 0,
+    "some_current_complete_packets_source_published_without_destination_custody_or_envelope": true,
+    "retained_companion_height_observations": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "negative_wrong_network_signature_receipt_refused": true,
+    "private1650_bytes_unchanged": true,
+    "no_native_runtime_node_constructor_sign_socket_recovery": true,
+    "final_native_state_known": false,
+    "full_native_cold_performed": false,
+    "unique_live_cause_proved": false
+  },
+  "read_only_decode_counter": {
+    "duration_seconds": 1.437988,
+    "active_records": 65,
+    "unique_frames": 46,
+    "duplicate_frame_references": 19,
+    "measured_profile_decode_seconds": 0.133363,
+    "aggregate_commitment_upper_bound_share": 0.357527,
+    "scope_correction_sha256": "66d011a0856d9326031d7823c95023d05cf46a2d654bbc502b266ead9caa5db6",
+    "operation_local_frame_byte_reuse_candidate_selected": false,
+    "source_changed": false,
+    "no_repeated_run": true,
+    "profile_is_not_live_benchmark": true
+  },
+  "nonqualifying_readonly_inspections": {
+    "neighbor_inventory_classification_next_batch_did_not_improve": true,
+    "naive_current_frame_priority_shared_ring_model_failed_target_coverage": true,
+    "neither_proposal_adopted": true,
+    "live_suppression_and_positions_not_reconstructed": true,
+    "lookup_and_wrong_interpreter_event_field_errors_are_not_protocol_failures": true
+  },
+  "new_model": {
+    "source_file": "tools/test_interstellar_carriage_churn.py",
+    "tests": 3,
+    "duration_seconds": 37.343285,
+    "helper_exit_code": 0,
+    "original_budget_seconds": 120,
+    "actual_ephemeral_mesh_keys_signatures_and_fsync": true,
+    "sockets": 0,
+    "native_or_bft_runtime_or_native_owner_signing": 0,
+    "initial_historical_packets": 48,
+    "designated_packets": 2,
+    "unique_new_frame_families_each_iteration": 4,
+    "finite_iterations": 24,
+    "actual_full_verified_hop_custody_and_local_reply_before_model_suppression": true,
+    "warm_position_delivery_iteration": 4,
+    "forget_positions_before_each_iteration_delivery_iteration": 15,
+    "later_bad_signature_refused": true,
+    "original_source_packets_retained": true,
+    "private_ground_stores_retained_files": 42,
+    "inventory_sha256": "0f5566de2f7e2fe41319a5d78baaf7be83436336916daabb9871b60d26a3463f",
+    "qualification": "Finite successful-call three-node spool transport model;no liveTCP/ordinary contention,Native payments,clock/60round assurance or fullfault qualification. Cache-loss cost is model evidence,not proof live cache loss occurred."
+  },
+  "production_source_changed_this_turn": false,
+  "test_source_count": 163,
+  "test_source_commitment": "ac1b2fbf991f7af9263ac099b45685039311541d64c19979cdce319010399e03",
+  "actual_tls_and_four_cli_python_source_count": 162,
+  "actual_tls_and_four_cli_source_commitment": "3e0b1df7e6488b80104f2590011597c86e2c51f1876c91d13e79b1d50644d60e",
+  "native89_and_core171_and_actual_binary_unchanged": true,
+  "full_fault_status": "FAIL/OPEN:runtime-v4 original600612.5706152;receive-v7 original600616.0526657;all oldfailed scopes preserved;new4CLIoriginal180alsoFAIL1650",
+  "next": {
+    "hypothesis": "A two-neighbor intermediate carrier under real pinnedTLS plus ordinary receive/carriage contention may be the missing transport service boundary. Two-peer loadedTLS and successful-call churn do not qualify it. Test exact original unacknowledged request/end-to-end packet,Native0,then select a source fix only if a concrete refusal/starvation counter appears.",
+    "scope": "One genuinely fresh three-peer pinnedTLS ground component;64fully signed archive rows perpeer,one intermediate with2pinned neighbors,one outbound owner each and actual ordinary receive selections. Original2inbound slots/.2lock/3socket/4packet/highwater32/batch16/512positions/4MiB. Require exact full transit/frame/receipt across both hops,nonce custody association,source retention,complete cold mesh and clean owned close. No old fixtures/keys/currency,Native,value,server operations. If result is model-dependent or missing trace intervals,fail not pass.",
+    "budget_seconds": 60,
+    "attempts": 1,
+    "exit": "first source/identity/signature/trace gap/worker/capacity/custody error,allcomplete cold/cleanclose,or original60deadline. Retain terminal private stores. No failed reopen/resign/refund/unchangedretry/deadline increase.",
+    "started": false,
+    "new_native180_allocated": false,
+    "new_full600_allocated": false
+  },
+  "legacy_value_strict": "VALUE-STRICT-01 OPEN;oldvalue source unchanged;no trigger/exemption",
+  "all_S_R_I_A_G_N_P_longhistory_PQ_independent_physical_qualified": false,
+  "persistent_cwd_ui_fix_pending": true,
+  "all_tool_project_commands_explicit_workdir": "/Users/galaxy/GitHub/rldcoin",
+  "website_frozen_paper_mainnet_funds_accounts_external_servers_cleanup_changed": false,
+  "whole_goal_completed": false
+}

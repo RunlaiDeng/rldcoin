@@ -1559,3 +1559,25 @@ serialized witness, evidence pruning or bounds increase.74targeted tests and exa
 Next once60freshTLS with64archived signed rows per peer, then conditional once180
 fresh8Native/fourCLI full maturity/cold; neither has begun, no600allocated.
 See docs/operations/evidence/regional-bft-inbound-archive-outcome-20261006.json.
+
+Loaded actual two-peer TLS passed10.519s/original60 with64signed archives each,
+16newrows and144fullcold;299sealed,all owned threads stopped,Native0. Conditional
+fresh fourCLI FAILED original180/191.836inclclose/seal,1650files,all4exit0/no
+force/cleanup;172publicsourcefiles retained without custody copy. Last observed
+Native13/import13/requiredmature15;finalNative unknown/full8cold unfinished.
+Never reopen these Native/Runtime/Node failures. Exact readonly661indexes/93
+complete paths find all source consensus published yet some destinations absent;
+not unique cause or Native authority. Decode-cost .357527share is an upperbound
+including later transit checks; use scope correction, no codec optimization.
+Inventory/naive-current-priority contrasts did not improve and were not adopted.
+New three-case actual fresh ground spool churn model passes37.343/original120:
+48historical/two target/four newframes per24iterations,original bounds/full auth/
+fsync. Actual signed destination custody occurs at4warm/15forget-position rounds;
+source kept/later badsignature refuses.42ground files retained. No sockets/Native/
+BFT Runtime/value or live cache-loss/60round/payment/fullfault qualification.
+Production source unchanged;163Python count adds test only,live scopes used162.
+Next once60fresh3peer pinnedTLS with64signed archive rows each and2-neighbor
+intermediate+ordinary selections/outbound owners; original2inbound/.2lock/3socket/
+4packet/allbounds,exact2hop custody/nonce/fullcold/cleanclose. Not started, no new
+180/600allocated. Only concrete new refusal/starvation evidence selects a fix.
+See docs/operations/evidence/regional-bft-loaded-tls-churn-outcome-20261006.json.
