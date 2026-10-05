@@ -33,7 +33,23 @@ pub(crate) enum Record {
     Certified(Box<Snapshot>),
     Evidence(Box<Evidence>),
     Receipt(Box<crate::channel_receipt::Receipt>),
+    Contact(Box<crate::contact::Frame>),
     Incidents(BTreeSet<Hash>),
+}
+impl Record {
+    fn snapshots(&self) -> Result<Vec<Snapshot>> {
+        Ok(match self {
+            Self::Certified(s) => vec![*s.clone()],
+            Self::Evidence(e) => e.snapshots.clone(),
+            Self::Contact(frame) => {
+                crate::contact::Frame::unpack(&frame.retained_bytes()?)?
+                    .1
+                    .evidence
+                    .snapshots
+            }
+            _ => vec![],
+        })
+    }
 }
 struct Replay {
     trust: Trust,
@@ -44,6 +60,7 @@ struct Replay {
     receipts: crate::channel_receipt::Replay,
     receipt_anchors: BTreeSet<Hash>,
     incidents: BTreeSet<Hash>,
+    contacts: BTreeMap<Hash, crate::contact::Record>,
 }
 fn body(snapshot: &Snapshot) -> Result<Hash> {
     id(
@@ -71,10 +88,12 @@ impl Replay {
             receipts: Default::default(),
             receipt_anchors: BTreeSet::new(),
             incidents: BTreeSet::new(),
+            contacts: BTreeMap::new(),
         })
     }
     fn retain_for_next(&mut self) -> Result<()> {
         let mut needed = self.receipt_anchors.clone();
+        needed.extend(self.contacts.values().map(|record| record.snapshot));
         if let Some(id) = self.chain.finalized {
             needed.insert(id);
         }
@@ -200,6 +219,51 @@ impl Replay {
                 self.receipts.record(*receipt.clone())?;
                 self.receipt_anchors.insert(receipt.statement.checkpoint);
             }
+            Record::Contact(frame) => {
+                let (frame, bundle) = crate::contact::Frame::unpack(&frame.retained_bytes()?)?;
+                require(
+                    bundle.currency == self.trust.currency()?
+                        && bundle.destination == self.chain.region,
+                    "paged contact currency/destination",
+                )?;
+                self.trust.region(bundle.source)?;
+                require(
+                    bundle.incidents.len() <= MAX_INCIDENTS,
+                    "paged contact incident bound",
+                )?;
+                for proof in &bundle.incidents {
+                    proof.verify(&self.trust)?;
+                    require(
+                        self.incidents.contains(&proof.id()?),
+                        "paged contact unindexed incident",
+                    )?;
+                }
+                let record = crate::contact::Record {
+                    message_id: frame.message_id,
+                    payload_sha256: frame.payload_sha256,
+                    source: bundle.source,
+                    destination: bundle.destination,
+                    snapshot: bundle.snapshot,
+                    export: bundle.export,
+                };
+                // The complete frame must stand alone under the original64 bound.
+                // Never fill an omitted predecessor from this Store's cache.
+                let checked = VerifiedEvidence::verify(&bundle.evidence, &self.trust)?;
+                record.verify(&self.trust, &checked, self.chain.region)?;
+                for snapshot in &bundle.evidence.snapshots {
+                    self.authenticate(snapshot)?;
+                }
+                record.verify(&self.trust, &self.evidence, self.chain.region)?;
+                if let Some(old) = self.contacts.get(&record.message_id) {
+                    require(old == &record, "paged contact retained record differs")?;
+                } else {
+                    require(
+                        self.contacts.len() < crate::contact::MAX_CONTACTS,
+                        "paged contact record capacity",
+                    )?;
+                    self.contacts.insert(record.message_id, record);
+                }
+            }
             Record::Incidents(ids) => {
                 require(
                     ids.len() <= MAX_INCIDENTS && self.incidents.is_subset(ids),
@@ -236,7 +300,7 @@ impl Replay {
             event_prefix: vec![],
             incident_ids: self.incidents.clone(),
             epoch_proofs: vec![],
-            contact_records: BTreeMap::new(),
+            contact_records: self.contacts.clone(),
         }
     }
 }
@@ -472,21 +536,21 @@ impl Store {
         Ok(())
     }
     pub(super) fn add_paged_evidence(&mut self, evidence: Evidence) -> Result<()> {
+        self.check_paged_evidence_conflicts(&evidence)?;
+        self.append_paged(&[Record::Evidence(Box::new(evidence))])
+    }
+    fn check_paged_evidence_conflicts(&mut self, evidence: &Evidence) -> Result<()> {
         require(
             evidence.snapshots.len() <= MAX_SNAPSHOTS,
             "paged BFT incoming evidence count",
         )?;
-        encode("evidence", &evidence)?;
+        encode("evidence", evidence)?;
         let stream = self.paged.as_ref().ok_or("paged store missing")?;
         let mut incident = None;
         stream.visit(stream.storage_head(), |record| {
-            let previous = match record {
-                Record::Certified(s) => std::slice::from_ref(s.as_ref()),
-                Record::Evidence(e) => e.snapshots.as_slice(),
-                _ => &[],
-            };
+            let previous = record.snapshots()?;
             for new in &evidence.snapshots {
-                for old in previous {
+                for old in &previous {
                     if old.statement.region == new.statement.region {
                         let proof = Conflict::from_snapshots(old, new)?;
                         if proof.verify(&self.trust).is_ok() {
@@ -514,7 +578,28 @@ impl Store {
                 id.to_hex()
             ));
         }
-        self.append_paged(&[Record::Evidence(Box::new(evidence))])
+        Ok(())
+    }
+    pub(crate) fn add_paged_contact(
+        &mut self,
+        frame: crate::contact::Frame,
+        evidence: &Evidence,
+    ) -> Result<()> {
+        self.paged_signing_history()?.finish(self)?;
+        self.check_paged_evidence_conflicts(evidence)?;
+        let record = Record::Contact(Box::new(frame));
+        let header = read_header(&self.dir)?;
+        let mut replay = Replay::new(&header, &self.authority, self.pin)?;
+        let stream = self.paged.as_ref().ok_or("paged contact stream missing")?;
+        stream.visit(stream.storage_head(), |old| replay.apply(old))?;
+        replay.apply(&record)?;
+        // Authenticate every complete later frame before exact retry suppression.
+        // An exact retained retry neither grows the archive nor grants an import.
+        if replay.contacts == self.journal.contact_records {
+            self.paged_signing_history()?.finish(self)?;
+            return Ok(());
+        }
+        self.append_paged(&[record])
     }
     pub(super) fn commit_paged_journal(&mut self, journal: Journal) -> Result<()> {
         require(
@@ -523,7 +608,7 @@ impl Store {
                 && journal.evidence == self.journal.evidence
                 && journal.event_prefix.is_empty()
                 && journal.epoch_proofs.is_empty()
-                && journal.contact_records.is_empty(),
+                && journal.contact_records == self.journal.contact_records,
             "paged BFT mutation requires complete typed native stream events",
         )?;
         let mut records = Vec::new();
@@ -549,12 +634,8 @@ impl Store {
         // Scan ALL original certified/evidence events, including evicted active
         // observations. Historical conflicting finality cannot hide in a page.
         stream.visit(stream.storage_head(), |record| {
-            let snapshots = match record {
-                Record::Certified(s) => std::slice::from_ref(s.as_ref()),
-                Record::Evidence(e) => e.snapshots.as_slice(),
-                _ => &[],
-            };
-            for old in snapshots {
+            let snapshots = record.snapshots()?;
+            for old in &snapshots {
                 if old.statement.region == snapshot.statement.region {
                     let proof = Conflict::from_snapshots(old, &snapshot)?;
                     if proof.verify(&self.trust).is_ok() {
@@ -735,6 +816,7 @@ impl Historical<'_> {
                 && self.replay.chain.ledger == node.chain.ledger
                 && self.replay.chain.finalized == node.chain.finalized
                 && self.replay.chain.epoch == node.chain.epoch
+                && self.replay.contacts == node.journal.contact_records
                 && self.replay.incidents == node.journal.incident_ids,
             "complete historical cursor differs from native current selection",
         )

@@ -55,6 +55,9 @@ fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
         .map_err(|e| e.to_string())
 }
 impl Frame {
+    pub(crate) fn retained_bytes(&self) -> Result<Vec<u8>> {
+        canonical(self)
+    }
     fn message(&self) -> Result<Hash> {
         let mut body = serde_json::to_value(self).map_err(|e| e.to_string())?;
         body.as_object_mut()
@@ -401,14 +404,17 @@ impl Store {
         for proof in bundle.incidents {
             self.observe_conflict(proof)?;
         }
-        let mut journal = self.stage_evidence(bundle.evidence)?;
-        journal
-            .contact_records
-            .entry(frame.message_id)
-            .or_insert(record);
-        // Full archive replay and exact export binding are checked together
-        // before writing either the new evidence or its pending application.
-        self.commit(journal)?;
+        if crate::paged_bft::is_profile(&self.trust.region(self.chain.region)?.rules) {
+            self.add_paged_contact(frame.clone(), &bundle.evidence)?;
+        } else {
+            let mut journal = self.stage_evidence(bundle.evidence)?;
+            journal
+                .contact_records
+                .entry(frame.message_id)
+                .or_insert(record);
+            // Full archive replay and exact export binding precede publication.
+            self.commit(journal)?;
+        }
         if let Some(miner) = miner {
             self.contact_fulfill(frame.message_id, miner)?;
         }

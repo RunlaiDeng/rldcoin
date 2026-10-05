@@ -1198,3 +1198,5 @@ pub fn recover_incident<P: Into<Incident>>(
 mod paged;
 
 pub(crate) use paged::Historical as PagedSigningHistory;
+#[cfg(test)]
+pub(crate) use paged::Record as PagedRecord;

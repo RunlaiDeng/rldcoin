@@ -63,3 +63,23 @@ before publication and before response release. Byte changes refuse; unchanged
 bytes inherit only this invocation's completed authentication. No cursor, ledger
 or lock witness is serialized, retained across calls, or used to initialize cold
 state. Full cold/recovery replay and all original bounds remain mandatory.
+
+Paged contact events retain the exact complete canonical native contact Frame,
+including every original certificate, owner command and incident. Each receipt,
+append, historical review and cold open reconstructs the frame, checks its route,
+digest and currency, and independently executes its complete evidence from signed
+genesis within the unchanged64-checkpoint/256-block/3-MiB payload bounds. Omitted
+predecessors cannot be supplied by local active evidence or peer caches. Received
+evidence never selects local finality, imports value or grants spending rights.
+Only a separately certified local Import and native maturity can do so.
+
+Keep at most256 exact contact records, with their source anchors in the existing
+64-entry active working set; refuse if all required anchors cannot fit. Exact
+retries authenticate their entire complete frame and current native history before
+suppressing an identical retained event. New certificate variants retain complete
+original frames. Scan contact evidence as well as other complete events for
+historical finality conflicts. Native typed contact events and the record are
+published atomically in the existing full-payload pages. No legacy journal rewrite,
+proof truncation, missing-prefix adoption, bound increase or value migration.
+This does not repair post64 rooted proof carriage, qualify compact complete remote
+authority, or grant interruption/independent/cross-device/physical qualification.

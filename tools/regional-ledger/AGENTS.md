@@ -346,3 +346,31 @@ all original wire/logical/snapshot/history bounds and owner/caller state; a loca
 65-height pass cannot authorize incomplete remote evidence. If proof cannot fit,
 retain the exact refusal and design explicit compact-complete authority; never
 truncate evidence, trust cached ledgers, refund or qualify an adopted network.
+
+
+The source86 typed Contact(Frame) addition now retains exact complete native wire
+frames in ordinary paged events. Every receive/append/cold review reconstructs the
+frame and independently authenticates its whole proof from signed genesis; local
+cached predecessors cannot fill omitted evidence. Fully authenticate exact later
+retries before suppressing duplicate append. Keep every contact source anchor in
+the existing64 active working set, plus all value/receipt/latest dependencies;
+refuse saturation, never prune or increase bounds. Include original contact
+proofs in all historical finality conflict scans. Legacy mutation cannot change
+contact records; certified local Import and original maturity remain separate.
+Profile/source change requires fresh signed no-value identity, no migration.
+
+The final25.002second source86 short sample has actual source4 export, destination3
+imported/mature recipient99, eight native Agents plus owner wallet/caller heads,
+complete same-process cold and unchanged private inventory. Exact retry, later
+bad envelope/missing predecessor/wrong route and hash-consistent corrupted cold
+contact refuse. CLI compile and library/tests strict pass; main binary unchanged.
+Earlier3.710 compile and26.842 strict failures stay failed. Source66 actual included
+export refused contact dependency bound121.522seconds; source4 legacy mutation
+counter refused18.744seconds. Keep their exact failed sources/private fixtures.
+The updated expected-refusal regression is not a remote capability pass and was
+not rerun. Post64 complete authority, full2016/fault, interruption, transport,
+new-process/independent custody and physical gates remain open. Legacy value
+strict independently OPEN. Next one fresh180second/network0 three-region short
+onward/return scope is defined in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md; old
+600/60/24/maturity/quorum/capacity unchanged. Never repeat old source66 long scope
+without a compact-complete authority model and actual native change.
