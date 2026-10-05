@@ -11,8 +11,11 @@
 [V8候选](research/REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md)只修复已测native路径，
 完整故障/窗口/独立安全仍未通过，不能把有限scope或守恒称为全部协议完成。
 2026-10-05 最小普通 Runtime leader 样本70.186秒通过自动q2提案且未扣款；
-首配置拒绝41.693秒及三Runtime范围120.017秒耗尽仍未通过。三取四实际纳入/TLS仍待验；
-[完整终态和下一一次180秒判别](operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)，不重复旧长测或降低冷认证/锁/期限。
+首配置拒绝41.693秒及三Runtime旧历史搬运范围120.017秒耗尽仍未通过。
+后续改变判别方法的一次180秒范围于179.233秒通过三个普通Runtime实际三取四
+认证/高度7纳入q2、原预算仅扣fee3及完整冷重放；controller仍搬运了完整信封，
+[该有限范围和下一普通Native/TLS验收](operations/evidence/regional-native-channel-fee-budget-runtime-certification-outcome-20261005.json)。
+普通TLS/完整故障、独立保管及整项协议资格继续待验，不降低冷认证/锁/期限。
 
 ## 已完成的近期交付
 

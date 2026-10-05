@@ -115,15 +115,36 @@ c=6、deadline2022不变，最终exact latest head完整冷重放通过。
 setup六个旧块/Close由controller真实3/4认证，不能冒充Runtime自动认证。
 同源码36项/strict/build与旧准确分支证据继续复用，没有再做已通过长测。
 
-下一假设：三个普通admitted Runtime仅接收新产生当前context的完整认证信封，
-应由自身生成prepare/commit/certification并把自动q2挑战实际纳入。原有完整冷
-认证、high-QC锁、separate caller heads及每个收到的信封native认证全保留；
-只是移除controller对已经冷认证历史的重复搬运，不替代ordinary接触链资格。
-全新isolated签署无价值fixture一次180秒，长网络campaign=0；该预算单列依据
-为已测setup+三个冷启动102.151秒及leader提案另约7.842秒，尚需quorum/finality。
-不得原样再跑前120秒范围或放宽冷认证、60秒轮、24高度、2016窗口、票数/容量。
-遇拒绝、180秒或实际3/4最终纳入且exactly一次fee debit与pinned冷重放即退出，
-失败保留原目录，不重签/退款/复活。原600秒stage的完整scope不受这短探针影响。
+### 三取四自动认证/最终纳入：有限控制器搬运范围已通过
+
+下一步已按当时记录的一次180秒独立预算执行；全新私有目录及签署无价值
+BFT/通道fixture，native与Node代码未变，不重复strict或旧长测试。
+移除controller对历史信封的重复搬运，每个Runtime仍在普通startup全量冷
+认证其保留历史，收到的每个新信封仍走原receive/native认证和依赖同步。
+没有重设时钟、caller head或prepare lock；没有controller注入Challenge/
+Propose/Prepare/Commit/quorum/certificate；原60秒轮、24高度、2016窗口不变。
+
+该范围在179.233秒正常终态通过：三份冷启动63.229/83.658/102.723秒，
+合法leader于114.434秒自动提出q2；三个Runtime产生三份不同有序prepare和
+commit，认证同一个高度7块。原budget仅扣fee3，剩余+spent=original；
+c=6、deadline2022保留，三个独立新native进程pinned全历史冷重放通过。
+controller仅经普通receive搬运16个完整当前context信封。所有owner/W钥
+文件在Runtime阶段已不存在。setup中的旧六块及Close仍由controller认证；
+这个有限范围不资格ordinary TLS/contact scheduler、完整fault或2016窗口。
+前41.693秒配置拒绝和120.017秒预算耗尽仍未通过，不由此结果改写。
+完整来源/终态：[实际自动认证](../operations/evidence/regional-native-channel-fee-budget-runtime-certification-outcome-20261005.json)。
+
+下一假设：在全新V8 admitted Native节点普通lifecycle和固定pin TLS下，
+普通接收调度和Runtime保管应自动交付/认证最高q2挑战；去掉controller信封
+总线而保留正常邻居路径。最小新scope为同机一地区四副本，literal loopback
+endpoints及已配置identity/certificate pins；仅公共fixture keys，无价值。
+controller仅准备fixture、启停和原生观察，不在live期间构造或搬运协议消息。
+准备预算一次180秒；live阶段保持原600秒、60秒轮、24高度上限；full fault
+campaign预算0。一旦意外拒绝、原stage边界或四副本实际同块/q2/一次fee debit
+并clean shutdown及停止native/完整envelope/caller-head核验即退出。保留失败、
+旧owner请求和pending custody，不重启旧fixture、不原样重跑、不放宽bounds。
+owned-process的原有bounded cleanup单独披露；任何forced/unclean exit不算通过，
+cleanup不能延展协议期限或授予恢复/签署资格。
 
 [Runtime判别及预算退出](../operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)
 保存三个来源绑定终态和独立配置拒绝；首两次未通过不由最后小范围通过替代。
