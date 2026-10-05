@@ -27,3 +27,21 @@ logical evidence8MiB; complete private archive4096 files/256MiB including residu
 Old64 snapshots/128 signer formats keep refusing; new signer custody requires its
 own complete paging/head/recover-only path. This contract does not qualify that
 unfinished path, full2016 execution, 200000 eras, independent custody or transport.
+
+
+The separately purpose-bound RLD-NATIVE-PAGED-BFT-SIGNER-V1 header/stream holds
+complete original request/response/native observation and previous caller head.
+Create only with an active genesis key and height-zero native selection. Every
+open, sign and retained retry replays all original records under this immutable
+header, from pinned native genesis history through each ordered historical parent.
+Use the same deterministic ordinary proposal/prepare/commit/timeout lock kernel.
+Never initialize a lock/ledger from a serialized cursor, active final-height
+snapshot collection or the bounded diagnostic header. The complete stream head
+binds this signed profile/header/purpose and every complete original record.
+Legacy128-record signer formats remain unchanged and cannot adopt these pages.
+Durable page publication precedes response release. Exact retries require the
+separate current caller head, or only the last response's exact previous head;
+keyless recovery cannot first-sign. Any incomplete publication refuses unchanged
+and retains its complete already-signed response; interrupted promotion/recovery
+is still a required implementation gate. No epoch handoff, concurrent copied-key,
+common rollback, independent latest head or cross-device qualification is granted.

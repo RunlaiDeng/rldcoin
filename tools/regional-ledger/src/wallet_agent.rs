@@ -114,6 +114,39 @@ impl Observation {
             "wallet observed incident disappeared",
         )
     }
+    /// Historical prefix is supplied only by the fully native genesis cursor.
+    pub(crate) fn check_selected(
+        &self,
+        node: &Store,
+        binding: &Binding,
+        chain: &Chain,
+    ) -> Result<()> {
+        let p = &self.pin;
+        require(
+            p.currency == binding.currency
+                && p.region == binding.region
+                && chain.currency == p.currency
+                && chain.region == p.region
+                && chain.height() == p.height
+                && chain.tip()? == p.tip
+                && chain.ledger.root()? == p.state
+                && chain.finalized == p.finality
+                && chain.epoch == p.epoch
+                && node.chain.height() >= p.height,
+            "signer observation differs from selected native genesis prefix",
+        )?;
+        let actual = node
+            .conflicts
+            .iter()
+            .map(|p| p.id())
+            .collect::<Result<BTreeSet<_>>>()?;
+        require(
+            self.incidents.len() <= conflict::MAX_INCIDENTS
+                && self.incidents.windows(2).all(|p| p[0] < p[1])
+                && self.incidents.iter().all(|id| actual.contains(id)),
+            "historical signer incident disappeared or has invalid order/bound",
+        )
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]

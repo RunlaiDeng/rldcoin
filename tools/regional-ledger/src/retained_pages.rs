@@ -52,7 +52,7 @@ impl Scope {
             origin,
         })
     }
-    fn initial(&self) -> Result<Hash> {
+    pub(crate) fn initial(&self) -> Result<Hash> {
         id("complete-stream-origin-v1", self)
     }
 }
@@ -198,7 +198,7 @@ fn root_inventory(dir: &Path) -> Result<()> {
     }
     Ok(())
 }
-fn next_head<T: Serialize>(previous: Hash, index: u64, record: &T) -> Result<Hash> {
+pub(crate) fn next_head<T: Serialize>(previous: Hash, index: u64, record: &T) -> Result<Hash> {
     id("complete-stream-record-v1", &(previous, index, record))
 }
 

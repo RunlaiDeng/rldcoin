@@ -1,6 +1,6 @@
 # 普通BFT完整历史/签署日志的共用原生保留层
 
-状态：**共用完整保留层及新明确规则的普通Store/钱包历史已接入；Agent分页写入/恢复仍OPEN**。
+状态：**普通Store/Agent分页正常写入及完整历史锁重放已接入；中断恢复/容量/完整窗口资格仍OPEN**。
 目标保持[完整历史合同](REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)及
 [分页保留模型](REGIONAL_BFT_PAGED_HISTORY_MODEL_V1.md)。这是完整原生集成的一步，
 不能将测试该层更多记录视为解决原第65检查点或128-record签署门槛。
@@ -225,3 +225,70 @@ record/陈旧caller及发布失败；首失败、完整有限判别或300秒退�
 新Store receipt/channel、历史冲突及完整容量的native资格、image restore、普通
 transport、epoch、实际2016完整结算、新进程/真实中断/跨设备/独立latest和完整
 fault仍OPEN；不将账本有限接入当全部原生paging或协议完成。
+
+
+## 普通Agent分页写入及历史原生锁重放（2026-10-05）
+
+新规则合同继续绑定明确 `RLD-NATIVE-PAGED-BFT-SIGNER-V1` header/stream。
+普通Agent create/open/sign/status/recover-only查找已实际分派到该路径：只在native
+创世边界为active原始成员创建，header不可变，原记录不转换。header中空records
+不是完整签署状态，Journal.state明确拒绝据此授权；Agent.head/status取完整页流
+head。所有原request、message、observation和previous head完整写入16-record页，
+完整pending包装先持久落盘，正常响应仅在完整publication/fsync之后返回。
+
+PagedReplay使用一个从pin genesis开始的普通Native历史cursor，按签署观察高度
+推进、执行全部certified/evidence/receipt/incident事件。每个历史parent/epoch/
+finality/state必须完全相符；每个request由同一旧State投票内核执行，保留全部
+prepare锁、actual signature和exact response检查。不得借当前活动64快照推旧
+parent，也不从页digest/serialized Ledger/state初始化。所有后来native历史和
+整个signer流必须通过后才释放state。scope绑定当前implementation、signed
+currency/admission、完整header/key/creation/purpose；native/caller头继续分开。
+
+新请求必须绑定当前native parent、safety和私钥。准确无钥重试完全认证已有
+原件，只接受当前caller head，或最后一个原response的exact previous head；
+没有原request不能first-sign。完整档案计入header/LOCK及所有孤儿/残片，保持
+4096-file/256MiB、8MiB对象；旧128-record格式继续拒绝，不从旧private state迁移。
+普通CLI初始化/status/签署入口使用Agent.head与完整retained-request谓词，当前
+只完成入口编译，没有重建或资格旧main binary/普通网络生命周期。
+
+一次60秒初scope实际37.861秒整体未通过：真实native组件在23.452秒运行完成，
+四真实Agents签署8proposal/32prepare/32commit、普通Store高度8、owner99/fee1
+纳入并成熟；每Agent18完整原records，一页及两tail。保存separate caller头后
+同进程Agent cold、无钥准确重试、stale caller/keyless-first-sign及回滚native视图
+拒绝、全私有hash/mode/size/mtime不变均通过。入口compile通过，但strict因
+`items_after_test_module`拒绝；整个scope仍失败，不叫全通过。
+
+只把完全未变production replay定义移到测试模块之前，并新增三高度小反例。
+首夹具1.499秒编译失败（测试误调用私有set_approval），生产未改；改为公开typed
+Vote字段后一次30秒10.795秒通过。四实际Agents/三native高度，主动清空**仅
+进程内活动snapshot集**后仍从完整原始Native档案认证旧votes；单独完整hash
+自洽但最后signature坏的流拒绝，私有库存不变。此操作模拟活动证据不可用，
+不是实际第65检查点或>128签署容量。受影响旧durable-QC/keyless-retry内核、
+strict和入口compile通过；没有重复8/65长样本。
+
+复核发现held-open Native后来出现pending incident marker时，历史cursor未
+重新检查。全新height0/four empty signers最小counter在3.943秒失败并证实缺口，
+无votes、无已认证事故或价值变更。修复在cursor构造与state释放时检查Native
+healthy/zero guard，并重验全部保留事故证明/index/safety。一次30秒范围9.942秒
+通过marker拒绝、受影响三高度完整历史/坏签名回归、strict和入口compile；全部
+拒绝保留原件和heads。它不自动完成pending事故或恢复签署响应。
+
+[准确源/终态与下一gate](../operations/evidence/regional-native-paged-agent-outcome-20261005.json)
+绑定现78-file源`00feaf5ab202...`、implementation`26b13da2133c...`。
+8样本只绑定其最初来源；其后production仅replay定义换位置、Native健康/事故
+检查加入，所有改变受影响consumer单独核验；不冒称最终完整suite或重新8长测。
+旧main binary、core171、legacy价值两文件、冻结正文/PDF/receipt均未变。
+
+下一假设H-paged-response-recover：准确已签响应在pending/pages/manifest三个
+保留位置中断后，只在native完全重放、immutable header/purpose及caller separately
+retained exact request/previous head全部匹配时恢复，不first-sign或创建缺失目录，
+不重置锁/领受新头。现Stream.open遇pending/commit残片严格拒绝，**没有中断
+promotion/recovery API**。先形成完整恢复合同/源码，再一次60秒小组件判别：
+三个实际保留位置、错request/head/坏signature/无custody均拒绝，含编译等待，
+首失败/完整有限判别/60秒退出，保留原件；网络预算0。
+
+原定一次300秒完整Store+Agent资格scope仍未开始，须恢复实现可审后才执行，
+实际>128完整记录/超过活动界native历史/价值锁、新进程pinned cold及坏档/旧caller/
+发布失败，预算包含编译和等待。原网络600sec/60sec/max24/2016/成熟/票数和
+capacity不改变。完整窗口、fault、epoch/role paging、image/restore、长期history/
+PQC、独立freshness/custody和physical继续OPEN；VALUE-STRICT-01独立OPEN。

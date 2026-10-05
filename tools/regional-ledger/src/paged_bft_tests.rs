@@ -269,3 +269,221 @@ fn paged_store_reauthenticates_retained_legacy_region_envelopes_without_format_a
     assert!(source.journal.evidence.snapshots[0].base.is_none());
     println!("paged-mixed phase=complete legacy-envelope-authenticated-again=true malformed-later-refused=true no-format-conversion=true");
 }
+
+#[test]
+fn ordinary_paged_agents_write_full_votes_and_replay_historical_native_locks() {
+    let started = std::time::Instant::now();
+    let mut h = Harness::with_rules(crate::paged_bft::RULES);
+    h.retain = true;
+    let initial = h.heads.clone();
+    let mut last = None;
+    for height in 1..=8 {
+        let commands = if height == 4 {
+            let (input, coin) = h
+                .node
+                .chain
+                .ledger
+                .coins
+                .iter()
+                .find(|(_, c)| c.mature <= 3 && c.payment.owner == public(10))
+                .unwrap();
+            vec![Command::Spend(Box::new(intent(
+                &h.node.chain,
+                &h.node.trust,
+                vec![*input],
+                vec![
+                    Payment {
+                        owner: public(11),
+                        amount: Amount(99),
+                    },
+                    Payment {
+                        owner: public(10),
+                        amount: Amount(coin.payment.amount.0 - 100),
+                    },
+                ],
+                None,
+                None,
+                1,
+                0,
+                &[10],
+            )))]
+        } else {
+            vec![]
+        };
+        let candidate = h.node.bft_candidate(commands, public(10)).unwrap();
+        let p = h.proposal(0, None, candidate);
+        let q = h.prepare(&p, &[0, 1, 2, 3]);
+        let s = h.commit(&p, &q, &[0, 1, 2, 3]);
+        last = Some((p, q));
+        h.node.finalize(s).unwrap();
+    }
+    assert!(h
+        .node
+        .chain
+        .ledger
+        .coins
+        .values()
+        .any(|c| c.payment.owner == public(11) && c.payment.amount == Amount(99) && c.mature <= 8));
+    let (p, q) = last.unwrap();
+    let request = Request::Commit {
+        proposal: Box::new(p),
+        prepared: q,
+    };
+    for (n, agent) in h.agents.iter_mut().enumerate() {
+        assert!(agent.journal.records.is_empty());
+        assert!(agent.journal.state(&h.node).is_err());
+        assert!(agent.record_count() >= 16);
+        let before = inventory(&h.root);
+        let recovered = agent
+            .sign(&h.node, request.clone(), None, h.heads[n])
+            .unwrap();
+        assert!(recovered.recovered_exact_retry);
+        assert_eq!(recovered.head, h.heads[n]);
+        assert!(agent
+            .sign(&h.node, request.clone(), None, initial[n])
+            .is_err());
+        let next = Request::Timeout {
+            context: Context::current(&h.node).unwrap(),
+            round: 0,
+        };
+        assert!(!agent.contains_request(&h.node, &next).unwrap());
+        assert!(agent.sign(&h.node, next, None, h.heads[n]).is_err());
+        assert_eq!(agent.head().unwrap(), h.heads[n]);
+        assert_eq!(inventory(&h.root), before);
+        crate::keystore::private_create(&h.root.join(format!("caller-{n}.head")), &h.heads[n].0)
+            .unwrap();
+    }
+    let native_head = h.node.storage_head().unwrap();
+    let counts: Vec<_> = h.agents.iter().map(Agent::record_count).collect();
+    let heads = h.heads.clone();
+    let package = h.node.journal.bootstrap.clone();
+    let pin = package.currency.id().unwrap();
+    let before = inventory(&h.root);
+    h.agents.clear();
+    let node = Store::create(
+        &h.root.join("empty-unused-native"),
+        package.clone(),
+        h.node.chain.region,
+        &public(1),
+        pin,
+    )
+    .unwrap();
+    // Complete non-genesis custody cannot open against a rolled-back native view.
+    for seed in &h.seeds {
+        assert!(Agent::open(&h.root.join(format!("signer-{seed}")), &node).is_err());
+    }
+    drop(node);
+    // Exclude the deliberately added empty counterexample directory from the
+    // original immutable signer/native inventory comparison below.
+    let stable = inventory(&h.root);
+    for (n, seed) in h.seeds.iter().enumerate() {
+        let (mut agent, status) =
+            Agent::open_with_status(&h.root.join(format!("signer-{seed}")), &h.node).unwrap();
+        assert_eq!(
+            serde_json::to_value(status).unwrap()["head"],
+            serde_json::to_value(heads[n]).unwrap()
+        );
+        assert_eq!(agent.head().unwrap(), heads[n]);
+        assert_eq!(agent.record_count(), counts[n]);
+        let caller =
+            crate::keystore::private_read(&h.root.join(format!("caller-{n}.head")), 32).unwrap();
+        assert_eq!(*caller, heads[n].0);
+        assert!(
+            agent
+                .sign(&h.node, request.clone(), None, heads[n])
+                .unwrap()
+                .recovered_exact_retry
+        );
+    }
+    assert_eq!(h.node.storage_head().unwrap(), native_head);
+    assert_eq!(inventory(&h.root), stable);
+    assert!(before
+        .iter()
+        .all(|(path, row)| stable.get(path) == Some(row)));
+    println!("paged-agent complete native_height=8 signatures=72 native_owner99_mature=true same_process_cold=true records={counts:?} elapsed={:.3} fixture={}",started.elapsed().as_secs_f64(),h.root.display());
+}
+
+#[test]
+fn paged_signer_replays_absent_active_parents_and_refuses_hash_consistent_bad_vote() {
+    let mut h = Harness::with_rules(crate::paged_bft::RULES);
+    h.retain = true;
+    for _ in 0..3 {
+        let p = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
+        let q = h.prepare(&p, &[0, 1, 2, 3]);
+        let s = h.commit(&p, &q, &[0, 1, 2, 3]);
+        h.node.finalize(s).unwrap();
+    }
+    let agent = h.agents.remove(0);
+    let dir = h.root.join(format!("signer-{}", h.seeds[0]));
+    let header = crate::keystore::private_read(&dir.join("bft-header.json"), MAX_BYTES).unwrap();
+    let manifest =
+        crate::keystore::private_read(&dir.join("bft-records/stream.json"), MAX_BYTES).unwrap();
+    let scope: crate::retained_pages::Scope = serde_json::from_value(
+        serde_json::from_slice::<serde_json::Value>(&manifest).unwrap()["scope"].clone(),
+    )
+    .unwrap();
+    let count = agent.record_count();
+    let head = agent.head().unwrap();
+    drop(agent);
+    // Remove ONLY the process-local working set. Full signed native records and
+    // the authoritative current ledger/selection remain in the original store.
+    h.node.evidence.snapshots.clear();
+    let before = inventory(&h.root);
+    let reopened = Agent::open(&dir, &h.node).unwrap();
+    assert_eq!(reopened.head().unwrap(), head);
+    assert_eq!(reopened.record_count(), count);
+    assert_eq!(inventory(&h.root), before);
+    drop(reopened);
+    let original =
+        crate::retained_pages::Stream::<bft::Record>::open(&dir.join("bft-records"), &scope, head)
+            .unwrap();
+    let mut records = vec![];
+    original
+        .visit(head, |r| {
+            records.push(r.clone());
+            Ok(())
+        })
+        .unwrap();
+    drop(original);
+    let Message::Vote(vote) = &mut records.last_mut().unwrap().message else {
+        panic!("last native response must be the retained commit vote");
+    };
+    vote.approval.signature = "00".repeat(64);
+    let damaged = h.root.join("hash-consistent-bad-signer");
+    fs::create_dir(&damaged).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&damaged, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    crate::keystore::private_create(&damaged.join("LOCK"), b"").unwrap();
+    crate::keystore::private_create(&damaged.join("bft-header.json"), &header).unwrap();
+    let mut stream =
+        crate::retained_pages::Stream::<bft::Record>::create(&damaged.join("bft-records"), scope)
+            .unwrap();
+    stream.append(&records, stream.storage_head()).unwrap();
+    // Integrity checks are satisfied. Native signatures must still reject.
+    stream.visit(stream.storage_head(), |_| Ok(())).unwrap();
+    drop(stream);
+    let before = inventory(&h.root);
+    assert!(Agent::open(&damaged, &h.node).is_err());
+    assert_eq!(inventory(&h.root), before);
+    println!("paged-signer full-native-history-without-active-parent=true hash-consistent-bad-signature-refused=true native_height=3 actual_archive_capacity=false");
+}
+
+#[test]
+fn paged_signer_refuses_new_pending_native_incident_on_already_open_store() {
+    let mut h = Harness::with_rules(crate::paged_bft::RULES);
+    h.retain = true;
+    h.agents.clear();
+    // Simulate a newly durable incident publication marker while the native
+    // Store lock stays held. It grants no incident/ledger authority.
+    fs::write(h.root.join("node/INCIDENT_GUARD"), Hash([7; 32]).0).unwrap();
+    let before = inventory(&h.root);
+    assert!(
+        Agent::open(&h.root.join(format!("signer-{}", h.seeds[0])), &h.node).is_err(),
+        "paged signer accepted native history with a new pending incident marker"
+    );
+    assert_eq!(inventory(&h.root), before);
+    println!("paged signer pending native incident refuses held-open Store; no votes or authority");
+}

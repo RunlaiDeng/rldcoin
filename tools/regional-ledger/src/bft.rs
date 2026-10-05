@@ -592,8 +592,13 @@ pub struct State {
     pub proposed: bool,
 }
 impl State {
-    fn enter(&mut self, c: &Context, node: &Store) -> Result<Vec<String>> {
-        let keys = c.keys(&node.trust, &node.evidence)?;
+    fn enter(
+        &mut self,
+        c: &Context,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+    ) -> Result<Vec<String>> {
+        let keys = c.keys(trust, evidence)?;
         if self.context.as_ref() != Some(c) {
             if let Some(old) = &self.context {
                 require(
@@ -650,9 +655,24 @@ impl State {
                 },
             });
         }
+        self.apply_authenticated(request, key, &node.trust, &node.evidence)
+    }
+    // Shared ordinary execution kernel. The paged caller supplies only evidence
+    // just derived by ordered native genesis replay, never a persisted ledger.
+    fn apply_authenticated(
+        &mut self,
+        request: &Request,
+        key: &str,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+    ) -> Result<Message> {
+        require(
+            self.epoch_fence.is_none() && !matches!(request, Request::EpochFence { .. }),
+            "ordinary BFT action requires unfenced authenticated context",
+        )?;
         let c = request.context()?;
-        crate::joint_epoch::signing_context(&c, &node.trust, &node.evidence)?;
-        let keys = self.enter(&c, node)?;
+        crate::joint_epoch::signing_context(&c, trust, evidence)?;
+        let keys = self.enter(&c, trust, evidence)?;
         require(
             keys.contains(&key.into()),
             "BFT signing key is not active in this era",
@@ -667,7 +687,7 @@ impl State {
                 snapshot,
                 timeout,
             } => {
-                verify_prospective(snapshot, &node.trust, &node.evidence)?;
+                verify_prospective(snapshot, trust, evidence)?;
                 authorize(&c, *round, timeout, snapshot.statement.id()?, key, &keys)?;
                 self.round(*round)?;
                 require(!self.proposed, "BFT leader already proposed in this round")?;
@@ -680,7 +700,7 @@ impl State {
                 })))
             }
             Request::Prepare(p) => {
-                let high = p.verify(&node.trust, &node.evidence)?;
+                let high = p.verify(trust, evidence)?;
                 let value = p.snapshot.statement.id()?;
                 self.round(p.round)?;
                 require(
@@ -706,7 +726,7 @@ impl State {
                 proposal: p,
                 prepared: q,
             } => {
-                p.verify(&node.trust, &node.evidence)?;
+                p.verify(trust, evidence)?;
                 q.verify(&keys)?;
                 let value = p.snapshot.statement.id()?;
                 require(
@@ -846,6 +866,10 @@ impl Journal {
         replay.finish(native_head)
     }
     pub fn state(&self, node: &Store) -> Result<State> {
+        require(
+            !crate::paged_bft::is_profile(&node.trust.region(self.binding.region)?.rules),
+            "paged signer header is not complete custody authority",
+        )?;
         self.state_at_depth(node, 0)
     }
     pub(crate) fn state_at_depth(&self, node: &Store, depth: usize) -> Result<State> {
@@ -863,6 +887,7 @@ pub struct Agent {
     _lock: File,
     pub journal: Journal,
     healthy: bool,
+    paged: Option<crate::retained_pages::Stream<Record>>,
 }
 /// Read-only result of the full journal validation in the same locked open.
 /// No decoded status can initialize a journal or authorize a signature.
@@ -960,7 +985,11 @@ impl Agent {
             _lock: lock(dir)?,
             journal,
             healthy: true,
+            paged: None,
         };
+        if crate::paged_bft::is_profile(&node.trust.region(c.region)?.rules) {
+            return Self::create_paged(agent, node);
+        }
         agent.journal.state(node)?;
         agent.persist(&agent.journal)?;
         Ok(agent)
@@ -973,10 +1002,10 @@ impl Agent {
     pub fn open_with_status(dir: &Path, node: &Store) -> Result<(Self, Status)> {
         let (agent, state) = Self::open_state(dir, node)?;
         let status = Status {
-            head: agent.journal.head()?,
+            head: agent.head()?,
             binding: agent.journal.binding.clone(),
             state,
-            records: agent.journal.records.len(),
+            records: agent.record_count(),
             creation: agent.journal.creation.clone(),
             external_rollback_anchor_qualified: false,
         };
@@ -984,6 +1013,13 @@ impl Agent {
     }
     fn open_state(dir: &Path, node: &Store) -> Result<(Self, State)> {
         let lock = lock(dir)?;
+        if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
+            return Self::open_paged(dir, lock, node);
+        }
+        require(
+            !exists(&dir.join("bft-header.json"))?,
+            "legacy signer cannot adopt paged custody",
+        )?;
         let journal: Journal = serde_json::from_slice(&crate::keystore::private_read(
             &dir.join("bft.json"),
             MAX_BYTES,
@@ -995,6 +1031,7 @@ impl Agent {
             _lock: lock,
             journal,
             healthy: true,
+            paged: None,
         };
         let next = dir.join("bft.next");
         if exists(&next)? {
@@ -1098,6 +1135,7 @@ impl Agent {
             _lock: lock(dir)?,
             journal,
             healthy: true,
+            paged: None,
         };
         agent.persist(&agent.journal)?;
         Ok(agent)
@@ -1135,6 +1173,7 @@ impl Agent {
             _lock: lock,
             journal,
             healthy: true,
+            paged: None,
         })
     }
     pub fn sign(
@@ -1148,6 +1187,9 @@ impl Agent {
             self.healthy,
             "BFT signer requires reopen after persistence failure",
         )?;
+        if self.paged.is_some() {
+            return self.sign_paged(node, request, key_file, expected);
+        }
         let mut state = self.journal.state(node)?;
         let head = self.journal.head()?;
         if let Some((n, r)) = self
@@ -1239,3 +1281,6 @@ mod replay;
 
 #[cfg(test)]
 pub(crate) use replay::tests::compare_all_prefixes;
+
+#[path = "paged_bft_agent.rs"]
+mod paged_agent;

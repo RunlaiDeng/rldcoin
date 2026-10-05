@@ -1,0 +1,233 @@
+{
+  "format": "RLD-NATIVE-PAGED-ORDINARY-AGENT-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T02:59:30.681222+00:00",
+  "status": "ORDINARY_PAGED_WRITES_AND_FULL_NATIVE_HISTORICAL_LOCK_REPLAY_IMPLEMENTED_INTERRUPTED_RECOVERY_OPEN",
+  "scopes": [
+    {
+      "name": "regional-native-paged-agent-writer-20261005",
+      "checks_path": "docs/operations/evidence/regional-native-paged-agent-writer-20261005-checks.json",
+      "checks_sha256": "208a52ac44f24c96c19c70a0e35a342d79e688e47551155bb14cea64a82ca88d",
+      "stage_sha256": "d4c2a6a6769eac44a9e0c3fca585b3edbbdf6e57a776a1ccc4fa60a0b94c85a1",
+      "completed": false,
+      "failure": "native-library-tests-strict: failed",
+      "duration_seconds": 37.861,
+      "budget_seconds": 60,
+      "native_source": "5bf220f21d041a57a9a36bcf0619dc87c07260fb9fa81665f7b020ef252fb50c",
+      "implementation": "34fcd1e15de1eb38936f059f2bbdd13faf3a9b2a32c17d7a9f111f39faab8770",
+      "components": [
+        {
+          "phase": "ordinary-paged-Agent-eight-native-heights",
+          "exit_code": 0
+        },
+        {
+          "phase": "affected-cli-compile-only",
+          "exit_code": 0
+        },
+        {
+          "phase": "native-library-tests-strict",
+          "exit_code": 101
+        }
+      ]
+    },
+    {
+      "name": "regional-native-paged-agent-strict-fix-20261005",
+      "checks_path": "docs/operations/evidence/regional-native-paged-agent-strict-fix-20261005-checks.json",
+      "checks_sha256": "8dae8516163c9596b0acd3e93e5bcf696c35a8129dbde5622a9f7b0e4efdf51b",
+      "stage_sha256": "eca5b60f07f45c72b082a128e8d3ecf3fe807307d7d8de2c85b131955297b78e",
+      "completed": false,
+      "failure": "paged-historical-native-and-bad-complete-signature: failed",
+      "duration_seconds": 1.499,
+      "budget_seconds": 30,
+      "native_source": "127b8e8bb8fd82d1d128c2d57075455c84eedf6bf7f7d5f949efd740a787adfa",
+      "implementation": "eb9da2f6e416acae679ca322fcacfc5d76d3bf2cc8b303053fd5c736cda84970",
+      "components": [
+        {
+          "phase": "paged-historical-native-and-bad-complete-signature",
+          "exit_code": 101
+        }
+      ]
+    },
+    {
+      "name": "regional-native-paged-agent-counter-fixture-fix-20261005",
+      "checks_path": "docs/operations/evidence/regional-native-paged-agent-counter-fixture-fix-20261005-checks.json",
+      "checks_sha256": "c5afdccb860a64a5ea8517e65e7445601376deaf1163d96be113c96ec1f6613b",
+      "stage_sha256": "3f7f01b49438981e0069f0f7ec9dbe0bc403a60c22d62f9d536b0fd3451c4295",
+      "completed": true,
+      "failure": null,
+      "duration_seconds": 10.795,
+      "budget_seconds": 30,
+      "native_source": "1ed748d9f10eadbe8fb5ec12b173280ab2a0dd60d6d8ac2e290801a8b4477dc4",
+      "implementation": "ead192f086cc8369445a3e6ba422db326320bf7275c25a98bfc88585cab1bb00",
+      "components": [
+        {
+          "phase": "paged-historical-native-and-bad-complete-signature",
+          "exit_code": 0
+        },
+        {
+          "phase": "legacy-durable-lock-and-keyless-exact-response",
+          "exit_code": 0
+        },
+        {
+          "phase": "affected-cli-compile-only",
+          "exit_code": 0
+        },
+        {
+          "phase": "native-library-tests-strict",
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "name": "regional-native-paged-agent-pending-native-counter-20261005",
+      "checks_path": "docs/operations/evidence/regional-native-paged-agent-pending-native-counter-20261005-checks.json",
+      "checks_sha256": "6fe04196dffc6dc2b6cb4d9830ccd0e68df0af7cba11812a0a7bb70459417fb6",
+      "stage_sha256": "2bdf776a86f4c6d2e4a63bb132ee301fab4500336afe6595498b311b0d849422",
+      "completed": false,
+      "failure": "pending-native-marker-refusal: failed",
+      "duration_seconds": 3.943,
+      "budget_seconds": 30,
+      "native_source": "11426ef9af1981036a3d7f955ea39e37b9529e66bffd08e614a13aa7068f5653",
+      "implementation": "62ee28c3de6269bd37b9525890def591df7996bc11600e6f23e68ce43e545a68",
+      "components": [
+        {
+          "phase": "pending-native-marker-refusal",
+          "exit_code": 101
+        }
+      ]
+    },
+    {
+      "name": "regional-native-paged-agent-pending-native-fix-20261005",
+      "checks_path": "docs/operations/evidence/regional-native-paged-agent-pending-native-fix-20261005-checks.json",
+      "checks_sha256": "0c06fc5bdc901ebdf650cb42631e3717b51792d0a2f3ff9985388a2b387ce7b8",
+      "stage_sha256": "cbefeb7c9f62620f3c6df4699fa7762b926eec781603cb70f72c6e67e86b7ad0",
+      "completed": true,
+      "failure": null,
+      "duration_seconds": 9.942,
+      "budget_seconds": 30,
+      "native_source": "00feaf5ab2020b58577cf40edfc9f02f7c9cd69665b04f0bbdf986123f01438d",
+      "implementation": "26b13da2133cdb6873ad025300d69cb3c9bd8183622f1a3d59ad60bd2983dc66",
+      "components": [
+        {
+          "phase": "pending-native-marker-refusal",
+          "exit_code": 0
+        },
+        {
+          "phase": "affected-paged-historical-native-and-bad-signature",
+          "exit_code": 0
+        },
+        {
+          "phase": "affected-cli-compile-only",
+          "exit_code": 0
+        },
+        {
+          "phase": "native-library-tests-strict",
+          "exit_code": 0
+        }
+      ]
+    }
+  ],
+  "final_native_source": "00feaf5ab2020b58577cf40edfc9f02f7c9cd69665b04f0bbdf986123f01438d",
+  "final_implementation": "26b13da2133cdb6873ad025300d69cb3c9bd8183622f1a3d59ad60bd2983dc66",
+  "source_files": 78,
+  "test_binary_sha256": "310b24a04f8831bcf9105bfb80dd3a6f46e9b7fbf71d52edd7ecfd70b647fbd0",
+  "old_main_binary_sha256": "838873ba542703392db98d3fa411bd2f4a9f43837c9493073bc6fdcd6ed5fb3a",
+  "old_main_binary_rebuilt": false,
+  "core171_unchanged": true,
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "frozen_body_pdf_unchanged": true,
+  "old_failed_fixture_opened": false,
+  "network_processes_started": 0,
+  "ordinary_Store_and_Agent_write_paths_integrated": true,
+  "full_paging_custody_integration_qualified": false,
+  "controller_annotation": "Inherited ordinary_Store_and_Agent_paging_integrated=false describes uncompleted full recovery/qualification; both ordinary normal write paths are implemented. Counter final stage text describes marker gate; command list additionally binds necessary changed historical consumer/strict/CLI compilation.",
+  "first60_scope_completed": false,
+  "first60_native_sample_passed": true,
+  "first60_failure": "items_after_test_module strict refusal; retain as failed whole scope",
+  "native8_sample": {
+    "heights": 8,
+    "actual_Agents": 4,
+    "proposals": 8,
+    "prepare_votes": 32,
+    "commit_votes": 32,
+    "records_per_agent": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "owner_payment": 99,
+    "fee": 1,
+    "recipient_mature": true,
+    "test_runtime_seconds": 23.452,
+    "same_process_signer_cold": true,
+    "pinned_external_caller_heads_retained": true,
+    "full_private_hash_mode_size_mtime_unchanged": true,
+    "exact_keyless_retry": true,
+    "stale_head_keyless_first_sign_and_rolled_back_native_view_refused": true,
+    "qualified_native_source": "5bf220f21d041a57a9a36bcf0619dc87c07260fb9fa81665f7b020ef252fb50c",
+    "rerun": false
+  },
+  "source_reuse": {
+    "changed_paths_since_native8": [
+      "tools/regional-ledger/src/bft_replay.rs",
+      "tools/regional-ledger/src/paged_bft_tests.rs",
+      "tools/regional-ledger/src/paged_store.rs"
+    ],
+    "bft_replay": "unchanged complete production items relocated before test module; exact normalized production item text compared",
+    "paged_store": "new native health/incident guard and full retained incident authentication checks before releasing historical state",
+    "paged_bft_tests": "focused counter tests added; private method call replaced by public typed vote mutation",
+    "qualification": "Native8 sample binds original source, never final complete suite. Final source tested affected three-height historical replay/missing working evidence/bad signatures plus pending marker gate; no8/65 rerun."
+  },
+  "minimal_counter": {
+    "duration_seconds": 3.943,
+    "observed": true,
+    "regression_passed": false,
+    "scope": "four empty actual signer directories and height-zero held native Store; new pending marker should refuse",
+    "fix": "native health and zero pending guard required at cursor construction and state release, full retained incident authentication/index/safety rechecked",
+    "fix_duration_seconds": 9.942
+  },
+  "current_strict_library_and_tests_passed": true,
+  "cli": "affected entry cargo check only; no binary rebuild/run",
+  "legacy_value_strict": "VALUE-STRICT-01 OPEN; original two file hashes unchanged; no trigger/retry/exemption",
+  "next_hypothesis": "An interrupted exact already-signed paged response can be restored only under the complete matching caller pending request/previous head/header-purpose and fully native-replayed original prefix, preserving all original lock history and never first-signing or adopting a missing custody directory.",
+  "next_required_work": [
+    "design explicit full pending-response/caller transition recovery contract",
+    "implement full old/proposed page authentication before exact recover-only publication",
+    "refuse ambiguous or unrelated pending/commit/header/head; preserve original bytes and old/new head observations",
+    "test three actual retained pending publication positions with invalid signature/head/request and absent-custody refusals"
+  ],
+  "next_once_component_gate": {
+    "implementation_review_required": true,
+    "started": false,
+    "budget_seconds": 60,
+    "attempts": 1,
+    "compile_wait_included": true,
+    "network_budget": 0,
+    "exit": "first mismatch/failure, complete bounded pending-recovery discrimination, or60seconds; preserve stopped source and all private files"
+  },
+  "reserved_full_integration_gate": {
+    "started": false,
+    "budget_seconds": 300,
+    "attempts": 1,
+    "compile_wait_included": true,
+    "requires": "complete normal Store/Agent writes and exact interrupted recovery contract implemented and reviewable",
+    "minimum": "actual>128 complete native signer records with full value/lock, actual retained native archive across active boundary, new-process pinned cold, stale caller/corrupted later record/publication failure refusal",
+    "exit": "first failure, complete finite gate, or300 seconds; no unchanged rerun"
+  },
+  "original_network": {
+    "stage_seconds": 600,
+    "round_seconds": 60,
+    "new_heights": 24,
+    "challenge_blocks": 2016,
+    "quorums_maturity_capacity_unchanged": true
+  },
+  "open_gates": [
+    "interrupted native paged signer response recovery",
+    "actual>128 signer/actual65+ signing and new-process cold",
+    "full native archive/incident/receipt/channel capacity and corruption/interruption",
+    "complete2016 challenge settlement and ordinary native lifecycle/TLS faults",
+    "epoch/role paging, image/restore, cross-device/independent freshness",
+    "long history200000 eras, PQC/renewal/physical and all mandatory clauses"
+  ],
+  "whole_goal_qualified": false
+}

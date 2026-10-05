@@ -58,7 +58,7 @@ impl Harness {
                 Agent::create(&root.join(format!("signer-{s}")), &node, public(*s)).unwrap()
             })
             .collect::<Vec<_>>();
-        let heads = agents.iter().map(|a| a.journal.head().unwrap()).collect();
+        let heads = agents.iter().map(|a| a.head().unwrap()).collect();
         Self {
             root,
             node,

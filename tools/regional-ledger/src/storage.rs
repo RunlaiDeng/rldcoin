@@ -1196,3 +1196,5 @@ pub fn recover_incident<P: Into<Incident>>(
 
 #[path = "paged_store.rs"]
 mod paged;
+
+pub(crate) use paged::Historical as PagedSigningHistory;

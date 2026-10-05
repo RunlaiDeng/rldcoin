@@ -114,3 +114,14 @@ context/candidate0.226924秒。sign占这些独立计时总额81.4769%，不是�
 旧失败和下一原定一次300秒Agent gate见
 [普通完整流接入](REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)及
 [准确总结果](../operations/evidence/regional-native-paged-store-outcome-20261005.json)。
+
+
+后续普通Agent正常分页写入及逐条historical native lock内核已接入；四实际
+Agents/8高度/72签署/owner99成熟的有限样本完成，但整个37.861秒scope因strict
+模块位置告警失败，保留未通过。生产项移序/夹具私有接口修正后10.795秒小范围
+通过缺活动parents时完整原始native重放及hash自洽坏signature拒绝，旧锁路径/
+strict/入口compile通过。held-native新pending事故标记3.943秒counter成立；健康/
+guard/full事故重验修复后9.942秒affected范围通过。没有8/65长测重复、实际>128/
+真实eviction签署/新进程或完整窗口资格，准确源及下一恢复gate见
+[Agent结果](../operations/evidence/regional-native-paged-agent-outcome-20261005.json)。
+原定300秒仍等待完整中断recover-only实现，不把正常页写入当保管恢复完成。

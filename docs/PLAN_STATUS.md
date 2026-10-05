@@ -80,6 +80,17 @@ quorum签名，无BFT Agent投票保管。两地区重复foreign legacy envelope
 >128历史锁/recover-only尚OPEN，原定一次300秒集成scope未启动，网络预算0。
 [实际变化、反例、来源和下一假设](operations/evidence/regional-native-paged-store-outcome-20261005.json)。
 旧价值库strict独立OPEN；主binary未重建，旧V8第65及完整fault失败不改称通过。
+后续78-file普通Agent已接入normal paged writer及从genesis逐条历史锁重放；
+真实四Agent/8高度/72签署/owner99成熟有限样本23.452秒运行完成，整个37.861秒
+scope因strict模块位置告警失败，保留未通过。移序/测试接口修正后10.795秒通过
+三高度实际Agent/活动parent集缺失时完整历史与自洽hash坏签名拒绝、旧锁路径/
+strict/入口compile。held-native新pending事故guard最小反例3.943秒成立；加Native
+health/guard/full事故重验后9.942秒受影响范围通过，不打开原失败目录。
+现源`00feaf5ab202...`/implementation`26b13da2133c...`，8样本保留准确原来源，
+未重复8/65或称final全套通过；[准确Agent结果](operations/evidence/regional-native-paged-agent-outcome-20261005.json)。
+中断响应promotion/recover-only仍未实现，pending严格拒绝保留。下一一次60秒
+恢复组件先待可审合同/实现；原定300秒>128/实际native活动界/新进程集成范围
+未开始，原网络600sec/60sec/max24/2016及成熟/票数/容量不变。旧价值strict仍OPEN。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

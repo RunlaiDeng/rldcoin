@@ -134,6 +134,104 @@ impl<'a> Replay<'a> {
     }
 }
 
+/// New signed paged custody keeps its complete original record chain in pages.
+/// Native genesis replay supplies every historical parent; no decoded cache or
+/// active evidence from the final height may authorize an old request.
+pub(super) struct PagedReplay<'a> {
+    journal: &'a Journal,
+    node: &'a Store,
+    history: crate::storage::PagedSigningHistory<'a>,
+    owner: crate::wallet_agent::Binding,
+    state: State,
+    head: Hash,
+    count: u64,
+}
+impl<'a> PagedReplay<'a> {
+    pub(super) fn new(journal: &'a Journal, node: &'a Store, head: Hash) -> Result<Self> {
+        require(
+            journal.records.is_empty()
+                && journal.origin.is_none()
+                && crate::paged_bft::is_profile(&node.trust.region(journal.binding.region)?.rules)
+                && journal.binding.currency == node.trust.currency()?
+                && journal.binding.region == node.chain.region
+                && journal.creation.pin.height == 0
+                && node
+                    .trust
+                    .region(journal.binding.region)?
+                    .validators
+                    .contains(&journal.binding.key),
+            "paged BFT immutable genesis signer header/profile/member",
+        )?;
+        validate_ed25519_public_key(&journal.binding.key)?;
+        let owner = crate::wallet_agent::Binding {
+            currency: journal.binding.currency,
+            region: journal.binding.region,
+            owner: journal.binding.key.clone(),
+        };
+        let mut history = node.paged_signing_history()?;
+        let (_, _, chain) = history.at(0)?;
+        journal.creation.check_selected(node, &owner, chain)?;
+        Ok(Self {
+            journal,
+            node,
+            history,
+            owner,
+            state: State::default(),
+            head,
+            count: 0,
+        })
+    }
+    pub(super) fn push(&mut self, record: &Record) -> Result<()> {
+        require(
+            record.previous_head == self.head && record.message.approval().key == self.owner.owner,
+            "paged BFT complete predecessor/key mismatch",
+        )?;
+        let (trust, evidence, chain) = self.history.at(record.observation.pin.height)?;
+        record
+            .observation
+            .check_selected(self.node, &self.owner, chain)?;
+        let c = record.request.context()?;
+        require(
+            c.currency == self.owner.currency
+                && c.region == self.owner.region
+                && c.parent_height == chain.height()
+                && c.parent_block == chain.tip()?
+                && c.parent_state == chain.ledger.root()?
+                && c.previous == chain.finalized
+                && c.epoch == chain.epoch
+                && c.epoch == self.journal.creation.pin.epoch,
+            "paged BFT request differs from complete historical parent",
+        )?;
+        let mut expected =
+            self.state
+                .apply_authenticated(&record.request, &self.owner.owner, trust, evidence)?;
+        expected.set_approval(record.message.approval().clone());
+        require(
+            expected == record.message,
+            "paged BFT response differs from original deterministic request/lock",
+        )?;
+        verify_bytes(
+            &self.owner.owner,
+            &record.message.bytes()?,
+            &record.message.approval().signature,
+        )?;
+        self.head = crate::retained_pages::next_head(self.head, self.count, record)?;
+        self.count = self
+            .count
+            .checked_add(1)
+            .ok_or("paged signer count overflow")?;
+        Ok(())
+    }
+    pub(super) fn finish(self, expected: Hash) -> Result<State> {
+        require(
+            self.head == expected,
+            "paged BFT exact complete caller head differs",
+        )?;
+        self.history.finish(self.node)?;
+        Ok(self.state)
+    }
+}
+
 #[cfg(test)]
 pub(super) mod tests {
     use super::*;

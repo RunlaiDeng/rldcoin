@@ -645,3 +645,96 @@ pub(super) fn events(
         },
     )))
 }
+
+/// One native cursor from pinned genesis, shared by historical signer records.
+/// Any look-ahead remains complete and is executed before state can be released.
+pub(crate) struct Historical<'a> {
+    replay: Replay,
+    records: crate::retained_pages::Records<'a, Record>,
+    pending: Option<Record>,
+    last_requested: u64,
+}
+impl Historical<'_> {
+    pub(crate) fn at(&mut self, height: u64) -> Result<(&Trust, &VerifiedEvidence, &Chain)> {
+        require(
+            height >= self.last_requested,
+            "paged signing history cursor rollback",
+        )?;
+        self.last_requested = height;
+        loop {
+            let next = match self.pending.take() {
+                Some(record) => Some(record),
+                None => self.records.next().transpose()?,
+            };
+            let Some(record) = next else {
+                break;
+            };
+            if matches!(&record, Record::Certified(s) if s.statement.height > height) {
+                self.pending = Some(record);
+                break;
+            }
+            self.replay.apply(&record)?;
+        }
+        require(
+            self.replay.chain.height() == height,
+            "paged historical signing prefix missing",
+        )?;
+        Ok((
+            &self.replay.trust,
+            &self.replay.evidence,
+            &self.replay.chain,
+        ))
+    }
+    pub(crate) fn finish(mut self, node: &Store) -> Result<()> {
+        if let Some(record) = self.pending.take() {
+            self.replay.apply(&record)?;
+        }
+        for record in self.records {
+            self.replay.apply(&record?)?;
+        }
+        require(
+            node.healthy && read_guard(&node.dir)?.is_zero(),
+            "paged signing history cannot release state with pending native incident",
+        )?;
+        let (retained, safety) =
+            read_incidents(&node.dir, &node.journal, &self.replay.trust, None)?;
+        require(
+            retained
+                .iter()
+                .map(|p| p.id())
+                .collect::<Result<BTreeSet<_>>>()?
+                == self.replay.incidents
+                && safety.regions == node.safety.regions
+                && safety.channels == node.safety.channels,
+            "paged signing full retained incident set/safety differs",
+        )?;
+        require(
+            self.replay.chain.height() == node.chain.height()
+                && self.replay.chain.ledger == node.chain.ledger
+                && self.replay.chain.finalized == node.chain.finalized
+                && self.replay.chain.epoch == node.chain.epoch
+                && self.replay.incidents == node.journal.incident_ids,
+            "complete historical cursor differs from native current selection",
+        )
+    }
+}
+impl Store {
+    pub(crate) fn paged_signing_history(&self) -> Result<Historical<'_>> {
+        require(
+            self.healthy && read_guard(&self.dir)?.is_zero(),
+            "paged signing requires healthy native Store without pending incident",
+        )?;
+        let header = read_header(&self.dir)?;
+        let replay = Replay::new(&header, &self.authority, self.pin)?;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("paged signing history requires native stream")?;
+        Ok(Historical {
+            replay,
+            records: stream.records(stream.storage_head())?,
+            pending: None,
+            last_requested: 0,
+        })
+    }
+}

@@ -1202,7 +1202,7 @@ fn run() -> Result<()> {
             let agent = bft::Agent::create(&signer_dir, &store, key)?;
             println!(
                 "{}",
-                serde_json::json!({"head":agent.journal.head()?,"binding":agent.journal.binding})
+                serde_json::json!({"head":agent.head()?,"binding":agent.journal.binding})
             );
         }
         Action::BftStatus { signer_dir } => {
@@ -1232,7 +1232,7 @@ fn run() -> Result<()> {
         } => {
             let request: bft::Request = read_json(&file)?;
             let mut agent = bft::Agent::open(&signer_dir, &store)?;
-            if recover_only && !agent.journal.records.iter().any(|r| r.request == request) {
+            if recover_only && !agent.contains_request(&store, &request)? {
                 return Err("BFT recovery cannot first-sign".into());
             }
             let signed = agent.sign(
