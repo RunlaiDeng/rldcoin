@@ -1,0 +1,40 @@
+diff --git a/tmp/default-relay-20260930/retained-pages-pending-counter-tests-20261005.rs b/tools/regional-ledger/src/retained_pages/tests.rs
+index 56f17d251..fd5501776 100644
+--- a/tmp/default-relay-20260930/retained-pages-pending-counter-tests-20261005.rs
++++ b/tools/regional-ledger/src/retained_pages/tests.rs
+@@ -273 +273 @@ fn publication_failure_keeps_original_head_and_all_residue() {
+-    for boundary in [Boundary::Pending, Boundary::Pages] {
++    for boundary in [Boundary::Pending, Boundary::Pages, Boundary::Committed] {
+@@ -285 +285,8 @@ fn publication_failure_keeps_original_head_and_all_residue() {
+-        assert_eq!(fs::read(dir.join(MANIFEST)).unwrap(), old_manifest);
++        if boundary == Boundary::Committed {
++            let published: Manifest<Record> =
++                decode(&fs::read(dir.join(MANIFEST)).unwrap()).unwrap();
++            assert_eq!(published.count, 16);
++            assert_ne!(published.head, head);
++        } else {
++            assert_eq!(fs::read(dir.join(MANIFEST)).unwrap(), old_manifest);
++        }
+@@ -289 +296 @@ fn publication_failure_keeps_original_head_and_all_residue() {
+-            usize::from(boundary == Boundary::Pages)
++            usize::from(boundary != Boundary::Pending)
+@@ -332,0 +340,16 @@ fn pending_seal_retains_complete_unpublished_record() {
++    let pending: Publication<Record> = decode(&raw).unwrap();
++    assert_eq!(pending.expected_head, head);
++    assert_eq!(pending.pages.len(), 1);
++    assert_eq!(pending.pages[0].records.len(), 16);
++    assert_eq!(
++        bytes(&pending.pages[0].records[15]).unwrap(),
++        bytes(&item).unwrap()
++    );
++    assert_eq!(pending.manifest.count, 16);
++    assert_eq!(pending.manifest.tail.len(), 0);
++    let complete = bytes(&pending.pages[0]).unwrap();
++    assert_eq!(
++        Hash(Sha256::digest(&complete).into()),
++        pending.manifest.pages[0].hash
++    );
++    assert_eq!(complete.len(), pending.manifest.pages[0].bytes);
+@@ -354 +377 @@ fn orphan_file_capacity_and_oversize_refusals_are_atomic() {
+-    for index in 0..history::MAX_FILES - 3 {
++    for index in 0..history::MAX_FILES - 4 {

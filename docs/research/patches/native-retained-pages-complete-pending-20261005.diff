@@ -1,0 +1,76 @@
+diff --git a/tmp/default-relay-20260930/retained-pages-pending-counter-source-20261005.rs b/tools/regional-ledger/src/retained_pages.rs
+index d650e626a..700357a8a 100644
+--- a/tmp/default-relay-20260930/retained-pages-pending-counter-source-20261005.rs
++++ b/tools/regional-ledger/src/retained_pages.rs
+@@ -16,0 +17 @@ const PENDING: &str = "stream.next";
++const COMMIT: &str = "stream.commit";
+@@ -77,0 +79,9 @@ struct Page<T> {
++#[derive(Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++struct Publication<T> {
++    expected_head: Hash,
++    manifest: Manifest<T>,
++    /// Full original records, not references to pages still in RAM. This is
++    /// durable before any object publication or possible response release.
++    pages: Vec<Page<T>>,
++}
+@@ -182 +192,4 @@ fn root_inventory(dir: &Path) -> Result<()> {
+-            matches!(name.to_str(), Some("LOCK" | MANIFEST | PENDING | OBJECTS)),
++            matches!(
++                name.to_str(),
++                Some("LOCK" | MANIFEST | PENDING | COMMIT | OBJECTS)
++            ),
+@@ -207,0 +221 @@ enum Boundary {
++    Committed,
+@@ -240 +254 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
+-            !exists(&dir.join(PENDING))?,
++            !exists(&dir.join(PENDING))? && !exists(&dir.join(COMMIT))?,
+@@ -270 +284 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
+-            self.healthy && !exists(&self.dir.join(PENDING))?,
++            self.healthy && !exists(&self.dir.join(PENDING))? && !exists(&self.dir.join(COMMIT))?,
+@@ -348,0 +363,7 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
++        require(
++            bytes(&records)?
++                .len()
++                .checked_add(bytes(&self.manifest.tail)?.len())
++                .is_some_and(|n| n <= MAX_BYTES),
++            "complete stream staged record byte capacity",
++        )?;
+@@ -378,0 +400,9 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
++        let publication = Publication {
++            expected_head: self.manifest.head,
++            manifest: proposed.clone(),
++            pages: objects
++                .iter()
++                .map(|(_, raw)| decode(raw))
++                .collect::<Result<Vec<Page<T>>>>()?,
++        };
++        let pending_raw = bytes(&publication)?;
+@@ -381 +411,2 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
+-        // Include current manifest, pending manifest and the retained LOCK;
++        // Include current manifest, complete pending payload, commit manifest
++        // and the retained LOCK;
+@@ -384,0 +416 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
++            .and_then(|n| n.checked_add(pending_raw.len() as u64))
+@@ -388 +420 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
+-            .checked_add(3)
++            .checked_add(4)
+@@ -413 +445 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
+-            keystore::private_create(&self.dir.join(PENDING), &raw)?;
++            keystore::private_create(&self.dir.join(PENDING), &pending_raw)?;
+@@ -435 +467,14 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
+-            fs::rename(self.dir.join(PENDING), self.dir.join(MANIFEST)).map_err(err)?;
++            keystore::private_create(&self.dir.join(COMMIT), &raw)?;
++            fs::rename(self.dir.join(COMMIT), self.dir.join(MANIFEST)).map_err(err)?;
++            File::open(&self.dir)
++                .map_err(err)?
++                .sync_all()
++                .map_err(err)?;
++            #[cfg(test)]
++            if self.interruption == Some(Boundary::Committed) {
++                return Err("injected after retained manifest publication".into());
++            }
++            // Every unique original byte is now durable in the exact page/tail.
++            // Only this completed redundant wrapper is removed. Any failure
++            // before completion keeps its marker/payload and refuses reopen.
++            fs::remove_file(self.dir.join(PENDING)).map_err(err)?;

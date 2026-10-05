@@ -45,6 +45,19 @@ sign占独立计时81.4769%，内部成本未分开，未验证128-record门槛�
 未变来源复用，未重复长轨迹。密码/发行/完整价值/出版均有明确模型前提，
 Native第65检查点/128签署容量及真实2016资格仍OPEN。下一实现同时处理普通
 Native Store与BFT signer的新规则，不降低旧bound或用只读verifier替代。
+共用[原生完整保留层](research/REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)已编写，
+但尚未接入普通Store/Agent/钱包或启用新signed admission。实际最小故障2.678秒
+确认pending只保留reference会缺完整未发布record；修复先持久完整payload，
+再发布页/manifest。22.139秒受影响组件及native库/tests strict通过，三注入边界
+保持证据并拒绝继续；同机新进程检查的是145条公共fixture签署record的存储，
+不是BFT高度/真实窗口/custody。首20.746秒strict测试告警失败仍保留。
+当前library源身份已变化；旧69-source/主binary只保留原有限绑定，未重建主程序、
+未复活旧fixture。普通原生分页集成及其一次300秒验证仍OPEN。
+字节容量首30.015秒耗尽仍未通过；保持完整逐文件哈希的改变观察方法范围
+16.924秒通过256MiB残片加manifest实际拒绝及strict，生产primitive不变。
+当前71文件library源`0bdde7ce...`/implementation`98326b85...`的
+[总绑定](operations/evidence/regional-native-retained-pages-outcome-20261005.json)
+不等于旧主binary或完整原生运行资格。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

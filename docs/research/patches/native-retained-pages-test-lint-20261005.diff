@@ -1,0 +1,7 @@
+diff --git a/tmp/default-relay-20260930/retained-pages-tests-initial-lint-failed-20261005.rs b/tools/regional-ledger/src/retained_pages/tests.rs
+index c96cc7c83..64bd08187 100644
+--- a/tmp/default-relay-20260930/retained-pages-tests-initial-lint-failed-20261005.rs
++++ b/tools/regional-ledger/src/retained_pages/tests.rs
+@@ -282 +282 @@ fn publication_failure_keeps_original_head_and_all_residue() {
+-        assert!(stream.append(&[item.clone()], head).is_err());
++        assert!(stream.append(std::slice::from_ref(&item), head).is_err());

@@ -94,3 +94,8 @@ H-native-paged-retention：只有明确新signed admission/storage/signer domain
 当来源/范围触发旧价值库VALUE-STRICT-01或候选发布门槛，串行执行其既定独立
 修复/检查，不能由本模型或地区strict替代。长历史、完整fault、独立保管/PQC/
 physical及全部S/R/I/A–G/N/P资格继续OPEN。
+
+后续源码已实现[共用原生保留层](REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)。
+实际故障注入确认并修复“pending只有新页reference、缺完整未发布record”反例；
+这是存储组件的进展，普通Store/Agent/钱包仍未接入，原300秒集成判别未启动。
+不能将该层145条fixture签署record当实际BFT高度或以存储digest代替原生重放。

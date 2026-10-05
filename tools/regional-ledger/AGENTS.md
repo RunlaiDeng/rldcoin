@@ -1,5 +1,15 @@
 # Regional value composition
 
+`src/retained_pages.rs` is a shared private byte-retention layer for future
+ordinary Store/BFT Agent integration, currently not adopted by those paths or
+any new signed admission. Its heads/scope/origin grant no ledger, custody or
+freshness authority. Keep full original sealed-page payloads in durable pending
+publication before writing pages; incomplete pending/commit files refuse,
+including after manifest publication. Only a fully completed redundant wrapper
+may be cleared when every original byte remains in the exact page/tail. Native
+integration must replay complete genesis/history/request semantics, preserve
+caller locks and use fresh signed no-value identity; byte checks never suffice.
+
 The ordinary regional ledger now has an explicitly admitted channel/fee-reserve
 bucket for the new native ground value-channel profiles. The
 executable model in `../value_composition_model.py` and the contract in
