@@ -183,7 +183,7 @@ binary再次exact核对不变。全部失败及原始报告、源码、私有fix
 native authority、长历史、独立/cross-device保管、crypto与physical门槛继续OPEN。
 旧价值库两告警与120秒耗尽独立OPEN；地区库/旧regional原文兼容均不能替代。
 
-## 下一ordinary Service/正常广播判别（尚未启动）
+## 历史ordinary Service/正常广播判别（已执行；以下保留原假设）
 
 假设：已认证分页Native的普通默认Contact Service能在同一生命周期构造，并将
 完整保留信封通过正常mesh广播交给一个配置邻居，而无需控制器搬运信封或新签署。
@@ -196,3 +196,59 @@ native authority、长历史、独立/cross-device保管、crypto与physical门�
 允许下一新scope；不复活失败夹具、原样重复、不签新款/恢复/退款。
 原600/60/24/2016与成熟/票数/8MiB/3MiB/64/256/512/4096/256MiB保持。
 多节点ordinary默认调度与实际value、fullfault/longhistory/independent/physical另验。
+
+
+## 2026-10-05 默认生命周期、TLS及正常接收的有限验证
+
+[准确来源、四个终态和下一范围](../operations/evidence/regional-native-paged-service-integration-outcome-20261005.json)。
+Native/Python未改，87-file b4bc4379 / implementation cf4a2c7e、release CLI
+2e72ac63及原47.519秒strict/legacy证据保持。四次各60秒、1次的新私有无价值
+范围均停止，不打开失败现场：9.189秒因观察器误读TLS字段失败，完整cold未到达；
+修正观察字段后11.132秒通过默认Service广播、真实spool邻居10信封/回执和完整
+原生检查。启用TLS监听仅说明适配器开启，该spool样本不是TCP交付证据。
+
+下一新两Service样本5.675秒因观察器硬编码18库存失败，启动网络之前拒绝；新
+地区同区域副本从签署创世初始化0、完整原生8-checkpoint同步到4已通过，但不能
+称Runtime/TLS或全库存通过。按Native原消息/record_count推导完整库存后，全新
+范围16.247秒通过两个默认无subcommand入口及正常TLS1.3传输，各自9 Signed+
+1 Finalized的库存仅共享Finalized，普通接收后每端完整保留19，每端10个实际对方
+原信封/运输回执；原生完整认证与普通依赖同步在去重前执行。控制器未造/搬信封，
+两个进程干净停止；每端19信封/8-checkpoint和完整已认证前缀停止cold通过。
+
+合法接收追加Native Evidence事件，可改变storage head与页manifest；保留每个
+原不可变对象、完整旧前缀和原始信封。金额/高度4/tip/finality/epoch/permanent
+import exact相同，原wallet/signer/caller及新Runtime caller bytes不变。最新Native
+head仅是本地观察，另存后完整pinned genesis replay，不是独立最新权威。新副本
+不拷贝ledger缓存、signer/wallet/key/runtime保管来初始化授权。四carrier中仅两端
+实际运行，固定localhost TLS、公用fixture钥；不资格独立或跨设备操作。
+
+这两个通过样本只验证完整承载、正常接收和保留认证。实际import99/onward98
+属于新库夹具准备，并非Service实际新增进口；实际净97收款/成熟/继续转出/返程、
+fullfault/2016/post64/longhistory/PQ/physical保持OPEN。原失败仍失败，旧源66不重跑。
+
+## 下一普通进口与成熟判别（尚未启动）
+
+可证伪假设：新鲜当前源E4/P4夹具中已经终局的P出口98，通过普通默认TLS中继
+到新授权Andromeda；四个实际A Native/Runtime从签署创世及独立voter/caller目录
+启动，完整认证出口及因果证明，普通leader从pending imports选择并由原三取四
+prepare/commit实际纳入，指定收款人12净97在原两块成熟后可花。不以运输收据、
+状态摘要或Python库存代替Native value授权。
+
+一次180秒/1次/五个Native进程，夹具准备/启动/等待/停止cold全计时：一个无钥且
+stop_height4的P source、四个fresh A voter，以明确固定localhost TLS拓扑
+P–A0–A1–A2–A3连接，拒外部端点。只使用本次新夹具原出口，不发替代owner请求。
+Controller不造quorum/block/import、不直接contact-apply/finalize，不搬运信封。
+A有限stop_height4保持原24新增高度内；原600秒stage/60秒轮/2016窗口与maturity/
+quorum/容量不改。缺可选telemetry保持unknown，不造height0或误判原生phase失败。
+
+首实际auth/conservation/import/maturity/head/custody失败、完整有限判别或180秒
+退出，保留原件/来源/私有目录，不重签/退款/恢复/原样重跑。通过须四副本实际
+进口/永久ID/精确收款输出及成熟可花、E/P/A兼容300守恒，clean exit后四Native
+完整cold、所有完整信封、各voter与另存caller精确head认证；原源owner保管保持。
+正常签署及认证接收允许新native/voter/caller日志合法推进，不能要求它们全目录
+不变，也不能采用陌生head。失败与unknown如实保留。
+
+即使通过，也只证明一段既有出口的实际接收：普通source owner提交/再次转出/
+返程、fullfault/2016、post64/longhistory、独立/cross-device/PQ/physical另验。
+旧价值库strict仍独立OPEN；源66只有compact-complete授权模型/profile及实际
+Native变化后才允许另一个新长scope，不以hash/cache代替完整授权。

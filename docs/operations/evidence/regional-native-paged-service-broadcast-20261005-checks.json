@@ -1,0 +1,60 @@
+{
+  "format": "RLD-NATIVE-PAGED-SERVICE-BROADCAST-CHECKS-V1",
+  "completed": false,
+  "failure": "actual-native-default-service-broadcast",
+  "duration_seconds": 9.189,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "fresh-current-source-native-fixture",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-paged-runtime-retained-fix-source-20261005/qualified-library-test-binary",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 6.284
+    },
+    {
+      "phase": "actual-native-default-service-broadcast",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-service-broadcast-20261005.py",
+        "203485.640294041"
+      ],
+      "exit_code": 1,
+      "budget_exhausted": false,
+      "elapsed_seconds": 9.173
+    }
+  ],
+  "observations": [],
+  "steps": [
+    {
+      "kind": "native-default-entry-started",
+      "elapsed_seconds": 0.57,
+      "native_default_no_subcommand": true,
+      "external_endpoints": 0
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 2.729,
+      "exit_code": 0,
+      "failed": true
+    }
+  ],
+  "stage_sha256": "74aabcfbf62afd9f98a6053483160f5ff21aaeb5ee46afde63839a8f4786d64b",
+  "controller_sha256": "782516dcedad56c3cfe978d8e2e89db3e476277d1e38a6bbea6212469d23c0b9",
+  "helper_sha256": "a89271dc2370c85da99ef348224da1cd5d24c5cf053e68b28c42dd57118e5064",
+  "log_sha256": "016dc5de4fac4e67e33062cba620ea4cfc90c455170f3d508a83b01e1a20bf9d",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 1,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN"
+}

@@ -1,0 +1,408 @@
+{
+  "format": "RLD-NATIVE-PAGED-SERVICE-TLS-CHECKS-V1",
+  "completed": true,
+  "failure": null,
+  "duration_seconds": 16.247,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "fresh-current-source-native-fixture",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-paged-runtime-retained-fix-source-20261005/qualified-library-test-binary",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 4.644
+    },
+    {
+      "phase": "actual-native-default-two-service-tls",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-service-tls-inventory-fix-20261005.py",
+        "203954.788115791"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 16.229
+    }
+  ],
+  "observations": [
+    {
+      "completed": true,
+      "native_default_entries": 2,
+      "clean_exits": true,
+      "actual_pinned_tls13_neighbor_delivery": true,
+      "no_spool_connections": true,
+      "new_peer_from_signed_genesis_and_full_native_prefix_sync": true,
+      "no_signer_wallet_keys_or_runtime_state_copied": true,
+      "expected_native_union": 19,
+      "peers": [
+        {
+          "index": 0,
+          "native_height": 4,
+          "complete_native_union": 19,
+          "own_original_local_envelopes": 10,
+          "neighbor_received_complete_envelopes": 10,
+          "neighbor_transport_receipts": 10,
+          "full_received_native_authentication": true,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 19,
+            "distinct_complete_snapshots": 8,
+            "retained_state_bytes": 124978,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 1491186,
+            "full_native_authentication": true
+          },
+          "monetary_state_tip_finality_epoch_permanent_imports_unchanged": true,
+          "old_native_immutable_objects_and_prefix_retained": true,
+          "native_storage_head_advanced_by_valid_evidence": true,
+          "independent_latest_head_qualified": false,
+          "runtime_caller_head_unchanged": true
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "complete_native_union": 19,
+          "own_original_local_envelopes": 10,
+          "neighbor_received_complete_envelopes": 10,
+          "neighbor_transport_receipts": 10,
+          "full_received_native_authentication": true,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 19,
+            "distinct_complete_snapshots": 8,
+            "retained_state_bytes": 124978,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 1491186,
+            "full_native_authentication": true
+          },
+          "monetary_state_tip_finality_epoch_permanent_imports_unchanged": true,
+          "old_native_immutable_objects_and_prefix_retained": true,
+          "native_storage_head_advanced_by_valid_evidence": true,
+          "independent_latest_head_qualified": false,
+          "runtime_caller_head_unchanged": true
+        }
+      ],
+      "live_observations": [
+        {
+          "index": 0,
+          "retained_native_envelopes": 10,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 10,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "retained_native_envelopes": 12,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 12,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "retained_native_envelopes": 13,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 13,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "retained_native_envelopes": 14,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 14,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "retained_native_envelopes": 16,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 16,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "retained_native_envelopes": 18,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 17,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 18,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "retained_native_envelopes": 19,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "retained_native_envelopes": 19,
+          "expected_union": 19,
+          "native_height": 4,
+          "errors": 0
+        }
+      ],
+      "no_controller_constructed_or_moved_carriage": true,
+      "no_new_owner_payment_first_sign_recover_refund": true,
+      "receipt_is_ledger_credit": false,
+      "new_ledger_import_or_maturity": false,
+      "full_fault_post64_independent_physical_qualified": false
+    }
+  ],
+  "steps": [
+    {
+      "kind": "fresh-peer-native-genesis-and-prefix",
+      "elapsed_seconds": 0.623,
+      "new_genesis_height": 0,
+      "certified_synced_height": 4,
+      "complete_proof_checkpoints": 8,
+      "keys_or_signer_state_copied": false
+    },
+    {
+      "kind": "native-exact-retained-inventory",
+      "elapsed_seconds": 0.812,
+      "source_local_counts": [
+        10,
+        10
+      ],
+      "exact_complete_union": 19,
+      "only_shared_finalized_body": true
+    },
+    {
+      "kind": "native-default-entry-started",
+      "elapsed_seconds": 0.813,
+      "index": 0,
+      "native_default_no_subcommand": true,
+      "external_endpoints": 0,
+      "pinned_tls13_neighbor": true
+    },
+    {
+      "kind": "native-default-entry-started",
+      "elapsed_seconds": 0.815,
+      "index": 1,
+      "native_default_no_subcommand": true,
+      "external_endpoints": 0,
+      "pinned_tls13_neighbor": true
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 2.864,
+      "index": 0,
+      "retained_native_envelopes": 10,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 2.864,
+      "index": 1,
+      "retained_native_envelopes": 10,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 3.972,
+      "index": 0,
+      "retained_native_envelopes": 12,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 3.972,
+      "index": 1,
+      "retained_native_envelopes": 12,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 4.507,
+      "index": 0,
+      "retained_native_envelopes": 13,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 4.507,
+      "index": 1,
+      "retained_native_envelopes": 13,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 5.143,
+      "index": 0,
+      "retained_native_envelopes": 14,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 5.143,
+      "index": 1,
+      "retained_native_envelopes": 14,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 5.787,
+      "index": 0,
+      "retained_native_envelopes": 16,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 5.847,
+      "index": 1,
+      "retained_native_envelopes": 16,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 6.489,
+      "index": 0,
+      "retained_native_envelopes": 18,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 6.489,
+      "index": 1,
+      "retained_native_envelopes": 17,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 7.084,
+      "index": 1,
+      "retained_native_envelopes": 18,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 7.551,
+      "index": 0,
+      "retained_native_envelopes": 19,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-native-reception",
+      "elapsed_seconds": 7.672,
+      "index": 1,
+      "retained_native_envelopes": 19,
+      "expected_union": 19,
+      "native_height": 4,
+      "errors": 0
+    },
+    {
+      "kind": "complete-native-reception-union",
+      "elapsed_seconds": 7.672,
+      "count_each": 19,
+      "controller_carried_envelopes": false
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 8.0,
+      "index": 0,
+      "exit_code": 0,
+      "failed": false
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 8.001,
+      "index": 1,
+      "exit_code": 0,
+      "failed": false
+    }
+  ],
+  "stage_sha256": "057b16818b7da0c8e989f0e51e64d614da8c41ddae46c564cd952907a6871cde",
+  "controller_sha256": "02054c793cc332e041b1ab1e294e93fa2c1e9265c22fc62fb61d52f5b2cdd540",
+  "helper_sha256": "c5f3ba435eff1d0b4b1da6f0344aca61131c4f34046ddb0d523947365d3c0aa8",
+  "log_sha256": "0c8c6ee051b7320ccdcee5265e3460bbd8be0f3ec7ae357939753195b4403630",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 2,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN"
+}

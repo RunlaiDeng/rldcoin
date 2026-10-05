@@ -418,5 +418,21 @@ with unchanged original native/owner/signer/caller inventory, not Service/TLS,
 ordinary network scheduling/value, fault/2016, long history or independent custody.
 Preserve its earlier real constructor retention failure and all prior failures.
 The changed native source requires fresh signed no-value fixtures; never migrate
-old state/value. Next60second single Service/broadcast discriminator is defined
-in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md. Legacy value strict remains OPEN.
+old state/value. That Service/broadcast discriminator is now historical; follow the
+exact integration outcome and current scope in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md.
+Legacy value strict remains OPEN.
+
+
+Default native Service/Runtime relay has finite current-source evidence: a spool
+neighbor receives10 exact envelopes, and two real pinned localhost TLS peers each
+retain/authenticate the full19-body union. This is no new payment/import/maturity
+or fault pass. Valid Evidence receive can append native history; retain every old
+immutable object and check native value/tip/finality/epoch/imports plus separate
+signer/wallet/caller custody. Do not demand an unchanged native storage head after
+valid sync or adopt a head from telemetry. New replicas initialize from signed
+genesis/full native evidence, never copied caches or custody. Keep observer field
+and fixed-inventory failures failed. Next one fresh180-second five-Service scope
+separates actual ordinary import and original maturity from transport receipt;
+no controller votes/blocks/frame movement, old fixture reopen or owner replacement.
+Original600/60/24/2016 and all quorum/maturity/capacity limits remain. Independent
+legacy value strict and post64 compact-complete authority remain OPEN.

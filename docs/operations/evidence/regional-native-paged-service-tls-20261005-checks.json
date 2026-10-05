@@ -1,0 +1,56 @@
+{
+  "format": "RLD-NATIVE-PAGED-SERVICE-TLS-CHECKS-V1",
+  "completed": false,
+  "failure": "actual-native-default-two-service-tls",
+  "duration_seconds": 5.675,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "fresh-current-source-native-fixture",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-paged-runtime-retained-fix-source-20261005/qualified-library-test-binary",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 4.746
+    },
+    {
+      "phase": "actual-native-default-two-service-tls",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-service-tls-20261005.py",
+        "203885.563488541"
+      ],
+      "exit_code": 1,
+      "budget_exhausted": false,
+      "elapsed_seconds": 5.655
+    }
+  ],
+  "observations": [],
+  "steps": [
+    {
+      "kind": "fresh-peer-native-genesis-and-prefix",
+      "elapsed_seconds": 0.598,
+      "new_genesis_height": 0,
+      "certified_synced_height": 4,
+      "complete_proof_checkpoints": 8,
+      "keys_or_signer_state_copied": false
+    }
+  ],
+  "stage_sha256": "67d9100e455fe0466eb9a540c944e2bae6dc227ee12c4b1ce75d318d5dd3f22b",
+  "controller_sha256": "f5f3a74c5a826dbca67320b923858dc14e439bdf32ef54f72c994f2928d3edd7",
+  "helper_sha256": "a01085d306d850bc7e1e0589cf82705298b9918919bc2de1b5c179217ec39e3d",
+  "log_sha256": "325f61782d92f058ee246ecb63f07453e452d473fdfc9c9d02fcbb0e7078e3b3",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 0,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN"
+}

@@ -1,0 +1,229 @@
+{
+  "format": "RLD-NATIVE-PAGED-SERVICE-BROADCAST-CHECKS-V1",
+  "completed": true,
+  "failure": null,
+  "duration_seconds": 11.132,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "fresh-current-source-native-fixture",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-paged-runtime-retained-fix-source-20261005/qualified-library-test-binary",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 4.646
+    },
+    {
+      "phase": "actual-native-default-service-broadcast",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-service-broadcast-observation-fix-20261005.py",
+        "203524.02594125"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 11.114
+    }
+  ],
+  "observations": [
+    {
+      "completed": true,
+      "native_default_entry": true,
+      "service_clean_exit": true,
+      "native_height": 4,
+      "actual_service_and_runtime": true,
+      "ordinary_ticks_without_new_signing": true,
+      "source_retained_envelopes": 10,
+      "neighbor_durable_full_envelopes": 10,
+      "neighbor_transport_receipts": 10,
+      "receiver_full_native_checks": 10,
+      "original_retained_envelope_inventory_exact": true,
+      "live_observations": [
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 0,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 2,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 3,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 4,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 6,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 8,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 9,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        },
+        {
+          "native_height": 4,
+          "received_complete_envelopes": 10,
+          "retained_source_envelopes": 10,
+          "consensus_stopped": true,
+          "errors": 0
+        }
+      ],
+      "stopped_source_retention": {
+        "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+        "messages_authenticated": 10,
+        "distinct_complete_snapshots": 8,
+        "retained_state_bytes": 106493,
+        "state_limit_bytes": 33554432,
+        "expanded_envelope_bytes_authenticated": 788975,
+        "full_native_authentication": true
+      },
+      "original_native_signer_wallet_caller_inventory_unchanged": true,
+      "runtime_caller_head_unchanged": true,
+      "default_tls13_listener_identity_created": true,
+      "actual_tcp_delivery": false,
+      "actual_spool_neighbor_delivery": true,
+      "no_controller_constructed_or_moved_carriage": true,
+      "no_first_sign_recover_refund": true,
+      "receipt_is_ledger_credit": false,
+      "new_ledger_import_or_maturity": false,
+      "full_fault_post64_independent_physical_qualified": false
+    }
+  ],
+  "steps": [
+    {
+      "kind": "native-default-entry-started",
+      "elapsed_seconds": 0.26,
+      "native_default_no_subcommand": true,
+      "external_endpoints": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 2.222,
+      "native_height": 4,
+      "received_complete_envelopes": 0,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 2.442,
+      "native_height": 4,
+      "received_complete_envelopes": 2,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 2.777,
+      "native_height": 4,
+      "received_complete_envelopes": 3,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 3.152,
+      "native_height": 4,
+      "received_complete_envelopes": 4,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 3.676,
+      "native_height": 4,
+      "received_complete_envelopes": 6,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 4.161,
+      "native_height": 4,
+      "received_complete_envelopes": 8,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 4.578,
+      "native_height": 4,
+      "received_complete_envelopes": 9,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "ordinary-live-observation",
+      "elapsed_seconds": 5.177,
+      "native_height": 4,
+      "received_complete_envelopes": 10,
+      "retained_source_envelopes": 10,
+      "consensus_stopped": true,
+      "errors": 0
+    },
+    {
+      "kind": "all-original-envelopes-durably-received",
+      "elapsed_seconds": 5.177,
+      "count": 10,
+      "receipt_is_ledger_authority": false
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 5.261,
+      "exit_code": 0,
+      "failed": false
+    }
+  ],
+  "stage_sha256": "69e68bc8c18bb5b25ec31bb257c6fbe78a8a20348b4e0b141a34bcd0717c160f",
+  "controller_sha256": "f90fd8d78523d71dc1204f54cc9e18ee0ce9491e484f9eee2be4e16d37fbd732",
+  "helper_sha256": "0e6ea05620ffc4ff3ffe46d764db749ceab232895ad41d72207a4850bdf7a373",
+  "log_sha256": "f03d1c9e47385966fd0d7cb7fbfdebc2c9d744119ee02b4f98a5b7e1c72ae1fe",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 1,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN"
+}

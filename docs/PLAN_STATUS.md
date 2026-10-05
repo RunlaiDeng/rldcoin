@@ -6,24 +6,30 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-最新[普通节点证明与分页签署消息接口修复](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)
-完成了两个实际反例的原生修复：跨地区import/onward后的proof因果顺序，以及
-分页签署者有记录而CLI只读空兼容头。最终来源 `b4bc4379...` / implementation
-`cf4a2c7e...` 一次60秒范围实际47.519秒通过：全新E4/P4、进口99实际再出口98、
-四Agent完整保留消息、旧regional签署输出原文兼容、独立release CLI重建；实际普通
-Runtime启动保留9 Signed+1 Finalized，停止后10完整信封/8完整检查点Native核验，
-原Native/八Agent/两wallet/原caller库存及另存Runtime head字节不变，地区lib/tests strict。
-没有共识tick、首次签署/恢复/sync、Service/TLS或网络传输。准确来源/工件和各失败
-见[终态汇总](operations/evidence/regional-native-paged-runtime-retained-outcome-20261005.json)。
+最新[普通节点默认中继及完整收件](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)
+已通过两个有限行为范围：默认Service/Runtime正常广播与spool邻居保管11.132秒；
+两个实际默认Native节点通过固定TLS1.3收件16.247秒，每端10运输回执、19完整保留
+信封及停止后逐份Native认证。新副本从签署创世及完整原生前缀初始化；控制器
+未构造或搬运信封。原生正常接收追加认证Evidence事件，storage head可以推进，
+但原历史对象、金额状态/高度/终局/时代/永久进口及owner/signer/caller保管保持。
+这些范围**没有新增价值进口或成熟**，不能称普通价值支付或完整fault通过。
+[准确终态和旧失败](operations/evidence/regional-native-paged-service-integration-outcome-20261005.json)
+保留9.189秒观察字段失败、5.675秒固定库存计数失败；后者在启动网络前拒绝。
 
-前一准确来源 `99f85976...` 普通Native proof/actual CLI/strict44.063秒通过；旧
-23.424秒原生信封拒绝、22.375秒私有观察目录拒绝、28.110秒测试strict失败保留。
-后续同源真实Runtime5.825秒失败，仅保留Finalized而缺Signed；未复活/重开该现场。
-历史e85d来源三地区净99/97/95及新进程cold36.714秒、26076a64最小28.414秒仍各自
-绑定原来源，不能声称在最终源码重跑。Source66完整proof容量拒绝、完整fault/2016、
-长历史/独立custody/crypto/physical与旧价值库VALUE-STRICT-01仍未完成。
-下一60秒/1次全新无价值ordinary Service及正常广播最小判别尚未启动；原600秒stage、
-60秒轮、24新增高度/2016窗口、成熟/票数/容量不变。
+Native87来源 `b4bc4379...` / implementation `cf4a2c7e...` / release CLI
+`2e72ac63...`及Python未改，复用前一47.519秒Native/旧regional原文兼容/编译/
+地区lib-tests strict证据，没有重复成功检查。此前proof因果与分页保留CLI两个
+实际反例的修复仍准确绑定[原终态](operations/evidence/regional-native-paged-runtime-retained-outcome-20261005.json)。
+23.424/22.375/28.110/5.825秒旧失败和旧完整fault保持原判定；source66容量拒绝、
+完整2016/长历史、独立custody/crypto/physical及旧价值库VALUE-STRICT-01继续OPEN。
+历史三地区e85d有限通过与26076a64最小检查仍只绑定原来源，未在当前身份重跑。
+
+下一可证伪假设：全新无价值源既有出口98由普通TLS中继送达新地区，四个默认
+节点以原三取四共识实际进口净97并达到原两块成熟；运输回执与账本收款分开。
+一次180秒/1次，五个实际Native进程；夹具/启动/等待/停止cold全部计时，首实际
+认证/金额/进口/成熟/head/保管失败、完整有限判别或预算到达即退出。**尚未启动**。
+无控制器投票/造块/搬运，不恢复旧夹具、不替换owner请求；原600秒stage/60秒轮/
+24新增高度/2016窗口、成熟/票数/容量均不变。当前有限样本不资格持续fault或全目标。
 
 本文历史“全部通过”仅指各段明确绑定的当时源码、命令和有限scope，例如下述
 8831a634来源的491过程/三个Runtime组件；不能覆盖后来完整fault、预算耗尽、
