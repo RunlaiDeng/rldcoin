@@ -1,0 +1,715 @@
+{
+  "format": "RLD-BFT-FINALITY-CARRIAGE-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T20:32:27.329623+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_status": "active",
+  "adopted_markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "adopted_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_text_predecessor_hashes_reported_not_rewritten": true,
+  "reports": {
+    "regional-bft-packet-body-service-v1-20261005": {
+      "completed": false,
+      "duration_seconds": 189.262,
+      "helper_exit_code": 1,
+      "checks_sha256": "c83ee74beaa88fc3f0ac4f1dda7496682e93e52a74a4e970ea7e09a4fd9311d8"
+    },
+    "regional-bft-finality-delivery-counter-20261005": {
+      "completed": false,
+      "duration_seconds": 3.188268,
+      "helper_exit_code": 1,
+      "checks_sha256": "c996537a5da0f9ae80f4e62593726fb88dca5ed293513063422d9ba4a979267f"
+    },
+    "regional-bft-finality-delivery-counter-v2-20261005": {
+      "completed": true,
+      "duration_seconds": 3.371489,
+      "helper_exit_code": 0,
+      "checks_sha256": "d4d93f4f4309770e9cf40f81eab285d58bdbb33a698a5da24a77a33c7e2c8a21"
+    },
+    "regional-bft-finality-carriage-model-20261005": {
+      "completed": true,
+      "duration_seconds": 0.113066,
+      "helper_exit_code": 0,
+      "checks_sha256": "78790cb204988497406634e50ff91b1940dcd16e11663afc0fa3e2fe5b6d5536"
+    },
+    "regional-bft-finality-carriage-regression-20261005": {
+      "completed": true,
+      "duration_seconds": 1.565642,
+      "helper_exit_code": 0,
+      "checks_sha256": "a7b6b434eb8c32dd68dda97e6d6a4c715492ad7f1ff2578c2c1821b04a97ca36"
+    },
+    "regional-bft-finality-carriage-service-v1-20261005": {
+      "completed": false,
+      "duration_seconds": 188.457,
+      "helper_exit_code": 1,
+      "checks_sha256": "edf5dc4f75fc0553bac1534f0c177154ec932593d381d1903fb0f73efad5ceba"
+    },
+    "regional-bft-fixture-deadline-counter-20261005": {
+      "completed": true,
+      "duration_seconds": 0.369028,
+      "helper_exit_code": 0,
+      "checks_sha256": "783807eedc3013b3e8b373a1359dd54ff944a0007e5066f5cceec1335658b3f5"
+    }
+  },
+  "actual_finite_service_details": {
+    "packet-body": {
+      "recorded_native_calls": 936,
+      "recorded_exit0": 935,
+      "recorded_nonzero_or_incomplete": [
+        {
+          "node": 1,
+          "command": "proof",
+          "diagnostic": "original180second service component deadline",
+          "exit_code": null,
+          "recover_only": false,
+          "started_seconds": 179.834856,
+          "wall_seconds": 0.051716
+        }
+      ],
+      "last_complete_progress_observations": [
+        {
+          "elapsed_seconds": 153.052,
+          "heights": [
+            14,
+            null,
+            null,
+            14
+          ]
+        },
+        {
+          "elapsed_seconds": 160.485,
+          "heights": [
+            14,
+            null,
+            null,
+            14
+          ]
+        },
+        {
+          "elapsed_seconds": 166.121,
+          "heights": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "elapsed_seconds": 170.393,
+          "heights": [
+            null,
+            null,
+            13,
+            null
+          ]
+        },
+        {
+          "elapsed_seconds": 177.567,
+          "heights": [
+            null,
+            13,
+            null,
+            null
+          ]
+        }
+      ],
+      "terminal_raw_rejection_not_retained": false,
+      "role_costs": {
+        "receive": {
+          "purpose": {
+            "calls": 78,
+            "failures": 14,
+            "max_seconds": 0.0
+          },
+          "acquire": {
+            "calls": 64,
+            "failures": 32,
+            "max_seconds": 1.085775
+          },
+          "open": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 0.950453
+          },
+          "hold": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 1.760045
+          }
+        },
+        "carriage": {
+          "purpose": {
+            "calls": 77,
+            "failures": 31,
+            "max_seconds": 0.0
+          },
+          "acquire": {
+            "calls": 46,
+            "failures": 14,
+            "max_seconds": 0.794269
+          },
+          "open": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 0.794262
+          },
+          "hold": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 1.227403
+          }
+        }
+      },
+      "final_native_state_known": false,
+      "maturity_and_full_cold_completed": false
+    },
+    "finality-carriage": {
+      "recorded_native_calls": 912,
+      "recorded_exit0": 912,
+      "recorded_nonzero_or_incomplete": [],
+      "last_complete_progress_observations": [
+        {
+          "elapsed_seconds": 155.397,
+          "heights": [
+            null,
+            13,
+            null,
+            13
+          ]
+        },
+        {
+          "elapsed_seconds": 159.44,
+          "heights": [
+            13,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "elapsed_seconds": 165.522,
+          "heights": [
+            null,
+            null,
+            null,
+            13
+          ]
+        },
+        {
+          "elapsed_seconds": 168.784,
+          "heights": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "elapsed_seconds": 177.478,
+          "heights": [
+            13,
+            13,
+            null,
+            null
+          ]
+        }
+      ],
+      "terminal_raw_rejection_not_retained": true,
+      "role_costs": {
+        "receive": {
+          "purpose": {
+            "calls": 86,
+            "failures": 29,
+            "max_seconds": 0.0
+          },
+          "acquire": {
+            "calls": 57,
+            "failures": 25,
+            "max_seconds": 0.935442
+          },
+          "open": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 0.740052
+          },
+          "hold": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 1.584967
+          }
+        },
+        "carriage": {
+          "purpose": {
+            "calls": 85,
+            "failures": 25,
+            "max_seconds": 0.0
+          },
+          "acquire": {
+            "calls": 60,
+            "failures": 30,
+            "max_seconds": 0.758548
+          },
+          "open": {
+            "calls": 30,
+            "failures": 0,
+            "max_seconds": 0.557798
+          },
+          "hold": {
+            "calls": 30,
+            "failures": 0,
+            "max_seconds": 1.085798
+          }
+        }
+      },
+      "final_native_state_known": false,
+      "maturity_and_full_cold_completed": false
+    }
+  },
+  "actual_finite_service_checks": {
+    "regional-bft-packet-body-service-v1-20261005": {
+      "format": "RLD-BFT-PACKET-BODY-SERVICE-CHECKS-V1",
+      "completed": false,
+      "budget_seconds": 180,
+      "attempts_used": 1,
+      "duration_seconds": 189.262,
+      "helper_exit_code": 1,
+      "helper_terminal": true,
+      "budget_exhausted": true,
+      "forced_helper": false,
+      "pin_error": null,
+      "stage_sha256": "4f556ae4c1d6c9cc45a22d3eda8959eb3134169d14749d82ffc931de7812a922",
+      "log_sha256": "63a17a800af7a1fa5292ec700d145762320e9a874905ea34482817584cb24b2b",
+      "helper_sha256": "59f32bec56dbc82d1bbf4c26c79d13cbf26d4e88a99e4c59db1d0ae9c08a2885",
+      "controller_sha256": "aa1e8980f32f0cf68383f15b9ef40a564a4da25a51c799c78cd3342d44f49daa",
+      "binding_source_sha256": "1327a6c487bbbed7243525a50664f02f71c0cc77a0a9f5dc950d9aedb2a98cf0",
+      "companion_source_commitment": "780419a8e858355cae9ba71debd7931504b87a16d0219f70a497ceb66d5d4683",
+      "stopped_inventory_sha256": "ae3d55fdc77aef3ae5554ee48e3ec4f7ccf097da1a46a90c65700e5e9f1ab275",
+      "stopped_files": 795,
+      "result": {
+        "completed": false,
+        "failure": "ValueError: actual Native/Service error: original180second service component deadline",
+        "cleanup_failures": [],
+        "services_and_owned_threads_stopped": true,
+        "failed_currency_never_reopen": true,
+        "whole_full_fault_qualified": false,
+        "whole_goal_completed": false
+      },
+      "old_private_source_binary_freeze_unchanged": true,
+      "failed_currency_sealed": true,
+      "failed_currency_never_reopen": true,
+      "full_fault_qualified": false,
+      "legacy_value_strict": "OPEN",
+      "whole_goal_completed": false
+    },
+    "regional-bft-finality-carriage-service-v1-20261005": {
+      "format": "RLD-BFT-FINALITY-CARRIAGE-SERVICE-CHECKS-V1",
+      "completed": false,
+      "budget_seconds": 180,
+      "attempts_used": 1,
+      "duration_seconds": 188.457,
+      "helper_exit_code": 1,
+      "helper_terminal": true,
+      "budget_exhausted": true,
+      "forced_helper": false,
+      "pin_error": null,
+      "stage_sha256": "099feb95a49bc690be56a5837b0dd176af4152c18fb753aff7d3ec1b20c341eb",
+      "log_sha256": "b165b374529ff0132243b91d838065de20dba3e1a096eef414265d35db899a81",
+      "helper_sha256": "f622bd413d5ff2a2d4e973a56f90d56904bd7c219f95ef65c8958621a693f3c1",
+      "controller_sha256": "ddd7b5e08b1d291b28b16ea09948bee96fcf61f714b60d2bfdfb3b5950b3fb93",
+      "binding_source_sha256": "b3604b89af897c0c1805b33815c6a31256329560ecd0a314b1f452a2d4f9f7eb",
+      "companion_source_commitment": "829fd98d7d088b77fea4bcf62ddb4e2d3c42932c2edd32c1a13a63e8f60a2296",
+      "stopped_inventory_sha256": "125a298463e4977c431073a50ea733efac25f0d2892bf561e0099477c527b720",
+      "stopped_files": 846,
+      "result": {
+        "completed": false,
+        "failure": "ValueError: ordinary Native rejected a complete envelope",
+        "cleanup_failures": [],
+        "services_and_owned_threads_stopped": true,
+        "failed_currency_never_reopen": true,
+        "whole_full_fault_qualified": false,
+        "whole_goal_completed": false
+      },
+      "old_private_source_binary_freeze_unchanged": true,
+      "failed_currency_sealed": true,
+      "failed_currency_never_reopen": true,
+      "full_fault_qualified": false,
+      "legacy_value_strict": "OPEN",
+      "whole_goal_completed": false
+    }
+  },
+  "authenticated_delivery_discriminator": {
+    "active_receipts_authenticated": 126,
+    "complete_relevant_transport_copies_authenticated": 0,
+    "completed": true,
+    "duration_seconds": 3.260493,
+    "final_native_state_known": false,
+    "finality_paths": [
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 0,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 0,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 0,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 3,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 3,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 3,
+        "source_published": false
+      }
+    ],
+    "full_archive_index_entries_authenticated": 144,
+    "full_cold_performed": false,
+    "full_fault_qualified": false,
+    "mesh_node_opens": 0,
+    "native_ledger_authority_granted": false,
+    "native_starts": 0,
+    "negative_checks": [
+      "wrong-network",
+      "altered-signature",
+      "altered-receipt"
+    ],
+    "original_next_carriage": [
+      {
+        "latest_finalized_next_batch_selected_destinations": [],
+        "latest_finalized_pending_destinations": [
+          1,
+          2,
+          3
+        ],
+        "original_next_batch": [
+          {
+            "destination": 1,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 2,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 3,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 1,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          }
+        ],
+        "pending_complete_envelope_recipient_pairs": 54,
+        "retained_companion_height": 14,
+        "source": 0
+      },
+      {
+        "latest_finalized_next_batch_selected_destinations": [],
+        "latest_finalized_pending_destinations": [
+          1,
+          2,
+          0
+        ],
+        "original_next_batch": [
+          {
+            "destination": 0,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 1,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 2,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 0,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          }
+        ],
+        "pending_complete_envelope_recipient_pairs": 59,
+        "retained_companion_height": 14,
+        "source": 3
+      }
+    ],
+    "private_795_files_unchanged": true,
+    "private_exact_paths_sha256": "1ca094b124bfc55257b01cbfc7b3ea3a8e1de30d376481b6270bfa9ff24bd232",
+    "recovery": 0,
+    "retained_companion_height_observations": [
+      14,
+      13,
+      13,
+      14
+    ],
+    "runtime_starts": 0,
+    "server_starts": 0,
+    "signing": 0,
+    "sockets": 0,
+    "whole_goal_completed": false
+  },
+  "diagnostic_driver_failures_retained": [
+    {
+      "checks_file": "regional-bft-finality-delivery-counter-20261005-checks.json",
+      "failure": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-finality-delivery-counter-20261005.py\", line 87, in <module>\n    sample=next(v for v in full if v['receipt'] is not None);negative=[]\nStopIteration\n",
+      "duration_seconds": 3.188268
+    }
+  ],
+  "implementation": {
+    "change": "Classify exact current observed-height complete Finalized alongside current Proposal/Vote/Timeout within existing2current/2history4slots. Old/future finality still history; all complete body/envelope/frame/native verification/caller/localflag/durablebytes and capacities unchanged. Classification grants no ledger or signing right.",
+    "source_sha256": {
+      "tools/regional_bft_node.py": "b3604b89af897c0c1805b33815c6a31256329560ecd0a314b1f452a2d4f9f7eb",
+      "tools/test_regional_bft_carriage_batch.py": "c0037bd9bc73e5fff366ea98fac7562c2d94e222ccad119ac011ba6eec6b6b60"
+    },
+    "models": {
+      "format": "RLD-BFT-FINALITY-CARRIAGE-MODEL-CHECKS-V1",
+      "completed": true,
+      "budget_seconds": 120,
+      "attempts_used": 1,
+      "duration_seconds": 0.113066,
+      "helper_exit_code": 0,
+      "test_count": 10,
+      "stage_sha256": "2c888fea1fa5ff716d474891cb730fb7b0b560fd5135a44b899829375c48036d",
+      "log_sha256": "8c4b1532288f3c2237a75b4778a19116380135ed2658033225c3d1a1a8446867",
+      "log_summary": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.005s\n\nOK\n",
+      "full_fault_qualified": false,
+      "whole_goal_completed": false
+    },
+    "exact_byte_regression": {
+      "authenticated_source_transport_counter_reused": true,
+      "completed": true,
+      "custody_or_ledger_authority_granted": false,
+      "duration_seconds": 1.458204,
+      "exact_stopped_source_regressions": [
+        {
+          "all_three_peers_selected": true,
+          "candidate_two_batches": [
+            {
+              "historical_pairs": 2,
+              "latest_finalized_destinations": [
+                1,
+                2
+              ],
+              "total_pairs": 4
+            },
+            {
+              "historical_pairs": 3,
+              "latest_finalized_destinations": [
+                3
+              ],
+              "total_pairs": 4
+            }
+          ],
+          "complete_envelope_bytes_unchanged": true,
+          "original_latest_finalized_publications": 0,
+          "original_next_batch_latest_finalized": 0,
+          "source": 0
+        },
+        {
+          "all_three_peers_selected": true,
+          "candidate_two_batches": [
+            {
+              "historical_pairs": 2,
+              "latest_finalized_destinations": [
+                2,
+                0
+              ],
+              "total_pairs": 4
+            },
+            {
+              "historical_pairs": 3,
+              "latest_finalized_destinations": [
+                1
+              ],
+              "total_pairs": 4
+            }
+          ],
+          "complete_envelope_bytes_unchanged": true,
+          "original_latest_finalized_publications": 0,
+          "original_next_batch_latest_finalized": 0,
+          "source": 3
+        }
+      ],
+      "first_signs": 0,
+      "full_fault_qualified": false,
+      "mesh_node_opens": 0,
+      "native_starts": 0,
+      "only_selection_and_exact_frame_bytes_checked": true,
+      "private_795_files_unchanged": true,
+      "recovery": 0,
+      "runtime_starts": 0,
+      "server_starts": 0,
+      "sockets": 0,
+      "whole_goal_completed": false
+    },
+    "actual_live_gate_passed": false
+  },
+  "controller_deadline_discriminator": {
+    "completed": true,
+    "duration_seconds": 0.257372,
+    "exact_missing_live_rejection_reason_reconstructed": false,
+    "full_fault_qualified": false,
+    "mesh_node_opens": 0,
+    "native_authority_granted": false,
+    "native_starts": 0,
+    "observations": [
+      {
+        "bft_seen_unchanged": true,
+        "case": "old-fixture-timeout",
+        "controller_deadline_propagated": false,
+        "deferred": 0,
+        "rejected": 1
+      },
+      {
+        "bft_seen_unchanged": true,
+        "case": "separate-controller-deadline",
+        "controller_deadline_propagated": true,
+        "deferred": 0,
+        "rejected": 0
+      },
+      {
+        "bft_seen_unchanged": true,
+        "case": "native-bad-proof",
+        "controller_deadline_propagated": false,
+        "deferred": 0,
+        "rejected": 1
+      },
+      {
+        "bft_seen_unchanged": true,
+        "case": "native-lock",
+        "controller_deadline_propagated": false,
+        "deferred": 1,
+        "rejected": 0
+      }
+    ],
+    "private_846_files_unchanged": true,
+    "proposal": "Future fixture controller uses separate BaseException cancellation and retains last whole observation before classification; no production Native-refusal relaxation.",
+    "recovery": 0,
+    "runtime_starts": 0,
+    "server_starts": 0,
+    "signing": 0,
+    "sockets": 0,
+    "synthetic_expiry_can_be_reported_as_rejected": true,
+    "whole_goal_completed": false
+  },
+  "prepared_only_private_controller": {
+    "file": "observe-bft-finality-carriage-service-v2-20261005.py",
+    "sha256": "124eaad9221fb94133aedcf81da3809ec8d6e06412c2fe54aff9108eede8dc80",
+    "executed": false,
+    "changes": "Separate BaseException deadline/remaining check; last whole canonical observation retained before classification, bounded1MiB pernode/unchanged8MiB combined diagnostics. Prototype is not an actual runtime adoption or PASS."
+  },
+  "default_cli_source_audit": {
+    "native_entry": "tools/regional-ledger/src/main.rs:681",
+    "unix_exec_preserves_process_pid": true,
+    "qualified_argv_source": "tools/regional_paged_fault_prepared.py:267",
+    "qualified_observation_pid_source": "tools/regional_paged_fault_driver.py:329",
+    "actual_four_process_gate_not_started": true,
+    "actual_binary_contains_new_manifest_path": true,
+    "actual_binary_contains_old_manifest_path": false
+  },
+  "failed_source_archives": {
+    "packet-body": {
+      "files": 164,
+      "manifest_sha256": "c76b4d0ca11d869924617fd508f5ef4550c10826d6f7192f46fbe89c2a922c78",
+      "private_fixture_copied": false
+    },
+    "finality-carriage": {
+      "files": 164,
+      "manifest_sha256": "b7b45b3f8cbe1eddc55d8721feec67bd3cdd4da6cc6da0415e9ae5d9879a0be2",
+      "private_fixture_copied": false
+    }
+  },
+  "next_scope": {
+    "active_hypothesis": "Single helper sequentially calls all4Service.tick and injects controller deadline exceptions inside production Native callbacks; production CLI uses4separate Unix exec processes, independent ticker/caches and no such injected expiry. This mismatch may prevent the finite deep13 gate and obscure deadline classification. It is not yet proven the unique cause.",
+    "minimum_preflight": "One source-bound120second controller/model gate to use existing actual native CLI argv/Unix exec PID and qualified observation parser; 4separate processes/maxone custodyowner each, exact pins/listeners/current source+actualbinary+controller, bounded stop/last observation capture. Preserve production rejection/OS-lock/caller authority. No Native startup in preflight.",
+    "preflight_budget_seconds": 120,
+    "preflight_attempts": 1,
+    "necessary_runtime_if_preflight_passes": "One genuinely fresh8Native E4/P13/four ordinary native CLI processes (samehost, not independent operators) with pinnedTLS chain0-1-2-3. No monkeypatched production Native.call, no controller consensus/carriage. Production .25second contact interval already used by qualified original full Driver; block1/round60/maturity2/quorum3/heightcap24/stop15/capacities unchanged.",
+    "runtime_budget_seconds": 180,
+    "runtime_attempts": 1,
+    "required": "All4 actual import13/mature15/spendable net2; close4ownedCLIs cleanly, all8fixed-head Native/full-envelopes/mesh/caller/owner/1e30conservation cold with private bytes unchanged.",
+    "exit": "First byte/source/pin/owner/native/typed-observation/capacity discrepancy, premature child exit, complete required checks or original deadline. Stop only owned children using original supported signal boundary; save all terminal raw observations/rejections then seal failed currency. Never reopen/recover/resign/refund/copy or unchanged retry.",
+    "runtime_started": false,
+    "new600_allocated": false,
+    "decision_on_pass": "Finite actual ordinary startup evidence only, then assess necessary original600 complete fault qualification.",
+    "decision_on_fail": "Exact saved raw rejection/body/stage/whole scopes plus source pins decide minimal fix or resource/defaultCLI model; no deadline or quorum relaxation."
+  },
+  "latest_complete_full_fault": "receive-v7 FAIL original600/616.052/6657;runtime-v4 original600/612.570/6152 and allolderFAILs remainFAIL. Original mature/keyless/all12cold/conservation not completed.",
+  "all_failed_currencies_never_reopened": true,
+  "legacy_value_strict": "OPEN: original large_enum_variant/bool_assert_comparison and120budget exhausted, no old value source trigger/exemption",
+  "all_S_R_I_A_G_N_P_history_PQ_independent_physical_qualification": "OPEN",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "site_frozen_body_pdf_unchanged": true,
+  "persistent_cwd": "UI fix pending; explicit /Users/galaxy/GitHub/rldcoin workdir on all commands",
+  "server_cleanup_mainnet_funds_accounts_permissions_external_contact_scope_expanded": false
+}

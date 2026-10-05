@@ -727,3 +727,57 @@ Goal active；已采用2ba62421/c59f9fe8及86821d19冻结记录，goal正文仍�
 不自主改写。持久cwd仍为界面待修，所有项目命令显式使用新rldcoin workdir。
 白皮书正文/PDF/官网未改，未扩大服务器或清理范围。
 证据：[实际测量、实现及有限回归](operations/evidence/regional-bft-mesh-lease-and-packet-bytes-outcome-20261005.json)。
+
+
+## 2026-10-05 当前终局发送前沿修复与两次有限服务失败
+
+完整fault仍FAIL：runtime-v4原600/612.570秒/6152、receive-v7原600/616.052秒/6657及
+所有旧失败保持。新精确编码四Service范围原180耗尽 **FAIL189.262秒/795封存**；
+helper1、所有自有服务线程停止、无强制/清理失败，936已记录Native调用中935退出0，
+一次控制器期限异常未取得Native退出码。节点0/3曾可见14，1/2曾13；未成熟15、
+全8cold/守恒未完成，最终Native未知。163/164等公开源码封存不是失败保管复制。
+
+只读当前完整终局运输路径判别：首入口3.188秒因错误假设目标有收据而失败，原件
+保留；改为用另一已认证完整运输/收据作负例后3.371秒通过，两次合计6.560秒。
+144签名档案索引、126活跃收据、全部活跃运输认证；0/3保留的完整Finalized14均尚未
+源发布，任何节点没有其运输副本/目标收据。原准确pending54/59对及cursor的下一
+四槽全是历史Vote，未选最新终局。此为完整签名/角色/保留字节事实，无新Native
+重放/权威，也不能还原丢失的实际现场调度。
+
+单一作者实际将 **与当前观察高度相等的完整Finalized** 纳入原current2/history2槽，
+保留历史/未来终局在history；所有完整认证、字节/local标志/caller顺序/容量不变，
+分类本身不授予账本或签署权。10模型.113秒通过；准确795字节回归1.566秒通过，
+原0/3未发布终局可在两次成功批次内选齐三收件节点，每批至少2history、最多4对，
+完整信封与frame不变，无Native/Runtime/Node/签署/恢复，795私有字节未变。
+Node源b3604b89…/当前160Python829fd98d…，Native89/Core171/实际CLI不变。
+
+新终局前沿源四Service范围仍 **FAIL原180耗尽/188.457秒/846封存**；helper1、
+全部自有服务线程停止，无强制/清理失败，912已记录Native调用全exit0。
+终态原文“ordinary Native rejected a complete envelope”；未保留最后整条rejected
+reason，不能用已记录exit0推断底层未拒绝，也不能把这一文字直接当协议拒收归因。
+最后可见13/未知不证明停止账本，成熟15/full8cold/守恒未完成。两范围各164公开
+源码/入口/报告文件独立封存，无失败保管复制，禁止Native/Runtime重开、退款、复签
+或相同180/600重跑。旧编码微比较仍仅原函数范围，未证明现场速度/资格。
+
+一次.369秒源绑定纯反例：生产Service.receive_bft_batch确实把夹具的TimeoutError
+归到rejected；单独BaseException控制器到期可直接传播，而真实Native bad-proof仍
+拒绝、精确OS-lock仍deferred，bft_seen不变。只证明这种可能，不还原缺失现场reason；
+846文件未变。私有v2入口已准备（未执行）：单独预算异常/remaining控制，分类前保存
+最后整条有界观察，每节点1MiB/总诊断原8MiB，不修改生产拒绝规则或提高任何预算。
+
+下一判别改用真实普通CLI独立调度，先一次120秒source/model入口核验：旧助手按顺序
+调用四Service.tick，并在Native.call中注入预算异常；实际Native CLI Unix exec保持
+PID、四进程各自普通tick/缓存无该注入。实际CLI已只读确认含新rldcoin manifest路径、
+不含旧manifest路径；旧支持17项typed观测/PID/TLS/未知分类证据按不变源复用。
+这一差异是否决定成熟尚未证明，不声称唯一原因。入口通过后才一次全新8Native/
+四正常CLI进程同机原180有限范围，复用既有.25秒contact interval、block1/round60/
+maturity2/quorum3/heightcap24/stop15及所有容量；无控制器共识/搬帧、无旧请求/保管。
+实际四节点import13/mature15/net2及全8固定头Native/完整信封/mesh/caller/owner/守恒
+cold决定通过。首任何字节/来源/保管/Native/类型/容量错误、进程提前退出、全检查
+完成或原deadline退出，停止仅自有进程、保留原始终态/拒绝并封存；不能恢复或延长。
+四CLI范围尚未启动，未分配新600；通过也仅有限scope，完整12Native fault另需资格。
+VALUE-STRICT-01两告警/原120耗尽仍独立OPEN，无旧价值源变更触发或豁免。全部S/R/I/
+A–G/N/P、长期/PQ/独立/物理仍OPEN；goal active。冻结正文2ba62421/PDFc59f9fe8/
+receipt86821d19采用，goal正文前继哈希只报告不改；官网/正文/PDF不改。
+持久cwd仍UI待修，全部项目命令显式新rldcoin workdir；不扩大服务器/清理/资金权限。
+证据：[源码、完整封存判别与实际失败](operations/evidence/regional-bft-finality-carriage-outcome-20261005.json)。

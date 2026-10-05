@@ -1,0 +1,81 @@
+{
+  "format": "RLD-BFT-FINALITY-CARRIAGE-REGRESSION-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 1.565642,
+  "helper_exit_code": 0,
+  "failure": null,
+  "result": {
+    "authenticated_source_transport_counter_reused": true,
+    "completed": true,
+    "custody_or_ledger_authority_granted": false,
+    "duration_seconds": 1.458204,
+    "exact_stopped_source_regressions": [
+      {
+        "all_three_peers_selected": true,
+        "candidate_two_batches": [
+          {
+            "historical_pairs": 2,
+            "latest_finalized_destinations": [
+              1,
+              2
+            ],
+            "total_pairs": 4
+          },
+          {
+            "historical_pairs": 3,
+            "latest_finalized_destinations": [
+              3
+            ],
+            "total_pairs": 4
+          }
+        ],
+        "complete_envelope_bytes_unchanged": true,
+        "original_latest_finalized_publications": 0,
+        "original_next_batch_latest_finalized": 0,
+        "source": 0
+      },
+      {
+        "all_three_peers_selected": true,
+        "candidate_two_batches": [
+          {
+            "historical_pairs": 2,
+            "latest_finalized_destinations": [
+              2,
+              0
+            ],
+            "total_pairs": 4
+          },
+          {
+            "historical_pairs": 3,
+            "latest_finalized_destinations": [
+              1
+            ],
+            "total_pairs": 4
+          }
+        ],
+        "complete_envelope_bytes_unchanged": true,
+        "original_latest_finalized_publications": 0,
+        "original_next_batch_latest_finalized": 0,
+        "source": 3
+      }
+    ],
+    "first_signs": 0,
+    "full_fault_qualified": false,
+    "mesh_node_opens": 0,
+    "native_starts": 0,
+    "only_selection_and_exact_frame_bytes_checked": true,
+    "private_795_files_unchanged": true,
+    "recovery": 0,
+    "runtime_starts": 0,
+    "server_starts": 0,
+    "sockets": 0,
+    "whole_goal_completed": false
+  },
+  "helper_sha256": "8dd0fd4ed7efdb47a702f75097770d6ca9174103afa6db8671f39d8bf49cf27e",
+  "stage_sha256": "e032e57262abe5ac2d2a989ff44997e7b7df3a082b909c6b991a9140717125d3",
+  "log_sha256": "f9391e1f93b8fcb0f234c63862920955847732a96753b730f1acc26d72639c83",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

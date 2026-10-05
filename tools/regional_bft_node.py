@@ -44,8 +44,10 @@ def carriage_batch(messages, pending, height, cursor):
     for ident, body, _, _ in messages.bodies():
         message = signed_body(body)
         proposal = message.get('Proposal')
+        finalized = body.get('Finalized')
         context = message.get('Vote', message.get('Timeout', {})).get('context', {})
         if ((proposal is not None and proposal['snapshot']['statement']['height'] == height + 1)
+                or (finalized is not None and finalized['statement']['height'] == height)
                 or context.get('parent_height') == height):
             current.add(ident)
     active = [pair for pair in pending if pair[1] in current]

@@ -1,0 +1,14 @@
+{
+  "format": "RLD-BFT-FINALITY-CARRIAGE-MODEL-STAGE-V1",
+  "recorded_at_utc": "2026-10-05T20:20:45.550721+00:00",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "Complete Finalized at exact native-observed height is an ordinary current carriage prerequisite for lagging replicas. Existing four slots2current/2history must carry its three recipient pairs within two successful batches while preserving history, current Vote/Timeout/Proposal rotation and exact complete bytes. Historical/future Finalized stay history. Classification grants no Native authority.",
+  "exit": "First immutable-byte/slot/fairness/height regression, complete10models, or original120deadline. No Native/Runtime/Server/Node custody/socket.",
+  "source_sha256": {
+    "tools/regional_bft_node.py": "b3604b89af897c0c1805b33815c6a31256329560ecd0a314b1f452a2d4f9f7eb",
+    "tools/test_regional_bft_carriage_batch.py": "c0037bd9bc73e5fff366ea98fac7562c2d94e222ccad119ac011ba6eec6b6b60"
+  },
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

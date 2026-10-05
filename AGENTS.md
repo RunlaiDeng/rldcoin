@@ -1486,3 +1486,42 @@ VALUE-STRICT-01/history/PQ/independent/physical OPEN; goalactive/frozenpaper/sit
 unchanged, goaltext predecessor hashes reported, persistentcwd UI pending and
 allcommands explicit newworkdir. See
 operations/evidence/regional-bft-mesh-lease-and-packet-bytes-outcome-20261005.json.
+
+
+2026-10-05 packet-encoding actual fourService gate FAIL original180/189.262total,
+795sealed/owned stopped/forced[]/cleanup[];0/3observed14,1/2observed13, no15/full8cold.
+936recordedNative=935exit0 plus controller deadline/noNativecode. Readonly complete
+Finalized14 counter144indexes/126receipts shows0/3latestfinality entirely unpublished,
+originalpending54/59nextbatchfourhistoryVotes. First wrongly assumed target receipt
+failure3.188 retained; corrected3.371pass, twoattempts6.560s. NoNative/Node custody.
+Actual carriage source now classifies exact observed-height Finalized with existing
+current2/history2four slots; old/futurefinality remainshistory.10models.113s and
+exact795source-byte regression1.566s pass: all3recipients within2successfulbatches,
+atleast2history each, complete envelope/frame/local/caller/fullNative checks intact.
+Nodeb3604b89/160Python829fd98d, Native89/Core171/CLI unchanged. New live finite gate
+stillFAIL original180/188.457total/846sealed;owned stopped/forced[]/cleanup[],912
+recordedNative calls all0. Rawterminal ordinaryNativeRejected string missing last
+fullreason; finalNative unknown, no maturity/full8cold/conservation. Do not infer
+protocol rejection or its absence from text/recordedcalls. AllfullFAIL6152/6657etc
+remainfailed; no oldNative/Runtime reopen/recovery/resign/refund/custodycopy/retry.
+Eachnewfailedsource164publicfiles separately archived withoutfixturecopy.
+Pure production expiry counter.369s: helperTimeoutError can become rejected;
+separateBaseException cancellation propagates; actualNative badproof/OSlock classes
+andseen unchanged. Exact live reason unreconstructed,846privatebytes unchanged.
+Private observe-bft-finality-carriage-service-v2-20261005.py preparednotexecuted:
+ScopeDeadline and remaining bound; lastwholeobservation beforeclassification1MiB
+pernode/combined8MiBdiagnostic. Not an adopted runtime/pass or production exception.
+Next only once120source/model qualified ordinary4CLI process controller; then one
+necessaryfresh8Native/fouractualCLI samehost original180 if preflightpasses. Unix
+exec preservesPID; actualbinary embedsnewrldcoinmanifest notold. Existinghelper
+sequentialfourService.tick/injectedNative.call expiry is a differing experiment,
+notprovenuniquecause. Preserve.25contact interval/block1/round60/maturity2/quorum3/
+heightcap24/stop15/allbounds;actual4import13/mature15/net2 plus full8fixedhead/native/
+envelopes/mesh/caller/owner/conservationcold required. No controller consensus/frame
+movement. Exit mismatch/childexit/fullchecks/deadline, then ownedstop/savefullraw/
+seal; no oldcustody/request/recovery/unchangedretry or new600allocated. That actual
+4CLI scope unstarted. Fullgoal/VALUE-STRICT-01/history/PQ/independent/physicalOPEN,
+goalactive/current2ba62421/c59f9fe8receipt86821d19 adopted; goalpredecessors reported,
+frozenpaper/site/server/cleanup/funds untouched; everycommand explicitnewworkdir,
+persistentcwd UIpending. See
+operations/evidence/regional-bft-finality-carriage-outcome-20261005.json.

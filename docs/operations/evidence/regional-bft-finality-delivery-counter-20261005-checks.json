@@ -1,0 +1,15 @@
+{
+  "format": "RLD-BFT-FINALITY-DELIVERY-COUNTER-CHECKS-V1",
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 3.188268,
+  "helper_exit_code": 1,
+  "failure": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-finality-delivery-counter-20261005.py\", line 87, in <module>\n    sample=next(v for v in full if v['receipt'] is not None);negative=[]\nStopIteration\n",
+  "result": null,
+  "helper_sha256": "f6ccd14c94626b6242d9f4508180c4f16ce159d2f8f30a2b1dc160bb4b0f8d54",
+  "stage_sha256": "e455af73c258b2b7d0006a4d9d89679f76a85e62dd7610962d7a10b2145aa626",
+  "log_sha256": "19617d657a7e3c3552ab4693abae9400078ca4b92ff7546db1dddf954f349f6b",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

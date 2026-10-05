@@ -63,14 +63,51 @@ class CarriageBatchTests(unittest.TestCase):
         self.assertEqual(len(self.select(bodies)), 4)
         self.assertEqual(carriage_batch(Messages({}), [], 13, 0), [])
 
-    def test_epoch_signed_is_current_and_complete_finality_keeps_history_slots(self):
+    def test_epoch_signed_is_current_and_historical_finality_keeps_history_slots(self):
         bodies = {'epoch': {'EpochSigned': {'message': {'Timeout': {'context': {'parent_height': 13}}}}},
                   'vote': vote(13),
-                  'final': {'Finalized': {'statement': {'height': 13}}},
+                  'final': {'Finalized': {'statement': {'height': 12}}},
                   **{f'old{i}': vote(1) for i in range(8)}}
         selected = self.select(bodies)
         self.assertEqual([pair[1] for pair in selected[:2]], ['epoch', 'vote'])
         self.assertIn('final', [pair[1] for pair in selected[2:]])
+
+    def test_latest_complete_finality_reaches_three_peers_without_history_starvation(self):
+        bodies = {f'old{i}': vote(1) for i in range(40)}
+        bodies['final'] = {'Finalized': {'statement': {'height': 13}}}
+        messages = Messages(bodies)
+        pending = [(ident + '-complete-bytes', ident, peer)
+                   for ident in bodies for peer in ('a', 'b', 'c')]
+        before = copy.deepcopy((bodies, pending))
+        delivered = set()
+        for cursor in (32, 36):
+            batch = carriage_batch(messages, pending, 13, cursor)
+            self.assertEqual(len(batch), 4)
+            self.assertEqual(sum(pair[1] == 'final' for pair in batch), 2)
+            self.assertEqual(sum(pair[1] != 'final' for pair in batch), 2)
+            delivered.update(pair[2] for pair in batch if pair[1] == 'final')
+        self.assertEqual(delivered, {'a', 'b', 'c'})
+        self.assertEqual((bodies, pending), before)
+
+    def test_current_finality_and_votes_both_rotate_within_original_current_slots(self):
+        bodies = {f'vote{i}': vote(13) for i in range(8)}
+        bodies['final'] = {'Finalized': {'statement': {'height': 13}}}
+        bodies.update({f'old{i}': vote(1) for i in range(10)})
+        selected = set()
+        for n in range(10):
+            batch = self.select(bodies, 4 * n)
+            self.assertEqual(sum(pair[1].startswith('old') for pair in batch), 2)
+            selected.update(pair[1] for pair in batch)
+        self.assertEqual(selected, set(bodies))
+
+    def test_future_finality_stays_in_history_and_only_exact_observed_height_is_current(self):
+        bodies = {'current': {'Finalized': {'statement': {'height': 13}}},
+                  'future': {'Finalized': {'statement': {'height': 14}}},
+                  'past': {'Finalized': {'statement': {'height': 12}}},
+                  **{f'old{i}': vote(1) for i in range(8)}}
+        selected = self.select(bodies)
+        self.assertEqual(selected[0][1], 'current')
+        self.assertNotIn('current', [pair[1] for pair in selected[1:]])
 
     def test_history_only_still_uses_all_four_slots_and_rotates(self):
         bodies = {f'old{i}': vote(1) for i in range(8)}

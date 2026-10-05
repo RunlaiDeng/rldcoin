@@ -1,0 +1,196 @@
+{
+  "format": "RLD-BFT-FINALITY-DELIVERY-COUNTER-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "diagnostic_attempts_total": 2,
+  "duration_seconds": 3.371489,
+  "total_diagnostic_seconds": 6.559757,
+  "helper_exit_code": 0,
+  "failure": null,
+  "result": {
+    "active_receipts_authenticated": 126,
+    "complete_relevant_transport_copies_authenticated": 0,
+    "completed": true,
+    "duration_seconds": 3.260493,
+    "final_native_state_known": false,
+    "finality_paths": [
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 0,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 0,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 0,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 3,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 3,
+        "source_published": false
+      },
+      {
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Finalized",
+        "observed_boundary": "not-source-published",
+        "phase": null,
+        "round": null,
+        "source": 3,
+        "source_published": false
+      }
+    ],
+    "full_archive_index_entries_authenticated": 144,
+    "full_cold_performed": false,
+    "full_fault_qualified": false,
+    "mesh_node_opens": 0,
+    "native_ledger_authority_granted": false,
+    "native_starts": 0,
+    "negative_checks": [
+      "wrong-network",
+      "altered-signature",
+      "altered-receipt"
+    ],
+    "original_next_carriage": [
+      {
+        "latest_finalized_next_batch_selected_destinations": [],
+        "latest_finalized_pending_destinations": [
+          1,
+          2,
+          3
+        ],
+        "original_next_batch": [
+          {
+            "destination": 1,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 2,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 3,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 1,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          }
+        ],
+        "pending_complete_envelope_recipient_pairs": 54,
+        "retained_companion_height": 14,
+        "source": 0
+      },
+      {
+        "latest_finalized_next_batch_selected_destinations": [],
+        "latest_finalized_pending_destinations": [
+          1,
+          2,
+          0
+        ],
+        "original_next_batch": [
+          {
+            "destination": 0,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 1,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 2,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          },
+          {
+            "destination": 0,
+            "is_latest_finalized": false,
+            "kind": "Vote"
+          }
+        ],
+        "pending_complete_envelope_recipient_pairs": 59,
+        "retained_companion_height": 14,
+        "source": 3
+      }
+    ],
+    "private_795_files_unchanged": true,
+    "private_exact_paths_sha256": "1ca094b124bfc55257b01cbfc7b3ea3a8e1de30d376481b6270bfa9ff24bd232",
+    "recovery": 0,
+    "retained_companion_height_observations": [
+      14,
+      13,
+      13,
+      14
+    ],
+    "runtime_starts": 0,
+    "server_starts": 0,
+    "signing": 0,
+    "sockets": 0,
+    "whole_goal_completed": false
+  },
+  "helper_sha256": "6431969b42938054233e7ce6228820a117ab7e419ccd46b61a4435e68c106bf1",
+  "stage_sha256": "3d63aef72253a93b5e120268960744f8a7cc47fd38b6ac5e59ca20506230a966",
+  "log_sha256": "b6a27d17fff630b3cff4b452d6b004789779af727ba3c09d983d684376ebb0f9",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
