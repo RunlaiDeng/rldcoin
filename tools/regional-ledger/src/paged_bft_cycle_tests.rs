@@ -340,6 +340,133 @@ fn paged_contact_causal_order_counter_uses_native_imported_owner_input() {
     println!("paged-causal-counter old_height_order_native_refused=true new_complete_original_multiset_native_verified=true checkpoints8=true native_owner_import99_spent_onward98=true export_refusal_never_refunds=true unchanged=true");
 }
 #[test]
+fn paged_ordinary_network_proof_after_onward_requires_complete_native_envelope() {
+    let mut earth = Harness::with_rules(crate::paged_bft::RULES);
+    earth.retain = true;
+    for n in 0..4 {
+        retain(&earth.root, n, earth.heads[n]);
+    }
+    let package = earth.node.journal.bootstrap.clone();
+    let mut proxima =
+        super::paged_remote::target(&earth, package.clone(), package.admissions[1].id().unwrap());
+    for _ in 0..3 {
+        certify_next(&mut earth, vec![]);
+    }
+    let (first, _) = export(&mut earth, 10, proxima.node.chain.region, 11, 100, None);
+    carry(&earth, &mut proxima, first);
+    export(
+        &mut proxima,
+        11,
+        package.admissions[2].id().unwrap(),
+        12,
+        98,
+        Some(id("output", &(first, 0u32)).unwrap()),
+    );
+    let finality = proxima.node.chain.finalized.unwrap();
+    let original = proxima.node.evidence.snapshot(finality).unwrap().clone();
+    let envelope = crate::bft_network::Envelope {
+        format: crate::bft_network::FORMAT.into(),
+        currency: proxima.node.trust.currency().unwrap(),
+        region: proxima.node.chain.region,
+        evidence: proxima.node.proof().unwrap(),
+        body: crate::bft_network::Body::Finalized(Box::new(original)),
+    };
+    let before = inventory(&earth.root);
+    let head = proxima.node.storage_head().unwrap();
+    let ledger = proxima.node.chain.ledger.clone();
+    let mut old = envelope.clone();
+    old.evidence = proxima.node.journal.evidence.clone();
+    let reason = old
+        .pack()
+        .unwrap()
+        .expand()
+        .unwrap()
+        .verify(&proxima.node)
+        .expect_err("original ordinary CLI view must expose the native envelope counter");
+    assert_eq!(reason, "missing verified source checkpoint");
+    for agent in &proxima.agents {
+        assert!(agent.journal.records.is_empty());
+        assert!(agent.record_count() >= 8);
+        let messages = agent.retained_messages(&proxima.node).unwrap();
+        assert_eq!(messages.len(), agent.record_count());
+        for message in messages {
+            let mut signed = envelope.clone();
+            signed.body = crate::bft_network::Body::Signed(Box::new(message));
+            signed
+                .pack()
+                .unwrap()
+                .expand()
+                .unwrap()
+                .verify(&proxima.node)
+                .unwrap();
+        }
+    }
+    let expanded = envelope.pack().unwrap().expand().unwrap();
+    if let Err(reason) = expanded.verify(&proxima.node) {
+        let unchanged = inventory(&earth.root) == before
+            && proxima.node.storage_head().unwrap() == head
+            && proxima.node.chain.ledger == ledger;
+        assert!(unchanged);
+        fail(
+            "ordinary-native-bft-complete-envelope",
+            &reason,
+            &proxima,
+            unchanged,
+        );
+    }
+    let mut bad = envelope.clone();
+    bad.evidence
+        .snapshots
+        .last_mut()
+        .unwrap()
+        .bft
+        .as_mut()
+        .unwrap()
+        .committed
+        .votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    assert!(bad
+        .pack()
+        .unwrap()
+        .expand()
+        .unwrap()
+        .verify(&proxima.node)
+        .is_err());
+    let mut missing = envelope.clone();
+    missing.evidence.snapshots.remove(0);
+    assert!(missing
+        .pack()
+        .unwrap()
+        .expand()
+        .unwrap()
+        .verify(&proxima.node)
+        .is_err());
+    assert_eq!(inventory(&earth.root), before);
+    assert_eq!(proxima.node.storage_head().unwrap(), head);
+    assert_eq!(proxima.node.chain.ledger, ledger);
+    if let Some(note) = std::env::var_os("RLD_PAGED_NETWORK_FIXTURE_NOTE") {
+        let mut files = serde_json::Map::new();
+        for (name, value) in [
+            ("valid", &envelope),
+            ("old-view", &old),
+            ("bad-certificate", &bad),
+            ("missing-parent", &missing),
+        ] {
+            let path = earth.root.join(format!("network-{name}.json"));
+            crate::keystore::private_create(&path, &serde_json::to_vec(value).unwrap()).unwrap();
+            files.insert(name.into(), serde_json::json!(path));
+        }
+        let data = serde_json::json!({"root":earth.root,"ledger":proxima.root.join("node"),
+            "authority":public(1),"currency":proxima.node.trust.currency().unwrap(),
+            "native_head":head,"envelopes":files,"implementation":implementation().unwrap(),
+            "native_envelope_id":id("bft-network-envelope-v2", &expanded).unwrap()});
+        crate::keystore::private_create(&PathBuf::from(note), &serde_json::to_vec(&data).unwrap())
+            .unwrap();
+    }
+    println!("paged-ordinary-network old_cli_view_native_refused=true complete_wire_after_native_import_onward_verified=true later_bad_certificate_missing_parent_refused=true unchanged=true runtime_and_physical_qualification=false");
+}
+#[test]
 fn paged_three_region_actual_owner_onward_return_with_fresh_process_cold() {
     let started = std::time::Instant::now();
     let mut earth = Harness::with_rules(crate::paged_bft::RULES);

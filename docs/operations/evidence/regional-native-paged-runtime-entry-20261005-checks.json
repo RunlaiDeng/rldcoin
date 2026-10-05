@@ -1,0 +1,45 @@
+{
+  "format": "RLD-NATIVE-PAGED-RUNTIME-ENTRY-CHECKS-V1",
+  "completed": false,
+  "failure": "actual-runtime-constructor-stopped-cold",
+  "duration_seconds": 5.825,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "fresh-native-fixture",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-paged-network-strict-fix-source-20261005/qualified-library-test-binary",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 4.681
+    },
+    {
+      "phase": "actual-runtime-constructor-stopped-cold",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-runtime-entry-20261005.py",
+        "203031.861128083"
+      ],
+      "exit_code": 1,
+      "budget_exhausted": false,
+      "elapsed_seconds": 5.817
+    }
+  ],
+  "observations": [],
+  "stage_sha256": "f298415010d24bdc5a6d7c374d01adea8b1bb4cd67f87c5d6780a404d85589e9",
+  "controller_sha256": "fd2876f641ccf91d0cc2364a9d8990c92fdfe94fc2da8cb7b2eeb136cb7f1146",
+  "helper_sha256": "a39a2aa9efd087495cbdb6bdac71f4282d04255f57c187cf1445128db024088b",
+  "log_sha256": "5af93d41c3348a682dee9a2895867a016c8add819fa221ee3d602dee205f69ae",
+  "source_commitment": "99f8597640ab0cc96a6935290b5750654448e2bc94007fc80b7b3b5cda139b42",
+  "implementation": "38247bdbee04df1674d726028e8937dfb432185bc31425fe5a68375aa48b558e",
+  "cli_binary_sha256": "76de0766ad02cf583293593c0f2ad27fe876baa618f42e2108d98b1bc1bce8c9",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 0,
+  "legacy_value_strict": "OPEN"
+}

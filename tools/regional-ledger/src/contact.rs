@@ -259,6 +259,21 @@ pub struct Status {
     pub remote_current_state_known: bool,
 }
 impl Store {
+    /// Complete public proof, independently reconstructed from signed genesis.
+    /// The paged diagnostic view's regional heights are not causal ordering.
+    pub fn proof(&self) -> Result<Evidence> {
+        let evidence = if crate::paged_bft::is_profile(&self.trust.region(self.chain.region)?.rules)
+        {
+            self.paged_signing_history()?.finish(self)?;
+            causal_evidence(self.journal.evidence.snapshots.clone())?
+        } else {
+            // Keep exact legacy duplicate/order bytes, including retired proofs.
+            self.journal.evidence.clone()
+        };
+        encode("evidence", &evidence)?;
+        VerifiedEvidence::verify(&evidence, &self.trust)?;
+        Ok(evidence)
+    }
     pub fn contact_export(&self, eid: Hash) -> Result<Vec<u8>> {
         let latest = self
             .chain

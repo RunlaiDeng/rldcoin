@@ -55,6 +55,10 @@ fn step(store: &mut Store) {
 #[test]
 fn export_carriage_stays_exact_after_unrelated_certified_growth_and_restart() {
     let (root, mut source, mut target, raw) = setup();
+    assert_eq!(
+        serde_json::to_vec(&source.proof().unwrap()).unwrap(),
+        serde_json::to_vec(&source.journal.evidence).unwrap()
+    );
     let (_, bundle) = Frame::unpack(&raw).unwrap();
     let pin = source.trust.currency().unwrap();
     let before = bundle.evidence.snapshots.len();

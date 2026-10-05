@@ -6,17 +6,28 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-最新[分页接触因果顺序修复](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)已完成
-实际Earth→Proxima→Andromeda→Earth净99/97/95及新进程三Native/十二Agent/三wallet
-完整cold、每步守恒、永久出口/import保留、exact retry/duplicate拒绝。准确e85d来源
-范围36.714秒/实际循环10.498秒通过；首5.212秒编译与22.146秒已纳入onward后的
-proof拒绝均保留。最终保留原DFS顺序的来源 `26076a64...` 最小28.414秒通过Native
-旧视图反例/完整原文集合重排认证、九regional旧contact、CLI compile和lib/tests strict；
-未重复三地区、旧65/66或完整fault长测，也未重建main binary。
-Source86接收短范围25.002秒是前一准确有限证据；源66实际完整proof拒绝仍OPEN。
-Controller在本循环搬运frames；ordinary Runtime/TLS、完整2016/fault/长历史、独立
-custody/crypto/physical及VALUE-STRICT-01不由它替代。下一ordinary proof→BFT完整
-信封最小判别60秒/1次/network0尚未启动；原600/60/24/2016及容量不变。
+最新[普通节点证明与分页签署消息接口修复](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)
+完成了两个实际反例的原生修复：跨地区import/onward后的proof因果顺序，以及
+分页签署者有记录而CLI只读空兼容头。最终来源 `b4bc4379...` / implementation
+`cf4a2c7e...` 一次60秒范围实际47.519秒通过：全新E4/P4、进口99实际再出口98、
+四Agent完整保留消息、旧regional签署输出原文兼容、独立release CLI重建；实际普通
+Runtime启动保留9 Signed+1 Finalized，停止后10完整信封/8完整检查点Native核验，
+原Native/八Agent/两wallet/原caller库存及另存Runtime head字节不变，地区lib/tests strict。
+没有共识tick、首次签署/恢复/sync、Service/TLS或网络传输。准确来源/工件和各失败
+见[终态汇总](operations/evidence/regional-native-paged-runtime-retained-outcome-20261005.json)。
+
+前一准确来源 `99f85976...` 普通Native proof/actual CLI/strict44.063秒通过；旧
+23.424秒原生信封拒绝、22.375秒私有观察目录拒绝、28.110秒测试strict失败保留。
+后续同源真实Runtime5.825秒失败，仅保留Finalized而缺Signed；未复活/重开该现场。
+历史e85d来源三地区净99/97/95及新进程cold36.714秒、26076a64最小28.414秒仍各自
+绑定原来源，不能声称在最终源码重跑。Source66完整proof容量拒绝、完整fault/2016、
+长历史/独立custody/crypto/physical与旧价值库VALUE-STRICT-01仍未完成。
+下一60秒/1次全新无价值ordinary Service及正常广播最小判别尚未启动；原600秒stage、
+60秒轮、24新增高度/2016窗口、成熟/票数/容量不变。
+
+本文历史“全部通过”仅指各段明确绑定的当时源码、命令和有限scope，例如下述
+8831a634来源的491过程/三个Runtime组件；不能覆盖后来完整fault、预算耗尽、
+分页/接触/普通节点失败，也不表示最终源码或全部协议资格通过。
 
 当前源绑定开发已推进到 V8 明确累计费用预算、原生 watcher及实际普通领导者自动挑战提案；
 [R-CH-FEE-01](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md) 旧费用覆盖失败保留；

@@ -1,0 +1,145 @@
+{
+  "format": "RLD-NATIVE-PAGED-RUNTIME-ENTRY-CHECKS-V1",
+  "completed": true,
+  "failure": null,
+  "duration_seconds": 47.519,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "current-source-native-fixture",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--locked",
+        "--offline",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 21.894
+    },
+    {
+      "phase": "legacy-response-byte-compatibility",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "two_phases_three_of_four_apply_one_atomic_native_block_and_exact_retry",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 22.266
+    },
+    {
+      "phase": "separate-current-release-cli-build",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--bin",
+        "rld-regional-ledger-candidate",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 42.364
+    },
+    {
+      "phase": "actual-runtime-constructor-stopped-cold",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-runtime-retained-fix-20261005.py",
+        "203149.171357833"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 45.63
+    },
+    {
+      "phase": "regional-library-tests-strict",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "--tests",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 47.511
+    }
+  ],
+  "observations": [
+    {
+      "completed": true,
+      "actual_constructor": true,
+      "constructor_seconds": 1.699,
+      "native_height": 4,
+      "retained_messages": 10,
+      "retained_signed_and_finalized": true,
+      "all_retained_local_carriage": true,
+      "stopped_cold": {
+        "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+        "messages_authenticated": 10,
+        "distinct_complete_snapshots": 8,
+        "retained_state_bytes": 106492,
+        "state_limit_bytes": 33554432,
+        "expanded_envelope_bytes_authenticated": 788975,
+        "full_native_authentication": true
+      },
+      "readonly_native_calls": {
+        "history-check": 2,
+        "bft-context": 3,
+        "bft-status": 5,
+        "bft-retained-messages": 5,
+        "proof": 11,
+        "bft-network-pack": 10,
+        "bft-network-check": 20
+      },
+      "original_native_signer_owner_and_caller_inventory_unchanged": true,
+      "original_retained_head_converted_without_adoption": true,
+      "runtime_caller_head_unchanged": true,
+      "no_runtime_tick_sign_recover_sync": true,
+      "private_runtime_mesh_observation_files_created": true,
+      "service_tls_or_network": false,
+      "full_fault_post64_independent_physical_qualified": false
+    }
+  ],
+  "stage_sha256": "f718ed8f129f9d4d30fbbf2dbc3f024ab00540b69b709a870fae32cef873bdf4",
+  "controller_sha256": "8de685878cb6118327ac10b9a06f5e7300f9c8ce905cd7daa2bc4ffe13b84749",
+  "helper_sha256": "fd6375bd2500cbcb7c28515632b4a1bd33d59f0531245ef50db12b6b83908ef0",
+  "log_sha256": "88b5437241969dbdeffb77b8e929778449c7ceb4c3d032c26a592c9c7a435520",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "library_test_binary_sha256": "bde63d226fd746531a15d0739e458c9a2b870d672c71329dd1c49420097ba58e",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 0,
+  "legacy_value_strict": "OPEN"
+}

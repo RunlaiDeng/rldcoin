@@ -115,7 +115,7 @@ binary仅证明这份测试构建，旧main binary未重建、旧绑定不继承
 仅收集运行时refusal日志；原生最小反例的旧视图拒绝由测试实际断言及完整日志支持。
 所有旧complete fault、source66 bound拒绝、超预算和编译失败保持未通过。
 
-## 下一普通节点接入的最小判别（尚未启动）
+## 历史普通节点接入最小判别（已执行；以下保留原假设）
 
 源码检查：`main.rs::Action::Proof`直接输出height-sorted `journal.evidence`，
 `regional_bft_node.Runtime`以native `proof`填充每个完整BFT网络信封。
@@ -131,3 +131,68 @@ BFT canonical envelope，所有原body/certificate与证据保持。一次全新
 startup/mesh/TLS；不直接启动完整fault、不原样重复源66，不保留旧余额/保管。
 所有原600/60/24/2016、成熟/票数/容量保持。此路径仍不解决post64 complete authority；
 根化DAG/compact完整授权模型、完整2016窗口、独立/crypto/physical资格继续OPEN。
+
+
+## 2026-10-05 普通证明及真实启动的终态
+
+[证明接口各来源与终态](../operations/evidence/regional-native-paged-network-outcome-20261005.json)、
+[真实启动反例、修复与最终绑定](../operations/evidence/regional-native-paged-runtime-retained-outcome-20261005.json)。
+普通完整BFT信封实际23.424秒拒绝 `missing verified source checkpoint`；source4/import3/
+onward4已原生扣款，拒绝时账本/head/全私有库存不变，不退款/重签/恢复。
+Store.proof先从pinned genesis完整健康分页重放，再给每个完整checkpoint按前驱、
+block/import/epoch依赖排序并独立Native验签；CLI调用此接口。旧legacy证据的
+原顺序/重复字节保留。缺已退休前驱继续拒绝；不以cache或分帧补不完整授权。
+
+22.375秒修复样本在私有观察note父目录政策拒绝，保持失败，未放宽权限；新建
+0700观察目录后28.110秒Native/旧原文兼容/实际CLI通过，但测试err_expect告警令
+整scope失败。仅改expect_err后，新来源99f85976/implementation38247bdb的一次60秒
+范围实际44.063秒完成新Native夹具、独立release CLI和地区strict：实际CLI proof8
+检查点、完整pack/check及原message binding一致，旧视图、坏后来证书和缺前驱拒绝；
+首尾pinned history-check及全部私有库存相同。Legacy兼容复用前一范围未改的生产/
+对应测试字节，没有宣称重跑。Checks反例布尔只收集运行时日志；通过测试对旧
+视图拒绝有实际断言。Debug旧binary不变，不能继承新release工件行为。
+
+同源下一真实Runtime范围5.825秒失败：构造器已返回且height4，但只保留1 Finalized，
+没有Signed。停止后的结构性只读诊断看到compatibility header records0、独立分页
+manifest count9；这些数字不授Native权威。源码定位CLI直接遍历空journal.records。
+未再启动/Native打开/恢复失败夹具；失败发生在最终库存/cold检查之前，不能声称
+该失败范围已经完整cold或验证了全库存不变。
+
+Agent.retained_messages对健康保管与Native历史完整认证后，读取原分页流的每个
+完整有序record并返回原message，序列化数组计账checked且原8MiB拒绝不变；legacy
+走完整Journal状态认证并保持原message字节。接口不恢复/首次签署/sync或采用head。
+库测试明确paged空头与>=8实际记录不同，返回数等于完整record_count，全部消息
+各自构造原生完整Signed envelope并验签；legacy测试比较每个原message序列原文。
+
+最终source87文件 `b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7`，
+implementation `cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069`。
+一次60秒/1次actual47.519秒含compile/build/wait：全新signed无价值E4/P4与八Agent/
+两owner wallets；实际只花原import99继续export98；四Agent实际CLI返回完整原消息
+数与Native status相符。普通Runtime无key、无pending/outbox、stop_height4，构造
+1.699秒，保留9 Signed+1 Finalized且local carriage，cold逐份Native认证10信封/8
+完整检查点，state106492字节/32MiB、展开认证788975字节。Read-only Native白名单
+实际记录无tick/sign/recover/sync；另存原voter head转换成Runtime配置并逐项核对，
+没有从当前观察采用陌生head。原Native/signer/wallet/caller全私有hash/mode/uid/
+size/mtime与Runtime caller bytes不变，停止cold也不改新Runtime私有库存。
+Release CLI SHA `2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d`；
+地区lib/tests严格检查exit0，无生产豁免。Core171/旧价值两文件/冻结内容/旧debug
+binary再次exact核对不变。全部失败及原始报告、源码、私有fixture保留。
+
+这些样本没有Service/TLS/普通网络广播/共识tick，不代替完整fault或2016窗口。
+历史三地区e85d通过不变来源而复用，没有在最终源码重跑。Post64 compact-complete
+native authority、长历史、独立/cross-device保管、crypto与physical门槛继续OPEN。
+旧价值库两告警与120秒耗尽独立OPEN；地区库/旧regional原文兼容均不能替代。
+
+## 下一ordinary Service/正常广播判别（尚未启动）
+
+假设：已认证分页Native的普通默认Contact Service能在同一生命周期构造，并将
+完整保留信封通过正常mesh广播交给一个配置邻居，而无需控制器搬运信封或新签署。
+一次全新signed无价值import/onward夹具，stop_height4、无私钥输入、原voter/caller
+绑定；新同机私有transport/pinned TLS与明确ground邻居，拒绝外部端点。构造/
+有界carriage后独立完整Native逐份核验及原始head/库存；只证明运输保管时，必须
+与ledger import/maturity分开，不能把出站排队称为收件或收款。
+总墙钟60秒/1次，compile/夹具/等待计入；首startup/auth/carriage/native/head或
+非预期私有变化失败、完整有限判别、预算任一到达退出。源码/能力/环境变化才
+允许下一新scope；不复活失败夹具、原样重复、不签新款/恢复/退款。
+原600/60/24/2016与成熟/票数/8MiB/3MiB/64/256/512/4096/256MiB保持。
+多节点ordinary默认调度与实际value、fullfault/longhistory/independent/physical另验。

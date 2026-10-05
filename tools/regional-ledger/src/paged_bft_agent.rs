@@ -80,6 +80,35 @@ impl Agent {
             None => self.journal.records.len(),
         }
     }
+    /// Original signed responses after full native custody/history replay.
+    /// A paged journal's empty compatibility header is not its record stream.
+    pub fn retained_messages(&self, node: &Store) -> Result<Vec<Message>> {
+        require(self.healthy, "BFT signer requires full healthy reopen")?;
+        let mut messages = Vec::new();
+        let mut bytes = 2usize; // Exact JSON array brackets and separators.
+        let mut collect = |record: &Record| -> Result<()> {
+            let size = serde_json::to_vec(&record.message)
+                .map_err(|_| "retained BFT message encoding")?
+                .len();
+            bytes = bytes
+                .checked_add(size)
+                .and_then(|n| n.checked_add(usize::from(!messages.is_empty())))
+                .ok_or("retained BFT message byte overflow")?;
+            require(bytes <= MAX_BYTES, "retained BFT message output capacity")?;
+            messages.push(record.message.clone());
+            Ok(())
+        };
+        if let Some(stream) = &self.paged {
+            self.paged_state(node)?;
+            stream.visit(stream.storage_head(), &mut collect)?;
+        } else {
+            self.journal.state(node)?;
+            for record in &self.journal.records {
+                collect(record)?;
+            }
+        }
+        Ok(messages)
+    }
     fn paged_state(&self, node: &Store) -> Result<State> {
         require(
             self.healthy,

@@ -234,6 +234,18 @@ fn two_phases_three_of_four_apply_one_atomic_native_block_and_exact_retry() {
     assert_eq!(h.node.finalize(s).unwrap(), sid);
     assert_eq!(h.node.chain.height(), 1);
     assert_eq!(h.agents[3].journal.records.len(), 0);
+    for agent in &h.agents {
+        let original = agent
+            .journal
+            .records
+            .iter()
+            .map(|r| r.message.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            serde_json::to_vec(&agent.retained_messages(&h.node).unwrap()).unwrap(),
+            serde_json::to_vec(&original).unwrap()
+        );
+    }
     let journal: storage::Journal = crate::history::read_journal(&h.root.join("node")).unwrap();
     let (_, _, chain) = journal
         .replay(&public(1), h.node.trust.currency().unwrap())

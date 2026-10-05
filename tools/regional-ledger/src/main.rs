@@ -903,12 +903,7 @@ fn run() -> Result<()> {
         }
         Action::BftRetainedMessages { signer_dir } => {
             let agent = bft::Agent::open(&signer_dir, &store)?;
-            let messages = agent
-                .journal
-                .records
-                .iter()
-                .map(|r| r.message.clone())
-                .collect::<Vec<_>>();
+            let messages = agent.retained_messages(&store)?;
             println!(
                 "{}",
                 serde_json::to_string(&messages).map_err(|e| e.to_string())?
@@ -1822,7 +1817,7 @@ fn run() -> Result<()> {
         ),
         Action::Proof => println!(
             "{}",
-            serde_json::to_string(&store.journal.evidence).map_err(|e| e.to_string())?
+            serde_json::to_string(&store.proof()?).map_err(|e| e.to_string())?
         ),
         Action::ContactNode { .. } => unreachable!(),
         Action::ContactExport { export } => println!(

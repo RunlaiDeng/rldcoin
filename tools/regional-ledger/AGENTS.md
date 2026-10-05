@@ -399,5 +399,24 @@ passes, without repeating the three-region or source66 long fixture. Historical
 three-region proof remains bound to e85d; main binary unchanged. Legacy value
 strict independently OPEN. Next60second one/network0 ordinary native proof/BFT
 canonical-envelope minimum is defined in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md.
-Current CLI proof exposes height-sorted diagnostic view and Runtime uses it;
-source inspection is not an observed native envelope counter or startup pass.
+That next proof scope is now historical; the exact native/CLI counter and repair
+are recorded in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md and its bound outcomes.
+
+
+Ordinary CLI Proof now calls Store.proof: fully replay healthy paged history from
+pinned genesis, order every retained complete checkpoint causally, then perform
+independent complete native authentication. Legacy proof order/duplicates remain
+exact. Missing retired predecessors refuse; this never qualifies post64 authority.
+
+Ordinary bft-retained-messages must call Agent.retained_messages, never read the
+empty paged compatibility header. Fully authenticate current native custody and
+history before visiting original ordered complete records; checked compact array
+output refuses above the unchanged8MiB limit. Keep original requests/responses,
+locks, caller heads and legacy message bytes. No first-sign/recover/sync rights.
+A finite keyless Runtime constructor/stopped verifier passed10 complete envelopes
+with unchanged original native/owner/signer/caller inventory, not Service/TLS,
+ordinary network scheduling/value, fault/2016, long history or independent custody.
+Preserve its earlier real constructor retention failure and all prior failures.
+The changed native source requires fresh signed no-value fixtures; never migrate
+old state/value. Next60second single Service/broadcast discriminator is defined
+in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md. Legacy value strict remains OPEN.
