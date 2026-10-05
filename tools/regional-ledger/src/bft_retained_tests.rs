@@ -2,8 +2,8 @@ use super::*;
 use crate::retained_pages::{Purpose, Scope, Stream};
 use std::collections::BTreeMap;
 
-type Inventory = BTreeMap<PathBuf, (Hash, u64, u32, u128)>;
-fn inventory(root: &Path) -> Inventory {
+pub(super) type Inventory = BTreeMap<PathBuf, (Hash, u64, u32, u128)>;
+pub(super) fn inventory(root: &Path) -> Inventory {
     fn walk(path: &Path, rows: &mut Inventory) {
         for entry in fs::read_dir(path).unwrap() {
             let path = entry.unwrap().path();

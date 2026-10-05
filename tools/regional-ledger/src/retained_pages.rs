@@ -352,6 +352,28 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             "complete stream native consumer scope",
         )
     }
+    /// Unpinned integrity observation only, never independent latest authority.
+    pub(crate) fn observe_head(dir: &Path, scope: &Scope) -> Result<Hash> {
+        let manifest: Manifest<T> =
+            decode(&keystore::private_read(&dir.join(MANIFEST), MAX_BYTES)?)?;
+        require(
+            manifest.format == FORMAT && manifest.scope == *scope,
+            "complete stream observed scope",
+        )?;
+        Ok(manifest.head)
+    }
+    pub(crate) fn records(&self, expected: Hash) -> Result<Records<'_, T>> {
+        self.visit(expected, |_| Ok(()))?;
+        Ok(Records {
+            stream: self,
+            page: 0,
+            index: 0,
+            previous: None,
+            tail: false,
+            failed: false,
+            ready: std::collections::VecDeque::new(),
+        })
+    }
     pub fn storage_head(&self) -> Hash {
         self.manifest.head
     }
@@ -363,6 +385,17 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
     /// their meaning. No automatic recovery or authorizing callback is supplied.
     /// All capacity checks precede disk writes; I/O failure retains residue.
     pub fn append(&mut self, records: &[T], expected_head: Hash) -> Result<Hash> {
+        self.append_accounted(records, expected_head, 0, 0)
+    }
+    /// The native store includes all separately retained metadata/incident/queue
+    /// files in this same unchanged archive ceiling before any stream write.
+    pub(crate) fn append_accounted(
+        &mut self,
+        records: &[T],
+        expected_head: Hash,
+        external_files: usize,
+        external_bytes: u64,
+    ) -> Result<Hash> {
         self.visit(expected_head, |_| Ok(()))?;
         require(
             !records.is_empty() && records.len() <= PAGE,
@@ -444,7 +477,12 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             }
         }
         require(
-            count <= history::MAX_FILES && total <= history::MAX_ARCHIVE_BYTES,
+            count
+                .checked_add(external_files)
+                .is_some_and(|n| n <= history::MAX_FILES)
+                && total
+                    .checked_add(external_bytes)
+                    .is_some_and(|n| n <= history::MAX_ARCHIVE_BYTES),
             "complete stream total archive capacity",
         )?;
         let outcome = (|| {
@@ -494,6 +532,69 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
         outcome?;
         self.manifest = proposed;
         Ok(self.manifest.head)
+    }
+}
+
+/// One fully checked complete page at a time, after full structural head check.
+/// Native consumers must still execute the whole history before publishing.
+pub(crate) struct Records<'a, T> {
+    stream: &'a Stream<T>,
+    page: usize,
+    index: u64,
+    previous: Option<Hash>,
+    tail: bool,
+    failed: bool,
+    ready: std::collections::VecDeque<T>,
+}
+impl<T: Clone + Serialize + DeserializeOwned> Iterator for Records<'_, T> {
+    type Item = Result<T>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.failed {
+            return None;
+        }
+        if self.ready.is_empty() {
+            let loaded = (|| -> Result<()> {
+                if let Some(reference) = self.stream.manifest.pages.get(self.page) {
+                    let raw = keystore::private_read(
+                        &self
+                            .stream
+                            .dir
+                            .join(OBJECTS)
+                            .join(page_name(reference.hash)),
+                        MAX_BYTES,
+                    )?;
+                    require(
+                        raw.len() == reference.bytes
+                            && Hash(Sha256::digest(&raw).into()) == reference.hash,
+                        "complete record cursor page digest/length",
+                    )?;
+                    let page: Page<T> = decode(&raw)?;
+                    require(
+                        page.format == FORMAT
+                            && page.scope == self.stream.manifest.scope
+                            && page.first == self.index
+                            && page.previous == self.previous
+                            && page.records.len() == PAGE,
+                        "complete record cursor order/domain",
+                    )?;
+                    self.ready = page.records.into();
+                    self.previous = Some(reference.hash);
+                    self.page += 1;
+                } else if !self.tail {
+                    self.ready = self.stream.manifest.tail.clone().into();
+                    self.tail = true;
+                }
+                Ok(())
+            })();
+            if let Err(e) = loaded {
+                self.failed = true;
+                return Some(Err(e));
+            }
+        }
+        self.ready.pop_front().map(|record| {
+            self.index += 1;
+            Ok(record)
+        })
     }
 }
 

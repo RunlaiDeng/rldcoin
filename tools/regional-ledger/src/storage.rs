@@ -54,6 +54,10 @@ impl Journal {
     ) -> Result<(Trust, VerifiedEvidence, Chain)> {
         encode("journal", self)?;
         let trust = Trust::verify(&self.bootstrap, authority, pin)?;
+        require(
+            !crate::paged_bft::is_profile(&trust.region(self.region)?.rules),
+            "paged BFT requires complete native disk event replay; bounded view cannot authorize",
+        )?;
         let segmented = crate::segmented::is_profile(&trust.region(self.region)?.rules);
         require(
             if segmented {
@@ -121,7 +125,12 @@ impl Journal {
     ) -> Result<()> {
         match event {
             Event::ChannelReceipt(receipt) => receipt.verify_selected(chain, trust, evidence)?,
-            Event::Block(block) => chain.accept(*block, trust, evidence)?,
+            Event::Block(block) => {
+                if crate::paged_bft::is_profile(&trust.region(chain.region)?.rules) {
+                    crate::paged_bft::prepare_parent(chain, evidence)?;
+                }
+                chain.accept(*block, trust, evidence)?;
+            }
             Event::Finalize(id) => {
                 require(
                     evidence.snapshot(id)?.statement.epoch == chain.epoch,
@@ -193,6 +202,7 @@ pub struct Store {
     authority: String,
     pin: Hash,
     healthy: bool,
+    paged: Option<crate::retained_pages::Stream<paged::Record>>,
 }
 pub fn ensure_not_restoring(dir: &Path) -> Result<()> {
     match fs::symlink_metadata(dir.join("RESTORING")) {
@@ -254,9 +264,7 @@ pub(crate) fn verify_pinned_image(
 impl Store {
     pub(crate) fn require_storage_head(&self, expected: Hash) -> Result<()> {
         require(
-            self.healthy
-                && !expected.is_zero()
-                && crate::history::manifest(&self.dir)?.head()? == expected,
+            self.healthy && !expected.is_zero() && self.storage_head()? == expected,
             "healthy native store and separately retained exact current storage head required",
         )
     }
@@ -271,8 +279,7 @@ impl Store {
             "store requires replay after persistence failure",
         )?;
         require(
-            !expected_head.is_zero()
-                && crate::history::manifest(&self.dir)?.head()? == expected_head,
+            !expected_head.is_zero() && self.storage_head()? == expected_head,
             "separately retained exact current native storage head required for receipt acceptance",
         )?;
         let before = self.chain.ledger.clone();
@@ -286,7 +293,7 @@ impl Store {
             receipt_id: receipt.id()?,
             accepted_sequence: receipt.next.statement.sequence,
             receipt,
-            history_head: crate::history::manifest(&self.dir)?.head()?,
+            history_head: self.storage_head()?,
             exact_retry,
             new_fast_payment_accepted: !exact_retry,
             historical_funded_state: true,
@@ -311,6 +318,10 @@ impl Store {
         authority: &str,
         pin: Hash,
     ) -> Result<Self> {
+        let trust = Trust::verify(&bootstrap, authority, pin)?;
+        if crate::paged_bft::is_profile(&trust.region(region)?.rules) {
+            return Self::create_paged(dir, bootstrap, region, authority, pin);
+        }
         let journal = Journal {
             bootstrap,
             region,
@@ -356,6 +367,7 @@ impl Store {
             authority: authority.into(),
             pin,
             healthy: true,
+            paged: None,
             safety: Safety::default(),
             conflicts: vec![],
         };
@@ -396,6 +408,9 @@ impl Store {
             .open(lock_path)
             .map_err(io)?;
         lock.try_lock().map_err(|e| e.to_string())?;
+        if paged::present(dir) {
+            return Self::open_paged(dir, lock, authority, pin, head);
+        }
         if !reconcile {
             require(
                 read_guard(dir)?.is_zero(),
@@ -420,6 +435,7 @@ impl Store {
             authority: authority.into(),
             pin,
             healthy: true,
+            paged: None,
             safety,
             conflicts,
         };
@@ -464,6 +480,9 @@ impl Store {
         for proof in &self.conflicts {
             journal.incident_ids.insert(proof.id()?);
         }
+        if self.paged.is_some() {
+            return self.commit_paged_journal(journal);
+        }
         require(
             self.healthy,
             "store requires replay after persistence failure",
@@ -484,19 +503,49 @@ impl Store {
     }
     /// Read one complete immutable page at a time, authenticating its bytes again.
     /// Value authority was established by the full native replay under this lock.
-    pub fn blocks(&self) -> Result<impl Iterator<Item = Result<Block>> + '_> {
-        Ok(
-            crate::history::events(Some(&self.dir), &self.journal)?.filter_map(
-                |event| match event {
-                    Ok(Event::Block(block)) => Some(Ok(*block)),
-                    Ok(_) => None,
-                    Err(error) => Some(Err(error)),
-                },
-            ),
-        )
+    pub fn blocks(&self) -> Result<Box<dyn Iterator<Item = Result<Block>> + '_>> {
+        Ok(Box::new(self.events()?.filter_map(|event| match event {
+            Ok(Event::Block(block)) => Some(Ok(*block)),
+            Ok(_) => None,
+            Err(error) => Some(Err(error)),
+        })))
     }
-    pub(crate) fn events(&self) -> Result<impl Iterator<Item = Result<Event>> + '_> {
-        crate::history::events(Some(&self.dir), &self.journal)
+    pub(crate) fn events(&self) -> Result<Box<dyn Iterator<Item = Result<Event>> + '_>> {
+        if let Some(stream) = &self.paged {
+            return paged::events(stream);
+        }
+        Ok(Box::new(crate::history::events(
+            Some(&self.dir),
+            &self.journal,
+        )?))
+    }
+    /// Locked current integrity observation only; independent freshness is separate.
+    pub fn storage_head(&self) -> Result<Hash> {
+        require(
+            self.healthy,
+            "native store requires cold replay after persistence failure",
+        )?;
+        if let Some(stream) = &self.paged {
+            return Ok(stream.storage_head());
+        }
+        crate::history::manifest(&self.dir)?.head()
+    }
+    pub fn history_layout(&self) -> Result<(String, usize, usize)> {
+        if let Some(stream) = &self.paged {
+            let count = usize::try_from(stream.record_count())
+                .map_err(|_| "native history record count")?;
+            return Ok((
+                "RLD-NATIVE-PAGED-BFT-STORE-V1".into(),
+                count / crate::history::PAGE_EVENTS,
+                count % crate::history::PAGE_EVENTS,
+            ));
+        }
+        let manifest = crate::history::manifest(&self.dir)?;
+        Ok((
+            manifest.format,
+            self.journal.event_prefix.len(),
+            self.journal.events.len(),
+        ))
     }
     pub fn block_at(&self, height: u64) -> Result<Block> {
         for block in self.blocks()? {
@@ -592,10 +641,17 @@ impl Store {
         Ok(iid)
     }
     pub fn add_evidence(&mut self, evidence: Evidence) -> Result<()> {
+        if self.paged.is_some() {
+            return self.add_paged_evidence(evidence);
+        }
         let journal = self.stage_evidence(evidence)?;
         self.commit(journal)
     }
     pub(crate) fn stage_evidence(&mut self, evidence: Evidence) -> Result<Journal> {
+        require(
+            self.paged.is_none(),
+            "paged BFT needs typed complete evidence event, not legacy journal mutation",
+        )?;
         require(
             evidence.snapshots.len() <= MAX_SNAPSHOTS,
             "incoming snapshot bound",
@@ -736,11 +792,13 @@ impl Store {
     }
     pub fn bft_candidate(&self, commands: Vec<Command>, miner: String) -> Result<Snapshot> {
         crate::bft::Context::current(self)?;
-        let commands = if self.trust.region(self.chain.region)?.rules == channels::BFT_RULES {
+        let commands = if self.trust.region(self.chain.region)?.rules == channels::BFT_RULES
+            || self.paged.is_some()
+        {
             // Ordinary startup already calls this native candidate path. This
             // current-head read is a locked local observation, not an independent
             // freshness witness or permission to first-sign an owner response.
-            let head = crate::history::manifest(&self.dir)?.head()?;
+            let head = self.storage_head()?;
             let mut watched = self.channel_watch(miner.clone(), head)?.commands;
             let automatic = watched.len();
             for command in commands {
@@ -763,6 +821,9 @@ impl Store {
             .template(commands, miner, &self.trust, &self.evidence)?;
         mine(&mut block)?;
         let mut chain = self.chain.clone();
+        if self.paged.is_some() {
+            crate::paged_bft::prepare_parent(&mut chain, &self.evidence)?;
+        }
         chain.accept(block, &self.trust, &self.evidence)?;
         let mut snapshot = self.snapshot_request()?;
         snapshot.statement = chain.statement(&self.trust)?;
@@ -840,7 +901,7 @@ impl Store {
         crate::bft::Context::current(self)?;
         let mut previous = epoch::Registry::initial(&self.trust, self.chain.region)?;
         let mut selected = Vec::new();
-        for event in crate::history::events(Some(&self.dir), &self.journal)? {
+        for event in self.events()? {
             if let Event::Epoch(eid) = event? {
                 require(
                     selected.len() < epoch::MAX_EPOCHS,
@@ -928,6 +989,9 @@ impl Store {
         Ok(eid)
     }
     pub fn finalize(&mut self, snapshot: Snapshot) -> Result<Hash> {
+        if self.paged.is_some() {
+            return self.finalize_paged(snapshot);
+        }
         CertifiedHistory::from_snapshot(&snapshot).verify(&self.trust)?;
         if crate::bft::is_profile(&self.trust.region(self.chain.region)?.rules)
             && self.chain.blocks.starts_with(&snapshot.blocks)
@@ -1033,11 +1097,14 @@ fn publish_incident(dir: &Path, proof: &Incident, iid: Hash, trust: &Trust) -> R
     require(bytes.len() <= MAX_BYTES, "incident byte bound")?;
     // A partial write is intentionally left behind. It fails closed on replay,
     // rather than permitting known signer faults to disappear after a crash.
-    let mut file = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(final_path)
-        .map_err(io)?;
+    let mut options = OpenOptions::new();
+    options.write(true).create_new(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    let mut file = options.open(final_path).map_err(io)?;
     file.write_all(&bytes).map_err(io)?;
     file.sync_all().map_err(io)?;
     File::open(path).map_err(io)?.sync_all().map_err(io)
@@ -1126,3 +1193,6 @@ pub fn recover_incident<P: Into<Incident>>(
     }
     publish_incident(dir, &proof, iid, &trust)
 }
+
+#[path = "paged_store.rs"]
+mod paged;

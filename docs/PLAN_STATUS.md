@@ -45,8 +45,8 @@ sign占独立计时81.4769%，内部成本未分开，未验证128-record门槛�
 未变来源复用，未重复长轨迹。密码/发行/完整价值/出版均有明确模型前提，
 Native第65检查点/128签署容量及真实2016资格仍OPEN。下一实现同时处理普通
 Native Store与BFT signer的新规则，不降低旧bound或用只读verifier替代。
-共用[原生完整保留层](research/REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)已编写，
-但尚未接入普通Store/Agent/钱包或启用新signed admission。实际最小故障2.678秒
+历史71-file共用[原生完整保留层](research/REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)已编写，
+该来源尚未接入普通Store/Agent/钱包或启用新signed admission，后续77-file进展见下。实际最小故障2.678秒
 确认pending只保留reference会缺完整未发布record；修复先持久完整payload，
 再发布页/manifest。22.139秒受影响组件及native库/tests strict通过，三注入边界
 保持证据并拒绝继续；同机新进程检查的是145条公共fixture签署record的存储，
@@ -67,8 +67,19 @@ Native Store与BFT signer的新规则，不降低旧bound或用只读verifier替
 `66ab6d20...`/implementation`a2e80dcf...`的
 [准确绑定](operations/evidence/regional-native-bft-record-replay-20261005-outcome.json)
 不等于普通分页写入/新signed admission或独立/新进程资格；主binary未重建。
-Store第65检查点与128签署容量保持OPEN，真正Store/Agent写入集成一次300秒
+该73-file来源Store第65检查点与128签署容量保持OPEN，真正Store/Agent写入集成一次300秒
 尚未启动；旧价值库strict独立OPEN，冻结正文/PDF/官网未改。
+后续77-file明确signed paged profile已接入普通Store及钱包完整历史审查。
+首5.680秒编译失败与8.563秒watcher segment失败保留；修复watcher从完整native
+流重放后，一次120秒实际88.056秒通过连续65认证高度/活动64、99付款成熟、
+历史签署审查、完整坏尾拒绝和同进程pinned cold，完整原件不删。仅公共fixture
+quorum签名，无BFT Agent投票保管。两地区重复foreign legacy envelope反例3.114秒
+成立，修复4.255秒通过坏后来签名仍拒绝；最终容量计账小组件/CLI仅编译/strict
+7.844秒通过。现77-file library源`d3abffbce056...`/implementation`c0979d1d4a0c...`；
+65及mixed各绑定实际来源，未原样重跑或冒称最终全套通过。普通Agent分页写入/
+>128历史锁/recover-only尚OPEN，原定一次300秒集成scope未启动，网络预算0。
+[实际变化、反例、来源和下一假设](operations/evidence/regional-native-paged-store-outcome-20261005.json)。
+旧价值库strict独立OPEN；主binary未重建，旧V8第65及完整fault失败不改称通过。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

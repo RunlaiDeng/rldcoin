@@ -1,8 +1,7 @@
 # Regional value composition
 
-`src/retained_pages.rs` is a shared private byte-retention layer for future
-ordinary Store/BFT Agent integration, currently not adopted by those paths or
-any new signed admission. Its heads/scope/origin grant no ledger, custody or
+`src/retained_pages.rs` is a shared private byte-retention layer adopted by the
+explicit new ordinary Store profile below. BFT Agent paged writes remain open. Its heads/scope/origin grant no ledger, custody or
 freshness authority. Keep full original sealed-page payloads in durable pending
 publication before writing pages; incomplete pending/commit files refuse,
 including after manifest publication. Only a fully completed redundant wrapper
@@ -17,8 +16,39 @@ execution, locks or signatures. `Journal::state_from_retained` shares this
 kernel for a read-only mirror bound to exact header/key/purpose plus separate
 storage/native heads. Return state only after both whole streams/heads pass.
 This does not create paged custody, first-sign or recover, and the old 128-record
-and 64-snapshot limits still refuse. New storage admission and ordinary
-Store/Agent write integration remain open; use fresh signed no-value fixtures.
+and 64-snapshot limits still refuse. Ordinary Agent paged write/recovery integration remains open; use fresh signed
+no-value fixtures. Its current 128-record custody limit is unchanged.
+
+
+The separate signed `RLD-REGIONAL-BFT-PAGED-VALUE-CHANNELS-FIXTURE-V1`
+admission binds `src/paged_bft_profile.md` and complete V8 value/issuance rules.
+Ordinary `Store` uses `RLD-NATIVE-PAGED-BFT-STORE-V1` with immutable signed
+bootstrap header and complete certified/evidence/receipt/incident-index events.
+Every open/append/historical wallet review replays from pinned signed genesis;
+no serialized ledger or bounded public Journal view can initialize authority.
+Each checkpoint carries one complete new block and the exact preceding certified
+last block; the preceding ledger must already have executed natively in this
+invocation. Every later certificate variant still authenticates completely under
+its own admitted region profile, including repeated legacy foreign envelopes.
+
+Keep all original events in 16-record pages and full pending payloads. At most64
+active fully verified snapshots retain all current value dependencies, accepted
+receipt anchors and each region's latest; refuse if they cannot fit. Only native
+executed body identities in this process may recognize historical bodies, capped
+at4096. All root-side files/residue count with stream files within4096/256MiB;
+object/ledger/evidence8MiB and ordinary network limits remain. No legacy format,
+private store, balances or custody conversion; no epoch handoff. Local certified
+selection and known remote evidence remain distinct; retained historical variants
+never select old state. Scan complete archives for historical finality conflicts.
+
+A65-height ordinary Store sample with fixture quorum signatures and a native99
+owner payment passed under its exact source. It is not BFT Agent voting custody
+or a full-window/fault/capacity/independent pass. Paged Agent writes, full historical
+signer observations beyond active evidence, exact pending-response recover-only,
+new-process/interruption/custody, receipt/channel history qualification, image
+restore and transport integration remain open. Old Agent128/legacy snapshot64
+refusals remain. Changed native source requires fresh signed no-value genesis;
+never reopen/re-sign stopped failed fixtures or migrate their state.
 
 The ordinary regional ledger now has an explicitly admitted channel/fee-reserve
 bucket for the new native ground value-channel profiles. The

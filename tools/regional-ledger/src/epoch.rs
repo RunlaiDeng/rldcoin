@@ -23,6 +23,17 @@ impl Anchor {
     pub fn verify(&self, trust: &Trust, keys: &[String]) -> Result<()> {
         let s = &self.statement;
         trust.region(s.region)?;
+        if crate::paged_bft::is_profile(&trust.region(s.region)?.rules) {
+            crate::paged_bft::headers(s, &self.headers, trust)?;
+            return crate::bft::checkpoint_auth(
+                s,
+                &self.approvals,
+                self.bft.as_ref(),
+                &self.headers,
+                keys,
+                trust,
+            );
+        }
         if crate::segmented::is_profile(&trust.region(s.region)?.rules) {
             require(s.currency == trust.currency()?, "segmented anchor currency")?;
             crate::bft::checkpoint_auth(

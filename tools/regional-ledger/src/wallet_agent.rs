@@ -72,21 +72,32 @@ impl Observation {
             ordinal(node.chain.epoch)? >= ordinal(p.epoch)?,
             "wallet observed validator era rollback",
         )?;
-        if let Some(old) = p.finality {
-            let snapshot = node.evidence.snapshot(old)?;
-            let current = node.evidence.snapshot(
-                node.chain
-                    .finalized
-                    .ok_or("wallet observed finality disappeared")?,
-            )?;
+        if crate::paged_bft::is_profile(&node.trust.region(binding.region)?.rules) {
+            let (historical, _) = node.paged_history_at(p.height)?;
             require(
-                snapshot.statement.region == binding.region
-                    && current.statement.height >= snapshot.statement.height
-                    && node
-                        .evidence
-                        .descends_from(current.statement.id()?, snapshot.statement.id()?)?,
-                "wallet observed finality rollback",
+                historical.finalized == p.finality
+                    && historical.epoch == p.epoch
+                    && historical.tip()? == p.tip
+                    && historical.ledger.root()? == p.state,
+                "paged wallet observed exact selected native history differs",
             )?;
+        } else {
+            if let Some(old) = p.finality {
+                let snapshot = node.evidence.snapshot(old)?;
+                let current = node.evidence.snapshot(
+                    node.chain
+                        .finalized
+                        .ok_or("wallet observed finality disappeared")?,
+                )?;
+                require(
+                    snapshot.statement.region == binding.region
+                        && current.statement.height >= snapshot.statement.height
+                        && node
+                            .evidence
+                            .descends_from(current.statement.id()?, snapshot.statement.id()?)?,
+                    "wallet observed finality rollback",
+                )?;
+            }
         }
         require(
             self.incidents.len() <= conflict::MAX_INCIDENTS
@@ -148,16 +159,20 @@ impl Journal {
                 r.observation.pin.height >= observed_chain.height(),
                 "wallet observed signing history moved backwards",
             )?;
-            while observed_chain.height() < r.observation.pin.height {
-                node.journal.replay_event(
-                    &mut observed_chain,
-                    &node.trust,
-                    &node.evidence,
-                    observed_events
-                        .next()
-                        .transpose()?
-                        .ok_or("wallet signing-height native prefix missing")?,
-                )?;
+            if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
+                observed_chain = node.paged_history_at(r.observation.pin.height)?.0;
+            } else {
+                while observed_chain.height() < r.observation.pin.height {
+                    node.journal.replay_event(
+                        &mut observed_chain,
+                        &node.trust,
+                        &node.evidence,
+                        observed_events
+                            .next()
+                            .transpose()?
+                            .ok_or("wallet signing-height native prefix missing")?,
+                    )?;
+                }
             }
             let actual_owners = r
                 .draft

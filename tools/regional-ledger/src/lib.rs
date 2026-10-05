@@ -122,6 +122,18 @@ pub struct Admission {
 }
 impl Admission {
     pub fn bytes(&self) -> Result<Vec<u8>> {
+        if crate::paged_bft::is_profile(&self.rules) {
+            return encode(
+                "paged-bft-admission-v1",
+                &(
+                    self.currency,
+                    &self.region,
+                    &self.rules,
+                    self.value_rules,
+                    &self.validators,
+                ),
+            );
+        }
         if let Some(value_rules) = self.value_rules {
             return encode(
                 "value-channel-admission-v1",
@@ -150,7 +162,12 @@ impl Admission {
                     || bft::is_profile(&self.rules)
                     || segmented::is_profile(&self.rules))
                 && if channels::is_profile(&self.rules) {
-                    self.value_rules == Some(channels::profile_hash()?)
+                    self.value_rules
+                        == Some(if crate::paged_bft::is_profile(&self.rules) {
+                            crate::paged_bft::rules_hash()?
+                        } else {
+                            channels::profile_hash()?
+                        })
                 } else {
                     self.value_rules.is_none()
                 }
@@ -591,6 +608,7 @@ impl VerifiedEvidence {
             require(
                 statement.height > old.statement.height
                     && (crate::segmented::is_profile(&trust.region(statement.region)?.rules)
+                        || crate::paged_bft::is_profile(&trust.region(statement.region)?.rules)
                         || snapshot.blocks.starts_with(&old.blocks)),
                 "checkpoint fork or rollback",
             )?;
@@ -621,6 +639,9 @@ impl VerifiedEvidence {
             snapshot.statement.currency == trust.currency()? && snapshot.blocks.len() <= MAX_BLOCKS,
             "replay extension identity or block bound",
         )?;
+        if crate::paged_bft::is_profile(&trust.region(snapshot.statement.region)?.rules) {
+            return crate::paged_bft::replay(snapshot, trust, self);
+        }
         if crate::segmented::is_profile(&trust.region(snapshot.statement.region)?.rules) {
             return segmented::replay(snapshot, trust, self);
         }
@@ -768,7 +789,8 @@ impl Chain {
             currency: trust.currency()?,
             prefix_height: 0,
             prefix_tip: region,
-            segmented: crate::segmented::is_profile(&trust.region(region)?.rules),
+            segmented: crate::segmented::is_profile(&trust.region(region)?.rules)
+                || crate::paged_bft::is_profile(&trust.region(region)?.rules),
             blocks: vec![],
             ledger: Ledger::default(),
             finalized: None,
@@ -1093,3 +1115,5 @@ pub mod stream_replay;
 mod tests;
 pub mod wallet;
 pub mod wallet_agent;
+
+pub mod paged_bft;

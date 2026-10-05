@@ -20,7 +20,10 @@ pub fn has_epochs(rules: &str) -> bool {
     rules == EPOCH_RULES || is_joint(rules)
 }
 pub fn is_profile(rules: &str) -> bool {
-    rules == RULES || rules == channels::BFT_RULES || has_epochs(rules)
+    rules == RULES
+        || rules == channels::BFT_RULES
+        || crate::paged_bft::is_profile(rules)
+        || has_epochs(rules)
 }
 pub const MAX_ROUNDS: u64 = 32;
 pub const MAX_RECORDS: usize = 128;
@@ -76,7 +79,8 @@ impl Context {
         require(
             is_profile(&trust.region(self.region)?.rules)
                 && self.currency == trust.currency()?
-                && self.parent_height < MAX_BLOCKS as u64,
+                && (crate::paged_bft::is_profile(&trust.region(self.region)?.rules)
+                    || self.parent_height < MAX_BLOCKS as u64),
             "BFT context profile/domain/height",
         )?;
         evidence
@@ -205,7 +209,13 @@ pub fn checkpoint_auth(
         return crate::epoch::approvals(approvals, keys, &s.bytes()?);
     }
     require(
-        approvals.is_empty() && !headers.is_empty() && headers.len() as u64 == s.height,
+        approvals.is_empty()
+            && !headers.is_empty()
+            && if crate::paged_bft::is_profile(&trust.region(s.region)?.rules) {
+                headers.len() == if s.previous.is_some() { 2 } else { 1 }
+            } else {
+                headers.len() as u64 == s.height
+            },
         "BFT checkpoint cannot use legacy approvals or omit history",
     )?;
     let (height, block, state) = if headers.len() == 1 {
@@ -400,7 +410,8 @@ fn authorize(
 }
 fn context_of(snapshot: &Snapshot) -> Result<Context> {
     require(
-        snapshot.base.is_none()
+        (snapshot.base.is_none()
+            || (snapshot.base == snapshot.statement.previous && snapshot.blocks.len() == 2))
             && !snapshot.blocks.is_empty()
             && snapshot.blocks.len() <= MAX_BLOCKS,
         "BFT proposal block bound",
@@ -427,6 +438,7 @@ fn verify_prospective(
     trust: &Trust,
     evidence: &VerifiedEvidence,
 ) -> Result<()> {
+    crate::segmented::shape(snapshot, trust)?;
     let c = context_of(snapshot)?;
     c.keys(trust, evidence)?;
     require(
@@ -473,7 +485,11 @@ fn verify_prospective(
                 && parent.statement.height == c.parent_height
                 && parent.statement.block == c.parent_block
                 && parent.statement.state == c.parent_state
-                && snapshot.blocks[..snapshot.blocks.len() - 1] == parent.blocks,
+                && if crate::paged_bft::is_profile(&trust.region(c.region)?.rules) {
+                    snapshot.blocks.first() == parent.blocks.last()
+                } else {
+                    snapshot.blocks[..snapshot.blocks.len() - 1] == parent.blocks
+                },
             "proposal forks from certified parent",
         )?;
     } else {
@@ -489,7 +505,7 @@ pub(crate) fn validate_next(snapshot: &Snapshot, node: &Store) -> Result<()> {
     verify_prospective(snapshot, &node.trust, &node.evidence)?;
     require(
         context_of(snapshot)? == Context::current(node)?
-            && snapshot.blocks[..snapshot.blocks.len() - 1] == node.chain.blocks,
+            && crate::paged_bft::parent_matches(snapshot, node)?,
         "BFT next proposal differs from current native parent",
     )
 }
@@ -1179,7 +1195,7 @@ impl Agent {
         };
         if let Some(s) = proposal {
             require(
-                s.blocks[..s.blocks.len() - 1] == node.chain.blocks,
+                crate::paged_bft::parent_matches(s, node)?,
                 "BFT proposal parent differs from actual replay",
             )?;
             node.safety.check(

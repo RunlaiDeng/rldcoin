@@ -8,7 +8,7 @@ pub const FEE_BUDGET_FORMAT: &str = "RLD-NATIVE-CHANNEL-FEE-BUDGET-V1";
 pub const BFT_RULES: &str = "RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V8";
 pub const SEGMENTED_RULES: &str = "RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V8";
 pub fn is_profile(rules: &str) -> bool {
-    rules == BFT_RULES || rules == SEGMENTED_RULES
+    rules == BFT_RULES || rules == SEGMENTED_RULES || crate::paged_bft::is_profile(rules)
 }
 pub fn profile_hash() -> Result<Hash> {
     id(

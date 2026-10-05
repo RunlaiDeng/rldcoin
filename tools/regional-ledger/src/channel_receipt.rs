@@ -319,6 +319,9 @@ pub struct Accepted {
     pub live_rld: bool,
 }
 fn index(node: &Store) -> Result<Replay> {
+    if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
+        return node.paged_receipt_history();
+    }
     let mut chain = Chain::new(node.chain.region, &node.trust)?;
     let mut result = Replay::default();
     for event in node.events()? {

@@ -1708,13 +1708,13 @@ fn run() -> Result<()> {
                 .map_err(|e| e.to_string())?
         ),
         Action::HistoryHead | Action::HistoryCheck { .. } => {
-            let manifest = history::manifest(&args.dir)?;
+            let (format, pages, tail) = store.history_layout()?;
             println!(
                 "{}",
                 serde_json::json!({
-                    "format":manifest.format,"history_head":manifest.head()?,
-                    "sealed_event_pages":store.journal.event_prefix.len(),
-                    "retained_tail_events":store.journal.events.len(),
+                    "format":format,"history_head":store.storage_head()?,
+                    "sealed_event_pages":pages,
+                    "retained_tail_events":tail,
                     "event_page_bound":history::PAGE_EVENTS,
                     "currency":pin,"region":store.chain.region,"height":store.chain.height(),
                     "tip":store.chain.tip()?,"state":store.chain.ledger.root()?,

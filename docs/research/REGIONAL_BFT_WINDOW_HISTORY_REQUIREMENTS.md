@@ -1,6 +1,7 @@
 # 普通 BFT 通道窗口的完整历史与签署保留
 
-状态：**实现缺口**。旧普通V8 Native实际在第65检查点拒绝；原生签署日志
+状态：**签署/完整窗口实现缺口；新明确分页规则的Store有限65高度样本通过**。
+旧普通V8 Native实际在第65检查点拒绝；原生签署日志
 的实际容量门槛及重放CPU归因尚未验证。I7/I10、S11/S16/S17、R10/R11/R22
 仍未完成。本记录约束后续新profile设计，不能修改冻结正文/PDF或旧signed规则。
 
@@ -102,3 +103,14 @@ context/candidate0.226924秒。sign占这些独立计时总额81.4769%，不是�
 这是理想认证/单era/价值子集与抽象出版模型，不是Native或独立custody资格。
 下一门槛为新明确原生规则下普通Store与BFT signer共同分页，一次300秒组件
 判别（实现完成后执行、含编译、无network），旧64/128及全部旧失败不改变。
+
+
+2026-10-05 后续实现：新明确signed paged profile的普通Store/钱包历史接入，
+65实际native认证高度、99/fee1付款成熟、完整坏尾拒绝及同进程固定head cold
+在88.056秒完成。公共fixture quorum签名不是实际Agent投票保管；旧V8第65
+拒绝仍是旧规则失败，signer128及完整2016仍OPEN。mixed foreign-envelope
+反例3.114秒成立、修复4.255秒通过；root侧档案容量计账小组件及CLI仅编译
+7.844秒通过。各scope绑定各自源，不重复65长测或改称full fault；细节、
+旧失败和下一原定一次300秒Agent gate见
+[普通完整流接入](REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)及
+[准确总结果](../operations/evidence/regional-native-paged-store-outcome-20261005.json)。

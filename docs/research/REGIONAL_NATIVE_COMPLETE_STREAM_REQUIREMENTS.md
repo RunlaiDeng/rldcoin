@@ -1,6 +1,6 @@
 # 普通BFT完整历史/签署日志的共用原生保留层
 
-状态：**共用字节保留层已实现；普通Store/Agent/钱包接入仍OPEN**。
+状态：**共用完整保留层及新明确规则的普通Store/钱包历史已接入；Agent分页写入/恢复仍OPEN**。
 目标保持[完整历史合同](REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)及
 [分页保留模型](REGIONAL_BFT_PAGED_HISTORY_MODEL_V1.md)。这是完整原生集成的一步，
 不能将测试该层更多记录视为解决原第65检查点或128-record签署门槛。
@@ -11,8 +11,8 @@
 `RLD-NATIVE-COMPLETE-STREAM-PAGES-V1`。独立私有目录持有OS lock，scope绑定已
 native验证的currency/region/admission、当前implementation、Ledger或BftSigner
 用途及origin context。origin是调用者提供的存储上下文，**不是最新状态见证或
-签署保管来源**；存储用途/公钥不授予成员资格。当前没有新signed admission，
-普通Store/Agent/CLI不自动采用该格式，旧采用/签署目录没有转换。
+签署保管来源**；存储用途/公钥不授予成员资格。初始71-file来源没有新signed admission；后续77-file普通Store明确采用见下节。
+普通Agent写入未转换，旧采用/签署目录没有转换。
 
 只保留完整typed records：16条封为immutable页，当前清单包含有序页引用和
 少于16条完整尾记录。页绑定scope、起始offset及exact predecessor；记录head
@@ -103,7 +103,7 @@ library implementation
 Byte observer只改变测试源码与implementation身份；生产primitive未变，复用
 此前八行为组的准确primitive来源，不宣称其在最终test源码上重新完整运行。
 
-## 必须继续的完整原生接入
+## 原71-file来源时的完整接入待办（历史，后续进展见末节）
 
 H-native-paged-retention仍OPEN。下一源码动作是明确新signed history/admission/
 signer domain，普通Journal保存完整本地certified events，普通Store从pin genesis
@@ -138,7 +138,8 @@ creation/rollover来源、完整proposal/prepare/commit/timeout/fence执行和�
 key、purpose/currency/admission/implementation，再完整验证每条record与两个
 分别提供的storage/native heads。派生state只在全部读取和两个heads通过后返回。
 它是read-only镜像，**不创建分页签署目录，不签名、不恢复、不采纳caller head**。
-普通Store仍未接入新certified-event stream，Agent写入仍是原格式；没有新admission。
+该73-file来源时普通Store仍未接入新certified-event stream；后续77-file进展见末节。
+Agent写入仍是原格式，该73-file范围没有新admission。
 
 一次120秒最小判别实际25.212秒完成（编译及strict包含）：全新当前implementation
 零初始分配fixture，四实际Agents签署8提案、32 prepare、32 commit；8个真实认证
@@ -163,3 +164,64 @@ implementation `a2e80dcf80e6b145cbcd398de4a23e94f1b214561f703d969c2420a89f2ffae6
 scope（含编译），遇invalid tail/容量/发布失败或预算即停止保留，不原样复跑旧
 fixture；保留旧64/128严格格式和新活动界，不删除任何signed history。该300秒scope
 尚未开始，本镜像检查不能替代它。第65检查点、真实2016窗口及独立资格仍OPEN。
+
+## 明确新规则的普通Store分页接入（2026-10-05）
+
+新签署 `RLD-REGIONAL-BFT-PAGED-VALUE-CHANNELS-FIXTURE-V1` 采用独立
+`paged-bft-admission-v1`域，绑定完整V8价值/预算/发行及新保留合同。四固定等权
+验证者、三ordered prepare/commit不变；epoch拒绝。旧规则、目录、余额和签署
+保管不转换。普通Store启用immutable signed-bootstrap header及完整typed certified/
+evidence/receipt/incident-index流，从pin genesis逐条执行后才发布账本；commit、
+cold及钱包历史审查共用完整native replay，bounded Journal view明确拒绝授权。
+
+每个certified checkpoint包含一个完整新block及准确前一认证末block。完整已
+native执行的前驱提供进程内Ledger，不能从磁盘cache/body digest开始。活动
+VerifiedEvidence最多64；保护当前finality、全部coin/export/channel/reserve依赖、
+accepted receipt anchors及各地区latest，保护集满则拒绝。完整原件不删除；
+历史body witness只在这次genesis执行后建立、最多4096。完整历史冲突扫描覆盖
+已退出活动集的原件。所有后来完整envelope再次验签，并按其自身地区signed
+profile校验形状。根目录保留证明/metadata/residue与页共计4096文件/256MiB；
+8MiB对象/current ledger/evidence、3MiB网络及旧64/128规则不变。
+
+首编译5.680秒失败（work-valid Result与私有test接口）；修正后的8.563秒范围
+在height3 candidate失败：watcher仍按bounded Journal重建，缺少前驱segment。
+两失败准确来源保留。修复为receipt index从完整native Store流重放，且原生
+Block历史事件准备已认证完整parent witness；未关闭watcher或跳过认证。
+
+一次120秒范围实际88.056秒通过普通Store连续65认证高度，活动64；钱包实际
+付款99/fee1并成熟，历史signing-height与固定latest head同进程cold通过。65个
+certificates使用公共fixture prepare/commit各195签名，**没有BFT Agent投票保管**。
+坏历史签名、签名完整但native Import无效的新尾、坏state与坏完整parent均拒绝，
+账本/head/全部私有hash/mode/size/mtime不变；准确旧cert再次认证和保留，不
+重新选择旧状态。最后66 records、4 sealed pages及2 tail。legacy两阶段最小行为
+和库/tests strict通过。该长样本源`28413f12d1eb...`，后续修复不原样重跑它。
+
+另一个一次30秒两地区最小counter在3.114秒失败：已执行的foreign legacy证据
+重复到达，错误强制使用本地paged形状。counter成立，regression未通过。改为
+按本身signed地区规则分派形状后，新源一次30秒范围4.255秒通过exact重复及
+后部坏签名拒绝，库存/head不变，strict通过。counter stage的fixture注释误沿用
+65描述；实际命令/代码/log均为小两地区检查，原记录保留，在总结果明确更正。
+它不是跨地区价值或long样本。最终只新增根目录容量计账回归：一次30秒范围
+7.844秒通过小primitive的外部file/byte/overflow超限原子拒绝及可容小metadata；
+CLI入口仅compile-check，主binary未重建，库/tests strict通过。它不资格真实
+完整Store满载、publication fault或CLI运行。
+
+[所有终态与准确来源](../operations/evidence/regional-native-paged-store-outcome-20261005.json)
+绑定最终77-file源`d3abffbce056...`、implementation`c0979d1d4a0c...`；
+长65与mixed检查各有自己的source，复用未变代码证据，不冒称最终源码完整重跑。
+core171、旧main binary、两旧价值库文件及冻结body/PDF/receipt字节未变。旧
+snapshot65拒绝及所有fault失败仍归旧scope；它们不因新profile有限通过而改称通过。
+
+下一可证伪假设H-paged-Agent：在明确新签署signer contract下，普通Agent保留
+超过128条完整request/response/observation，逐条重放历史native parent和prepare
+锁，独立caller head不变，pending只能恢复已落盘准确响应而不能first-sign。
+必须先实现普通Agent完整页writer、historical parent cursor/全认证、purpose/origin/
+creation及exact recover-only；当前旧Agent只有128原record和active evidence，
+尚不能资格该假设。可审实现完成后才启动原定**一次300秒**Store+Agent判别，
+含编译/等待，至少实际>128、真实owner/value、fresh-process pinned cold、坏后部
+record/陈旧caller及发布失败；首失败、完整有限判别或300秒退出。网络预算0，
+原600sec stage/60sec rounds/max24/成熟/票数/2016均不改。该scope尚未启动。
+
+新Store receipt/channel、历史冲突及完整容量的native资格、image restore、普通
+transport、epoch、实际2016完整结算、新进程/真实中断/跨设备/独立latest和完整
+fault仍OPEN；不将账本有限接入当全部原生paging或协议完成。

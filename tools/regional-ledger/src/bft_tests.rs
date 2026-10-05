@@ -23,6 +23,9 @@ impl Harness {
         }
         for a in &mut package.admissions {
             a.rules = rules.into();
+            if crate::paged_bft::is_profile(rules) {
+                a.value_rules = Some(crate::paged_bft::rules_hash().unwrap());
+            }
             a.signature = signature(1, &a.bytes().unwrap());
         }
         let root = fs::canonicalize(std::env::temp_dir())
@@ -1243,3 +1246,6 @@ fn live_network_batch_refuses_count_and_wire_capacity_without_changes() {
 
 #[path = "bft_retained_tests.rs"]
 mod retained_native_replay;
+
+#[path = "paged_bft_tests.rs"]
+mod ordinary_paged_history;

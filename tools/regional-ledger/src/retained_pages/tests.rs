@@ -518,3 +518,33 @@ fn retained_bytes_include_orphans_and_manifest_at_archive_ceiling() {
     assert_eq!(byte_capacity_inventory(&root), before);
     eprintln!("byte_capacity_timing prepared={prepared_seconds:.6} before_inventory={before_inventory_seconds:.6} native_refusals={native_refusals_seconds:.6} complete={:.6}", start.elapsed().as_secs_f64());
 }
+
+#[test]
+fn native_external_archive_accounting_refuses_before_any_stream_publication() {
+    let root = private_root();
+    let scope = fixture_scope(Purpose::Ledger);
+    let mut stream = Stream::create(&root.join("ledger"), scope.clone()).unwrap();
+    let head = stream.storage_head();
+    let original = inventory(&root);
+    let request = record(&scope, 0, Hash::ZERO);
+    for (files, bytes) in [
+        (history::MAX_FILES, 0),
+        (0, history::MAX_ARCHIVE_BYTES),
+        (usize::MAX, 0),
+        (0, u64::MAX),
+    ] {
+        let error = stream
+            .append_accounted(std::slice::from_ref(&request), head, files, bytes)
+            .unwrap_err();
+        assert!(error.contains("total archive capacity"), "{error}");
+        assert_eq!(stream.storage_head(), head);
+        assert_eq!(stream.record_count(), 0);
+        assert_eq!(inventory(&root), original);
+    }
+    // Small retained root-side metadata fits and never becomes record authority.
+    stream
+        .append_accounted(std::slice::from_ref(&request), head, 3, 128)
+        .unwrap();
+    assert_eq!(stream.record_count(), 1);
+    eprintln!("native_external_archive_accounting file/byte/overflow refusals atomic; small root metadata fits");
+}

@@ -7,6 +7,9 @@ pub fn is_profile(rules: &str) -> bool {
 }
 
 pub(crate) fn shape(snapshot: &Snapshot, trust: &Trust) -> Result<()> {
+    if crate::paged_bft::is_profile(&trust.region(snapshot.statement.region)?.rules) {
+        return crate::paged_bft::shape(snapshot, trust);
+    }
     if !is_profile(&trust.region(snapshot.statement.region)?.rules) {
         return require(
             snapshot.base.is_none(),
