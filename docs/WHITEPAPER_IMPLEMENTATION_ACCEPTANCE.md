@@ -614,3 +614,27 @@ checks/deadline, failure seals/no reopen/recovery/resign/refund/copy/unchanged r
 Goalactive/allgoal/VALUE-STRICT-01/history/2016/PQ/independent/physical OPEN.
 See operations/evidence/regional-bft-receive-defer-service-v1-outcome-20261005.json
 and regional-bft-receive-defer-service-v2-outcome-20261005.json.
+
+
+2026-10-05 seventh fullfault receive-v7 FAILED: original600deadline exhausted,
+616.052seconds including cleanup/pins/seal;12nodes exit0/relays stopped/forced[]/
+cleanupnull,6657files/exact155Python source d72… and currentNative89/actualCLI sealed.
+Isolation/local owner payments/missing9/offlinecatchup passed finite gates.170native
+receipt reads=129busy/12no-evidence/29complete responses:18pending import/11imported
+immature;allfour replicas observed import13/mature15, native pins13(10)/14(1).
+Original maturity/keylessdrain/full12Native cold/conservation notcompleted;final
+stoppedNative state unknown. No failed Native/Runtime opens, recovery, replacement,
+resign/refund/copy. All prior fullFAILs remainfailed;36.857setup/74.627gate finite only.
+
+Readonly exact-response production predicate counter1.98095seconds/once120 passes:
+all29 wait correctly,8synthetic negatives and maturecontrol grant no native rights;
+6657privatebytes unchanged. Firstcounter wrong all-pin13 assertion remainsfailed;
+last actualpin14 is below15. Retained7sign spans prove inner bft-sign alone is less
+than half enclosing work: residual lowerbounds3.364990–4.016831seconds. No precise
+stage/lock/replay/relay attribution or unique fullfault cause;bounded rings dropped
+old rows. Next once120zeroNative production _sign path/failure-order attribution,
+then only bounded scalar diagnostics preserving all custody ordering if needed;
+necessary fresh once180no-network actualcomponent binds changedcompanion/Native/CLI.
+No new600allocated, unchanged bounds/oldfailures/frozenpaper/site/cwd limitations.
+Fulltarget/VALUE-STRICT-01/history/2016/PQ/independent/physical OPEN; goalactive.
+See operations/evidence/regional-paged-full-fault-receive-v7-outcome-20261005.json.

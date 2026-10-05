@@ -1,0 +1,17 @@
+{
+  "format": "RLD-READONLY-RECEIPT-COUNTER-CHECKS-V1",
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "exit_code": 1,
+  "budget_exhausted": false,
+  "stage_sha256": "429a5462f4f53b1227ea09766d3636556a3cdf77878b05ad013dcb526f7c11a6",
+  "helper_sha256": "7de9f1f21a5e1c39f22062794b7417d1da19511f323df8c53720c7ac317e50ad",
+  "failure": "AssertionError: counter incorrectly required every imported response pin.height13; actual last replica1 pin.height14, import13/mature15",
+  "production_predicate_29_actual_samples_returned_false": true,
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "failed_native_runtime_reopened": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

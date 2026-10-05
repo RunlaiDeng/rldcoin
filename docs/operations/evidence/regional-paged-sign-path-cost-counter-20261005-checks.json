@@ -1,0 +1,88 @@
+{
+  "format": "RLD-SIGN-PATH-COST-COUNTER-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.001728,
+  "stage_sha256": "2aa3dc6174c39af892e5f45deb3e90ce75bfd86f14f23cfb94d8cd6c47c17fd9",
+  "source_sha256": "4cd91497220d2b50cb3f10aa9457cfa4a6cbfc9d8c3cc47e4564083c865c9639",
+  "retained_successful_sign_spans": [
+    {
+      "replica": 0,
+      "action": "Prepare",
+      "enclosing_seconds": 5.690339,
+      "lifetime_native_sign_max_seconds": 2.117103,
+      "residual_lower_bound_seconds": 3.573236
+    },
+    {
+      "replica": 0,
+      "action": "Commit",
+      "enclosing_seconds": 5.688491,
+      "lifetime_native_sign_max_seconds": 2.117103,
+      "residual_lower_bound_seconds": 3.571388
+    },
+    {
+      "replica": 1,
+      "action": "Commit",
+      "enclosing_seconds": 5.841084,
+      "lifetime_native_sign_max_seconds": 2.219115,
+      "residual_lower_bound_seconds": 3.621969
+    },
+    {
+      "replica": 1,
+      "action": "Timeout",
+      "enclosing_seconds": 5.584105,
+      "lifetime_native_sign_max_seconds": 2.219115,
+      "residual_lower_bound_seconds": 3.36499
+    },
+    {
+      "replica": 2,
+      "action": "Prepare",
+      "enclosing_seconds": 5.611274,
+      "lifetime_native_sign_max_seconds": 2.123917,
+      "residual_lower_bound_seconds": 3.487357
+    },
+    {
+      "replica": 2,
+      "action": "Commit",
+      "enclosing_seconds": 5.888456,
+      "lifetime_native_sign_max_seconds": 2.123917,
+      "residual_lower_bound_seconds": 3.764539
+    },
+    {
+      "replica": 3,
+      "action": "Timeout",
+      "enclosing_seconds": 5.939475,
+      "lifetime_native_sign_max_seconds": 1.922644,
+      "residual_lower_bound_seconds": 4.016831
+    }
+  ],
+  "residual_range_seconds": [
+    3.36499,
+    4.016831
+  ],
+  "all_seven_native_sign_inner_below_half_enclosing": true,
+  "hypothesis_falsified_for_retained_spans": true,
+  "ring_dropped_counts": [
+    1087,
+    1058,
+    1121,
+    1015
+  ],
+  "complete_campaign_trace": false,
+  "unique_full_fault_cause_proved": false,
+  "attribution_unknown": [
+    "native signer-status replay",
+    "pending/response caller-head fsync",
+    "complete proof/pack/check",
+    "durable local outbox publication",
+    "contention inside those stages"
+  ],
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "failed_native_runtime_reopened": false,
+  "source_and_retained_status_unchanged": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "next": "Once120 zero-Native production _sign stage-attribution/failure-order counter, then narrow bounded primitive timing only around existing status/pending/native/response/outbox stages if it closes attribution gap without reordering custody. Necessary fresh once180 actual no-network component gate must bind changed companion/currentNative/actualCLI; preserve original limits and failed roots. No new600full attempt is allocated until actual stage cost and relevant regression decide a concrete repair."
+}
