@@ -902,3 +902,22 @@ new zero-allocation genesis/currency/all custody and the original600s/one attemp
 60s rounds, at most24 new heights per region in the entire scope, all original
 maturity/quorums/capacity and complete cold checks. See current PLAN_STATUS and
 `regional-native-paged-return-outcome-20261005.json`; do not rerun failed fixtures.
+
+The subsequent fresh ordinary three-region cycle also failed its original600s
+budget (600.666s including terminal bookkeeping). Its E-to-P99 and P-to-A97
+maturity/full cold and A9 original97 debit/export96/full cold passed finite
+stages; final E live maturity does not prove final stopped cold/conservation.
+Twenty-two Services exited0, finalfive exited-9; do not call all clean. Seal the
+entire `native-paged-ordinary-cycle-contract-v2-private-20261005` currency and
+5722 private files. No Native/Runtime reopening, recovery, resign/refund or value
+migration; inspect files only. Preserve the original controller and requests.
+The separate stop-review guard allows asking for graceful stop despite already
+accepted transport retries, while Native errors, unknown observations, pending,
+immaturity and quarantine remain ineligible/refused. Stop eligibility never
+substitutes for full Native/envelope/head/owner cold. The bounded5s cleanup
+candidate is not runtime-qualified and does not extend600s qualification.
+No next full cycle/fault yet: first the bound120s fresh offline Native causal
+cost discriminator in the current outcome; use measured opening/authentication
+cost to select a bounded Native cold stream/aggregate or independent maturity
+fence. Every complete later envelope still authenticates; never serialize a
+ledger/cache as authority or raise4-envelope/8MiB/512/history/archive bounds.

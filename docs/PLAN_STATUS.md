@@ -61,16 +61,42 @@ controller错误称原生协议通过。准确currency及原E/P/A/owner/voter/ca
 分离；两项回归exit0、私有字节不变，无Native调用/网络/签署权。失败helper不改，
 新候选只引用尚未创建的新根，尚未启动。[最小反例](operations/evidence/regional-return-transport-contract-counter-20261005.json)。
 
-下一新scope须先审查六阶段驱动：全新签署零分配根，空E3仅作Native前缀准备；
-E100→P99→A97→原E95的三个owner出口均普通Runtime执行，不由controller准备
-初始跨区付款。一次原600秒stage/1次覆盖全准备、六阶段27次启动和每阶段cold，
-峰值5，原60秒轮/每地区全范围最多24新增高度/成熟2/三取四/容量不变（E绝对27，
-P/A24）。实际import+2成熟、current Native context+2源继续均须在总高度界内。
-起源每个完整兼容认证前缀按实际发行审计；原输入/出口/永久进口始终保持，净95
-是新后代，绝非退款。这是不同的完整ordinary行为判别，不延长或原样重复失败300。
-首实际失败/完整判别/600秒退出；先选精确Native/model/成本反例，不加预算或豁免。
-旧价值VALUE-STRICT-01、返程/完整循环/完整fault/窗口/source66/post64/独立/PQ/物理
-仍OPEN。本页历史“全部通过”仅对应明确绑定的当时有限scope，不能覆盖后续失败。
+
+## 2026-10-05 普通全闭环600秒失败与停止谓词反例
+
+一次原600秒scope实际600.666秒预算终止，**整范围未通过**。全新零分配currency，
+E空3仅准备；普通E100→P99在85.598秒完整成熟/cold，四P5；普通P98→A97在
+259.833秒完整成熟/cold，四A7。原A97只签96，四A9实际认证原输入消费及返程出口，
+356完整信封/full Native/owner/caller cold。前五阶段累计1368完整信封Native核验；
+最后原E live观察为11且import/spendable true（原import8/mature10）；这不是最终
+停止高度、完整cold或三地区最终守恒证明。末段仍等待所有允许运输错误同时为空；
+600秒耗尽，前22Service clean exit、最后5为−9，当前自有进程0。准确wholecurrency
+5722私有文件封存，不打开Native/Runtime、不重签/退款/恢复或替代请求。
+[准确终态/源绑定/下一成本判别](operations/evidence/regional-paged-ordinary-cycle-contract-v2-outcome-20261005.json)。
+
+0.012秒semantic AST/兼容前缀review通过；最初静态substring guard把
+`recovered_exact_retry=False`误作recover call而失败，原件保留，未启动fixture。
+一次20秒只读停止反例实际2.815秒：原Service日志约553.691秒已观察四目的成熟/
+无pending及原source只读，但允许运输重试非空；旧全局silent谓词仍false，新
+模块只允许请求干净停止并保留全部错误，不能通过账本/签署/保管或跳过full cold。
+三回归exit0：Native/未知错误拒绝，未知观察/pending/未成熟/错intent/隔离不可停止。
+独立候选将预算后的近零wait改为原bounded总5秒cleanup，先signal已知Service、
+超时才kill其owned group；qualification仍严格600秒。失败helper字节不改、候选
+未启动；已证明多余silent条件，但不是唯一超时原因或下一600秒可完成证明。
+[真实停止反例与严格拒绝](operations/evidence/regional-paged-cycle-stop-counter-20261005.json)。
+
+已测stop→fullcold段分别3.298/9.618/13.177/18.702/27.758秒，最后是四A9，
+共356信封；这些是阶段总wall，不是逐Native调用CPU分类。约553.7秒首次暖观察
+仅余46.3秒，还需干净停止/五份完整cold/最终12Native及owner/receipt审计；不能
+据controller谓词修复假设预算必够。下一完整cycle/fault预算当前0，先一次120秒/
+1次无网络fresh Native成本判别，最短E6→P5→A3→E1并真实成熟，E7/P4/A4；
+测完整local replay/open、独立头/owner/proof及四单份对原4-envelope/8MiB cold，
+后置坏certificate/dependency必须拒绝。旧失败/全部bounds/原费用成熟票数不变。
+若重复open成本实质成立，再实现explicit只读有界cold stream/aggregate：一次
+Native OS锁/准确caller head/full genesis replay，每完整信封仍独立认证，原每帧
+4/8MiB与512总数不变；无serialized cache authority。否则改独立原生成熟停止栅栏
+或更小typed timing模型。首次失败/完成/120秒退出，不原样复跑、加预算或免认证。
+VALUE-STRICT-01/完整cycle/完整fault/2016/source66/post64/独立/PQ/physical仍OPEN。
 
 历史b4来源普通owner提交至目的成熟组合范围已通过：全新零分配根，一次180秒实际
 91.981秒；源端只签一个请求，typed queue不debit，四普通节点认证source5出口100
