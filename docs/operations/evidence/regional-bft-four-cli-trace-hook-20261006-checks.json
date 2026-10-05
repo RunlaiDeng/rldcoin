@@ -1,0 +1,28 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 16.766492,
+  "test_duration_seconds": 0.001794,
+  "test_count": 4,
+  "helper_exit_code": 0,
+  "stage_sha256": "001728e48b88f296dd209e4a90420aaae09861f469cca2edca63e1f0eacbe9a6",
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace.py": "47b0b423151e7f174ee67e4936dbfc00374da2ee9e3a1e08b635bbd0d05e8a69",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_regional_contact_trace.py": "9acc63beac2bc87e307e639a623dc83a8a9e4e68e65e1880d332661d8362c4fa",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_regional_contact_trace_collector.py": "310a311216287895dd79774cc7edb3b243aba62bc6b10943d87af32cba3b7c34",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_regional_contact_trace_native.py": "96a6a2b1792d4bf3be67b87cbcebf2819af3db7bc06e6236f48f877e79e2846c",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-trace-hook-20261006.py": "5dba2aee7dbbb452e2a6e7d5ca44318cbd457c97260c1a49c1f282a957251541",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_four_cli_trace_20261006.py": "ecc47e34fbb322bc69746e1dc1042f76bf156112bea1579569f8d85ae38cd2c1",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_window.py": "b02b5e30400cd7f4b1394230d6acb9b119cb1f5ef53c07ecd1589e13cd7b3437",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_regional_contact_trace_window.py": "60d603fdc2e47563063a6f986daccc11c2fe7d594931e44807188d42f0db7bdb"
+  },
+  "test_output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.002s\n\nOK\n",
+  "all_old_failed_private_source_binary_freeze_unchanged": true,
+  "real_native_runtime_node_server_socket_signing": 0,
+  "adapter_is_live_qualified": false,
+  "new_four_cli_scope_started": false,
+  "new_full600_scope_budget": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

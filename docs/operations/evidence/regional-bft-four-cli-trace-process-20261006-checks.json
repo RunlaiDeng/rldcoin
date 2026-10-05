@@ -1,0 +1,53 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 17.04108,
+  "helper_exit_code": 0,
+  "stage_sha256": "90d7fa41f49a3ff2045cc9c6ed50d1547033bfdb3cde6c634eba3c7ed82f36ed",
+  "controller_sha256": "b44741077be1989abfb7448d2877ecb467256688358e1b91f74d329985889e0f",
+  "stopped_inventory_sha256": "98b0697905725100685d65be0486e4d14054d22f65596ae8ad54953ae81fa951",
+  "stopped_files": 10,
+  "failure": null,
+  "terminal": [
+    {
+      "slot": 0,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "slot": 1,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "slot": 2,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "slot": 3,
+      "exit_code": 0,
+      "stderr": ""
+    }
+  ],
+  "all_owned_producers_stopped": true,
+  "result": {
+    "actual_python_producers": 4,
+    "synthetic_trace_events": 64,
+    "exact_ordered_once_per_producer": true,
+    "no_trace_gaps": true,
+    "real_status_io": true,
+    "native_marker_not_retained": true,
+    "independent_native_freshness": false,
+    "real_native_node_socket_signing": 0,
+    "whole_goal_completed": false,
+    "full_fault_qualified": false
+  },
+  "synthetic_only": true,
+  "native_live_adapter_qualified": false,
+  "old_failed_private_source_binary_freeze_unchanged": true,
+  "failed_scope_never_reopen": false,
+  "new_full600_allocation": 0,
+  "whole_goal_completed": false
+}

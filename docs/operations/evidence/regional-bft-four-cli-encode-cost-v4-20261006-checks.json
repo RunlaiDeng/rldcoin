@@ -1,0 +1,12 @@
+{
+  "completed": false,
+  "helper_exit_code": 1,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "stage_sha256": "f42c06ff1c31fd097eab01924654eee03c1c6ca461425cc0eafcb62002a0681f",
+  "controller_sha256": "765632bef6b1d09cbe7e419bc696ce21a4c4c008f54904b73122b70ed7a37b22",
+  "failure": "AssertionError at encode equality/pass-count discriminator: counter also counted the initial empty-frame image. No source/private mutation or protocol refusal; measured claim not established.",
+  "budget_wall_elapsed_seconds": 20.966168642044067,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

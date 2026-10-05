@@ -1,0 +1,35 @@
+{
+  "format": "RLD-BFT-FOUR-CLI-LOOP-PREFLIGHT-V1",
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts": 1,
+  "duration_seconds": 15.843365209002513,
+  "head": "f494c708a0a939f75fd00bf6573a9097dfd2e585",
+  "identity_sha256": "2c9f228f231ed633de541acb2e60136b6d27af1d877f50ff32b3d2ea7daaef4c",
+  "actual_cli_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+  "implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+  "source_complete_verified": true,
+  "core171_unchanged": true,
+  "borrowed_startup_exact_byte_sha256": {
+    "struct Args {": "428ed0bbc4e572da37776db387ebfd5ecb613bc02b5896568e326ac730bbaabf",
+    "fn require_local_interval(": "6db9f91bff2e26446d116d5888d3320ed5f7df90f6c73804a4b113676cb8b0a6",
+    "fn run() -> Result<()> {": "8531d6aa5eda959d75497e649623058acd40d9b27eb99d2f9acc039073c0fa6c",
+    "    if let Action::ContactNode": "7bb4d62addeecf7a59c8db0fb3324fbdc7ae3d8f708b6c0ef391b3a9d0c954b3"
+  },
+  "carriage_batch_normalized_ast_sha256": "11308fda67fce6e3a3843184711fcc8281dc3bd9bfc3a222fe5143b6b9f42454",
+  "controller_guard_model_tests_reused": [
+    10,
+    3
+  ],
+  "whole_changed_main_or_runtime_old_qualification_reused": false,
+  "old_complete_native_component_still_failed": true,
+  "protected_inventory_sets": 41,
+  "active_native_companions": [],
+  "next_original_budget_seconds": 180,
+  "next_attempts": 1,
+  "network_launches": 0,
+  "native_launches": 0,
+  "old_failed_opens": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

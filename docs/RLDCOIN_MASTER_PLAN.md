@@ -781,3 +781,17 @@ goal active，采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…。
 只是前继引用，已报告不自主改。全部命令显式新rldcoin workdir，持久cwd仍UI待修。
 冻结正文/PDF/官网、服务器/权限/资金/清理不扩大。
 证据：[实际改动、所有终态及下一判别](operations/evidence/regional-bft-loop-observation-outcome-20261006.json)。
+
+
+## 2026-10-06 四CLI终态、加载运输与追踪驱动接入
+
+完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152文件、receive-v7原600/616.052秒/6657文件和全部旧失败保留。合并原生读取后的四CLI-v4也FAIL：原180耗尽、197.729秒含封存，1842文件封存；四进程exit0，无强制或清理失败。最后观察14/14/14/14，原import13、要求mature15；all8完整cold/守恒未完成，不能因停止或高度把全验收改PASS。失败库不重开、恢复、复签、退款或复制保管。
+
+准确1842停止库只读运输核对5.031秒：804签名档案索引、15active receipts、50完整相关副本认证；源consensus发布pending均0，Proposal15已到四节点，但部分Prepare/Timeout仍缺目的保管。没有Native重放，不证明现场唯一根因。保留时序：26.916秒启动，约35.7秒均观察13，首次14分布83–105秒；准备耗尽整个预算假设不成立。编码计数首次误计空帧映像失败保留；同一120内修正判别1.385秒，重复编码16.8%低于预设20%，不选codec修复。既有“目的永久互锁”反例复用，不重复。
+
+新大帧三peerTLS第一次准备FAIL18.924秒/397封存：检查器误用16项入队，原上限4正确拒绝；未到竞争路径。准确helper循环无节点模型验证12×4+3，改用原MAX_PACKET_BATCH。全新修正组件也严格FAIL：63.054秒含保护核验/封存，超原60；helper0且有限两跳原nonce保管、目的签名receipt、208完整档案cold完成，153大帧待转包保留、所有线程关闭。只能记录这些有限行为，不改deadline或fullfault资格；432文件封存不重开。
+
+实际新增regional_contact_trace_window.py和测试：四准确进程/trace scope、缺失unknown、永久缺口、原绝对期限及8192event/8MiB界限；只保留校验标量，原生账本/钥/头不进入窗口。增量准确字节计数避免每次重编码整段历史。最终11测试exit0/0.008秒；私有FourCLI实际接入launch/原observe/停止留存，四接入模型16.766秒/一次120通过，真实Native/节点/socket/sign均0。生产Native89/CLI/Core171未变；当前Python166仅新增窗口/测试。适配器尚无真实节点运行资格，不把准备代码称已采用运行。
+
+该一次60秒四合成进程组件已实际通过：17.041秒，真实PID/状态文件I/O、64准确事件无缺口、原生敏感标记未留存、四进程exit0，10文件封存；Native/真实节点/socket/sign均0，不能授予真实节点或付款资格。下一只分配一次120源码/检查器绑定反例，把显式追踪producer和已测adapter接入全新四CLI helper，检查原启动/observe/清理/cold、原600/180/60round/24height/maturity2/quorum3/容量/owner边界；首不一致/完成/原期限退出，不真实启动。真实180及完整600预算均0，之后依据绑定结果另作一次必要范围决定。全部S/R/I/A–G/N/P、VALUE-STRICT-01/长期/PQ/独立/物理仍OPEN；goal active，冻结2ba62421/c59f9fe8/receipt86821d19已核验，goal旧哈希仅前继引用不改。持久cwd仍UI待修，全部命令显式新rldcoin；官网/服务器/资金/权限/清理不扩大。
+证据：[终态、代码与下一判别](operations/evidence/regional-bft-four-cli-trace-window-outcome-20261006.json)、[实际进程收集接入](operations/evidence/regional-bft-four-cli-trace-process-outcome-20261006.json)。
