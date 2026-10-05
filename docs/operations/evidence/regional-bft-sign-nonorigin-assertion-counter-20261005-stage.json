@@ -1,0 +1,13 @@
+{
+  "format": "RLD-SIGN-NONORIGIN-ASSERTION-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "The private helper incorrectly assumes every region mints fixed per-block rewards; pinned native execution grants origin-only issuance, so fresh unfunded nonorigin Proxima should retain zero minted/received/liquid despite thirteen certified empty blocks.",
+  "exit": "First source/profile/domain mismatch, exact helper/kernel counter checked or120seconds; source/JSON only and zero failed Native/Runtime opens.",
+  "protected_sha256": {
+    "tools/regional-ledger/src/execution.rs": "a3ecdfd96e16b69f576b9124d3f2635df8d729df75375c0ca006b3224ebe1bf3",
+    "tmp/default-relay-20260930/observe-bft-sign-stages-native-v1-20261005.py": "a7c13c946f04bede18585279a3a7e918d7bf6a2da46eab12b5fef3d2ab51d3d2",
+    "tmp/default-relay-20260930/native-bft-sign-stages-native-v1-private-20261005/signed-fresh-bootstrap.json": "41aa6ebb8091a5c478d965ad8b57e8bd425d154c019bc4f14eafbc47467d6f36",
+    "docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  }
+}

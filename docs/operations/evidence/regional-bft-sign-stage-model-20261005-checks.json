@@ -1,0 +1,20 @@
+{
+  "format": "RLD-BFT-SIGN-STAGE-MODEL-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.185435,
+  "exit_code": 0,
+  "budget_exhausted": false,
+  "models": 11,
+  "stage_sha256": "3abc743ae503b2dbe5b74791d27810240bc81a7114546daf29b57e30315a6060",
+  "log_sha256": "6a5161b3cf086718f005a0ea6d682568d0515d223388a0eecf7c27866f37699d",
+  "binding_source_sha256": "24f9ddbefd049a02b8f97b1bd1514ceb4993cbcb637602bbb798dd660ce0e96f",
+  "source_freeze_unchanged": true,
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "sockets": 0,
+  "private_custody_writes": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

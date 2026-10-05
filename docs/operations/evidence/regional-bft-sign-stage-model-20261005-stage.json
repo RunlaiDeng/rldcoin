@@ -1,0 +1,24 @@
+{
+  "format": "RLD-BFT-SIGN-STAGE-MODEL-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "New five stage timings preserve exact native/caller/outbox order through every failure and cannot retain private arguments, change absent/saturated diagnostic execution, or raise observation limits.",
+  "exit": "First failed test/source mismatch, complete11models or120seconds; zero Native/Runtime startup or network.",
+  "source_sha256": {
+    "tools/regional_bft_node.py": "24f9ddbefd049a02b8f97b1bd1514ceb4993cbcb637602bbb798dd660ce0e96f",
+    "tools/test_regional_bft_sign_observation.py": "a80054cbe67441fbc84a09901084c8e6f748c5471b8c5ff5b99983aed5b3fb5c",
+    "tools/regional_bft_observation.py": "a113e4645dae6bf36cc7e41a6abfb8b64cc8eb17e2c9eb0f992d15da70f42151",
+    "tools/test_regional_bft_observation.py": "8fe56e73d8c3be6efe619b3ef76003bfb33ffd23163f8706b5116508b1af5d5c",
+    "tools/bft_tick_fixture.py": "54ebcb9f22af0252bbc1dfcf7d8fcdd66b00272974e0d56181a5561317a2c7e3",
+    "docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "tests": [
+    "test_regional_bft_sign_observation.SignObservationTests",
+    "test_regional_bft_observation.ObservationTests.test_ring_evicts_explicitly_and_snapshot_never_aliases",
+    "test_regional_bft_observation.ObservationTests.test_mutable_native_objects_and_unbounded_fields_are_never_retained",
+    "test_regional_bft_observation.ObservationTests.test_operation_cardinality_and_maximum_event_sizes_stay_bounded",
+    "test_regional_bft_observation.ObservationTests.test_restart_has_no_retained_events_or_native_state",
+    "test_regional_bft_observation.ObservationTests.test_observation_preserves_same_round_prepare_commit_and_failure_path",
+    "test_regional_bft_observation.ObservationTests.test_two_votes_remain_insufficient_and_keyless_remains_readonly"
+  ]
+}

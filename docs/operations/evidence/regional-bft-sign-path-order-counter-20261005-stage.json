@@ -1,0 +1,14 @@
+{
+  "format": "RLD-BFT-SIGN-PATH-ORDER-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "Current _sign contains independently fallible status, pending-save, native-sign, response-save and outbox-publication stages outside the already measured native-sign operation. Narrow per-stage timing can distinguish those without reordering native custody.",
+  "exit": "First exact source/custody order mismatch, six injected failure boundaries and complete path checked, or120seconds; no Native/Runtime initialization, disk key/head write or socket.",
+  "protected_sha256": {
+    "tools/regional_bft_node.py": "4cd91497220d2b50cb3f10aa9457cfa4a6cbfc9d8c3cc47e4564083c865c9639",
+    "tmp/default-relay-20260930/failed-paged-fault-receive-v7-source-private-20261005/tools/regional_bft_node.py": "4cd91497220d2b50cb3f10aa9457cfa4a6cbfc9d8c3cc47e4564083c865c9639",
+    "tools/regional_bft_observation.py": "a113e4645dae6bf36cc7e41a6abfb8b64cc8eb17e2c9eb0f992d15da70f42151",
+    "docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "tmp/default-relay-20260930/check-bft-sign-path-order-counter-20261005.py": "3740e544b71428df1190f6fbaa93a087ef635b9f6e4b4d40be8d4bf888390158"
+  }
+}

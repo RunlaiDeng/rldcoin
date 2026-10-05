@@ -1,0 +1,16 @@
+{
+  "format": "RLD-SIGN-NONORIGIN-SOURCE-REVIEW-V1",
+  "native_source_sha256": "a3ecdfd96e16b69f576b9124d3f2635df8d729df75375c0ca006b3224ebe1bf3",
+  "failed_helper_sha256": "a7c13c946f04bede18585279a3a7e918d7bf6a2da46eab12b5fef3d2ab51d3d2",
+  "reviewed_origin_only_minted_assignment": true,
+  "fixture_nonorigin_proxima": true,
+  "expected_unfunded_minted_received_liquid": "0",
+  "actual_native_verification_pending": true,
+  "first_two_detector_failures_retained": true,
+  "source_review_is_not_native_replay": true,
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "failed_native_runtime_reopened": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

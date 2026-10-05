@@ -1,0 +1,15 @@
+{
+  "format": "RLD-SIGN-NONORIGIN-ASSERTION-CHECKS-V2",
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "exit_code": 1,
+  "budget_exhausted": false,
+  "stage_sha256": "701b7c4e90b8d24705883000194cd59580a37e5a135fcda3c369938fc2bded67",
+  "failure": "AssertionError: detector substring ledger.minted = also counted ledger.minted ==. No Native replay or component started; scanner unqualified.",
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "failed_fixture_reopened": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

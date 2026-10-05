@@ -638,3 +638,29 @@ necessary fresh once180no-network actualcomponent binds changedcompanion/Native/
 No new600allocated, unchanged bounds/oldfailures/frozenpaper/site/cwd limitations.
 Fulltarget/VALUE-STRICT-01/history/2016/PQ/independent/physical OPEN; goalactive.
 See operations/evidence/regional-paged-full-fault-receive-v7-outcome-20261005.json.
+
+
+2026-10-05 current sign-stage diagnostics candidate preserves status/pending/native/
+response/outbox custody order and failure states; five fixed scalar timers retain
+no request/head/key/proof.11models pass; original128events/192KiB/32operations and
+all native bounds unchanged. Node24f9ddbe…/156Python72ee844c…, Native89/CLI unchanged.
+Actual first31.869second no-network component failed helper blanket reward assertion
+on unfunded nonorigin;371files/exactsource sealed, neverNative/Runtime reopened.
+Two readonly detector failures retained; exact origin-only kernel unchanged.
+Corrected fresh once180component passed32.142seconds:4Native P13empty nonorigin,
+1Runtime/noService/socket,1explicit Timeout; stages .085339/.000602/.145903/.000577/
+.184896seconds, enclosing .417616/unattributed .000299;32complete envelopes/4fixed
+heads/native caller/cold and zero value conservation/privatebytes unchanged.
+13controller certs setup only; no ordinary owner/network/fullfault qualification.
+Empty isolated sample did not reproduce old5–6second spans; no unique cause claim.
+
+Next once180fresh8Native no-network E4/P13loaded-causal-import component, one fresh
+owner gross3/net2 atP1/mature3; atP13 one explicitTimeout and five actual stages,
+full8Native/envelopes/originalowner/caller/conservation cold. Compare already valid
+empty .417616baseline without repeating it. If loaded cost increases, isolate
+measured stage before optimization; otherwise measure actualService/contention.
+Exit first mismatch/fullcold/originaldeadline; failure seals entire currency, no
+reopen/recovery/resign/refund/copy or new600allocation. Fullfault receive-v7 remains
+FAILED616.052/6657 plus everyoldFAIL. Alltarget/VALUE-STRICT-01/2016/history/PQ/
+independent/physical OPEN, goalactive/frozenpaper/site untouched/cwd UI stillold.
+See operations/evidence/regional-bft-sign-stages-outcome-20261005.json.

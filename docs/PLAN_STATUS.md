@@ -19,10 +19,24 @@
 人工控制不授予Native权；6657私有文件未变。首次“所有pin13”断言失败保留，原最后
 pin14仍低于mature15；不改正确谓词。7保留签署测时证明，完整sign包围跨度除内部
 bft-sign外至少另耗3.365–4.017秒；不归因为唯一锁/重放/调度原因，128事件环已丢弃旧行。
-下一一次120秒零Native路径/失败顺序反例区分status重放、caller持久化和完整outbox
-发布成本；必要窄诊断必须保留原顺序及所有认证，再由全新一次180秒无网络组件测量。
-当前不分配新的600秒完整范围、不增加deadline/高度/成熟/票数/容量。
-[准确终态、反例及下一判别](operations/evidence/regional-paged-full-fault-receive-v7-outcome-20261005.json)。
+该一次离线路径/六个失败边界反例已完成；已加五段有界标量测时，原status/pending/
+Native/response/outbox顺序、失败保管与最后计时重置保持。11模型通过，Native协议/CLI未改。
+首次无网络组件31.869秒因控制器把非创世奖励误算为13倍而失败，371文件/源码封存；
+两个只读检测器自身失败也保留。按原Native origin-only规则修正控制器后，全新范围
+**32.142秒/一次180有限通过**：4Native/P13空账本、1Runtime无网络、一次明确Timeout；
+实际五段status .085339/pending .000602/native .145903/response .000577/outbox .184896秒，
+包围 .417616秒、未归属 .000299秒；32完整信封/4固定头Native/独立caller cold、零价值
+守恒及私有字节未变，Runtime关闭。13controller证书仅setup；非普通付款/Service/fullfault。
+新companion156Python `72ee844c…`、Node `24f9ddbe…`；原128事件/192KiB/32操作限不变。
+本样本没有复现旧5–6秒，不能据此优化或归因旧范围。
+
+下一一次180秒全新8Native无网络组件增加完整E4→P1进口依赖，P3成熟、P13测同一
+签署五段并全8cold/完整信封/原owner/caller/守恒；复用已测空P13基线，不重跑它。
+固定本次判别线 .835232秒（空样本2倍），只计单样本反例，不是统计速度资格；
+再选最大实际阶段差的最小来源反例或Service/争用测量；当前没有
+分配新600秒范围，也不提高期限、成熟、票数、高度或容量。
+[完整失败终态](operations/evidence/regional-paged-full-fault-receive-v7-outcome-20261005.json)、
+[实际测时、失败与下一判别](operations/evidence/regional-bft-sign-stages-outcome-20261005.json)。
 
 已实施候选试验锁忙窄修复：完整有界原生诊断/实际命令/返回码绑定后，中止本轮
 选择，不能把未知有效性当无效并生成空或部分候选。旧两反例复现；新6反例、13相关

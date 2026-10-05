@@ -1,0 +1,15 @@
+{
+  "format": "RLD-SIGN-NONORIGIN-ASSERTION-CHECKS-V1",
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "exit_code": 1,
+  "budget_exhausted": false,
+  "stage_sha256": "ef23ae6ef5b156b5c0419fa6604ca0dff42a735329533dd637733c0ed70aac8c",
+  "failure": "ValueError: readonly detector searched ledger.conserve(); exact kernel calls ledger.audit(). Detector did not complete; production kernel unchanged.",
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "failed_fixture_reopened": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

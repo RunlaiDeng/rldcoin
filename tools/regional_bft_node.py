@@ -274,14 +274,30 @@ class Runtime:
             if observation is not None:
                 observation.event('sign-end', started, action=kind, succeeded=succeeded)
 
+    def _sign_stage(self, name, operation, *args):
+        observation = getattr(self, 'observation', None)
+        if observation is None:
+            return operation(*args)
+        started = time.monotonic()
+        succeeded = False
+        try:
+            result = operation(*args)
+            succeeded = True
+            return result
+        finally:
+            # Fixed names and scalars only; never retain the request, head,
+            # response or proof. Timing does not authorize custody or retry.
+            observation.operation('sign-' + name, started, succeeded)
+            observation.event('sign-stage', started, stage=name, succeeded=succeeded)
+
     def _sign(self, request):
         private(self.key_file)
         mesh.require(self.head['pending'] is None and self.head['outbox'] is None, 'BFT signer has unreconciled request/response')
-        self.signer_status()
-        self.save_head(dict(self.head,pending=request))
-        result=self.with_json('bft-sign',request,'--signer-dir',self.signer,'--expected-head',self.head['head'],'--key-file',self.key_file)
-        self.save_head(dict(self.head,head=result['head'],pending=None,outbox=result['message']))
-        self.flush_outbox()
+        self._sign_stage('status', self.signer_status)
+        self._sign_stage('pending', self.save_head, dict(self.head,pending=request))
+        result=self._sign_stage('native', self.with_json, 'bft-sign',request,'--signer-dir',self.signer,'--expected-head',self.head['head'],'--key-file',self.key_file)
+        self._sign_stage('response', self.save_head, dict(self.head,head=result['head'],pending=None,outbox=result['message']))
+        self._sign_stage('outbox', self.flush_outbox)
         # Give a newly persisted local phase time to propagate. Native one-vote
         # rules bound these resets; arbitrary peer traffic cannot renew a timer.
         self.entered_at=time.monotonic()
