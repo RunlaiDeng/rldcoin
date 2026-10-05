@@ -6,7 +6,37 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-当前普通owner提交至目的成熟组合范围已通过：全新零分配根，一次180秒实际
+当前来源 `4e2331b4...` / implementation `bb6d1e5b...`：已修复原生付款入队
+的因果证明遗漏，改用完整原生证明接口；原命令和完整证据均保留，不因入队扣款。
+原2.954秒继续转出失败已封存，原批准/调用头/预留不恢复、重签、退款或迁移。
+21.670秒新反例复现遗漏；5.065秒测试字段构建失败及21.325秒测试持锁冷启动失败
+仍失败。最终45.509秒原始99输入入队、创世只读接收端、坏后证明/缺前置/坏owner
+拒绝、冷重放、旧队列/响应回归、CLI及地区lib/tests strict通过。
+
+新来源普通E到P范围105.313秒完整通过，P原net99在3进口、5成熟；其后普通
+P继续转出范围 **180.529秒预算耗尽，未通过**。四原P实际在7认证export98，
+准确99输入已消费，原永久进口保留；源阶段284完整信封/full Native/原heads/owner
+cold通过。最后A live观测为6、已进口而未成熟，**不是最终停止高度**；目的完整cold
+未达到，整范围不能称通过。连同此前通过的E/P现场封存，不打开Native/Runtime。
+
+停止核验现采用已有原生4份完整信封/8MiB只读批量接口，每份仍全认证；输入/响应
+摘要仅绑定本次请求，不授予账本/签署权。1.015秒工具路径缺失失败保持；修正后
+12.614秒合同/真实Native/后置坏证明/容量/新进口owner证明及私有字节检查通过。
+小夹具4单独调用对1批量结果相同，约2.128倍；不证明旧live耗尽唯一原因或新普通
+成熟cold。Native源不再改变，原45.509严格检查复用；Node冷核验来源已改变。
+[准确修复、范围、失败与下一假设](operations/evidence/regional-native-paged-submission-outcome-20261005.json)。
+
+下一最小一次180秒/1次范围尚未启动：全新签署零分配根，controller只作Native
+准备E4原export100/P import1+成熟3；不计作新普通E到P全循环。四原P普通生命周期
+用实际99输入签一次gross98，finite5须实际认证出口4或5，完整源cold后原P0
+keyless中继到四新A0、真实net97/import+2成熟、完整Native/每份信封/原独立heads/
+owner与三地区守恒。使用已判别batch4，最高同时5/两阶段9Services；运行阶段
+controller不造票/块/搬运。全部准备/等待/核验计入180秒，首实际失败/完整有限
+判别/预算退出；24新增高度、600stage/60round/2016/成熟/quorum/容量均不改。
+旧价值库VALUE-STRICT-01、返程/完整fault/窗口/source66/post64/独立/PQ/物理仍OPEN。
+本页历史“全部通过”只指明确绑定的当时有限scope，不能覆盖后续失败或全部协议。
+
+历史b4来源普通owner提交至目的成熟组合范围已通过：全新零分配根，一次180秒实际
 91.981秒；源端只签一个请求，typed queue不debit，四普通节点认证source5出口100
 并完成停止核验。随后同一原source keyless普通中继至四新Proxima replicas，均在
 3导入net99、5原两块成熟可花。两阶段9次Service启动均clean exit，源阶段191/
@@ -57,16 +87,9 @@ Native87来源 `b4bc4379...` / implementation `cf4a2c7e...` / release CLI
 source66容量拒绝、完整2016/长历史、独立custody/crypto/physical与VALUE-STRICT-01
 仍未完成。地区strict不能替代旧价值库，冻结正文/PDF/官网均未改。
 
-下一可证伪假设：当前真实P原收款99，由owner11另存wallet/caller只授权该准确
-import input继续export98（目的fee1/localfee1）至Andromeda owner12。四原P
-Native/voter/caller从5正常继续至有限7，typed queue不debit；source/owner完整
-停止cold后，原P source0 keyless中继至四新A genesis0，实际import97并按import+2
-成熟可花。一次180秒/1次/两阶段9Services、最多并发5；A原24高度上限，三地区
-完整守恒/Native/full envelopes/原独立heads为完成标准。不init/adopt原voter头，
-不替代原E请求/debit，运行阶段controller不造票/块/搬运。首实际auth/amount/
-input/head/custody/import/maturity失败、完整有限判别或预算退出。**尚未启动**。
-原600/60/24/2016、成熟/票数/容量保持；return/fullfault/post64/PQ/独立/cross-device/
-physical继续OPEN，旧失败不恢复/重签/退款/原样重复。
+原P5→7/新A收款的180秒假设已分别终止于原2.954秒入队拒绝及新来源
+180.529秒预算失败；这些夹具和批准全部封存。当前下一范围以本页顶部及准确
+outcome为准，不复活旧余额或原样重跑。
 
 本文历史“全部通过”仅指各段明确绑定的当时源码、命令和有限scope，例如下述
 8831a634来源的491过程/三个Runtime组件；不能覆盖后来完整fault、预算耗尽、

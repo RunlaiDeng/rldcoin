@@ -1,0 +1,47 @@
+{
+  "format": "RLD-NATIVE-PAGED-SUBMISSION-PROOF-CHECKS-V1",
+  "completed": false,
+  "mode": "counter-corrected",
+  "failure": "imported-original-owner-native-submission-counter",
+  "duration_seconds": 21.67,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "imported-original-owner-native-submission-counter",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "paged_imported_owner_submission_carries_complete_causal_proof_without_debit",
+        "--locked",
+        "--offline",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "budget_exhausted": false,
+      "elapsed_seconds": 21.552
+    }
+  ],
+  "observations": [],
+  "counter_expected_missing_checkpoint_observed": true,
+  "stage_sha256": "9fc237810ed6fc33e9ff212f1035f06c3e49ba2a0f4ea27a469bd2081dfb662c",
+  "controller_sha256": "a993778c8b97c90d534bf337f825eda0c2efcf620889bccdb5822ba87c830487",
+  "log_sha256": "8483547fde0437fca5042565bf9302bbabb17d2629faace09deb42161f4e94e3",
+  "source_commitment": "9cff9d903e269ecbb8f05c634964f0594efcdc45af0831d12121781c6026f7e0",
+  "implementation": "0085153fb82638d9eb508b66c84b29c1836ac733ec89624be487fc9f20b9d369",
+  "source_87_count": 87,
+  "cli_binary_sha256": null,
+  "library_test_binary_sha256": "f8382a85fabb5a611bab08f7a708aa49230ddd0d331d997c6ed466116fc2aef4",
+  "sealed_failed_private_inventory_unchanged": true,
+  "sealed_failed_files_checked": 1400,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "ordinary_network_processes": 0,
+  "whole_goal_qualified": false
+}

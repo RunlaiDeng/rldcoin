@@ -1,0 +1,126 @@
+{
+  "format": "RLD-NATIVE-PAGED-SUBMISSION-PROOF-CHECKS-V1",
+  "completed": true,
+  "mode": "fix-stopped",
+  "failure": null,
+  "duration_seconds": 45.509,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "imported-original-owner-native-submission-counter",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "paged_imported_owner_submission_carries_complete_causal_proof_without_debit",
+        "--locked",
+        "--offline",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 21.523
+    },
+    {
+      "phase": "legacy-submission-retry",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "signed_submission_queues_without_debit_and_refuses_invalid_owner_amount",
+        "--locked",
+        "--offline",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 22.195
+    },
+    {
+      "phase": "legacy-response-exact-retry",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "two_phases_three_of_four_apply_one_atomic_native_block_and_exact_retry",
+        "--locked",
+        "--offline",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 22.579
+    },
+    {
+      "phase": "current-release-cli-build",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--bin",
+        "rld-regional-ledger-candidate",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 43.012
+    },
+    {
+      "phase": "regional-lib-tests-strict",
+      "command": [
+        "/Users/galaxy/.cargo/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tools/regional-ledger/Cargo.toml",
+        "--lib",
+        "--tests",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 45.378
+    }
+  ],
+  "observations": [
+    "paged-owner-submission original99_input_reviewed_once=true onward98_queued_without_debit=true complete_causal_original_multiset=true fresh_genesis_keyless_receiver_verified=true altered_later_certificate_missing_parent_bad_owner_refused_unchanged=true exact_retry_and_cold=true old_height_order_refused=true"
+  ],
+  "counter_expected_missing_checkpoint_observed": false,
+  "stage_sha256": "3ad2eee2490502b56844f7a44d81d46e015daa3cc822f976b26927da0ba12044",
+  "controller_sha256": "1276ad0cab9c78fd26258b723869429bddf500d8daa9ca6b59dce0712dc5a5f4",
+  "log_sha256": "b467c1e177e520187b260042e9115f5c82b43ae5366f9657fa6a2a30c200a32c",
+  "source_commitment": "4e2331b4cf44015c7da829d4710e7b09577ba893664ebec2802e0daf2d356ead",
+  "implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+  "source_87_count": 87,
+  "cli_binary_sha256": "20d0b0fc56ab91888ce5fca01d35997976266b1f17858c1159ff479c331d5696",
+  "library_test_binary_sha256": "e75ec38e6420e9e759378f92bc12d8a0e7d8600036d8af0755777e9fdae45e41",
+  "sealed_failed_private_inventory_unchanged": true,
+  "sealed_failed_files_checked": 1538,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "ordinary_network_processes": 0,
+  "whole_goal_qualified": false
+}

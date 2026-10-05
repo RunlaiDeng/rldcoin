@@ -1,0 +1,33 @@
+{
+  "format": "RLD-NATIVE-PAGED-ORDINARY-COMPOSED-OWNER-CHECKS-V1",
+  "completed": false,
+  "failure_phase": "ordinary-recipient-onward-owner-source",
+  "duration_seconds": 2.954,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "ordinary-recipient-onward-owner-source",
+      "exit_code": 1,
+      "budget_exhausted": false,
+      "elapsed_seconds": 2.698
+    }
+  ],
+  "steps": [],
+  "observations": [],
+  "stage_sha256": "18ded42ae568a4e2c4aa6fc3fdd5cac9e6c1792f3d5ca2315ab1e0a4b53186fe",
+  "controller_sha256": "8ed714ad47e33c6286b653b0278940f96fe86a0c77a672c3ba973c085bc82556",
+  "helper_sha256": [
+    "7ac0636e4a873dc32f29e74bae30abd0cd0c84bc2a65ebd66c81491b68d6e0b3",
+    "d7e88d394f8759d02e0d271d8e99e5aca2b285f1a2375d4b4381d4d81b6b600c"
+  ],
+  "log_sha256": "b59fb10cf14d57c8d14a3b0f2fb7b46500fa546b8a6af48fb736441e68b06b97",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "all_prior_failed_private_inventory_unchanged": true,
+  "failed_private_files_checked": 3242,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_qualified": false
+}

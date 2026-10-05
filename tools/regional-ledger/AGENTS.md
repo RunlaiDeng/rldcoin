@@ -497,3 +497,17 @@ uses actual P99 original input for owner11 onward98/new A recipient12/net97 with
 original P journals/heads (no init/adopt/copy), full native cold/conservation.
 Detailed gate in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md; all fault/2016/post64/
 crypto/independent/physical gates and original limits remain separate.
+
+
+Ordinary `bft_submit` must carry `Store::proof()` complete native-authenticated
+causal evidence, never the paged diagnostic regional-height ordering. Preserve
+original signed commands and complete snapshot multiplicity; queueing does not
+debit, sign consensus or release an owner reservation. A genesis-only keyless
+receiver must verify the carried closure independently. Stopped verification may
+use the existing native four-envelope/eight-MiB cold batch API only with exact
+ordered complete bytes and request/domain/value/authority response binding;
+every later envelope authenticates, including same-body altered proofs. Batch
+hashes grant no rights, and failure never skips custody/evidence or raises limits.
+The subsequent ordinary onward budget failed; seal its whole currency stores and
+original approvals/heads. Do not reopen/recover/refund/resign or migrate them.
+See REGIONAL_PAGED_CONTACT_REQUIREMENTS.md for the next fresh finite discriminator.

@@ -1,0 +1,142 @@
+{
+  "format": "RLD-NATIVE-PAGED-SUBMISSION-LIVE-CHECKS-V1",
+  "completed": false,
+  "failure": "ordinary-keyless-import-maturity",
+  "mode": "onward",
+  "duration_seconds": 180.529,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "ordinary-original-owner-export",
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 117.576
+    },
+    {
+      "phase": "ordinary-keyless-import-maturity",
+      "exit_code": 1,
+      "budget_exhausted": true,
+      "elapsed_seconds": 180.081
+    }
+  ],
+  "observations": [
+    {
+      "completed": true,
+      "native_default_entries": 4,
+      "clean_exits": true,
+      "actual_ordinary_onward_inclusion_height": 7,
+      "final_native_height": 7,
+      "original_import99_exact_input_spent": true,
+      "source_export_gross": "98",
+      "destination_net_if_imported": "97",
+      "typed_queue_and_signature_no_debit": true,
+      "zero_change": true,
+      "original_earth_owner_debit_and_private_inventory_unchanged": true,
+      "old_proxima_nonsigning_nonnative_inventory_unchanged": true,
+      "native_accounting": {
+        "issued": "1250000000000000000000000000000",
+        "liquid": "1249999999999999999999999999902",
+        "escrow": "0",
+        "pending_exports": "98",
+        "pending_export_net": "97",
+        "origin_height": 5,
+        "observed_exports": 2,
+        "observed_permanent_imports": 1,
+        "conserved": true,
+        "derived_from_pinned_native_replay": true,
+        "independent_freshness_or_signing_authority": false
+      },
+      "full_cold_peers": [
+        {
+          "index": 0,
+          "native_height": 7,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 71,
+            "distinct_complete_snapshots": 20,
+            "retained_state_bytes": 370268,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 6229454,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        },
+        {
+          "index": 1,
+          "native_height": 7,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 71,
+            "distinct_complete_snapshots": 20,
+            "retained_state_bytes": 370267,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 6229454,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        },
+        {
+          "index": 2,
+          "native_height": 7,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 71,
+            "distinct_complete_snapshots": 20,
+            "retained_state_bytes": 370268,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 6229454,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        },
+        {
+          "index": 3,
+          "native_height": 7,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 71,
+            "distinct_complete_snapshots": 20,
+            "retained_state_bytes": 370269,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 6229454,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        }
+      ],
+      "original_voter_caller_heads_retained_without_init_or_adoption": true,
+      "onward_owner_original_approval_head_key_retained": true,
+      "no_failed_fixture_opened_or_recovered": true,
+      "controller_votes_blocks_frames_during_runtime": false,
+      "full_fault_return_recipient_independent_physical_qualified": false
+    }
+  ],
+  "stage_sha256": "57c83e0b827a180dbd95149a5f4978c1f909e5df491cee271b30e99b071a1737",
+  "controller_sha256": "0683cd9b4e6973d15ee507677abf6a9896bfb686ed8552b8134cb00fa19b18e0",
+  "helper_sha256": [
+    "2d70f3031ace028b1e4a674f39fab84d1f21debed61c4c446a6969a311f80dac",
+    "e0267de2703e0a8403c6462c2257ba7a0d4600a625ba1f60e339824dc929a1fb"
+  ],
+  "log_sha256": "f01714ab8e77c0c865a11add39e4626ee3b659b1c796cb71b561cd60f5546b4d",
+  "source_commitment": "4e2331b4cf44015c7da829d4710e7b09577ba893664ebec2802e0daf2d356ead",
+  "implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+  "cli_binary_sha256": "20d0b0fc56ab91888ce5fca01d35997976266b1f17858c1159ff479c331d5696",
+  "sealed_failed_private_inventory_unchanged": true,
+  "sealed_failed_files_checked": 1861,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_qualified": false
+}

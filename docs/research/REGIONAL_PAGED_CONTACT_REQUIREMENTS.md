@@ -415,7 +415,7 @@ receipt不是payment authority。Live确认真实TLS13/pins/no downgrade及原
 旧价值strict独立OPEN，25.981秒失败不补记通过；完整fault/2016/post64/longhistory/
 PQC/独立/cross-device/physical与完整S/R/I/A-G/N/P仍另验。
 
-## 下一真实收款普通onward判别（尚未启动）
+## 历史真实收款普通onward判别（已失败并封存）
 
 本次通过P原import99完整保留。New owner11 wallet和separate reviewed caller
 只授权此准确import input继续gross98至Andromeda owner12，目的fee1/localfee1，
@@ -433,3 +433,36 @@ owner-envelope cold，再原P source0 keyless携complete closure至四新A signe
 预算退出。失败保留，不恢复/重签/退款/迁移或原样重跑。此范围只有onward，不资格
 return/fullfault/2016/post64/独立/PQC/physical；source66仍需实际compact-complete
 模型/profile/native变化。旧价值库strict独立OPEN。
+
+
+## 完整原生入队与停止核验的当前契约
+
+`Store::bft_submit` 必须经 `Store::proof()` 从签署创世完整重放并携完整因果证明；
+分页诊断视图的地区高度排序不能授权进口owner提交。保留完整原命令、证据多重集、
+wallet批准/预留、独立caller与所有边界；入队不是扣款或签署共识。创世只读接收端
+不得靠本地历史补未认证依赖，坏后置证明/缺前置/坏owner必须拒绝且不改变状态。
+
+当前Native4e2331b4来源45.509秒修复检查通过；原2.954/5.065/21.670/21.325秒
+范围保持各自失败/反例含义。新源普通E5→P import3/mature5在105.313秒完整通过；
+后续P原99→export98实际纳入7、源284完整信封cold通过，但新A成熟/full cold范围
+180.529秒耗尽仍未通过。最后A live6已进口/未成熟，不是停止高度；封存整个相关
+货币的E/P/A/wallet/voter/caller/transport现场，不打开、恢复、重签、退款或迁移。
+
+停止核验使用已有原生 `bft-network-check-batch`：最多4份完整原始信封，总8MiB，
+每份3MiB边界仍由Native拒绝。每个完整后来信封仍认证，整批失败不返回成功，
+不开Runtime、不catchup/recover/sign/reconcile或采用头。逐批绑定精确原输入摘要、
+原货币/地区、完整ordered results/原value、verified/no-ledger-change/no-signing。
+保留原完整payload，不能以digest替代Native验签。Native4e来源未再改，Python停止
+验证来源已变；12.614秒新夹具/合同/Native坏后证明/容量判别通过，小样本2.128倍
+不证明旧网络预算唯一原因，也不能补记原失败通过。1.015秒工具路径失败保留。
+
+下一单次180秒新范围：全新签署零分配根，Native controller只准备E4原出口100、
+P import1+成熟3，不计普通E到P全循环；原四P voter/caller从genesis自行保留到3。
+owner11只签实际99 input的gross98/fee1+1/zero-change，ordinary四P finite5
+须认证准确export4或5、完整源cold；再原P0 keyless→四新A0实际net97/import+2
+成熟，完整Native/每份envelope/原独立heads/owner/守恒cold。两阶段9Services、
+最高同时5，准备/运行/核验均计入180；首实际auth/amount/input/head/custody/export/
+import/maturity/clean-stop/cold失败、完整有限判别或预算退出。不得提高600stage/
+60round/24新增高度/2016/成熟/票数/容量。Native未变，但新停止验证路径需要新
+普通资格，不能重用封存余额。完整fault/返程/source66/长历史/独立/PQ/物理另验。
+[完整准确来源及所有终态](../operations/evidence/regional-native-paged-submission-outcome-20261005.json)。

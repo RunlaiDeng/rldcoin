@@ -1,0 +1,1585 @@
+{
+  "format": "RLD-NATIVE-PAGED-SUBMISSION-LIVE-CHECKS-V1",
+  "completed": true,
+  "failure": null,
+  "mode": "origin",
+  "duration_seconds": 105.313,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "ordinary-original-owner-export",
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 31.984
+    },
+    {
+      "phase": "ordinary-keyless-import-maturity",
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 104.839
+    }
+  ],
+  "observations": [
+    {
+      "completed": true,
+      "native_default_entries": 4,
+      "clean_exits": true,
+      "preparation_native_certified_empty_heights": 3,
+      "actual_ordinary_owner_inclusion_height": 5,
+      "final_native_height": 5,
+      "one_original_owner_review_request": true,
+      "queue_and_signature_did_not_debit": true,
+      "ordinary_runtime_constructed_certified_owner_block": true,
+      "controller_votes_blocks_frames_during_runtime": false,
+      "source_export_gross": "100",
+      "destination_net_if_imported": "99",
+      "issued": "1250000000000000000000000000000",
+      "liquid": "1249999999999999999999999999900",
+      "pending_gross": "100",
+      "escrow": "0",
+      "conserved": true,
+      "full_cold_peers": [
+        {
+          "index": 0,
+          "native_height": 5,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 50,
+            "distinct_complete_snapshots": 6,
+            "retained_state_bytes": 167977,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 1582506,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        },
+        {
+          "index": 1,
+          "native_height": 5,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 50,
+            "distinct_complete_snapshots": 6,
+            "retained_state_bytes": 167978,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 1582506,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        },
+        {
+          "index": 2,
+          "native_height": 5,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 50,
+            "distinct_complete_snapshots": 6,
+            "retained_state_bytes": 167911,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 1582506,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        },
+        {
+          "index": 3,
+          "native_height": 5,
+          "retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 50,
+            "distinct_complete_snapshots": 6,
+            "retained_state_bytes": 167978,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 1582506,
+            "full_native_authentication": true
+          },
+          "original_voter_separate_caller_verified": true,
+          "full_history_pinned_replayed": true,
+          "exact_export": true,
+          "all_prior_immutable_objects_retained": true
+        }
+      ],
+      "compatible_four_tip_state_finality_ledger": true,
+      "original_owner_wallet_caller_key_unchanged": true,
+      "owner_approval_retained_and_exact_original_head_verified": true,
+      "full_source_finality_covers_export": true,
+      "unknown_progress_observations": 0,
+      "failed_transport_attempt_observations": 4,
+      "transport_failure_is_not_authority": true,
+      "live_exact_tls13_pins_limits_verified": true,
+      "no_prior_fixture_opened_or_migrated": true,
+      "full_fault_recipient_onward_return_independent_physical_qualified": false
+    },
+    {
+      "completed": true,
+      "native_default_entries": 5,
+      "clean_exits": true,
+      "ordinary_tls_relay_then_native_import_and_original_maturity": true,
+      "controller_constructed_or_moved_frames_votes_blocks": false,
+      "source_original_owner_request_only": true,
+      "no_failed_fixture_reopened_or_resigned_refunded_recovered": true,
+      "no_copied_ledger_or_custody_initialization": true,
+      "compatible_all_four_destination_native_selected_certified_prefixes": true,
+      "common_selected_certified_height": 5,
+      "distinct_current_heights_are_not_conflict": true,
+      "native_accounting": {
+        "issued": "1250000000000000000000000000000",
+        "liquid": "1250000000000000000000000000000",
+        "escrow": "0",
+        "pending_exports": "0",
+        "pending_export_net": "0",
+        "origin_height": 5,
+        "observed_exports": 1,
+        "observed_permanent_imports": 1,
+        "conserved": true,
+        "derived_from_pinned_native_replay": true,
+        "independent_freshness_or_signing_authority": false
+      },
+      "actual_original_output_net": "99",
+      "source_owner_signer_caller_inventory_unchanged": true,
+      "all_original_native_immutable_objects_retained": true,
+      "independent_latest_anchor_qualified": false,
+      "peers": [
+        {
+          "index": 0,
+          "native_height": 5,
+          "permanent_imports": 0,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 14,
+            "distinct_complete_snapshots": 5,
+            "retained_state_bytes": 79156,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 634226,
+            "full_native_authentication": true
+          },
+          "separate_native_voter_caller_exact_head_verified": true,
+          "source_readonly_caller_unchanged": true,
+          "actual_receipt": null
+        },
+        {
+          "index": 1,
+          "native_height": 5,
+          "permanent_imports": 1,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 57,
+            "distinct_complete_snapshots": 15,
+            "retained_state_bytes": 299917,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 3005594,
+            "full_native_authentication": true
+          },
+          "separate_native_voter_caller_exact_head_verified": true,
+          "source_readonly_caller_unchanged": true,
+          "actual_receipt": {
+            "import_height": 3,
+            "mature_height": 5,
+            "net": "99",
+            "remaining": "99",
+            "mature_spendable": true,
+            "local_finality_covers_import": true,
+            "transport_receipt_is_value_authority": false
+          }
+        },
+        {
+          "index": 2,
+          "native_height": 5,
+          "permanent_imports": 1,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 57,
+            "distinct_complete_snapshots": 15,
+            "retained_state_bytes": 299917,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 3005594,
+            "full_native_authentication": true
+          },
+          "separate_native_voter_caller_exact_head_verified": true,
+          "source_readonly_caller_unchanged": true,
+          "actual_receipt": {
+            "import_height": 3,
+            "mature_height": 5,
+            "net": "99",
+            "remaining": "99",
+            "mature_spendable": true,
+            "local_finality_covers_import": true,
+            "transport_receipt_is_value_authority": false
+          }
+        },
+        {
+          "index": 3,
+          "native_height": 5,
+          "permanent_imports": 1,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 57,
+            "distinct_complete_snapshots": 15,
+            "retained_state_bytes": 299918,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 3005594,
+            "full_native_authentication": true
+          },
+          "separate_native_voter_caller_exact_head_verified": true,
+          "source_readonly_caller_unchanged": true,
+          "actual_receipt": {
+            "import_height": 3,
+            "mature_height": 5,
+            "net": "99",
+            "remaining": "99",
+            "mature_spendable": true,
+            "local_finality_covers_import": true,
+            "transport_receipt_is_value_authority": false
+          }
+        },
+        {
+          "index": 4,
+          "native_height": 5,
+          "permanent_imports": 1,
+          "stopped_retention": {
+            "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+            "messages_authenticated": 57,
+            "distinct_complete_snapshots": 15,
+            "retained_state_bytes": 299918,
+            "state_limit_bytes": 33554432,
+            "expanded_envelope_bytes_authenticated": 3005594,
+            "full_native_authentication": true
+          },
+          "separate_native_voter_caller_exact_head_verified": true,
+          "source_readonly_caller_unchanged": true,
+          "actual_receipt": {
+            "import_height": 3,
+            "mature_height": 5,
+            "net": "99",
+            "remaining": "99",
+            "mature_spendable": true,
+            "local_finality_covers_import": true,
+            "transport_receipt_is_value_authority": false
+          }
+        }
+      ],
+      "live_observations": [
+        {
+          "index": 1,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 0,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 0,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 0,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 0,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 1,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 2,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 2,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 2,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 5,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 3,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 5,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 5,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 6,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 6,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 7,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 0,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 7,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 8,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 9,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 9,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 9,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 9,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 10,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 10,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 11,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 11,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 0,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 14,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 11,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 11,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 13,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 13,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 12,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 14,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 14,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": null,
+          "original_output_spendable": null,
+          "retained_envelopes": 14,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 14,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 14,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 17,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 17,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 17,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 17,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 18,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 18,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 1,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 18,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 20,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 20,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 20,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 20,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 21,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 22,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 22,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 21,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 22,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 23,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 24,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 24,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 24,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 24,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 25,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 25,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 27,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 27,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 27,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 28,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 27,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 28,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 2,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 29,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 31,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 31,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 31,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 31,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": false,
+          "original_output_spendable": false,
+          "retained_envelopes": 31,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 32,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 32,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 31,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 32,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 33,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 33,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 33,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 33,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 35,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 35,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 35,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 36,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 36,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 35,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 38,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 39,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 39,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 38,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 38,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 1,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 40,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 40,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 4,
+          "native_height": 3,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 39,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 2,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 42,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 42,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 2,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 43,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 42,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 44,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 43,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 44,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 43,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 44,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 45,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 46,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 46,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 46,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 47,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 4,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 46,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 47,
+          "optional_value_observation_available": true,
+          "errors": 2
+        },
+        {
+          "index": 3,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 49,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 50,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 50,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 49,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 2,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 49,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 4,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 51,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 51,
+          "optional_value_observation_available": true,
+          "errors": 2
+        },
+        {
+          "index": 1,
+          "native_height": 4,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 50,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 53,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 53,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 54,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 4,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 53,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 1,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": false,
+          "retained_envelopes": 54,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 3,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 54,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 1,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 54,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 4,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 54,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 55,
+          "optional_value_observation_available": true,
+          "errors": 1
+        },
+        {
+          "index": 1,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 55,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 3,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 57,
+          "optional_value_observation_available": true,
+          "errors": 0
+        },
+        {
+          "index": 2,
+          "native_height": 5,
+          "round": 0,
+          "import_accepted": true,
+          "original_output_spendable": true,
+          "retained_envelopes": 57,
+          "optional_value_observation_available": true,
+          "errors": 0
+        }
+      ],
+      "unknown_progress_observations": 0,
+      "failed_transport_attempt_report_observations": 30,
+      "failed_attempt_is_not_custody_and_cause_unknown": true,
+      "live_tls13_and_original_attempt_worker_lock_limits_verified": true,
+      "full_fault_post64_independent_physical_qualified": false
+    }
+  ],
+  "stage_sha256": "1c3d5d1c3c8acefffc95fc91aaac5a3e2cd5443d363b5d9f2ddeefe0795c7f43",
+  "controller_sha256": "0683cd9b4e6973d15ee507677abf6a9896bfb686ed8552b8134cb00fa19b18e0",
+  "helper_sha256": [
+    "e63d377db8988d9a4bff362e2f028cf6ca4568280ec1e950044249453f67846e",
+    "eb1ced6b27ccdc2bf580ad183ba11535f080837bfb25bf448cc2daf5335f262a"
+  ],
+  "log_sha256": "3f7529f5a9b860d6b3c65cae5a62e52f55c7d11a9bcd91a23125f45bcd8ca769",
+  "source_commitment": "4e2331b4cf44015c7da829d4710e7b09577ba893664ebec2802e0daf2d356ead",
+  "implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+  "cli_binary_sha256": "20d0b0fc56ab91888ce5fca01d35997976266b1f17858c1159ff479c331d5696",
+  "sealed_failed_private_inventory_unchanged": true,
+  "sealed_failed_files_checked": 1861,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_qualified": false
+}

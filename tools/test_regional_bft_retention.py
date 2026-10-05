@@ -108,6 +108,64 @@ class ExactStorageTests(unittest.TestCase):
             with self.assertRaises(ValueError):retained_body_present(path,e['body'])
 
 
+class StoppedBatchContractTests(unittest.TestCase):
+    """Response/budget plumbing only; these fake rows grant no native authority."""
+    def run_codec(self, count=5, padding=0, alter=None):
+        with tempfile.TemporaryDirectory() as scratch:
+            root=Path(scratch).resolve();directory=root/'retention';directory.mkdir()
+            messages=Messages()
+            for n in range(count):
+                e=envelope(n,[]);e['body']['padding']='x'*padding
+                messages=messages.append(mesh.digest(e['body']),e,format(n,'064x'),False)
+            path=directory/'state.json'
+            mesh.atomic(path,pack_state(dict(state(messages),binding={'currency':'1'*64,'region':'2'*64,'key':'3'*64})))
+            before=path.read_bytes();calls=[]
+            class FakeNative:
+                currency='1'*64
+                def call(self, action, flag, file):
+                    self_outer.assertEqual((action,flag),('bft-network-check-batch','--file'))
+                    raw=Path(file).read_bytes();rows=wire.decode_json(raw);calls.append((len(rows),len(raw)))
+                    response={'format':'RLD-BFT-COLD-NETWORK-CHECK-V1','currency':self.currency,'region':'2'*64,
+                              'request_sha256':hashlib.sha256(raw).hexdigest(),'verified':True,
+                              'ledger_changed':False,'signing_authority':False,
+                              'results':[{'message_id':'4'*64,'value':format(row['body']['codec_fixture'],'064x')} for row in rows]}
+                    if alter:alter(response,len(calls))
+                    return response
+            self_outer=self
+            try:
+                result=verify_stopped_state(FakeNative(),{'state':str(directory),'format':'RLD-REGIONAL-BFT-NODE-V1','key':'3'*64},
+                                            {'region':'2'*64,'height':0,'tip':'2'*64},root)
+                return result,calls
+            finally:self.assertEqual(path.read_bytes(),before)
+
+    def test_ordered_four_slot_batches_and_last_remainder(self):
+        result,calls=self.run_codec()
+        self.assertEqual([n for n,_ in calls],[4,1])
+        self.assertEqual(result['messages_authenticated'],5)
+        self.assertEqual(result['native_authentication_batches'],2)
+
+    def test_total_byte_limit_splits_before_four_and_keeps_every_complete_envelope(self):
+        result,calls=self.run_codec(count=3,padding=3*1024*1024-1024)
+        self.assertEqual([n for n,_ in calls],[2,1])
+        self.assertTrue(all(size<=8*1024*1024 for _,size in calls))
+        self.assertEqual(result['messages_authenticated'],3)
+
+    def test_wrong_request_domain_order_count_or_authority_refuses_unchanged(self):
+        changes=[lambda d:d.update(request_sha256='0'*64),lambda d:d.update(currency='0'*64),
+                 lambda d:d.update(region='0'*64),lambda d:d.update(verified=1),
+                 lambda d:d.update(ledger_changed=True),lambda d:d.update(signing_authority=True),
+                 lambda d:d['results'].reverse(),lambda d:d['results'].pop()]
+        for change in changes:
+            with self.subTest(change=change),self.assertRaises(ValueError):
+                self.run_codec(alter=lambda d,n:change(d))
+
+    def test_later_batch_native_refusal_returns_no_success_and_preserves_state(self):
+        def refusal(response,n):
+            if n==2:raise ValueError('native rejected later exact envelope')
+        with self.assertRaisesRegex(ValueError,'native rejected later'):
+            self.run_codec(alter=refusal)
+
+
 class NativeRetentionTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(prefix='rld-bft-exact-retention-')

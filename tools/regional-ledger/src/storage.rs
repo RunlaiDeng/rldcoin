@@ -746,7 +746,10 @@ impl Store {
             format: bft_network::FORMAT.into(),
             currency: self.trust.currency()?,
             region: self.chain.region,
-            evidence: self.journal.evidence.clone(),
+            // The paged diagnostic view orders regional heights, not causal
+            // imports. Carry the complete independently authenticated closure;
+            // a submission must verify without the receiver's local history.
+            evidence: self.proof()?,
             body: if crate::bft::is_joint(&self.trust.region(self.chain.region)?.rules) {
                 bft_network::Body::EpochSubmission {
                     commands: commands.clone(),

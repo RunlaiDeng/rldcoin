@@ -187,16 +187,57 @@ def verify_stopped_state(native, config, current, root):
     for ident in state['snapshot_cache']:
         mesh.hex32(ident)
     total = 0
+    batches = 0
     with tempfile.TemporaryDirectory(prefix='rld-bft-cold-input-') as scratch:
         input_path = Path(scratch) / 'envelope.json'
+        pending = []
+        size = 2
+
+        def authenticate(rows):
+            raw = b'[' + b','.join(payload for _, payload in rows) + b']'
+            input_path.write_bytes(raw)
+            checked = native.call('bft-network-check-batch', '--file', input_path)
+            mesh.require(isinstance(checked, dict)
+                         and set(checked) == {'format', 'currency', 'region', 'request_sha256',
+                                              'results', 'verified', 'ledger_changed', 'signing_authority'}
+                         and checked['format'] == 'RLD-BFT-COLD-NETWORK-CHECK-V1'
+                         and checked['currency'] == native.currency
+                         and checked['region'] == current['region']
+                         and checked['request_sha256'] == digest(raw)
+                         and checked['verified'] is True
+                         and checked['ledger_changed'] is False
+                         and checked['signing_authority'] is False
+                         and isinstance(checked['results'], list)
+                         and len(checked['results']) == len(rows),
+                         'BFT cold batch response differs from exact request')
+            for (ident, _), result in zip(rows, checked['results']):
+                mesh.require(isinstance(result, dict) and set(result) == {'message_id', 'value'},
+                             'BFT cold batch result schema differs')
+                mesh.hex32(result['message_id'])
+                mesh.require(result['value'] == state['messages'].record(ident)['value'],
+                             'BFT retained native value differs')
+
         for ident in state['messages']:
             raw = state['messages'].payload(ident)
             total += len(raw)
-            input_path.write_bytes(raw)
-            checked = native.call('bft-network-check', '--file', input_path)
-            mesh.require(checked['value'] == state['messages'].record(ident)['value'],
-                         'BFT retained native value differs')
+            # Match the existing native four-envelope / eight-MiB batch bounds.
+            # Keep exact complete bytes; each later envelope authenticates again.
+            addition = len(raw) + bool(pending)
+            if pending and (len(pending) == 4 or size + addition > 8 * 1024 * 1024):
+                authenticate(pending)
+                batches += 1
+                pending = []
+                size = 2
+                addition = len(raw)
+            mesh.require(size + addition <= 8 * 1024 * 1024,
+                         'BFT cold batch input exceeds native byte bound')
+            pending.append((ident, raw))
+            size += addition
+        if pending:
+            authenticate(pending)
+            batches += 1
     return {'retention_format': FORMAT, 'messages_authenticated': len(state['messages']),
             'distinct_complete_snapshots': len(state['messages']._snapshots),
             'retained_state_bytes': path.stat().st_size, 'state_limit_bytes': MAX_STATE,
-            'expanded_envelope_bytes_authenticated': total, 'full_native_authentication': True}
+            'expanded_envelope_bytes_authenticated': total, 'full_native_authentication': True,
+            'native_authentication_batches': batches, 'native_batch_envelope_limit': 4}

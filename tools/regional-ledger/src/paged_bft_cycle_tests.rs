@@ -286,6 +286,196 @@ fn paged_three_region_cycle_cold_child() {
     println!("paged-cycle-cold three_native_twelve_signers_three_wallets_from_genesis=true private_inventory_unchanged=true independently_fresh=false");
 }
 #[test]
+fn paged_imported_owner_submission_carries_complete_causal_proof_without_debit() {
+    let mut earth = Harness::with_rules(crate::paged_bft::RULES);
+    earth.retain = true;
+    for n in 0..4 {
+        retain(&earth.root, n, earth.heads[n]);
+    }
+    let package = earth.node.journal.bootstrap.clone();
+    let mut proxima =
+        super::paged_remote::target(&earth, package.clone(), package.admissions[1].id().unwrap());
+    for _ in 0..3 {
+        certify_next(&mut earth, vec![]);
+    }
+    let (first, _) = export(&mut earth, 10, proxima.node.chain.region, 11, 100, None);
+    carry(&earth, &mut proxima, first);
+    let input = id("output", &(first, 0u32)).unwrap();
+    assert_eq!(
+        proxima.node.chain.ledger.coins[&input].payment.amount,
+        Amount(99)
+    );
+    let mut owner = crate::wallet_agent::Agent::create(
+        &proxima.root.join("onward-owner"),
+        &proxima.node,
+        public(11),
+    )
+    .unwrap();
+    let old_head = owner.journal.head().unwrap();
+    retain(&proxima.root, 4, old_head);
+    let key = proxima.root.join("onward-owner-key.json");
+    crate::keystore::private_create(
+        &key,
+        &serde_json::to_vec(&serde_json::json!({"secret_key":hex::encode([11;32])})).unwrap(),
+    )
+    .unwrap();
+    let prepared = owner
+        .prepare(
+            &proxima.node,
+            crate::wallet::Request {
+                owner: public(11),
+                participants: vec![],
+                inputs: Some(vec![input]),
+                outputs: vec![],
+                remote: Some(crate::wallet::Remote {
+                    destination: package.admissions[2].id().unwrap(),
+                    recipient: Payment {
+                        owner: public(12),
+                        amount: Amount(98),
+                    },
+                    destination_fee: Amount(1),
+                }),
+                fee: Amount(1),
+                valid_for_blocks: 8,
+                valid_through: None,
+            },
+            old_head,
+        )
+        .unwrap();
+    assert_eq!(prepared.draft.intent.inputs, vec![input]);
+    assert_eq!(prepared.draft.change, Amount::ZERO);
+    let signed = owner
+        .sign(
+            &proxima.node,
+            prepared.draft,
+            &key,
+            prepared.review_commitment,
+            old_head,
+        )
+        .unwrap();
+    retain(&proxima.root, 4, signed.wallet_head);
+    let old = crate::bft_network::Envelope {
+        format: crate::bft_network::FORMAT.into(),
+        currency: proxima.node.trust.currency().unwrap(),
+        region: proxima.node.chain.region,
+        evidence: proxima.node.journal.evidence.clone(),
+        body: crate::bft_network::Body::Submission(signed.commands.clone()),
+    };
+    let before = inventory(&earth.root);
+    assert_eq!(
+        old.verify(&proxima.node).unwrap_err(),
+        "missing verified source checkpoint"
+    );
+    assert_eq!(inventory(&earth.root), before);
+    let ledger = proxima.node.chain.ledger.clone();
+    let native = proxima.node.storage_head().unwrap();
+    let signer_heads = proxima
+        .agents
+        .iter()
+        .map(|a| a.head().unwrap())
+        .collect::<Vec<_>>();
+    let submission = proxima.node.bft_submit(signed.commands.clone()).unwrap();
+    let queued: crate::bft_network::WireEnvelope = crate::storage::read_json(
+        &proxima
+            .root
+            .join("node/bft-submissions")
+            .join(format!("{}.json", submission.to_hex())),
+    )
+    .unwrap();
+    let envelope = queued.expand().unwrap();
+    assert_eq!(envelope.verify(&proxima.node).unwrap(), submission);
+    assert_eq!(
+        serde_json::to_vec(&envelope.body).unwrap(),
+        serde_json::to_vec(&old.body).unwrap()
+    );
+    let mut original = old
+        .evidence
+        .snapshots
+        .iter()
+        .map(|s| serde_json::to_vec(s).unwrap())
+        .collect::<Vec<_>>();
+    let mut carried = envelope
+        .evidence
+        .snapshots
+        .iter()
+        .map(|s| serde_json::to_vec(s).unwrap())
+        .collect::<Vec<_>>();
+    original.sort();
+    carried.sort();
+    assert_eq!(original, carried);
+    // A fresh keyless receiver starts from signed genesis, with no local source
+    // checkpoint or cached ledger supplying the missing dependency.
+    let receiver = Store::create(
+        &earth.root.join("keyless-receiver"),
+        package.clone(),
+        proxima.node.chain.region,
+        &public(1),
+        package.currency.id().unwrap(),
+    )
+    .unwrap();
+    assert_eq!(receiver.chain.height(), 0);
+    assert_eq!(envelope.verify(&receiver).unwrap(), submission);
+    let unchanged = inventory(&earth.root);
+    assert_eq!(
+        proxima.node.bft_submit(signed.commands.clone()).unwrap(),
+        submission
+    );
+    let mut bad = envelope.clone();
+    bad.evidence
+        .snapshots
+        .last_mut()
+        .unwrap()
+        .bft
+        .as_mut()
+        .unwrap()
+        .committed
+        .votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    assert!(bad
+        .pack()
+        .unwrap()
+        .expand()
+        .unwrap()
+        .verify(&receiver)
+        .is_err());
+    let mut missing = envelope.clone();
+    missing.evidence.snapshots.remove(0);
+    assert!(missing
+        .pack()
+        .unwrap()
+        .expand()
+        .unwrap()
+        .verify(&receiver)
+        .is_err());
+    let mut bad_commands = signed.commands.clone();
+    let crate::Command::Spend(spend) = &mut bad_commands[0] else {
+        panic!("original signed owner Spend");
+    };
+    spend.approvals[0].signature = "00".repeat(64);
+    assert!(proxima.node.bft_submit(bad_commands).is_err());
+    assert_eq!(inventory(&earth.root), unchanged);
+    assert_eq!(proxima.node.storage_head().unwrap(), native);
+    assert_eq!(proxima.node.chain.ledger, ledger);
+    assert_eq!(
+        proxima
+            .agents
+            .iter()
+            .map(|a| a.head().unwrap())
+            .collect::<Vec<_>>(),
+        signer_heads
+    );
+    assert_eq!(owner.journal.head().unwrap(), signed.wallet_head);
+    let stopped = proxima.root.join("node");
+    drop(proxima);
+    let cold = Store::open(&stopped, &public(1), package.currency.id().unwrap()).unwrap();
+    assert_eq!(cold.storage_head().unwrap(), native);
+    assert_eq!(envelope.verify(&cold).unwrap(), submission);
+    assert_eq!(cold.chain.ledger, ledger);
+    assert_eq!(inventory(&earth.root), unchanged);
+    println!("paged-owner-submission original99_input_reviewed_once=true onward98_queued_without_debit=true complete_causal_original_multiset=true fresh_genesis_keyless_receiver_verified=true altered_later_certificate_missing_parent_bad_owner_refused_unchanged=true exact_retry_and_cold=true old_height_order_refused=true");
+}
+#[test]
 fn paged_contact_causal_order_counter_uses_native_imported_owner_input() {
     let mut earth = Harness::with_rules(crate::paged_bft::RULES);
     earth.retain = true;
