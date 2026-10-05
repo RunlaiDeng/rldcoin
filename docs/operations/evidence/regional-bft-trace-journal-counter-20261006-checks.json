@@ -1,0 +1,22 @@
+{
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 1.644301,
+  "helper_exit_code": 1,
+  "stage_sha256": "785926dd9d07ef1aac3f72e88841352571e1a2a940e8786c35106870c1ed51ee",
+  "controller_sha256": "aa6b448980b72f9666fa095715bb0b3ee9324848e31a4bcc97a75e5ab5486832",
+  "log_sha256": "87416f34e7a4343066ec26103d7a323498e7198a28856ebbab7da0291ec44499",
+  "private_seals_unchanged": 1,
+  "actual_8193_event_counter": true,
+  "actual_status_file_IO": true,
+  "producer_PIDs_modeled": true,
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "mesh_node_opens": 0,
+  "sockets": 0,
+  "signing": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "log_tail": ".E.............................\n======================================================================\nERROR: test_controller_hook_collects_actual_status_files_with_same_owner_validation (test_regional_contact_trace_journal.JournalTests.test_controller_hook_collects_actual_status_files_with_same_owner_validation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tools/test_regional_contact_trace_journal.py\", line 163, in test_controller_hook_collects_actual_status_files_with_same_owner_validation\n    journal.collect(controller)\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^\n  File \"/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_window.py\", line 107, in collect\n    status = document(path)\n  File \"/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_scope.py\", line 52, in document\n    data = raw(path)\n  File \"/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_scope.py\", line 34, in raw\n    path = safe(path)\n  File \"/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_scope.py\", line 29, in safe\n    require(not any(p.is_symlink() for p in (path, *path.parents)), 'scope symlink refused')\n    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_scope.py\", line 17, in require\n    raise ValueError(message)\nValueError: scope symlink refused\n\n----------------------------------------------------------------------\nRan 31 tests in 0.996s\n\nFAILED (errors=1)\n"
+}
