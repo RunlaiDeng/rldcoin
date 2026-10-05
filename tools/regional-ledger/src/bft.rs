@@ -762,10 +762,7 @@ impl Journal {
     pub fn head(&self) -> Result<Hash> {
         id("bft-signer-journal-v1", self)
     }
-    pub fn state(&self, node: &Store) -> Result<State> {
-        self.state_at_depth(node, 0)
-    }
-    pub(crate) fn state_at_depth(&self, node: &Store, depth: usize) -> Result<State> {
+    fn validate_header(&self, node: &Store, depth: usize) -> Result<()> {
         require(
             depth <= crate::epoch::MAX_EPOCHS,
             "BFT custody ancestry bound",
@@ -801,49 +798,46 @@ impl Journal {
                 "legacy voter cannot adopt role custody provenance",
             )?;
         }
-        let mut prefix = Self {
-            binding: self.binding.clone(),
-            creation: self.creation.clone(),
-            origin: self.origin.clone(),
-            records: vec![],
-        };
-        let mut state = State::default();
+        Ok(())
+    }
+    /// Read-only native replay of complete original legacy records held in
+    /// pages. Both external heads are required. This does not create/adopt a
+    /// paged signer, raise the 128-record bound, recover custody or first-sign.
+    pub fn state_from_retained(
+        &self,
+        node: &Store,
+        stream: &crate::retained_pages::Stream<Record>,
+        storage_head: Hash,
+        native_head: Hash,
+    ) -> Result<State> {
+        require(
+            self.records.is_empty(),
+            "retained replay requires an empty journal header",
+        )?;
+        let scope = crate::retained_pages::Scope::bind(
+            &node.trust,
+            self.binding.region,
+            crate::retained_pages::Purpose::BftSigner(self.binding.key.clone()),
+            self.head()?,
+        )?;
+        stream.require_scope(&scope)?;
+        require(
+            stream.record_count() <= MAX_RECORDS as u64,
+            "BFT journal record capacity",
+        )?;
+        let mut replay = replay::Replay::new(self, node, 0)?;
+        stream.visit(storage_head, |record| replay.push(record))?;
+        replay.finish(native_head)
+    }
+    pub fn state(&self, node: &Store) -> Result<State> {
+        self.state_at_depth(node, 0)
+    }
+    pub(crate) fn state_at_depth(&self, node: &Store, depth: usize) -> Result<State> {
+        let mut replay = replay::Replay::new(self, node, depth)?;
         for record in &self.records {
-            require(
-                record.previous_head == prefix.head()?
-                    && record.message.approval().key == self.binding.key,
-                "BFT journal predecessor/key mismatch",
-            )?;
-            record.observation.check(node, &b)?;
-            let c = record.request.context()?;
-            require(
-                node.trust.region(b.region)?.rules != ROLE_RULES
-                    || c.epoch == self.creation.pin.epoch,
-                "role voter cannot change era inside its original journal",
-            )?;
-            require(
-                c.currency == b.currency
-                    && c.region == b.region
-                    && c.parent_height == record.observation.pin.height
-                    && c.parent_block == record.observation.pin.tip
-                    && c.parent_state == record.observation.pin.state
-                    && c.previous == record.observation.pin.finality
-                    && c.epoch == record.observation.pin.epoch,
-                "BFT vote observation does not bind actual native parent",
-            )?;
-            let mut expected = state.apply(&record.request, &self.binding.key, node)?;
-            expected.set_approval(record.message.approval().clone());
-            require(
-                expected == record.message,
-                "BFT retained message differs from deterministic request/state",
-            )?;
-            verify_bytes(
-                &self.binding.key,
-                &record.message.bytes()?,
-                &record.message.approval().signature,
-            )?;
-            prefix.records.push(record.clone());
+            replay.push(record)?;
         }
+        let state = replay.finish(self.head()?)?;
         encode("bft-journal", self)?;
         Ok(state)
     }
@@ -1223,3 +1217,9 @@ impl Agent {
         })
     }
 }
+
+#[path = "bft_replay.rs"]
+mod replay;
+
+#[cfg(test)]
+pub(crate) use replay::tests::compare_all_prefixes;

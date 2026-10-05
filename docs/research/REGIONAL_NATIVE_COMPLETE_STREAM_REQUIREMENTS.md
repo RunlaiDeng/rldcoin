@@ -123,3 +123,43 @@ campaign预算0。2016真实窗口须另作实际成本预算，不增加原600s
 完整BFT、epoch、owner/custody、完整价值DAG、实际窗口、独立最新状态、PQC/
 physical和所有S/R/I/A–G/N/P义务仍未完成。旧VALUE-STRICT-01仍独立OPEN；
 当触及其库或候选发布门槛，遵守既定300秒修复/120秒实际阻塞诊断条件。
+
+## 普通BFT签署的完整record内核接入（2026-10-05）
+
+`bft_replay.rs`已由普通`Agent`的`Journal.state`实际调用，不再复制逐渐增长的
+record vector来生成每个历史prefix head。只在进程内从完整immutable header开始
+逐条哈希canonical record，补回原JSON结尾；保留原`bft-signer-journal-v1`域、
+完整旧head字节、128-record/8MiB门槛。它不序列化state/hash见证，也没有缓存
+native账本、原生观察、角色、时代、签名或锁转移的认证结果。
+
+每条完整record仍认证exact predecessor及key、签署时原生历史父状态、时代/
+creation/rollover来源、完整proposal/prepare/commit/timeout/fence执行和实际签名。
+`Journal.state_from_retained`用同一内核读取完整页，先绑定exact header origin、
+key、purpose/currency/admission/implementation，再完整验证每条record与两个
+分别提供的storage/native heads。派生state只在全部读取和两个heads通过后返回。
+它是read-only镜像，**不创建分页签署目录，不签名、不恢复、不采纳caller head**。
+普通Store仍未接入新certified-event stream，Agent写入仍是原格式；没有新admission。
+
+一次120秒最小判别实际25.212秒完成（编译及strict包含）：全新当前implementation
+零初始分配fixture，四实际Agents签署8提案、32 prepare、32 commit；8个真实认证
+高度，owner付款99/fee1实际纳入并成熟。每Agent18完整records，mirror各封一页并
+保留2条完整tail；每个历史head与独立完整JSON序列化oracle比较，普通与页读取
+得到完全相同的原生锁/state/head。后部坏签名、错误用途及任一陈旧head拒绝；
+Store按另存head完整cold reopen、四Agent和mirror同进程cold reopen后，原私有
+hash/mode/size/mtime未变。单独受影响durable-lock/旧备份/keyless exact retry及
+role-origin真实认证/certificate变体/完整旧日志head也通过；当前library/tests strict
+通过。没有新进程、真实SIGKILL、跨设备或独立最新状态资格，也未测>128签署。
+
+[准确范围](../operations/evidence/regional-native-bft-record-replay-20261005-stage.json)、
+[终态](../operations/evidence/regional-native-bft-record-replay-20261005-checks.json)、
+[绑定及下一门槛](../operations/evidence/regional-native-bft-record-replay-20261005-outcome.json)。
+73-file library source `66ab6d204fda70dc8dae18b404f91b3de754c0f202ce4af549a619dd479547ee`，
+implementation `a2e80dcf80e6b145cbcd398de4a23e94f1b214561f703d969c2420a89f2ffae6`；
+旧main binary未重建/重新资格，旧fixture、通道费用反例和完整fault失败未打开或改称通过。
+
+下一实现仍是明确新signed profile的**普通Store certified-event和Agent分页写入**，
+包括完整genesis/value/钱包signing-height/远程依赖/历史incident、separate caller head
+及已落盘signed response的recover-only。完成可审代码后才运行原定一次300秒集成
+scope（含编译），遇invalid tail/容量/发布失败或预算即停止保留，不原样复跑旧
+fixture；保留旧64/128严格格式和新活动界，不删除任何signed history。该300秒scope
+尚未开始，本镜像检查不能替代它。第65检查点、真实2016窗口及独立资格仍OPEN。

@@ -10,6 +10,7 @@ struct Harness {
     agents: Vec<Agent>,
     heads: Vec<Hash>,
     seeds: Vec<u8>,
+    retain: bool,
 }
 impl Harness {
     fn new() -> Self {
@@ -61,6 +62,7 @@ impl Harness {
             agents,
             heads,
             seeds,
+            retain: false,
         }
     }
     fn sign(&mut self, n: usize, req: Request) -> bft::Signed {
@@ -143,7 +145,7 @@ impl Harness {
 }
 impl Drop for Harness {
     fn drop(&mut self) {
-        if std::thread::panicking() {
+        if self.retain || std::thread::panicking() {
             return;
         }
         let _ = fs::remove_dir_all(&self.root);
@@ -1238,3 +1240,6 @@ fn live_network_batch_refuses_count_and_wire_capacity_without_changes() {
         .contains("batch exceeds bound"));
     assert_eq!(fs::read(h.root.join("node/journal.json")).unwrap(), before);
 }
+
+#[path = "bft_retained_tests.rs"]
+mod retained_native_replay;

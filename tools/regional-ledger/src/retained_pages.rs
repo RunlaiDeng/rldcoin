@@ -344,6 +344,14 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
         )?;
         Ok(index)
     }
+    /// A native consumer must bind the complete stream domain before replay.
+    /// Equality is storage context only, never signature/admission authority.
+    pub(crate) fn require_scope(&self, expected: &Scope) -> Result<()> {
+        require(
+            self.manifest.scope == *expected,
+            "complete stream native consumer scope",
+        )
+    }
     pub fn storage_head(&self) -> Hash {
         self.manifest.head
     }

@@ -48,6 +48,10 @@ fn voter_origin_authenticates_distinct_closing_quorums_before_matching_complete_
         let origin = agent.journal.origin.as_ref().unwrap();
         assert_eq!(*origin.proof, proof);
         assert_eq!(*origin.ready.scope.proposal, selected);
+        bft::compare_all_prefixes(&agent.journal);
+        if let Some(old) = &agent.journal.origin.as_ref().unwrap().old {
+            bft::compare_all_prefixes(old);
+        }
         assert!(agent.journal.state(&h.node).is_ok());
         let mut invalid = agent.journal.clone();
         invalid

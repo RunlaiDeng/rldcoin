@@ -10,6 +10,16 @@ may be cleared when every original byte remains in the exact page/tail. Native
 integration must replay complete genesis/history/request semantics, preserve
 caller locks and use fresh signed no-value identity; byte checks never suffice.
 
+The ordinary BFT Agent now uses `src/bft_replay.rs` for every complete original
+record. Its process-local hash cursor reproduces the exact legacy JSON head;
+it is not serialized and never substitutes for observations, roles, request
+execution, locks or signatures. `Journal::state_from_retained` shares this
+kernel for a read-only mirror bound to exact header/key/purpose plus separate
+storage/native heads. Return state only after both whole streams/heads pass.
+This does not create paged custody, first-sign or recover, and the old 128-record
+and 64-snapshot limits still refuse. New storage admission and ordinary
+Store/Agent write integration remain open; use fresh signed no-value fixtures.
+
 The ordinary regional ledger now has an explicitly admitted channel/fee-reserve
 bucket for the new native ground value-channel profiles. The
 executable model in `../value_composition_model.py` and the contract in

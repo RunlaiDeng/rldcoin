@@ -55,9 +55,20 @@ Native Store与BFT signer的新规则，不降低旧bound或用只读verifier替
 未复活旧fixture。普通原生分页集成及其一次300秒验证仍OPEN。
 字节容量首30.015秒耗尽仍未通过；保持完整逐文件哈希的改变观察方法范围
 16.924秒通过256MiB残片加manifest实际拒绝及strict，生产primitive不变。
-当前71文件library源`0bdde7ce...`/implementation`98326b85...`的
+上一保留层71文件library源`0bdde7ce...`/implementation`98326b85...`的
 [总绑定](operations/evidence/regional-native-retained-pages-outcome-20261005.json)
 不等于旧主binary或完整原生运行资格。
+后续普通BFT Agent已接入完整逐条record内核，exact legacy prefix head改为
+进程内增量哈希，仍全认证原生观察/角色/请求/锁/签名；read-only完整页镜像共用
+同一内核。一次120秒范围实际25.212秒通过四真实Agents/8认证高度/99付款成熟、
+每人18原record与4完整sealed pages、逐prefix独立head oracle、后部坏签名/陈旧
+双head/错purpose拒绝及完整pinned same-process冷重放、私有字节/属性不变；
+受影响锁/恢复/role-origin及native库/tests strict通过。现73-file library源
+`66ab6d20...`/implementation`a2e80dcf...`的
+[准确绑定](operations/evidence/regional-native-bft-record-replay-20261005-outcome.json)
+不等于普通分页写入/新signed admission或独立/新进程资格；主binary未重建。
+Store第65检查点与128签署容量保持OPEN，真正Store/Agent写入集成一次300秒
+尚未启动；旧价值库strict独立OPEN，冻结正文/PDF/官网未改。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付
