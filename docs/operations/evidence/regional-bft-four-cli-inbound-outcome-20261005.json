@@ -1,0 +1,187 @@
+{
+  "format": "RLD-BFT-FOUR-CLI-INBOUND-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T20:55:50.980733+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_status": "active",
+  "adopted_markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "adopted_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_text_predecessor_hashes_reported_not_rewritten": true,
+  "reports": {
+    "regional-bft-four-cli-controller-model": {
+      "completed": true,
+      "duration_seconds": 0.178096,
+      "helper_exit_code": 0,
+      "checks_sha256": "ed0b2f6bae610764e98d48c275812faab67b2816fcc60d36734dc7cdb7c297f8"
+    },
+    "regional-bft-four-cli-guard-model": {
+      "completed": true,
+      "duration_seconds": 0.201026,
+      "helper_exit_code": 0,
+      "checks_sha256": "11ff186eeac8c7991ed1c2bd5b26e0e3ffffebfef6a3f6271f9beaedd9d379e3"
+    },
+    "regional-bft-four-cli-guard-model-v2": {
+      "completed": true,
+      "duration_seconds": 0.135631,
+      "helper_exit_code": 0,
+      "checks_sha256": "148eb6d2e8805e1320c2f38299523aaf1562c54f96b7356bf771b779559ed5eb"
+    },
+    "regional-bft-four-cli-service-v1": {
+      "completed": false,
+      "duration_seconds": 189.148,
+      "helper_exit_code": 1,
+      "checks_sha256": "0483c0acd56363f0663e0ff7d711f52616e9fcfa4af59cafb1a520bbc1e0874e"
+    },
+    "regional-bft-four-cli-frontier-counter": {
+      "completed": true,
+      "duration_seconds": 4.515915,
+      "helper_exit_code": 0,
+      "checks_sha256": "bdfae9cf60436a045845aa62f28953d788b828d9fd55d1f9863d262bd52630ac"
+    },
+    "regional-bft-inbound-turn-counter": {
+      "completed": true,
+      "duration_seconds": 0.144162,
+      "helper_exit_code": 0,
+      "checks_sha256": "3c2f7cb820ea90eb50aec686cbc63faa66ae065152425c9bcda45df19ab0940e"
+    },
+    "regional-bft-inbound-turn-model": {
+      "completed": true,
+      "duration_seconds": 3.389475,
+      "helper_exit_code": 0,
+      "checks_sha256": "efcc96d1547555a6589069c5edcbada0f3487dc953af723f46854753577d0621"
+    }
+  },
+  "related_model_initial_scope_declaration_invalid": true,
+  "related_model_scope_correction_sha256": "ba04eebd1a603de803cdff2a88f6dc6b6454e61148cf58dbdd11d638ecbeac2f",
+  "related_model_actual_scope": "5new mock-Node inbound fairness tests;11existing mesh-turn and4selection-preference tests each create new ephemeral two-peer TLS transport fixtures;7lease-cost tests use mock Node plus bounded observation threads. Real local TLS/sockets/transport signing and mesh file operations occurred. No Native CLI/BFT Runtime/value owner signing/recovery/old failed fixture reopening. These short regressions are not new native maturity/fullfault scopes.",
+  "test_child_workdir_explicit_new_project_tools": "/Users/galaxy/GitHub/rldcoin/tools",
+  "no_tests_repeated_for_correction": true,
+  "controller_guard_first_version_wrong_pre_exec_dir_assumption": "Preflight identified actual Unix exec maps Native --dir to companion --ledger; previous3mocktests and exact sources retained; corrected3tests passed before any launch. First guardian is historical only, never actual ownership qualification.",
+  "guard_model_attempts": 2,
+  "guard_model_total_seconds": 0.336657,
+  "first_preliminary_body_inspection_failed": "Read-only preliminary parser called next() on an empty signed_body for a Finalized body; StopIteration, no Native/Runtime or mutation; corrected schema used by the one bound frontier counter.",
+  "actual_four_cli_finite_pass": false,
+  "actual_finite_budget_seconds": 180,
+  "actual_finite_duration_including_close_and_seal": 189.148,
+  "actual_finite_helper_exit_code": 1,
+  "actual_owned_four_zero_exit": true,
+  "actual_guardian_used": false,
+  "forced_owned_processes": [],
+  "cleanup_failures": [],
+  "failed_private_files": 1889,
+  "failed_private_inventory_sha256": "44994238faa235e3c5f8a7fed9ff87651d8c3a50d5a4395103c0b95c8e8cbee9",
+  "failed_public_source_files": 168,
+  "failed_public_source_manifest_sha256": "8bdb82561bc4aab2b234e54c70cda1f6e25d23f19dd985374fa797aaf8fb6355",
+  "failed_currency_never_reopen": true,
+  "recorded_native_receipt_observations": [
+    {
+      "node": 0,
+      "import_accepted": true,
+      "import_height": 13,
+      "mature_height": 15,
+      "local_height": 14,
+      "net": "2",
+      "spendable": false
+    },
+    {
+      "node": 1,
+      "import_accepted": true,
+      "import_height": 13,
+      "mature_height": 15,
+      "local_height": 14,
+      "net": "2",
+      "spendable": false
+    },
+    {
+      "node": 2,
+      "import_accepted": true,
+      "import_height": 13,
+      "mature_height": 15,
+      "local_height": 14,
+      "net": "2",
+      "spendable": false
+    },
+    {
+      "node": 3,
+      "import_accepted": true,
+      "import_height": 13,
+      "mature_height": 15,
+      "local_height": 14,
+      "net": "2",
+      "spendable": false
+    }
+  ],
+  "recorded_native_observations_are_not_stopped_cold_authority": true,
+  "final_native_state_known": false,
+  "full_eight_fixed_head_cold_completed": false,
+  "conservation_completed": false,
+  "falsified_hypothesis": "Changing only helper scheduling to four actual ordinary CLI processes does not complete fresh import maturity and full8cold within original180.",
+  "transport_counter": {
+    "authenticated_archive_indexes": 845,
+    "authenticated_active_receipts": 15,
+    "complete_related_transport_copies": 32,
+    "all_companion_retained_heights": 14,
+    "source_carriage_pending": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "proposal15_and_prepare14_published_but_some_destination_custody_and_complete_envelopes_absent": true,
+    "native_or_runtime_or_node_constructor_opens": 0,
+    "private_1889_bytes_unchanged": true,
+    "new_native_authority": false
+  },
+  "actual_source_fix": "Alternate actual waiting retained TCP input with fresh inbound handlers only while both have live demand. Preserve existing ordinary/outbound alternation, .2lock attempts,3socket,original2inbound slots and full authentication/fsync before custody. One nullable process-local inbound role, no serialized authority/cache/evidence pruning.",
+  "old_counter": {
+    "rounds": 32,
+    "outbound_success": 32,
+    "handler_success": 32,
+    "input_success": 0,
+    "input_refusals": 32
+  },
+  "candidate_counter": {
+    "rounds": 32,
+    "outbound_success": 32,
+    "handler_success": 16,
+    "input_success": 16,
+    "max_input_gap_rounds": 2
+  },
+  "tcp_source_sha256": "7b0b01d09dc8df36475215f337462db867ec312f3ffdf02d3066402153f78509",
+  "bft_companion_source_sha256": "b3604b89af897c0c1805b33815c6a31256329560ecd0a314b1f452a2d4f9f7eb",
+  "current_python_source_count": 161,
+  "current_python_source_commitment": "c40a8dc04db725d4f6f303ad94051b628c78ae27e1909c40134080880883d746",
+  "native_source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "core_171_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+  "actual_cli_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "native_core_binary_freeze_unchanged": true,
+  "full_fault_status": "FAIL/OPEN;runtime-v4 original600612.5706152;receive-v7 original600616.0526657;all older failures preserved",
+  "unique_old_live_failure_cause_proved": false,
+  "next": {
+    "hypothesis": "Under the changed TCP source an actual retained authenticated input must acquire its original local custody turn while new handlers/outbound compete; actual ordinary fresh8Native receipt progress must then be tested separately.",
+    "minimal_validation": "One fresh loopback pinned-TLS bounded retained-input contention component; authenticate complete request, exact durable transit/receipt, unchanged refusal/slots and owned clean close. No Native/currency/value/oldfailed opens. Existing27related regressions and exact oldcounter are reused.",
+    "component_budget_seconds": 60,
+    "component_attempts": 1,
+    "component_exit": "first authenticity/ownership/capacity/custody/refusal error, completed exact custody and clean close, or original60; retain failure; no deadline raise/repeat",
+    "conditional_native_validation": "Only after component pass and complete changed161Python/source/binary/controller binding, one genuinely fresh8Native/fourordinaryCLI original180total with all4import13/mature15/net2 and full8fixed-head/native-envelopes/mesh/caller/owner/conservation. No oldfixture recovery, controller consensus/carriage afterstartup, or unchanged180retry.",
+    "native_budget_seconds": 180,
+    "native_attempts": 1,
+    "full_600_scope_allocated": false
+  },
+  "unchanged_bounds": {
+    "round_seconds": 60,
+    "maturity": 2,
+    "quorum": 3,
+    "absolute_height_cap": 24,
+    "socket_attempt_seconds": 3,
+    "local_mesh_lock_wait_seconds": 0.2,
+    "inbound_slots": 2
+  },
+  "legacy_value_strict": "VALUE-STRICT-01 independentlyOPEN;unchanged old value source no trigger;no exemptions",
+  "qualification": "S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8/allphysical/independent/longhistory/PQ remainOPEN",
+  "persistent_cwd_ui_fix_pending": true,
+  "explicit_new_project_tool_workdir": "/Users/galaxy/GitHub/rldcoin",
+  "website_paper_mainnet_funds_accounts_external_server_cleanup_changed": false,
+  "whole_goal_completed": false
+}

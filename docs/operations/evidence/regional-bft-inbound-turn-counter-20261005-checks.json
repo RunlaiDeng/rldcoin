@@ -1,0 +1,33 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.144162,
+  "helper_exit_code": 0,
+  "result": {
+    "completed": true,
+    "old_inbound_starvation_reproduced": true,
+    "finite_rounds": 32,
+    "successful_mesh_turns": {
+      "outbound": 32,
+      "handler": 32,
+      "input": 0
+    },
+    "input_refusals": 32,
+    "original_lock_wait_seconds": 0.2,
+    "retained_original_unacknowledged_job": true,
+    "native_starts": 0,
+    "runtime_starts": 0,
+    "real_mesh_node_opens": 0,
+    "sockets": 0,
+    "signing": 0,
+    "recovery": 0,
+    "custody_granted": false,
+    "unique_live_failure_cause_proved": false
+  },
+  "stage_sha256": "624007447e0242cbafd90521827ee0f4ea507940f3ba9be52c4a36b6ff72817a",
+  "log_sha256": "c52049f7fa0d777166a36ba35495cc3fba1d44a642eab17f5cb8bab4a62bd0f2",
+  "log_summary": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

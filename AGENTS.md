@@ -1525,3 +1525,20 @@ goalactive/current2ba62421/c59f9fe8receipt86821d19 adopted; goalpredecessors rep
 frozenpaper/site/server/cleanup/funds untouched; everycommand explicitnewworkdir,
 persistentcwd UIpending. See
 operations/evidence/regional-bft-finality-carriage-outcome-20261005.json.
+
+
+The separately bound four ordinary CLI finite gate exhausted its original180
+budget (189.148including close/seal;1889files), with all4zero-exit and no forced/
+cleanup failures. It is FAILED, not stopped-cold maturity/fullfault qualification.
+Its complete signed transportation counter finds Proposal15/parent14Prepare
+published but some destination custody/envelopes absent; all source broadcast
+pending0. Never reopen its Native/Runtime/value. The TCP inbound-turn candidate
+alternates actual retained-input demand with fresh handlers, retaining original
+ordinary/outbound fairness,2inbound/.2lock/3socket/full authentication/fsync.
+A32round source counter and27related checks qualify only this finite scheduling
+change. Their first report incorrectly declared no real TLS/mesh; use the bound
+scope-correction (real ephemeral transport fixtures occurred; Native/value0).
+The next once60 fresh retained-input TLS contention component and conditional
+once180fresh8Native/fourCLI maturity/fullcold are separate, not yet started;
+no new600allocated. Keep unknown observations, all failures and original bounds.
+See docs/operations/evidence/regional-bft-four-cli-inbound-outcome-20261005.json.

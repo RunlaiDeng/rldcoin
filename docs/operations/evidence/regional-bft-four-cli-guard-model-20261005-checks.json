@@ -1,0 +1,20 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.201026,
+  "helper_exit_code": 0,
+  "test_count": 3,
+  "stage_sha256": "ad0b39c288e30eb0d09b3500b46362bac1b5bd2788b4f9d1fe5431ef55e89fe4",
+  "log_sha256": "4e21635b2ec89c5a06f26ca9e64ebedd3cb6cb619d5f62f9b728aecf228b8dd1",
+  "log_summary": "paged-fault-step {\"kind\": \"ordinary-node-start\", \"phase\": \"ordinary\"}\n.paged-fault-step {\"index\": 0, \"keyless\": false, \"kind\": \"ordinary-node-start\", \"phase\": \"ordinary\", \"region\": \"proxima\"}\n.paged-fault-step {\"kind\": \"ordinary-node-start\", \"phase\": \"ordinary\"}\n.\n----------------------------------------------------------------------\nRan 3 tests in 0.006s\n\nOK\n",
+  "source_pins_unchanged": true,
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "real_owned_process_starts": 0,
+  "signing": 0,
+  "recovery": 0,
+  "sockets": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

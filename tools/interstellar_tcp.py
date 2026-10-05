@@ -319,6 +319,7 @@ class Server:
         self.local_mesh_owner=None
         self.last_mesh_class=None
         self.last_tcp_role=None
+        self.last_tcp_inbound_role=None
         self.tcp_mesh_waiters=set()
         self.cursor=0
         self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -397,6 +398,20 @@ class Server:
                              for thread in self.tcp_mesh_waiters)
                 deferred=deferred or (other_out and self.last_tcp_role!='outbound') or (
                     outgoing and other_in and self.last_tcp_role=='outbound')
+                # The retained input occupies an original inbound slot. New
+                # handlers must not win every inbound turn ahead of that same
+                # actual waiting owner. Alternate the two inbound roles only
+                # while both have live demand; this supplies no custody.
+                input_owner=getattr(self,'input_thread',None)
+                waiting_input=(input_owner in self.tcp_mesh_waiters
+                               and getattr(self,'input_active',None) is not None)
+                other_handler=any(thread is not current and thread is not self.outbound_owner
+                                  and thread is not input_owner for thread in self.tcp_mesh_waiters)
+                last_inbound=getattr(self,'last_tcp_inbound_role',None)
+                if not outgoing:
+                    deferred=deferred or (waiting_input and current is not input_owner
+                                          and last_inbound!='input') or (
+                        current is input_owner and other_handler and last_inbound=='input')
             if busy or deferred:
                 raise BlockingIOError(errno.EAGAIN,'local mesh turn pending; retain evidence')
             self.local_mesh_owner=current
@@ -451,7 +466,11 @@ class Server:
                     time.sleep(min(0.005,max(0,until-time.monotonic())))
             with self.guard:
                 self.last_mesh_class='ordinary' if ordinary else 'tcp'
-                if not ordinary:self.last_tcp_role='outbound' if current is self.outbound_owner else 'inbound'
+                if not ordinary:
+                    self.last_tcp_role='outbound' if current is self.outbound_owner else 'inbound'
+                    if current is not self.outbound_owner:
+                        self.last_tcp_inbound_role=('input' if current is getattr(self,'input_thread',None)
+                                                   else 'handler')
             acquired=True
             if costs is not None:costs.record(role,'acquire',time.monotonic()-attempt_started,True)
             # Ordinary's bound covers lock attempts, not full validation CPU.

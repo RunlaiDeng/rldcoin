@@ -1,0 +1,18 @@
+{
+  "format": "RLD-BFT-INBOUND-TURN-COUNTER-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-inbound-turn-counter-20261005.py": "ccdf0245fea5abe67721d7147d23b019708846d6a604c9fd54f30dd8753bec36",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-inbound-turn-counter-20261005.py": "ef7b9087dfae02aec39d8071d1bc53e55565698e18599a9829e69d43aa2237d6",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "fe4cb828270a508a3a815ba287737b145eb7fafb3101284bb36c2cfc86f9b86c",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh_cost.py": "d33f4856ebd9f4012c7605b5b04d154ed93de116f1aa93650878d4380b045758",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-v1-20261005-checks.json": "0483c0acd56363f0663e0ff7d711f52616e9fcfa4af59cafb1a520bbc1e0874e",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-frontier-counter-20261005-checks.json": "bdfae9cf60436a045845aa62f28953d788b828d9fd55d1f9863d262bd52630ac",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-v1-stopped-private-inventory-20261005.json": "44994238faa235e3c5f8a7fed9ff87651d8c3a50d5a4395103c0b95c8e8cbee9"
+  },
+  "hypothesis": "Production mesh-turn alternation distinguishes outbound/inbound but not actual retained input versus newly arriving handlers. A synthetic feasible 32-round interleaving may let every fresh handler precede a continuously waiting retained input while outgoing keeps waiting. Original .2lock acquisition, no real Node/Server/Native/thread/socket/keys/custody. Reproduce or refuse scheduling fix.",
+  "exit": "first assertion, complete32 synthetic rounds, original120deadline",
+  "full_fault_qualified": false
+}

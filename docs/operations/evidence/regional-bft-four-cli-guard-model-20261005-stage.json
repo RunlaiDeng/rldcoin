@@ -1,0 +1,20 @@
+{
+  "format": "RLD-BFT-FOUR-CLI-GUARD-MODEL-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_four_cli_controller_20261005.py": "6482c55f2c2fe08be0961e59e24df2b469018ffd611fc54673fc3b321faebd8a",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/test_bft_four_cli_controller_20261005.py": "4c6e1a67dc678b937ed2e66437137e297d59fccbaa0781df7814fe3560abda91",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_driver.py": "74468bb15c433fe2c3bd8de18d19413395b82886631231cf0e3bf833b03d4d5d",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_scope.py": "b8228c7173e1093ba7d38c15d44cb0250ccdcd1e25632da4f0d67fc66b074c5b",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_fixture_transport_contract.py": "f12f336ddf9d63a398b078155da23d72e45d53052adc01b753fd7f039676c47a",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional-ledger/src/main.rs": "d910cb2db8196eb99abf8434aa0617a6622c986887e8803cf44c8abbd9a07bf4",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_four_cli_guard_20261005.py": "1ee1160cc0829258fa2781000dc20ebb0c1e43f38ff476e225c1b0c08efaa2b2",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/test_bft_four_cli_guard_20261005.py": "d1febafd47f711238a53fc84cc12ba1f7a835531026e5d3fbe5248d61b798988",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-guard-model-20261005.py": "a2e55a70ff93054da79ef636d4479f0fa89b4d0476fc42f4cdbe706729ff9a32"
+  },
+  "hypothesis": "Actual successful partial start persists ownership; reused PID refuses before any signal; exact live PID requires original own process group; stopped ownership sends no signal. All subprocess/PID/signal probes mocked; no Native/Runtime/socket/sign/recovery.",
+  "exit": "first counterexample failure, all3 pure tests, original120seconds",
+  "full_fault_qualified": false
+}

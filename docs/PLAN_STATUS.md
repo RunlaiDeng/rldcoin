@@ -8,6 +8,57 @@
 
 
 
+## 2026-10-05 四普通CLI终态、完整运输反例及入站轮转修复
+
+完整fault仍FAIL/OPEN：runtime-v4原600耗尽612.570秒/6152封存、receive-v7原600
+耗尽616.052秒/6657及全部旧失败保持。新四普通CLI有限范围也 **FAIL原180耗尽，
+189.148秒含关闭/来源核对/封存，helper1，1889文件封存**；实际四进程各exit0，
+guardian未接管、forced[]、cleanup[]。17准备证书仅启动前；运行阶段无助手tick、
+Native.call预算注入、控制器共识/搬帧。四份最后Native观察均import13/local14/
+mature15/net2且不可花，但观察不是停止后完整cold权威；全8固定头cold/守恒未完成，
+最终Native状态未知。失败保管绝不重开/恢复/退款/复签/复制，168公开来源单独留存。
+这否定“四独立普通CLI足以在原180完成”的假设，不证明旧故障唯一原因。
+
+纯只读准确1889判别4.516秒/一次120通过：845签名档案索引、15活跃收据、32相关
+完整运输副本认证，四companion保留height14；完整Proposal15和parent14准备票均已
+源发布，部分指定目标缺运输保管/完整信封。全部四源共识发布pending为0，不能再把
+此边界归为终局尚未源发布或只有观察等待。无Native/Runtime/Node构造/新签名/恢复。
+初次非正式只读body查看误对Finalized取空Signed的next，StopIteration；不隐藏该错，
+未开Native/写保管。正式入口采用正确typed分支，完整封存字节保持。
+
+实际租约记录：中继1的input取得200次/146拒绝，outbound264/152；中继2input
+172/105、outbound270/152；均保留一个活动待处理入站任务。成本是重叠墙钟，不可
+相加、不能证明唯一现场原因。单独原源32轮合成反例.144秒/一次120通过：出站32、
+新handler32，而连续等待的原input0，原.2锁等待/未确认任务未变。证明已有公平规则
+只区分出站/入站，允许新handler反复赢过同一个保留入站任务。
+
+唯一作者修复 `interstellar_tcp.py`：仅在两入站角色均有实际live demand时轮转
+retained input与fresh handler，一个nullable进程内角色；开锁/完整Node open成功
+才推进轮次。保留原ordinary/outbound公平、.2锁尝试、3秒socket、2入站槽、完整请求/
+运输认证和真实fsync再保管。无证据/签署权缓存、无序列化/剪裁/容量或阈值放宽。
+相同32轮模型现在outbound32/handler16/input16，input最长每2轮进一次；另检查无任务/
+死owner、无效open及OS锁拒绝，不代替真实运输或Native付款。
+
+27相关检查3.389秒/一次120退出0。初始stage/checks错误声称全模拟、无真实mesh/
+Server/socket/transport signing；源审计证实其中15旧检查各建临时两节点TLS运输夹具，
+7成本和5新公平模型用mock Node。原错误记录保留，独立scope-correction明确更正，
+未重复检查；未量测真实次数用null，不能伪造0。无Native CLI/BFT Runtime/原生owner
+签署/恢复或失败保管重开。current161Python c40a8dc0…；Nodeb3604b89…不变，
+Native89/Core171/实际CLIa45387fa…/冻结receipt及1889封存再次核对不变。
+
+下一可证伪目标：一次60秒全新本机pinned-TLS小范围，使实际已认证保留input在新
+handler/outbound竞争下取得完整持久保管；原完整字节/收据/槽/拒绝/干净关闭判别，
+无Native/value/旧fixture。首错误/全部通过/原deadline退出、失败保留不续跑。
+只有通过且161来源/binary/controller绑定齐备，才一次全新8Native/四普通CLI原180
+总预算验证all4import13/mature15/net2及全8cold/完整信封/caller/owner/守恒。两新范围
+尚未启动，未分配600。round60/maturity2/quorum3/24height及所有容量保持；所有S/R/I/
+A–G/N/P、长期/PQ/独立/物理、VALUE-STRICT-01仍OPEN，不添加静态告警豁免。
+goal active；采用正文2ba62421/PDFc59f9fe8/receipt86821d19，goal前继哈希只报告不改。
+持久cwd仍UI待修，工具命令显式新rldcoin；单次相关测试子进程显式新目录tools下。
+冻结正文/PDF/官网、服务器/资金/权限/清理不扩大。
+证据：[本次终态、反例、修复与真实检查范围](operations/evidence/regional-bft-four-cli-inbound-outcome-20261005.json)。
+
+
 ## 2026-10-05 当前终局发送前沿修复与两次有限服务失败
 
 完整fault仍FAIL：runtime-v4原600/612.570秒/6152、receive-v7原600/616.052秒/6657及

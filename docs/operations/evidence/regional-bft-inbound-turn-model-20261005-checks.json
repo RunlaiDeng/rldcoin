@@ -1,0 +1,20 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 3.389475,
+  "helper_exit_code": 0,
+  "test_count": 27,
+  "stage_sha256": "5c98766e27f1722e1573f75513bd17fa02a5c53bf63d0527829124268b153280",
+  "log_sha256": "a8e02c541673d07a7a70deea1326cc34bf2bff46c2b0cc000b80fbf41c28fe2a",
+  "log_summary": "...........................\n----------------------------------------------------------------------\nRan 27 tests in 3.224s\n\nOK\n",
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "real_mesh_node_opens": 0,
+  "real_server_starts": 0,
+  "sockets": 0,
+  "signing": 0,
+  "recovery": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
