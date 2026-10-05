@@ -1,0 +1,15 @@
+{
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.716072,
+  "helper_exit_code": 1,
+  "stage_sha256": "01736d0ee659ea65885c95cca3f3631d971d782d22cc79569cc80f803aafbf78",
+  "helper_sha256": "78dfc08b49fb3a08117ff4772ab129c967f0ffc6bb6b160c4688c90068183c1b",
+  "controller_sha256": "fe4977248139fd84172b6d83ee2c9da7b9216511538ac204d298cd3427653449",
+  "log_sha256": "aa71f2b95cdda1b524411bd715b02ca6d975473a385765166e70b669cb250593",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-exact-nonce-refusal-counter-20261006.py\", line 36, in <module>\n    source_preps=[v for v in events if v['slot']==source and v['stage']=='outgoing_prepared' and v.get('packet_id')==packet and v.get('envelope_id')==content and v['monotonic_seconds']>=queued_at];assert source_preps;first=min(source_preps,key=lambda v:v['monotonic_seconds']);peer=first['peer'];prior=[v for v in events if v['slot']==source and v['peer']==peer and queued_at<=v['monotonic_seconds']<first['monotonic_seconds']];starts=[v for v in prior if v['stage']=='contact_start'];prepare_refused=[v for v in prior if v['stage']=='contact_failed' and v.get('failure_stage')=='prepare'];known_attempts={v['attempt'] for v in prior if v['stage'] in ('contact_start','contact_failed')};prepare_classes={k:sum(v.get('error_class')==k for v in prepare_refused) for k in sorted({v.get('error_class') for v in prepare_refused})}\n                                                                                                                                                                                                            ^^^^^^^^^^^^\nAssertionError\n",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

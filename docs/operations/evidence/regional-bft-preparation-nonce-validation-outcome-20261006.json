@@ -1,0 +1,544 @@
+{
+  "format": "RLD-BFT-PREPARATION-NONCE-VALIDATION-COUNTER-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T23:12:54.000947+00:00",
+  "goal_status": "active",
+  "whole_goal_completed": false,
+  "full_fault_status": "FAIL/OPEN",
+  "old_runtime_v4": {
+    "budget_seconds": 600,
+    "total_seconds": 612.57,
+    "sealed_files": 6152
+  },
+  "old_receive_v7": {
+    "budget_seconds": 600,
+    "total_seconds": 616.052,
+    "sealed_files": 6657
+  },
+  "latest_actual_live_scope": {
+    "status": "FAIL",
+    "budget_seconds": 180,
+    "total_seconds": 199.77,
+    "helper_exit_code": 1,
+    "failure": "ScopeDeadline: original180second service component deadline",
+    "budget_exhausted": true,
+    "all4_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "guardian_used": false,
+    "forced": [],
+    "cleanup_failure": null,
+    "sealed_files": 1615,
+    "sealed_inventory_sha256": "dbea45e939aae53804bf64b61faa5ee611576c3d1aa058dc181b346f2aa64716",
+    "failed_currency_never_reopen": true,
+    "source_only_archive_files": 292,
+    "retained_companion_height_observations": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "final_native_state_known": false,
+    "maturity15_full8_cold_caller_owner_conservation_incomplete": true
+  },
+  "all_older_failures_preserved": true,
+  "original_receiver_maturity_keyless_drain_all12_cold_conservation_not_completed": true,
+  "actual_new_work": "Ran unchanged production selection/route/byte kernel on explicit synthetic models; authenticated exact archived signed target via read-only unbound methods; matched original packet/frame/nonce/peer diagnostic counterparts; executed full unbound signed validate_state on4sealed real mesh images. No production source optimization or live test selected.",
+  "selector": {
+    "first_fail_seconds": 1.015766,
+    "first_fail_reason": "Incorrect active-only assumption for an archived exact target; failed before model conclusion; source/report retained.",
+    "corrected_pass_seconds": 4.62107,
+    "repair_budget_seconds": 118,
+    "combined_original_execution_ceiling_seconds": 120,
+    "combined_seconds": 5.636836,
+    "models": 12,
+    "worst_first_prepare_round": 38,
+    "sixty_preparation_counterexamples": [],
+    "original_bounds_unchanged": true,
+    "actual_signing_atomic_authentication_were_models": true,
+    "suppression_modeled_empty_not_actual_live_suppression": true,
+    "old_live_eligibility_not_reconstructed": true,
+    "stopped_target_route_and_size": [
+      {
+        "active_packets": 86,
+        "alone_exceeds_ceiling": false,
+        "archived_target_not_pending": false,
+        "byte_ceiling": 20971520,
+        "candidate_bytes_with_placeholder_signature": 295207,
+        "destination": 2,
+        "recent_packets": 23,
+        "source": 1,
+        "stopped_direct_route_valid": true,
+        "stopped_state_not_old_live_eligibility": true,
+        "target_receipted_at_stop": false,
+        "target_recent_at_stop": false,
+        "target_storage_at_stop": "active"
+      },
+      {
+        "active_packets": 62,
+        "alone_exceeds_ceiling": false,
+        "archived_target_not_pending": true,
+        "byte_ceiling": 20971520,
+        "candidate_bytes_with_placeholder_signature": 295207,
+        "destination": 1,
+        "recent_packets": 19,
+        "source": 2,
+        "stopped_direct_route_valid": true,
+        "stopped_state_not_old_live_eligibility": true,
+        "target_receipted_at_stop": true,
+        "target_recent_at_stop": false,
+        "target_storage_at_stop": "archive"
+      }
+    ],
+    "byte_case_scope_correction": "Two modeled7MiB packets plus small total14687399bytes fits below20MiB; this checks whole bytes and small inclusion, NOT exhaustion-pressure rotation.",
+    "selector_optimization_selected": false
+  },
+  "exact_nonce": {
+    "first_fail_seconds": 0.716072,
+    "first_fail_reason": "Transport rows use frame_id; envelope_id filter incorrectly excluded all preparations. No counterpart conclusion made; failure/source retained.",
+    "corrected_pass_seconds": 1.005873,
+    "repair_budget_seconds": 118,
+    "combined_original_execution_ceiling_seconds": 120,
+    "combined_seconds": 1.721945,
+    "same_connection_diagnostic_refusal_classes": {
+      "BlockingIOError": 18
+    },
+    "negative_controls": [
+      "wrong-nonce-refuses-counterpart",
+      "wrong-packet_id-refuses-counterpart",
+      "wrong-slot-refuses-counterpart"
+    ],
+    "direct_source_first_prepare_counts": [
+      {
+        "destination": 2,
+        "first_source_peer": 2,
+        "first_source_prepare_seconds": 69.052401,
+        "kind": "Vote",
+        "phase": "Prepare",
+        "prior_prepare_refusal_classes": {
+          "BlockingIOError": 42
+        },
+        "prior_same_peer_completed_preparations": 17,
+        "prior_same_peer_known_attempts": 59,
+        "prior_same_peer_pre_open_prepare_refusals": 42,
+        "source": 1,
+        "stopped_destination_complete_custody": false,
+        "stopped_native_retention": false
+      },
+      {
+        "destination": 1,
+        "first_source_peer": 1,
+        "first_source_prepare_seconds": 60.469421,
+        "kind": "Vote",
+        "phase": "Prepare",
+        "prior_prepare_refusal_classes": {
+          "BlockingIOError": 29
+        },
+        "prior_same_peer_completed_preparations": 19,
+        "prior_same_peer_known_attempts": 48,
+        "prior_same_peer_pre_open_prepare_refusals": 29,
+        "source": 2,
+        "stopped_destination_complete_custody": true,
+        "stopped_native_retention": true
+      }
+    ],
+    "real_signed_response_persisted": false,
+    "diagnostic_not_native_authority": true,
+    "decision": "Do not infer bad signatures from response_authentication ValueError. Select original local lease/validation cost discrimination."
+  },
+  "actual_readonly_validation": {
+    "pass_seconds": 4.307857,
+    "original_budget_seconds": 60,
+    "full_signed_unbound_validation_calls": 12,
+    "all4_wrong_network_rejected": true,
+    "all_retained_open_failure_counts_zero": true,
+    "retained_role_cost_rows": [
+      {
+        "acquire_calls": 45,
+        "acquire_failures": 1,
+        "hold_wall_max": 0.416746,
+        "node_open_calls": 44,
+        "node_open_failures": 0,
+        "open_wall_max": 0.16978,
+        "open_wall_total": 4.924924,
+        "role": "carriage",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 112,
+        "acquire_failures": 19,
+        "hold_wall_max": 0.577298,
+        "node_open_calls": 93,
+        "node_open_failures": 0,
+        "open_wall_max": 0.178304,
+        "open_wall_total": 12.148755,
+        "role": "receive",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 42,
+        "acquire_failures": 9,
+        "hold_wall_max": 0.516196,
+        "node_open_calls": 33,
+        "node_open_failures": 0,
+        "open_wall_max": 0.159697,
+        "open_wall_total": 3.927902,
+        "role": "tcp-handler",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 12,
+        "acquire_failures": 3,
+        "hold_wall_max": 0.47302,
+        "node_open_calls": 9,
+        "node_open_failures": 0,
+        "open_wall_max": 0.159786,
+        "open_wall_total": 1.350764,
+        "role": "tcp-input",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 195,
+        "acquire_failures": 44,
+        "hold_wall_max": 0.500858,
+        "node_open_calls": 151,
+        "node_open_failures": 0,
+        "open_wall_max": 0.289345,
+        "open_wall_total": 20.323092,
+        "role": "tcp-outbound",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 52,
+        "acquire_failures": 24,
+        "hold_wall_max": 0.776178,
+        "node_open_calls": 28,
+        "node_open_failures": 0,
+        "open_wall_max": 0.359289,
+        "open_wall_total": 5.58818,
+        "role": "carriage",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 69,
+        "acquire_failures": 39,
+        "hold_wall_max": 1.162992,
+        "node_open_calls": 30,
+        "node_open_failures": 0,
+        "open_wall_max": 0.374284,
+        "open_wall_total": 6.518547,
+        "role": "receive",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 162,
+        "acquire_failures": 127,
+        "hold_wall_max": 0.753377,
+        "node_open_calls": 35,
+        "node_open_failures": 0,
+        "open_wall_max": 0.343174,
+        "open_wall_total": 5.572367,
+        "role": "tcp-handler",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 170,
+        "acquire_failures": 112,
+        "hold_wall_max": 0.782309,
+        "node_open_calls": 58,
+        "node_open_failures": 0,
+        "open_wall_max": 0.339617,
+        "open_wall_total": 14.524176,
+        "role": "tcp-input",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 267,
+        "acquire_failures": 166,
+        "hold_wall_max": 0.807197,
+        "node_open_calls": 101,
+        "node_open_failures": 0,
+        "open_wall_max": 0.38303,
+        "open_wall_total": 21.942572,
+        "role": "tcp-outbound",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 50,
+        "acquire_failures": 17,
+        "hold_wall_max": 0.678913,
+        "node_open_calls": 33,
+        "node_open_failures": 0,
+        "open_wall_max": 0.274358,
+        "open_wall_total": 6.228358,
+        "role": "carriage",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 83,
+        "acquire_failures": 38,
+        "hold_wall_max": 1.004612,
+        "node_open_calls": 45,
+        "node_open_failures": 0,
+        "open_wall_max": 0.329931,
+        "open_wall_total": 9.580984,
+        "role": "receive",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 165,
+        "acquire_failures": 138,
+        "hold_wall_max": 0.670002,
+        "node_open_calls": 27,
+        "node_open_failures": 0,
+        "open_wall_max": 0.278816,
+        "open_wall_total": 3.910372,
+        "role": "tcp-handler",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 197,
+        "acquire_failures": 135,
+        "hold_wall_max": 0.885413,
+        "node_open_calls": 62,
+        "node_open_failures": 0,
+        "open_wall_max": 0.422173,
+        "open_wall_total": 14.735802,
+        "role": "tcp-input",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 274,
+        "acquire_failures": 176,
+        "hold_wall_max": 0.750902,
+        "node_open_calls": 98,
+        "node_open_failures": 0,
+        "open_wall_max": 0.335609,
+        "open_wall_total": 20.033251,
+        "role": "tcp-outbound",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 47,
+        "acquire_failures": 2,
+        "hold_wall_max": 0.385553,
+        "node_open_calls": 45,
+        "node_open_failures": 0,
+        "open_wall_max": 0.144701,
+        "open_wall_total": 4.807212,
+        "role": "carriage",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 105,
+        "acquire_failures": 9,
+        "hold_wall_max": 0.573339,
+        "node_open_calls": 96,
+        "node_open_failures": 0,
+        "open_wall_max": 0.173273,
+        "open_wall_total": 11.79322,
+        "role": "receive",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 41,
+        "acquire_failures": 11,
+        "hold_wall_max": 0.528501,
+        "node_open_calls": 30,
+        "node_open_failures": 0,
+        "open_wall_max": 0.166789,
+        "open_wall_total": 3.287858,
+        "role": "tcp-handler",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 11,
+        "acquire_failures": 0,
+        "hold_wall_max": 0.66087,
+        "node_open_calls": 11,
+        "node_open_failures": 0,
+        "open_wall_max": 0.3099,
+        "open_wall_total": 1.666853,
+        "role": "tcp-input",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 200,
+        "acquire_failures": 36,
+        "hold_wall_max": 0.404898,
+        "node_open_calls": 164,
+        "node_open_failures": 0,
+        "open_wall_max": 0.229378,
+        "open_wall_total": 20.373397,
+        "role": "tcp-outbound",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      }
+    ],
+    "steady_slow_slot1_rows": [
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.25105,
+        "load_wall_seconds": 0.17563,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000862
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000496
+          },
+          "receipt_check": {
+            "calls": 4,
+            "wall_seconds": 0.001605
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.064358
+          }
+        },
+        "round": 2,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.07542
+      },
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.250355,
+        "load_wall_seconds": 0.173162,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000944
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000487
+          },
+          "receipt_check": {
+            "calls": 4,
+            "wall_seconds": 0.001709
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.065691
+          }
+        },
+        "round": 3,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.077193
+      }
+    ],
+    "point_two_is_discriminator_not_new_open_deadline": true,
+    "wall_not_cpu_or_live_benchmark": true,
+    "decision": "Observed counters do not support OS flock/open failure explanation in retained snapshots. Slow warm slot1 load triggers narrow active-state read cost profile; no fairness or cache repair inferred."
+  },
+  "all_private1615_files_unchanged": true,
+  "real_native_runtime_meshnode_socket_sign_recovery_custody_publications": 0,
+  "self_owned_previous_pids_checked_absent": [
+    47951,
+    47971,
+    71690,
+    72085,
+    72086,
+    72087,
+    72088
+  ],
+  "no_active_self_test": true,
+  "bound_file_sha256": {
+    "docs/operations/evidence/regional-bft-receive-trace-journal-outcome-20261006.json": "3a393ee1e51edd1234f6d72869f92abe704249f0df518ae77a3b6f280b74226a",
+    "docs/operations/evidence/regional-bft-four-cli-trace-journal-receive-identity-20261006.json": "4debdb0bc17847c055b4ae55ceddae4d0f824a5d21e56b3befb7b40e0a9d86f9",
+    "docs/operations/evidence/regional-bft-carriage-preparation-counter-20261006-stage.json": "cbf71f173708d0579dc4363d05f966aec78d53cdf58bcbbe297fda582ad07342",
+    "docs/operations/evidence/regional-bft-carriage-preparation-counter-20261006-checks.json": "f9523bd1f9b0dd3d59e0738ff73dbaf4db6a19e20af07c901969c13b9cb549df",
+    "docs/operations/evidence/regional-bft-carriage-preparation-counter-v2-20261006-stage.json": "3b50400dac76e213dd66c8eb0eeb2b19e50dbcdce51fed5f48a9eeab8526556b",
+    "docs/operations/evidence/regional-bft-carriage-preparation-counter-v2-20261006-checks.json": "2d65b1b0fda3bf554f0749c945328ac77a7b61625fd2684e0586be03ac23d408",
+    "docs/operations/evidence/regional-bft-exact-nonce-refusal-counter-20261006-stage.json": "01736d0ee659ea65885c95cca3f3631d971d782d22cc79569cc80f803aafbf78",
+    "docs/operations/evidence/regional-bft-exact-nonce-refusal-counter-20261006-checks.json": "cbdf916d269db0c30845e518cee2868c3f66dd1e1b0ad5cd7522749b16ea85e8",
+    "docs/operations/evidence/regional-bft-exact-nonce-refusal-counter-v2-20261006-stage.json": "b45c6ea44dc6af4358f51e299bcf208cd34498896a93ef9e9abd86032330e575",
+    "docs/operations/evidence/regional-bft-exact-nonce-refusal-counter-v2-20261006-checks.json": "85c273b180021b9e4b567d0d100cfa10812b73cfed0cb3bea70960b8243d138e",
+    "docs/operations/evidence/regional-bft-readonly-validation-cost-counter-20261006-stage.json": "9c09970b458e976d51afd16d339f88afb99e0dc77f55899702470783cbe995ed",
+    "docs/operations/evidence/regional-bft-readonly-validation-cost-counter-20261006-checks.json": "035b1a48818e9298c734097cc53b59168c59239341dfea520d25afbea5a5a4c3",
+    "tmp/default-relay-20260930/failed-carriage-preparation-counter-source-private-20261006/SOURCE_MANIFEST.json": "c2f67fd8b6d5f76626a74369acbe9e0c2803a30f2943a42061eb20986c4d8bf4",
+    "tmp/default-relay-20260930/failed-exact-nonce-refusal-counter-source-private-20261006/SOURCE_MANIFEST.json": "5cde1cb716f359c67f65588c23eb14e54e2acec5a9874e1b35faaf7d00dc54d4"
+  },
+  "source_binding": {
+    "python_files": 192,
+    "python_commitment": "71dbe10e56d2e8164a88b094250f9a544a2da13819f723e8a4539416ae97f897",
+    "native_implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+    "native_manifest": "346ca668e5e798af407163bb49acea012f2d348dcadd92199a2bd9176db63acd",
+    "core_manifest": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+    "actual_cli_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+    "protocol_sources_and_actual_binary_unchanged": true
+  },
+  "value_strict_01": "OPEN; two baseline warnings and120second exhaustion remain, unchanged-source triggers not met",
+  "all_S_R_I_A_G_N_P_targets_unreduced": true,
+  "all_history_PQ_independent_physical_qualification_open": true,
+  "adopted_whitepaper_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "adopted_whitepaper_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_text_old_c906_f825_predecessor_reference_reported": true,
+  "persistent_cwd": "old UI cwd remains pending; never claimed changed",
+  "all_commands_explicit_new_workdir": true,
+  "frozen_site_server_mainnet_funds_permissions_private_cleanup_unchanged": true,
+  "next": {
+    "status": "NOT_STARTED",
+    "budget_seconds": 60,
+    "attempts": 1,
+    "mode": "source-bound offline/read-only active-state-load cost discriminator",
+    "hypothesis": "Slot1 two warm exact full load+validate .251050/.250355 exceeds the declared .2 discriminator; load alone .175630/.173162 dominates. Determine whether exact canonical image/frame-pool encoding, JSON decode, or expanded commitment accounts for >=20 percent of original complete load before choosing any serialization fix.",
+    "smallest_input": "Same sealed slot1 complete active-state image, two finite read/decode profiles; original ownership/schema/canonical/expanded commitments and full signed validation preserved. No old Node/Runtime/Native construction, identity key, lock, recovery, copy, save or signing.",
+    "exit": "first byte/source/schema/negative mismatch, two exact complete profiles, or once original60 deadline",
+    "decisions": {
+      "canonical_share_at_least_twenty_percent": "Consider only operation-local exact canonical byte serialization candidate and relevant negative regression; no unchecked state/authentication cache.",
+      "canonical_share_below_twenty_percent": "Do not select serialization repair; narrow exact lease handoff/retry opportunity instead."
+    },
+    "new_live180_budget": 0,
+    "new_full600_budget": 0,
+    "original_bounds": "600stage/180finite/60round/24height/maturity2/quorum3/256active/32recent/4packet/20MiB/.2lock/3socket/allhint/archive/native bounds unchanged"
+  }
+}

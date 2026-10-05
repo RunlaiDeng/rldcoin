@@ -1017,3 +1017,19 @@ goal active，采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…。
 
 下一仅一次120离线/read-only精确selector/route/字节反例，在原四包/256active/32recent/20MiB及现有hint/peer边界下，区分历史交通/失败/suppression导致的准备等待与真实route/byte资格；模型输入和未知旧live状态明确分开，旧签署证据复用、不打开Node/Native/Runtime、不读取旧钥或签署。首不一致/最小判别/原期限退出；有反例才选最小修复，没有则保留未知并收窄原nonce/拒绝input证据。新180/full600预算当前均0，禁止未变长重跑。VALUE-STRICT-01及全部S/R/I/A–G/N/P/长期/PQ/独立/物理仍OPEN；goal active，冻结2ba62421/c59f9fe8/receipt86821d19采用，goal c906/f825仅前继引用。旧cwd仍UI待修；所有命令显式新rldcoin，白皮书/官网/服务器/资金/权限/清理不扩大。
 证据：[实际源码行为、全部终态与下一最小判别](operations/evidence/regional-bft-receive-trace-journal-outcome-20261006.json)。
+
+
+## 2026-10-06 发送准备反例、准确nonce与只读成本判别
+
+完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152封存、receive-v7原600/616.052秒/6657封存及所有旧失败不变；最近普通四CLI也FAIL原180/199.770秒/1615封存。原收款成熟、keyless drain、all12完整cold/守恒未完成，伴随高度和干净停止不等于Native终态。本文历史“全部通过”仅指当段来源和明确有限scope，不能覆盖后续失败或总验收。
+
+实际完成离线发送准备判别：首 **FAIL1.016秒**，入口误把来源仍有完整签署包等同active，实际一个目标已archive；未到模型，原源码/日志/失败另存。仅改为既有unbound归档认证读取，新名称 **PASS4.621秒/原剩余118**，两次合计5.637秒不超过原120。12组原route/transit_groups/exchange/prepare内核模型，86history/2目标/每轮4新包至256、64丢失发送轮、两peer/六seed、warm和每次忘记hint，所有目标均准备，最慢38轮，未复现预设60轮反例。真实签署/保管为0，认证/atomic和空suppression明确是模型；模型轮不等于现场秒，不能复原旧live资格。两个准确签署目标单包295207bytes低于20MiB；停后直连route有效，一active未receipt、一archive已receipt。选择器暂不修。字节补充两7MiB模型包加small总14687399bytes，**没有触发20MiB组合耗尽**，不能称耗尽压力轮转已验证。
+
+准确nonce判别首 **FAIL0.716秒**：transport行只有frame_id，错误envelope_id过滤误排全部准备；原失败保留。仅用source入队准确frame绑定修正，新名称 **PASS1.006秒/剩余118**，合计1.722秒不超过原120。12448行/142.135秒共同完整前缀中，18准确packet/frame/nonce/peer连接匹配接收端BlockingIOError，wrong nonce/packet/slot拒配；部分原请求随后deferred保管。不能把发送端response_authentication ValueError单独说成坏签名，完整签署TCP响应没有另存，诊断非Native权威。两个直接目标首次prepare69.052/60.469秒之前，同peer分别42/29次prepare阶段BlockingIOError和17/19次成功准备，17/19不能当60次内核饥饿证明。
+
+另一次60只读成本 **PASS4.308秒**：四封存Mesh state各一次transit/archive witness冷、两次暖，共12完整unbound validate_state，全部签署/路由/容量/档案库存仍检查，四wrong network拒绝；没有Node构造/旧identity钥/锁/恢复/save/socket/签署。保留快照各角色Node open失败均0，1/2 outbound分别166/267、176/274次acquire失败且成功open数量准确等于成功acquire；这些快照不支持OS flock/open拒绝解释，尾部/准确每次CPU未知。slot1暖完整load+validate为.251050/.250355秒，load独占.175630/.173162秒；.2仅预定判别阈值，不改变原锁或校验deadline。这是同机停后wall成本，不能叫现场CPU或全服务提速。
+
+下一仅一次60离线/read-only加载成本分解：同一准确slot1全图两次有限read/decode，区分完整JSON decode、canonical image/framepool重编码、expanded commitment；若canonical占完整load≥20%，才选保留完整字节/普通认证的单次操作序列化候选，低于则不改codec，转准确lease让位/重试机会。首来源/字节/schema/负例不一致、两次完整判别或原60退出；未启动。新180/full600预算仍0，不加deadline或重跑未变范围。所有6152/6657/1615及失败counter原件保留，1615字节未变；192Python/89Native/171Core/实际CLI未改，源/实际binary/controller/evidence分别绑定。先前自有PID核验均不存在，当前没有活动的自有测试。
+
+VALUE-STRICT-01两基线及120秒耗尽继续OPEN，原120诊断/300修复触发未满足，不被地区strict替代。S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、长期/PQ/独立/物理均保持。goal active，采用AGENTS与freeze receipt正文2ba62421…/PDFc59f9fe8…/receipt86821d19…；goal c906/f825仅前继引用，已报告不改正文。所有命令显式新rldcoin，持久cwd仍UI待修；冻结白皮书/官网/远端/权限/资金/清理不扩大。
+证据：[实际内核、原nonce和完整只读校验行为](operations/evidence/regional-bft-preparation-nonce-validation-outcome-20261006.json)。

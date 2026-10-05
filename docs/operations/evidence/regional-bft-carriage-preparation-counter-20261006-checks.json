@@ -1,0 +1,15 @@
+{
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 1.015766,
+  "helper_exit_code": 1,
+  "stage_sha256": "cbf71f173708d0579dc4363d05f966aec78d53cdf58bcbbe297fda582ad07342",
+  "helper_sha256": "1ac8b2404e6e090caf5de49c1ca77d62f982772e9489314bdc26bd017ed43459",
+  "controller_sha256": "2fa70b19c410961cb63c7a51f707d8b0678a020f0df5747b40d06b5426f31828",
+  "log_sha256": "d27b74b58e766d7e9ed8c7d7fbd785c16a60f2c54c5e52100c716bfc7b080a6c",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-carriage-preparation-counter-20261006.py\", line 23, in <module>\n    ids={v['packet_id'] for v in relevant[0]['paths'] if v['node']==source};assert len(ids)==1;ident=next(iter(ids));assert ident in st['messages'];transit=st['messages'][ident]\n                                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

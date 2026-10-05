@@ -1,0 +1,671 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 4.307857,
+  "helper_exit_code": 0,
+  "stage_sha256": "9c09970b458e976d51afd16d339f88afb99e0dc77f55899702470783cbe995ed",
+  "helper_sha256": "cd7b20518601379079e6bb6af8817a34e479f8dfd7943eab7ba79ed3dd29fb36",
+  "controller_sha256": "e4556967f128df46615bf0af4e0ce1b1e3c2ae954b22a37ccd37b5fad9194dc9",
+  "log_sha256": "f32826119a3c8d9c3404cf487a149b8e8c1c83f33016532768ffbfc905f8a95b",
+  "result": {
+    "actual_local_flock_rejections_evidenced": false,
+    "all_retained_node_open_failures_zero": true,
+    "completed": true,
+    "duration_seconds": 4.170482,
+    "full_fault_qualified": false,
+    "private1615_files_unchanged": true,
+    "real_native_runtime_node_socket_signing_recovery_custody_write": 0,
+    "retained_role_cost_rows": [
+      {
+        "acquire_calls": 45,
+        "acquire_failures": 1,
+        "hold_wall_max": 0.416746,
+        "node_open_calls": 44,
+        "node_open_failures": 0,
+        "open_wall_max": 0.16978,
+        "open_wall_total": 4.924924,
+        "role": "carriage",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 112,
+        "acquire_failures": 19,
+        "hold_wall_max": 0.577298,
+        "node_open_calls": 93,
+        "node_open_failures": 0,
+        "open_wall_max": 0.178304,
+        "open_wall_total": 12.148755,
+        "role": "receive",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 42,
+        "acquire_failures": 9,
+        "hold_wall_max": 0.516196,
+        "node_open_calls": 33,
+        "node_open_failures": 0,
+        "open_wall_max": 0.159697,
+        "open_wall_total": 3.927902,
+        "role": "tcp-handler",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 12,
+        "acquire_failures": 3,
+        "hold_wall_max": 0.47302,
+        "node_open_calls": 9,
+        "node_open_failures": 0,
+        "open_wall_max": 0.159786,
+        "open_wall_total": 1.350764,
+        "role": "tcp-input",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 195,
+        "acquire_failures": 44,
+        "hold_wall_max": 0.500858,
+        "node_open_calls": 151,
+        "node_open_failures": 0,
+        "open_wall_max": 0.289345,
+        "open_wall_total": 20.323092,
+        "role": "tcp-outbound",
+        "slot": 0,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 52,
+        "acquire_failures": 24,
+        "hold_wall_max": 0.776178,
+        "node_open_calls": 28,
+        "node_open_failures": 0,
+        "open_wall_max": 0.359289,
+        "open_wall_total": 5.58818,
+        "role": "carriage",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 69,
+        "acquire_failures": 39,
+        "hold_wall_max": 1.162992,
+        "node_open_calls": 30,
+        "node_open_failures": 0,
+        "open_wall_max": 0.374284,
+        "open_wall_total": 6.518547,
+        "role": "receive",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 162,
+        "acquire_failures": 127,
+        "hold_wall_max": 0.753377,
+        "node_open_calls": 35,
+        "node_open_failures": 0,
+        "open_wall_max": 0.343174,
+        "open_wall_total": 5.572367,
+        "role": "tcp-handler",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 170,
+        "acquire_failures": 112,
+        "hold_wall_max": 0.782309,
+        "node_open_calls": 58,
+        "node_open_failures": 0,
+        "open_wall_max": 0.339617,
+        "open_wall_total": 14.524176,
+        "role": "tcp-input",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 267,
+        "acquire_failures": 166,
+        "hold_wall_max": 0.807197,
+        "node_open_calls": 101,
+        "node_open_failures": 0,
+        "open_wall_max": 0.38303,
+        "open_wall_total": 21.942572,
+        "role": "tcp-outbound",
+        "slot": 1,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 50,
+        "acquire_failures": 17,
+        "hold_wall_max": 0.678913,
+        "node_open_calls": 33,
+        "node_open_failures": 0,
+        "open_wall_max": 0.274358,
+        "open_wall_total": 6.228358,
+        "role": "carriage",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 83,
+        "acquire_failures": 38,
+        "hold_wall_max": 1.004612,
+        "node_open_calls": 45,
+        "node_open_failures": 0,
+        "open_wall_max": 0.329931,
+        "open_wall_total": 9.580984,
+        "role": "receive",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 165,
+        "acquire_failures": 138,
+        "hold_wall_max": 0.670002,
+        "node_open_calls": 27,
+        "node_open_failures": 0,
+        "open_wall_max": 0.278816,
+        "open_wall_total": 3.910372,
+        "role": "tcp-handler",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 197,
+        "acquire_failures": 135,
+        "hold_wall_max": 0.885413,
+        "node_open_calls": 62,
+        "node_open_failures": 0,
+        "open_wall_max": 0.422173,
+        "open_wall_total": 14.735802,
+        "role": "tcp-input",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 274,
+        "acquire_failures": 176,
+        "hold_wall_max": 0.750902,
+        "node_open_calls": 98,
+        "node_open_failures": 0,
+        "open_wall_max": 0.335609,
+        "open_wall_total": 20.033251,
+        "role": "tcp-outbound",
+        "slot": 2,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 47,
+        "acquire_failures": 2,
+        "hold_wall_max": 0.385553,
+        "node_open_calls": 45,
+        "node_open_failures": 0,
+        "open_wall_max": 0.144701,
+        "open_wall_total": 4.807212,
+        "role": "carriage",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 105,
+        "acquire_failures": 9,
+        "hold_wall_max": 0.573339,
+        "node_open_calls": 96,
+        "node_open_failures": 0,
+        "open_wall_max": 0.173273,
+        "open_wall_total": 11.79322,
+        "role": "receive",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 41,
+        "acquire_failures": 11,
+        "hold_wall_max": 0.528501,
+        "node_open_calls": 30,
+        "node_open_failures": 0,
+        "open_wall_max": 0.166789,
+        "open_wall_total": 3.287858,
+        "role": "tcp-handler",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 11,
+        "acquire_failures": 0,
+        "hold_wall_max": 0.66087,
+        "node_open_calls": 11,
+        "node_open_failures": 0,
+        "open_wall_max": 0.3099,
+        "open_wall_total": 1.666853,
+        "role": "tcp-input",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      },
+      {
+        "acquire_calls": 200,
+        "acquire_failures": 36,
+        "hold_wall_max": 0.404898,
+        "node_open_calls": 164,
+        "node_open_failures": 0,
+        "open_wall_max": 0.229378,
+        "open_wall_total": 20.373397,
+        "role": "tcp-outbound",
+        "slot": 3,
+        "snapshot_not_terminal_or_per_nonce": true,
+        "successful_open_but_acquire_refused": 0
+      }
+    ],
+    "snapshot_tail_and_per_nonce_cpu_unknown": true,
+    "threshold_is_discriminator_not_new_validation_deadline": true,
+    "threshold_seconds": 0.2,
+    "unbound_full_signed_state_validation": [
+      {
+        "active": 43,
+        "archive_rows": 135,
+        "load_plus_validate_wall_seconds": 0.433172,
+        "load_wall_seconds": 0.082561,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.001797
+          },
+          "inventory_check": {
+            "calls": 1,
+            "wall_seconds": 0.000277
+          },
+          "receipt_check": {
+            "calls": 135,
+            "wall_seconds": 0.055447
+          },
+          "transit_check": {
+            "calls": 43,
+            "wall_seconds": 0.252072
+          }
+        },
+        "round": 1,
+        "slot": 0,
+        "transit_archive_witnesses_cold_only": true,
+        "validation_wall_seconds": 0.350611
+      },
+      {
+        "active": 43,
+        "archive_rows": 135,
+        "load_plus_validate_wall_seconds": 0.121161,
+        "load_wall_seconds": 0.081348,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000844
+          },
+          "inventory_check": {
+            "calls": 1,
+            "wall_seconds": 0.000286
+          },
+          "transit_check": {
+            "calls": 43,
+            "wall_seconds": 0.032447
+          }
+        },
+        "round": 2,
+        "slot": 0,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.039813
+      },
+      {
+        "active": 43,
+        "archive_rows": 135,
+        "load_plus_validate_wall_seconds": 0.121791,
+        "load_wall_seconds": 0.081204,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000814
+          },
+          "inventory_check": {
+            "calls": 1,
+            "wall_seconds": 0.000316
+          },
+          "transit_check": {
+            "calls": 43,
+            "wall_seconds": 0.033104
+          }
+        },
+        "round": 3,
+        "slot": 0,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.040586
+      },
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.826726,
+        "load_wall_seconds": 0.174704,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000868
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000537
+          },
+          "receipt_check": {
+            "calls": 197,
+            "wall_seconds": 0.07994
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.51294
+          }
+        },
+        "round": 1,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": true,
+        "validation_wall_seconds": 0.652022
+      },
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.25105,
+        "load_wall_seconds": 0.17563,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000862
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000496
+          },
+          "receipt_check": {
+            "calls": 4,
+            "wall_seconds": 0.001605
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.064358
+          }
+        },
+        "round": 2,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.07542
+      },
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.250355,
+        "load_wall_seconds": 0.173162,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000944
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000487
+          },
+          "receipt_check": {
+            "calls": 4,
+            "wall_seconds": 0.001709
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.065691
+          }
+        },
+        "round": 3,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.077193
+      },
+      {
+        "active": 62,
+        "archive_rows": 186,
+        "load_plus_validate_wall_seconds": 0.624206,
+        "load_wall_seconds": 0.123203,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000902
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000511
+          },
+          "receipt_check": {
+            "calls": 188,
+            "wall_seconds": 0.077363
+          },
+          "transit_check": {
+            "calls": 62,
+            "wall_seconds": 0.366866
+          }
+        },
+        "round": 1,
+        "slot": 2,
+        "transit_archive_witnesses_cold_only": true,
+        "validation_wall_seconds": 0.501003
+      },
+      {
+        "active": 62,
+        "archive_rows": 186,
+        "load_plus_validate_wall_seconds": 0.187862,
+        "load_wall_seconds": 0.128677,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000802
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000519
+          },
+          "receipt_check": {
+            "calls": 2,
+            "wall_seconds": 0.000798
+          },
+          "transit_check": {
+            "calls": 62,
+            "wall_seconds": 0.048775
+          }
+        },
+        "round": 2,
+        "slot": 2,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.059185
+      },
+      {
+        "active": 62,
+        "archive_rows": 186,
+        "load_plus_validate_wall_seconds": 0.184589,
+        "load_wall_seconds": 0.12782,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000852
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.00052
+          },
+          "receipt_check": {
+            "calls": 2,
+            "wall_seconds": 0.000857
+          },
+          "transit_check": {
+            "calls": 62,
+            "wall_seconds": 0.047102
+          }
+        },
+        "round": 3,
+        "slot": 2,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.056769
+      },
+      {
+        "active": 34,
+        "archive_rows": 123,
+        "load_plus_validate_wall_seconds": 0.350437,
+        "load_wall_seconds": 0.063776,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000818
+          },
+          "inventory_check": {
+            "calls": 1,
+            "wall_seconds": 0.000267
+          },
+          "receipt_check": {
+            "calls": 123,
+            "wall_seconds": 0.050075
+          },
+          "transit_check": {
+            "calls": 34,
+            "wall_seconds": 0.19865
+          }
+        },
+        "round": 1,
+        "slot": 3,
+        "transit_archive_witnesses_cold_only": true,
+        "validation_wall_seconds": 0.286661
+      },
+      {
+        "active": 34,
+        "archive_rows": 123,
+        "load_plus_validate_wall_seconds": 0.09471,
+        "load_wall_seconds": 0.062138,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000833
+          },
+          "inventory_check": {
+            "calls": 1,
+            "wall_seconds": 0.000255
+          },
+          "transit_check": {
+            "calls": 34,
+            "wall_seconds": 0.025846
+          }
+        },
+        "round": 2,
+        "slot": 3,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.032572
+      },
+      {
+        "active": 34,
+        "archive_rows": 123,
+        "load_plus_validate_wall_seconds": 0.09371,
+        "load_wall_seconds": 0.061863,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000788
+          },
+          "inventory_check": {
+            "calls": 1,
+            "wall_seconds": 0.000258
+          },
+          "transit_check": {
+            "calls": 34,
+            "wall_seconds": 0.025428
+          }
+        },
+        "round": 3,
+        "slot": 3,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.031848
+      }
+    ],
+    "wall_cost_not_cpu_or_live_benchmark": true,
+    "warm_read_load_validate_at_least_point_two_seconds": [
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.25105,
+        "load_wall_seconds": 0.17563,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000862
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000496
+          },
+          "receipt_check": {
+            "calls": 4,
+            "wall_seconds": 0.001605
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.064358
+          }
+        },
+        "round": 2,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.07542
+      },
+      {
+        "active": 86,
+        "archive_rows": 193,
+        "load_plus_validate_wall_seconds": 0.250355,
+        "load_wall_seconds": 0.173162,
+        "profile_nested_wall_seconds_not_additive": {
+          "advert_check": {
+            "calls": 4,
+            "wall_seconds": 0.000944
+          },
+          "inventory_check": {
+            "calls": 2,
+            "wall_seconds": 0.000487
+          },
+          "receipt_check": {
+            "calls": 4,
+            "wall_seconds": 0.001709
+          },
+          "transit_check": {
+            "calls": 86,
+            "wall_seconds": 0.065691
+          }
+        },
+        "round": 3,
+        "slot": 1,
+        "transit_archive_witnesses_cold_only": false,
+        "validation_wall_seconds": 0.077193
+      }
+    ],
+    "whole_goal_completed": false,
+    "wrong_network_refused_four_of_four": true
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

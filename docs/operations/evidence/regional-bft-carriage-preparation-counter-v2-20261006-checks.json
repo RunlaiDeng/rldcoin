@@ -1,0 +1,250 @@
+{
+  "completed": true,
+  "budget_seconds": 118,
+  "attempts_used": 1,
+  "duration_seconds": 4.62107,
+  "helper_exit_code": 0,
+  "stage_sha256": "3b50400dac76e213dd66c8eb0eeb2b19e50dbcdce51fed5f48a9eeab8526556b",
+  "helper_sha256": "a9f928b786f2e875a82130d2610858cbb593dbce044bfae04378762ebdbc87b1",
+  "controller_sha256": "aefb5ce2c12436bf17b2f264398e9803b6d00ad4af040a3ebcf8e81d2f8494ac",
+  "log_sha256": "dfacf716a0d5239e5620f31a2b0058b8d08f8195f38ef909f697f6abb6100bc5",
+  "result": {
+    "actual_old_live_route_suppression_cache_not_reconstructed": true,
+    "byte_ceiling_case": [
+      {
+        "bytes": 14687399,
+        "round": 1,
+        "small_present": true,
+        "transits": 3
+      },
+      {
+        "bytes": 14687399,
+        "round": 2,
+        "small_present": true,
+        "transits": 3
+      },
+      {
+        "bytes": 14687399,
+        "round": 3,
+        "small_present": true,
+        "transits": 3
+      },
+      {
+        "bytes": 14687399,
+        "round": 4,
+        "small_present": true,
+        "transits": 3
+      }
+    ],
+    "completed": true,
+    "duration_seconds": 4.426192,
+    "full_fault_qualified": false,
+    "mesh_node_opens": 0,
+    "modeled_atomic_calls": 1540,
+    "modeled_signature_calls": 15386,
+    "native_starts": 0,
+    "private1615_files_unchanged": true,
+    "real_file_custody_publication": 0,
+    "real_signatures": 0,
+    "recovery": 0,
+    "runtime_starts": 0,
+    "sixty_preparation_counterexamples": [],
+    "sockets": 0,
+    "source_kernel_models": [
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "first_target_prepare_rounds": [
+          5,
+          6
+        ],
+        "initial_historical": 86,
+        "seed": 0
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "first_target_prepare_rounds": [
+          1,
+          5
+        ],
+        "initial_historical": 86,
+        "seed": 1
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "first_target_prepare_rounds": [
+          2,
+          4
+        ],
+        "initial_historical": 86,
+        "seed": 2
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "first_target_prepare_rounds": [
+          4,
+          38
+        ],
+        "initial_historical": 86,
+        "seed": 3
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "first_target_prepare_rounds": [
+          2,
+          10
+        ],
+        "initial_historical": 86,
+        "seed": 4
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "first_target_prepare_rounds": [
+          8,
+          19
+        ],
+        "initial_historical": 86,
+        "seed": 5
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "first_target_prepare_rounds": [
+          2,
+          3
+        ],
+        "initial_historical": 86,
+        "seed": 0
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "first_target_prepare_rounds": [
+          4,
+          22
+        ],
+        "initial_historical": 86,
+        "seed": 1
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "first_target_prepare_rounds": [
+          2,
+          4
+        ],
+        "initial_historical": 86,
+        "seed": 2
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "first_target_prepare_rounds": [
+          2,
+          7
+        ],
+        "initial_historical": 86,
+        "seed": 3
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "first_target_prepare_rounds": [
+          1,
+          7
+        ],
+        "initial_historical": 86,
+        "seed": 4
+      },
+      {
+        "active_final": 256,
+        "actual_lost_send_custody_or_suppression": false,
+        "all_targets_prepared": true,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "first_target_prepare_rounds": [
+          2,
+          3
+        ],
+        "initial_historical": 86,
+        "seed": 5
+      }
+    ],
+    "stopped_target_route_and_size": [
+      {
+        "active_packets": 86,
+        "alone_exceeds_ceiling": false,
+        "archived_target_not_pending": false,
+        "byte_ceiling": 20971520,
+        "candidate_bytes_with_placeholder_signature": 295207,
+        "destination": 2,
+        "recent_packets": 23,
+        "source": 1,
+        "stopped_direct_route_valid": true,
+        "stopped_state_not_old_live_eligibility": true,
+        "target_receipted_at_stop": false,
+        "target_recent_at_stop": false,
+        "target_storage_at_stop": "active"
+      },
+      {
+        "active_packets": 62,
+        "alone_exceeds_ceiling": false,
+        "archived_target_not_pending": true,
+        "byte_ceiling": 20971520,
+        "candidate_bytes_with_placeholder_signature": 295207,
+        "destination": 1,
+        "recent_packets": 19,
+        "source": 2,
+        "stopped_direct_route_valid": true,
+        "stopped_state_not_old_live_eligibility": true,
+        "target_receipted_at_stop": true,
+        "target_recent_at_stop": false,
+        "target_storage_at_stop": "archive"
+      }
+    ],
+    "unique_cause_proved": false,
+    "whole_goal_completed": false,
+    "worst_first_target_prepare_round": 38
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
