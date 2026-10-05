@@ -1,0 +1,39 @@
+{
+  "format": "RLD-NATIVE-BFT-COST-ATTRIBUTION-V1",
+  "recorded_at_utc": "2026-10-05T01:25:10.976669+00:00",
+  "completed_timing_sample": true,
+  "report_sha256": "4668cf72744ceaebcdee20f97d8a1f3eb12026e7db9e202a7208ba94311d7495",
+  "stage_sha256": "0e6e524d26bd897d2a8d9bd2b2169d131843342407eebe3f421baf033c805d77",
+  "native_69_source_verified_unchanged": true,
+  "native_implementation": "ec6f496020310cda80f82a2865b78114305ffc7825e34c1666f58f1ed7ce34d1",
+  "total_seconds": 24.715,
+  "retained_height": 12,
+  "signer_records": [
+    27,
+    27,
+    27,
+    3
+  ],
+  "all_separate_heads_and_complete_cold_verified": true,
+  "same_process_cold": true,
+  "all_private_inventory_file_hash_mode_size_mtime_unchanged_by_cold": true,
+  "sequential_timed_operation_totals_seconds": {
+    "native_Agent_sign_seconds": 17.915988,
+    "pre_inventory_state_head_seconds": 1.911762,
+    "caller_head_fsync_seconds": 0.800069,
+    "native_Store_finalize_seconds": 1.134307,
+    "native_context_candidate_seconds": 0.226924
+  },
+  "native_Agent_sign_fraction_of_timed_operations": 0.814769,
+  "native_Agent_sign_includes_validation_replay_and_native_response_persistence": true,
+  "internal_crypto_replay_hash_fsync_subcosts_not_separated": true,
+  "last_height_native_Prepare_Commit_range_seconds": [
+    0.489609458,
+    0.540226666
+  ],
+  "no_capacity_or_window_or_independent_custody_qualification": true,
+  "prior_120_second_failure_remains_failed": true,
+  "fixture_source_sha256": "e12a6cb4f1ce9434cea6df6b7285d1e34e66662e6f7271c30bd0ae5f8ecbc675",
+  "whole_goal_qualified": false,
+  "next": "Design an executable full-retained-history/native-signing model before native paging changes. Native sign dominates this sample; do not attribute its internal costs or introduce authority caches without a specific discriminator. Account both evidence64 and voter128; preserve all original native/source/fixture failures."
+}

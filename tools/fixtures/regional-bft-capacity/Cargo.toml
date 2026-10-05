@@ -1,0 +1,25 @@
+[package]
+name = "rld-bft-window-capacity-observation"
+version = "0.1.0"
+edition = "2021"
+[workspace]
+[dependencies]
+rld-regional-ledger-candidate = { path = "../../regional-ledger" }
+rld-core = { path = "../../../crates/rld-core" }
+rld-pow = { path = "../../../crates/rld-pow" }
+serde_json = "=1.0.134"
+ed25519-dalek = "=2.1.1"
+sha2 = "=0.10.8"
+hex = "=0.4.3"
+
+[[bin]]
+name = "rld-bft-window-capacity-observation"
+path = "src/window.rs"
+
+[[bin]]
+name = "rld-bft-custody-capacity-observation"
+path = "src/custody.rs"
+
+[[bin]]
+name = "rld-bft-cost-sample-observation"
+path = "src/cost.rs"

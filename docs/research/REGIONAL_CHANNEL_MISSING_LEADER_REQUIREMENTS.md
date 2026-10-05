@@ -61,7 +61,7 @@ Native69/core171及main binary与已验证V8来源准确字节不变。Node live
 全部来源、预算及工件：[结果绑定](../operations/evidence/regional-native-channel-fee-budget-missing-leader-outcome-20261005.json)。
 旧价值库VALUE-STRICT-01仍OPEN，无新增告警豁免或候选发布包。
 
-## 下一必要判别：完整窗口的实际历史能力
+## 后续已执行判别：完整窗口的实际历史能力
 
 本样本只到7，不能证明完整窗口结算。当前源码保留64 snapshots/256 blocks，
 而Settle要求h>c+2016。下一假设：ordinary V8 BFT最先遇到的完整证据/历史
@@ -74,3 +74,8 @@ Native69/core171及main binary与已验证V8来源准确字节不变。Node live
 完整判别或120秒即退出，保留来源/日志；若没到门槛，保留未知并换方法，不原样
 重跑。已证容量阻塞须另签bounded BFT history/checkpoint设计及实现，不能提高
 旧限额、剪除签署证据、缩短2016窗口或把有限q2纳入称为长期结算资格。
+
+后续实际Native反例已确认64快照保留/65拒绝，49.515秒；真实Agent补充判别
+120.028秒耗尽，尚未证明signer门槛/CPU归因。保留所有失败与原limits。
+[窗口历史及签署义务](REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)记录准确范围和
+改变方法的一次60秒成本样本；不是完整窗口/全协议资格。

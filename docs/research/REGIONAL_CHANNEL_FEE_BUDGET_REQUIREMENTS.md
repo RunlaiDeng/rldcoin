@@ -188,3 +188,8 @@ VALUE-STRICT-01仍OPEN，本轮未触及该库/发布包，未触发诊断或修
 新0.008秒反例支持fixture准备及严格只读公开锚修复，Native/Node live未改。
 [完整范围、失败和下一2016窗口容量门槛](REGIONAL_CHANNEL_MISSING_LEADER_REQUIREMENTS.md)。
 这不替代full fault、完整窗口结算、跨地区支付或独立/物理资格。
+
+普通窗口存在已证Native历史阻塞：实际64完整BFT检查点后，65 snapshot bound
+拒绝，原生/磁盘不变。真实signer范围120秒耗尽仍未通过，容量/CPU归因待辨。
+[完整历史和持久签署锁合同](REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)要求另签
+规则，同时处理两者；不能提高旧bounds或缩短2016窗口。费用覆盖不保证活性。

@@ -31,6 +31,13 @@ live164.517秒、总303.651秒，原60秒轮/24高度/2016窗口未变，无控�
 clean exit，133完整信封/339packet/219receipt和四Native/caller；缺席副本及
 所有私有库存/hash/mode/size/mtime未变，没有full fault通过。
 [准确范围、旧失败及下一完整窗口容量判别](research/REGIONAL_CHANNEL_MISSING_LEADER_REQUIREMENTS.md)。
+后续原生窗口容量反例49.515秒完成：连续64 BFT检查点实际保留，65以
+snapshot bound拒绝且原生/磁盘不变；2016窗口未改，普通窗口结算仍不可资格。
+真实签署判别首编译失败保留，修正范围120.028秒耗尽、最后完整记录height20；
+实际signer容量门槛/最终头/cold及CPU归因未知，不能称通过。
+新改变方法12高度成本样本24.715秒通过完整cold/四signer/caller heads；Native
+sign占独立计时81.4769%，内部成本未分开，未验证128-record门槛。
+[完整历史/锁设计义务、成本归因边界和下一可执行模型](research/REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付
