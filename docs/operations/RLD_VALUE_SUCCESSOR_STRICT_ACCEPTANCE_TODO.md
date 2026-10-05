@@ -191,3 +191,12 @@ dev-budget失败仍失败。旧价值库/PoW/Cargo.lock/采用包未改，没有
 pin修正4.177秒通过，Native/网络/保管复制0；旧价值库/PoW/Cargo.lock/采用包未改，
 无实际本库构建阻塞，不触发strict重跑。两告警及120.019秒/-15独立OPEN；原一次
 120诊断或300修复/无生产豁免/严格exit0及完整编码授权拒绝完成标准不变。
+
+
+2026-10-05 Native preparation checkpoint: explicit Python fixture preparation/
+label/private-parent/test-path source changed; Native89/Core171/legacy value
+library remained unchanged. Offline preparation35.548s/once180 is separate from
+VALUE-STRICT-01. No adopted-library/PoW change, whole-workspace strict claim or
+actual unchanged-source Cargo blocker triggered its120diagnostic/300fix budget.
+Both baseline warnings and original120.019s failure remain OPEN; no exemptions
+or replacement regional pass. See paged-fault-native-preparation outcome.

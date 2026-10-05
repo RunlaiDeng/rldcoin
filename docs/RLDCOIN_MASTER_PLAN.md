@@ -330,3 +330,28 @@ Native89/defaultRuntime未改，旧全部失败/成功/freeze/旧价值基线保
 2016/source66/长期/独立/PQ/physical和全部规范资格仍OPEN。VALUE-STRICT-01仍
 独立OPEN，原触发/120诊断或300修复/无豁免标准不变，本次未触旧库或实际构建阻塞。
 [实际配置、失败修复与下一原生准备](operations/evidence/regional-paged-full-fault-launch-outcome-20261005.json)。
+
+
+Fresh Source89 offline full-fault preparation passed35.548s/once180 after three
+separately preserved controller/test failures:33-byte origin label1.804s, missing
+safe wallet parent5.433s and default macOS/var test symlink2.101s. Keep their exact
+sources/reports and entire2/203/2-file currencies sealed; never reopen Native or
+Runtime/recover/re-sign/refund them. Narrow label28/32 validation, exclusive0700
+owner parents and project-tmp test setup do not weaken Native or symlink rules.
+The new12Native/12voter-caller sample reachedE8/P5/A5, from zero-allocation signed
+genesis only. One preparation owner signed three actual payments:local95/source13
+and two gross3/net2 imported payments to remote20. All12fixed-head histories,
+original signer/caller heads,8recipient maturity checks/conservation and3unsigned
+fault-owner reviews passed. Actual source95 and remote2/2 inputs are mature; no
+fault-owner first-sign.12fresh mesh/TLS identities retain exact private bytes on
+reopen. Preserve668stopped files.473Native calls and18controller certificates
+are setup-only, not Runtime/network/full-fault rights. Native89/default Runtime
+unchanged; all old5050files/failures/freeze unchanged. Next once120s network0/
+first-sign0/recovery0 explicit prepared-source binding must authenticate complete
+creation/provenance/checks/inventory,12retained Native heads,3unsigned reviews and
+real TLS/endpoints before emitting all48full-fault configs in a separate fresh
+output. Never bypass generic absent-root guard, adopt sampled heads or launch
+synthetic parameters. Actual missing leader derives fromE8/key0 at9. Original
+600stage/60round/24heights/E27-P24-A24/maturity2/3of4/capacities remain. Full fault,
+Source66/2016/long-history/independent/physical and legacy value strict stay OPEN.
+See regional-paged-fault-native-preparation-outcome-20261005.json.

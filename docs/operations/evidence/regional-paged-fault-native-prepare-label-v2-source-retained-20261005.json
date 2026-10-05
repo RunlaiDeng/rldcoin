@@ -1,0 +1,11 @@
+{
+  "format": "RLD-PAGED-FAULT-NATIVE-PREPARE-FAILED-SOURCE-RETENTION-V1",
+  "source_sha256": "54dd7131c02bb59a0db0bad8e48e9777ab4a7aabe6621052106358227ae10e11",
+  "tests_sha256": "a48fb11c51f8e754972d903e3e563841c2f550aaaa96bf96ffeed75219d299aa",
+  "stage_sha256": "8179d1d9b3b1d4d95016b19ab40986c3c641514cb984cd72ea03650dfb05e29c",
+  "private_retained_source": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/paged-fault-native-prepare-label-v2-source-private-20261005/regional_paged_fault_prepare.py",
+  "exact_failed_source_retained": true,
+  "native_implementation_changed": false,
+  "failure": "Native wallet-init requires an existing safe parent directory; driver had not created the fresh preparation-owner parent.12Native/voter/caller initialized andE3controller prefix, no owner first-sign",
+  "failed_currency_remains_sealed": true
+}

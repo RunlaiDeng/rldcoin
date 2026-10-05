@@ -1,0 +1,10 @@
+{
+  "format": "RLD-PAGED-FAULT-NATIVE-PREPARE-FAILED-SOURCE-RETENTION-V1",
+  "source_sha256": "c380184f573d080f4ed686793b1f2d8f7e4ddd83d023049e4ef0e5f2f15d1f83",
+  "stage_sha256": "33a5dcaa71a0f466710b6c8282766f1808cde89cc3e2c114a5bab4644ab13e31",
+  "private_retained_source": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/paged-fault-native-prepare-v1-source-private-20261005/regional_paged_fault_prepare.py",
+  "exact_failed_source_retained": true,
+  "native_implementation_changed": false,
+  "failure": "Origin label33bytes exceeds existing Native32-byte limit; Native refused before ledger initialization",
+  "failed_currency_remains_sealed": true
+}
