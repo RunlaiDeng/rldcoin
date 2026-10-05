@@ -1087,3 +1087,23 @@ one justified600stage/60round/24height/E27-P24-A24/maturity2/3of4complete fault 
 All capacity limits and prior failures remain unchanged; fullfault,VALUE-STRICT-01,
 long-history/independent/physical and whole goal stayOPEN. See
 operations/evidence/regional-paged-fault-prepared-binding-outcome-20261005.json.
+
+
+Paged fault driver implemented on separate source: online replica1 receives the
+three original unsigned owner approvals/queues; only ordinary nodes vote/relay/
+install. Missing Earth0 stays stopped through certified gate9 and both directed
+TLS cuts; catchup occurs before restoration, then original recipient maturity,
+keyless restart/drain and all12fixed-head Native/envelope/mesh/owner checks.
+Total once600seconds (including stages/cold) and60round/24newheights/originalcaps/
+maturity2/quorum3/capacities remain unchanged. Native init/recovery/votes/direct
+acceptance are forbidden controller commands; missing optional telemetry is
+unknown, only exact OS-lock read refusals retry. Prelaunch public mesh anchors
+are retained separately rather than adopted from final private identity.
+Seven driver/pending/certified-prefix counterexamples passed2.155seconds/once120;
+all actual Native/socket/Runtime/first-sign calls0. They use fake observation
+backends and grant no real fullfault/custody qualification. Exact668prepared,
+98bound-config,old sealed inventories/source/freeze unchanged. Real fullfault has
+not started. Before it, add explicit preservation of old immutable voter pages
+and qualify the changed driver boundary; then final bound launch preflight and
+one justified original600scope. See regional-paged-fault-driver-model-outcome-
+20261005.json. VALUE-STRICT-01/long-history/independent/physical/allgoal remainOPEN.
