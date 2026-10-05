@@ -6,15 +6,17 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-最新[分页原生接收修复](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)最终25.002秒
-通过源4→目的3的实际99收款成熟、八Agent/钱包完整冷重放、精确重试与坏完整
-信封/缺前缀/错目的/自洽哈希cold损坏拒绝，以及入口compile/地区库strict。
-这是86文件源码 `659dbad3...` 的有限same-process ground范围，主binary未重建。
-源66实际已纳入出口的完整proof在121.522秒被dependency bound拒绝，仍OPEN；
-源4旧式写入反例18.744秒、修复编译3.710秒及strict26.842秒失败均保留。
-旧完整fault/2016窗口/长期历史/独立custody/physical及VALUE-STRICT-01均不由短例替代。
-下一次全新三地区短onward/return范围180秒/1次/network0尚未启动；保留原600/60/
-24/2016及容量。接收修复不允许拆proof、cache/hash授权或重复旧高度66长测。
+最新[分页接触因果顺序修复](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)已完成
+实际Earth→Proxima→Andromeda→Earth净99/97/95及新进程三Native/十二Agent/三wallet
+完整cold、每步守恒、永久出口/import保留、exact retry/duplicate拒绝。准确e85d来源
+范围36.714秒/实际循环10.498秒通过；首5.212秒编译与22.146秒已纳入onward后的
+proof拒绝均保留。最终保留原DFS顺序的来源 `26076a64...` 最小28.414秒通过Native
+旧视图反例/完整原文集合重排认证、九regional旧contact、CLI compile和lib/tests strict；
+未重复三地区、旧65/66或完整fault长测，也未重建main binary。
+Source86接收短范围25.002秒是前一准确有限证据；源66实际完整proof拒绝仍OPEN。
+Controller在本循环搬运frames；ordinary Runtime/TLS、完整2016/fault/长历史、独立
+custody/crypto/physical及VALUE-STRICT-01不由它替代。下一ordinary proof→BFT完整
+信封最小判别60秒/1次/network0尚未启动；原600/60/24/2016及容量不变。
 
 当前源绑定开发已推进到 V8 明确累计费用预算、原生 watcher及实际普通领导者自动挑战提案；
 [R-CH-FEE-01](research/REGIONAL_CHANNEL_WATCH_REQUIREMENTS.md) 旧费用覆盖失败保留；

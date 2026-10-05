@@ -1267,3 +1267,6 @@ mod paged_capacity_attacks;
 
 #[path = "paged_bft_remote_tests.rs"]
 mod paged_remote;
+
+#[path = "paged_bft_cycle_tests.rs"]
+mod paged_cycle;

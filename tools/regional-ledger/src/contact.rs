@@ -180,6 +180,67 @@ impl Record {
         )
     }
 }
+fn dependencies(snapshot: &Snapshot) -> Vec<Hash> {
+    // Keep the original bounded closure traversal order, including repeated
+    // parents. The visited set suppresses repeats; wire sorting uses sets only
+    // after the complete closure has passed its existing admission bound.
+    let mut ids = Vec::new();
+    ids.extend(snapshot.statement.previous);
+    for block in &snapshot.blocks {
+        ids.extend(block.header.anchor);
+        for command in &block.commands {
+            if let Command::Import { snapshot, .. } = command {
+                ids.push(*snapshot);
+            }
+        }
+    }
+    ids.extend(
+        snapshot
+            .epochs
+            .iter()
+            .map(|p| p.statement.closing_checkpoint),
+    );
+    ids
+}
+/// Sequencing only; the caller still fully authenticates this complete proof.
+/// A region's local height is not an order between regions' causal histories.
+fn causal_evidence(snapshots: Vec<Snapshot>) -> Result<Evidence> {
+    require(snapshots.len() <= MAX_SNAPSHOTS, "contact dependency bound")?;
+    let mut pending = snapshots
+        .into_iter()
+        .map(|snapshot| {
+            Ok((
+                snapshot.statement.id()?,
+                dependencies(&snapshot).into_iter().collect::<BTreeSet<_>>(),
+                snapshot,
+            ))
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let all = pending
+        .iter()
+        .map(|(sid, _, _)| *sid)
+        .collect::<BTreeSet<_>>();
+    require(
+        all.len() == pending.len(),
+        "contact causal duplicate statement",
+    )?;
+    require(
+        pending.iter().all(|(_, deps, _)| deps.is_subset(&all)),
+        "contact causal dependency absent",
+    )?;
+    let mut selected = BTreeSet::new();
+    let mut ordered = vec![];
+    while !pending.is_empty() {
+        let n = pending
+            .iter()
+            .position(|(_, deps, _)| deps.is_subset(&selected))
+            .ok_or("contact causal cycle")?;
+        let (sid, _, snapshot) = pending.remove(n);
+        selected.insert(sid);
+        ordered.push(snapshot);
+    }
+    Ok(Evidence { snapshots: ordered })
+}
 #[derive(Debug, Serialize)]
 pub struct Status {
     pub message_id: Hash,
@@ -252,24 +313,10 @@ impl Store {
             }
             require(needed.len() <= MAX_SNAPSHOTS, "contact dependency bound")?;
             let snapshot = self.evidence.snapshot(sid)?;
-            pending.extend(snapshot.statement.previous);
-            for block in &snapshot.blocks {
-                pending.extend(block.header.anchor);
-                for command in &block.commands {
-                    if let Command::Import { snapshot, .. } = command {
-                        pending.push(*snapshot);
-                    }
-                }
-            }
-            pending.extend(
-                snapshot
-                    .epochs
-                    .iter()
-                    .map(|p| p.statement.closing_checkpoint),
-            );
+            pending.extend(dependencies(snapshot));
         }
-        // Preserve the native validated topological order, including complete
-        // parent, import/ancestry and epoch closing dependencies.
+        // Collect exact original native-verified statements; the bounded public
+        // paged view is height-sorted, which cannot order cross-region imports.
         // Legacy finalization can retain an exact checkpoint twice: once as
         // evidence and once when installing local finality. The verified index
         // already authenticates/normalizes these entries. Carry one proof per
@@ -292,7 +339,7 @@ impl Store {
             included == needed,
             "contact dependency missing from retained archive",
         )?;
-        let evidence = Evidence { snapshots };
+        let evidence = causal_evidence(snapshots)?;
         VerifiedEvidence::verify(&evidence, &self.trust)?;
         Ok(evidence)
     }

@@ -374,3 +374,30 @@ strict independently OPEN. Next one fresh180second/network0 three-region short
 onward/return scope is defined in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md; old
 600/60/24/maturity/quorum/capacity unchanged. Never repeat old source66 long scope
 without a compact-complete authority model and actual native change.
+
+
+Native contact closure carriage now orders exact complete original statements by
+checkpoint predecessors, full block anchors/import dependencies and epoch closing
+checkpoints before normal independent native verification. Height alone cannot
+order regions. Preserve the ORIGINAL ordered/duplicate DFS enumeration before
+visited/capacity checks; only fully collected wire dependency rows use sets.
+Ready selection preserves already-causal retained order. Missing dependencies,
+cycles/duplicates refuse; no proof truncation, bound increase, body rewrite or
+cached ledger. Original certificates/event bytes remain unchanged. New native
+source requires fresh signed no-value fixtures, never old private state/value.
+
+The actual source87/e85d native three-region sample passed36.714seconds, cycle
+10.498:net99/97/95, exact imported inputs spent for onward/return, certified
+heights7/4/4, all transition conservation, original exports/permanent imports,
+separate heads and fresh-process full three-native/12-signer/3-wallet cold with
+unchanged private inventory. Controller carried frames; ordinary Runtime/TLS,
+full fault/2016/independent/physical gates remain open. Preserve original5.212
+compile and22.146 actual onward proof failures; never reopen/recover those stores.
+Final source26076a64/implementation668b95fe retains old DFS traversal;28.414second
+native causal minimum/nine affected regional legacy contacts/CLI compile/strict
+passes, without repeating the three-region or source66 long fixture. Historical
+three-region proof remains bound to e85d; main binary unchanged. Legacy value
+strict independently OPEN. Next60second one/network0 ordinary native proof/BFT
+canonical-envelope minimum is defined in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md.
+Current CLI proof exposes height-sorted diagnostic view and Runtime uses it;
+source inspection is not an observed native envelope counter or startup pass.

@@ -1,7 +1,7 @@
 use super::paged_integration::{certify, retain};
 use super::retained_native_replay::inventory;
 use super::*;
-fn target(source: &Harness, package: Bootstrap, region: Hash) -> Harness {
+pub(super) fn target(source: &Harness, package: Bootstrap, region: Hash) -> Harness {
     let root = source.root.join("destination");
     fs::create_dir(&root).unwrap();
     #[cfg(unix)]
