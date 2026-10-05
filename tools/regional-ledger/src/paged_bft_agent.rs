@@ -1,6 +1,7 @@
 //! Ordinary paged signer custody under the explicit fresh signed ground profile.
 //! Full retained native history/requests/locks precede signing or exact retries.
-//! Incomplete stream publication refuses; explicit interrupted recovery is open.
+//! Ordinary open refuses incomplete publication. Explicit keyless recovery binds
+//! the exact pending caller request/head and fully native-replayed response.
 use super::*;
 use crate::retained_pages::{Purpose, Scope, Stream};
 const HEADER: &str = "bft-header.json";
@@ -126,6 +127,71 @@ impl Agent {
         let state = agent.paged_state(node)?;
         Ok((agent, state))
     }
+    /// Explicit keyless recovery of exactly retained original response bytes.
+    /// Does not create a directory, sign, reset a lock or adopt an observed head.
+    pub fn recover_response(
+        dir: &Path,
+        node: &Store,
+        request: Request,
+        expected: Hash,
+    ) -> Result<Signed> {
+        require(
+            crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules),
+            "paged response recovery requires explicit signed profile",
+        )?;
+        let guard = lock(dir)?;
+        let h = header(dir)?;
+        let scope = h.scope(node)?;
+        let records = dir.join(RECORDS);
+        if !exists(&records.join("stream.next"))? {
+            let (mut agent, _) = Self::open_paged(dir, guard, node)?;
+            return agent.sign_paged(node, request, None, expected);
+        }
+        let outside_bytes = (crate::keystore::private_read(&dir.join(HEADER), MAX_BYTES)?.len()
+            + crate::keystore::private_read(&dir.join("LOCK"), 16)?.len())
+            as u64;
+        let (stream, signed) = Stream::<Record>::recover_one_authenticated(
+            &records,
+            &scope,
+            expected,
+            2,
+            outside_bytes,
+            |view| {
+                let mut replay = replay::PagedReplay::new(&h.journal, node, scope.initial()?)?;
+                let mut last = None;
+                view.visit(|record, is_last| {
+                if is_last {
+                    require(record.request == request && record.previous_head == expected,
+                        "retained pending response differs from exact caller request/previous head")?;
+                    last = Some(record.clone());
+                }
+                replay.push(record)
+            })?;
+                replay.finish(view.head())?;
+                let record = last.ok_or("retained complete final response missing")?;
+                Ok(Signed {
+                    message: record.message,
+                    previous_head: record.previous_head,
+                    head: view.head(),
+                    recovered_exact_retry: true,
+                })
+            },
+        )?;
+        let agent = Self {
+            dir: dir.into(),
+            _lock: guard,
+            journal: h.journal,
+            healthy: true,
+            paged: Some(stream),
+        };
+        // Full native recheck before any original response is released.
+        agent.paged_state(node)?;
+        require(
+            agent.head()? == signed.head,
+            "recovered original response head differs",
+        )?;
+        Ok(signed)
+    }
     /// Full native validation first; never a digest-only recovery predicate.
     pub fn contains_request(&self, node: &Store, request: &Request) -> Result<bool> {
         if let Some(stream) = &self.paged {
@@ -247,5 +313,15 @@ impl Agent {
             head: next,
             recovered_exact_retry: false,
         })
+    }
+}
+
+#[cfg(test)]
+impl Agent {
+    pub(crate) fn interrupt_publication(&mut self, boundary: u8) {
+        self.paged
+            .as_mut()
+            .expect("fresh paged fixture")
+            .interrupt_at(boundary);
     }
 }

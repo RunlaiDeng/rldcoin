@@ -1231,16 +1231,18 @@ fn run() -> Result<()> {
             recover_only,
         } => {
             let request: bft::Request = read_json(&file)?;
-            let mut agent = bft::Agent::open(&signer_dir, &store)?;
-            if recover_only && !agent.contains_request(&store, &request)? {
-                return Err("BFT recovery cannot first-sign".into());
-            }
-            let signed = agent.sign(
-                &store,
-                request,
-                key_file.as_deref(),
-                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
-            )?;
+            let expected = Hash::from_hex(&expected_head).map_err(|e| e.to_string())?;
+            let signed = if recover_only
+                && paged_bft::is_profile(&store.trust.region(store.chain.region)?.rules)
+            {
+                bft::Agent::recover_response(&signer_dir, &store, request, expected)?
+            } else {
+                let mut agent = bft::Agent::open(&signer_dir, &store)?;
+                if recover_only && !agent.contains_request(&store, &request)? {
+                    return Err("BFT recovery cannot first-sign".into());
+                }
+                agent.sign(&store, request, key_file.as_deref(), expected)?
+            };
             println!(
                 "{}",
                 serde_json::to_string(&signed).map_err(|e| e.to_string())?

@@ -1,6 +1,6 @@
 # 普通BFT完整历史/签署日志的共用原生保留层
 
-状态：**普通Store/Agent分页正常写入及完整历史锁重放已接入；中断恢复/容量/完整窗口资格仍OPEN**。
+状态：**普通Store/Agent写入、完整历史锁重放及显式原响应恢复已接入；首次300秒集成预算耗尽，容量/新进程/完整窗口资格仍OPEN**。
 目标保持[完整历史合同](REGIONAL_BFT_WINDOW_HISTORY_REQUIREMENTS.md)及
 [分页保留模型](REGIONAL_BFT_PAGED_HISTORY_MODEL_V1.md)。这是完整原生集成的一步，
 不能将测试该层更多记录视为解决原第65检查点或128-record签署门槛。
@@ -279,7 +279,9 @@ healthy/zero guard，并重验全部保留事故证明/index/safety。一次30�
 检查加入，所有改变受影响consumer单独核验；不冒称最终完整suite或重新8长测。
 旧main binary、core171、legacy价值两文件、冻结正文/PDF/receipt均未变。
 
-下一假设H-paged-response-recover：准确已签响应在pending/pages/manifest三个
+以下为78-file来源时的下一假设（历史；本次终态见末节）：
+
+H-paged-response-recover：准确已签响应在pending/pages/manifest三个
 保留位置中断后，只在native完全重放、immutable header/purpose及caller separately
 retained exact request/previous head全部匹配时恢复，不first-sign或创建缺失目录，
 不重置锁/领受新头。现Stream.open遇pending/commit残片严格拒绝，**没有中断
@@ -292,3 +294,42 @@ promotion/recovery API**。先形成完整恢复合同/源码，再一次60秒�
 发布失败，预算包含编译和等待。原网络600sec/60sec/max24/2016/成熟/票数和
 capacity不改变。完整窗口、fault、epoch/role paging、image/restore、长期history/
 PQC、独立freshness/custody和physical继续OPEN；VALUE-STRICT-01独立OPEN。
+
+
+## 原响应恢复、容量反例与首次集成终态（2026-10-05）
+
+`retained_recovery.rs`只允许明确BftSigner用途的一次原始append恢复。完整pending
+保存新页原文；从原页逐条重建prefix/head及确切旧manifest，当前manifest必须
+逐字节等于旧或拟发布版本。完整native history/record/signature/prepare lock和
+caller的确切request/previous head通过后才fsync原页、发布清单；不得first-sign、
+创建缺失目录、重置投票或采纳观察头。仅移除已经完全发布的冗余包装，全部
+孤儿/残片计账，响应释放前再核验native历史及incident guard。CLI recover-only
+明确调用这一原生接口，不读取密钥；普通open仍拒绝pending。
+
+一次60秒范围实际21.377秒通过三个真实native prepare-QC锁的发布注入边界；
+返回原先相同响应，错误请求/头、缺失目录、keyless新请求及完整hash自洽坏
+签名均拒绝、库存未变。它不是实际SIGKILL或owner付款/独立保管资格。
+实际4096文件反例23.575秒失败：已发布manifest仍被多计一个不需创建的commit。
+最小修复仅计实际/必要commit；新45秒范围27.279秒通过，孤儿/完整原文保留，
+只删除完成的pending。该存储签名fixture不授予native BFT容量资格。
+
+恢复实现可审后，原定一次300秒集成已运行并于300.033秒预算耗尽/-15终止。
+这是首次真实普通Store+四Agent跨界尝试，未重跑旧manual65或8样本。最后
+记录的完整阶段为height24、每人54records、active24，163.531秒；最终head/
+height未知，不打开/恢复停止现场。>128、height65及fresh-process cold均未完成。
+独立30秒范围仅编译新测试定义/CLI及lib-tests strict，4.326秒通过；不能替代
+失败集成或VALUE-STRICT-01。[精确来源、五个终态和下一判别](../operations/evidence/regional-native-paged-response-recovery-20261005-outcome.json)。
+现81-file源`56f88b7f8a92...`/implementation`642609498aa4...`，core171、旧main
+binary及冻结正文/PDF/receipt未变。最终只比80-file容量修复来源多测试注册/新
+集成测试定义，production逐字节相同；不宣称最终来源完整suite重新通过。
+
+下一H-paged-sign-cost：单次sign内重复完整重放是否占测得签署墙钟至少50%。
+先加test-only分阶段时钟：first native/record replay、request scan、current
+execution/sign、second完整replay+new record、append/fsync及Store finalize。
+一次60秒/1次、全新签署当前来源fixture、最多10个本地高度、四实际签名者/
+owner付款/分别caller heads及pinned完整same-process cold；编译等待计入，
+网络预算0。首认证失败、完整成本判别或60秒退出，保留来源现场，不原样重跑。
+小于50%即推翻；若占主导，再设计一次调用内完全认证cursor复用，必须保留
+签名前及释放前完整history/incident检查，另行全新fixture验证。不能用成本
+判别充当跨128/65、新进程、完整2016窗口或完整fault通过。原600/60/max24/
+成熟/票数/容量全部不改，legacy strict、独立/长期/physical义务继续OPEN。

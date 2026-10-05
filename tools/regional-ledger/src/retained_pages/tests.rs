@@ -548,3 +548,44 @@ fn native_external_archive_accounting_refuses_before_any_stream_publication() {
     assert_eq!(stream.record_count(), 1);
     eprintln!("native_external_archive_accounting file/byte/overflow refusals atomic; small root metadata fits");
 }
+
+#[test]
+fn committed_response_recovery_at_exact_file_limit_needs_no_new_commit_file() {
+    let root = private_root();
+    let scope = fixture_scope(Purpose::BftSigner(crate::tests::public(2)));
+    let dir = root.join("signer");
+    let mut stream = Stream::<Record>::create(&dir, scope.clone()).unwrap();
+    let old = stream.storage_head();
+    let response = record(&scope, 0, Hash::ZERO);
+    stream.interruption = Some(Boundary::Committed);
+    assert!(stream.append(std::slice::from_ref(&response), old).is_err());
+    drop(stream);
+    // Exactly4096 retained files:4093 private orphans + LOCK/current/pending.
+    // Proposed manifest is already published and no new page/commit is needed.
+    for n in 0..history::MAX_FILES - 3 {
+        let hash = id("committed-recovery-capacity-orphan", &n).unwrap();
+        keystore::private_create(&dir.join(OBJECTS).join(page_name(hash)), b"").unwrap();
+    }
+    let before = inventory(&root);
+    assert_eq!(before.len(), history::MAX_FILES);
+    let (stream, ()) =
+        Stream::<Record>::recover_one_authenticated(&dir, &scope, old, 0, 0, |view| {
+            view.visit(|r, last| {
+                require(
+                    last && r.index == 0 && r.previous == Hash::ZERO,
+                    "fixture complete single response",
+                )?;
+                verify_bytes(
+                    &r.approval.key,
+                    &record_bytes(&scope, r),
+                    &r.approval.signature,
+                )
+            })
+        })
+        .expect("completed manifest at actual4096 files must not reserve a nonexistent commit");
+    assert_eq!(stream.record_count(), 1);
+    let mut retained = before;
+    retained.remove(&dir.join(PENDING));
+    assert_eq!(inventory(&root), retained);
+    eprintln!("committed-response exact4096 file arithmetic passes; private orphans unchanged; storage-signature fixture only, no native BFT authority");
+}

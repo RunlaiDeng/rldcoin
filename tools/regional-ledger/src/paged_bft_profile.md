@@ -41,7 +41,16 @@ binds this signed profile/header/purpose and every complete original record.
 Legacy128-record signer formats remain unchanged and cannot adopt these pages.
 Durable page publication precedes response release. Exact retries require the
 separate current caller head, or only the last response's exact previous head;
-keyless recovery cannot first-sign. Any incomplete publication refuses unchanged
-and retains its complete already-signed response; interrupted promotion/recovery
-is still a required implementation gate. No epoch handoff, concurrent copied-key,
+keyless recovery cannot first-sign. Ordinary opens refuse incomplete publication unchanged. Explicit keyless recovery
+requires the exact separately retained caller request and previous head. Fully
+replay all original native history and complete old/proposed signer records before
+publishing one exact retained append; current manifest must be either the exact
+old prefix or exact proposed complete manifest. Pending contains every newly
+sealed complete page, never a reference-only response. Bad request/head/signature,
+missing custody or ambiguous pending/commit refuses without rewrite. Recovery
+may fsync/publish only these original durable bytes and remove only completed
+redundant wrappers; it cannot first-sign, reset votes or adopt an unanchored head.
+All retained orphans/residue and publication peak remain within existing bounds.
+Recheck complete native history/incident guard before releasing the original
+response. Real interruption, power loss and cross-device recovery remain gates. No epoch handoff, concurrent copied-key,
 common rollback, independent latest head or cross-device qualification is granted.

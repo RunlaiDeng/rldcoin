@@ -1249,3 +1249,9 @@ mod retained_native_replay;
 
 #[path = "paged_bft_tests.rs"]
 mod ordinary_paged_history;
+
+#[path = "paged_bft_recovery_tests.rs"]
+mod paged_recovery;
+
+#[path = "paged_bft_integration_tests.rs"]
+mod paged_integration;

@@ -88,9 +88,19 @@ strict/入口compile。held-native新pending事故guard最小反例3.943秒成�
 health/guard/full事故重验后9.942秒受影响范围通过，不打开原失败目录。
 现源`00feaf5ab202...`/implementation`26b13da2133c...`，8样本保留准确原来源，
 未重复8/65或称final全套通过；[准确Agent结果](operations/evidence/regional-native-paged-agent-outcome-20261005.json)。
-中断响应promotion/recover-only仍未实现，pending严格拒绝保留。下一一次60秒
+上述78-file时中断响应promotion/recover-only未实现，pending严格拒绝保留。当时下一一次60秒
 恢复组件先待可审合同/实现；原定300秒>128/实际native活动界/新进程集成范围
 未开始，原网络600sec/60sec/max24/2016及成熟/票数/容量不变。旧价值strict仍OPEN。
+后续明确keyless原响应恢复已实现，三个native锁发布注入边界21.377秒通过；
+错误头/请求/缺失保管/完整hash自洽坏签名及keyless新签均拒绝。4096文件反例
+23.575秒确认已发布manifest多预留commit；窄计账修复27.279秒通过，原文/孤儿
+不删。首次原定300秒真实Store+四Agent集成于300.033秒耗尽/-15，仍未通过；
+最后完整日志height24/每人54records/active24，最终头未知、现场不打开恢复。
+实际>128/65及新进程cold未完成，不能以两组件通过替代。81-file准确来源
+`56f88b7f8a92...`及[终态/下一成本判别](operations/evidence/regional-native-paged-response-recovery-20261005-outcome.json)
+保留所有失败；最终新增测试定义/CLI编译/地区lib-tests strict4.326秒通过，
+主binary未重建、旧价值strict独立OPEN。下一一次60秒/最多10本地高度只区分
+双完整replay、请求/签名、落盘及Store成本；不原样重复300范围或改网络预算。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

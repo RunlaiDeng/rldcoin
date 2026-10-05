@@ -598,5 +598,23 @@ impl<T: Clone + Serialize + DeserializeOwned> Iterator for Records<'_, T> {
     }
 }
 
+#[path = "retained_recovery.rs"]
+mod recovery;
+
+#[cfg(test)]
+impl<T> Stream<T> {
+    pub(crate) fn interrupt_at(&mut self, boundary: u8) {
+        self.interruption = Some(match boundary {
+            0 => Boundary::Pending,
+            1 => Boundary::Pages,
+            2 => Boundary::Committed,
+            _ => panic!("unknown fixture interruption boundary"),
+        });
+    }
+}
+
+#[cfg(test)]
+pub(crate) use recovery::rewrite_last_pending_for_fixture;
+
 #[cfg(test)]
 mod tests;

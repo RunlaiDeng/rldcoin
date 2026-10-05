@@ -17,7 +17,7 @@ kernel for a read-only mirror bound to exact header/key/purpose plus separate
 storage/native heads. Return state only after both whole streams/heads pass.
 This does not create paged custody, first-sign or recover, and the old 128-record
 and 64-snapshot limits still refuse. Ordinary paged Agent normal writes use the explicit profile below; interrupted
-publication recovery remains open. Legacy 128-record custody limits are unchanged.
+publication recovery is explicit and keyless as described below. Legacy128-record custody limits are unchanged.
 
 
 The separate signed `RLD-REGIONAL-BFT-PAGED-VALUE-CHANNELS-FIXTURE-V1`
@@ -44,7 +44,7 @@ never select old state. Scan complete archives for historical finality conflicts
 A65-height ordinary Store sample with fixture quorum signatures and a native99
 owner payment passed under its exact source. It is not BFT Agent voting custody
 or a full-window/fault/capacity/independent pass. Exact interrupted-response
-recover-only, actual signer>128/native active-boundary/new-process qualification,
+recover-only has finite boundary-injection evidence below; actual signer>128/native active-boundary/new-process qualification,
 new-process/interruption/custody, receipt/channel history qualification, image
 restore and transport integration remain open. Old Agent128/legacy snapshot64
 refusals remain. Changed native source requires fresh signed no-value genesis;
@@ -74,10 +74,33 @@ Exact keyless retry requires the current separate caller head, or only the last
 response's exact previous head. New requests always require the native current
 parent and private key; keyless recovery cannot first-sign. Count every root
 header/LOCK with all page/orphan/publication bytes under unchanged4096/256MiB and
-8MiB object limits. Incomplete stream publication refuses and retains complete
-already-signed bytes; no pending promotion or automatic recovery is implemented.
+8MiB object limits. Ordinary opens refuse incomplete publication and retain all
+already-signed bytes. Explicit recover-only uses the exact caller request/previous
+head and immutable purpose/header, reconstructs every original proposed page,
+and fully replays native history, signer records, signatures and prepare locks
+before publishing one retained append. Current manifest must equal exact old or
+proposed bytes. Missing/ambiguous custody, bad later signature or wrong caller
+refuses unchanged; never first-sign, create missing custody or adopt a head.
+Recheck complete native history/incident guard before response release.
+Count actual retained files and only publication files that must be created;
+when proposed manifest is already durable, no nonexistent commit is reserved.
 The actual8-height/four-Agent sample is finite original-source evidence, not
 >128 capacity, real interruption, independent/cross-device or whole-window proof.
+
+Three real native prepare-lock publication boundaries passed21.377seconds;
+these are injected failures, not actualSIGKILL/power/cross-device qualification.
+The actual4096-file storage counter failed23.575seconds, then the narrow accounting
+fix passed27.279seconds without pruning or raising limits. First actual four-Agent/
+Store integration used its original300-second budget and failed at300.033seconds;
+last logged complete height24/54records each is not its final head. Preserve exact
+source/private fixture; never reopen/recover or unchanged-retry it. >128/65/fresh-
+process cold remains OPEN. Source81 CLI compile/lib-tests strict passed4.326seconds;
+main executable was not rebuilt and legacy value strict remains independently OPEN.
+Next60seconds/one fresh10-height component measures first replay, request scan,
+execution/sign, second replay, durable append and Store finalization; no skipped
+native checks or serialized authorization. Hypothesis: duplicate full replay uses
+at least50percent of signing wall-clock. Stop on failure, discrimination or budget;
+only measured dominance supports a separately tested same-invocation cursor design.
 
 The ordinary regional ledger now has an explicitly admitted channel/fee-reserve
 bucket for the new native ground value-channel profiles. The
