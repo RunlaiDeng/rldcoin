@@ -158,3 +158,10 @@ controller guard修复不触及旧价值库/PoW/Cargo.lock/采用包；无实际
 旧库/PoW/Cargo.lock/采用包未改，无实际构建阻塞，故不触发strict重跑；
 两处告警及120.019秒/-15独立OPEN。下一地区只读cold入口不替代本库资格，
 原触发/影响/一次120诊断或300修复strict/完整编码及授权拒绝标准保持。
+
+
+固定头cold入口检查点：新增Native只读代码及六/四focused和地区lib/tests/bin
+strict30.142秒、release build23.806秒、全新CLI32.956秒通过；首类型/身份排序/
+dev-budget失败仍失败。旧价值库/PoW/Cargo.lock/采用包未改，没有实际旧库构建
+阻塞，故不触发旧strict重跑。两处告警及120.019秒/-15独立OPEN；原影响/触发/
+一次120诊断或300修复strict、完整编码/授权拒绝标准保持，地区strict不能替代。

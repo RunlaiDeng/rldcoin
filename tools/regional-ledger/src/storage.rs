@@ -382,6 +382,38 @@ impl Store {
     pub fn open_inspection(dir: &Path, authority: &str, pin: Hash) -> Result<Self> {
         Self::open_internal(dir, authority, pin, None, false)
     }
+    /// Explicit caller pin, no incident reconciliation or custody mutation.
+    pub fn open_pinned_inspection(
+        dir: &Path,
+        authority: &str,
+        pin: Hash,
+        head: Hash,
+    ) -> Result<Self> {
+        require(
+            !head.is_zero(),
+            "cold inspection requires external latest head",
+        )?;
+        Self::open_internal(dir, authority, pin, Some(head), false)
+    }
+    pub(crate) fn require_cold_head(&self, head: Hash) -> Result<()> {
+        self.require_storage_head(head)?;
+        require(
+            read_guard(&self.dir)?.is_zero(),
+            "cold inspection pending incident",
+        )?;
+        if self.paged.is_some() {
+            self.require_paged_inspection_head(head)?;
+        }
+        let (incidents, _) = read_incidents(&self.dir, &self.journal, &self.trust, None)?;
+        require(
+            incidents
+                .iter()
+                .map(|p| p.id())
+                .collect::<Result<BTreeSet<_>>>()?
+                == self.journal.incident_ids,
+            "cold inspection unindexed retained incident",
+        )
+    }
     /// The caller must retain the latest exact head outside this rollback domain.
     /// Check under the native OS lock before any incident reconciliation or replay.
     pub fn open_pinned(dir: &Path, authority: &str, pin: Hash, head: Hash) -> Result<Self> {

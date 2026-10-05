@@ -57,6 +57,13 @@ enum Action {
         #[arg(long)]
         file: PathBuf,
     },
+    /// Pinned read-only multi-batch cold check; no partial success or recovery.
+    BftNetworkCheckPlan {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     /// Full bounded live authentication only; no ledger installation or signing.
     BftNetworkInspectBatch {
         #[arg(long)]
@@ -859,6 +866,12 @@ fn run() -> Result<()> {
         )?;
     }
     let mut store = match &action {
+        Action::BftNetworkCheckPlan { expected_head, .. } => Store::open_pinned_inspection(
+            &args.dir,
+            &args.authority,
+            pin,
+            Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
+        )?,
         Action::BftNetworkCheckBatch { .. } | Action::BftNetworkInspectBatch { .. } => {
             Store::open_inspection(&args.dir, &args.authority, pin)?
         }
@@ -937,6 +950,20 @@ fn run() -> Result<()> {
                     "request_sha256":Hash(Sha256::digest(&raw).into()),
                     "results":checked,"verified":true,"ledger_changed":false,
                     "signing_authority":false})
+            );
+        }
+        Action::BftNetworkCheckPlan {
+            file,
+            expected_head,
+        } => {
+            let checked = cold_plan::check(
+                &file,
+                &store,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&checked).map_err(|e| e.to_string())?
             );
         }
         Action::BftNetworkInspectBatch { file } => {

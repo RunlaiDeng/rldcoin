@@ -1,0 +1,611 @@
+{
+  "format": "RLD-NATIVE-CAUSAL-COLD-COST-CHECKS-V1",
+  "completed": true,
+  "duration_seconds": 32.956,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "exit_code": 0,
+  "budget_exhausted": false,
+  "helper_terminal": true,
+  "cleanup_error": null,
+  "source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "cli_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "stage_sha256": "9a3404f75ed50f14d60ef12dd5a585a76ee95ae85f6cc6c7afad55a55a903e84",
+  "controller_sha256": "84c3e6a7e684677a6da2663480788e86aed26fc903e26628103fccb458f222e1",
+  "helper_sha256": "dbda0f568836c4131ce34ac9f56bc90551dcb7d843a261c1bc4b40daf620eb06",
+  "native_json_loader_sha256": "b1c43aeabdee94de84da5dcd868d4cb0c42fa2cd692ea590ac595fd99e0523e3",
+  "log_sha256": "0a5ee19b258158d04132f1dd99780525cf2578e1bf97638531f46e209fb76995",
+  "result": {
+    "completed": true,
+    "duration_seconds": 31.466,
+    "network_starts": 0,
+    "new_fresh_zero_allocation_currency": true,
+    "native_ledgers": 3,
+    "original_native_voter_caller_journals": 12,
+    "original_owner_first_signs": 3,
+    "final_heights": [
+      7,
+      4,
+      4
+    ],
+    "gross_exports": [
+      "6",
+      "4",
+      "2"
+    ],
+    "net_imports": [
+      "5",
+      "3",
+      "1"
+    ],
+    "native_accounting": {
+      "issued": "1750000000000000000000000000000",
+      "liquid": "1750000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 7,
+      "observed_exports": 3,
+      "observed_permanent_imports": 3,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    },
+    "cold_plan_positive": [
+      {
+        "kind": "eight-batches",
+        "batches": 8,
+        "complete_envelopes": 32,
+        "wall_seconds": 0.388514,
+        "bounded_response_bytes": 4262,
+        "same_native_rows": true,
+        "request_sha256": "bc92591f475b089655896447b968018d671130bb7fc09138b12972fa49411271"
+      },
+      {
+        "kind": "maximum512",
+        "batches": 128,
+        "complete_envelopes": 512,
+        "wall_seconds": 5.181516,
+        "bounded_response_bytes": 61622,
+        "same_native_rows": true,
+        "request_sha256": "9ca00a366523cada9784556f129a1ae6b3f16209662a17316984b09881ba6a4a"
+      }
+    ],
+    "cold_plan_negative": [
+      {
+        "kind": "plan-bad-later-complete-certificate",
+        "diagnostic": "native rejected: regional candidate rejected: signature error: Verification equation was not satisfied",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.142438,
+            "reaped_child_cpu_seconds": 0.086098
+          }
+        ]
+      },
+      {
+        "kind": "plan-missing-later-causal-dependency",
+        "diagnostic": "native rejected: regional candidate rejected: checkpoint is stale, conflicting or missing predecessor",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.07523,
+            "reaped_child_cpu_seconds": 0.07251
+          }
+        ]
+      },
+      {
+        "kind": "plan-stale-external-head",
+        "diagnostic": "native rejected: regional candidate rejected: complete stream exact latest head/count",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.006175,
+            "reaped_child_cpu_seconds": 0.004572
+          }
+        ]
+      },
+      {
+        "kind": "plan-zero-external-head",
+        "diagnostic": "native rejected: regional candidate rejected: cold inspection requires external latest head",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.006225,
+            "reaped_child_cpu_seconds": 0.001871
+          }
+        ]
+      },
+      {
+        "kind": "plan-over512-total",
+        "diagnostic": "native rejected: regional candidate rejected: cold plan total bound",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.041092,
+            "reaped_child_cpu_seconds": 0.025368
+          }
+        ]
+      },
+      {
+        "kind": "plan-fifth-in-single-batch",
+        "diagnostic": "native rejected: regional candidate rejected: cold plan per-batch bound",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.04841,
+            "reaped_child_cpu_seconds": 0.025629
+          }
+        ]
+      },
+      {
+        "kind": "plan-altered-exact-input",
+        "diagnostic": "native rejected: regional candidate rejected: cold plan missing or altered batch",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-plan",
+            "success": false,
+            "wall_seconds": 0.044158,
+            "reaped_child_cpu_seconds": 0.025233
+          }
+        ]
+      }
+    ],
+    "incident_refusals": [
+      {
+        "kind": "pending",
+        "diagnostic": "native rejected: regional candidate rejected: paged BFT pending incident requires explicit recovery",
+        "retained_bytes_unchanged": true
+      },
+      {
+        "kind": "unindexed",
+        "diagnostic": "native rejected: regional candidate rejected: expected value at line 1 column 1",
+        "retained_bytes_unchanged": true
+      }
+    ],
+    "standalone_eight_batches_wall_seconds": 0.682524,
+    "plan_eight_batches_wall_seconds": 0.388514,
+    "plan_eight_batch_ratio": 1.756755,
+    "native_cost_samples": {
+      "history-check": {
+        "timings": [
+          {
+            "region": "andromeda",
+            "command": "history-check",
+            "success": true,
+            "wall_seconds": 0.041077,
+            "reaped_child_cpu_seconds": 0.024142
+          }
+        ],
+        "response_bytes": 972
+      },
+      "status": {
+        "timings": [
+          {
+            "region": "andromeda",
+            "command": "status",
+            "success": true,
+            "wall_seconds": 0.04644,
+            "reaped_child_cpu_seconds": 0.02491
+          }
+        ],
+        "response_bytes": 2534
+      },
+      "bft-context": {
+        "timings": [
+          {
+            "region": "andromeda",
+            "command": "bft-context",
+            "success": true,
+            "wall_seconds": 0.04155,
+            "reaped_child_cpu_seconds": 0.025199
+          }
+        ],
+        "response_bytes": 1341
+      },
+      "proof": {
+        "timings": [
+          {
+            "region": "andromeda",
+            "command": "proof",
+            "success": true,
+            "wall_seconds": 0.091119,
+            "reaped_child_cpu_seconds": 0.053392
+          }
+        ],
+        "response_bytes": 115015
+      },
+      "bft-status": {
+        "timings": [
+          {
+            "region": "andromeda",
+            "command": "bft-status",
+            "success": true,
+            "wall_seconds": 0.084881,
+            "reaped_child_cpu_seconds": 0.051907
+          }
+        ],
+        "response_bytes": 5583
+      },
+      "wallet-view": {
+        "timings": [
+          {
+            "region": "andromeda",
+            "command": "wallet-view",
+            "success": true,
+            "wall_seconds": 0.150786,
+            "reaped_child_cpu_seconds": 0.144836
+          }
+        ],
+        "response_bytes": 2098
+      }
+    },
+    "four_singletons_wall_seconds": 0.194857,
+    "four_complete_batch_wall_seconds": 0.088745,
+    "singleton_to_batch_wall_ratio": 2.195696,
+    "separate_stopped_queries_wall_seconds": 0.455853,
+    "negative_full_complete_envelopes": [
+      {
+        "kind": "bad-later-complete-certificate",
+        "diagnostic": "native rejected: regional candidate rejected: signature error: Verification equation was not satisfied",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-batch",
+            "success": false,
+            "wall_seconds": 0.048212,
+            "reaped_child_cpu_seconds": 0.042497
+          }
+        ]
+      },
+      {
+        "kind": "missing-complete-causal-dependency",
+        "diagnostic": "native rejected: regional candidate rejected: checkpoint is stale, conflicting or missing predecessor",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-batch",
+            "success": false,
+            "wall_seconds": 0.047447,
+            "reaped_child_cpu_seconds": 0.035578
+          }
+        ]
+      },
+      {
+        "kind": "over-four-batch-count",
+        "diagnostic": "native rejected: regional candidate rejected: cold network batch count exceeds bound",
+        "native_times": [
+          {
+            "region": "andromeda",
+            "command": "bft-network-check-batch",
+            "success": false,
+            "wall_seconds": 0.048587,
+            "reaped_child_cpu_seconds": 0.026407
+          }
+        ]
+      }
+    ],
+    "all_original_native_owner_voter_caller_bytes_unchanged": true,
+    "pinned_latest_observation_replayed_not_independent_freshness": true,
+    "native_command_summary": {
+      "bft-candidate": {
+        "count": 15,
+        "wall_seconds": 0.725038,
+        "reaped_child_cpu_seconds": 0.493055
+      },
+      "bft-certify": {
+        "count": 15,
+        "wall_seconds": 0.432729,
+        "reaped_child_cpu_seconds": 0.286295
+      },
+      "bft-context": {
+        "count": 19,
+        "wall_seconds": 0.562829,
+        "reaped_child_cpu_seconds": 0.327735
+      },
+      "bft-init": {
+        "count": 12,
+        "wall_seconds": 0.657947,
+        "reaped_child_cpu_seconds": 0.140994
+      },
+      "bft-network-check": {
+        "count": 4,
+        "wall_seconds": 0.194857,
+        "reaped_child_cpu_seconds": 0.134167
+      },
+      "bft-network-check-batch": {
+        "count": 12,
+        "wall_seconds": 0.915515,
+        "reaped_child_cpu_seconds": 0.684077
+      },
+      "bft-network-check-plan": {
+        "count": 11,
+        "wall_seconds": 5.94627,
+        "reaped_child_cpu_seconds": 5.761544
+      },
+      "bft-quorum": {
+        "count": 30,
+        "wall_seconds": 0.82415,
+        "reaped_child_cpu_seconds": 0.579865
+      },
+      "bft-sign": {
+        "count": 135,
+        "wall_seconds": 13.715052,
+        "reaped_child_cpu_seconds": 7.917026
+      },
+      "bft-status": {
+        "count": 13,
+        "wall_seconds": 0.975112,
+        "reaped_child_cpu_seconds": 0.700956
+      },
+      "bft-submit": {
+        "count": 3,
+        "wall_seconds": 0.279989,
+        "reaped_child_cpu_seconds": 0.150347
+      },
+      "contact-apply": {
+        "count": 3,
+        "wall_seconds": 0.283302,
+        "reaped_child_cpu_seconds": 0.13482
+      },
+      "contact-export": {
+        "count": 3,
+        "wall_seconds": 0.119029,
+        "reaped_child_cpu_seconds": 0.074527
+      },
+      "finalize": {
+        "count": 15,
+        "wall_seconds": 1.1011,
+        "reaped_child_cpu_seconds": 0.519369
+      },
+      "history-check": {
+        "count": 7,
+        "wall_seconds": 0.274716,
+        "reaped_child_cpu_seconds": 0.172901
+      },
+      "history-head": {
+        "count": 5,
+        "wall_seconds": 0.138553,
+        "reaped_child_cpu_seconds": 0.084107
+      },
+      "init": {
+        "count": 5,
+        "wall_seconds": 0.856282,
+        "reaped_child_cpu_seconds": 0.039819
+      },
+      "proof": {
+        "count": 1,
+        "wall_seconds": 0.091119,
+        "reaped_child_cpu_seconds": 0.053392
+      },
+      "status": {
+        "count": 16,
+        "wall_seconds": 0.471802,
+        "reaped_child_cpu_seconds": 0.277677
+      },
+      "wallet-init": {
+        "count": 3,
+        "wall_seconds": 0.185305,
+        "reaped_child_cpu_seconds": 0.091146
+      },
+      "wallet-prepare": {
+        "count": 3,
+        "wall_seconds": 0.153081,
+        "reaped_child_cpu_seconds": 0.127114
+      },
+      "wallet-receipt": {
+        "count": 3,
+        "wall_seconds": 0.115357,
+        "reaped_child_cpu_seconds": 0.082813
+      },
+      "wallet-sign": {
+        "count": 3,
+        "wall_seconds": 0.283325,
+        "reaped_child_cpu_seconds": 0.22371
+      },
+      "wallet-view": {
+        "count": 7,
+        "wall_seconds": 1.143821,
+        "reaped_child_cpu_seconds": 0.889915
+      }
+    },
+    "all_native_command_wall_seconds": 30.44628,
+    "all_native_reaped_child_cpu_seconds": 19.947371,
+    "private_files": 165,
+    "expanded_evidence_snapshots": 11,
+    "checked_wire_bytes": 105841,
+    "batch_bytes": 423369,
+    "ordinary_full_cycle_fault_qualification": false,
+    "cost_sample_is_not_current_failed_depth_or_unique_cause": true
+  },
+  "last_native_controller_steps": [
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 17.618,
+      "region": "earth",
+      "height": 5,
+      "commands": 1,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 19.33,
+      "region": "earth",
+      "height": 6,
+      "commands": 0,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-controller-certified",
+      "elapsed_seconds": 21.041,
+      "region": "earth",
+      "height": 7,
+      "commands": 0,
+      "ordinary_qualification": false
+    },
+    {
+      "kind": "native-causal-leg",
+      "elapsed_seconds": 21.241,
+      "leg": 2,
+      "source": "andromeda",
+      "gross": "2",
+      "destination": "earth",
+      "net": "1",
+      "import_height": 5,
+      "mature_height": 7,
+      "only_controller_native_fixture": true
+    },
+    {
+      "kind": "native-cold-plan-checks",
+      "elapsed_seconds": 29.825,
+      "positive": [
+        {
+          "kind": "eight-batches",
+          "batches": 8,
+          "complete_envelopes": 32,
+          "wall_seconds": 0.388514,
+          "bounded_response_bytes": 4262,
+          "same_native_rows": true,
+          "request_sha256": "bc92591f475b089655896447b968018d671130bb7fc09138b12972fa49411271"
+        },
+        {
+          "kind": "maximum512",
+          "batches": 128,
+          "complete_envelopes": 512,
+          "wall_seconds": 5.181516,
+          "bounded_response_bytes": 61622,
+          "same_native_rows": true,
+          "request_sha256": "9ca00a366523cada9784556f129a1ae6b3f16209662a17316984b09881ba6a4a"
+        }
+      ],
+      "negative": [
+        {
+          "kind": "plan-bad-later-complete-certificate",
+          "diagnostic": "native rejected: regional candidate rejected: signature error: Verification equation was not satisfied",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.142438,
+              "reaped_child_cpu_seconds": 0.086098
+            }
+          ]
+        },
+        {
+          "kind": "plan-missing-later-causal-dependency",
+          "diagnostic": "native rejected: regional candidate rejected: checkpoint is stale, conflicting or missing predecessor",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.07523,
+              "reaped_child_cpu_seconds": 0.07251
+            }
+          ]
+        },
+        {
+          "kind": "plan-stale-external-head",
+          "diagnostic": "native rejected: regional candidate rejected: complete stream exact latest head/count",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.006175,
+              "reaped_child_cpu_seconds": 0.004572
+            }
+          ]
+        },
+        {
+          "kind": "plan-zero-external-head",
+          "diagnostic": "native rejected: regional candidate rejected: cold inspection requires external latest head",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.006225,
+              "reaped_child_cpu_seconds": 0.001871
+            }
+          ]
+        },
+        {
+          "kind": "plan-over512-total",
+          "diagnostic": "native rejected: regional candidate rejected: cold plan total bound",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.041092,
+              "reaped_child_cpu_seconds": 0.025368
+            }
+          ]
+        },
+        {
+          "kind": "plan-fifth-in-single-batch",
+          "diagnostic": "native rejected: regional candidate rejected: cold plan per-batch bound",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.04841,
+              "reaped_child_cpu_seconds": 0.025629
+            }
+          ]
+        },
+        {
+          "kind": "plan-altered-exact-input",
+          "diagnostic": "native rejected: regional candidate rejected: cold plan missing or altered batch",
+          "native_times": [
+            {
+              "region": "andromeda",
+              "command": "bft-network-check-plan",
+              "success": false,
+              "wall_seconds": 0.044158,
+              "reaped_child_cpu_seconds": 0.025233
+            }
+          ]
+        }
+      ],
+      "incident_refusals": [
+        {
+          "kind": "pending",
+          "diagnostic": "native rejected: regional candidate rejected: paged BFT pending incident requires explicit recovery",
+          "retained_bytes_unchanged": true
+        },
+        {
+          "kind": "unindexed",
+          "diagnostic": "native rejected: regional candidate rejected: expected value at line 1 column 1",
+          "retained_bytes_unchanged": true
+        }
+      ],
+      "standalone_eight_batches_wall_seconds": 0.682524,
+      "eight_batch_wall_ratio": 1.756755,
+      "ordinary_qualification": false
+    }
+  ],
+  "old_private_source_freeze_report_pins_unchanged": true,
+  "old_native_runtime_opened": false,
+  "network_starts": 0,
+  "ordinary_full_cycle_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_completed": false
+}

@@ -218,3 +218,17 @@ Native锁/full-genesis、每完整信封认证及incident拒绝；原4/8MiB/wire
 goal active/持久旧cwd待修/显式新workdir；当前freeze及全部验收目标保持，旧goal
 哈希引用已在本线程/动态记录报告，父线程传达未确认。VALUE-STRICT-01仍OPEN。
 [详细结果和退出标准](operations/evidence/regional-native-causal-cold-cost-outcome-20261005.json)。
+
+
+## 2026-10-05 固定头原生只读冷核验入口
+
+来源89408f5a/implementation8a361699新增独立固定head只读cold plan；
+六边界/四原batch/地区strict30.142秒及release build23.806秒通过。
+首19.164秒类型编译、3.421秒驱动身份排序、121.752秒dev-budget失败均保持。
+release全新120秒scope32.956秒完成E7/P4/A4因果成熟、原heads/owner字节检查；
+八批32份0.388514秒对八次调用0.682524秒，512份完整重复信封5.181516秒，
+后置坏证明/缺依赖/旧头/越界/变更输入拒绝。pending/坏incident CLI与真实已认证
+未索引incident unit分别记录，不能互替；普通Runtime未采用、旧来源网络结果
+不继承，全部完整目标和旧价值strict保持OPEN。下一明确外部head的停止适配器
+一次120秒、网络budget0，不恢复失败currency。freeze/全部规范/active goal不变。
+[完整范围及失败原件](operations/evidence/regional-native-cold-plan-outcome-20261005.json)。

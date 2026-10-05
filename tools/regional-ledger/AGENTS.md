@@ -511,3 +511,17 @@ hashes grant no rights, and failure never skips custody/evidence or raises limit
 The subsequent ordinary onward budget failed; seal its whole currency stores and
 original approvals/heads. Do not reopen/recover/refund/resign or migrate them.
 See REGIONAL_PAGED_CONTACT_REQUIREMENTS.md for the next fresh finite discriminator.
+
+
+The standalone pinned cold plan is read-only: open_pinned_inspection requires
+a separately retained nonzero exact latest head under the Native OS lock and
+full genesis/history replay, never incident reconciliation. Each original bounded
+4-envelope/8MiB batch and every later complete envelope authenticate. Input
+archive digest inventory binds exact bytes only; keep512 total and3MiB wire,
+4096/256MiB archive limits. Final head/incident and paged manifest/structural
+checks precede a bounded whole success response; no partial release or custody
+mutation. Ordinary Runtime has not adopted this path. The fresh release CLI
+E7/P4/A4 sample checks causal value and512 repeated envelopes, not distinct
+complex-envelope load or full fault qualification. See the pinned cold plan
+contract and source-bound outcome. New source requires fresh signed zero-value
+genesis/currency; legacy source87 network evidence is historical only.

@@ -382,6 +382,23 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
     pub fn storage_head(&self) -> Hash {
         self.manifest.head
     }
+    /// The Native owner holds the OS lock; metadata agreement is not authority.
+    pub(crate) fn require_unchanged(&self, expected: Hash) -> Result<()> {
+        require(
+            !exists(&self.dir.join(PENDING))? && !exists(&self.dir.join(COMMIT))?,
+            "cold stream has incomplete publication",
+        )?;
+        let current = keystore::private_read(&self.dir.join(MANIFEST), MAX_BYTES)?;
+        require(
+            current.as_slice()
+                == serde_json::to_vec(&self.manifest)
+                    .map_err(|e| e.to_string())?
+                    .as_slice(),
+            "cold stream manifest changed",
+        )?;
+        self.visit(expected, |_| Ok(()))?;
+        Ok(())
+    }
     pub fn record_count(&self) -> u64 {
         self.manifest.count
     }

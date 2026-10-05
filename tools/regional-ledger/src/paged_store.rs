@@ -494,6 +494,12 @@ impl Store {
             paged: Some(stream),
         })
     }
+    pub(super) fn require_paged_inspection_head(&self, head: Hash) -> Result<()> {
+        let header = read_header(&self.dir)?;
+        let stream = self.paged.as_ref().ok_or("cold paged store missing")?;
+        stream.require_scope(&header.scope(&self.trust)?)?;
+        stream.require_unchanged(head)
+    }
     pub(super) fn append_paged(&mut self, records: &[Record]) -> Result<()> {
         require(
             self.healthy,

@@ -1094,6 +1094,7 @@ pub mod channel_owner;
 pub mod channel_receipt;
 pub mod channel_state_witness;
 pub mod channels;
+pub mod cold_plan;
 pub mod conflict;
 pub mod contact;
 pub mod epoch;

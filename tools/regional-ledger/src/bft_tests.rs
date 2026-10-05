@@ -12,6 +12,8 @@ struct Harness {
     seeds: Vec<u8>,
     retain: bool,
 }
+#[path = "cold_plan_tests.rs"]
+mod cold_plan_tests;
 impl Harness {
     fn new() -> Self {
         Self::with_rules(bft::RULES)

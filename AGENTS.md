@@ -940,3 +940,21 @@ release no partial success. Keep4 envelopes/8MiB per batch,3MiB wire and512
 total. Changed Native needs fresh signed zero-allocation fixtures. Current
 cost outcome binds once300s focused-source/strict plus once120s fresh CLI
 budgets, network/full-cycle/fault budget0, and failure/terminal exit conditions.
+
+
+Native cold-plan source89 is89408f5a/implementation8a361699. Preserve the initial
+19.164s type compile failure,3.421s incorrect string-sorted source identity and
+121.752s dev-build120s budget failure. Seal the whole
+`native-cold-plan-cli-private-20261005` (2 files) and
+`native-cold-plan-cli-source-order-v2-private-20261005` (160 files) currencies;
+never reopen Native/Runtime, recover, resign/refund or migrate them. Native
+source hashing must match Rust PathBuf component order, not sorted path strings.
+Use the source-bound release CLI for measured comparisons; dev strict evidence
+is separate. Corrected source6 new/4 original tests and strict passed30.142s;
+release build23.806s and a new no-value CLI32.956s passed. This is only the
+fixed-head read-only component/small causal sample; ordinary Runtime not adopted.
+The successful CLI's two injected incident Native targets remain private and
+closed: never reopen/recover them. Preserve all original bounds and proof bytes.
+Next once120s pinned stopped-adapter check requires caller-supplied separately
+retained exact latest head; never infer independent freshness by sampling it.
+Network/cycle/fault budget0, old failures and full normative gates remain open.

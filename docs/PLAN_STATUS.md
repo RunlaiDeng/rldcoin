@@ -6,7 +6,12 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-当前来源 `4e2331b4...` / implementation `bb6d1e5b...`：已修复原生付款入队
+当前新增只读cold入口来源 `89408f5a...` / implementation `8a361699...`，
+六新边界/四原cold-batch/地区strict通过；release全新CLI32.956秒通过。
+来源87旧完整网络结果仍保留原scope，当前来源89普通Runtime尚未采用；
+19.164源码、3.421身份及121.752 dev-budget失败保留，完整cycle/fault仍OPEN。
+
+前继来源 `4e2331b4...` / implementation `bb6d1e5b...` 的历史有限范围：已修复原生付款入队
 的因果证明遗漏，改用完整原生证明接口；原命令和完整证据均保留，不因入队扣款。
 原2.954秒继续转出失败已封存，原批准/调用头/预留不恢复、重签、退款或迁移。
 21.670秒新反例复现遗漏；5.065秒测试字段构建失败及21.325秒测试持锁冷启动失败
@@ -749,3 +754,36 @@ AGENTS/receipt的正文2ba62421/PDFc59f9fe8和全部S/R/I/A–G/N/P；goal旧前
 引用在本原线程/动态记录报告，父线程传达未确认，不改冻结正文/PDF/官网。
 VALUE-STRICT-01/完整cycle/fault/2016/source66/post64/独立/PQ/physical继续OPEN。
 [准确来源、成本与下一判别](operations/evidence/regional-native-causal-cold-cost-outcome-20261005.json)。
+
+
+## 2026-10-05 固定头原生只读冷核验入口
+
+新Native来源89408f5a / implementation8a361699 / release binarya45387fa，
+新增独立固定最新head的cold plan：一次OS锁/full-genesis开库，每批完整认证，
+最终头/事件/分页manifest/输入目录复查，后置失败不返回部分通过。保留每批4份/
+8MiB、wire3MiB、总512及原archive/history/成熟/票数限制；没有恢复、签署或入账。
+
+首源码检查19.164秒编译类型错误失败，修正后一次300秒范围30.142秒完成六新边界
+测试、四原cold-batch回归、lib/tests/bin无豁免strict及dev build。首CLI3.421秒
+因驱动按字符串而非Rust路径组件计算source而被Trust拒绝；错误身份及两文件保留。
+修正身份后的dev CLI原120秒范围121.752秒耗尽，最后完整日志E6，**未进入cold plan**，
+整个160文件currency封存，不打开Native/Runtime、恢复/重签/退款。诊断核实旧样本
+用release、本轮误用dev；只重建release23.806秒通过，未复跑相同源码strict。
+
+再一次原120秒全新零分配CLI范围32.956秒exit0。原生因果E6→P5→A3→E1实际
+进口/成熟，E7/P4/A4及I=U=1.75×10^30、E=0；三原owner、12独立voter/caller
+字节不变。八原四份批调用0.682524秒对新八批计划0.388514秒（1.756755倍），
+128批512份有序重复完整信封5.181516秒通过；不是512份不同复杂证明负载。
+坏后完整certificate、缺因果依赖、旧/零头、第五份、513总份数、输入摘要变更拒绝。
+CLI额外两个新零高度Native targets只测pending marker及坏retained incident，字节
+保持；完整已认证未索引incident另由新Native边界测试证明，不能混称CLI证据。
+成功scope208文件留私有inventory、当前自有活动进程0；所有旧失败/报告/freeze保持。
+
+这是Native组件/小历史controller证据，普通Runtime尚未采用。来源87旧严格测试
+保留原scope，不继承到来源89；旧600.666失败、完整cycle/fault、2016/source66/
+长期历史/独立/PQ/physical/旧价值strict仍OPEN。下一一次120秒停止适配器判别，
+调用者明确提供分别保留最新Native头，保留完整原信封有序多重引用和值、逐输入/响应
+绑定、不构造Runtime或恢复保管、不自动采用现观察头；首失败/完整判别/预算退出，
+网络cycle/fault budget0。当前成功Native root仅可distinct只读，两个注入incident
+目标和旧失败currency禁止Native/Runtime打开；必要时新夹具，不迁移价值。
+[准确源码、结果、失败和下一范围](operations/evidence/regional-native-cold-plan-outcome-20261005.json)。
