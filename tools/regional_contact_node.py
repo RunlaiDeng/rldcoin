@@ -28,6 +28,15 @@ MAX_PER_TICK = 4
 MAX_NATIVE_OUTPUT = 8 * 1024 * 1024
 
 
+class NativeRefusal(ValueError):
+    """Complete bounded subprocess refusal; display text grants no authority."""
+    def __init__(self, command, exit_code, diagnostic):
+        self.command = command
+        self.exit_code = exit_code
+        self.diagnostic = diagnostic
+        super().__init__('native rejected: ' + diagnostic[:2048].strip())
+
+
 class Native:
     def __init__(self, binary, ledger, authority, currency):
         self.binary = Path(binary)
@@ -48,7 +57,9 @@ class Native:
                 input=private_input, stdout=output, stderr=errors, timeout=30, check=False)
             mesh.require(output.tell() <= MAX_NATIVE_OUTPUT and errors.tell() <= 64 * 1024, 'native response outside bound')
             errors.seek(0)
-            mesh.require(result.returncode == 0, 'native rejected: ' + errors.read(2048).decode('utf-8', errors='replace').strip())
+            if result.returncode != 0:
+                raise NativeRefusal(str(args[0]) if args else '', result.returncode,
+                                    errors.read(64 * 1024).decode('utf-8', errors='replace'))
             output.seek(0)
             return wire.decode_json(output.read(MAX_NATIVE_OUTPUT + 1))
 

@@ -1261,3 +1261,34 @@ binary/12Native/owner/TLS gates. This budget-ended stage launches no more fullsc
 Goalactive; fullfault/VALUE-STRICT-01/Source66/2016/history/independent/physical/
 allgoal OPEN. See operations/evidence/regional-paged-full-fault-runtime-v4-outcome-
 20261005.json and regional-paged-fault-async-receipt-fix-outcome-20261005.json.
+
+
+2026-10-05 fifth paged fullfault remains FAILED at original600deadline;613.933
+seconds includes cleanup/pins/seal,12node exit0/relays stopped/6128files retained.
+203actual receipt reads:147Native lock busy,23no-evidence,33complete authenticated
+responses all pending import. These observation-time statements cannot establish
+final stopped Native state. Original maturity/keyless drain/all12cold/conservation
+not completed. Earlier6152and all failures stayfailed; no failed Native/Runtime
+reopen/recover/resign/refund/copy. Isolation/payments/offline catchup remain finite.
+
+Measured candidate-lock correction retains complete bounded diagnostic/action/exit;
+only exact native candidate lock refusal aborts selection before empty/partial
+fallback. No skipped native checks, cached authorization or changed bounds. Old2
+counterexamples reproduced; new6/related13batch regressions pass. Fresh offline
+Native component passed10.319seconds/once180:8new stores, actual locked trial old
+empty/new abort; unlocked exact Import candidate;fournet2recipients mature/full
+8fixed-head/caller/owner cold, private bytes unchanged;7controllercertificates
+qualify setup only. Native89/CLI unchanged. No Runtime/socket; no unique oldfull
+fault causality or actual ordinary-retry qualification.261newfiles sealed.
+
+Next once180/one fresh zero-allocation finite ordinary gate: blocked leader trial
+must release no Proposal or changed signer/caller head; after release ordinary
+native selection/import/maturity/fullcold must complete. All original maturity2,
+quorum3/history/capacity bounds remain. Exit first mismatch, full discriminator or
+180; failure seals/no unchanged600retry/deadline increase. No new fullscope in this
+stage. Source66/2016/history/independent/physical/PQ/VALUE-STRICT-01/allgoal OPEN.
+Goalactive; commands explicit newworkdir, persistentcwd remains UI repair item.
+Current body2ba62421/PDFc59f9fe8and S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8 adopted;
+goal text retains superseded predecessor hashes; frozen paper/site unchanged.
+See operations/evidence/regional-paged-full-fault-async-v5-outcome-20261005.json and
+operations/evidence/regional-bft-candidate-lock-fix-outcome-20261005.json.

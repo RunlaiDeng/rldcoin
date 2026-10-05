@@ -1,0 +1,22 @@
+{
+  "format": "RLD-BFT-CANDIDATE-LOCK-STAGE-V1",
+  "recorded_at_utc": "2026-10-05T18:16:03.044160+00:00",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "An exact native OS-lock refusal in candidate trial is silently skipped, allowing an empty/partial candidate despite a retained pending Import.",
+  "discriminator": "Intercept every native subprocess at the existing Native facade; replay the exact retained actual Rust1.98lock diagnostic. Old selection must demonstrate the empty/partial fallthrough; fixed selection must abort before a final candidate or signing.",
+  "exit": "First model/binding error, discrimination and related regressions complete, or120seconds; no actual Native/Runtime/socket/first-sign/custody writes.",
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "sockets": 0,
+  "first_signs": 0,
+  "unique_actual_full_fault_cause_not_established": true,
+  "source_before_sha256": {
+    "regional_bft_node.py": "1efc2b143fbccc31198fe3aef9734e9f223896fe06e408e6dece839b0483a530",
+    "regional_contact_node.py": "e7145265b593c781c62e795716637abd5627d5517b06d0beeca47abab52074e1"
+  },
+  "actual_diagnostic_sha256": "efaf13b11689e91ea4d1935c3aa0d20962c36d75ca4442d6b1a265e2ab2adaac",
+  "frozen_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "failed_inventory_sha256": "8b5fa15c923ff4af0e6d0700d62be426940363c0174fe13d485c4a7f68f710fa",
+  "test_source_sha256": "3ad47c92ce76942acadd707abcf03f1d77084e33f10d646dd99a78602bd6d3f2"
+}

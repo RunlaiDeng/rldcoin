@@ -84,3 +84,12 @@ head/envelope/custody/value cold gate is unchanged. Retain exact successful live
 receipt observations privately and categorical native read-lock/no-evidence/fatal
 refusals; these observations do not authorize signing or refund. The original
 600timeout scope remains failed; finite fake-Native counterexamples do not pass it.
+
+
+Candidate trial contention is an unknown validity observation. Retain the complete
+bounded native diagnostic and actual action/exit; an exact native candidate lock
+refusal aborts this selection before empty/partial fallback. Ordinary next-tick
+retry must rerun native pending-import/candidate authorization from current state.
+No receipt, timeout or cached command can grant inclusion or reset caller custody.
+The fresh offline lock/import component is separate from ordinary Service retry
+and full fault qualification; all prior full failures remain failed.

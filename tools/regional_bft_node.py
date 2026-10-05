@@ -602,7 +602,19 @@ class Runtime:
             seen.add(ident)
             try:
                 self.with_json('bft-candidate',commands+[command],'--miner',self.miner)
-            except ValueError:
+            except ValueError as error:
+                # A contended native trial never established command invalidity.
+                # Abort this selection; the next ordinary tick retries from the
+                # native head, with no empty/partial fallback or signing here.
+                from regional_contact_node import NativeRefusal
+                if (isinstance(error, NativeRefusal)
+                        and error.command == 'bft-candidate'
+                        and type(error.exit_code) is int and error.exit_code == 1
+                        and error.diagnostic.strip() in (
+                            'regional candidate rejected: lock acquisition failed because the operation would block',
+                            'regional candidate rejected: complete stream already locked',
+                        )):
+                    raise
                 continue  # retain stale/invalid submission; never rewrite or cancel it.
             commands.append(command)
         return self.with_json('bft-candidate',commands,'--miner',self.miner)
