@@ -456,7 +456,7 @@ wallet批准/预留、独立caller与所有边界；入队不是扣款或签署�
 验证来源已变；12.614秒新夹具/合同/Native坏后证明/容量判别通过，小样本2.128倍
 不证明旧网络预算唯一原因，也不能补记原失败通过。1.015秒工具路径失败保留。
 
-下一单次180秒新范围：全新签署零分配根，Native controller只准备E4原出口100、
+历史单次180秒新范围（下节已记录终态）：全新签署零分配根，Native controller只准备E4原出口100、
 P import1+成熟3，不计普通E到P全循环；原四P voter/caller从genesis自行保留到3。
 owner11只签实际99 input的gross98/fee1+1/zero-change，ordinary四P finite5
 须认证准确export4或5、完整源cold；再原P0 keyless→四新A0实际net97/import+2
@@ -466,3 +466,50 @@ import/maturity/clean-stop/cold失败、完整有限判别或预算退出。不�
 60round/24新增高度/2016/成熟/票数/容量。Native未变，但新停止验证路径需要新
 普通资格，不能重用封存余额。完整fault/返程/source66/长历史/独立/PQ/物理另验。
 [完整准确来源及所有终态](../operations/evidence/regional-native-paged-submission-outcome-20261005.json)。
+
+
+## 新目录当前来源普通继续转出终态及返程契约
+
+[准确新范围](../operations/evidence/regional-native-paged-onward-fresh-outcome-20261005.json)
+在一次180秒预算内136.378秒完整通过。Native87 `4e2331b4...`、implementation
+`bb6d1e5b...`、Python153/Core字节不变；迁移驱动 `d8c2af0d...` 默认入口实际
+执行新目录companion，旧 `20d0b0fc...` 完整保留。新根Native验证零分配及当前
+implementation；controller准备E4出口100/P import1、原两块成熟3，不计普通
+初始跨区资格。原四P/voter/caller从genesis保留；owner11真实99 input只签
+gross98，fee1+1、zero change，typed queue不debit。四ordinary Runtime在4
+认证准确98出口、5停止；原99输入消费、永久进口保留，source204完整信封/full
+Native/owner/heads cold。原P0 keyless普通TLS到四新A0，四A在4唯一进口97、6
+成熟可花，source/目的290完整信封/full Native/head/receipt cold通过。总494
+完整信封逐份认证，九个Service正常退出，I=U=10^30、E=T=0；没有打开旧失败
+Native/Runtime、重签、退款或剪证据。旧180.529秒整范围仍失败，Node cold batch
+不是其唯一原因证明，Native45.509秒同来源严格检查复用，旧价值strict仍OPEN。
+
+下一一次300秒/1次范围是实际返程；它需要更长A6原始签署/证据重放及已发行E4
+账本，不延长原失败的180秒范围。完整准备/等待/停止cold均计入，原600stage/
+60round/24新增高度/2016/成熟/三取四/容量不变，最高同时5、两阶段9Services。
+必须绑定准确成功136.378秒报告、全部原source/binary/heads和从genesis的原
+voter journals，正常核验实际A6已认证输入97及当前独立caller无pending。
+owner12第一次签此准确input的return96，local/destination fee各1、zero change；
+原四A从6普通继续到finite8，须真实certified export7或8。运行阶段controller
+不造票/块/搬运frame；失败不发replacement request、不恢复旧保管或采用新head。
+
+原A0 keyless普通中继至原四E4，保持原Native/voter/caller journals，不copy/
+init/adopt；须准确唯一import95、actual import+2 maturity及local finality。
+初始E100原扣款/export/wallet批准/head必须保持，返程是新价值后代，不能释放
+或退款旧出口。每个source/destination完整proof/envelope/caller/owner都cold
+认证，合法Evidence追加保留旧immutable objects；source签署头在keyless阶段不变。
+
+起源E继续正常发行，所以当前不同高度的已认证兼容E前缀可以有不同minted/coins。
+先全Native重放每份complete proof，再以Native-selected finality的完整previous
+链核验共同已选statement；相同高度要求相同ledger，不同高度不能强要求相同
+奖励余额。每份真实Native observation按它自己的认证高度完整核对发行/coins/
+exports/imports/received/E/T及无quarantine；Python metadata/hash不提供authority。
+选择一个已完整Native认证且与所有已选前缀兼容的E状态作三地区守恒，不杜撰固定
+E8/E10、固定发行量或只读取滞后副本。E源/目的同名回路仍需完整祖先认证，不能
+因当地已有E历史而省略incoming依赖。
+
+首实际输入/授权/head/保管/出口/导入/成熟/clean-stop/full-cold失败，完整有限
+判别或300秒退出，保留原件。失败后先选精确Native/model/cost反例，不原样重复、
+扩大预算/界限、refund或替代owner。通过也仅给该精确ground返程能力；初始E到P
+仍为controller准备，普通全循环/fullfault/2016/source66/post64/独立custody/PQ/
+physical与全部S/R/I/A-G/N/P仍OPEN。

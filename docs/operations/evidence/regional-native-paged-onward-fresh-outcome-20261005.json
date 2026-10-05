@@ -1,0 +1,193 @@
+{
+  "format": "RLD-NATIVE-PAGED-ONWARD-FRESH-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T07:16:27.205420+00:00",
+  "completed": true,
+  "duration_seconds": 136.378,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "report": "regional-native-paged-onward-fresh-20261005-checks.json",
+  "report_sha256": "05a11f3010a56d2dd4fd9398c00d459f95e5ca880bfd65a2d9d25a30e1ecc30a",
+  "stage": "regional-native-paged-onward-fresh-20261005-stage.json",
+  "stage_sha256": "14d8b1a446615d75560df0e5a7fbc627271f0c1b7c05a65c8319ae580d62858b",
+  "driver_recovery_sha256": "b7ba81084756b4141025f70e2f3bddf0ff9d442932c72441225bef851973cf93",
+  "native_source_commitment": "4e2331b4cf44015c7da829d4710e7b09577ba893664ebec2802e0daf2d356ead",
+  "implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+  "cli_binary_sha256": "d8c2af0dcf5fca5fd4de517a4f7a92444e151dd91cdb68a79aa897b07cbc37a7",
+  "controller_sha256": "1d319567861c11c68afe80f30ad7135101e36003a2844b7ff23056eb8b4a4c39",
+  "helper_sha256": {
+    "prepare-native-paged-onward-fresh-20261005.py": "910b6d209ad80cda6a4850f686d0138158b1bbf096b9fb29f48f0ddc91f4b60d",
+    "observe-native-paged-onward-fresh-source-20261005.py": "60da2696bfa52d63390dab99c3b9391b4d05527c7e4da34fded6aac6e2637f3d",
+    "observe-native-paged-onward-fresh-receiving-20261005.py": "ff363d499f5b2330e2872a6cd7fe3b20747548d751e8d632e0470527ec2d3b06"
+  },
+  "preparation": {
+    "completed": true,
+    "fresh_signed_zero_allocation_currency": true,
+    "native_init_authenticated_current_implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+    "earth_height": 4,
+    "proxima_height": 3,
+    "actual_export": "100",
+    "original_imported_input_net": "99",
+    "actual_import_height": 1,
+    "mature_height": 3,
+    "all_four_original_native_voter_and_caller_heads": true,
+    "ordinary_origin_to_proxima_qualified": false,
+    "no_old_fixture_or_custody_opened": true,
+    "network_services_started": 0
+  },
+  "source": {
+    "source_initial_height": 3,
+    "source_final_height": 5,
+    "actual_original_input": "99",
+    "gross_export": "98",
+    "actual_export_height": 4,
+    "local_fee": "1",
+    "destination_fee": "1",
+    "change": "0",
+    "signing_and_queue_no_debit": true,
+    "source_cold_envelopes": [
+      51,
+      51,
+      51,
+      51
+    ],
+    "original_voter_heads_preserved": true,
+    "original_owner_approval_retained": true
+  },
+  "destination": {
+    "initial_height": 0,
+    "final_native_heights": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "actual_receipts": [
+      {
+        "import_height": 4,
+        "mature_height": 6,
+        "net": "97",
+        "remaining": "97",
+        "mature_spendable": true,
+        "local_finality_covers_import": true,
+        "transport_receipt_is_value_authority": false
+      },
+      {
+        "import_height": 4,
+        "mature_height": 6,
+        "net": "97",
+        "remaining": "97",
+        "mature_spendable": true,
+        "local_finality_covers_import": true,
+        "transport_receipt_is_value_authority": false
+      },
+      {
+        "import_height": 4,
+        "mature_height": 6,
+        "net": "97",
+        "remaining": "97",
+        "mature_spendable": true,
+        "local_finality_covers_import": true,
+        "transport_receipt_is_value_authority": false
+      },
+      {
+        "import_height": 4,
+        "mature_height": 6,
+        "net": "97",
+        "remaining": "97",
+        "mature_spendable": true,
+        "local_finality_covers_import": true,
+        "transport_receipt_is_value_authority": false
+      }
+    ],
+    "keyless_source_native_height": 5,
+    "cold_envelopes": [
+      13,
+      71,
+      69,
+      69,
+      68
+    ],
+    "every_complete_envelope_native_authenticated": true,
+    "separate_caller_heads_verified": true
+  },
+  "native_accounting": {
+    "issued": "1000000000000000000000000000000",
+    "liquid": "1000000000000000000000000000000",
+    "escrow": "0",
+    "pending_exports": "0",
+    "pending_export_net": "0",
+    "origin_height": 4,
+    "observed_exports": 2,
+    "observed_permanent_imports": 2,
+    "conserved": true,
+    "derived_from_pinned_native_replay": true,
+    "independent_freshness_or_signing_authority": false
+  },
+  "full_native_cold_envelopes": 494,
+  "clean_service_terminals": 9,
+  "active_services_remaining": 0,
+  "old_180_529s_failure_still_failed": true,
+  "old_failed_native_runtime_opened": false,
+  "old_reports_unchanged": true,
+  "native_python_core_source_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "bounds": {
+    "object_bytes": 8388608,
+    "archive_files": 4096,
+    "archive_bytes": 268435456,
+    "logical_checkpoints": 64,
+    "logical_blocks": 256,
+    "wire_bytes": 3145728,
+    "page_records": 16
+  },
+  "original_network": {
+    "stage_seconds": 600,
+    "round_seconds": 60,
+    "max_new_heights": 24,
+    "challenge_blocks": 2016,
+    "quorums_maturity_capacity_unchanged": true
+  },
+  "next_scope": {
+    "started": false,
+    "hypothesis": "The actual original A97 output imported at4/mature6 in this exact passed fresh currency can be independently reviewed and first-signed once for return96 (local fee1, destination fee1, change0). The original four A Native/voter/caller journals continue6 to finite8 under ordinary startup; only an actual certified return export at7or8 permits keyless A0 ordinary relay to the original four E4 journals. Each E replica must uniquely import95, preserve its original export100 and consumed owner input, mature at actual import+2 and fully cold-authenticate every complete envelope/head. E issuance follows its actual selected Native height and compatible certified prefixes, never an assumed fixed total or a refund.",
+    "budget_seconds": 300,
+    "attempts": 1,
+    "network_processes_peak": 5,
+    "network_starts_across_phases": 9,
+    "source_entry_requirement": "Exact successful136.378s report, source/binary/controller and original immutable source/caller/owner bytes; recheck all original A/E Native certified boundaries and separately retained voter heads. No copy/init/adoption of a signing journal or old failed value/custody.",
+    "measurement_basis": "Prior onward136.378s included9.105s preparation,40.735s source and86.516s recipient. Return adds A6 historical signing/cold replay and an already-issued E4 destination, rather than four new zero-height destinations. This is a new return discriminator; no failed scope budget is extended.",
+    "bounds": {
+      "object_bytes": 8388608,
+      "archive_files": 4096,
+      "archive_bytes": 268435456,
+      "logical_checkpoints": 64,
+      "logical_blocks": 256,
+      "wire_bytes": 3145728,
+      "page_records": 16
+    },
+    "original_network": {
+      "stage_seconds": 600,
+      "round_seconds": 60,
+      "max_new_heights": 24,
+      "challenge_blocks": 2016,
+      "quorums_maturity_capacity_unchanged": true
+    },
+    "source_finite_height": 8,
+    "destination_initial_height": 4,
+    "max_destination_new_heights": 24,
+    "controller_votes_blocks_frames_during_runtime": false,
+    "exit": "First actual authorization/input/conservation/caller/custody/export/import/maturity/clean-stop/full-cold failure, complete finite discriminator or300s. Preserve every outcome. A failure selects one exact Native/model/cost counterexample; no unchanged repeat, resign, refund, replacement owner request or budget/capacity increase.",
+    "qualification": "Finite ordinary return in the exact current fresh ground currency only. Controller-prepared initial E-to-P remains preparation; no ordinary whole-cycle, full-fault,2016-window,post64,independent/cross-device/PQ/physical qualification."
+  },
+  "remaining": [
+    "ordinary return current source",
+    "ordinary full cycle with initial E-to-P ordinary",
+    "full sustained fault",
+    "2016 execution",
+    "source66 dependency closure",
+    "post64/long history",
+    "complete protocol/model",
+    "PQC/epoch/independent/cross-device/physical"
+  ],
+  "whole_goal_completed": false
+}

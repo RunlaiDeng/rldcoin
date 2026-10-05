@@ -26,15 +26,36 @@ cold通过。最后A live观测为6、已进口而未成熟，**不是最终停�
 成熟cold。Native源不再改变，原45.509严格检查复用；Node冷核验来源已改变。
 [准确修复、范围、失败与下一假设](operations/evidence/regional-native-paged-submission-outcome-20261005.json)。
 
-下一最小一次180秒/1次范围尚未启动：全新签署零分配根，controller只作Native
-准备E4原export100/P import1+成熟3；不计作新普通E到P全循环。四原P普通生命周期
-用实际99输入签一次gross98，finite5须实际认证出口4或5，完整源cold后原P0
-keyless中继到四新A0、真实net97/import+2成熟、完整Native/每份信封/原独立heads/
-owner与三地区守恒。使用已判别batch4，最高同时5/两阶段9Services；运行阶段
-controller不造票/块/搬运。全部准备/等待/核验计入180秒，首实际失败/完整有限
-判别/预算退出；24新增高度、600stage/60round/2016/成熟/quorum/容量均不改。
-旧价值库VALUE-STRICT-01、返程/完整fault/窗口/source66/post64/独立/PQ/物理仍OPEN。
-本页历史“全部通过”只指明确绑定的当时有限scope，不能覆盖后续失败或全部协议。
+迁移恢复：原任务 goal 已读回 active；后续全部项目命令显式使用
+`/Users/galaxy/GitHub/rldcoin`，持久 cwd 仍旧且待界面修复。旧合格CLI
+`20d0b0fc...` 的默认入口实际引用已不存在的旧 companion，独立 help-only
+探针返回2；旧二进制保留。一次120秒预算内44.068秒从新目录重建CLI
+`d8c2af0d...`，构建及新默认 companion help/import 探针均返回0，未创建
+Native目录或启动网络。87 Native/153 Python/Core来源、implementation、
+冻结材料及旧价值strict基线未变；这是入口恢复，不是新Native付款/冷保管/fault
+资格。[准确恢复与新二进制绑定](operations/evidence/regional-migration-driver-recovery-20261005.json)。
+下一新scope绑定这份新驱动并重新核验实际Native身份；旧签署夹具/失败/报告不改。
+原goal正文仍保存 `c906.../f825...` 前继引用，须向父线程报告；实施规范继续按
+当前AGENTS及冻结记录的 `2ba62421.../c59f9fe8...`，不自主改目标正文或白皮书。
+
+既定一次全新继续转出范围已于136.378秒/180秒完整通过：Native准备E4/P3
+只计作前置准备；四原P实际99输入签一次gross98，普通节点在4认证出口、5停止。
+四新A均在4唯一进口净97、6达到原两块成熟且可花。源204及keyless/目的290份
+完整信封共494份逐份Native认证，原独立voter/owner caller heads、原审批及
+所有既有Native不可变对象核验；9 Services正常退出，守恒I=U=10^30、E=T=0。
+旧180.529秒失败仍失败；有效旧检查未重跑，没有打开失败Native/Runtime。
+[准确终态与下一返程判别](operations/evidence/regional-native-paged-onward-fresh-outcome-20261005.json)。
+
+下一一次返程范围尚未启动：基于这份完整通过的全新currency，原A97所有者独立
+首次签gross96（两端fee各1、找零0），原四A6→finite8须实际认证出口7或8；
+keyless A0普通中继至原四E4，真实净95导入/原两块成熟及完整Native/信封/heads。
+保持原E100出口、原输入已消费及全部旧负债；E发行随实际已选Native高度计数，
+兼容前缀核验不能要求不同高度的起源账本有相同奖励余额。一次300秒/1次含
+准备/等待/停止核验；这是新的返程判别，不延长任何失败范围。600stage/60round/
+24新增高度/2016/原quorum/成熟/容量保持。首实际失败/完整判别/预算退出后换
+精确Native/模型/成本反例，不原样重跑或重签退款；最多同时5/两阶段9Services。
+旧价值VALUE-STRICT-01、普通完整循环/完整fault/窗口/source66/post64/独立/PQ/物理
+仍OPEN。本页历史“全部通过”仅对应明确绑定的当时有限scope，不能覆盖后续失败。
 
 历史b4来源普通owner提交至目的成熟组合范围已通过：全新零分配根，一次180秒实际
 91.981秒；源端只签一个请求，typed queue不debit，四普通节点认证source5出口100
