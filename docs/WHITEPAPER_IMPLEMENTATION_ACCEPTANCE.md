@@ -473,3 +473,27 @@ status passed3.423seconds/once120; prior56e313/3.285source/report retained. No
 Native/runtime/socket/firstsign/recovery or OS-lock probe rerun. Fullfault still
 FAILED; original next180fresh preparation/once600and all limits unchanged. See
 operations/evidence/regional-paged-fault-runtime-lock-cap-fix-outcome-20261005.json.
+
+
+2026-10-05 latest paged fullfault FAILED at original600deadline (612.570seconds
+including cleanup/source pins/inventory sealing);12nodes exited0,relays stopped,
+6152files/exacta373source retained. Isolation original payments/nonzero-round
+certificate/offline catchup passed, then restoration; only2Native receipt calls
+returned1,38restored samples all had some unknown heights. No actual final Native
+import/maturity/keyless/fullcold was established. Old refusal classes were not
+retained; samples cannot reconstruct missing scheduling or uniquely prove cause.
+All4failed currencies remain sealed; no Native/Runtime/recovery/resign/refund.
+
+Narrow74468bb1receipt driver removes only the simultaneous-all12telemetry query
+barrier: exact complete Native recipient authentication/maturity/finality/value
+and fair2sec rotation remain mandatory, unknown/pending never credit. Retain
+exact successful live responses and categorical lock/no-evidence/fatal outcomes.
+Retained-sample old-block/new-query counterexample plus17tests passed4.243seconds
+/once120 with Native/runtime/socket/firstsign/recovery0; modeled answers grant no
+actual value/fault qualification. Native89/CLIunchanged,all old/source/freeze exact.
+Next once180fresh signed zero-allocation custody, then one necessary original
+600/60/24/E27-P24-A24/maturity2/quorum3/fullcold scope after17model/terminal/source/
+binary/12Native/owner/TLS gates. This budget-ended stage launches no more fullscope.
+Goalactive; fullfault/VALUE-STRICT-01/Source66/2016/history/independent/physical/
+allgoal OPEN. See operations/evidence/regional-paged-full-fault-runtime-v4-outcome-
+20261005.json and regional-paged-fault-async-receipt-fix-outcome-20261005.json.

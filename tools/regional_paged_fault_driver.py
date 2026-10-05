@@ -229,12 +229,16 @@ class Driver:
                 cwd=self.project,input=None,stdout=output,stderr=errors,timeout=min(30,self.remaining()),check=False)
             require(output.tell()<=8*1024**2 and errors.tell()<=65536,'controller Native output capacity')
             errors.seek(0);diagnostic=errors.read(65536).decode(errors='replace')
-            self.calls.append(dict(command=command,region=label,index=n,exit_code=result.returncode,
-                wall_seconds=round(time.monotonic()-started,6)))
+            call=dict(command=command,region=label,index=n,exit_code=result.returncode,
+                wall_seconds=round(time.monotonic()-started,6))
+            self.calls.append(call)
             if native_read_busy(command,result.returncode,diagnostic):
+                call['observation_kind']='NATIVE_READ_BUSY'
                 raise NativeReadBusy('Native observation OS lock unavailable')
             if receipt_not_observed(command,result.returncode,diagnostic):
+                call['observation_kind']='NATIVE_RECEIPT_NOT_OBSERVED'
                 raise NativeReceiptNotObserved('Native receipt evidence not observed at this replica')
+            call['observation_kind']='NATIVE_EXIT_ZERO' if result.returncode==0 else 'FATAL_NATIVE_REFUSAL'
             require(result.returncode==0,'controller Native refusal: '+diagnostic[:2048])
             output.seek(0);answer=decode_native_json(output.read(8*1024**2+1))
         if command in WRITES:self.write_counts[command]+=1
@@ -375,13 +379,18 @@ class Driver:
         return True
 
     def live_receipt(self, heights):
-        if not all(type(heights.get(s)) is int for s in SLOTS):return False
+        # A Native recipient read authenticates its complete source/import/value
+        # evidence. Missing unrelated telemetry must not gate that read or its
+        # fair replica rotation. Observations() still refuses real errors/caps.
         now=time.monotonic()
         if now<getattr(self,'next_receipt',0):return False
         self.next_receipt=now+2
         n=getattr(self,'receipt_slot',0);self.receipt_slot=(n+1)%4
         value=self.call('proxima',n,'wallet-receipt','--file',self.expectation_path)
         require(value['expected']==self.expectation,'exact original receipt binding differs')
+        self.receipt_observations=getattr(self,'receipt_observations',0)+1
+        self.file('observations/original-receipt-'+str(self.receipt_observations),
+            dict(region='proxima',index=n,call_index=len(self.calls)-1,receipt=value))
         return value if (value['evidence_verified'] and value['import_accepted'] and value['maturity_reached']
             and value['original_output_spendable_now'] and value['original_output_remaining']=='9'
             and value['local_finality_covers_import'] and not value['quarantined']) else False

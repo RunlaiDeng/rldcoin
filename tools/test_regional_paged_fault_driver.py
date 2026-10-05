@@ -208,6 +208,8 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError) as error:driver.call('proxima',0,'wallet-receipt','--file','not-run')
             self.assertNotIsInstance(error.exception,NativeReceiptNotObserved)
         self.assertFalse(driver.write_counts);self.assertEqual(len(driver.calls),3)
+        self.assertEqual([c['observation_kind'] for c in driver.calls],
+            ['NATIVE_RECEIPT_NOT_OBSERVED','FATAL_NATIVE_REFUSAL','FATAL_NATIVE_REFUSAL'])
 
     def test_later_error_after_2048bytes_cannot_be_hidden_by_absence_prefix(self):
         from types import SimpleNamespace
@@ -241,6 +243,7 @@ class Tests(unittest.TestCase):
             return fake_run
         with patch('regional_paged_fault_driver.subprocess.run',respond(diagnostic)):
             with self.assertRaises(NativeReadBusy):driver.call('earth',1,'status')
+            self.assertEqual(driver.calls[-1]['observation_kind'],'NATIVE_READ_BUSY')
             with self.assertRaises(ValueError) as error:driver.call('earth',1,'wallet-sign')
             self.assertNotIsInstance(error.exception,NativeReadBusy)
         with patch('regional_paged_fault_driver.subprocess.run',respond(diagnostic+b' '*3000+b'invalid checkpoint proof\n')):
@@ -280,6 +283,48 @@ class Tests(unittest.TestCase):
                 with self.assertRaises(ValueError):observation_height(observed,*args)
         value['transport']=dict(tcp=dict(encrypted=False))
         with self.assertRaises(ValueError):observation_height(value,*args)
+
+
+    def test_complete_native_recipient_read_does_not_require_global_known_telemetry(self):
+        driver=Driver.__new__(Driver);driver.expectation=dict(export='3'*64)
+        driver.expectation_path=Path('/not-run');driver.calls=[];retained=[];attempts=[]
+        value=dict(expected=driver.expectation,evidence_verified=True,import_accepted=True,
+            maturity_reached=True,original_output_spendable_now=True,original_output_remaining='9',
+            local_finality_covers_import=True,quarantined=False)
+        def call(*args):attempts.append(args);driver.calls.append(dict(command='wallet-receipt'));return value
+        driver.call=call;driver.file=lambda name,record:retained.append((name,record))
+        heights={s:None for s in SLOTS};before=copy.deepcopy(heights)
+        with patch('regional_paged_fault_driver.time.monotonic',return_value=10):
+            self.assertEqual(driver.live_receipt(heights),value)
+            self.assertFalse(driver.live_receipt(heights))
+        self.assertEqual(attempts,[('proxima',0,'wallet-receipt','--file',driver.expectation_path)])
+        self.assertEqual(heights,before);self.assertEqual(driver.receipt_slot,1)
+        self.assertEqual(retained,[('observations/original-receipt-1',dict(region='proxima',index=0,call_index=0,receipt=value))])
+
+    def test_receipt_rotation_retains_unknown_pending_and_wrong_binding_without_credit(self):
+        driver=Driver.__new__(Driver);driver.expectation=dict(export='3'*64)
+        driver.expectation_path=Path('/not-run');driver.calls=[];retained=[];slots=[]
+        pending=dict(expected=driver.expectation,evidence_verified=True,import_accepted=False,
+            maturity_reached=False,original_output_spendable_now=False,original_output_remaining='0',
+            local_finality_covers_import=False,quarantined=False)
+        def call(label,n,*args):
+            slots.append(n);driver.calls.append(dict(command='wallet-receipt'))
+            if n==0:raise NativeReadBusy('exact native lock unknown')
+            if n==1:raise NativeReceiptNotObserved('exact native evidence not observed')
+            if n==3:return dict(pending,expected=dict(export='4'*64))
+            return pending
+        driver.call=call;driver.file=lambda name,record:retained.append((name,record))
+        heights={s:None for s in SLOTS}
+        with patch('regional_paged_fault_driver.time.monotonic',return_value=10):
+            with self.assertRaises(NativeReadBusy):driver.live_receipt(heights)
+        with patch('regional_paged_fault_driver.time.monotonic',return_value=12):
+            with self.assertRaises(NativeReceiptNotObserved):driver.live_receipt(heights)
+        with patch('regional_paged_fault_driver.time.monotonic',return_value=14):self.assertFalse(driver.live_receipt(heights))
+        with patch('regional_paged_fault_driver.time.monotonic',return_value=16):
+            with self.assertRaisesRegex(ValueError,'exact original receipt binding'):driver.live_receipt(heights)
+        self.assertEqual(slots,[0,1,2,3]);self.assertEqual(driver.receipt_slot,0)
+        self.assertEqual(len(retained),1);self.assertEqual(retained[0][1]['receipt'],pending)
+        self.assertFalse(retained[0][1]['receipt']['import_accepted'])
 
 
 if __name__=='__main__':unittest.main()

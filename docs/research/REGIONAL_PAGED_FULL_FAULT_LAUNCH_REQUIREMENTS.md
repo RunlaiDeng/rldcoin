@@ -70,3 +70,17 @@ resolved regular interpreter, with bounded64-MiB read. Python parent-directory
 symlinks and every custody/config/fixture-root symlink still refuse. This does not
 qualify dependencies or cryptography. The changed source gets one120second launch
 spec discriminator; no Native/network budget or unchanged full-cycle rerun.
+
+
+Recipient observation is asynchronous: a complete Native wallet-receipt query
+must not require simultaneous available telemetry from all12ordinary processes.
+Keep fair2-second recipient replica rotation and original absolute600deadline.
+Telemetry unknown never proves a height or a receipt. Every selected complete
+Native receipt still binds the exact original source/destination/export/recipient/
+net amount and fully authenticated import history, original maturity, finality,
+spendability and quarantine checks. Received rejections/actual proof/persistence/
+TLS errors and observed integer/height caps still refuse; the final all12fixed-
+head/envelope/custody/value cold gate is unchanged. Retain exact successful live
+receipt observations privately and categorical native read-lock/no-evidence/fatal
+refusals; these observations do not authorize signing or refund. The original
+600timeout scope remains failed; finite fake-Native counterexamples do not pass it.
