@@ -226,7 +226,7 @@ head仅是本地观察，另存后完整pinned genesis replay，不是独立最�
 属于新库夹具准备，并非Service实际新增进口；实际净97收款/成熟/继续转出/返程、
 fullfault/2016/post64/longhistory/PQ/physical保持OPEN。原失败仍失败，旧源66不重跑。
 
-## 下一普通进口与成熟判别（尚未启动）
+## 历史普通进口与成熟判别（已执行；以下保留原假设）
 
 可证伪假设：新鲜当前源E4/P4夹具中已经终局的P出口98，通过普通默认TLS中继
 到新授权Andromeda；四个实际A Native/Runtime从签署创世及独立voter/caller目录
@@ -243,7 +243,7 @@ quorum/容量不改。缺可选telemetry保持unknown，不造height0或误判�
 
 首实际auth/conservation/import/maturity/head/custody失败、完整有限判别或180秒
 退出，保留原件/来源/私有目录，不重签/退款/恢复/原样重跑。通过须四副本实际
-进口/永久ID/精确收款输出及成熟可花、E/P/A兼容300守恒，clean exit后四Native
+进口/永久ID/精确收款输出及成熟可花、兼容E/P/A完整守恒，clean exit后四Native
 完整cold、所有完整信封、各voter与另存caller精确head认证；原源owner保管保持。
 正常签署及认证接收允许新native/voter/caller日志合法推进，不能要求它们全目录
 不变，也不能采用陌生head。失败与unknown如实保留。
@@ -252,3 +252,68 @@ quorum/容量不改。缺可选telemetry保持unknown，不造height0或误判�
 返程、fullfault/2016、post64/longhistory、独立/cross-device/PQ/physical另验。
 旧价值库strict仍独立OPEN；源66只有compact-complete授权模型/profile及实际
 Native变化后才允许另一个新长scope，不以hash/cache代替完整授权。
+
+
+## 2026-10-05 普通实际收款终态与核算更正
+
+[准确来源、各次失败和实际收款](../operations/evidence/regional-native-paged-ordinary-value-outcome-20261005.json)。
+Native87/source b4bc4379、implementation cf4a2c7e、CLI2e72ac63和节点Python未改；
+最终一次180秒预算actual65.805秒通过五个默认Native Service/Runtime。既有P出口
+98经固定localhost TLS普通中继至新A地区，四个独立A Native/voter/caller目录各自
+执行原三取四prepare/commit，实际在高度2进口净97，高度4原两块成熟、精确原
+收款输出仍97且可花、finality覆盖进口。队列、运输回执和Native收款保持分开。
+Control不造/搬运信封/投票/进口块；source为无钥stop4，原owner请求已在新夹具
+准备期间签署/纳入，故不称普通source owner提交、onward/return的通过。
+
+停止五进程均exit0：五Native pinned完整历史和voter/caller精确head检查；Runtime
+完整信封分别10/44/44/44/44，共186，各信封完整Native验签/重放；A各16份不同
+完整snapshot原文包括合法cert变体，不把数量当checkpoint选定或去重权威。四A
+最终tip/state/finality相同，原Source owner/signer/caller和不可变旧历史原件保持。
+TLS1.3/固定pin/无降级和原2worker/3秒attempt/.2秒锁边界逐次实际观察核对；所有
+最终进度观察无error，未知与失败尝试仍原样记录，不授任何保管/账本/签署权。
+临时尝试失败之后只有正常完整认证/持久保管/原生纳入才提供对应成功结论。
+
+原17.683秒范围因观察器把已认证negative ACK当永久失败而停止，未成熟/cold；
+0.973秒实际TLS持锁反例确认队列/无ack及后续真实保管。新62.910秒范围已实际
+四副本进口/成熟、五Native/caller/176信封cold，但最后固定300断言失败，原源全
+库存最终检查尚未到达，整scope仍失败。新26.298秒范围因连接重置被错误判为
+永久故障而停止，未完成成熟/cold。0.694秒原2连接容量反例产生TLS EOF，源
+精确证据/未ack保持，随后正常重试获得真实receipt；它不复现旧reset或证明唯一
+根因。失败现场323/668/461私有文件全部hash/mode/uid/size/mtime不变；未打开
+原失败Native/Runtime、恢复、退款或签替代owner请求。
+
+**核算更正，不是经济参数更改：** 历史小夹具300发行预期曾进入前一integration
+next-scope文字和controller；这个明确签署paged profile继承channels的起源
+reserve-era曲线，Native Trust要求cap=10^35、初始reward=2.5*10^29 runlai，
+执行内核逐块检查完整起源累计发行。一次network0的5.008秒新E4/P4/A0完整
+Native状态/proof核对发行10^30、未进口毛98/净97；非起源发行、错received、重复
+进口、遗漏escrow和错currency核算数据拒绝。最终实际E4/P4/A4集合issued与
+liquid均10^30、escrow/pending0，完整每区及全exports/imports/received守恒。
+数字是无价值fixture账本观察；历史报告保持原件，此前300预期不能提供当前来源
+资格。不以Python账本/cache或状态hash授权Native，也不忽略任何真实channel escrow。
+
+当前来源地区strict/legacy与CLI编译复用47.519秒准确证据，不重复；旧价值库
+VALUE-STRICT-01仍独立OPEN，两处告警和120秒耗尽/原因未知均保持。完整fault、
+2016窗口、source66/post64 compact-complete授权、longhistory、PQC/独立/cross-device/
+physical和全部S/R/I/A-G/N/P资格继续OPEN。原600/60/24/2016及所有bound不改。
+
+## 下一普通源端owner提交判别（尚未启动）
+
+假设：全新签署零分配public-fixture currency/root采用准确当前paged admission与
+原发行曲线，四个Native/voter/caller从genesis0创建并保留同一原始日志/锁/头。
+原生认证准备前缀3之后，独立owner10钱包、caller及公共fixture key对一个毛100/
+目的手续费1/本地fee1的精确出口请求审查与签署；typed bft-submit仅排队。四个
+默认Native/Runtime正常携带该完整Submission及各自投票，在高度4由原三取四
+证书实际纳入、扣准确原input并保留唯一export，排队/签署/transport不冒充debit。
+
+总120秒/1次/四Native进程，全部root/准备签署与native前缀认证、owner动作、
+startup/wait/停止cold计时。运行阶段不让controller造票/块/搬运；保留每个原始
+voter锁和独立caller，不用历史Fixture的值/钥保管或cache初始化，不发失败现场
+替代owner请求。先排队时四账本不debit；后完整停止cold须四相同 certified source
+前缀及准确输入/100 export、owner/voter/caller heads、全部完整信封、原发行及
+本区/全观察金额守恒。只有运输失败尝试保持unknown/零权利；所有实际typed/native/
+auth/amount/head/custody拒绝或预算到达退出，失败不恢复/重签/退款/原样重复。
+
+这一范围只验新ordinary source owner提交与纳入；目的实际收款、onward/return、
+fullfault/2016/post64/longhistory/独立/crypto/physical另验。既有600秒stage/60秒轮/
+24新增高度/2016窗口、成熟、票数、容量不变；不得仅因这些通过复跑源66长scope。

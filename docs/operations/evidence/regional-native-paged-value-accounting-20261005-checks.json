@@ -1,0 +1,97 @@
+{
+  "format": "RLD-NATIVE-PAGED-SERVICE-VALUE-CHECKS-V1",
+  "completed": true,
+  "failure": null,
+  "duration_seconds": 5.008,
+  "budget_seconds": 30,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "fresh-current-source-native-fixture",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-paged-runtime-retained-fix-source-20261005/qualified-library-test-binary",
+        "paged_ordinary_network_proof_after_onward_requires_complete_native_envelope",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 4.636
+    },
+    {
+      "phase": "actual-native-profile-accounting",
+      "command": [
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/rldcoin-goal-20261001-venv/bin/python",
+        "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/observe-native-paged-value-accounting-20261005.py",
+        "205290.670740166"
+      ],
+      "exit_code": 0,
+      "budget_exhausted": false,
+      "elapsed_seconds": 4.991
+    }
+  ],
+  "observations": [
+    {
+      "completed": true,
+      "exact_native_profile": "RLD-REGIONAL-BFT-PAGED-VALUE-CHANNELS-FIXTURE-V1",
+      "signed_cap": "100000000000000000000000000000000000",
+      "signed_first_era_reward": "250000000000000000000000000000",
+      "native": {
+        "issued": "1000000000000000000000000000000",
+        "liquid": "999999999999999999999999999902",
+        "escrow": "0",
+        "pending_exports": "98",
+        "pending_export_net": "97",
+        "origin_height": 4,
+        "observed_exports": 2,
+        "observed_permanent_imports": 1,
+        "conserved": true,
+        "derived_from_pinned_native_replay": true,
+        "independent_freshness_or_signing_authority": false
+      },
+      "original_fixed300_counter_refused": true,
+      "corrupted_observation_refusals": [
+        "nonorigin",
+        "bad_received",
+        "duplicate_import",
+        "omitted_escrow",
+        "wrong_currency"
+      ],
+      "full_native_status_proof_bindings": [
+        {
+          "height": 4,
+          "status_sha256": "70b52960f8671a8a3bd6fe660a03eb456cd3d89f0fab2e8a4506ead5da48c8ba",
+          "complete_native_proof_sha256": "6b5192a3440dfe0d1ec38210698b45bf24dadfcb7139675679fd1171294e5284"
+        },
+        {
+          "height": 4,
+          "status_sha256": "dcfd71072843bcaff0a4602d33ea8e0894084bd290a1150cb3465c808c9c7177",
+          "complete_native_proof_sha256": "ac6204cbbe81012050aa9b6a678e0240dceda59f47622924f46323ccebb50098"
+        },
+        {
+          "height": 0,
+          "status_sha256": "767d23e675028fab39ccde70a394d8b7eefa2ad497812bfc75eb1731a8494fde",
+          "complete_native_proof_sha256": "6a4389c5f63920b03b2a4e70118c9f376786d6ff5ba3f73c4570f0440ab770ad"
+        }
+      ],
+      "native_original_inventory_unchanged": true,
+      "failed_fixtures_opened": false,
+      "network_processes": 0,
+      "scope": "Fresh Native E4/P4/new A0; only finite source-bound accounting and pending-leg diagnosis, no new recipient import or maturity"
+    }
+  ],
+  "steps": [],
+  "stage_sha256": "a49613ac4af2577b0fb8e68d7019246a48634f551adf066d8e1a4969f1c94ac4",
+  "controller_sha256": "944fda7be50ccdd784eb55101482d44c47246eb57f81d5c6dd31055196630dfe",
+  "helper_sha256": "19c40b617479c8ee999125201a595d32325c366a7ec8b542b3337703874c53a3",
+  "log_sha256": "4b9266be4706759e4012a23ded8c118104df9a73bcbc047d3fc46c43be04db41",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "whole_goal_qualified": false,
+  "old_fixture_opened": false,
+  "network_processes_started": 0,
+  "core_legacy_freeze_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "accounting_module_sha256": "dae8993dac676dee2174a41fef3e4b4148817d48572fbe7d42247b826db66f6d"
+}

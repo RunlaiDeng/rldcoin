@@ -1,0 +1,35 @@
+{
+  "format": "RLD-NATIVE-PAGED-VALUE-REFUSAL-CHECKS-V1",
+  "completed": true,
+  "exit_code": 0,
+  "budget_exhausted": false,
+  "duration_seconds": 0.694,
+  "budget_seconds": 30,
+  "attempts": 1,
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "observations": [
+    {
+      "actual_tls13": true,
+      "original_two_worker_capacity_preserved": true,
+      "refused_extra_connection_errors": [
+        "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)"
+      ],
+      "unacknowledged_original_source_queue_preserved": true,
+      "receiver_no_packet_or_receipt_on_failed_attempt": true,
+      "no_unchecked_retry_suppression": true,
+      "later_fresh_attempt_complete_byte_custody_and_actual_receipt": true,
+      "not_value_authority": true
+    }
+  ],
+  "diagnostic_sha256": "4e22fa2a2ea84c063448ad08e6364e606eb7526e2e8c4be7502a38a2c5daa595",
+  "controller_sha256": "7e04f4af91faa42555c9d63ab213f97be3018f99b95c98a2cc1493d83b7cf829",
+  "stage_sha256": "9678c7ec09a1e83ca4d05b43288760bc0e3e351563386e6b6052651118bcaad8",
+  "log_sha256": "8289c58630257301456dc13c860fdf3ba6efc11fd361c5421678480418fb07ee",
+  "failed_private_inventory_unchanged": true,
+  "failed_private_file_count": 323,
+  "failed_native_runtime_opened": false,
+  "source_python_unchanged": true,
+  "specific_old_negative_ack_unique_cause_proven": false,
+  "old_value_scope_still_failed": true,
+  "whole_goal_qualified": false
+}

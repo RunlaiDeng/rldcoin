@@ -434,5 +434,22 @@ genesis/full native evidence, never copied caches or custody. Keep observer fiel
 and fixed-inventory failures failed. Next one fresh180-second five-Service scope
 separates actual ordinary import and original maturity from transport receipt;
 no controller votes/blocks/frame movement, old fixture reopen or owner replacement.
-Original600/60/24/2016 and all quorum/maturity/capacity limits remain. Independent
-legacy value strict and post64 compact-complete authority remain OPEN.
+Original600/60/24/2016 and all quorum/maturity/capacity limits remain. That180-second
+receiving-leg scope is now historical: exact current-source value pass is recorded
+below. Independent legacy value strict and post64 compact-complete remain OPEN.
+
+
+A current-source finite ordinary receiving leg passed65.805seconds: five default
+native entries relay a retained export, four new admitted replicas import net97
+at2/mature at4, stop cleanly and cold-authenticate186 complete envelopes plus
+original voter/caller heads. No controller votes/blocks/frame movement. Preserve
+failed17.683/62.910/26.298scopes; no retained-failure recovery or whole-fault claim.
+The paged admission inherits exact origin reserve-era issuance: current origin4
+issued1e30, not the historical small300 template. Keep signed cap/reward and full
+regional/global coins/exports/imports/received/escrow audit; never hide escrow or
+turn a number/hash into authority. Typed native failure still stops; transient
+socket/negative-ack attempts retain unknown failure and no custody/signing rights.
+Full value/cold and exact pins/default limits remain required. Source ordinary
+owner submission/onward/return, fullfault/2016/post64/PQ/independent/physical still
+OPEN; next one fresh120second four-entry owner submission gate is defined in
+REGIONAL_PAGED_CONTACT_REQUIREMENTS.md. Legacy strict independently remains OPEN.

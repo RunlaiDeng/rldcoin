@@ -1,0 +1,31 @@
+{
+  "format": "RLD-NATIVE-PAGED-VALUE-REFUSAL-CHECKS-V1",
+  "completed": true,
+  "exit_code": 0,
+  "budget_exhausted": false,
+  "duration_seconds": 0.973,
+  "budget_seconds": 30,
+  "attempts": 1,
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "observations": [
+    {
+      "actual_tls13": true,
+      "forced_original_lock_exhaustion": true,
+      "exact_authenticated_negative_ack_observed": true,
+      "sender_queue_retained_receiver_unacknowledged": true,
+      "later_fresh_attempt_real_custody": true,
+      "not_value_authority": true
+    }
+  ],
+  "diagnostic_sha256": "e6ffdb3215b179bacda32f91817c449244476f3a80bf590f52fc91c5a17f8663",
+  "controller_sha256": "16d04b0f1095b57803461ca3a357b4d6ca7c60da257df5cb26c5faf740306714",
+  "stage_sha256": "a50b379c4a95eff188a7bfae7131cdeab87a5c9c74076e949a9ad0712cfa443b",
+  "log_sha256": "4f6045df032dfc9571c8fdee43779a0e35d3925affacb048528758fc5e820435",
+  "failed_private_inventory_unchanged": true,
+  "failed_private_file_count": 323,
+  "failed_native_runtime_opened": false,
+  "source_python_unchanged": true,
+  "specific_old_negative_ack_unique_cause_proven": false,
+  "old_value_scope_still_failed": true,
+  "whole_goal_qualified": false
+}

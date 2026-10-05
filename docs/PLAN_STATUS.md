@@ -6,30 +6,33 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-最新[普通节点默认中继及完整收件](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)
-已通过两个有限行为范围：默认Service/Runtime正常广播与spool邻居保管11.132秒；
-两个实际默认Native节点通过固定TLS1.3收件16.247秒，每端10运输回执、19完整保留
-信封及停止后逐份Native认证。新副本从签署创世及完整原生前缀初始化；控制器
-未构造或搬运信封。原生正常接收追加认证Evidence事件，storage head可以推进，
-但原历史对象、金额状态/高度/终局/时代/永久进口及owner/signer/caller保管保持。
-这些范围**没有新增价值进口或成熟**，不能称普通价值支付或完整fault通过。
-[准确终态和旧失败](operations/evidence/regional-native-paged-service-integration-outcome-20261005.json)
-保留9.189秒观察字段失败、5.675秒固定库存计数失败；后者在启动网络前拒绝。
+最新[普通节点实际收款](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)已在全新无价值
+范围通过：五个默认Native Service/Runtime以普通TLS中继既有P出口98，四个新A
+副本均在高度2进口净97、高度4达到原两块成熟并可花。总65.805秒（一次180秒）；
+五个进程干净停止，186完整信封、五Native完整历史、独立保留的voter/caller heads
+核验通过；四A的tip/state/finality相同，原源owner/signer/caller与历史对象保持。
+无控制器造/搬运投票、信封或进口块。[准确源绑定与失败](operations/evidence/regional-native-paged-ordinary-value-outcome-20261005.json)。
+
+当前签署paged profile继承原起源发行曲线：E4实际发行与liquid均为 `10^30 runlai`，
+escrow/pending为0。前一计划套用历史小夹具“300”不适用于这个准入，已明确更正
+核算预期，经济/共识参数未改。17.683秒拒绝观察失败、62.910秒全部收款/cold后
+错误固定300断言失败、26.298秒连接重置观察失败均保留；后两次不能补记整项通过。
+0.973秒锁拒绝、5.008秒原生发行核算及0.694秒连接容量反例改变了controller判别；
+临时运输尝试失败保留unknown且不授保管/签署/价值权利，实际Native拒绝仍停止。
+新通过仅是一段既有出口的普通收件，不资格源端普通钱包提交/继续转出/返程或fullfault。
 
 Native87来源 `b4bc4379...` / implementation `cf4a2c7e...` / release CLI
-`2e72ac63...`及Python未改，复用前一47.519秒Native/旧regional原文兼容/编译/
-地区lib-tests strict证据，没有重复成功检查。此前proof因果与分页保留CLI两个
-实际反例的修复仍准确绑定[原终态](operations/evidence/regional-native-paged-runtime-retained-outcome-20261005.json)。
-23.424/22.375/28.110/5.825秒旧失败和旧完整fault保持原判定；source66容量拒绝、
-完整2016/长历史、独立custody/crypto/physical及旧价值库VALUE-STRICT-01继续OPEN。
-历史三地区e85d有限通过与26076a64最小检查仍只绑定原来源，未在当前身份重跑。
+`2e72ac63...`及节点Python未改；准确复用47.519秒Native/legacy/地区lib-tests strict。
+此前默认spool11.132秒、双默认TLS完整收件16.247秒保持各自有限绑定；所有旧失败、
+source66容量拒绝、完整2016/长历史、独立custody/crypto/physical与VALUE-STRICT-01
+仍未完成。地区strict不能替代旧价值库，冻结正文/PDF/官网均未改。
 
-下一可证伪假设：全新无价值源既有出口98由普通TLS中继送达新地区，四个默认
-节点以原三取四共识实际进口净97并达到原两块成熟；运输回执与账本收款分开。
-一次180秒/1次，五个实际Native进程；夹具/启动/等待/停止cold全部计时，首实际
-认证/金额/进口/成熟/head/保管失败、完整有限判别或预算到达即退出。**尚未启动**。
-无控制器投票/造块/搬运，不恢复旧夹具、不替换owner请求；原600秒stage/60秒轮/
-24新增高度/2016窗口、成熟/票数/容量均不变。当前有限样本不资格持续fault或全目标。
+下一可证伪假设：全新签署零分配fixture中，一个Native owner100出口请求由普通
+bft-submit只入队，四默认节点正常认证后在源高度4纳入并准确扣款/保留出口。
+先从genesis0保留原voter/caller执行原生认证的准备前缀3，完整owner审查/签署与
+队列不得先debit；运行阶段无控制器投票/造块/搬运。一次120秒/1次/四Native进程，
+含全部准备、签署、启动、等待、停止cold；首实际拒绝/金额/head/保管失败、有限
+完整判别或预算退出。**尚未启动**。原600/60/24/2016、成熟/票数/容量保持。
 
 本文历史“全部通过”仅指各段明确绑定的当时源码、命令和有限scope，例如下述
 8831a634来源的491过程/三个Runtime组件；不能覆盖后来完整fault、预算耗尽、
