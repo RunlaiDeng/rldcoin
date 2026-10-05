@@ -6,10 +6,12 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
-当前新增只读cold入口来源 `89408f5a...` / implementation `8a361699...`，
-六新边界/四原cold-batch/地区strict通过；release全新CLI32.956秒通过。
-来源87旧完整网络结果仍保留原scope，当前来源89普通Runtime尚未采用；
-19.164源码、3.421身份及121.752 dev-budget失败保留，完整cycle/fault仍OPEN。
+当前来源 `89408f5a...` / implementation `8a361699...` / release binary `a45387fa...`：
+**普通六阶段完整闭环510.455秒/原600秒有限通过**；四E9/四P6/四A8，全部成熟、
+1606阶段合计完整信封/原heads/12Native/最终守恒，27Services正常退出。
+普通启动cold路径未改，停止采用明确固定头模式；完整fault和全部协议资格仍OPEN。
+六新边界/四原cold-batch/地区strict及release CLI32.956秒保留原scope；
+19.164/3.421/121.752及旧600.666、旧完整fault失败均仍失败。
 
 前继来源 `4e2331b4...` / implementation `bb6d1e5b...` 的历史有限范围：已修复原生付款入队
 的因果证明遗漏，改用完整原生证明接口；原命令和完整证据均保留，不因入队扣款。
@@ -816,3 +818,30 @@ owner/最终守恒判别；最高5服务/共27启动，fault budget0。首真正
 currency/原请求，不恢复重签退款、加预算或原样重跑。旧全部失败、VALUE-STRICT-01、
 完整cycle/fault/2016/source66/长期/独立/PQ/physical及全部规范目标仍OPEN。
 [准确实现、证据与下一范围](operations/evidence/regional-pinned-stopped-adapter-outcome-20261005.json)。
+
+
+## 2026-10-05 来源89普通完整闭环有限通过
+
+一次原600秒、全新签署零分配currency/all custody普通六阶段范围，实际510.455秒
+exit0。E原100→P净99、P原98→A净97、A原96→E净95全部实际导入/两块成熟/
+完整停止cold；最终四E9/四P6/四A8，全12Native兼容认证前缀、原独立voter/caller
+及3owner原输入/头检查，旧收款准确消费，返程95仍可花。27Services全部exit0，
+自有活动进程0。共1606份完整信封全认证（阶段合计，非1606 distinct负载资格）；
+四E最终审计I=U=2.25×10^30、E=T=0，3出口/3永久进口/零pending。
+
+Native89408f5a/implementation8a361699/release binarya45387fa，driver5e267b95/
+outerf12f6bb7绑定；普通Runtime启动cold路径未改，停止后明确保存并读回本机head，
+传入pinned完整计划。这仅为本机完整性观察，未证明独立最新保护/保管/物理链路。
+原600/60/每区24新增高度/成熟票数容量不变；5050私有文件停止封存，旧全部失败及
+成功私有pins/freeze/旧价值基线均未变。旧600.666/完整fault失败仍失败，不能替换。
+
+只读旧fault入口反例一次20秒、实际0.009秒：准确旧driver条件要求E7/P4/A4及
+旧格式/平面配置，当前E9/P6/A8及独立phase配置不满足；未执行Native/Runtime、
+复制或恢复保管。禁止改报告高度/标签或legacy/joint recovery绕过。下一一次120秒
+network0显式paged fault-scope模型，绑定本次完整源/保留head/原owner及12保管路径，
+从实际height/ordered membership导出缺席leader gate，错source/head/profile/layout/
+cap必须拒绝。首不符/完整判别/120秒退出；通过合同与反例之后才准备新的网络预算。
+当前完整fault/2016/source66/长期/独立/PQ/physical及完整规范仍OPEN；
+VALUE-STRICT-01两告警/120.019秒未通过，原触发/120诊断或300修复/无豁免标准保留，
+本次未触旧库或实际构建阻塞，不重复已有strict。
+[准确来源、终态、反例和下一判别](operations/evidence/regional-paged-ordinary-cycle-pinned-cold-v4-outcome-20261005.json)。

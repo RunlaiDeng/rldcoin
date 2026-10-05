@@ -974,3 +974,21 @@ per region/maturity/quorums/capacity/5s bounded cleanup; full cold and original
 owner requests are mandatory. Explicitly retained post-stop Native observations
 are local integrity pins, never independent latest protection. First failure,
 full discrimination or budget exits; fault budget0. See stopped-adapter outcome.
+
+
+Source89 ordinary six-stage pinned-cold cycle passed510.455s under its original
+600s once: E9/P6/A8, all12Native/original owner/caller/maturity/conservation,
+1606 phase-total complete envelopes,27Services exit0. Preserve5050 stopped
+private files and all old failures. This is a finite same-host ordinary cycle,
+not a full fault/2016/Source66/long-history/independent/physical qualification.
+Default Runtime startup cold path stays unchanged; post-stop saved native heads
+are local integrity observations, not independent latest-state protection.
+The exact legacy fault profile demands7/4/4 and old flat carrier configuration;
+a0.009s read-only predicate/layout counter rejected current9/6/8. Never relabel
+reports, rewrite heights or use recovery/joint profiles to bypass it. Next once
+120s network0 explicit paged fault-scope model binds the exact successful source,
+retained heads, original owners and12custody paths, derives current missing-leader
+successor and keeps original quotas. Wrong source/head/profile/layout/cap refuses.
+No Native/Runtime open, private copying or first-signing during that model scope.
+Only its reviewed contract and counterexamples can support preparing a separate
+network budget. See regional-paged-ordinary-cycle-pinned-cold-v4-outcome-20261005.

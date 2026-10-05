@@ -1,0 +1,305 @@
+{
+  "format": "RLD-PAGED-ORDINARY-CYCLE-PINNED-COLD-V4-OUTCOME",
+  "recorded_at_utc": "2026-10-05T15:47:31.948477+00:00",
+  "completed": true,
+  "scope": "One fresh signed zero-allocation same-host ordinary six-stage E100/P99/P98/A97/A96/E95 cycle, Native Source89 and explicit fixed-head stopped verification",
+  "checks_sha256": "fe18e8a6a551a870a13ccb800d5b79d108577ab2f3106840e6dc4eec7359b054",
+  "stage_sha256": "222bd68c0baa59bd6dce8e2ef858457485736614a8d67926d6a12652bc60b2fa",
+  "native_source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "cli_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "controller_sha256": "f12f6bb74033499e33892575d43d04b75ace585bef1d50a9b7525687cafc2a60",
+  "driver_sha256": "5e267b954e3919bd13efd112e95e58749cc5cdcb227b4303b09a3fcc61e458a5",
+  "budget_seconds": 600,
+  "duration_seconds": 510.455,
+  "attempts": 1,
+  "whole_scope_new_height_limit_per_region": 24,
+  "round_seconds": 60,
+  "maturity_blocks": 2,
+  "prepare_commit_quorum": "three ordered distinct votes of four",
+  "original_bounds": {
+    "object_bytes": 8388608,
+    "archive_files": 4096,
+    "archive_bytes": 268435456,
+    "logical_checkpoints": 64,
+    "logical_blocks": 256,
+    "wire_bytes": 3145728,
+    "page_records": 16
+  },
+  "phases": [
+    {
+      "phase": "leg-0-source",
+      "heights": [
+        5,
+        5,
+        5,
+        5
+      ],
+      "complete_envelopes": 201,
+      "expanded_bytes": 6396465,
+      "native_batches": 52,
+      "clean_exits": true
+    },
+    {
+      "phase": "leg-0-receive",
+      "heights": [
+        5,
+        4,
+        4,
+        4,
+        4
+      ],
+      "complete_envelopes": 181,
+      "expanded_bytes": 8769488,
+      "native_batches": 48,
+      "clean_exits": true
+    },
+    {
+      "phase": "leg-1-source",
+      "heights": [
+        6,
+        6,
+        6,
+        6
+      ],
+      "complete_envelopes": 244,
+      "expanded_bytes": 19484736,
+      "native_batches": 64,
+      "clean_exits": true
+    },
+    {
+      "phase": "leg-1-receive",
+      "heights": [
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "complete_envelopes": 278,
+      "expanded_bytes": 20592179,
+      "native_batches": 72,
+      "clean_exits": true
+    },
+    {
+      "phase": "leg-2-source",
+      "heights": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "complete_envelopes": 316,
+      "expanded_bytes": 45286840,
+      "native_batches": 80,
+      "clean_exits": true
+    },
+    {
+      "phase": "leg-2-receive",
+      "heights": [
+        8,
+        9,
+        9,
+        9,
+        9
+      ],
+      "complete_envelopes": 386,
+      "expanded_bytes": 38125083,
+      "native_batches": 97,
+      "clean_exits": true
+    }
+  ],
+  "final_native_heights": {
+    "earth": [
+      9,
+      9,
+      9,
+      9
+    ],
+    "proxima": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "andromeda": [
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  "owner_first_sign_count": 3,
+  "owner_actual_inputs_consumed": true,
+  "owner_original_heads_preserved": true,
+  "no_recovery_refund_or_replacement": true,
+  "net_imports": [
+    "99",
+    "97",
+    "95"
+  ],
+  "all_recipient_imports_mature": true,
+  "previous_recipient_outputs_consumed_for_onward": true,
+  "final_return_original_output_remaining": "95",
+  "complete_envelopes_authenticated": 1606,
+  "authentication_count_is_phase_total_not_distinct_load": true,
+  "final_native_accounting_by_origin_replica": [
+    {
+      "issued": "2250000000000000000000000000000",
+      "liquid": "2250000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 9,
+      "observed_exports": 3,
+      "observed_permanent_imports": 3,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    },
+    {
+      "issued": "2250000000000000000000000000000",
+      "liquid": "2250000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 9,
+      "observed_exports": 3,
+      "observed_permanent_imports": 3,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    },
+    {
+      "issued": "2250000000000000000000000000000",
+      "liquid": "2250000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 9,
+      "observed_exports": 3,
+      "observed_permanent_imports": 3,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    },
+    {
+      "issued": "2250000000000000000000000000000",
+      "liquid": "2250000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 9,
+      "observed_exports": 3,
+      "observed_permanent_imports": 3,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    }
+  ],
+  "service_starts": 27,
+  "all_service_exit_codes_zero": true,
+  "active_own_service_pids": [],
+  "stopped_private_files": 5050,
+  "stopped_private_inventory_sha256": "7180a4ba5ef20f2d712098b0e4a602c80d8c22f65c79d3ad119598b4a54c8b90",
+  "old_failed_and_success_private_pins_unchanged": true,
+  "failed_native_runtime_opened": false,
+  "ordinary_runtime_startup_cold_path": "unchanged; explicit pinned mode used only after clean stop",
+  "local_native_heads": "Post-stop separately saved/reloaded native integrity observations; not independent latest-state protection",
+  "frozen_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_status": "active",
+  "persistent_cwd": "old UI repair item; every project command explicit /Users/galaxy/GitHub/rldcoin",
+  "goal_predecessor_hash_reference": "Goal still contains c906/f825; reported in original thread and dynamic records, parent delivery unconfirmed; no autonomous goal/body/PDF edits",
+  "prior_failures_remain_failed": true,
+  "legacy_value_strict": "OPEN",
+  "fault_driver_entry_counter_sha256": "992392fab756923a779c87c1eb5469d5ad6b346b5d9168ede1ebd4355a42449e",
+  "fault_driver_entry_counter": {
+    "format": "RLD-PAGED-FAULT-ENTRY-COUNTER-V1",
+    "completed": true,
+    "budget_seconds": 20,
+    "attempts": 1,
+    "duration_seconds": 0.009,
+    "method": "Read actual completed report and filesystem only; evaluate exact legacy profile branch extracted from its AST, never execute driver, Native or Runtime",
+    "driver_sha256": "b4e2c469d49b117de0a34215b15a9a926c9c19ae96ce0fb54be216cc3701267d",
+    "condition_line": 277,
+    "condition": "previous['format'] == 'RLD-REGIONAL-BFT-MULTIREGION-GROUND-CAMPAIGN-V1' and previous['replica_heights'] == {'earth': [7] * 4, 'proxima': [4] * 4, 'andromeda': [4] * 4}",
+    "completed_cycle_checks_sha256": "fe18e8a6a551a870a13ccb800d5b79d108577ab2f3106840e6dc4eec7359b054",
+    "actual_format": "RLD-PAGED-ORDINARY-CYCLE-PINNED-COLD-V4-CHECKS",
+    "actual_heights": {
+      "earth": [
+        9,
+        9,
+        9,
+        9
+      ],
+      "proxima": [
+        6,
+        6,
+        6,
+        6
+      ],
+      "andromeda": [
+        8,
+        8,
+        8,
+        8
+      ]
+    },
+    "required_legacy_heights": {
+      "earth": [
+        7,
+        7,
+        7,
+        7
+      ],
+      "proxima": [
+        4,
+        4,
+        4,
+        4
+      ],
+      "andromeda": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "legacy_branch_accepts": false,
+    "actual12_native_voter_caller_layout_present": true,
+    "legacy_flat12_configs_present": false,
+    "native_calls": 0,
+    "network_starts": 0,
+    "fixture_writes": 0,
+    "claim": "Legacy driver cannot qualify current paged cycle. Do not edit report labels/heights or invoke legacy/joint recovery to bypass its guard.",
+    "next_scope": {
+      "budget_seconds": 120,
+      "attempts": 1,
+      "network_budget": 0,
+      "hypothesis": "An explicit paged fault-scope model can bind the exact current completed source/head/owner/custody inventory and derive missing-leader gate from actual E9/P6/A8 membership, while refusing wrong source/head/layout/profile and preserving original quotas without starting or copying custody.",
+      "minimum": "Pure validated scope/entry and role/leader/cap model using actual stopped report plus malformed source/head/profile/cap inputs; no Native open, Runtime, copying or first-signing. Only after its source-bound contract and counterexamples pass can an ordinary fault driver and a distinct network budget be prepared.",
+      "exit": "First unexpected acceptance/refusal or source/private change, complete discriminator or120s; no unchanged retry or fallback to legacy profile."
+    },
+    "legacy_value_strict": "OPEN",
+    "whole_goal_completed": false
+  },
+  "next_scope": {
+    "budget_seconds": 120,
+    "attempts": 1,
+    "network_budget": 0,
+    "hypothesis": "An explicit paged fault-scope model can bind the exact current completed source/head/owner/custody inventory and derive missing-leader gate from actual E9/P6/A8 membership, while refusing wrong source/head/layout/profile and preserving original quotas without starting or copying custody.",
+    "minimum": "Pure validated scope/entry and role/leader/cap model using actual stopped report plus malformed source/head/profile/cap inputs; no Native open, Runtime, copying or first-signing. Only after its source-bound contract and counterexamples pass can an ordinary fault driver and a distinct network budget be prepared.",
+    "exit": "First unexpected acceptance/refusal or source/private change, complete discriminator or120s; no unchanged retry or fallback to legacy profile."
+  },
+  "remaining": [
+    "Current full fault profile",
+    "2016-block challenge/window and Source66 complete dependency/capacity",
+    "Post64/long ordinary BFT history",
+    "Independent freshness/custody/rollback/cross-device review",
+    "Physical routes/cryptographic horizons",
+    "All full S/R/I/A-G/N/P qualifications"
+  ],
+  "whole_goal_completed": false
+}
