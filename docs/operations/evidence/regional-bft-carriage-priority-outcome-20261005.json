@@ -1,0 +1,270 @@
+{
+  "format": "RLD-BFT-CARRIAGE-PRIORITY-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T19:46:00.704386+00:00",
+  "bounded_source_counter_and_fix_completed": true,
+  "ordinary_maturity_qualified": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "source_before": "24f9ddbefd049a02b8f97b1bd1514ceb4993cbcb637602bbb798dd660ce0e96f",
+  "source_after": "1327a6c487bbbed7243525a50664f02f71c0cc77a0a9f5dc950d9aedb2a98cf0",
+  "python_source_count": 157,
+  "companion_source_commitment": "d29290deb888939924b43fb8b03b4182d24b351df40da5b4c76c0736480ed4d9",
+  "native_source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "implementation": "8a361699b19c3f081bb7f2bc82585c115c07c51b4ab02da96d93b42adac4e616",
+  "actual_cli_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "core_171_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+  "references_sha256": {
+    "regional-mesh-purpose-release-counter-20261005-checks.json": "23068b9ed62f4920eb7c0225eddbe2c7a0369edca45a9ae1c50908a643be0d4b",
+    "regional-bft-broadcast-current-counter-20261005-checks.json": "be94e4769ef11703a1de313f364751d9fa05c8d8248021362c6d740ed033da0e",
+    "regional-bft-broadcast-current-counter-v2-20261005-checks.json": "2335b23994548a74b3c31834cc1fefef5c992b7f8dec3bee23bd41fac107625c",
+    "regional-bft-broadcast-current-regression-v1-20261005-checks.json": "1d3e0eefd8809317eb93c03e173916c7f6995eb0b6b1096dd0720dac4c16e9af",
+    "regional-bft-broadcast-current-regression-v2-20261005-checks.json": "d265191e96169f599bf54bf6572339d9d3e6343a415ec225c827d74c577e4462",
+    "regional-bft-carriage-batch-model-20261005-checks.json": "653f2e296485b4f617e616d12a48a93611844c5645dc4f1451651cccea0b82b1",
+    "regional-bft-sign-stages-loaded-v1-20261005-checks.json": "a69798a202877888ab364eec395aab8abb99f58ed7a8fff9211d6dea943ee2c1",
+    "regional-bft-sign-stages-service-v1-20261005-checks.json": "6a46e2265be9c213a7d99aba1d2816e314df656f8d25f6738760794369eae41c",
+    "regional-bft-carriage-service-v1-20261005-checks.json": "7d223136ca935c1b597b11c47d81d636d63f0fb55e16774c41703a172f54c18b"
+  },
+  "loaded_isolated_scope": {
+    "completed": true,
+    "total_duration_seconds": 45.642,
+    "enclosing_sign_seconds": 0.53788,
+    "empty_sample_twofold_threshold_seconds": 0.835232,
+    "threshold_reached": false,
+    "full_fixed_head_native_cold": 8,
+    "stopped_files": 518,
+    "full_fault_qualified": false
+  },
+  "service_before": {
+    "completed": false,
+    "total_duration_seconds": 187.638,
+    "budget_seconds": 180,
+    "stopped_files": 963,
+    "result": {
+      "completed": false,
+      "failure": "TimeoutError: original180second service component deadline",
+      "cleanup_failures": [],
+      "services_and_owned_threads_stopped": true,
+      "failed_currency_never_reopen": true,
+      "whole_full_fault_qualified": false,
+      "whole_goal_completed": false
+    },
+    "cost_diagnostics": {
+      "recorded_native_calls": 873,
+      "recorded_native_nonzero_exits": 0,
+      "complete_signs": [
+        {
+          "node": 0,
+          "action": "Timeout",
+          "duration_seconds": 1.013016
+        },
+        {
+          "node": 1,
+          "action": "Propose",
+          "duration_seconds": 0.702601
+        },
+        {
+          "node": 1,
+          "action": "Prepare",
+          "duration_seconds": 0.963758
+        },
+        {
+          "node": 1,
+          "action": "Timeout",
+          "duration_seconds": 0.902394
+        },
+        {
+          "node": 2,
+          "action": "Timeout",
+          "duration_seconds": 0.786262
+        },
+        {
+          "node": 3,
+          "action": "Timeout",
+          "duration_seconds": 0.849228
+        }
+      ],
+      "max_complete_sign_seconds": 1.013016,
+      "sample_twofold_threshold_seconds": 1.07576,
+      "sample_twofold_threshold_reached": false,
+      "final_native_state_unknown": true,
+      "full_cold_not_completed": true
+    }
+  },
+  "source_counter": {
+    "unconditional_purpose_deadlock_falsified": true,
+    "original_source_next_batch_parent_heights": [
+      9,
+      9,
+      2,
+      2
+    ],
+    "current_proposal_absent_source_carriage_inventory": true,
+    "stored_only_at_source": true,
+    "failed_reporter_1": "Missing synthetic region; retained failure.",
+    "failed_reporter_2": "Assumed Signed instead of allowing complete Finalized; retained failure.",
+    "model_signature_or_native_authority": false
+  },
+  "production_change": "Four existing carriage slots reserve two for local exact current-height Proposal/Vote/Timeout, two for history including complete Finalized. Each class rotates by one per durable four-step cursor. Short classes donate unused slots. Original native authentication, body/local flags, exact envelope bytes, mesh leases, caller order and all capacity/timeout limits unchanged.",
+  "model_gate": {
+    "completed": true,
+    "models": 7,
+    "total_duration_seconds": 0.102161
+  },
+  "exact_stopped_regression": {
+    "completed": true,
+    "total_duration_seconds": 0.551123,
+    "selected_current": [
+      "Timeout",
+      "Proposal"
+    ],
+    "selected_history_parent_heights": [
+      0,
+      1
+    ],
+    "complete_bytes_unchanged": true,
+    "native_replay_performed": false
+  },
+  "service_after": {
+    "completed": false,
+    "total_duration_seconds": 189.185,
+    "budget_seconds": 180,
+    "stopped_files": 818,
+    "result": {
+      "completed": false,
+      "failure": "ValueError: actual Native/Service error: original180second service component deadline",
+      "cleanup_failures": [],
+      "services_and_owned_threads_stopped": true,
+      "failed_currency_never_reopen": true,
+      "whole_full_fault_qualified": false,
+      "whole_goal_completed": false
+    },
+    "stopped_inventory_sha256": "8babde9889cf4261695527f0e986577466be17fdd0abc42f78ed79fd4226476d",
+    "cost_diagnostics": {
+      "recorded_native_calls": 921,
+      "recorded_native_nonzero_exits": 0,
+      "complete_signs": [
+        {
+          "node": 0,
+          "action": "Prepare",
+          "duration_seconds": 0.89622
+        },
+        {
+          "node": 0,
+          "action": "Commit",
+          "duration_seconds": 0.918153
+        },
+        {
+          "node": 1,
+          "action": "Propose",
+          "duration_seconds": 0.822684
+        },
+        {
+          "node": 1,
+          "action": "Prepare",
+          "duration_seconds": 0.860195
+        },
+        {
+          "node": 1,
+          "action": "Commit",
+          "duration_seconds": 0.95698
+        },
+        {
+          "node": 1,
+          "action": "Timeout",
+          "duration_seconds": 0.939687
+        },
+        {
+          "node": 2,
+          "action": "Prepare",
+          "duration_seconds": 0.905091
+        },
+        {
+          "node": 2,
+          "action": "Timeout",
+          "duration_seconds": 0.92361
+        },
+        {
+          "node": 3,
+          "action": "Timeout",
+          "duration_seconds": 0.895773
+        }
+      ],
+      "max_complete_sign_seconds": 0.95698,
+      "sample_twofold_threshold_seconds": 1.07576,
+      "sample_twofold_threshold_reached": false,
+      "final_native_state_unknown": true,
+      "full_cold_not_completed": true
+    },
+    "terminal_inventory_current_message_observations": [
+      {
+        "node": 0,
+        "stored_parent13_body_counts": {
+          "Vote:Commit": 2,
+          "Proposal": 1,
+          "Vote:Prepare": 3
+        },
+        "locally_originated_parent13_body_counts": {
+          "Vote:Commit": 1,
+          "Vote:Prepare": 1
+        }
+      },
+      {
+        "node": 1,
+        "stored_parent13_body_counts": {
+          "Proposal": 1,
+          "Vote:Commit": 1,
+          "Vote:Prepare": 3,
+          "Timeout": 1
+        },
+        "locally_originated_parent13_body_counts": {
+          "Proposal": 1,
+          "Vote:Commit": 1,
+          "Vote:Prepare": 1,
+          "Timeout": 1
+        }
+      },
+      {
+        "node": 2,
+        "stored_parent13_body_counts": {
+          "Proposal": 1,
+          "Timeout": 1,
+          "Vote:Prepare": 2
+        },
+        "locally_originated_parent13_body_counts": {
+          "Timeout": 1,
+          "Vote:Prepare": 1
+        }
+      },
+      {
+        "node": 3,
+        "stored_parent13_body_counts": {
+          "Timeout": 1,
+          "Vote:Commit": 1,
+          "Proposal": 1,
+          "Vote:Prepare": 3
+        },
+        "locally_originated_parent13_body_counts": {
+          "Timeout": 1
+        }
+      }
+    ],
+    "observed_proposal_stored_at_all_four_nodes": true,
+    "observed_distinct_locally_originated_prepare_count": 3,
+    "observed_distinct_locally_originated_commit_count": 2,
+    "receipt_import13_mature15_not_qualified": true,
+    "all_eight_fixed_head_cold_not_completed": true,
+    "terminal_inventory_is_not_new_native_replay_or_final_authority": true
+  },
+  "failed_public_source_archive_sha256": "25c2652399869f2e72a7dd0f59707d8a67f8317768140df20fabc4d2ae233486",
+  "all_old_failed_currencies_remain_sealed": true,
+  "all_old_complete_fault_scopes_remain_failed": true,
+  "latest_complete_fault": "receive-v7 original600 failed total616.052; 6657 sealed. Runtime-v4 original600 failed total612.570/6152 remains failed.",
+  "legacy_value_strict": "OPEN; original two baseline warnings/120 exhaustion; unchanged Core does not trigger a repeat.",
+  "goal_status_observed": "active",
+  "goal_objective_predecessor_hashes": "Goal still references c906/f825; current AGENTS/receipt/master/acceptance use 2ba62421/c59f9fe8. Reported; no objective or frozen document edit.",
+  "persistent_cwd": "Old UI cwd pending repair; all commands explicit /Users/galaxy/GitHub/rldcoin.",
+  "next_hypothesis": "Third Commit and next-view proposal are blocked by incomplete delivery of required Prepare/Timeout control envelopes after the now-observed current proposal reaches all four nodes; determine actual publication/transport/native-retention boundary before optimizing.",
+  "next_discriminator": "Once120 read-only exact818 sealed source: reconstruct only complete bounded retained envelopes, trace the three distinct Prepare and missing Timeout dependencies to the two noncommitting voters/next leader through exact active transit bytes and independently authenticated transport receipt/index roles. No Native/Runtime/Server open or private fixture copy. Original retained response and separate source heads stay unchanged.",
+  "next_decision": "If a required exact envelope was not published, isolate source selection; if published without destination custody, isolate actual next-transport batch from retained bytes; if destination custody exists but native retained body is absent, isolate receive selection/full authentication. Missing historical live events remain unknown; no sole cause from absent logs.",
+  "next_exit": "First byte/signature/source/role/bound mismatch, complete path discrimination, or original120 seconds. Preserve failures; no unchanged180/600 retry, deadline increase or new signing."
+}

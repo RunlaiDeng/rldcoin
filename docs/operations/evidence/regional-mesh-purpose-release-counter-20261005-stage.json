@@ -1,0 +1,21 @@
+{
+  "format": "RLD-MESH-PURPOSE-RELEASE-COUNTER-V1",
+  "recorded_at_utc": "2026-10-05T19:35:09.806068+00:00",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "A retained receive/carriage purpose alone permanently blocks the ordinary loop after the transient local mesh lock is released.",
+  "discriminator": "Exact Server/Service bounded acquisition methods with deterministic clock and synthetic Node only: force original lock refusal, show cross-purpose refusal, release lock, retry the original purpose. Never construct Server/Runtime/Native or access custody through an API.",
+  "decision": "If exact original-purpose retry succeeds and clears intent, falsify unconditional purpose deadlock; do not change ownership rule. If it still refuses with no competing lease/waiter, isolate predicate before repair.",
+  "exit": "First source/private mismatch, all cases, or original120seconds; no sockets/native/recovery/signing.",
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "c7e3e1c6b26f01504ffead747b85512ca8a254ba9d7d12a754b9cf27997c7b63",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_node.py": "652376a0e05c5c5646d34d181000678228bdc139806b0f9fc1720d3b3c71e4d0",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-mesh-purpose-release-counter-20261005.py": "6b60afa23909040fdf9a5f639fffe11fc5b6a75a7f00f9261b3be77ebe9af910",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-sign-stages-service-v1-stopped-private-inventory-20261005.json": "a6393d7f4e35ae7b2f7c1852dba65fc8cb60d8eb03b9e13327f1200d7bffd361",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "server_starts": 0,
+  "sockets": 0
+}

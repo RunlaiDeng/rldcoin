@@ -1,0 +1,54 @@
+{
+  "format": "RLD-BFT-BROADCAST-CURRENT-COUNTER-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.562777,
+  "source_sha256": "24f9ddbefd049a02b8f97b1bd1514ceb4993cbcb637602bbb798dd660ce0e96f",
+  "controller_sha256": "54551090295913f12119eb065921eef36c4413d57d3bd6564d2ff463d187c30b",
+  "stage_sha256": "bfe57753cf6d392bfaed5441ebabcab5ed4416ff0240ea510a7a54c789081d0d",
+  "stopped_inventory_sha256": "a6393d7f4e35ae7b2f7c1852dba65fc8cb60d8eb03b9e13327f1200d7bffd361",
+  "current_height": 13,
+  "local_retained_count": 33,
+  "source_cursor": 32,
+  "proposal_retained_only_at_source": true,
+  "proposal_absent_source_carriage_index": true,
+  "actual_original_next_batch": [
+    {
+      "kind": "Vote",
+      "parent_height": 9,
+      "current_height": false,
+      "exact_payload_unchanged": true
+    },
+    {
+      "kind": "Vote",
+      "parent_height": 9,
+      "current_height": false,
+      "exact_payload_unchanged": true
+    },
+    {
+      "kind": "Vote",
+      "parent_height": 2,
+      "current_height": false,
+      "exact_payload_unchanged": true
+    },
+    {
+      "kind": "Vote",
+      "parent_height": 2,
+      "current_height": false,
+      "exact_payload_unchanged": true
+    }
+  ],
+  "current_proposal_selected": false,
+  "scheduling_counterexample_reproduced": true,
+  "exact_payloads_unchanged": true,
+  "native_replay_performed": false,
+  "signature_or_ledger_authority_granted": false,
+  "sole_fault_cause_proved": false,
+  "private_963_files_unchanged": true,
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "sockets": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

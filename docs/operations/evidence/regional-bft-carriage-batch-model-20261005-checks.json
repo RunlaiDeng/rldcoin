@@ -1,0 +1,19 @@
+{
+  "format": "RLD-BFT-CARRIAGE-BATCH-MODEL-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "source_sha256": "1327a6c487bbbed7243525a50664f02f71c0cc77a0a9f5dc950d9aedb2a98cf0",
+  "test_sha256": "26a09b6bc3acf148ce723bdffbc4c7ec71780559aa2fac349205c2a69c2fa8ab",
+  "hypothesis": "Current-height and retained-history classes each retain two ordinary slots, rotate without four-stride starvation, preserve exact tuple bytes and total four-slot bound; no Native authority.",
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "sockets": 0,
+  "completed": true,
+  "helper_exit_code": 0,
+  "models": 7,
+  "duration_seconds": 0.102161,
+  "stage_sha256": "eeb839daaf184ac9e88b38814f7f763987b94f45d8de3bce25553b3b4bc373b7",
+  "log_sha256": "a96e163c58830ba310949687c50e744ec00d9a35887471284d847913358dfbb8",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

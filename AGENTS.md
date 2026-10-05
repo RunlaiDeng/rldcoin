@@ -1428,3 +1428,27 @@ reopen/recovery/resign/refund/copy or new600allocation. Fullfault receive-v7 rem
 FAILED616.052/6657 plus everyoldFAIL. Alltarget/VALUE-STRICT-01/2016/history/PQ/
 independent/physical OPEN, goalactive/frozenpaper/site untouched/cwd UI stillold.
 See operations/evidence/regional-bft-sign-stages-outcome-20261005.json.
+
+
+2026-10-05 sign-cost/source-carriage boundary: isolated loaded E4/P13 passed45.642s,
+8cold/32envelopes/owner/caller/conservation, enclosing.537880s below.835232 threshold.
+Four-Service old source24f finite gate FAILED original180/187.638total;963files sealed.
+Six complete signs.703–1.013s did not reach1.07576;873recorded Native calls exit0.
+Source-bound purpose-release counter falsified unconditional purpose deadlock;
+retain ownership/fair leases. Exact stopped ordinary broadcast selected four history
+rows despite an unpublished current proposal. Two reporter-field failures retained.
+Current source1327a6c4/157Python d29290de reserves existing four carriage slots2current/
+2history with per-class one-step rotation; complete bytes/local flags/full native
+validation/caller order/bounds unchanged.7models and exact stopped-byte regression
+pass. New fresh ordinary four-Service gate FAILED original180/189.185total;818files
+sealed, all owned threads stopped, no forced/cleanup failure. Actual proposal retained
+at all four;3distinct Prepare/2Commit, no maturity15/full8cold/conservation pass.
+No failed Native/Runtime reopen/recovery/resign/refund/copy, no new600 allocation.
+Next once120 offline exact818 complete-control-message/transport custody path counter
+separates source publication, carriage and native retention before a minimal fix.
+Missing live scheduling remains unknown. Native89/Core171/CLI unchanged; all full
+faults including runtime-v4/6152 and receive-v7/6657 remainFAILED. VALUE-STRICT-01/
+allgoal/independent/history/PQ/physical OPEN; goalactive, frozenbody/site untouched.
+Persistent cwd remains UI repair; every command explicitly uses newrldcoin workdir.
+Goal text stillc906/f825 predecessors; current adopted authority2ba62421/c59f9fe8.
+See docs/operations/evidence/regional-bft-carriage-priority-outcome-20261005.json.

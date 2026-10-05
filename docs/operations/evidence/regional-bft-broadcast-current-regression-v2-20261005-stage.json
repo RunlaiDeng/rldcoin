@@ -1,0 +1,20 @@
+{
+  "format": "RLD-BFT-BROADCAST-CURRENT-COUNTER-V1",
+  "recorded_at_utc": "2026-10-05T19:40:11.211047+00:00",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "hypothesis": "Changed production broadcast reserves two of four slots for exact current-height envelopes and two for history at the stopped counterexample, including its unpublished proposal.",
+  "discriminator": "Invoke exact production broadcast unbound on immutable Messages reconstructed from sealed JSON and memory-only summaries/enqueue/save; compare exact payload bytes to retained rows. No Runtime/Native/Server constructor, signature/cold replay or custody open.",
+  "decision": "Require current proposal, two current rows and two historical rows; failure blocks fresh Service qualification. Inventory equality grants no Native authority.",
+  "exit": "First bytes/source/seal mismatch, one production batch, or original120seconds.",
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "1327a6c487bbbed7243525a50664f02f71c0cc77a0a9f5dc950d9aedb2a98cf0",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-sign-stages-service-v1-stopped-private-inventory-20261005.json": "a6393d7f4e35ae7b2f7c1852dba65fc8cb60d8eb03b9e13327f1200d7bffd361",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-broadcast-current-regression-v2-20261005.py": "6f7e40eba72611490b84471eacf59ecc7e68b1b4055daa8e085ff8887189e42a",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_retention.py": "895c6ad7626c988f0d52fdd4d0f7f4350d99674bd15a40664e5b3cce3c7d575b",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "native_starts": 0,
+  "runtime_starts": 0,
+  "sockets": 0
+}

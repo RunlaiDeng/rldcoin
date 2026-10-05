@@ -34,6 +34,41 @@ MAX_BROADCAST_QUIET_SECONDS = 4.0
 MAX_BROADCAST_QUIET_CALLS = 16
 
 
+def carriage_batch(messages, pending, height, cursor):
+    """Reserve carriage for this native-observed height and retained history.
+
+    Classification schedules already retained complete bytes only. It never
+    validates an envelope or supplies a ledger, quorum or signing decision.
+    """
+    current = set()
+    for ident, body, _, _ in messages.bodies():
+        message = signed_body(body)
+        proposal = message.get('Proposal')
+        context = message.get('Vote', message.get('Timeout', {})).get('context', {})
+        if ((proposal is not None and proposal['snapshot']['statement']['height'] == height + 1)
+                or context.get('parent_height') == height):
+            current.add(ident)
+    active = [pair for pair in pending if pair[1] in current]
+    history = [pair for pair in pending if pair[1] not in current]
+
+    def take(rows, count):
+        if not rows:
+            return []
+        # Durable cursor advances by four per published batch. Rotate each
+        # class by one so a stable odd/even class cannot pin its first slots.
+        offset = (cursor // 4) % len(rows)
+        return (rows[offset:] + rows[:offset])[:count]
+
+    if active and history:
+        selected = take(active, 2) + take(history, 2)
+        # A short class donates its spare slot without starving either class.
+        if len(selected) < 4:
+            selected += [pair for pair in take(active + history, 4)
+                         if pair not in selected][:4 - len(selected)]
+        return selected
+    return take(active or history, 4)
+
+
 def private(path, directory=False, missing=False):
     path = Path(path)
     mesh.require(path.is_absolute() and not any(p.is_symlink() for p in [path, *path.parents]), 'BFT private path must be absolute without symlinks')
@@ -502,8 +537,8 @@ class Runtime:
                     retained.add((summary['export_id'],summary['destination']))
             pending=[pair for pair in pairs if (pair[0],pair[2]) not in retained]
             if pending:
-                offset=self.state['cursor']%len(pending)
-                batch_pairs=(pending[offset:]+pending[:offset])[:4]
+                batch_pairs=carriage_batch(self.state['messages'],pending,
+                                          self.state['height'],self.state['cursor'])
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)

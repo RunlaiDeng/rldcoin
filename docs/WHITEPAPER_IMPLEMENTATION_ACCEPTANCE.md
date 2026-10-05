@@ -664,3 +664,17 @@ reopen/recovery/resign/refund/copy or new600allocation. Fullfault receive-v7 rem
 FAILED616.052/6657 plus everyoldFAIL. Alltarget/VALUE-STRICT-01/2016/history/PQ/
 independent/physical OPEN, goalactive/frozenpaper/site untouched/cwd UI stillold.
 See operations/evidence/regional-bft-sign-stages-outcome-20261005.json.
+
+
+## 2026-10-05 当前共识/历史发送槽位有限修复与失败边界
+
+单一作者已实际实现原四槽current2/history2发送排队，保持完整原生认证、字节/local
+标志、caller保管、成熟/票数/高度/容量及期限。原封存字节反例与7模型通过；
+全新普通服务原180范围仍FAILED189.185（含收尾），818文件/来源封存、服务线程停止。
+实际提案四节点保留、三个Prepare/两个Commit为有限行为进展；原成熟15/全8cold/守恒
+未完成。原963有限失败、全部完整fault（含6152/6657）仍FAIL，禁止重开/恢复/重签/
+退款/复制失败保管。下一仅一次120秒准确完整控制消息/运输角色read-only路径判别，
+零Native/Runtime/Server启动；完整签名/角色/字节/容量必须核实，不能从缺日志归因。
+Native89/Core171/实际CLI未改；旧价值库两告警/120耗尽独立OPEN，无新触发或豁免。
+全部S/R/I/A–G/N/P/长期/密码/独立/物理资格仍OPEN。正文/PDF及官网冻结不改。
+证据：[实际源码修复及终态](operations/evidence/regional-bft-carriage-priority-outcome-20261005.json)。
