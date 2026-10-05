@@ -78,6 +78,13 @@ enum Action {
         file: PathBuf,
     },
     BftContext,
+    /// One fully replayed locked scheduling observation; no recovery or signing.
+    BftLoopStatus {
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     /// Exact historical proofs actually installed by fully replayed local events.
     BftInstalledEpochs,
     JointReadyInit {
@@ -630,6 +637,24 @@ fn require_local_interval(interval: f64) -> Result<()> {
         Err("contact poll interval outside bound".into())
     }
 }
+fn bft_context_observation(store: &Store) -> Result<serde_json::Value> {
+    let context = bft::Context::current(store)?;
+    let keys = context.keys(&store.trust, &store.evidence)?;
+    // Known verified evidence can include a transition which the local
+    // ordered journal has not activated. Expose only the exact proof
+    // for the epoch actually reconstructed by native event replay.
+    let mut active_epoch_proof = None;
+    for proof in &store.journal.epoch_proofs {
+        if proof.statement.id()? == context.epoch {
+            active_epoch_proof = Some(proof);
+            break;
+        }
+    }
+    Ok(
+        serde_json::json!({"context":context,"keys":keys,"initial_keys":store.trust.region(store.chain.region)?.validators,"leader_round_zero":bft::leader(&context,0,&keys)?,"rules":store.trust.region(store.chain.region)?.rules,"epochs":store.evidence.epoch_proofs(store.chain.region),"active_epoch_proof":active_epoch_proof,"fixture_only":true,"independent_bft_qualified":false,"autonomous_pacemaker_qualified":false}),
+    )
+}
+
 fn run() -> Result<()> {
     let args = Args::parse();
     let pin = Hash::from_hex(&args.currency).map_err(|e| e.to_string())?;
@@ -872,9 +897,9 @@ fn run() -> Result<()> {
             pin,
             Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
         )?,
-        Action::BftNetworkCheckBatch { .. } | Action::BftNetworkInspectBatch { .. } => {
-            Store::open_inspection(&args.dir, &args.authority, pin)?
-        }
+        Action::BftNetworkCheckBatch { .. }
+        | Action::BftNetworkInspectBatch { .. }
+        | Action::BftLoopStatus { .. } => Store::open_inspection(&args.dir, &args.authority, pin)?,
         Action::HistoryCheck { expected_head }
         | Action::ChannelReceiptAccept { expected_head, .. }
         | Action::ChannelWatch { expected_head, .. }
@@ -1092,22 +1117,31 @@ fn run() -> Result<()> {
             println!("{raw}");
         }
         Action::BftContext => {
-            let context = bft::Context::current(&store)?;
-            let keys = context.keys(&store.trust, &store.evidence)?;
-            // Known verified evidence can include a transition which the local
-            // ordered journal has not activated. Expose only the exact proof
-            // for the epoch actually reconstructed by native event replay.
-            let mut active_epoch_proof = None;
-            for proof in &store.journal.epoch_proofs {
-                if proof.statement.id()? == context.epoch {
-                    active_epoch_proof = Some(proof);
-                    break;
-                }
+            println!("{}", bft_context_observation(&store)?);
+        }
+        Action::BftLoopStatus {
+            signer_dir,
+            expected_head,
+        } => {
+            if !matches!(std::fs::symlink_metadata(args.dir.join("journal.next")),
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound)
+            {
+                return Err("BFT loop inspection refuses interrupted ledger publication".into());
             }
-            println!(
-                "{}",
-                serde_json::json!({"context":context,"keys":keys,"initial_keys":store.trust.region(store.chain.region)?.validators,"leader_round_zero":bft::leader(&context,0,&keys)?,"rules":store.trust.region(store.chain.region)?.rules,"epochs":store.evidence.epoch_proofs(store.chain.region),"active_epoch_proof":active_epoch_proof,"fixture_only":true,"independent_bft_qualified":false,"autonomous_pacemaker_qualified":false})
-            );
+            let (agent, status) = bft::Agent::inspect_with_status(&signer_dir, &store)?;
+            if agent.head()? != Hash::from_hex(&expected_head).map_err(|e| e.to_string())? {
+                return Err(
+                    "BFT loop inspection differs from separately retained caller head".into(),
+                );
+            }
+            let value = serde_json::json!({"format":"RLD-BFT-LOOP-OBSERVATION-V1",
+                "native":bft_context_observation(&store)?,"signer":status,
+                "signing_authority":false,"independent_freshness_qualified":false});
+            let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
+            if raw.len() > MAX_BYTES {
+                return Err("BFT loop observation bytes bound".into());
+            }
+            println!("{raw}");
         }
         Action::JointVoterInit {
             signer_dir,

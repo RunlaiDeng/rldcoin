@@ -923,3 +923,52 @@ N/P/长期/PQ/独立/物理门槛仍OPEN。goal active，采用2ba62421/c59f9fe8
 goal正文c906/f825只是前继引用，已报告不改。冻结白皮书/官网、服务器、资金、权限/
 清理不扩大；持久cwd仍UI待修，工具项目命令显式新rldcoin。
 证据：[真实终态、运输边界与新动态模型](operations/evidence/regional-bft-loaded-tls-churn-outcome-20261006.json)。
+
+
+## 2026-10-06 合并原生调度读取，完整故障仍未通过
+
+完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152文件、receive-v7原600/
+616.052秒/6657文件及四CLI-v3原180/191.836秒/1650文件、所有旧失败原件保留。
+收款成熟、keyless drain、all12完整cold/守恒未完成；进程停止和transport通过不替代。
+
+本轮三peer实际TLS组件15.395秒/一次60通过：中间两个固定邻居、三个实际outbound
+owner与普通receive/carriage选择，准确两hop/原nonce保管/目的签名收据，停止后清空
+metadata/transit witness完整核验192档案，400文件封存。仅运输组件，不资格Native值。
+
+实际修改Native CLI/Agent与普通Runtime：原每轮分别bft-context、bft-status的两次完整
+原生库打开，合并为一次bft-loop-status。同一次真实Native库与signer锁下完整重放，
+绑定独立caller准确head、完整上下文/原生签署状态，按原8MiB输出上限；拒绝未完成
+ledger/signer写入，不恢复、不从缓存建立ledger。签署前独立fresh status及原生expected
+head仍保留；joint路径不改。新Native实现fd1e24fe…、实际CLI bef4d5c7…，需要全新
+签署无价值genesis/currency；旧8a361699…普通cycle/故障资格不转移。
+
+首次构建32.078秒exit101（CLI不能访问库私有require）保留；明确修正后构建及地区
+strict均exit0，24.742+14.064秒，54.419含封存核验，无新增豁免。23相关模型通过，
+后来补普通combined分支的Prepare/Commit优先回归，最终9项0.138秒/一次120通过。
+共享normal状态读取的三个原生回归36.931秒/一次120通过，保留原有锁/完整签名拒绝/
+准确合法中断晋升；该stage误写unsigned-response recovery，实际是已签名原生journal
+的normal open晋升，详见outcome纠正，不能当新inspection恢复授权。
+
+新13高度原生组件仍 **FAIL**：35.181秒/一次120、helper1，374文件封存。检查器把
+分页残留错误放入records/stream.next；Native正确拒绝额外root entry，诊断与期待不符。
+绑定源码/traceback表明此前顺序断言走过新旧观察比对、四完整Native prefix/head、两次
+实际Runtime combined tick、完整retained envelope cold及锁/旧head拒绝；这些只是正向
+控制流证据，不是完整组件通过。失败currency不再打开/恢复/复制；不重复13高度准备。
+最小补充双库零高度组件8.442秒/一次60通过：准确bft-records/stream.next及legacy
+bft.next均拒绝，私有字节不变；两次实际keyless Runtime每次一个combined call。
+39文件封存，不资格加载13高度、付款/成熟/完整fault。所有自有检查/节点已终止。
+
+下一可证伪假设：合并实际原生打开能否让四普通CLI在原180内从import13达到mature15。
+只条件分配一次全新8Native/四CLI原180，先完整绑定最终Native89/Python164/Core171/
+实际binary/controller/guard。沿原60秒轮、24新高度、maturity2、quorum3及全部容量。
+所有四收款net2可花及all8固定头/完整信封/caller/owner/守恒cold和干净关闭才通过；
+首错误/全完成/原deadline退出，失败封存不得续跑、退款/重签/复制/剪裁/加时。尚未
+启动，600预算0，不宣称现场唯一根因或整体服务提速。源码/模型/实际读取改变才是推进。
+
+VALUE-STRICT-01两基线和120.019秒未知耗尽独立OPEN，旧value/PoW/lock源未变，当前
+实际阻塞与修复触发均未满足，原120诊断/300修复strict及完整编码/拒绝标准保持。
+所有S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、长期/PQ/独立/物理门槛仍OPEN；
+goal active，采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…。goal正文c906/f825
+只是前继引用，已报告不自主改。全部命令显式新rldcoin workdir，持久cwd仍UI待修。
+冻结正文/PDF/官网、服务器/权限/资金/清理不扩大。
+证据：[实际改动、所有终态及下一判别](operations/evidence/regional-bft-loop-observation-outcome-20261006.json)。

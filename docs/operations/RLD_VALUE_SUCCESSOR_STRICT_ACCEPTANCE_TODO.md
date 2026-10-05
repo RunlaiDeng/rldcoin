@@ -200,3 +200,12 @@ VALUE-STRICT-01. No adopted-library/PoW change, whole-workspace strict claim or
 actual unchanged-source Cargo blocker triggered its120diagnostic/300fix budget.
 Both baseline warnings and original120.019s failure remain OPEN; no exemptions
 or replacement regional pass. See paged-fault-native-preparation outcome.
+
+
+2026-10-06 combined Native scheduling inspection checkpoint: old value/PoW
+baseline files and Cargo.lock unchanged, no adopted-value release or actual
+value-library build blocker. Regional Native implementation changed for a
+fresh signed no-value candidate; affected-bin strict and3status regressions
+cannot substitute for VALUE-STRICT-01. Both warnings/original120.019 remainOPEN;
+no120diagnostic/300repair trigger or exemption. See
+[evidence](evidence/regional-bft-loop-observation-outcome-20261006.json).

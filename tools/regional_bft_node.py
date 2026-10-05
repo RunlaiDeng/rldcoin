@@ -347,8 +347,27 @@ class Runtime:
         mesh.require(len(wire.canonical(envelope))<=wire.MAX_PAYLOAD,'BFT network payload capacity; retain signed native response')
         return envelope
 
+    def loop_observation(self):
+        # Operation-local native observation, never a serialized status cache.
+        # Native holds both locks, fully replays and refuses publication residue.
+        # A later sign still performs its independent fresh status/head checks.
+        mesh.require(self.head['pending'] is None and self.head['outbox'] is None,
+                     'BFT loop observation requires reconciled caller state')
+        value=self.native.call('bft-loop-status','--signer-dir',self.signer,
+                               '--expected-head',self.head['head'])
+        mesh.require(set(value)=={'format','native','signer','signing_authority','independent_freshness_qualified'}
+                     and value['format']=='RLD-BFT-LOOP-OBSERVATION-V1'
+                     and value['signing_authority'] is False and value['independent_freshness_qualified'] is False,
+                     'BFT loop observation domain differs')
+        status=value['signer']
+        mesh.require(status['binding']==self.signing_binding and status['head']==self.head['head'],
+                     'BFT signer differs from separately retained caller head')
+        return self._observe_context(value['native']['context']),status
+
     def observe(self):
-        value=self.native.call('bft-context')['context']
+        return self._observe_context(self.native.call('bft-context')['context'])
+
+    def _observe_context(self, value):
         mesh.require(value['parent_height']>=self.state['height']
                      and (value['parent_height']!=self.state['height'] or value['parent_block']==self.state['tip']),
                      'BFT native ledger rolled back beneath retained runtime observation')
@@ -718,10 +737,13 @@ class Runtime:
             context=self.observe()
             status=self.signer_status()
             return self.report(context,None,status,stopped=True)
-        context=self.observe()
-        status = loop_status.read(self, operation) if loop_status is not None else None
-        if status is None:
-            status=self.signer_status()
+        if self.joint is None and self.head['head'] is not None:
+            context,status=self.loop_observation()
+        else:
+            context=self.observe()
+            status = loop_status.read(self, operation) if loop_status is not None else None
+            if status is None:
+                status=self.signer_status()
         active=status['state'] if status['state'] is not None and status['state']['context']==context else {'round':0,'prepared':None,'committed':None,'proposed':False}
         round_number=active['round']
         slot=(mesh.digest(context),round_number)

@@ -1,0 +1,36 @@
+{
+  "completed": false,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "duration_seconds": 47.63067433302058,
+  "budget_exhausted": false,
+  "forced_child": false,
+  "pin_error": null,
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "tools/regional-ledger/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--bin",
+        "rld-regional-ledger-candidate",
+        "--bin",
+        "contact-fixture"
+      ],
+      "return_code": 101,
+      "duration_seconds": 32.07789404198411,
+      "log_sha256": "d46999528f410d220b3e03225ec479758a3be08e9cd02326678d0b49f41f1d11"
+    }
+  ],
+  "stage_sha256": "4a501a3723f2896701607c5439d3d11d52bee67807ca4f6debad69a681f63066",
+  "controller_sha256": "9fdb7bc8eb8b7666af7cfd31bb35e7af324a196af22ca138b0e18dd5176cb30c",
+  "binary_sha256": {},
+  "actual_native_launches": 0,
+  "old_failed_opens": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

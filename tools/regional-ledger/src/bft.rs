@@ -995,12 +995,19 @@ impl Agent {
         Ok(agent)
     }
     pub fn open(dir: &Path, node: &Store) -> Result<Self> {
-        Self::open_state(dir, node).map(|(agent, _)| agent)
+        Self::open_state(dir, node, true).map(|(agent, _)| agent)
     }
     /// Keep the actual signer lock alive alongside its exact verified observation.
     /// Signing still independently revalidates the current journal and expected head.
     pub fn open_with_status(dir: &Path, node: &Store) -> Result<(Self, Status)> {
-        let (agent, state) = Self::open_state(dir, node)?;
+        Self::status_from_open(Self::open_state(dir, node, true)?)
+    }
+    /// Full locked observation; interrupted publication refuses without recovery.
+    /// The result is scheduling telemetry, never signing or latest-state authority.
+    pub fn inspect_with_status(dir: &Path, node: &Store) -> Result<(Self, Status)> {
+        Self::status_from_open(Self::open_state(dir, node, false)?)
+    }
+    fn status_from_open((agent, state): (Self, State)) -> Result<(Self, Status)> {
         let status = Status {
             head: agent.head()?,
             binding: agent.journal.binding.clone(),
@@ -1011,7 +1018,7 @@ impl Agent {
         };
         Ok((agent, status))
     }
-    fn open_state(dir: &Path, node: &Store) -> Result<(Self, State)> {
+    fn open_state(dir: &Path, node: &Store, recover: bool) -> Result<(Self, State)> {
         let lock = lock(dir)?;
         if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
             return Self::open_paged(dir, lock, node);
@@ -1035,6 +1042,10 @@ impl Agent {
         };
         let next = dir.join("bft.next");
         if exists(&next)? {
+            require(
+                recover,
+                "BFT inspection refuses interrupted signer publication",
+            )?;
             let proposed: Journal =
                 serde_json::from_slice(&crate::keystore::private_read(&next, MAX_BYTES)?)
                     .map_err(|_| "invalid interrupted BFT journal")?;

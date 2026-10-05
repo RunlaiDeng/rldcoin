@@ -1581,3 +1581,34 @@ intermediate+ordinary selections/outbound owners; original2inbound/.2lock/3socke
 4packet/allbounds,exact2hop custody/nonce/fullcold/cleanclose. Not started, no new
 180/600allocated. Only concrete new refusal/starvation evidence selects a fix.
 See docs/operations/evidence/regional-bft-loaded-tls-churn-outcome-20261006.json.
+
+
+The native ordinary-loop observation candidate combines the former separate
+context/status store opens under one full native Store inspection and signer
+lock, requires the external exact signer head and original8MiB response bound.
+It refuses native journal.next, paged stream.next and legacy bft.next residue
+without recovery. No Python status/ledger cache authorizes signing; pre-sign
+fresh status and native expected-head checks remain mandatory. Joint scheduling
+keeps its original operation-local observation. Changed Native implementation
+fd1e24fe requires fresh signed no-value genesis/currency, never older custody.
+Build/affected-bin strict,9final scheduling models and3normal status regressions
+pass; normal signed interrupted journal promotion remains intact. The regression
+stage phrase unsigned-response recovery is wrong; see the outcome correction.
+The new loaded13 Native component FAILED35.181/original120 due controller
+records/bft-records path mismatch; Native correctly refused the unexpected root
+entry.374files sealed,never reopen its Native/Runtime/value. Earlier sequential
+assertions are partial control-flow evidence,not a completed component. The
+separate fresh zero-height paged+legacy exact-residue component passed8.442/
+once60,39files,2actual keyless Runtime calls with1native open each; not loaded13,
+payment/maturity/fullfault. Three-peer actualTLS passed15.395/once60,192cold
+archives/400sealed before this Native repair,finite transport only. All older
+6152/6657/1650and other failures remain failures and private seals unchanged.
+Next conditional once180fresh8Native/four actualCLI import13/mature15/full8
+fixedhead/caller/owner/envelope/conservation cold requires final source/binary/
+controller/guard audit first. Not started,no new600; original60round/24height/
+maturity2/quorum3/allbounds. Failure seals,no retry/reopen/recovery/refund/copy.
+All protocol/history/PQ/independent/physical and VALUE-STRICT-01 gates remainOPEN;
+goalactive,freeze2ba62421/c59f9fe8/receipt86821d19,predecessor goal hashes reported.
+No live speed or unique fault cause established; all commands explicitrldcoin,
+persistentcwd stillUIpending. See
+operations/evidence/regional-bft-loop-observation-outcome-20261006.json.

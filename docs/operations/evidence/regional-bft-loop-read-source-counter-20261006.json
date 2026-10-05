@@ -1,0 +1,27 @@
+{
+  "format": "RLD-BFT-LOOP-READ-SOURCE-COUNTER-V1",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "duration_seconds": 0.00028908299282193184,
+  "source_sha256": {
+    "tools/regional_bft_node.py": "b3604b89af897c0c1805b33815c6a31256329560ecd0a314b1f452a2d4f9f7eb",
+    "tools/regional-ledger/src/main.rs": "d910cb2db8196eb99abf8434aa0617a6622c986887e8803cf44c8abbd9a07bf4",
+    "tools/regional-ledger/src/bft.rs": "5ed3b3d7d5208be60f8db7f72afb2eddcbd8bbeb77ec6937917c0973c768f156",
+    "tools/bft_tick_fixture.py": "54ebcb9f22af0252bbc1dfcf7d8fcdd66b00272974e0d56181a5561317a2c7e3"
+  },
+  "ordinary_read_only_exact_tick_model_calls": {
+    "bft-context": 1,
+    "bft-status": 1,
+    "broadcast": 1
+  },
+  "actual_native_calls": 0,
+  "native_ledger_opens": 0,
+  "runtime_constructors": 0,
+  "old_failed_opens": 0,
+  "duplicate_store_opens_per_loop_static": 2,
+  "legacy_status_open_can_promote_bft_next": true,
+  "decision": "Implement a bounded native combined context/signer inspection under one store and signer lock; refuse pending legacy signer residue instead of recovery; exact retained head required. Scheduling only, independent pre-sign/native expected-head checks retained. No runtime speed/root-cause/maturity/fullfault claim.",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
