@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
-from regional_paged_fault_driver import Driver, NativeReadBusy, NativeReceiptNotObserved, receipt_not_observed, native_read_busy, NATIVE_BUSY_DIAGNOSTICS, observation_height, compatible, statement_id, retain_original_objects
+from regional_paged_fault_driver import Driver, NativeReadBusy, NativeReceiptNotObserved, receipt_not_observed, native_read_busy, NATIVE_BUSY_DIAGNOSTICS, SERVICE_NATIVE_BUSY_DIAGNOSTICS, observation_height, compatible, statement_id, retain_original_objects
 from regional_paged_fault_launch import Config, PHASES, SLOTS
 from regional_paged_fault_scope import REGIONS
 from regional_paged_fault_prepared import Bound
@@ -247,6 +247,39 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError) as error:driver.call('earth',1,'status')
             self.assertNotIsInstance(error.exception,NativeReadBusy)
         self.assertFalse(driver.write_counts)
+
+
+    def test_exact_runtime_native_lock_is_whole_observation_unknown_even_with_height(self):
+        value=dict(process_id=123,currency='1'*64,relay_enabled=True,rejected=[],errors=[],
+            consensus=dict(height=9),transport=dict(progress_observation_available=False))
+        args=(123,'1'*64,'2'*64,dict(host='127.0.0.1',port=42000),27)
+        for diagnostic in SERVICE_NATIVE_BUSY_DIAGNOSTICS:
+            observed=copy.deepcopy(value);observed['errors']=[diagnostic]
+            self.assertIsNone(observation_height(observed,*args))
+        self.assertEqual(observation_height(value,*args),9)
+        observed=copy.deepcopy(value);observed['errors']=[next(iter(SERVICE_NATIVE_BUSY_DIAGNOSTICS))]
+        observed['consensus']=dict(progress_observation_available=False)
+        self.assertIsNone(observation_height(observed,*args))
+
+    def test_runtime_lock_never_hides_rejection_bad_proof_persistence_or_tls_errors(self):
+        diagnostic='native rejected: regional candidate rejected: lock acquisition failed because the operation would block'
+        value=dict(process_id=123,currency='1'*64,relay_enabled=True,rejected=[],errors=[diagnostic],
+            consensus=dict(height=9),transport=dict(progress_observation_available=False))
+        args=(123,'1'*64,'2'*64,dict(host='127.0.0.1',port=42000),27)
+        for errors,rejections in [([diagnostic+'\ninvalid proof'],[]),
+            ([diagnostic,'native rejected: invalid owner/domain/signature'],[]),
+            ([diagnostic,'BFT runtime requires restart after persistence failure'],[]),
+            ([diagnostic], [{'packet_id':'3'*64,'reason':diagnostic}]),
+            (['native rejected: regional candidate rejected: invalid proof: already locked'],[])]:
+            observed=copy.deepcopy(value);observed['errors']=errors;observed['rejected']=rejections
+            with self.subTest(errors=errors,rejections=rejections):
+                with self.assertRaises(ValueError):observation_height(observed,*args)
+        for height in (28,True,-1):
+            observed=copy.deepcopy(value);observed['consensus']=dict(height=height)
+            with self.subTest(height=height):
+                with self.assertRaises(ValueError):observation_height(observed,*args)
+        value['transport']=dict(tcp=dict(encrypted=False))
+        with self.assertRaises(ValueError):observation_height(value,*args)
 
 
 if __name__=='__main__':unittest.main()

@@ -1196,3 +1196,44 @@ currency seals forever. VALUE-STRICT-01/Source66/2016/long-history/independent/
 physical/allgoal remainOPEN. Evidence: operations/evidence/regional-paged-full-
 fault-receipt-v2-outcome-20261005.json and regional-paged-fault-lock-observation-
 fix-outcome-20261005.json.
+
+
+Latest third paged full fault FAILED184.744seconds/once600(exit1, not budget
+exhaustion): Runtime status wrapped the exact native OS-lock diagnostic as a
+Service error. The controller observation classifier aborted, with no completed
+isolation/restoration/recipient/fullcold phase discriminator. All11nodes exited0,
+both relays stopped,3157files and exact3a266failed source retained. Three original
+owner responses/heads remain. Prior163.892/2954and213.822/3492failures stay failed;
+new lock-v6setup38.542pass is historical only and that currency now stays sealed.
+No Native/Runtime/recovery/re-sign/refund/replacement reopening is permitted.
+
+Measured Runtime observation repair56e313ccnow treats only exact wrapped native
+OS-lock errors, with no received rejections, as whole-observation unknown even
+with a retained height. Runtime diagnostics lack command/exit, so cannot prove a
+read or write action or grant progress/signing. All received rejections/later bad
+proof/domain/permission/persistence/TLS errors remainfatal. Actual retained P1
+status makes old driver refuse and new observation returnNone;15counterexamples
+passed3.285seconds/once120exit0. Prior actual installedRust1.98lock reproduction
+is reused without rebuild/rerun. Native89/CLIunchanged; actual Native/runtime/
+socket/firstsign/recovery0. Old/private/source/freeze remain unchanged.
+
+No further full attempt in this stage. Next hypothesis is that both exact direct
+read and runtime-observation lock paths no longer falsely abort ordinary
+contention; restored original9net maturity and all12fullcold must still actually
+complete. Next fresh signed zero-allocation/custody once180, then only after
+current15model/terminal/source/binary and12Native/TLS/owner binding one necessary
+600total/60round/24newheights/E27-P24-A24/maturity2/quorum3/full-capacity scope.
+Exit first real error/deadline or all required checks; every failure closes whole
+currency. Fullfault/VALUE-STRICT-01/Source66/2016/long-history/independent/physical/
+allgoal remainOPEN. Evidence: operations/evidence/regional-paged-full-fault-lock-
+v3-outcome-20261005.json and regional-paged-fault-runtime-lock-observation-fix-
+outcome-20261005.json. Goalactive; commands explicit newworkdir, persistent cwd
+remains a UI repair item. Frozen body/PDF/website unchanged.
+
+Final Runtime observation source a373124ealso checks any available height is an
+integer within its original cap before returning lock-unknown. Over-cap/bool/
+negative heights still refuse. Changed-source15counterexamples/actual retained
+status passed3.423seconds/once120; prior56e313/3.285source/report retained. No
+Native/runtime/socket/firstsign/recovery or OS-lock probe rerun. Fullfault still
+FAILED; original next180fresh preparation/once600and all limits unchanged. See
+operations/evidence/regional-paged-fault-runtime-lock-cap-fix-outcome-20261005.json.

@@ -1,0 +1,46 @@
+{
+  "format": "RLD-PAGED-FAULT-PREPARATION-OUTCOME-V6",
+  "recorded_at_utc": "2026-10-05T17:28:25.729498+00:00",
+  "completed": true,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "duration_seconds": 38.542,
+  "exit_code": 0,
+  "checks_sha256": "94cedc0739eb99be2d5ac5ad394a964a5953a2e121b378e0cf5f980d90c28e7d",
+  "stage_sha256": "928516b53000e465bb9f7584ec9feca62913ab6b1ef9fa2742ea567749145b5d",
+  "private_inventory_sha256": "40c0a1fd624882ad86fce65f30b9d095171deed6510c2aa259e2a04184548e3f",
+  "new_private_files": 668,
+  "source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "actual_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "unchanged_preparation_boundary_tests_reused": true,
+  "new_currency_and_all12mesh_tls_distinct_from_both_failed_currencies": true,
+  "actual_heights": {
+    "earth": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "proxima": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "andromeda": [
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  "native_calls": 473,
+  "full_recipient_checks": 8,
+  "unsigned_fault_reviews": 3,
+  "fault_owner_first_signs": 0,
+  "network_starts": 0,
+  "runtime_starts": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "next": "Exact finite-qualified3a266lock/receipt driver and unchanged terminal; one justified600full scope after fresh12Native/TLS/owner/source/binary/controller binding. Never reopen either previous failed currency."
+}

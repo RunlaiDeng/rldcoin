@@ -116,15 +116,24 @@ def observation_height(value, pid, currency, certificate, listener, cap):
             and tcp['tls_cert_sha256']==certificate and tcp['listener']==listener, 'actual TLS observation differs')
         verify_original_limits(tcp['limits'])
     require(not value['rejected'], 'ordinary Native rejected a complete envelope')
+    native_busy=False
     for error in value['errors']:
+        if error in SERVICE_NATIVE_BUSY_DIAGNOSTICS:
+            native_busy=True
+            continue
         require(not error.startswith('native rejected:') and any(t in error for t in
             ('Connection refused','[Errno 61]','[Errno 35]','already locked','lock contention',
              'TCP peer refused custody; retain queued evidence','timed out','Connection reset by peer',
              'Broken pipe','UNEXPECTED_EOF_WHILE_READING','TCP stream closed')), 'actual Native/Service error: '+error)
+    # Runtime errors omit the command/exit code. Exact lock text is therefore
+    # unknown for the entire observation, even if a height remains present.
+    # It cannot prove progress or authorize replay/signing; later fresh Native
+    # observations and the complete stopped custody checks remain mandatory.
     consensus=value.get('consensus') or {}
     if consensus.get('progress_observation_available',True) is not True or 'height' not in consensus:return None
     height=consensus['height']
     require(type(height) is int and 0<=height<=cap, 'observed original native height cap exceeded')
+    if native_busy:return None
     return height
 
 
@@ -150,6 +159,9 @@ NATIVE_BUSY_DIAGNOSTICS = frozenset((
     'regional candidate rejected: BFT signer is already locked',
     'regional candidate rejected: complete stream already locked',
 ))
+
+
+SERVICE_NATIVE_BUSY_DIAGNOSTICS = frozenset('native rejected: '+v for v in NATIVE_BUSY_DIAGNOSTICS)
 
 
 def native_read_busy(command, code, diagnostic):
