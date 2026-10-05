@@ -61,7 +61,7 @@ candidate/receive/sign/reconcile/retain/broadcast及cold/live/retention/TCP/mesh
 [启动修复结果](../operations/evidence/regional-native-startup-inspection-outcome-20261005.json)。
 VALUE-STRICT-01仍OPEN，地区/启动通过不替代旧价值库严格检查。
 
-## 下一行为门槛
+## 后续已执行的有限行为门槛
 
 全新一地区V8普通Native/TLS fixture，按实际height6/有序admission导出缺席
 leader，不启动其进程；三健康voter须有事前明确pin的连通邻居路径。
@@ -73,3 +73,8 @@ leader，不启动其进程；三健康voter须有事前明确pin的连通邻居
 容量不变，full fault campaign预算0。拒绝、原阶段边界或实际终态即退出，
 保留反证，不原样重跑。这个有限缺席leader观察仍不替代完整fault、真实
 2016窗口、跨设备/独立保管、长历史、PQC/续证及物理route资格。
+
+上述门槛随后已执行：首329.533秒cold库存失败保留；配置/只读核验最小反例
+0.008秒后，修正fixture的一次全新范围261.266秒通过三健康节点round1/q2/fee3、
+全部停止检查及缺席副本不变。没有改Native/Node live或原预算；准确范围和下一
+完整窗口容量判别见[有限缺席leader合同](REGIONAL_CHANNEL_MISSING_LEADER_REQUIREMENTS.md)。

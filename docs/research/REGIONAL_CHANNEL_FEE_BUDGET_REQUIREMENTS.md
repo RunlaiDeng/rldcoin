@@ -180,3 +180,11 @@ VALUE-STRICT-01仍OPEN，本轮未触及该库/发布包，未触发诊断或修
 最终83步实际CLI在24.334秒终止通过，完整来源绑定与复用边界见
 [实施结果](../operations/evidence/regional-native-channel-fee-budget-outcome-20261005.json)。
 核心171文件和最新冻结正文/PDF/receipt逐字节未变；没有官网/Library/远程发布动作。
+
+## 有限缺席leader的后续行为
+
+三健康普通Native/pinnedTLS节点实际round1认证最高q2、每份fee只扣3及严格
+停止核验已在一次全新261.266秒范围通过。首329.533秒cold库存失败保留；
+新0.008秒反例支持fixture准备及严格只读公开锚修复，Native/Node live未改。
+[完整范围、失败和下一2016窗口容量门槛](REGIONAL_CHANNEL_MISSING_LEADER_REQUIREMENTS.md)。
+这不替代full fault、完整窗口结算、跨地区支付或独立/物理资格。

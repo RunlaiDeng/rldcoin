@@ -1,0 +1,99 @@
+{
+  "format": "RLD-CHANNEL-MISSING-LEADER-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T01:10:02.301367+00:00",
+  "completed_finite_ground_behavior": true,
+  "previous_goal_turn": "progress: real startup contention fix eb8cd6e18",
+  "native_source_commitment": "c2b5e8bccd707e8f6d74193d488d24dace8453a3339e0c2a09c6db89d8b808a3",
+  "native_binary_sha256": "838873ba542703392db98d3fa411bd2f4a9f43837c9493073bc6fdcd6ed5fb3a",
+  "native_69_core_171_and_live_node_source_unchanged": true,
+  "fixture_controller_source": "tools/regional_channel_missing_leader_drill.py",
+  "fixture_controller_sha256": "2b50e532047ceaa72a6723fd08cdd98b08e6cf720c2af6a863339d811fe71201",
+  "failed_scope": {
+    "completed": false,
+    "duration_seconds": 329.533,
+    "live_q2_seconds": 216.695,
+    "four_native_and_three_later_round_observations_retained": true,
+    "private_inventory_verification_failed": true,
+    "mutating_cold_Node_call": true,
+    "original_failure_remains_failed": true
+  },
+  "minimal_counterexample": {
+    "seconds": 0.008,
+    "wrong_config_strict_inspection_refuses_without_write": true,
+    "ordinary_Node_config_change_writes_advert_and_cursors": true,
+    "prepared_exact_config_readonly_inspection_preserves_state": true,
+    "preflight_wrong_module_refusal_before_any_scope_preserved": true
+  },
+  "repair": {
+    "complete_pinned_transport_setup_before_freeze": true,
+    "public_node_key_network_and_config_anchor_retained_at_setup": true,
+    "cold_MeshInspection_no_private_identity_reads_or_mutation": true,
+    "no_native_live_consensus_or_limits_changed": true
+  },
+  "passed_scope": {
+    "total_seconds": 261.266,
+    "prepare_seconds": 42.551,
+    "live_seconds": 160.834,
+    "clean_shutdown_seconds": 10.578,
+    "missing_actual_height6_round0_leader": 2,
+    "active_processes": [
+      0,
+      1,
+      3
+    ],
+    "certified_challenge_height": 7,
+    "certified_round": 1,
+    "ordered_distinct_prepare_commit_and_timeout_votes": 3,
+    "highest_sequence": 2,
+    "fee_spent_each": "3",
+    "closing_height": 6,
+    "absolute_deadline": 2022,
+    "owner_and_witness_key_files_absent_during_live": true,
+    "complete_native_and_caller_heads_verified": 4,
+    "complete_retained_envelopes_verified": 133,
+    "retained_packets_verified": 339,
+    "retained_receipts_verified": 219,
+    "missing_native_voter_caller_transport_file_hash_inventory_mode_size_mtime_unchanged": true,
+    "all_private_inventory_file_hash_mode_size_mtime_unchanged_by_strict_cold": true,
+    "other_posix_metadata_comparison": false,
+    "controller_live_protocol_messages": false,
+    "stopped_no_startup_recovery_first_sign_or_head_adoption": true
+  },
+  "budgets": {
+    "attempts_per_scope": 1,
+    "preparation_seconds": 180,
+    "live_seconds": 600,
+    "stopped_seconds": 180,
+    "round_seconds": 60,
+    "maximum_height": 24,
+    "challenge_window_blocks": 2016,
+    "full_fault_campaigns": 0
+  },
+  "artifact_sha256": {
+    "regional-native-channel-fee-budget-missing-leader-20261005-stage.json": "68291ed602945f40a858de2e92009a924b026bfc8da539d05d31658890b41566",
+    "regional-native-channel-fee-budget-missing-leader-20261005-checks.json": "94af0910814dfb2e00dbf7ff0256548a4f82f79b9d219efabe1a8d2851e49485",
+    "regional-missing-leader-cold-config-preflight-failure-20261005.json": "612e29bc330ce6646dd2f271c66bf64ca59b0fddfb159251aa78840aeb864c0a",
+    "regional-missing-leader-cold-config-counterexample-retry1-20261005-stage.json": "72f7f815480108d5d907afd40a60ce0d1e64f57f603ac6fda4b14bc4445b009b",
+    "regional-missing-leader-cold-config-counterexample-retry1-20261005-checks.json": "a5629caa2458e5698f8ec4dadb9cee57de93f0dc831f3aecd17cb5594f265c9d",
+    "regional-native-channel-fee-budget-missing-leader-retry1-20261005-stage.json": "99aff6e3bca780e76875163897b5fba9790717538a46e32cf755b0a1ceb1a69c",
+    "regional-native-channel-fee-budget-missing-leader-retry1-20261005-checks.json": "e9a33b9c0b146830cb6613a5024fc757d95bfcc075fca432fe36e07a4d7e14a8"
+  },
+  "authority": {
+    "markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+    "pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+    "receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "all_S_R_I_A_G_N_P_obligations_still_mandatory": true
+  },
+  "legacy_value_strict": "VALUE-STRICT-01 OPEN/not passed; unaffected source, no waiver, no candidate release",
+  "no_site_library_mainnet_funds_account_remote_actions": true,
+  "full_fault_cross_region_window_independent_custody_crypto_long_history_physical_or_whole_protocol_qualified": false,
+  "next": {
+    "hypothesis": "The current ordinary V8 BFT evidence/history bounds prevent reaching an unchanged 2016-block channel settlement window; determine the exact first native capacity refusal without weakening bounds or assigning fake heights.",
+    "minimum": "One fresh no-value native execution harness, real consecutively certified BFT checkpoints up to the current 64 snapshot bound plus one refused next step, with exact ledger/evidence/book before-and-after checks. No ordinary 24-height network scope is extended; no custody/owner recovery or old fixture startup. If certified construction cannot reach the boundary within budget, retain that outcome and switch method before retry.",
+    "attempts": 1,
+    "budget_seconds": 120,
+    "network_campaigns": 0,
+    "exit": "First native refusal or successful complete bounded discriminator or120 seconds. Retain all source and logs; no unchanged rerun, prune, bounds increase or shortened2016 window.",
+    "followup": "A verified bound blocker needs a separately signed bounded BFT history/checkpoint design and native implementation; finite q2 inclusion cannot qualify actual settlement or whole long-history execution."
+  }
+}

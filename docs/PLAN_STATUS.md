@@ -25,6 +25,12 @@ live164.517秒、总303.651秒，原60秒轮/24高度/2016窗口未变，无控�
 首次stale helper setup拒绝仍未通过，helper来源修复后换全新fixture验证；
 [修复绑定和下一有限缺席leader门槛](research/REGIONAL_NATIVE_STARTUP_CONTENTION_REQUIREMENTS.md)。
 没有原样重跑旧TLS或full fault范围。
+后续有限缺席leader范围首329.533秒因cold构造器更新未启动carrier配置而
+库存检查失败，仍未通过；新0.008秒反例及fixture修复采用独立公开锚严格只读
+检查。全新一次范围总261.266/live160.834秒通过三健康副本round1/q2/fee3，
+clean exit，133完整信封/339packet/219receipt和四Native/caller；缺席副本及
+所有私有库存/hash/mode/size/mtime未变，没有full fault通过。
+[准确范围、旧失败及下一完整窗口容量判别](research/REGIONAL_CHANNEL_MISSING_LEADER_REQUIREMENTS.md)。
 完整故障、独立保管、长历史/crypto/physical与整项协议资格继续待验。
 
 ## 已完成的近期交付

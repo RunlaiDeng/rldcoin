@@ -1,0 +1,17 @@
+{
+  "format": "RLD-MISSING-LEADER-COLD-CONFIG-STAGE-V1",
+  "recorded_at_utc": "2026-10-05T01:03:50.939150+00:00",
+  "attempts_started": 1,
+  "attempt_budget": 1,
+  "budget_seconds": 120,
+  "prior_failed_sha256": "94af0910814dfb2e00dbf7ff0256548a4f82f79b9d219efabe1a8d2851e49485",
+  "source_sha256": {
+    "tools/interstellar_mesh.py": "90bd87e3c86ae81c2e329ce44bbcd3f77e9fef825bc8402c2312ac920db1dc29",
+    "tools/interstellar_active_state.py": "cce9540fe0ba3f39593bd71b3df68c9de3b8519506ad2b377d6bcc70f10c87ab",
+    "tools/interstellar_transfer.py": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+    "tools/interstellar_mesh_inspection.py": "41264884b97d0d69eb22355cbba16dd0b9cece4e6c4034f603b232358404cc7b"
+  },
+  "controller_sha256": "4defdaaa9c749fcde18365074b54395079090f665b14bec674f8abe7ec17c5a2",
+  "hypothesis": "Opening an initialized but unstarted mesh with newly configured contacts rewrites its own advertisement/cursors; prepare the exact configured state before freezing it, then the same full cold open must not write.",
+  "exit": "First counterexample/refusal, completed discriminating observations, or120 seconds; preserve all fixtures. No native signing, network service or old fixture startup."
+}

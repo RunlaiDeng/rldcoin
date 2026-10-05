@@ -1,0 +1,29 @@
+{
+  "format": "RLD-MISSING-LEADER-COLD-CONFIG-CHECKS-V1",
+  "completed": true,
+  "failure": null,
+  "duration_seconds": 0.008,
+  "checks": {
+    "strict_cold_mismatched_config_refuses_without_write": true,
+    "actual_config_change_cold_open_mutated_state_and_parent": true,
+    "changed_relative_paths": [
+      ".",
+      "mesh-state.json"
+    ],
+    "prepared_exact_config_strict_cold_preserves_inventory_file_hash_mode_size_mtime": true
+  },
+  "source_sha256": {
+    "tools/interstellar_mesh.py": "90bd87e3c86ae81c2e329ce44bbcd3f77e9fef825bc8402c2312ac920db1dc29",
+    "tools/interstellar_active_state.py": "cce9540fe0ba3f39593bd71b3df68c9de3b8519506ad2b377d6bcc70f10c87ab",
+    "tools/interstellar_transfer.py": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+    "tools/interstellar_mesh_inspection.py": "41264884b97d0d69eb22355cbba16dd0b9cece4e6c4034f603b232358404cc7b"
+  },
+  "controller_sha256": "4defdaaa9c749fcde18365074b54395079090f665b14bec674f8abe7ec17c5a2",
+  "prior_failed_sha256": "94af0910814dfb2e00dbf7ff0256548a4f82f79b9d219efabe1a8d2851e49485",
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "old_missing_leader_scope_remains_failed": true,
+  "old_private_fixture_opened_or_restarted": false,
+  "native_or_protocol_qualification": false,
+  "network_processes_started": 0
+}

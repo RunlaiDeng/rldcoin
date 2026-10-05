@@ -1,0 +1,11 @@
+{
+  "format": "RLD-COLD-CONFIG-PREFLIGHT-FAILURE-V1",
+  "recorded_at_utc": "2026-10-05T01:03:50.872135+00:00",
+  "controller_sha256": "a37253b7fcb6f13a3f1ad392a042404893e9b92af4668c677019f8697e042e0e",
+  "failure": "KeyError: tools/interstellar_mesh_active.py (actual module tools/interstellar_active_state.py)",
+  "scope_attempt_started": false,
+  "stage_written": false,
+  "fixture_created": false,
+  "passed": false,
+  "remedy": "Resolve actual module/import and use existing strict externally anchored MeshInspection; preserve controller preflight failure."
+}
