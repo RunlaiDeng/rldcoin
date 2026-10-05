@@ -612,21 +612,55 @@ class Node:
                 tuple(sorted(evidence.KINDS)), tuple(sorted(evidence.CONTROL_KINDS)))
         raw=evidence.canonical(s['archives'])
         rows=None
+        exact_witness=None
+        previous_entries=()
+        retained_entries=()
         with _verified_archive_index_lock:
             witness=_verified_archive_index
             if witness is not None and witness[3]>MAX_VERIFIED_ARCHIVE_INDEX_BYTES:
                 _verified_archive_index=None
                 witness=None
-            if witness is not None and witness[0]==domain and witness[1]==raw:
-                rows=witness[2]
+            if witness is not None and witness[0]==domain:
+                if witness[1]==raw:
+                    rows=witness[2]
+                    retained_entries=witness[4]
+                    exact_witness=witness
+                else:
+                    previous_entries=witness[4]
         if rows is None:
+            # Only the immediately preceding fully checked index in this exact
+            # store/domain may supply immutable byte/primitive-row witnesses.
+            # A changed row still authenticates completely; a digest is never
+            # compared in place of its full canonical signed entry bytes.
+            previous={ident:(encoded,row) for ident,encoded,row in previous_entries}
             checked=[]
+            candidates=[]
+            domain_size=len(evidence.canonical(domain))
+            row_bytes=entry_bytes=2
+            retain=True
             for ident,entry in s['archives'].items():
-                body=self.archive_entry(entry,ident)
-                ref=body['frame_object']
-                checked.append((ident,body['file_id'],body['size_bytes'],body['kind'] is None,
-                                ref['file_id'] if ref else None,ref['size_bytes'] if ref else None))
+                encoded=evidence.canonical(entry).decode('utf-8')
+                prior=previous.get(ident)
+                if prior is not None and prior[0]==encoded:
+                    row=prior[1]
+                else:
+                    body=self.archive_entry(entry,ident)
+                    ref=body['frame_object']
+                    row=(ident,body['file_id'],body['size_bytes'],body['kind'] is None,
+                         ref['file_id'] if ref else None,ref['size_bytes'] if ref else None)
+                checked.append(row)
+                if retain:
+                    candidate=(ident,encoded,row)
+                    comma=int(len(checked)>1)
+                    row_bytes+=len(evidence.canonical(row))+comma
+                    entry_bytes+=len(evidence.canonical(candidate))+comma
+                    if len(raw)+domain_size+row_bytes+entry_bytes<=MAX_VERIFIED_ARCHIVE_INDEX_BYTES:
+                        candidates.append(candidate)
+                    else:
+                        candidates=[]
+                        retain=False
             rows=tuple(checked)
+            retained_entries=tuple(candidates)
         # Recheck every actual retained file and active/archive overlap even on
         # an exact metadata hit. A changed payload still authenticates on read.
         for ident,file_id,size,receipt_only,frame_id,frame_size in rows:
@@ -639,12 +673,22 @@ class Node:
                 'peer inventory cache capacity/schema invalid')
         for peer, inventory in s['peer_inventory'].items():
             require(inventory_check(inventory,self.network)['node_id']==peer,'peer inventory identity changed')
-        retained_size=len(raw)+len(evidence.canonical(rows))+len(evidence.canonical(domain))
+        if exact_witness is not None:
+            retained_size=exact_witness[3]
+        else:
+            retained_size=len(raw)+len(evidence.canonical(rows))+len(evidence.canonical(domain))
+            overlap_size=len(evidence.canonical(retained_entries))
+            if retained_size+overlap_size>MAX_VERIFIED_ARCHIVE_INDEX_BYTES:
+                # Preserve the original exact-index optimization when complete
+                # per-entry retention cannot fit the same original bound.
+                retained_entries=()
+            else:
+                retained_size+=overlap_size
         if retained_size<=MAX_VERIFIED_ARCHIVE_INDEX_BYTES:
             # Publish only after complete validation. Retain exact canonical
             # bytes and primitive tuples, never a mutable signed object.
             with _verified_archive_index_lock:
-                _verified_archive_index=(domain,raw,rows,retained_size)
+                _verified_archive_index=(domain,raw,rows,retained_size,retained_entries)
         else:
             with _verified_archive_index_lock:
                 _verified_archive_index=None

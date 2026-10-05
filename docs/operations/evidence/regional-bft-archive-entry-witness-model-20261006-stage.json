@@ -1,0 +1,28 @@
+{
+  "format": "RLD-BFT-ARCHIVE-ENTRY-WITNESS-MODEL-STAGE-V1",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_archive_entry_witness.py": "adadf389b08ca3d79249af991be9fcd006017cf846b318fd087f53457ec43ec0",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "c40bb21de253f15f8f209b06570d8827b8ee4ed615368f40d4a6ad5e0bf1932c",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_shared_archive.py": "b3ae4336d0c81c3863346bd4360fb06a1544ab08dee06d6c3454c7a817b9f28a",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_archive_index_overlap.py": "b545bf78cf7e245863af002ce7fa24aa4226dc6564205f08c60ed9bcfdd587b9",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_custody_sync.py": "69ad097f3a6cd8ea39679146279dee1ef4ceec36a83ddfe5af9c9e019b1a1b05",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_state_decode.py": "89ec024590f5a1a280859dfad0afabbb9784b23fc633bfd24cf36763cd8c2c65",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "80c0c25b055d85959de66e2c0d6f441324840ad5424fd5a05c88a2ab221f20a0",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_transfer.py": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_active_state.py": "cce9540fe0ba3f39593bd71b3df68c9de3b8519506ad2b377d6bcc70f10c87ab",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_frame_digest.py": "5952262117a183120adb847adacc6a91f362b5a4bf44928e6fad4072df12d581",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_receipt_scheduler.py": "a68bb69565f556a66e682b961c74e52bd925905912599890d7346e37bb2d5ae3",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-archive-index-change-cost-20261006-checks.json": "3fadcd36e54c3adbc16034b26fd9809da325e8eef33f00029265fd5f15878210",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-archive-entry-witness-model-20261006.py": "9b1f417201239302c7630cf29cb903eeeffb686b67df200aa0995a3fe757215b"
+  },
+  "hypothesis": "Only previous fully authenticated same store/complete domain may reuse exact complete canonical signed entries and immutable primitive rows; actual appended new row fully checks, invalid later signature/receipt/ownership refuses; current files/overlap/payload reads remain checked. Restart/domain/limits/capacity miss fully verifies. One4MiB witness, fallback to original exact-index optimization when row witnesses cannot fit. Actual ephemeral mesh/Ed signing/files/fsync and one existing own fixture SIGKILL subprocess occur; no Native/BFT Runtime/value/oldfailed reopening or real sockets.",
+  "exit": "first invariant/source/model error, all74 targeted relatedtests, original120deadline; preserve errors, no scope broadening",
+  "native_starts": 0,
+  "bft_runtime_starts": 0,
+  "native_value_signing": 0,
+  "old_failed_fixture_opens": 0,
+  "full_fault_qualified": false
+}

@@ -832,3 +832,51 @@ goal active；采用正文2ba62421/PDFc59f9fe8/receipt86821d19，goal前继哈�
 持久cwd仍UI待修，工具命令显式新rldcoin；单次相关测试子进程显式新目录tools下。
 冻结正文/PDF/官网、服务器/资金/权限/清理不扩大。
 证据：[本次终态、反例、修复与真实检查范围](operations/evidence/regional-bft-four-cli-inbound-outcome-20261005.json)。
+
+
+## 2026-10-06 实际入站保管通过、Native仍失败及档案行认证修复
+
+完整fault仍FAIL/OPEN（runtime-v4原600/612.570秒/6152、receive-v7原600/616.052秒/
+6657及全部旧失败）。真实retained-input TLS组件一次60预算 **PASS7.906秒**：首次
+请求拒绝且未suppression，准确原request nonce/packet对应的入站任务在两个出站owner/
+新handler竞争下完成实际持久保管；完整transit/frame/签名receipt与源packet保留核验
+通过，所有自有线程停止，11文件封存，无Native/BFT Runtime/owner原生签署/恢复。
+运输通过不证明收款、故障、独立或物理路线资格。
+
+条件启动的新四普通CLI范围仍 **FAIL原180耗尽/189.974秒含收尾、helper1、1797封存**；
+四进程均exit0，无guardian接管/强制/cleanup。169公开来源独立保留，无失败保管复制。
+最后Native观察14/14/13/13，全部import13/mature15/net2不可花；观察不是停止cold权威，
+最终Native未知，full8fixedhead cold/守恒未完成。原60round/24height/maturity2/quorum3/
+全部容量未变。失败账本不得重开/恢复/复签/退款/旧请求替换；未分配新600。
+
+新真实服务证据不支持“入站公平修复即可在原180成熟”。下一单一只读成本反例
+1.418秒/一次120通过：准确停止1797的store1有236完整签名档案行，同一index warm
+重验0；仅在内存省一行对照（不保存、不删任何证据/文件）改变index后重验235，
+该次profile .218秒中archive_entry累计CPU .157秒/约72%。统计带开销、成本重叠，
+不证明现场唯一原因或服务提速；越过预先.02秒/50%判别只选择对应重验优化。
+
+唯一作者修改Mesh：同一store/完整domain仅保留上一份已完整认证index的exact
+canonical signed entry字符串及immutable primitive rows；完整字节/ident相同才复用，
+新/改变签名行仍全面认证。每次仍检查真实文件、active/archive重叠及peer inventory；
+payload读、完整frame/transit/receipt检查和真实fsync/保管规则不变。一个进程内witness
+按原4MiB完整计费，不fit则退回原exact-index，再超限则全cold；无序列化/Native
+ledger、签署或freshness权，无增缓存上限/证据剪裁/容量放宽。
+
+74项针对性检查一次120内4.363秒通过：实际临时Mesh/transport Ed签名/fsync及既有
+自有fixture SIGKILL反例，無socket/Native/BFT Runtime/原生value签署/旧失败保管重开。
+真实新增signed row只验一次；restart/domain/limits重验，坏后续签名/receipt role、
+缺文件/active重叠/改变payload/容量继续拒绝。准确1797只读回归1.267秒通过，同样
+235行对照重验降至0、仍拒绝保留行后续坏签名、全真实文件/重叠检查，4MiB内且
+1797字节未变。该profile .067秒只说明该函数路径，不充当现场benchmark/成熟通过。
+当前162Python3e0b1df7…，Native89/Core171/实际CLIa45387fa…及freeze receipt不变。
+
+下一判别：一次60秒全新pinnedTLS组件，每peer预留64完整签名档案行，明确执行改变的
+archive路径/新行认证/实际保管/完整receipt和干净关闭；不重复旧archive-empty组件。
+通过且162来源/实际binary/controller绑定后，才一次全新8Native/四普通CLI原180总预算，
+all4import13/mature15/net2及全8固定头/完整信封/mesh/caller/owner/守恒cold决定通过。
+首错误/全部完成/原deadline退出、FAIL封存不可续跑或加时。两新范围均未开始，600
+未分配。VALUE-STRICT-01独立OPEN，旧值源码未变触发条件不成立、无告警豁免。
+所有S/R/I/A–G/N/P/长期/PQ/独立/物理资格仍OPEN；goal active，采用正文2ba62421/
+PDFc59f9fe8/receipt86821d19，goal前继哈希仅报告。冻结正文/官网/服务器/资金/权限/
+清理不扩大，持久cwd仍UI待修，全部工具项目命令显式新rldcoin workdir。
+证据：[实际范围、成本反例与档案行修复](operations/evidence/regional-bft-inbound-archive-outcome-20261006.json)。

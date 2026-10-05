@@ -1,0 +1,20 @@
+{
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 4.362541,
+  "helper_exit_code": 0,
+  "test_count": 74,
+  "stage_sha256": "8294f2cd6504bd4614e5d45d8bb054acbe0aff535c444f44d453320df9ea6d50",
+  "log_sha256": "1cc39d16f0670e6f442e71ac16e4635a7c937b30f22ead48b049cf36b342f9f3",
+  "log_summary": "..........................................................................\n----------------------------------------------------------------------\nRan 74 tests in 4.161s\n\nOK\n",
+  "actual_ephemeral_mesh_and_transport_signing": true,
+  "existing_own_fixture_sigkill_regression": true,
+  "native_starts": 0,
+  "bft_runtime_starts": 0,
+  "native_value_signing": 0,
+  "old_failed_fixture_opens": 0,
+  "sockets": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

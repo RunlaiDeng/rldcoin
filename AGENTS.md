@@ -1542,3 +1542,20 @@ The next once60 fresh retained-input TLS contention component and conditional
 once180fresh8Native/fourCLI maturity/fullcold are separate, not yet started;
 no new600allocated. Keep unknown observations, all failures and original bounds.
 See docs/operations/evidence/regional-bft-four-cli-inbound-outcome-20261005.json.
+
+
+The real original-request retained-input TLS component passed7.906seconds/once60
+with exact nonce/packet custody and cold signed transport receipts, not Native
+maturity. Its conditional source-changed fourCLI scope still FAILED189.974/
+original180,1797sealed,all4exit0/no forced/cleanup;169public source files preserved.
+Never reopen its Native/Runtime/value. Full8cold/conservation remain unfinished.
+An exact read-only index-change counter found235unchanged archive rows reverified.
+The separate entry-witness candidate reuses only complete canonical signed entry
+bytes and immutable primitive rows from one previous fully checked exact store/
+domain, under the existing4MiB total witness limit. Real files/overlap/peer checks,
+changed rows/payloads/fsync/custody still verify. No Native or freshness authority,
+serialized witness, evidence pruning or bounds increase.74targeted tests and exact
+1797read-only regression pass; not live service speed/maturity/fullfault proof.
+Next once60freshTLS with64archived signed rows per peer, then conditional once180
+fresh8Native/fourCLI full maturity/cold; neither has begun, no600allocated.
+See docs/operations/evidence/regional-bft-inbound-archive-outcome-20261006.json.
