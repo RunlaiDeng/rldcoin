@@ -1,0 +1,55 @@
+{
+  "format": "RLD-BFT-RECEIVE-DEFER-SERVICE-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T18:44:14.878249+00:00",
+  "completed": false,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "duration_seconds": 44.975,
+  "helper_exit_code": 1,
+  "checks_sha256": "ff16b03a8c6b59ae59d88e6e1c7bca29e81309c22352f144659af6185a814ac1",
+  "stage_sha256": "d3f06f4325f58197750b4ff960dc2bbd6c9adc734630184384112803f5c797d9",
+  "helper_sha256": "8cb4a201c965805fe58b5cd65b50e457d7b6cda44aca19590922550515bb4603",
+  "controller_sha256": "5221fca652c10a3bc1acac84633be61774698d0994dcf421645d37c2c833530e",
+  "result": {
+    "completed": false,
+    "failure": "AssertionError: ",
+    "cleanup_failures": [],
+    "services_and_owned_threads_stopped": true,
+    "failed_currency_never_reopen": true,
+    "whole_full_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "finite_blocked_receive_discriminator_retained": true,
+  "unknown_progress_actual_observation": {
+    "progress_observation_available": false,
+    "diagnostic": "[Errno 35] ordinary other-purpose retry pending; retain evidence",
+    "height_present": false,
+    "errors": [
+      "[Errno 35] local mesh turn pending; retain evidence",
+      "[Errno 35] ordinary other-purpose retry pending; retain evidence"
+    ],
+    "rejections": []
+  },
+  "unknown_observation_sha256": "1b4058b884167c19b1880d7b9af03d8afa114e94ec3b46ab22d2fb6cb6fb5767",
+  "last_logged_known_heights_not_cold_authority": [
+    2,
+    2,
+    2,
+    2
+  ],
+  "actual_final_native_import_maturity_unknown": true,
+  "full_cold_uncompleted": true,
+  "stopped_files": 397,
+  "stopped_inventory_sha256": "529b357456dd4e0f28d08f2e9151bd13bad651e4ae64925525bddf88266f8fe4",
+  "exact_failed_source_archive_sha256": {
+    "regional_contact_node.py": "652376a0e05c5c5646d34d181000678228bdc139806b0f9fc1720d3b3c71e4d0",
+    "regional_bft_node.py": "4cd91497220d2b50cb3f10aa9457cfa4a6cbfc9d8c3cc47e4564083c865c9639",
+    "observe-bft-receive-defer-service-v1-20261005.py": "8cb4a201c965805fe58b5cd65b50e457d7b6cda44aca19590922550515bb4603",
+    "check-bft-receive-defer-service-v1-20261005.py": "5221fca652c10a3bc1acac84633be61774698d0994dcf421645d37c2c833530e"
+  },
+  "failed_currency_never_reopen_native_or_runtime": true,
+  "source_binary_freeze_pins_unchanged": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "next": "Once120read-only exact stopped telemetry counterexample. Old strict type assertion must refuse; source-bound existing Driver.observation_height returns unknown under exact PID/currency/TLS/limits/cap binding and rejects wrong domains/over-cap. No node/source change or failed Native/Runtime opens. Then one necessary fresh180scope for corrected controller, no unchanged/full600 retry."
+}

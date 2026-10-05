@@ -33,6 +33,14 @@ batch回归通过。全新无网络原生组件10.319秒/一次180通过：实�
 真实旧flush源码反例、新5模型及13batch回归通过；实际接收锁忙重试尚未资格。
 [下一一次180秒真实接收判别](operations/evidence/regional-bft-receive-defer-outcome-20261005.json)。
 
+实际接收延后/原字节重验范围74.627秒/一次180有限通过：同helper4Service，
+实际Native inspect锁忙无seen/heads变更，原完整帧解锁后全认证；四net2成熟，
+120完整信封/8固定头Native/caller/owner/fullmesh/1e30守恒cold、私有字节未变。
+541文件封存，Services/线程停止；非默认CLI/独立/fullfault资格。首次44.975秒
+缺高度断言失败保留397文件，不打开失败Native。只读真实观测反例后修正控制器，
+已实际等待unknown而未伪造高度或放宽原门槛。
+[实际证据与下一必要完整范围](operations/evidence/regional-bft-receive-defer-service-v2-outcome-20261005.json)。
+
 当前来源 `89408f5a...` / implementation `8a361699...` / release binary `a45387fa...`：
 **普通六阶段完整闭环510.455秒/原600秒有限通过**；四E9/四P6/四A8，全部成熟、
 1606阶段合计完整信封/原heads/12Native/最终守恒，27Services正常退出。

@@ -1,0 +1,22 @@
+{
+  "format": "RLD-BFT-RECEIVE-DEFER-UNKNOWN-COUNTER-V1",
+  "recorded_at_utc": "2026-10-05T18:44:14.977989+00:00",
+  "completed": true,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 0.001308,
+  "old_exact_assertion_refuses_unknown": true,
+  "current_qualified_observation_returns_unknown": true,
+  "negative_pid_currency_height_cases": 5,
+  "actual_stopped_observation_sha256": "1b4058b884167c19b1880d7b9af03d8afa114e94ec3b46ab22d2fb6cb6fb5767",
+  "driver_sha256": "74468bb15c433fe2c3bd8de18d19413395b82886631231cf0e3bf833b03d4d5d",
+  "source_bound17driver_tests_reused": true,
+  "native_calls": 0,
+  "runtime_starts": 0,
+  "sockets": 0,
+  "first_signs": 0,
+  "failed_inventory_sha256": "529b357456dd4e0f28d08f2e9151bd13bad651e4ae64925525bddf88266f8fe4",
+  "source_and_failed_private_bytes_not_written": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

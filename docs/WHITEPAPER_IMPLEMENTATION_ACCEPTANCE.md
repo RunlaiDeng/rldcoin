@@ -583,3 +583,34 @@ increase. No further fullscope in this stage. Goalactive/allgoal/fullfault/stric
 2016/history/independent/PQ/physicalOPEN. Current paper/site/cwd limitations unchanged.
 See operations/evidence/regional-paged-full-fault-candidate-v6-outcome-20261005.json
 and operations/evidence/regional-bft-receive-defer-outcome-20261005.json.
+
+
+2026-10-05 first receive-defer Service gate FAILED44.975seconds/once180exit1:
+actual blocked inspect was deferred without credit/custody change, then known
+progress reached2. Helper incorrectly required a height in explicit unknown
+other-purpose mesh contention; actual final Native maturity/cold not established.
+397files/source sealed and never Native/Runtime reopened.1.308msreadonly retained
+observation counter proves oldassert refusal/current qualified Driver unknown,
+5PID/currency/type/cap negatives refuse;17driver evidence reused, no Native/socket.
+
+Changed controller alone uses exact qualified PID/domain/TLS/limits/error/unknown
+classification plus present-height cap/type before waiting. Fresh corrected gate
+passed74.627seconds/once180exit0:8Native/4Service in onehelper with pinnedTLS, actual
+bft-network-inspect-batch exit1/fullOSlock diagnostic ->deferred, no seen/native/
+signer/caller credit; the identical complete frame reauthenticated natively after
+unlock. Four import1/mature3/net2,120complete retained envelopes/8fixed-head Native/
+8caller+owner/fullmesh/1e30conservation cold, private bytes unchanged. Explicit
+unknown samples actually waited. AllServices/ownedthreads stopped,541files sealed.
+Source4cert/contact are setup only, no controller consensus after Runtime start;
+this is not defaultCLI/independent processes/oldfullFAIL replacement. Native89/
+CLI/current Node unchanged between those gates; original44.975 remainsFAILED.
+
+Next fresh signed zero-allocation/custody12Native/TLS preparation once180; at most
+one necessary full600body/cold under current typed-receive source/model/actual
+ordinary gate/current155Python/Native89/CLI/independentcontroller binding. Original
+60round/24newheights/E27-P24-A24/maturity2/quorum3/capacities remain. Actual original
+9net maturity/keyless/all12cold/conservation required; exit first mismatch/full
+checks/deadline, failure seals/no reopen/recovery/resign/refund/copy/unchanged retry.
+Goalactive/allgoal/VALUE-STRICT-01/history/2016/PQ/independent/physical OPEN.
+See operations/evidence/regional-bft-receive-defer-service-v1-outcome-20261005.json
+and regional-bft-receive-defer-service-v2-outcome-20261005.json.
