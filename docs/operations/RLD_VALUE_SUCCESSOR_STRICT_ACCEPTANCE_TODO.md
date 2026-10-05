@@ -138,3 +138,10 @@ source/Cargo.lock不变才启动来源不变诊断。影响为PoW授权枚举的
 旧两价值文件/Core171未变；没有触及本库/PoW、采用包或工作区strict声明，
 故不触发新诊断或修复，本项继续独立OPEN。旧两告警/120.019秒耗尽与原
 120/300秒预算/严格完成标准不改，地区付款通过不替代本库strict。
+
+返程检查点：原300秒scope14.512秒控制器assert失败，四Service −15/0/0/0，
+目的/full cold未到达，整体仍失败且currency封存。0.456秒只读交通合同反例与
+controller guard修复不触及旧价值库/PoW/Cargo.lock/采用包；无实际构建阻塞，
+故本次不触发或重跑旧strict。两基线告警和120.019秒/-15继续独立OPEN；上表
+触发、影响、一次120/300秒、无豁免严格exit0及完整编码/授权拒绝完成标准保持。
+[准确失败与下一验收](evidence/regional-native-paged-return-outcome-20261005.json)。

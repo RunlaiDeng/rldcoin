@@ -1,0 +1,65 @@
+{
+  "format": "RLD-NATIVE-PAGED-RETURN-CHECKS-V1",
+  "completed": false,
+  "failure": "ordinary-original-owner-return-export",
+  "cleanup_error": null,
+  "duration_seconds": 14.512,
+  "budget_seconds": 300,
+  "attempts_used": 1,
+  "commands": [
+    {
+      "phase": "ordinary-original-owner-return-export",
+      "exit_code": 1,
+      "budget_exhausted": false,
+      "helper_terminal": true,
+      "elapsed_seconds": 14.487
+    }
+  ],
+  "observations": [],
+  "service_terminals": [
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 13.402,
+      "index": 0,
+      "exit_code": -15,
+      "scope_failed": true
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 13.439,
+      "index": 1,
+      "exit_code": 0,
+      "scope_failed": true
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 14.324,
+      "index": 2,
+      "exit_code": 0,
+      "scope_failed": true
+    },
+    {
+      "kind": "service-terminal",
+      "elapsed_seconds": 14.324,
+      "index": 3,
+      "exit_code": 0,
+      "scope_failed": true
+    }
+  ],
+  "stage_sha256": "17bf189c282d5a2c577695e25a7eea4fcb002e5715a5c7f02129c4c86e190c10",
+  "controller_sha256": "8ff0f6980e48e712c7d0439a280717584c250d6f68982b56591bde5431b17286",
+  "helper_sha256": {
+    "observe-native-paged-return-source-20261005.py": "9503b5e0197c011aa9da6b3b4a99712f29a11722727bf34e1561374cb4a5675a",
+    "observe-native-paged-return-receiving-20261005.py": "d5d5107ff0183e693d3dcd08b499463442640c2fa40ca15f2505e295c7a9ea62"
+  },
+  "accounting_helper_sha256": "437cedba4c95dbed8e8f564653132ebf52a0a5c822d1b8daa2b8efc1837081e1",
+  "log_sha256": "965c923eaafeaa993b214b4577abe0da12494acaa951103288dca2edf417d8ac",
+  "source_commitment": "4e2331b4cf44015c7da829d4710e7b09577ba893664ebec2802e0daf2d356ead",
+  "implementation": "bb6d1e5b59f1baf2851998ac8d102243a786e12a73f284a7c83dd43558e04273",
+  "cli_binary_sha256": "d8c2af0dcf5fca5fd4de517a4f7a92444e151dd91cdb68a79aa897b07cbc37a7",
+  "old_report_bytes_unchanged": true,
+  "old_fixture_native_runtime_opened": false,
+  "freeze_core_legacy_source_unchanged": true,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_qualified": false
+}

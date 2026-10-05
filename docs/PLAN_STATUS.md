@@ -46,15 +46,30 @@ Native目录或启动网络。87 Native/153 Python/Core来源、implementation�
 旧180.529秒失败仍失败；有效旧检查未重跑，没有打开失败Native/Runtime。
 [准确终态与下一返程判别](operations/evidence/regional-native-paged-onward-fresh-outcome-20261005.json)。
 
-下一一次返程范围尚未启动：基于这份完整通过的全新currency，原A97所有者独立
-首次签gross96（两端fee各1、找零0），原四A6→finite8须实际认证出口7或8；
-keyless A0普通中继至原四E4，真实净95导入/原两块成熟及完整Native/信封/heads。
-保持原E100出口、原输入已消费及全部旧负债；E发行随实际已选Native高度计数，
-兼容前缀核验不能要求不同高度的起源账本有相同奖励余额。一次300秒/1次含
-准备/等待/停止核验；这是新的返程判别，不延长任何失败范围。600stage/60round/
-24新增高度/2016/原quorum/成熟/容量保持。首实际失败/完整判别/预算退出后换
-精确Native/模型/成本反例，不原样重跑或重签退款；最多同时5/两阶段9Services。
-旧价值VALUE-STRICT-01、普通完整循环/完整fault/窗口/source66/post64/独立/PQ/物理
+返程一次300秒范围已在 **14.512秒失败**，未通过：owner12原97输入首次签96并
+入队时无debit已核验，但驱动构建把原3秒连接尝试断言误改为6秒，在源阶段停止。
+四Service退出码为−15/0/0/0，当前自有进程0；目的阶段未启动，实际后续出口、
+导入成熟及完整cold均UNPROVEN。停止后的空Native拒绝诊断原因未知，不能因
+controller错误称原生协议通过。准确currency及原E/P/A/owner/voter/caller/transport
+共1783文件已封存，原请求/签署/预留保持，不再Native/Runtime打开、重签、退款、
+恢复或替换。旧136.378秒历史onward仍有效，旧180.529秒整范围仍失败。
+[准确返程失败、修复、封存及下一范围](operations/evidence/regional-native-paged-return-outcome-20261005.json)。
+
+一次20秒只读反例实际0.456秒/exit0：三份真实停止观测均为原2worker/3秒attempt/
+0.2秒lock；旧6秒断言误拒绝，新独立固定合同接受原值，并拒绝改变/缺字段/错误
+类型。新增 `tools/regional_fixture_transport_contract.py` 将传输约束与高度改写
+分离；两项回归exit0、私有字节不变，无Native调用/网络/签署权。失败helper不改，
+新候选只引用尚未创建的新根，尚未启动。[最小反例](operations/evidence/regional-return-transport-contract-counter-20261005.json)。
+
+下一新scope须先审查六阶段驱动：全新签署零分配根，空E3仅作Native前缀准备；
+E100→P99→A97→原E95的三个owner出口均普通Runtime执行，不由controller准备
+初始跨区付款。一次原600秒stage/1次覆盖全准备、六阶段27次启动和每阶段cold，
+峰值5，原60秒轮/每地区全范围最多24新增高度/成熟2/三取四/容量不变（E绝对27，
+P/A24）。实际import+2成熟、current Native context+2源继续均须在总高度界内。
+起源每个完整兼容认证前缀按实际发行审计；原输入/出口/永久进口始终保持，净95
+是新后代，绝非退款。这是不同的完整ordinary行为判别，不延长或原样重复失败300。
+首实际失败/完整判别/600秒退出；先选精确Native/model/成本反例，不加预算或豁免。
+旧价值VALUE-STRICT-01、返程/完整循环/完整fault/窗口/source66/post64/独立/PQ/物理
 仍OPEN。本页历史“全部通过”仅对应明确绑定的当时有限scope，不能覆盖后续失败。
 
 历史b4来源普通owner提交至目的成熟组合范围已通过：全新零分配根，一次180秒实际

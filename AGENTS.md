@@ -883,3 +883,22 @@ The successor editorial freeze changes no I/S/R/A-G/N/P obligation, consensus or
 economic parameter. Keep development evidence in the dynamic records. Existing
 source-bound qualification remains scoped to its actual code and experiment; do not
 restart an active scope or repeat valid tests merely because the paper was edited.
+
+The current-source ground return scope failed at14.512s because its controller
+expected6s instead of the unchanged3s transport attempt. Retain its original
+helper/report and signed96 owner request. The whole participating currency is
+sealed: `native-paged-onward-fresh-preparation-{earth,proxima}-private-20261005`,
+`native-paged-onward-fresh-{source,receiving}-private-20261005` and
+`native-paged-return-{source,receiving}-private-20261005`. Never open Native or
+Runtime on those directories again, including historically passed E/P/A stores.
+Readonly file/hash inspection is allowed. Preserve all owner/voter/caller heads,
+keys, reservations and immutable evidence; never resign/refund/recover or migrate
+that value. Historical136.378s onward remains a finite pass; return, later Native
+inclusion/maturity and full cold remain unproven. Four Service exit codes were
+-15/0/0/0, not all clean. The separate transport-contract guard fixes only the
+controller's2-worker/3s-attempt/0.2s-lock assertions; its stopped counter gives no
+Native/signing/fault rights. Next fresh ordinary cycle requires reviewed drivers,
+new zero-allocation genesis/currency/all custody and the original600s/one attempt,
+60s rounds, at most24 new heights per region in the entire scope, all original
+maturity/quorums/capacity and complete cold checks. See current PLAN_STATUS and
+`regional-native-paged-return-outcome-20261005.json`; do not rerun failed fixtures.
