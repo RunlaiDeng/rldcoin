@@ -51,6 +51,57 @@ class MeshTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.f = Fixture(self.temporary.name)
 
+    def test_retry_preserves_ordinary_positions_and_retains_original_packets(self):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id']
+        with self.f.node('earth') as node:
+            for _ in range(8):node.enqueue(self.f.frame(),self.f.identities['andromeda']['node_id'])
+            first=node.prepare_exchange(peer)
+            ids=tuple(mesh.digest(t['packet']) for t in first['body']['transits'])
+            positions={k:copy.deepcopy(node.state[k]) for k in ('transit_cursors','recent_transit_cursors','history_transit_cursors','transit_class_steps')}
+            replay=node.prepare_exchange(peer,retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']),ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            following=node.prepare_exchange(peer)
+            self.assertTrue({mesh.digest(t['packet']) for t in following['body']['transits']}-set(ids))
+            self.assertTrue(set(ids)<=set(node.state['messages']))
+            self.assertFalse(set(ids)&set(node.receipts()))
+
+    def test_retry_still_authenticates_and_obeys_suppression(self):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id']
+        with self.f.node('earth') as node:
+            ident=node.enqueue(self.f.frame(),self.f.identities['andromeda']['node_id'])
+            first=node.prepare_exchange(peer);ids=(ident,)
+            replay=node.exchange(peer,{mesh.digest(t) for t in first['body']['transits']},ids)
+            self.assertEqual(replay['body']['transits'],[])
+            original=copy.deepcopy(node.state['messages'][ident]);before=node.path.read_bytes()
+            node.state['messages'][ident]['packet']['signature']='0'*128
+            with self.assertRaises(ValueError):node.prepare_exchange(peer,retry_packet_ids=ids)
+            self.assertEqual(node.path.read_bytes(),before)
+            node.state['messages'][ident]=original
+            for invalid in ([ident],(ident,ident),('x',),tuple(str(i)*64 for i in range(5))):
+                with self.assertRaises(ValueError):node.exchange(peer,retry_packet_ids=invalid)
+
+    def test_retry_hint_is_bounded_scoped_and_forgettable(self):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id']
+        with self.f.node('earth') as node:
+            domain=node.carriage_position_domain();ids=('1'*64,)
+            mesh.remember_carriage_position((domain,peer,'failed-carriage'),ids)
+            self.assertEqual(node.failed_carriage(peer),ids)
+            with patch.object(mesh,'MAX_PACKET_BATCH',3):self.assertEqual(node.failed_carriage(peer),())
+            node.forget_failed_carriage(peer)
+            self.assertEqual(node.failed_carriage(peer),())
+            with patch.object(mesh,'MAX_CARRIAGE_POSITIONS',2):
+                for i in range(5):mesh.remember_carriage_position((domain,peer,'test',i),ids)
+                self.assertLessEqual(len(mesh._carriage_positions),2)
+                self.assertLessEqual(mesh._carriage_position_bytes,mesh.MAX_CARRIAGE_POSITION_BYTES)
+
+    def test_previous_scheduler_identity_refuses_without_rewrite(self):
+        path=self.f.root/'earth/identity.private.json'
+        identity=json.loads(path.read_text());identity['transit_scheduler']='RLD-CONTACT-TRANSIT-SCHEDULER-V4'
+        path.write_text(json.dumps(identity));before=path.read_bytes()
+        with self.assertRaises(ValueError):self.f.node('earth')
+        self.assertEqual(path.read_bytes(),before)
+
     def routed_fixture(self, names, edges):
         root=self.f.root/'routed'
         ids={n:mesh.initialize(root/n,NETWORK,str(i+1)*64,n)['node_id'] for i,n in enumerate(names)}

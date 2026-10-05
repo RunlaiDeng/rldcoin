@@ -1,0 +1,161 @@
+{
+  "format": "RLD-BFT-FAILED-CARRIAGE-REPLAY-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T23:49:09.733615+00:00",
+  "goal_status": "active",
+  "normative_target": "S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8",
+  "frozen_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_predecessor_hashes_still_old_no_autonomous_rewrite": true,
+  "reports": {
+    "regional-bft-exact-revisit-nonce-counter-20261006": {
+      "completed": true,
+      "duration_seconds": 1.037788,
+      "budget_seconds": 60,
+      "checks_sha256": "49261eb574a1f9b646d0cd1171ae7fe837f64ca3714b9c4e6c51ad9d4fcbe5d3",
+      "stage_sha256": "f59bb04bfd084d2c749ea01e77522cea0b494121c2651d23a1e9a77146888276"
+    },
+    "regional-bft-lost-send-revisit-kernel-counter-20261006": {
+      "completed": true,
+      "duration_seconds": 1.957288,
+      "budget_seconds": 60,
+      "checks_sha256": "c9d43e8e874ba9a028833b189952bfe2fe7f089817bc4d4b3c9525f6963c9819",
+      "stage_sha256": "db7076e34c4da8c2247521ff010a7931b85a6187cbe00c02674347c468ac4aff"
+    },
+    "regional-bft-lost-send-fast-replay-candidate-20261006": {
+      "completed": false,
+      "duration_seconds": 1.703833,
+      "budget_seconds": 60,
+      "checks_sha256": "109e0064b712fdbac9579adbb26c905f0b689fad42fa2739d9010d2af0e03db7",
+      "stage_sha256": "8bdb0ec1d70cc4a983b7e07dd694002053cbe5ec1fb996bb45d3339ead38d166"
+    },
+    "regional-bft-lost-send-fast-replay-rotation-v2-20261006": {
+      "completed": true,
+      "duration_seconds": 1.820912,
+      "budget_seconds": 58,
+      "checks_sha256": "dbdc690ec0e920caf6b8383ccdc0753d6cc377a0a3b22726245735edf80295b9",
+      "stage_sha256": "a6e95d88928599b239c03de676e1d127d92caf7318a97d53cbdfa5bdcabccf12"
+    },
+    "regional-bft-fast-replay-related-regression-20261006": {
+      "completed": true,
+      "duration_seconds": 12.061286,
+      "budget_seconds": 60,
+      "checks_sha256": "678ae469fb0bb375b2a211733187db4026e617e0b71d969d926503e3c98d523b",
+      "stage_sha256": "e23706e3c8637658576c2d878cded7ab4d0c21e3dcf8a1d252183951c53a57e3"
+    },
+    "regional-bft-four-cli-fast-replay-binding-20261006": {
+      "completed": true,
+      "duration_seconds": 35.719859,
+      "budget_seconds": 120,
+      "checks_sha256": "227e6b6c7264b1c714e44caac90bfbdbc7ff58ff29febbc19cf934718a664a97",
+      "stage_sha256": "79e739753470859f0993577b89492354af3d5c7a76f91903591f13f9eac97e3b"
+    },
+    "regional-bft-four-cli-service-trace-journal-fast-replay-v9-20261006": {
+      "completed": false,
+      "duration_seconds": 94.131,
+      "budget_seconds": 180,
+      "checks_sha256": "eb5651272e4d699f0f0bf979d23680e5dc342ab051f8ba5b16f226ce96205957",
+      "stage_sha256": "1aada5cd7912054fc8e5c790332df8a0feb251c74d8426242c4afedc44fd6c16"
+    },
+    "regional-bft-fast-replay-trace-gap-counter-20261006": {
+      "completed": true,
+      "duration_seconds": 0.610377,
+      "budget_seconds": 60,
+      "checks_sha256": "7ffff12d38abfd9f3e34f19235379978b571a55816e21d38611cfe5d29db163d",
+      "stage_sha256": "d03d9a3476c10fbdb9dea63fdcc0559b9f93e5f1eaf37de180029085fb72bcbe"
+    }
+  },
+  "implementation": {
+    "source_changes": [
+      "tools/interstellar_mesh.py",
+      "tools/interstellar_tcp.py",
+      "tools/test_interstellar_mesh.py",
+      "tools/test_interstellar_tcp.py"
+    ],
+    "python_192_commitment": "3dc3adc15f3af2d693449a72eb5ad6bb6b8770b13f7230a89619a4f4e7d32c0d",
+    "native_89_manifest_commitment": "346ca668e5e798af407163bb49acea012f2d348dcadd92199a2bd9176db63acd",
+    "native_implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+    "core_171_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+    "actual_cli_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+    "native_core_binary_unchanged": true,
+    "profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V5",
+    "one_failed_prepared_batch_replay_then_ordinary": true,
+    "retry_ids_only_in_original512_4MiB_hint_pool": true,
+    "original_4packet_20MiB_256active_32recent_and_all_auth_custody_unchanged": true,
+    "old_V4_stores_refuse_no_conversion": true,
+    "related_fresh_signed_TLS_tests": 68,
+    "old_value_strict": "OPEN"
+  },
+  "counter": {
+    "actual_original24_positive_preparations_71_376s_after_failure": true,
+    "old_live_eligibility_not_reconstructed": true,
+    "kernel_max_failed_target_revisit55_preparations": true,
+    "first_candidate_failed_ordinary_service_changed": true,
+    "failed_candidate_source_manifest_sha256": "d14635c4153ae29500e78a99f67e49c4339b5381108e16505065986ba72ff4d1",
+    "narrow_fix_full_replay_does_not_touch_ordinary_hint_positions": true,
+    "repaired_model_ordinary_target_sequence_exact_baseline": true,
+    "repair_two_attempts_total_seconds": 3.5247450000000002,
+    "original60_not_exceeded": true,
+    "models_not_live_authentication": true
+  },
+  "finite_native_scope": {
+    "completed": false,
+    "failure": "AssertionError: complete trace interval required",
+    "budget_seconds": 180,
+    "duration_seconds": 94.131,
+    "budget_exhausted": false,
+    "all4_clean_exit": true,
+    "guardian_stop_used": false,
+    "owned_pids_absent": [
+      81507,
+      81919,
+      81920,
+      81922,
+      81924
+    ],
+    "stopped_files": 1138,
+    "stopped_inventory_sha256": "6949edee8a68ec0b6fb84e9bb429e441f501cfdf5eff4068746077c1f0850140",
+    "source_only_files": 458,
+    "source_only_manifest_sha256": "a49dbb1eed3cb9d3bd54e6a0b324ffbf11f13cd1866ec8f1aca5f796a219921d",
+    "source_archive_has_no_failed_currency_custody_or_binary": true,
+    "failed_currency_never_reopen_or_resign_or_refund_or_copy": true,
+    "last_companion_height_observation": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "native_maturity15_all8cold_owner_caller_conservation_uncompleted": true,
+    "trace_rows4410_gap2": true,
+    "trace_gap_slot1_sequences": [
+      1166,
+      1167
+    ],
+    "observer_ring128_snapshot_advance130_reproduced": true,
+    "complete_verifier_still_refuses": true,
+    "publication_vs_collection_gap_cause_unknown": true,
+    "unique_protocol_failure_cause_unknown": true
+  },
+  "historical_full_fault": {
+    "runtime_v4": "FAIL600/612.570/6152",
+    "receive_v7": "FAIL600/616.052/6657",
+    "original_receipts_maturity_keyless_drain_all12cold_conservation": "UNCOMPLETED",
+    "old_fixtures_preserved": true
+  },
+  "next": {
+    "hypothesis": "Diagnostic complete coverage may fail because more than128 events occur between status publications, or because collector misses otherwise sufficiently frequent publications. Current closed trace proves exactly2lost rows, not which interval caused them. Measure producer publication sequence deltas versus collector read deltas in one offline model using unchanged bounded128ring and original cadence; retain actual nonreconstructible schedule as unknown.",
+    "budget_seconds": 60,
+    "attempts": 1,
+    "actual_native_runtime_mesh_start_budget": 0,
+    "new180_budget": 0,
+    "new_full600_budget": 0,
+    "exit": "first source/bound/negative/model/inventory mismatch, publication and collection counterexamples both discriminate, or original60deadline",
+    "decision": "If publication delta itself exceeds128, sampler-only change is falsified; if each publication fits128 but reader misses>128, isolate diagnostic collector. Neither permits lost-row reconstruction, larger rings/deadlines, old Native starts or a qualification pass.",
+    "status": "NOT_STARTED"
+  },
+  "whole_goal_completed": false,
+  "full_fault_qualified": false,
+  "app_persistent_cwd_still_UI_pending": true,
+  "all_project_commands_explicit_new_workdir": true,
+  "website_whitepaper_pdf_unchanged": true
+}

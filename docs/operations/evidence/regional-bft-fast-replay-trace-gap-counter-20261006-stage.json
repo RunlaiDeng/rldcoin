@@ -1,0 +1,24 @@
+{
+  "budget_seconds": 60,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-fast-replay-trace-gap-counter-20261006.py": "a7388676dd2e9118de8014473166bcfb386d39092d9c3421881be88f80e4f83e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-fast-replay-trace-gap-counter-20261006.py": "5960d4402c599a2a5dfe01d3f7444460e256c4c2020a183052102f7cb261fb00",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-trace-journal-fast-replay-v9-stopped-private-inventory-20261006.json": "6949edee8a68ec0b6fb84e9bb429e441f501cfdf5eff4068746077c1f0850140",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-trace-journal-fast-replay-v9-20261006-checks.json": "eb5651272e4d699f0f0bf979d23680e5dc342ab051f8ba5b16f226ce96205957",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "bf3659150bbd4846a91e609e547c9ff52803beab04892b135bf6b7d8a4ad5792",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "d03f08a864a34befcfd6660943f5702ddb88f753ef9e5fea377a508380d55158",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "33ae162db9ba6b132a9bed0d88cdd0e8a53e3643d9ab95e2725cf53cb7da02c7",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_tcp.py": "a8b5d13f70b607832fed6c1dbbac01fbe2ea6ec058c928347bb3dee0b469abbb",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh_inspection.py": "41264884b97d0d69eb22355cbba16dd0b9cece4e6c4034f603b232358404cc7b",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh_inspection.py": "9bd5cf0c7a128f2b2559976ec3bd9f2f990b14a09397c7c63997ad9bd6b90913",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_active_state.py": "a72f20c337f3243258c7950dba1322e10afd21b05ead4988d3b4064b5c675798",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace.py": "f8b67df4f88a885921919d1d53763ace00ef0f50ee33a7ad36395844f02611ff",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_window.py": "b02b5e30400cd7f4b1394230d6acb9b119cb1f5ef53c07ecd1589e13cd7b3437",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_journal.py": "acc174ba2eeb4ac6a869a0df61241a89b8b186c948939619d7ef206aefd093b3",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-trace-journal-fast-replay-v9-private-20261006/ordinary-process-controller/finite-trace-journal.json": "55043c30ad2e2335a20f5854ac86176948789d2de25de47cd19998f582bf8772",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-trace-journal-fast-replay-v9-private-20261006/ordinary-process-controller/finite-trace-events.jsonl": "cf9deca64ced1bcf322a1417d979df6e313f9feabf098279f9af1bfadd0764dd"
+  },
+  "hypothesis": "New finite gate FAIL94.131s on incomplete trace, not180deadline. Strict readonly closed4410rows actual2gap at slot1; reproduce unchanged128ring/130event advance and incomplete verifier refusal. Keep source/profile/binary all unchanged. Distinguish true observer coverage failure from codec/fsync failure; publication versus collector cause remains unknown without original snapshots. First scalar/source/count/byte/inventory/negative mismatch or original60deadline exits. No new180/full600 allocated.",
+  "full_fault_qualified": false
+}

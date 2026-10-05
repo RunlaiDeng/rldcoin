@@ -8,6 +8,26 @@
 
 
 
+
+## 2026-10-06 一次失败批次重试修复与完整观察缺口终态
+
+**完整fault仍FAIL/OPEN**，runtime-v4原600/612.570秒/6152、receive-v7原600/616.052秒/6657和全部旧失败不变。原收款成熟、keyless drain、all12完整cold/守恒未完成。本文历史“全部通过”仅对应当段准确来源和有限scope，不覆盖后续失败或总验收。
+
+准确nonce/重访只读PASS1.038秒：source1→2原Prepare失败后有24次成功同peer准备、71.376秒完整前缀未再准备该原包；另三次准确nonce匹配receiver锁拒绝，旧live资格仍unknown。原route/transit_groups/exchange/prepare内核96轮、86history/2目标/4新包到256、两peer/两seed/warm-cold模型PASS1.957秒，原失败包重访缺口最高55次准备，明确选择一次fast replay，不把模型轮当现场秒。
+
+实际源码采用 **RLD-CONTACT-TRANSIT-SCHEDULER-V5**：原失败普通TCP批次最多四个原packet IDs共享原512-entry/4-MiB位置缓存，下一成功准备完整重验并用新挑战重试一次；该重试失败回普通轮转，完整重试不推进普通cursor/bucket，预打开/准备失败保留等待hint。全部原packet/hop/receipt认证、256active/32recent/4batch/20MiB、锁/三秒attempt及保管保持，重启/eviction可安全忘记hint，V4原件拒绝不转换。首候选 **FAIL1.704秒**：额外触碰LRU改变普通服务顺序，源码/失败另封存；仅移除完整重试的该触碰，修正 **PASS1.821秒/剩余58**，两次3.525秒不超过原60。修后96轮的普通目标序列逐项等于基线，每个失败完整批次立即重访一次。
+
+相关一次60内 **PASS12.061秒/68检查**，有fresh实际签署Mesh/atomic/保管/pinnedTLS、原格式拒绝/篡改/容量/fsync/丢回复/错误nonce与readonly inspection；没有Native/Runtime货币fixture启动或旧Node打开。当前192Python `3dc3adc1…`，仅Mesh/TCP及两tests四文件变更；89Native `fd1e24fe…` / Core171 `de74cf78…` / CLI `bef4d5c7…`精确未变。独立绑定 **PASS35.720秒/120**：整份helper AST仅名称/identity变化，controller仅当前资格绑定/metadata变化，22禁止修改拒绝、49旧封存库存字节不变。
+
+必要一次全新四CLI `fast-replay-v9` **FAIL94.131秒**：未耗尽原180，因 `complete trace interval required` 提前终止。四进程均exit0，guardian/forced/cleanup/source-pin无错误；1138私有文件封存、458公开源码另存，没有复制failed currency/keys/custody/binary。最后伴随13/13/13/13不能作Native终态；mature15/all8固定头/完整envelope/caller/owner/守恒未完成。81507/81919/81920/81922/81924已不存在，当前无自有测试/节点。禁止旧Native/Runtime/恢复/复签/退款/复制保管；该失败不能改为通过或由停止替代资格。
+
+随后一次60只读 **PASS0.610秒**：4410已封存行逐行primitive/schema/字节/次数检查，slot1唯一缺口为1166/1167，前1165后1168、closed journal `intervals_complete[1]=false`，非decode/fsync failed。原128 ring在两次观察间前进130准确复现漏两条，四wrong binding/authority/counter负例拒绝，原完整verifier仍拒绝，1138库存字节未变。不能断言是producer发布间隔、collector间隔或协议唯一失败原因；成熟仍unknown。
+
+下一仅一次60离线模型判别 **尚未启动**：区分“单次producer发布跨度>128”和“每次发布≤128但reader错过多次发布”两个反例。若前者，sampler-only修复被否证；若后者，才隔离collector；不得重建丢失行、加ring/deadline或打开旧Native。源/容量/负例/库存首不一致、两模型判别完毕或原60退出。新180/full600预算均0，不能原样再跑。
+
+VALUE-STRICT-01仍独立OPEN，原两告警/120耗尽不由地区检查替代；Core/value/lock未改，原120诊断/300修复触发未满足。goal active；全部S/R/I/A–G/N/P目标采用当前冻结2ba62421…/c59f9fe8…/receipt86821d19…，goal正文c906/f825仍前继引用已报告不改。所有命令显式新rldcoin；持久cwd仍UI待修。冻结白皮书/PDF/官网、服务器、权限、资金、清理均不扩展。
+证据：[实际代码、反例、68回归、独立绑定、Native失败与准确追踪缺口](operations/evidence/regional-bft-failed-carriage-replay-outcome-20261006.json)。
+
 ## 2026-10-06 实际状态读取优化及新四CLI终态
 
 完整fault仍 **FAIL/OPEN**：runtime-v4原600/612.570秒/6152封存、receive-v7原600/616.052秒/6657封存及全部旧失败不变。原收款成熟、keyless drain、all12完整cold/守恒未完成；历史“全部通过”只指当时明确来源和有限scope。本次没有新增600范围。

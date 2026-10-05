@@ -1612,3 +1612,17 @@ goalactive,freeze2ba62421/c59f9fe8/receipt86821d19,predecessor goal hashes repor
 No live speed or unique fault cause established; all commands explicitrldcoin,
 persistentcwd stillUIpending. See
 operations/evidence/regional-bft-loop-observation-outcome-20261006.json.
+
+The one-replay ground scheduling candidate pins RLD-CONTACT-TRANSIT-SCHEDULER-V5.
+A failed completed ordinary TCP preparation may retain at most four original
+packet IDs in the existing 512-entry/4-MiB process-local carriage hint pool,
+scoped to store/network/node/contact roles/profile and validation bounds.
+The next successful preparation rebuilds and fully authenticates them under a
+fresh connection challenge once; replay failure returns to ordinary rotation.
+Full replay leaves ordinary durable and optional bucket positions untouched.
+A failed local open/preparation leaves the waiting hint; restart/eviction may
+forget it safely. Receipted, suppressed, missing or no-longer-routable packets
+still take ordinary eligibility rules. No cached exchange, acknowledgment,
+pruning or extra socket attempt follows. V4 identities/states refuse unchanged;
+fresh fixtures only. Immediate retry models and fresh signed/TLS regressions
+do not qualify Native maturity, changing-contact fairness or full faults.

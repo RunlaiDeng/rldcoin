@@ -283,6 +283,41 @@ class TcpTests(unittest.TestCase):
         with self.f.node('earth') as node:
             self.assertEqual(len(node.state['adverts']),3)
 
+    def test_failed_batch_replays_once_then_returns_to_ordinary_rotation(self):
+        self.f.rounds()
+        server=self.f.servers['earth'];peer=self.f.ids['proxima'];batches=[]
+        with self.f.node('earth') as node:
+            original={node.enqueue(self.f.frame(810+i),self.f.ids['andromeda']) for i in range(8)}
+        outgoing=tcp.outgoing
+        def recorded(node,*args,**kwargs):
+            bundle=outgoing(node,*args,**kwargs)
+            batches.append(tuple(mesh.digest(t['packet']) for t in bundle['body']['transits']))
+            return bundle
+        with patch.object(tcp,'outgoing',side_effect=recorded),patch.object(tcp,'client_connect',side_effect=OSError('lost before send')):
+            for _ in range(3):self.assertTrue(server.tick()['errors'])
+        self.assertEqual(len(batches[0]),4)
+        self.assertEqual(batches[1],batches[0])
+        self.assertTrue(set(batches[2])-set(batches[0]))
+        self.assertEqual(server.suppressed(peer),set())
+        with self.f.node('earth') as node:
+            self.assertTrue(original<=set(node.state['messages']))
+            self.assertFalse(original & set(node.receipts()))
+
+    def test_failed_local_preparation_preserves_waiting_replay(self):
+        self.f.rounds()
+        server=self.f.servers['earth'];peer=self.f.ids['proxima']
+        with self.f.node('earth') as node:ident=node.enqueue(self.f.frame(820),peer)
+        with patch.object(tcp,'client_connect',side_effect=OSError('lost before send')):
+            self.assertTrue(server.tick()['errors'])
+        with self.f.node('earth') as node:self.assertEqual(node.failed_carriage(peer),(ident,))
+        with patch.object(tcp,'outgoing',side_effect=OSError('preparation did not commit')):
+            self.assertTrue(server.tick()['errors'])
+        with self.f.node('earth') as node:self.assertEqual(node.failed_carriage(peer),(ident,))
+        self.assertFalse(server.tick()['errors'])
+        with self.f.node('earth') as node:
+            self.assertEqual(node.failed_carriage(peer),())
+            self.assertIn(ident,node.receipts())
+
     def test_cold_outbound_preparation_precedes_connection_and_keeps_fresh_challenge(self):
         self.f.rounds()
         server=self.f.servers['earth'];peer=self.f.ids['proxima']

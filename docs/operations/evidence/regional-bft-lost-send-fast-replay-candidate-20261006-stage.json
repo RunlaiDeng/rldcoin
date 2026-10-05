@@ -1,0 +1,22 @@
+{
+  "budget_seconds": 60,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-lost-send-fast-replay-candidate-20261006.py": "9269adba1df73150ca7034ad291492f82b01a6a442fdfdfd7b93a11928e8d080",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-lost-send-fast-replay-candidate-20261006.py": "f76d16a904c5d734c14c700e5f7e081978f683b25114f21c0b2666c65c0a542d",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-lost-send-revisit-kernel-counter-20261006.py": "26ae423d7019d708e02e2e24b9c9578532b21c0475ac10bf40e9ec80bae5833c",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/lost-send-replay-baseline-source-private-20261006/SOURCE_MANIFEST.json": "934848ce376bfe28ae9bb89276b1ebf0a66eb3124547237a51f73aa9ef1e1714",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/lost-send-replay-baseline-source-private-20261006/interstellar_mesh.py": "80c0c25b055d85959de66e2c0d6f441324840ad5424fd5a05c88a2ab221f20a0",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-trace-journal-active-bytes-v8-stopped-private-inventory-20261006.json": "5938a4f1c472569c68d433bc7340b3cc87dc4e52deba9e62072d5b3eedb266e3",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "18ff56ff115e7cfa4b74f832ee496dbd77ad8705f22604d2484398a4a1dfc71e",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "d03f08a864a34befcfd6660943f5702ddb88f753ef9e5fea377a508380d55158",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "33ae162db9ba6b132a9bed0d88cdd0e8a53e3643d9ab95e2725cf53cb7da02c7",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_tcp.py": "a8b5d13f70b607832fed6c1dbbac01fbe2ea6ec058c928347bb3dee0b469abbb",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-exact-revisit-nonce-counter-20261006-checks.json": "49261eb574a1f9b646d0cd1171ae7fe837f64ca3714b9c4e6c51ad9d4fcbe5d3",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-lost-send-revisit-kernel-counter-20261006-checks.json": "c9d43e8e874ba9a028833b189952bfe2fe7f089817bc4d4b3c9525f6963c9819",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-trace-journal-active-bytes-v8-20261006-checks.json": "87c6e6a9da8f6e959f1a68e5c935577c90af7a376e90633cf3087c408b3ab680"
+  },
+  "hypothesis": "One complete original failed batch replays at next successful preparation without advancing normal class/bucket positions; subsequent ordinary selection remains exact baseline under96rounds/86history/4arrivals/256capacity/twopeers/twoseeds/perpetual modeled lost sends. Real auth/atomic not modeled qualification. Counter or deadline rejects candidate; no live scope allocation.",
+  "exit": "first counterexample, pins/inventory/bound mismatch or original60deadline",
+  "full_fault_qualified": false
+}

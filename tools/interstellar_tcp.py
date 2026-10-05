@@ -170,10 +170,10 @@ def send(connection, value, deadline):
     connection.sendall(struct.pack('!I',len(data))+data)
 
 
-def outgoing(node, peer, accepted_transits=None):
+def outgoing(node, peer, accepted_transits=None, retry_packet_ids=()):
     # Both active carriage and this peer's receipt batch rotate durably before
     # the connection opens. No reply/receipt or ledger right follows from this.
-    return node.prepare_exchange(peer,accepted_transits,advance_active=True)
+    return node.prepare_exchange(peer,accepted_transits,advance_active=True,retry_packet_ids=retry_packet_ids)
 
 
 def _custody_reply(node, peer, received, after=None):
@@ -742,6 +742,7 @@ class Server:
                 if not self.running:
                     break
                 trace=self.contact_trace;trace_rows=();failure_stage='prepare';count=0
+                prepared=None;retry_ids=();carriage_domain=None
                 try:
                     c=self.peers[peer]
                     with self.guard:
@@ -755,7 +756,10 @@ class Server:
                     # binds the exact prepared exchange after TLS admission.
                     with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
                         mesh.require(node.id==self.id,'TCP runtime identity changed')
-                        prepared=outgoing(node,peer,self.suppressed(peer))
+                        retry_ids=node.failed_carriage(peer)
+                        prepared=outgoing(node,peer,self.suppressed(peer),retry_ids)
+                        carriage_domain=node.carriage_position_domain()
+                        if retry_ids:node.forget_failed_carriage(peer)
                     if trace is not None:
                         trace_rows=trace.packet_rows(prepared)
                         trace.packets('outgoing_prepared',peer,trace_rows,attempt=count)
@@ -801,6 +805,12 @@ class Server:
                     if trace is not None:trace.packets('reply_local_custody',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
                     if trace is not None:trace.packets('destination_receipt_observed',peer,receipt_rows,attempt=count,nonce=sent['body']['nonce'])
                 except (OSError,ValueError,KeyError,TypeError,RecursionError) as error:
+                    # Only completed ordinary preparation arms one replay.
+                    # A failed local open leaves its hint; replay failure
+                    # returns to ordinary rotation. This grants no custody.
+                    if prepared is not None and carriage_domain is not None and not retry_ids:
+                        ids=tuple(mesh.digest(t['packet']) for t in prepared['body']['transits'])
+                        if ids:mesh.remember_carriage_position((carriage_domain,peer,'failed-carriage'),ids)
                     self.mark(peer,'outbound',False)
                     errors.append(str(error)[:256])
                     if trace is not None:

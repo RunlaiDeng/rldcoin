@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V4'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V5'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -92,6 +92,12 @@ def remember_carriage_position(key, value):
                 or _carriage_position_bytes>MAX_CARRIAGE_POSITION_BYTES):
             _,(_,removed)=_carriage_positions.popitem(last=False)
             _carriage_position_bytes-=removed
+
+def forget_carriage_position(key):
+    global _carriage_position_bytes
+    with _carriage_position_lock:
+        row=_carriage_positions.pop(key,None)
+        if row is not None:_carriage_position_bytes-=row[1]
 
 
 def require(ok, message):
@@ -984,6 +990,7 @@ class Node:
     def carriage_position_domain(self):
         return (str(self.root),self.network,self.id,VERSION,TRANSIT_SCHEDULER,
                 MAX_MESSAGES,MAX_NODES,MAX_CONTACTS,MAX_HOPS,MAX_BATCH,
+                MAX_PACKET_BATCH,MAX_RECENT_TRANSITS,MAX_RECEIPT_BATCH,
                 evidence.FORMAT,evidence.DOMAIN,evidence.MAX_FRAME,evidence.MAX_PAYLOAD,
                 MAX_CARRIAGE_POSITIONS,MAX_CARRIAGE_POSITION_BYTES,
                 tuple((p,tuple(sorted(c.items()))) for p,c in sorted(self.contacts.items())))
@@ -1044,6 +1051,12 @@ class Node:
         groups=self.transit_groups(peer)
         return [items[index] for index in range(max(map(len,groups),default=0))
                 for items in groups if index<len(items)]
+
+    def failed_carriage(self, peer):
+        return carriage_position((self.carriage_position_domain(),peer,'failed-carriage')) or ()
+
+    def forget_failed_carriage(self, peer):
+        forget_carriage_position((self.carriage_position_domain(),peer,'failed-carriage'))
 
     def receive(self, bundle, peer):
         require(getattr(self,'_archive_sync_paths',None) is None,
@@ -1125,10 +1138,12 @@ class Node:
             sync_retained(self.path)
         self.state = updated
 
-    def exchange(self, peer, accepted_transits=None):
+    def exchange(self, peer, accepted_transits=None, retry_packet_ids=()):
         require(peer in self.contacts and outgoing_contact(self.contacts[peer]),
                 'unconfigured outgoing exchange peer')
-        pending = self.transit_groups(peer)
+        require(isinstance(retry_packet_ids,tuple) and len(retry_packet_ids)<=MAX_PACKET_BATCH
+                and all(isinstance(i,str) and re.fullmatch(r'[0-9a-f]{64}',i) for i in retry_packet_ids)
+                and len(set(retry_packet_ids))==len(retry_packet_ids),'invalid failed carriage IDs')
         transits = []
         requested=set(self.state['peer_inventory'].get(peer,{}).get('body',{}).get('packet_ids',[]))
         receipts=[]
@@ -1175,6 +1190,7 @@ class Node:
             # raw IDs could let repeated/unroutable rows starve later eligible
             # history forever. Every examined transit still authenticates.
             for ident in items:
+                if ident not in self.state['messages']:continue
                 if ident in self.state['receipts']:continue
                 transit=self.state['messages'][ident]
                 packet,_,visited=transit_check(transit,self.network)
@@ -1185,7 +1201,16 @@ class Node:
                 candidate={'packet':transit['packet'],'routing':transit['routing'],'hops':transit['hops']+[hop]}
                 if accepted_transits is not None and digest(candidate) in accepted_transits:continue
                 yield candidate
-        streams=[iter(eligible(items)) for items in pending]
+        # Retry IDs grant scheduling priority only. Rebuild and authenticate
+        # every original packet/hop; never reuse an exchange or socket nonce.
+        for candidate in eligible(retry_packet_ids):
+            if len(evidence.canonical({**body,'transits':transits+[candidate]}))+512>MAX_BATCH:
+                break
+            transits.append(candidate)
+        # A full replay must not initialize/touch ordinary LRU positions: those
+        # optional bounded hints can otherwise change the next ordinary turn.
+        pending=self.transit_groups(peer) if len(transits)<MAX_PACKET_BATCH else []
+        streams=[iter(eligible([i for i in items if i not in retry_packet_ids])) for items in pending]
         while streams and len(transits)<MAX_PACKET_BATCH:
             remaining=[]
             for stream in streams:
@@ -1200,13 +1225,13 @@ class Node:
             streams=remaining
         return sign(self.key, 'exchange', body)
 
-    def prepare_exchange(self, peer, accepted_transits=None, advance_active=False):
+    def prepare_exchange(self, peer, accepted_transits=None, advance_active=False, retry_packet_ids=()):
         """Durably rotate this peer's active start and selected receipts before I/O.
 
         Preparation grants no custody. Failed/lost sends retain every receipt
         and revisit it after bounded rotation; cold open retains these cursors.
         """
-        bundle = self.exchange(peer, accepted_transits)
+        bundle = self.exchange(peer, accepted_transits, retry_packet_ids)
         require(len(evidence.canonical(bundle)) <= MAX_BATCH, 'exchange bytes exceed bound')
         # The diagnostic global cursor preserves its historical cadence.
         # Active selection depends only on this prepared peer, including failed
@@ -1223,8 +1248,9 @@ class Node:
         updated['receipt_cursors'][peer] = (updated['receipt_cursors'][peer]
                                           + len(bundle['body']['receipts'])-wanted) % (2**63)
         pending = sorted(self.state['messages'])
-        if bundle['body']['transits']:
-            last = digest(bundle['body']['transits'][-1]['packet'])
+        ordinary=[t for t in bundle['body']['transits'] if digest(t['packet']) not in retry_packet_ids]
+        if ordinary:
+            last = digest(ordinary[-1]['packet'])
             require(last in self.state['messages'], 'prepared transit absent from retained pool')
             # Continue after the last actually carried original packet, including
             # route/suppression skips. Failed sends revisit it on the next full
@@ -1233,12 +1259,12 @@ class Node:
             # earlier rows or new packets shift their ranks. Never prune evidence.
             updated['transit_cursors'][peer] = last
             recent=set(self.state['recent_transits'])
-            for transit in bundle['body']['transits']:
+            for transit in ordinary:
                 ident=digest(transit['packet'])
                 name='recent_transit_cursors' if ident in recent else 'history_transit_cursors'
                 updated[name][peer]=ident
-            updated['transit_class_steps'][peer]=(updated['transit_class_steps'][peer]+len(bundle['body']['transits']))%(2**63)
-        elif pending:
+            updated['transit_class_steps'][peer]=(updated['transit_class_steps'][peer]+len(ordinary))%(2**63)
+        elif pending and not bundle['body']['transits']:
             # A zero-carriage byte/route/suppression attempt examines one start;
             # durably rotate past it without granting custody or dropping bytes.
             ident=self.transit_order(peer)[0]
@@ -1250,7 +1276,7 @@ class Node:
         self.state = updated
         # Advance optional positions only after durable ordinary preparation.
         # Eviction/restart forgets hints and never deletes retained packets.
-        self.remember_carriage(peer,bundle)
+        self.remember_carriage(peer,{'body':{'transits':ordinary}})
         return bundle
 
     def tick(self):

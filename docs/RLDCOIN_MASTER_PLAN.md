@@ -861,3 +861,10 @@ VALUE-STRICT-01两基线及120秒耗尽继续OPEN，原120诊断/300修复触发
 
 VALUE-STRICT-01两基线及120秒耗尽保持OPEN，旧value/PoW/lock/Core源未变，原120诊断/300修复触发未满足，不被地区strict替代。全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及长期/PQ/独立/物理门槛不减。goal active，采用冻结2ba62421…/c59f9fe8…/receipt86821d19…，goal旧c906/f825仅前继引用不自主改。所有命令显式新rldcoin，持久cwd仍UI待修；冻结正文/PDF/官网、服务器、资金、账号权限和清理范围不扩大。
 证据：[实际代码、有限回归、准确字节及全部终态](operations/evidence/regional-bft-active-load-and-live-outcome-20261006.json)。
+
+## 2026-10-06 原失败批次一次重试与新观察缺口
+
+实际Mesh/TCP采用V5：≤4原packet IDs在原512/4MiB hint池优先一次，重试完整认证/新nonce，失败后普通rotation；不推进普通cursor/hints、不产生custody。模型首FAIL1.704另存，单点修复PASS1.821/原剩余58，普通序列逐项同基线；68 fresh signed/TLS回归PASS12.061/60；192Python仅四文件变更，Native89/Core171/CLI字节不变。AST及22negative独立绑定PASS35.720/120、49旧库存未变。
+
+必要新四CLI范围FAIL94.131/180，因完整trace区间缺口提前终止，未证明Native15/maturity2/all8cold/caller/owner/守恒；四CLI正常退出，1138失败封存，旧Native/Runtime/恢复/复签/退款/复制保管均禁止。只读PASS0.610/60核验4410行和slot1缺1166/1167；原128ring跨130事件准确复现，完整verifier继续拒绝。publication与collection原因未知，不能当协议或旧完整fault唯一根因。下一一次60离线发布/读取跨度模型未启动；新180/full600预算0，旧600失败6152/6657不改PASS。VALUE-STRICT-01仍独立OPEN；冻结S/R/I/A–G/N/P目标、全部阈值与长期/独立/物理门槛不减。
+见[来源、实现、有限验证、所有失败与下一判别](operations/evidence/regional-bft-failed-carriage-replay-outcome-20261006.json)。

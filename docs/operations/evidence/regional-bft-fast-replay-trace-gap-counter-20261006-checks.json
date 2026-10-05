@@ -1,0 +1,45 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 0.610377,
+  "helper_exit_code": 0,
+  "stage_sha256": "d03d9a3476c10fbdb9dea63fdcc0559b9f93e5f1eaf37de180029085fb72bcbe",
+  "helper_sha256": "a7388676dd2e9118de8014473166bcfb386d39092d9c3421881be88f80e4f83e",
+  "controller_sha256": "5960d4402c599a2a5dfe01d3f7444460e256c4c2020a183052102f7cb261fb00",
+  "log_sha256": "46aa92c5e5c37798f0d6415d8ba4d435488679854959662cbdee5e5cf3edb9c4",
+  "result": {
+    "collector_decode_fsync_failure_not_observed": true,
+    "completed": true,
+    "duration_seconds": 0.45721,
+    "exact_gap": [
+      {
+        "missing": 2,
+        "next_sequence": 1168,
+        "previous_sequence": 1165,
+        "slot": 1
+      }
+    ],
+    "full_fault_qualified": false,
+    "journal_rows": 4410,
+    "mesh_native_runtime_socket_sign_or_recovery": 0,
+    "modeled_missed_events": 2,
+    "negative_controls_refused": 4,
+    "original_complete_verifier_still_refuses": true,
+    "per_slot_rows": {
+      "0": 901,
+      "1": 1293,
+      "2": 1325,
+      "3": 891
+    },
+    "private1138_files_unchanged": true,
+    "producer_ring_limit": 128,
+    "protocol_maturity_or_unique_failure_cause_unknown": true,
+    "publication_vs_collection_gap_cause_unknown": true,
+    "snapshot_sequence_advance": 130,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

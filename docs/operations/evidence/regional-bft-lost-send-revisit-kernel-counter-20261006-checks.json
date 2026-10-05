@@ -1,0 +1,250 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 1.957288,
+  "helper_exit_code": 0,
+  "stage_sha256": "db7076e34c4da8c2247521ff010a7931b85a6187cbe00c02674347c468ac4aff",
+  "helper_sha256": "26ae423d7019d708e02e2e24b9c9578532b21c0475ac10bf40e9ec80bae5833c",
+  "controller_sha256": "54c69339d7bc91b19ed8966bc71cf1b8cf38863cd4348ff9024bd975409d8957",
+  "log_sha256": "d437081d43291c0a9afaf4acf4fca18e3152bdc610f10364b1d6c5d119bc585e",
+  "result": {
+    "authentication_and_signing_are_models": true,
+    "completed": true,
+    "decision": "one bounded fast replay candidate with ordinary rotation retained",
+    "duration_seconds": 1.789136,
+    "full_fault_qualified": false,
+    "model_atomic_calls": 768,
+    "model_preparations_not_live_seconds": true,
+    "model_sign_calls": 6656,
+    "old_live_eligibility_not_reconstructed": true,
+    "original_256active_32recent_4batch_20MiB_512hints_4MiB_unchanged": true,
+    "private1888_files_unchanged": true,
+    "real_signing_custody_node_native_runtime_socket": 0,
+    "source_kernel_models": [
+      {
+        "active_final": 256,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "initial_historical": 86,
+        "original_active_limit": 256,
+        "rounds": 96,
+        "seed": 0,
+        "targets": [
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              5,
+              41
+            ],
+            "max_completed_preparation_gap": 43,
+            "peer": 0,
+            "prepared_rounds": [
+              5,
+              11,
+              53
+            ],
+            "tail_completed_preparations_without_revisit": 43
+          },
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              15,
+              50
+            ],
+            "max_completed_preparation_gap": 50,
+            "peer": 1,
+            "prepared_rounds": [
+              6,
+              22,
+              73
+            ],
+            "tail_completed_preparations_without_revisit": 23
+          }
+        ]
+      },
+      {
+        "active_final": 256,
+        "arrivals_per_round": 4,
+        "cold_every_open": false,
+        "initial_historical": 86,
+        "original_active_limit": 256,
+        "rounds": 96,
+        "seed": 3,
+        "targets": [
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              7,
+              38
+            ],
+            "max_completed_preparation_gap": 45,
+            "peer": 0,
+            "prepared_rounds": [
+              4,
+              12,
+              51
+            ],
+            "tail_completed_preparations_without_revisit": 45
+          },
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              55
+            ],
+            "max_completed_preparation_gap": 55,
+            "peer": 1,
+            "prepared_rounds": [
+              38,
+              94
+            ],
+            "tail_completed_preparations_without_revisit": 2
+          }
+        ]
+      },
+      {
+        "active_final": 256,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "initial_historical": 86,
+        "original_active_limit": 256,
+        "rounds": 96,
+        "seed": 0,
+        "targets": [
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              37
+            ],
+            "max_completed_preparation_gap": 55,
+            "peer": 0,
+            "prepared_rounds": [
+              3,
+              41
+            ],
+            "tail_completed_preparations_without_revisit": 55
+          },
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              37,
+              55
+            ],
+            "max_completed_preparation_gap": 55,
+            "peer": 1,
+            "prepared_rounds": [
+              2,
+              40,
+              96
+            ],
+            "tail_completed_preparations_without_revisit": 0
+          }
+        ]
+      },
+      {
+        "active_final": 256,
+        "arrivals_per_round": 4,
+        "cold_every_open": true,
+        "initial_historical": 86,
+        "original_active_limit": 256,
+        "rounds": 96,
+        "seed": 3,
+        "targets": [
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              5,
+              43
+            ],
+            "max_completed_preparation_gap": 43,
+            "peer": 0,
+            "prepared_rounds": [
+              7,
+              13,
+              57
+            ],
+            "tail_completed_preparations_without_revisit": 39
+          },
+          {
+            "actual_ack_or_suppression": false,
+            "all_original_bytes_retained": true,
+            "completed_preparations_between_revisits": [
+              35,
+              55
+            ],
+            "max_completed_preparation_gap": 55,
+            "peer": 1,
+            "prepared_rounds": [
+              2,
+              38,
+              94
+            ],
+            "tail_completed_preparations_without_revisit": 2
+          }
+        ]
+      }
+    ],
+    "twenty_four_preparation_counterexamples": [
+      {
+        "cold": false,
+        "gap": 43,
+        "peer": 0,
+        "seed": 0
+      },
+      {
+        "cold": false,
+        "gap": 50,
+        "peer": 1,
+        "seed": 0
+      },
+      {
+        "cold": false,
+        "gap": 45,
+        "peer": 0,
+        "seed": 3
+      },
+      {
+        "cold": false,
+        "gap": 55,
+        "peer": 1,
+        "seed": 3
+      },
+      {
+        "cold": true,
+        "gap": 55,
+        "peer": 0,
+        "seed": 0
+      },
+      {
+        "cold": true,
+        "gap": 55,
+        "peer": 1,
+        "seed": 0
+      },
+      {
+        "cold": true,
+        "gap": 43,
+        "peer": 0,
+        "seed": 3
+      },
+      {
+        "cold": true,
+        "gap": 55,
+        "peer": 1,
+        "seed": 3
+      }
+    ],
+    "whole_goal_completed": false,
+    "worst_completed_preparation_gap": 55
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
