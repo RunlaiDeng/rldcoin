@@ -1,0 +1,20 @@
+{
+  "format": "RLD-CHANNEL-NATIVE-TLS-STARTUP-LOCK-REFUSAL-V1",
+  "completed": false,
+  "scope_duration_seconds": 42.973,
+  "ordinary_node_startup_rejected": true,
+  "actual_error": "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+  "native_log_sha256": "b34085cd91c2f326b6c430ede6909f7452a70c8d88bbbab065e5c52b89a7a20f",
+  "source_controller_sha256": "f1ac5f2e48f4c2414a4d9b3fd55b717a87313fc4e8a8cb5875fea23b01e96d60",
+  "controller_first_native_status_before_any_process_owned_telemetry": true,
+  "protocol_root_cause_uniquely_proven": false,
+  "changed_method": "Use current-PID complete ordinary startup telemetry before any controller native ledger query, matching existing network Campaign startup policy. No node/native code change; fresh fixture only.",
+  "next_attempt_budget": 1,
+  "preparation_budget_seconds": 180,
+  "live_stage_budget_seconds": 600,
+  "stopped_verification_budget_seconds": 180,
+  "round_timeout_seconds": 60,
+  "maximum_height": 24,
+  "all_owned_processes_terminal": true,
+  "old_fixture_restart": false
+}

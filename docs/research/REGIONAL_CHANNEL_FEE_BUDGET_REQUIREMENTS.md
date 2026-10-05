@@ -134,17 +134,45 @@ controller仅经普通receive搬运16个完整当前context信封。所有owner/
 前41.693秒配置拒绝和120.017秒预算耗尽仍未通过，不由此结果改写。
 完整来源/终态：[实际自动认证](../operations/evidence/regional-native-channel-fee-budget-runtime-certification-outcome-20261005.json)。
 
-下一假设：在全新V8 admitted Native节点普通lifecycle和固定pin TLS下，
-普通接收调度和Runtime保管应自动交付/认证最高q2挑战；去掉controller信封
-总线而保留正常邻居路径。最小新scope为同机一地区四副本，literal loopback
-endpoints及已配置identity/certificate pins；仅公共fixture keys，无价值。
-controller仅准备fixture、启停和原生观察，不在live期间构造或搬运协议消息。
-准备预算一次180秒；live阶段保持原600秒、60秒轮、24高度上限；full fault
-campaign预算0。一旦意外拒绝、原stage边界或四副本实际同块/q2/一次fee debit
-并clean shutdown及停止native/完整envelope/caller-head核验即退出。保留失败、
-旧owner请求和pending custody，不重启旧fixture、不原样重跑、不放宽bounds。
-owned-process的原有bounded cleanup单独披露；任何forced/unclean exit不算通过，
-cleanup不能延展协议期限或授予恢复/签署资格。
+### 普通原生生命周期/固定pin TLS：有限范围已通过
+
+首个全新样本42.973秒停止：controller在任何当前PID启动telemetry之前
+读取Native ledger，副本1的ordinary startup报实际原生锁竞争并退出1；
+其余进程在启动完成前结束(-15)，未观测TLS付款，样本保留为未通过。
+没有把观察超时当作终止：实际exit已确认；没有重启这些旧目录。
+源码/时序与controller干扰一致，但此轮未证明其为唯一原因。
+
+下一新样本采用既有network startup策略：仅先读所属当前PID状态文件，
+四个普通startup实际完成后才轮换Native查询；缺失/锁竞争观测保持unknown，
+不填height0。Native/Node代码、crypto、quorum、60秒轮、24高度和window未改。
+仅全新一地区四副本、literal loopback及固定identity/certificate pins，
+邻居为0--1--2--3；普通Native entry直接启动contact/Runtime，无controller
+协议总线、live Challenge/vote/quorum/certificate注入或insecure fallback。
+
+准备42.087秒、live164.517秒，四副本实际观察q2；干净停机8.898秒，
+全范围303.651秒通过。各段预算保持prepare180/live600/cold180。
+停止核验最终高度均8，同一高度7的native认证首次纳入q2；三份有序不同
+prepare/commit保证原生BFT证明。fee各扣3，剩余+spent=original，c6/d2022
+保持，owner/W钥文件在live与cold均不存在。四份Native全历史重放、262个
+完整保留信封、573 packet/573 receipt网格档案及四组独立voter/caller heads
+认证通过，私有字节/条目库存及所比对模式、大小、mtime未变。未启动Runtime作cold核验，
+没有cold签署、init、pending recovery、caller-head adoption或原样长测重跑。
+数量只描述核验范围，完成依据是实际最高状态纳入和fee/caller/cold行为。
+[普通Native/TLS终态](../operations/evidence/regional-native-channel-fee-budget-native-tls-outcome-20261005.json)。
+
+这个通过只是一地区同机有限normal ground路径；不替代完整fault、窗口2016
+真实执行、independent custody/最新见证、cross-device、长历史/PQ/实际物理
+route或全部S/R/I/A–G/N/P资格。所有此前失败、旧owner请求和余额不迁移。
+VALUE-STRICT-01仍OPEN，旧价值库与其两处基线未改，地区strict不替代。
+
+下一可证伪假设：独立的benign Native store OS锁持有本身足以让当前ordinary
+startup观察拒绝；放锁后相同新签无价值store仍有效且字节不变。只用全新
+原生store、实际OS锁和startup/contact read，不启动投票、owner请求、网络或
+旧fixture，一次120秒，终态/反证/预算即退出。若成立，针对明确read-only
+startup观察的精确lock-refusal做有界等待；不重试signing、自动recover/adopt
+head、fake authority或绕过Native认证。若不成立保留原因未知，换最小判别；
+不重复本次已通过TLS循环。startup gating已解决本实验干扰，并未修复产品
+在其他读进程竞争时的startup拒绝风险。
 
 [Runtime判别及预算退出](../operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)
 保存三个来源绑定终态和独立配置拒绝；首两次未通过不由最后小范围通过替代。
