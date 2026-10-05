@@ -305,3 +305,21 @@ cwd. Continue existing bounded check entries, not a weaker stability claim. All
 old sealed/stopped inventories and current668prepared files/freeze unchanged.
 Full fault and legacy value strict remainOPEN. See HYBRID_BUILD_TEST_WORKFLOW.md
 and hybrid-workflow-local-adoption-20261005.json.
+
+
+Prepared-source binding passed once120seconds in3.248seconds/exit0. The separate
+regional_paged_fault_prepared gate authenticated12complete Native fixed-head
+replays,12actual retained mesh/TLS identities and3unsigned owner reviews against
+successful Source89E8/P5/A5preparation and its exact668-file inventory. All48configs
+(96files plus2observation markers) were written only in a new private output;
+original heads/custody/files and every old seal remain unchanged. Nine provenance/
+endpoint/later-response counterexamples refused, including a bad twelfth Native
+response returning no Bound. Two unit tests passed. No Runtime/socket/first-sign/
+recover/head adoption occurred. Explicit E8/key0 missing-leader gate derives9;
+phase active slots11/12/12/12, remote recipients15/16 and keyless paths remain
+absent. This gate grants no launch/port/fault qualification. Next implement the
+actual prepared-config fault controller, finite driver counterexample, then only
+one justified600stage/60round/24height/E27-P24-A24/maturity2/3of4complete fault scope.
+All capacity limits and prior failures remain unchanged; fullfault,VALUE-STRICT-01,
+long-history/independent/physical and whole goal stayOPEN. See
+operations/evidence/regional-paged-fault-prepared-binding-outcome-20261005.json.
