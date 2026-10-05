@@ -1107,3 +1107,19 @@ not started. Before it, add explicit preservation of old immutable voter pages
 and qualify the changed driver boundary; then final bound launch preflight and
 one justified original600scope. See regional-paged-fault-driver-model-outcome-
 20261005.json. VALUE-STRICT-01/long-history/independent/physical/allgoal remainOPEN.
+
+
+Driver now explicitly retains every original Native ledger and voter immutable
+header/page/residue byte. Only the exact ledger-events/stream.json and
+bft-records/stream.json manifests may advance; full Native replay and separate
+current caller/native heads still authenticate all actual execution/custody.
+A deleted or replaced old page (even another authenticated variant) refuses.
+Changed driver/source8counterexamples passed2.184seconds/once120exit0; prior
+7-test source/reports remain bound and separately retained. Fake backends only,
+actual Native/socket/Runtime/first-sign0; no real fault/custody qualification.
+All old/current668/98private inventories and source/freeze unchanged. Full fault
+remains unstarted; next finish once-only terminal/owned-process wrapper plus
+source/Native/port preflight, then one justified original600total full scope.
+Failed currency never reopens/signs/refunds/replaces. Independent/physical/
+long-history/Source66/2016/VALUE-STRICT-01/allgoal remainOPEN. See
+operations/evidence/regional-paged-fault-driver-retention-outcome-20261005.json.

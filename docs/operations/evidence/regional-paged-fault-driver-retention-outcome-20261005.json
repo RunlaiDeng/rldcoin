@@ -1,0 +1,52 @@
+{
+  "format": "RLD-PAGED-FAULT-DRIVER-RETENTION-OUTCOME-V2",
+  "recorded_at_utc": "2026-10-05T17:00:36.023234+00:00",
+  "completed": true,
+  "source_sha256": {
+    "tools/regional_paged_fault_driver.py": "e0550aa5624d972d76dc5347b9343fea58da3388e661617ad0e2b3025528c92e",
+    "tools/test_regional_paged_fault_driver.py": "91def3da9fc39965145017a40715cc39d3c33629d99c8c120e4eeb0cbda61b91"
+  },
+  "prior_source_archive_sha256": {
+    "regional_paged_fault_driver.py": "b9c5c21b4374a99adb3b8f9074316585d304812b295cf99b29263a67fb8e270d",
+    "test_regional_paged_fault_driver.py": "9431e252490379d8b70797d43708ab665bd3e1d7ee03849dec9d947b691b68c6"
+  },
+  "checks_sha256": "4fc33514ee08061724353bf7307f9c73bf06419288360e7a2485d6f8c55aa2c3",
+  "stage_sha256": "7c7d682e101a08987b6a42b38bfa45bb8fe096abc9e4ac6081ea5e0b331ce2af",
+  "duration_seconds": 2.184,
+  "exit_code": 0,
+  "once_budget_seconds": 120,
+  "attempts_used": 1,
+  "changed_behavior": "Stopped full driver now checks every original immutable Native ledger and voter header/page/residue against prelaunch exact inventory; only each exact original stream manifest may advance. Changed/deleted old authenticated variants refuse. Native full replay/current separate caller heads remain mandatory.",
+  "result": {
+    "completed": true,
+    "tests": 8,
+    "duration_seconds": 0.149,
+    "original_immutable_native_voter_objects_enforced": true,
+    "actual_driver_orchestration_exercised_with_fake_backend": true,
+    "actual_owner_pending_response_head_paths_exercised_with_fake_native": true,
+    "replica1_online_owner_queue": true,
+    "catchup_failure_never_restores_contacts": true,
+    "only_native_lock_retry_not_authentication_refusal": true,
+    "unchanged600total60round24height_caps": true,
+    "unknown_never_height_zero": true,
+    "later_bad_certified_checkpoint_refuses": true,
+    "native_calls": 0,
+    "runtime_starts": 0,
+    "socket_starts": 0,
+    "first_signs": 0,
+    "recoveries": 0,
+    "actual_fresh_native_or_custody_or_fault_qualification": false,
+    "full_fault_qualified": false
+  },
+  "helper_sha256": "01a36fb397fe002f5dc7e56631667034cc92ecc80b6bcc2e0a91b33add981442",
+  "controller_sha256": "4b5c982d41a53b0f320edc3cc122306cd5d664f09f46d2f3964d8f2c33c95ce7",
+  "native_source_commitment": "89408f5a84c5f7f6b0622f7675e9647af2119eacfed49111053cc5b4916e05fc",
+  "actual_binary_sha256": "a45387fabe2323fade07aa6f9720ad04b1c374ab74925baad0c78da38f7b3f1e",
+  "old_private_source_freeze_unchanged": true,
+  "native_or_real_network_fault_qualification": false,
+  "full_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "goal_status": "active",
+  "whole_goal_completed": false,
+  "next": "Complete the once-only controller terminal/owned-process wrapper and prelaunch exact source/Native/port preflight; then one original600 total scope, four fault phases,60round24heights/originalcaps/maturity2/quorum3. Failure seals entire attempted fresh currency without reopening/signing/refund/replacement. No old or passed full cycle rerun."
+}

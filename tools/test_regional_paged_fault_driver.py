@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
-from regional_paged_fault_driver import Driver, NativeReadBusy, observation_height, compatible, statement_id
+from regional_paged_fault_driver import Driver, NativeReadBusy, observation_height, compatible, statement_id, retain_original_objects
 from regional_paged_fault_launch import Config, PHASES, SLOTS
 from regional_paged_fault_scope import REGIONS
 from regional_paged_fault_prepared import Bound
@@ -160,6 +160,18 @@ class Tests(unittest.TestCase):
             bound=Bound('/unused-root','/unused-output','1'*64,(),12,9,'2'*64)
             for deadline in (time.monotonic()+601,time.monotonic()-1,float('nan')):
                 with self.assertRaises(ValueError):Driver(PROJECT,bound,deadline,lambda *a:None)
+
+    def test_manifest_advance_never_hides_rewritten_missing_old_voter_pages(self):
+        old={'bft-header.json':['header',1], 'bft-records/pages/old.json':['exact-complete-old-bytes',2],
+            'bft-records/stream.json':['old-manifest',3]}
+        newer=copy.deepcopy(old);newer['bft-records/stream.json']=['new-manifest',4]
+        newer['bft-records/pages/new.json']=['exact-new-bytes',5]
+        retain_original_objects(old,newer,'bft-records/stream.json')
+        bad=copy.deepcopy(newer);del bad['bft-records/pages/old.json']
+        with self.assertRaises(ValueError):retain_original_objects(old,bad,'bft-records/stream.json')
+        bad=copy.deepcopy(newer);bad['bft-records/pages/old.json']=['different-but-authenticated-variant',2]
+        with self.assertRaises(ValueError):retain_original_objects(old,bad,'bft-records/stream.json')
+        with self.assertRaises(ValueError):retain_original_objects(old,newer,'not-a-retained-manifest')
 
 
 if __name__=='__main__':unittest.main()

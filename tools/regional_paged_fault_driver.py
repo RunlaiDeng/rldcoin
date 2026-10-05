@@ -128,6 +128,19 @@ def observation_height(value, pid, currency, certificate, listener, cap):
     return height
 
 
+def retain_original_objects(before, after, mutable_manifest):
+    """Every original immutable byte remains; one exact manifest may advance.
+
+    This is retention observation only. Native still replays the entire journal
+    and its separately retained head, purpose, owner/value and signer history.
+    No digest/metadata comparison grants ledger or custody authorization.
+    """
+    require(type(mutable_manifest) is str and mutable_manifest in before,
+        'explicit original stream manifest required')
+    require(all(path in after and (path==mutable_manifest or after[path]==row)
+        for path,row in before.items()), 'original immutable journal object lost or altered')
+
+
 class NativeReadBusy(ValueError):
     """Only a reported native OS lock is unknown; other refusals remain failures."""
 
@@ -158,6 +171,7 @@ class Driver:
         self.mesh_anchors={slot:dict(public_key=document(self.root/'mesh'/f'{slot[0]}-{slot[1]}'/'identity.private.json')['public_key'],node_id=self.observed['transport_pins'][i]['node_id'],network=self.currency,config_sha256=config_commitment(json.loads(self.configs[PHASES[-1],*slot].mesh))) for i,slot in enumerate(SLOTS)}
         self.tls_observations=set()
         self.original_states=None;self.original_objects={slot:inventory(self.root/slot[0]/f'native-{slot[1]}') for slot in SLOTS}
+        self.original_voter_objects={slot:inventory(self.root/slot[0]/f'voter-{slot[1]}') for slot in SLOTS}
         self.write_counts={command:0 for command in WRITES}
 
     def remaining(self):
@@ -374,8 +388,9 @@ class Driver:
                 require(context['rules']==RULES and context['keys']==[v['key'] for v in conf['validators']]
                     and context['context']['parent_height']==state['height'],'final original membership differs')
                 after=inventory(self.root/label/f'native-{n}')
-                require(all(p in after and (p=='ledger-events/stream.json' or after[p]==v)
-                    for p,v in self.original_objects[label,n].items()),'old original Native objects lost or altered')
+                retain_original_objects(self.original_objects[label,n],after,'ledger-events/stream.json')
+                retain_original_objects(self.original_voter_objects[label,n],inventory(Path(conf['signer_dir'])),
+                    'bft-records/stream.json')
                 pin=self.observed['transport_pins'][SLOTS.index((label,n))]
                 config=json.loads(self.configs[PHASES[-1],label,n].mesh)
                 with MeshInspection(config,**self.mesh_anchors[label,n]) as image:transport=dict(image.summary)
