@@ -356,7 +356,7 @@ receipt没有价值权利。四节点每条live观察验证TLS13/encryption/no f
 及原2worker/3秒socket/.2秒mesh lock；failed attempts保留unknown/no rights。
 15.199/3.823失败不补记通过；4.201counter不是旧网络失败唯一诊断。
 
-## 下一普通owner出口至目的成熟判别（尚未启动）
+## 普通owner出口至目的成熟历史判别（固定目的4失败）
 
 本次准确通过fixture的source5、原请求100及owner/voter/caller保管继续保留。
 一个keyless original source默认Service携完整native closure至四新Proxima replicas；
@@ -371,3 +371,65 @@ head/custody失败、完整有限判别或预算退出。失败保留，不恢�
 到实际目的成熟证据，onward/return/fullfault/post64/PQC/独立/cross-device/physical
 与完整S/R/I/A-G/N/P仍独立。旧价值库strict仍OPEN；未经compact-complete native
 模型/profile/实现变化不复跑source66长scope。
+
+## 2026-10-05 实际导入成熟反例与普通owner完整收款
+
+[准确来源、原失败和终态](../operations/evidence/regional-native-paged-ordinary-composed-receiving-outcome-20261005.json)。
+首180秒收款scope实际25.981秒失败：五默认Services原source5及四P0启动，四目的
+至4未成熟原99；五process clean exit。完整Native/envelopes/owner停止cold未到达，
+整项不通过。原33.203秒通过source0参与该失败后，源/目的私有现场共同封存，不再
+打开Native/Runtime、recover/re-sign/refund或发替代请求；历史通过范围保持绑定。
+
+一次30秒network0新currency反例实际12.288秒：Native认证source4出口100，四
+目的原voter/caller从genesis认证空1/2，完整contact先认证未credit，再certify
+Import3。四wallet-receipt在3/4证据与进口有效但原99未成熟/不可花，5才原两块
+成熟/可花且finality覆盖。八Native/source4/P5 proofs、原caller/owner heads、
+cold私有inventory不变及issued=liquid1e30通过。Controller只在诊断认证Native
+blocks，不建立普通network资格或旧失败的唯一时序原因。
+
+依据真实成熟规则改变controller：目的scheduler保留原24高度上限，须四目的
+实际import+2/native spendability及caller无pending后才停止，不以固定4判成功。
+冷核验先全Native认证每个complete proof，再从准确Native-selected finality
+statement ID跟随完整previous至公共高度；四选定前缀的完整statement必须相同。
+Python digest仅在已认证proof内查找/比较，不初始化ledger或授签署/价值权。
+不同tip不自动等于冲突；此样本四最终height5，未演示不同tip分支。
+
+全新signed zero-allocation root/原四Native-voter-caller准备空3，owner10只
+审查/签署一个准确成熟input的100出口，typed queue保持四ledger未debit。
+四default Services普通TLS/原3of4在source5纳入Spend/debit/export；clean stop
+与191 complete envelopes/四Native full replay/原owner-voter-caller核验先完成。
+同一新原source0 keyless用原caller继续Service，四新P从同一genesis0启动，普通
+TLS多跳/原3of4在3进口net99、5原两块成熟，原输出仍99可花。完整一次180秒
+实际91.981秒，两阶段9Service启动均clean exit，最高同时5。收款阶段233完整
+信封、五Native full-genesis replay/原voter-caller及owner heads、四P Native
+selected exact共同statement5/ledger相同。原source owner/key/signer/caller及
+非source0 inventory不变；source0合法Evidence追加保留原immutable objects，
+不要求native storage head不变。Controller运行阶段不造票/块、不搬运帧；阶段
+间不复制ledger/custody或改变fixture身份。
+
+兼容E5/P5/A0 Native observation issued=liquid1.25e30、escrow/pending0，唯一
+export100/permanent import；源owner原请求保持included/finalized，transport
+receipt不是payment authority。Live确认真实TLS13/pins/no downgrade及原
+2worker/3秒socket/.2秒mesh lock，失败尝试unknown。Native87 b4bc4379 / cf4a2c7e
+/ CLI2e72ac63及Node Python字节未改，准确47.519秒strict/legacy/build复用。
+旧价值strict独立OPEN，25.981秒失败不补记通过；完整fault/2016/post64/longhistory/
+PQC/独立/cross-device/physical与完整S/R/I/A-G/N/P仍另验。
+
+## 下一真实收款普通onward判别（尚未启动）
+
+本次通过P原import99完整保留。New owner11 wallet和separate reviewed caller
+只授权此准确import input继续gross98至Andromeda owner12，目的fee1/localfee1，
+无change。按当前完整Native context选择queue replica，sign/typed queue不得
+先debit；原P四Native/voter/caller从5正常继续，原locks/heads不init/adopt，
+有限source7须实际认证export98且花准确99。先clean stop/full Native-caller-
+owner-envelope cold，再原P source0 keyless携complete closure至四新A signed
+ genesis0，普通Import97及实际import+2成熟。原E owner请求/debit与保管不替代。
+
+总180秒/1次/两阶段9Services（最高并发5），A原24新增高度上限，原600stage/
+60round/2016/成熟/quorum/capacity不变。运行中Controller不造票/块/搬运帧。
+三地区compatible Native-selected前缀、原amount/input/永久ID、每complete
+ envelope、原独立voter/caller/owner heads、原E钱包保管及conservation必须
+通过；首真实auth/value/input/head/custody/import/maturity失败、完整有限判别或
+预算退出。失败保留，不恢复/重签/退款/迁移或原样重跑。此范围只有onward，不资格
+return/fullfault/2016/post64/独立/PQC/physical；source66仍需实际compact-complete
+模型/profile/native变化。旧价值库strict独立OPEN。

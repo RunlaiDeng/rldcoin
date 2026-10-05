@@ -476,3 +476,24 @@ unique cause, and source export is still pending100/net99, not recipient money.
 Next one180second five-actor keyless-source/new-Proxima receiving/maturity scope
 is defined in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md; no new owner request, copied
 custody, failed recovery or parameter/bound increase. Legacy strict stays OPEN.
+
+
+The fixed-destination4 receiving gate failed25.981seconds: clean five exits but no
+mature99/full cold. Seal that source/recipient fixture; no Native/Runtime reopen,
+recovery/replacement/refund. Fresh12.288second Native-only counter proves import3
+immature4, mature5, full eight histories/original heads/owner cold and unchanged
+private inventory. It is not the old network unique timing cause.
+Controller waits for actual import+2/spendability under original max24, then full
+cold; trace only exact Native-selected finality IDs inside already fully native
+verified proofs to compare an exact complete common predecessor statement. A hash
+comparison grants no authority. Fresh composed91.981seconds passes original owner
+request/source5 export100/all four P import3/net99/mature5, nine clean starts
+across phases (peak5), source191/receiving233 complete envelopes/full Native,
+voter-caller/owner cold. Common5/ledgers agree; differing-height branch is not
+shown in this sample. Source custody retained, valid Evidence append retains all
+immutable objects. No controller votes/blocks/frames during runtime; native/Python
+unchanged, exact47.519strict reused, legacy strict OPEN. Next one180second scope
+uses actual P99 original input for owner11 onward98/new A recipient12/net97 with
+original P journals/heads (no init/adopt/copy), full native cold/conservation.
+Detailed gate in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md; all fault/2016/post64/
+crypto/independent/physical gates and original limits remain separate.

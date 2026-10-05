@@ -13,6 +13,14 @@ source4与3.823秒诊断失败保持。Native/Python、core171及下述两旧价
 执行触发、影响、单次120/300秒预算、退出和完成标准以本页下表为准；地区strict
 或普通付款行为通过不能替代旧价值库通过，原120.019秒/-15原因未知仍保留。
 
+当前组合收款检查点：25.981秒固定目的4失败、12.288秒原生成熟反例及91.981秒
+普通owner到实际目的成熟组合范围均正常终态；失败保持，不打开其Native/Runtime。
+Native/Node Python、core171和两旧价值文件仍exact相同，库/PoW/采用包或实际
+工具链/资源阻塞触发未满足，故不并行或重跑旧strict。
+[准确组合及旧失败](evidence/regional-native-paged-ordinary-composed-receiving-outcome-20261005.json)。
+本项独立OPEN：原告警/120.019秒原因未知、下表触发/影响/单次120或300秒预算、
+无豁免严格exit0与完整编码/授权拒绝验证的完成标准不变。
+
 原件：[120 秒预算及命令](evidence/regional-whitepaper-issuance-lint-stage-20261004.json)、
 [失败/预算耗尽记录](evidence/regional-whitepaper-issuance-lint-checks-20261004.json)。
 `rld-value-successor` 原严格检查有 `large_enum_variant`（`src/destination/pow.rs:91`）

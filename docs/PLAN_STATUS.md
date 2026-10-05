@@ -6,6 +6,23 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
+当前普通owner提交至目的成熟组合范围已通过：全新零分配根，一次180秒实际
+91.981秒；源端只签一个请求，typed queue不debit，四普通节点认证source5出口100
+并完成停止核验。随后同一原source keyless普通中继至四新Proxima replicas，均在
+3导入net99、5原两块成熟可花。两阶段9次Service启动均clean exit，源阶段191/
+收款阶段233完整信封、全部Native/voter-caller/owner核验通过。四目的Native选定
+认证前缀共同statement5精确相同且ledger相同，E5/P5/A0 issued=liquid=1.25e30，
+一出口/一永久进口，pending/escrow0。
+[来源、失败、反例和终态](operations/evidence/regional-native-paged-ordinary-composed-receiving-outcome-20261005.json)。
+
+固定目的终点4的收款25.981秒失败，完整cold未到达；其原33.203秒通过source
+fixture随失败共同封存，不再打开Native/Runtime。新network0的12.288秒反例以
+八Native/原heads证明import3在4未成熟、5才成熟。Controller按实际import+2
+判别，目的仍原24高度上限；新组合用全新货币根，不复活/重签/退款旧现场。
+四目的本次都停在5，不证明不同当前高度的兼容分支；Native87/Python未改、准确
+strict复用。旧价值库strict、onward/return/fullfault/2016/post64/独立/PQ/physical
+仍OPEN。
+
 最新普通源端钱包范围已通过：全新签署零分配货币根，四份原始Native/voter/caller
 准备认证前缀3；一个明确成熟input的owner100出口审查/签署并typed入队时，四账本
 均未debit。默认四Native Service/Runtime以普通TLS和原三取四认证在高度5实际
@@ -40,14 +57,16 @@ Native87来源 `b4bc4379...` / implementation `cf4a2c7e...` / release CLI
 source66容量拒绝、完整2016/长历史、独立custody/crypto/physical与VALUE-STRICT-01
 仍未完成。地区strict不能替代旧价值库，冻结正文/PDF/官网均未改。
 
-下一可证伪假设：本次准确通过来源的普通owner出口100保持原请求/保管，由一个
-keyless原source5及四个从同一signed genesis0启动的新Proxima Native默认TLS节点
-完成实际进口净99和原两块成熟可花。一次180秒/1次/五Native进程，目的终点4；
-无controller投票/造块/搬运，原owner及源signer/caller不签新请求。须完整实际收款、
-四目的相同认证前缀、全信封/Native/caller停止cold与兼容守恒，运输收据不授价值。
-首实际auth/value/import/maturity/head/custody失败、完整有限判别或预算退出，
-失败保留且不恢复/重签/退款/原样重复。**尚未启动**。原600/60/24/2016、成熟/
-票数/容量保持；onward/return/fullfault/2016/post64/PQ/独立/physical继续OPEN。
+下一可证伪假设：当前真实P原收款99，由owner11另存wallet/caller只授权该准确
+import input继续export98（目的fee1/localfee1）至Andromeda owner12。四原P
+Native/voter/caller从5正常继续至有限7，typed queue不debit；source/owner完整
+停止cold后，原P source0 keyless中继至四新A genesis0，实际import97并按import+2
+成熟可花。一次180秒/1次/两阶段9Services、最多并发5；A原24高度上限，三地区
+完整守恒/Native/full envelopes/原独立heads为完成标准。不init/adopt原voter头，
+不替代原E请求/debit，运行阶段controller不造票/块/搬运。首实际auth/amount/
+input/head/custody/import/maturity失败、完整有限判别或预算退出。**尚未启动**。
+原600/60/24/2016、成熟/票数/容量保持；return/fullfault/post64/PQ/独立/cross-device/
+physical继续OPEN，旧失败不恢复/重签/退款/原样重复。
 
 本文历史“全部通过”仅指各段明确绑定的当时源码、命令和有限scope，例如下述
 8831a634来源的491过程/三个Runtime组件；不能覆盖后来完整fault、预算耗尽、

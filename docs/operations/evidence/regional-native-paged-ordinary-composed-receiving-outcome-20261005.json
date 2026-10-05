@@ -1,0 +1,363 @@
+{
+  "format": "RLD-NATIVE-PAGED-ORDINARY-SUBMITTED-OWNER-RECEIVING-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T06:07:06.316995+00:00",
+  "current_source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "source_inventory_reference": "regional-native-paged-service-integration-outcome-20261005.json",
+  "source_inventory_report_sha256": "12f42767822dbac0b5920ea2b3d65828df1dbd6dfe600ece1c0d9245d20c5d4b",
+  "node_native_python_unchanged": true,
+  "exact_source_47_519_second_strict_legacy_compile_reused": true,
+  "scopes": [
+    {
+      "scope": "regional-native-paged-owner-receiving-20261005",
+      "completed": false,
+      "duration_seconds": 25.981,
+      "budget_seconds": 180,
+      "stage": "regional-native-paged-owner-receiving-20261005-stage.json",
+      "stage_sha256": "0d0fc8c60acfbaeb7c0654f8d9d94ea69bae30710f8c98ac5a35aef82648d18e",
+      "report": "regional-native-paged-owner-receiving-20261005-checks.json",
+      "report_sha256": "fd2f93a75bd3475e656f6c06c24c47f813ebb6ca0586ff94ba4757f71cf003a7",
+      "controller_sha256": "3e71bb0a1b69370535c1e84d2accda581ac5eb51511f551374d0a447f0095ce9",
+      "helper_sha256": "a0cbb901b7ea5458b35944418488b898aba41b2a4bf6a546eaa2975c4e7b9edb",
+      "log_sha256": "a741e50ae108a4a0b71cd4ccb6235a6ad7b1973e0a081a3353ffde71f6a5ffd0",
+      "actual_services_started": 5,
+      "clean_service_exits": 5
+    },
+    {
+      "scope": "regional-native-paged-import-maturity-counter-20261005",
+      "completed": true,
+      "duration_seconds": 12.288,
+      "budget_seconds": 30,
+      "stage": "regional-native-paged-import-maturity-counter-20261005-stage.json",
+      "stage_sha256": "18129763ea66322198ab73890a1c628d20af6c8ea29392cfb0f54a7580a16fe0",
+      "report": "regional-native-paged-import-maturity-counter-20261005-checks.json",
+      "report_sha256": "24b426a87890b3cfabdc500f799bdaddb9da4c68c71aed4b95bafd381d7d364b",
+      "controller_sha256": "9fea0da569dabe653e80cc9bf2341a30987b449376f791c1c504fa2158d35385",
+      "helper_sha256": "89442e080caae41c7494404bd15de866e74c9683bd67a96911dd800a683b49fd",
+      "log_sha256": "77b27bc691de5bc0f58cacb68654772589b2ef3f9a2c23e63725de797bde93d4",
+      "actual_services_started": 0,
+      "clean_service_exits": 0
+    },
+    {
+      "scope": "regional-native-paged-owner-composed-20261005",
+      "completed": true,
+      "duration_seconds": 91.981,
+      "budget_seconds": 180,
+      "stage": "regional-native-paged-owner-composed-20261005-stage.json",
+      "stage_sha256": "c074d4f0c12ea6e8d2ece95fb6bf18d3c063c8409ed0b24338844a1084ae5403",
+      "report": "regional-native-paged-owner-composed-20261005-checks.json",
+      "report_sha256": "fc615c31217cd07d3a4de35a64701284469fd7ab9eb4e89c88c7e8b9b5b6d29f",
+      "controller_sha256": "e70b05f81d4d22d0f1b1565bc36a500293d6ea7b735ec52a0886761e789aa74d",
+      "helper_sha256": [
+        "6d588f5aadc6a719519c3b22a44c89d8c7f4151176bcd2691faf1f840cbbb1f4",
+        "f7ee48ada054fa8ee3819897ae98061a4db32da5e23f98e2a47be13f51dc6c81"
+      ],
+      "log_sha256": "3c42554776c9cb4c20b59828f72532d43ad2bac118b51043d06457cf87554fe5",
+      "actual_services_started": 9,
+      "clean_service_exits": 9
+    }
+  ],
+  "actual_source_phase": {
+    "completed": true,
+    "native_default_entries": 4,
+    "clean_exits": true,
+    "preparation_native_certified_empty_heights": 3,
+    "actual_ordinary_owner_inclusion_height": 5,
+    "final_native_height": 5,
+    "one_original_owner_review_request": true,
+    "queue_and_signature_did_not_debit": true,
+    "ordinary_runtime_constructed_certified_owner_block": true,
+    "controller_votes_blocks_frames_during_runtime": false,
+    "source_export_gross": "100",
+    "destination_net_if_imported": "99",
+    "issued": "1250000000000000000000000000000",
+    "liquid": "1249999999999999999999999999900",
+    "pending_gross": "100",
+    "escrow": "0",
+    "conserved": true,
+    "full_cold_peers": [
+      {
+        "index": 0,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 47,
+          "distinct_complete_snapshots": 5,
+          "retained_state_bytes": 147797,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1464677,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      },
+      {
+        "index": 1,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 47,
+          "distinct_complete_snapshots": 5,
+          "retained_state_bytes": 147799,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1464677,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      },
+      {
+        "index": 2,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 48,
+          "distinct_complete_snapshots": 5,
+          "retained_state_bytes": 149395,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1501538,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      },
+      {
+        "index": 3,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 49,
+          "distinct_complete_snapshots": 5,
+          "retained_state_bytes": 150990,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1538398,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      }
+    ],
+    "compatible_four_tip_state_finality_ledger": true,
+    "original_owner_wallet_caller_key_unchanged": true,
+    "owner_approval_retained_and_exact_original_head_verified": true,
+    "full_source_finality_covers_export": true,
+    "unknown_progress_observations": 0,
+    "failed_transport_attempt_observations": 6,
+    "transport_failure_is_not_authority": true,
+    "live_exact_tls13_pins_limits_verified": true,
+    "no_prior_fixture_opened_or_migrated": true,
+    "full_fault_recipient_onward_return_independent_physical_qualified": false
+  },
+  "actual_receiving_phase": {
+    "completed": true,
+    "native_default_entries": 5,
+    "clean_exits": true,
+    "ordinary_tls_relay_then_native_import_and_original_maturity": true,
+    "controller_constructed_or_moved_frames_votes_blocks": false,
+    "source_original_owner_request_only": true,
+    "no_failed_fixture_reopened_or_resigned_refunded_recovered": true,
+    "no_copied_ledger_or_custody_initialization": true,
+    "compatible_all_four_destination_native_selected_certified_prefixes": true,
+    "common_selected_certified_height": 5,
+    "distinct_current_heights_are_not_conflict": true,
+    "native_accounting": {
+      "issued": "1250000000000000000000000000000",
+      "liquid": "1250000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 5,
+      "observed_exports": 1,
+      "observed_permanent_imports": 1,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    },
+    "actual_original_output_net": "99",
+    "source_owner_signer_caller_inventory_unchanged": true,
+    "all_original_native_immutable_objects_retained": true,
+    "independent_latest_anchor_qualified": false,
+    "peers": [
+      {
+        "index": 0,
+        "native_height": 5,
+        "permanent_imports": 0,
+        "stopped_retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 14,
+          "distinct_complete_snapshots": 5,
+          "retained_state_bytes": 79152,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 634197,
+          "full_native_authentication": true
+        },
+        "separate_native_voter_caller_exact_head_verified": true,
+        "source_readonly_caller_unchanged": true,
+        "actual_receipt": null
+      },
+      {
+        "index": 1,
+        "native_height": 5,
+        "permanent_imports": 1,
+        "stopped_retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 55,
+          "distinct_complete_snapshots": 15,
+          "retained_state_bytes": 295745,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 2968360,
+          "full_native_authentication": true
+        },
+        "separate_native_voter_caller_exact_head_verified": true,
+        "source_readonly_caller_unchanged": true,
+        "actual_receipt": {
+          "import_height": 3,
+          "mature_height": 5,
+          "net": "99",
+          "remaining": "99",
+          "mature_spendable": true,
+          "local_finality_covers_import": true,
+          "transport_receipt_is_value_authority": false
+        }
+      },
+      {
+        "index": 2,
+        "native_height": 5,
+        "permanent_imports": 1,
+        "stopped_retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 55,
+          "distinct_complete_snapshots": 15,
+          "retained_state_bytes": 295746,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 2968360,
+          "full_native_authentication": true
+        },
+        "separate_native_voter_caller_exact_head_verified": true,
+        "source_readonly_caller_unchanged": true,
+        "actual_receipt": {
+          "import_height": 3,
+          "mature_height": 5,
+          "net": "99",
+          "remaining": "99",
+          "mature_spendable": true,
+          "local_finality_covers_import": true,
+          "transport_receipt_is_value_authority": false
+        }
+      },
+      {
+        "index": 3,
+        "native_height": 5,
+        "permanent_imports": 1,
+        "stopped_retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 55,
+          "distinct_complete_snapshots": 15,
+          "retained_state_bytes": 295746,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 2968360,
+          "full_native_authentication": true
+        },
+        "separate_native_voter_caller_exact_head_verified": true,
+        "source_readonly_caller_unchanged": true,
+        "actual_receipt": {
+          "import_height": 3,
+          "mature_height": 5,
+          "net": "99",
+          "remaining": "99",
+          "mature_spendable": true,
+          "local_finality_covers_import": true,
+          "transport_receipt_is_value_authority": false
+        }
+      },
+      {
+        "index": 4,
+        "native_height": 5,
+        "permanent_imports": 1,
+        "stopped_retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 54,
+          "distinct_complete_snapshots": 14,
+          "retained_state_bytes": 278431,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 2876108,
+          "full_native_authentication": true
+        },
+        "separate_native_voter_caller_exact_head_verified": true,
+        "source_readonly_caller_unchanged": true,
+        "actual_receipt": {
+          "import_height": 3,
+          "mature_height": 5,
+          "net": "99",
+          "remaining": "99",
+          "mature_spendable": true,
+          "local_finality_covers_import": true,
+          "transport_receipt_is_value_authority": false
+        }
+      }
+    ],
+    "unknown_progress_observations": 0,
+    "failed_transport_attempt_report_observations": 17,
+    "failed_attempt_is_not_custody_and_cause_unknown": true,
+    "live_tls13_and_original_attempt_worker_lock_limits_verified": true,
+    "full_fault_post64_independent_physical_qualified": false
+  },
+  "source_envelopes_authenticated": 191,
+  "receiving_envelopes_authenticated": 233,
+  "maturity_counter": {
+    "completed": true,
+    "network0": true,
+    "duration_seconds": 12.288,
+    "native_import_height": 3,
+    "original_mature_height": 5,
+    "height4_spendable": false,
+    "height5_spendable": true,
+    "full_eight_native_four_source_four_destination_and_original_voter_caller_owner_verified": true,
+    "cold_private_inventory_unchanged": true,
+    "diagnostic_only_no_ordinary_network_or_old_unique_cause": true
+  },
+  "preserved_failure": {
+    "scope": "regional-native-paged-owner-receiving-20261005",
+    "duration_seconds": 25.981,
+    "completed": false,
+    "reason": "All four destination stop4 without mature original recipient99. Live observation shows import accepted but output not spendable; five services clean exit. Full final Native/all-envelope/owner cold not reached, no failed Native/Runtime reopened. Native-only fresh counter proves import3 maturity5 but does not by itself authenticate the old failed state or determine unique network timing cause.",
+    "original_source_fixture_now_frozen_with_failed_receiving_scope": true,
+    "no_failed_cold_recovery_resign_refund_replacement": true
+  },
+  "controller_change": "Actual Native maturity, not fixed4 endpoint. Destination retains original max24, stops after all four actual mature original99/caller clean and then full read-only Native cold. Already fully Native-authenticated complete proofs are traced from the exact Native-selected finality ID to an exact common predecessor statement; Python statement digest comparison supplies no authority. This sample stopped all four at5/common5, so differently current-height handling code is implemented but this sample does not demonstrate that branch.",
+  "core_171_freeze_legacy_unchanged": true,
+  "legacy_value_strict": "OPEN: no oldlibrary/PoW/adopted-package/toolchain-block trigger; original warnings and120.019 budget failure remain.",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "frozen_markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "whole_goal_qualified": false,
+  "all_owned_services_terminal": true,
+  "no_mainnet_real_funds_accounts_external_contacts": true,
+  "next_scope": {
+    "hypothesis": "Continue exact passed composed currency with actual Proxima net99 original recipient coin. One new owner11 journal and separate reviewed caller signs one exact original imported99 input: onward gross98 to newly admitted Andromeda recipient12, destinationfee1/localfee1. Signature/typed queue cannot debit. Restart all four original Proxima Native/voter/caller custody without init/adopting/resetting heads; ordinary same-host pinned TLS and original3of4 certify onward export by finite source7 (two ordinary opportunities after current5) and fully cold verify original owner heads and the exact imported input consumed. Same source0 then keyless relays complete closure to four fresh signed-genesis Andromeda replicas; ordinary Import97 and actual import-height+2 maturity/spendability. No controller votes/blocks/frames during runtime, source replica current-context pending locks retained, no original Earth owner/debit replacement/refund.",
+    "budget_seconds": 180,
+    "attempts": 1,
+    "max_concurrent_services": 5,
+    "services_across_two_phases": 9,
+    "source_start_height": 5,
+    "source_finite_stop_height": 7,
+    "destination_max_new_height": 24,
+    "original_round_seconds": 60,
+    "original_stage_seconds": 600,
+    "original_maturity": 2,
+    "window": 2016,
+    "capacity_quorums_unchanged": true,
+    "exit": "First actual auth/amount/head/owner input/custody/import/maturity failure, full finite discrimination or180seconds for both phases. Preserve all failures and private stores, clean only owned services. Full native selected-prefix compatibility, every complete envelope, separately retained voter/caller/owner heads and complete three-region conservation mandatory; no unchanged rerun, sign recovery or old failed fixture open.",
+    "started": false,
+    "qualification": "Ordinary continuation of actual recipient onward payment only; return/fullfault/2016/post64/PQC/independent/cross-device/physical remain separate."
+  }
+}
