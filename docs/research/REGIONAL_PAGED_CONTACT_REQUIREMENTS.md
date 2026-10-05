@@ -297,7 +297,7 @@ VALUE-STRICT-01仍独立OPEN，两处告警和120秒耗尽/原因未知均保持
 2016窗口、source66/post64 compact-complete授权、longhistory、PQC/独立/cross-device/
 physical和全部S/R/I/A-G/N/P资格继续OPEN。原600/60/24/2016及所有bound不改。
 
-## 下一普通源端owner提交判别（尚未启动）
+## 普通源端owner提交历史判别（原高度4范围未通过）
 
 假设：全新签署零分配public-fixture currency/root采用准确当前paged admission与
 原发行曲线，四个Native/voter/caller从genesis0创建并保留同一原始日志/锁/头。
@@ -317,3 +317,57 @@ auth/amount/head/custody拒绝或预算到达退出，失败不恢复/重签/退
 这一范围只验新ordinary source owner提交与纳入；目的实际收款、onward/return、
 fullfault/2016/post64/longhistory/独立/crypto/physical另验。既有600秒stage/60秒轮/
 24新增高度/2016窗口、成熟、票数、容量不变；不得仅因这些通过复跑源66长scope。
+
+## 2026-10-05 普通源端owner提交终态与到达反例
+
+[准确来源、原失败和最终行为](../operations/evidence/regional-native-paged-ordinary-owner-outcome-20261005.json)。
+Native87 b4bc4379 / implementation cf4a2c7e / CLI2e72ac63及节点Python字节未改；
+准确47.519秒strict/legacy/编译证据复用，不重复。首一次120秒范围15.199秒失败：
+四实际普通节点到4、clean exit，但第一cold Native0完整history-check后，准确
+owner export/input断言失败；全四Native/200信封/owner cold未到达。原请求与停止
+私有现场保留；后续不再打开其Native/Runtime。仅bounded raw storage观察到空4
+提案和后来保留Submission，不是完整独立认证或唯一时序原因。
+
+最小network0反例首次3.823秒因Python规范JSON reader拒native serde字段顺序
+失败。原stage从模板残留runtime/120秒描述；实际budget30/network0、原controller
+及checks绑定，仅诊断，未运行网络或120秒。原记录不改。改变fixture helper为
+有界duplicate-free typed read再用普通Runtime完整native认证，新的4.201秒反例
+证明同一source3上下文：候选在无Submission时为空，完整认证原始Submission到达
+后含准确Spend；原caller/wallet heads及native value不变，没有sign/debit。
+这是controller读取/判别修复，原产品本来已用该typed路径，不能称修复产品。
+
+基于该行为反例，下一一次120秒有限范围把终点改为5，在原24新增高度内给queued
+node0一次正常leader机会；没有增加round/stage/maturity/consensus/bounds，也没
+改变Native/Python或启动旧fixture。全新签署zero-allocation根/原Native-voter-caller
+从0准备空前缀3，owner10只签一次明确成熟输入的100出口、目的fee1/localfee1；
+先签署/typed bft-submit保持四ledger未debit且原钱包保留自己的输入。
+
+实际33.203秒通过：四默认Service/Runtime通过普通pinned same-host TLS在高度5
+原3of4认证纳入准确owner Spend；移除原input、只保留一个100 export，finality
+覆盖出口。四source5 certified tip/state/finality/ledger相同；四进程clean exit，
+200完整envelopes、四full-genesis Native replay、各原voter与独立caller精确head、
+一个完整owner钱包及其另存head核验通过。原owner approve/key/caller bytes不变；
+原Native immutable objects保留，新合法ledger/voter/caller推进不称全目录不变。
+controller只参与空前缀fixture准备，运行阶段不造票/块、不搬运帧。
+
+原当前起源发行curve在height5 issued1.25e30，liquid=issued-100、gross pending100，
+received/imports/escrow0；全本区及观察守恒。预计目的net99尚未导入，transport
+receipt没有价值权利。四节点每条live观察验证TLS13/encryption/no fallback/准确pin
+及原2worker/3秒socket/.2秒mesh lock；failed attempts保留unknown/no rights。
+15.199/3.823失败不补记通过；4.201counter不是旧网络失败唯一诊断。
+
+## 下一普通owner出口至目的成熟判别（尚未启动）
+
+本次准确通过fixture的source5、原请求100及owner/voter/caller保管继续保留。
+一个keyless original source默认Service携完整native closure至四新Proxima replicas；
+目的从同一完整signed genesis0创建，不拷贝ledger/cache/key/custody授权，不发替代
+owner请求。实际普通TLS/原3of4认证进口net99、原两块成熟可花；四目的终点4。
+总180秒/1次/五Native actors，所有准备/startup/wait/clean-stop/cold计入。
+controller不造票/块/import、不搬运信封；source5 keyless不推进原投票/owner头。
+完整source/四目的/full envelopes/另存caller-head cold、原owner保管及兼容发行/
+coins/export/import/received/escrow守恒为完成标准；实际auth/value/import/maturity/
+head/custody失败、完整有限判别或预算退出。失败保留，不恢复/重签/退款/原样重复。
+原600stage/60round/24高度/2016窗口/成熟/票数/容量不变；只提供原普通owner请求
+到实际目的成熟证据，onward/return/fullfault/post64/PQC/独立/cross-device/physical
+与完整S/R/I/A-G/N/P仍独立。旧价值库strict仍OPEN；未经compact-complete native
+模型/profile/实现变化不复跑source66长scope。

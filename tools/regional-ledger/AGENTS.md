@@ -453,3 +453,26 @@ Full value/cold and exact pins/default limits remain required. Source ordinary
 owner submission/onward/return, fullfault/2016/post64/PQ/independent/physical still
 OPEN; next one fresh120second four-entry owner submission gate is defined in
 REGIONAL_PAGED_CONTACT_REQUIREMENTS.md. Legacy strict independently remains OPEN.
+
+That owner gate is now historical. Preserve its15.199second source4 failure:
+four live stop boundaries and clean exit did not produce the owner export; full
+cold/owner acceptance was not reached. Do not reopen failed Native/Runtime. A
+fresh actual Native/Runtime4.201second counter authenticates the original typed
+submission: absent submission gives an empty candidate, arrival gives the exact
+owner Spend at the same context without signing/debit/head change. Native queue
+JSON uses serde order; bounded typed read precedes full Native verification.
+The diagnostic3.823second canonical-reader failure remains failed.
+
+The changed finite discriminator stops at5 within original24: source queue node0
+gets an ordinary leader opportunity after carriage. Fresh root, four original
+Native/voter/caller journals prepare empty3, then one owner review/sign/queue does
+not debit. Ordinary four Service/Runtime actors certify exact100 export at5;
+33.203seconds includes clean stop,200complete envelopes/four full native histories,
+original separate voter/caller and complete owner journal/head. Owner custody
+unchanged; native/voter journals legally advance and retain old immutable bytes.
+No controller voting/block/frame movement during runtime. Native/Python unchanged,
+exact47.519strict reused. This does not retroactively pass source4 or prove its
+unique cause, and source export is still pending100/net99, not recipient money.
+Next one180second five-actor keyless-source/new-Proxima receiving/maturity scope
+is defined in REGIONAL_PAGED_CONTACT_REQUIREMENTS.md; no new owner request, copied
+custody, failed recovery or parameter/bound increase. Legacy strict stays OPEN.

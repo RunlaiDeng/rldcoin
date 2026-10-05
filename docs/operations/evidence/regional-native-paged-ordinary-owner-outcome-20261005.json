@@ -1,0 +1,209 @@
+{
+  "format": "RLD-NATIVE-PAGED-ORDINARY-OWNER-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-05T05:50:08.270073+00:00",
+  "source_commitment": "b4bc437957704130028e2732b8b7afb843740aeaa5fff685f23ba0dd05bf3aa7",
+  "implementation": "cf4a2c7e1161811e7e2440fb36070f60e2f7f0f94f84a2144818075ec0d99069",
+  "source_inventory_reference": "regional-native-paged-service-integration-outcome-20261005.json",
+  "source_inventory_sha256": "12f42767822dbac0b5920ea2b3d65828df1dbd6dfe600ece1c0d9245d20c5d4b",
+  "cli_binary_sha256": "2e72ac63c32cf76596b0a152121f3b7caa1ad7b32ccec13e501d348784c9b76d",
+  "native_python_unchanged": true,
+  "strict_same_source_47_519sec_reused_no_repeat": true,
+  "scopes": [
+    {
+      "scope": "regional-native-paged-owner-submit-20261005",
+      "completed": false,
+      "duration_seconds": 15.199,
+      "budget_seconds": 120,
+      "stage": "regional-native-paged-owner-submit-20261005-stage.json",
+      "stage_sha256": "9c1aac79b115056c6465732d04aeb7262bd59fe9ca93d51f03522e6034fd6a27",
+      "report": "regional-native-paged-owner-submit-20261005-checks.json",
+      "report_sha256": "a0b0e3e55c86d6af7989715e35791cbc1cf7173cab60dcbc0202ed608b7ac105",
+      "controller_sha256": "af2777c98bce254c4893ad93d0b7d6c2a4b3089fe1c7f6e251c2f15eca5e9835",
+      "helper_sha256": "0de0352508a68f857659e6a5f90ddb76234e6e4d222431b304e8ad6118f09383",
+      "log_sha256": "394030d7760edf3b94f3a5064e4ebaf1e56445549239eb8a9d46bf259f33b871",
+      "native_service_processes_started": 4,
+      "clean_service_exits": 4,
+      "full_acceptance_observation_count": 0
+    },
+    {
+      "scope": "regional-native-paged-owner-arrival-20261005",
+      "completed": false,
+      "duration_seconds": 3.823,
+      "budget_seconds": 30,
+      "stage": "regional-native-paged-owner-arrival-20261005-stage.json",
+      "stage_sha256": "67a3cbc8a2702833e5c4afc691fcf163041a045852f36824879c0de2de6e2901",
+      "report": "regional-native-paged-owner-arrival-20261005-checks.json",
+      "report_sha256": "f5161942dab3246417a8a15dc11383a78b1d1c3d206ddeb101a27a668e028400",
+      "controller_sha256": "96a34d8fa2a7dea3a98d926ebc72f5f58a3bbeccb5209c68361329d15d673304",
+      "helper_sha256": "0259c41ed98497e5505efa3c7e2165de9511df7c0300bd437fcf4ef3bb6ba43f",
+      "log_sha256": "fb117810dece8b6ecfef042e52b490ad2e2369b389cdd2447be9e0137818ba9c",
+      "native_service_processes_started": 0,
+      "clean_service_exits": 0,
+      "full_acceptance_observation_count": 0
+    },
+    {
+      "scope": "regional-native-paged-owner-typed-arrival-20261005",
+      "completed": true,
+      "duration_seconds": 4.201,
+      "budget_seconds": 30,
+      "stage": "regional-native-paged-owner-typed-arrival-20261005-stage.json",
+      "stage_sha256": "9befe82e83a06ce33e0b8610fe7874177988ab03a16eaf58cef1e517b22a3e36",
+      "report": "regional-native-paged-owner-typed-arrival-20261005-checks.json",
+      "report_sha256": "f3be5f6fbdba75b37be3fe0ca48929fb6fe10d7101bc955eeb7b5a501be0999c",
+      "controller_sha256": "d3715e56c0e970676085de1c2253ac63cfd2fb39a11c0429e9e4618f250fc796",
+      "helper_sha256": "f9921574c6bc6c22b7bd00cb2bb1aff9f89a9a752ea381594f14073860c4916f",
+      "log_sha256": "39469d62d1a048b15d5a036de5ff336309727450e8f672558add80026fa47a6a",
+      "native_service_processes_started": 0,
+      "clean_service_exits": 0,
+      "full_acceptance_observation_count": 1
+    },
+    {
+      "scope": "regional-native-paged-owner-arrival-window-20261005",
+      "completed": true,
+      "duration_seconds": 33.203,
+      "budget_seconds": 120,
+      "stage": "regional-native-paged-owner-arrival-window-20261005-stage.json",
+      "stage_sha256": "09119d67616462f76f0e816455afff3ab129b040e4465bdc64fe7a48591a0672",
+      "report": "regional-native-paged-owner-arrival-window-20261005-checks.json",
+      "report_sha256": "0a06e706eb43fcc9064198d34e130981cf7c15259355cb1609beab66bd9761e1",
+      "controller_sha256": "cbb1cbcdb9d4a1d2be8467a53431be804c3a23307b980d47dd1b92405d187988",
+      "helper_sha256": "989a5c709a928411720b99b01a1836a7dec05af07231e7566c97ba69debd5ba5",
+      "log_sha256": "484cdd9e941db72c98eb9d262d2ca61140fd960098a1be788ad6c2d48cec8b22",
+      "native_service_processes_started": 4,
+      "clean_service_exits": 4,
+      "full_acceptance_observation_count": 1
+    }
+  ],
+  "actual_pass": {
+    "completed": true,
+    "native_default_entries": 4,
+    "clean_exits": true,
+    "preparation_native_certified_empty_heights": 3,
+    "actual_ordinary_owner_inclusion_height": 5,
+    "final_native_height": 5,
+    "one_original_owner_review_request": true,
+    "queue_and_signature_did_not_debit": true,
+    "ordinary_runtime_constructed_certified_owner_block": true,
+    "controller_votes_blocks_frames_during_runtime": false,
+    "source_export_gross": "100",
+    "destination_net_if_imported": "99",
+    "issued": "1250000000000000000000000000000",
+    "liquid": "1249999999999999999999999999900",
+    "pending_gross": "100",
+    "escrow": "0",
+    "conserved": true,
+    "full_cold_peers": [
+      {
+        "index": 0,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 50,
+          "distinct_complete_snapshots": 6,
+          "retained_state_bytes": 169753,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1592470,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      },
+      {
+        "index": 1,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 50,
+          "distinct_complete_snapshots": 6,
+          "retained_state_bytes": 169753,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1592470,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      },
+      {
+        "index": 2,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 50,
+          "distinct_complete_snapshots": 6,
+          "retained_state_bytes": 169754,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1592470,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      },
+      {
+        "index": 3,
+        "native_height": 5,
+        "retention": {
+          "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+          "messages_authenticated": 50,
+          "distinct_complete_snapshots": 6,
+          "retained_state_bytes": 169754,
+          "state_limit_bytes": 33554432,
+          "expanded_envelope_bytes_authenticated": 1592470,
+          "full_native_authentication": true
+        },
+        "original_voter_separate_caller_verified": true,
+        "full_history_pinned_replayed": true,
+        "exact_export": true,
+        "all_prior_immutable_objects_retained": true
+      }
+    ],
+    "compatible_four_tip_state_finality_ledger": true,
+    "original_owner_wallet_caller_key_unchanged": true,
+    "owner_approval_retained_and_exact_original_head_verified": true,
+    "full_source_finality_covers_export": true,
+    "unknown_progress_observations": 0,
+    "failed_transport_attempt_observations": 6,
+    "transport_failure_is_not_authority": true,
+    "live_exact_tls13_pins_limits_verified": true,
+    "no_prior_fixture_opened_or_migrated": true,
+    "full_fault_recipient_onward_return_independent_physical_qualified": false
+  },
+  "preserved_failures": {
+    "15.199second_source4": "All four live source4 and clean exits, first cold native history-check completed then source export/input assertion refused. Full four-native/all-envelope/owner cold not reached. Whole scope remains failed; no failed Native/Runtime reopened. Raw storage-only observations show empty4 proposal and retained Submission, do not grant authority or establish unique timing cause.",
+    "3.823second_arrival_counter": "Fresh network0 diagnostic used mesh canonical reader on native serde queue; refused noncanonical JSON; original failed scope remains failed. Later native-typed bounded reader plus normal full native Runtime retention is controller-only repair.",
+    "first_arrival_stage_copy_erratum": "The3.823sec stage copied broad source/runtime and120sec exit text from its template. Actual budget_seconds30,network_processes0, exact controller and terminal report show a network0 diagnostic only; it never ran a source runtime campaign or120sec. Stage original bytes remain unchanged."
+  },
+  "legacy_value_strict": {
+    "status": "OPEN",
+    "baseline_sha256": {
+      "crates/rld-value-successor/src/destination/pow.rs": "a4bb07011aa719d5429529dcff4a59baaf56c6ae47766dcea1e6728f5b41eb77",
+      "crates/rld-value-successor/src/destination/pow/tests.rs": "032ae054565f05e31351b0eacea75ef6f9dee8e6916782327f60b97193c25c04"
+    },
+    "no_trigger": "No oldlibrary/PoW touch or adopted package or actual toolchain/resource blocking. Regional passes never replace oldlibrary strict. Original warning failures and120.019 timeout/-15/unknown cause remain."
+  },
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "frozen_markdown_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "whole_goal_qualified": false,
+  "no_mainnet_money_account_external_operations": true,
+  "all_owned_network_processes_clean_terminal": true,
+  "next_scope": {
+    "hypothesis": "Continue exact passed current-source ordinary owner export100 at source5 without a new owner request. One keyless original source Service relays its complete retained native export to four fresh signed-genesis Proxima replicas through ordinary pinned same-host TLS. Original3of4 native prepare/commit includes exact import99; all four must reach original2-block maturity and retain original recipient output99 spendable. Full source/recipient/complete-envelope and separate voter/caller cold, original owner custody and full compatible monetary conservation required. Same native/Python/source; no failed stores reopen, signer/value copying or prior receiving-leg reuse.",
+    "budget_seconds": 180,
+    "attempts": 1,
+    "network_processes": 5,
+    "source_stop_height": 5,
+    "destination_stop_height": 4,
+    "original_600_stage_60_round_24_new_heights_2016_maturity_quorum_capacity_unchanged": true,
+    "controller_votes_blocks_frame_movement": false,
+    "exit": "First actual authentication/value/import/maturity/head/custody failure, complete finite qualification or180seconds. Socket failed attempts unknown/no rights. Clean owned processes and preserve exact stopped failure; no re-sign/refund/recovery/replacement or unchanged repeats.",
+    "started": false,
+    "qualification": "Finite ordinary submitted-owner source to recipient maturity only; onward/return/fullfault/2016/post64/PQC/independent/cross-device/physical remain separate."
+  },
+  "service_terminal_field_scope": "Runtime cleanup steps scope_failed=false records only the live phase; first15.199sec cold export assertion later failed. Whole scope completed=false remains authoritative."
+}

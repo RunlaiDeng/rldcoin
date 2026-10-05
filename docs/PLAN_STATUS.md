@@ -6,6 +6,19 @@
 [完整主计划](RLDCOIN_MASTER_PLAN.md)继续记录实现/风险，不能降低规范目标；
 默认网络：[N1–N10 接触中继要求](research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)。均未全部完成。
 
+最新普通源端钱包范围已通过：全新签署零分配货币根，四份原始Native/voter/caller
+准备认证前缀3；一个明确成熟input的owner100出口审查/签署并typed入队时，四账本
+均未debit。默认四Native Service/Runtime以普通TLS和原三取四认证在高度5实际
+纳入、扣原input并保留唯一export100。一次120秒实际33.203秒，clean exit后
+200完整信封/四Native完整历史/独立voter-caller heads及原owner钱包/头核验通过。
+四副本tip/state/finality/ledger相同，issued `1.25×10^30` = liquid + gross pending100，
+imports/received/escrow0；目的手续费1、预计净99尚未进口。
+[来源、反例、终态与失败](operations/evidence/regional-native-paged-ordinary-owner-outcome-20261005.json)。
+原高度4范围15.199秒无出口，仍失败；3.823秒诊断读错native serde顺序仍失败。
+实际4.201秒Native/Runtime反例证明：没有提交时候选为空，完整认证提交到达后
+候选含准确付款，构造不debit/sign；只改变controller有限判别，不修改协议。
+新的高度5终点在原24高度内，不能补记高度4失败通过或推断其唯一时序原因。
+
 最新[普通节点实际收款](research/REGIONAL_PAGED_CONTACT_REQUIREMENTS.md)已在全新无价值
 范围通过：五个默认Native Service/Runtime以普通TLS中继既有P出口98，四个新A
 副本均在高度2进口净97、高度4达到原两块成熟并可花。总65.805秒（一次180秒）；
@@ -27,12 +40,14 @@ Native87来源 `b4bc4379...` / implementation `cf4a2c7e...` / release CLI
 source66容量拒绝、完整2016/长历史、独立custody/crypto/physical与VALUE-STRICT-01
 仍未完成。地区strict不能替代旧价值库，冻结正文/PDF/官网均未改。
 
-下一可证伪假设：全新签署零分配fixture中，一个Native owner100出口请求由普通
-bft-submit只入队，四默认节点正常认证后在源高度4纳入并准确扣款/保留出口。
-先从genesis0保留原voter/caller执行原生认证的准备前缀3，完整owner审查/签署与
-队列不得先debit；运行阶段无控制器投票/造块/搬运。一次120秒/1次/四Native进程，
-含全部准备、签署、启动、等待、停止cold；首实际拒绝/金额/head/保管失败、有限
-完整判别或预算退出。**尚未启动**。原600/60/24/2016、成熟/票数/容量保持。
+下一可证伪假设：本次准确通过来源的普通owner出口100保持原请求/保管，由一个
+keyless原source5及四个从同一signed genesis0启动的新Proxima Native默认TLS节点
+完成实际进口净99和原两块成熟可花。一次180秒/1次/五Native进程，目的终点4；
+无controller投票/造块/搬运，原owner及源signer/caller不签新请求。须完整实际收款、
+四目的相同认证前缀、全信封/Native/caller停止cold与兼容守恒，运输收据不授价值。
+首实际auth/value/import/maturity/head/custody失败、完整有限判别或预算退出，
+失败保留且不恢复/重签/退款/原样重复。**尚未启动**。原600/60/24/2016、成熟/
+票数/容量保持；onward/return/fullfault/2016/post64/PQ/独立/physical继续OPEN。
 
 本文历史“全部通过”仅指各段明确绑定的当时源码、命令和有限scope，例如下述
 8831a634来源的491过程/三个Runtime组件；不能覆盖后来完整fault、预算耗尽、
