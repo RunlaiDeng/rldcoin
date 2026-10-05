@@ -1,0 +1,23 @@
+{
+  "format": "RLD-NATIVE-FAIR-RECEIVE-PACKAGE-AUDIT-V1",
+  "source_set_sha256": "55b923889a476710ef5927482e0dc1efc363c4e0b36ec3cd3fe6f5ad634ab2c9",
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "package_files": 72,
+  "all_checksums_exact": true,
+  "exact_archives": [
+    {
+      "path": "source.tar.gz",
+      "exact_files": 273,
+      "sha256": "b67327fa0744d26eebff7253737e9e46ff02126b7cae71ac2b7fa6ad47893bea"
+    },
+    {
+      "path": "failed-selection-source.tar.gz",
+      "exact_files": 273,
+      "sha256": "5050dc8787b0cc4c23778711bad65b9c8bfc111c19951d86434727a6e00b8fc9"
+    }
+  ],
+  "supplemental_tools_equal_frozen_source": true,
+  "no_private_absolute_paths_or_PEM_blocks": true,
+  "fresh_finite_fault_profile_passed": true,
+  "all_prior_failed_profiles_preserved": true
+}

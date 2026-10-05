@@ -1,0 +1,12 @@
+{
+  "format": "RLD-BFT-AUTONOMOUS-JOINT-LOCAL-STATUS-UPDATE-V1",
+  "documentation_only_after_frozen_publication": true,
+  "changed_path": "docs/PLAN_STATUS.md",
+  "before_sha256": "b2c0ffe0ec03c788dbf688ae0fd817f6f0c6fd7e3337c746a7fa837906c5f95a",
+  "after_sha256": "bed2990776d679e58ba586a1ef9704148236833e00bdce42b06bef505c43b4ac",
+  "frozen_source_unchanged": true,
+  "primary_native_and_core_source_still_exact": true,
+  "public_commit": "bb89e3abfbe9aff6fba31883228c4c7767124422",
+  "goal_completed": false,
+  "website_or_forum_changed": false
+}

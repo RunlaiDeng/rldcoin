@@ -1,0 +1,1290 @@
+{
+  "format": "RLD-JOINT-LOOP-LIVE-FAULT-COST-OBSERVATION-V1",
+  "source_set_sha256": "60c4ec2fbbf54499c71544d1a9fb2c0a0ef7047a51f14bee11bc30486340fb46",
+  "observer_sha256": "b5a9410b9be5ae9a2e2ad7e41d336699544cb36825333ffcd76b705f98d9f376",
+  "sampled_at_unix": 1791093812.1414049,
+  "rows": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "process_id": 55402,
+      "actual_live_command_matches": false,
+      "cached_status_is_not_current_progress": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "status_bytes_sha256": "c3be97962c5c1ca25de881989f47a14456c5a6f5dd16b0d1583b367c22159385",
+      "process_id": 62836,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.232,
+      "cached_height": 12,
+      "cached_round": 1,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 306,
+      "dropped_events": 178,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 32,
+      "stages": {
+        "duration_seconds": {
+          "samples": 32,
+          "mean": 1.9745919375,
+          "maximum": 5.399718
+        },
+        "mesh_seconds": {
+          "samples": 32,
+          "mean": 0.3675579375,
+          "maximum": 0.553525
+        },
+        "native_seconds": {
+          "samples": 32,
+          "mean": 0.64874009375,
+          "maximum": 1.681914
+        },
+        "consensus_seconds": {
+          "samples": 32,
+          "mean": 0.95197290625,
+          "maximum": 3.255182
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 1,
+          "max_seconds": 0.105055,
+          "total_seconds": 0.228206,
+          "mean_seconds": 0.07606866666666666
+        },
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.065273,
+          "total_seconds": 0.065273,
+          "mean_seconds": 0.065273
+        },
+        "bft-network-check": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.167321,
+          "total_seconds": 0.88886,
+          "mean_seconds": 0.09876222222222222
+        },
+        "bft-network-check-batch": {
+          "calls": 27,
+          "failures": 0,
+          "max_seconds": 0.151436,
+          "total_seconds": 2.497701,
+          "mean_seconds": 0.09250744444444445
+        },
+        "bft-network-inspect-batch": {
+          "calls": 31,
+          "failures": 0,
+          "max_seconds": 0.186605,
+          "total_seconds": 3.902703,
+          "mean_seconds": 0.1258936451612903
+        },
+        "bft-network-pack": {
+          "calls": 8,
+          "failures": 0,
+          "max_seconds": 0.117149,
+          "total_seconds": 0.777615,
+          "mean_seconds": 0.097201875
+        },
+        "bft-quorum": {
+          "calls": 14,
+          "failures": 0,
+          "max_seconds": 0.130069,
+          "total_seconds": 1.028314,
+          "mean_seconds": 0.073451
+        },
+        "bft-sign": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.454289,
+          "total_seconds": 1.951314,
+          "mean_seconds": 0.3902628
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.275549,
+          "total_seconds": 0.275549,
+          "mean_seconds": 0.275549
+        },
+        "bft-timeout-certificate": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.065045,
+          "total_seconds": 0.065045,
+          "mean_seconds": 0.065045
+        },
+        "consensus-tick": {
+          "calls": 56,
+          "failures": 0,
+          "max_seconds": 3.255149,
+          "total_seconds": 51.931217,
+          "mean_seconds": 0.9273431607142857
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.232396,
+          "total_seconds": 0.232396,
+          "mean_seconds": 0.232396
+        }
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "status_bytes_sha256": "fc43f00b2c61e6850eca975de8d8815544f9d56e6e6d418a67b7238abfad788c",
+      "process_id": 62923,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.221,
+      "cached_height": 12,
+      "cached_round": 1,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 315,
+      "dropped_events": 187,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 36,
+      "stages": {
+        "duration_seconds": {
+          "samples": 36,
+          "mean": 1.6242946388888888,
+          "maximum": 3.227461
+        },
+        "mesh_seconds": {
+          "samples": 36,
+          "mean": 0.3468231666666666,
+          "maximum": 0.626238
+        },
+        "native_seconds": {
+          "samples": 36,
+          "mean": 0.5194176944444444,
+          "maximum": 1.250338
+        },
+        "consensus_seconds": {
+          "samples": 36,
+          "mean": 0.7534529999999999,
+          "maximum": 2.334442
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.048529,
+          "total_seconds": 0.048529,
+          "mean_seconds": 0.048529
+        },
+        "bft-network-check": {
+          "calls": 6,
+          "failures": 0,
+          "max_seconds": 0.104273,
+          "total_seconds": 0.554792,
+          "mean_seconds": 0.09246533333333333
+        },
+        "bft-network-check-batch": {
+          "calls": 27,
+          "failures": 0,
+          "max_seconds": 0.148492,
+          "total_seconds": 2.559045,
+          "mean_seconds": 0.09477944444444443
+        },
+        "bft-network-inspect-batch": {
+          "calls": 30,
+          "failures": 0,
+          "max_seconds": 0.253625,
+          "total_seconds": 3.781518,
+          "mean_seconds": 0.1260506
+        },
+        "bft-network-pack": {
+          "calls": 6,
+          "failures": 0,
+          "max_seconds": 0.107588,
+          "total_seconds": 0.58753,
+          "mean_seconds": 0.09792166666666667
+        },
+        "bft-quorum": {
+          "calls": 6,
+          "failures": 0,
+          "max_seconds": 0.079417,
+          "total_seconds": 0.370753,
+          "mean_seconds": 0.06179216666666667
+        },
+        "bft-sign": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.411588,
+          "total_seconds": 1.001901,
+          "mean_seconds": 0.33396699999999996
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.423674,
+          "total_seconds": 0.423674,
+          "mean_seconds": 0.423674
+        },
+        "bft-timeout-certificate": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.082165,
+          "total_seconds": 0.132525,
+          "mean_seconds": 0.0662625
+        },
+        "consensus-tick": {
+          "calls": 59,
+          "failures": 0,
+          "max_seconds": 2.334405,
+          "total_seconds": 45.425113,
+          "mean_seconds": 0.7699171694915254
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.217243,
+          "total_seconds": 0.217243,
+          "mean_seconds": 0.217243
+        }
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "status_bytes_sha256": "c49ddc7c1d547afc0622a576561782482d7eb7a630b898f38561ee9f40a48688",
+      "process_id": 63027,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.083,
+      "cached_height": 12,
+      "cached_round": 1,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 316,
+      "dropped_events": 188,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 35,
+      "stages": {
+        "duration_seconds": {
+          "samples": 35,
+          "mean": 1.5699450285714285,
+          "maximum": 2.962356
+        },
+        "mesh_seconds": {
+          "samples": 35,
+          "mean": 0.3321872857142857,
+          "maximum": 0.651176
+        },
+        "native_seconds": {
+          "samples": 35,
+          "mean": 0.5397216285714285,
+          "maximum": 1.271644
+        },
+        "consensus_seconds": {
+          "samples": 35,
+          "mean": 0.6963366,
+          "maximum": 2.262176
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 2,
+          "failures": 1,
+          "max_seconds": 0.056108,
+          "total_seconds": 0.11181,
+          "mean_seconds": 0.055905
+        },
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.063354,
+          "total_seconds": 0.063354,
+          "mean_seconds": 0.063354
+        },
+        "bft-network-check": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.110103,
+          "total_seconds": 0.674465,
+          "mean_seconds": 0.09635214285714286
+        },
+        "bft-network-check-batch": {
+          "calls": 27,
+          "failures": 0,
+          "max_seconds": 0.147125,
+          "total_seconds": 2.504645,
+          "mean_seconds": 0.09276462962962963
+        },
+        "bft-network-inspect-batch": {
+          "calls": 30,
+          "failures": 0,
+          "max_seconds": 0.165299,
+          "total_seconds": 3.518016,
+          "mean_seconds": 0.11726719999999999
+        },
+        "bft-network-pack": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.130148,
+          "total_seconds": 0.724764,
+          "mean_seconds": 0.10353771428571427
+        },
+        "bft-quorum": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.05152,
+          "total_seconds": 0.192205,
+          "mean_seconds": 0.04805125
+        },
+        "bft-sign": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.376388,
+          "total_seconds": 1.173822,
+          "mean_seconds": 0.2934555
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.327714,
+          "total_seconds": 0.590844,
+          "mean_seconds": 0.295422
+        },
+        "consensus-tick": {
+          "calls": 58,
+          "failures": 0,
+          "max_seconds": 2.487212,
+          "total_seconds": 42.829324,
+          "mean_seconds": 0.7384366206896552
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.28601,
+          "total_seconds": 0.28601,
+          "mean_seconds": 0.28601
+        }
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "status_bytes_sha256": "e65dbe7f28cf8aa44b13e9bc4b0104beb7ebd62fe9bf67e403553e59124bfd76",
+      "process_id": 63167,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 0.323,
+      "cached_height": 7,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 482,
+      "dropped_events": 354,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 24,
+      "stages": {
+        "duration_seconds": {
+          "samples": 24,
+          "mean": 1.2220176666666667,
+          "maximum": 2.514432
+        },
+        "mesh_seconds": {
+          "samples": 24,
+          "mean": 0.24859383333333332,
+          "maximum": 0.42449
+        },
+        "native_seconds": {
+          "samples": 24,
+          "mean": 0.488709875,
+          "maximum": 0.965075
+        },
+        "consensus_seconds": {
+          "samples": 24,
+          "mean": 0.4798992083333333,
+          "maximum": 1.484625
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 2,
+          "failures": 1,
+          "max_seconds": 0.025846,
+          "total_seconds": 0.050651,
+          "mean_seconds": 0.0253255
+        },
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.045081,
+          "total_seconds": 0.045081,
+          "mean_seconds": 0.045081
+        },
+        "bft-network-check": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.124988,
+          "total_seconds": 0.865163,
+          "mean_seconds": 0.07865118181818181
+        },
+        "bft-network-check-batch": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.090307,
+          "total_seconds": 0.914787,
+          "mean_seconds": 0.08316245454545455
+        },
+        "bft-network-inspect-batch": {
+          "calls": 34,
+          "failures": 0,
+          "max_seconds": 0.180787,
+          "total_seconds": 3.521698,
+          "mean_seconds": 0.10357935294117648
+        },
+        "bft-network-pack": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.117542,
+          "total_seconds": 0.823573,
+          "mean_seconds": 0.07487027272727273
+        },
+        "bft-quorum": {
+          "calls": 38,
+          "failures": 0,
+          "max_seconds": 0.110332,
+          "total_seconds": 2.157349,
+          "mean_seconds": 0.056772342105263156
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.157717,
+          "total_seconds": 1.090865,
+          "mean_seconds": 0.12120722222222222
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.316383,
+          "total_seconds": 0.741586,
+          "mean_seconds": 0.24719533333333332
+        },
+        "consensus-tick": {
+          "calls": 80,
+          "failures": 0,
+          "max_seconds": 1.48456,
+          "total_seconds": 32.537915,
+          "mean_seconds": 0.40672393749999997
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.177079,
+          "total_seconds": 0.177079,
+          "mean_seconds": 0.177079
+        }
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "status_bytes_sha256": "80f58a78c49b3eb7f46d9d52b1f9e7e025a8403be152a1d461dd71689096841b",
+      "process_id": 63265,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 0.309,
+      "cached_height": 7,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 423,
+      "dropped_events": 295,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 24,
+      "stages": {
+        "duration_seconds": {
+          "samples": 24,
+          "mean": 1.4540952083333334,
+          "maximum": 2.579384
+        },
+        "mesh_seconds": {
+          "samples": 24,
+          "mean": 0.33104425,
+          "maximum": 0.614303
+        },
+        "native_seconds": {
+          "samples": 24,
+          "mean": 0.528870375,
+          "maximum": 1.003872
+        },
+        "consensus_seconds": {
+          "samples": 24,
+          "mean": 0.5847232916666667,
+          "maximum": 1.361453
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 1,
+          "max_seconds": 0.066226,
+          "total_seconds": 0.177498,
+          "mean_seconds": 0.059165999999999996
+        },
+        "bft-certify": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.051194,
+          "total_seconds": 0.08854,
+          "mean_seconds": 0.04427
+        },
+        "bft-network-check": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.118422,
+          "total_seconds": 1.00722,
+          "mean_seconds": 0.07747846153846154
+        },
+        "bft-network-check-batch": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.110694,
+          "total_seconds": 0.986081,
+          "mean_seconds": 0.08964372727272728
+        },
+        "bft-network-inspect-batch": {
+          "calls": 33,
+          "failures": 0,
+          "max_seconds": 0.160577,
+          "total_seconds": 3.305093,
+          "mean_seconds": 0.10015433333333333
+        },
+        "bft-network-pack": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.119506,
+          "total_seconds": 0.894928,
+          "mean_seconds": 0.07457733333333333
+        },
+        "bft-quorum": {
+          "calls": 48,
+          "failures": 0,
+          "max_seconds": 0.095929,
+          "total_seconds": 2.44046,
+          "mean_seconds": 0.05084291666666666
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.184927,
+          "total_seconds": 1.226141,
+          "mean_seconds": 0.13623788888888888
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.265762,
+          "total_seconds": 0.722699,
+          "mean_seconds": 0.24089966666666665
+        },
+        "consensus-tick": {
+          "calls": 67,
+          "failures": 0,
+          "max_seconds": 1.392325,
+          "total_seconds": 34.28579,
+          "mean_seconds": 0.5117282089552239
+        },
+        "finalize": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.22038,
+          "total_seconds": 0.399184,
+          "mean_seconds": 0.199592
+        }
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "status_bytes_sha256": "c4f15026a1b458187c53aafb313224ed588c375313e5797b409a2d75c0cfa66f",
+      "process_id": 63431,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.338,
+      "cached_height": 7,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 443,
+      "dropped_events": 315,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 22,
+      "stages": {
+        "duration_seconds": {
+          "samples": 22,
+          "mean": 1.330813090909091,
+          "maximum": 2.383901
+        },
+        "mesh_seconds": {
+          "samples": 22,
+          "mean": 0.2904043636363636,
+          "maximum": 0.471771
+        },
+        "native_seconds": {
+          "samples": 22,
+          "mean": 0.5023858636363636,
+          "maximum": 0.920364
+        },
+        "consensus_seconds": {
+          "samples": 22,
+          "mean": 0.5358321363636364,
+          "maximum": 1.351862
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 2,
+          "max_seconds": 0.104423,
+          "total_seconds": 0.227485,
+          "mean_seconds": 0.07582833333333333
+        },
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.065712,
+          "total_seconds": 0.17211,
+          "mean_seconds": 0.057370000000000004
+        },
+        "bft-network-check": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.112311,
+          "total_seconds": 1.014608,
+          "mean_seconds": 0.07804676923076923
+        },
+        "bft-network-check-batch": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.089687,
+          "total_seconds": 0.920194,
+          "mean_seconds": 0.08365399999999999
+        },
+        "bft-network-inspect-batch": {
+          "calls": 36,
+          "failures": 0,
+          "max_seconds": 0.173221,
+          "total_seconds": 3.61981,
+          "mean_seconds": 0.10055027777777778
+        },
+        "bft-network-pack": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.103814,
+          "total_seconds": 0.999351,
+          "mean_seconds": 0.07687315384615384
+        },
+        "bft-quorum": {
+          "calls": 40,
+          "failures": 0,
+          "max_seconds": 0.09206,
+          "total_seconds": 2.0717,
+          "mean_seconds": 0.0517925
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.196407,
+          "total_seconds": 1.158512,
+          "mean_seconds": 0.12872355555555556
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.263288,
+          "total_seconds": 0.567534,
+          "mean_seconds": 0.18917799999999999
+        },
+        "consensus-tick": {
+          "calls": 68,
+          "failures": 0,
+          "max_seconds": 1.374214,
+          "total_seconds": 32.960506,
+          "mean_seconds": 0.4847133235294118
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.257284,
+          "total_seconds": 0.656039,
+          "mean_seconds": 0.2186796666666667
+        }
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "status_bytes_sha256": "9fcc9a116f8dcb7509111938af249f74d320a13ee9a0d74d6eb5fe73687c8d23",
+      "process_id": 63542,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.157,
+      "cached_height": 7,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 451,
+      "dropped_events": 323,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 21,
+      "stages": {
+        "duration_seconds": {
+          "samples": 21,
+          "mean": 1.1968305714285716,
+          "maximum": 2.694401
+        },
+        "mesh_seconds": {
+          "samples": 21,
+          "mean": 0.2504879047619048,
+          "maximum": 0.539514
+        },
+        "native_seconds": {
+          "samples": 21,
+          "mean": 0.44409938095238094,
+          "maximum": 0.70117
+        },
+        "consensus_seconds": {
+          "samples": 21,
+          "mean": 0.4968047142857143,
+          "maximum": 1.484127
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 2,
+          "max_seconds": 0.075793,
+          "total_seconds": 0.207135,
+          "mean_seconds": 0.06904500000000001
+        },
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.045202,
+          "total_seconds": 0.121176,
+          "mean_seconds": 0.040392000000000004
+        },
+        "bft-network-check": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.108858,
+          "total_seconds": 0.968703,
+          "mean_seconds": 0.07451561538461539
+        },
+        "bft-network-check-batch": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.13735,
+          "total_seconds": 1.047678,
+          "mean_seconds": 0.09524345454545456
+        },
+        "bft-network-inspect-batch": {
+          "calls": 34,
+          "failures": 0,
+          "max_seconds": 0.201354,
+          "total_seconds": 3.334319,
+          "mean_seconds": 0.09806820588235293
+        },
+        "bft-network-pack": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.109211,
+          "total_seconds": 1.114564,
+          "mean_seconds": 0.08573569230769232
+        },
+        "bft-quorum": {
+          "calls": 54,
+          "failures": 0,
+          "max_seconds": 0.076595,
+          "total_seconds": 2.698691,
+          "mean_seconds": 0.04997575925925926
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.164098,
+          "total_seconds": 1.102836,
+          "mean_seconds": 0.12253733333333333
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.274177,
+          "total_seconds": 0.645869,
+          "mean_seconds": 0.21528966666666668
+        },
+        "consensus-tick": {
+          "calls": 71,
+          "failures": 0,
+          "max_seconds": 1.484062,
+          "total_seconds": 31.908818,
+          "mean_seconds": 0.4494199718309859
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.196551,
+          "total_seconds": 0.549765,
+          "mean_seconds": 0.18325499999999997
+        }
+      }
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "status_bytes_sha256": "70271621847143a471118becdc7eaf8bbd13df632bf1715a06a028ac7fa70378",
+      "process_id": 63684,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 0.924,
+      "cached_height": 6,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 381,
+      "dropped_events": 253,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 26,
+      "stages": {
+        "duration_seconds": {
+          "samples": 26,
+          "mean": 1.3333792692307693,
+          "maximum": 2.514619
+        },
+        "mesh_seconds": {
+          "samples": 26,
+          "mean": 0.29787007692307693,
+          "maximum": 0.461497
+        },
+        "native_seconds": {
+          "samples": 26,
+          "mean": 0.5046772692307692,
+          "maximum": 0.824894
+        },
+        "consensus_seconds": {
+          "samples": 26,
+          "mean": 0.5268627307692307,
+          "maximum": 1.516154
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 2,
+          "failures": 1,
+          "max_seconds": 0.045604,
+          "total_seconds": 0.09086,
+          "mean_seconds": 0.04543
+        },
+        "bft-certify": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.051115,
+          "total_seconds": 0.093794,
+          "mean_seconds": 0.046897
+        },
+        "bft-network-check": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.136321,
+          "total_seconds": 1.017304,
+          "mean_seconds": 0.1017304
+        },
+        "bft-network-check-batch": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.147556,
+          "total_seconds": 1.586492,
+          "mean_seconds": 0.13220766666666667
+        },
+        "bft-network-inspect-batch": {
+          "calls": 25,
+          "failures": 0,
+          "max_seconds": 0.210652,
+          "total_seconds": 3.432293,
+          "mean_seconds": 0.13729172
+        },
+        "bft-network-pack": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.111139,
+          "total_seconds": 0.908753,
+          "mean_seconds": 0.0908753
+        },
+        "bft-quorum": {
+          "calls": 18,
+          "failures": 0,
+          "max_seconds": 0.108648,
+          "total_seconds": 1.186712,
+          "mean_seconds": 0.06592844444444444
+        },
+        "bft-sign": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.166381,
+          "total_seconds": 0.959522,
+          "mean_seconds": 0.13707457142857143
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.198689,
+          "total_seconds": 0.369111,
+          "mean_seconds": 0.1845555
+        },
+        "consensus-tick": {
+          "calls": 60,
+          "failures": 0,
+          "max_seconds": 1.546441,
+          "total_seconds": 30.270745,
+          "mean_seconds": 0.5045124166666667
+        },
+        "finalize": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.2657,
+          "total_seconds": 0.411058,
+          "mean_seconds": 0.205529
+        }
+      }
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "status_bytes_sha256": "370060f79667b93b2f63b9764cf59440ca7947f04bf518f412dce7941092de1e",
+      "process_id": 63919,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.709,
+      "cached_height": 6,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 366,
+      "dropped_events": 238,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 25,
+      "stages": {
+        "duration_seconds": {
+          "samples": 25,
+          "mean": 1.3442202,
+          "maximum": 2.725838
+        },
+        "mesh_seconds": {
+          "samples": 25,
+          "mean": 0.288611,
+          "maximum": 0.494307
+        },
+        "native_seconds": {
+          "samples": 25,
+          "mean": 0.50428084,
+          "maximum": 0.934192
+        },
+        "consensus_seconds": {
+          "samples": 25,
+          "mean": 0.5454502800000001,
+          "maximum": 1.620355
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 1,
+          "max_seconds": 0.06513,
+          "total_seconds": 0.190847,
+          "mean_seconds": 0.06361566666666667
+        },
+        "bft-certify": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.051844,
+          "total_seconds": 0.101916,
+          "mean_seconds": 0.050958
+        },
+        "bft-network-check": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.112863,
+          "total_seconds": 1.003352,
+          "mean_seconds": 0.09121381818181819
+        },
+        "bft-network-check-batch": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.16445,
+          "total_seconds": 1.709265,
+          "mean_seconds": 0.14243875
+        },
+        "bft-network-inspect-batch": {
+          "calls": 27,
+          "failures": 0,
+          "max_seconds": 0.187177,
+          "total_seconds": 3.266104,
+          "mean_seconds": 0.1209668148148148
+        },
+        "bft-network-pack": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.130169,
+          "total_seconds": 1.000021,
+          "mean_seconds": 0.10000210000000001
+        },
+        "bft-quorum": {
+          "calls": 22,
+          "failures": 0,
+          "max_seconds": 0.087298,
+          "total_seconds": 1.210707,
+          "mean_seconds": 0.05503213636363636
+        },
+        "bft-sign": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.15289,
+          "total_seconds": 0.892826,
+          "mean_seconds": 0.12754657142857143
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.347354,
+          "total_seconds": 0.580641,
+          "mean_seconds": 0.2903205
+        },
+        "consensus-tick": {
+          "calls": 56,
+          "failures": 0,
+          "max_seconds": 1.620317,
+          "total_seconds": 28.416894,
+          "mean_seconds": 0.5074445357142857
+        },
+        "finalize": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.179543,
+          "total_seconds": 0.354969,
+          "mean_seconds": 0.1774845
+        }
+      }
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "status_bytes_sha256": "064f1c9b6e970488360d6a9ef4dee95c54e6ac3c0e1d8bdaa5892ea7b147c525",
+      "process_id": 64254,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 2.615,
+      "cached_height": 6,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 279,
+      "dropped_events": 151,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 29,
+      "stages": {
+        "duration_seconds": {
+          "samples": 29,
+          "mean": 1.3315336896551724,
+          "maximum": 2.440487
+        },
+        "mesh_seconds": {
+          "samples": 29,
+          "mean": 0.32030193103448273,
+          "maximum": 0.606428
+        },
+        "native_seconds": {
+          "samples": 29,
+          "mean": 0.5426014137931034,
+          "maximum": 1.185864
+        },
+        "consensus_seconds": {
+          "samples": 29,
+          "mean": 0.4648253448275862,
+          "maximum": 1.291481
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 2,
+          "max_seconds": 0.062849,
+          "total_seconds": 0.173275,
+          "mean_seconds": 0.057758333333333335
+        },
+        "bft-network-check": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.0998,
+          "total_seconds": 0.423915,
+          "mean_seconds": 0.084783
+        },
+        "bft-network-check-batch": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.147926,
+          "total_seconds": 1.572836,
+          "mean_seconds": 0.13106966666666667
+        },
+        "bft-network-inspect-batch": {
+          "calls": 26,
+          "failures": 0,
+          "max_seconds": 0.241494,
+          "total_seconds": 3.501702,
+          "mean_seconds": 0.13468084615384615
+        },
+        "bft-network-pack": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.112819,
+          "total_seconds": 0.464294,
+          "mean_seconds": 0.09285879999999999
+        },
+        "bft-quorum": {
+          "calls": 18,
+          "failures": 0,
+          "max_seconds": 0.076331,
+          "total_seconds": 0.939649,
+          "mean_seconds": 0.05220272222222222
+        },
+        "bft-sign": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.176751,
+          "total_seconds": 0.472157,
+          "mean_seconds": 0.11803925
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.371017,
+          "total_seconds": 0.714997,
+          "mean_seconds": 0.3574985
+        },
+        "consensus-tick": {
+          "calls": 52,
+          "failures": 0,
+          "max_seconds": 1.291409,
+          "total_seconds": 24.334443,
+          "mean_seconds": 0.4679700576923077
+        }
+      }
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "status_bytes_sha256": "10554bfd555ccaab0022d5e6876316758f0341f35c18fadeb9cd5442ef8506ec",
+      "process_id": 64520,
+      "actual_live_command_matches": true,
+      "status_age_seconds": 1.521,
+      "cached_height": 6,
+      "cached_round": 0,
+      "cached_progress_explicitly_unknown": false,
+      "sequence": 312,
+      "dropped_events": 184,
+      "rejected_events": 0,
+      "contact_ticks_in_retained_ring": 25,
+      "stages": {
+        "duration_seconds": {
+          "samples": 25,
+          "mean": 1.22005476,
+          "maximum": 2.154824
+        },
+        "mesh_seconds": {
+          "samples": 25,
+          "mean": 0.27128008000000003,
+          "maximum": 0.464585
+        },
+        "native_seconds": {
+          "samples": 25,
+          "mean": 0.4910356,
+          "maximum": 0.783868
+        },
+        "consensus_seconds": {
+          "samples": 25,
+          "mean": 0.4524904,
+          "maximum": 1.282585
+        }
+      },
+      "recorded_operation_totals_since_this_process_started": {
+        "bft-certify": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.085581,
+          "total_seconds": 0.146296,
+          "mean_seconds": 0.073148
+        },
+        "bft-network-check": {
+          "calls": 8,
+          "failures": 0,
+          "max_seconds": 0.110782,
+          "total_seconds": 0.774095,
+          "mean_seconds": 0.096761875
+        },
+        "bft-network-check-batch": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.161203,
+          "total_seconds": 1.654632,
+          "mean_seconds": 0.137886
+        },
+        "bft-network-inspect-batch": {
+          "calls": 22,
+          "failures": 0,
+          "max_seconds": 0.214557,
+          "total_seconds": 3.059123,
+          "mean_seconds": 0.13905104545454547
+        },
+        "bft-network-pack": {
+          "calls": 8,
+          "failures": 0,
+          "max_seconds": 0.121686,
+          "total_seconds": 0.753006,
+          "mean_seconds": 0.09412575
+        },
+        "bft-quorum": {
+          "calls": 44,
+          "failures": 0,
+          "max_seconds": 0.103417,
+          "total_seconds": 2.569956,
+          "mean_seconds": 0.05840809090909091
+        },
+        "bft-sign": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.234162,
+          "total_seconds": 0.787636,
+          "mean_seconds": 0.1575272
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.259144,
+          "total_seconds": 0.441462,
+          "mean_seconds": 0.220731
+        },
+        "consensus-tick": {
+          "calls": 52,
+          "failures": 0,
+          "max_seconds": 1.507673,
+          "total_seconds": 25.018411,
+          "mean_seconds": 0.48112328846153846
+        },
+        "finalize": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.203382,
+          "total_seconds": 0.346512,
+          "mean_seconds": 0.173256
+        }
+      }
+    }
+  ],
+  "only_existing_bounded_telemetry_read": true,
+  "operation_totals_include_aggregate_consensus_tick_and_selected_native_calls": true,
+  "not_all_native_calls_instrumented": true,
+  "no_native_calls": true,
+  "no_runtime_startup": true,
+  "no_packet_or_private_identity_read": true,
+  "no_control_signing_recovery_or_head_adoption": true,
+  "report_is_not_native_authority": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "ring_eviction_and_different_process_start_times_preclude_full_history_causality": true,
+  "unique_fault_cause_established": false,
+  "fresh_full_fault_profile_completed": false
+}

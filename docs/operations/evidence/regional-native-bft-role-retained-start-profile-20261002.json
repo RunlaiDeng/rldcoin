@@ -1,0 +1,26 @@
+{
+  "format": "RLD-ROLE-RETAINED-START-READONLY-PROFILE-V1",
+  "runtime_source_set_sha256": "2af3ea73509a666f40b3889de12ecfbe06e86d757307cc449f12ec9f5268e1fb",
+  "binary_sha256": "1e0abd62221fdd51b03f24c4097e716e5f5e37a3b64c5ddc8a7f7dacea647209",
+  "failed_run_report_sha256": "50d3f5f21418cca62af66b2365b9b09b2440cb7c4491539f3510fba851b9a580",
+  "profiler_sha256": "4e4c6d5ff721f68a94a50af078ba8be5d5b2f41e2f06d0c2ef05dfb9c8edaaf9",
+  "profiles": [
+    {
+      "retained_responses": 12,
+      "duration_seconds": 3.37
+    },
+    {
+      "retained_responses": 9,
+      "duration_seconds": 2.551
+    }
+  ],
+  "total_retained_responses": 21,
+  "total_seconds": 6.223,
+  "full_native_envelope_pack_and_check": true,
+  "all_private_files_unchanged": true,
+  "processes_not_restarted": true,
+  "full_runtime_startup_measured": false,
+  "completed_campaign": false,
+  "fixture_only": true,
+  "live_rld": false
+}

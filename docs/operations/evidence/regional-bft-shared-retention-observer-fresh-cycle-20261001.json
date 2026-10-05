@@ -1,0 +1,627 @@
+{
+  "format": "RLD-REGIONAL-BFT-MULTIREGION-GROUND-CAMPAIGN-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+  "implementation": "d268bd83be7f87afa2db26603ae4597d711aa85eaaf265bccdce8d1426b2e971",
+  "regions": 3,
+  "native_replicas_per_region": 4,
+  "ordinary_native_startup_used": true,
+  "configured_topology": "local 0--1--2--3; adjacent gateway Earth-1--Proxima-1--Andromeda-1",
+  "all_nodes_discovered_three_regions": true,
+  "controller_generated_consensus_messages": 0,
+  "controller_carried_payment_proofs": 0,
+  "controller_installed_checkpoints": 0,
+  "remote_execution_earth_calls": 0,
+  "every_earth_node_stopped_during_onward_and_return_exports": true,
+  "genesis_signing_pause_preserved_relay": true,
+  "external_heads_retained_during_restarts": true,
+  "transport_receipt_did_not_credit": true,
+  "queued_owner_submissions_did_not_debit": true,
+  "original_export_carriage_stable_after_unrelated_growth": true,
+  "return_uses_new_export_and_import": true,
+  "initial_debit_never_released": true,
+  "actual_two_hop_return_carriage": true,
+  "mesh_format": "RLD-CONTACT-MESH-V3",
+  "socket_adapter": "RLD-CONTACT-TCP-V4",
+  "TLS_1_3_and_pinned_configured_neighbors": true,
+  "first_recipient": {
+    "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+    "expected": {
+      "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+      "source": "41c43ea8613ac6a3d5e8e0da2596a3be6d76d576e0e71d75a45eafd1370b90c7",
+      "destination": "26612a4dc31e940b96c99b875662dfdfd530813d958aa1a056f25544ce5ffbb7",
+      "export": "0223f7970b4caf541c897c62b2a77b1bd9efd1a168f2652467e761d0564b465f",
+      "recipient": "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a",
+      "net_amount": "96"
+    },
+    "pin": {
+      "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+      "region": "26612a4dc31e940b96c99b875662dfdfd530813d958aa1a056f25544ce5ffbb7",
+      "height": 3,
+      "tip": "0048c6c1d0f39c82cd18e47eeecc8471416d36af1ad847acfae38ccf4f413e99",
+      "state": "1506437cca8ef7c8d90b705e070f28712ffb32896ad2a8a6e256c79099d0471f",
+      "epoch": "6c0c2c7661d8ed1add9322c506a0d231477eb305f7279104c61d64df07776027",
+      "finality": "4d9e4fd3106d84328f97006ea76c62fe949c29855d13e21f07914a6037ffcf6d",
+      "local_journal_and_incidents": "d3efda7980b36520be3516c979108d0f681ee04d5537eae3d2a6c5ca14b61c92"
+    },
+    "verified_source_checkpoint": "0ae402de64234a0e3b8b722e8902562697ca8aadada6534e85776b0ead97ad7c",
+    "evidence_verified": true,
+    "import_accepted": true,
+    "import_height": 1,
+    "mature_height": 3,
+    "maturity_reached": true,
+    "original_output_remaining": "96",
+    "original_output_spendable_now": true,
+    "local_finality_covers_import": true,
+    "quarantined": false,
+    "state": "ORIGINAL_OUTPUT_SPENDABLE",
+    "transport_receipt_checked": false,
+    "remote_current_state_known": false,
+    "live_rld": false
+  },
+  "onward_recipient": {
+    "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+    "expected": {
+      "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+      "source": "26612a4dc31e940b96c99b875662dfdfd530813d958aa1a056f25544ce5ffbb7",
+      "destination": "32c045c81561a68ae9a2f925f17ddc9d82a7342bcbd29ac408bc203079b82454",
+      "export": "db399c870052687d65766a401795854076e47657c11e90bac571c30e435260fe",
+      "recipient": "0b513ad9b4924015ca0902ed079044d3ac5dbec2306f06948c10da8eb6e39f2d",
+      "net_amount": "91"
+    },
+    "pin": {
+      "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+      "region": "32c045c81561a68ae9a2f925f17ddc9d82a7342bcbd29ac408bc203079b82454",
+      "height": 3,
+      "tip": "00cdd63ed27eb8eefddd93ebc8c7ef32f22a8af1e5e25911af66c49f5fa94246",
+      "state": "3e900f6a1ffb81207371471d0b0e55a90d943b2849bca604a3143e105b9ae7c2",
+      "epoch": "a53d4cd2273beb72a247411950e54cce5b778aa15717ad0ea9778dea3ae56965",
+      "finality": "4b1152bd8fdf3e3fd8b78f8077a9ce75c07e590c632d790b26684a47bf84d6c2",
+      "local_journal_and_incidents": "217cc3c936bf84f887ceb73bd99d61194ed0614028052191f2429166f9580b28"
+    },
+    "verified_source_checkpoint": "bf7c8c3c7aa6d617dea655302e92f0b9900270a278c831a95ab4973c8c312328",
+    "evidence_verified": true,
+    "import_accepted": true,
+    "import_height": 1,
+    "mature_height": 3,
+    "maturity_reached": true,
+    "original_output_remaining": "91",
+    "original_output_spendable_now": true,
+    "local_finality_covers_import": true,
+    "quarantined": false,
+    "state": "ORIGINAL_OUTPUT_SPENDABLE",
+    "transport_receipt_checked": false,
+    "remote_current_state_known": false,
+    "live_rld": false
+  },
+  "return_recipient": {
+    "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+    "expected": {
+      "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+      "source": "32c045c81561a68ae9a2f925f17ddc9d82a7342bcbd29ac408bc203079b82454",
+      "destination": "41c43ea8613ac6a3d5e8e0da2596a3be6d76d576e0e71d75a45eafd1370b90c7",
+      "export": "364ea8ed3b335e2455c72f2f67481faefe8af5fe384be8dd5eadd8cfe8f4f452",
+      "recipient": "91a28a0b74381593a4d9469579208926afc8ad82c8839b7644359b9eba9a4b3a",
+      "net_amount": "86"
+    },
+    "pin": {
+      "currency": "2371ca0161dc86cd93893f66ecbd53205e0f9cafc794a8b93099093e6152dff5",
+      "region": "41c43ea8613ac6a3d5e8e0da2596a3be6d76d576e0e71d75a45eafd1370b90c7",
+      "height": 7,
+      "tip": "00fee2669e4364bde6aff383b29073947f6ea9e54613d9628867038996bdc77b",
+      "state": "92389e22fa08320c9e41362c5a8dab4832963507385897e393f931a0ec1d9e8a",
+      "epoch": "be2e848efb1fd9e34a1d042b182fcd056ac4e70303fa3e0072aea0e4074021ac",
+      "finality": "716eac693f4afb42dac30e8aecb941a77615eb400506086f138e2d160328d7ce",
+      "local_journal_and_incidents": "7fe83587598efb0dcfa999c595a984f3b68eefdeb0713d4e8c2e2b8de2a37f05"
+    },
+    "verified_source_checkpoint": "9dc257f29eb49ebcceb70295e57b6058da0d80d1928f40518b9514eaeafb0c27",
+    "evidence_verified": true,
+    "import_accepted": true,
+    "import_height": 5,
+    "mature_height": 7,
+    "maturity_reached": true,
+    "original_output_remaining": "86",
+    "original_output_spendable_now": true,
+    "local_finality_covers_import": true,
+    "quarantined": false,
+    "state": "ORIGINAL_OUTPUT_SPENDABLE",
+    "transport_receipt_checked": false,
+    "remote_current_state_known": false,
+    "live_rld": false
+  },
+  "replica_heights": {
+    "earth": [
+      7,
+      7,
+      7,
+      7
+    ],
+    "proxima": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "andromeda": [
+      4,
+      4,
+      4,
+      4
+    ]
+  },
+  "conservation_checks": [
+    {
+      "phase": "three regions discovered; only Earth has issued fixture value",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "earth: autonomous certified height 4",
+      "issued": "300",
+      "liquid": "202",
+      "pending_exports": "98",
+      "conserved": true
+    },
+    {
+      "phase": "proxima: proof received before local import",
+      "issued": "300",
+      "liquid": "202",
+      "pending_exports": "98",
+      "conserved": true
+    },
+    {
+      "phase": "proxima: autonomous certified height 1",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "proxima: autonomous certified height 3",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "proxima: autonomous certified height 4",
+      "issued": "300",
+      "liquid": "207",
+      "pending_exports": "93",
+      "conserved": true
+    },
+    {
+      "phase": "andromeda: proof received before local import",
+      "issued": "300",
+      "liquid": "207",
+      "pending_exports": "93",
+      "conserved": true
+    },
+    {
+      "phase": "andromeda: autonomous certified height 1",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "andromeda: autonomous certified height 3",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "andromeda: autonomous certified height 4",
+      "issued": "300",
+      "liquid": "212",
+      "pending_exports": "88",
+      "conserved": true
+    },
+    {
+      "phase": "return deducted at Andromeda; Earth offline, no timeout refund",
+      "issued": "300",
+      "liquid": "212",
+      "pending_exports": "88",
+      "conserved": true
+    },
+    {
+      "phase": "earth: proof received before local import",
+      "issued": "300",
+      "liquid": "212",
+      "pending_exports": "88",
+      "conserved": true
+    },
+    {
+      "phase": "earth: autonomous certified height 5",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "earth: autonomous certified height 7",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    },
+    {
+      "phase": "complete new export/import cycle; returned value mature and initial debit retained",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "conserved": true
+    }
+  ],
+  "observed_ground_phases": [
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 0.211,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 0.205,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 0.211,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 0.211,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 0.418,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 0.417,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 0.413,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 0.417,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 0.205,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 0.412,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 0.418,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 0.413,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "Earth issuance matures under autonomous local BFT",
+      "elapsed_seconds": 11.387,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "all twelve nodes discover three regions through adjacent contacts",
+      "elapsed_seconds": 0.003,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "earth actual signed command reaches all four validators",
+      "elapsed_seconds": 2.008,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 1.442,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 2.064,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 2.083,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 1.659,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "earth autonomous certified height 4",
+      "elapsed_seconds": 10.352,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "Proxima keeps first proof while every Earth process stops",
+      "elapsed_seconds": 3.526,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "proxima authenticated evidence pending without ledger credit",
+      "elapsed_seconds": 0.001,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 0.414,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 0.625,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 0.409,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 0.419,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "proxima autonomous certified height 1",
+      "elapsed_seconds": 4.357,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 1.045,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 1.465,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 1.459,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 1.442,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "proxima autonomous certified height 3",
+      "elapsed_seconds": 15.308,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "proxima actual signed command reaches all four validators",
+      "elapsed_seconds": 5.028,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 2.07,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 3.108,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 2.694,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 2.261,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "proxima autonomous certified height 4",
+      "elapsed_seconds": 18.199,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "andromeda authenticated evidence pending without ledger credit",
+      "elapsed_seconds": 2.692,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 0.412,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 1.045,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 0.835,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 1.031,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "andromeda autonomous certified height 1",
+      "elapsed_seconds": 5.586,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 1.454,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 2.284,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 1.866,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 1.867,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "andromeda autonomous certified height 3",
+      "elapsed_seconds": 21.395,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "andromeda actual signed command reaches all four validators",
+      "elapsed_seconds": 3.943,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 3.127,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 4.356,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 3.748,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 3.321,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "andromeda autonomous certified height 4",
+      "elapsed_seconds": 25.534,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "new return export remains queued while Earth is unreachable",
+      "elapsed_seconds": 0.001,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 2.263,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 3.523,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 3.32,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 3.117,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "earth authenticated evidence pending without ledger credit",
+      "elapsed_seconds": 5.413,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 3.117,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 4.795,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 4.376,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 3.738,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "earth autonomous certified height 5",
+      "elapsed_seconds": 29.766,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 4.142,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 6.222,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 5.618,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 4.966,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "earth autonomous certified height 7",
+      "elapsed_seconds": 65.465,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "ground_round_timeout_seconds": 60,
+  "native_cli_calls": 189,
+  "node_process_starts": 52,
+  "same_host_same_controller": true,
+  "independent_operators_qualified": false,
+  "complete_BFT_liveness_qualified": false,
+  "BFT_reconfiguration_implemented": false,
+  "external_monotonic_custody_qualified": false,
+  "long_disconnection_qualified": false,
+  "physical_interstellar_route_qualified": false
+}

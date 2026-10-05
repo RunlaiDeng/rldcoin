@@ -1,0 +1,21 @@
+{
+  "format": "RLD-NATIVE-PREFIX-FROZEN-CHECKS-V1",
+  "source_set_sha256": "47b07d586f58914881c98e32dd7abc93b8cdbfb449b7d6f15538594dd95ecd62",
+  "native_implementation": "d268bd83be7f87afa2db26603ae4597d711aa85eaaf265bccdce8d1426b2e971",
+  "fixture_only": true,
+  "live_rld": false,
+  "checked_release_build_passed": true,
+  "native_tests": 86,
+  "clippy_strict_passed": true,
+  "transport_tests": 84,
+  "process_controller_tests": 34,
+  "binary_sha256": "66073c511660e0100aa3a8c9cce911ea8db1fa6f9a78d6a510e1a22a2786e0f7",
+  "source_unchanged": true,
+  "full_fresh_cycle_completed": true,
+  "full_fault_profile_completed": false,
+  "long_term_history_qualified": false,
+  "full_fresh_cycle_cold_verified": true,
+  "full_fault_profile_terminal_exit_code": 1,
+  "full_fault_profile_failure": "recipient maturity observation deadline; repeated-evidence BFT state capacity observed",
+  "failed_fixture_retained": true
+}

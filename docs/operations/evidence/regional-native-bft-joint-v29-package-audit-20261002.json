@@ -1,0 +1,27 @@
+{
+  "format": "RLD-BFT-JOINT-PACKAGE-AUDIT-V1",
+  "source_set_sha256": "5ce8aa65cc3dd41ca27dab46c83a35b3454c7c5019f7b65c6cd978be257247cc",
+  "native_implementation": "a62625a12ee8039c600513fe3cf7ca40d5930552febc7abc99462937cd01d155",
+  "package_files": 57,
+  "all_checksums_exact": true,
+  "exact_archives": [
+    {
+      "path": "source.tar.gz",
+      "exact_files": 263,
+      "sha256": "b67a28bacf5a673d41c81afa9f80b64548e588d5e451c0a515361cc2fcfc9487"
+    },
+    {
+      "path": "historical/initial-source.tar.gz",
+      "exact_files": 261,
+      "sha256": "820e804eb425a61e16917dda073fe64a7f5f90b5a4811d271cb138bcebb8d19c"
+    },
+    {
+      "path": "historical/focused-refusal-source.tar.gz",
+      "exact_files": 261,
+      "sha256": "b73a5767ef531f0803f63d2b02b652264c8283e083ebd4b8d77d26e018dbe91c"
+    }
+  ],
+  "supplemental_tools_equal_frozen_source": true,
+  "no_private_absolute_paths_or_PEM_blocks": true,
+  "full_fault_profile_run": false
+}

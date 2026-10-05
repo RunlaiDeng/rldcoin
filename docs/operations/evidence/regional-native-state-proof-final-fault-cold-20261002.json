@@ -1,0 +1,359 @@
+{
+  "format": "RLD-SUSTAINED-COLD-VERIFICATION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "same_host_same_controller": true,
+  "run_report_sha256": "c03c4cc65310b39a6db0d1edf75bed0cc4183b36aebe19de5e811a6a731b2423",
+  "source_set_sha256": "f0586e230a2f6f3b3cd13187d214c9c3a0c9acc5aa396ce2036e8ad7e51472ab",
+  "verifier_sha256": "1e17e9cfec66fad96843dd06ff125cc76f2b4eab19b39576b8a61871ee80f73a",
+  "native_implementation": "df0a2c8f1faf93273a9be0212021575879a1f01cc39b0c614ae1031600b4281f",
+  "binary_sha256": "4dd073bf57b64eb2f967505471cd375591168e8d76702a239255064ab26912bb",
+  "native_replays": 12,
+  "replicas": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "height": 13,
+      "tip": "00224e402300e99357707aad3824a1d7ab8f78a721616be6386065b8ef39b023",
+      "native_signer_records": 25,
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "height": 13,
+      "tip": "00224e402300e99357707aad3824a1d7ab8f78a721616be6386065b8ef39b023",
+      "native_signer_records": 30,
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "height": 13,
+      "tip": "00224e402300e99357707aad3824a1d7ab8f78a721616be6386065b8ef39b023",
+      "native_signer_records": 30,
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "height": 13,
+      "tip": "00224e402300e99357707aad3824a1d7ab8f78a721616be6386065b8ef39b023",
+      "native_signer_records": 30,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "height": 13,
+      "tip": "001ebabae6ad1504d70b765b206cf8067773cc2fa0d2dd4ec256241531681c27",
+      "native_signer_records": 30,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "height": 13,
+      "tip": "001ebabae6ad1504d70b765b206cf8067773cc2fa0d2dd4ec256241531681c27",
+      "native_signer_records": 24,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "height": 13,
+      "tip": "001ebabae6ad1504d70b765b206cf8067773cc2fa0d2dd4ec256241531681c27",
+      "native_signer_records": 29,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "height": 13,
+      "tip": "001ebabae6ad1504d70b765b206cf8067773cc2fa0d2dd4ec256241531681c27",
+      "native_signer_records": 29,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "height": 14,
+      "tip": "00cdab9cc205f2b808ffafcc699f796f920fe2b29f8bbc77cfd64b1c7ea34eaf",
+      "native_signer_records": 32,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "height": 14,
+      "tip": "00cdab9cc205f2b808ffafcc699f796f920fe2b29f8bbc77cfd64b1c7ea34eaf",
+      "native_signer_records": 32,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "height": 14,
+      "tip": "00cdab9cc205f2b808ffafcc699f796f920fe2b29f8bbc77cfd64b1c7ea34eaf",
+      "native_signer_records": 29,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "height": 14,
+      "tip": "00cdab9cc205f2b808ffafcc699f796f920fe2b29f8bbc77cfd64b1c7ea34eaf",
+      "native_signer_records": 31,
+      "separate_head_matches": true
+    }
+  ],
+  "native_replicas_agree": true,
+  "recipient_checks": 4,
+  "new_export_debit_retained": true,
+  "unique_import_and_original_output_maturity_verified": true,
+  "native_conservation": {
+    "issued": "300",
+    "liquid": "300",
+    "in_transit": "0",
+    "conserved": true
+  },
+  "archive_reads": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "archived_records": 208,
+      "retained_files": 208,
+      "retained_bytes": 33276028,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "archived_records": 424,
+      "retained_files": 424,
+      "retained_bytes": 72691510,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "archived_records": 397,
+      "retained_files": 397,
+      "retained_bytes": 66136630,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "archived_records": 224,
+      "retained_files": 224,
+      "retained_bytes": 36790600,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "archived_records": 224,
+      "retained_files": 224,
+      "retained_bytes": 39783738,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "archived_records": 416,
+      "retained_files": 416,
+      "retained_bytes": 72437424,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "archived_records": 384,
+      "retained_files": 384,
+      "retained_bytes": 69883980,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "archived_records": 224,
+      "retained_files": 224,
+      "retained_bytes": 39848286,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "archived_records": 240,
+      "retained_files": 240,
+      "retained_bytes": 50779245,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "archived_records": 448,
+      "retained_files": 448,
+      "retained_bytes": 95354363,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "archived_records": 432,
+      "retained_files": 432,
+      "retained_bytes": 93252882,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "archived_records": 240,
+      "retained_files": 240,
+      "retained_bytes": 50212320,
+      "full_cold_authentication": true
+    }
+  ],
+  "all_private_fixture_files_unchanged": true,
+  "bft_retention_reads": [
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 136,
+      "distinct_complete_snapshots": 36,
+      "retained_state_bytes": 849582,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13439633,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 0
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 136,
+      "distinct_complete_snapshots": 36,
+      "retained_state_bytes": 849974,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13484083,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 1
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 136,
+      "distinct_complete_snapshots": 36,
+      "retained_state_bytes": 849036,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13378701,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 2
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 136,
+      "distinct_complete_snapshots": 36,
+      "retained_state_bytes": 848702,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13341090,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 3
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 135,
+      "distinct_complete_snapshots": 44,
+      "retained_state_bytes": 925495,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13655398,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 0
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 135,
+      "distinct_complete_snapshots": 44,
+      "retained_state_bytes": 926447,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13763523,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 1
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 135,
+      "distinct_complete_snapshots": 44,
+      "retained_state_bytes": 926772,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13802609,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 2
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 135,
+      "distinct_complete_snapshots": 44,
+      "retained_state_bytes": 926034,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 13718962,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 3
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 154,
+      "distinct_complete_snapshots": 39,
+      "retained_state_bytes": 1061849,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 18537018,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 0
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 154,
+      "distinct_complete_snapshots": 39,
+      "retained_state_bytes": 1061846,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 18539018,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 1
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 153,
+      "distinct_complete_snapshots": 39,
+      "retained_state_bytes": 1058512,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 18306518,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 2
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 154,
+      "distinct_complete_snapshots": 39,
+      "retained_state_bytes": 1061178,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 18459442,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 3
+    }
+  ],
+  "within_recorded_observation_bounds": true,
+  "sustained_BFT_liveness_qualified": false,
+  "independent_operators_qualified": false,
+  "cross_host_qualified": false,
+  "power_loss_qualified": false,
+  "physical_route_qualified": false
+}

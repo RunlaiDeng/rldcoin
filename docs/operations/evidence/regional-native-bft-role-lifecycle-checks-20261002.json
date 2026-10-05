@@ -1,0 +1,74 @@
+{
+  "format": "RLD-ROLE-LIFECYCLE-NATIVE-SOURCE-CHECKS-V1",
+  "checked_utc": "2026-10-02T19:13:45.410723+00:00",
+  "source_files": 280,
+  "source_set_sha256": "cea1b3d4afed2dbdd29d60cbe49d6edd119a64a689828c2ea87cebeaeb2e405f",
+  "native_source_sha256": "fb01c5f9cc241e61add6a378e75888c9663b5418230c11ca49466a6a3ce01c75",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "native_implementation": "d1f519335dff8da5f08c62f314ca3d88395b7a750784afcc830e399fdaf840aa",
+  "source_unchanged": true,
+  "binary_sha256": "94e9a6d249566ac04ed4c2827209f2444494466a84c2e7ca700ed33c0c456687",
+  "fixture_helper_sha256": "7c536881ba208d0ec9e968c81459f5c5326c5a7a0bca5843aade1dfd2d92304a",
+  "fixture_currency": "7f97164d5d7afc79fb02ff4c301c64775d80673df664ed142e70e45520929a2b",
+  "native_tests_actually_run": 164,
+  "new_native_role_checks": 6,
+  "process_tests_actually_run": 37,
+  "process_test_modules": [
+    "test_regional_bft_joint_epoch",
+    "test_regional_bft_node",
+    "test_regional_bft_joint_roles",
+    "test_regional_bft_joint_roles_lifecycle"
+  ],
+  "release_overflow_checks": true,
+  "release_debug_assertions": true,
+  "strict_clippy_passed": true,
+  "core_exact_v33": true,
+  "partial_overlap_counts": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "consecutive_native_handoffs": 2,
+  "actual_owner_payment_and_export": true,
+  "full_native_cold_replay": true,
+  "role_relabelling_refused": true,
+  "old_journals_and_heads_preserved": true,
+  "readiness_recover_cannot_first_sign": true,
+  "continuing_unfenced_key_refused_before_key_read": true,
+  "interrupted_readiness_layout_checks": true,
+  "real_process_interruption_qualified": false,
+  "controller_carried_cli_sample": true,
+  "ordinary_node_lifecycle_implemented": true,
+  "fresh_full_fault_profile_completed": false,
+  "independent_or_cross_device_custody_qualified": false,
+  "no_old_state_or_value_migration": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "phases": [
+    {
+      "phase": "strict",
+      "exit_code": 0,
+      "duration_seconds": 13.505,
+      "log_sha256": "29556153cff5b8db5d645901e94d84e7ec80504d38ec2583476144bb4db85226"
+    },
+    {
+      "phase": "native-tests",
+      "exit_code": 0,
+      "duration_seconds": 99.747,
+      "log_sha256": "7a5c3283e6a2de71faaa3791a5150fd2282bbdd7d137b94d02f95b4094469931"
+    },
+    {
+      "phase": "build",
+      "exit_code": 0,
+      "duration_seconds": 6.271,
+      "log_sha256": "87d711a9d6f2eb749625e7ad5417705bdf64d57ce7dfdad62fe23c695233b482"
+    },
+    {
+      "phase": "process-tests",
+      "exit_code": 0,
+      "duration_seconds": 70.402,
+      "log_sha256": "7d6f0ef528359853061a9f4f72034cf344608a29defd2f0d2ff3ead543e3178c"
+    }
+  ]
+}

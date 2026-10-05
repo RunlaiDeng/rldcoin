@@ -1,0 +1,60 @@
+{
+  "format": "RLD-SHARED-ARCHIVE-PROCESS-BOUNDARIES-V1",
+  "completed": true,
+  "runtime_source_set_sha256": "4b4a1ab23a96aafdff2a146b100e9a9e0c90070939a0a7efb52e6ff1cf34d7ff",
+  "verifier_sha256": "2cd10ce6939eb723bd1f968cfc1c0b6b0aa37d393f2ddc1b0ab6aab1856e7648",
+  "phases": [
+    {
+      "boundary": "frame-durable",
+      "actual_process_sigkill": true,
+      "exit_code": -9,
+      "original_objects_retained": 1,
+      "original_objects_bytes_and_inodes_unchanged": true,
+      "indexed_before_recovery": 0,
+      "active_before_recovery": 1,
+      "full_original_transport_authentication": true,
+      "cold_read_after_recovery": true,
+      "retained_files": 2,
+      "retained_bytes": 4027,
+      "payment_authorized": false
+    },
+    {
+      "boundary": "wrapper-durable",
+      "actual_process_sigkill": true,
+      "exit_code": -9,
+      "original_objects_retained": 2,
+      "original_objects_bytes_and_inodes_unchanged": true,
+      "indexed_before_recovery": 0,
+      "active_before_recovery": 1,
+      "full_original_transport_authentication": true,
+      "cold_read_after_recovery": true,
+      "retained_files": 2,
+      "retained_bytes": 4027,
+      "payment_authorized": false
+    },
+    {
+      "boundary": "index-durable",
+      "actual_process_sigkill": true,
+      "exit_code": -9,
+      "original_objects_retained": 2,
+      "original_objects_bytes_and_inodes_unchanged": true,
+      "indexed_before_recovery": 1,
+      "active_before_recovery": 0,
+      "full_original_transport_authentication": true,
+      "cold_read_after_recovery": true,
+      "retained_files": 2,
+      "retained_bytes": 4027,
+      "payment_authorized": false
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "selected_storage_boundaries_only": true,
+  "native_ledger_or_wallet_used": false,
+  "socket_or_full_runtime_used": false,
+  "default_completion_high_water_tested": false,
+  "fresh_full_fault_profile_completed": false,
+  "independent_custody_qualified": false,
+  "power_loss_qualified": false,
+  "old_failed_fixtures_opened": false
+}

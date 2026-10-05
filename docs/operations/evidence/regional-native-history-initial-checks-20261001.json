@@ -1,0 +1,28 @@
+{
+  "format": "RLD-NATIVE-HISTORY-INITIAL-CHECKS-V1",
+  "source_set_sha256": "b0df4102859ee85f1101ef94b8626446bab4bd5ed7d4c10303ba665f8d218e6f",
+  "native_implementation": "a0416b790263876dfbea791c14cc4e96a2a0ad76b92534669296543a1b3f96d3",
+  "checked_release_build_passed": true,
+  "native_tests": 98,
+  "native_tests_passed": true,
+  "clippy_strict_passed": true,
+  "process_tests": 52,
+  "process_tests_passed": false,
+  "process_test_error_count": 1,
+  "native_refusal": "inputs, change, fees and export do not conserve",
+  "invalid_test_request": "omitted exact input selection; native conservation correctly refused",
+  "fresh_cycle_started": false,
+  "full_fresh_fault_profile_passed": false,
+  "source_unchanged": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "baseline_regression_source_set_sha256": "13fc6c77587ab9cb155f4d9c67cefb27e9e5443a5299b870767343bd65b03f81",
+  "baseline_regression_expected_refusal_missing": true,
+  "log_sha256": {
+    "build": "4ba7d46202a19f7a07455ed0fccdfb3d35d13a122adcac6d139a9f22c1ea717a",
+    "native-tests": "9503b2ced3744e45ad36232f77fb3ecc4f8ed9468eb6e0204b688aafde742b6b",
+    "clippy": "551a41e82eb27ee3a149e90d0d1087ee9cf6bbbfc77244cd9a8cbc799e3f7cf9",
+    "process-tests": "0610f56583731793f8d7f3909de7240f78575d0d0f9482ed63857ed4697ad8cc"
+  },
+  "baseline_regression_log_sha256": "812cd56e47f5da79679f8d1bfdb4b7cc58ec070e7d049dbf466cec067ea903d0"
+}

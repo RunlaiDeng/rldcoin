@@ -1,0 +1,57 @@
+{
+  "format": "RLD-ROLE-TICK-ACTUAL-ENTRY-OBSERVATION-V1",
+  "source_set_sha256": "2aecc750b73b9ff45e8eca79de7f88bf0f1165330ed8dc54148285acc6308050",
+  "binary_sha256": "b07aadd16a333aa30ab33c99bfb331ee88a5dfb6ccaa849bc7b69be8de569c3f",
+  "actual_live_actor_count": 5,
+  "actors": [
+    {
+      "process_id": 55050,
+      "native_driver_matches": true,
+      "binary_matches": true,
+      "all_custody_config_paths_in_fresh_private_fixture": true,
+      "ledger_entry": "earth-0",
+      "mesh_config_sha256": "8560330c37c5be3278e595799ecf78c63f26ce2ead4a13cf707aa12a91a785ca",
+      "bft_config_sha256": "746a17db9477e64a754a58a62a3560d37168cba22d612f97df17bf5dd40b2295"
+    },
+    {
+      "process_id": 55079,
+      "native_driver_matches": true,
+      "binary_matches": true,
+      "all_custody_config_paths_in_fresh_private_fixture": true,
+      "ledger_entry": "earth-1",
+      "mesh_config_sha256": "24b42a7ff3ce79a978bcc706d2589fe05bf54e1dfb31304256e909db57a241cb",
+      "bft_config_sha256": "1dbf121b74aa99ff52055dc47449c01cbed4ce4f0032f6da44be125cc6623d85"
+    },
+    {
+      "process_id": 55135,
+      "native_driver_matches": true,
+      "binary_matches": true,
+      "all_custody_config_paths_in_fresh_private_fixture": true,
+      "ledger_entry": "earth-2",
+      "mesh_config_sha256": "cb9a650a4b4d47994c98bce204938f51cfead6083b6a226576c128f3fe3a37a6",
+      "bft_config_sha256": "46bf180e8dd840f72ee112b15c63e006d18fb081f34938d4842fd5c210823e7e"
+    },
+    {
+      "process_id": 55216,
+      "native_driver_matches": true,
+      "binary_matches": true,
+      "all_custody_config_paths_in_fresh_private_fixture": true,
+      "ledger_entry": "earth-3",
+      "mesh_config_sha256": "ef6269471d94cd6b1d41655a37bdc4dcecc02487cdf8521ec29c8d6f1626c362",
+      "bft_config_sha256": "cc56878c577e2909d240a916ab9ac39279669e5c2896972714001577e3d0b7fa"
+    },
+    {
+      "process_id": 55297,
+      "native_driver_matches": true,
+      "binary_matches": true,
+      "all_custody_config_paths_in_fresh_private_fixture": true,
+      "ledger_entry": "earth-4",
+      "mesh_config_sha256": "82a49e48f33ad4d1224f9963e111e6793e3eaaffb4728207232ca8c38b7a720a",
+      "bft_config_sha256": "a14dc4c5fce49f3dbc7e7a964e736582a3f8f5e1d5f0124e0eec37bb6b740bec"
+    }
+  ],
+  "no_native_or_custody_calls": true,
+  "cycle_or_fault_completed": false,
+  "fixture_only": true,
+  "live_rld": false
+}

@@ -1,0 +1,231 @@
+{
+  "date": "2026-10-01",
+  "format": "RLD-NATIVE-ARCHIVE-GROUND-PUBLICATION-V1",
+  "repository": "RunlaiDeng/rldcoin-genesis",
+  "commit": "dd02da67a8945cc7c953810ab39bb6949d8e518a",
+  "remote_main_matches": true,
+  "public_files_content_verified": 36,
+  "all_bytes_match": true,
+  "source_named_files": 226,
+  "historical_packages_changed": false,
+  "private_material_excluded": true,
+  "claimed_scope": "no-value same-host V3/TCP-V4 frozen twelve-node cycle, bounded archives and process-crash custody; no power loss, sustained faults/load, cross-host, independent custody or physical qualification",
+  "artifact_checks": [
+    {
+      "path": "MASTER_PLAN.md",
+      "status": 200,
+      "sha256": "96d8e538f345eb85edd42451ab2e0b332b2b9b18b8e309db3d04f65c0ca9f7e5",
+      "matches": true
+    },
+    {
+      "path": "README.md",
+      "status": 200,
+      "sha256": "e3e1e1602c34b3bae43c8eb1a28c30c05b5c4e4b5e698c0df9d361bb5b209367",
+      "matches": true
+    },
+    {
+      "path": "SHA256SUMS.current-docs-20260930",
+      "status": 200,
+      "sha256": "f3b5a48b72e22dba048bdbbe6839feacf25ed7e32e77a6b92289432975efc8fe",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/ACCEPTANCE_QUEUE.md",
+      "status": 200,
+      "sha256": "3cc7c379b0e74a40c311822258d65ad5d29689c188d1d567f435d8054db26edf",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/README.md",
+      "status": 200,
+      "sha256": "d4e4c46a3dc80d8386d7e8f8eca572c5aea155ef4b5acbae5f019bca30c0093e",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/SHA256SUMS",
+      "status": 200,
+      "sha256": "4676c68112142f08ee7c283f437a65a4ba0dd9b53f1f8e16d8a480eaf02df8e5",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/STATUS.zh-CN.md",
+      "status": 200,
+      "sha256": "10ac05080fe86cea4f16215e8b88d1afca397564bc8adc6465fb5c7a6d7b6eef",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/base-source-manifest.json",
+      "status": 200,
+      "sha256": "20848cd672795d3c6fd3e6d1d56a85b1ff5744620a762d266d6c79cd5c5b3d60",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/campaign-report.json",
+      "status": 200,
+      "sha256": "5a8e1c90c094944df1a17bf5f143a818f82a81a93918836e7036893bdf2f542d",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/process-crash-report.json",
+      "status": 200,
+      "sha256": "a1fce7886241d808de50975f6629b7c0e9b6e61dfb670f3113e3528f76f31638",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/source-manifest.json",
+      "status": 200,
+      "sha256": "2e172c4b1c27a4f44d8e85f7ad6c578e0824e6e37ff5674518879183ad96d996",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/source.tar.gz",
+      "status": 200,
+      "sha256": "cd36e05dea169d7902a767e076382290e097e3a6f791f1743570b0000ed8dded",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/interstellar-mesh-requirements.txt",
+      "status": 200,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/interstellar_archive_crash_campaign.py",
+      "status": 200,
+      "sha256": "9b9f03af7497173eb4d94f9a463d987e876609c616a88a73cd686c867c0ec874",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/interstellar_mesh.py",
+      "status": 200,
+      "sha256": "e7dd8bfbddf21457b72afab2e047ffd6b6a50d174ccbabd307770e99879499fc",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/interstellar_route_budget.py",
+      "status": 200,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/interstellar_tcp.py",
+      "status": 200,
+      "sha256": "fb584dc79130368325841dd545723dd30bcafa71a72f093dff63383d68029649",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/interstellar_transfer.py",
+      "status": 200,
+      "sha256": "00b6d0f65bd63e93f91c2f2b2c8fd8ff5b6b65cd09595bef4c9755b84e0c6184",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_bft_campaign.py",
+      "status": 200,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_bft_multiregion_campaign.py",
+      "status": 200,
+      "sha256": "a4f35275d8daf55590ca17c6dbd35f244b166c01a7e9f7eb654c44b3973d4b6b",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_bft_network_campaign.py",
+      "status": 200,
+      "sha256": "fb9d324860d48b92b0ea5a3dfa88baa5be9c1c34b568db5aa154f4de01292d77",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_bft_node.py",
+      "status": 200,
+      "sha256": "3b7a9891d2918a1304baa2aa48f5d16ab47c2e0f746958685dc7ca1de12c8f4c",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_contact_campaign.py",
+      "status": 200,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_contact_node.py",
+      "status": 200,
+      "sha256": "d3d7d7ca38da32aee93f2849cdd092a6219a55da6b054c3ae3cb8020377e7cf1",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/regional_wallet_app.py",
+      "status": 200,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_interstellar_mesh.py",
+      "status": 200,
+      "sha256": "327152ae7ae0852d8aadca3e06ccc470c8d9e5ddcf709ccf26acec4da8008857",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_interstellar_route_budget.py",
+      "status": 200,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_interstellar_tcp.py",
+      "status": 200,
+      "sha256": "68911fbb03441109921a6931b10ee56638d8c75b0f5ef9c5f0214f6eb5fe933d",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_interstellar_transfer.py",
+      "status": 200,
+      "sha256": "5e8d963d681800aca7f327e8781e5e902a1dac95f94b0c3c26c005f980940373",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_regional_bft.py",
+      "status": 200,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_regional_bft_node.py",
+      "status": 200,
+      "sha256": "a663656335650d2d0740ed9b3087136362f59370258d3b062c8ff1a9703dc88e",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_regional_contact_node.py",
+      "status": 200,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_regional_wallet.py",
+      "status": 200,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_regional_wallet_app.py",
+      "status": 200,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/tools/test_regional_wallet_custody.py",
+      "status": 200,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "matches": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-archive-v16/verification.json",
+      "status": 200,
+      "sha256": "78ca3d4bf6c0eda5c618fdedb1e38893c345e729925c45deb944446708eb74f4",
+      "matches": true
+    }
+  ]
+}

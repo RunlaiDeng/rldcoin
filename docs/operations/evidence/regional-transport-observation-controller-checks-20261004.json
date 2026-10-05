@@ -1,0 +1,34 @@
+{
+  "format": "RLD-CONTROLLER-TRANSPORT-OBSERVATION-CHECKS-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": true,
+  "source_set_sha256": "c95133b1afa72ab396b3556a6358856a23a266307bf71532e71a9ad940b7f152",
+  "source_file_count": 359,
+  "previous_controller_source_set_sha256": "0f87be35e627c6b17dbe0ab3503ed62ebe1fe28f0826c466818ccf2533ffbc95",
+  "source_manifest_sha256": "e7ca4df10c01182af666aebd55412aae5dd64c548f2cfe3b76053aa8e78d24e0",
+  "controller_only_correction": true,
+  "native_and_ordinary_runtime_unchanged": true,
+  "compiled_driver_source_set_sha256": "a5ab25a8d56d97e8659240dfbe9d04703d73d153830d409b57fcd6a32cfcc48f",
+  "binary_sha256": "75acbc80e1ff3523b234bf0cdae648b0552592710e4eab05b22bf9fb2818c68f",
+  "tests": [
+    {
+      "scope": "root correction",
+      "actual_test_count": 35,
+      "contains_actual_twelve_store_cold_boundary_tests": true,
+      "log_sha256": "35e4ff74e30ed38f4645f6364c0b708f724b83f597122eeca0a5f6543484f0a1"
+    },
+    {
+      "scope": "exact frozen controller",
+      "actual_test_count": 35,
+      "contains_actual_twelve_store_cold_boundary_tests": true,
+      "log_sha256": "fa2360a01eef5973abbb4298b09ffd0458c07a4a21090ba6e04546d397b63115"
+    }
+  ],
+  "preserved_initial_test_failure": "missing RLD_CONTACT_BINARY test environment; no fixture construction",
+  "initial_failed_log_sha256": "8a858158c1a5f656c58d8d029b8f4a58115c431c624691aad19d0271b8913b7b",
+  "previous_actual_fault_report_sha256": "ce55e53b6b51e5de43259eeffd22a99053501835b79752d2d784cce04376060c",
+  "previous_fault_remains_failed": true,
+  "full_fault_profile_pass": false,
+  "independent_qualification": false
+}

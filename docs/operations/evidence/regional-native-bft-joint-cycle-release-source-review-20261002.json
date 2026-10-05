@@ -1,0 +1,34 @@
+{
+  "format": "RLD-JOINT-CYCLE-RELEASE-SOURCE-REVIEW-V1",
+  "source_set_sha256": "bf7c247ae5023497df005ea54d98d740edfede475aa118b486999ec44a2432ec",
+  "runtime_campaign_source_set_sha256": "d6d299244832fcecf4f9e4b36c24f5b81055a8bf30341852b43967c9a5eb0026",
+  "native_implementation": "dee623baa0d39c625a142fa04a6f792342a553cac7d30042997a624c962836e6",
+  "source_files": 270,
+  "relative_to_public_revision": 30,
+  "added_source_files": [
+    "tools/regional_bft_joint_cycle_campaign.py",
+    "tools/verify_regional_bft_joint_cycle.py"
+  ],
+  "changed_source_files": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_bft_retention.py",
+    "tools/test_regional_bft_joint_epoch.py",
+    "tools/verify_regional_bft_cycle.py"
+  ],
+  "removed_source_files": [],
+  "runtime_campaign_and_72_process_tests_source_files": 269,
+  "all_ordinary_node_runtime_and_native_core_bytes_exact_to_tested_cycle": true,
+  "final_changes_from_tested_cycle": {
+    "added_predecessor_design_exact_v30": true,
+    "cold_verifier_module_docstring_only": true,
+    "cold_verifier_executable_ast_exact": true
+  },
+  "native_tests_reused_not_rerun": 158,
+  "native_core_exactly_public_v30": true,
+  "retention_live_runtime_unchanged": true,
+  "retention_cold_helper_requires_signed_joint_admission": true,
+  "all_original_bounds_retained": true,
+  "self_review_only": true,
+  "independent_security_qualification": false,
+  "full_fault_profile_run": false
+}

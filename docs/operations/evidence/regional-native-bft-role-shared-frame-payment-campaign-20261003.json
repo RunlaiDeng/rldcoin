@@ -1,0 +1,125 @@
+{
+  "format": "RLD-ROLE-PAYMENT-GROUND-CAMPAIGN-V1",
+  "completed": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "failure": "ValueError: bounded ground observation deadline: ordinary native era 2 before owner payment {\"0\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [], \"process_exit_code\": null}, \"1\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"The read operation timed out\"], \"process_exit_code\": null}, \"2\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] Resource temporarily unavailable\"], \"process_exit_code\": null}, \"3\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"The read operation timed out\", \"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}, \"4\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [], \"process_exit_code\": null}}",
+  "currency": "b1556dd39617c7caf41112992a17c5d38b6d776d2f502a0ad0130dc95d115644",
+  "implementation": "472fc8bfcf6e2ccb969c3f795072140cd179bb6f3adbad4df016e0083cb3437f",
+  "controller_authority_calls": 0,
+  "observations": [
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 0.221,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 0.311,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 0.317,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 0.318,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 0.213,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 0 before owner payment",
+      "elapsed_seconds": 39.135,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 1.074,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 2.14,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 2.373,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 2.227,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 1.494,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 1 before owner payment",
+      "elapsed_seconds": 72.874,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 6.049,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 9.438,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 9.442,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 9.407,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 4.62,
+      "observation_bound_seconds": 300
+    }
+  ],
+  "owner_payments": [
+    {
+      "era": 0,
+      "owner": "43a72e714401762df66b68c26dfbdf2682aaec9f2474eca4613e424a0fbafd3c",
+      "recipient": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+      "amount": "30",
+      "fee": "1",
+      "signing_height": 3,
+      "intent_id": "d84a5dd6488b8f2c97cbf0a9ce9fb31cd43f29927fde732c39a10e42bbe11da6",
+      "selected_input_total": "100",
+      "signature_and_submission_did_not_debit": true
+    },
+    {
+      "era": 1,
+      "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+      "recipient": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+      "amount": "20",
+      "fee": "1",
+      "signing_height": 7,
+      "intent_id": "e5896f7a483e33ff8963d3ac483462b6ea4130d3efaa592a7fadb6b81dfa79a2",
+      "selected_input_total": "30",
+      "signature_and_submission_did_not_debit": true
+    }
+  ],
+  "owned_process_cleanup_verified": true,
+  "runtime_source_set_sha256": "4b4a1ab23a96aafdff2a146b100e9a9e0c90070939a0a7efb52e6ff1cf34d7ff",
+  "binary_sha256": "dc147736e07f1ba82231cd9735f65605c3b08fe597c6fc047a1ab3b65580e649",
+  "campaign_source_sha256": "51490e84f9901bac9c7d7083c06afbaca6616702a07d2a29529999c6579273e9"
+}

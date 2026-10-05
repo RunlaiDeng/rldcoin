@@ -1,0 +1,5695 @@
+{
+  "format": "RLD-STOPPED-ROLE-MISSING-LEADER-OPERATION-OBSERVATION-V1",
+  "completed_observation": true,
+  "failed_run_report_sha256": "f983fd38c8b91186c5579f4e6af2c8b0d125504ccbcc678de6927cb114fc196d",
+  "runtime_source_set_sha256": "10876f4012b0dafb09734055466846dd1e32684350a68cb6b959a42c52338fad",
+  "processes": [
+    {
+      "carrier": 1,
+      "process_id": 57281,
+      "events_dropped": 1398,
+      "events_rejected": 0,
+      "operations": {
+        "bft-epoch-activate-observed": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.267634,
+          "total_seconds": 0.7513
+        },
+        "bft-network-check": {
+          "calls": 233,
+          "failures": 0,
+          "max_seconds": 0.161567,
+          "total_seconds": 22.453788
+        },
+        "bft-network-check-batch": {
+          "calls": 51,
+          "failures": 0,
+          "max_seconds": 0.204427,
+          "total_seconds": 6.727899
+        },
+        "bft-network-pack": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.095909,
+          "total_seconds": 0.280041
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.422697,
+          "total_seconds": 0.422697
+        },
+        "consensus-tick": {
+          "calls": 310,
+          "failures": 0,
+          "max_seconds": 1.261069,
+          "total_seconds": 235.503185
+        }
+      },
+      "last_events": [
+        {
+          "duration_seconds": 0.983324,
+          "elapsed_seconds": 531.347038,
+          "kind": "tick-end",
+          "sequence": 1399,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.983367,
+          "duration_seconds": 1.994895,
+          "elapsed_seconds": 531.347699,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.707031,
+          "native_seconds": 0.303831,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1400,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 532.435619,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 241.302288,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1401,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.703746,
+          "elapsed_seconds": 532.895947,
+          "kind": "tick-end",
+          "sequence": 1402,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.703774,
+          "duration_seconds": 1.23513,
+          "elapsed_seconds": 532.896859,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202968,
+          "native_seconds": 0.327423,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1403,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 534.369753,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 243.236419,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1404,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.934323,
+          "elapsed_seconds": 535.11836,
+          "kind": "tick-end",
+          "sequence": 1405,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.934349,
+          "duration_seconds": 1.893995,
+          "elapsed_seconds": 535.118968,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.73805,
+          "native_seconds": 0.220964,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1406,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 536.350189,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 245.216859,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1407,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.729904,
+          "elapsed_seconds": 536.797577,
+          "kind": "tick-end",
+          "sequence": 1408,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.729931,
+          "duration_seconds": 1.347722,
+          "elapsed_seconds": 536.79814,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.206009,
+          "native_seconds": 0.4112,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1409,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 538.261474,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 247.128143,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1410,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.174219,
+          "elapsed_seconds": 539.164555,
+          "kind": "tick-end",
+          "sequence": 1411,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.174244,
+          "duration_seconds": 2.036111,
+          "elapsed_seconds": 539.165491,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.701968,
+          "native_seconds": 0.158947,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1412,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 540.646936,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 249.513604,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1413,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.993384,
+          "elapsed_seconds": 541.434968,
+          "kind": "tick-end",
+          "sequence": 1414,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.993418,
+          "duration_seconds": 1.956523,
+          "elapsed_seconds": 541.436097,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.710602,
+          "native_seconds": 0.251353,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1415,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 542.544251,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 251.410919,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1416,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.702769,
+          "elapsed_seconds": 542.989074,
+          "kind": "tick-end",
+          "sequence": 1417,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.702795,
+          "duration_seconds": 1.221483,
+          "elapsed_seconds": 542.989592,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.200521,
+          "native_seconds": 0.317621,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1418,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 544.400532,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 253.267203,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1419,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.956511,
+          "elapsed_seconds": 545.179933,
+          "kind": "tick-end",
+          "sequence": 1420,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.956536,
+          "duration_seconds": 1.871558,
+          "elapsed_seconds": 545.180533,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.707101,
+          "native_seconds": 0.2073,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1421,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 546.252426,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 255.119094,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1422,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.711328,
+          "elapsed_seconds": 546.699629,
+          "kind": "tick-end",
+          "sequence": 1423,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.711357,
+          "duration_seconds": 1.195484,
+          "elapsed_seconds": 546.700556,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.204618,
+          "native_seconds": 0.278557,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1424,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 548.174372,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 257.041044,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1425,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.112503,
+          "elapsed_seconds": 549.107109,
+          "kind": "tick-end",
+          "sequence": 1426,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.11253,
+          "duration_seconds": 2.08027,
+          "elapsed_seconds": 549.108088,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.748657,
+          "native_seconds": 0.218078,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1427,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 550.148974,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 259.015643,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1428,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.810931,
+          "elapsed_seconds": 550.645148,
+          "kind": "tick-end",
+          "sequence": 1429,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.810969,
+          "duration_seconds": 1.218329,
+          "elapsed_seconds": 550.646059,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203485,
+          "native_seconds": 0.202903,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1430,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 552.19381,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 261.060479,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1431,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.940519,
+          "elapsed_seconds": 552.900983,
+          "kind": "tick-end",
+          "sequence": 1432,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.940544,
+          "duration_seconds": 1.93183,
+          "elapsed_seconds": 552.901485,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.737013,
+          "native_seconds": 0.253743,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1433,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 553.932412,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 262.79908,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1434,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.694834,
+          "elapsed_seconds": 554.400105,
+          "kind": "tick-end",
+          "sequence": 1435,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.694867,
+          "duration_seconds": 1.165121,
+          "elapsed_seconds": 554.400977,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202449,
+          "native_seconds": 0.266905,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1436,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 555.918644,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 264.785312,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1437,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.089373,
+          "elapsed_seconds": 556.819602,
+          "kind": "tick-end",
+          "sequence": 1438,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.089397,
+          "duration_seconds": 2.097988,
+          "elapsed_seconds": 556.820381,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.730184,
+          "native_seconds": 0.27762,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1439,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 557.910046,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 266.776716,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1440,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.689783,
+          "elapsed_seconds": 558.379257,
+          "kind": "tick-end",
+          "sequence": 1441,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.689811,
+          "duration_seconds": 1.224191,
+          "elapsed_seconds": 558.379848,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20073,
+          "native_seconds": 0.333037,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1442,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 559.897128,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 268.763796,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1443,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.984301,
+          "elapsed_seconds": 560.632271,
+          "kind": "tick-end",
+          "sequence": 1444,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.984326,
+          "duration_seconds": 1.939922,
+          "elapsed_seconds": 560.633102,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.736989,
+          "native_seconds": 0.217748,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1445,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 561.623881,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 270.490546,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1446,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.696076,
+          "elapsed_seconds": 562.091856,
+          "kind": "tick-end",
+          "sequence": 1447,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.696101,
+          "duration_seconds": 1.127175,
+          "elapsed_seconds": 562.092875,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20145,
+          "native_seconds": 0.228587,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1448,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 563.637012,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 272.503681,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1449,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.973156,
+          "elapsed_seconds": 564.341788,
+          "kind": "tick-end",
+          "sequence": 1450,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.973188,
+          "duration_seconds": 1.926128,
+          "elapsed_seconds": 564.342701,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.727048,
+          "native_seconds": 0.224956,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1451,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 565.383891,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 274.250561,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1452,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.721793,
+          "elapsed_seconds": 565.846393,
+          "kind": "tick-end",
+          "sequence": 1453,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.721819,
+          "duration_seconds": 1.173132,
+          "elapsed_seconds": 565.847295,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203181,
+          "native_seconds": 0.247208,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1454,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 567.411487,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 276.278156,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1455,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.11645,
+          "elapsed_seconds": 568.282002,
+          "kind": "tick-end",
+          "sequence": 1456,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.116478,
+          "duration_seconds": 2.107059,
+          "elapsed_seconds": 568.282904,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.730775,
+          "native_seconds": 0.258877,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1457,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 569.313901,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 278.18057,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1458,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.767608,
+          "elapsed_seconds": 569.784082,
+          "kind": "tick-end",
+          "sequence": 1459,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.767655,
+          "duration_seconds": 1.168418,
+          "elapsed_seconds": 569.784722,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.200174,
+          "native_seconds": 0.199926,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1460,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 571.299117,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 280.165785,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1461,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.092717,
+          "elapsed_seconds": 572.159037,
+          "kind": "tick-end",
+          "sequence": 1462,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.092736,
+          "duration_seconds": 2.058035,
+          "elapsed_seconds": 572.160221,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.735284,
+          "native_seconds": 0.228801,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1463,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 573.265564,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 282.132233,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1464,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.733187,
+          "elapsed_seconds": 573.732416,
+          "kind": "tick-end",
+          "sequence": 1465,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.733211,
+          "duration_seconds": 1.236108,
+          "elapsed_seconds": 573.733314,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201709,
+          "native_seconds": 0.300264,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1466,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 575.257844,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 284.124515,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1467,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.948415,
+          "elapsed_seconds": 575.968656,
+          "kind": "tick-end",
+          "sequence": 1468,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.948442,
+          "duration_seconds": 1.912975,
+          "elapsed_seconds": 575.969195,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.728641,
+          "native_seconds": 0.235329,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1469,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 576.985135,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 285.851802,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1470,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.683677,
+          "elapsed_seconds": 577.45144,
+          "kind": "tick-end",
+          "sequence": 1471,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.683707,
+          "duration_seconds": 1.163612,
+          "elapsed_seconds": 577.452321,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203063,
+          "native_seconds": 0.275928,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1472,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 578.966995,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 287.833664,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1473,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.042472,
+          "elapsed_seconds": 579.827504,
+          "kind": "tick-end",
+          "sequence": 1474,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.0425,
+          "duration_seconds": 2.060351,
+          "elapsed_seconds": 579.828458,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.721811,
+          "native_seconds": 0.295067,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1475,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 580.871784,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 289.738453,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1476,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.725158,
+          "elapsed_seconds": 581.340682,
+          "kind": "tick-end",
+          "sequence": 1477,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.72518,
+          "duration_seconds": 1.181985,
+          "elapsed_seconds": 581.341322,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201276,
+          "native_seconds": 0.254863,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1478,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 582.864305,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 291.730974,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1479,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.9401,
+          "elapsed_seconds": 583.586883,
+          "kind": "tick-end",
+          "sequence": 1480,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.940129,
+          "duration_seconds": 1.927142,
+          "elapsed_seconds": 583.587667,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.729914,
+          "native_seconds": 0.256287,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1481,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 584.626644,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 293.493312,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1482,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.723504,
+          "elapsed_seconds": 585.100901,
+          "kind": "tick-end",
+          "sequence": 1483,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.723526,
+          "duration_seconds": 1.195436,
+          "elapsed_seconds": 585.101783,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201498,
+          "native_seconds": 0.269493,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1484,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 586.631215,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 295.497885,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1485,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.009913,
+          "elapsed_seconds": 587.460344,
+          "kind": "tick-end",
+          "sequence": 1486,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.009937,
+          "duration_seconds": 2.036989,
+          "elapsed_seconds": 587.461437,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.750208,
+          "native_seconds": 0.275716,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1487,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 588.515943,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 297.382613,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1488,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.698597,
+          "elapsed_seconds": 588.978523,
+          "kind": "tick-end",
+          "sequence": 1489,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.698622,
+          "duration_seconds": 1.169931,
+          "elapsed_seconds": 588.979459,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.205143,
+          "native_seconds": 0.265214,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1490,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 590.53239,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 299.39906,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1491,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.094873,
+          "elapsed_seconds": 591.396113,
+          "kind": "tick-end",
+          "sequence": 1492,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.094898,
+          "duration_seconds": 2.097346,
+          "elapsed_seconds": 591.396721,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.750499,
+          "native_seconds": 0.251323,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1493,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 592.941957,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 301.808627,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1494,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.993846,
+          "elapsed_seconds": 593.754266,
+          "kind": "tick-end",
+          "sequence": 1495,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.993896,
+          "duration_seconds": 2.037792,
+          "elapsed_seconds": 593.754795,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.751212,
+          "native_seconds": 0.292126,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1496,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 594.810224,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 303.676893,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1497,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.758079,
+          "elapsed_seconds": 595.312302,
+          "kind": "tick-end",
+          "sequence": 1498,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.758105,
+          "duration_seconds": 1.230647,
+          "elapsed_seconds": 595.312909,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.205524,
+          "native_seconds": 0.266376,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1499,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 596.783197,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 305.649868,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1500,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.956582,
+          "elapsed_seconds": 597.551322,
+          "kind": "tick-end",
+          "sequence": 1501,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.956608,
+          "duration_seconds": 1.908544,
+          "elapsed_seconds": 597.551864,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.735179,
+          "native_seconds": 0.216188,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1502,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 598.685665,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 307.552333,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1503,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.728925,
+          "elapsed_seconds": 599.150172,
+          "kind": "tick-end",
+          "sequence": 1504,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.72895,
+          "duration_seconds": 1.264515,
+          "elapsed_seconds": 599.150748,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.200661,
+          "native_seconds": 0.3343,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1505,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 600.69504,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 309.56171,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1506,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.140692,
+          "elapsed_seconds": 601.611909,
+          "kind": "tick-end",
+          "sequence": 1507,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.140719,
+          "duration_seconds": 2.136552,
+          "elapsed_seconds": 601.612495,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.773911,
+          "native_seconds": 0.221301,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1508,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 602.616864,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 311.483533,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1509,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.754551,
+          "elapsed_seconds": 603.097949,
+          "kind": "tick-end",
+          "sequence": 1510,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.754576,
+          "duration_seconds": 1.163316,
+          "elapsed_seconds": 603.098547,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201367,
+          "native_seconds": 0.206742,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1511,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 605.003527,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 313.870197,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1512,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.25262,
+          "elapsed_seconds": 606.019847,
+          "kind": "tick-end",
+          "sequence": 1513,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.252645,
+          "duration_seconds": 2.595954,
+          "elapsed_seconds": 606.020463,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.054689,
+          "native_seconds": 0.287976,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1514,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 607.492974,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 316.359642,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1515,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 1.189721,
+          "elapsed_seconds": 608.399502,
+          "kind": "tick-end",
+          "sequence": 1516,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.189743,
+          "duration_seconds": 2.048518,
+          "elapsed_seconds": 608.40001,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.649677,
+          "native_seconds": 0.20856,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1517,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 609.46875,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 318.33542,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1518,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.722106,
+          "elapsed_seconds": 609.928011,
+          "kind": "tick-end",
+          "sequence": 1519,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.722144,
+          "duration_seconds": 1.216808,
+          "elapsed_seconds": 609.928936,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201687,
+          "native_seconds": 0.292032,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1520,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 611.432907,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 320.299576,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1521,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.94603,
+          "elapsed_seconds": 612.160098,
+          "kind": "tick-end",
+          "sequence": 1522,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.946058,
+          "duration_seconds": 1.903834,
+          "elapsed_seconds": 612.160923,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.653328,
+          "native_seconds": 0.303592,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1523,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 613.225057,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 322.091726,
+          "prepared": null,
+          "round": 0,
+          "sequence": 1524,
+          "stopped": true
+        },
+        {
+          "duration_seconds": 0.673022,
+          "elapsed_seconds": 613.646643,
+          "kind": "tick-end",
+          "sequence": 1525,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 0.673051,
+          "duration_seconds": 1.158014,
+          "elapsed_seconds": 613.647257,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203286,
+          "native_seconds": 0.281029,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1526,
+          "tcp_seconds": null
+        }
+      ],
+      "last_consensus": {
+        "height": 15,
+        "round": null,
+        "progress_observation_available": null
+      }
+    },
+    {
+      "carrier": 2,
+      "process_id": 57282,
+      "events_dropped": 592,
+      "events_rejected": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.085344,
+          "total_seconds": 0.085344
+        },
+        "bft-epoch-activate-observed": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.312291,
+          "total_seconds": 0.845928
+        },
+        "bft-network-check": {
+          "calls": 208,
+          "failures": 0,
+          "max_seconds": 0.219315,
+          "total_seconds": 19.698457
+        },
+        "bft-network-check-batch": {
+          "calls": 50,
+          "failures": 0,
+          "max_seconds": 0.201413,
+          "total_seconds": 6.490296
+        },
+        "bft-network-pack": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.120236,
+          "total_seconds": 1.287682
+        },
+        "bft-quorum": {
+          "calls": 14,
+          "failures": 0,
+          "max_seconds": 0.129689,
+          "total_seconds": 0.929958
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 1.173725,
+          "total_seconds": 9.448446
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.316758,
+          "total_seconds": 0.590354
+        },
+        "bft-timeout-certificate": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.11563,
+          "total_seconds": 0.708942
+        },
+        "consensus-tick": {
+          "calls": 147,
+          "failures": 0,
+          "max_seconds": 6.607398,
+          "total_seconds": 390.696672
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.154341,
+          "total_seconds": 0.154341
+        }
+      },
+      "last_events": [
+        {
+          "duration_seconds": 2.709951,
+          "elapsed_seconds": 450.009744,
+          "kind": "tick-end",
+          "sequence": 593,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.709972,
+          "duration_seconds": 3.883108,
+          "elapsed_seconds": 450.010727,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.937997,
+          "native_seconds": 0.234124,
+          "received": 0,
+          "selected": 0,
+          "sequence": 594,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 453.420783,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 45.941276,
+          "prepared": null,
+          "round": 4,
+          "sequence": 595,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.543326,
+          "elapsed_seconds": 454.032907,
+          "kind": "tick-end",
+          "sequence": 596,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.54335,
+          "duration_seconds": 3.701111,
+          "elapsed_seconds": 454.033462,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.930876,
+          "native_seconds": 0.226305,
+          "received": 0,
+          "selected": 0,
+          "sequence": 597,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 456.646621,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 49.167118,
+          "prepared": null,
+          "round": 4,
+          "sequence": 598,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.602181,
+          "elapsed_seconds": 457.281721,
+          "kind": "tick-end",
+          "sequence": 599,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.602203,
+          "duration_seconds": 2.981109,
+          "elapsed_seconds": 457.282227,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201045,
+          "native_seconds": 0.177325,
+          "received": 0,
+          "selected": 0,
+          "sequence": 600,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 460.522302,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 53.042795,
+          "prepared": null,
+          "round": 4,
+          "sequence": 601,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.987855,
+          "elapsed_seconds": 461.761304,
+          "kind": "tick-end",
+          "sequence": 602,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.987879,
+          "duration_seconds": 4.15535,
+          "elapsed_seconds": 461.762159,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.938836,
+          "native_seconds": 0.227749,
+          "received": 0,
+          "selected": 0,
+          "sequence": 603,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 464.53976,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 57.06026,
+          "prepared": null,
+          "round": 4,
+          "sequence": 604,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.516983,
+          "elapsed_seconds": 465.140449,
+          "kind": "tick-end",
+          "sequence": 605,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.517005,
+          "duration_seconds": 3.04296,
+          "elapsed_seconds": 465.141376,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202379,
+          "native_seconds": 0.322623,
+          "received": 0,
+          "selected": 0,
+          "sequence": 606,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 468.731409,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 61.251908,
+          "prepared": null,
+          "round": 4,
+          "sequence": 607,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.57549,
+          "elapsed_seconds": 469.552734,
+          "kind": "tick-end",
+          "sequence": 608,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.575514,
+          "duration_seconds": 4.09877,
+          "elapsed_seconds": 469.553634,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.277673,
+          "native_seconds": 0.244641,
+          "received": 0,
+          "selected": 0,
+          "sequence": 609,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 472.081675,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 64.602171,
+          "prepared": null,
+          "round": 4,
+          "sequence": 610,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.479656,
+          "elapsed_seconds": 472.667423,
+          "kind": "tick-end",
+          "sequence": 611,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.479708,
+          "duration_seconds": 2.859586,
+          "elapsed_seconds": 472.668268,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202528,
+          "native_seconds": 0.176473,
+          "received": 0,
+          "selected": 0,
+          "sequence": 612,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 476.023567,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 68.54406,
+          "prepared": null,
+          "round": 4,
+          "sequence": 613,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.278051,
+          "elapsed_seconds": 477.420159,
+          "kind": "tick-end",
+          "sequence": 614,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.27808,
+          "duration_seconds": 4.425674,
+          "elapsed_seconds": 477.421155,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.920492,
+          "native_seconds": 0.22608,
+          "received": 0,
+          "selected": 0,
+          "sequence": 615,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 479.936851,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 72.457348,
+          "prepared": null,
+          "round": 4,
+          "sequence": 616,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.44844,
+          "elapsed_seconds": 480.519468,
+          "kind": "tick-end",
+          "sequence": 617,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.44848,
+          "duration_seconds": 2.833774,
+          "elapsed_seconds": 480.520045,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201892,
+          "native_seconds": 0.182805,
+          "received": 0,
+          "selected": 0,
+          "sequence": 618,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 483.804062,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 76.324559,
+          "prepared": null,
+          "round": 4,
+          "sequence": 619,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.989476,
+          "elapsed_seconds": 485.012265,
+          "kind": "tick-end",
+          "sequence": 620,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.9895,
+          "duration_seconds": 4.172092,
+          "elapsed_seconds": 485.012819,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.904094,
+          "native_seconds": 0.277918,
+          "received": 0,
+          "selected": 0,
+          "sequence": 621,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 487.7136,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 80.234099,
+          "prepared": null,
+          "round": 4,
+          "sequence": 622,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.532351,
+          "elapsed_seconds": 488.297595,
+          "kind": "tick-end",
+          "sequence": 623,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.532374,
+          "duration_seconds": 2.952959,
+          "elapsed_seconds": 488.298437,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20415,
+          "native_seconds": 0.215568,
+          "received": 0,
+          "selected": 0,
+          "sequence": 624,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 491.56136,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 84.081857,
+          "prepared": null,
+          "round": 4,
+          "sequence": 625,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.188186,
+          "elapsed_seconds": 492.95034,
+          "kind": "tick-end",
+          "sequence": 626,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.188213,
+          "duration_seconds": 4.330047,
+          "elapsed_seconds": 492.950873,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.917838,
+          "native_seconds": 0.223442,
+          "received": 0,
+          "selected": 0,
+          "sequence": 627,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 495.428224,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 87.948724,
+          "prepared": null,
+          "round": 4,
+          "sequence": 628,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.485042,
+          "elapsed_seconds": 496.074238,
+          "kind": "tick-end",
+          "sequence": 629,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.485069,
+          "duration_seconds": 2.869704,
+          "elapsed_seconds": 496.075225,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202632,
+          "native_seconds": 0.181,
+          "received": 0,
+          "selected": 0,
+          "sequence": 630,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 499.392927,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 91.913426,
+          "prepared": null,
+          "round": 4,
+          "sequence": 631,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.875932,
+          "elapsed_seconds": 500.49026,
+          "kind": "tick-end",
+          "sequence": 632,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.875959,
+          "duration_seconds": 4.101513,
+          "elapsed_seconds": 500.490762,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.995137,
+          "native_seconds": 0.229889,
+          "received": 0,
+          "selected": 0,
+          "sequence": 633,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 503.940578,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 96.461075,
+          "prepared": null,
+          "round": 4,
+          "sequence": 634,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.53677,
+          "elapsed_seconds": 504.560112,
+          "kind": "tick-end",
+          "sequence": 635,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.536795,
+          "duration_seconds": 3.743537,
+          "elapsed_seconds": 504.560775,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.969036,
+          "native_seconds": 0.237012,
+          "received": 0,
+          "selected": 0,
+          "sequence": 636,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 507.138373,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 99.658873,
+          "prepared": null,
+          "round": 4,
+          "sequence": 637,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.518804,
+          "elapsed_seconds": 507.742969,
+          "kind": "tick-end",
+          "sequence": 638,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.51885,
+          "duration_seconds": 2.908723,
+          "elapsed_seconds": 507.7435,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203507,
+          "native_seconds": 0.18579,
+          "received": 0,
+          "selected": 0,
+          "sequence": 639,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 511.144948,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 103.665445,
+          "prepared": null,
+          "round": 4,
+          "sequence": 640,
+          "stopped": false
+        },
+        {
+          "action": "Timeout",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 511.145616,
+          "kind": "sign-start",
+          "round": 4,
+          "sequence": 641
+        },
+        {
+          "action": "Timeout",
+          "duration_seconds": 2.431385,
+          "elapsed_seconds": 513.576995,
+          "kind": "sign-end",
+          "sequence": 642,
+          "succeeded": true
+        },
+        {
+          "duration_seconds": 6.6074,
+          "elapsed_seconds": 515.857033,
+          "kind": "tick-end",
+          "sequence": 643,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 6.607445,
+          "duration_seconds": 7.787918,
+          "elapsed_seconds": 515.857435,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.955038,
+          "native_seconds": 0.225023,
+          "received": 0,
+          "selected": 0,
+          "sequence": 644,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 518.435953,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 4.858952,
+          "prepared": null,
+          "round": 5,
+          "sequence": 645,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.63725,
+          "elapsed_seconds": 519.151917,
+          "kind": "tick-end",
+          "sequence": 646,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.637276,
+          "duration_seconds": 3.022015,
+          "elapsed_seconds": 519.152467,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201991,
+          "native_seconds": 0.182178,
+          "received": 0,
+          "selected": 0,
+          "sequence": 647,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 522.667463,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 9.090464,
+          "prepared": null,
+          "round": 5,
+          "sequence": 648,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.307976,
+          "elapsed_seconds": 524.072902,
+          "kind": "tick-end",
+          "sequence": 649,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.308,
+          "duration_seconds": 4.598903,
+          "elapsed_seconds": 524.073501,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.032791,
+          "native_seconds": 0.257463,
+          "received": 0,
+          "selected": 0,
+          "sequence": 650,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 526.710239,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 13.13324,
+          "prepared": null,
+          "round": 5,
+          "sequence": 651,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.573138,
+          "elapsed_seconds": 527.367291,
+          "kind": "tick-end",
+          "sequence": 652,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.573161,
+          "duration_seconds": 2.967467,
+          "elapsed_seconds": 527.368062,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.204375,
+          "native_seconds": 0.189135,
+          "received": 0,
+          "selected": 0,
+          "sequence": 653,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 531.548149,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 17.971151,
+          "prepared": null,
+          "round": 5,
+          "sequence": 654,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.510474,
+          "elapsed_seconds": 532.231134,
+          "kind": "tick-end",
+          "sequence": 655,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.510499,
+          "duration_seconds": 4.540915,
+          "elapsed_seconds": 532.231658,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.788569,
+          "native_seconds": 0.241294,
+          "received": 0,
+          "selected": 0,
+          "sequence": 656,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 534.95842,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 21.381421,
+          "prepared": null,
+          "round": 5,
+          "sequence": 657,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.739427,
+          "elapsed_seconds": 535.692502,
+          "kind": "tick-end",
+          "sequence": 658,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.739504,
+          "duration_seconds": 3.136116,
+          "elapsed_seconds": 535.693656,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203935,
+          "native_seconds": 0.191519,
+          "received": 0,
+          "selected": 0,
+          "sequence": 659,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 539.133486,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 25.556484,
+          "prepared": null,
+          "round": 5,
+          "sequence": 660,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.704104,
+          "elapsed_seconds": 539.977024,
+          "kind": "tick-end",
+          "sequence": 661,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.704126,
+          "duration_seconds": 3.957919,
+          "elapsed_seconds": 539.977511,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.016364,
+          "native_seconds": 0.236889,
+          "received": 0,
+          "selected": 0,
+          "sequence": 662,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 542.578175,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 29.001177,
+          "prepared": null,
+          "round": 5,
+          "sequence": 663,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.581615,
+          "elapsed_seconds": 543.236159,
+          "kind": "tick-end",
+          "sequence": 664,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.58164,
+          "duration_seconds": 2.980855,
+          "elapsed_seconds": 543.236992,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20125,
+          "native_seconds": 0.197064,
+          "received": 0,
+          "selected": 0,
+          "sequence": 665,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 546.745505,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 33.168507,
+          "prepared": null,
+          "round": 5,
+          "sequence": 666,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.179176,
+          "elapsed_seconds": 547.994806,
+          "kind": "tick-end",
+          "sequence": 667,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.179203,
+          "duration_seconds": 4.433485,
+          "elapsed_seconds": 547.995346,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.014416,
+          "native_seconds": 0.239296,
+          "received": 0,
+          "selected": 0,
+          "sequence": 668,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 551.628725,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 38.051723,
+          "prepared": null,
+          "round": 5,
+          "sequence": 669,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.744156,
+          "elapsed_seconds": 552.329651,
+          "kind": "tick-end",
+          "sequence": 670,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.744186,
+          "duration_seconds": 4.012473,
+          "elapsed_seconds": 552.331584,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.009081,
+          "native_seconds": 0.257246,
+          "received": 0,
+          "selected": 0,
+          "sequence": 671,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 554.867913,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 41.290915,
+          "prepared": null,
+          "round": 5,
+          "sequence": 672,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.516663,
+          "elapsed_seconds": 555.550693,
+          "kind": "tick-end",
+          "sequence": 673,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.516685,
+          "duration_seconds": 2.888333,
+          "elapsed_seconds": 555.551232,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202093,
+          "native_seconds": 0.168993,
+          "received": 0,
+          "selected": 0,
+          "sequence": 674,
+          "tcp_seconds": null
+        },
+        {
+          "body_id": "ef1d209022faad1f61861415122e5db92ed3c2896e9a46f47f001b267131931d",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "duration_seconds": 1.199823,
+          "elapsed_seconds": 558.703967,
+          "envelope_id": "cd47179d7c7e6d2c51f4f1542c98f432f147baa50cc447c8a4a25d40b9128352",
+          "kind": "receive-end",
+          "kind_received": "Vote",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 675,
+          "succeeded": true
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 560.815579,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 47.23858,
+          "prepared": null,
+          "round": 5,
+          "sequence": 676,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.153919,
+          "elapsed_seconds": 562.003883,
+          "kind": "tick-end",
+          "sequence": 677,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.153948,
+          "duration_seconds": 6.129686,
+          "elapsed_seconds": 562.00475,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.486939,
+          "native_seconds": 1.487887,
+          "received": 1,
+          "selected": 1,
+          "sequence": 678,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 564.681563,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 51.104566,
+          "prepared": null,
+          "round": 5,
+          "sequence": 679,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.638528,
+          "elapsed_seconds": 565.354766,
+          "kind": "tick-end",
+          "sequence": 680,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.638551,
+          "duration_seconds": 3.015179,
+          "elapsed_seconds": 565.355316,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201374,
+          "native_seconds": 0.174663,
+          "received": 0,
+          "selected": 0,
+          "sequence": 681,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 569.213664,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 55.636662,
+          "prepared": null,
+          "round": 5,
+          "sequence": 682,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.338182,
+          "elapsed_seconds": 570.724846,
+          "kind": "tick-end",
+          "sequence": 683,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.338212,
+          "duration_seconds": 5.055832,
+          "elapsed_seconds": 570.725808,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.469504,
+          "native_seconds": 0.247135,
+          "received": 0,
+          "selected": 0,
+          "sequence": 684,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 573.35859,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 59.781594,
+          "prepared": null,
+          "round": 5,
+          "sequence": 685,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.54378,
+          "elapsed_seconds": 574.00044,
+          "kind": "tick-end",
+          "sequence": 686,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.543808,
+          "duration_seconds": 2.947575,
+          "elapsed_seconds": 574.000978,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20337,
+          "native_seconds": 0.199837,
+          "received": 0,
+          "selected": 0,
+          "sequence": 687,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 577.43006,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 63.853061,
+          "prepared": null,
+          "round": 5,
+          "sequence": 688,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 3.214628,
+          "elapsed_seconds": 578.788994,
+          "kind": "tick-end",
+          "sequence": 689,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.214655,
+          "duration_seconds": 4.473403,
+          "elapsed_seconds": 578.789493,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.010963,
+          "native_seconds": 0.247237,
+          "received": 0,
+          "selected": 0,
+          "sequence": 690,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 581.44372,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 67.866723,
+          "prepared": null,
+          "round": 5,
+          "sequence": 691,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.574473,
+          "elapsed_seconds": 582.085362,
+          "kind": "tick-end",
+          "sequence": 692,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.574495,
+          "duration_seconds": 2.966877,
+          "elapsed_seconds": 582.085879,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.200193,
+          "native_seconds": 0.19165,
+          "received": 0,
+          "selected": 0,
+          "sequence": 693,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 585.553223,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 71.976221,
+          "prepared": null,
+          "round": 5,
+          "sequence": 694,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.718947,
+          "elapsed_seconds": 586.394582,
+          "kind": "tick-end",
+          "sequence": 695,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.718971,
+          "duration_seconds": 3.982804,
+          "elapsed_seconds": 586.395168,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.008239,
+          "native_seconds": 0.254983,
+          "received": 0,
+          "selected": 0,
+          "sequence": 696,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 589.067806,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 75.490809,
+          "prepared": null,
+          "round": 5,
+          "sequence": 697,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.576251,
+          "elapsed_seconds": 589.713433,
+          "kind": "tick-end",
+          "sequence": 698,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.576291,
+          "duration_seconds": 2.981069,
+          "elapsed_seconds": 589.714329,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203238,
+          "native_seconds": 0.200619,
+          "received": 0,
+          "selected": 0,
+          "sequence": 699,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 593.14971,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 79.572712,
+          "prepared": null,
+          "round": 5,
+          "sequence": 700,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.485391,
+          "elapsed_seconds": 593.790041,
+          "kind": "tick-end",
+          "sequence": 701,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.485419,
+          "duration_seconds": 3.757718,
+          "elapsed_seconds": 593.790596,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.023728,
+          "native_seconds": 0.247986,
+          "received": 0,
+          "selected": 0,
+          "sequence": 702,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 596.302467,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 82.725468,
+          "prepared": null,
+          "round": 5,
+          "sequence": 703,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.546066,
+          "elapsed_seconds": 596.983635,
+          "kind": "tick-end",
+          "sequence": 704,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.546087,
+          "duration_seconds": 2.926715,
+          "elapsed_seconds": 596.984273,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.204611,
+          "native_seconds": 0.175353,
+          "received": 0,
+          "selected": 0,
+          "sequence": 705,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 600.376389,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 86.79939,
+          "prepared": null,
+          "round": 5,
+          "sequence": 706,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.463585,
+          "elapsed_seconds": 601.00287,
+          "kind": "tick-end",
+          "sequence": 707,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.463618,
+          "duration_seconds": 3.702335,
+          "elapsed_seconds": 601.003508,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.002093,
+          "native_seconds": 0.235969,
+          "received": 0,
+          "selected": 0,
+          "sequence": 708,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 603.714693,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 90.137693,
+          "prepared": null,
+          "round": 5,
+          "sequence": 709,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.636658,
+          "elapsed_seconds": 604.385659,
+          "kind": "tick-end",
+          "sequence": 710,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.636681,
+          "duration_seconds": 3.046796,
+          "elapsed_seconds": 604.386271,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.204289,
+          "native_seconds": 0.205174,
+          "received": 0,
+          "selected": 0,
+          "sequence": 711,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 607.80851,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 94.23151,
+          "prepared": null,
+          "round": 5,
+          "sequence": 712,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.488415,
+          "elapsed_seconds": 608.454957,
+          "kind": "tick-end",
+          "sequence": 713,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.48844,
+          "duration_seconds": 3.738926,
+          "elapsed_seconds": 608.455889,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.00455,
+          "native_seconds": 0.244956,
+          "received": 0,
+          "selected": 0,
+          "sequence": 714,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 611.046304,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 97.469306,
+          "prepared": null,
+          "round": 5,
+          "sequence": 715,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.58267,
+          "elapsed_seconds": 611.688123,
+          "kind": "tick-end",
+          "sequence": 716,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.582693,
+          "duration_seconds": 2.973279,
+          "elapsed_seconds": 611.688741,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202152,
+          "native_seconds": 0.187767,
+          "received": 0,
+          "selected": 0,
+          "sequence": 717,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 615.085395,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 101.508395,
+          "prepared": null,
+          "round": 5,
+          "sequence": 718,
+          "stopped": false
+        },
+        {
+          "duration_seconds": 2.47168,
+          "elapsed_seconds": 615.713259,
+          "kind": "tick-end",
+          "sequence": 719,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.471705,
+          "duration_seconds": 3.696825,
+          "elapsed_seconds": 615.714115,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.000456,
+          "native_seconds": 0.223776,
+          "received": 0,
+          "selected": 0,
+          "sequence": 720,
+          "tcp_seconds": null
+        }
+      ],
+      "last_consensus": {
+        "height": 15,
+        "round": 5,
+        "progress_observation_available": null
+      }
+    },
+    {
+      "carrier": 3,
+      "process_id": 57283,
+      "events_dropped": 783,
+      "events_rejected": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 8,
+          "failures": 6,
+          "max_seconds": 0.143289,
+          "total_seconds": 0.619571
+        },
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.058478,
+          "total_seconds": 0.058478
+        },
+        "bft-epoch-activate-observed": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.291679,
+          "total_seconds": 0.722062
+        },
+        "bft-network-check": {
+          "calls": 220,
+          "failures": 0,
+          "max_seconds": 0.186557,
+          "total_seconds": 20.511296
+        },
+        "bft-network-check-batch": {
+          "calls": 50,
+          "failures": 0,
+          "max_seconds": 0.196069,
+          "total_seconds": 6.418442
+        },
+        "bft-network-pack": {
+          "calls": 17,
+          "failures": 0,
+          "max_seconds": 0.14991,
+          "total_seconds": 1.756376
+        },
+        "bft-quorum": {
+          "calls": 14,
+          "failures": 0,
+          "max_seconds": 0.110107,
+          "total_seconds": 0.870265
+        },
+        "bft-sign": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 1.242942,
+          "total_seconds": 14.020648
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.31359,
+          "total_seconds": 0.59398
+        },
+        "bft-timeout-certificate": {
+          "calls": 42,
+          "failures": 0,
+          "max_seconds": 0.142494,
+          "total_seconds": 2.607259
+        },
+        "consensus-tick": {
+          "calls": 141,
+          "failures": 0,
+          "max_seconds": 7.046528,
+          "total_seconds": 393.507686
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.149125,
+          "total_seconds": 0.149125
+        }
+      },
+      "last_events": [
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 510.920499,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 784,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 510.920527,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 785,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.910657,
+          "elapsed_seconds": 511.898133,
+          "kind": "tick-end",
+          "sequence": 786,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.910687,
+          "duration_seconds": 4.101227,
+          "elapsed_seconds": 511.899239,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.975034,
+          "native_seconds": 0.214356,
+          "received": 0,
+          "selected": 0,
+          "sequence": 787,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 514.668198,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 69.211029,
+          "prepared": null,
+          "round": 4,
+          "sequence": 788,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 514.668534,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 789,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 514.668563,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 790,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.688324,
+          "elapsed_seconds": 515.340657,
+          "kind": "tick-end",
+          "sequence": 791,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.688397,
+          "duration_seconds": 3.101954,
+          "elapsed_seconds": 515.341206,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203633,
+          "native_seconds": 0.2093,
+          "received": 0,
+          "selected": 0,
+          "sequence": 792,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 519.097151,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 73.63998,
+          "prepared": null,
+          "round": 4,
+          "sequence": 793,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 519.097472,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 794,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 519.097501,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 795,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.540728,
+          "elapsed_seconds": 519.764528,
+          "kind": "tick-end",
+          "sequence": 796,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.540756,
+          "duration_seconds": 4.098188,
+          "elapsed_seconds": 519.765243,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.338173,
+          "native_seconds": 0.218518,
+          "received": 0,
+          "selected": 0,
+          "sequence": 797,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 522.540436,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 77.083265,
+          "prepared": null,
+          "round": 4,
+          "sequence": 798,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 522.540848,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 799,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 522.540877,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 800,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.551118,
+          "elapsed_seconds": 523.17075,
+          "kind": "tick-end",
+          "sequence": 801,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.551142,
+          "duration_seconds": 3.067895,
+          "elapsed_seconds": 523.171246,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.204382,
+          "native_seconds": 0.311848,
+          "received": 0,
+          "selected": 0,
+          "sequence": 802,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 526.635027,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 81.177856,
+          "prepared": null,
+          "round": 4,
+          "sequence": 803,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 526.63532,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 804,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 526.635346,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 805,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.785869,
+          "elapsed_seconds": 527.401763,
+          "kind": "tick-end",
+          "sequence": 806,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.785892,
+          "duration_seconds": 3.911449,
+          "elapsed_seconds": 527.402609,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.976954,
+          "native_seconds": 0.147711,
+          "received": 0,
+          "selected": 0,
+          "sequence": 807,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 530.401532,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 84.944365,
+          "prepared": null,
+          "round": 4,
+          "sequence": 808,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 530.40191,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 809,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 530.401942,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 810,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.905902,
+          "elapsed_seconds": 531.031294,
+          "kind": "tick-end",
+          "sequence": 811,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.905932,
+          "duration_seconds": 3.299331,
+          "elapsed_seconds": 531.031922,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202472,
+          "native_seconds": 0.190283,
+          "received": 0,
+          "selected": 0,
+          "sequence": 812,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 534.709376,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 89.252205,
+          "prepared": null,
+          "round": 4,
+          "sequence": 813,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 534.709663,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 814,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 534.709691,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 815,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.711799,
+          "elapsed_seconds": 535.346946,
+          "kind": "tick-end",
+          "sequence": 816,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.711869,
+          "duration_seconds": 3.984733,
+          "elapsed_seconds": 535.347845,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.035645,
+          "native_seconds": 0.236295,
+          "received": 0,
+          "selected": 0,
+          "sequence": 817,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 538.195856,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 92.738687,
+          "prepared": null,
+          "round": 4,
+          "sequence": 818,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 538.196206,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 819,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 538.196233,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 820,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.669583,
+          "elapsed_seconds": 538.891563,
+          "kind": "tick-end",
+          "sequence": 821,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.669633,
+          "duration_seconds": 3.210096,
+          "elapsed_seconds": 538.892457,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201221,
+          "native_seconds": 0.338273,
+          "received": 0,
+          "selected": 0,
+          "sequence": 822,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 542.317421,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 96.860251,
+          "prepared": null,
+          "round": 4,
+          "sequence": 823,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 542.317739,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 824,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 542.317763,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 825,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.597378,
+          "elapsed_seconds": 542.97733,
+          "kind": "tick-end",
+          "sequence": 826,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.597407,
+          "duration_seconds": 3.765575,
+          "elapsed_seconds": 542.977793,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.967055,
+          "native_seconds": 0.200623,
+          "received": 0,
+          "selected": 0,
+          "sequence": 827,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 546.585673,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 101.128503,
+          "prepared": null,
+          "round": 4,
+          "sequence": 828,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 546.585979,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 829,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 546.586004,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 830,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "action": "Timeout",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 546.586587,
+          "kind": "sign-start",
+          "round": 4,
+          "sequence": 831
+        },
+        {
+          "action": "Timeout",
+          "duration_seconds": 2.57192,
+          "elapsed_seconds": 549.158501,
+          "kind": "sign-end",
+          "sequence": 832,
+          "succeeded": true
+        },
+        {
+          "duration_seconds": 6.870378,
+          "elapsed_seconds": 551.45346,
+          "kind": "tick-end",
+          "sequence": 833,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 6.870417,
+          "duration_seconds": 8.168964,
+          "elapsed_seconds": 551.46023,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.080997,
+          "native_seconds": 0.210769,
+          "received": 0,
+          "selected": 0,
+          "sequence": 834,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 554.244958,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 5.086453,
+          "prepared": null,
+          "round": 5,
+          "sequence": 835,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 554.267919,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 836,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 554.267952,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 837,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.76087,
+          "elapsed_seconds": 554.974714,
+          "kind": "tick-end",
+          "sequence": 838,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.760904,
+          "duration_seconds": 3.186236,
+          "elapsed_seconds": 554.9757,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.218886,
+          "native_seconds": 0.205439,
+          "received": 0,
+          "selected": 0,
+          "sequence": 839,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 558.607849,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 9.449341,
+          "prepared": null,
+          "round": 5,
+          "sequence": 840,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 558.608166,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 841,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 558.608192,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 842,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.727423,
+          "elapsed_seconds": 559.325132,
+          "kind": "tick-end",
+          "sequence": 843,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.727453,
+          "duration_seconds": 4.032865,
+          "elapsed_seconds": 559.333105,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.028113,
+          "native_seconds": 0.269305,
+          "received": 0,
+          "selected": 0,
+          "sequence": 844,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 562.056258,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 12.897754,
+          "prepared": null,
+          "round": 5,
+          "sequence": 845,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 562.056589,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 846,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 562.056617,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 847,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.757645,
+          "elapsed_seconds": 562.79658,
+          "kind": "tick-end",
+          "sequence": 848,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.757671,
+          "duration_seconds": 3.132172,
+          "elapsed_seconds": 562.797136,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.205616,
+          "native_seconds": 0.16831,
+          "received": 0,
+          "selected": 0,
+          "sequence": 849,
+          "tcp_seconds": null
+        },
+        {
+          "body_id": "1d52b09017fbcf83588aeb54ca7430253710873cb7cf585f515f345c16377029",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "duration_seconds": 1.315858,
+          "elapsed_seconds": 566.125432,
+          "envelope_id": "e0dfa46558d77c2467658fa58084a7faa6d6d2f42328c6b41bfebd42770b762e",
+          "kind": "receive-end",
+          "kind_received": "Timeout",
+          "phase": null,
+          "round": 4,
+          "sequence": 850,
+          "succeeded": true
+        },
+        {
+          "body_id": "b84a843eb9977be67239b65417174698bf820ec8b05f2ba2a88d3d939d71a1c9",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "duration_seconds": 1.395559,
+          "elapsed_seconds": 567.635289,
+          "envelope_id": "ab0e613d81d856bb787d9de0413d80355b8af1ec4c02375f918ca9878e97234f",
+          "kind": "receive-end",
+          "kind_received": "Timeout",
+          "phase": null,
+          "round": 3,
+          "sequence": 851,
+          "succeeded": true
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 569.729636,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 20.571132,
+          "prepared": null,
+          "round": 5,
+          "sequence": 852,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 569.759054,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 853,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 569.759088,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 854,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.959653,
+          "elapsed_seconds": 570.700775,
+          "kind": "tick-end",
+          "sequence": 855,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.959699,
+          "duration_seconds": 7.586019,
+          "elapsed_seconds": 570.70192,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.576065,
+          "native_seconds": 3.049073,
+          "received": 2,
+          "selected": 2,
+          "sequence": 856,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 573.432881,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 24.274378,
+          "prepared": null,
+          "round": 5,
+          "sequence": 857,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 573.43325,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 858,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 573.433284,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 859,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.708953,
+          "elapsed_seconds": 574.150747,
+          "kind": "tick-end",
+          "sequence": 860,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.708983,
+          "duration_seconds": 3.104711,
+          "elapsed_seconds": 574.151597,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202604,
+          "native_seconds": 0.192245,
+          "received": 0,
+          "selected": 0,
+          "sequence": 861,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 578.112963,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 28.954457,
+          "prepared": null,
+          "round": 5,
+          "sequence": 862,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 578.113287,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 863,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 578.113314,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 864,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 3.470107,
+          "elapsed_seconds": 579.63844,
+          "kind": "tick-end",
+          "sequence": 865,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.470133,
+          "duration_seconds": 5.162992,
+          "elapsed_seconds": 579.638989,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.441652,
+          "native_seconds": 0.250609,
+          "received": 0,
+          "selected": 0,
+          "sequence": 866,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 582.324059,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 33.165554,
+          "prepared": null,
+          "round": 5,
+          "sequence": 867,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 582.324482,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 868,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 582.324512,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 869,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.639852,
+          "elapsed_seconds": 582.998253,
+          "kind": "tick-end",
+          "sequence": 870,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.639881,
+          "duration_seconds": 3.028561,
+          "elapsed_seconds": 582.999217,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202298,
+          "native_seconds": 0.185393,
+          "received": 0,
+          "selected": 0,
+          "sequence": 871,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 586.650322,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 37.491813,
+          "prepared": null,
+          "round": 5,
+          "sequence": 872,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 586.65063,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 873,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 586.650655,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 874,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.763264,
+          "elapsed_seconds": 587.329177,
+          "kind": "tick-end",
+          "sequence": 875,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.763301,
+          "duration_seconds": 3.999305,
+          "elapsed_seconds": 587.329814,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.018148,
+          "native_seconds": 0.217198,
+          "received": 0,
+          "selected": 0,
+          "sequence": 876,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 590.007699,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 40.849189,
+          "prepared": null,
+          "round": 5,
+          "sequence": 877,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 590.008095,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 878,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 590.008127,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 879,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.613157,
+          "elapsed_seconds": 590.683321,
+          "kind": "tick-end",
+          "sequence": 880,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.613179,
+          "duration_seconds": 2.985259,
+          "elapsed_seconds": 590.684253,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20363,
+          "native_seconds": 0.1675,
+          "received": 0,
+          "selected": 0,
+          "sequence": 881,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 594.668598,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 45.510093,
+          "prepared": null,
+          "round": 5,
+          "sequence": 882,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 594.668905,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 883,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 594.668933,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 884,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 3.0954,
+          "elapsed_seconds": 595.749007,
+          "kind": "tick-end",
+          "sequence": 885,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.095431,
+          "duration_seconds": 4.742404,
+          "elapsed_seconds": 595.749484,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.435289,
+          "native_seconds": 0.211174,
+          "received": 0,
+          "selected": 0,
+          "sequence": 886,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 598.394738,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 49.236234,
+          "prepared": null,
+          "round": 5,
+          "sequence": 887,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 598.395064,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 888,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 598.395092,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 889,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.557132,
+          "elapsed_seconds": 599.054727,
+          "kind": "tick-end",
+          "sequence": 890,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.557153,
+          "duration_seconds": 2.96093,
+          "elapsed_seconds": 599.055284,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.203851,
+          "native_seconds": 0.19934,
+          "received": 0,
+          "selected": 0,
+          "sequence": 891,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 602.596068,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 53.437561,
+          "prepared": null,
+          "round": 5,
+          "sequence": 892,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 602.596396,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 893,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 602.596426,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 894,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.679484,
+          "elapsed_seconds": 603.30757,
+          "kind": "tick-end",
+          "sequence": 895,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.679517,
+          "duration_seconds": 3.928527,
+          "elapsed_seconds": 603.308352,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.031786,
+          "native_seconds": 0.216428,
+          "received": 0,
+          "selected": 0,
+          "sequence": 896,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 606.099859,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 56.941354,
+          "prepared": null,
+          "round": 5,
+          "sequence": 897,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 606.100234,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 898,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 606.100264,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 899,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.720203,
+          "elapsed_seconds": 606.760597,
+          "kind": "tick-end",
+          "sequence": 900,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.720232,
+          "duration_seconds": 3.117863,
+          "elapsed_seconds": 606.761478,
+          "errors": 3,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202764,
+          "native_seconds": 0.193973,
+          "received": 0,
+          "selected": 0,
+          "sequence": 901,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 610.346448,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 61.187941,
+          "prepared": null,
+          "round": 5,
+          "sequence": 902,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 610.346754,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 903,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 610.346779,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 904,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.673797,
+          "elapsed_seconds": 611.00388,
+          "kind": "tick-end",
+          "sequence": 905,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.673829,
+          "duration_seconds": 3.912387,
+          "elapsed_seconds": 611.005003,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.004564,
+          "native_seconds": 0.23284,
+          "received": 0,
+          "selected": 0,
+          "sequence": 906,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 614.625283,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 65.466777,
+          "prepared": null,
+          "round": 5,
+          "sequence": 907,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 614.625753,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 908,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 614.625777,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 909,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 3.288438,
+          "elapsed_seconds": 615.972944,
+          "kind": "tick-end",
+          "sequence": 910,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 3.288472,
+          "duration_seconds": 4.62743,
+          "elapsed_seconds": 615.973442,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 1.120142,
+          "native_seconds": 0.218295,
+          "received": 0,
+          "selected": 0,
+          "sequence": 911,
+          "tcp_seconds": null
+        }
+      ],
+      "last_consensus": {
+        "height": 15,
+        "round": 5,
+        "progress_observation_available": null
+      }
+    },
+    {
+      "carrier": 4,
+      "process_id": 57284,
+      "events_dropped": 1069,
+      "events_rejected": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 8,
+          "failures": 6,
+          "max_seconds": 0.086613,
+          "total_seconds": 0.489276
+        },
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.056651,
+          "total_seconds": 0.056651
+        },
+        "bft-epoch-activate-observed": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.266452,
+          "total_seconds": 0.708714
+        },
+        "bft-network-check": {
+          "calls": 243,
+          "failures": 0,
+          "max_seconds": 0.16023,
+          "total_seconds": 21.963026
+        },
+        "bft-network-check-batch": {
+          "calls": 50,
+          "failures": 0,
+          "max_seconds": 0.195854,
+          "total_seconds": 6.660119
+        },
+        "bft-network-pack": {
+          "calls": 15,
+          "failures": 0,
+          "max_seconds": 0.171094,
+          "total_seconds": 1.575741
+        },
+        "bft-quorum": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.088985,
+          "total_seconds": 0.715413
+        },
+        "bft-sign": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.88491,
+          "total_seconds": 9.738948
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.329589,
+          "total_seconds": 0.329589
+        },
+        "bft-timeout-certificate": {
+          "calls": 65,
+          "failures": 0,
+          "max_seconds": 0.113594,
+          "total_seconds": 4.059086
+        },
+        "consensus-tick": {
+          "calls": 202,
+          "failures": 0,
+          "max_seconds": 5.081356,
+          "total_seconds": 370.604534
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.186358,
+          "total_seconds": 0.186358
+        }
+      },
+      "last_events": [
+        {
+          "consensus_seconds": 1.687416,
+          "duration_seconds": 2.361079,
+          "elapsed_seconds": 549.585106,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.497703,
+          "native_seconds": 0.175356,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1070,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 552.119068,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 88.152687,
+          "prepared": null,
+          "round": 4,
+          "sequence": 1071,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 552.119385,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1072,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 552.119416,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1073,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.731574,
+          "elapsed_seconds": 552.485287,
+          "kind": "tick-end",
+          "sequence": 1074,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.731602,
+          "duration_seconds": 2.576523,
+          "elapsed_seconds": 552.486354,
+          "errors": 0,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.660293,
+          "native_seconds": 0.18354,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1075,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 554.969201,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 91.00282,
+          "prepared": null,
+          "round": 4,
+          "sequence": 1076,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 554.969545,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1077,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 554.969576,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1078,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.810076,
+          "elapsed_seconds": 555.454808,
+          "kind": "tick-end",
+          "sequence": 1079,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.810102,
+          "duration_seconds": 2.591662,
+          "elapsed_seconds": 555.455838,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.61313,
+          "native_seconds": 0.167377,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1080,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 557.48807,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 93.521673,
+          "prepared": null,
+          "round": 4,
+          "sequence": 1081,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 557.488411,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1082,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 557.488444,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1083,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.645973,
+          "elapsed_seconds": 557.851304,
+          "kind": "tick-end",
+          "sequence": 1084,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.645999,
+          "duration_seconds": 2.071989,
+          "elapsed_seconds": 557.851741,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201856,
+          "native_seconds": 0.223682,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1085,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 560.115559,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 96.149181,
+          "prepared": null,
+          "round": 4,
+          "sequence": 1086,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 560.115869,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1087,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 560.115898,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1088,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.044028,
+          "elapsed_seconds": 560.897185,
+          "kind": "tick-end",
+          "sequence": 1089,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.044051,
+          "duration_seconds": 2.723814,
+          "elapsed_seconds": 560.898027,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.502104,
+          "native_seconds": 0.176779,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1090,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 562.912816,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 98.946439,
+          "prepared": null,
+          "round": 4,
+          "sequence": 1091,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 562.91322,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1092,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 562.913251,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1093,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.621697,
+          "elapsed_seconds": 563.286311,
+          "kind": "tick-end",
+          "sequence": 1094,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.621722,
+          "duration_seconds": 2.056364,
+          "elapsed_seconds": 563.287151,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201058,
+          "native_seconds": 0.232723,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1095,
+          "tcp_seconds": null
+        },
+        {
+          "body_id": "c3395e1d49bf09bb425646c7153576429fca6b86cd37b54ff1a21cad20ea856c",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "duration_seconds": 0.931817,
+          "elapsed_seconds": 565.167975,
+          "envelope_id": "c7d8a3f09d57d9d6d172bcb4c25e4ceeabdb46075c517de166e39bd738c86595",
+          "kind": "receive-end",
+          "kind_received": "Timeout",
+          "phase": null,
+          "round": 4,
+          "sequence": 1096,
+          "succeeded": true
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 566.584651,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 102.618273,
+          "prepared": null,
+          "round": 4,
+          "sequence": 1097,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 566.607825,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1098,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 566.607855,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1099,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "action": "Timeout",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 566.608446,
+          "kind": "sign-start",
+          "round": 4,
+          "sequence": 1100
+        },
+        {
+          "action": "Timeout",
+          "duration_seconds": 1.955947,
+          "elapsed_seconds": 568.564387,
+          "kind": "sign-end",
+          "sequence": 1101,
+          "succeeded": true
+        },
+        {
+          "duration_seconds": 5.002386,
+          "elapsed_seconds": 570.26595,
+          "kind": "tick-end",
+          "sequence": 1102,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 5.002431,
+          "duration_seconds": 6.654926,
+          "elapsed_seconds": 570.272394,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.552123,
+          "native_seconds": 1.093911,
+          "received": 1,
+          "selected": 1,
+          "sequence": 1103,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 572.270652,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 3.706263,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1104,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 572.294011,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1105,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 572.294044,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1106,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.753179,
+          "elapsed_seconds": 572.729678,
+          "kind": "tick-end",
+          "sequence": 1107,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.753211,
+          "duration_seconds": 2.115882,
+          "elapsed_seconds": 572.730273,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201307,
+          "native_seconds": 0.160746,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1108,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 575.148932,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 6.584543,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1109,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 575.14923,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1110,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 575.149257,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1111,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.956703,
+          "elapsed_seconds": 575.751428,
+          "kind": "tick-end",
+          "sequence": 1112,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.956727,
+          "duration_seconds": 2.709506,
+          "elapsed_seconds": 575.752331,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.579837,
+          "native_seconds": 0.172019,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1113,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 577.809869,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 9.245483,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1114,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 577.81029,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1115,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 577.810319,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1116,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.724495,
+          "elapsed_seconds": 578.242553,
+          "kind": "tick-end",
+          "sequence": 1117,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.724527,
+          "duration_seconds": 2.166175,
+          "elapsed_seconds": 578.243382,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.208269,
+          "native_seconds": 0.232521,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1118,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 580.637154,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 12.072765,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1119,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 580.637463,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1120,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 580.637491,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1121,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.926461,
+          "elapsed_seconds": 581.244452,
+          "kind": "tick-end",
+          "sequence": 1122,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.926488,
+          "duration_seconds": 2.685174,
+          "elapsed_seconds": 581.245244,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.581952,
+          "native_seconds": 0.175928,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1123,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 583.291503,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 14.727115,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1124,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 583.291869,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1125,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 583.2919,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1126,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.693567,
+          "elapsed_seconds": 583.709908,
+          "kind": "tick-end",
+          "sequence": 1127,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.693591,
+          "duration_seconds": 2.139649,
+          "elapsed_seconds": 583.710503,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.201071,
+          "native_seconds": 0.244369,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1128,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 586.16479,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 17.600402,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1129,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 586.165118,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1130,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 586.165147,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1131,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 2.333769,
+          "elapsed_seconds": 587.113439,
+          "kind": "tick-end",
+          "sequence": 1132,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 2.333813,
+          "duration_seconds": 3.075781,
+          "elapsed_seconds": 587.114059,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.587084,
+          "native_seconds": 0.154257,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1133,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 589.156861,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 20.592471,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1134,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 589.157229,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1135,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 589.15726,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1136,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.792591,
+          "elapsed_seconds": 589.6059,
+          "kind": "tick-end",
+          "sequence": 1137,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.792621,
+          "duration_seconds": 2.169159,
+          "elapsed_seconds": 589.606837,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.20735,
+          "native_seconds": 0.168228,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1138,
+          "tcp_seconds": null
+        },
+        {
+          "body_id": "b84a843eb9977be67239b65417174698bf820ec8b05f2ba2a88d3d939d71a1c9",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "duration_seconds": 1.003855,
+          "elapsed_seconds": 591.897194,
+          "envelope_id": "ab0e613d81d856bb787d9de0413d80355b8af1ec4c02375f918ca9878e97234f",
+          "kind": "receive-end",
+          "kind_received": "Timeout",
+          "phase": null,
+          "round": 3,
+          "sequence": 1139,
+          "succeeded": true
+        },
+        {
+          "body_id": "1d52b09017fbcf83588aeb54ca7430253710873cb7cf585f515f345c16377029",
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "duration_seconds": 0.932856,
+          "elapsed_seconds": 592.837416,
+          "envelope_id": "e0dfa46558d77c2467658fa58084a7faa6d6d2f42328c6b41bfebd42770b762e",
+          "kind": "receive-end",
+          "kind_received": "Timeout",
+          "phase": null,
+          "round": 4,
+          "sequence": 1140,
+          "succeeded": true
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 594.255335,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 25.690944,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1141,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 594.278594,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1142,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 594.278627,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1143,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "action": "Propose",
+          "context_id": null,
+          "elapsed_seconds": 594.721847,
+          "kind": "sign-start",
+          "round": 5,
+          "sequence": 1144
+        },
+        {
+          "action": "Propose",
+          "duration_seconds": 1.895514,
+          "elapsed_seconds": 596.617355,
+          "kind": "sign-end",
+          "sequence": 1145,
+          "succeeded": true
+        },
+        {
+          "duration_seconds": 5.081358,
+          "elapsed_seconds": 598.01939,
+          "kind": "tick-end",
+          "sequence": 1146,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 5.081385,
+          "duration_seconds": 8.107518,
+          "elapsed_seconds": 598.025944,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.899691,
+          "native_seconds": 2.119863,
+          "received": 2,
+          "selected": 2,
+          "sequence": 1147,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 600.630699,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 4.013371,
+          "prepared": null,
+          "round": 5,
+          "sequence": 1148,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 600.662791,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1149,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 600.662828,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1150,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 600.66304,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1151,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 600.663062,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 5,
+          "sequence": 1152,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 600.663486,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1153,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "action": "Prepare",
+          "context_id": "df365a5cf4dac75aca247151b92d5b336831103a0e878f422278cd0477936c5c",
+          "elapsed_seconds": 600.663505,
+          "kind": "sign-start",
+          "round": 5,
+          "sequence": 1154
+        },
+        {
+          "action": "Prepare",
+          "duration_seconds": 1.93838,
+          "elapsed_seconds": 602.601877,
+          "kind": "sign-end",
+          "sequence": 1155,
+          "succeeded": true
+        },
+        {
+          "duration_seconds": 4.882606,
+          "elapsed_seconds": 604.188661,
+          "kind": "tick-end",
+          "sequence": 1156,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 4.882634,
+          "duration_seconds": 5.83554,
+          "elapsed_seconds": 604.191763,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.781543,
+          "native_seconds": 0.168242,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1157,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 606.347805,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 3.745926,
+          "prepared": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a",
+          "round": 5,
+          "sequence": 1158,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 606.371911,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1159,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 606.371947,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1160,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 606.372163,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1161,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 606.372184,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 5,
+          "sequence": 1162,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 606.372607,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1163,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.921303,
+          "elapsed_seconds": 606.871801,
+          "kind": "tick-end",
+          "sequence": 1164,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.921354,
+          "duration_seconds": 2.342132,
+          "elapsed_seconds": 606.872399,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.205507,
+          "native_seconds": 0.214644,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1165,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 609.487565,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 6.885687,
+          "prepared": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a",
+          "round": 5,
+          "sequence": 1166,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 609.48792,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1167,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 609.487948,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1168,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 609.48821,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1169,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 609.488238,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 5,
+          "sequence": 1170,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 609.488697,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1171,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.993347,
+          "elapsed_seconds": 609.992962,
+          "kind": "tick-end",
+          "sequence": 1172,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.99339,
+          "duration_seconds": 2.789936,
+          "elapsed_seconds": 609.993493,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.644751,
+          "native_seconds": 0.151248,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1173,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 612.521067,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 9.919189,
+          "prepared": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a",
+          "round": 5,
+          "sequence": 1174,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 612.521374,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1175,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 612.521401,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1176,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 612.521619,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1177,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 612.521639,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 5,
+          "sequence": 1178,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 612.522052,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1179,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.90809,
+          "elapsed_seconds": 613.055199,
+          "kind": "tick-end",
+          "sequence": 1180,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.908115,
+          "duration_seconds": 2.733935,
+          "elapsed_seconds": 613.056125,
+          "errors": 0,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.645229,
+          "native_seconds": 0.179641,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1181,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 615.190316,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 12.588438,
+          "prepared": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a",
+          "round": 5,
+          "sequence": 1182,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 615.190655,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1183,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 615.190687,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1184,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 615.190924,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1185,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 615.190949,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 5,
+          "sequence": 1186,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 615.191361,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1187,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.930321,
+          "elapsed_seconds": 615.688145,
+          "kind": "tick-end",
+          "sequence": 1188,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.930346,
+          "duration_seconds": 2.313265,
+          "elapsed_seconds": 615.689045,
+          "errors": 2,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.202092,
+          "native_seconds": 0.179898,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1189,
+          "tcp_seconds": null
+        },
+        {
+          "committed": null,
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "elapsed_seconds": 618.136264,
+          "height": 15,
+          "kind": "tick-phase",
+          "phase_age_seconds": 15.53438,
+          "prepared": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a",
+          "round": 5,
+          "sequence": 1190,
+          "stopped": false
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 2,
+          "elapsed_seconds": 618.136678,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 3,
+          "sequence": 1191,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 618.136708,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 3,
+          "sequence": 1192,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 618.13697,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1193,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 0,
+          "elapsed_seconds": 618.136997,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 5,
+          "sequence": 1194,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "context_id": "8bd539efc03bb2db8dc9f4b0a7213f6c50892264a9cb3f02752de32773b62f1a",
+          "distinct_votes": 1,
+          "elapsed_seconds": 618.137446,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 5,
+          "sequence": 1195,
+          "value": "bd375430aefc6fd1a01e710fc361aad2b44bbac3a570ddb277710221e936cc3a"
+        },
+        {
+          "duration_seconds": 1.846441,
+          "elapsed_seconds": 618.631326,
+          "kind": "tick-end",
+          "sequence": 1196,
+          "succeeded": true
+        },
+        {
+          "consensus_seconds": 1.846477,
+          "duration_seconds": 2.626109,
+          "elapsed_seconds": 618.632342,
+          "errors": 1,
+          "kind": "contact-tick",
+          "mesh_seconds": 0.63282,
+          "native_seconds": 0.145785,
+          "received": 0,
+          "selected": 0,
+          "sequence": 1197,
+          "tcp_seconds": null
+        }
+      ],
+      "last_consensus": {
+        "height": 15,
+        "round": 5,
+        "progress_observation_available": null
+      }
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "elapsed_waits_included": true,
+  "not_cpu_or_live_throughput": true,
+  "not_unique_causal_proof": true,
+  "fresh_full_fault_profile_completed": false
+}

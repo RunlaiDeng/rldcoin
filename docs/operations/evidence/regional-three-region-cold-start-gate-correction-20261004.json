@@ -1,0 +1,21 @@
+{
+  "format": "RLD-THREE-REGION-COLD-GATE-CORRECTION-V1",
+  "stopped_waiters": [
+    {
+      "pid": 25343,
+      "script_sha256": "5ea313c54292bcc3c4be115b91d33d6e2c4200eaf1f94f0c337e12dda282e120",
+      "waiting_controller_only": true
+    },
+    {
+      "pid": 20272,
+      "script_sha256": "99f204a02e44dbf1ca9f24a1ee3248fb8358d89c9b6e7c4a355f5cfadc333932",
+      "waiting_controller_only": true
+    }
+  ],
+  "reason": "cold verifier has complete-authentication fields but no generic completed field",
+  "ordinary_campaign_not_restarted": true,
+  "no_fault_or_new_checks_had_started": true,
+  "original_scripts_and_start_gates_retained": true,
+  "fixture_only": true,
+  "live_rld": false
+}

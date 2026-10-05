@@ -1,0 +1,400 @@
+{
+  "format": "RLD-NATIVE-PAGED-EVENTS-PUBLICATION-VERIFICATION-V1",
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "1883272f040280e8a74b3b784556d5b0486e5d92",
+  "branch_head_matches": true,
+  "changed_remote_files_exact": 64,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 18458,
+      "sha256": "fdc1ebfcbd98e41856d966365ca378b49b7db75a6187187ae297b64ca8821a3b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/HISTORY_RETENTION.md",
+      "bytes": 36159,
+      "sha256": "4ae22ef232600bca564c2b8b44d53603b11064c0a0063b9630edc014f6357539",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/README.md",
+      "bytes": 9744,
+      "sha256": "4084e6eca609fb3de14f92ed61ea943ba0c80f3299bce73dc7ea2125ead36241",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/SHA256SUMS",
+      "bytes": 6790,
+      "sha256": "c76754feadd3b442b7b98b879084ecb094999b891eb668932a873c9a344969e1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/STATUS.zh-CN.md",
+      "bytes": 1530,
+      "sha256": "ba10828a58848d808738cf516d7705b5f2f3050acee124220f621d8b1f906671",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/checks.json",
+      "bytes": 2654,
+      "sha256": "4484d2dc9ba31774e2a7e1d1f234e0d6bc25d41a2f0fc2dd5d13bc28907c914e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-cycle-cold-20261002.json",
+      "bytes": 13310,
+      "sha256": "ded5f12dca58e99c90cc0964d5e2ad82e5e67c0539a661a4bce836c6edd84a42",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-cycle-fresh-target-audit-20261002.json",
+      "bytes": 7323,
+      "sha256": "5b4e7913e0092bc3cd7a5ef07c8bc1fc03a2507ac56d7805c254588a8ba32fa1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-fault-cold-20261002.json",
+      "bytes": 10803,
+      "sha256": "1654f1369ab7033c75c6c79bce84c9bf16f6562d499644f927de7624ba0aca09",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-fault-fresh-target-audit-20261002.json",
+      "bytes": 7339,
+      "sha256": "ef502a71e373510ffc310df04c88302efbde2b1fa0b31af7da6c410862afe802",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-fresh-cycle-20261002.json",
+      "bytes": 19134,
+      "sha256": "187c623d26c1688a3c49264ba8f5e45d5418137b28c9db910aba7e66f5fd636d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-fresh-fault-20261002.json",
+      "bytes": 26214,
+      "sha256": "2398daa01faa58ef557c162b0ea24462bfafdb169da619ad9676503c00a0e547",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-frozen-checks-20261002.json",
+      "bytes": 1497,
+      "sha256": "310c5b5555f614648630ff52207884e2917816fc9f3a350b5bec814af5c981ec",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-frozen-process-sample-20261002.json",
+      "bytes": 510,
+      "sha256": "8512b90a1fa370ab296c35a03c9a98e5167c42a1d02b4dc9b2d097426f097ce5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-local-verification-20261002.json",
+      "bytes": 3324,
+      "sha256": "6f4915ea5a8c283d64c832495977ca53c12f17671f30bf8e78b4ef6c2bbe126c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-long-store-sample-20261002.json",
+      "bytes": 653,
+      "sha256": "7185bfc831af74f856b4e11911b28c45b7c904da79f7acde9cc495df359274b6",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/evidence/regional-native-paged-events-workspace-checks-20261002.json",
+      "bytes": 1767,
+      "sha256": "2236a013d34c0cc9d828d6937f76dc0f1f29a8b419be755c13ede92cd17f0744",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/captures.json",
+      "bytes": 1153,
+      "sha256": "d5b0c1467f2357a7fc9137410d7084b9900f8d29e92cec31d3915329230b6b30",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/paged-compiler-native-source-only.tar.gz",
+      "bytes": 140252,
+      "sha256": "95147bc7c04a0d687e14531e9812065f2f51d2aa9a6ff84da7af4de8c5889a1b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/paged-wallet-scan-native-source-only.tar.gz",
+      "bytes": 140532,
+      "sha256": "f46fc43d39648c4f80027046d8cc3b28ced32920b24082d844e09cf6088e86a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/regional-native-segmented-frozen-checks-20261002.json",
+      "bytes": 1114,
+      "sha256": "4e4da878d9e9728401416ea53edf5a29bdd58fa2d8fc7979fc03d838e72bad9d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/regional-native-segmented-frozen-store-sample-20261002.json",
+      "bytes": 415,
+      "sha256": "5fbd64bc63cf2c8001dcc22c19236873be8ea0c1d29e5e3bc8f6ff8894a115b0",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/regional-native-segmented-frozen-value-sample-20261002.json",
+      "bytes": 558,
+      "sha256": "5ffed32e689e4f5a8527b335e9eea39901bc6cbbcee955a67135878f2504a951",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/regional-native-segmented-workspace-checks-20261002.json",
+      "bytes": 2105,
+      "sha256": "9dbee4ee0a6efae58b197638e26e75c8ec8ef10b39a15ab48d5055f6abf6f2ce",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/segmented-expiry-native-source-only.tar.gz",
+      "bytes": 128937,
+      "sha256": "b980f9d5dd7b3e6cf444ea3a650a45ac8289c227c4009a4b335aa71e1032c20a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/segmented-reviewed-source-manifest.json",
+      "bytes": 47589,
+      "sha256": "78a2df88c8e3a5c7d6fc5342b7eef65e317efe1cb5b0178e8eff4a24fcc34257",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/segmented-reviewed-source.tar.gz",
+      "bytes": 1473430,
+      "sha256": "5b7c18fc0850bee32ca16c0cd7aafb5a24b75c35b75e5ba94a80309a361a28c0",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/test_regional_segmented_history_before_archive_flag_fix-20261002.py",
+      "bytes": 6703,
+      "sha256": "9ccb4e79401bc36f1073552f5caca58b07c2cec67ae568891ac60875b4fba2ad",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/historical/test_regional_segmented_history_initial-20261002.py",
+      "bytes": 6255,
+      "sha256": "0fabd25fd80c59f6d26c05495ce7c319245b1d6fa7042c0390c224a03194a685",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/source-manifest.json",
+      "bytes": 46650,
+      "sha256": "7a7c5d371c24420eeab165b29bd7321c2117c5735c0acf779794bec7d33d4019",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/source.tar.gz",
+      "bytes": 1481561,
+      "sha256": "64778371eaf033c4b4b8de66ce6382053c89ddc34cbaab9126bc54dd76143a42",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/interstellar-mesh-requirements.txt",
+      "bytes": 21,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/interstellar_mesh.py",
+      "bytes": 44126,
+      "sha256": "b53407f24b48eea6164daf504c087a60ca33a11a851bee2fe1398f0957dab11b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/interstellar_route_budget.py",
+      "bytes": 5160,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/interstellar_tcp.py",
+      "bytes": 22697,
+      "sha256": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/interstellar_transfer.py",
+      "bytes": 24741,
+      "sha256": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_bft_campaign.py",
+      "bytes": 15456,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_bft_multiregion_campaign.py",
+      "bytes": 20019,
+      "sha256": "6c73cf1ed33c7d59b96614ce729be53126b0b889c6e3ac61815f579322eae81c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_bft_network_campaign.py",
+      "bytes": 12339,
+      "sha256": "7e7ccc48c4ee2d6d36423d68e3dcc6c3d58209ba7a5be97f187052387462e686",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_bft_node.py",
+      "bytes": 22763,
+      "sha256": "df3a34498e753ed26a61ad3ef3c0c1d3d69dc5bc9d178acb674f93a39e3d11d7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_bft_retention.py",
+      "bytes": 9614,
+      "sha256": "9cac2d877c0df32e6be12cab81031cd294246ead2ddd67763348c6bb2bd27e37",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_bft_sustained_campaign.py",
+      "bytes": 36649,
+      "sha256": "be354b345f229ef360e8e91ba89cae406246b32a5a6b2d5723ca837368bcb63e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_contact_campaign.py",
+      "bytes": 23451,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_contact_node.py",
+      "bytes": 16064,
+      "sha256": "d3d7d7ca38da32aee93f2849cdd092a6219a55da6b054c3ae3cb8020377e7cf1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/regional_wallet_app.py",
+      "bytes": 25328,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_interstellar_mesh.py",
+      "bytes": 37691,
+      "sha256": "dcb7992729722d1bb20b76e5b8c4485619d9a4c05db0aca7abf3ed504ae6fa1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_interstellar_route_budget.py",
+      "bytes": 3671,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_interstellar_tcp.py",
+      "bytes": 31760,
+      "sha256": "050d1c88a8f2b93d8b37d134aed1bef4281d5ee65daa278eef6498b9301ab05a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_interstellar_transfer.py",
+      "bytes": 10342,
+      "sha256": "eec863f0afb3ba2e5eddb1ad05eab1a1fc4b19edec7ce199976bbd4b4b1ffc23",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_bft.py",
+      "bytes": 2856,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_bft_node.py",
+      "bytes": 14186,
+      "sha256": "0e8733e06de9c8cfc7dfafa3f281bcb34818c652697b27d4db0c93832e4ff15d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_bft_retention.py",
+      "bytes": 13651,
+      "sha256": "239d4e15300f35ecbe5560bea03f0447bf3f4a7f30151a1c29e083913579ee04",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_bft_sustained_campaign.py",
+      "bytes": 5720,
+      "sha256": "b6aff8a62885ca8fb902a8191b6856e1851e8a5486faebd09518654b20cea255",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_contact_node.py",
+      "bytes": 13365,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_history.py",
+      "bytes": 4964,
+      "sha256": "d7d79d39178216ea68a6c79d56d436c988d9ec86c34e5a7e5b643b76cfa37d1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_history_archive.py",
+      "bytes": 10070,
+      "sha256": "ae1c261c814ddbe2558af91fdcf1841b9e4166bb4b0c2bd318e0f95c0f93f430",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_segmented_history.py",
+      "bytes": 7181,
+      "sha256": "cafc44fc58f5b8392a1d686e54ae4f3105b8acf560c0b6aa9ac7179f571348a9",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_state_proof.py",
+      "bytes": 6645,
+      "sha256": "e9be47c6e337d86f21dbec95c26f404c6bc34c2d9131d41262372e57f9e98b58",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_wallet.py",
+      "bytes": 15933,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_wallet_app.py",
+      "bytes": 18950,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/test_regional_wallet_custody.py",
+      "bytes": 10513,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/verify_regional_bft_cycle.py",
+      "bytes": 11306,
+      "sha256": "95e883c2679ea9a683e7afc76a5686db4422eca02fbe554e5fc56e82d6e35566",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/verify_regional_bft_sustained.py",
+      "bytes": 9641,
+      "sha256": "1e17e9cfec66fad96843dd06ff125cc76f2b4eab19b39576b8a61871ee80f73a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-segmented-paged-events-v26/tools/verify_regional_history_archive.py",
+      "bytes": 8414,
+      "sha256": "214f3691d36dd51c1213e1c9f265fa83d509aff51cf8dcf1e8d2b923e9f2da0d",
+      "fetch_attempts": 1
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_material_included": false,
+  "source_set_sha256": "699edda9fe44908a11828be2aa52f13e853460a1689a94ce8b023bad079de1e4",
+  "native_implementation": "21a89b186467cbf7dbb7f9061105b3c8340725ee5d845bdb69831ae0756aae7b",
+  "long_history_qualified": false,
+  "verified_at_utc": "2026-10-02T09:50:56.159792+00:00"
+}

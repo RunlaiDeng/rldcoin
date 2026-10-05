@@ -1,0 +1,40 @@
+{
+  "format": "RLD-SHARED-FRAME-STOPPED-COMPONENT-PROFILE-V1",
+  "runtime_source_set_sha256": "4b4a1ab23a96aafdff2a146b100e9a9e0c90070939a0a7efb52e6ff1cf34d7ff",
+  "binary_sha256": "dc147736e07f1ba82231cd9735f65605c3b08fe597c6fc047a1ab3b65580e649",
+  "failed_run_report_sha256": "6552be3eef4569c815e845f8f408336a276a35e6f64c2a98836d948f38bd0133",
+  "profiler_sha256": "f0a6cb39b7c545d3dfa4babb8deebb6753084cca282bf6fc8f4b3f8d5cf7ed10",
+  "profiles": [
+    {
+      "component": "retained-current-parent-body-scans",
+      "scans": 36,
+      "retained_messages": 202,
+      "duration_seconds": 0.527619
+    },
+    {
+      "component": "cold-open",
+      "archive_entries": 288,
+      "duration_seconds": 0.565787
+    },
+    {
+      "component": "warm-open",
+      "archive_entries": 288,
+      "duration_seconds": 0.106142
+    },
+    {
+      "component": "four-complete-proposal-transit-checks",
+      "transits": 4,
+      "total_transit_canonical_bytes": 2138432,
+      "duration_seconds": 0.066657,
+      "recipient_hop_not_added": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "processes_not_restarted": true,
+  "new_signatures_or_consensus_certificates_constructed": false,
+  "full_tcp_exchange_or_runtime_tick_measured": false,
+  "ordinary_campaign_completed": false,
+  "scheduler_cause_not_established": true
+}

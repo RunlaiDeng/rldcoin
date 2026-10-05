@@ -1,0 +1,199 @@
+{
+  "format": "RLD-ROLE-PAYMENT-GROUND-CAMPAIGN-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "implementation": "4934067283b0052635b789a8b54b2cc563f8f8069d8d8f49d0a2db6c0c098abc",
+  "currency": "377f710caddb7b99284f7437f217eb07929cc73dcd20174a86eac2c9f6bf0b64",
+  "carriers": 5,
+  "configured_handoffs": 2,
+  "select_heights": [
+    4,
+    8
+  ],
+  "final_height": 14,
+  "owner_payments": [
+    {
+      "era": 0,
+      "owner": "43a72e714401762df66b68c26dfbdf2682aaec9f2474eca4613e424a0fbafd3c",
+      "recipient": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+      "amount": "30",
+      "fee": "1",
+      "signing_height": 3,
+      "intent_id": "350e8e4d54ccc32f231ab4615a825fbf9a609a43fbfbd9e46d1e00df3c6a025b",
+      "selected_input_total": "100",
+      "signature_and_submission_did_not_debit": true,
+      "native_included": true
+    },
+    {
+      "era": 1,
+      "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+      "recipient": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+      "amount": "20",
+      "fee": "1",
+      "signing_height": 7,
+      "intent_id": "4bced22e3c0923a658059407e6c01f2e22a0281b61519410301e247edb7d2c67",
+      "selected_input_total": "30",
+      "signature_and_submission_did_not_debit": true,
+      "native_included": true
+    },
+    {
+      "era": 2,
+      "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+      "recipient": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+      "amount": "10",
+      "fee": "1",
+      "signing_height": 11,
+      "intent_id": "502486cf2e987db8f8dff842b9572fbb1d8d9658170936cf32d78dc0de6576ce",
+      "selected_input_total": "20",
+      "signature_and_submission_did_not_debit": true,
+      "native_included": true
+    }
+  ],
+  "owner_signing_eras": [
+    0,
+    1,
+    2
+  ],
+  "node_process_starts": 20,
+  "final_recipient_native_available": "10",
+  "owned_process_cleanup_verified": true,
+  "controller_authority_calls": 0,
+  "ordinary_native_startup_used": true,
+  "minted": "300",
+  "liquid": "300",
+  "conserved": true,
+  "observations": [
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 0.221,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 0.323,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 0.318,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 0.319,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 0.211,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 0 before owner payment",
+      "elapsed_seconds": 36.326,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 0.868,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 0.978,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 1.19,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 0.99,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 0.969,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 1 before owner payment",
+      "elapsed_seconds": 48.283,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 2.957,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 4.159,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 3.774,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 3.7,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 2.813,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 2 before owner payment",
+      "elapsed_seconds": 128.341,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 7.323,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 7.243,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 9.657,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 8.445,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 6.319,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "third-era payment inclusion and recipient maturity",
+      "elapsed_seconds": 225.012,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "duration_seconds": 509.906,
+  "same_host": true,
+  "cross_host_qualified": false,
+  "fresh_full_fault_profile_completed": false,
+  "stopped_cold_verification_completed": false,
+  "independent_custody_qualified": false,
+  "owned_process_shutdown_clean": true,
+  "mesh_inspection_anchors_sha256": "6958c76d07a9e51dd02b4e053e677ef2eb883f02e30b09f50728ddaef8e9e3e5",
+  "runtime_source_set_sha256": "2aecc750b73b9ff45e8eca79de7f88bf0f1165330ed8dc54148285acc6308050",
+  "binary_sha256": "b07aadd16a333aa30ab33c99bfb331ee88a5dfb6ccaa849bc7b69be8de569c3f",
+  "campaign_source_sha256": "516f3237986e360ae8541ac98185ad02d19f163ae65a09f6857b15cb9940dd83"
+}

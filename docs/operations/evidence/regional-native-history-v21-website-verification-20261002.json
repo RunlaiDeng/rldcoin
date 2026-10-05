@@ -1,0 +1,66 @@
+{
+  "format": "RLD-NATIVE-HISTORY-IMAGE-WEBSITE-VERIFICATION-V1",
+  "website_commit": "56f5ccd4614a69e36d3b883bb18c651290a50134",
+  "publication_commit": "dbb9930eb74819b8b2403010baa530eb3b4d6e20",
+  "production_site": "https://rldcoin.com",
+  "production_build_passed": true,
+  "deployment_status": "READY",
+  "deployment_id": "dpl_7zErQPk49YHuA3cGwV4V9xUsxUuX",
+  "deployment_url": "https://rldcoin-website-ltvzecfhu-tradergalaxs-projects.vercel.app",
+  "network_status_tests_passed": 6,
+  "routes": [
+    {
+      "route": "/",
+      "http_status": 200,
+      "sha256": "a20086fdd9042e966ebf28cb20b2249e04a0ae00577f6e0beda6a1fce3d5a833",
+      "v21_entry_present": true
+    },
+    {
+      "route": "/developers",
+      "http_status": 200,
+      "sha256": "5ea6c5a2f8d54c7c42414f76bb3cada94bee79e921b1c1dc73ad72e60847173d",
+      "v21_entry_present": true
+    },
+    {
+      "route": "/research",
+      "http_status": 200,
+      "sha256": "56ba5f124b8f0173aeb27e6bb29af0903a1306cbabcce68d7c58cb6a2dfccb74",
+      "v21_entry_present": true
+    },
+    {
+      "route": "/network",
+      "http_status": 200,
+      "sha256": "255648a3c6b1b3b98fc4aac8497eeb659674d410009c2b4a3f5628b3026e55b5",
+      "v21_entry_present": true
+    },
+    {
+      "route": "/resources",
+      "http_status": 200,
+      "sha256": "f59ccb78e81e2193cd493195d8b641afccd3db740c75d1f5ab937e162dcd10bb",
+      "v21_entry_present": true
+    }
+  ],
+  "changed_remote_source_files_verified": 6,
+  "browser_report_sha256": "2da9cbd7001c2945052fb1fec0eda8fe7cd87dca7385b0f3c0a1075115c57e87",
+  "old_reproduction_anchors_retained": true,
+  "full_finite_fault_scope_explicit": true,
+  "previous_failure_links_retained": true,
+  "retired_api_http_status": 410,
+  "retired_mainnet_state": "RETIRED",
+  "old_balances_migrate": false,
+  "new_mainnet_launched": false,
+  "verified_at_utc": "2026-10-01T21:34:09.508583+00:00",
+  "public_source_set_sha256": "4af70053f541a67f967bbcfca3d647c46af663343c34e76d7c2e5d63cee6d258",
+  "native_tests_passed": 109,
+  "process_tests_passed": 57,
+  "transport_tests_rerun": false,
+  "private_native_ledger_image_restores": 24,
+  "private_images_published": false,
+  "deployment_observation_source": "Vercel CLI 51.7.0 authenticated API, existing project scope",
+  "connected_app_read_refused_with_403": true,
+  "connected_app_refusal_resolved_by_existing_cli_auth": true,
+  "temporary_browser_closed": true,
+  "temporary_viewport_reset": true,
+  "temporary_local_server_stopped": true,
+  "owned_cycle_fault_process_cleanup_verified": true
+}

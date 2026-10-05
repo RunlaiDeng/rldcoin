@@ -1,0 +1,100 @@
+{
+  "format": "RLD-ROLE-FAILED-ARCHIVE-READONLY-PROFILE-V1",
+  "runtime_source_set_sha256": "b4efe9902ce03b509295e9885c21b226c807c8f6ec6986c92722f17a9ca1ba9a",
+  "native_implementation": "472fc8bfcf6e2ccb969c3f795072140cd179bb6f3adbad4df016e0083cb3437f",
+  "binary_sha256": "7eb246229c7048c7be4f2e8d6647dd94904f3437d0f8fb95742600d18a91751e",
+  "failed_run_report_sha256": "5b80b04a9b412ac01bdff9480079d60354777fb23815c57aac0150036784e413",
+  "profiler_sha256": "7236d318b6ea076d15c2d35d45cfc51d279b2808e0a531be419401d48f114030",
+  "native_replays": [
+    {
+      "carrier": 0,
+      "height": 11,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "liquid": "300",
+      "conserved": true
+    },
+    {
+      "carrier": 1,
+      "height": 11,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "liquid": "300",
+      "conserved": true
+    },
+    {
+      "carrier": 2,
+      "height": 11,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "liquid": "300",
+      "conserved": true
+    },
+    {
+      "carrier": 3,
+      "height": 11,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "liquid": "300",
+      "conserved": true
+    },
+    {
+      "carrier": 4,
+      "height": 11,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "liquid": "300",
+      "conserved": true
+    }
+  ],
+  "owner_payments": [
+    {
+      "era": 0,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 1,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 2,
+      "native_state": "SIGNED_PENDING_INCLUSION",
+      "reserved_owned_outputs": "20",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    }
+  ],
+  "archive_profiles": [
+    {
+      "carrier": 2,
+      "complete_archives_transport_authenticated": 973,
+      "receipt_only_archives": 0,
+      "actual_retained_files": 974,
+      "actual_retained_bytes": 267949194,
+      "indexed_complete_archive_bytes": 267444230,
+      "total_exact_frame_string_bytes": 264077302,
+      "distinct_exact_frame_strings": 298,
+      "distinct_exact_frame_string_bytes": 88735420,
+      "repeated_exact_frame_string_bytes": 175341882,
+      "duration_seconds": 15.779,
+      "shared_storage_implemented": false,
+      "projected_overhead_or_capacity_not_qualified": true
+    }
+  ],
+  "owned_process_cleanup_verified": true,
+  "all_private_files_unchanged": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "completed_campaign": false,
+  "fresh_full_fault_profile_completed": false,
+  "all_retained_envelopes_cold_verified": false,
+  "all_transport_archives_cold_verified": false,
+  "no_capacity_bounds_raised": true,
+  "old_failed_fixtures_not_restarted": true
+}

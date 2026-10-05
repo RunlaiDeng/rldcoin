@@ -1,0 +1,67 @@
+{
+  "format": "RLD-NATIVE-HISTORY-IMAGE-INITIAL-TEST-OBSERVATIONS-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "initial_focused_native_tests": {
+    "passed": 9,
+    "failed": 1,
+    "terminal_exit_code": 101,
+    "failure": "Incorrect test assertion for short forged signature: native returned expected 64 bytes.",
+    "failed_log_sha256": "43ed38d30d131bddc8bc00d7a765876ce09856136406939c208aca63144fabda",
+    "captured_changed_native_files": [
+      {
+        "path": "history_archive.rs",
+        "sha256": "7b30c6bbdec8457190870719a3a02fb45a243acad1608c205e5b14cded5e9fc2",
+        "size_bytes": 15469
+      },
+      {
+        "path": "history_archive_tests.rs",
+        "sha256": "7e70646ddb928d7952fc41409ef0c0a925a2d0629529e2b74d9bc2c92314f164",
+        "size_bytes": 18505
+      },
+      {
+        "path": "lib.rs",
+        "sha256": "d0cbe6bf3046afeebde6cc2007bbc014db06023babd257d60dfc4e94f71f05c7",
+        "size_bytes": 37209
+      },
+      {
+        "path": "main.rs",
+        "sha256": "679c23fa989ce42d1d83271c4bac2b04e36d45787211bf82e161a2a178cf0a34",
+        "size_bytes": 38866
+      },
+      {
+        "path": "storage.rs",
+        "sha256": "764e8b4f2ffccd9a7c0fb8a1244ba8cb2ea08a3e70bca9e5fbd557c45d29817a",
+        "size_bytes": 32668
+      },
+      {
+        "path": "tests.rs",
+        "sha256": "801b6b962f58e499f8739fac02e30327360c65c5fd38af575ca48676b54f12f9",
+        "size_bytes": 37782
+      }
+    ],
+    "captured_files_are_not_full_frozen_source_package": true,
+    "failed_unit_fixture_retained": false
+  },
+  "fixed_focused_native_tests": {
+    "passed": 10,
+    "failed": 0,
+    "terminal_exit_code": 0,
+    "forged_signature_now_full_length_invalid": true,
+    "log_sha256": "16f4006804beaf344ebc38847f4a59890d509b71754b766bd9024b348882cb78"
+  },
+  "workspace_actual_process_tests": {
+    "passed": 5,
+    "terminal_exit_code": 0,
+    "log_sha256": "d60f2188e9e522207237430baa5b4b056b6ee96e5b01c18bf566326adeae5461",
+    "observed_actual_sigkill_restore": true,
+    "power_loss_qualified": false
+  },
+  "all_target_strict_clippy": {
+    "passed": true,
+    "terminal_exit_code": 0,
+    "log_sha256": "e9911f7bc135d42f361f5273221488a0400308a06f4f1f8f5ef4f4239700ef95"
+  },
+  "prior_v20_cycle_fault_certify_changed_native_source": false,
+  "generated_private_archives_published": false
+}

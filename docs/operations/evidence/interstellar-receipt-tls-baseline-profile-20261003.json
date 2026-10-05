@@ -1,0 +1,51 @@
+{
+  "format": "RLD-RECEIPT-TLS-COMPONENT-PROFILE-V1",
+  "source_sha256": {
+    "interstellar_mesh.py": "9f35808c8d286d8f45a8de30de676c1ac7eaba41d73d70413fb094a4f31cc844",
+    "interstellar_tcp.py": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+    "interstellar_transfer.py": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b"
+  },
+  "archived_receipts_per_node": 128,
+  "opaque_payload_bytes": 65536,
+  "tick_seconds": 0.824928,
+  "tick_errors": [],
+  "operations": [
+    {
+      "operation": "prepare",
+      "receipts": 1,
+      "transits": 1,
+      "seconds": 0.002381
+    },
+    {
+      "operation": "receive",
+      "receipts": 1,
+      "transits": 1,
+      "seconds": 0.008693
+    },
+    {
+      "operation": "prepare",
+      "receipts": 129,
+      "transits": 0,
+      "seconds": 0.003186
+    },
+    {
+      "operation": "receive",
+      "receipts": 129,
+      "transits": 0,
+      "seconds": 0.534685
+    }
+  ],
+  "complete_archive_reconstructions": 129,
+  "retained_file_fsyncs": 258,
+  "new_transit_destination_custody": true,
+  "new_transit_source_receipt": true,
+  "selected_receipts_fully_authenticated_and_fsynced": true,
+  "fixture_setup_selected_one_receipt_per_packet": true,
+  "actual_loopback_tls13": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "failed_private_stores_opened": false,
+  "native_ledger_or_wallet_used": false,
+  "ordinary_consensus_or_full_fault_profile_completed": false,
+  "independent_or_physical_qualification": false
+}

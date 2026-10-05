@@ -1,0 +1,9 @@
+{
+  "format": "RLD-ROLE-TICK-CHECKS-START-GATE-V1",
+  "confirmed_sequence_pid": 20272,
+  "sequence_sha256": "99f204a02e44dbf1ca9f24a1ee3248fb8358d89c9b6e7c4a355f5cfadc333932",
+  "waiting_for_exact_live_sequence": true,
+  "fault_success_not_inferred": true,
+  "fixture_only": true,
+  "live_rld": false
+}

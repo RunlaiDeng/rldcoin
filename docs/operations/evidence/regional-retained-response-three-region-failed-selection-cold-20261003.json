@@ -1,0 +1,298 @@
+{
+  "format": "RLD-JOINT-SELECTION-FAILED-STOPPED-OBSERVATION-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "failed_cycle_completed": false,
+  "failed_run_report_sha256": "87e57a18d5c94d0b8364d5417c3c434ab49191f04f4efe2937fbd7c53e1cbd09",
+  "source_set_sha256": "a5ab25a8d56d97e8659240dfbe9d04703d73d153830d409b57fcd6a32cfcc48f",
+  "binary_sha256": "75acbc80e1ff3523b234bf0cdae648b0552592710e4eab05b22bf9fb2818c68f",
+  "observer_sha256": "18064c3c61ccf406264c721782bbc242a4e9e261436c882feaa5ae5342575148",
+  "native_replays": [
+    {
+      "region": "earth",
+      "carrier": 0,
+      "height": 7,
+      "minted": "300",
+      "full_genesis_replay": true,
+      "active_epoch_selected": true,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "earth",
+      "carrier": 1,
+      "height": 7,
+      "minted": "300",
+      "full_genesis_replay": true,
+      "active_epoch_selected": true,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "earth",
+      "carrier": 2,
+      "height": 7,
+      "minted": "300",
+      "full_genesis_replay": true,
+      "active_epoch_selected": true,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "earth",
+      "carrier": 3,
+      "height": 7,
+      "minted": "300",
+      "full_genesis_replay": true,
+      "active_epoch_selected": true,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 0,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 1,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 2,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 3,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 0,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 1,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 2,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 3,
+      "height": 0,
+      "minted": "0",
+      "full_genesis_replay": true,
+      "active_epoch_selected": false,
+      "no_exports_or_imports": true
+    }
+  ],
+  "retained_envelopes": [
+    {
+      "region": "earth",
+      "carrier": 0,
+      "complete_envelopes_authenticated": 69,
+      "full_native_authentication": true
+    },
+    {
+      "region": "earth",
+      "carrier": 1,
+      "complete_envelopes_authenticated": 69,
+      "full_native_authentication": true
+    },
+    {
+      "region": "earth",
+      "carrier": 2,
+      "complete_envelopes_authenticated": 69,
+      "full_native_authentication": true
+    },
+    {
+      "region": "earth",
+      "carrier": 3,
+      "complete_envelopes_authenticated": 69,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 0,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 1,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 2,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 3,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 0,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 1,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 2,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 3,
+      "complete_envelopes_authenticated": 0,
+      "full_native_authentication": true
+    }
+  ],
+  "transport_archives": [
+    {
+      "region": "earth",
+      "carrier": 0,
+      "archive_records": 80,
+      "retained_files": 134,
+      "retained_bytes": 3490337,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "earth",
+      "carrier": 1,
+      "archive_records": 192,
+      "retained_files": 260,
+      "retained_bytes": 5092149,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "earth",
+      "carrier": 2,
+      "archive_records": 208,
+      "retained_files": 275,
+      "retained_bytes": 4982152,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "earth",
+      "carrier": 3,
+      "archive_records": 128,
+      "retained_files": 196,
+      "retained_bytes": 5207846,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 0,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 1,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 2,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "proxima",
+      "carrier": 3,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 0,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 1,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 2,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "carrier": 3,
+      "archive_records": 0,
+      "retained_files": 0,
+      "retained_bytes": 0,
+      "full_transport_authentication": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "actual_owned_processes_stopped": true,
+  "value_return_cycle_qualified": false,
+  "fresh_full_fault_profile_completed": false,
+  "optional_telemetry_failure_does_not_change_original_failed_result": true
+}

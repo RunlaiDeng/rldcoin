@@ -1,0 +1,17 @@
+{
+  "format": "RLD-NATIVE-STREAM-REPORT-CONTROLLER-RESUME-V1",
+  "source_set_sha256": "1593d355e4bf94514ce596c06aaaae0c58b0464fe1e8ecb788f646d594073b53",
+  "native_tests_terminal_exit_code": 0,
+  "native_tests_passed": 133,
+  "native_cli_checked": true,
+  "controller_failure": "AttributeError: report helper retained log as binary path string after native tests passed",
+  "native_source_or_test_failure": false,
+  "source_changes_during_resume": false,
+  "passed_native_tests_repeated": false,
+  "failed_helper_sha256": "ca08dc4c26a2333f97693ebfe785cf64b7ff732861c6cce6b0920675245eafdb",
+  "resume_helper_sha256": "67fc76aefb1f1a354507bc1f9be6632770cec489dd7b2852c045ad4e6651ed9b",
+  "native_test_log_sha256": "cb1eaf7dc8d161e27bf2bbf34c4773c37c599d6a2b4949a3496a38465928e695",
+  "resume_record_writer_initial_error": "NameError: metadata not loaded; resume script was already saved and started successfully",
+  "package_controller_initial_error": "native_replays report field is twelve per-replica observations, not a count; inventory assertion corrected to len without changing report/native source",
+  "failed_package_helper_sha256": "503a9f355b612f8d35c3adb6d51d94f86cc47377137457d92200aada2ed3baf1"
+}

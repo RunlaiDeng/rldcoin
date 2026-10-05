@@ -1,0 +1,23 @@
+{
+  "format": "RLD-ENCRYPTED-WALLET-BROWSER-GROUND-V1",
+  "currency": "89bf6dfa0c11baf21f72c164986fab05bf9222d38ee016a5993057bc421532e0",
+  "actual_browser_backup_button_saved_one_private_envelope": true,
+  "actual_browser_displayed_separate_latest_head": true,
+  "actual_browser_explicit_encrypted_native_signing": true,
+  "caller_head_advanced_before_response": true,
+  "native_records": 1,
+  "reserved_owned_outputs": "60",
+  "available": "0",
+  "old_ui_backup_rejected_with_surviving_latest_head": true,
+  "old_backup_result_cleared_after_new_signature": true,
+  "activation_fragment_removed": true,
+  "password_or_key_inputs_absent_from_browser": true,
+  "same_host_same_controller": true,
+  "cross_device_qualified": false,
+  "independent_security_qualified": false,
+  "live_rld": false,
+  "browser_functional_actions_and_native_replay_verified": true,
+  "desktop_dom_horizontal_overflow": false,
+  "screenshot_capture_completed": false,
+  "new_visual_layout_qualification": false
+}

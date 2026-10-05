@@ -1,0 +1,15 @@
+{
+  "all_logical_native_bytes_equal": true,
+  "block_capacity_unchanged": true,
+  "fixture_only": true,
+  "format": "RLD-NATIVE-HISTORY-PREFIX-SAMPLE-V1",
+  "fresh_image_restore_equal": true,
+  "full_snapshot_object_bytes": 1314584,
+  "live_rld": false,
+  "long_term_history_qualified": false,
+  "native_implementation": "64c09ec0696918b42f0c91fe82cb66c9ea833e1e205d873f89d9174bad24a2a6",
+  "prefix_snapshot_object_bytes": 149192,
+  "snapshot_capacity_unchanged": true,
+  "snapshots": 64,
+  "transport_prefix_compression_implemented": false
+}

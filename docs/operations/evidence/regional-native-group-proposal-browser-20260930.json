@@ -1,0 +1,47 @@
+{
+  "format": "RLD-NATIVE-GROUP-PROPOSAL-BROWSER-CHECKS-V1",
+  "date": "2026-09-30",
+  "browser": "Chrome for Testing 150.0.7871.115",
+  "same_host": true,
+  "fixture_only": true,
+  "currency": "d81150d9f9104c5403bb672a57297213c4bd48f2e48fd82d386fa2809da0aa22",
+  "intent_id": "d40cb605e9b1d4f33ca6179994f588567f8a85fa9fe58919daa8c496f9b6aee5",
+  "interactive_inputs_selected": [
+    "39",
+    "60"
+  ],
+  "explicit_local_refund": "1",
+  "local_fee": "1",
+  "gross_remote_payment": "97",
+  "destination_fee": "2",
+  "expected_remote_net": "95",
+  "actual_proposal_download_verified": true,
+  "proposal_fixed_valid_through": 13,
+  "owner_review_heights": [
+    5,
+    6
+  ],
+  "same_exact_intent_at_both_reviews": true,
+  "both_checkbox_confirmations_and_signing_clicked": true,
+  "owner_reservations_before_inclusion": [
+    "39",
+    "60"
+  ],
+  "both_retained_commands_recovered_natively": true,
+  "combination_and_inclusion_clicked_in_browser": true,
+  "both_native_reservations_after_inclusion": "0",
+  "both_native_journals_observe_inclusion": true,
+  "local_export_checkpoint_installed_after_inclusion": false,
+  "recipient_import_claimed_in_this_browser_check": false,
+  "issued": "300",
+  "liquid": "203",
+  "pending_exports": "97",
+  "conserved": true,
+  "url_fragments_removed": true,
+  "desktop_horizontal_overflow": false,
+  "independent_operators_qualified": false,
+  "cross_device_custody_qualified": false,
+  "physical_contact_qualified": false,
+  "builder_desktop_screenshot_visually_inspected": false,
+  "screenshot_capture_completed": false
+}

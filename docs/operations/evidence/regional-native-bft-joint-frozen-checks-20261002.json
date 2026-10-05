@@ -1,0 +1,27 @@
+{
+  "format": "RLD-BFT-JOINT-FROZEN-CHECKS-V1",
+  "source_set_sha256": "5ce8aa65cc3dd41ca27dab46c83a35b3454c7c5019f7b65c6cd978be257247cc",
+  "native_implementation": "a62625a12ee8039c600513fe3cf7ca40d5930552febc7abc99462937cd01d155",
+  "source_files": 263,
+  "source_unchanged": true,
+  "checked_release_build_passed": true,
+  "strict_clippy_passed": true,
+  "frozen_native_tests": 155,
+  "frozen_process_tests": 60,
+  "legacy_stream_optional_cli_checks_enabled": true,
+  "binary_sha256": "5a76394d803ed3be0d2fd8e6ef4db377edede1527edf6da51a92f76ed63c7dc2",
+  "fixture_only": true,
+  "live_rld": false,
+  "native_four_replica_epoch_cli_completed": true,
+  "autonomous_epoch_ceremony": false,
+  "fresh_full_fault_profile_run": false,
+  "full_long_history_qualified": false,
+  "published": false,
+  "log_sha256": {
+    "clippy": "b016622fd90055393a6fba00a2eb9678d5e66c4bf0b37060bcfeab5d43766899",
+    "checked-build": "da60ae7ce06e50eb29aedde8d3ba1730985dec67f61c109744c2211ec41d0a5d",
+    "native-tests": "61893b27e0bba04c36bb6587e3cca1f7d93b02afe51d541bb6226b667a7803f1",
+    "process-tests": "2b4c3eff305c51f4e10cb28a0d1c57573c14400bef136dc6e2633a0e5771a09b",
+    "epoch-cli-campaign": "8ddb1e72c98df32d2cb656b59cd44103d964651fb43419372ba762af5e1a9bd9"
+  }
+}

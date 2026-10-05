@@ -1,0 +1,45 @@
+{
+  "format": "RLD-TRANSIT-BATCH-SCHEDULER-CHECKS-V1",
+  "initial_related_tests_actually_run": 92,
+  "initial_log_sha256": "0f038100b24d648bef54b117187b0986ade0b3515cbcd52059069c82c686d5b2",
+  "final_scheduler_tests_actually_run": 14,
+  "final_log_sha256": "6f9ac25408ed08ff5826bd28eea27f26d8204b47a0c0d74e1b07a6cdbf5ba0af",
+  "new_inspection_map_test_actually_run": 1,
+  "inspection_log_sha256": "2299339565fdc7c4fedeb54e99b181ba53b821f77194926422cc7df3301ba0ee",
+  "files": [
+    {
+      "path": "tools/interstellar_mesh.py",
+      "sha256": "cee27225ac1c0cba369d9bcecc20821616293cefc07be9ef88cbf9c1b000b3b4"
+    },
+    {
+      "path": "tools/interstellar_mesh_inspection.py",
+      "sha256": "22a9784f11bd15324eb00be6eadc7af70c90564a348928fb5cd1433de747504f"
+    },
+    {
+      "path": "tools/test_interstellar_transit_scheduler.py",
+      "sha256": "2ede70d6904b728c344a9f5e67e72e9eeff2975badc86cb7f28e69b486a7d883"
+    },
+    {
+      "path": "tools/test_interstellar_mesh_inspection.py",
+      "sha256": "4d61de57d5090d0e71bb6907e02d6a56f26550448456ddfc0ee37e2d05c61a1d"
+    }
+  ],
+  "private_binding": "RLD-CONTACT-TRANSIT-SCHEDULER-V2",
+  "selection_after_last_carried_packet": true,
+  "empty_batch_steps_one": true,
+  "fresh_fixed_pool_sizes": [
+    5,
+    15,
+    25,
+    64,
+    256
+  ],
+  "six_four_item_failed_preparations_cover_24_distinct_of_25_packets": true,
+  "old_v1_marker_refused_without_rewrite": true,
+  "large_retained_cursor_with_single_frame_budget_full_coverage": true,
+  "pending_evidence_preserved": true,
+  "no_socket_native_value_or_old_fixture": true,
+  "full_cycle_not_yet_run": true,
+  "fixture_only": true,
+  "live_rld": false
+}

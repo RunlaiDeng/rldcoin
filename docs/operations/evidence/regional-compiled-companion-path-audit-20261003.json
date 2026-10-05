@@ -1,0 +1,52 @@
+{
+  "format": "RLD-COMPILED-COMPANION-PATH-AUDIT-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "binary_sha256": "473b7706ff94280485a5271b90db43ce2c4f96d5e509f7909af7c1672ac731ae",
+  "compiled_manifest_path": "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-bft-selection-preference-source-20261003/tools/regional-ledger",
+  "compiled_driver_path": "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-bft-selection-preference-source-20261003/tools/regional_contact_node.py",
+  "actual_old_transit_scheduler": "RLD-CONTACT-TRANSIT-SCHEDULER-V3",
+  "intended_new_transit_scheduler": "RLD-CONTACT-TRANSIT-SCHEDULER-V4",
+  "launch_source": "tools/regional-ledger/src/main.rs:519",
+  "python_script_directory_precedes_PYTHONPATH": true,
+  "affected_prior_reports": [
+    {
+      "path": "regional-native-bft-custody-reply-checks-20261003.json",
+      "sha256": "bdb184f89a05f7a1d47c672ddb0b080f9dc1587d68a62877fb36dfde10b3af05"
+    },
+    {
+      "path": "regional-native-bft-custody-reply-payment-campaign-20261003.json",
+      "sha256": "6822f5d6c05168a60d83fdd4c3d640856733e08a8e860dd4493377374fc6c4a8"
+    },
+    {
+      "path": "regional-native-bft-custody-reply-failed-cold-observations-20261003.json",
+      "sha256": "a176c400f0acbc31e54dccd102cffc40be16fcb46b697e5652de65a69738e0b1"
+    },
+    {
+      "path": "regional-native-bft-transit-eligibility-checks-20261003.json",
+      "sha256": "004c611e35036d78a727a37320d8ecdf1bdd513594710b24a270ddbc5349574f"
+    }
+  ],
+  "prior_L_component_tests_scope_valid": true,
+  "prior_L_ordinary_companion_is_K_not_L": true,
+  "prior_L_stopped_native_and_transport_authentication_remains_scoped_valid": true,
+  "N_actual_frozen_process_tests": 340,
+  "N_process_log_sha256": "31244d8aba84b2d0bfff2aba1e4cfada4a8c1f5cedb45462753fea03ba9dd5d7",
+  "N_actual_runtime_custody_tests": 3,
+  "N_actual_startup_seconds": 1.029,
+  "N_node_startup_rejected": true,
+  "N_node_log_sha256": "77940a03cc0fa93352a66ecedaf075ee08711c395367fb9fd5e0f7f3058a3d5e",
+  "N_failure": "identity network/storage mismatch",
+  "N_report_missing_because_cleanup_raised": true,
+  "N_driver_exit": 1,
+  "N_supervisor_exit": 1,
+  "N_original_failure_log_sha256": "44a5bca0a18bd3e923e1224006ed0df9a3f4f1de4f2f79ad0abe69bf53eacfde",
+  "N_owned_fixture_processes_absent": true,
+  "N_owner_payment_requests": 0,
+  "N_private_inventory_files": 132,
+  "N_private_inventory_commitment": "271cb4721979c5e3d942ae0171defccf1f881448abbc95db847b4bce374306cc",
+  "N_frozen_source_unchanged": true,
+  "prior_records_kept_unchanged": true,
+  "qualification_not_transferred": true
+}

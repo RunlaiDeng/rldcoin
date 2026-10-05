@@ -1,0 +1,32 @@
+{
+  "format": "RLD-CERTIFIED-LEADER-LOCAL-CHECKS-V1",
+  "model_tests_actually_run": 9,
+  "prior_phase_tests_actually_run": 9,
+  "real_native_positive_tests_actually_run": 1,
+  "real_native_negative_tests_actually_run": 1,
+  "native_source_sha256": "1be82ddceb9a0b053d30e335a74a9f5ceefa5c1f635e0499bd714c58ebe0fddd",
+  "native_implementation": "5beadb88bcd50424568f6fdeff81233d763bad5f231adab5f293b930b7608bd1",
+  "controller_carried_two_handoffs": true,
+  "ordinary_full_cycle": false,
+  "full_fault_profile": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "failed_initial_test_preserved": true,
+  "normal_first_tick_block_interval_preserved": true,
+  "other_heads_and_ledger_unchanged": true,
+  "short_same_host_overlap_not_isolated_benchmark": true,
+  "logs": [
+    {
+      "path": "certified-leader-final-model-checks-20261003.log",
+      "sha256": "7bc83929f79c8678737a5724da0d7fb69194a01ca52394499c61abcb93823e0b"
+    },
+    {
+      "path": "certified-leader-real-native-checks-20261003.log",
+      "sha256": "3ef0afd7f32c467a8cbbc58ed68be3a3fa2452154ba7f753eecf57500f57a7a2"
+    },
+    {
+      "path": "certified-leader-native-positive-recheck-20261003.log",
+      "sha256": "97d0b2e7e6899ad40a7f4fd3a741fba5e96b4922abf79fba6982a323c4e2acea"
+    }
+  ]
+}

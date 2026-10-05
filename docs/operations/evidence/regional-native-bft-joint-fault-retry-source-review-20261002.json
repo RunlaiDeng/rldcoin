@@ -1,0 +1,31 @@
+{
+  "format": "RLD-JOINT-FAULT-RETRY-SOURCE-REVIEW-V1",
+  "source_files": 273,
+  "source_set_sha256": "89558e0b61a4de3e877d91b256827b729eef1509ce025aef1e812294014fbb45",
+  "native_implementation": "dee623baa0d39c625a142fa04a6f792342a553cac7d30042997a624c962836e6",
+  "actual_run_and_cold_verifier_same_source": true,
+  "ordinary_runtime_native_core_exact_v31": true,
+  "changed_from_v31": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_bft_joint_fault_profile.py",
+    "tools/regional_bft_sustained_campaign.py",
+    "tools/test_regional_bft_joint_fault_profile.py",
+    "tools/verify_regional_bft_joint_sustained.py",
+    "tools/verify_regional_bft_sustained.py"
+  ],
+  "changed_from_failed_full_profile": [
+    "tools/regional_bft_joint_fault_profile.py",
+    "tools/regional_bft_sustained_campaign.py",
+    "tools/test_regional_bft_joint_fault_profile.py",
+    "tools/verify_regional_bft_sustained.py"
+  ],
+  "read_only_lock_retry_maximum_invocations": 8,
+  "each_native_invocation_retains_30_second_timeout": true,
+  "only_exact_native_os_lock_failure_retried": true,
+  "no_cached_success_no_signing_recovery_head_adoption": true,
+  "original_phase_height_storage_bounds_unchanged": true,
+  "failed_full_profile_preserved_sha256": "73991a18dc7a887b5587bc4fc6943cce81f8e64bd48e00dc5e7e0074b65a43b9",
+  "failed_profile_not_qualified": true,
+  "fixture_only": true,
+  "live_rld": false
+}

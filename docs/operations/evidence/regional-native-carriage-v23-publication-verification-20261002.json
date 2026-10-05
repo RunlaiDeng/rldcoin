@@ -1,0 +1,364 @@
+{
+  "format": "RLD-NATIVE-CARRIAGE-PUBLICATION-VERIFICATION-V1",
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "1ed5cc11598b11e2d5d38b12fedff33b39ba0a4b",
+  "branch_head_matches": true,
+  "changed_remote_files_exact": 58,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 16606,
+      "sha256": "7725b8b200e1893bb613109465cad7993da8817f171375736b3573e38eccee24",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/ACCEPTANCE_QUEUE.md",
+      "bytes": 21983,
+      "sha256": "a0b1227be6eff82ddb83caa0036b0e76ed41c1cf505d398da9a33f5a67f3367b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/HISTORY_RETENTION.md",
+      "bytes": 21585,
+      "sha256": "9e2f8768aa52e1a29d38f8b464483451310a48fa8e0d374ce473b9779b92494e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/README.md",
+      "bytes": 10704,
+      "sha256": "5410a0ceed486061e285019f12f75de3c9b2a02bba4c222bad2821e7131c42e3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/SHA256SUMS",
+      "bytes": 5852,
+      "sha256": "7bda0412dd864234dd28f31bd7dcd9bd102b2974c17c8639b974f9592114d9cc",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/STATUS.zh-CN.md",
+      "bytes": 44046,
+      "sha256": "0f1ee42857ca8025a6d63049fa9f454bd4ef2c29f2c194ac0c4a38efe8032996",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/checks.json",
+      "bytes": 2082,
+      "sha256": "801180d292c4add38ec2fd7be91d85be25a3ce38a73b7c2643f800ed8291e905",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-bft-sample-20261002.json",
+      "bytes": 359,
+      "sha256": "7bdab096a7a23ab6402f3ff0f14652e09487f7231251b83db4ef13f528c304bd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-cycle-cold-20261002.json",
+      "bytes": 13309,
+      "sha256": "2ce437edceb732d5481a386cac05135a0632876dca8e7624af5ab692e19362fc",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-cycle-fresh-target-audit-20261002.json",
+      "bytes": 7323,
+      "sha256": "58ed7420eae2d2b10ea67547b0370089472a91153407882c468998e539d31d8b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-evidence-sample-20261002.json",
+      "bytes": 443,
+      "sha256": "02c0897fd8a27d41b3792d03b2139b8cf60259157d06072435e4a5189e6fb4e3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-fault-cold-20261002.json",
+      "bytes": 10794,
+      "sha256": "93a32c32ba79c5b6f84a4bdb2d6188b5dea740b2547db029abe66aa1e581d1cb",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-fault-fresh-target-audit-20261002.json",
+      "bytes": 7339,
+      "sha256": "38316322d7233ab1937dc840e0da138d7846d5c09f5779128022e3c2294c2a26",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-fresh-cycle-20261002.json",
+      "bytes": 19125,
+      "sha256": "37e96b061858d68f1e395cdb43a35ed5838fbd09e5d53401ee956be7e712f3e0",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-fresh-fault-20261002.json",
+      "bytes": 25894,
+      "sha256": "76198f753bf46ba73641611cda68cf1cdc227f2285b5f4145896a88e2dc919b1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/evidence/regional-native-carriage-final-frozen-checks-20261002.json",
+      "bytes": 2082,
+      "sha256": "801180d292c4add38ec2fd7be91d85be25a3ce38a73b7c2643f800ed8291e905",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-contact-native-files.tar.gz",
+      "bytes": 106562,
+      "sha256": "fd9c8b980bb78e3c3d499e3beafc999b9bb72965c53769d4f55a38f6603b1d95",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-contact.log",
+      "bytes": 4005,
+      "sha256": "94005eecdb13492ebe22cc68b78688cb993dff281177d5f32a6922b80f158819",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-focused-checks.json",
+      "bytes": 10929,
+      "sha256": "ccbf07063ab52bd58c2449bbff41be6bf626aa949deebbeba3e8c771bde4c036",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-frozen-clippy.log",
+      "bytes": 2677,
+      "sha256": "c8cf1b4f015b066a5f169206d93adfb739de0659f1d502b4236d9d1049c3b33c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-frozen-failure.json",
+      "bytes": 995,
+      "sha256": "7bbe987c03367cc8621c2b29358bf8c6fbdd5f497fee80ae965d5231e5d4f7b6",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-native-ratio.log",
+      "bytes": 14246,
+      "sha256": "5ae2d7a23a582f1d2591b56ea5e7304febe29976992e388507b6b72330f4896d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-ratio-native-files.tar.gz",
+      "bytes": 109114,
+      "sha256": "657ae76f26f1e6420649b4faa780b4bd80eb2803bdda3a86dfc57696e86f8c7f",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-source-manifest.json",
+      "bytes": 46440,
+      "sha256": "5d892740a7ce1be1883154d2f0e4cabf7132f7edace6546fa81b163d85eb958c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/historical/initial-source.tar.gz",
+      "bytes": 1441009,
+      "sha256": "f74a89f8bd6071ca669d121fcbb1db68295bb7b4a20724dc548a9ce131604b4b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/source-manifest.json",
+      "bytes": 46440,
+      "sha256": "9da594914916238e61d9f92c9480f7bf23cf4102ee965c4581b4e9a3666ce36a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/source.tar.gz",
+      "bytes": 1441536,
+      "sha256": "0c3b23761a7294e903a6c5333bcabddb7fdeb0dc2021b91bd7b2a697442c6858",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/interstellar-mesh-requirements.txt",
+      "bytes": 21,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/interstellar_mesh.py",
+      "bytes": 44126,
+      "sha256": "b53407f24b48eea6164daf504c087a60ca33a11a851bee2fe1398f0957dab11b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/interstellar_route_budget.py",
+      "bytes": 5160,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/interstellar_tcp.py",
+      "bytes": 22697,
+      "sha256": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/interstellar_transfer.py",
+      "bytes": 24741,
+      "sha256": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_bft_campaign.py",
+      "bytes": 15456,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_bft_multiregion_campaign.py",
+      "bytes": 20019,
+      "sha256": "6c73cf1ed33c7d59b96614ce729be53126b0b889c6e3ac61815f579322eae81c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_bft_network_campaign.py",
+      "bytes": 12339,
+      "sha256": "7e7ccc48c4ee2d6d36423d68e3dcc6c3d58209ba7a5be97f187052387462e686",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_bft_node.py",
+      "bytes": 22763,
+      "sha256": "df3a34498e753ed26a61ad3ef3c0c1d3d69dc5bc9d178acb674f93a39e3d11d7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_bft_retention.py",
+      "bytes": 9614,
+      "sha256": "9cac2d877c0df32e6be12cab81031cd294246ead2ddd67763348c6bb2bd27e37",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_bft_sustained_campaign.py",
+      "bytes": 36649,
+      "sha256": "be354b345f229ef360e8e91ba89cae406246b32a5a6b2d5723ca837368bcb63e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_contact_campaign.py",
+      "bytes": 23451,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_contact_node.py",
+      "bytes": 16064,
+      "sha256": "d3d7d7ca38da32aee93f2849cdd092a6219a55da6b054c3ae3cb8020377e7cf1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/regional_wallet_app.py",
+      "bytes": 25328,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_interstellar_mesh.py",
+      "bytes": 37691,
+      "sha256": "dcb7992729722d1bb20b76e5b8c4485619d9a4c05db0aca7abf3ed504ae6fa1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_interstellar_route_budget.py",
+      "bytes": 3671,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_interstellar_tcp.py",
+      "bytes": 31760,
+      "sha256": "050d1c88a8f2b93d8b37d134aed1bef4281d5ee65daa278eef6498b9301ab05a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_interstellar_transfer.py",
+      "bytes": 10342,
+      "sha256": "eec863f0afb3ba2e5eddb1ad05eab1a1fc4b19edec7ce199976bbd4b4b1ffc23",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_bft.py",
+      "bytes": 2856,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_bft_node.py",
+      "bytes": 14186,
+      "sha256": "0e8733e06de9c8cfc7dfafa3f281bcb34818c652697b27d4db0c93832e4ff15d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_bft_retention.py",
+      "bytes": 13651,
+      "sha256": "239d4e15300f35ecbe5560bea03f0447bf3f4a7f30151a1c29e083913579ee04",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_bft_sustained_campaign.py",
+      "bytes": 5720,
+      "sha256": "b6aff8a62885ca8fb902a8191b6856e1851e8a5486faebd09518654b20cea255",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_contact_node.py",
+      "bytes": 13365,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_history.py",
+      "bytes": 4964,
+      "sha256": "d7d79d39178216ea68a6c79d56d436c988d9ec86c34e5a7e5b643b76cfa37d1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_history_archive.py",
+      "bytes": 10070,
+      "sha256": "ae1c261c814ddbe2558af91fdcf1841b9e4166bb4b0c2bd318e0f95c0f93f430",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_wallet.py",
+      "bytes": 15933,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_wallet_app.py",
+      "bytes": 18950,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/test_regional_wallet_custody.py",
+      "bytes": 10513,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/verify_regional_bft_cycle.py",
+      "bytes": 11306,
+      "sha256": "95e883c2679ea9a683e7afc76a5686db4422eca02fbe554e5fc56e82d6e35566",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/verify_regional_bft_sustained.py",
+      "bytes": 9641,
+      "sha256": "1e17e9cfec66fad96843dd06ff125cc76f2b4eab19b39576b8a61871ee80f73a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-proof-carriage-v23/tools/verify_regional_history_archive.py",
+      "bytes": 8414,
+      "sha256": "214f3691d36dd51c1213e1c9f265fa83d509aff51cf8dcf1e8d2b923e9f2da0d",
+      "fetch_attempts": 1
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_material_included": false,
+  "source_set_sha256": "b49b62072387b63720c64edc324788884ca117c45147166f69f2a9583ca692f0",
+  "native_implementation": "e213d670da01c99ea34706a15b1f241d3bf5bbd137ca95d107f5a9b5841d6918",
+  "long_history_qualified": false,
+  "verified_at_utc": "2026-10-02T07:08:27.920424+00:00"
+}

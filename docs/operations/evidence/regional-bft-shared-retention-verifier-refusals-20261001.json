@@ -1,0 +1,41 @@
+{
+  "format": "RLD-BFT-SHARED-RETENTION-COLD-REFUSALS-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "5ab9e125172125c34ecd81d811c2f00097a59801d7b326afa017559476c52bc0",
+  "verifier_sha256": "95e883c2679ea9a683e7afc76a5686db4422eca02fbe554e5fc56e82d6e35566",
+  "observations": [
+    {
+      "case": "boolean_counter",
+      "refused": true,
+      "output_created": false,
+      "diagnostic": "ValueError: controller authority/carriage exceeds cycle scope"
+    },
+    {
+      "case": "altered_implementation",
+      "refused": true,
+      "output_created": false,
+      "diagnostic": "ValueError: completed exact fixture cycle required"
+    },
+    {
+      "case": "altered_return_amount",
+      "refused": true,
+      "output_created": false,
+      "diagnostic": "ValueError: original payment binding differs"
+    },
+    {
+      "case": "nonfinite_phase",
+      "refused": true,
+      "output_created": false,
+      "diagnostic": "ValueError: cycle observation outside recorded bounds"
+    },
+    {
+      "case": "actual_live_fault",
+      "refused": true,
+      "output_created": false,
+      "diagnostic": "ValueError: fixture is still running"
+    }
+  ],
+  "stopped_cycle_private_files_unchanged": true,
+  "independent_qualification": false
+}

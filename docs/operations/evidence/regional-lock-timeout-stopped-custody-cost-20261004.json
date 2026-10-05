@@ -1,0 +1,60 @@
+{
+  "format": "RLD-STOPPED-NATIVE-CUSTODY-COMPONENT-COST-V1",
+  "completed": true,
+  "runtime_source_set_sha256": "10876f4012b0dafb09734055466846dd1e32684350a68cb6b959a42c52338fad",
+  "binary_sha256": "81b04b62077c8dfc5d2e0f00f414f1ab576ec48e98ae3379f7e2eaa7dafc0dc2",
+  "failed_run_report_sha256": "f983fd38c8b91186c5579f4e6af2c8b0d125504ccbcc678de6927cb114fc196d",
+  "full_failed_cold_report_sha256": "594b2e301078de27e68350a5bdb2f1ece5a921d1d4d81be47ff9806ceeda5b68",
+  "profiler_sha256": "2e0147ca6c2845ed5763d691b95a181514b4d524d198e1b89c6931223460a3ed",
+  "carrier": 2,
+  "actions": [
+    {
+      "action": "status",
+      "era": null,
+      "duration_seconds": 0.05002,
+      "separately_retained_head_matches": false
+    },
+    {
+      "action": "bft-context",
+      "era": null,
+      "duration_seconds": 0.049128,
+      "separately_retained_head_matches": false
+    },
+    {
+      "action": "bft-status",
+      "era": 0,
+      "duration_seconds": 0.084362,
+      "separately_retained_head_matches": true
+    },
+    {
+      "action": "bft-status",
+      "era": 1,
+      "duration_seconds": 0.200793,
+      "separately_retained_head_matches": true
+    },
+    {
+      "action": "joint-ready-status",
+      "era": 1,
+      "duration_seconds": 0.079884,
+      "separately_retained_head_matches": true
+    },
+    {
+      "action": "bft-status",
+      "era": 2,
+      "duration_seconds": 0.729678,
+      "separately_retained_head_matches": true
+    },
+    {
+      "action": "joint-ready-status",
+      "era": 2,
+      "duration_seconds": 0.092409,
+      "separately_retained_head_matches": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "one_call_per_action_not_live_throughput": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "signing_recovery_or_runtime_startup_used": false,
+  "fresh_full_fault_profile_completed": false
+}

@@ -1,0 +1,394 @@
+{
+  "format": "RLD-NATIVE-BFT-JOINT-CYCLE-PUBLICATION-VERIFICATION-V1",
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "99c8e5373053f158fe0380e11cb88af38e68460d",
+  "branch_head_matches": true,
+  "changed_remote_files_exact": 63,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 22163,
+      "sha256": "81daa9ff4152d29d90099c9771c14d3e62e6b58efa7a87df50c4f066a0a8b201",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "SHA256SUMS.v31-publication",
+      "bytes": 10216,
+      "sha256": "cf05018cd6c2f098b4d7b991893f9f10bbca9f44d7d92c6f1f03f561a08def5c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/DESIGN.md",
+      "bytes": 5031,
+      "sha256": "a0257debd02cb0ec9cae88f57835e451296d1fa1b9a47e777d92fa7b3b793b58",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/README.md",
+      "bytes": 6608,
+      "sha256": "a9c6cb3760314c77ec91619afbbebd00c5e4e6af4955141dbb4e95f1d89b2239",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/SHA256SUMS",
+      "bytes": 6159,
+      "sha256": "b2f69ad92680aadf256eafc56b58f989d5f1b68cb3523d5fec5666a21058e948",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/STATUS.zh-CN.md",
+      "bytes": 1328,
+      "sha256": "397d5af376c3d3b9727e21a019db63ac699e7199a754b41d34fe3132c6810e32",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/build.log",
+      "bytes": 2506,
+      "sha256": "6a5bbb8ff7b9eda85d3b8ad640f6927c19586e0559380e261c54ff9a433824b8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/campaign.log",
+      "bytes": 8236,
+      "sha256": "15f38c6ed85175cdfb1884fd030a413bbcd630c70481c86e4937343dea0535fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/cold.log",
+      "bytes": 112,
+      "sha256": "0016c13549d42b93a0130be7e4d5e401ce3da3d7669a3d89a5e305657172bc15",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/final-build.log",
+      "bytes": 2500,
+      "sha256": "e2fd7cf82c936e206e79ebb9b6313775ac8c290789ddc52d954b6560f373a387",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/log-inventory.json",
+      "bytes": 1570,
+      "sha256": "f64a12717ebaec27696517a9e053bcf0cf081148432a42c76703566917253dba",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/process-checks.log",
+      "bytes": 655,
+      "sha256": "635db528c30dbcbf6039896ba8ea1d69c0212951f071035a488d8e0b7a26bdef",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-autonomous-epoch-wallet-frozen-checks-20261002.json",
+      "bytes": 1332,
+      "sha256": "2c146db4557c9bfab1f453eea5666b5d5952014fe03ace484f28bbae2cc37c92",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-joint-cycle-frozen-campaign-20261002.json",
+      "bytes": 16398,
+      "sha256": "08b1a5117d9877ef45aabf99c20011563578c6141753136352127f163b508199",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-joint-cycle-frozen-checks-20261002.json",
+      "bytes": 1102,
+      "sha256": "60bcf4b989d815f0c32562d36d8994fac4db6d12edc3f70221bd6d9db1f58357",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-joint-cycle-frozen-cold-20261002.json",
+      "bytes": 14404,
+      "sha256": "23dc8459d2b13bab2edb56175f1804b4a0bdc3ee0c50324c14b574c2b21c215e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-joint-cycle-release-checks-20261002.json",
+      "bytes": 1440,
+      "sha256": "6d86a4bdaa06f69fa956c0115f244ab556632d26913e530fb080e7d3427ba9f1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-joint-cycle-release-source-review-20261002.json",
+      "bytes": 1428,
+      "sha256": "c532b3c0968d2643adebb12385965895eb20c911ec05bda8db41d83876b92c0f",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/evidence/regional-native-bft-joint-cycle-source-review-20261002.json",
+      "bytes": 935,
+      "sha256": "aafc2ef0e34d36b2056d2d66a1cd1b2d80f3539c1d4a1fc9b594a5e2b12d4474",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/runtime-source-manifest.json",
+      "bytes": 49034,
+      "sha256": "873e79865cfa7cee0cec5b2f63c9a2130b822a82e6ec0696d4b0b2ca3de50170",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/runtime-source.tar.gz",
+      "bytes": 1522900,
+      "sha256": "43b0cefe98af845eb3df90d91c955a4c547855eb63523b6077013bc1dec0fb1f",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/source-manifest.json",
+      "bytes": 49236,
+      "sha256": "d8da61a1ca85b5e43431a57155ffc816e29590d3ca6a031c63f12a2d083524c4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/source.tar.gz",
+      "bytes": 1524877,
+      "sha256": "cf44444b54db315eab2c5a9c01e5f51f1c44522ed4aa97878c424ab879cc7361",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/interstellar-mesh-requirements.txt",
+      "bytes": 21,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/interstellar_mesh.py",
+      "bytes": 44126,
+      "sha256": "b53407f24b48eea6164daf504c087a60ca33a11a851bee2fe1398f0957dab11b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/interstellar_route_budget.py",
+      "bytes": 5160,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/interstellar_tcp.py",
+      "bytes": 22697,
+      "sha256": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/interstellar_transfer.py",
+      "bytes": 24741,
+      "sha256": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_autonomous_epoch_campaign.py",
+      "bytes": 9734,
+      "sha256": "077ed4770b34bd7a4bf03897d001f5f7e27613ab4dfaf709aa774016c15b3cee",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_campaign.py",
+      "bytes": 15456,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_epoch_campaign.py",
+      "bytes": 8320,
+      "sha256": "1aeff9c75c6735a0fbb39afc587947f019b7079006798b2a9de9284ef23f875d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_joint_cycle_campaign.py",
+      "bytes": 10193,
+      "sha256": "527d107922bc7c16d6fd8ab40c3a6c107401a3d882e2463da4fb8921b6a6f4fb",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_joint_epoch.py",
+      "bytes": 13048,
+      "sha256": "ffe0d97eaa37f7a088804c3e97b095efb50461209d3a60a7d7dce8abc7f2b752",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_joint_epoch_campaign.py",
+      "bytes": 9338,
+      "sha256": "92d384fb18210ea978bbc60a626fc5296b15ba0f0a90ed27bc44628b7f111d09",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_multiregion_campaign.py",
+      "bytes": 20019,
+      "sha256": "6c73cf1ed33c7d59b96614ce729be53126b0b889c6e3ac61815f579322eae81c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_network_campaign.py",
+      "bytes": 12339,
+      "sha256": "7e7ccc48c4ee2d6d36423d68e3dcc6c3d58209ba7a5be97f187052387462e686",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_node.py",
+      "bytes": 25628,
+      "sha256": "f039397f36ad0bf06c1a71ae0495fa75c6f80405bf1417c2ed7ec76948f6b167",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_retention.py",
+      "bytes": 9865,
+      "sha256": "f45f0281dcedcb3774e04a9a8dbec5c5803b7fab710c9d66040b3af532dc0020",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_bft_sustained_campaign.py",
+      "bytes": 36649,
+      "sha256": "be354b345f229ef360e8e91ba89cae406246b32a5a6b2d5723ca837368bcb63e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_contact_campaign.py",
+      "bytes": 23451,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_contact_node.py",
+      "bytes": 16064,
+      "sha256": "d3d7d7ca38da32aee93f2849cdd092a6219a55da6b054c3ae3cb8020377e7cf1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/regional_wallet_app.py",
+      "bytes": 25328,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_interstellar_mesh.py",
+      "bytes": 37691,
+      "sha256": "dcb7992729722d1bb20b76e5b8c4485619d9a4c05db0aca7abf3ed504ae6fa1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_interstellar_route_budget.py",
+      "bytes": 3671,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_interstellar_tcp.py",
+      "bytes": 31760,
+      "sha256": "050d1c88a8f2b93d8b37d134aed1bef4281d5ee65daa278eef6498b9301ab05a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_interstellar_transfer.py",
+      "bytes": 10342,
+      "sha256": "eec863f0afb3ba2e5eddb1ad05eab1a1fc4b19edec7ce199976bbd4b4b1ffc23",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_bft.py",
+      "bytes": 2856,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_bft_joint_epoch.py",
+      "bytes": 15392,
+      "sha256": "83bd44a6161478ac960b5d3ee8b7478129c8abbd41e8d20d0991d4426e17a4ee",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_bft_node.py",
+      "bytes": 14186,
+      "sha256": "0e8733e06de9c8cfc7dfafa3f281bcb34818c652697b27d4db0c93832e4ff15d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_bft_retention.py",
+      "bytes": 13651,
+      "sha256": "239d4e15300f35ecbe5560bea03f0447bf3f4a7f30151a1c29e083913579ee04",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_bft_sustained_campaign.py",
+      "bytes": 5720,
+      "sha256": "b6aff8a62885ca8fb902a8191b6856e1851e8a5486faebd09518654b20cea255",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_contact_node.py",
+      "bytes": 13365,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_history.py",
+      "bytes": 4964,
+      "sha256": "d7d79d39178216ea68a6c79d56d436c988d9ec86c34e5a7e5b643b76cfa37d1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_history_archive.py",
+      "bytes": 10070,
+      "sha256": "ae1c261c814ddbe2558af91fdcf1841b9e4166bb4b0c2bd318e0f95c0f93f430",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_segmented_history.py",
+      "bytes": 7181,
+      "sha256": "cafc44fc58f5b8392a1d686e54ae4f3105b8acf560c0b6aa9ac7179f571348a9",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_state_proof.py",
+      "bytes": 6645,
+      "sha256": "e9be47c6e337d86f21dbec95c26f404c6bc34c2d9131d41262372e57f9e98b58",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_wallet.py",
+      "bytes": 15933,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_wallet_app.py",
+      "bytes": 18950,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/test_regional_wallet_custody.py",
+      "bytes": 10513,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/verify_regional_bft_cycle.py",
+      "bytes": 11884,
+      "sha256": "df089707b696fd5b595643fd7d8d958456507fbbb41e7670fa4d86ab2a1d33fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/verify_regional_bft_joint_cycle.py",
+      "bytes": 4914,
+      "sha256": "831e001d43383224d7fe1b0630d7a41bcf3cf9ac36e28a9d0c8250e65128d5f7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/verify_regional_bft_sustained.py",
+      "bytes": 9641,
+      "sha256": "1e17e9cfec66fad96843dd06ff125cc76f2b4eab19b39576b8a61871ee80f73a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-joint-offline-cycle-v31/tools/verify_regional_history_archive.py",
+      "bytes": 8414,
+      "sha256": "214f3691d36dd51c1213e1c9f265fa83d509aff51cf8dcf1e8d2b923e9f2da0d",
+      "fetch_attempts": 1
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_material_included": false,
+  "source_set_sha256": "bf7c247ae5023497df005ea54d98d740edfede475aa118b486999ec44a2432ec",
+  "native_implementation": "dee623baa0d39c625a142fa04a6f792342a553cac7d30042997a624c962836e6",
+  "long_history_qualified": false,
+  "verified_at_utc": "2026-10-02T14:27:02.369086+00:00"
+}

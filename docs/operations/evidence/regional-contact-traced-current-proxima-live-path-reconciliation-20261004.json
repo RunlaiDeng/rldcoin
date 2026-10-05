@@ -1,0 +1,4161 @@
+{
+  "format": "RLD-GROUND-CURRENT-PARENT-LIVE-PATH-RECONCILIATION-V1",
+  "fixture_only": true,
+  "source_set_sha256": "2309a18199c5e7714017b56780001cbdf2527c57b574cc759d09d83ebc9f4c57",
+  "stopped_path_report_sha256": "ab17a03b9bc73d1712da6100d117ac249e27c7bdc0be40e68db4ee83064dfea2",
+  "live_observer_report_sha256": "47c06d8cc2b1f4baf5335095a90903ccabdb3e4a88bbcd9e07ec0d5d22b503e1",
+  "cold_report_sha256": "0a6234ebacbb6c4fba86b79b6cfde16b071b3ead3156fb80f9aec0d2320c27de",
+  "analyzer_sha256": "fe7cb1dd8f67f08102f6424158bf3550d20954c34032cfdb32a25d9c53e2cabc",
+  "private_chain_reader_sha256": "2637660a95bce646c7ae71e4117bd404f00d58ec977131e67385437ede4935e2",
+  "coverage": [
+    {
+      "actor": "earth-1",
+      "events": 8226,
+      "startup_unknown_samples": 13,
+      "unknown_after_first_events": 6,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "earth-2",
+      "events": 11685,
+      "startup_unknown_samples": 12,
+      "unknown_after_first_events": 6,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "earth-3",
+      "events": 6445,
+      "startup_unknown_samples": 12,
+      "unknown_after_first_events": 6,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "proxima-0",
+      "events": 6978,
+      "startup_unknown_samples": 7,
+      "unknown_after_first_events": 5,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "proxima-1",
+      "events": 12762,
+      "startup_unknown_samples": 8,
+      "unknown_after_first_events": 5,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "proxima-2",
+      "events": 11110,
+      "startup_unknown_samples": 9,
+      "unknown_after_first_events": 5,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "proxima-3",
+      "events": 5895,
+      "startup_unknown_samples": 8,
+      "unknown_after_first_events": 5,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "andromeda-0",
+      "events": 6993,
+      "startup_unknown_samples": 8,
+      "unknown_after_first_events": 4,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "andromeda-1",
+      "events": 11895,
+      "startup_unknown_samples": 9,
+      "unknown_after_first_events": 4,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "andromeda-2",
+      "events": 10818,
+      "startup_unknown_samples": 8,
+      "unknown_after_first_events": 4,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "andromeda-3",
+      "events": 5971,
+      "startup_unknown_samples": 7,
+      "unknown_after_first_events": 4,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    },
+    {
+      "actor": "earth-0",
+      "events": 3000,
+      "startup_unknown_samples": 9,
+      "unknown_after_first_events": 4,
+      "no_ring_eviction_or_rejection": true,
+      "terminal_chain_checked": true,
+      "final_unpublished_in_memory_tail_not_observed": true
+    }
+  ],
+  "rows": [
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Commit",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "211e5d92b4785a88ce3369b59b6932e805a6886a029799b3a59c670f30a72d81",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "3b4388d678ce63096f9c64d6d7fa237ba0b71d10112c1ccaff74194183be9c26",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 30,
+                "request_sent": 26,
+                "outgoing_failed": 29,
+                "peer_custody_authenticated": 2,
+                "reply_local_custody": 1,
+                "destination_receipt_observed": 1
+              },
+              "first_event_seconds": 155939.730538541,
+              "last_event_seconds": 155985.834663458
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 26,
+                "inbound_refused": 24,
+                "deferred_attempt": 59,
+                "local_transport_custody": 2,
+                "destination_receipt_retained": 7,
+                "native_envelope_received": 1,
+                "deferred_local_custody": 5
+              },
+              "first_event_seconds": 155940.583937083,
+              "last_event_seconds": 155985.501556125
+            }
+          ],
+          "source_queued_at": 155939.730538541,
+          "source_first_prepared_at": 155940.310335958,
+          "source_queue_to_first_prepare_seconds": 0.579797416983638,
+          "destination_first_receipt_at": 155953.635567625,
+          "destination_first_native_reception_at": 155955.328035583,
+          "target_receipt_to_native_seconds": 1.6924679579969961,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "ConnectionResetError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 24
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Commit",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "211e5d92b4785a88ce3369b59b6932e805a6886a029799b3a59c670f30a72d81",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "5a67231d67668234ae3a3eb19390b64436f6db2dcdad18511c118d4f8b92c48e",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 39,
+                "request_sent": 37,
+                "outgoing_failed": 37,
+                "peer_custody_authenticated": 3,
+                "reply_local_custody": 2
+              },
+              "first_event_seconds": 155939.730528416,
+              "last_event_seconds": 156133.681279166
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 37,
+                "inbound_refused": 34,
+                "local_transport_custody": 3,
+                "deferred_attempt": 60,
+                "deferred_local_custody": 9,
+                "outgoing_prepared": 2,
+                "outgoing_failed": 2,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1
+              },
+              "first_event_seconds": 155940.583901625,
+              "last_event_seconds": 156133.653932166
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156095.730787541,
+              "last_event_seconds": 156101.256683916
+            }
+          ],
+          "source_queued_at": 155939.730528416,
+          "source_first_prepared_at": 155940.310258625,
+          "source_queue_to_first_prepare_seconds": 0.5797302089922596,
+          "destination_first_receipt_at": 156096.542123833,
+          "destination_first_native_reception_at": 156101.256683916,
+          "target_receipt_to_native_seconds": 4.714560082997195,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 34
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Commit",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "211e5d92b4785a88ce3369b59b6932e805a6886a029799b3a59c670f30a72d81",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "88ca5853e68be43d03306b5dd4f2defd751a5d3339d74027b8a9a8a7e09e6f9c",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 44,
+                "request_sent": 38,
+                "outgoing_failed": 43,
+                "peer_custody_authenticated": 2,
+                "reply_local_custody": 1
+              },
+              "first_event_seconds": 155939.73049875,
+              "last_event_seconds": 156052.563214916
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 38,
+                "inbound_refused": 36,
+                "deferred_attempt": 102,
+                "deferred_local_custody": 11,
+                "local_transport_custody": 2,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155941.547957416,
+              "last_event_seconds": 156052.90645975
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 3,
+                "request_sent": 3,
+                "outgoing_failed": 3
+              },
+              "first_event_seconds": 155964.159144291,
+              "last_event_seconds": 155976.55817375
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 3,
+                "inbound_refused": 3,
+                "deferred_attempt": 8,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155971.686540375,
+              "last_event_seconds": 155978.516717083
+            }
+          ],
+          "source_queued_at": 155939.73049875,
+          "source_first_prepared_at": 155941.457931583,
+          "source_queue_to_first_prepare_seconds": 1.727432832994964,
+          "destination_first_receipt_at": 155974.087325708,
+          "destination_first_native_reception_at": 155975.643963625,
+          "target_receipt_to_native_seconds": 1.5566379170049913,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "ConnectionResetError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 5
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 36
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 3
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Proposal",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "d0d2a941809ab712c43b6e16922f3dd3b9e33a0ee9d0cf74d5ea2ab48c18c2e0",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "b549953dc9274c42b3e7a5f840d8d727ce5b7eee23ca40a6f1cfeb48ad9bc26d",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 9,
+                "request_sent": 7,
+                "outgoing_failed": 9
+              },
+              "first_event_seconds": 156066.277468916,
+              "last_event_seconds": 156095.646110041
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 7,
+                "inbound_refused": 7,
+                "deferred_attempt": 17,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156069.201050666,
+              "last_event_seconds": 156101.3808415
+            }
+          ],
+          "source_queued_at": 156066.277468916,
+          "source_first_prepared_at": 156069.074015458,
+          "source_queue_to_first_prepare_seconds": 2.7965465419983957,
+          "destination_first_receipt_at": 156070.766735791,
+          "destination_first_native_reception_at": 156072.119434708,
+          "target_receipt_to_native_seconds": 1.3526989170059096,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 7
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Proposal",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "d0d2a941809ab712c43b6e16922f3dd3b9e33a0ee9d0cf74d5ea2ab48c18c2e0",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "4a3cf2ce99df09d604e06da83ebc887c49a51c9053b276f58627ad1d2048c8c8",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 44,
+                "request_sent": 41,
+                "outgoing_failed": 43,
+                "peer_custody_authenticated": 2,
+                "reply_local_custody": 1
+              },
+              "first_event_seconds": 156066.277458666,
+              "last_event_seconds": 156161.173738416
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 41,
+                "inbound_refused": 39,
+                "deferred_attempt": 43,
+                "deferred_local_custody": 7,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1,
+                "local_transport_custody": 2
+              },
+              "first_event_seconds": 156067.271336041,
+              "last_event_seconds": 156163.903370208
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1
+              },
+              "first_event_seconds": 156105.384011208,
+              "last_event_seconds": 156105.592513166
+            }
+          ],
+          "source_queued_at": 156066.277458666,
+          "source_first_prepared_at": 156067.18312375,
+          "source_queue_to_first_prepare_seconds": 0.9056650839920621,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 39
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Proposal",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "d0d2a941809ab712c43b6e16922f3dd3b9e33a0ee9d0cf74d5ea2ab48c18c2e0",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "286e8c3598ea862df34df2590f95a4bb7b7c43c173ea2f70e8df74b92ba7b511",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 22,
+                "request_sent": 20,
+                "outgoing_failed": 20,
+                "peer_custody_authenticated": 3,
+                "reply_local_custody": 2
+              },
+              "first_event_seconds": 156070.108711333,
+              "last_event_seconds": 156161.173730041
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 20,
+                "inbound_refused": 17,
+                "deferred_attempt": 41,
+                "deferred_local_custody": 7,
+                "local_transport_custody": 3,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156070.970303833,
+              "last_event_seconds": 156163.903362041
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 12,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 3,
+                "request_sent": 3,
+                "outgoing_failed": 3
+              },
+              "first_event_seconds": 156154.455764208,
+              "last_event_seconds": 156165.446997166
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1
+              },
+              "first_event_seconds": 156162.163153791,
+              "last_event_seconds": 156163.88344225
+            }
+          ],
+          "source_queued_at": 156070.108711333,
+          "source_first_prepared_at": 156070.817827916,
+          "source_queue_to_first_prepare_seconds": 0.7091165829915553,
+          "destination_first_receipt_at": 156163.88344225,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 17
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 3
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "2482725ab74f4de190e203d0280b37aa616fd9a742f08cd62ed3c3298977c6a8",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "b946554a0d2b706d9f7e08f9e78585fd47d28d7f10175fc75e65877686701a0e",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 11,
+                "request_sent": 8,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 11
+              },
+              "first_event_seconds": 156002.485452583,
+              "last_event_seconds": 156052.563093833
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 8,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 5,
+                "native_envelope_received": 1,
+                "inbound_refused": 7,
+                "deferred_attempt": 24,
+                "deferred_local_custody": 4
+              },
+              "first_event_seconds": 156004.912619375,
+              "last_event_seconds": 156052.906475833
+            }
+          ],
+          "source_queued_at": 156002.485452583,
+          "source_first_prepared_at": 156004.809397708,
+          "source_queue_to_first_prepare_seconds": 2.32394512501196,
+          "destination_first_receipt_at": 156005.803510583,
+          "destination_first_native_reception_at": 156010.676483208,
+          "target_receipt_to_native_seconds": 4.872972624987597,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 7
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "2482725ab74f4de190e203d0280b37aa616fd9a742f08cd62ed3c3298977c6a8",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "2c5c55a1493708b4617fb240be853b5ed3b29dde17502382edfbe1d99461d72c",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 43,
+                "request_sent": 42,
+                "peer_custody_authenticated": 2,
+                "outgoing_failed": 43
+              },
+              "first_event_seconds": 156002.485428125,
+              "last_event_seconds": 156129.810295625
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 42,
+                "local_transport_custody": 2,
+                "inbound_refused": 40,
+                "deferred_attempt": 56,
+                "deferred_local_custody": 11,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156004.912599833,
+              "last_event_seconds": 156130.962740416
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156095.730806083,
+              "last_event_seconds": 156097.829805333
+            }
+          ],
+          "source_queued_at": 156002.485428125,
+          "source_first_prepared_at": 156004.809379708,
+          "source_queue_to_first_prepare_seconds": 2.3239515830064192,
+          "destination_first_receipt_at": 156096.54227525,
+          "destination_first_native_reception_at": 156097.829805333,
+          "target_receipt_to_native_seconds": 1.2875300830055494,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 40
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "2482725ab74f4de190e203d0280b37aa616fd9a742f08cd62ed3c3298977c6a8",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "a56c78d2ac4832ffc5f3aeefe43535f2e9df5b7ded2af04b7f2faea4f2fcc06f",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 16,
+                "request_sent": 16,
+                "outgoing_failed": 14,
+                "peer_custody_authenticated": 2,
+                "reply_local_custody": 2,
+                "destination_receipt_observed": 1
+              },
+              "first_event_seconds": 156002.485462333,
+              "last_event_seconds": 156097.714895583
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 16,
+                "inbound_refused": 14,
+                "deferred_attempt": 45,
+                "deferred_local_custody": 6,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1,
+                "local_transport_custody": 2
+              },
+              "first_event_seconds": 156003.499351458,
+              "last_event_seconds": 156101.380832541
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156038.496355541,
+              "last_event_seconds": 156058.275512375
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156057.064455416,
+              "last_event_seconds": 156059.572735708
+            }
+          ],
+          "source_queued_at": 156002.485462333,
+          "source_first_prepared_at": 156003.286791458,
+          "source_queue_to_first_prepare_seconds": 0.8013291250099428,
+          "destination_first_receipt_at": 156057.927777375,
+          "destination_first_native_reception_at": 156059.572735708,
+          "target_receipt_to_native_seconds": 1.6449583329958841,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 14
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 1,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "948be6b3edb359f1e836fe4098ba04bdbe0d2db3e90085d249b040a155061345",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "f1bc3b2125ddf84675215ca8cf7f14953f73955791fb1728144e9fbe88055b67",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 9,
+                "request_sent": 8,
+                "outgoing_failed": 9
+              },
+              "first_event_seconds": 156066.277417458,
+              "last_event_seconds": 156095.646100833
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 8,
+                "inbound_refused": 8,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156069.201030333,
+              "last_event_seconds": 156095.583387833
+            }
+          ],
+          "source_queued_at": 156066.277417458,
+          "source_first_prepared_at": 156069.073967166,
+          "source_queue_to_first_prepare_seconds": 2.7965497080003843,
+          "destination_first_receipt_at": 156070.766727208,
+          "destination_first_native_reception_at": 156072.13938625,
+          "target_receipt_to_native_seconds": 1.3726590419828426,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 8
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "round": 1,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "948be6b3edb359f1e836fe4098ba04bdbe0d2db3e90085d249b040a155061345",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "3b14912d13f8f44608d5a58a3363ba3e9ea0bf21d63ce27e8293105de75f8f0e",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 27,
+                "request_sent": 26,
+                "outgoing_failed": 27
+              },
+              "first_event_seconds": 156070.108736416,
+              "last_event_seconds": 156133.681264541
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 26,
+                "inbound_refused": 26,
+                "deferred_attempt": 46,
+                "deferred_local_custody": 8,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156070.970330083,
+              "last_event_seconds": 156133.653923375
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156095.730758958,
+              "last_event_seconds": 156097.841586791
+            }
+          ],
+          "source_queued_at": 156070.108736416,
+          "source_first_prepared_at": 156070.81790475,
+          "source_queue_to_first_prepare_seconds": 0.7091683339967858,
+          "destination_first_receipt_at": 156096.542113166,
+          "destination_first_native_reception_at": 156097.841586791,
+          "target_receipt_to_native_seconds": 1.2994736249966081,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 26
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 1,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "948be6b3edb359f1e836fe4098ba04bdbe0d2db3e90085d249b040a155061345",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "cdd28fa9379866de770f529b8bde55b3f137b08a76e14ba145aed50c91e41a7d",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 23,
+                "request_sent": 21,
+                "outgoing_failed": 21,
+                "peer_custody_authenticated": 3,
+                "reply_local_custody": 2
+              },
+              "first_event_seconds": 156066.277448041,
+              "last_event_seconds": 156161.173714083
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 21,
+                "inbound_refused": 18,
+                "deferred_attempt": 54,
+                "deferred_local_custody": 8,
+                "local_transport_custody": 3,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156067.271300083,
+              "last_event_seconds": 156163.903344708
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1
+              },
+              "first_event_seconds": 156105.384142916,
+              "last_event_seconds": 156105.5925515
+            }
+          ],
+          "source_queued_at": 156066.277448041,
+          "source_first_prepared_at": 156067.183076916,
+          "source_queue_to_first_prepare_seconds": 0.9056288750143722,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 18
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "0d85ebc795d39d13abd00bbce9a33202800e8267dbe554412afa670a84e17951",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "1783806f436e118b0a99c33c9781a30bbcd800b0921e59600e3f0d46bef3cd9d",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 2,
+                "request_sent": 2,
+                "outgoing_failed": 2
+              },
+              "first_event_seconds": 155935.998322291,
+              "last_event_seconds": 155941.791114
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2,
+                "deferred_attempt": 15,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155936.876974291,
+              "last_event_seconds": 155947.954367208
+            }
+          ],
+          "source_queued_at": 155935.998322291,
+          "source_first_prepared_at": 155936.800543458,
+          "source_queue_to_first_prepare_seconds": 0.8022211669886019,
+          "destination_first_receipt_at": 155939.056377541,
+          "destination_first_native_reception_at": 155940.0592665,
+          "target_receipt_to_native_seconds": 1.0028889589884784,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 2
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "0d85ebc795d39d13abd00bbce9a33202800e8267dbe554412afa670a84e17951",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "d7fe40a4b3eebbaebf2b54a46648755d18b86869e2276e99a79f347515b8f8a0",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 66,
+                "request_sent": 60,
+                "outgoing_failed": 64,
+                "peer_custody_authenticated": 5,
+                "reply_local_custody": 2
+              },
+              "first_event_seconds": 155935.998357666,
+              "last_event_seconds": 156161.173746166
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 60,
+                "inbound_refused": 55,
+                "deferred_attempt": 116,
+                "deferred_local_custody": 18,
+                "local_transport_custody": 5,
+                "outgoing_prepared": 2,
+                "outgoing_failed": 2,
+                "request_sent": 1
+              },
+              "first_event_seconds": 155936.87695225,
+              "last_event_seconds": 156163.903377125
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1
+              },
+              "first_event_seconds": 156105.38411975,
+              "last_event_seconds": 156105.592543583
+            }
+          ],
+          "source_queued_at": 155935.998357666,
+          "source_first_prepared_at": 155936.800522458,
+          "source_queue_to_first_prepare_seconds": 0.8021647920249961,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 6
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 55
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "0d85ebc795d39d13abd00bbce9a33202800e8267dbe554412afa670a84e17951",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "b93581dedba28e3ce4d3a2c2e70684a84089243d812a5e6296893aeb90ae22c0",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 45,
+                "request_sent": 41,
+                "outgoing_failed": 43,
+                "peer_custody_authenticated": 3,
+                "reply_local_custody": 2,
+                "destination_receipt_observed": 1
+              },
+              "first_event_seconds": 155935.998347583,
+              "last_event_seconds": 156055.868704583
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 41,
+                "inbound_refused": 38,
+                "deferred_attempt": 85,
+                "deferred_local_custody": 9,
+                "local_transport_custody": 3,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155938.622305625,
+              "last_event_seconds": 156055.123617625
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 3,
+                "request_sent": 3,
+                "outgoing_failed": 3
+              },
+              "first_event_seconds": 155964.1592435,
+              "last_event_seconds": 155976.55820675
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 3,
+                "inbound_refused": 3,
+                "deferred_attempt": 8,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155971.686565291,
+              "last_event_seconds": 155978.516730666
+            }
+          ],
+          "source_queued_at": 155935.998347583,
+          "source_first_prepared_at": 155938.515401958,
+          "source_queue_to_first_prepare_seconds": 2.517054374999134,
+          "destination_first_receipt_at": 155974.087342125,
+          "destination_first_native_reception_at": 155975.655017125,
+          "target_receipt_to_native_seconds": 1.5676749999984168,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "ConnectionResetError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 38
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 3
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "e41b6976fabfcf8ffa5d969ad30f5e9dc8fc6469c4dcb5a8f343791d781ab510",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "5d8ed2f0909d25a2020300a9d22cbf65e3c1e686d68eb3bd3f7d117eff2ae029",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156160.769155791,
+              "last_event_seconds": 156162.577626041
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2
+              },
+              "first_event_seconds": 156162.353812041,
+              "last_event_seconds": 156166.378048416
+            }
+          ],
+          "source_queued_at": 156160.769155791,
+          "source_first_prepared_at": 156162.220043333,
+          "source_queue_to_first_prepare_seconds": 1.450887542014243,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "e41b6976fabfcf8ffa5d969ad30f5e9dc8fc6469c4dcb5a8f343791d781ab510",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "91045299b277704c47c70a8eaaeccce791b0296a0e12d48f4b82afa04c533a79",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156160.769126083,
+              "last_event_seconds": 156162.577712666
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2
+              },
+              "first_event_seconds": 156162.353883708,
+              "last_event_seconds": 156166.378083041
+            }
+          ],
+          "source_queued_at": 156160.769126083,
+          "source_first_prepared_at": 156162.220119875,
+          "source_queue_to_first_prepare_seconds": 1.4509937920083757,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "e41b6976fabfcf8ffa5d969ad30f5e9dc8fc6469c4dcb5a8f343791d781ab510",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "1a752b5f13e672402059471e0a7305d61b175da51c4b812e2ba9eb7cbe1f10c0",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156160.769170375,
+              "last_event_seconds": 156162.577688541
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2
+              },
+              "first_event_seconds": 156162.353862333,
+              "last_event_seconds": 156166.378070125
+            }
+          ],
+          "source_queued_at": 156160.769170375,
+          "source_first_prepared_at": 156162.2201,
+          "source_queue_to_first_prepare_seconds": 1.4509296250180341,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-0",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "087ca23decb0af1732527242f0c83af6c1d4fe041023b5540e046f767c4ccda8",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "6fd1f9c6d12c1f50bd1bad835904f09ab002579d341ef2c7de48b13123553956",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 5,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156042.9278965,
+              "last_event_seconds": 156047.587101791
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156037.366506,
+              "last_event_seconds": 156043.195361333
+            }
+          ],
+          "source_queued_at": 156037.366506,
+          "source_first_prepared_at": 156042.834548583,
+          "source_queue_to_first_prepare_seconds": 5.468042583001079,
+          "destination_first_receipt_at": 156046.395818708,
+          "destination_first_native_reception_at": 156047.587101791,
+          "target_receipt_to_native_seconds": 1.1912830829969607,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "087ca23decb0af1732527242f0c83af6c1d4fe041023b5540e046f767c4ccda8",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "d165576f6dc5037c2368f1b3008388568abbf5e334706c5aa27f6178c090eb78",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 2,
+                "request_sent": 2,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 2
+              },
+              "first_event_seconds": 156037.366518,
+              "last_event_seconds": 156154.680241833
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 2,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 12,
+                "deferred_local_custody": 1
+              },
+              "first_event_seconds": 156095.730797791,
+              "last_event_seconds": 156161.325854541
+            }
+          ],
+          "source_queued_at": 156037.366518,
+          "source_first_prepared_at": 156095.5457915,
+          "source_queue_to_first_prepare_seconds": 58.17927349999081,
+          "destination_first_receipt_at": 156096.542132958,
+          "destination_first_native_reception_at": 156101.264492375,
+          "target_receipt_to_native_seconds": 4.72235941697727,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "087ca23decb0af1732527242f0c83af6c1d4fe041023b5540e046f767c4ccda8",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "84b8653d22c3f4789f09188c180d26c45fe0a59d1535933c93401dd7fbfb46c9",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156037.366482083,
+              "last_event_seconds": 156038.735487333
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156038.496343083,
+              "last_event_seconds": 156058.275501708
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156057.064445708,
+              "last_event_seconds": 156059.566833875
+            }
+          ],
+          "source_queued_at": 156037.366482083,
+          "source_first_prepared_at": 156038.349033458,
+          "source_queue_to_first_prepare_seconds": 0.9825513750256505,
+          "destination_first_receipt_at": 156057.927768666,
+          "destination_first_native_reception_at": 156059.566833875,
+          "target_receipt_to_native_seconds": 1.6390652089903597,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Proposal",
+      "round": 2,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "4db51ab67d9f7bfb003fec018221ae3692a55e3b649d523a4cd3621c4239472d",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "5f4c84ee6fe6b07b5f113578ac39ac28820a7a358c581b783fc5213056709de4",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156157.074995375,
+              "last_event_seconds": 156158.565023375
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156148.006314208,
+              "last_event_seconds": 156158.090869541
+            }
+          ],
+          "source_queued_at": 156148.006314208,
+          "source_first_prepared_at": 156156.980159416,
+          "source_queue_to_first_prepare_seconds": 8.973845208005514,
+          "destination_first_receipt_at": 156157.789768375,
+          "destination_first_native_reception_at": 156158.565023375,
+          "target_receipt_to_native_seconds": 0.7752550000150222,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Proposal",
+      "round": 2,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "4db51ab67d9f7bfb003fec018221ae3692a55e3b649d523a4cd3621c4239472d",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "ad9606631beba47dbf66137ccace6760f642a4bf01b2a99a55af6f9755e91227",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156148.006337375,
+              "last_event_seconds": 156154.680222708
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 12,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156154.4558475,
+              "last_event_seconds": 156163.051473708
+            }
+          ],
+          "source_queued_at": 156148.006337375,
+          "source_first_prepared_at": 156154.296061,
+          "source_queue_to_first_prepare_seconds": 6.289723624999169,
+          "destination_first_receipt_at": 156161.325816583,
+          "destination_first_native_reception_at": 156163.051473708,
+          "target_receipt_to_native_seconds": 1.7256571250036359,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Proposal",
+      "round": 2,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "4db51ab67d9f7bfb003fec018221ae3692a55e3b649d523a4cd3621c4239472d",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "f80debd6a17257f2eca8831d01622904afef2cf77855ac295d3219f24ddb9d6b",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1
+              },
+              "first_event_seconds": 156148.006349958,
+              "last_event_seconds": 156148.006349958
+            }
+          ],
+          "source_queued_at": 156148.006349958,
+          "source_first_prepared_at": null,
+          "source_queue_to_first_prepare_seconds": null,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "9f7ca7da4d0d2d8fe351ff555a978269f38dd19a7e02ca7e75677d65b0215300",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "2b3f18455441f43d80aaa9e2271940ef8e77c4f5a7e90bb42c42f30a90ce7706",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 1,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155930.283629083,
+              "last_event_seconds": 155933.216593583
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155915.051639541,
+              "last_event_seconds": 155930.510101416
+            }
+          ],
+          "source_queued_at": 155915.051639541,
+          "source_first_prepared_at": 155930.164113041,
+          "source_queue_to_first_prepare_seconds": 15.112473500019405,
+          "destination_first_receipt_at": 155931.522745708,
+          "destination_first_native_reception_at": 155933.216593583,
+          "target_receipt_to_native_seconds": 1.6938478749943897,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "9f7ca7da4d0d2d8fe351ff555a978269f38dd19a7e02ca7e75677d65b0215300",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "599991ce166c15e57bff4ad869b10772402b6fbc81c1785c9fd27bdb9b59937b",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 2,
+                "outgoing_failed": 2,
+                "request_sent": 1
+              },
+              "first_event_seconds": 155915.051604791,
+              "last_event_seconds": 156105.708982541
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1
+              },
+              "first_event_seconds": 156105.384096833,
+              "last_event_seconds": 156105.592533833
+            }
+          ],
+          "source_queued_at": 155915.051604791,
+          "source_first_prepared_at": 156003.369726833,
+          "source_queue_to_first_prepare_seconds": 88.31812204202288,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "9f7ca7da4d0d2d8fe351ff555a978269f38dd19a7e02ca7e75677d65b0215300",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "71a469b3ad910064c1b7e45dcc4177c1192dc8ab5c9b9eaadd5248a15d5c51e0",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155915.051629791,
+              "last_event_seconds": 155964.399191875
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 3,
+                "request_sent": 3,
+                "outgoing_failed": 3
+              },
+              "first_event_seconds": 155964.159224833,
+              "last_event_seconds": 155976.558196291
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 3,
+                "inbound_refused": 3,
+                "deferred_attempt": 8,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155971.686556833,
+              "last_event_seconds": 155979.586408791
+            }
+          ],
+          "source_queued_at": 155915.051629791,
+          "source_first_prepared_at": 155964.052637,
+          "source_queue_to_first_prepare_seconds": 49.00100720897899,
+          "destination_first_receipt_at": 155974.087334875,
+          "destination_first_native_reception_at": 155979.586408791,
+          "target_receipt_to_native_seconds": 5.499073915998451,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 3
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "cc382a04f666eb78383e5c547533e0b025dee39f25bb6265bed6114d8a01cb9f",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "31e8b8efec3c1dff24bb21606d431bb1a89ff3c9522c42c7d010ac6388cc2965",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156157.075030333,
+              "last_event_seconds": 156158.600125333
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156148.006358625,
+              "last_event_seconds": 156158.090950291
+            }
+          ],
+          "source_queued_at": 156148.006358625,
+          "source_first_prepared_at": 156156.980203,
+          "source_queue_to_first_prepare_seconds": 8.973844375024782,
+          "destination_first_receipt_at": 156157.789776958,
+          "destination_first_native_reception_at": 156158.600125333,
+          "target_receipt_to_native_seconds": 0.8103483750019222,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "cc382a04f666eb78383e5c547533e0b025dee39f25bb6265bed6114d8a01cb9f",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "b47fe9b352af9ec19fe697947fb17c20d8a862a7495bfb272467271ce623f4f4",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156150.764670541,
+              "last_event_seconds": 156154.680233125
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 12,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156154.45589425,
+              "last_event_seconds": 156163.060992458
+            }
+          ],
+          "source_queued_at": 156150.764670541,
+          "source_first_prepared_at": 156154.296070375,
+          "source_queue_to_first_prepare_seconds": 3.5313998340279795,
+          "destination_first_receipt_at": 156161.325837333,
+          "destination_first_native_reception_at": 156163.060992458,
+          "target_receipt_to_native_seconds": 1.7351551250030752,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "cc382a04f666eb78383e5c547533e0b025dee39f25bb6265bed6114d8a01cb9f",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "5ac123c8930cc81575da330545c6bbde4827ca42a8d27b2d220bb8aaa4489c80",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "source_enqueued": 1
+              },
+              "first_event_seconds": 156150.764701291,
+              "last_event_seconds": 156150.764701291
+            }
+          ],
+          "source_queued_at": 156150.764701291,
+          "source_first_prepared_at": null,
+          "source_queue_to_first_prepare_seconds": null,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "dd853429de3b97710f5be820e9af969aa8895341454962ae88e5c31f871fae37",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "e81fc71c6c28ea3712e7695b6285618d6480afa5faccfd455c76cb56a5bb497c",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1
+              },
+              "first_event_seconds": 156165.664723875,
+              "last_event_seconds": 156165.664723875
+            }
+          ],
+          "source_queued_at": 156165.664723875,
+          "source_first_prepared_at": null,
+          "source_queue_to_first_prepare_seconds": null,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "dd853429de3b97710f5be820e9af969aa8895341454962ae88e5c31f871fae37",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "f698be582e7ad280af6e47cd2e865eed64a804266fd0192496a09f3bcdb28ca5",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156165.664750375,
+              "last_event_seconds": 156166.2916105
+            }
+          ],
+          "source_queued_at": 156165.664750375,
+          "source_first_prepared_at": 156166.28979225,
+          "source_queue_to_first_prepare_seconds": 0.6250418749987148,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 2,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "dd853429de3b97710f5be820e9af969aa8895341454962ae88e5c31f871fae37",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "packets": [
+        {
+          "packet_id": "ec60fb3833abb8dabab1eb73e2e0838cd4fbf762ede21b62b7bdc6b28eff2f28",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1
+              },
+              "first_event_seconds": 156165.664760958,
+              "last_event_seconds": 156165.664760958
+            }
+          ],
+          "source_queued_at": 156165.664760958,
+          "source_first_prepared_at": null,
+          "source_queue_to_first_prepare_seconds": null,
+          "destination_first_receipt_at": null,
+          "destination_first_native_reception_at": null,
+          "target_receipt_to_native_seconds": null,
+          "exact_target_native_event_observed": false,
+          "destination_receipt_event_observed": false,
+          "outgoing_failures": [],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "935e6e3dd1976b181413f526c563f724e243a1cd424998d012f3c87f1f8df335",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "5d28b884b066b2ea7e9a9c71b53534dea9c8e47ba749974d744363b71ee3943a",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2,
+                "deferred_attempt": 6,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156130.0797435,
+              "last_event_seconds": 156134.232542041
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 10,
+                "inbound_refused": 10,
+                "deferred_attempt": 14,
+                "deferred_local_custody": 2,
+                "outgoing_prepared": 2,
+                "request_sent": 2,
+                "outgoing_failed": 2
+              },
+              "first_event_seconds": 156086.046220208,
+              "last_event_seconds": 156165.763670625
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 13,
+                "request_sent": 10,
+                "outgoing_failed": 13
+              },
+              "first_event_seconds": 156060.81620425,
+              "last_event_seconds": 156166.291596875
+            }
+          ],
+          "source_queued_at": 156060.81620425,
+          "source_first_prepared_at": 156085.838780708,
+          "source_queue_to_first_prepare_seconds": 25.022576457995456,
+          "destination_first_receipt_at": 156131.602165666,
+          "destination_first_native_reception_at": 156133.24742325,
+          "target_receipt_to_native_seconds": 1.6452575839939527,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 10
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "935e6e3dd1976b181413f526c563f724e243a1cd424998d012f3c87f1f8df335",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "c0a9044da32fcde03918314424ba47c7494e884ed4feb919e180cc9e84eb7b5c",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 7,
+                "inbound_refused": 7,
+                "deferred_attempt": 3,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156076.624811625,
+              "last_event_seconds": 156154.695894625
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 12,
+                "request_sent": 7,
+                "outgoing_failed": 12
+              },
+              "first_event_seconds": 156060.816214583,
+              "last_event_seconds": 156160.070642916
+            }
+          ],
+          "source_queued_at": 156060.816214583,
+          "source_first_prepared_at": 156076.539897958,
+          "source_queue_to_first_prepare_seconds": 15.723683374992106,
+          "destination_first_receipt_at": 156137.242925333,
+          "destination_first_native_reception_at": 156142.551212583,
+          "target_receipt_to_native_seconds": 5.308287249994464,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 5
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 7
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "935e6e3dd1976b181413f526c563f724e243a1cd424998d012f3c87f1f8df335",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "38681e1c99e88563a4b2b9c7777d8371a64d0adaf36e0ed504d35f066f599762",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 2,
+                "request_sent": 2,
+                "outgoing_failed": 2,
+                "peer_custody_authenticated": 1
+              },
+              "first_event_seconds": 156060.816177208,
+              "last_event_seconds": 156069.156651291
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1,
+                "local_transport_custody": 1
+              },
+              "first_event_seconds": 156063.685893583,
+              "last_event_seconds": 156068.935143833
+            }
+          ],
+          "source_queued_at": 156060.816177208,
+          "source_first_prepared_at": 156063.614169916,
+          "source_queue_to_first_prepare_seconds": 2.7979927079868503,
+          "destination_first_receipt_at": 156065.32910075,
+          "destination_first_native_reception_at": 156067.405895125,
+          "target_receipt_to_native_seconds": 2.0767943749960978,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "dc023e05b678b1cc03783bc2b3a3d3e2ccb4adb07931c9e7092b8a8709725bf0",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "3cf195d79d0c25a9569ebdce1636f61b8bff28a0fc8e786453ffcf73564a98d5",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 3,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156056.455388375,
+              "last_event_seconds": 156061.429694041
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 16,
+                "inbound_refused": 16,
+                "deferred_attempt": 37,
+                "deferred_local_custody": 5,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155978.921037666,
+              "last_event_seconds": 156165.76369875
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 21,
+                "outgoing_failed": 21,
+                "request_sent": 16
+              },
+              "first_event_seconds": 155939.159696041,
+              "last_event_seconds": 156164.715617625
+            }
+          ],
+          "source_queued_at": 155939.159696041,
+          "source_first_prepared_at": 155950.916485041,
+          "source_queue_to_first_prepare_seconds": 11.756789000006393,
+          "destination_first_receipt_at": 156058.383464416,
+          "destination_first_native_reception_at": 156061.429694041,
+          "target_receipt_to_native_seconds": 3.0462296250043437,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "ConnectionResetError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 4
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 16
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "dc023e05b678b1cc03783bc2b3a3d3e2ccb4adb07931c9e7092b8a8709725bf0",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "de044e695263ea5a9dc3f8e465a28b90283676a5c436f966f13855ed2034d2c5",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 7,
+                "inbound_refused": 7,
+                "deferred_attempt": 3,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155972.785382,
+              "last_event_seconds": 156093.073272083
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 11,
+                "outgoing_failed": 11,
+                "request_sent": 7
+              },
+              "first_event_seconds": 155939.159662458,
+              "last_event_seconds": 156093.119710541
+            }
+          ],
+          "source_queued_at": 155939.159662458,
+          "source_first_prepared_at": 155942.481351,
+          "source_queue_to_first_prepare_seconds": 3.3216885419969913,
+          "destination_first_receipt_at": 156034.065386583,
+          "destination_first_native_reception_at": 156035.12087675,
+          "target_receipt_to_native_seconds": 1.0554901669966057,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 4
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 7
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "dc023e05b678b1cc03783bc2b3a3d3e2ccb4adb07931c9e7092b8a8709725bf0",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "82cf6b836a3160f34f84d7a16d680a9e63aaa3494b52fafca924d45c1cd44be3",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155939.159686375,
+              "last_event_seconds": 155953.031984583
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155952.806295083,
+              "last_event_seconds": 155956.08094625
+            }
+          ],
+          "source_queued_at": 155939.159686375,
+          "source_first_prepared_at": 155952.707931041,
+          "source_queue_to_first_prepare_seconds": 13.548244665988022,
+          "destination_first_receipt_at": 155953.987516458,
+          "destination_first_native_reception_at": 155956.08094625,
+          "target_receipt_to_native_seconds": 2.0934297920030076,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "9d2c142a20211e8fab63a8a150b205db724e43a49b3b1b02f7e06a7d0409c4c9",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "f254de44931038d588e719ba07772f5261ff85eaa1175ffc86bcda5b3be0c2a4",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 1,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155930.283427916,
+              "last_event_seconds": 155938.019694125
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 15,
+                "inbound_refused": 15,
+                "deferred_attempt": 11,
+                "deferred_local_custody": 3,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155880.023624041,
+              "last_event_seconds": 156086.252405958
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 17,
+                "request_sent": 15,
+                "outgoing_failed": 17
+              },
+              "first_event_seconds": 155878.271438375,
+              "last_event_seconds": 156091.049621875
+            }
+          ],
+          "source_queued_at": 155878.271438375,
+          "source_first_prepared_at": 155879.896018208,
+          "source_queue_to_first_prepare_seconds": 1.624579833005555,
+          "destination_first_receipt_at": 155931.522738333,
+          "destination_first_native_reception_at": 155938.019694125,
+          "target_receipt_to_native_seconds": 6.496955791983055,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 15
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "9d2c142a20211e8fab63a8a150b205db724e43a49b3b1b02f7e06a7d0409c4c9",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "b1da38cb287332b4937c5788ee9ab49a278a850ffe57df571c1014df6b2512b1",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 11,
+                "inbound_refused": 11,
+                "deferred_attempt": 8,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155895.436189708,
+              "last_event_seconds": 156093.073331583
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 17,
+                "outgoing_failed": 17,
+                "request_sent": 11
+              },
+              "first_event_seconds": 155878.271465125,
+              "last_event_seconds": 156093.119776208
+            }
+          ],
+          "source_queued_at": 155878.271465125,
+          "source_first_prepared_at": 155881.736988041,
+          "source_queue_to_first_prepare_seconds": 3.465522915998008,
+          "destination_first_receipt_at": 155926.078596791,
+          "destination_first_native_reception_at": 155927.061701833,
+          "target_receipt_to_native_seconds": 0.9831050420179963,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 6
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 11
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "9d2c142a20211e8fab63a8a150b205db724e43a49b3b1b02f7e06a7d0409c4c9",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "27b31846acc6589ec37aa10fa7cce5aa1180e74a9bee7726d1f0bcd57ba4fbac",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155878.271475583,
+              "last_event_seconds": 155880.851835875
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 2,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155880.644091166,
+              "last_event_seconds": 155883.337141
+            }
+          ],
+          "source_queued_at": 155878.271475583,
+          "source_first_prepared_at": 155880.618507125,
+          "source_queue_to_first_prepare_seconds": 2.347031542012701,
+          "destination_first_receipt_at": 155881.799131583,
+          "destination_first_native_reception_at": 155883.337141,
+          "target_receipt_to_native_seconds": 1.5380094170104712,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "8b2c9ef9b4dbe94c6b18b8b1539c137111d4b215ec01ff55f2738196e8c922ad",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "a1df979a18b70ed662e5c1f54737f8cda9e0f35921b92684e1b6b3d3247e1083",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 3,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156056.455465666,
+              "last_event_seconds": 156061.416789208
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 16,
+                "inbound_refused": 16,
+                "deferred_attempt": 22,
+                "deferred_local_custody": 4,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155987.459847125,
+              "last_event_seconds": 156165.76357025
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 49,
+                "inbound_refused": 44,
+                "deferred_attempt": 119,
+                "deferred_local_custody": 30,
+                "outgoing_prepared": 21,
+                "outgoing_failed": 21,
+                "request_sent": 16,
+                "local_transport_custody": 5
+              },
+              "first_event_seconds": 155935.674751166,
+              "last_event_seconds": 156166.291566458
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 49,
+                "request_sent": 49,
+                "outgoing_failed": 46,
+                "peer_custody_authenticated": 5,
+                "reply_local_custody": 3
+              },
+              "first_event_seconds": 155930.180530958,
+              "last_event_seconds": 156156.588146958
+            }
+          ],
+          "source_queued_at": 155930.180530958,
+          "source_first_prepared_at": 155935.480019791,
+          "source_queue_to_first_prepare_seconds": 5.2994888329994865,
+          "destination_first_receipt_at": 156058.383472166,
+          "destination_first_native_reception_at": 156061.416789208,
+          "target_receipt_to_native_seconds": 3.033317041990813,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "ConnectionResetError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 4
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 16
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 44
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "8b2c9ef9b4dbe94c6b18b8b1539c137111d4b215ec01ff55f2738196e8c922ad",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "52ec549c9f0e4d9a6ed63ce4d13effec8b75c0a3daf13bab88d9df46e837a8af",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 4,
+                "inbound_refused": 4,
+                "deferred_attempt": 1,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155972.785389291,
+              "last_event_seconds": 156035.1284925
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 35,
+                "inbound_refused": 32,
+                "deferred_attempt": 67,
+                "deferred_local_custody": 14,
+                "outgoing_prepared": 7,
+                "outgoing_failed": 7,
+                "request_sent": 4,
+                "local_transport_custody": 3
+              },
+              "first_event_seconds": 155930.997945833,
+              "last_event_seconds": 156071.485684583
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 35,
+                "request_sent": 35,
+                "outgoing_failed": 35,
+                "peer_custody_authenticated": 3
+              },
+              "first_event_seconds": 155930.180469916,
+              "last_event_seconds": 156071.380997708
+            }
+          ],
+          "source_queued_at": 155930.180469916,
+          "source_first_prepared_at": 155930.883706333,
+          "source_queue_to_first_prepare_seconds": 0.7032364170008805,
+          "destination_first_receipt_at": 156034.065393333,
+          "destination_first_native_reception_at": 156035.1284925,
+          "target_receipt_to_native_seconds": 1.0630991669895593,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 4
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 32
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "8b2c9ef9b4dbe94c6b18b8b1539c137111d4b215ec01ff55f2738196e8c922ad",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "a8ae8a110c4e4405302472bb21e2ed23d353cdea094fa455c0f6424222eeb663",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 6,
+                "inbound_refused": 6,
+                "deferred_attempt": 11,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155936.74694825,
+              "last_event_seconds": 155951.788201833
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 6,
+                "request_sent": 6,
+                "outgoing_failed": 6
+              },
+              "first_event_seconds": 155930.180555083,
+              "last_event_seconds": 155950.161423083
+            }
+          ],
+          "source_queued_at": 155930.180555083,
+          "source_first_prepared_at": 155936.599676916,
+          "source_queue_to_first_prepare_seconds": 6.4191218329942785,
+          "destination_first_receipt_at": 155949.486165958,
+          "destination_first_native_reception_at": 155950.535241791,
+          "target_receipt_to_native_seconds": 1.0490758329979144,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 6
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "7adfbe629693140c7089ba6eda8e5397b830c36705d53301604d47140474aadf",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "6ebe78f023b0042311c52b31508a42b22fb46848a06431497b6f20c9e957c549",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155891.365573541,
+              "last_event_seconds": 155895.652380833
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 8,
+                "inbound_refused": 8,
+                "deferred_attempt": 18,
+                "deferred_local_custody": 2,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155882.68694275,
+              "last_event_seconds": 156017.030774666
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 48,
+                "inbound_refused": 45,
+                "deferred_attempt": 106,
+                "deferred_local_custody": 25,
+                "outgoing_prepared": 13,
+                "outgoing_failed": 13,
+                "request_sent": 8,
+                "local_transport_custody": 3
+              },
+              "first_event_seconds": 155869.921010916,
+              "last_event_seconds": 156070.228160375
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 48,
+                "request_sent": 48,
+                "outgoing_failed": 48,
+                "peer_custody_authenticated": 3
+              },
+              "first_event_seconds": 155868.780714666,
+              "last_event_seconds": 156070.2611415
+            }
+          ],
+          "source_queued_at": 155868.780714666,
+          "source_first_prepared_at": 155869.736095375,
+          "source_queue_to_first_prepare_seconds": 0.9553807089978363,
+          "destination_first_receipt_at": 155892.046446125,
+          "destination_first_native_reception_at": 155895.652380833,
+          "target_receipt_to_native_seconds": 3.6059347080008592,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 5
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 8
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 45
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "7adfbe629693140c7089ba6eda8e5397b830c36705d53301604d47140474aadf",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "ff345a249632d71ad6cffac08337b9d7cbdcfab4f67918ed4c889aa0a9e2e8c4",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 8,
+                "inbound_refused": 8,
+                "deferred_attempt": 3,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155880.023727166,
+              "last_event_seconds": 155954.738720166
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 25,
+                "inbound_refused": 24,
+                "deferred_attempt": 42,
+                "deferred_local_custody": 10,
+                "outgoing_prepared": 8,
+                "request_sent": 8,
+                "outgoing_failed": 8,
+                "local_transport_custody": 1
+              },
+              "first_event_seconds": 155869.921070625,
+              "last_event_seconds": 155970.103576166
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 25,
+                "request_sent": 25,
+                "outgoing_failed": 25,
+                "peer_custody_authenticated": 1
+              },
+              "first_event_seconds": 155868.780751083,
+              "last_event_seconds": 155970.139463375
+            }
+          ],
+          "source_queued_at": 155868.780751083,
+          "source_first_prepared_at": 155869.736122083,
+          "source_queue_to_first_prepare_seconds": 0.9553710000182036,
+          "destination_first_receipt_at": 155928.554426708,
+          "destination_first_native_reception_at": 155929.912025083,
+          "target_receipt_to_native_seconds": 1.3575983750051819,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 8
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 24
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "7adfbe629693140c7089ba6eda8e5397b830c36705d53301604d47140474aadf",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "770f5935f213d1d7552c30c2a0c845e5730d633f73d6bb656926a6c7b7f6c0a5",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 8,
+                "inbound_refused": 8,
+                "deferred_attempt": 18,
+                "deferred_local_custody": 5,
+                "destination_receipt_retained": 5,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155869.921045458,
+              "last_event_seconds": 155903.433530041
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 8,
+                "request_sent": 8,
+                "outgoing_failed": 8
+              },
+              "first_event_seconds": 155868.780740333,
+              "last_event_seconds": 155901.890860541
+            }
+          ],
+          "source_queued_at": 155868.780740333,
+          "source_first_prepared_at": 155869.736114208,
+          "source_queue_to_first_prepare_seconds": 0.9553738750109915,
+          "destination_first_receipt_at": 155875.850066208,
+          "destination_first_native_reception_at": 155879.56078475,
+          "target_receipt_to_native_seconds": 3.7107185420172755,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 8
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "54ab7481fabf435ff892bbe3c82fb8030ae8bb93f77047068ea2ff34f69cbe1e",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "c989c8fed8f17faf3f4808e51245ce8c12b91440928c52d6bf5f53e6af78c443",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "local_transport_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156100.280537291,
+              "last_event_seconds": 156101.960861208
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 9,
+                "inbound_refused": 9,
+                "deferred_attempt": 26,
+                "deferred_local_custody": 3,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "peer_custody_authenticated": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156082.0642035,
+              "last_event_seconds": 156157.5618975
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 18,
+                "inbound_refused": 15,
+                "deferred_attempt": 42,
+                "deferred_local_custody": 11,
+                "outgoing_prepared": 12,
+                "request_sent": 9,
+                "outgoing_failed": 12,
+                "local_transport_custody": 3
+              },
+              "first_event_seconds": 156053.830088208,
+              "last_event_seconds": 156160.0707155
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 18,
+                "request_sent": 18,
+                "outgoing_failed": 15,
+                "peer_custody_authenticated": 3,
+                "reply_local_custody": 3
+              },
+              "first_event_seconds": 156052.059980416,
+              "last_event_seconds": 156156.588130166
+            }
+          ],
+          "source_queued_at": 156052.059980416,
+          "source_first_prepared_at": 156053.734317708,
+          "source_queue_to_first_prepare_seconds": 1.6743372920027468,
+          "destination_first_receipt_at": 156100.743040833,
+          "destination_first_native_reception_at": 156101.960861208,
+          "target_receipt_to_native_seconds": 1.2178203749936074,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 9
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 15
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "54ab7481fabf435ff892bbe3c82fb8030ae8bb93f77047068ea2ff34f69cbe1e",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "f6f8c404fdd680338dd71753691663fb4434257b9d125963c969fb4d511346f5",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 2,
+                "inbound_refused": 2,
+                "deferred_attempt": 6,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156059.302895291,
+              "last_event_seconds": 156086.2524285
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 10,
+                "inbound_refused": 9,
+                "deferred_attempt": 29,
+                "deferred_local_custody": 7,
+                "outgoing_prepared": 3,
+                "request_sent": 2,
+                "outgoing_failed": 3,
+                "local_transport_custody": 1
+              },
+              "first_event_seconds": 156052.775738375,
+              "last_event_seconds": 156094.323027125
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 10,
+                "request_sent": 10,
+                "outgoing_failed": 9,
+                "peer_custody_authenticated": 1,
+                "reply_local_custody": 1
+              },
+              "first_event_seconds": 156052.06001675,
+              "last_event_seconds": 156094.658955333
+            }
+          ],
+          "source_queued_at": 156052.06001675,
+          "source_first_prepared_at": 156052.605967833,
+          "source_queue_to_first_prepare_seconds": 0.5459510829823557,
+          "destination_first_receipt_at": 156063.271961458,
+          "destination_first_native_reception_at": 156068.557655291,
+          "target_receipt_to_native_seconds": 5.2856938329932746,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 2
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 9
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Timeout",
+      "round": 1,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "54ab7481fabf435ff892bbe3c82fb8030ae8bb93f77047068ea2ff34f69cbe1e",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "d6824c3045e0f348c4d37310e50b54662548a3e6f863d9bb973df1d5335d7024",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 4,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 156052.775697416,
+              "last_event_seconds": 156056.5654805
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 156052.060007041,
+              "last_event_seconds": 156053.024221291
+            }
+          ],
+          "source_queued_at": 156052.060007041,
+          "source_first_prepared_at": 156052.605951166,
+          "source_queue_to_first_prepare_seconds": 0.5459441250131931,
+          "destination_first_receipt_at": 156055.46130125,
+          "destination_first_native_reception_at": 156056.5654805,
+          "target_receipt_to_native_seconds": 1.1041792499891017,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "8cb1a4491c10b2d0982d53674110a6ab0c38f465a9aa4298afd6e715713fda3d",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "68a58294240271ecfcd5f45947070da73f804e92a6142edb781eed2d030e9981",
+          "actors": [
+            {
+              "actor": "proxima-0",
+              "stages": {
+                "request_authenticated": 1,
+                "inbound_refused": 1,
+                "deferred_attempt": 1,
+                "deferred_local_custody": 1,
+                "destination_receipt_retained": 1,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155930.283658416,
+              "last_event_seconds": 155933.245828083
+            },
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 8,
+                "inbound_refused": 8,
+                "deferred_attempt": 8,
+                "deferred_local_custody": 1,
+                "outgoing_prepared": 1,
+                "request_sent": 1,
+                "outgoing_failed": 1
+              },
+              "first_event_seconds": 155895.436225958,
+              "last_event_seconds": 156020.502270208
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 47,
+                "inbound_refused": 44,
+                "deferred_attempt": 95,
+                "deferred_local_custody": 22,
+                "outgoing_prepared": 12,
+                "outgoing_failed": 12,
+                "request_sent": 8,
+                "local_transport_custody": 3
+              },
+              "first_event_seconds": 155872.655286625,
+              "last_event_seconds": 156071.485691333
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 47,
+                "request_sent": 47,
+                "outgoing_failed": 47,
+                "peer_custody_authenticated": 3
+              },
+              "first_event_seconds": 155868.780759208,
+              "last_event_seconds": 156068.336907833
+            }
+          ],
+          "source_queued_at": 155868.780759208,
+          "source_first_prepared_at": 155872.4984025,
+          "source_queue_to_first_prepare_seconds": 3.7176432920095976,
+          "destination_first_receipt_at": 155931.522752291,
+          "destination_first_native_reception_at": 155933.245828083,
+          "target_receipt_to_native_seconds": 1.723075791989686,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-1",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 4
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 8
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 44
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "8cb1a4491c10b2d0982d53674110a6ab0c38f465a9aa4298afd6e715713fda3d",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "6bbd58d089e9adb1fb0eade39b688575a8c47e4598e8c6dccbfefceee6fd1d5b",
+          "actors": [
+            {
+              "actor": "proxima-1",
+              "stages": {
+                "request_authenticated": 12,
+                "inbound_refused": 12,
+                "deferred_attempt": 4,
+                "deferred_local_custody": 2,
+                "destination_receipt_retained": 2,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155880.023674833,
+              "last_event_seconds": 156034.065373083
+            },
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 47,
+                "inbound_refused": 44,
+                "deferred_attempt": 104,
+                "deferred_local_custody": 25,
+                "outgoing_prepared": 13,
+                "request_sent": 12,
+                "outgoing_failed": 13,
+                "local_transport_custody": 3
+              },
+              "first_event_seconds": 155874.445216208,
+              "last_event_seconds": 156071.485661625
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 47,
+                "request_sent": 47,
+                "outgoing_failed": 47,
+                "peer_custody_authenticated": 3
+              },
+              "first_event_seconds": 155871.930165708,
+              "last_event_seconds": 156071.380964291
+            }
+          ],
+          "source_queued_at": 155871.930165708,
+          "source_first_prepared_at": 155874.20454525,
+          "source_queue_to_first_prepare_seconds": 2.274379541981034,
+          "destination_first_receipt_at": 155928.554409791,
+          "destination_first_native_reception_at": 155929.936106416,
+          "target_receipt_to_native_seconds": 1.3816966250014957,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-2",
+              "stage": "connect",
+              "error_class": "SSLEOFError",
+              "count": 1
+            },
+            {
+              "actor": "proxima-2",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 12
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "reply_local_custody",
+              "error_class": "BlockingIOError",
+              "count": 3
+            },
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 44
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "strict_native_source_height": 11,
+      "complete_envelope_sha256": "8cb1a4491c10b2d0982d53674110a6ab0c38f465a9aa4298afd6e715713fda3d",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "packets": [
+        {
+          "packet_id": "179672a92157717544b61a8ec30a492cc3036fd6b465fd3290bad5066f52ebfc",
+          "actors": [
+            {
+              "actor": "proxima-2",
+              "stages": {
+                "request_authenticated": 6,
+                "inbound_refused": 6,
+                "deferred_attempt": 17,
+                "deferred_local_custody": 5,
+                "destination_receipt_retained": 5,
+                "native_envelope_received": 1
+              },
+              "first_event_seconds": 155872.655326666,
+              "last_event_seconds": 155894.368265416
+            },
+            {
+              "actor": "proxima-3",
+              "stages": {
+                "source_enqueued": 1,
+                "outgoing_prepared": 6,
+                "request_sent": 6,
+                "outgoing_failed": 6
+              },
+              "first_event_seconds": 155871.930121375,
+              "last_event_seconds": 155891.728528416
+            }
+          ],
+          "source_queued_at": 155871.930121375,
+          "source_first_prepared_at": 155872.498496875,
+          "source_queue_to_first_prepare_seconds": 0.5683755000063684,
+          "destination_first_receipt_at": 155874.005798791,
+          "destination_first_native_reception_at": 155876.004668125,
+          "target_receipt_to_native_seconds": 1.9988693339983001,
+          "exact_target_native_event_observed": true,
+          "destination_receipt_event_observed": true,
+          "outgoing_failures": [
+            {
+              "actor": "proxima-3",
+              "stage": "response_authentication",
+              "error_class": "ValueError",
+              "count": 6
+            }
+          ],
+          "live_event_absence_not_complete_tail_proof": true
+        }
+      ]
+    }
+  ],
+  "exact_private_log_chain_and_producer_binding_checked": true,
+  "all_12_actor_rings_collected_from_event_one_without_eviction": true,
+  "native_envelopes_and_custody_authentication_from_exact_prior_cold": true,
+  "no_runtime_native_calls_or_private_identity_load": true,
+  "same_host_monotonic_timing_only": true,
+  "missing_final_unpublished_tail_not_reconstructed": true,
+  "metadata_grants_no_custody_ledger_signing_or_freshness": true,
+  "failed_full_profile_remains_failed": true
+}

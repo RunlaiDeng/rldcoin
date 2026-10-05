@@ -1,0 +1,215 @@
+{
+  "format": "RLD-REGIONAL-WALLET-RESERVATIONS-PUBLICATION-V1",
+  "commit": "6fc783d2016a78f9bde67358d56bfc43d6777072",
+  "remote_head_verified": true,
+  "raw_files_verified": [
+    {
+      "path": "README.md",
+      "sha256": "6abb34b477832b7760ead20deb0428b3d356088e7c8c556e2545c04368f7c2e2"
+    },
+    {
+      "path": "MASTER_PLAN.md",
+      "sha256": "084545c8d29b351d4c58af2836cdc81defec09e84c32eee0eccef4f1223854fa"
+    },
+    {
+      "path": "SHA256SUMS.current-docs-20260930",
+      "sha256": "75376dc2bce5f774ee02c79801a349dc38b8dc588d126f9d5ccbe97b2f763517"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/SHA256SUMS",
+      "sha256": "2b32f8af76f686469839f9e3ae2078635d13784555f7270532ed7c404ca6280d"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/PLAN_STATUS.zh-CN.md",
+      "sha256": "2bf0b1d056fb4e0b133529a610eddb0f459430e95d6e66a3ec678b4994374676"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/README.md",
+      "sha256": "fd7f5bd3b36ac5ffb816e477c60ccc785f53b4c01c296c7dd4235299c620cf60"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/base-source-manifest.json",
+      "sha256": "20848cd672795d3c6fd3e6d1d56a85b1ff5744620a762d266d6c79cd5c5b3d60"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/campaign-report.json",
+      "sha256": "db77ece32f1564def5b38307bb26a38539b4da49d4fa79e7b5d5a7006909c355"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/RLDCOIN_MASTER_PLAN.md",
+      "sha256": "7d2f42f62da43db8dc0de0e4a6436acb4fe0206bfa9140c09abba582d8ecc56f"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/operations/INTERSTELLAR_EVIDENCE_TRANSPORT.md",
+      "sha256": "81ca7427b0a7b6003ec821ac26bdd102ad7cdf0aea60fdb0be2b6e5b241f73bc"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/operations/INTERSTELLAR_NODE_MESH.md",
+      "sha256": "b09193c8471115b4e70ad9702a61f445c1e2173601ce1e8ae025019dd8190e32"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/operations/evidence/regional-native-wallet-reservations-campaign-20260930.json",
+      "sha256": "db77ece32f1564def5b38307bb26a38539b4da49d4fa79e7b5d5a7006909c355"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/operations/evidence/regional-native-wallet-reservations-verification-20260930.json",
+      "sha256": "5fa1a84507a1d12657986b24648b1e75815b14b13cded7448748a5e37e387684"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md",
+      "sha256": "a98e1188773782e7fc72c720afd7e2e16cd91b71bafbc9392b954733d930c732"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/research/REGIONAL_FINALITY_INCIDENTS_V1.md",
+      "sha256": "b7b2ab44850057b3387325afd35c75cded37a2642136365ae70e95cfec0d6c6f"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/research/REGIONAL_LEDGER_CANDIDATE_V1.md",
+      "sha256": "994b424a5b0292e335a8573d0c6e33902f701b0aa7285f9d1cd269af267de46f"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/docs/research/REGIONAL_SIGNER_EPOCHS_V1.md",
+      "sha256": "4243b51699d5c4693b9ccc9824530e18dbe9bc4b6bb271c0f89ef6428b641504"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/source-manifest.json",
+      "sha256": "b88be2ecea131a37d9c8bd1d6f792930d921db828a644e4af58a0e64607e01df"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/source.tar.gz",
+      "sha256": "96a5553ea487cd2abadb47d0dd7b6caa6b713799d637339e7f57e6a5daaa326d"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/interstellar-mesh-requirements.txt",
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/interstellar_mesh.py",
+      "sha256": "bff470c121aac013100bb28997e9fb31d8a4ea675bd96bc03cd52be2797cb6b0"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/interstellar_route_budget.py",
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/interstellar_transfer.py",
+      "sha256": "799ec3b5bbcb94950b1f4cc09bbc0711f859cbf196e6f29593ee7a610f6bb7da"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/Cargo.lock",
+      "sha256": "d8d443dbe3969a2fcde1d1b965acf53e8ffbb82f9cb9493a836ff44ec616a975"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/Cargo.toml",
+      "sha256": "8bf6d222dc1ebe2385ce53046709a771255450c9785a6b9cc9f3f6d7a71afe34"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/README.md",
+      "sha256": "bc5780db04723240f15e001e0797f34c255d6d9709c95eade6d317887b8eb5ad"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/build.rs",
+      "sha256": "0dfa707932e52dd116add44b14d4837cdeb771972290d37981d65ee6e2115cfa"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/bin/contact-fixture.rs",
+      "sha256": "29497d8cd250ed3034eff8028ebd375e08681b7c0f6a5ed5f395ff92d07e7aa5"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/bin/fixture-campaign.rs",
+      "sha256": "e8bb475ab89a29fd9ebf75bdc7bd67f4b1525d46f36041fc084482dd5dff43fe"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/conflict.rs",
+      "sha256": "2f755e8f4f39884d5b5bcea9d778c972a523761a2768057b6fcb182da08fb4e0"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/contact.rs",
+      "sha256": "2519d664422a1716c27c6de1f1b9f443540eb7401b35947b64c99d12b21c46d2"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/contact_tests.rs",
+      "sha256": "2e7b1c80600930275349082cdec653c9d5e50891793ab9ca27c532124f4bd6cb"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/epoch.rs",
+      "sha256": "39256fe8376226bbc1b6d2cbe68d94ce0f49abb0e49828c699979aa3c884fd57"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/epoch_tests.rs",
+      "sha256": "f5053ffc302f123efff0f2d0d6d1185eb86540e5aa4050d7c38479a6c1b523dd"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/lib.rs",
+      "sha256": "7ae55231f66056aaea7042d980cc19ff5d432f8e2bba37e4ae2caf6bafd1c8c1"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/main.rs",
+      "sha256": "2c85a3012bf205f432f85a61c23088fad990c905b09298aea914fd65a84ca262"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/signer.rs",
+      "sha256": "2460679efabe3f5acf4a901adb953de455f4d9e5ee9c5c899aa172354040b73f"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/storage.rs",
+      "sha256": "6702173e17b7fa63c1feb36f0d395ddaa52531b15ad4fffc2d00f43c10ee34b0"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/tests.rs",
+      "sha256": "c693ac8dd674a005f94799d29469b80dfb37373bd68a9a5d69eff0066f704408"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/wallet.rs",
+      "sha256": "ed2fe46c6c10d7f7d2095c4d9072a24d484aacd7e4842e738e97eaa713acd493"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/wallet_agent.rs",
+      "sha256": "ef3c5dc6c3aae5332bb7c43e8879c2433b3681f44daa15e17f6e52861eb5caa6"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/wallet_agent_tests.rs",
+      "sha256": "e2d85883b7f9b7bf9abfdf9e13f0ddf51de920010d5c4a25cd15bb6c8fa265bc"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional-ledger/src/wallet_tests.rs",
+      "sha256": "488ba7a20b3a98cac8642f7455486ca21f73527701e3edb35ff780b3c75e7ee6"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional_contact_campaign.py",
+      "sha256": "e5c1e1bcc4d76d97dba11fb9793cafe552ab3a43ee83a43bece2fe38d0b0e73c"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/regional_contact_node.py",
+      "sha256": "7ec8d5e5aa405a25e0969c1de68d8e183d7052aef24ac257c627275c1d3bd035"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/test_interstellar_mesh.py",
+      "sha256": "129531139b3e6e6ff196fbcf7e3d4577e510a41166f338641ddc2d26af406dcb"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/test_interstellar_route_budget.py",
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/test_interstellar_transfer.py",
+      "sha256": "5e8d963d681800aca7f327e8781e5e902a1dac95f94b0c3c26c005f980940373"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/test_regional_contact_node.py",
+      "sha256": "fb72d547b1fc3ff7519be9d107a4c8f53870536db9a5a0036640317d9081b77f"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/tools/test_regional_wallet.py",
+      "sha256": "940fc3c780c886d9c8bec92fb1be6209b67f4f77c589cf02829463d6d611d689"
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-reservations-v6/verification.json",
+      "sha256": "5fa1a84507a1d12657986b24648b1e75815b14b13cded7448748a5e37e387684"
+    }
+  ],
+  "package_url": "https://github.com/RunlaiDeng/rldcoin-genesis/tree/6fc783d2016a78f9bde67358d56bfc43d6777072/research/2026-09-30/regional-native-wallet-reservations-v6/",
+  "mainnet_authorized": false,
+  "physical_route_qualified": false,
+  "protocol_qualified": false
+}

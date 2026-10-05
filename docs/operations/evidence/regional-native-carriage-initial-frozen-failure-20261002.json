@@ -1,0 +1,23 @@
+{
+  "format": "RLD-NATIVE-CARRIAGE-INITIAL-FROZEN-FAILURE-V1",
+  "source_set_sha256": "c694c2bc7ecfcc9ff190c1b8d6344efcc00daba0a62528b22f896f2f3d17c20a",
+  "native_implementation": "e11ffa35e0357ec6f177fd6d53a2bc4d65544fdba6c2526ce45594b6227371e2",
+  "complete_source_files": 244,
+  "native_tests_passed": 122,
+  "native_tests_failed": 0,
+  "native_test_exit_code": 0,
+  "strict_clippy_exit_code": 101,
+  "terminal_runner_exit_code": 1,
+  "cause": "Strict clippy rejected an explicit counter in the expansion-bound test; replaced with an explicit height range without relaxing checks.",
+  "frozen_source_unchanged": true,
+  "process_tests_started": false,
+  "fresh_cycle_started": false,
+  "fresh_fault_profile_started": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "long_history_qualified": false,
+  "logs": {
+    "native-tests": "933ecdc3f0b4e11e768a5905351e198db6c42600eb90801f7db2c9049b3c69a9",
+    "clippy": "ce4a57fc23a814ba27e606d27d09d3108f9985ff6e5fd8187bcf11569e520615"
+  }
+}

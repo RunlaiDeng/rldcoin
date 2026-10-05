@@ -1,0 +1,284 @@
+{
+  "actual_ipv4_loopback_sockets": true,
+  "automatic_native_evidence_and_import": true,
+  "checks": [
+    {
+      "conserved": true,
+      "issued": "100",
+      "liquid": "100",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "200",
+      "liquid": "200",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "170",
+      "pending_exports": "130",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "170",
+      "pending_exports": "130",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "170",
+      "pending_exports": "130",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "170",
+      "pending_exports": "130",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "old-era finalized exports imported through neighbors after origin handoff"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "271",
+      "pending_exports": "29",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "271",
+      "pending_exports": "29",
+      "phase": "proxima:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "onward value accepted; no Earth service or directory calls"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "andromeda:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "226",
+      "pending_exports": "74",
+      "phase": "andromeda:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "226",
+      "pending_exports": "74",
+      "phase": "andromeda:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "226",
+      "pending_exports": "74",
+      "phase": "new return export waits for restored adjacent contact"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "new return imported exactly once; original debit remains"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "hostile transport received and acknowledged but native credit rejected"
+    }
+  ],
+  "contact_adapter": "tcp",
+  "cross_host_contact_qualified": false,
+  "currency": "304d2677fafc3a4f400b83936f3df4dd25adbd47992869906ebf81d4636cfa54",
+  "date": "2026-09-30",
+  "destination_restart_without_duplicate_credit": true,
+  "direct_native_cli_invocations_including_busy_retries": 287,
+  "direct_two_hop_export": "5619daebe48fb69da4e1b531acfe571e3c94f224ca58b5f3ea60b6994ff6d7bd",
+  "earth_calls_during_remote_interval": 0,
+  "earth_services_removed_for_remote_local_payment_and_onward": true,
+  "elapsed_years_or_storage_aging_verified": false,
+  "encrypted_transport": true,
+  "format": "RLD-NATIVE-CONTACT-CAMPAIGN-V1",
+  "implementation": "d014d57619a0c7d7d72213fe04ff16e0c3887cbccca4714bffcafd1a85ec231e",
+  "independent_operators": false,
+  "learned_remote_route_hops": 2,
+  "limits": {
+    "applications_and_offers_per_poll": 4,
+    "frame_bytes": 4198400,
+    "native_contact_records": 256,
+    "payload_bytes": 3145728
+  },
+  "live_rld": false,
+  "mainnet_authorized": false,
+  "multiple_sources_split_merge_fees_and_multiple_owners": true,
+  "native_contact_process_starts": 10,
+  "new_cyclic_return_and_permanent_initial_debit": true,
+  "new_return_export": "981a0d0fabccd388c11cd4ab678ec58754d656f7e567a9e2b80422a11d82471c",
+  "normal_node_startup_enables_relay_without_subcommand": true,
+  "old_era_exports_accepted_after_in_flight_origin_handoff": true,
+  "onward_export": "2d298054cf0e4b82e3d4cf6aae2897899e67737529a8b3ed9a57e33fdb0552ae",
+  "original_export": "1f64367ce2d479be32b9ab8e70601296f6d0c248de0b8266d772aef52e5d97ce",
+  "physical_route_verified": false,
+  "plaintext_fallback": false,
+  "public_fixture_helper_invocations": 9,
+  "regions": [
+    "earth",
+    "proxima",
+    "andromeda"
+  ],
+  "relay_stop_sender_restart_and_resume": true,
+  "remaining": [
+    "BFT fork choice/view changes and independent reconfiguration",
+    "payment channels and their liquidity reservations",
+    "complete wallet product, independent encrypted-custody qualification and cross-device/reorganization recovery",
+    "cross-host/physical contact and independent TLS security qualification; adversarial availability/resource admission",
+    "cryptographic horizons and delayed revocation",
+    "external monotonic rollback roots and independent long-term archives",
+    "independent operators/custody/review and actual release"
+  ],
+  "result": "PASS_BOUNDED_NATIVE_CONTACT_VALUE_RETURN",
+  "return_gross_amount": "74",
+  "return_original_recipient_amount": "73",
+  "shared_spools_used": false,
+  "source_http_used": false,
+  "storage_receipt_does_not_grant_payment": true,
+  "tcp_custody_before_source_disconnect": true,
+  "tls_pinned_certificate_and_signed_connection_challenge": true,
+  "tls_version": "TLSv1.3",
+  "topology": "Earth <-> Proxima Centauri <-> Andromeda; only adjacent tcp contacts",
+  "transport_runtime": "Python signed tcp contact companion launched by native CLI; Rust verifies and mines value",
+  "transport_valid_foreign_currency_rejected_without_credit": true
+}

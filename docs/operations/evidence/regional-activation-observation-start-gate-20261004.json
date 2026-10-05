@@ -1,0 +1,14 @@
+{
+  "format": "RLD-ACTIVATION-OBSERVATION-START-GATE-V1",
+  "initial_waiter_failed": true,
+  "initial_error": "incorrect process match; prior report absent",
+  "initial_heavy_checks_started": false,
+  "retry_waiter_active": true,
+  "prior_runner_pid": 36969,
+  "heavy_checks_require_prior_runner_terminal_and_owned_process_cleanup": true,
+  "fresh_source_files": 363,
+  "source_set_sha256": "783bab9d4c1c22c56fc3af9ac60f4083038e898481ee017d0b3f9d0b120611b7",
+  "native_tests_completed": false,
+  "ordinary_cycle_completed": false,
+  "fixture_only": true
+}

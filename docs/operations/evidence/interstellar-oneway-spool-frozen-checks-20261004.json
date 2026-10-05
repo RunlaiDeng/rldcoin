@@ -1,0 +1,39 @@
+{
+  "format": "RLD-ONEWAY-SPOOL-FROZEN-CHECKS-V1",
+  "completed": false,
+  "source_set_sha256": "b7a78b8f27baa4ef11997b5f9f040fc15fafe8844e75d50d93b23674ea82d1a8",
+  "source_files": 381,
+  "native_source_sha256": "4488e628508580e75f4f4232e6553369a5cb9ab0f1548a5b9dafb43f78d6221b",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "native_implementation": "effd7f80773f6a6b4322f99356d91f9575c032f24f87eb63a38973a138449d84",
+  "native_and_core_exact_prior": true,
+  "native_tests_actually_run": 0,
+  "native_tests_reused_not_rerun": 181,
+  "strict_clippy_actually_run": false,
+  "strict_clippy_reused_not_rerun": true,
+  "native_reuse_source_set_sha256": "1912b64cbd7aaf312f9a4f1fb562871116eeeb271b752237b3c852f7f842dc63",
+  "fixture_only": true,
+  "live_rld": false,
+  "fresh_full_fault_profile_completed": false,
+  "physical_adapter_qualified": false,
+  "phases": [
+    {
+      "phase": "build",
+      "exit_code": 0,
+      "duration_seconds": 39.125,
+      "log_sha256": "d2761ffa7696a096c93689bd4ae7ab0c28f41ad76fedfd9ac5b507879e38c209"
+    },
+    {
+      "phase": "process-tests",
+      "exit_code": 1,
+      "duration_seconds": 268.527,
+      "log_sha256": "6f1f9ed73dbc1d448a1a6ea2f0d5c1230926ca64dd074d1a4fc1c45046605bf7"
+    }
+  ],
+  "runner_sha256": "3a4615a7464c64bf0e15c4c8ec1982c123a3f5a7ac861f640709e4781fc87228",
+  "binary_sha256": "45a7055fffbd42de17f86753e7c0f0ff2ad12d710c9ade9736ef9737519dada4",
+  "actually_rebuilt_from_frozen_source": true,
+  "new_compiled_default_driver": true,
+  "compiled_manifest_path": "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/oneway-spool-source-20261004/tools/regional-ledger",
+  "fresh_private_directories": true
+}

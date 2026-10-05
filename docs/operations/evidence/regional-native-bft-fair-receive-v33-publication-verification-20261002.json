@@ -1,0 +1,460 @@
+{
+  "format": "RLD-NATIVE-FAIR-RECEIVE-PUBLICATION-VERIFICATION-V1",
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "12f96085e68fddfe8a04c1b15708c4867ea18b65",
+  "branch_head_matches": true,
+  "changed_remote_files_exact": 74,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 23834,
+      "sha256": "a5552ee4ad24729e152f839dd7cb5f12686079f6539b6f1646ce4980603a3c1f",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "SHA256SUMS.v33-publication",
+      "bytes": 11772,
+      "sha256": "ee8ab0946a3082d74508e229f888282859d9706ab0a79b4178036e7b19711b3a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/DESIGN.md",
+      "bytes": 5031,
+      "sha256": "a0257debd02cb0ec9cae88f57835e451296d1fa1b9a47e777d92fa7b3b793b58",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/README.md",
+      "bytes": 8220,
+      "sha256": "a2119b0d410f85a76973a9043b04d1c95ce8fd2a271d89a544fd3e02bad94b9e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/SHA256SUMS",
+      "bytes": 7515,
+      "sha256": "375526bd899bce416d20b25c373baee9d7c43174e3f46c4dea39dc1e1613369e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/STATUS.zh-CN.md",
+      "bytes": 1061,
+      "sha256": "db107699a57b5d974975b086c1af6d6e9babd3510b365d925036ca0c4e6df32d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/cycle-cold.log",
+      "bytes": 112,
+      "sha256": "3495d9d7542631bc2cc0f9ae01d2ffad63104162785691af1eef70c8ae6ac1e9",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/cycle.log",
+      "bytes": 8236,
+      "sha256": "15f38c6ed85175cdfb1884fd030a413bbcd630c70481c86e4937343dea0535fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/earlier-process-tests.log",
+      "bytes": 669,
+      "sha256": "cb058c19c47d9c2e5fbb3e94bc07d424acccba3d94c17c82c583097aab5e113a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/failed-selection-cycle.log",
+      "bytes": 2641,
+      "sha256": "a93796280aad283e8ba46c9cad956a997762b485d1fc52e77eb1ab1fa4f1d8a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/fault-cold.log",
+      "bytes": 85,
+      "sha256": "6a7d08e737a31d44213cd201132e91c8392c63d3e3b35da2978523b5730056e3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/fresh-fault.log",
+      "bytes": 1979,
+      "sha256": "145398d39f35158951049cb26da7be23bb6ddcb75ef50a976d50c62498881228",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/log-inventory.json",
+      "bytes": 2547,
+      "sha256": "1476ef8716ecc3b85d4e7085ab6a948d78bdf770507042a7a0d976753c549f9e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/native-build.log",
+      "bytes": 2474,
+      "sha256": "0bcf3624ce638978d4d214308890446a3355d751e3ded3b87dec80d53781f29e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/process-tests.log",
+      "bytes": 670,
+      "sha256": "bcee34d54a9d1da6051f95d1cabc29ec3faa954abdb6f40e45be97ee2f795228",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-active-proof-failed-carriage-20261002.json",
+      "bytes": 1847,
+      "sha256": "00840bc5cdf4a12ab1ababda753cc8165c92ba58aabc8e7e84910a3370ea1ac7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-checks-20261002.json",
+      "bytes": 1315,
+      "sha256": "f32267924ec0c70084d5744a9aab16a6cf01b5d6e9f1ad22283b90f71a0a4284",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-cycle-20261002.json",
+      "bytes": 280,
+      "sha256": "fcabf327e26e06285b44247b77f49bf9449da11989cd64d4c4d010fa873fe5a8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-checks-20261002.json",
+      "bytes": 1553,
+      "sha256": "9517a03652cc3cdae5ca297616711bdd72c8fe380d8ff536e60a8e45df19eda1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-cycle-20261002.json",
+      "bytes": 16389,
+      "sha256": "5fd0d0e5b8bf158baa1fb4212206b402b0a8397f9229c11a0ff0935963f2bcd7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-cycle-cold-20261002.json",
+      "bytes": 14404,
+      "sha256": "7e3bf542f971bf4e5bc5c489898623939eb3df2741d3e76354b1b88a274ccbe8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-diagnostic-20261002.json",
+      "bytes": 8561,
+      "sha256": "f17829753c05e43697562406525bb2c907c1fd5f840366cc5c6cd00191f7f9b2",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-fault-cold-20261002.json",
+      "bytes": 12042,
+      "sha256": "47181d4cc2adf8c8d6a5816048d219df59ef199609cee98ee9409112b2de2018",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-fault-fresh-20261002.json",
+      "bytes": 27524,
+      "sha256": "23e853986b7cf1398e558f6d9ed39c2c1fc3f83b6008b0b8601f4bd783b61d67",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-regression-20261002.json",
+      "bytes": 1359,
+      "sha256": "671db05fa024d1cfa601dc37a82b389c88c1c4333fcb0f6df7a2028eb7940d80",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-selection-source-review-20261002.json",
+      "bytes": 1346,
+      "sha256": "7a5a88cb3fa3646ed1539b22c048851d0c5bb999ec5ed2418533a18858c76e51",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/evidence/regional-native-bft-fair-receive-source-review-20261002.json",
+      "bytes": 1269,
+      "sha256": "705b58f4606675a097a7774c79ff610b5a7d3e72f349ff785cceccbcc26dbf97",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/failed-selection-source-manifest.json",
+      "bytes": 49787,
+      "sha256": "923d814618f59bf51c856db5911a3efb0cd88160b55ff92a362fbaa36c3460c4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/failed-selection-source.tar.gz",
+      "bytes": 1536924,
+      "sha256": "5050dc8787b0cc4c23778711bad65b9c8bfc111c19951d86434727a6e00b8fc9",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/source-manifest.json",
+      "bytes": 49787,
+      "sha256": "b7ca97fa4f77c5ef34607843ef6e224c4d257280bc1d1a7267daeafa20196584",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/source.tar.gz",
+      "bytes": 1537996,
+      "sha256": "b67327fa0744d26eebff7253737e9e46ff02126b7cae71ac2b7fa6ad47893bea",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/interstellar-mesh-requirements.txt",
+      "bytes": 21,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/interstellar_mesh.py",
+      "bytes": 44126,
+      "sha256": "b53407f24b48eea6164daf504c087a60ca33a11a851bee2fe1398f0957dab11b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/interstellar_route_budget.py",
+      "bytes": 5160,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/interstellar_tcp.py",
+      "bytes": 22697,
+      "sha256": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/interstellar_transfer.py",
+      "bytes": 24741,
+      "sha256": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_autonomous_epoch_campaign.py",
+      "bytes": 9734,
+      "sha256": "077ed4770b34bd7a4bf03897d001f5f7e27613ab4dfaf709aa774016c15b3cee",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_campaign.py",
+      "bytes": 15456,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_epoch_campaign.py",
+      "bytes": 8320,
+      "sha256": "1aeff9c75c6735a0fbb39afc587947f019b7079006798b2a9de9284ef23f875d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_joint_cycle_campaign.py",
+      "bytes": 11152,
+      "sha256": "c1dc598bd071f289d082645cda944ffda0f453711ce93f92f40d41199c72f2b8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_joint_epoch.py",
+      "bytes": 13048,
+      "sha256": "ffe0d97eaa37f7a088804c3e97b095efb50461209d3a60a7d7dce8abc7f2b752",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_joint_epoch_campaign.py",
+      "bytes": 9338,
+      "sha256": "92d384fb18210ea978bbc60a626fc5296b15ba0f0a90ed27bc44628b7f111d09",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_joint_fault_profile.py",
+      "bytes": 6518,
+      "sha256": "0d49b0d7f2b7441dbfe01778d9ec8748a6a0079353eae19f6d9cf62a3eb5da07",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_multiregion_campaign.py",
+      "bytes": 20019,
+      "sha256": "6c73cf1ed33c7d59b96614ce729be53126b0b889c6e3ac61815f579322eae81c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_network_campaign.py",
+      "bytes": 12339,
+      "sha256": "7e7ccc48c4ee2d6d36423d68e3dcc6c3d58209ba7a5be97f187052387462e686",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_node.py",
+      "bytes": 26718,
+      "sha256": "6d53066dde8f1e64303dc1242db2c56dd03f697f4e9338cb0c2f69f3df2e2cd4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_retention.py",
+      "bytes": 9865,
+      "sha256": "f45f0281dcedcb3774e04a9a8dbec5c5803b7fab710c9d66040b3af532dc0020",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_bft_sustained_campaign.py",
+      "bytes": 41143,
+      "sha256": "6f9fa54eab32d65db1b91a843b2d959aa72a8fd9391181680a483086c06a74f5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_contact_campaign.py",
+      "bytes": 23451,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_contact_node.py",
+      "bytes": 17683,
+      "sha256": "90589c4b29c3d2966dc001a62fdfd9a3aa3388ff1f713a86b56667ba80b3d6a2",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/regional_wallet_app.py",
+      "bytes": 25328,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_interstellar_mesh.py",
+      "bytes": 37691,
+      "sha256": "dcb7992729722d1bb20b76e5b8c4485619d9a4c05db0aca7abf3ed504ae6fa1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_interstellar_route_budget.py",
+      "bytes": 3671,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_interstellar_tcp.py",
+      "bytes": 31760,
+      "sha256": "050d1c88a8f2b93d8b37d134aed1bef4281d5ee65daa278eef6498b9301ab05a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_interstellar_transfer.py",
+      "bytes": 10342,
+      "sha256": "eec863f0afb3ba2e5eddb1ad05eab1a1fc4b19edec7ce199976bbd4b4b1ffc23",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_bft.py",
+      "bytes": 2856,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_bft_joint_epoch.py",
+      "bytes": 25276,
+      "sha256": "120cb39c9b282101f37d290abd1577152c920d4ac35eb3d20046c6fc91ee7691",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_bft_joint_fault_profile.py",
+      "bytes": 7317,
+      "sha256": "7d396fe511c7fe0522308343f5ce0bc754ccc6e6f2a562d0648695635f321efe",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_bft_node.py",
+      "bytes": 18587,
+      "sha256": "00fa37f9b103818d464da0f98a361e3b781886effcf7204558eb22e955689250",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_bft_retention.py",
+      "bytes": 13651,
+      "sha256": "239d4e15300f35ecbe5560bea03f0447bf3f4a7f30151a1c29e083913579ee04",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_bft_sustained_campaign.py",
+      "bytes": 5720,
+      "sha256": "b6aff8a62885ca8fb902a8191b6856e1851e8a5486faebd09518654b20cea255",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_contact_node.py",
+      "bytes": 13365,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_history.py",
+      "bytes": 4964,
+      "sha256": "d7d79d39178216ea68a6c79d56d436c988d9ec86c34e5a7e5b643b76cfa37d1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_history_archive.py",
+      "bytes": 10070,
+      "sha256": "ae1c261c814ddbe2558af91fdcf1841b9e4166bb4b0c2bd318e0f95c0f93f430",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_segmented_history.py",
+      "bytes": 7181,
+      "sha256": "cafc44fc58f5b8392a1d686e54ae4f3105b8acf560c0b6aa9ac7179f571348a9",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_state_proof.py",
+      "bytes": 6645,
+      "sha256": "e9be47c6e337d86f21dbec95c26f404c6bc34c2d9131d41262372e57f9e98b58",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_wallet.py",
+      "bytes": 15933,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_wallet_app.py",
+      "bytes": 18950,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/test_regional_wallet_custody.py",
+      "bytes": 10513,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/verify_regional_bft_cycle.py",
+      "bytes": 11884,
+      "sha256": "df089707b696fd5b595643fd7d8d958456507fbbb41e7670fa4d86ab2a1d33fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/verify_regional_bft_joint_cycle.py",
+      "bytes": 4914,
+      "sha256": "831e001d43383224d7fe1b0630d7a41bcf3cf9ac36e28a9d0c8250e65128d5f7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/verify_regional_bft_joint_sustained.py",
+      "bytes": 196,
+      "sha256": "03f4d22582126cf1309e227ff0390f6852cb05f4af20e82b6e058e3dd9af1a44",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/verify_regional_bft_sustained.py",
+      "bytes": 13043,
+      "sha256": "bbf2d9e0fa32a87f11963f74862a90314ef2d20b999ba36d5e9cf690010c89c1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-fair-receive-v33/tools/verify_regional_history_archive.py",
+      "bytes": 8414,
+      "sha256": "214f3691d36dd51c1213e1c9f265fa83d509aff51cf8dcf1e8d2b923e9f2da0d",
+      "fetch_attempts": 1
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_material_included": false,
+  "source_set_sha256": "55b923889a476710ef5927482e0dc1efc363c4e0b36ec3cd3fe6f5ad634ab2c9",
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "long_history_qualified": false,
+  "verified_at_utc": "2026-10-02T18:17:41.180704+00:00"
+}

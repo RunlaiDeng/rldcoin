@@ -1,0 +1,123 @@
+{
+  "format": "RLD-BFT-SHARED-EVIDENCE-EXACT-BYTE-SAMPLE-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "old_failed_run_sha256": "098b252019d42906a7b94386fe73fba703ee3a2dab58d23d531d40caa591596c",
+  "codec_sha256": "2e500a7cd198f732a43ce190fd7e5b9def943e9a84b36b14259ef496874e56b4",
+  "observations": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "original_state_bytes": 30049867,
+      "proposed_exact_state_bytes": 1421509,
+      "messages_matched": 182,
+      "distinct_snapshot_payloads": 41,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "original_state_bytes": 30324020,
+      "proposed_exact_state_bytes": 1424366,
+      "messages_matched": 183,
+      "distinct_snapshot_payloads": 41,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "original_state_bytes": 29379434,
+      "proposed_exact_state_bytes": 1403388,
+      "messages_matched": 180,
+      "distinct_snapshot_payloads": 41,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "original_state_bytes": 28820005,
+      "proposed_exact_state_bytes": 1397380,
+      "messages_matched": 178,
+      "distinct_snapshot_payloads": 41,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "original_state_bytes": 29947646,
+      "proposed_exact_state_bytes": 1567802,
+      "messages_matched": 194,
+      "distinct_snapshot_payloads": 50,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "original_state_bytes": 30811219,
+      "proposed_exact_state_bytes": 1578346,
+      "messages_matched": 196,
+      "distinct_snapshot_payloads": 50,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "original_state_bytes": 30254508,
+      "proposed_exact_state_bytes": 1576836,
+      "messages_matched": 195,
+      "distinct_snapshot_payloads": 50,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "original_state_bytes": 30241028,
+      "proposed_exact_state_bytes": 1576770,
+      "messages_matched": 195,
+      "distinct_snapshot_payloads": 50,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "original_state_bytes": 33286818,
+      "proposed_exact_state_bytes": 1591245,
+      "messages_matched": 189,
+      "distinct_snapshot_payloads": 47,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "original_state_bytes": 33529748,
+      "proposed_exact_state_bytes": 1628727,
+      "messages_matched": 189,
+      "distinct_snapshot_payloads": 48,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "original_state_bytes": 33351337,
+      "proposed_exact_state_bytes": 1591650,
+      "messages_matched": 189,
+      "distinct_snapshot_payloads": 47,
+      "every_envelope_value_and_local_flag_exact": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "original_state_bytes": 33300379,
+      "proposed_exact_state_bytes": 1591313,
+      "messages_matched": 189,
+      "distinct_snapshot_payloads": 47,
+      "every_envelope_value_and_local_flag_exact": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "private_state_migrated": false,
+  "native_authentication_in_this_byte_sample": false,
+  "full_fault_profile_repaired": false,
+  "state_limit_bytes_unchanged": 33554432,
+  "elapsed_seconds": 15.972
+}

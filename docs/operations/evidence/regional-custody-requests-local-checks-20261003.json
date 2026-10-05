@@ -1,0 +1,18 @@
+{
+  "format": "RLD-CUSTODY-REQUESTS-LOCAL-CHECKS-V1",
+  "source_set_sha256": "a21f1be826d14cc4ef8d890cf416485cfa05f9b4f6c47627f624459a6e35924f",
+  "source_files": 345,
+  "native_core_files_exact_prior": 89,
+  "tests_actually_run": 37,
+  "log_sha256": "970e6d19c6fa929bed9f272ba8b55b6728c8ee86f2bde5064e205d3caa63a2f5",
+  "exact_frozen_prior_negative_tests": 1,
+  "exact_frozen_prior_expected_failures": 1,
+  "negative_log_sha256": "cf73a11b2a478567553501d76a0bd8d35328dc0ddddcd9d2b1be8a58913c3e8c",
+  "prior_manifest_sha256": "7b002be5d60d19dfc987f771d3bfefbca3c49a845b665973783b7211158d4cfb",
+  "actual_tls_requested_receipt_tests": 5,
+  "ordinary_durable_cursors_unchanged": true,
+  "all_limits_unchanged": true,
+  "failed_private_directories_not_restarted": true,
+  "fixture_only": true,
+  "live_rld": false
+}

@@ -1,0 +1,842 @@
+{
+  "format": "RLD-REGIONAL-BFT-SUSTAINED-GROUND-CAMPAIGN-V3",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": true,
+  "failure": null,
+  "mode": "fresh_fault_profile",
+  "fresh_fault_profile_completed": true,
+  "retained_payment_recovery_completed": false,
+  "retained_failed_report_sha256": null,
+  "same_host_same_controller": true,
+  "private_fixture_copy_not_independent_custody": true,
+  "sealed_source_state_unchanged": true,
+  "runtime_source_set_sha256": "daf6710c8170b994990bbcf96251023fd9d72ffc968de17a51a186c6e4c9843f",
+  "drill_source_sha256": "be354b345f229ef360e8e91ba89cae406246b32a5a6b2d5723ca837368bcb63e",
+  "native_implementation": "7cfff8f8b25bbb0b7d3219c54bbea344022b01095f525dcc46e3360b35a392f5",
+  "maximum_local_stop_height": 24,
+  "phase_observation_bound_seconds": 600,
+  "controller_generated_consensus_messages": 0,
+  "controller_carried_payment_proofs": 0,
+  "controller_installed_checkpoints": 0,
+  "power_loss_qualified": false,
+  "sustained_BFT_liveness_qualified": false,
+  "cross_host_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false,
+  "result": {
+    "completed": true,
+    "recipient": {
+      "format": "RLD-REGIONAL-WALLET-RECEIPT-V1",
+      "expected": {
+        "currency": "736aad97c488d64779249d23914b0ac5199bfa07a7a24b445ac903a9482bbe23",
+        "source": "fa9f4722dea9f6818afee6a48b69b17195b0488b91b5e47bf1ced021a16ae523",
+        "destination": "a8baddc8de35f7afa5ae94d789d2a5f5820ee444e82e73901d4a49dad00654f0",
+        "export": "a7a56892212b3b49564ed6b1b14a94256d9afd5ff94757da80034c7bfa1bd898",
+        "recipient": "d54207da194977dcf46adbfec2bc2e75b52d5a8a42184fedfdc00024f0e3e8da",
+        "net_amount": "9"
+      },
+      "pin": {
+        "currency": "736aad97c488d64779249d23914b0ac5199bfa07a7a24b445ac903a9482bbe23",
+        "region": "a8baddc8de35f7afa5ae94d789d2a5f5820ee444e82e73901d4a49dad00654f0",
+        "height": 13,
+        "tip": "0011f25d7848fdea6e7f722a1d08c7b8651b8af56cf641d430460c422db1fa80",
+        "state": "c9800d2c1af0dc05b04775f9c63bcf55094f77c8ea9e6e6f0baa64b600de4ff0",
+        "epoch": "d374b7197e66efc4f0578c9f8412904dbca88f6ad56cad6aee122f862c8fecc8",
+        "finality": "399227fd338b1cbc0c74fa8952d720ff83f1f8221d3b47791a40aa748c75c309",
+        "local_journal_and_incidents": "cd2c99c08116b74aacfd64b1a24daa89b7ca016ddfa631eafaefdc1696126263"
+      },
+      "verified_source_checkpoint": "ba8b780115dc9fa3070e1afe211e5e116ad509c69b9b147d2b6aa8aae06cb6db",
+      "evidence_verified": true,
+      "import_accepted": true,
+      "import_height": 11,
+      "mature_height": 13,
+      "maturity_reached": true,
+      "original_output_remaining": "9",
+      "original_output_spendable_now": true,
+      "local_finality_covers_import": true,
+      "quarantined": false,
+      "state": "ORIGINAL_OUTPUT_SPENDABLE",
+      "transport_receipt_checked": false,
+      "remote_current_state_known": false,
+      "live_rld": false
+    },
+    "final_heights": {
+      "earth": 15,
+      "proxima": 13,
+      "andromeda": 16
+    },
+    "cold_archive_reads": [
+      {
+        "region": "earth",
+        "replica": 0,
+        "archived_records": 272,
+        "retained_files": 272,
+        "retained_bytes": 68192361,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "earth",
+        "replica": 1,
+        "archived_records": 510,
+        "retained_files": 510,
+        "retained_bytes": 125879676,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "earth",
+        "replica": 2,
+        "archived_records": 492,
+        "retained_files": 492,
+        "retained_bytes": 127468432,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "earth",
+        "replica": 3,
+        "archived_records": 288,
+        "retained_files": 288,
+        "retained_bytes": 77259142,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "proxima",
+        "replica": 0,
+        "archived_records": 240,
+        "retained_files": 240,
+        "retained_bytes": 60900904,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "proxima",
+        "replica": 1,
+        "archived_records": 448,
+        "retained_files": 448,
+        "retained_bytes": 109774184,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "proxima",
+        "replica": 2,
+        "archived_records": 416,
+        "retained_files": 416,
+        "retained_bytes": 107770482,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "proxima",
+        "replica": 3,
+        "archived_records": 240,
+        "retained_files": 240,
+        "retained_bytes": 60830197,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "andromeda",
+        "replica": 0,
+        "archived_records": 288,
+        "retained_files": 288,
+        "retained_bytes": 81301586,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "andromeda",
+        "replica": 1,
+        "archived_records": 528,
+        "retained_files": 528,
+        "retained_bytes": 151519011,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "andromeda",
+        "replica": 2,
+        "archived_records": 496,
+        "retained_files": 496,
+        "retained_bytes": 143517483,
+        "full_cold_read_passed": true
+      },
+      {
+        "region": "andromeda",
+        "replica": 3,
+        "archived_records": 288,
+        "retained_files": 288,
+        "retained_bytes": 84547894,
+        "full_cold_read_passed": true
+      }
+    ]
+  },
+  "duration_seconds": 863.055,
+  "offered_owner_requests": [
+    {
+      "region": "earth",
+      "kind": "export",
+      "amount": "10",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "proxima",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "andromeda",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    }
+  ],
+  "fault_events": [
+    {
+      "kind": "faults_applied",
+      "offline_validator": {
+        "region": "earth",
+        "replica": 0
+      },
+      "interregion_contacts": "earth/proxima both directions cut",
+      "local_stop_height": 24
+    },
+    {
+      "kind": "validator_offline",
+      "region": "earth",
+      "replica": 0,
+      "starting_height": 7,
+      "minimum_online_height": 9,
+      "native_signer_and_external_head_unchanged": true,
+      "certified_view_change_seen": true
+    },
+    {
+      "kind": "interregion_contacts_restored",
+      "elapsed_seconds": 248.496
+    }
+  ],
+  "conservation_checks": [
+    {
+      "phase": "certified export stays deducted while interregion contact is cut; remote local payments continue",
+      "issued": "300",
+      "liquid": "290",
+      "pending_exports": "10",
+      "observed_export_count": 4,
+      "observed_import_count": 3,
+      "unresolved_export_count": 1,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          7,
+          9,
+          9,
+          9
+        ],
+        "proxima": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "andromeda": [
+          7,
+          7,
+          7,
+          7
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "after restored contact and independent native recipient maturity",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          15,
+          15,
+          15,
+          15
+        ],
+        "proxima": [
+          13,
+          13,
+          13,
+          13
+        ],
+        "andromeda": [
+          15,
+          15,
+          15,
+          15
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "stopped native stores replay; new import exists once and debit remains",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          15,
+          15,
+          15,
+          15
+        ],
+        "proxima": [
+          13,
+          13,
+          13,
+          13
+        ],
+        "andromeda": [
+          16,
+          16,
+          16,
+          16
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "stopped native stores: complete replay of all twelve compatible prefixes",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          15,
+          15,
+          15,
+          15
+        ],
+        "proxima": [
+          13,
+          13,
+          13,
+          13
+        ],
+        "andromeda": [
+          16,
+          16,
+          16,
+          16
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    }
+  ],
+  "observations": [
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 10.022,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 10.448,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 9.593,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 4.089,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 6.725,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 5.729,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 4.695,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 5.737,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 10.431,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 10.632,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 8.198,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "three voters progress past the offline height-8 leader",
+      "elapsed_seconds": 107.403,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "both isolated remote regions continue local certified progress",
+      "elapsed_seconds": 0.003,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 11.061,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "offline validator catches up through pinned TLS",
+      "elapsed_seconds": 34.281,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "retained new export imports uniquely and matures after contact restoration",
+      "elapsed_seconds": 488.991,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "keyless fixture pause drains complete native certificates",
+      "elapsed_seconds": 26.455,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "phase_samples": [
+    {
+      "phase": "certified export stays deducted while interregion contact is cut; remote local payments continue",
+      "elapsed_seconds": 202.691,
+      "nodes": [
+        {
+          "region": "earth",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 95,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 28,
+          "archived_transport_records": 277,
+          "tcp_local_lock_retries": 609,
+          "tcp_local_lock_exhaustions": 18,
+          "sampled_errors": [
+            "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)",
+            "[Errno 61] Connection refused"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 95,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 22,
+          "archived_transport_records": 269,
+          "tcp_local_lock_retries": 2362,
+          "tcp_local_lock_exhaustions": 55,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 96,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 31,
+          "archived_transport_records": 144,
+          "tcp_local_lock_retries": 248,
+          "tcp_local_lock_exhaustions": 2,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 92,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 24,
+          "archived_transport_records": 144,
+          "tcp_local_lock_retries": 201,
+          "tcp_local_lock_exhaustions": 2,
+          "sampled_errors": []
+        },
+        {
+          "region": "proxima",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 91,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 18,
+          "archived_transport_records": 288,
+          "tcp_local_lock_retries": 2873,
+          "tcp_local_lock_exhaustions": 71,
+          "sampled_errors": [
+            "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 91,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 17,
+          "archived_transport_records": 256,
+          "tcp_local_lock_retries": 1664,
+          "tcp_local_lock_exhaustions": 36,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 92,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 22,
+          "archived_transport_records": 144,
+          "tcp_local_lock_retries": 319,
+          "tcp_local_lock_exhaustions": 2,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 82,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 31,
+          "archived_transport_records": 112,
+          "tcp_local_lock_retries": 110,
+          "tcp_local_lock_exhaustions": 2,
+          "sampled_errors": []
+        },
+        {
+          "region": "andromeda",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 82,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 18,
+          "archived_transport_records": 240,
+          "tcp_local_lock_retries": 1948,
+          "tcp_local_lock_exhaustions": 51,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 83,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 17,
+          "archived_transport_records": 224,
+          "tcp_local_lock_retries": 1169,
+          "tcp_local_lock_exhaustions": 24,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 84,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 27,
+          "archived_transport_records": 112,
+          "tcp_local_lock_retries": 231,
+          "tcp_local_lock_exhaustions": 4,
+          "sampled_errors": []
+        }
+      ]
+    },
+    {
+      "phase": "after restored contact and independent native recipient maturity",
+      "elapsed_seconds": 737.494,
+      "nodes": [
+        {
+          "region": "earth",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 1,
+          "retained_bft_messages": 171,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 24,
+          "archived_transport_records": 510,
+          "tcp_local_lock_retries": 5981,
+          "tcp_local_lock_exhaustions": 199,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 0,
+          "retained_bft_messages": 174,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 22,
+          "archived_transport_records": 492,
+          "tcp_local_lock_retries": 5336,
+          "tcp_local_lock_exhaustions": 158,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 0,
+          "retained_bft_messages": 174,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 20,
+          "archived_transport_records": 288,
+          "tcp_local_lock_retries": 1117,
+          "tcp_local_lock_exhaustions": 27,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 0,
+          "retained_bft_messages": 143,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 24,
+          "archived_transport_records": 240,
+          "tcp_local_lock_retries": 869,
+          "tcp_local_lock_exhaustions": 16,
+          "sampled_errors": []
+        },
+        {
+          "region": "proxima",
+          "replica": 1,
+          "consensus_observation_complete": false,
+          "height": null,
+          "round": null,
+          "retained_bft_messages": null,
+          "consensus_diagnostic": "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+          "active_transport_packets": 28,
+          "archived_transport_records": 432,
+          "tcp_local_lock_retries": 10617,
+          "tcp_local_lock_exhaustions": 325,
+          "sampled_errors": [
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 2,
+          "retained_bft_messages": 143,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 17,
+          "archived_transport_records": 416,
+          "tcp_local_lock_retries": 5361,
+          "tcp_local_lock_exhaustions": 161,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 2,
+          "retained_bft_messages": 141,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 19,
+          "archived_transport_records": 240,
+          "tcp_local_lock_retries": 1257,
+          "tcp_local_lock_exhaustions": 31,
+          "sampled_errors": []
+        },
+        {
+          "region": "andromeda",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 0,
+          "retained_bft_messages": 183,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 22,
+          "archived_transport_records": 288,
+          "tcp_local_lock_retries": 1131,
+          "tcp_local_lock_exhaustions": 32,
+          "sampled_errors": []
+        },
+        {
+          "region": "andromeda",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 0,
+          "retained_bft_messages": 184,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 23,
+          "archived_transport_records": 512,
+          "tcp_local_lock_retries": 8492,
+          "tcp_local_lock_exhaustions": 272,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable",
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 0,
+          "retained_bft_messages": 184,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 31,
+          "archived_transport_records": 480,
+          "tcp_local_lock_retries": 4856,
+          "tcp_local_lock_exhaustions": 147,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 0,
+          "retained_bft_messages": 183,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 16,
+          "archived_transport_records": 288,
+          "tcp_local_lock_retries": 1173,
+          "tcp_local_lock_exhaustions": 30,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 1,
+          "retained_bft_messages": 172,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 26,
+          "archived_transport_records": 272,
+          "tcp_local_lock_retries": 713,
+          "tcp_local_lock_exhaustions": 13,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        }
+      ]
+    }
+  ],
+  "ciphertext_fault_relays": [
+    {
+      "attempts": 99,
+      "refused_connections": 59,
+      "forwarded_connections": 40,
+      "ciphertext_bytes_forwarded": 8942670,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    },
+    {
+      "attempts": 99,
+      "refused_connections": 39,
+      "forwarded_connections": 60,
+      "ciphertext_bytes_forwarded": 10141442,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    }
+  ],
+  "native_cli_calls": 2482,
+  "node_process_starts": 12,
+  "owned_process_cleanup_verified": true
+}

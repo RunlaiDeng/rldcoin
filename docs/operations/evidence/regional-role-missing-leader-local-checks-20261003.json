@@ -1,0 +1,20 @@
+{
+  "format": "RLD-ROLE-MISSING-LEADER-LOCAL-CHECKS-V1",
+  "completed": true,
+  "local_tests_actually_run": 27,
+  "new_finite_profile_and_controller_tests": 5,
+  "private_rebind_and_scope_tests": 14,
+  "cold_mapping_tests": 8,
+  "controller_sha256": "265e65558618987b20530d67ce7fee5d7a43765c6a1d3872c2ea6d3ee1b56159",
+  "cold_verifier_sha256": "0a7ed57cf4158e2a51a0b260cc7f4bf755f51b4058edf44158a2628812e38d9d",
+  "test_sha256": "8b14e0451de79ce982b748362b9b5cd13e9e1f531113b736a2ff56bca27565f7",
+  "protected_runtime_files": 105,
+  "all_native_core_and_ordinary_runtime_bytes_exact_running_source": true,
+  "running_source_set_sha256": "5dec4efdc1007c9a4a6b279f12930eafdbacce1f47df29d481ebfb89a17218f1",
+  "running_private_fixture_modified": false,
+  "positive_drill_entry_or_native_fault_cold_observed": false,
+  "native_authority_calls_from_local_tests": 0,
+  "fresh_full_fault_profile_completed": false,
+  "fixture_only": true,
+  "live_rld": false
+}

@@ -1,0 +1,60 @@
+{
+  "format": "RLD-INTERSTELLAR-VALUE-MODEL-V1",
+  "result": "PASS_BOUNDED_ABSTRACT_MODEL",
+  "regions": [
+    "earth",
+    "proxima",
+    "andromeda"
+  ],
+  "owners": [
+    "alice",
+    "bob"
+  ],
+  "fixture_units": 1,
+  "max_exports": 3,
+  "exhaustive_reachable_states": 4092,
+  "transitions": 5846,
+  "wrong_region_unauthorized_duplicate_or_unfinalized_checks": 11704,
+  "three_region_return_trace": [
+    "export:earth->proxima:alice",
+    "certify-debit:0",
+    "deliver:0:proxima",
+    "mature:proxima",
+    "local-finality:proxima",
+    "export:proxima->andromeda:alice",
+    "certify-debit:1",
+    "deliver:1:andromeda",
+    "mature:andromeda",
+    "local-finality:andromeda",
+    "export:andromeda->earth:alice",
+    "certify-debit:2",
+    "deliver:2:earth",
+    "mature:earth",
+    "local-finality:earth"
+  ],
+  "remote_local_payment_trace": [
+    "export:earth->proxima:alice",
+    "certify-debit:0",
+    "deliver:0:proxima",
+    "mature:proxima",
+    "pay:proxima:alice->bob"
+  ],
+  "unsafe_timeout_refund_counterexample": [
+    "export:earth->proxima:alice",
+    "certify-debit:0",
+    "unsafe-timeout-refund",
+    "late-delivery:0"
+  ],
+  "time_and_transport_receipt_have_no_value_transition": true,
+  "assumptions": [
+    "ideal non-equivocating local finality",
+    "preauthorized compatible regions",
+    "authenticated owner operations",
+    "one indivisible asset with no fees, splits, native rewards or ledger forks"
+  ],
+  "proof_scope": "all reachable states of this finite symbolic state machine; no Rust refinement proof",
+  "implemented_in_native_ledger": false,
+  "cryptography_or_transport_exercised": false,
+  "physical_interstellar_route_verified": false,
+  "mainnet_authorized": false
+}

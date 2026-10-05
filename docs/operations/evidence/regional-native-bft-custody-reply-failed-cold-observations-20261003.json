@@ -1,0 +1,756 @@
+{
+  "format": "RLD-CUSTODY-REPLY-FAILED-COLD-OBSERVATIONS-V1",
+  "runtime_source_set_sha256": "aa2381b56f0682b9d1cc1f317b60e0c28b0c1d6c3ea3ad0652330532a54af4e1",
+  "native_implementation": "5415647bdccf790c871f27e02e115549f3b32161e05faf8606409ed8fdb987fc",
+  "binary_sha256": "473b7706ff94280485a5271b90db43ce2c4f96d5e509f7909af7c1672ac731ae",
+  "failed_run_report_sha256": "6822f5d6c05168a60d83fdd4c3d640856733e08a8e860dd4493377374fc6c4a8",
+  "profiler_sha256": "6919e3f551b7089e09213979406e8730e37f90e7931444aa30759f36feefc15f",
+  "native_replays": [
+    {
+      "carrier": 0,
+      "height": 11,
+      "active_era": 2,
+      "minted": "300",
+      "full_native_genesis_replay": true,
+      "conserved": true,
+      "recipient_balances": [
+        {
+          "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+          "total": "9",
+          "mature": "9"
+        },
+        {
+          "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+          "total": "20",
+          "mature": "20"
+        },
+        {
+          "owner": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+          "total": "0",
+          "mature": "0"
+        }
+      ]
+    },
+    {
+      "carrier": 1,
+      "height": 11,
+      "active_era": 2,
+      "minted": "300",
+      "full_native_genesis_replay": true,
+      "conserved": true,
+      "recipient_balances": [
+        {
+          "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+          "total": "9",
+          "mature": "9"
+        },
+        {
+          "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+          "total": "20",
+          "mature": "20"
+        },
+        {
+          "owner": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+          "total": "0",
+          "mature": "0"
+        }
+      ]
+    },
+    {
+      "carrier": 2,
+      "height": 11,
+      "active_era": 2,
+      "minted": "300",
+      "full_native_genesis_replay": true,
+      "conserved": true,
+      "recipient_balances": [
+        {
+          "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+          "total": "9",
+          "mature": "9"
+        },
+        {
+          "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+          "total": "20",
+          "mature": "20"
+        },
+        {
+          "owner": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+          "total": "0",
+          "mature": "0"
+        }
+      ]
+    },
+    {
+      "carrier": 3,
+      "height": 11,
+      "active_era": 2,
+      "minted": "300",
+      "full_native_genesis_replay": true,
+      "conserved": true,
+      "recipient_balances": [
+        {
+          "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+          "total": "9",
+          "mature": "9"
+        },
+        {
+          "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+          "total": "20",
+          "mature": "20"
+        },
+        {
+          "owner": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+          "total": "0",
+          "mature": "0"
+        }
+      ]
+    },
+    {
+      "carrier": 4,
+      "height": 11,
+      "active_era": 2,
+      "minted": "300",
+      "full_native_genesis_replay": true,
+      "conserved": true,
+      "recipient_balances": [
+        {
+          "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+          "total": "9",
+          "mature": "9"
+        },
+        {
+          "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+          "total": "20",
+          "mature": "20"
+        },
+        {
+          "owner": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+          "total": "0",
+          "mature": "0"
+        }
+      ]
+    }
+  ],
+  "owner_payments": [
+    {
+      "era": 0,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 1,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 2,
+      "native_state": "SIGNED_PENDING_INCLUSION",
+      "reserved_owned_outputs": "20",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    }
+  ],
+  "custody_reads": [
+    {
+      "carrier": 0,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 0,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 7,
+      "prepared": false,
+      "committed": false
+    },
+    {
+      "carrier": 1,
+      "era": 0,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": false,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 1,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 2,
+      "era": 0,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": false,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 2,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 2,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 7,
+      "prepared": false,
+      "committed": false
+    },
+    {
+      "carrier": 3,
+      "era": 0,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": false,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 3,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 3,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 7,
+      "prepared": false,
+      "committed": false
+    },
+    {
+      "carrier": 4,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 7,
+      "prepared": false,
+      "committed": false
+    }
+  ],
+  "current_parent_rounds": [
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "14725f2835f88b2e4a1d9bfd0fc66ae0e885e743638ac78e4514821f9253fa17"
+    },
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 1,
+      "value": "14725f2835f88b2e4a1d9bfd0fc66ae0e885e743638ac78e4514821f9253fa17"
+    },
+    {
+      "carrier": 0,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 4,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 5,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 6,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "14725f2835f88b2e4a1d9bfd0fc66ae0e885e743638ac78e4514821f9253fa17"
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 1,
+      "value": "14725f2835f88b2e4a1d9bfd0fc66ae0e885e743638ac78e4514821f9253fa17"
+    },
+    {
+      "carrier": 1,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 4,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 5,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "14725f2835f88b2e4a1d9bfd0fc66ae0e885e743638ac78e4514821f9253fa17"
+    },
+    {
+      "carrier": 2,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 4,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 5,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 6,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 1,
+      "value": "14725f2835f88b2e4a1d9bfd0fc66ae0e885e743638ac78e4514821f9253fa17"
+    },
+    {
+      "carrier": 3,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 4,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 5,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 6,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 2,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 3,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 4,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 5,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 6,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    }
+  ],
+  "current_parent_authentication_profiles": [
+    {
+      "carrier": 0,
+      "retained_complete_envelopes": 273,
+      "current_parent_complete_envelopes_native_authenticated": 12,
+      "duration_seconds": 0.972
+    },
+    {
+      "carrier": 1,
+      "retained_complete_envelopes": 278,
+      "current_parent_complete_envelopes_native_authenticated": 11,
+      "duration_seconds": 0.931
+    },
+    {
+      "carrier": 2,
+      "retained_complete_envelopes": 296,
+      "current_parent_complete_envelopes_native_authenticated": 17,
+      "duration_seconds": 1.416
+    },
+    {
+      "carrier": 3,
+      "retained_complete_envelopes": 290,
+      "current_parent_complete_envelopes_native_authenticated": 22,
+      "duration_seconds": 1.925
+    },
+    {
+      "carrier": 4,
+      "retained_complete_envelopes": 300,
+      "current_parent_complete_envelopes_native_authenticated": 21,
+      "duration_seconds": 1.765
+    }
+  ],
+  "archive_metadata": [
+    {
+      "carrier": 0,
+      "indexed_archives": 458,
+      "distinct_shared_frames": 283,
+      "actual_retained_files": 741,
+      "actual_retained_bytes": 74150525,
+      "indexed_expanded_bytes": 116713984,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 1,
+      "indexed_archives": 819,
+      "distinct_shared_frames": 302,
+      "actual_retained_files": 1121,
+      "actual_retained_bytes": 83841295,
+      "indexed_expanded_bytes": 194109876,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 2,
+      "indexed_archives": 1000,
+      "distinct_shared_frames": 313,
+      "actual_retained_files": 1313,
+      "actual_retained_bytes": 89297329,
+      "indexed_expanded_bytes": 243204230,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 3,
+      "indexed_archives": 832,
+      "distinct_shared_frames": 317,
+      "actual_retained_files": 1149,
+      "actual_retained_bytes": 90433387,
+      "indexed_expanded_bytes": 206987591,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 4,
+      "indexed_archives": 400,
+      "distinct_shared_frames": 298,
+      "actual_retained_files": 698,
+      "actual_retained_bytes": 80923565,
+      "indexed_expanded_bytes": 103832046,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    }
+  ],
+  "active_storage_observations": [
+    {
+      "carrier": 0,
+      "actual_state_image_bytes": 10137186,
+      "active_messages": 44,
+      "pending_unreceipted_messages": 44,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 1,
+      "actual_state_image_bytes": 20427773,
+      "active_messages": 74,
+      "pending_unreceipted_messages": 74,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 2,
+      "actual_state_image_bytes": 35435675,
+      "active_messages": 100,
+      "pending_unreceipted_messages": 100,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 3,
+      "actual_state_image_bytes": 18590651,
+      "active_messages": 74,
+      "pending_unreceipted_messages": 74,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 4,
+      "actual_state_image_bytes": 9582059,
+      "active_messages": 30,
+      "pending_unreceipted_messages": 17,
+      "all_active_transport_signatures_authenticated": true
+    }
+  ],
+  "owned_process_cleanup_verified": true,
+  "all_private_files_unchanged": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "completed_campaign": false,
+  "third_owner_payment_signed": true,
+  "fresh_full_fault_profile_completed": false,
+  "all_retained_envelopes_cold_verified": false,
+  "all_transport_archives_cold_verified": true,
+  "strict_transport_read_only_entry_used": true,
+  "transport_inspection_private_identity_not_loaded": true,
+  "retained_native_era_maps_and_all_setup_maps_bound": true,
+  "future_setup_maps_not_native_activation_authority": true,
+  "setup_anchors_sha256": "3a19541566f75b4660b2a2d36ac9b5357dc11bce90f8eb38db83b79aa7185075",
+  "no_capacity_bounds_raised": true,
+  "old_failed_fixtures_not_restarted": true
+}

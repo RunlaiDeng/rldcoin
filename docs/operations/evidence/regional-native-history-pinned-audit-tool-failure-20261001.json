@@ -1,0 +1,14 @@
+{
+  "format": "RLD-NATIVE-HISTORY-AUDIT-TOOL-FAILURE-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "native_source_changed": false,
+  "native_source_set_sha256": "1756c85e876dbca24275c77e7d035673d2b3fd4a90c5c67b0cbbbf99cd0d445b",
+  "separate_full_fault_cold_verifier_passed": true,
+  "audit_tool_terminal_exit_code": 1,
+  "failure": "KeyError: currency; full fault report has no top-level currency field",
+  "native_calls_before_failure": 0,
+  "failed_audit_tool_sha256": "283a56f2ffaf131e15ceffa22089ab96b3604b2003c99dd8607b04dd4eaaa6c9",
+  "failed_audit_log_sha256": "85d45b00a270c52f0f29e80a71737d4bb56e2ab01856e25a60ceb846dbdda778",
+  "fix": "Bind currency to the retained public fixture bootstrap and exact cycle or fault report; refuse owned running nodes. No native runtime or evidence rewrite."
+}

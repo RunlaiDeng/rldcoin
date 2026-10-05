@@ -1,0 +1,31 @@
+{
+  "format": "RLD-DUPLICATE-ROLE-DEFERRAL-RELATED-CHECKS-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "d05ed59b94e957ec946e26de64dd2f091a0ce1fee6cdd12e4953cc2c682d61a5",
+  "source_files": 362,
+  "tested_root_runtime_and_changed_native_test_exact_frozen": true,
+  "actual_related_tests": [
+    {
+      "log_sha256": "51dca7a918a905210dcb9ce1f70850ad06192128cba52a2aab737f4bd5fb7aee",
+      "tests_actually_run": 20,
+      "actual_native_binary_sha256": "75acbc80e1ff3523b234bf0cdae648b0552592710e4eab05b22bf9fb2818c68f"
+    },
+    {
+      "log_sha256": "cb6d2af62ac6f7696898005b30e1ea692ae95b5808e97a64aa342dcd44a0afa9",
+      "tests_actually_run": 28,
+      "actual_native_binary_sha256": "75acbc80e1ff3523b234bf0cdae648b0552592710e4eab05b22bf9fb2818c68f"
+    }
+  ],
+  "native_core_unchanged": true,
+  "every_complete_envelope_native_authentication_and_dependency_sync_precedes_dedup": true,
+  "ordinary_tick_rechecks_membership_and_custody_before_signing": true,
+  "all_limits_and_round_deadlines_unchanged": true,
+  "actually_rebuilt_new_default_driver": false,
+  "frozen_complete_process_tests_completed": false,
+  "fresh_ordinary_cycle_completed": false,
+  "fresh_full_fault_profile_completed": false,
+  "previous_failed_fault_remains_failed": true,
+  "runner_sha256": "c60120aeb65f8067a04349bb667cd55f2a46804a6f9b2ce798d9f8001cc55d4d"
+}

@@ -1,0 +1,684 @@
+{
+  "format": "RLD-JOINT-LOOP-STOPPED-CURRENT-PROXIMA-PATH-OBSERVATIONS-V1",
+  "completed": true,
+  "source_set_sha256": "60c4ec2fbbf54499c71544d1a9fb2c0a0ef7047a51f14bee11bc30486340fb46",
+  "strict_stopped_report_sha256": "3fc8b2f2340e2628d8acb7d6e69021364fe0816ee11118cba8154c70117d531a",
+  "observer_sha256": "8aac97dbe5c132b356e52f628c28084be1f48c3a57a354667f886062b9c8c822",
+  "native_current_parent_heights": {
+    "0": 12,
+    "1": 12,
+    "2": 12,
+    "3": 12
+  },
+  "selected_local_envelopes": 3,
+  "rows": [
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "strict_native_source_height": 12,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "3d45d8f354ba0bc02ed5d5ccfddd49bbe113d3db68d5b6e90eab28b76d8b47d2",
+      "signed_body_id": "0478528a80f89a967597b3ceefa01f27f4fcd206194af1e3669b7440a0b2c9f5",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "8856097fb4bc0785f58de99f945f1325a42d5be186957dde9f6ef4aa3f61502d",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "8856097fb4bc0785f58de99f945f1325a42d5be186957dde9f6ef4aa3f61502d",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": false,
+          "candidate_route": [
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "strict_native_source_height": 12,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "3d45d8f354ba0bc02ed5d5ccfddd49bbe113d3db68d5b6e90eab28b76d8b47d2",
+      "signed_body_id": "0478528a80f89a967597b3ceefa01f27f4fcd206194af1e3669b7440a0b2c9f5",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "184f865c58e1cffe9a4931ac9d5a1cc5a4bb0f797aba0453c0425090f21cf093",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "184f865c58e1cffe9a4931ac9d5a1cc5a4bb0f797aba0453c0425090f21cf093",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "strict_native_source_height": 12,
+      "kind": "Proposal",
+      "round": 0,
+      "phase": null,
+      "complete_envelope_sha256": "3d45d8f354ba0bc02ed5d5ccfddd49bbe113d3db68d5b6e90eab28b76d8b47d2",
+      "signed_body_id": "0478528a80f89a967597b3ceefa01f27f4fcd206194af1e3669b7440a0b2c9f5",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "322c4ba9cd772930ee344d5a736d93aef3bccc7b65f99fa2e5986bec5ae2b8c3",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "322c4ba9cd772930ee344d5a736d93aef3bccc7b65f99fa2e5986bec5ae2b8c3",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "strict_native_source_height": 12,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "279a94a0fd9c89a5ff46d0120cf9d2f21d66087a27c9fad0bb0e0a8b62b9d15f",
+      "signed_body_id": "080beb821f13d769b9b68e91721d9b5824946fb7ace69717a1ff64fddc6bb726",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "2307aaafc43f9b608c98c4d9f67972b04f04dba04e801bcb95cc8b27dfb11a83",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "2307aaafc43f9b608c98c4d9f67972b04f04dba04e801bcb95cc8b27dfb11a83",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": false,
+          "candidate_route": [
+            "proxima-1"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": [
+                "proxima-1"
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "strict_native_source_height": 12,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "279a94a0fd9c89a5ff46d0120cf9d2f21d66087a27c9fad0bb0e0a8b62b9d15f",
+      "signed_body_id": "080beb821f13d769b9b68e91721d9b5824946fb7ace69717a1ff64fddc6bb726",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "f30966089f69d127ae856cbe627ac4234509f6bf502bdd066d57984f080aa9b9",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "f30966089f69d127ae856cbe627ac4234509f6bf502bdd066d57984f080aa9b9",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "strict_native_source_height": 12,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "279a94a0fd9c89a5ff46d0120cf9d2f21d66087a27c9fad0bb0e0a8b62b9d15f",
+      "signed_body_id": "080beb821f13d769b9b68e91721d9b5824946fb7ace69717a1ff64fddc6bb726",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "db8f77828252d3d03b8b418422863f181cdb6ee1fe04e82fe774934582b1b7ea",
+          "visited_nodes": [
+            "proxima-0"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-0",
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0",
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "db8f77828252d3d03b8b418422863f181cdb6ee1fe04e82fe774934582b1b7ea",
+          "visited_nodes": [
+            "proxima-0",
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "strict_native_source_height": 12,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "9632f739efb8838e53e084176fd7a596921ee4f2992d391dfc41320834478ba0",
+      "signed_body_id": "929cbf04d3642da476b2f5703257a3a70940789b9d06548013cdd88ca71b11f7",
+      "destination_retains_exact_complete_envelope": true,
+      "destination_retains_body_variant": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "97003705df64fd1a2640a203410d62a72f55ac2daff94b2fb6373132ee8798db",
+          "visited_nodes": [
+            "proxima-1",
+            "proxima-0"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-1",
+              "candidate_route": [
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "97003705df64fd1a2640a203410d62a72f55ac2daff94b2fb6373132ee8798db",
+          "visited_nodes": [
+            "proxima-1"
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-0"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-0"
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "strict_native_source_height": 12,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "9632f739efb8838e53e084176fd7a596921ee4f2992d391dfc41320834478ba0",
+      "signed_body_id": "929cbf04d3642da476b2f5703257a3a70940789b9d06548013cdd88ca71b11f7",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "1249464855cd01973175ee605c21e05addbb6c7a683799dc246866db0e3711a8",
+          "visited_nodes": [
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "strict_native_source_height": 12,
+      "kind": "Vote",
+      "round": 0,
+      "phase": "Prepare",
+      "complete_envelope_sha256": "9632f739efb8838e53e084176fd7a596921ee4f2992d391dfc41320834478ba0",
+      "signed_body_id": "929cbf04d3642da476b2f5703257a3a70940789b9d06548013cdd88ca71b11f7",
+      "destination_retains_exact_complete_envelope": false,
+      "destination_retains_body_variant": false,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "d1c4b4bb9acd0eedae6c9b6ac88f77f3c58f64eb9400cb0550db589641f81f15",
+          "visited_nodes": [
+            "proxima-1"
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            "proxima-1",
+            "proxima-2",
+            "proxima-3"
+          ],
+          "configured_next_hops": [
+            {
+              "peer": "proxima-0",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "proxima-2",
+              "candidate_route": [
+                "proxima-1",
+                "proxima-2",
+                "proxima-3"
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "earth-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer": "andromeda-1",
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "no_native_calls_runtime_recovery_signing_or_identity_load": true,
+  "configuration_public_anchors_authenticated": true,
+  "packet_and_receipt_authentication": true,
+  "retained_complete_native_envelopes_authenticated_by_prior_strict_cold": true,
+  "metadata_routes_not_contact_custody_or_authority": true,
+  "full_fault_profile_remains_failed": true,
+  "duration_seconds": 20.705
+}

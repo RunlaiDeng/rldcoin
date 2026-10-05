@@ -1,0 +1,63 @@
+{
+  "format": "RLD-FRAME-STREAM-CYCLE-V51-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "85ef8acf12380d51148aac26a9a9deb09eb3de84",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 29028,
+      "sha256": "79ffd90e20bb61abe5c5dc300d2e5adbf5fe0f9db310abd9fc5d68a6d2d671de"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/README.md",
+      "bytes": 2262,
+      "sha256": "9c19db3b01c65490711698c955efa7e144ec6da97057c2a2b3d2ca159823703b"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/SHA256SUMS",
+      "bytes": 660,
+      "sha256": "bb031941b318bbea350bbfe70e7e8156339bd3b34161ec9d793f9579e284fd9a"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/evidence/frame-stream-three-region-cold-20261004.log",
+      "bytes": 112,
+      "sha256": "e2ec15d8ba9219136af3400a269a060586bd1678e8e2c0a340edd24a4bfd839d"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/evidence/frame-stream-three-region-cycle-20261004.log",
+      "bytes": 8236,
+      "sha256": "15f38c6ed85175cdfb1884fd030a413bbcd630c70481c86e4937343dea0535fd"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/evidence/regional-frame-stream-three-region-cold-20261004.json",
+      "bytes": 14555,
+      "sha256": "be7d295dc44953c86fad036b2ba23c5bc2ff9078e2a157002c3869f8e65600e1"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/evidence/regional-frame-stream-three-region-cycle-20261004.json",
+      "bytes": 21715,
+      "sha256": "93202a4ea251f676b8a704ee2770530ff1d058b0e3a0f4f8a59b42fc0d38facf"
+    },
+    {
+      "path": "research/2026-10-04/regional-frame-stream-cycle-v51/source-binding.json",
+      "bytes": 596,
+      "sha256": "425b6c1310e070101667c43bab41b961049998271a8b4e882d5d1c4a944bd3f2"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "adefb680fcd72dfdcda6d9387896da46a4c3928c75ae06eb2817c838602ef1ea",
+  "complete_source_archive_members": 384,
+  "source_archive_replaced": false,
+  "same_host_ordinary_three_region_value_return_completed": true,
+  "full_native_cold_replay_nodes": 12,
+  "strict_public_config_anchor_inspection_completed": true,
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T05:05:22.863468+00:00"
+}

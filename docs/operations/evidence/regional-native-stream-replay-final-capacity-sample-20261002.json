@@ -1,0 +1,11 @@
+{
+  "absence_proof_bytes": 2683,
+  "entries": 4096,
+  "format": "RLD-NATIVE-STATE-PROOF-CAPACITY-SAMPLE-V1",
+  "native_implementation": "601b7153fe673292ede3c23ced9f765d0e4cd572532f0e9563f3cf01664cafe8",
+  "native_long_history_qualified": false,
+  "permanent_index_bound_unchanged": true,
+  "sibling_hashes": 24,
+  "state_bytes": 860228,
+  "synthetic_map_shape_only": true
+}

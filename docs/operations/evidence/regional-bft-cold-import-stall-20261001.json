@@ -1,0 +1,89 @@
+{
+  "format": "RLD-BFT-COLD-IMPORT-STALL-DIAGNOSTIC-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "source_failed_run_sha256": "329f7eb99f7370e9ef6adce965cd8ac18d82647b518e55962aa124571749eeaa",
+  "replicas": [
+    {
+      "replica": 0,
+      "native_parent_height": 10,
+      "round": 2,
+      "prepared": true,
+      "committed": false,
+      "current_parent_message_groups": {
+        "Commit:0": 1,
+        "Prepare:0": 3,
+        "Prepare:2": 1,
+        "Proposal:0": 1,
+        "Proposal:2": 1,
+        "Timeout:0": 4,
+        "Timeout:1": 3,
+        "Timeout:2": 2
+      },
+      "import_accepted": false,
+      "original_output_spendable_now": false,
+      "pending_import_commands": 4,
+      "prospective_candidate_height": 11,
+      "prospective_candidate_construction_seconds": 0.0747
+    },
+    {
+      "replica": 1,
+      "native_parent_height": 10,
+      "round": 2,
+      "prepared": true,
+      "committed": false,
+      "current_parent_message_groups": {
+        "Commit:0": 1,
+        "Prepare:0": 3,
+        "Prepare:2": 2,
+        "Proposal:0": 1,
+        "Proposal:2": 1,
+        "Timeout:0": 4,
+        "Timeout:1": 3,
+        "Timeout:2": 2
+      },
+      "import_accepted": false,
+      "original_output_spendable_now": false
+    },
+    {
+      "replica": 2,
+      "native_parent_height": 10,
+      "round": 3,
+      "prepared": false,
+      "committed": false,
+      "current_parent_message_groups": {
+        "Commit:0": 1,
+        "Prepare:0": 3,
+        "Proposal:0": 1,
+        "Timeout:0": 4,
+        "Timeout:1": 2,
+        "Timeout:2": 2
+      },
+      "import_accepted": false,
+      "original_output_spendable_now": false
+    },
+    {
+      "replica": 3,
+      "native_parent_height": 10,
+      "round": 3,
+      "prepared": false,
+      "committed": false,
+      "current_parent_message_groups": {
+        "Commit:0": 1,
+        "Prepare:0": 3,
+        "Proposal:0": 1,
+        "Timeout:0": 4,
+        "Timeout:1": 2,
+        "Timeout:2": 2
+      },
+      "import_accepted": false,
+      "original_output_spendable_now": false
+    }
+  ],
+  "source_failed_fixture_unchanged": true,
+  "native_proposals_signed": 0,
+  "native_certificates_installed": 0,
+  "native_consensus_processes_started": 0,
+  "full_fault_profile_passed": false,
+  "native_import_acceptance_demonstrated": false
+}

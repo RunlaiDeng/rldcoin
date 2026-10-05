@@ -1,0 +1,213 @@
+{
+  "format": "RLD-ACTIVATION-OBSERVATION-V37-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "6348a5f87fe09af7364e1afbb4e27921694500a6",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 25143,
+      "sha256": "ee91c24dfdb8dec28acf9b8a3dd2d4cb539b57f9525f046a38b653bc85d7b60f"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/README.md",
+      "bytes": 6672,
+      "sha256": "048da22ebbcd8f777f231bdf93925aa3f4def89eae17bb90f4b37b1629b1e87f"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/SHA256SUMS",
+      "bytes": 4677,
+      "sha256": "dd392fde6a942491e749c2d2373c372e52863b7c628efde5be835a121d42ae9f"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/activation-observation-original-manifest.json",
+      "bytes": 72865,
+      "sha256": "7b6faf9c606abdafb5fa23e2d26ceaa272324296c87172bf1962728109fc6520"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/activation-observation-source-manifest.json",
+      "bytes": 73122,
+      "sha256": "a1c6792688d1ee7a9e23cec2515f1413339ad753cba24cf0a0ed4f024962383b"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/activation-observation-source.tar.gz",
+      "bytes": 1775437,
+      "sha256": "06d5daf538541158d9c50714675ca3c9d45b7f0d0f24f7a510281126b2ec02b4"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/duplicate-role-deferral-source-manifest.json",
+      "bytes": 72036,
+      "sha256": "72e77943551e5fcc2594a76be3a2833136bc8f67cdab3e47bef33b9819a4d3ea"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/duplicate-role-deferral-source.tar.gz",
+      "bytes": 1772148,
+      "sha256": "dc5956228e34a9613cf7cbc9d6e9c021d3d14a4e25fba1d049de0920d7254ae7"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-bad-reply-corrected-20261004.log",
+      "bytes": 98,
+      "sha256": "f260022f80d775c6debac780abca0317f21d3159055b2cdb8e21c29c776ca9d5"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-build-20261004.log",
+      "bytes": 2476,
+      "sha256": "687647a919e7a05d810b360090f4d8e391fb1dfac3e61cb62724a9f701e7f5f9"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-clippy-20261004.log",
+      "bytes": 2486,
+      "sha256": "709efb554d9ccca5498d8d394c65ad8cf84beaf100fa7dc57c8053d39955a0fb"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-controller-boundary-20261004.log",
+      "bytes": 106,
+      "sha256": "75ff54e727b57e4bd7b88956ed0c92c4b9a416e6f0976707e8fb54aa385ac0bd"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-failed-cold-20261004.log",
+      "bytes": 665,
+      "sha256": "1bc3cd079d220fc2bc390e4e199b15d49da5f6669b98a5ed997959564565acc5"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-native-tests-20261004.log",
+      "bytes": 26281,
+      "sha256": "56eb1c5211a52e1af36240cfe2dd1746c59fe064f4615b03ff53e1007497cefb"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-process-tests-20261004.log",
+      "bytes": 1664,
+      "sha256": "c198b0904bbce76f0e4d4455219d07c44f98644adabab290c4d3ab388370403f"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-role-campaign-20261004.log",
+      "bytes": 2567,
+      "sha256": "d64037c7e1830d16671cec475f1bf1abba0a182951dba3e10c0acccf15b469fa"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-test-correction-custody-20261004.log",
+      "bytes": 59,
+      "sha256": "b150d99a6e86e1f7ae3cdba2b10f660c6412010e22e6b330f713967a03ce1034"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/activation-observation-test-correction-joint-module-20261004.log",
+      "bytes": 122,
+      "sha256": "91f74216dce2c7786cc473d0f8d1a8641333534241044bae58acc9811b0114d3"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/duplicate-role-deferral-failed-cold-20261004.log",
+      "bytes": 666,
+      "sha256": "e45e06a060c8d330ad15c34e09147535c4da1703b25f62a6746dddf13aaade04"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/duplicate-role-deferral-role-campaign-20261004.log",
+      "bytes": 2622,
+      "sha256": "6d6a42b4a3a0d2be5504a8cff7eaf17b8191d0f2fa75b207a3127e6d96c6c089"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/log-inventory.json",
+      "bytes": 3898,
+      "sha256": "995b930cf5ddf7597017cf008670c66766f5d2f85839b022fb07652b3000a8ce"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-controller-boundary-20261004.json",
+      "bytes": 495,
+      "sha256": "bb2717f50f7f6803588ba3b39bdffc39bf6e45f7b6ffc680baf734605ae72957"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-failed-cold-observations-20261004.json",
+      "bytes": 13489,
+      "sha256": "97a8eba6de167657187f99979cde7ee09380d0f69defde260ccd65b6453784f2"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-failed-operation-observations-20261004.json",
+      "bytes": 11399,
+      "sha256": "ecd5540bf74af10a9f875ab82321d38d272c9d708632bbbbbdcfd8e64a00e295"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-failed-operation-summary-20261004.json",
+      "bytes": 436,
+      "sha256": "5a9c1db4af5fdca1ab3147435ffc520584cb7de79e29d9ba95b4b8186caadf97"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-frozen-checks-20261004.json",
+      "bytes": 2450,
+      "sha256": "607d63b6b746d630caf7751ede0e2620d8591904df95259d62a752bb2d61293a"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-role-collection-20261004.json",
+      "bytes": 42186,
+      "sha256": "98e04bfd3f8cc12089cb68017914eb4db745654ec92b691144247c3676d1cf3d"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-role-entry-sample-20261004.json",
+      "bytes": 2652,
+      "sha256": "2e2ed30e232f0df557cd13c21d8d21fe18af98ce0462e7ab975a388dc3bb6ce0"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-role-payment-20261004.json",
+      "bytes": 6131,
+      "sha256": "8c375f1452a31ee08777ac2f554c46bb19fff3504a0804f70f8fd534ed9a4dac"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-runtime-custody-20261004.json",
+      "bytes": 2449,
+      "sha256": "ffbbc4aeb149742e2f9fb61159eb39611a005dba3ef3a6bb19275d2a0bf6cb27"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-start-gate-20261004.json",
+      "bytes": 556,
+      "sha256": "64d3ea080b209e82138f35838a1f68bf41b4557fbd7f8238ac67f85b4fc190d3"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-activation-observation-test-corrected-checks-20261004.json",
+      "bytes": 3721,
+      "sha256": "a6d2cac252ddcf65734c598dd7db87e86aa1bf15a29b951ff4948793aae4d4da"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-duplicate-role-deferral-failed-cold-observations-20261004.json",
+      "bytes": 18590,
+      "sha256": "cafeccaaac22537f5cbef090d142d581b6615566db849fa7f901b27d4c25af72"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-duplicate-role-deferral-failed-operation-observations-20261004.json",
+      "bytes": 10900,
+      "sha256": "48ae8d98cfc803f445e54ca54c61bdad4749fa31d52a37d7cbde096e2f6fad04"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-duplicate-role-deferral-frozen-checks-20261004.json",
+      "bytes": 4207,
+      "sha256": "8579b7784cd58fa32003c9d39367ad4e388d03cce4da251b62ab98c2b04ea4e5"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-duplicate-role-deferral-role-payment-20261004.json",
+      "bytes": 6181,
+      "sha256": "d0d3b6e54dcbd76221ce569156e4ca2e7173b52147a59148509361f31a590629"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/evidence/regional-duplicate-role-deferral-runtime-custody-20261004.json",
+      "bytes": 2449,
+      "sha256": "51c5b2f1e71fa9fc148acc9f338fbd20c0a4715bced510202fac10278b0b8e44"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/test-correction-source-manifest.json",
+      "bytes": 73034,
+      "sha256": "55623e969005fa8021f6c9d51e640435fcb67c953cc81a12e2511ccc06f23e4d"
+    },
+    {
+      "path": "research/2026-10-04/regional-activation-observation-v37/test-correction-source.tar.gz",
+      "bytes": 1776112,
+      "sha256": "b616a43c45c92be98d80bb0c3e7576869347a673f4784a6c9211e534e6f526a4"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "783bab9d4c1c22c56fc3af9ac60f4083038e898481ee017d0b3f9d0b120611b7",
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T00:27:05.249877+00:00"
+}

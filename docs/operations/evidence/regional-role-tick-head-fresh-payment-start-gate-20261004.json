@@ -1,0 +1,13 @@
+{
+  "format": "RLD-ROLE-TICK-FRESH-PAYMENT-START-GATE-V1",
+  "confirmed_checks_sequence_pid": 39524,
+  "checks_sequence_sha256": "993bc80db8e42d0b5e47f49387c3bbde24251e27497f5673f38c4be8e123c669",
+  "waiting_for_exact_live_sequence": true,
+  "requires_related_full438_and_custody_checks": true,
+  "failed_fault_requires_separate_stopped_observer": true,
+  "fresh_payment_root_required": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "full_ordinary_cycle_completed": false,
+  "fresh_full_fault_profile_completed": false
+}

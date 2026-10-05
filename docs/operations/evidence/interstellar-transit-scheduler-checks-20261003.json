@@ -1,0 +1,42 @@
+{
+  "format": "RLD-TRANSIT-SCHEDULER-CHECKS-V1",
+  "related_tests_actually_run": 94,
+  "related_test_log_sha256": "1ca53eefdafa19be3165f8b4e6ba328216cb7fc2efc0b6de21e7b5d73338a6b8",
+  "new_scheduler_tests_actually_run": 11,
+  "new_test_log_sha256": "3e22de58f3408dd8333a9f0b35d4142763bd17138066cef0389e9d2e5cd531ce",
+  "files": [
+    {
+      "path": "tools/interstellar_mesh.py",
+      "sha256": "1ca98c0d6dd9ebff78be7f982ef97ea2ef1282d5748f7df286a98290acb0cc4c"
+    },
+    {
+      "path": "tools/test_interstellar_mesh.py",
+      "sha256": "8d5e0b4036d77d2fb28510035d7504c4d621e5696da574a438c0365cc58b6bcc"
+    },
+    {
+      "path": "tools/test_interstellar_mesh_inspection.py",
+      "sha256": "5b0500bd0523dc6b27098b8e220a8fdff374ba396ee038afab6fc46e1469ae73"
+    },
+    {
+      "path": "tools/test_interstellar_transit_scheduler.py",
+      "sha256": "ecba1e80618eb0d40b67c16cf08460b285723f96917c532b39dcf24f37b26918"
+    }
+  ],
+  "pending_pool_sizes": [
+    5,
+    15,
+    25,
+    64,
+    256
+  ],
+  "fixed_peers": 4,
+  "static_pool_every_peer_full_coverage": true,
+  "original_active_batch_limit": 4,
+  "original_state_bytes_limit": 67108864,
+  "new_private_binding": "RLD-CONTACT-TRANSIT-SCHEDULER-V1",
+  "advance_per_prepared_peer": 1,
+  "no_actual_socket_or_native_authority": true,
+  "full_cycle_not_yet_run": true,
+  "fixture_only": true,
+  "live_rld": false
+}

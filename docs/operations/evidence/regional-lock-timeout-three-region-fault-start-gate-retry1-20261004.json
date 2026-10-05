@@ -1,0 +1,8 @@
+{
+  "format": "RLD-EXACT-THREE-REGION-FAULT-START-GATE-V1",
+  "confirmed_runner_pid": 67674,
+  "runner_sha256": "a8f1605c413d1e82a79ab97a2e9c0ebcabf89a5688f86a1fd60b8ee26b541d8b",
+  "waiting_for_exact_live_runner": true,
+  "fixture_only": true,
+  "live_rld": false
+}

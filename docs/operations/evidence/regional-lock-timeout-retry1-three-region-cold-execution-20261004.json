@@ -1,0 +1,12 @@
+{
+  "format": "RLD-THREE-REGION-COLD-EXECUTION-OBSERVATION-V1",
+  "completed_cold": true,
+  "runner_sha256": "a8f1605c413d1e82a79ab97a2e9c0ebcabf89a5688f86a1fd60b8ee26b541d8b",
+  "cold_report_sha256": "5d4176340a627c4972c04c09c4acf762b5c3c0d17cbf2dfc6db244b6b0520410",
+  "log_sha256": "ff1e52008b1073c57a1d2eb7c283f3f67b7f67d10908d9bec97033702cac2b2d",
+  "duration_seconds": 65.038,
+  "duration_origin": "observed runner phase stdout",
+  "fixture_only": true,
+  "live_rld": false,
+  "fresh_full_fault_profile_completed": false
+}

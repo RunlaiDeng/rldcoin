@@ -1,0 +1,225 @@
+{
+  "format": "RLD-SUSTAINED-COLD-VERIFICATION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "same_host_same_controller": true,
+  "run_report_sha256": "09b6f002e85a0d5d7642eca00650e2f36fd17b278f99b63d3552146329430454",
+  "source_set_sha256": "daf6710c8170b994990bbcf96251023fd9d72ffc968de17a51a186c6e4c9843f",
+  "verifier_sha256": "fbe7e217c679aafd515124d015ded31d20cb4f7b6e742bc368d22163231b8819",
+  "native_implementation": "7cfff8f8b25bbb0b7d3219c54bbea344022b01095f525dcc46e3360b35a392f5",
+  "binary_sha256": "28b3e768ee9c30ab0e0850abb3d2b4f8b12be127130d2c50678ba0b850253a1f",
+  "native_replays": 12,
+  "replicas": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "height": 15,
+      "tip": "004da61d738c07597985183cdc8be743568ff87e6d13c4a8962008da59ed051c",
+      "native_signer_records": 33,
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "height": 15,
+      "tip": "004da61d738c07597985183cdc8be743568ff87e6d13c4a8962008da59ed051c",
+      "native_signer_records": 38,
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "height": 15,
+      "tip": "004da61d738c07597985183cdc8be743568ff87e6d13c4a8962008da59ed051c",
+      "native_signer_records": 36,
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "height": 15,
+      "tip": "004da61d738c07597985183cdc8be743568ff87e6d13c4a8962008da59ed051c",
+      "native_signer_records": 37,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "height": 13,
+      "tip": "0011f25d7848fdea6e7f722a1d08c7b8651b8af56cf641d430460c422db1fa80",
+      "native_signer_records": 33,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "height": 13,
+      "tip": "0011f25d7848fdea6e7f722a1d08c7b8651b8af56cf641d430460c422db1fa80",
+      "native_signer_records": 24,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "height": 13,
+      "tip": "0011f25d7848fdea6e7f722a1d08c7b8651b8af56cf641d430460c422db1fa80",
+      "native_signer_records": 34,
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "height": 13,
+      "tip": "0011f25d7848fdea6e7f722a1d08c7b8651b8af56cf641d430460c422db1fa80",
+      "native_signer_records": 33,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "height": 16,
+      "tip": "004d52d1cf33272842ac0e227e8227b15eeff6e3c84eff09a69dcd594ad807c5",
+      "native_signer_records": 36,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "height": 16,
+      "tip": "004d52d1cf33272842ac0e227e8227b15eeff6e3c84eff09a69dcd594ad807c5",
+      "native_signer_records": 36,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "height": 16,
+      "tip": "004d52d1cf33272842ac0e227e8227b15eeff6e3c84eff09a69dcd594ad807c5",
+      "native_signer_records": 36,
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "height": 16,
+      "tip": "004d52d1cf33272842ac0e227e8227b15eeff6e3c84eff09a69dcd594ad807c5",
+      "native_signer_records": 36,
+      "separate_head_matches": true
+    }
+  ],
+  "native_replicas_agree": true,
+  "recipient_checks": 4,
+  "new_export_debit_retained": true,
+  "unique_import_and_original_output_maturity_verified": true,
+  "native_conservation": {
+    "issued": "300",
+    "liquid": "300",
+    "in_transit": "0",
+    "conserved": true
+  },
+  "archive_reads": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "archived_records": 272,
+      "retained_files": 272,
+      "retained_bytes": 68192361,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "archived_records": 510,
+      "retained_files": 510,
+      "retained_bytes": 125879676,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "archived_records": 492,
+      "retained_files": 492,
+      "retained_bytes": 127468432,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "archived_records": 288,
+      "retained_files": 288,
+      "retained_bytes": 77259142,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "archived_records": 240,
+      "retained_files": 240,
+      "retained_bytes": 60900904,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "archived_records": 448,
+      "retained_files": 448,
+      "retained_bytes": 109774184,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "archived_records": 416,
+      "retained_files": 416,
+      "retained_bytes": 107770482,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "archived_records": 240,
+      "retained_files": 240,
+      "retained_bytes": 60830197,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "archived_records": 288,
+      "retained_files": 288,
+      "retained_bytes": 81301586,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "archived_records": 528,
+      "retained_files": 528,
+      "retained_bytes": 151519011,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "archived_records": 496,
+      "retained_files": 496,
+      "retained_bytes": 143517483,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "archived_records": 288,
+      "retained_files": 288,
+      "retained_bytes": 84547894,
+      "full_cold_authentication": true
+    }
+  ],
+  "all_private_fixture_files_unchanged": true,
+  "within_recorded_observation_bounds": true,
+  "sustained_BFT_liveness_qualified": false,
+  "independent_operators_qualified": false,
+  "cross_host_qualified": false,
+  "power_loss_qualified": false,
+  "physical_route_qualified": false
+}

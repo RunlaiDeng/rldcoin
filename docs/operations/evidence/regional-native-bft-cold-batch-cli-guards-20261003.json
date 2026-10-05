@@ -1,0 +1,15 @@
+{
+  "format": "RLD-COLD-BATCH-ACTUAL-CLI-GUARDS-V1",
+  "checks": [
+    "fresh old implementation refuses unchanged; no old failed store used",
+    "pending incident refuses before input parse, without reconciliation or guard clearing",
+    "RESTORING refuses without overwriting interrupted target"
+  ],
+  "all_checked_private_files_unchanged": true,
+  "binary_sha256": "d7e26cc88577f1e18249ed33ee5aa716e50db0f3ceace5d3fd9a51537893eba7",
+  "checker_sha256": "c587913493142a942fec0cf6ea34d267970c570d449e07b9c3ab8c147ed05d0f",
+  "fixture_only": true,
+  "live_rld": false,
+  "old_failed_states_not_used": true,
+  "generated_interrupted_guard_targets_retained": true
+}

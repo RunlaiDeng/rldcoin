@@ -1,0 +1,49 @@
+{
+  "format": "RLD-ROLE-OBSERVATION-FROZEN-CHECKS-V1",
+  "source_set_sha256": "b4efe9902ce03b509295e9885c21b226c807c8f6ec6986c92722f17a9ca1ba9a",
+  "native_source_sha256": "275144a1d97bb74c5885c0c738b0f48966eac79fe6060ad09452316eba2dab80",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "native_implementation": "472fc8bfcf6e2ccb969c3f795072140cd179bb6f3adbad4df016e0083cb3437f",
+  "binary_sha256": "7eb246229c7048c7be4f2e8d6647dd94904f3437d0f8fb95742600d18a91751e",
+  "fixture_helper_sha256": "3b65d15b62c5c0cbbbdfffbacf659a6e97bc3211a8b654394560362bbea2f8c5",
+  "fixture_currency": "b1556dd39617c7caf41112992a17c5d38b6d776d2f502a0ad0130dc95d115644",
+  "source_files": 284,
+  "source_unchanged": true,
+  "native_tests_reused_not_rerun": 165,
+  "strict_clippy_reused_not_rerun": true,
+  "transport_tests_reused_not_rerun": 89,
+  "reused_check_report_sha256": "36a8ca570b3da610543110d4509b623aa9d21294fc687f1088b6bff7b97d845b",
+  "native_core_exact_prior": true,
+  "process_tests_actually_run": 44,
+  "process_test_modules": [
+    "test_regional_bft_joint_epoch",
+    "test_regional_bft_node",
+    "test_regional_bft_joint_roles",
+    "test_regional_bft_joint_roles_lifecycle",
+    "test_interstellar_archive_index_overlap",
+    "test_regional_bft_campaign_observation"
+  ],
+  "release_overflow_checks": true,
+  "release_debug_assertions": true,
+  "phases": [
+    {
+      "phase": "build",
+      "exit_code": 0,
+      "duration_seconds": 37.377,
+      "log_sha256": "77cd694afc28e16ba826b46c916ce49cc3a6f94281c0c90c6ab0dd1a034d5c7d"
+    },
+    {
+      "phase": "process-tests",
+      "exit_code": 0,
+      "duration_seconds": 70.712,
+      "log_sha256": "00611f78c8f95261dbec7029513ebd16e7d427d542a8580625ec287b7ad2dd94"
+    }
+  ],
+  "cold_start_observation_seconds": 300,
+  "unchanged_height_observation_seconds": 600,
+  "unchanged_round_timeout_seconds": 20,
+  "fixture_only": true,
+  "live_rld": false,
+  "previous_failed_fixtures_preserved": true,
+  "old_state_or_value_migrated": false
+}

@@ -1,0 +1,114 @@
+{
+  "format": "RLD-RETAINED-RESPONSE-V34-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "01836bbd95aa5f987634b01a877028f979ab59ee",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 24136,
+      "sha256": "ed2cef8fd74cefe2309e4380349f2f6ec5955f83fe4ec782ab9732b43fe768e4"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/README.md",
+      "bytes": 4221,
+      "sha256": "85934b95ae26d8f25a4b97e7ae487510e71871d1fbe9af234c01ede663d2819b"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/REPRODUCE.md",
+      "bytes": 3783,
+      "sha256": "d2968b7cb3a7b8d4cd4d2bc27ac72d5113cc10d5f8f27764274fca2b0e66279f"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/SHA256SUMS",
+      "bytes": 1977,
+      "sha256": "0c6314d94a06ace89170619cded8ea86ef9ad30f08a07f72f5f4d94dc3002ae9"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/controller-correction-source-manifest.json",
+      "bytes": 70348,
+      "sha256": "e3634148744da579e119b19f9beaf83fe4f32808d80c515ffa82aa0b2aa3fc1b"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/controller-correction-source.tar.gz",
+      "bytes": 1763770,
+      "sha256": "993b2b32fcfd48d2a1ae76f7fb0e04cf2f61875d53531df4c3eb5ff80151717f"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/log-inventory.json",
+      "bytes": 1268,
+      "sha256": "c9452dc6fc126b4d450bf14d3c905d5d3e22d4f2da3dd1c009a8a9030602f472"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/native-bft-retained-response-cold-20261003.log",
+      "bytes": 1279,
+      "sha256": "70689f4a1b59477068bdb171c2ffec8e5c1f8e0b4a7ef6fd1889a89eac946f78"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/native-bft-retained-response-process-tests-20261003.log",
+      "bytes": 824,
+      "sha256": "8bc1ac67185fc8e10805af8ab1c0b8a02d71538dbf5f13d8fdd38083a3aa1df0"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/native-bft-wallet-metadata-cold-20261003.log",
+      "bytes": 90,
+      "sha256": "7b0e0d182ff5f54b8ae82583eacbc4bb0ec721077321f001d54bb073cfa2ee2d"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/native-wallet-metadata-frozen-tests-20261003.log",
+      "bytes": 131,
+      "sha256": "88619ad19695a711d0bd7b7388c656a0d4b0f98115d31488f22ab28e50335346"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/regional-native-bft-cold-batch-native-checks-20261003.json",
+      "bytes": 1594,
+      "sha256": "f0aa86ce1a7cf8315dd16554b0cf34d71808e2dd9f4ecc468069fc09a4b0d46c"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/regional-native-bft-retained-response-checks-20261003.json",
+      "bytes": 4819,
+      "sha256": "2c9b802395f4d0421272f95fdaf711d2e24106f8803fcc37b0dc721897ccba83"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/regional-native-bft-retained-response-payment-campaign-20261003.json",
+      "bytes": 5747,
+      "sha256": "a53b99939fa2aa76d476a1ea8f5512078d8861ba3ba81e6673958586fc200d35"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/regional-native-bft-retained-response-payment-cold-corrected-20261003.json",
+      "bytes": 6807,
+      "sha256": "b306576301818563fc6f620ab2eeabbc8cdf68b1b3f630a68cb6aaf864ad3295"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/regional-native-bft-retained-response-runtime-custody-20261003.json",
+      "bytes": 2449,
+      "sha256": "4fa05dd3548689b5bf177752116af03ece71dd85640701f4aa31e4a497ee413b"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/evidence/regional-native-wallet-metadata-correction-20261003.json",
+      "bytes": 1334,
+      "sha256": "246d58798db2c54c402d561363acc3b5f98db12ca6a60886e8cb05efe66fbc3e"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/runtime-source-manifest.json",
+      "bytes": 70072,
+      "sha256": "c37a61102f1f1bfafc718f5f15903cf26aa472432fad6e97c930bd003d14096a"
+    },
+    {
+      "path": "research/2026-10-03/regional-native-bft-retained-response-v34/runtime-source.tar.gz",
+      "bytes": 1762577,
+      "sha256": "1801a67ca1ba363c94784cc716927404ccf4a7a3fac0f2a1a129c22f5fa3bdb5"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "a5ab25a8d56d97e8659240dfbe9d04703d73d153830d409b57fcd6a32cfcc48f",
+  "controller_source_set_sha256": "ec6c7cf784787e597a79553bc32c68c2920346e2479e543b30321b7c8824b01e",
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-03T20:37:10.403090+00:00"
+}

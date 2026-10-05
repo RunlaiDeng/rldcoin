@@ -1,0 +1,101 @@
+{
+  "builder_review_height": 5,
+  "candidate_only": true,
+  "checks": [
+    {
+      "conserved": true,
+      "issued": "100",
+      "liquid": "100",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "200",
+      "liquid": "200",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "203",
+      "pending_exports": "97",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "interactive proposal, later second-owner approval and matured remote net"
+    }
+  ],
+  "construction_reserves_or_signs": false,
+  "cross_device_custody_qualified": false,
+  "currency": "d81150d9f9104c5403bb672a57297213c4bd48f2e48fd82d386fa2809da0aa22",
+  "fixed_expiry": 13,
+  "format": "RLD-NATIVE-GROUP-PROPOSAL-CAMPAIGN-V1",
+  "implementation": "27254501cb4c59a44eddffb4e3052c90ffdfbc9ca3ea63ee00898bb9064d32d3",
+  "independent_operators_qualified": false,
+  "input_amounts": {
+    "8c49e1a9ef33818d589bd95bc681b1b687c498979347d761a1c56cddaa726551": "39",
+    "bd58972fedf31f2b4e8b83ea8b4de587a57b087fbe3c2317e709d28e3746929b": "60"
+  },
+  "intent_id": "d40cb605e9b1d4f33ca6179994f588567f8a85fa9fe58919daa8c496f9b6aee5",
+  "mature_recipient_net": "95",
+  "only_owned_inputs_reserved": true,
+  "physical_contact_qualified": false,
+  "same_exact_intent_across_heights": true,
+  "same_host": true,
+  "second_owner_review_height": 6
+}

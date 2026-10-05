@@ -1,0 +1,18 @@
+{
+  "format": "RLD-JOINT-CYCLE-LOCAL-STATUS-UPDATE-V1",
+  "public_commit": "99c8e5373053f158fe0380e11cb88af38e68460d",
+  "goal_complete": false,
+  "full_fault_profile_run": false,
+  "local_status_updated_after_release": true,
+  "release_source_unchanged": true,
+  "files": [
+    {
+      "path": "docs/PLAN_STATUS.md",
+      "sha256": "5861a7360b5da174716d81e18f7f438f21102fc6e5e2647038e1f4b86673d1ba"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "9b3b243c797cda1f3c48ca700a8064c74234848cc0ec8858bd970f5abc53971e"
+    }
+  ]
+}

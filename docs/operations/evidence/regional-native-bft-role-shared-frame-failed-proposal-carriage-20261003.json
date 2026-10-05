@@ -1,0 +1,83 @@
+{
+  "format": "RLD-SHARED-FRAME-FAILED-PROPOSAL-CARRIAGE-V1",
+  "runtime_source_set_sha256": "4b4a1ab23a96aafdff2a146b100e9a9e0c90070939a0a7efb52e6ff1cf34d7ff",
+  "binary_sha256": "dc147736e07f1ba82231cd9735f65605c3b08fe597c6fc047a1ab3b65580e649",
+  "failed_run_report_sha256": "6552be3eef4569c815e845f8f408336a276a35e6f64c2a98836d948f38bd0133",
+  "profiler_sha256": "fb4d5f19dd946a5aeac3bf0d95864f15fe38b56d3aac84ae0b407715a862875c",
+  "source_carrier": 4,
+  "proposal_round": 2,
+  "parent_height": 10,
+  "native_complete_source_envelope_authenticated": true,
+  "exact_complete_payload_matches": true,
+  "carriage_observations": [
+    {
+      "carrier": 0,
+      "matching_packets": [],
+      "complete_proposal_retained_by_runtime": false
+    },
+    {
+      "carrier": 1,
+      "matching_packets": [],
+      "complete_proposal_retained_by_runtime": false
+    },
+    {
+      "carrier": 2,
+      "matching_packets": [],
+      "complete_proposal_retained_by_runtime": false
+    },
+    {
+      "carrier": 3,
+      "matching_packets": [],
+      "complete_proposal_retained_by_runtime": false
+    },
+    {
+      "carrier": 4,
+      "matching_packets": [
+        {
+          "destination_carrier": 3,
+          "source_carrier": 4,
+          "authenticated_visited_carriers": [
+            4
+          ],
+          "destination_receipt_transport_authenticated": false,
+          "archived": false
+        },
+        {
+          "destination_carrier": 0,
+          "source_carrier": 4,
+          "authenticated_visited_carriers": [
+            4
+          ],
+          "destination_receipt_transport_authenticated": false,
+          "archived": false
+        },
+        {
+          "destination_carrier": 2,
+          "source_carrier": 4,
+          "authenticated_visited_carriers": [
+            4
+          ],
+          "destination_receipt_transport_authenticated": false,
+          "archived": false
+        },
+        {
+          "destination_carrier": 1,
+          "source_carrier": 4,
+          "authenticated_visited_carriers": [
+            4
+          ],
+          "destination_receipt_transport_authenticated": false,
+          "archived": false
+        }
+      ],
+      "complete_proposal_retained_by_runtime": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "owned_process_cleanup_verified": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "completed_campaign": false,
+  "selected_proposal_only": true,
+  "transport_receipt_grants_no_ledger_or_vote_authority": true
+}

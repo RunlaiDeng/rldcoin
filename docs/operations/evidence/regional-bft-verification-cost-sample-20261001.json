@@ -1,0 +1,30 @@
+{
+  "format": "RLD-MESH-VERIFICATION-COST-SAMPLE-V1",
+  "fixture_only": true,
+  "same_host": true,
+  "same_retained_custody_bytes": true,
+  "sampled_state_sha256": "df632c1aae724ff1935ea8830bc2d30ef4d26d08ac739f6b64c2bc2b4fa4dd72",
+  "state_unchanged": true,
+  "samples": [
+    {
+      "candidate": "archive",
+      "mesh_source_sha256": "e7dd8bfbddf21457b72afab2e047ffd6b6a50d174ccbabd307770e99879499fc",
+      "cold_then_two_warm_opens_seconds": [
+        1.149008,
+        0.455584,
+        0.458745
+      ]
+    },
+    {
+      "candidate": "carriage",
+      "mesh_source_sha256": "9029d1f3a922ec243375252be2c07606da655e5ef3d222ab784f188e7c63af39",
+      "cold_then_two_warm_opens_seconds": [
+        1.061239,
+        0.358892,
+        0.349882
+      ]
+    }
+  ],
+  "scope": "three sequential directory opens in each fresh interpreter; diagnostic sample, not a capacity or sustained-liveness qualification",
+  "independent_performance_qualification": false
+}

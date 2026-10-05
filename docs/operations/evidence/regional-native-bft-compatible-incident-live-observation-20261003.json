@@ -1,0 +1,161 @@
+{
+  "format": "RLD-ROLE-LIVE-PARTIAL-OBSERVATION-V1",
+  "observed_at": "2026-10-03T10:20:39.971693+00:00",
+  "source_set_sha256": "ec14673fa9d81193e0c5fc0d8c7d5be88650db4a43893c75e4dea87d52d54b12",
+  "observations": [
+    {
+      "carrier": 0,
+      "process_id": 42379,
+      "live_companion_match": true,
+      "status_sha256": "d03a7b12a8df17047c5bdc4bbed1875a607569a08f5c13318aa5df3fd0326a60",
+      "height": 8,
+      "round": null,
+      "joint_active_slot": 2,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.212626,
+          "total_seconds": 1.074103
+        },
+        "bft-network-check": {
+          "calls": 244,
+          "failures": 0,
+          "max_seconds": 0.105406,
+          "total_seconds": 9.314488
+        },
+        "consensus-tick": {
+          "calls": 67,
+          "failures": 0,
+          "max_seconds": 3.197681,
+          "total_seconds": 48.18633
+        }
+      }
+    },
+    {
+      "carrier": 1,
+      "process_id": 42539,
+      "live_companion_match": true,
+      "status_sha256": "62a77727c193d08ad2ad947ce71d226d3340c5faa623a88dcbe223b360baf9af",
+      "height": 8,
+      "round": null,
+      "joint_active_slot": 2,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.192321,
+          "total_seconds": 0.952955
+        },
+        "bft-network-check": {
+          "calls": 233,
+          "failures": 0,
+          "max_seconds": 0.089831,
+          "total_seconds": 9.292096
+        },
+        "consensus-tick": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 1.952374,
+          "total_seconds": 36.434354
+        }
+      }
+    },
+    {
+      "carrier": 2,
+      "process_id": 42885,
+      "live_companion_match": true,
+      "status_sha256": "8a87039d809fd4f7c8b525aa4b3a37c683f0544362ddce086de4670f94555e23",
+      "height": 8,
+      "round": null,
+      "joint_active_slot": 1,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 56,
+          "failures": 0,
+          "max_seconds": 0.268439,
+          "total_seconds": 8.499504
+        },
+        "bft-network-check": {
+          "calls": 212,
+          "failures": 0,
+          "max_seconds": 0.06969,
+          "total_seconds": 9.121624
+        },
+        "consensus-tick": {
+          "calls": 26,
+          "failures": 0,
+          "max_seconds": 2.979005,
+          "total_seconds": 34.697075
+        }
+      }
+    },
+    {
+      "carrier": 3,
+      "process_id": 43388,
+      "live_companion_match": true,
+      "status_sha256": "85555068c535c61b4c1fee1c02887ad8779db0806aa74113c7dcac7335716a97",
+      "height": 8,
+      "round": null,
+      "joint_active_slot": 1,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 52,
+          "failures": 0,
+          "max_seconds": 0.230292,
+          "total_seconds": 7.960362
+        },
+        "bft-network-check": {
+          "calls": 205,
+          "failures": 0,
+          "max_seconds": 0.070075,
+          "total_seconds": 8.7763
+        },
+        "consensus-tick": {
+          "calls": 25,
+          "failures": 0,
+          "max_seconds": 3.026905,
+          "total_seconds": 29.444375
+        }
+      }
+    },
+    {
+      "carrier": 4,
+      "process_id": 43876,
+      "live_companion_match": true,
+      "status_sha256": "0ee74626d0802855aa272305119c6611afa17fbc89c4f4ce4ddd0b1c6400734b",
+      "height": 8,
+      "round": 0,
+      "joint_active_slot": 2,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 84,
+          "failures": 0,
+          "max_seconds": 0.254635,
+          "total_seconds": 12.798129
+        },
+        "bft-network-check": {
+          "calls": 246,
+          "failures": 0,
+          "max_seconds": 0.108827,
+          "total_seconds": 10.543952
+        },
+        "consensus-tick": {
+          "calls": 53,
+          "failures": 0,
+          "max_seconds": 2.145468,
+          "total_seconds": 20.65175
+        }
+      }
+    }
+  ],
+  "read_only_published_status": true,
+  "private_identity_or_native_call_used": false,
+  "completed_payment_cycle": false,
+  "full_cold_verification_completed": false,
+  "isolated_performance_benchmark": false,
+  "unique_failure_cause_proven": false,
+  "timing_or_metadata_grants_authority": false,
+  "fixture_only": true,
+  "live_rld": false
+}

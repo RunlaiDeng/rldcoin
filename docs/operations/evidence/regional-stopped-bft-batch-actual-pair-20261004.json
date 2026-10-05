@@ -1,0 +1,49 @@
+{
+  "format": "RLD-STOPPED-BFT-BATCH-ACTUAL-PAIR-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "8b45441ee94652081b48a10820bfd0f8ea91be17f4c339368332c13cd20f4036",
+  "source_file_count": 361,
+  "source_manifest_sha256": "389a98db4f084baabb94123b8c71094b0f432211cabcb76193d3a36e87283ea8",
+  "binary_sha256": "75acbc80e1ff3523b234bf0cdae648b0552592710e4eab05b22bf9fb2818c68f",
+  "failed_stopped_observation_sha256": "712fc5d15d9920068dd48d3df4d267518ea5e226de9a685df782ca9771ea3017",
+  "observer_sha256": "edeeb39b96e31c6e1ad4f750f8959a54c930aca6c357fb2a720a07d920fa0c4c",
+  "native_genesis_height": 15,
+  "results": {
+    "single": {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 161,
+      "distinct_complete_snapshots": 27,
+      "retained_state_bytes": 2692689,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 26460787,
+      "full_native_authentication": true
+    },
+    "batch": {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 161,
+      "distinct_complete_snapshots": 27,
+      "retained_state_bytes": 2692689,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 26460787,
+      "full_native_authentication": true,
+      "native_inspection_mode": "bounded complete-envelope batch"
+    }
+  },
+  "component_duration_seconds": {
+    "single": 12.885,
+    "batch": 6.195
+  },
+  "all_private_files_unchanged": true,
+  "native_and_ordinary_runtime_unchanged": true,
+  "ordinary_throughput_or_fault_qualification": false,
+  "failed_profile_remains_failed": true,
+  "tests": {
+    "root": 12,
+    "frozen": 12,
+    "root_log_sha256": "8ffa5975dbde749685ff98587bd42d81c65a4fbb8cdb7823318908026d6cecb9",
+    "frozen_log_sha256": "8ffa5975dbde749685ff98587bd42d81c65a4fbb8cdb7823318908026d6cecb9"
+  },
+  "preserved_initial_test_failure_log_sha256": "556fe58e02c6593384ce44be74b0ce7e28905a172f2e4df32ac394f8932a138d"
+}

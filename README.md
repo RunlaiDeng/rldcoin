@@ -47,6 +47,6 @@ verified adoption. No old network material supplies that authorization.
 
 The independent English website lives in the sibling `rldcoin-website` checkout.
 Supplemental source and sanitized ground evidence are published in
-[the public protocol repository](https://github.com/RunlaiDeng/rldcoin-genesis).
+[the public protocol repository](https://github.com/RunlaiDeng/rldcoin).
 Never publish generated keys, private ledger images, wallets, signing journals,
 caller heads or transport/TLS state. Licensed under [Apache-2.0](LICENSE).

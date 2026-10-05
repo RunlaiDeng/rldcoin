@@ -1,0 +1,67 @@
+{
+  "format": "RLD-ARCHIVE-INDEX-FAILED-STARTUP-COLD-V1",
+  "completed_campaign": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "native_replays": [
+    {
+      "carrier": 0,
+      "height": 11,
+      "active_era": 2,
+      "full_genesis_replay": true
+    },
+    {
+      "carrier": 1,
+      "height": 11,
+      "active_era": 2,
+      "full_genesis_replay": true
+    },
+    {
+      "carrier": 2,
+      "height": 11,
+      "active_era": 2,
+      "full_genesis_replay": true
+    },
+    {
+      "carrier": 3,
+      "height": 11,
+      "active_era": 2,
+      "full_genesis_replay": true
+    },
+    {
+      "carrier": 4,
+      "height": 11,
+      "active_era": 2,
+      "full_genesis_replay": true
+    }
+  ],
+  "owner_payments": [
+    {
+      "era": 0,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 1,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 2,
+      "native_state": "SIGNED_PENDING_INCLUSION",
+      "reserved_owned_outputs": "20",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    }
+  ],
+  "third_signed_payment_not_replaced_or_released": true,
+  "all_private_files_unchanged": true,
+  "native_implementation": "472fc8bfcf6e2ccb969c3f795072140cd179bb6f3adbad4df016e0083cb3437f",
+  "failed_run_report_sha256": "50d3f5f21418cca62af66b2365b9b09b2440cb7c4491539f3510fba851b9a580",
+  "all_retained_envelopes_cold_verified": false,
+  "full_fault_profile_completed": false
+}

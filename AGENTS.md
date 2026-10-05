@@ -2,7 +2,61 @@
 
 Obsolete mainnet records, releases, private state and recovery archives have been discarded at the user’s request and cannot count toward completion or authorize a new network. Current development uses a fresh testnet with public fixture keys and no monetary value. A future mainnet needs a new signed zero-issuance genesis; test balances and keys never migrate. Retain exact source commitments and evidence for current no-value fixture candidates, including their failures.
 
+Current user-directed task `01a100ac-5340-7b13-b661-eedc397b003a`
+(owner instruction 2026-10-04; final paper independently reviewed and frozen):
+complete the project according to the final whitepaper as quickly as practical.
+The paper has no publication version label. Its canonical Markdown SHA-256 is
+`2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b`;
+its frozen PDF SHA-256 is
+`c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14`.
+Use `https://rldcoin.com/whitepaper` and the hash-bound public freeze receipt at
+`https://rldcoin.com/documents/rldcoin-whitepaper-freeze.json`.
+`docs/WHITEPAPER_FREEZE_RECEIPT.json` binds the audit commit and content;
+`docs/RLDCOIN_MASTER_PLAN.md` and `docs/WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md`
+are the dynamic authoritative implementation plan and clause-to-evidence checklist.
+The frozen paper's I1-I12, S1-S18, R1-R24, embedded A-G/N1-N10 and authenticated-adoption
+P1-P8 are mandatory. Current code and reference fixture parameters cannot shrink
+the target. A complete authenticated executable profile, composition proof,
+independent custody/review, long-history/resource/cryptographic qualification and
+physical routes remain distinct gates; none is completed by documentation.
+Do not autonomously modify or regenerate the frozen body/PDF. Record future
+defects and progress separately, report material problems, stop affected unsafe
+operations, and obtain an explicit owner decision for a body correction. Protocol,
+suite, key and epoch versions/upgrades remain mandatory. Prioritize the measured
+critical path and explicit behavior milestones; preserve failed scopes, bounds
+and liabilities. Reuse valid source-bound evidence and keep one owner per active
+source/fixture. The 100-million-year objective requires generational maintenance
+and finite-horizon requalification, not an eternal guarantee. This instruction
+does not authorize mainnet, real funds, account/permission changes or external
+contacts. A file update does not establish that the running thread received it.
+
 The node-network target is progressive neighbor discovery and multi-hop evidence relay, illustrated by Earth–Proxima Centauri–Andromeda and the user's Endfield relay analogy. Physical contact is a prerequisite. Distant connections are asynchronous and respect causal propagation; there is no mandatory always-online Earth directory or instantaneous global state.
+
+Development decisions must serve the future interstellar peer-to-peer payment goal:
+ordinary neighbor relay, independent local consensus during disconnection, and
+native-verified import, maturity and spendability. Ground fixtures are intermediate
+engineering evidence; research and negative results are useful when they resolve a
+named uncertainty. More logs, reports, activity or small-test counts alone are not
+progress toward these behaviors.
+
+For each blocking stage, use the existing plan/status to state one active falsifiable
+hypothesis, its discriminating observation or smallest counterexample, a bounded
+time/attempt budget, the decision that follows each outcome, and an exit criterion.
+Instrumentation must close that named observation gap. At the budget boundary, stop
+repeating the same approach: review contrary evidence, narrow the reproducer or switch
+the diagnostic method, and report the unresolved dependency. Historical stopped data
+cannot reconstruct missing live scheduling; do not optimize a suspected cause without
+a counterexample or measured service/wait evidence. Keep necessary research bounded
+by a decision, not by an assumed guarantee that physical or independent gates will pass.
+
+Keep one implementation owner per active source/fixture; watchers review or prepare
+isolated changes and coordinate before overlapping edits. Reuse valid bound evidence.
+Rerun a failed or passed expensive scope only for a stated relevant source, controller,
+experiment or environment change; never relax thresholds, deadlines or maturity to
+obtain a pass. Bind required validation to the final source, actual launched binary
+and controller. Exit a stage with a verified behavior change, a falsified hypothesis
+that selects the next action, or an explicit blocker; disclose remaining gates and
+keep failed evidence. Document edits do not prove a running task loaded new guidance.
 
 `docs/research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md` holds N1–N10. `tools/interstellar_mesh.py` is a separately started, bounded contact-spool ground prototype outside the signed consensus input set. Its self-signed region labels do not authorize a ledger, finality signer or issuance. Keep discovered identity, candidate route, contact observation, destination transport receipt, ledger acceptance and spendability distinct. Adopted source/destination nodes still use explicit peer bridges. The incompatible regional fixture candidate defaults to a Python contact runtime within the normal node lifecycle, with native Rust evidence validation; this does not qualify or upgrade an adopted network.
 
@@ -822,3 +876,10 @@ process anchors, including the first valid kernel start observation. Changed
 anchors/counters or disappearance remain unknown. Never add overlapping
 parent/child totals or backfill frozen V1 logs; a diagnostic reaped-child pass
 does not qualify node load, active children, fsync or Native command coverage.
+
+Owner instruction 2026-10-04 explicitly authorized separating required capabilities
+from development status in the whitepaper ("是把需要实现的能力写到白皮书里，开发状态不要进去").
+The successor editorial freeze changes no I/S/R/A-G/N/P obligation, consensus or
+economic parameter. Keep development evidence in the dynamic records. Existing
+source-bound qualification remains scoped to its actual code and experiment; do not
+restart an active scope or repeat valid tests merely because the paper was edited.

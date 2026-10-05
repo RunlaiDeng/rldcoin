@@ -1,0 +1,28 @@
+{
+  "format": "RLD-FAIR-RECEIVE-SOURCE-REVIEW-V1",
+  "source_set_sha256": "435065e420fdeae78ae8e8280ded4d61f17da693e8144c1630752210354caa22",
+  "source_files": 273,
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "changed_paths_from_v32": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_contact_node.py",
+    "tools/test_regional_bft_node.py"
+  ],
+  "native_core_exact_v32": true,
+  "original_four_item_receive_batch": true,
+  "each_nonempty_class_reserved_two_slots": true,
+  "fair_history_and_ordinary_contact_rotation": true,
+  "classification_only_complete_retained_envelope_byte_identity": true,
+  "changed_proof_same_body_remains_novel": true,
+  "full_transit_and_receipt_authentication_unchanged": true,
+  "every_complete_received_envelope_native_checked_before_body_deduplication": true,
+  "no_proof_or_bounds_pruning": true,
+  "no_new_ledger_signing_or_receipt_authority": true,
+  "full_process_and_cycle_and_fault_pending_at_review": true,
+  "failed_v32_profile_remains_failed": true,
+  "failed_carriage_report_sha256": "00840bc5cdf4a12ab1ababda753cc8165c92ba58aabc8e7e84910a3370ea1ac7",
+  "self_review_only": true,
+  "independent_security_qualification": false,
+  "fixture_only": true,
+  "live_rld": false
+}

@@ -1,0 +1,42 @@
+{
+  "format": "RLD-JOINT-SELECTION-DUPLICATE-COLD-REGRESSION-V1",
+  "observations": [
+    {
+      "replica": 0,
+      "native_height": 7,
+      "retained_height_four_snapshots": 2,
+      "exact_active_selection_observed": true,
+      "closing_height": 4
+    },
+    {
+      "replica": 1,
+      "native_height": 7,
+      "retained_height_four_snapshots": 2,
+      "exact_active_selection_observed": true,
+      "closing_height": 4
+    },
+    {
+      "replica": 2,
+      "native_height": 7,
+      "retained_height_four_snapshots": 1,
+      "exact_active_selection_observed": true,
+      "closing_height": 4
+    },
+    {
+      "replica": 3,
+      "native_height": 7,
+      "retained_height_four_snapshots": 1,
+      "exact_active_selection_observed": true,
+      "closing_height": 4
+    }
+  ],
+  "controller_source_sha256": "c1dc598bd071f289d082645cda944ffda0f453711ce93f92f40d41199c72f2b8",
+  "old_failed_source_set_sha256": "435065e420fdeae78ae8e8280ded4d61f17da693e8144c1630752210354caa22",
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "private_files_unchanged": true,
+  "no_restart_signing_recovery_or_head_adoption": true,
+  "old_cycle_remains_failed": true,
+  "scope": "stopped four-store native selection observation; not resumed or complete payment cycle",
+  "fixture_only": true,
+  "live_rld": false
+}

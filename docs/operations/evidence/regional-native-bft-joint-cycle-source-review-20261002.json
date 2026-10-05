@@ -1,0 +1,26 @@
+{
+  "format": "RLD-JOINT-CYCLE-SOURCE-REVIEW-V1",
+  "source_set_sha256": "d6d299244832fcecf4f9e4b36c24f5b81055a8bf30341852b43967c9a5eb0026",
+  "native_implementation": "dee623baa0d39c625a142fa04a6f792342a553cac7d30042997a624c962836e6",
+  "source_files": 269,
+  "added": [
+    "tools/regional_bft_joint_cycle_campaign.py",
+    "tools/verify_regional_bft_joint_cycle.py"
+  ],
+  "changed": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_bft_retention.py",
+    "tools/test_regional_bft_joint_epoch.py",
+    "tools/verify_regional_bft_cycle.py"
+  ],
+  "omitted": [
+    "docs/research/REGIONAL_BFT_AUTONOMOUS_JOINT_EPOCH_CANDIDATE.md"
+  ],
+  "native_and_core_exactly_v30": true,
+  "retention_live_runtime_unchanged": true,
+  "retention_cold_helper_requires_signed_joint_admission": true,
+  "original_storage_bounds_retained": true,
+  "self_review_only": true,
+  "independent_security_qualified": false,
+  "full_fault_profile_run": false
+}

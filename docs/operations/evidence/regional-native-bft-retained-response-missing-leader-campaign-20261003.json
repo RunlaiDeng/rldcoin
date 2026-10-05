@@ -1,0 +1,8 @@
+{
+  "format": "RLD-ROLE-MISSING-LEADER-GROUND-V1",
+  "completed": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "failure": "ValueError: exact sealed cycle/native implementation commitment required",
+  "fresh_full_fault_profile_completed": false
+}

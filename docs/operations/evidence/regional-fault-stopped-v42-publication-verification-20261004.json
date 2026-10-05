@@ -1,0 +1,99 @@
+{
+  "format": "RLD-FAULT-STOPPED-V42-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "0df338314f2afc098b701e6982274f68f3815712",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 26482,
+      "sha256": "7ab2cc3078f9bef37d70d59b111ad0effe3f11db08bc9250d3e58442a6c4327a"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/README.md",
+      "bytes": 4673,
+      "sha256": "3d8c9d064d9b196f8aea8fc1b83b67b0a514a72765648386dbece7e9df051a39"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/SHA256SUMS",
+      "bytes": 1799,
+      "sha256": "a550f7ecfabfd845b2006081fcf0a6e02281dd3dcbaa9c2e10b053a38fb78771"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/log-inventory.json",
+      "bytes": 552,
+      "sha256": "e7aac5945fe14386a42f202c3c4542ae3896d30a407e53e04b2e078e7edb7645"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/observe-fault-probe-joint-fault-stopped-20261004.log",
+      "bytes": 278,
+      "sha256": "84b49e7eb2bfead1ec7efaf26588e03025749c5023728d9c49695fa899442f40"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/observe-fault-probe-joint-fault-stopped-retry1-20261004.log",
+      "bytes": 2430,
+      "sha256": "4bcc22365fd91a523d5510fd52887f794dec6c629b8e4efe0caba709559aaa66"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/regional-fault-probe-controller-joint-fault-failed-cold-observations-20261004.json",
+      "bytes": 19044,
+      "sha256": "3af2d692d630d064c82c644bb395b9b29e4ed6d69660b3b61c11261669181427"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/regional-fault-probe-controller-joint-fault-fresh-20261004.json",
+      "bytes": 28082,
+      "sha256": "67d5b923650529822d79f25b8b89b6143a5e8add400b796a46907109ab08af5a"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/regional-fault-probe-joint-fault-fresh-execution-20261004.json",
+      "bytes": 755,
+      "sha256": "65155dccd17c18bada57b379509aba2613fa234c3d2d0d78bab7e23276c0526a"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/regional-fault-probe-joint-fault-operation-observations-20261004.json",
+      "bytes": 35193,
+      "sha256": "f04640d4564728e9494a295d0d50b2aa61b2f60458821177d0abe39765a9d6e1"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/regional-fault-probe-joint-fault-owner-head-observations-20261004.json",
+      "bytes": 1499,
+      "sha256": "5e3a338103312f50aba77c04d0dee82925cf05f9a62c76ae8d140da31bdad143"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/evidence/regional-fault-probe-stopped-observers-prepared-20261004.json",
+      "bytes": 1066,
+      "sha256": "a1ceb04f19d413fac01b10355c38c4bcf18b5278d59c35acb34eb22d0a708b1a"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/tools/observe-fault-probe-joint-fault-owner-heads-20261004.py",
+      "bytes": 2695,
+      "sha256": "9b68b93b16c9e6c81f826c1e4157bc88c4c99c59aa647bf6674db1b9477f27ae"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/tools/observe-fault-probe-joint-fault-stopped-20261004.py",
+      "bytes": 6269,
+      "sha256": "5f15da795ebf63f188ccd9711a8d400995c5254e6a11def7b0040eaf83868c6e"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/tools/observe-fault-probe-joint-fault-stopped-retry1-20261004.py",
+      "bytes": 6590,
+      "sha256": "f313e209c6625432113c311166deb259cad12893744eb51cdb4947576bdf11f2"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-stopped-v42/tools/observe-fault-probe-operation-rings-20261004.py",
+      "bytes": 3112,
+      "sha256": "32d3a08933d98bf100f334c53e8d4c65ca6c54f6c357ef804aba8eed01826db9"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "controller_source_set_sha256": "62a897b6f248aeddf5f2c79c7b427f7534143111336545df4ffc40942f499211",
+  "runtime_source_set_sha256": "10876f4012b0dafb09734055466846dd1e32684350a68cb6b959a42c52338fad",
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T02:01:33.490414+00:00"
+}

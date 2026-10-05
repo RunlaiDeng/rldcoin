@@ -1,0 +1,749 @@
+{
+  "format": "RLD-JOINT-BFT-SUSTAINED-GROUND-CAMPAIGN-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": false,
+  "failure": "bounded ground observation deadline: retained new export imports uniquely and matures after contact restoration {\"('earth', 1)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('earth', 2)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('earth', 3)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('proxima', 0)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('proxima', 1)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\", \"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('proxima', 2)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\", \"TCP peer refused custody; retain queued evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('proxima', 3)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('andromeda', 0)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('andromeda', 1)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\", \"TCP peer refused custody; retain queued evidence\", \"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}, \"('andromeda', 2)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('andromeda', 3)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"('earth', 0)\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}}",
+  "mode": "fresh_fault_profile",
+  "fresh_fault_profile_completed": false,
+  "retained_payment_recovery_completed": false,
+  "retained_failed_report_sha256": null,
+  "same_host_same_controller": true,
+  "private_fixture_copy_not_independent_custody": true,
+  "sealed_source_state_unchanged": true,
+  "runtime_source_set_sha256": "dc957e53ef7e82d7d2600ec7743502c3a4ab015d704172981fd3d35984a3a2ac",
+  "drill_source_sha256": "df5b5d02bfc45e468e65b186acbfffc9cec0ef76c15b9306018fc9db0979d5c8",
+  "native_implementation": "4934067283b0052635b789a8b54b2cc563f8f8069d8d8f49d0a2db6c0c098abc",
+  "currency": "377f710caddb7b99284f7437f217eb07929cc73dcd20174a86eac2c9f6bf0b64",
+  "mesh_inspection_anchors_sha256": "120d1d030200972a3b97d41488b80e24c4d6e6596c35dff3f0162b6bf673c8e8",
+  "source_mesh_inspection_anchors_sha256": "950c8b7032c063b1959cba150549f512f40e7c6a13544c0943b84fcbb34d324b",
+  "maximum_local_stop_height": 24,
+  "phase_observation_bound_seconds": 600,
+  "controller_generated_consensus_messages": 0,
+  "controller_carried_payment_proofs": 0,
+  "controller_installed_checkpoints": 0,
+  "power_loss_qualified": false,
+  "sustained_BFT_liveness_qualified": false,
+  "cross_host_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false,
+  "result": {},
+  "activated_epoch": "362c93a9fe089a0385786e0e3e5eb07a7c414e72f61d56fe69b2a62dcf7e4f45",
+  "cycle_report_sha256": "4026ac31f7bd78024fad37a63945535aa475f79e77c11cb3dd150f0676fb22bc",
+  "cycle_cold_report_sha256": "631a620c0d76ca968f98d37c6c4217fd0a7ab1c25b77e71e32b4f21b59ea94d3",
+  "cycle_source_set_sha256": "dc957e53ef7e82d7d2600ec7743502c3a4ab015d704172981fd3d35984a3a2ac",
+  "controller_generated_epoch_approvals": 0,
+  "controller_installed_epoch_activation": 0,
+  "uses_current_new_voter_journals": true,
+  "keyless_carrier_not_initialized": true,
+  "overlapping_membership_qualified": false,
+  "controller_read_only_lock_retries": 0,
+  "duration_seconds": 874.612,
+  "offered_owner_requests": [
+    {
+      "region": "earth",
+      "kind": "export",
+      "amount": "10",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "proxima",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "andromeda",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    }
+  ],
+  "fault_events": [
+    {
+      "kind": "faults_applied",
+      "offline_validator": {
+        "region": "earth",
+        "replica": 0
+      },
+      "interregion_contacts": "earth/proxima both directions cut",
+      "local_stop_height": 24
+    },
+    {
+      "kind": "validator_offline",
+      "region": "earth",
+      "replica": 0,
+      "starting_height": 11,
+      "missing_leader_successor": 13,
+      "minimum_online_height": 13,
+      "native_signer_and_external_head_unchanged": true,
+      "certified_view_change_seen": true
+    },
+    {
+      "kind": "interregion_contacts_restored",
+      "elapsed_seconds": 258.21
+    }
+  ],
+  "conservation_checks": [
+    {
+      "phase": "certified export stays deducted while interregion contact is cut; remote local payments continue",
+      "issued": "300",
+      "liquid": "290",
+      "pending_exports": "10",
+      "observed_export_count": 4,
+      "observed_import_count": 3,
+      "unresolved_export_count": 1,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          11,
+          13,
+          13,
+          13
+        ],
+        "proxima": [
+          8,
+          9,
+          9,
+          8
+        ],
+        "andromeda": [
+          8,
+          8,
+          8,
+          8
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "failed bounded observation; all evidence retained",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          15,
+          15,
+          15,
+          15
+        ],
+        "proxima": [
+          12,
+          12,
+          12,
+          12
+        ],
+        "andromeda": [
+          13,
+          13,
+          13,
+          13
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "stopped native stores: complete replay of all twelve compatible prefixes",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          15,
+          15,
+          15,
+          15
+        ],
+        "proxima": [
+          12,
+          12,
+          12,
+          12
+        ],
+        "andromeda": [
+          13,
+          13,
+          13,
+          13
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    }
+  ],
+  "observations": [
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 7.284,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 6.234,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 6.66,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 3.134,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 3.334,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 3.117,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 3.346,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 4.759,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 5.195,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 5.435,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 4.186,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "three voters progress past offline parent-12 leader",
+      "elapsed_seconds": 150.358,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "both isolated remote regions continue local certified progress",
+      "elapsed_seconds": 0.007,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 6.429,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "offline validator catches up through pinned TLS",
+      "elapsed_seconds": 41.627,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "phase_samples": [
+    {
+      "phase": "certified export stays deducted while interregion contact is cut; remote local payments continue",
+      "elapsed_seconds": 209.421,
+      "nodes": [
+        {
+          "region": "earth",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 1,
+          "retained_bft_messages": 125,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 34,
+          "archived_transport_records": 385,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 6534,
+          "tcp_local_lock_exhaustions": 237,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 0,
+          "retained_bft_messages": 125,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 30,
+          "archived_transport_records": 407,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 8172,
+          "tcp_local_lock_exhaustions": 297,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 1,
+          "retained_bft_messages": 125,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 25,
+          "archived_transport_records": 240,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 2979,
+          "tcp_local_lock_exhaustions": 87,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 94,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 18,
+          "archived_transport_records": 144,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 3022,
+          "tcp_local_lock_exhaustions": 86,
+          "sampled_errors": []
+        },
+        {
+          "region": "proxima",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 97,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 26,
+          "archived_transport_records": 288,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 10674,
+          "tcp_local_lock_exhaustions": 363,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 98,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": false,
+          "active_transport_packets": null,
+          "archived_transport_records": null,
+          "transport_diagnostic": "mesh selection lock contention; retained evidence remains pending",
+          "tcp_local_lock_retries": 7070,
+          "tcp_local_lock_exhaustions": 231,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 96,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 24,
+          "archived_transport_records": 144,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 3173,
+          "tcp_local_lock_exhaustions": 89,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 89,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 31,
+          "archived_transport_records": 128,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 2646,
+          "tcp_local_lock_exhaustions": 79,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 88,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 26,
+          "archived_transport_records": 256,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 8122,
+          "tcp_local_lock_exhaustions": 302,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 88,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 28,
+          "archived_transport_records": 240,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 6182,
+          "tcp_local_lock_exhaustions": 228,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 8,
+          "round": 0,
+          "retained_bft_messages": 88,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 16,
+          "archived_transport_records": 144,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 3511,
+          "tcp_local_lock_exhaustions": 119,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "phase": "failed bounded observation; all evidence retained",
+      "elapsed_seconds": 858.262,
+      "nodes": [
+        {
+          "region": "earth",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 2,
+          "retained_bft_messages": 160,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 29,
+          "archived_transport_records": 490,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 38627,
+          "tcp_local_lock_exhaustions": 1581,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 2,
+          "retained_bft_messages": 159,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 28,
+          "archived_transport_records": 515,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 34493,
+          "tcp_local_lock_exhaustions": 1386,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 15,
+          "round": 2,
+          "retained_bft_messages": 159,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": false,
+          "active_transport_packets": null,
+          "archived_transport_records": null,
+          "transport_diagnostic": "mesh selection lock contention; retained evidence remains pending",
+          "tcp_local_lock_retries": 16561,
+          "tcp_local_lock_exhaustions": 602,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 1,
+          "retained_bft_messages": 153,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": false,
+          "active_transport_packets": null,
+          "archived_transport_records": null,
+          "transport_diagnostic": "mesh selection lock contention; retained evidence remains pending",
+          "tcp_local_lock_retries": 13199,
+          "tcp_local_lock_exhaustions": 460,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 1,
+          "retained_bft_messages": 158,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 19,
+          "archived_transport_records": 477,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 49488,
+          "tcp_local_lock_exhaustions": 1999,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 1,
+          "retained_bft_messages": 154,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": false,
+          "active_transport_packets": null,
+          "archived_transport_records": null,
+          "transport_diagnostic": "mesh selection lock contention; retained evidence remains pending",
+          "tcp_local_lock_retries": 33581,
+          "tcp_local_lock_exhaustions": 1325,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence",
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 1,
+          "retained_bft_messages": 153,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": false,
+          "active_transport_packets": null,
+          "archived_transport_records": null,
+          "transport_diagnostic": "mesh selection lock contention; retained evidence remains pending",
+          "tcp_local_lock_retries": 15723,
+          "tcp_local_lock_exhaustions": 561,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 0,
+          "retained_bft_messages": 168,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 29,
+          "archived_transport_records": 256,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 14865,
+          "tcp_local_lock_exhaustions": 544,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 0,
+          "retained_bft_messages": 169,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 31,
+          "archived_transport_records": 464,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 38228,
+          "tcp_local_lock_exhaustions": 1494,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "TCP peer refused custody; retain queued evidence",
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 0,
+          "retained_bft_messages": 165,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": false,
+          "active_transport_packets": null,
+          "archived_transport_records": null,
+          "transport_diagnostic": "mesh selection lock contention; retained evidence remains pending",
+          "tcp_local_lock_retries": 35401,
+          "tcp_local_lock_exhaustions": 1398,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 13,
+          "round": 0,
+          "retained_bft_messages": 165,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 19,
+          "archived_transport_records": 256,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 17599,
+          "tcp_local_lock_exhaustions": 637,
+          "sampled_errors": [
+            "[Errno 35] local mesh turn pending; retain evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 0,
+          "consensus_observation_complete": false,
+          "height": null,
+          "round": null,
+          "retained_bft_messages": null,
+          "consensus_diagnostic": null,
+          "transport_observation_complete": true,
+          "active_transport_packets": 23,
+          "archived_transport_records": 208,
+          "transport_diagnostic": null,
+          "tcp_local_lock_retries": 11089,
+          "tcp_local_lock_exhaustions": 435,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        }
+      ]
+    }
+  ],
+  "ciphertext_fault_relays": [
+    {
+      "attempts": 169,
+      "refused_connections": 71,
+      "forwarded_connections": 98,
+      "ciphertext_bytes_forwarded": 73332238,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    },
+    {
+      "attempts": 143,
+      "refused_connections": 48,
+      "forwarded_connections": 95,
+      "ciphertext_bytes_forwarded": 3434798,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    }
+  ],
+  "native_cli_calls": 491,
+  "node_process_starts": 12,
+  "controller_native_receipt_probe_interval_seconds": 2,
+  "controller_native_receipt_probe_attempts": 283,
+  "owned_process_cleanup_verified": true
+}

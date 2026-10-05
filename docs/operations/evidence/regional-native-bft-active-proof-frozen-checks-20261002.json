@@ -1,0 +1,35 @@
+{
+  "format": "RLD-ACTIVE-EPOCH-PROOF-SOURCE-CHECKS-V1",
+  "source_files": 273,
+  "source_set_sha256": "0be0a01f00b6b04c11a7cb4b3012c3b8a2d1857904f1ac921ade72890d49e049",
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "fresh_fixture_currency": "e859e5819a33d59dc70631e33fdde9f598df2b822b1d45cfdf3efe8387958c3c",
+  "native_tests_actually_run": 158,
+  "process_tests_actually_run": 85,
+  "joint_process_tests": 17,
+  "new_actual_native_epoch_observation_regressions": 5,
+  "controller_scope_tests": 8,
+  "checked_release_build": true,
+  "fmt_check_passed": true,
+  "strict_clippy_passed": true,
+  "native_changed_paths": [
+    "tools/regional-ledger/src/main.rs"
+  ],
+  "changed_paths_from_v31": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional-ledger/src/main.rs",
+    "tools/regional_bft_joint_fault_profile.py",
+    "tools/regional_bft_node.py",
+    "tools/regional_bft_sustained_campaign.py",
+    "tools/test_regional_bft_joint_epoch.py",
+    "tools/test_regional_bft_joint_fault_profile.py",
+    "tools/verify_regional_bft_joint_sustained.py",
+    "tools/verify_regional_bft_sustained.py"
+  ],
+  "core_source_exact_v31": true,
+  "binary_sha256": "5f1f53ff7022ac84382ead974cd19bee37b6b9d2ba38b066acf8009a424270e0",
+  "fixture_only": true,
+  "live_rld": false,
+  "no_old_state_or_value_migration": true,
+  "source_unchanged": true
+}

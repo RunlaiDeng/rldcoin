@@ -1,0 +1,65 @@
+{
+  "format": "RLD-NATIVE-PREFIX-WEBSITE-VERIFICATION-V1",
+  "website_commit": "d91ec025391ff10c5da5d9a573ce8b84c7fa2847",
+  "publication_commit": "0ef4c9395f66cd3f4821c581c3fd6eff47e05fa6",
+  "production_site": "https://rldcoin.com",
+  "production_build_passed": true,
+  "network_status_tests_passed": 6,
+  "routes": [
+    {
+      "route": "/",
+      "http_status": 200,
+      "sha256": "a1c5c63afdc56ec58b9295a900bb9585765a3810f00e5627df5d51253ea84862",
+      "v18_entry_present": true
+    },
+    {
+      "route": "/developers",
+      "http_status": 200,
+      "sha256": "e1cde63de9cb20cf8cbbb8fd171a3ac8d283b6846d45f029c59bb444c929485e",
+      "v18_entry_present": true
+    },
+    {
+      "route": "/research",
+      "http_status": 200,
+      "sha256": "f287943e03a6659f2d438916bfbe63b447f1f481371bd98d3bd738229d85dd92",
+      "v18_entry_present": true
+    },
+    {
+      "route": "/network",
+      "http_status": 200,
+      "sha256": "1d5fed91fac81fb1d5c64f7fcc4b800e127e37e4743367844caacfd628ef866a",
+      "v18_entry_present": true
+    },
+    {
+      "route": "/resources",
+      "http_status": 200,
+      "sha256": "fc2752ff364bcf4aa438b31cb95647b5bb9d45ed430e591a3a771b1d8df2d7a6",
+      "v18_entry_present": true
+    }
+  ],
+  "changed_remote_source_files_verified": 6,
+  "desktop_viewport": [
+    1440,
+    1100
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "desktop_and_mobile_screenshots_inspected": true,
+  "horizontal_overflow": false,
+  "browser_errors": false,
+  "mobile_navigation_verified": true,
+  "old_reproduction_anchors_retained": true,
+  "full_fault_failure_explicit": true,
+  "retired_api_http_status": 410,
+  "retired_mainnet_state": "RETIRED",
+  "old_balances_migrate": false,
+  "new_mainnet_launched": false,
+  "production_deployment_id": "dpl_6E2Q1CzGFsxMr3tAS3ZtxaRv7gnL",
+  "production_deployment_url": "https://rldcoin-website-e3fppu98p-tradergalaxs-projects.vercel.app",
+  "production_deployment_status": "READY",
+  "production_alias_verified": true,
+  "local_browser_closed": true,
+  "local_server_stopped": true
+}

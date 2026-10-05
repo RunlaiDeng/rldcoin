@@ -1,0 +1,59 @@
+{
+  "format": "RLD-CUSTODY-REPLY-LOCAL-CHECKS-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "aa2381b56f0682b9d1cc1f317b60e0c28b0c1d6c3ea3ad0652330532a54af4e1",
+  "source_files": 333,
+  "changed_previous_inventory_paths": [
+    "AGENTS.md",
+    "docs/PLAN_STATUS.md",
+    "tools/interstellar_tcp.py"
+  ],
+  "additions": [
+    "docs/operations/REGIONAL_CUSTODY_REPLY.md",
+    "tools/test_interstellar_custody_reply.py"
+  ],
+  "native_core_all_inventory_files_exact_prior": 89,
+  "native_source_sha256": "e5a0fb4b2dcd359021208ab27d78c4c2d06c5fbc58856dc6a6bf4c29ec4b992c",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "native_implementation": "5415647bdccf790c871f27e02e115549f3b32161e05faf8606409ed8fdb987fc",
+  "native_tests_reused_not_rerun": 167,
+  "strict_clippy_reused_not_rerun": true,
+  "actual_tool_result_checks": [
+    {
+      "tests": 5,
+      "seconds": 0.666,
+      "module": "test_interstellar_custody_reply",
+      "before_multihop_test_added": true
+    },
+    {
+      "tests": 58,
+      "seconds": 30.623,
+      "modules": [
+        "test_interstellar_custody_reply",
+        "test_interstellar_tcp",
+        "test_interstellar_selection_preference",
+        "test_regional_carriage_worker",
+        "test_regional_contact_node",
+        "test_regional_bft_contact_order"
+      ],
+      "before_multihop_test_added": true
+    },
+    {
+      "tests": 1,
+      "seconds": 0.525,
+      "test": "test_interstellar_custody_reply.CustodyReplyTests.test_three_live_workers_deliver_multihop_and_return_the_real_receipt"
+    }
+  ],
+  "check_capture": "actual completed exec tool results; not newly rerun process logs",
+  "freeze_producer_sha256": "3a59d71fa75e50a0846e4670bc7c677077fd30531c327ca246e9aa3c06191332",
+  "frozen_source_unchanged": true,
+  "local_tests_used_prior_native_binary": true,
+  "capacity_or_timing_bounds_raised": false,
+  "ordinary_payment_completed": false,
+  "full_fault_profile_completed": false,
+  "publication_done": false,
+  "previous_failed_run_report_sha256": "a2332509b8a32833bd3b1dbce94decf05a0fbb4b39df00ca3dec902225539e27",
+  "previous_failed_private_sources_not_restarted": true
+}

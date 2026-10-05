@@ -1,0 +1,503 @@
+{
+  "format": "RLD-NATIVE-JOINT-CYCLE-COLD-VERIFICATION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "same_host_same_controller": true,
+  "source_set_sha256": "10876f4012b0dafb09734055466846dd1e32684350a68cb6b959a42c52338fad",
+  "native_implementation": "4934067283b0052635b789a8b54b2cc563f8f8069d8d8f49d0a2db6c0c098abc",
+  "binary_sha256": "81b04b62077c8dfc5d2e0f00f414f1ab576ec48e98ae3379f7e2eaa7dafc0dc2",
+  "verifier_sha256": "5620850d542a23ce8ae432537409c5b5704ac54fb72d112a0f12def09829b61a",
+  "run_report_sha256": "f8960286e86e6edcec3372ed87bdc08cf799af95ea0c84843347b5896a411e7a",
+  "native_replays": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "height": 11,
+      "tip": "005bc3b1eb771119ba4ba81dc68450bef02cbcfad497e8e40a30fc5cc8ccc315",
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "height": 11,
+      "tip": "005bc3b1eb771119ba4ba81dc68450bef02cbcfad497e8e40a30fc5cc8ccc315",
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "height": 11,
+      "tip": "005bc3b1eb771119ba4ba81dc68450bef02cbcfad497e8e40a30fc5cc8ccc315",
+      "separate_head_matches": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "height": 11,
+      "tip": "005bc3b1eb771119ba4ba81dc68450bef02cbcfad497e8e40a30fc5cc8ccc315",
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "height": 4,
+      "tip": "00f6eb5776f09b74fed0b1e44e82774065b169f5b9720d9d601e2c727d6ebb19",
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "height": 4,
+      "tip": "00f6eb5776f09b74fed0b1e44e82774065b169f5b9720d9d601e2c727d6ebb19",
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "height": 4,
+      "tip": "00f6eb5776f09b74fed0b1e44e82774065b169f5b9720d9d601e2c727d6ebb19",
+      "separate_head_matches": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "height": 4,
+      "tip": "00f6eb5776f09b74fed0b1e44e82774065b169f5b9720d9d601e2c727d6ebb19",
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "height": 4,
+      "tip": "00dd40c42994ee1b8e7e8cee3bb70f98256b4b168c5c525d1d3a35c16f2d8d4b",
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "height": 4,
+      "tip": "00dd40c42994ee1b8e7e8cee3bb70f98256b4b168c5c525d1d3a35c16f2d8d4b",
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "height": 4,
+      "tip": "00dd40c42994ee1b8e7e8cee3bb70f98256b4b168c5c525d1d3a35c16f2d8d4b",
+      "separate_head_matches": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "height": 4,
+      "tip": "00dd40c42994ee1b8e7e8cee3bb70f98256b4b168c5c525d1d3a35c16f2d8d4b",
+      "separate_head_matches": true
+    }
+  ],
+  "regional_replicas_agree": true,
+  "recipient_checks": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "net_amount": "86",
+      "original_output_remaining": "86",
+      "native_state": "ORIGINAL_OUTPUT_SPENDABLE",
+      "import_height": 9,
+      "mature_height": 11,
+      "finality_covers_import": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "net_amount": "86",
+      "original_output_remaining": "86",
+      "native_state": "ORIGINAL_OUTPUT_SPENDABLE",
+      "import_height": 9,
+      "mature_height": 11,
+      "finality_covers_import": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "net_amount": "86",
+      "original_output_remaining": "86",
+      "native_state": "ORIGINAL_OUTPUT_SPENDABLE",
+      "import_height": 9,
+      "mature_height": 11,
+      "finality_covers_import": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "net_amount": "86",
+      "original_output_remaining": "86",
+      "native_state": "ORIGINAL_OUTPUT_SPENDABLE",
+      "import_height": 9,
+      "mature_height": 11,
+      "finality_covers_import": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "net_amount": "96",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "net_amount": "96",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "net_amount": "96",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "net_amount": "96",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "net_amount": "91",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "net_amount": "91",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "net_amount": "91",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "net_amount": "91",
+      "original_output_remaining": "0",
+      "native_state": "ORIGINAL_OUTPUT_SPENT",
+      "import_height": 1,
+      "mature_height": 3,
+      "finality_covers_import": true
+    }
+  ],
+  "archive_reads": [
+    {
+      "region": "earth",
+      "replica": 0,
+      "archived_records": 144,
+      "retained_files": 252,
+      "retained_bytes": 19453310,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "archived_records": 336,
+      "retained_files": 453,
+      "retained_bytes": 21721532,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 2,
+      "archived_records": 336,
+      "retained_files": 451,
+      "retained_bytes": 20729457,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "earth",
+      "replica": 3,
+      "archived_records": 192,
+      "retained_files": 299,
+      "retained_bytes": 17883298,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 0,
+      "archived_records": 64,
+      "retained_files": 103,
+      "retained_bytes": 8976413,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "archived_records": 144,
+      "retained_files": 193,
+      "retained_bytes": 11629954,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 2,
+      "archived_records": 112,
+      "retained_files": 156,
+      "retained_bytes": 10157693,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "proxima",
+      "replica": 3,
+      "archived_records": 64,
+      "retained_files": 102,
+      "retained_bytes": 8713079,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 0,
+      "archived_records": 64,
+      "retained_files": 110,
+      "retained_bytes": 13044761,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 1,
+      "archived_records": 128,
+      "retained_files": 179,
+      "retained_bytes": 14771854,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 2,
+      "archived_records": 128,
+      "retained_files": 180,
+      "retained_bytes": 15071501,
+      "full_cold_authentication": true
+    },
+    {
+      "region": "andromeda",
+      "replica": 3,
+      "archived_records": 64,
+      "retained_files": 107,
+      "retained_bytes": 12176316,
+      "full_cold_authentication": true
+    }
+  ],
+  "native_conservation": {
+    "issued": "300",
+    "liquid": "300",
+    "in_transit": "0"
+  },
+  "bft_retention_reads": [
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 104,
+      "distinct_complete_snapshots": 22,
+      "retained_state_bytes": 1517486,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 9299894,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 0
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 104,
+      "distinct_complete_snapshots": 22,
+      "retained_state_bytes": 1516982,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 9160830,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 1
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 105,
+      "distinct_complete_snapshots": 22,
+      "retained_state_bytes": 1531893,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 9442855,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 2
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 105,
+      "distinct_complete_snapshots": 22,
+      "retained_state_bytes": 1532163,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 9521383,
+      "full_native_authentication": true,
+      "region": "earth",
+      "replica": 3
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 43,
+      "distinct_complete_snapshots": 14,
+      "retained_state_bytes": 291844,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 5349465,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 0
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 43,
+      "distinct_complete_snapshots": 14,
+      "retained_state_bytes": 291841,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 5349465,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 1
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 43,
+      "distinct_complete_snapshots": 14,
+      "retained_state_bytes": 291842,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 5349465,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 2
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 43,
+      "distinct_complete_snapshots": 14,
+      "retained_state_bytes": 291843,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 5349465,
+      "full_native_authentication": true,
+      "region": "proxima",
+      "replica": 3
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 44,
+      "distinct_complete_snapshots": 21,
+      "retained_state_bytes": 368799,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 6903889,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 0
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 44,
+      "distinct_complete_snapshots": 21,
+      "retained_state_bytes": 368798,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 6903889,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 1
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 44,
+      "distinct_complete_snapshots": 21,
+      "retained_state_bytes": 368798,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 6903889,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 2
+    },
+    {
+      "retention_format": "RLD-REGIONAL-BFT-RETENTION-V2",
+      "messages_authenticated": 44,
+      "distinct_complete_snapshots": 21,
+      "retained_state_bytes": 368798,
+      "state_limit_bytes": 33554432,
+      "expanded_envelope_bytes_authenticated": 6903889,
+      "full_native_authentication": true,
+      "region": "andromeda",
+      "replica": 3
+    }
+  ],
+  "joint_custody_reads": [
+    {
+      "replica": 0,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 0,
+      "keyless_nonparticipant": true,
+      "old_fence_retained": false,
+      "no_first_signing": true
+    },
+    {
+      "replica": 1,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 1,
+      "keyless_nonparticipant": false,
+      "old_fence_retained": true,
+      "no_first_signing": true
+    },
+    {
+      "replica": 2,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 1,
+      "keyless_nonparticipant": false,
+      "old_fence_retained": true,
+      "no_first_signing": true
+    },
+    {
+      "replica": 3,
+      "native_epoch_matches": true,
+      "separately_retained_heads_match": true,
+      "exact_candidate_approvals": 1,
+      "keyless_nonparticipant": false,
+      "old_fence_retained": true,
+      "no_first_signing": true
+    }
+  ],
+  "mesh_inspection_anchors_sha256": "4b2ef3cbff6d8b111715b51a129070dd94a72e481db2e7a46ea08737587b2dcb",
+  "strict_transport_read_only_entry_used": true,
+  "all_private_fixture_files_unchanged": true,
+  "owned_process_cleanup_verified": true,
+  "cross_host_qualified": false,
+  "independent_operators_qualified": false,
+  "long_term_history_qualified": false,
+  "physical_route_qualified": false
+}

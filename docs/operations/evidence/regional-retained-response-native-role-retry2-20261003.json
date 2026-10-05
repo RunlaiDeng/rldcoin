@@ -1,0 +1,19 @@
+{
+  "format": "RLD-RETAINED-ROLE-RESPONSE-CHECK-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "complete_native_cold_authentication": true,
+  "actual_original_journal_response_and_external_head_verified": true,
+  "active_era": 1,
+  "underlying_signed_message_exact_equal": true,
+  "retained_full_body_variants": 2,
+  "new_complete_envelope_constructed": false,
+  "all_original_envelope_bytes_retained": true,
+  "caller_and_signer_bytes_unchanged": true,
+  "native_ledger_unchanged": true,
+  "controller_carried_ceremony_only": true,
+  "ordinary_role_payment_qualified": false,
+  "duration_seconds": 1.321,
+  "checker_sha256": "f31983401181e054a36c4355f8a01991114194fe6c5d852874bd51669d083b97",
+  "helper_sha256": "4b79625a085b3e270eee8eb32f6d3ad4ffe3c4fbd1991d24c0e3be43ca1a4f3c"
+}

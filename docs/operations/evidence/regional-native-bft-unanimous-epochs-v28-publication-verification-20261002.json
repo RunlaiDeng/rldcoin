@@ -1,0 +1,388 @@
+{
+  "format": "RLD-NATIVE-BFT-EPOCH-PUBLICATION-VERIFICATION-V1",
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "b7efbf3df75d29f9db8f0e8214c1c87d2021216d",
+  "branch_head_matches": true,
+  "changed_remote_files_exact": 62,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 19675,
+      "sha256": "411d34ef45dc1813d518eb2e90a2b0432f8e5cee0de1f1e86b4c493f2b955505",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/README.md",
+      "bytes": 6712,
+      "sha256": "81532bd94c773adf05d086da3167ce7b782662bce97c51439c1510a93b3173bd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/SHA256SUMS",
+      "bytes": 6180,
+      "sha256": "66e0e1ffd356e99c4769a27e4eec5480088b6957ba4ec73884e28f86d78e8583",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/STATUS.zh-CN.md",
+      "bytes": 984,
+      "sha256": "e6eedbb920bf85e8b286b62644fa4e80c82de0a5a2ea0fc248c6cf59d44fc00d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/final-checked-build.log",
+      "bytes": 2472,
+      "sha256": "b16f77905a6bc3bd467a1ce134847f6c5c1623d81d10a0192d201417a2af5d99",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/final-clippy.log",
+      "bytes": 377,
+      "sha256": "5d01528230b548fac8177562b8eb9460d1d45fc9baeadb34bd699e931a426d6d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/final-epoch-cli-campaign.log",
+      "bytes": 917,
+      "sha256": "9e770737bac8518d3ada8148165bfb0f268f68c28e23dcd0ebdffa076ceecb05",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/final-native-tests.log",
+      "bytes": 22534,
+      "sha256": "f6da65b58ecf4be47d116e3d1563dc0e78aa9913cadd109c4609967ec1477a73",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/final-process-tests.log",
+      "bytes": 643,
+      "sha256": "0e75e09bce5d886de7415579a67afa4f8e214c8797290a63d4aa3a81e39a51de",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/log-inventory.json",
+      "bytes": 3256,
+      "sha256": "252c2c06976e673c5b4ce372ab4ce228dca78d9173c5d5dd3b52f02fc215a148",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/regional-native-bft-epoch-cli-campaign-20261002.json",
+      "bytes": 868,
+      "sha256": "51e2a36a04cf0b3b2e93b0c6ffc3831c9bd9fc156453521983ff6e2c4d02cc93",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/regional-native-bft-epoch-frozen-checks-20261002.json",
+      "bytes": 1576,
+      "sha256": "ab71dff2eeb5ee4245493ca7c686308fd6a7f7ef83015be1cb43dd835eb85cf5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/evidence/regional-native-bft-epoch-native-sample-20261002.json",
+      "bytes": 574,
+      "sha256": "5db8cb14e0550c651385dc1f386c1800b32d7ccd571e0881a3cb2b7b0e147c68",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-cli-refusal.json",
+      "bytes": 1239,
+      "sha256": "f249d5a099f3b32a53ccb2dfcefdf0e3616b24cc825711564e5c55b4f4330205",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-cli-refusal.log",
+      "bytes": 1949,
+      "sha256": "cf0540c76c79d2c99359df4beea7c1d2c79a23964b9a5fda0b257d025ef9804f",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-focused-refusal-manifest.json",
+      "bytes": 46879,
+      "sha256": "6923beb038ad21855fb3d8331fbeaea0b821232db4660e2ce2a1545f0742b18c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-focused-refusal-source.tar.gz",
+      "bytes": 1488022,
+      "sha256": "c022bb2fa0b8f1635c6297128b0ba8fc972dcba937386758f551462f0cd09b0b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-focused-refusal.log",
+      "bytes": 2143,
+      "sha256": "af7e2da3cf728290c4179eae8b1bc05c11f56caadcb178441e8795c863d32f40",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-strict-refusal-manifest.json",
+      "bytes": 47364,
+      "sha256": "bb46230228e4e466692be9e7f0fcc19cb068f22e9201b2706d5d4a704aef5e8c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-strict-refusal-source.tar.gz",
+      "bytes": 1492374,
+      "sha256": "7d405ac256cbad7d6e93c96dedce132007a4f732a9ca6fa19969193b41706b92",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-strict-refusal.log",
+      "bytes": 3708,
+      "sha256": "8ba208421c00c08c1c60b9d7eb4f684614780733d70e8eb271e60732abf3e7ad",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-test-compilation-manifest.json",
+      "bytes": 46945,
+      "sha256": "e267429bcdb8b7c8e6d7e7c79640fa0878257fa7e0845acd48125308e4866f52",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-test-compilation-source.tar.gz",
+      "bytes": 1488401,
+      "sha256": "1706c22bcf29f9e486a04c5cd3320682a6c9ba36216e3c2f10f7c40ccfaddc63",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/initial-test-compilation.log",
+      "bytes": 2687,
+      "sha256": "8183db09270523b8846c34b46ec8fc49061883e784719c0672d6e942044e3953",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/native-process-pass-cli-refusal-manifest.json",
+      "bytes": 47364,
+      "sha256": "1afe8585d07fac7e077698a86d7f2165e33ebc4b05fc1559a2bd7a9c95c1ceb4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/historical/native-process-pass-cli-refusal-source.tar.gz",
+      "bytes": 1492574,
+      "sha256": "6a4dae65e04831f7111a3f4d9f094e44fe4b65b36272a8de39af0d0f140b24a2",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/source-manifest.json",
+      "bytes": 47564,
+      "sha256": "c4e162c8d9d2c6a75ac9e7369fcbce0a029dc303cdb8f8440e94eef7fe252e04",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/source.tar.gz",
+      "bytes": 1492455,
+      "sha256": "a647fe0d0c042206f2f0c7513eb73f132f26a4a3084f6abdad3fff04fe77d218",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/interstellar-mesh-requirements.txt",
+      "bytes": 21,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/interstellar_mesh.py",
+      "bytes": 44126,
+      "sha256": "b53407f24b48eea6164daf504c087a60ca33a11a851bee2fe1398f0957dab11b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/interstellar_route_budget.py",
+      "bytes": 5160,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/interstellar_tcp.py",
+      "bytes": 22697,
+      "sha256": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/interstellar_transfer.py",
+      "bytes": 24741,
+      "sha256": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_campaign.py",
+      "bytes": 15456,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_epoch_campaign.py",
+      "bytes": 8320,
+      "sha256": "1aeff9c75c6735a0fbb39afc587947f019b7079006798b2a9de9284ef23f875d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_multiregion_campaign.py",
+      "bytes": 20019,
+      "sha256": "6c73cf1ed33c7d59b96614ce729be53126b0b889c6e3ac61815f579322eae81c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_network_campaign.py",
+      "bytes": 12339,
+      "sha256": "7e7ccc48c4ee2d6d36423d68e3dcc6c3d58209ba7a5be97f187052387462e686",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_node.py",
+      "bytes": 22763,
+      "sha256": "df3a34498e753ed26a61ad3ef3c0c1d3d69dc5bc9d178acb674f93a39e3d11d7",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_retention.py",
+      "bytes": 9614,
+      "sha256": "9cac2d877c0df32e6be12cab81031cd294246ead2ddd67763348c6bb2bd27e37",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_bft_sustained_campaign.py",
+      "bytes": 36649,
+      "sha256": "be354b345f229ef360e8e91ba89cae406246b32a5a6b2d5723ca837368bcb63e",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_contact_campaign.py",
+      "bytes": 23451,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_contact_node.py",
+      "bytes": 16064,
+      "sha256": "d3d7d7ca38da32aee93f2849cdd092a6219a55da6b054c3ae3cb8020377e7cf1",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/regional_wallet_app.py",
+      "bytes": 25328,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_interstellar_mesh.py",
+      "bytes": 37691,
+      "sha256": "dcb7992729722d1bb20b76e5b8c4485619d9a4c05db0aca7abf3ed504ae6fa1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_interstellar_route_budget.py",
+      "bytes": 3671,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_interstellar_tcp.py",
+      "bytes": 31760,
+      "sha256": "050d1c88a8f2b93d8b37d134aed1bef4281d5ee65daa278eef6498b9301ab05a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_interstellar_transfer.py",
+      "bytes": 10342,
+      "sha256": "eec863f0afb3ba2e5eddb1ad05eab1a1fc4b19edec7ce199976bbd4b4b1ffc23",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_bft.py",
+      "bytes": 2856,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_bft_node.py",
+      "bytes": 14186,
+      "sha256": "0e8733e06de9c8cfc7dfafa3f281bcb34818c652697b27d4db0c93832e4ff15d",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_bft_retention.py",
+      "bytes": 13651,
+      "sha256": "239d4e15300f35ecbe5560bea03f0447bf3f4a7f30151a1c29e083913579ee04",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_bft_sustained_campaign.py",
+      "bytes": 5720,
+      "sha256": "b6aff8a62885ca8fb902a8191b6856e1851e8a5486faebd09518654b20cea255",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_contact_node.py",
+      "bytes": 13365,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_history.py",
+      "bytes": 4964,
+      "sha256": "d7d79d39178216ea68a6c79d56d436c988d9ec86c34e5a7e5b643b76cfa37d1c",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_history_archive.py",
+      "bytes": 10070,
+      "sha256": "ae1c261c814ddbe2558af91fdcf1841b9e4166bb4b0c2bd318e0f95c0f93f430",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_segmented_history.py",
+      "bytes": 7181,
+      "sha256": "cafc44fc58f5b8392a1d686e54ae4f3105b8acf560c0b6aa9ac7179f571348a9",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_state_proof.py",
+      "bytes": 6645,
+      "sha256": "e9be47c6e337d86f21dbec95c26f404c6bc34c2d9131d41262372e57f9e98b58",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_wallet.py",
+      "bytes": 15933,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_wallet_app.py",
+      "bytes": 18950,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/test_regional_wallet_custody.py",
+      "bytes": 10513,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/verify_regional_bft_cycle.py",
+      "bytes": 11306,
+      "sha256": "95e883c2679ea9a683e7afc76a5686db4422eca02fbe554e5fc56e82d6e35566",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/verify_regional_bft_sustained.py",
+      "bytes": 9641,
+      "sha256": "1e17e9cfec66fad96843dd06ff125cc76f2b4eab19b39576b8a61871ee80f73a",
+      "fetch_attempts": 1
+    },
+    {
+      "path": "research/2026-10-02/regional-native-bft-unanimous-epochs-v28/tools/verify_regional_history_archive.py",
+      "bytes": 8414,
+      "sha256": "214f3691d36dd51c1213e1c9f265fa83d509aff51cf8dcf1e8d2b923e9f2da0d",
+      "fetch_attempts": 1
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_material_included": false,
+  "source_set_sha256": "7e9b5d8cea28839313d91ed5cfc6df42dac66f85403324de858be304810ad33e",
+  "native_implementation": "a1911d35bf70ee98a6fefb7f05b003f508144b19d265d152587b7b956a3911a2",
+  "long_history_qualified": false,
+  "verified_at_utc": "2026-10-02T12:01:08.149446+00:00"
+}

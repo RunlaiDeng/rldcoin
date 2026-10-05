@@ -1,0 +1,26 @@
+{
+  "format": "RLD-FAIR-RECEIVE-SELECTION-SOURCE-REVIEW-V1",
+  "source_set_sha256": "55b923889a476710ef5927482e0dc1efc363c4e0b36ec3cd3fe6f5ad634ab2c9",
+  "source_files": 273,
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "changed_paths_from_failed_fair_source": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_bft_joint_cycle_campaign.py",
+    "tools/test_regional_bft_joint_epoch.py"
+  ],
+  "native_core_and_ordinary_runtime_exact_failed_fair_source": true,
+  "controller_observes_native_active_proof_and_exact_closing_proposal": true,
+  "expected_currency_region_epoch_ordered_validators_height_and_number_checked": true,
+  "no_python_checkpoint_id_or_snapshot_count_authority": true,
+  "retained_duplicate_native_checkpoint_evidence_preserved": true,
+  "no_signing_or_checkpoint_installation_rights_added": true,
+  "all_original_bounds_retained": true,
+  "failed_cycle_remains_failed": true,
+  "prior_cycle_report_sha256": "fcabf327e26e06285b44247b77f49bf9449da11989cd64d4c4d010fa873fe5a8",
+  "stopped_duplicate_selection_regression_report_sha256": "671db05fa024d1cfa601dc37a82b389c88c1c4333fcb0f6df7a2028eb7940d80",
+  "process_cycle_and_fault_pending_at_review": true,
+  "self_review_only": true,
+  "independent_security_qualification": false,
+  "fixture_only": true,
+  "live_rld": false
+}

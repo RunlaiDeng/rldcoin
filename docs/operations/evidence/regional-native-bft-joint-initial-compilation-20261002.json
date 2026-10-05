@@ -1,0 +1,7 @@
+{
+  "format": "RLD-BFT-JOINT-INITIAL-COMPILATION-V1",
+  "exit_code": 101,
+  "source_manifest": "native-bft-joint-initial-source-manifest-20261002.json",
+  "native_tests_ran": false,
+  "diagnostic": "Test compared Chain directly, which has no PartialEq or Debug. Changed observation to exact serialized native journal; no production semantic repair from this compilation refusal."
+}

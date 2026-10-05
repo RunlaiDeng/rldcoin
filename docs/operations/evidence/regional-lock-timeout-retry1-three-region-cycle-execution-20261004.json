@@ -1,0 +1,14 @@
+{
+  "format": "RLD-THREE-REGION-CYCLE-EXECUTION-OBSERVATION-V1",
+  "completed_cycle": true,
+  "runner_sha256": "a8f1605c413d1e82a79ab97a2e9c0ebcabf89a5688f86a1fd60b8ee26b541d8b",
+  "run_report_sha256": "f8960286e86e6edcec3372ed87bdc08cf799af95ea0c84843347b5896a411e7a",
+  "log_sha256": "15f38c6ed85175cdfb1884fd030a413bbcd630c70481c86e4937343dea0535fd",
+  "duration_seconds": 815.094,
+  "duration_origin": "observed runner phase stdout",
+  "run_duration_field_not_present": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "cold_completed_not_inferred": true,
+  "fresh_full_fault_profile_completed": false
+}

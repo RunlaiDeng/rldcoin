@@ -1,0 +1,674 @@
+{
+  "format": "RLD-STOPPED-FAULT-TIMEOUT-PATH-OBSERVATIONS-V1",
+  "completed": true,
+  "source_set_sha256": "1912b64cbd7aaf312f9a4f1fb562871116eeeb271b752237b3c852f7f842dc63",
+  "strict_stopped_report_sha256": "d9725cf290b5d82dca8bd743904c6a9e75bd56927abcf46d6258bcee44a56ccb",
+  "observer_sha256": "6e56e83f10e47dba3f19abcc4b6413f7626f49e7fdea8def8d1123a37e0e9d9c",
+  "rows": [
+    {
+      "source_replica": 0,
+      "destination_replica": 1,
+      "complete_envelope_sha256": "927703cb5597fdc7d41c0a27cb99913beccff1bb35e0c4557b3b084795ed9d51",
+      "signed_body_id": "8c035c6282f74811060d0b0737ffe87b8ef19ee84adb51b1f1dafd61b67113eb",
+      "destination_runtime_has_body": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "6005068d2b3bebd986c4cd92b914e03537394d9532f28c804c358955ef33a979",
+          "visited_replicas": [
+            0
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            0,
+            1
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": [
+                0,
+                1
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "6005068d2b3bebd986c4cd92b914e03537394d9532f28c804c358955ef33a979",
+          "visited_replicas": [
+            0,
+            1
+          ],
+          "destination_receipt_retained": true,
+          "active": false,
+          "candidate_route": [
+            1
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 0,
+              "candidate_route": [
+                1
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                1
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": [
+                1
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": [
+                1
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 2,
+      "complete_envelope_sha256": "927703cb5597fdc7d41c0a27cb99913beccff1bb35e0c4557b3b084795ed9d51",
+      "signed_body_id": "8c035c6282f74811060d0b0737ffe87b8ef19ee84adb51b1f1dafd61b67113eb",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "9169781b297e61f0412791db6fcdfc471098c7c152da3c09f7e12a05d9a3caf7",
+          "visited_replicas": [
+            0
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            0,
+            1,
+            2
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": [
+                0,
+                1,
+                2
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "9169781b297e61f0412791db6fcdfc471098c7c152da3c09f7e12a05d9a3caf7",
+          "visited_replicas": [
+            0,
+            1
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            1,
+            2
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 0,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                1,
+                2
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 0,
+      "destination_replica": 3,
+      "complete_envelope_sha256": "927703cb5597fdc7d41c0a27cb99913beccff1bb35e0c4557b3b084795ed9d51",
+      "signed_body_id": "8c035c6282f74811060d0b0737ffe87b8ef19ee84adb51b1f1dafd61b67113eb",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "f8ddbdb1d74ba68039fc6fb23ad1c596ef85618d3ed800169405b0d84d5c0d0c",
+          "visited_replicas": [
+            0
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "f8ddbdb1d74ba68039fc6fb23ad1c596ef85618d3ed800169405b0d84d5c0d0c",
+          "visited_replicas": [
+            0,
+            1
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            1,
+            2,
+            3
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 0,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                1,
+                2,
+                3
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 2,
+          "packet_id": "f8ddbdb1d74ba68039fc6fb23ad1c596ef85618d3ed800169405b0d84d5c0d0c",
+          "visited_replicas": [
+            0,
+            1,
+            2
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            2,
+            3
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer_replica": 3,
+              "candidate_route": [
+                2,
+                3
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 0,
+      "complete_envelope_sha256": "a09837b3783710af1beaeea17b7d7a474922b7b51db98c75e2f9d009b11f29ce",
+      "signed_body_id": "5169d3b76f008add30139abaf939cf03d4a459b5430272c919574d3c96e801b8",
+      "destination_runtime_has_body": true,
+      "retained_packet_locations": [
+        {
+          "replica": 0,
+          "packet_id": "94b9806d0d2c3dd142d6b2ee61ef0c35ec2aaa1b5af820838f960b7e1896a673",
+          "visited_replicas": [
+            1,
+            0
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            0
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": [
+                0
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 1,
+          "packet_id": "94b9806d0d2c3dd142d6b2ee61ef0c35ec2aaa1b5af820838f960b7e1896a673",
+          "visited_replicas": [
+            1
+          ],
+          "destination_receipt_retained": true,
+          "active": false,
+          "candidate_route": [
+            1,
+            0
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 0,
+              "candidate_route": [
+                1,
+                0
+              ],
+              "peer_inventory_lists_packet": true
+            },
+            {
+              "peer_replica": 2,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 2,
+      "complete_envelope_sha256": "a09837b3783710af1beaeea17b7d7a474922b7b51db98c75e2f9d009b11f29ce",
+      "signed_body_id": "5169d3b76f008add30139abaf939cf03d4a459b5430272c919574d3c96e801b8",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "36bd223abf8d4250484ec2fab159976615320778bbd9a888aad1436aa67ad830",
+          "visited_replicas": [
+            1
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            1,
+            2
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 0,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                1,
+                2
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 1,
+      "destination_replica": 3,
+      "complete_envelope_sha256": "a09837b3783710af1beaeea17b7d7a474922b7b51db98c75e2f9d009b11f29ce",
+      "signed_body_id": "5169d3b76f008add30139abaf939cf03d4a459b5430272c919574d3c96e801b8",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 1,
+          "packet_id": "2011f959f7905953eda1414e82d9cc4596abf8cae8669916e85b6e8f8a9170df",
+          "visited_replicas": [
+            1
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            1,
+            2,
+            3
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 0,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                1,
+                2,
+                3
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": null,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 0,
+      "complete_envelope_sha256": "43ae16519cfff84398760147ca024675ad805a0c4e8a1b32410e49a5a71366a9",
+      "signed_body_id": "78ac1a14f32183a02969f37e124f1d31d11bd3e8aa55ba259fd2f271911ee7c7",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "062c78be5086b8b4a6d753eeb17070f740dd596f5cca905b74ce1b778aac5d4f",
+          "visited_replicas": [
+            2
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            2,
+            1,
+            0
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": [
+                2,
+                1,
+                0
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": 3,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 1,
+      "complete_envelope_sha256": "43ae16519cfff84398760147ca024675ad805a0c4e8a1b32410e49a5a71366a9",
+      "signed_body_id": "78ac1a14f32183a02969f37e124f1d31d11bd3e8aa55ba259fd2f271911ee7c7",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "d89a8e9cc87fda391117ba268e7b74f8d5d01e4fb736c81b39e9e7bd844b310a",
+          "visited_replicas": [
+            2
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            2,
+            1
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": [
+                2,
+                1
+              ],
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": 3,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 2,
+      "destination_replica": 3,
+      "complete_envelope_sha256": "43ae16519cfff84398760147ca024675ad805a0c4e8a1b32410e49a5a71366a9",
+      "signed_body_id": "78ac1a14f32183a02969f37e124f1d31d11bd3e8aa55ba259fd2f271911ee7c7",
+      "destination_runtime_has_body": true,
+      "retained_packet_locations": [
+        {
+          "replica": 2,
+          "packet_id": "5904ea10dbf53269e3b43759262b1b64e7ea5db628e76189bdd27863be621141",
+          "visited_replicas": [
+            2
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            2,
+            3
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 1,
+              "candidate_route": null,
+              "peer_inventory_lists_packet": false
+            },
+            {
+              "peer_replica": 3,
+              "candidate_route": [
+                2,
+                3
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        },
+        {
+          "replica": 3,
+          "packet_id": "5904ea10dbf53269e3b43759262b1b64e7ea5db628e76189bdd27863be621141",
+          "visited_replicas": [
+            2,
+            3
+          ],
+          "destination_receipt_retained": true,
+          "active": true,
+          "candidate_route": [
+            3
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                3
+              ],
+              "peer_inventory_lists_packet": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 0,
+      "complete_envelope_sha256": "2d9458e8ffe15746a8b35b5ace2aeb05011330ae8dbbc893197dee34cebd4e15",
+      "signed_body_id": "a19b02fa728ff8f896604e7f4fd77337130bc82445c45cce6e1fdc3db945aca5",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 3,
+          "packet_id": "0930079772195e7be86e6983ca28992cf74697c1a42dfaa309fff361577c644d",
+          "visited_replicas": [
+            3
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                3,
+                2,
+                1,
+                0
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 1,
+      "complete_envelope_sha256": "2d9458e8ffe15746a8b35b5ace2aeb05011330ae8dbbc893197dee34cebd4e15",
+      "signed_body_id": "a19b02fa728ff8f896604e7f4fd77337130bc82445c45cce6e1fdc3db945aca5",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 3,
+          "packet_id": "744e3a56fc64a58e561f8dc5a1b4b59eb035e53b77b75640956d682fe69712d2",
+          "visited_replicas": [
+            3
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            3,
+            2,
+            1
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                3,
+                2,
+                1
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_replica": 3,
+      "destination_replica": 2,
+      "complete_envelope_sha256": "2d9458e8ffe15746a8b35b5ace2aeb05011330ae8dbbc893197dee34cebd4e15",
+      "signed_body_id": "a19b02fa728ff8f896604e7f4fd77337130bc82445c45cce6e1fdc3db945aca5",
+      "destination_runtime_has_body": false,
+      "retained_packet_locations": [
+        {
+          "replica": 3,
+          "packet_id": "c8b79c07e39bec0292d5b6ec42629206116d88114aa64976d8e48ff1415982bf",
+          "visited_replicas": [
+            3
+          ],
+          "destination_receipt_retained": false,
+          "active": true,
+          "candidate_route": [
+            3,
+            2
+          ],
+          "configured_next_hops": [
+            {
+              "peer_replica": 2,
+              "candidate_route": [
+                3,
+                2
+              ],
+              "peer_inventory_lists_packet": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "no_runtime_startup_recovery_or_signing": true,
+  "configuration_public_anchors_authenticated": true,
+  "packet_and_receipt_authentication": true,
+  "retained_native_bodies_authenticated_by_prior_strict_cold": true,
+  "metadata_routes_not_contact_custody_or_authority": true,
+  "full_fault_profile_remains_failed": true,
+  "duration_seconds": 20.673
+}

@@ -1,0 +1,493 @@
+{
+  "format": "RLD-ROLE-QUERY-INDEX-ACTIVE-CAPACITY-PROFILE-V1",
+  "runtime_source_set_sha256": "72a58070445c96da73590a79dcff0c3b724c38f66f0dd2601c699e0ad6a7409b",
+  "failed_run_report_sha256": "c76033d0a79eb715a72a91871f01d3cd7512d5c945366b29109d3b349ec3026b",
+  "producer_sha256": "9789656a8d5a62fdaba9f903fffc6f2117296aec42ba81de61654e3b2692ed57",
+  "observations": [
+    {
+      "carrier": 0,
+      "mesh_state_bytes": 56740415,
+      "mesh_top_key_value_canonical_bytes": {
+        "adverts": 3600,
+        "archive_storage": 37,
+        "archives": 959290,
+        "cursor": 4,
+        "format": 21,
+        "messages": 55768513,
+        "network": 66,
+        "node_id": 66,
+        "peer_inventory": 8542,
+        "receipt_cursors": 73,
+        "receipt_scheduler": 34,
+        "receipts": 2
+      },
+      "active_messages": 97,
+      "pending_unreceipted_messages": 97,
+      "pending_unreceipted_transit_canonical_bytes": 55761916,
+      "completed_yet_active_messages": 0,
+      "completed_yet_active_transit_canonical_bytes": 0,
+      "active_frame_string_references": 97,
+      "active_frame_string_bytes_total": 55636980,
+      "active_frame_distinct_strings": 31,
+      "active_frame_distinct_string_bytes": 17459656,
+      "exact_duplicate_active_frame_string_bytes": 38177324,
+      "bft_state_bytes": 6066394,
+      "bft_records_by_kind": {
+        "Finalized": {
+          "records": 16,
+          "record_bytes": 402869,
+          "body_bytes": 389408
+        },
+        "Proposal": {
+          "records": 24,
+          "record_bytes": 894269,
+          "body_bytes": 871983
+        },
+        "Timeout": {
+          "records": 52,
+          "record_bytes": 1325022,
+          "body_bytes": 1271869
+        },
+        "Vote": {
+          "records": 141,
+          "record_bytes": 2659389,
+          "body_bytes": 2529916
+        },
+        "EpochApproval": {
+          "records": 15,
+          "record_bytes": 313816,
+          "body_bytes": 301951
+        },
+        "EpochActivation": {
+          "records": 7,
+          "record_bytes": 109099,
+          "body_bytes": 102770
+        },
+        "EpochSubmission": {
+          "records": 2,
+          "record_bytes": 16108,
+          "body_bytes": 14749
+        }
+      },
+      "bft_snapshot_pool_count": 16,
+      "bft_snapshot_pool_canonical_bytes": 326031,
+      "largest_five_bft_records": [
+        {
+          "kind": "Proposal",
+          "record_bytes": 72696,
+          "body_bytes": 71753
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71240,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71107,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 69175,
+          "body_bytes": 67831
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 68390,
+          "body_bytes": 67246
+        }
+      ]
+    },
+    {
+      "carrier": 1,
+      "mesh_state_bytes": 66978596,
+      "mesh_top_key_value_canonical_bytes": {
+        "adverts": 3600,
+        "archive_storage": 37,
+        "archives": 1744324,
+        "cursor": 4,
+        "format": 21,
+        "messages": 65216598,
+        "network": 66,
+        "node_id": 66,
+        "peer_inventory": 13532,
+        "receipt_cursors": 145,
+        "receipt_scheduler": 34,
+        "receipts": 2
+      },
+      "active_messages": 120,
+      "pending_unreceipted_messages": 120,
+      "pending_unreceipted_transit_canonical_bytes": 65208437,
+      "completed_yet_active_messages": 0,
+      "completed_yet_active_transit_canonical_bytes": 0,
+      "active_frame_string_references": 120,
+      "active_frame_string_bytes_total": 65012468,
+      "active_frame_distinct_strings": 49,
+      "active_frame_distinct_string_bytes": 26327500,
+      "exact_duplicate_active_frame_string_bytes": 38684968,
+      "bft_state_bytes": 6297492,
+      "bft_records_by_kind": {
+        "Finalized": {
+          "records": 17,
+          "record_bytes": 448658,
+          "body_bytes": 433918
+        },
+        "Proposal": {
+          "records": 27,
+          "record_bytes": 1074478,
+          "body_bytes": 1048498
+        },
+        "Timeout": {
+          "records": 46,
+          "record_bytes": 1140251,
+          "body_bytes": 1094780
+        },
+        "Vote": {
+          "records": 146,
+          "record_bytes": 2812779,
+          "body_bytes": 2677812
+        },
+        "EpochApproval": {
+          "records": 15,
+          "record_bytes": 313816,
+          "body_bytes": 301951
+        },
+        "EpochActivation": {
+          "records": 7,
+          "record_bytes": 109099,
+          "body_bytes": 102770
+        },
+        "EpochSubmission": {
+          "records": 2,
+          "record_bytes": 16108,
+          "body_bytes": 14749
+        }
+      },
+      "bft_snapshot_pool_count": 17,
+      "bft_snapshot_pool_canonical_bytes": 362240,
+      "largest_five_bft_records": [
+        {
+          "kind": "Proposal",
+          "record_bytes": 76750,
+          "body_bytes": 75673
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 72696,
+          "body_bytes": 71753
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71241,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71107,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 69176,
+          "body_bytes": 67831
+        }
+      ]
+    },
+    {
+      "carrier": 2,
+      "mesh_state_bytes": 67012360,
+      "mesh_top_key_value_canonical_bytes": {
+        "adverts": 3600,
+        "archive_storage": 37,
+        "archives": 2014416,
+        "cursor": 4,
+        "format": 21,
+        "messages": 64977724,
+        "network": 66,
+        "node_id": 66,
+        "peer_inventory": 16078,
+        "receipt_cursors": 145,
+        "receipt_scheduler": 34,
+        "receipts": 2
+      },
+      "active_messages": 131,
+      "pending_unreceipted_messages": 131,
+      "pending_unreceipted_transit_canonical_bytes": 64968815,
+      "completed_yet_active_messages": 0,
+      "completed_yet_active_transit_canonical_bytes": 0,
+      "active_frame_string_references": 131,
+      "active_frame_string_bytes_total": 64737944,
+      "active_frame_distinct_strings": 72,
+      "active_frame_distinct_string_bytes": 35116804,
+      "exact_duplicate_active_frame_string_bytes": 29621140,
+      "bft_state_bytes": 6719556,
+      "bft_records_by_kind": {
+        "Finalized": {
+          "records": 17,
+          "record_bytes": 448188,
+          "body_bytes": 433918
+        },
+        "Proposal": {
+          "records": 26,
+          "record_bytes": 1064316,
+          "body_bytes": 1039949
+        },
+        "Timeout": {
+          "records": 52,
+          "record_bytes": 1326606,
+          "body_bytes": 1274923
+        },
+        "Vote": {
+          "records": 153,
+          "record_bytes": 3027640,
+          "body_bytes": 2885012
+        },
+        "EpochApproval": {
+          "records": 15,
+          "record_bytes": 313815,
+          "body_bytes": 301951
+        },
+        "EpochSubmission": {
+          "records": 3,
+          "record_bytes": 46773,
+          "body_bytes": 44268
+        },
+        "EpochActivation": {
+          "records": 7,
+          "record_bytes": 109032,
+          "body_bytes": 102770
+        }
+      },
+      "bft_snapshot_pool_count": 17,
+      "bft_snapshot_pool_canonical_bytes": 362240,
+      "largest_five_bft_records": [
+        {
+          "kind": "Proposal",
+          "record_bytes": 76750,
+          "body_bytes": 75673
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 73181,
+          "body_bytes": 71971
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 72695,
+          "body_bytes": 71753
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71241,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71107,
+          "body_bytes": 70030
+        }
+      ]
+    },
+    {
+      "carrier": 3,
+      "mesh_state_bytes": 66888202,
+      "mesh_top_key_value_canonical_bytes": {
+        "adverts": 3600,
+        "archive_storage": 37,
+        "archives": 1873117,
+        "cursor": 4,
+        "format": 21,
+        "messages": 64994611,
+        "network": 66,
+        "node_id": 66,
+        "peer_inventory": 12259,
+        "receipt_cursors": 145,
+        "receipt_scheduler": 34,
+        "receipts": 4075
+      },
+      "active_messages": 139,
+      "pending_unreceipted_messages": 136,
+      "pending_unreceipted_transit_canonical_bytes": 63493111,
+      "completed_yet_active_messages": 3,
+      "completed_yet_active_transit_canonical_bytes": 1492047,
+      "active_frame_string_references": 139,
+      "active_frame_string_bytes_total": 64784128,
+      "active_frame_distinct_strings": 59,
+      "active_frame_distinct_string_bytes": 26867256,
+      "exact_duplicate_active_frame_string_bytes": 37916872,
+      "bft_state_bytes": 6824857,
+      "bft_records_by_kind": {
+        "Finalized": {
+          "records": 17,
+          "record_bytes": 448455,
+          "body_bytes": 433918
+        },
+        "Proposal": {
+          "records": 26,
+          "record_bytes": 985413,
+          "body_bytes": 960976
+        },
+        "Timeout": {
+          "records": 57,
+          "record_bytes": 1479459,
+          "body_bytes": 1422500
+        },
+        "Vote": {
+          "records": 155,
+          "record_bytes": 3088981,
+          "body_bytes": 2944135
+        },
+        "EpochApproval": {
+          "records": 15,
+          "record_bytes": 313815,
+          "body_bytes": 301951
+        },
+        "EpochActivation": {
+          "records": 7,
+          "record_bytes": 109032,
+          "body_bytes": 102770
+        },
+        "EpochSubmission": {
+          "records": 2,
+          "record_bytes": 16108,
+          "body_bytes": 14749
+        }
+      },
+      "bft_snapshot_pool_count": 17,
+      "bft_snapshot_pool_canonical_bytes": 362240,
+      "largest_five_bft_records": [
+        {
+          "kind": "Proposal",
+          "record_bytes": 76749,
+          "body_bytes": 75673
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 72696,
+          "body_bytes": 71753
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71241,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71107,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 68389,
+          "body_bytes": 67246
+        }
+      ]
+    },
+    {
+      "carrier": 4,
+      "mesh_state_bytes": 16929819,
+      "mesh_top_key_value_canonical_bytes": {
+        "adverts": 3600,
+        "archive_storage": 37,
+        "archives": 961833,
+        "cursor": 4,
+        "format": 21,
+        "messages": 15954101,
+        "network": 66,
+        "node_id": 66,
+        "peer_inventory": 9815,
+        "receipt_cursors": 73,
+        "receipt_scheduler": 34,
+        "receipts": 2
+      },
+      "active_messages": 37,
+      "pending_unreceipted_messages": 37,
+      "pending_unreceipted_transit_canonical_bytes": 15951584,
+      "completed_yet_active_messages": 0,
+      "completed_yet_active_transit_canonical_bytes": 0,
+      "active_frame_string_references": 37,
+      "active_frame_string_bytes_total": 15903928,
+      "active_frame_distinct_strings": 16,
+      "active_frame_distinct_string_bytes": 6659672,
+      "exact_duplicate_active_frame_string_bytes": 9244256,
+      "bft_state_bytes": 6495613,
+      "bft_records_by_kind": {
+        "Finalized": {
+          "records": 17,
+          "record_bytes": 448187,
+          "body_bytes": 433918
+        },
+        "Proposal": {
+          "records": 24,
+          "record_bytes": 902993,
+          "body_bytes": 881174
+        },
+        "Timeout": {
+          "records": 53,
+          "record_bytes": 1356740,
+          "body_bytes": 1304503
+        },
+        "Vote": {
+          "records": 151,
+          "record_bytes": 2965820,
+          "body_bytes": 2825769
+        },
+        "EpochApproval": {
+          "records": 15,
+          "record_bytes": 313818,
+          "body_bytes": 301951
+        },
+        "EpochActivation": {
+          "records": 7,
+          "record_bytes": 109032,
+          "body_bytes": 102770
+        },
+        "EpochSubmission": {
+          "records": 2,
+          "record_bytes": 16108,
+          "body_bytes": 14749
+        }
+      },
+      "bft_snapshot_pool_count": 17,
+      "bft_snapshot_pool_canonical_bytes": 362240,
+      "largest_five_bft_records": [
+        {
+          "kind": "Proposal",
+          "record_bytes": 76750,
+          "body_bytes": 75673
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 72696,
+          "body_bytes": 71753
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71241,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 71106,
+          "body_bytes": 70030
+        },
+        {
+          "kind": "Proposal",
+          "record_bytes": 68390,
+          "body_bytes": 67246
+        }
+      ]
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "selection_metadata_only": true,
+  "full_native_authentication_not_performed_by_this_profiler": true,
+  "proposed_frame_sharing_not_implemented": true,
+  "mesh_state_bytes_limit": 67108864,
+  "bft_state_bytes_limit": 33554432,
+  "no_bounds_raised": true,
+  "no_pending_evidence_pruned": true,
+  "fixture_only": true,
+  "live_rld": false
+}

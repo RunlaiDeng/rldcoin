@@ -1,0 +1,48 @@
+{
+  "format": "RLD-SINGLE-FRAME-AUTH-LOCAL-CHECKS-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": true,
+  "actual_tests": 50,
+  "logs": [
+    {
+      "log": "single-frame-auth-first-checks-20261003.log",
+      "sha256": "5a95b6e886ba8652e702edcf33ead2c4814ac259cc553344a667513cb013443d",
+      "tests": 46,
+      "seconds": 3.587
+    },
+    {
+      "log": "single-frame-auth-focused-checks-20261003.log",
+      "sha256": "330936209cdf24d242542cbe340a2222ec59f4cb330face502f64d6ce344394e",
+      "tests": 4,
+      "seconds": 0.024
+    }
+  ],
+  "source_files": [
+    {
+      "path": "tools/interstellar_mesh.py",
+      "sha256": "c7977d8931987216becab90cd80395a7c4cafd18f02c55b59629290bb2cf67a5"
+    },
+    {
+      "path": "tools/test_interstellar_single_frame_auth.py",
+      "sha256": "65e4d1a8395de91ad9ee39e7b47630d2e0fe4020ba7431b6cdf46c95ff0ecbb0"
+    },
+    {
+      "path": "docs/operations/INTERSTELLAR_SINGLE_FRAME_AUTH.md",
+      "sha256": "501df4b12b045a959cbd91af7583e4adefeeed3f665e1c8bfb36dea56901ed40"
+    }
+  ],
+  "native_core_exact_running_freeze": true,
+  "native_tests_reused_not_rerun": 167,
+  "strict_clippy_reused_not_rerun": true,
+  "running_source_set_sha256": "9c0ae39e52b2bb39f3fba1193013fc8348bf233bb428479a1f413cbfcca44c5b",
+  "running_frozen_source_unchanged": true,
+  "benchmark_sha256": "904a6b572d7f1f72f9ded64ca2c30f52a1a1531149dcc1df6878ef91f7dd692a",
+  "same_host_ordinary_campaign_overlap": true,
+  "ordinary_payment_completed": false,
+  "full_fault_profile_completed": false,
+  "full_cold_qualification_completed": false,
+  "limits_changed": false,
+  "headers_or_payload_cached": false,
+  "publication_done": false
+}

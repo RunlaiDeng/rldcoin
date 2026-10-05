@@ -1,0 +1,62 @@
+{
+  "format": "RLD-REQUESTED-RECEIPT-LOCAL-CHECKS-V1",
+  "receipt_scheduler": "RLD-CONTACT-RECEIPT-SCHEDULER-V2",
+  "fixture_only": true,
+  "live_rld": false,
+  "old_scheduling_requested_receipt_regression_failed": true,
+  "initial_relevant_tests_passed": 25,
+  "expanded_tests_run": 166,
+  "expanded_tests_passed": 164,
+  "expanded_test_harness_errors": 2,
+  "test_harness_nested_state_mutations_corrected": true,
+  "final_specific_tests_passed": 8,
+  "final_external_cursor_map_binding_tests_passed": 1,
+  "batch_counts_overlap_do_not_sum": true,
+  "logs": [
+    {
+      "name": "requested-receipts-before-fix-20261003.log",
+      "sha256": "955ed535f0d34c11d25d5fe0a8ebd4087e5fb1b93cffed764f488e2b5c892b29"
+    },
+    {
+      "name": "requested-receipts-first-checks-20261003.log",
+      "sha256": "2e4ec4f9b8a65a3a517053ea913a9386a8ef37302da7df6dd6ce10cdded6e68c"
+    },
+    {
+      "name": "requested-receipts-expanded-checks-20261003.log",
+      "sha256": "51b4e2646a0360126dd5b0963d34ebe2ebe486b9e2abef10b34994983590eec4"
+    },
+    {
+      "name": "requested-receipts-final-specific-checks-20261003.log",
+      "sha256": "4c062f1aac5cc738208a50f3787eb45398d0ebe45e2d3771982221b09331e881"
+    },
+    {
+      "name": "requested-receipts-inspection-map-check-20261003.log",
+      "sha256": "2299339565fdc7c4fedeb54e99b181ba53b821f77194926422cc7df3301ba0ee"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "tools/interstellar_mesh.py",
+      "sha256": "8759238a4c127f9008cf4a55a0024f9ae368c14a3eb01602298c65d598984c94"
+    },
+    {
+      "path": "tools/interstellar_mesh_inspection.py",
+      "sha256": "b4db3adefda24c57892df93e9ca90ef6a8f5e3c6f17940e7f9b3ea9e923e3c01"
+    },
+    {
+      "path": "tools/test_interstellar_requested_receipts.py",
+      "sha256": "5e505a8dc0719c6438e064ee4b2814c025fcb7b3ce6def15d72aa7dcaad243ec"
+    },
+    {
+      "path": "tools/test_interstellar_mesh_inspection.py",
+      "sha256": "dc6625b7923df7ba0426c94623c732a80a79b24441c39051edb2a425ffc439d2"
+    }
+  ],
+  "receipt_batch_limit": 16,
+  "requested_and_historical_independent_peer_cursors": true,
+  "strict_cold_cursor_contact_binding": true,
+  "original_evidence_and_authentication_preserved": true,
+  "old_v1_state_refuses_unchanged": true,
+  "all_limits_and_native_sources_unchanged": true,
+  "ordinary_fresh_payment_cycle_not_yet_run": true
+}

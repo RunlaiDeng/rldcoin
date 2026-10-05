@@ -1,0 +1,51 @@
+{
+  "format": "RLD-NATIVE-COMPACT-LONG-STREAM-SAMPLE-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "same_host_same_controller": true,
+  "source_set_sha256": "14e769a2bf116fffc191d4e7d4406c980f36937bd514ccc1e30a01e13c88e594",
+  "native_implementation": "add6b34954bee1bbf0d8e2c94e87f056181535a63771a28fed7551f3a9a094da",
+  "binary_sha256": "4a2c9673394522186b1f2c7abbce2413c1553f71418a391323212dde80dc790e",
+  "fixture_helper_sha256": "631daf3463451a0ce9f6fb0df32e277fd60b4c45d80891d747f08c435c908a53",
+  "fixture_currency": "b43f54f541b17036ff4b7b45044f42761219128478a1cd1b3e866b578ce26cde",
+  "owner_payments": 200001,
+  "native_blocks": 200009,
+  "returned_import_height": 200006,
+  "returned_mature_payment_height": 200009,
+  "expected_head": "2590a58d20f536a3d60d7712d989175a227d021473c12a09c86b105acdb3de57",
+  "archive_bytes": 192930821,
+  "archive_sha256": "a46194c51c8b1ff58acbfa1cb3ffc1a92f92a4a7f8837a9d031b37105ac1d9e5",
+  "archive_limit_bytes": 268435456,
+  "native_genesis_and_every_block_constructed_and_cold_verified": true,
+  "per_transition_native_conservation_checked": true,
+  "original_debit_never_released": true,
+  "issued": "300",
+  "liquid": "300",
+  "pending": "0",
+  "retained_observations": 256,
+  "all_private_fixture_files_and_permissions_unchanged": true,
+  "ordinary_store_not_created": true,
+  "ordinary_long_history_qualified": false,
+  "bft_long_history_qualified": false,
+  "issuance_era_qualified": false,
+  "late_onward_export_qualified": false,
+  "incident_quarantine_reconciled": false,
+  "independent_custody_qualified": false,
+  "physical_stellar_routes_qualified": false,
+  "phases": [
+    {
+      "phase": "generate",
+      "exit_code": 0,
+      "duration_seconds": 261.85,
+      "log_sha256": "71900dbd9b97001bdd0fe50d1eefdf6f3cd5423dc34ae285c1074b05586c0484"
+    },
+    {
+      "phase": "cold",
+      "exit_code": 0,
+      "duration_seconds": 44.249,
+      "log_sha256": "40c701f62ceb2c4e47a5ec5f63f2d101feb236847f89a70e6c5bfec16c7a67f5"
+    }
+  ],
+  "runner_sha256": "24851e859ba128d1ba7291190eba8a526c5c299be85446d73b854fbc7f1bf919"
+}

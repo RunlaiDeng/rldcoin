@@ -1,0 +1,76 @@
+{
+  "format": "RLD-NATIVE-PAGED-EVENTS-LOCAL-VERIFICATION-V1",
+  "source_set_sha256": "699edda9fe44908a11828be2aa52f13e853460a1689a94ce8b023bad079de1e4",
+  "native_implementation": "21a89b186467cbf7dbb7f9061105b3c8340725ee5d845bdb69831ae0756aae7b",
+  "reviewed_source_files": 254,
+  "current_frozen_and_source_archive_inventory_exact": true,
+  "source_archive_sha256": "64778371eaf033c4b4b8de66ce6382053c89ddc34cbaab9126bc54dd76143a42",
+  "native_unique_tests_covered": 139,
+  "native_tests_from_frozen_source": 138,
+  "long_store_test_rerun_from_frozen_source": false,
+  "workspace_long_store_native_source_exact_to_freeze": true,
+  "process_tests_from_frozen_source": 60,
+  "checked_release_build_passed": true,
+  "strict_clippy_passed": true,
+  "format_check_passed": true,
+  "affected_tracked_native_whitespace_check_passed": true,
+  "ordinary_store_long_sample": {
+    "height": 1029,
+    "actual_owner_payments": 1025,
+    "sealed_pages": 64,
+    "retained_tail_events": 11,
+    "page_events": 16,
+    "cold_genesis_replay_equal": true,
+    "wallet_review_and_inclusion": true,
+    "private_fresh_target_ledger_restore_equal": true
+  },
+  "cross_region_process_sample": {
+    "height": 361,
+    "actual_signed_local_payments": 353,
+    "return_net": "98",
+    "sealed_event_pages": 23,
+    "retained_tail_events": 0,
+    "cold_private_restore_equal": true,
+    "permanent_duplicate_import_refused": true
+  },
+  "negative_checks": [
+    "corrupt page refuses",
+    "reordered page references refuse",
+    "legacy storage/profile mismatch refuses without conversion",
+    "rehashed page with invalid native state refuses",
+    "invalid full-segment anchor tail leaves native statement unchanged",
+    "existing interrupted publication residue retained",
+    "all 4096 retained files counted; capacity refuses without pruning or head change"
+  ],
+  "fixed_limits": {
+    "archive_files": 4096,
+    "archive_bytes": 268435456,
+    "native_object_and_metadata_bytes": 8388608,
+    "complete_evidence_bytes": 8388608,
+    "snapshots": 64,
+    "active_segment_blocks": 256,
+    "permanent_index_entries": 4096
+  },
+  "scope": {
+    "fixture_only": true,
+    "live_rld": false,
+    "legacy_and_BFT_event_limits_unchanged": true,
+    "full_checkpoint_evidence_still_bounded_in_memory": true,
+    "full_native_replay_still_required_on_commit_and_cold_open": true,
+    "fresh_full_fault_profile_run": false,
+    "autonomous_twelve_node_cycle_run": false,
+    "power_loss_or_cross_device_custody_qualified": false,
+    "independent_latest_head_qualified": false,
+    "full_long_history_qualified": false,
+    "BFT_long_history_qualified": false,
+    "physical_links_qualified": false,
+    "published": false,
+    "full_project_objective_achieved": false
+  },
+  "evidence_sha256": {
+    "regional-native-paged-events-frozen-checks-20261002.json": "310c5b5555f614648630ff52207884e2917816fc9f3a350b5bec814af5c981ec",
+    "regional-native-paged-events-workspace-checks-20261002.json": "2236a013d34c0cc9d828d6937f76dc0f1f29a8b419be755c13ede92cd17f0744",
+    "regional-native-paged-events-long-store-sample-20261002.json": "7185bfc831af74f856b4e11911b28c45b7c904da79f7acde9cc495df359274b6",
+    "regional-native-paged-events-frozen-process-sample-20261002.json": "8512b90a1fa370ab296c35a03c9a98e5167c42a1d02b4dc9b2d097426f097ce5"
+  }
+}

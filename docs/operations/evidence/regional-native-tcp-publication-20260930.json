@@ -1,0 +1,279 @@
+{
+  "format": "RLD-NATIVE-TCP-PUBLICATION-VERIFICATION-V1",
+  "date": "2026-09-30",
+  "repository": "RunlaiDeng/rldcoin-genesis",
+  "commit": "ae467a2d7c4f017c19c2b501af4b45762be4dcfa",
+  "remote_main_matches": true,
+  "raw_served_hashes_verified": 53,
+  "package": "research/2026-09-30/regional-native-tcp-v7",
+  "files": [
+    {
+      "path": "MASTER_PLAN.md",
+      "sha256": "f688ee462433228d5438d3481960173237d2cd86ae4b06a6ef9c84f7c09949e8",
+      "remote_match": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "9eb5ebe5e0bdbf61ab893520fb28fbae6e6760b3c3d0a5357b25813ef64b1a62",
+      "remote_match": true
+    },
+    {
+      "path": "SHA256SUMS.current-docs-20260930",
+      "sha256": "b3814f89b10263d3b0aed969e5830d04933c86513909853f36c90190e9cc58cf",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/PLAN_STATUS.zh-CN.md",
+      "sha256": "3f7046e37ba630ff8e141c261288cab6e12bae39401c376869abb6df84b30ac6",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/README.md",
+      "sha256": "ad54c9dc2b18a3a5730798ebf193978855b9db8285045ddc725a9ecaa3421fbf",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/SHA256SUMS",
+      "sha256": "54c239aec6d07014df14756691ba337d22bf66b0903363efebd884032a41e8c8",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/base-source-manifest.json",
+      "sha256": "20848cd672795d3c6fd3e6d1d56a85b1ff5744620a762d266d6c79cd5c5b3d60",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/campaign-report.json",
+      "sha256": "5e86bd656b6547e1267bc246c8942b2e75de551da4aa3fe92b370bc6352736e9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/RLDCOIN_MASTER_PLAN.md",
+      "sha256": "7d2f42f62da43db8dc0de0e4a6436acb4fe0206bfa9140c09abba582d8ecc56f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/operations/INTERSTELLAR_EVIDENCE_TRANSPORT.md",
+      "sha256": "9b16842ec49f1c6fa4e30b8f1b5e6bb3e5699b3b348b08aae07762380326bc19",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/operations/INTERSTELLAR_NODE_MESH.md",
+      "sha256": "e08da58db6eb4c8a31b3f9ede8e76817a75e42e2850981844ff492e1689555c9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/operations/evidence/regional-native-tcp-campaign-20260930.json",
+      "sha256": "5e86bd656b6547e1267bc246c8942b2e75de551da4aa3fe92b370bc6352736e9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/operations/evidence/regional-native-tcp-verification-20260930.json",
+      "sha256": "1e4c58a7e1403cc2febf3e0fa0b004a419af6f576d15e7710478b8317847e16e",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md",
+      "sha256": "09d992a539d00c036c0dfb035beba5d1d5630329e44558a90a808e3cef68e667",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/research/REGIONAL_FINALITY_INCIDENTS_V1.md",
+      "sha256": "b7b2ab44850057b3387325afd35c75cded37a2642136365ae70e95cfec0d6c6f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/research/REGIONAL_LEDGER_CANDIDATE_V1.md",
+      "sha256": "96cd9723004976d610aff17a0d279f58befec7f08db4e027a25b677563cf9187",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/docs/research/REGIONAL_SIGNER_EPOCHS_V1.md",
+      "sha256": "4243b51699d5c4693b9ccc9824530e18dbe9bc4b6bb271c0f89ef6428b641504",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/source-manifest.json",
+      "sha256": "dbbeaa936843cac721c33ad934f05d8806838f2105f8be10933f85abdb1ed8bf",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/source.tar.gz",
+      "sha256": "35b086c71a82ae4b00ca8b11203a2f2cff26589cd549834592b434be024e12cc",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/interstellar-mesh-requirements.txt",
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/interstellar_mesh.py",
+      "sha256": "d1957cc60272ecbbb1e0293c2bd663297631fa3a86016f04dc4425f84b08a51b",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/interstellar_route_budget.py",
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/interstellar_tcp.py",
+      "sha256": "f915eba65068e8084d69ead38f06c1707d944714ca00cd79d918686591bfb9d9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/interstellar_transfer.py",
+      "sha256": "799ec3b5bbcb94950b1f4cc09bbc0711f859cbf196e6f29593ee7a610f6bb7da",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/Cargo.lock",
+      "sha256": "d8d443dbe3969a2fcde1d1b965acf53e8ffbb82f9cb9493a836ff44ec616a975",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/Cargo.toml",
+      "sha256": "8bf6d222dc1ebe2385ce53046709a771255450c9785a6b9cc9f3f6d7a71afe34",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/README.md",
+      "sha256": "3e408cce0db6bfdc90c8bc0e29aade21c167cf84f127ebfae4a95e592c2dd51f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/build.rs",
+      "sha256": "0dfa707932e52dd116add44b14d4837cdeb771972290d37981d65ee6e2115cfa",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/bin/contact-fixture.rs",
+      "sha256": "29497d8cd250ed3034eff8028ebd375e08681b7c0f6a5ed5f395ff92d07e7aa5",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/bin/fixture-campaign.rs",
+      "sha256": "e8bb475ab89a29fd9ebf75bdc7bd67f4b1525d46f36041fc084482dd5dff43fe",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/conflict.rs",
+      "sha256": "2f755e8f4f39884d5b5bcea9d778c972a523761a2768057b6fcb182da08fb4e0",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/contact.rs",
+      "sha256": "2519d664422a1716c27c6de1f1b9f443540eb7401b35947b64c99d12b21c46d2",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/contact_tests.rs",
+      "sha256": "2e7b1c80600930275349082cdec653c9d5e50891793ab9ca27c532124f4bd6cb",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/epoch.rs",
+      "sha256": "39256fe8376226bbc1b6d2cbe68d94ce0f49abb0e49828c699979aa3c884fd57",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/epoch_tests.rs",
+      "sha256": "f5053ffc302f123efff0f2d0d6d1185eb86540e5aa4050d7c38479a6c1b523dd",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/lib.rs",
+      "sha256": "7ae55231f66056aaea7042d980cc19ff5d432f8e2bba37e4ae2caf6bafd1c8c1",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/main.rs",
+      "sha256": "b84ec4b0b906e0527d8f48c4f31f3de87ac0fd63a222785d534e3b09afaa7dd7",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/signer.rs",
+      "sha256": "2460679efabe3f5acf4a901adb953de455f4d9e5ee9c5c899aa172354040b73f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/storage.rs",
+      "sha256": "6702173e17b7fa63c1feb36f0d395ddaa52531b15ad4fffc2d00f43c10ee34b0",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/tests.rs",
+      "sha256": "c693ac8dd674a005f94799d29469b80dfb37373bd68a9a5d69eff0066f704408",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/wallet.rs",
+      "sha256": "ed2fe46c6c10d7f7d2095c4d9072a24d484aacd7e4842e738e97eaa713acd493",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/wallet_agent.rs",
+      "sha256": "ef3c5dc6c3aae5332bb7c43e8879c2433b3681f44daa15e17f6e52861eb5caa6",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/wallet_agent_tests.rs",
+      "sha256": "e2d85883b7f9b7bf9abfdf9e13f0ddf51de920010d5c4a25cd15bb6c8fa265bc",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional-ledger/src/wallet_tests.rs",
+      "sha256": "488ba7a20b3a98cac8642f7455486ca21f73527701e3edb35ff780b3c75e7ee6",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional_contact_campaign.py",
+      "sha256": "594f4009679cecf80b97c32f697cae3c5a2445e95cc47fb05fc980b68f826ee1",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/regional_contact_node.py",
+      "sha256": "a1412ce67a647f9f144803d1054dfb99405f3a33a6c7aa16267262d78a9623d6",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/test_interstellar_mesh.py",
+      "sha256": "129531139b3e6e6ff196fbcf7e3d4577e510a41166f338641ddc2d26af406dcb",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/test_interstellar_route_budget.py",
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/test_interstellar_tcp.py",
+      "sha256": "538259989ea0a6b0908f60bbe713334260617f75814afa4e6f2082b1d1f79d72",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/test_interstellar_transfer.py",
+      "sha256": "5e8d963d681800aca7f327e8781e5e902a1dac95f94b0c3c26c005f980940373",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/test_regional_contact_node.py",
+      "sha256": "77617e166ebd32fea6c99a9ac760ed9f10a666e541e4939037c8a5ee955d9033",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/tools/test_regional_wallet.py",
+      "sha256": "940fc3c780c886d9c8bec92fb1be6209b67f4f77c589cf02829463d6d611d689",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-tcp-v7/verification.json",
+      "sha256": "1e4c58a7e1403cc2febf3e0fa0b004a419af6f576d15e7710478b8317847e16e",
+      "remote_match": true
+    }
+  ],
+  "private_states_published": false,
+  "mainnet_authorized": false,
+  "physical_route_qualified": false
+}

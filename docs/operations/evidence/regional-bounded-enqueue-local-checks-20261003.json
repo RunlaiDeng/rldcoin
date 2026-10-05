@@ -1,0 +1,41 @@
+{
+  "format": "RLD-BOUNDED-ENQUEUE-LOCAL-CHECKS-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "9c0ae39e52b2bb39f3fba1193013fc8348bf233bb428479a1f413cbfcca44c5b",
+  "source_files": 327,
+  "changed_previous_inventory_paths": [
+    "AGENTS.md",
+    "docs/PLAN_STATUS.md",
+    "docs/research/REGIONAL_HISTORY_RETENTION_V1.md",
+    "tools/interstellar_mesh.py",
+    "tools/regional-ledger/README.md",
+    "tools/regional_bft_node.py",
+    "tools/test_regional_bft_node.py"
+  ],
+  "additions": [
+    "docs/operations/REGIONAL_BOUNDED_ENQUEUE.md",
+    "tools/test_interstellar_enqueue_batch.py"
+  ],
+  "native_source_code_and_cargo_files_exact_prior": 88,
+  "native_source_sha256": "e5a0fb4b2dcd359021208ab27d78c4c2d06c5fbc58856dc6a6bf4c29ec4b992c",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "native_implementation": "5415647bdccf790c871f27e02e115549f3b32161e05faf8606409ed8fdb987fc",
+  "native_tests_reused_not_rerun": 167,
+  "strict_clippy_reused_not_rerun": true,
+  "related_tests_actually_run": 110,
+  "duration_seconds": 32.969,
+  "related_log_sha256": "4bc1f9a0cd99e1de5f3206edc883529a3d29b82cb84498dee18fa370410b762a",
+  "focused_tests_actually_run": 7,
+  "focused_seconds": 1.334,
+  "benchmark_report_sha256": "a8a15f43cb415b057195b26730d724cd1b7864083dc95012a41badc70badec2e",
+  "freeze_producer_sha256": "8e1416bdbcdccbbe70cc5d91d0ee5818c3d7b49e6e47d0e9e1d8f8e42fed37d6",
+  "frozen_source_unchanged": true,
+  "private_failed_sources_not_restarted": true,
+  "capacity_or_timing_bounds_changed": false,
+  "ordinary_payment_completed": false,
+  "full_fault_profile_completed": false,
+  "publication_done": false,
+  "documentation_cleanup_review": "Two historical revision links now use rebuilt public main; frozen previous bytes retained, not republished."
+}

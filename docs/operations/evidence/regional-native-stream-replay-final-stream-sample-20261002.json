@@ -1,0 +1,18 @@
+{
+  "actual_signed_local_payments": 1024,
+  "archive_bytes": 1338021,
+  "cold_native_replay_equal": true,
+  "delayed_return_import_net": "59",
+  "duplicate_import_refused": true,
+  "fixture_only": true,
+  "format": "RLD-NATIVE-BOUNDED-STREAM-SAMPLE-V1",
+  "full_long_history_qualification": false,
+  "incident_quarantine_reconciled": false,
+  "legacy_bounds_unchanged": true,
+  "live_rld": false,
+  "native_blocks": 1032,
+  "native_cli_checked": true,
+  "native_implementation": "601b7153fe673292ede3c23ced9f765d0e4cd572532f0e9563f3cf01664cafe8",
+  "ordinary_node_storage_upgraded": false,
+  "retained_history_observations": 256
+}

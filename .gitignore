@@ -18,3 +18,17 @@ deploy/devnet-two-zone-data/
 deploy/m0-mainnet-data/
 __pycache__/
 *.pyc
+
+# Local private fixtures, build products and migration scratch.
+/tmp/
+/bin/
+/output/
+/outputs/
+/backups/
+/.agents/
+/.codex/
+/.aws/
+*.tar.gz
+*.tgz
+# Generated fixture credentials stay local.
+/docs/operations/evidence/fresh-testnet-20260930/bootstrap.json

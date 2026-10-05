@@ -1,0 +1,28 @@
+{
+  "format": "RLD-RETAINED-RESPONSE-LOCAL-CHECKS-V1",
+  "source_set_sha256": "a5ab25a8d56d97e8659240dfbe9d04703d73d153830d409b57fcd6a32cfcc48f",
+  "source_files": 355,
+  "native_core_files_exact_prior": 89,
+  "related_tests_actually_run": 77,
+  "mechanical_tests_actually_run": 6,
+  "related_test_seconds": 120.496,
+  "related_log_sha256": "168d3570b9ae0a2c9f0aab417c0ef19c285a752c5c0df7127d531d7d84648b8b",
+  "component_reports": [
+    {
+      "name": "regional-retained-response-native-old-retry1-20261003.json",
+      "sha256": "1d1355a04d107e74d70656bdc910494ba43a5363dd70e2f89f12c0654a0459ab"
+    },
+    {
+      "name": "regional-retained-response-native-new-retry1-20261003.json",
+      "sha256": "a39b4befaf8b10e5bf6cd2f85495ac61677f06f1173622e0ac605b047b93f908"
+    },
+    {
+      "name": "regional-retained-response-native-role-retry2-20261003.json",
+      "sha256": "d3ee7cdce784357d59ddcf1b5b63ce17793f9a6189deebd468e5a0575e3ab7fb"
+    }
+  ],
+  "component_process_starts_still_use_prior_compiled_driver": true,
+  "new_frozen_ordinary_rebuild_required": true,
+  "fixture_only": true,
+  "live_rld": false
+}

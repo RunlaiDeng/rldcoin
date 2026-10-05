@@ -1,0 +1,12 @@
+{
+  "format": "RLD-PARALLEL-FREEZE-INVENTORY-REVIEW-V1",
+  "initial_freeze_guard_refused_unexpected_document_change": true,
+  "document": "docs/operations/INTERSTELLAR_EVIDENCE_TRANSPORT.md",
+  "previous_sha256": "d5b573144ab38622aaa18450c608b504a94cae2974bf8e45c42b6abbb588ac37",
+  "reviewed_current_sha256": "cbb432b3c45929b5cafd1d3050c55dc60fa56b7ba684246189efc2bba4bd709c",
+  "document_retired_mainnet_scope_reviewed": true,
+  "previous_frozen_document_preserved": true,
+  "existing_prepared_bytes_rechecked_not_overwritten": true,
+  "no_binary_or_native_private_state_created_before_review": true,
+  "native_core_exact_prior": true
+}

@@ -1,0 +1,72 @@
+{
+  "format": "RLD-BFT-COLD-RETAINED-RECIPIENT-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "mode": "retained_payment_recovery",
+  "source_run_sha256": "a16b44ac806bf50350a0a508818d15e8feb622df63dd1c17540272599a881f54",
+  "runtime_source_set_sha256": "daf6710c8170b994990bbcf96251023fd9d72ffc968de17a51a186c6e4c9843f",
+  "binary_sha256": "28b3e768ee9c30ab0e0850abb3d2b4f8b12be127130d2c50678ba0b850253a1f",
+  "recipient_replays": [
+    {
+      "replica": 0,
+      "native_height": 12,
+      "evidence_verified": true,
+      "import_accepted": true,
+      "import_height": 10,
+      "mature_height": 12,
+      "maturity_reached": true,
+      "original_output_remaining": "9",
+      "original_output_spendable_now": true,
+      "local_finality_covers_import": true,
+      "quarantined": false,
+      "state": "ORIGINAL_OUTPUT_SPENDABLE"
+    },
+    {
+      "replica": 1,
+      "native_height": 12,
+      "evidence_verified": true,
+      "import_accepted": true,
+      "import_height": 10,
+      "mature_height": 12,
+      "maturity_reached": true,
+      "original_output_remaining": "9",
+      "original_output_spendable_now": true,
+      "local_finality_covers_import": true,
+      "quarantined": false,
+      "state": "ORIGINAL_OUTPUT_SPENDABLE"
+    },
+    {
+      "replica": 2,
+      "native_height": 12,
+      "evidence_verified": true,
+      "import_accepted": true,
+      "import_height": 10,
+      "mature_height": 12,
+      "maturity_reached": true,
+      "original_output_remaining": "9",
+      "original_output_spendable_now": true,
+      "local_finality_covers_import": true,
+      "quarantined": false,
+      "state": "ORIGINAL_OUTPUT_SPENDABLE"
+    },
+    {
+      "replica": 3,
+      "native_height": 12,
+      "evidence_verified": true,
+      "import_accepted": true,
+      "import_height": 10,
+      "mature_height": 12,
+      "maturity_reached": true,
+      "original_output_remaining": "9",
+      "original_output_spendable_now": true,
+      "local_finality_covers_import": true,
+      "quarantined": false,
+      "state": "ORIGINAL_OUTPUT_SPENDABLE"
+    }
+  ],
+  "all_private_fixture_files_unchanged": true,
+  "fresh_fault_profile_passed": false,
+  "cross_host_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false
+}

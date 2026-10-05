@@ -1,0 +1,30 @@
+{
+  "format": "RLD-MULTIREGION-UNKNOWN-OBSERVATION-LOCAL-CHECKS-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "files": [
+    {
+      "path": "tools/regional_bft_multiregion_campaign.py",
+      "sha256": "a6eb84febb2c83570bdd53133f2d7b0a47e81057c86ed900c951bead5220fa61"
+    },
+    {
+      "path": "tools/test_regional_bft_campaign_observation.py",
+      "sha256": "9f7e001cc448e5ccc4314440a3f8a28716312bbee0b42a1a1687262fd1e1e91e"
+    }
+  ],
+  "source_set_sha256": "5a6d7f276a7767c732706fa2baeaa308b29bcfa08ef4de7178d43d964f268f0f",
+  "actual_tests": 8,
+  "new_multiregion_tests": 3,
+  "existing_network_tests": 5,
+  "actual_seconds": 0.018,
+  "check_capture": "completed exec tool result; no new process log fabricated",
+  "unknown_genesis_height_not_fabricated": true,
+  "boolean_height_refused": true,
+  "stale_pid_does_not_replace_deadline": true,
+  "all_four_explicit_zero_observations_required": true,
+  "no_native_or_wallet_or_runtime_calls": true,
+  "running_frozen_source_changed": false,
+  "ordinary_multiregion_cycle_passed": false,
+  "role_multiregion_cycle_implemented": false
+}

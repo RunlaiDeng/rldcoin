@@ -1,0 +1,60 @@
+{
+  "format": "RLD-JOINT-LOOP-FAULT-V55-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "74f16276605823e8c84b67a66d5ff23134a86c8a",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 30202,
+      "sha256": "01a61f381da86162ea65939622a29ea46915262c64a92c2bd7959ebd2855bcb7"
+    },
+    {
+      "path": "research/2026-10-04/regional-joint-loop-fault-v55/README.md",
+      "bytes": 2822,
+      "sha256": "96a1a10d586bba0796d87fc3c7b54abdeca4799ba633875bfc807fd185a7cfed"
+    },
+    {
+      "path": "research/2026-10-04/regional-joint-loop-fault-v55/SHA256SUMS",
+      "bytes": 601,
+      "sha256": "1ebfa496859e95243beb6776ecb698e051313321912e7c3e8efba8b7f2e05b44"
+    },
+    {
+      "path": "research/2026-10-04/regional-joint-loop-fault-v55/evidence/regional-joint-loop-retry1-joint-fault-failed-cold-observations-20261004.json",
+      "bytes": 19100,
+      "sha256": "3fc8b2f2340e2628d8acb7d6e69021364fe0816ee11118cba8154c70117d531a"
+    },
+    {
+      "path": "research/2026-10-04/regional-joint-loop-fault-v55/evidence/regional-joint-loop-retry1-joint-fault-fresh-20261004.json",
+      "bytes": 27743,
+      "sha256": "832e0977095b303bf8a0439bfdc719dc7565daa5539a4c385b30d79e8de4fd68"
+    },
+    {
+      "path": "research/2026-10-04/regional-joint-loop-fault-v55/evidence/regional-joint-loop-retry1-joint-fault-owner-head-observations-20261004.json",
+      "bytes": 1500,
+      "sha256": "7a6722232eebdeb757dcacba24567314fddf996bd2a6f3fea097379917bfd804"
+    },
+    {
+      "path": "research/2026-10-04/regional-joint-loop-fault-v55/source-binding.json",
+      "bytes": 849,
+      "sha256": "ef4e24c3d2d6c50d6a67c6be46dbb110bca18b824963a3a2dda381f70272e0bf"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "60c4ec2fbbf54499c71544d1a9fb2c0a0ef7047a51f14bee11bc30486340fb46",
+  "complete_source_archive_members": 385,
+  "source_archive_replaced": false,
+  "same_host_ordinary_three_region_value_return_completed": true,
+  "full_native_cold_replay_nodes": 12,
+  "strict_public_config_anchor_inspection_completed": true,
+  "fresh_full_fault_profile_completed": false,
+  "sustained_byzantine_liveness_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T06:28:48.318239+00:00"
+}

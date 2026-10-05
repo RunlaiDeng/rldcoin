@@ -1,0 +1,41 @@
+{
+  "format": "RLD-CAMPAIGN-CLEANUP-LOCAL-CHECKS-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "files": [
+    {
+      "path": "tools/regional_bft_network_campaign.py",
+      "sha256": "28dbfb805d99b9a861e8debc7e9c9f9c1c5f590f19f30860e67114eab7ba7d8f",
+      "size_bytes": 14483
+    },
+    {
+      "path": "tools/regional_bft_role_payment_campaign.py",
+      "sha256": "beaecb486cce5b9621aac7d6cd699c539d94ea721ceab802aedcf58e47c86016",
+      "size_bytes": 9851
+    },
+    {
+      "path": "tools/test_regional_bft_campaign_cleanup.py",
+      "sha256": "0387c53f4aaf541fe8f4a7d4f769f61e9be6453288f8cfce1ac3ba2cbeecfa40",
+      "size_bytes": 4995
+    }
+  ],
+  "source_set_sha256": "5698392e4f9af51184d4f85b26f2f2ec83919595d74e2359d33d52cdf993c4bd",
+  "actual_tests": 13,
+  "log_sha256": "a15810f8a8f44dcb41377bdfa1317cc770961409d3dd7df1d544dfbf8edf0e4d",
+  "real_child_cleanup_cases": true,
+  "native_or_wallet_or_signing_calls": false,
+  "failed_wait_keeps_process_ownership": true,
+  "all_known_children_attempted_even_after_failure": true,
+  "unclean_shutdown_sticky_across_phase_and_final_cleanup": true,
+  "original_failure_report_preserved": true,
+  "success_cannot_mask_unclean_shutdown": true,
+  "original_observation_and_consensus_limits_unchanged": true,
+  "shutdown_attempt_seconds": 30,
+  "forced_shutdown_wait_seconds": 10,
+  "forced_shutdown_never_clean": true,
+  "running_frozen_source_unchanged": true,
+  "rejected_private_root_unchanged": true,
+  "running_campaign_uses_original_frozen_controller": true,
+  "ordinary_or_full_fault_qualification": false
+}

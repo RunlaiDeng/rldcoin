@@ -1,0 +1,60 @@
+{
+  "format": "RLD-GOAL-WEBSITE-PUBLICATION-V1",
+  "date": "2026-10-01",
+  "website_commit": "c766b8dc25740c249c9c62d38f9d45372238f8ff",
+  "source_commit": "506ccbbe6824c5d5d7856a37323e8db80bec9de0",
+  "remote_main_matches": true,
+  "production_pages": [
+    {
+      "url": "https://rldcoin.com/network",
+      "status": 200,
+      "scope_copy_present": true,
+      "exact_source_revision_present": true,
+      "reproduction_guide_anchor_present": true,
+      "observed_html_sha256": "2a8dce9d8243023f213b7763c04113ac9cbce7b02033adee718e34295a2dd430"
+    },
+    {
+      "url": "https://rldcoin.com/developers",
+      "status": 200,
+      "scope_copy_present": true,
+      "exact_source_revision_present": true,
+      "reproduction_guide_anchor_present": true,
+      "observed_html_sha256": "83f10083e2e5c0413318a3dfd8b986e5d88be061697af6631f80eeb4be954b17"
+    },
+    {
+      "url": "https://rldcoin.com/research",
+      "status": 200,
+      "scope_copy_present": true,
+      "exact_source_revision_present": true,
+      "reproduction_guide_anchor_present": true,
+      "observed_html_sha256": "e5f3fb9fd40e79e1ce16a4de15d0033b6f9c6cb5788c27ccf6a8799d1afd816c"
+    },
+    {
+      "url": "https://rldcoin.com/node-network",
+      "status": 200,
+      "scope_copy_present": true,
+      "exact_source_revision_present": true,
+      "reproduction_guide_anchor_present": true,
+      "observed_html_sha256": "ed8c0539ef1dc0b6c2b99f3eec1e594b5d8433512a7632770095942f38d492fe"
+    },
+    {
+      "url": "https://rldcoin.com/",
+      "status": 200,
+      "scope_copy_present": true,
+      "exact_source_revision_present": false,
+      "reproduction_guide_anchor_present": true,
+      "observed_html_sha256": "d2f4bbc498c6809644f24ff5df643ab626a879d8a34b851b193b78dacda9bb1f"
+    }
+  ],
+  "typecheck": "PASS",
+  "website_tests_passed": 6,
+  "production_build": "PASS",
+  "desktop_mobile_navigation_rendering": "PASS",
+  "mobile_horizontal_overflow": false,
+  "browser_errors_observed": false,
+  "mainnet_authorized": false,
+  "physical_interstellar_route_qualified": false,
+  "live_browser_verified": true,
+  "live_mobile_navigation_open_close_verified": true,
+  "old_reproduce_v14_anchor_preserved": true
+}

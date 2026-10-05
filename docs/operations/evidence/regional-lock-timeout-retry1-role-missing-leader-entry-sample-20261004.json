@@ -1,0 +1,59 @@
+{
+  "format": "RLD-ROLE-MISSING-LEADER-ACTUAL-ENTRY-SAMPLE-V1",
+  "completed": true,
+  "source_set_sha256": "10876f4012b0dafb09734055466846dd1e32684350a68cb6b959a42c52338fad",
+  "preflight_report_sha256": "63ee8e0d3435e3489e398d550186938accf8ce7d200efab762216f17dc1895c0",
+  "sampled_entries": [
+    {
+      "carrier": 1,
+      "pid": 57281,
+      "exact_driver_path_verified": true,
+      "reported_consensus": {
+        "height": 14,
+        "round": null,
+        "progress_observation_available": null,
+        "joint_active_slot": 2
+      }
+    },
+    {
+      "carrier": 2,
+      "pid": 57282,
+      "exact_driver_path_verified": true,
+      "reported_consensus": {
+        "height": 14,
+        "round": 2,
+        "progress_observation_available": null,
+        "joint_active_slot": 2
+      }
+    },
+    {
+      "carrier": 3,
+      "pid": 57283,
+      "exact_driver_path_verified": true,
+      "reported_consensus": {
+        "height": 14,
+        "round": 2,
+        "progress_observation_available": null,
+        "joint_active_slot": 2
+      }
+    },
+    {
+      "carrier": 4,
+      "pid": 57284,
+      "exact_driver_path_verified": true,
+      "reported_consensus": {
+        "height": 14,
+        "round": 2,
+        "progress_observation_available": null,
+        "joint_active_slot": 2
+      }
+    }
+  ],
+  "absent_carrier": 0,
+  "absent_carrier_process_not_live": true,
+  "read_only_process_observation": true,
+  "finite_drill_completed": false,
+  "fresh_full_fault_profile_completed": false,
+  "fixture_only": true,
+  "live_rld": false
+}

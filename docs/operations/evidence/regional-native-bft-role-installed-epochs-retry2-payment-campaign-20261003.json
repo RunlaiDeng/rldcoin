@@ -1,0 +1,167 @@
+{
+  "format": "RLD-ROLE-PAYMENT-GROUND-CAMPAIGN-V1",
+  "completed": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "failure": "ValueError: bounded ground observation deadline: third-era payment inclusion and recipient maturity {\"0\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}, \"1\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [], \"process_exit_code\": null}, \"2\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}, \"3\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}, \"4\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"TCP peer refused custody; retain queued evidence\"], \"process_exit_code\": null}}",
+  "currency": "dffdfc437dd564d399d1fc65c6090f2de4d45008076c142bb281f6d1c8644862",
+  "implementation": "5beadb88bcd50424568f6fdeff81233d763bad5f231adab5f293b930b7608bd1",
+  "controller_authority_calls": 0,
+  "observations": [
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 0.215,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 0.324,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 0.325,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 0.307,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 0.221,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 0 before owner payment",
+      "elapsed_seconds": 39.411,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 1.185,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 2.059,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 2.385,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 2.05,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 1.402,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 1 before owner payment",
+      "elapsed_seconds": 72.623,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 6.476,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 10.16,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 10.959,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 10.631,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 5.633,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "ordinary native era 2 before owner payment",
+      "elapsed_seconds": 264.099,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup 0",
+      "elapsed_seconds": 26.312,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 1",
+      "elapsed_seconds": 28.863,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 2",
+      "elapsed_seconds": 34.448,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 3",
+      "elapsed_seconds": 31.91,
+      "observation_bound_seconds": 300
+    },
+    {
+      "phase": "node startup 4",
+      "elapsed_seconds": 21.154,
+      "observation_bound_seconds": 300
+    }
+  ],
+  "owner_payments": [
+    {
+      "era": 0,
+      "owner": "43a72e714401762df66b68c26dfbdf2682aaec9f2474eca4613e424a0fbafd3c",
+      "recipient": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+      "amount": "30",
+      "fee": "1",
+      "signing_height": 3,
+      "intent_id": "1a44b7552fc770af3c75f0d098aef4afba99c069ce2c04be0883aff51ae15e38",
+      "selected_input_total": "100",
+      "signature_and_submission_did_not_debit": true
+    },
+    {
+      "era": 1,
+      "owner": "0beef5a9e679e6a3e134fe27837bff32c7cb5f5d44ea09bcb0e542bad6a4c0cc",
+      "recipient": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+      "amount": "20",
+      "fee": "1",
+      "signing_height": 7,
+      "intent_id": "b39651a3de406f2b28071e1aa46a878057fbbdadaf608e6e8dd62b5a43df81d5",
+      "selected_input_total": "30",
+      "signature_and_submission_did_not_debit": true
+    },
+    {
+      "era": 2,
+      "owner": "d9bf2148748a85c89da5aad8ee0b0fc2d105fd39d41a4c796536354f0ae2900c",
+      "recipient": "5c9c6df261c9cb840475776aaefcd944b405328fab28f9b3a95ef40490d3de84",
+      "amount": "10",
+      "fee": "1",
+      "signing_height": 11,
+      "intent_id": "82cc7e5072af39ea486a9408165d3d1192f6e8748564507c083e90d486b19ebd",
+      "selected_input_total": "20",
+      "signature_and_submission_did_not_debit": true
+    }
+  ],
+  "owned_process_cleanup_verified": true,
+  "mesh_inspection_anchors_sha256": "b5e6c6cc8736f382327e99cb261746fa3b8fa5184f10956e2ff5d612195c8179",
+  "runtime_source_set_sha256": "d77a9e264fb9eac4277178f02b72948511082b8a34d45bd8311953ebd721b0f7",
+  "binary_sha256": "885dd99c6392387d7bc90533401b16c6644b938f67988025289ef1d11b9cc646",
+  "campaign_source_sha256": "ade2b981d83c7bffebe8cc55cc730177402621d51dfc09976c1de7985b3a0222"
+}

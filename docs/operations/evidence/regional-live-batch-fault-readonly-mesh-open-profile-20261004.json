@@ -1,0 +1,214 @@
+{
+  "format": "RLD-STOPPED-READONLY-MESH-OPEN-PROFILE-V1",
+  "completed": true,
+  "source_set_sha256": "1912b64cbd7aaf312f9a4f1fb562871116eeeb271b752237b3c852f7f842dc63",
+  "observer_sha256": "d7b6439bf5b1f89a1f2649f5b2a7d28440acaed2201bfb295d09c1b7838126db",
+  "private_unchanged": true,
+  "no_runtime_startup_signing_recovery_or_head_adoption": true,
+  "strict_public_config_anchors": true,
+  "rows": [
+    {
+      "replica": 1,
+      "attempt": 0,
+      "full_transport_open_seconds": 6.394158,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 1,
+      "attempt": 1,
+      "full_transport_open_seconds": 3.067533,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 1,
+      "attempt": 2,
+      "full_transport_open_seconds": 3.071106,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 1,
+      "attempt": 3,
+      "full_transport_open_seconds": 3.044202,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 2,
+      "attempt": 0,
+      "full_transport_open_seconds": 5.534217,
+      "active_transits": 21,
+      "archives": 384
+    },
+    {
+      "replica": 2,
+      "attempt": 1,
+      "full_transport_open_seconds": 2.719975,
+      "active_transits": 21,
+      "archives": 384
+    },
+    {
+      "replica": 2,
+      "attempt": 2,
+      "full_transport_open_seconds": 2.762481,
+      "active_transits": 21,
+      "archives": 384
+    },
+    {
+      "replica": 2,
+      "attempt": 3,
+      "full_transport_open_seconds": 2.664512,
+      "active_transits": 21,
+      "archives": 384
+    }
+  ],
+  "hot_functions": [
+    {
+      "file": "interstellar_mesh_inspection.py",
+      "line": 91,
+      "function": "__init__",
+      "calls": 8,
+      "self_seconds": 0.012114,
+      "cumulative_seconds": 29.255493
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 646,
+      "function": "archived",
+      "calls": 3320,
+      "self_seconds": 0.072474,
+      "cumulative_seconds": 24.76708
+    },
+    {
+      "file": "interstellar_transfer.py",
+      "line": 37,
+      "function": "canonical",
+      "calls": 52629,
+      "self_seconds": 0.024113,
+      "cumulative_seconds": 15.078793
+    },
+    {
+      "file": "__init__.py",
+      "line": 185,
+      "function": "dumps",
+      "calls": 52629,
+      "self_seconds": 0.039347,
+      "cumulative_seconds": 14.919775
+    },
+    {
+      "file": "encoder.py",
+      "line": 185,
+      "function": "encode",
+      "calls": 52629,
+      "self_seconds": 0.032817,
+      "cumulative_seconds": 14.872518
+    },
+    {
+      "file": "encoder.py",
+      "line": 207,
+      "function": "iterencode",
+      "calls": 49309,
+      "self_seconds": 12.55278,
+      "cumulative_seconds": 12.55278
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 272,
+      "function": "transit_check",
+      "calls": 3484,
+      "self_seconds": 0.01339,
+      "cumulative_seconds": 10.410913
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 71,
+      "function": "digest",
+      "calls": 8541,
+      "self_seconds": 0.005798,
+      "cumulative_seconds": 6.500163
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 302,
+      "function": "_transit_check",
+      "calls": 871,
+      "self_seconds": 0.004074,
+      "cumulative_seconds": 6.063044
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 214,
+      "function": "verify",
+      "calls": 25242,
+      "self_seconds": 0.092146,
+      "cumulative_seconds": 5.675377
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 251,
+      "function": "_packet_frame_check",
+      "calls": 871,
+      "self_seconds": 0.070552,
+      "cumulative_seconds": 4.982927
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+      "calls": 25242,
+      "self_seconds": 4.572577,
+      "cumulative_seconds": 4.572577
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 619,
+      "function": "archive_entry",
+      "calls": 7470,
+      "self_seconds": 0.031863,
+      "cumulative_seconds": 4.449144
+    },
+    {
+      "file": "interstellar_transfer.py",
+      "line": 51,
+      "function": "decode_json",
+      "calls": 12417,
+      "self_seconds": 0.005,
+      "cumulative_seconds": 3.506366
+    },
+    {
+      "file": "__init__.py",
+      "line": 304,
+      "function": "loads",
+      "calls": 12417,
+      "self_seconds": 0.017768,
+      "cumulative_seconds": 3.501366
+    },
+    {
+      "file": "decoder.py",
+      "line": 340,
+      "function": "decode",
+      "calls": 12417,
+      "self_seconds": 0.011625,
+      "cumulative_seconds": 3.309644
+    },
+    {
+      "file": "decoder.py",
+      "line": 351,
+      "function": "raw_decode",
+      "calls": 12417,
+      "self_seconds": 3.007655,
+      "cumulative_seconds": 3.289146
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 346,
+      "function": "receipt_check",
+      "calls": 7518,
+      "self_seconds": 0.012041,
+      "cumulative_seconds": 2.90455
+    }
+  ],
+  "same_host_stopped_profile_not_reconstruction_of_live_fault": true
+}

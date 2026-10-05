@@ -1,0 +1,216 @@
+{
+  "format": "RLD-STOPPED-READONLY-LIVE-VALIDATION-PROFILE-V1",
+  "completed": true,
+  "source_set_sha256": "1912b64cbd7aaf312f9a4f1fb562871116eeeb271b752237b3c852f7f842dc63",
+  "observer_sha256": "a7c14a4cd6bca42b010ee9d93534875c6cfb76043d550850839d1b66b5c699cc",
+  "private_unchanged": true,
+  "no_runtime_startup_signing_recovery_or_head_adoption": true,
+  "strict_public_config_anchors": true,
+  "rows": [
+    {
+      "replica": 1,
+      "attempt": 0,
+      "live_decode_and_validation_seconds": 0.15593,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 1,
+      "attempt": 1,
+      "live_decode_and_validation_seconds": 0.156057,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 1,
+      "attempt": 2,
+      "live_decode_and_validation_seconds": 0.155483,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 1,
+      "attempt": 3,
+      "live_decode_and_validation_seconds": 0.162017,
+      "active_transits": 20,
+      "archives": 446
+    },
+    {
+      "replica": 2,
+      "attempt": 0,
+      "live_decode_and_validation_seconds": 0.172612,
+      "active_transits": 21,
+      "archives": 384
+    },
+    {
+      "replica": 2,
+      "attempt": 1,
+      "live_decode_and_validation_seconds": 0.172515,
+      "active_transits": 21,
+      "archives": 384
+    },
+    {
+      "replica": 2,
+      "attempt": 2,
+      "live_decode_and_validation_seconds": 0.173188,
+      "active_transits": 21,
+      "archives": 384
+    },
+    {
+      "replica": 2,
+      "attempt": 3,
+      "live_decode_and_validation_seconds": 0.173628,
+      "active_transits": 21,
+      "archives": 384
+    }
+  ],
+  "hot_functions": [
+    {
+      "file": "interstellar_mesh.py",
+      "line": 115,
+      "function": "load_state_storage",
+      "calls": 8,
+      "self_seconds": 7.8e-05,
+      "cumulative_seconds": 0.816181
+    },
+    {
+      "file": "interstellar_active_state.py",
+      "line": 73,
+      "function": "decode",
+      "calls": 8,
+      "self_seconds": 0.00266,
+      "cumulative_seconds": 0.806206
+    },
+    {
+      "file": "interstellar_transfer.py",
+      "line": 37,
+      "function": "canonical",
+      "calls": 860,
+      "self_seconds": 0.000423,
+      "cumulative_seconds": 0.74412
+    },
+    {
+      "file": "__init__.py",
+      "line": 185,
+      "function": "dumps",
+      "calls": 860,
+      "self_seconds": 0.000668,
+      "cumulative_seconds": 0.734679
+    },
+    {
+      "file": "encoder.py",
+      "line": 185,
+      "function": "encode",
+      "calls": 860,
+      "self_seconds": 0.000579,
+      "cumulative_seconds": 0.733887
+    },
+    {
+      "file": "encoder.py",
+      "line": 207,
+      "function": "iterencode",
+      "calls": 860,
+      "self_seconds": 0.733068,
+      "cumulative_seconds": 0.733068
+    },
+    {
+      "file": "interstellar_active_state.py",
+      "line": 88,
+      "function": "_unpack",
+      "calls": 8,
+      "self_seconds": 0.00106,
+      "cumulative_seconds": 0.534058
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 504,
+      "function": "validate_state",
+      "calls": 8,
+      "self_seconds": 0.002058,
+      "cumulative_seconds": 0.503721
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 272,
+      "function": "transit_check",
+      "calls": 164,
+      "self_seconds": 0.0005,
+      "cumulative_seconds": 0.373241
+    },
+    {
+      "file": "interstellar_mesh.py",
+      "line": 71,
+      "function": "digest",
+      "calls": 164,
+      "self_seconds": 0.000102,
+      "cumulative_seconds": 0.233231
+    },
+    {
+      "file": "interstellar_active_state.py",
+      "line": 27,
+      "function": "digest",
+      "calls": 120,
+      "self_seconds": 8.2e-05,
+      "cumulative_seconds": 0.170071
+    },
+    {
+      "file": "base64.py",
+      "line": 62,
+      "function": "b64decode",
+      "calls": 164,
+      "self_seconds": 7.4e-05,
+      "cumulative_seconds": 0.139095
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method binascii.a2b_base64>",
+      "calls": 164,
+      "self_seconds": 0.137448,
+      "cumulative_seconds": 0.137448
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'fullmatch' of 're.Pattern' objects>",
+      "calls": 12212,
+      "self_seconds": 0.125129,
+      "cumulative_seconds": 0.125129
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method _hashlib.openssl_sha256>",
+      "calls": 664,
+      "self_seconds": 0.09931,
+      "cumulative_seconds": 0.09931
+    },
+    {
+      "file": "interstellar_transfer.py",
+      "line": 51,
+      "function": "decode_json",
+      "calls": 8,
+      "self_seconds": 1.4e-05,
+      "cumulative_seconds": 0.095572
+    },
+    {
+      "file": "__init__.py",
+      "line": 304,
+      "function": "loads",
+      "calls": 8,
+      "self_seconds": 3.3e-05,
+      "cumulative_seconds": 0.095558
+    },
+    {
+      "file": "decoder.py",
+      "line": 340,
+      "function": "decode",
+      "calls": 8,
+      "self_seconds": 1.6e-05,
+      "cumulative_seconds": 0.090991
+    }
+  ],
+  "full_inspection_archive_reads_excluded_from_timing": true,
+  "identity_creation_signing_lock_contention_excluded_from_timing": true,
+  "same_host_stopped_profile_not_reconstruction_of_live_fault": true
+}

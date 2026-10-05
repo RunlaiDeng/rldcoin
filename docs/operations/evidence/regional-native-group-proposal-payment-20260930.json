@@ -1,0 +1,166 @@
+{
+  "all_owner_journals_observe_same_included_intent": true,
+  "candidate_only": true,
+  "checks": [
+    {
+      "conserved": true,
+      "issued": "100",
+      "liquid": "100",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "200",
+      "liquid": "200",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "group inputs funded and locally finalized"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "partial missing and duplicate approvals preserve ledger value"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "all retained approvals combined without ledger mutation"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "203",
+      "pending_exports": "97",
+      "phase": "earth:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "203",
+      "pending_exports": "97",
+      "phase": "earth:unanimous checkpoint"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "203",
+      "pending_exports": "97",
+      "phase": "complete group export debited and finalized"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "203",
+      "pending_exports": "97",
+      "phase": "group evidence pending without recipient credit"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "group unique import accepted before maturity"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "proxima:native block"
+    },
+    {
+      "conserved": true,
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "phase": "independently retained group consent, native remote debit and matured recipient value"
+    }
+  ],
+  "complete_combination_does_not_change_ledger": true,
+  "cross_device_recovery_qualified": false,
+  "currency": "d81150d9f9104c5403bb672a57297213c4bd48f2e48fd82d386fa2809da0aa22",
+  "destination_fee": "2",
+  "exact_partial_recovery_after_cli_restart": true,
+  "format": "RLD-NATIVE-GROUP-WALLET-CAMPAIGN-V1",
+  "gross_remote_payment": "97",
+  "implementation": "27254501cb4c59a44eddffb4e3052c90ffdfbc9ca3ea63ee00898bb9064d32d3",
+  "independent_operators_qualified": false,
+  "input_amounts": {
+    "8c49e1a9ef33818d589bd95bc681b1b687c498979347d761a1c56cddaa726551": "39",
+    "bd58972fedf31f2b4e8b83ea8b4de587a57b087fbe3c2317e709d28e3746929b": "60"
+  },
+  "intent_id": "d40cb605e9b1d4f33ca6179994f588567f8a85fa9fe58919daa8c496f9b6aee5",
+  "local_fee": "1",
+  "local_refund": "1",
+  "mature_recipient_net": "95",
+  "missing_and_duplicate_approvals_refused": true,
+  "only_own_inputs_reserved": true,
+  "partial_mining_refused": true,
+  "participants": [
+    "43a72e714401762df66b68c26dfbdf2682aaec9f2474eca4613e424a0fbafd3c",
+    "66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a"
+  ],
+  "physical_contact_qualified": false,
+  "regions": {
+    "andromeda": "dba30e2c00d7163a26a1336be72acf4d2bb802a85ff4885a1840e9ab9a03f5a3",
+    "earth": "48b4bc20bbd696cf40d8d2bad60dea683a7448205944d61707b4cb3cdb693c1d",
+    "proxima": "a1738b60a18a04ec507807abd5b097328c6e8932f26a57438fe6a07711efaaae"
+  },
+  "replay_does_not_refund_included_export": true,
+  "same_host": true,
+  "selected_input_total": "99",
+  "wallet_ui_complete": false
+}

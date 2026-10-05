@@ -1,0 +1,19 @@
+{
+  "format": "RLD-ROLE-KEYLESS-COLD-LOCAL-CHECKS-V1",
+  "completed": true,
+  "checks_actually_run": 8,
+  "existing_mapping_checks": 4,
+  "new_absence_checks": 4,
+  "checks_passed": true,
+  "command": "python -B -m unittest test_regional_bft_cold_role_mapping",
+  "tool_result": "Ran 8 tests in 0.013s; OK",
+  "source_sha256": {
+    "verify_regional_bft_role_lifecycle.py": "bdb727c3445c641a3ac12192627277984752894c0ce7497c0d4fea33195dbc0e",
+    "test_regional_bft_cold_role_mapping.py": "c7c034f40a07268a0c307aa9ca3b79ff2297dbfa22ce3fd9fd3dd7dcebe3cc36"
+  },
+  "generated_private_fixture_accessed": false,
+  "ordinary_runtime_or_native_source_changed": false,
+  "full_cycle_or_fault_qualification": false,
+  "fixture_only": true,
+  "live_rld": false
+}

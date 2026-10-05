@@ -1,0 +1,522 @@
+{
+  "format": "RLD-FRAME-STREAM-STOPPED-BFT-COMPONENT-PROFILE-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "adefb680fcd72dfdcda6d9387896da46a4c3928c75ae06eb2817c838602ef1ea",
+  "binary_sha256": "272aead968733b6cd110efab8aef8d667c1550a19c4875f7d640579c07798810",
+  "observer_sha256": "f4d01855acb9113ace85263253f7e75af8350a38a10a95ef8ef631b4e30bfebf",
+  "failed_report_sha256": "db1e863975ebf587e2d52490ddcab833ad083a87e805bfe8e20f9501270a7424",
+  "strict_stopped_observer_report_sha256": "9bada5e75d413bd738d5f7b5df7956b25af9aa78e1d225877d46477e64d76a8e",
+  "readonly_native_calls": [
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "context",
+      "action": "bft-context",
+      "attempt": 0,
+      "duration_seconds": 0.050618,
+      "exact_separate_head_verified": false,
+      "response_json_bytes": 25611,
+      "native_readonly_observation": {
+        "native_parent_height": 16
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "context",
+      "action": "bft-context",
+      "attempt": 1,
+      "duration_seconds": 0.050416,
+      "exact_separate_head_verified": false,
+      "response_json_bytes": 25611,
+      "native_readonly_observation": {
+        "native_parent_height": 16
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "context",
+      "action": "bft-context",
+      "attempt": 2,
+      "duration_seconds": 0.043463,
+      "exact_separate_head_verified": false,
+      "response_json_bytes": 25611,
+      "native_readonly_observation": {
+        "native_parent_height": 16
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "original_voter",
+      "action": "bft-status",
+      "attempt": 0,
+      "duration_seconds": 0.090552,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 4811,
+      "native_readonly_observation": {
+        "native_round": 0,
+        "prepared_present": true,
+        "committed_present": true,
+        "epoch_fence_present": true,
+        "proposed": false
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "original_voter",
+      "action": "bft-status",
+      "attempt": 1,
+      "duration_seconds": 0.082987,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 4811,
+      "native_readonly_observation": {
+        "native_round": 0,
+        "prepared_present": true,
+        "committed_present": true,
+        "epoch_fence_present": true,
+        "proposed": false
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "original_voter",
+      "action": "bft-status",
+      "attempt": 2,
+      "duration_seconds": 0.089542,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 4811,
+      "native_readonly_observation": {
+        "native_round": 0,
+        "prepared_present": true,
+        "committed_present": true,
+        "epoch_fence_present": true,
+        "proposed": false
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "candidate",
+      "action": "signer-status",
+      "attempt": 0,
+      "duration_seconds": 0.048799,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 1086,
+      "native_readonly_observation": {}
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "candidate",
+      "action": "signer-status",
+      "attempt": 1,
+      "duration_seconds": 0.041934,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 1086,
+      "native_readonly_observation": {}
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "candidate",
+      "action": "signer-status",
+      "attempt": 2,
+      "duration_seconds": 0.048335,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 1086,
+      "native_readonly_observation": {}
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "active_new_voter",
+      "action": "bft-status",
+      "attempt": 0,
+      "duration_seconds": 0.385434,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 4815,
+      "native_readonly_observation": {
+        "native_round": 1,
+        "prepared_present": true,
+        "committed_present": true,
+        "epoch_fence_present": false,
+        "proposed": true
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "active_new_voter",
+      "action": "bft-status",
+      "attempt": 1,
+      "duration_seconds": 0.444823,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 4815,
+      "native_readonly_observation": {
+        "native_round": 1,
+        "prepared_present": true,
+        "committed_present": true,
+        "epoch_fence_present": false,
+        "proposed": true
+      }
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "query": "active_new_voter",
+      "action": "bft-status",
+      "attempt": 2,
+      "duration_seconds": 0.44676,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 4815,
+      "native_readonly_observation": {
+        "native_round": 1,
+        "prepared_present": true,
+        "committed_present": true,
+        "epoch_fence_present": false,
+        "proposed": true
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "query": "context",
+      "action": "bft-context",
+      "attempt": 0,
+      "duration_seconds": 0.049367,
+      "exact_separate_head_verified": false,
+      "response_json_bytes": 1333,
+      "native_readonly_observation": {
+        "native_parent_height": 13
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "query": "context",
+      "action": "bft-context",
+      "attempt": 1,
+      "duration_seconds": 0.046531,
+      "exact_separate_head_verified": false,
+      "response_json_bytes": 1333,
+      "native_readonly_observation": {
+        "native_parent_height": 13
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "query": "context",
+      "action": "bft-context",
+      "attempt": 2,
+      "duration_seconds": 0.048452,
+      "exact_separate_head_verified": false,
+      "response_json_bytes": 1333,
+      "native_readonly_observation": {
+        "native_parent_height": 13
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "query": "original_voter",
+      "action": "bft-status",
+      "attempt": 0,
+      "duration_seconds": 0.144079,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 1571,
+      "native_readonly_observation": {
+        "native_round": 0,
+        "prepared_present": true,
+        "committed_present": false,
+        "epoch_fence_present": false,
+        "proposed": true
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "query": "original_voter",
+      "action": "bft-status",
+      "attempt": 1,
+      "duration_seconds": 0.150583,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 1571,
+      "native_readonly_observation": {
+        "native_round": 0,
+        "prepared_present": true,
+        "committed_present": false,
+        "epoch_fence_present": false,
+        "proposed": true
+      }
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "query": "original_voter",
+      "action": "bft-status",
+      "attempt": 2,
+      "duration_seconds": 0.142619,
+      "exact_separate_head_verified": true,
+      "response_json_bytes": 1571,
+      "native_readonly_observation": {
+        "native_round": 0,
+        "prepared_present": true,
+        "committed_present": false,
+        "epoch_fence_present": false,
+        "proposed": true
+      }
+    }
+  ],
+  "storage_cpu": [
+    {
+      "region": "earth",
+      "replica": 1,
+      "attempt": 0,
+      "state_bytes": 2820260,
+      "state_sha256": "a675d333378bbd3214bef27a2fa42599d7fc60a24ae148195d6fe9c686ae7354",
+      "messages": 167,
+      "snapshots": 26,
+      "pack_seconds": 0.011606,
+      "capacity_encode_seconds": 0.010233,
+      "publication_encode_seconds": 0.009427,
+      "body_scan_seconds": 0.00976
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "attempt": 1,
+      "state_bytes": 2820260,
+      "state_sha256": "a675d333378bbd3214bef27a2fa42599d7fc60a24ae148195d6fe9c686ae7354",
+      "messages": 167,
+      "snapshots": 26,
+      "pack_seconds": 0.013246,
+      "capacity_encode_seconds": 0.009861,
+      "publication_encode_seconds": 0.009464,
+      "body_scan_seconds": 0.010012
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "attempt": 2,
+      "state_bytes": 2820260,
+      "state_sha256": "a675d333378bbd3214bef27a2fa42599d7fc60a24ae148195d6fe9c686ae7354",
+      "messages": 167,
+      "snapshots": 26,
+      "pack_seconds": 0.01233,
+      "capacity_encode_seconds": 0.009884,
+      "publication_encode_seconds": 0.009541,
+      "body_scan_seconds": 0.010038
+    },
+    {
+      "region": "earth",
+      "replica": 1,
+      "attempt": 3,
+      "state_bytes": 2820260,
+      "state_sha256": "a675d333378bbd3214bef27a2fa42599d7fc60a24ae148195d6fe9c686ae7354",
+      "messages": 167,
+      "snapshots": 26,
+      "pack_seconds": 0.013222,
+      "capacity_encode_seconds": 0.009686,
+      "publication_encode_seconds": 0.009625,
+      "body_scan_seconds": 0.00995
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "attempt": 0,
+      "state_bytes": 1264006,
+      "state_sha256": "6ab558e50151ca97dc213eba0842880ba0a5fc8d537576137ac627f953ffebf4",
+      "messages": 161,
+      "snapshots": 44,
+      "pack_seconds": 0.006682,
+      "capacity_encode_seconds": 0.004273,
+      "publication_encode_seconds": 0.004356,
+      "body_scan_seconds": 0.003877
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "attempt": 1,
+      "state_bytes": 1264006,
+      "state_sha256": "6ab558e50151ca97dc213eba0842880ba0a5fc8d537576137ac627f953ffebf4",
+      "messages": 161,
+      "snapshots": 44,
+      "pack_seconds": 0.005985,
+      "capacity_encode_seconds": 0.004383,
+      "publication_encode_seconds": 0.004256,
+      "body_scan_seconds": 0.003787
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "attempt": 2,
+      "state_bytes": 1264006,
+      "state_sha256": "6ab558e50151ca97dc213eba0842880ba0a5fc8d537576137ac627f953ffebf4",
+      "messages": 161,
+      "snapshots": 44,
+      "pack_seconds": 0.006279,
+      "capacity_encode_seconds": 0.00435,
+      "publication_encode_seconds": 0.004362,
+      "body_scan_seconds": 0.003856
+    },
+    {
+      "region": "proxima",
+      "replica": 1,
+      "attempt": 3,
+      "state_bytes": 1264006,
+      "state_sha256": "6ab558e50151ca97dc213eba0842880ba0a5fc8d537576137ac627f953ffebf4",
+      "messages": 161,
+      "snapshots": 44,
+      "pack_seconds": 0.005902,
+      "capacity_encode_seconds": 0.004317,
+      "publication_encode_seconds": 0.004261,
+      "body_scan_seconds": 0.003806
+    }
+  ],
+  "hot_storage_functions": [
+    {
+      "file": "interstellar_transfer.py",
+      "line": 51,
+      "function": "decode_json",
+      "calls": 2904,
+      "self_seconds": 0.00077,
+      "cumulative_seconds": 0.123127
+    },
+    {
+      "file": "__init__.py",
+      "line": 304,
+      "function": "loads",
+      "calls": 2904,
+      "self_seconds": 0.003189,
+      "cumulative_seconds": 0.122357
+    },
+    {
+      "file": "interstellar_transfer.py",
+      "line": 37,
+      "function": "canonical",
+      "calls": 16,
+      "self_seconds": 1.7e-05,
+      "cumulative_seconds": 0.112253
+    },
+    {
+      "file": "decoder.py",
+      "line": 340,
+      "function": "decode",
+      "calls": 2904,
+      "self_seconds": 0.002119,
+      "cumulative_seconds": 0.111875
+    },
+    {
+      "file": "__init__.py",
+      "line": 185,
+      "function": "dumps",
+      "calls": 16,
+      "self_seconds": 3.4e-05,
+      "cumulative_seconds": 0.111008
+    },
+    {
+      "file": "encoder.py",
+      "line": 185,
+      "function": "encode",
+      "calls": 16,
+      "self_seconds": 2.6e-05,
+      "cumulative_seconds": 0.110968
+    },
+    {
+      "file": "encoder.py",
+      "line": 207,
+      "function": "iterencode",
+      "calls": 16,
+      "self_seconds": 0.110934,
+      "cumulative_seconds": 0.110934
+    },
+    {
+      "file": "decoder.py",
+      "line": 351,
+      "function": "raw_decode",
+      "calls": 2904,
+      "self_seconds": 0.08181,
+      "cumulative_seconds": 0.108209
+    },
+    {
+      "file": "regional_bft_retention.py",
+      "line": 145,
+      "function": "pack_state",
+      "calls": 8,
+      "self_seconds": 1.8e-05,
+      "cumulative_seconds": 0.071619
+    },
+    {
+      "file": "regional_bft_retention.py",
+      "line": 103,
+      "function": "packed",
+      "calls": 8,
+      "self_seconds": 0.000283,
+      "cumulative_seconds": 0.0716
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<built-in method builtins.sum>",
+      "calls": 8,
+      "self_seconds": 0.000133,
+      "cumulative_seconds": 0.055063
+    },
+    {
+      "file": "profile-frame-stream-stopped-bft-components-20261004.py",
+      "line": 45,
+      "function": "<genexpr>",
+      "calls": 1320,
+      "self_seconds": 0.002191,
+      "cumulative_seconds": 0.05493
+    },
+    {
+      "file": "regional_bft_retention.py",
+      "line": 47,
+      "function": "bodies",
+      "calls": 1320,
+      "self_seconds": 0.00064,
+      "cumulative_seconds": 0.052739
+    },
+    {
+      "file": "regional_bft_retention.py",
+      "line": 44,
+      "function": "record",
+      "calls": 1312,
+      "self_seconds": 0.00028,
+      "cumulative_seconds": 0.052095
+    },
+    {
+      "file": "interstellar_transfer.py",
+      "line": 42,
+      "function": "unique",
+      "calls": 103348,
+      "self_seconds": 0.026399,
+      "cumulative_seconds": 0.026399
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "function": "<method 'decode' of 'bytes' objects>",
+      "calls": 2904,
+      "self_seconds": 0.002552,
+      "cumulative_seconds": 0.002552
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "no_runtime_startup_signing_recovery_or_head_adoption": true,
+  "no_pending_caller_review_or_response": true,
+  "actual_normal_native_readonly_queries": true,
+  "storage_profiling_overhead_included": true,
+  "actual_disk_fsync_publication_and_lock_contention_not_profiled": true,
+  "not_reconstruction_of_live_fault_timing": true,
+  "unique_fault_cause_established": false,
+  "fresh_full_fault_profile_completed": false
+}

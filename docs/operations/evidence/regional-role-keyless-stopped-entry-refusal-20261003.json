@@ -1,0 +1,12 @@
+{
+  "format": "RLD-ROLE-KEYLESS-STOPPED-ENTRY-REFUSAL-V1",
+  "completed": true,
+  "actual_failed_role_run_refused": true,
+  "failed_run_report_sha256": "a0287e57a914dd5c3d1d4acbb4dbadcf8e549c215b8257706acb20a826a2f92b",
+  "failed_cold_report_sha256": "823542640f96e85cea60d0685ef50abd5b1551ed36f743b22cc647f4b05ecbf5",
+  "reason": "exact completed stopped role/payment cold reports required",
+  "source_sha256": "63c63be6443354ede3fac80ad3750d499d56381e5ea937bc5df09c9e34376c1a",
+  "native_or_private_fixture_calls": 0,
+  "fixture_only": true,
+  "live_rld": false
+}

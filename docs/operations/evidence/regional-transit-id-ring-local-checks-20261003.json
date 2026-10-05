@@ -1,0 +1,18 @@
+{
+  "format": "RLD-TRANSIT-ID-RING-LOCAL-CHECKS-V1",
+  "completed": true,
+  "related_tests_actually_run": 169,
+  "related_log_sha256": "fe01ea6e6cba65c0ab19ef7aee2aacacc1b7f8edf765712d5030f6341e75c91d",
+  "new_dynamic_regressions": 2,
+  "old_frozen_v2_actual_archive_regression_failed": true,
+  "old_v2_regression_log_sha256": "6c2a9df63f30bb110e65bc31f391401bfdef7a11f0cbb2f7dfff0005a334bb3d",
+  "failed_initial_test_source_sha256": "14f740a1e34727fd44fbad23fbd5cedd93db811b26260ecdaca3fa1a450cd4ce",
+  "transit_scheduler": "RLD-CONTACT-TRANSIT-SCHEDULER-V3",
+  "nullable_last_packet_id_per_neighbor": true,
+  "old_private_v2_state_refuses_unchanged": true,
+  "old_failed_fixtures_not_restarted": true,
+  "no_native_source_change": true,
+  "native_ordinary_payment_or_full_fault_qualified": false,
+  "fixture_only": true,
+  "live_rld": false
+}

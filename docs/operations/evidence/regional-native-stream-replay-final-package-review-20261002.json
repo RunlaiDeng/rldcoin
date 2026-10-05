@@ -1,0 +1,16 @@
+{
+  "format": "RLD-NATIVE-STREAM-PACKAGE-REVIEW-V1",
+  "reviewed_public_files": 53,
+  "staged_inventory_exact": true,
+  "staged_bytes_exact": true,
+  "whitespace_check_passed": true,
+  "raw_failure_logs_retained_inside_reviewed_source_archives": true,
+  "reviewed_archives": [
+    "research/2026-10-02/regional-native-stream-replay-v25/historical/clippy-native-source-only.tar.gz",
+    "research/2026-10-02/regional-native-stream-replay-v25/historical/compiler-native-source-only.tar.gz",
+    "research/2026-10-02/regional-native-stream-replay-v25/source.tar.gz"
+  ],
+  "generated_private_state_included": false,
+  "fixture_only": true,
+  "live_rld": false
+}

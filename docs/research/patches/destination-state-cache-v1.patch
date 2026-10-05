@@ -1,0 +1,288 @@
+diff --git a/crates/rld-value-successor/src/destination/pow.rs b/crates/rld-value-successor/src/destination/pow.rs
+index 494f658..6dd927d 100644
+--- a/crates/rld-value-successor/src/destination/pow.rs
++++ b/crates/rld-value-successor/src/destination/pow.rs
+@@ -179,7 +179,6 @@ struct Predecessor {
+ #[derive(Clone)]
+ struct Entry {
+     block: Block,
+-    state: DestinationSimulation,
+     cumulative_work: Work,
+ }
+ 
+@@ -190,6 +189,8 @@ pub struct DestinationPowChain {
+     base_state: DestinationSimulation,
+     entries: BTreeMap<Hash, Entry>,
+     tip: Hash,
++    selected_state: Option<DestinationSimulation>,
++    side_state: Option<(Hash, DestinationSimulation)>,
+     halted: bool,
+ }
+ 
+@@ -208,6 +209,8 @@ impl DestinationPowChain {
+             base_state,
+             entries: BTreeMap::new(),
+             tip: genesis,
++            selected_state: None,
++            side_state: None,
+             halted: false,
+         })
+     }
+@@ -235,9 +238,7 @@ impl DestinationPowChain {
+             .map_or(Work::ZERO, |entry| entry.cumulative_work)
+     }
+     pub fn state(&self) -> &DestinationSimulation {
+-        self.entries
+-            .get(&self.tip)
+-            .map_or(&self.base_state, |entry| &entry.state)
++        self.selected_state.as_ref().unwrap_or(&self.base_state)
+     }
+     pub fn block(&self, id: Hash) -> Option<&Block> {
+         self.entries.get(&id).map(|entry| &entry.block)
+@@ -295,14 +296,42 @@ impl DestinationPowChain {
+         Ok(())
+     }
+ 
+-    fn state_at(&self, parent: Hash) -> Result<DestinationSimulation> {
++    fn state_at(&self, parent: Hash, source: &CandidateChain) -> Result<DestinationSimulation> {
++        if parent == self.tip {
++            return Ok(self.state().clone());
++        }
+         if parent == self.genesis {
+             return Ok(self.base_state.clone());
+         }
+-        self.entries
+-            .get(&parent)
+-            .map(|entry| entry.state.clone())
+-            .ok_or("unknown destination parent".into())
++        if let Some((id, state)) = &self.side_state {
++            if *id == parent {
++                return Ok(state.clone());
++            }
++        }
++        // Keep two working states rather than one complete asset map per
++        // retained block. Historical states are rebuilt from the fixed anchor;
++        // every committed root must match, including on orphaned branches.
++        let mut path = Vec::new();
++        let mut cursor = parent;
++        while cursor != self.genesis {
++            let block = &self
++                .entries
++                .get(&cursor)
++                .ok_or("unknown destination parent")?
++                .block;
++            path.push(block);
++            require(path.len() <= MAX_TRACKED_BLOCKS, "destination replay bound")?;
++            cursor = block.header.parent;
++        }
++        let mut state = self.base_state.clone();
++        for block in path.into_iter().rev() {
++            state = self.execute_from(state, &block.header, &block.commands, source, true)?;
++            require(
++                state.root()? == block.header.state_root,
++                "replayed destination state root mismatch",
++            )?;
++        }
++        Ok(state)
+     }
+ 
+     fn work_at(&self, parent: Hash) -> Result<Work> {
+@@ -404,7 +433,23 @@ impl DestinationPowChain {
+         source: &CandidateChain,
+         replay: bool,
+     ) -> Result<DestinationSimulation> {
+-        let mut state = self.state_at(parent)?;
++        self.execute_from(
++            self.state_at(parent, source)?,
++            header,
++            commands,
++            source,
++            replay,
++        )
++    }
++
++    fn execute_from(
++        &self,
++        mut state: DestinationSimulation,
++        header: &Header,
++        commands: &[Command],
++        source: &CandidateChain,
++        replay: bool,
++    ) -> Result<DestinationSimulation> {
+         if !replay {
+             state.audit_source(source)?;
+         }
+@@ -592,12 +637,17 @@ impl DestinationPowChain {
+             id,
+             Entry {
+                 block,
+-                state,
+                 cumulative_work: work,
+             },
+         );
+         if preferred {
++            self.side_state = self
++                .selected_state
++                .replace(state)
++                .map(|prior| (self.tip, prior));
+             self.tip = id;
++        } else {
++            self.side_state = Some((id, state));
+         }
+         Ok(preferred)
+     }
+diff --git a/crates/rld-value-successor/src/destination/pow/storage.rs b/crates/rld-value-successor/src/destination/pow/storage.rs
+index e862852..be4cb6f 100644
+--- a/crates/rld-value-successor/src/destination/pow/storage.rs
++++ b/crates/rld-value-successor/src/destination/pow/storage.rs
+@@ -218,6 +218,7 @@ impl DestinationPowStore {
+                 .get(&previous)
+                 .ok_or("published destination head missing from durable blocks")?;
+             if prior.cumulative_work == chain.chainwork() {
++                chain.selected_state = Some(chain.state_at(previous, source)?);
+                 chain.tip = previous;
+             }
+         }
+diff --git a/crates/rld-value-successor/src/destination/pow/tests.rs b/crates/rld-value-successor/src/destination/pow/tests.rs
+index 308e81d..5064cb3 100644
+--- a/crates/rld-value-successor/src/destination/pow/tests.rs
++++ b/crates/rld-value-successor/src/destination/pow/tests.rs
+@@ -14,6 +14,138 @@ use rld_cross_region::value::{ExportCommand, ExportIntent};
+ use rld_pow::transition::Approval;
+ use rld_pow::{OutPoint, Output, Transfer, BLOCK_SECONDS};
+ 
++#[test]
++fn cold_destination_branch_rebuilds_import_spend_and_reorg_balances() {
++    let (source, _, bundle, source_policy, _, recipient, miner, amount) = source_export();
++    let context = Context {
++        chain_id: Hash([91; 32]),
++        source_policy,
++        started_at: 2_000_000,
++        initial_target: target_limit(),
++        source_finality: None,
++    };
++    let mut destination = DestinationPowChain::new(context.clone()).unwrap();
++    let first = mine_destination(
++        &mut destination,
++        &source,
++        &miner,
++        2_000_001,
++        vec![Command::Import(bundle.clone())],
++    );
++    let mut fork = destination.clone();
++    let mut bytes = b"RLD-EARTH-DESTINATION-POW-IMPORT-OUTPUT\0".to_vec();
++    bytes.extend(context.chain_id.0);
++    bytes.extend(bundle.source_chain_id.0);
++    bytes.extend(bundle.export_id.0);
++    let input = OutPoint {
++        transaction: hash(&bytes),
++        index: 0,
++    };
++    for height in 2..=6 {
++        mine_destination(
++            &mut destination,
++            &source,
++            &miner,
++            2_000_000 + height,
++            vec![],
++        );
++    }
++    let tx = signed_destination_payment(
++        context.chain_id,
++        &recipient,
++        input.clone(),
++        amount.checked_sub(Amount(10)).unwrap(),
++        &generate_identity(),
++    );
++    mine_destination(
++        &mut destination,
++        &source,
++        &miner,
++        2_000_007,
++        vec![Command::Transfer(tx)],
++    );
++    mine_destination(&mut destination, &source, &miner, 2_000_008, vec![]);
++    assert!(destination.state().coin(&input).is_none());
++    let cold = destination
++        .state_at(first.header.id().unwrap(), &source)
++        .unwrap();
++    assert_eq!(cold.root().unwrap(), first.header.state_root);
++    assert_eq!(cold.imported_total(), amount);
++    assert!(cold.coin(&input).is_some());
++    for height in 2..=9 {
++        let block = mine_destination(&mut fork, &source, &miner, 2_000_100 + height, vec![]);
++        destination
++            .accept(&source, block, 2_000_100 + height)
++            .unwrap();
++    }
++    assert_eq!(destination.tip(), fork.tip());
++    assert_eq!(
++        destination.state().root().unwrap(),
++        fork.state().root().unwrap()
++    );
++    assert!(destination.state().coin(&input).is_some());
++    assert_eq!(destination.state().imported_total(), amount);
++    destination.side_state = None;
++    destination
++        .entries
++        .get_mut(&first.header.id().unwrap())
++        .unwrap()
++        .block
++        .header
++        .state_root = Hash::ZERO;
++    assert!(destination
++        .state_at(first.header.id().unwrap(), &source)
++        .unwrap_err()
++        .contains("replayed destination state root mismatch"));
++}
++
++#[test]
++fn destination_restart_restores_saved_equal_work_branch_and_its_assets() {
++    let (source, _, bundle, source_policy, _, _, miner, _) = source_export();
++    let context = Context {
++        chain_id: Hash([91; 32]),
++        source_policy,
++        started_at: 2_000_000,
++        initial_target: target_limit(),
++        source_finality: None,
++    };
++    let mut branch_a = DestinationPowChain::new(context.clone()).unwrap();
++    let mut branch_b = branch_a.clone();
++    let a = mine_destination(
++        &mut branch_a,
++        &source,
++        &miner,
++        2_000_001,
++        vec![Command::Import(bundle)],
++    );
++    let b = mine_destination(&mut branch_b, &source, &miner, 2_000_001, vec![]);
++    // Recovery visits hash order. Persist the opposite tie winner to exercise
++    // HEAD restoration after replay selected a different asset state.
++    let (chosen, other) = if a.header.id().unwrap() > b.header.id().unwrap() {
++        (a, b)
++    } else {
++        (b, a)
++    };
++    let root = std::env::temp_dir().join(format!(
++        "rld-destination-tie-assets-{}",
++        generate_identity().public_key
++    ));
++    let mut store = DestinationPowStore::open(&root, context.clone(), &source, 2_000_100).unwrap();
++    store.accept(&source, chosen.clone(), 2_000_100).unwrap();
++    store.accept(&source, other, 2_000_100).unwrap();
++    let amount = store.chain().state().imported_total();
++    drop(store);
++    let restored = DestinationPowStore::open(&root, context, &source, 2_000_100).unwrap();
++    assert_eq!(restored.chain().tip(), chosen.header.id().unwrap());
++    assert_eq!(
++        restored.chain().state().root().unwrap(),
++        chosen.header.state_root
++    );
++    assert_eq!(restored.chain().state().imported_total(), amount);
++    drop(restored);
++    std::fs::remove_dir_all(root).unwrap();
++}
++
+ #[test]
+ fn earth_import_requires_signed_source_finality_covering_export() {
+     let (mut source, _, bundle, mut policy, _owner, _recipient, miner, _) = source_export();

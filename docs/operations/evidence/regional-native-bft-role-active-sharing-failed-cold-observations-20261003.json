@@ -1,0 +1,586 @@
+{
+  "format": "RLD-ROLE-ACTIVE-SHARING-FAILED-COLD-OBSERVATIONS-V1",
+  "runtime_source_set_sha256": "2f1ede8e5da00b9a003d83424c2c8c2e974aa7952dade03840ee1eefb88d8a64",
+  "native_implementation": "472fc8bfcf6e2ccb969c3f795072140cd179bb6f3adbad4df016e0083cb3437f",
+  "binary_sha256": "0e99c92297b7a02ac10bcc48df92feccf216b9ed3250a14fe54d9c09f2ec903f",
+  "failed_run_report_sha256": "110fa3f0bf98ec234820b63198405c51e9a42156f9c3390ae81922558355b335",
+  "profiler_sha256": "d0048bd2eac4248ffe195b35c489a02cecd2d3c851daf9b1a18040855f69b50d",
+  "native_replays": [
+    {
+      "carrier": 0,
+      "height": 9,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "conserved": true
+    },
+    {
+      "carrier": 1,
+      "height": 9,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "conserved": true
+    },
+    {
+      "carrier": 2,
+      "height": 9,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "conserved": true
+    },
+    {
+      "carrier": 3,
+      "height": 9,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "conserved": true
+    },
+    {
+      "carrier": 4,
+      "height": 9,
+      "active_era": 2,
+      "full_native_genesis_replay": true,
+      "conserved": true
+    }
+  ],
+  "owner_payments": [
+    {
+      "era": 0,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    },
+    {
+      "era": 1,
+      "native_state": "INCLUDED_IN_LOCAL_LEDGER",
+      "reserved_owned_outputs": "0",
+      "full_native_owner_replay": true,
+      "latest_external_head_matches": true
+    }
+  ],
+  "custody_reads": [
+    {
+      "carrier": 0,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 0,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 2,
+      "prepared": false,
+      "committed": false
+    },
+    {
+      "carrier": 1,
+      "era": 0,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": false,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 1,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 2,
+      "era": 0,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": false,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 2,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 2,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 2,
+      "prepared": false,
+      "committed": false
+    },
+    {
+      "carrier": 3,
+      "era": 0,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": false,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 3,
+      "era": 1,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": null,
+      "prepared": null,
+      "committed": null
+    },
+    {
+      "carrier": 3,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 2,
+      "prepared": false,
+      "committed": false
+    },
+    {
+      "carrier": 4,
+      "era": 2,
+      "full_native_cold_journal": true,
+      "external_head_matches": true,
+      "pending_review_retained": false,
+      "native_response_outbox_retained": false,
+      "readiness_verified": true,
+      "round": 2,
+      "prepared": false,
+      "committed": false
+    }
+  ],
+  "current_parent_rounds": [
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Commit",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 0,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 3,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 0,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 0,
+      "round": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Commit",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 1,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 1,
+      "round": 1,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 1,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 1,
+      "round": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 2,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 2,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 2,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 3,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 2,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 2,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 3,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Commit",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 3,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 3,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 3,
+      "round": 1,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 3,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 3,
+      "round": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 4,
+      "round": 0,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 4,
+      "round": 0,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 4,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Commit",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 4,
+      "round": 0,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 3,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 4,
+      "round": 1,
+      "kind": "Proposal",
+      "phase": null,
+      "distinct_native_authenticated_signers": 1,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    },
+    {
+      "carrier": 4,
+      "round": 1,
+      "kind": "Timeout",
+      "phase": null,
+      "distinct_native_authenticated_signers": 3,
+      "value": null
+    },
+    {
+      "carrier": 4,
+      "round": 1,
+      "kind": "Vote",
+      "phase": "Prepare",
+      "distinct_native_authenticated_signers": 2,
+      "value": "ac74f8dbd71d9a44a6ed430dced6b4d77509144a590c68267bdf7a7589ac95d5"
+    }
+  ],
+  "current_parent_authentication_profiles": [
+    {
+      "carrier": 0,
+      "retained_complete_envelopes": 195,
+      "current_parent_complete_envelopes_native_authenticated": 12,
+      "duration_seconds": 1.028
+    },
+    {
+      "carrier": 1,
+      "retained_complete_envelopes": 197,
+      "current_parent_complete_envelopes_native_authenticated": 14,
+      "duration_seconds": 1.209
+    },
+    {
+      "carrier": 2,
+      "retained_complete_envelopes": 193,
+      "current_parent_complete_envelopes_native_authenticated": 10,
+      "duration_seconds": 0.939
+    },
+    {
+      "carrier": 3,
+      "retained_complete_envelopes": 199,
+      "current_parent_complete_envelopes_native_authenticated": 16,
+      "duration_seconds": 1.49
+    },
+    {
+      "carrier": 4,
+      "retained_complete_envelopes": 199,
+      "current_parent_complete_envelopes_native_authenticated": 16,
+      "duration_seconds": 1.291
+    }
+  ],
+  "archive_metadata": [
+    {
+      "carrier": 0,
+      "indexed_archives": 301,
+      "distinct_shared_frames": 205,
+      "actual_retained_files": 506,
+      "actual_retained_bytes": 37858726,
+      "indexed_expanded_bytes": 52080946,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 1,
+      "indexed_archives": 579,
+      "distinct_shared_frames": 205,
+      "actual_retained_files": 784,
+      "actual_retained_bytes": 38782387,
+      "indexed_expanded_bytes": 95017634,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 2,
+      "indexed_archives": 680,
+      "distinct_shared_frames": 205,
+      "actual_retained_files": 885,
+      "actual_retained_bytes": 39108693,
+      "indexed_expanded_bytes": 112059122,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 3,
+      "indexed_archives": 563,
+      "distinct_shared_frames": 211,
+      "actual_retained_files": 774,
+      "actual_retained_bytes": 41042323,
+      "indexed_expanded_bytes": 99524412,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    },
+    {
+      "carrier": 4,
+      "indexed_archives": 265,
+      "distinct_shared_frames": 212,
+      "actual_retained_files": 477,
+      "actual_retained_bytes": 40384740,
+      "indexed_expanded_bytes": 52478576,
+      "referenced_files_present": true,
+      "unindexed_retained_files": 0,
+      "all_payloads_read_and_authenticated": true
+    }
+  ],
+  "active_storage_observations": [
+    {
+      "carrier": 0,
+      "actual_state_image_bytes": 5137941,
+      "active_messages": 22,
+      "pending_unreceipted_messages": 10,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 1,
+      "actual_state_image_bytes": 8843961,
+      "active_messages": 31,
+      "pending_unreceipted_messages": 13,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 2,
+      "actual_state_image_bytes": 12789593,
+      "active_messages": 54,
+      "pending_unreceipted_messages": 54,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 3,
+      "actual_state_image_bytes": 10664992,
+      "active_messages": 65,
+      "pending_unreceipted_messages": 65,
+      "all_active_transport_signatures_authenticated": true
+    },
+    {
+      "carrier": 4,
+      "actual_state_image_bytes": 5895619,
+      "active_messages": 32,
+      "pending_unreceipted_messages": 32,
+      "all_active_transport_signatures_authenticated": true
+    }
+  ],
+  "owned_process_cleanup_verified": true,
+  "all_private_files_unchanged": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "completed_campaign": false,
+  "third_owner_payment_signed": false,
+  "fresh_full_fault_profile_completed": false,
+  "all_retained_envelopes_cold_verified": false,
+  "all_transport_archives_cold_verified": true,
+  "strict_transport_read_only_entry_used": true,
+  "transport_inspection_private_identity_not_loaded": true,
+  "role_carrier_maps_native_and_setup_bound": true,
+  "setup_anchors_sha256": "bb75105ba6a4b129b819e98be45a70299d15bf8bd2289ddd6d9c2710852724f2",
+  "no_capacity_bounds_raised": true,
+  "old_failed_fixtures_not_restarted": true
+}

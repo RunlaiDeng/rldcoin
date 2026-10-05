@@ -1,0 +1,24 @@
+{
+  "format": "RLD-ROLE-TICK-HEAD-RELATED-CHECKS-V1",
+  "completed": true,
+  "exit_code": 0,
+  "duration_seconds": 34.0,
+  "source_set_sha256": "2aecc750b73b9ff45e8eca79de7f88bf0f1165330ed8dc54148285acc6308050",
+  "source_files": 368,
+  "binary_sha256": "81b04b62077c8dfc5d2e0f00f414f1ab576ec48e98ae3379f7e2eaa7dafc0dc2",
+  "native_implementation": "4934067283b0052635b789a8b54b2cc563f8f8069d8d8f49d0a2db6c0c098abc",
+  "unchanged_prior_native_used": true,
+  "new_compiled_default_driver": false,
+  "modules": [
+    "test_regional_bft_role_tick_head",
+    "test_regional_bft_joint_roles_lifecycle",
+    "test_regional_bft_joint_roles",
+    "test_regional_bft_lock_timeout"
+  ],
+  "log_sha256": "73177cd95625985ca7f0d9ed744b83e1e6b0f94958b934c1a5fc3dda8c839343",
+  "fixture_only": true,
+  "live_rld": false,
+  "full_ordinary_cycle_completed": false,
+  "fresh_full_fault_profile_completed": false,
+  "tests_actually_run": 15
+}

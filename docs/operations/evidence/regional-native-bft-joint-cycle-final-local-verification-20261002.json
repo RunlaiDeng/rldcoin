@@ -1,0 +1,13 @@
+{
+  "format": "RLD-JOINT-CYCLE-FINAL-LOCAL-VERIFICATION-V1",
+  "all_owned_cycle_jobs_stopped": true,
+  "release_source_unchanged": true,
+  "primary_code_matches_release": true,
+  "post_release_manifest_document_changes": [
+    "docs/PLAN_STATUS.md"
+  ],
+  "agents_local_updated_separately_not_in_release_manifest": true,
+  "remote_files_exact": 63,
+  "public_commit": "99c8e5373053f158fe0380e11cb88af38e68460d",
+  "goal_complete": false
+}

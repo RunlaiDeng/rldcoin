@@ -1,0 +1,16 @@
+{
+  "format": "RLD-ROLE-MISSING-LEADER-FAILED-ENTRY-REFUSAL-V1",
+  "actual_cli_exit_code": 1,
+  "retained_actual_failed_cycle_report_sha256": "a0287e57a914dd5c3d1d4acbb4dbadcf8e549c215b8257706acb20a826a2f92b",
+  "retained_actual_failed_cold_observation_sha256": "823542640f96e85cea60d0685ef50abd5b1551ed36f743b22cc647f4b05ecbf5",
+  "controller_sha256": "265e65558618987b20530d67ce7fee5d7a43765c6a1d3872c2ea6d3ee1b56159",
+  "actual_negative_output_sha256": "dbd0613f1274a83ef5ca32cebd4a88a081cc65f1833b7f7cc6403e0f1383b726",
+  "exact_completed_cycle_gate_refused": true,
+  "unreachable_source_binary_manifest_arguments_not_accessed": true,
+  "no_drill_private_directory_created": true,
+  "no_preflight_report_created": true,
+  "native_signing_or_recovery_calls": 0,
+  "positive_drill_entry_observed": false,
+  "fixture_only": true,
+  "live_rld": false
+}

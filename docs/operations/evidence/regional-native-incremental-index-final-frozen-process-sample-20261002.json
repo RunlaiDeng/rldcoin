@@ -1,0 +1,15 @@
+{
+  "format": "RLD-NATIVE-PAGED-EVENTS-ORDINARY-STORE-SAMPLE-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "native_implementation": "87f7bfdf37f12b4bc734f87c7ca55717ccfcb1f4cf868177ad5be8e20a8143ed",
+  "height": 361,
+  "actual_signed_local_payments": 353,
+  "return_net": "98",
+  "cold_private_restore_equal": true,
+  "sealed_event_pages": 23,
+  "retained_tail_events": 0,
+  "legacy_event_bounds_unchanged": true,
+  "snapshot_and_archive_bounds_unchanged": true,
+  "full_long_history_qualified": false
+}

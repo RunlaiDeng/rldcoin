@@ -1,0 +1,10 @@
+{
+  "test_only": true,
+  "has_monetary_value": false,
+  "mainnet_authorized": false,
+  "upstream": "https://api.rldcoin.com/v1/testnet/earth",
+  "initial_sync_schema_accepted": true,
+  "source_chain_id": "e8a8dd66eac5a8fe70816901c6b06035fc92b2193213d8fa0f00d2f10a32438e",
+  "returned_blocks": 8,
+  "private_native_adopted_normalization": true
+}

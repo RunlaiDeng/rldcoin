@@ -1,0 +1,665 @@
+{
+  "format": "RLD-REGIONAL-BFT-SUSTAINED-GROUND-CAMPAIGN-V2",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": false,
+  "failure": "bounded ground observation deadline: retained new export imports uniquely and matures after contact restoration {\"('earth', 1)\": [\"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] Resource temporarily unavailable\"], \"('earth', 2)\": [], \"('earth', 3)\": [\"TCP peer refused custody; retain queued evidence\"], \"('proxima', 0)\": [], \"('proxima', 1)\": [\"TCP peer refused custody; retain queued evidence\", \"TCP peer refused custody; retain queued evidence\", \"[Errno 35] Resource temporarily unavailable\", \"native rejected: regional candidate rejected: lock acquisition failed because the operation would block\", \"native rejected: regional candidate rejected: lock acquisition failed because the operation would block\", \"native rejected: regional candidate rejected: lock acquisition failed because the operation would block\", \"native rejected: regional candidate rejected: lock acquisition failed because the operation would block\"], \"('proxima', 2)\": [\"TCP peer refused custody; retain queued evidence\"], \"('proxima', 3)\": [], \"('andromeda', 0)\": [\"TCP peer refused custody; retain queued evidence\"], \"('andromeda', 1)\": [\"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] Resource temporarily unavailable\"], \"('andromeda', 2)\": [\"TCP peer refused custody; retain queued evidence\"], \"('andromeda', 3)\": [\"TCP peer refused custody; retain queued evidence\"], \"('earth', 0)\": [\"TCP peer refused custody; retain queued evidence\"]}",
+  "same_host_same_controller": true,
+  "private_fixture_copy_not_independent_custody": true,
+  "sealed_source_state_unchanged": true,
+  "runtime_source_set_sha256": "3c0e00521a1f394a54844a3f32902e3dac6f7aec28cba4e9fd655919c540d46a",
+  "drill_source_sha256": "4d0b07e059ae2d95d07a264c4c3260648993b6f7222eddeee3eff2f68ab245af",
+  "native_implementation": "7cfff8f8b25bbb0b7d3219c54bbea344022b01095f525dcc46e3360b35a392f5",
+  "maximum_local_stop_height": 24,
+  "phase_observation_bound_seconds": 600,
+  "controller_generated_consensus_messages": 0,
+  "controller_carried_payment_proofs": 0,
+  "controller_installed_checkpoints": 0,
+  "power_loss_qualified": false,
+  "sustained_BFT_liveness_qualified": false,
+  "cross_host_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false,
+  "result": {},
+  "duration_seconds": 956.535,
+  "offered_owner_requests": [
+    {
+      "region": "earth",
+      "kind": "export",
+      "amount": "10",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "proxima",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "andromeda",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    }
+  ],
+  "fault_events": [
+    {
+      "kind": "faults_applied",
+      "offline_validator": {
+        "region": "earth",
+        "replica": 0
+      },
+      "interregion_contacts": "earth/proxima both directions cut",
+      "local_stop_height": 24
+    },
+    {
+      "kind": "validator_offline",
+      "region": "earth",
+      "replica": 0,
+      "starting_height": 7,
+      "minimum_online_height": 9,
+      "native_signer_and_external_head_unchanged": true,
+      "certified_view_change_seen": true
+    },
+    {
+      "kind": "interregion_contacts_restored",
+      "elapsed_seconds": 329.332
+    }
+  ],
+  "conservation_checks": [
+    {
+      "phase": "certified export stays deducted while interregion contact is cut; remote local payments continue",
+      "issued": "300",
+      "liquid": "290",
+      "pending_exports": "10",
+      "observed_export_count": 4,
+      "observed_import_count": 3,
+      "unresolved_export_count": 1,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          7,
+          9,
+          9,
+          9
+        ],
+        "proxima": [
+          7,
+          7,
+          8,
+          7
+        ],
+        "andromeda": [
+          6,
+          6,
+          6,
+          6
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "failed bounded observation; all evidence retained",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          12,
+          12,
+          12,
+          12
+        ],
+        "proxima": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "andromeda": [
+          11,
+          11,
+          11,
+          11
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    },
+    {
+      "phase": "stopped native stores: complete replay of all twelve compatible prefixes",
+      "issued": "300",
+      "liquid": "300",
+      "pending_exports": "0",
+      "observed_export_count": 4,
+      "observed_import_count": 4,
+      "unresolved_export_count": 0,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          12,
+          12,
+          12,
+          12
+        ],
+        "proxima": [
+          10,
+          11,
+          10,
+          10
+        ],
+        "andromeda": [
+          11,
+          11,
+          12,
+          12
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    }
+  ],
+  "observations": [
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 11.847,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 11.456,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 10.599,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 4.291,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 7.987,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 6.754,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 5.717,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 6.135,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 11.693,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 10.637,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 8.812,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "three voters progress past the offline height-8 leader",
+      "elapsed_seconds": 161.375,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "both isolated remote regions continue local certified progress",
+      "elapsed_seconds": 16.534,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "node startup earth-0",
+      "elapsed_seconds": 16.5,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "offline validator catches up through pinned TLS",
+      "elapsed_seconds": 28.014,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "phase_samples": [
+    {
+      "phase": "certified export stays deducted while interregion contact is cut; remote local payments continue",
+      "elapsed_seconds": 284.368,
+      "nodes": [
+        {
+          "region": "earth",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 98,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 120,
+          "archived_transport_records": 192,
+          "tcp_local_lock_retries": 918,
+          "tcp_local_lock_exhaustions": 31,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)",
+            "[Errno 61] Connection refused"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 95,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 120,
+          "archived_transport_records": 176,
+          "tcp_local_lock_retries": 2341,
+          "tcp_local_lock_exhaustions": 77,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 9,
+          "round": 0,
+          "retained_bft_messages": 96,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 127,
+          "archived_transport_records": 48,
+          "tcp_local_lock_retries": 579,
+          "tcp_local_lock_exhaustions": 19,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 84,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 114,
+          "archived_transport_records": 32,
+          "tcp_local_lock_retries": 359,
+          "tcp_local_lock_exhaustions": 9,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 84,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 119,
+          "archived_transport_records": 160,
+          "tcp_local_lock_retries": 3106,
+          "tcp_local_lock_exhaustions": 103,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)",
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 83,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 116,
+          "archived_transport_records": 128,
+          "tcp_local_lock_retries": 2075,
+          "tcp_local_lock_exhaustions": 66,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 7,
+          "round": 0,
+          "retained_bft_messages": 84,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 116,
+          "archived_transport_records": 32,
+          "tcp_local_lock_retries": 372,
+          "tcp_local_lock_exhaustions": 9,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 6,
+          "round": 0,
+          "retained_bft_messages": 70,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 120,
+          "archived_transport_records": 0,
+          "tcp_local_lock_retries": 347,
+          "tcp_local_lock_exhaustions": 12,
+          "sampled_errors": []
+        },
+        {
+          "region": "andromeda",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 6,
+          "round": 0,
+          "retained_bft_messages": 70,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 112,
+          "archived_transport_records": 112,
+          "tcp_local_lock_retries": 2797,
+          "tcp_local_lock_exhaustions": 102,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 6,
+          "round": 0,
+          "retained_bft_messages": 73,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 114,
+          "archived_transport_records": 96,
+          "tcp_local_lock_retries": 1508,
+          "tcp_local_lock_exhaustions": 51,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 6,
+          "round": 0,
+          "retained_bft_messages": 73,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 124,
+          "archived_transport_records": 0,
+          "tcp_local_lock_retries": 410,
+          "tcp_local_lock_exhaustions": 16,
+          "sampled_errors": []
+        }
+      ]
+    },
+    {
+      "phase": "failed bounded observation; all evidence retained",
+      "elapsed_seconds": 929.553,
+      "nodes": [
+        {
+          "region": "earth",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 0,
+          "retained_bft_messages": 146,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 112,
+          "archived_transport_records": 352,
+          "tcp_local_lock_retries": 5555,
+          "tcp_local_lock_exhaustions": 234,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 0,
+          "retained_bft_messages": 148,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 123,
+          "archived_transport_records": 320,
+          "tcp_local_lock_retries": 5008,
+          "tcp_local_lock_exhaustions": 189,
+          "sampled_errors": []
+        },
+        {
+          "region": "earth",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 0,
+          "retained_bft_messages": 148,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 117,
+          "archived_transport_records": 144,
+          "tcp_local_lock_retries": 1647,
+          "tcp_local_lock_exhaustions": 64,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 10,
+          "round": 1,
+          "retained_bft_messages": 122,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 117,
+          "archived_transport_records": 96,
+          "tcp_local_lock_retries": 1146,
+          "tcp_local_lock_exhaustions": 42,
+          "sampled_errors": []
+        },
+        {
+          "region": "proxima",
+          "replica": 1,
+          "consensus_observation_complete": false,
+          "height": null,
+          "round": null,
+          "retained_bft_messages": null,
+          "consensus_diagnostic": "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+          "active_transport_packets": 121,
+          "archived_transport_records": 272,
+          "tcp_local_lock_retries": 9229,
+          "tcp_local_lock_exhaustions": 360,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence",
+            "TCP peer refused custody; retain queued evidence",
+            "[Errno 35] Resource temporarily unavailable",
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+            "native rejected: regional candidate rejected: lock acquisition failed because the operation would block"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 10,
+          "round": 2,
+          "retained_bft_messages": 123,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 123,
+          "archived_transport_records": 240,
+          "tcp_local_lock_retries": 5412,
+          "tcp_local_lock_exhaustions": 208,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "proxima",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 10,
+          "round": 2,
+          "retained_bft_messages": 123,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 120,
+          "archived_transport_records": 96,
+          "tcp_local_lock_retries": 1432,
+          "tcp_local_lock_exhaustions": 52,
+          "sampled_errors": []
+        },
+        {
+          "region": "andromeda",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 11,
+          "round": 0,
+          "retained_bft_messages": 136,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 114,
+          "archived_transport_records": 112,
+          "tcp_local_lock_retries": 995,
+          "tcp_local_lock_exhaustions": 40,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 1,
+          "consensus_observation_complete": true,
+          "height": 11,
+          "round": 0,
+          "retained_bft_messages": 139,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 116,
+          "archived_transport_records": 288,
+          "tcp_local_lock_retries": 8364,
+          "tcp_local_lock_exhaustions": 348,
+          "sampled_errors": [
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] Resource temporarily unavailable",
+            "[Errno 35] Resource temporarily unavailable"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 2,
+          "consensus_observation_complete": true,
+          "height": 11,
+          "round": 0,
+          "retained_bft_messages": 137,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 126,
+          "archived_transport_records": 256,
+          "tcp_local_lock_retries": 4658,
+          "tcp_local_lock_exhaustions": 187,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "andromeda",
+          "replica": 3,
+          "consensus_observation_complete": true,
+          "height": 11,
+          "round": 0,
+          "retained_bft_messages": 137,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 115,
+          "archived_transport_records": 112,
+          "tcp_local_lock_retries": 1436,
+          "tcp_local_lock_exhaustions": 61,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        },
+        {
+          "region": "earth",
+          "replica": 0,
+          "consensus_observation_complete": true,
+          "height": 12,
+          "round": 0,
+          "retained_bft_messages": 148,
+          "consensus_diagnostic": null,
+          "active_transport_packets": 124,
+          "archived_transport_records": 128,
+          "tcp_local_lock_retries": 456,
+          "tcp_local_lock_exhaustions": 20,
+          "sampled_errors": [
+            "TCP peer refused custody; retain queued evidence"
+          ]
+        }
+      ]
+    }
+  ],
+  "ciphertext_fault_relays": [
+    {
+      "attempts": 85,
+      "refused_connections": 54,
+      "forwarded_connections": 31,
+      "ciphertext_bytes_forwarded": 8402575,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    },
+    {
+      "attempts": 81,
+      "refused_connections": 35,
+      "forwarded_connections": 46,
+      "ciphertext_bytes_forwarded": 10368720,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    }
+  ],
+  "native_cli_calls": 2526,
+  "node_process_starts": 12,
+  "owned_process_cleanup_verified": true
+}

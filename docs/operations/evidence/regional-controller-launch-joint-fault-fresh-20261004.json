@@ -1,0 +1,206 @@
+{
+  "format": "RLD-JOINT-BFT-SUSTAINED-GROUND-CAMPAIGN-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": false,
+  "failure": "'active_messages'",
+  "mode": "fresh_fault_profile",
+  "fresh_fault_profile_completed": false,
+  "retained_payment_recovery_completed": false,
+  "retained_failed_report_sha256": null,
+  "same_host_same_controller": true,
+  "private_fixture_copy_not_independent_custody": true,
+  "sealed_source_state_unchanged": true,
+  "runtime_source_set_sha256": "0f87be35e627c6b17dbe0ab3503ed62ebe1fe28f0826c466818ccf2533ffbc95",
+  "drill_source_sha256": "6f9fa54eab32d65db1b91a843b2d959aa72a8fd9391181680a483086c06a74f5",
+  "native_implementation": "948ab942ac43bddd287cedffef630239425eae8a0e2ec463fb3854fdda1bcee2",
+  "maximum_local_stop_height": 24,
+  "phase_observation_bound_seconds": 600,
+  "controller_generated_consensus_messages": 0,
+  "controller_carried_payment_proofs": 0,
+  "controller_installed_checkpoints": 0,
+  "power_loss_qualified": false,
+  "sustained_BFT_liveness_qualified": false,
+  "cross_host_qualified": false,
+  "independent_operators_qualified": false,
+  "physical_route_qualified": false,
+  "result": {},
+  "activated_epoch": "9c447e99f806892c2bdaae48a7d9f962765bed7c0e1a7820fb836f6e89cfa510",
+  "cycle_report_sha256": "55962d77057b30360a7f23b8fc38c56997193ed0fd3535172d0ca61eac945fc9",
+  "cycle_cold_report_sha256": "10ea3a5229511a6f74986382d007ea63a2cf1c941ae820aea65db4c87e632a15",
+  "cycle_source_set_sha256": "0f87be35e627c6b17dbe0ab3503ed62ebe1fe28f0826c466818ccf2533ffbc95",
+  "controller_generated_epoch_approvals": 0,
+  "controller_installed_epoch_activation": 0,
+  "uses_current_new_voter_journals": true,
+  "keyless_carrier_not_initialized": true,
+  "overlapping_membership_qualified": false,
+  "controller_read_only_lock_retries": 0,
+  "duration_seconds": 249.603,
+  "offered_owner_requests": [
+    {
+      "region": "earth",
+      "kind": "export",
+      "amount": "10",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "proxima",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    },
+    {
+      "region": "andromeda",
+      "kind": "local_payment",
+      "amount": "1",
+      "owner_approval_released": true,
+      "native_queue_accepted": true,
+      "queue_outcome": "accepted",
+      "queue_did_not_debit": true
+    }
+  ],
+  "fault_events": [
+    {
+      "kind": "faults_applied",
+      "offline_validator": {
+        "region": "earth",
+        "replica": 0
+      },
+      "interregion_contacts": "earth/proxima both directions cut",
+      "local_stop_height": 24
+    }
+  ],
+  "conservation_checks": [
+    {
+      "phase": "stopped native stores: complete replay of all twelve compatible prefixes",
+      "issued": "300",
+      "liquid": "290",
+      "pending_exports": "10",
+      "observed_export_count": 4,
+      "observed_import_count": 3,
+      "unresolved_export_count": 1,
+      "conserved": true,
+      "compatible_prefixes_verified": true,
+      "replica_heights": {
+        "earth": [
+          11,
+          13,
+          13,
+          13
+        ],
+        "proxima": [
+          6,
+          7,
+          7,
+          7
+        ],
+        "andromeda": [
+          8,
+          8,
+          8,
+          8
+        ]
+      },
+      "scope": "highest observed certified prefix per region; not all-replica agreement"
+    }
+  ],
+  "observations": [
+    {
+      "phase": "node startup earth-1",
+      "elapsed_seconds": 6.668,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-2",
+      "elapsed_seconds": 6.046,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup earth-3",
+      "elapsed_seconds": 7.722,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-0",
+      "elapsed_seconds": 2.93,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-1",
+      "elapsed_seconds": 3.954,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-2",
+      "elapsed_seconds": 3.539,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup proxima-3",
+      "elapsed_seconds": 3.131,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-0",
+      "elapsed_seconds": 4.164,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-1",
+      "elapsed_seconds": 4.393,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-2",
+      "elapsed_seconds": 4.155,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "node startup andromeda-3",
+      "elapsed_seconds": 5.436,
+      "observation_bound_seconds": 60
+    },
+    {
+      "phase": "three voters progress past offline parent-12 leader",
+      "elapsed_seconds": 180.888,
+      "observation_bound_seconds": 600
+    },
+    {
+      "phase": "both isolated remote regions continue local certified progress",
+      "elapsed_seconds": 0.006,
+      "observation_bound_seconds": 600
+    }
+  ],
+  "phase_samples": [],
+  "ciphertext_fault_relays": [
+    {
+      "attempts": 80,
+      "refused_connections": 80,
+      "forwarded_connections": 0,
+      "ciphertext_bytes_forwarded": 0,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    },
+    {
+      "attempts": 54,
+      "refused_connections": 54,
+      "forwarded_connections": 0,
+      "ciphertext_bytes_forwarded": 0,
+      "max_workers": 2,
+      "max_connection_seconds": 4,
+      "max_connection_bytes": 67108864,
+      "TLS_terminated": false
+    }
+  ],
+  "native_cli_calls": 65,
+  "node_process_starts": 11,
+  "owned_process_cleanup_verified": true
+}

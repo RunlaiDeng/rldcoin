@@ -1,0 +1,43 @@
+{
+  "format": "RLD-FAILED-SUSTAINED-NATIVE-PREFIX-CHECK-V1",
+  "fixture_only": true,
+  "failure_remains_failed": true,
+  "cold_report_sha256": "e46280402365dfa9921854e70ed41be0bfd19a87f95550e4dd5a4ca3a4fcbdda",
+  "regions": [
+    {
+      "region": "earth",
+      "native_heights": [
+        7,
+        8,
+        8,
+        9
+      ],
+      "highest_certified_height": 9,
+      "all_observed_native_tips_are_prefixes_of_highest_complete_certified_history": true
+    },
+    {
+      "region": "proxima",
+      "native_heights": [
+        7,
+        7,
+        7,
+        7
+      ],
+      "highest_certified_height": 7,
+      "all_observed_native_tips_are_prefixes_of_highest_complete_certified_history": true
+    },
+    {
+      "region": "andromeda",
+      "native_heights": [
+        6,
+        6,
+        6,
+        6
+      ],
+      "highest_certified_height": 6,
+      "all_observed_native_tips_are_prefixes_of_highest_complete_certified_history": true
+    }
+  ],
+  "all_replica_agreement": false,
+  "new_export_debit_in_highest_prefix_must_be_retained": true
+}

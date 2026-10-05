@@ -1,0 +1,22 @@
+{
+  "format": "RLD-TRANSIT-FAILED-SEND-BATCH-OVERLAP-V1",
+  "source_set_sha256": "da2b75eb153632ae1fac371694910000198a0d352e65fb4ff65cda929bff959d",
+  "producer_sha256": "a693f086c2d505265a701bbaedae5df58155af64d8781e3880d57959f97cc527",
+  "fixed_eligible_pool": 25,
+  "prepared_exchanges": 6,
+  "selected_item_occurrences": 24,
+  "distinct_selected_packets": 9,
+  "consecutive_exact_packet_overlaps": [
+    3,
+    3,
+    3,
+    3,
+    3
+  ],
+  "all_pending_evidence_retained": true,
+  "no_socket_or_native_value": true,
+  "no_original_private_fixture_read": true,
+  "not_unique_cause_of_failed_campaign": true,
+  "fixture_only": true,
+  "live_rld": false
+}

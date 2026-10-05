@@ -1,0 +1,73 @@
+{
+  "format": "RLD-BOUNDED-PHASE-RUNTIME-CUSTODY-CHECK-V1",
+  "completed": true,
+  "source_set_sha256": "60c4ec2fbbf54499c71544d1a9fb2c0a0ef7047a51f14bee11bc30486340fb46",
+  "runtime_source_sha256": "0e566d3355649fe3fcbf3b47af60df4e434d234832bbcc28b47132a444476dea",
+  "binary_sha256": "2464fe948694b8dca6b0ee51b0fd66448cd9030069b142ffbad86c62f1437d4a",
+  "producer_sha256": "f144bb06b5c147583aa9a9add152fe2ecf0447fea27725cce6160f6f1c216445",
+  "source_unchanged": true,
+  "fresh_private_diagnostic_fixtures": 3,
+  "cases": [
+    {
+      "boundary": "normal",
+      "passed": true,
+      "native_records_at_injected_failure": null,
+      "reopen_did_not_repeat_retained_signature": true,
+      "native_own_records": 2,
+      "own_retained_phases": [
+        "Prepare",
+        "Commit"
+      ],
+      "same_round": 0,
+      "separate_caller_head_exact": true,
+      "pending_and_outbox_clear": true,
+      "cold_runtime_reopen_checked": true,
+      "native_height": 0,
+      "controller_carried_setup_votes": true,
+      "ordinary_transport_delivery_qualified": false
+    },
+    {
+      "boundary": "commit-pending-publication-failure",
+      "passed": true,
+      "native_records_at_injected_failure": 1,
+      "reopen_did_not_repeat_retained_signature": true,
+      "native_own_records": 2,
+      "own_retained_phases": [
+        "Prepare",
+        "Commit"
+      ],
+      "same_round": 0,
+      "separate_caller_head_exact": true,
+      "pending_and_outbox_clear": true,
+      "cold_runtime_reopen_checked": true,
+      "native_height": 0,
+      "controller_carried_setup_votes": true,
+      "ordinary_transport_delivery_qualified": false
+    },
+    {
+      "boundary": "commit-outbox-publication-failure",
+      "passed": true,
+      "native_records_at_injected_failure": 2,
+      "reopen_did_not_repeat_retained_signature": true,
+      "native_own_records": 2,
+      "own_retained_phases": [
+        "Prepare",
+        "Commit"
+      ],
+      "same_round": 0,
+      "separate_caller_head_exact": true,
+      "pending_and_outbox_clear": true,
+      "cold_runtime_reopen_checked": true,
+      "native_height": 0,
+      "controller_carried_setup_votes": true,
+      "ordinary_transport_delivery_qualified": false
+    }
+  ],
+  "duration_seconds": 3.097,
+  "fixture_only": true,
+  "live_rld": false,
+  "same_host": true,
+  "full_cycle_completed": false,
+  "process_sigkill_or_power_loss_qualified": false,
+  "independent_custody_qualified": false
+}

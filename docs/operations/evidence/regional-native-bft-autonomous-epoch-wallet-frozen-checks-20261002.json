@@ -1,0 +1,28 @@
+{
+  "format": "RLD-BFT-AUTONOMOUS-JOINT-FROZEN-CHECKS-V1",
+  "source_set_sha256": "d14db018bcd42cba1aad629f076c2db9397de0953b7d4689e69f15425cc28e43",
+  "native_implementation": "dee623baa0d39c625a142fa04a6f792342a553cac7d30042997a624c962836e6",
+  "source_files": 268,
+  "source_unchanged": true,
+  "checked_release_build_passed": true,
+  "strict_clippy_passed": true,
+  "frozen_native_tests": 158,
+  "frozen_process_tests": 71,
+  "joint_process_recovery_tests": 11,
+  "legacy_stream_optional_cli_checks_enabled": true,
+  "binary_sha256": "535c7dda684ff8f1971352f40c6b15305d8cd4ffe46de67fda8b81f26a2970f2",
+  "fixture_only": true,
+  "live_rld": false,
+  "native_four_replica_autonomous_campaign_completed": true,
+  "preconfigured_autonomous_epoch_ceremony": true,
+  "fresh_full_fault_profile_run": false,
+  "full_long_history_qualified": false,
+  "published": false,
+  "log_sha256": {
+    "clippy": "683a3a284a2a79633e9baec4dcbaffef2caab3a75e5e38e9a9a613fda374b0c9",
+    "checked-build": "48bfd4c75d305e31f6b5e80512a6c27c22cad718206720fc30faf3d6b79ac4f7",
+    "native-tests": "897e0854f3a1ec48488510b04247ffb123dde8cc1434cbdadcac9350704e7b86",
+    "process-tests": "fce263c22e1ea444afce0efcef66ceabc8d7771829ab0d374e4991cdb8dbb1ba",
+    "autonomous-campaign": "d2beefa0f26f45776dd410c5822c100395410c37bcbff4506bebd78fb5a8928a"
+  }
+}

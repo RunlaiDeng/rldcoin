@@ -1,0 +1,55 @@
+{
+  "format": "RLD-BFT-ACTIVATION-OBSERVATION-FROZEN-CHECKS-V1",
+  "completed": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "783bab9d4c1c22c56fc3af9ac60f4083038e898481ee017d0b3f9d0b120611b7",
+  "source_files": 363,
+  "native_source_sha256": "7161f7a6506d57c8ab0d42a6811d21d3edb1e4ee337860311789c54761c61019",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "native_implementation": "4934067283b0052635b789a8b54b2cc563f8f8069d8d8f49d0a2db6c0c098abc",
+  "core_exact_prior": true,
+  "native_tests_reused_not_rerun": 0,
+  "strict_clippy_reused_not_rerun": false,
+  "fresh_ordinary_cycle_completed": false,
+  "fresh_full_fault_profile_completed": false,
+  "all_capacity_and_round_deadline_limits_unchanged": true,
+  "phases": [
+    {
+      "phase": "build",
+      "exit_code": 0,
+      "duration_seconds": 41.665,
+      "log_sha256": "848c2d8785ce9be797c6ae112df8006ee5022f9d6a3eb4a495caaa5fb298f13f"
+    },
+    {
+      "phase": "clippy",
+      "exit_code": 0,
+      "duration_seconds": 15.296,
+      "log_sha256": "39642bd073301fb805fee80cfb05fd79a2523e26e44d2ec00b8cc2b82802e08d"
+    },
+    {
+      "phase": "native-tests",
+      "exit_code": 0,
+      "duration_seconds": 250.501,
+      "log_sha256": "616f113491e8347402d0fb617a2db90fe7833b3d5d73d45694d9c04d0529ec28"
+    },
+    {
+      "phase": "process-tests",
+      "exit_code": 1,
+      "duration_seconds": 253.419,
+      "log_sha256": "73a55d585c96a26ccf669e97bf24c3dd20f3d4e05afa538de72bc16a1857caa4"
+    }
+  ],
+  "runner_sha256": "24a6c40a002ab45ac623862c2be0cfe8067bc2640e8dcc959fbc47885b944553",
+  "actually_rebuilt_from_frozen_source": true,
+  "fresh_native_implementation": true,
+  "fresh_fixture_currency": true,
+  "fixture_currency": "377f710caddb7b99284f7437f217eb07929cc73dcd20174a86eac2c9f6bf0b64",
+  "binary_sha256": "bad3075a4f5f553aff89711e8a26fdebf27329376160581b1987a7d87b910792",
+  "fixture_helper_sha256": "eafc995bf31b3b688308a7aba4c7e177e2cfc267a6f0ad815552c4bf22d55881",
+  "compiled_manifest_path": "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-bft-activation-observation-source-20261004/tools/regional-ledger",
+  "compiled_companion_path": "/Users/galaxy/GitHub/\u661f\u9645\u8d27\u5e01/tmp/default-relay-20260930/native-bft-activation-observation-source-20261004/tools/regional_contact_node.py",
+  "previous_compiled_manifest_path_absent": true,
+  "strict_clippy_actually_run": true,
+  "native_tests_actually_run": 173
+}

@@ -1,0 +1,165 @@
+{
+  "format": "RLD-FAILED-FAULT-COMMIT-CARRIAGE-METADATA-V1",
+  "prior_full_native_transport_diagnostic_sha256": "3af2d692d630d064c82c644bb395b9b29e4ed6d69660b3b61c11261669181427",
+  "observer_sha256": "d0081c44b10732219994bfebd374572c177767bde0e764fe450cbaeec44f9cdc",
+  "retained_body_files": [
+    {
+      "replica": 0,
+      "retained_bft_height": 12,
+      "retained_bft_sha256": "fff62d2497b83868f8c98458d6b5f65e2e0d0bb1000b83b0fed9a9f3c096b242"
+    },
+    {
+      "replica": 1,
+      "retained_bft_height": 12,
+      "retained_bft_sha256": "8c1f360a4cbb88838fc40ad0672747d4c3ebe94b8179e4c95eeab9f856f7fd2d"
+    },
+    {
+      "replica": 2,
+      "retained_bft_height": 13,
+      "retained_bft_sha256": "68d63a8c8bad65437d0c9f3ebddc9fc55728e5a2f3c92291e8a2cbcfbb6d6025"
+    },
+    {
+      "replica": 3,
+      "retained_bft_height": 13,
+      "retained_bft_sha256": "f02dd8495fd257ef6c236328475b6ca816f7b1dbf9288990eacde7ac2b9a2688"
+    }
+  ],
+  "rows": [
+    {
+      "replica": 0,
+      "stored_commit_keys": 2,
+      "mesh_state_sha256": "6aa50875225a1ab4fb590f259561004e09f88001c870d53df42bb32815406e2d",
+      "status_sha256": "fd1e6032cd4e7d75c404c603b5ecfea0a5091dda62780c9cd06c207f6faa2c4a",
+      "active_messages": 18,
+      "active_receipts": 14,
+      "archive_records": 256,
+      "tcp_local_lock_exhaustions": 616,
+      "missing_commit_carriage_metadata": []
+    },
+    {
+      "replica": 1,
+      "stored_commit_keys": 2,
+      "mesh_state_sha256": "e2dfe68d1667b826f0ccc80744d0a7b1ecf7591a5d7df3038d2c1d48edb24d1a",
+      "status_sha256": "d5b90684a5a50dcd735f78f165324641b47d8fb2dd2342bd9db24529777e4645",
+      "active_messages": 28,
+      "active_receipts": 24,
+      "archive_records": 480,
+      "tcp_local_lock_exhaustions": 2417,
+      "missing_commit_carriage_metadata": []
+    },
+    {
+      "replica": 2,
+      "stored_commit_keys": 3,
+      "mesh_state_sha256": "3ae1f2e74dacbc1da7ac29295b249b9fecd66f53b27c5cfc56be9fcf6a5fc4dd",
+      "status_sha256": "011f0e65964b08e28079c5e587bf009ad05cb90029955e0dcf080ab2d419ac2c",
+      "active_messages": 22,
+      "active_receipts": 14,
+      "archive_records": 447,
+      "tcp_local_lock_exhaustions": 1559,
+      "missing_commit_carriage_metadata": [
+        {
+          "packet": "b627adcf1f1155afd8a0a421a812e3169912e0f73cd1a864dc5193896d792f0f",
+          "export": "61c46c29c1fea9206cbb4aeefdecd1977ca0745154dedf1c0c6147a51ff8e601",
+          "source": "proxima-2",
+          "destination": "proxima-3",
+          "archived": true,
+          "has_receipt": true
+        },
+        {
+          "packet": "71bcaa563d485c68327a0e7ecc2ace820144f7ea7660dfc37d5ca6be0d98fd2e",
+          "export": "61c46c29c1fea9206cbb4aeefdecd1977ca0745154dedf1c0c6147a51ff8e601",
+          "source": "proxima-2",
+          "destination": "proxima-0",
+          "archived": false,
+          "has_receipt": false
+        },
+        {
+          "packet": "baec169b76fc1780aeab68eb012bf1dd6fa642129b980810cec28f30aba97e68",
+          "export": "6ec4ebf6b1c626892df2c9ad51320c18ea6de5054993e0a0d0cf49cf5606f7f3",
+          "source": "proxima-3",
+          "destination": "proxima-1",
+          "archived": false,
+          "has_receipt": false
+        },
+        {
+          "packet": "d8614e62cb6cfafc9810549f61fd007ce349c7dd4b8085c465f9aa15ab11e082",
+          "export": "6ec4ebf6b1c626892df2c9ad51320c18ea6de5054993e0a0d0cf49cf5606f7f3",
+          "source": "proxima-3",
+          "destination": "proxima-2",
+          "archived": false,
+          "has_receipt": true
+        },
+        {
+          "packet": "e8637704bc7cd941af573dcc032528a6c12b73b23e979c131e611c326f1104b3",
+          "export": "6ec4ebf6b1c626892df2c9ad51320c18ea6de5054993e0a0d0cf49cf5606f7f3",
+          "source": "proxima-3",
+          "destination": "proxima-0",
+          "archived": false,
+          "has_receipt": false
+        },
+        {
+          "packet": "f1915ae97b5d3f11d66127876f3dde8d51844c80c87a0d82eb8df0eabe49829f",
+          "export": "61c46c29c1fea9206cbb4aeefdecd1977ca0745154dedf1c0c6147a51ff8e601",
+          "source": "proxima-2",
+          "destination": "proxima-1",
+          "archived": false,
+          "has_receipt": false
+        }
+      ]
+    },
+    {
+      "replica": 3,
+      "stored_commit_keys": 3,
+      "mesh_state_sha256": "c1e242fefb228dbb417f7ee4beced655526955b34628cd389e379126c6796039",
+      "status_sha256": "5a724722e7f9a0cbecb6f2926fa14bcca6938266e1e09104e1fca85001713e87",
+      "active_messages": 18,
+      "active_receipts": 14,
+      "archive_records": 256,
+      "tcp_local_lock_exhaustions": 686,
+      "missing_commit_carriage_metadata": [
+        {
+          "packet": "b627adcf1f1155afd8a0a421a812e3169912e0f73cd1a864dc5193896d792f0f",
+          "export": "61c46c29c1fea9206cbb4aeefdecd1977ca0745154dedf1c0c6147a51ff8e601",
+          "source": "proxima-2",
+          "destination": "proxima-3",
+          "archived": true,
+          "has_receipt": true
+        },
+        {
+          "packet": "baec169b76fc1780aeab68eb012bf1dd6fa642129b980810cec28f30aba97e68",
+          "export": "6ec4ebf6b1c626892df2c9ad51320c18ea6de5054993e0a0d0cf49cf5606f7f3",
+          "source": "proxima-3",
+          "destination": "proxima-1",
+          "archived": false,
+          "has_receipt": false
+        },
+        {
+          "packet": "d8614e62cb6cfafc9810549f61fd007ce349c7dd4b8085c465f9aa15ab11e082",
+          "export": "6ec4ebf6b1c626892df2c9ad51320c18ea6de5054993e0a0d0cf49cf5606f7f3",
+          "source": "proxima-3",
+          "destination": "proxima-2",
+          "archived": false,
+          "has_receipt": true
+        },
+        {
+          "packet": "e8637704bc7cd941af573dcc032528a6c12b73b23e979c131e611c326f1104b3",
+          "export": "6ec4ebf6b1c626892df2c9ad51320c18ea6de5054993e0a0d0cf49cf5606f7f3",
+          "source": "proxima-3",
+          "destination": "proxima-0",
+          "archived": false,
+          "has_receipt": false
+        }
+      ]
+    }
+  ],
+  "distinct_commit_keys_in_union": 4,
+  "commit_keys_absent_from_replica_0": 2,
+  "native_calls": 0,
+  "signature_authentication_repeated": false,
+  "decoded_ledger_or_custody_authority": false,
+  "metadata_is_not_independent_freshness": true,
+  "unique_cause_established": false,
+  "failed_profile_remains_failed": true,
+  "fixture_only": true,
+  "live_rld": false
+}

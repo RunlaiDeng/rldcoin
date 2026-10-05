@@ -1,0 +1,28 @@
+{
+  "format": "RLD-JOINT-FAULT-RELEASE-SOURCE-REVIEW-V1",
+  "source_set_sha256": "7bf30e4643ef42f4f5f089886230cc60837d8ef4b5a74efc847d8c55e75f7183",
+  "runtime_fault_source_set_sha256": "db558b89ebf25cb7fff055c4067ae89ce35b0710fcab8c92141b8db8ca5dbf1c",
+  "cycle_source_set_sha256": "bf7c247ae5023497df005ea54d98d740edfede475aa118b486999ec44a2432ec",
+  "source_files": 273,
+  "native_implementation": "dee623baa0d39c625a142fa04a6f792342a553cac7d30042997a624c962836e6",
+  "all_runtime_native_core_bytes_exact_v31": true,
+  "actual_fault_controller_exact_reviewed_source": true,
+  "final_difference_from_running_source": [
+    "tools/verify_regional_bft_sustained.py"
+  ],
+  "final_cold_verifier_checks_actual_current_epoch_view_change": true,
+  "final_cold_verifier_checks_real_contact_cut_restoration_and_owner_queue_observations": true,
+  "self_review_only": true,
+  "independent_qualification": false,
+  "added_from_v31": [
+    "tools/regional_bft_joint_fault_profile.py",
+    "tools/test_regional_bft_joint_fault_profile.py",
+    "tools/verify_regional_bft_joint_sustained.py"
+  ],
+  "changed_from_v31": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_bft_sustained_campaign.py",
+    "tools/verify_regional_bft_sustained.py"
+  ],
+  "removed_from_v31": []
+}

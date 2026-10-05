@@ -1,0 +1,20 @@
+{
+  "format": "RLD-BFT-SHARED-RETENTION-FROZEN-CHECKS-V1",
+  "source_set_sha256": "24fb58eda0a3fcea0744b12e6b2587656a1d740ede5c93b25b6a4291133f6042",
+  "native_implementation": "d268bd83be7f87afa2db26603ae4597d711aa85eaaf265bccdce8d1426b2e971",
+  "fixture_only": true,
+  "live_rld": false,
+  "checked_release_build_passed": true,
+  "binary_sha256": "a2ec9d4af527bb799c061803768a259a0f72e3e0d48d7a5b6d30355416d18948",
+  "native_tests_previous_unchanged_source": 86,
+  "native_tests_rerun": false,
+  "previous_native_strict_clippy_passed": true,
+  "previous_native_checks_report_sha256": "81131a40be228c295567e67d4ab4fdd7e6f676f3c85bafcc77a6c33dda9a08c1",
+  "native_source_files_match_previous": true,
+  "transport_tests": 84,
+  "process_controller_and_retention_tests": 46,
+  "source_unchanged": true,
+  "full_fresh_cycle_completed": false,
+  "full_fresh_fault_profile_passed": false,
+  "long_term_history_qualified": false
+}

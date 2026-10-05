@@ -1,0 +1,24 @@
+[Unit]
+Description=Rldcoin worthless fresh testnet destination
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=galaxy
+UMask=0077
+WorkingDirectory=/home/galaxy/rldcoin-testnet-20260930
+ExecStart=/usr/bin/python3 /home/galaxy/rldcoin-testnet-20260930/run.py --root /home/galaxy/rldcoin-testnet-20260930 --mode destination
+Restart=on-failure
+RestartSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/galaxy/rldcoin-testnet-20260930
+MemoryMax=512M
+CPUQuota=50%
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

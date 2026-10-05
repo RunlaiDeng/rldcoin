@@ -1,0 +1,294 @@
+{
+  "format": "RLD-PUBLICATION-VERIFICATION-V1",
+  "commit": "195678658a7684f4aea81c5f1f6896f9e8665bf5",
+  "remote_main_matches": true,
+  "files_verified": 47,
+  "all_exact_match": true,
+  "files": [
+    {
+      "path": "README.md",
+      "size_bytes": 13834,
+      "sha256": "2e032629e23aa6fbbeb5077981614704e0b3eac38bbe208727ded1b3422ac0a9",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/ACCEPTANCE_QUEUE.md",
+      "size_bytes": 2054,
+      "sha256": "9c94ab4566acdf8602c6cdbf9749e4dca17a209e01d2d7a55474195337c6a0e9",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/HISTORY_RETENTION.md",
+      "size_bytes": 6951,
+      "sha256": "37193df67a0ee7bd8aaf8e2d67b08c06d23e334c0ee55cd0283ed93dbdcc1606",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/README.md",
+      "size_bytes": 12844,
+      "sha256": "8aada80b3b46a2c521fd3bfde0a102dd2f581d4d9c2959f45b08b422c803e38c",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/SHA256SUMS",
+      "size_bytes": 4714,
+      "sha256": "cac132645905611aa18ebc022151db2d9a077fd8082fc8faf127e874d0f8b98c",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/STATUS.zh-CN.md",
+      "size_bytes": 1990,
+      "sha256": "128d73948db2b4002c82ed5cedcda0e980b6ade6103b61a8c79bc76bfbf61c8a",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/checks.json",
+      "size_bytes": 1809,
+      "sha256": "2d01d838ced266871793fa759d4ef8e3f840b564dc446800369aaad029736d61",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-evidence-byte-sample-20261001.json",
+      "size_bytes": 3817,
+      "sha256": "7bfd237765bd8effb9c57c0f9ee3ee2b99b16eb4d9e89727115bc33178b14a4b",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-fresh-fault-20261001.json",
+      "size_bytes": 25665,
+      "sha256": "c9f77abe1bbc81c2646b4829523ef7c05de6bf0e4dc0e82c4ed4dd50342cb759",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-fresh-fault-cold-20261001.json",
+      "size_bytes": 10808,
+      "sha256": "9c0391de55ed50c009ebd4648163e14ea867fd33b4eb3ce47baede6694bbfb7a",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-observer-cycle-cold-20261001.json",
+      "size_bytes": 13313,
+      "sha256": "e37be432907533d6799285b7ccb4254cdd965ef3985c64e3a508f496fd5a05e2",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-observer-fresh-cycle-20261001.json",
+      "size_bytes": 19135,
+      "sha256": "005c228f798f0bae20efcbe1713de6d8ddff1e767c24840637fab2934f487a74",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-observer-frozen-checks-20261001.json",
+      "size_bytes": 1809,
+      "sha256": "2d01d838ced266871793fa759d4ef8e3f840b564dc446800369aaad029736d61",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-observer-interruption-20261001.json",
+      "size_bytes": 5623,
+      "sha256": "1e9d6c1046436ed2b925702751bc7e9fe6ebd332c7e37ee54a19a37b4434e925",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/evidence/regional-bft-shared-retention-verifier-refusals-20261001.json",
+      "size_bytes": 1270,
+      "sha256": "b3967759b553d9ebd53501ff9526c10ddd0a7546aec0c983eb6458c4118bbadb",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/historical/observer-interruption-source-manifest.json",
+      "size_bytes": 43579,
+      "sha256": "4cc018b51f41c15b7079802427add7e4a9a20e9beaf0cf21329bb370c4888c48",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/historical/observer-interruption-source.tar.gz",
+      "size_bytes": 1398365,
+      "sha256": "dcd155f01b65efbfc5f9410dea5bd70c154c024f850be0338de9e18e57e3e4de",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/source-manifest.json",
+      "size_bytes": 43675,
+      "sha256": "8c99a3ab92d7aee713c0fee27bda56a09c9dcafdd7b0f63203aab349f93d2b51",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/source.tar.gz",
+      "size_bytes": 1398806,
+      "sha256": "4aa53ce3fd83feee644dfd7cc846ccd5b9f32c055b845658cc1c5f0be10d2558",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/interstellar-mesh-requirements.txt",
+      "size_bytes": 21,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/interstellar_mesh.py",
+      "size_bytes": 44126,
+      "sha256": "b53407f24b48eea6164daf504c087a60ca33a11a851bee2fe1398f0957dab11b",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/interstellar_route_budget.py",
+      "size_bytes": 5160,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/interstellar_tcp.py",
+      "size_bytes": 22697,
+      "sha256": "9536e4858510fd0012dc863e5a94cfdb789e015a760c09535783096ae8d567a4",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/interstellar_transfer.py",
+      "size_bytes": 24741,
+      "sha256": "00b6d0f65bd63e93f91c2f2b2c8fd8ff5b6b65cd09595bef4c9755b84e0c6184",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_bft_campaign.py",
+      "size_bytes": 15456,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_bft_multiregion_campaign.py",
+      "size_bytes": 20019,
+      "sha256": "6c73cf1ed33c7d59b96614ce729be53126b0b889c6e3ac61815f579322eae81c",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_bft_network_campaign.py",
+      "size_bytes": 12339,
+      "sha256": "7e7ccc48c4ee2d6d36423d68e3dcc6c3d58209ba7a5be97f187052387462e686",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_bft_node.py",
+      "size_bytes": 22541,
+      "sha256": "552c2f61441167d8b95f56c4095bcba97f3dfef50f022775cb8cd3b6837ce8cd",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_bft_retention.py",
+      "size_bytes": 9614,
+      "sha256": "9cac2d877c0df32e6be12cab81031cd294246ead2ddd67763348c6bb2bd27e37",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_bft_sustained_campaign.py",
+      "size_bytes": 36649,
+      "sha256": "be354b345f229ef360e8e91ba89cae406246b32a5a6b2d5723ca837368bcb63e",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_contact_campaign.py",
+      "size_bytes": 23451,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_contact_node.py",
+      "size_bytes": 16064,
+      "sha256": "d3d7d7ca38da32aee93f2849cdd092a6219a55da6b054c3ae3cb8020377e7cf1",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/regional_wallet_app.py",
+      "size_bytes": 25328,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_interstellar_mesh.py",
+      "size_bytes": 37691,
+      "sha256": "dcb7992729722d1bb20b76e5b8c4485619d9a4c05db0aca7abf3ed504ae6fa1c",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_interstellar_route_budget.py",
+      "size_bytes": 3671,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_interstellar_tcp.py",
+      "size_bytes": 31760,
+      "sha256": "050d1c88a8f2b93d8b37d134aed1bef4281d5ee65daa278eef6498b9301ab05a",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_interstellar_transfer.py",
+      "size_bytes": 9424,
+      "sha256": "5e8d963d681800aca7f327e8781e5e902a1dac95f94b0c3c26c005f980940373",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_bft.py",
+      "size_bytes": 2856,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_bft_node.py",
+      "size_bytes": 14060,
+      "sha256": "2fb83e5aeb801bfa2f8fddae38928c7ba2afd1c47c3027ca5e24c15412d6594c",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_bft_retention.py",
+      "size_bytes": 13563,
+      "sha256": "f9af5114ba6e6e8a4531d307f5729519539d148fcf61689cfe1460d4288a578d",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_bft_sustained_campaign.py",
+      "size_bytes": 5720,
+      "sha256": "b6aff8a62885ca8fb902a8191b6856e1851e8a5486faebd09518654b20cea255",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_contact_node.py",
+      "size_bytes": 13365,
+      "sha256": "544c67503a20b79242c81ac5b4472a67fd0f22c2afeb1aa911eef1108d1cf34a",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_wallet.py",
+      "size_bytes": 15933,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_wallet_app.py",
+      "size_bytes": 18950,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/test_regional_wallet_custody.py",
+      "size_bytes": 10513,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/verify_regional_bft_cycle.py",
+      "size_bytes": 11306,
+      "sha256": "95e883c2679ea9a683e7afc76a5686db4422eca02fbe554e5fc56e82d6e35566",
+      "remote_exact_match": true
+    },
+    {
+      "path": "research/2026-10-01/regional-native-bft-shared-evidence-v19/tools/verify_regional_bft_sustained.py",
+      "size_bytes": 9641,
+      "sha256": "1e17e9cfec66fad96843dd06ff125cc76f2b4eab19b39576b8a61871ee80f73a",
+      "remote_exact_match": true
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "verified_at_utc": "2026-10-01T19:35:34.675817+00:00"
+}

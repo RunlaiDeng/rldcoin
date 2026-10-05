@@ -1,0 +1,20 @@
+{
+  "format": "RLD-NATIVE-HISTORY-PREFIX-INITIAL-FAILURE-V1",
+  "source_set_sha256": "016fb2da543a80412ce18463f30c606ef841ed90a1e0e89d8c227745e9b1cf18",
+  "native_implementation": "2a59033fe654e2f8f1981ea108cf6839678cba7b880fd107c035f730a0eec0d3",
+  "frozen_source_unchanged": true,
+  "native_tests_passed": 87,
+  "native_tests_failed": 28,
+  "native_test_exit_code": 101,
+  "terminal_exit_code": 1,
+  "native_test_log_sha256": "a249c746e354f42bea01427df49f87c87f5ba86f5c67b4caffdd8112a9e52ffd",
+  "cause": "Storage incorrectly refused duplicate checkpoints allowed by native evidence rules. Final fix retains listed proofs and earliest exact predecessor; native equivalence validation remains mandatory.",
+  "cycle_started": false,
+  "full_fault_profile_started": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "failed_frozen_source_and_log_retained": true,
+  "all_failed_unit_private_states_preserved": false,
+  "private_material_published": false,
+  "long_history_qualified": false
+}

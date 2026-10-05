@@ -1,0 +1,11 @@
+{
+  "format": "RLD-ACTIVATION-OBSERVATION-CONTROLLER-BOUNDARY-V1",
+  "completed": true,
+  "source_set_sha256": "783bab9d4c1c22c56fc3af9ac60f4083038e898481ee017d0b3f9d0b120611b7",
+  "mechanical_tests_actually_run": 8,
+  "duration_seconds": 0.186,
+  "log_sha256": "75ff54e727b57e4bd7b88956ed0c92c4b9a416e6f0976707e8fb54aa385ac0bd",
+  "native_or_ordinary_qualification_claimed": false,
+  "fixture_only": true,
+  "runner_sha256": "9f8e01aed73e11c1765af11edc42ba164df8a18feef7e261ff86731ecf50c5cd"
+}

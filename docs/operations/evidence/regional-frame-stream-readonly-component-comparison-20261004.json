@@ -1,0 +1,29 @@
+{
+  "format": "RLD-FRAME-STREAM-READONLY-COMPONENT-COMPARISON-V1",
+  "completed": true,
+  "source_set_sha256": "adefb680fcd72dfdcda6d9387896da46a4c3928c75ae06eb2817c838602ef1ea",
+  "previous_runtime_source_set_sha256": "1912b64cbd7aaf312f9a4f1fb562871116eeeb271b752237b3c852f7f842dc63",
+  "candidate_helper_sha256": "cccc48ca21c770e8e1ef979a9581a9354445a5d1d15c18b8dd3ed6ace203eda3",
+  "prior_profile_sha256": "836f4e406ea392a91ba07a6ab1632c8fa15591296b8c584efdf90a36a109c006",
+  "candidate_profile_sha256": "6c6de633bf87044cf70408c6c9433bce8d6f30ff0c52e59bca80da6f59b1542a",
+  "rows": [
+    {
+      "replica": 1,
+      "prior_mean_seconds": 0.157372,
+      "candidate_mean_seconds": 0.123828,
+      "sample_reduction_percent": 21.31
+    },
+    {
+      "replica": 2,
+      "prior_mean_seconds": 0.172986,
+      "candidate_mean_seconds": 0.139066,
+      "sample_reduction_percent": 19.61
+    }
+  ],
+  "private_source_unchanged": true,
+  "profiling_overhead_included": true,
+  "nonconcurrent_stopped_same_host_samples": true,
+  "not_live_fault_cause_or_ordinary_throughput_qualification": true,
+  "fresh_ordinary_cycle_completed": false,
+  "fresh_full_fault_profile_completed": false
+}

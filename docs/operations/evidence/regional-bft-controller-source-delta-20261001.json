@@ -1,0 +1,18 @@
+{
+  "format": "RLD-CONTROLLER-FROZEN-DELTA-CHECK-V1",
+  "source_set_sha256": "13463e64e020944714e2c9609c46c5270daf3ccb58ec94ed2eb2206aa2085eb1",
+  "predecessor_source_set_sha256": "3690ef1895ead262924fa379567b320bc62ac7f7b319a52816c4df76bf120a91",
+  "named_files": 228,
+  "changed_or_added_files": [
+    "docs/PLAN_STATUS.md",
+    "tools/regional_bft_sustained_campaign.py",
+    "tools/test_regional_bft_sustained_campaign.py"
+  ],
+  "base_source_167_unchanged": true,
+  "runtime_code_unchanged": true,
+  "prior_81_transport_29_process_checks_retained": true,
+  "new_controller_checks_passed": 3,
+  "new_full_fault_drill_completed": false,
+  "fixture_only": true,
+  "independent_security_qualified": false
+}

@@ -1,0 +1,44 @@
+{
+  "format": "RLD-MULTIREGION-CLEANUP-LOCAL-CHECKS-V1",
+  "actual_tests": 22,
+  "new_controller_tests": 8,
+  "duration_seconds": 0.87,
+  "test_log_sha256": "52bf28e1205b6c6b253d2ab909c10487ada033323bb66846ff3f12ea0deb4b6e",
+  "exact_frozen_counterexamples_report_sha256": "e1613727589b6ab444fc46b26b392d429c00e8b66b6d5de0800e24f10f85b70f",
+  "source_files": 5,
+  "files": [
+    {
+      "path": "docs/operations/REGIONAL_BFT_TERMINAL_REPORTS.md",
+      "size_bytes": 1690,
+      "sha256": "f156dd4de35894b8d28735167dda2a6c47d04d45b8f3196cb8d2c275e5de0388"
+    },
+    {
+      "path": "tools/regional_bft_joint_cycle_campaign.py",
+      "size_bytes": 10464,
+      "sha256": "5876a13e38ca0f8faff701977453fe592e38ee5b988563418250c1690b2bf49e"
+    },
+    {
+      "path": "tools/regional_bft_multiregion_campaign.py",
+      "size_bytes": 19947,
+      "sha256": "4a75ddf44eb0e2c64a1538551738ff0cd7ab78a7a7d91b97503d74373a371997"
+    },
+    {
+      "path": "tools/regional_campaign_terminal.py",
+      "size_bytes": 2986,
+      "sha256": "586fd7cb8a094b7d6287c71e7479120120fec03b196d5167d4af66e45c1dbec4"
+    },
+    {
+      "path": "tools/test_regional_multiregion_cleanup.py",
+      "size_bytes": 7248,
+      "sha256": "5c115b182aa05a6ee418f5886bd4464751d496020bf07f82a27fff69cde3d87c"
+    }
+  ],
+  "source_set_sha256": "9ce89f9475c8c78184281aa21c90b88b4f6b8402b32fbad6f41abf6af6e8b96e",
+  "actual_cycle_entrypoints_checked": 2,
+  "real_children_used": true,
+  "native_wallet_runtime_calls": false,
+  "fresh_ordinary_cycle_qualified": false,
+  "existing_failed_reports_not_rewritten": true,
+  "fixture_only": true,
+  "live_rld": false
+}

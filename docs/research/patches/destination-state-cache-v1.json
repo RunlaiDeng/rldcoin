@@ -1,0 +1,36 @@
+{
+  "status": "UNADOPTED_CANDIDATE",
+  "signed_baseline_source_commitment": "3dbdc83228ac06049ee077db5c95436273ac6784cfc964bdb678e603669e1974",
+  "patch_sha256": "ac54c1b13d1b36c2de68d68c00d1f9522bcb11c34618cb4008a3b8cb42c80e21",
+  "changes": [
+    {
+      "file": "crates/rld-value-successor/src/destination/pow.rs",
+      "baseline_sha256": "9fac86810120a01436ce323c816db9ad75d9f1eb3631df72828d0b56e9afa23d",
+      "candidate_sha256": "a4bb07011aa719d5429529dcff4a59baaf56c6ae47766dcea1e6728f5b41eb77"
+    },
+    {
+      "file": "crates/rld-value-successor/src/destination/pow/storage.rs",
+      "baseline_sha256": "6649f5d34d5caf563c3e90e39c8c1048e9aece4a0a08cdf390cb4c0120dc538b",
+      "candidate_sha256": "da65ae7f3e3e09b772ac77d4498a7e77062e3f0ebe590745ada90a5424b9186c"
+    },
+    {
+      "file": "crates/rld-value-successor/src/destination/pow/tests.rs",
+      "baseline_sha256": "4d540b843cb3c089513ea535cfce86aa7d5bf6c66369650281d809409c9662ee",
+      "candidate_sha256": "032ae054565f05e31351b0eacea75ef6f9dee8e6916782327f60b97193c25c04"
+    }
+  ],
+  "baseline_patch_applies": true,
+  "production_binaries_replaced": false,
+  "consensus_parameters_changed": false,
+  "retained_entry_cap_removed": false,
+  "compatibility_upgrade_authorized": false,
+  "library_regression": {
+    "command": "cargo test --offline --locked -p rld-value-successor --lib",
+    "platform": "macOS arm64",
+    "passed": 49,
+    "failed": 0,
+    "seconds": 141.34,
+    "observed_exit_code": 0
+  },
+  "scope": "Current workspace library tests include this patch; patch applicability verified against extracted signed release. Not an independently reproduced or deployed release."
+}

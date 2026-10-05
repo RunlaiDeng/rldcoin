@@ -1,0 +1,334 @@
+{
+  "format": "RLD-NATIVE-WALLET-APP-PUBLICATION-VERIFICATION-V1",
+  "date": "2026-09-30",
+  "repository": "RunlaiDeng/rldcoin-genesis",
+  "commit": "53274723cd77d1c4251d23dd36a8932d826b40d1",
+  "remote_main_matches": true,
+  "raw_served_hashes_verified": 64,
+  "package": "research/2026-09-30/regional-native-wallet-app-v10",
+  "files": [
+    {
+      "path": "MASTER_PLAN.md",
+      "sha256": "14bb277a77abfcc3c084e580bd76a820a023ad7e2d501f92395dbd67e634f3ff",
+      "remote_match": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "51c41269fc5376aa8679d91bb3535659b287d04b4076317d4f04d924abcf4f7d",
+      "remote_match": true
+    },
+    {
+      "path": "SHA256SUMS.current-docs-20260930",
+      "sha256": "85ced4d4fad3fce777c2af1800eefa38902d8e14c899e3c4e22ee78f3c3c41e5",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/PLAN_STATUS.zh-CN.md",
+      "sha256": "a9282d849914c783bce3194a76fd99574cc52f9906308c8e4d577282997c79d6",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/README.md",
+      "sha256": "272a0f1f09e5a1f60281653feeaaa7298437bbb3fd75d4622806d2f7f6b944b1",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/SHA256SUMS",
+      "sha256": "0d50ba8e5581975ce973551182de70a8b4eb4201040f19dd42a45540ada7e6f3",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/base-source-manifest.json",
+      "sha256": "20848cd672795d3c6fd3e6d1d56a85b1ff5744620a762d266d6c79cd5c5b3d60",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/browser-checks.json",
+      "sha256": "33d976426d49b144b5304c9eff5552ebfa36f8d9c078f87c449fca7cf5603198",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/campaign-report.json",
+      "sha256": "1fdb248af6144e4073df70f531a565db33969766ade6cf58ff246aaeec5e4d60",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/RLDCOIN_MASTER_PLAN.md",
+      "sha256": "7d2f42f62da43db8dc0de0e4a6436acb4fe0206bfa9140c09abba582d8ecc56f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/operations/INTERSTELLAR_EVIDENCE_TRANSPORT.md",
+      "sha256": "8a562fc5300b3145e8eee4a1a7c7e1e21b2f63f280b3d1d1da48e1bd5ca0a41e",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/operations/INTERSTELLAR_NODE_MESH.md",
+      "sha256": "1cd4e96177f8f2dc544224719e7e36eb587c57e9057d8fdd5d6f65328936ecfd",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/operations/evidence/regional-native-wallet-app-browser-20260930.json",
+      "sha256": "33d976426d49b144b5304c9eff5552ebfa36f8d9c078f87c449fca7cf5603198",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/operations/evidence/regional-native-wallet-app-campaign-20260930.json",
+      "sha256": "1fdb248af6144e4073df70f531a565db33969766ade6cf58ff246aaeec5e4d60",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/operations/evidence/regional-native-wallet-app-payment-20260930.json",
+      "sha256": "475189b795e0835b0a88083f1189d0c28286f376e2f5658cdac730d9fbb94fda",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/operations/evidence/regional-native-wallet-app-verification-20260930.json",
+      "sha256": "c835a8d8845f040f9a0c5696029c29da9ddc2d9bb23a1756e7776d1bea48fab9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md",
+      "sha256": "dbec00736b8d437ae3c56f3b903807c4713dea6ee24c9c5444e4ed73fd714199",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/research/REGIONAL_FINALITY_INCIDENTS_V1.md",
+      "sha256": "b7b2ab44850057b3387325afd35c75cded37a2642136365ae70e95cfec0d6c6f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/research/REGIONAL_LEDGER_CANDIDATE_V1.md",
+      "sha256": "16b3a1c74c27691ff378cde8fe0d386d7287be6e59b436fd6fa6a01d07f903f6",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/docs/research/REGIONAL_SIGNER_EPOCHS_V1.md",
+      "sha256": "4243b51699d5c4693b9ccc9824530e18dbe9bc4b6bb271c0f89ef6428b641504",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/payment-report.json",
+      "sha256": "475189b795e0835b0a88083f1189d0c28286f376e2f5658cdac730d9fbb94fda",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/source-manifest.json",
+      "sha256": "bcadef6ef2512e4a0dc1289157a77290c871f3a413f3b258c2ee575e879fdf5f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/source.tar.gz",
+      "sha256": "b3af2fddfad6c4344feee811c6641166934189c2a3ecffb8e7745d8693850fc8",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/interstellar-mesh-requirements.txt",
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/interstellar_mesh.py",
+      "sha256": "01992ea7900e1acf24a2c992b137cf73c517eab90108f66143d96241ce321a8d",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/interstellar_route_budget.py",
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/interstellar_tcp.py",
+      "sha256": "47f4145ecb5ecb094ab00573c229178a3ecacb9216239bf37e36c3fefa2c3bca",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/interstellar_transfer.py",
+      "sha256": "799ec3b5bbcb94950b1f4cc09bbc0711f859cbf196e6f29593ee7a610f6bb7da",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/Cargo.lock",
+      "sha256": "d8d443dbe3969a2fcde1d1b965acf53e8ffbb82f9cb9493a836ff44ec616a975",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/Cargo.toml",
+      "sha256": "8bf6d222dc1ebe2385ce53046709a771255450c9785a6b9cc9f3f6d7a71afe34",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/README.md",
+      "sha256": "c3b1b5aeaabefcd4fab827511201005db00b228a394985f511ca14eb4de3de78",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/build.rs",
+      "sha256": "0dfa707932e52dd116add44b14d4837cdeb771972290d37981d65ee6e2115cfa",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/bin/contact-fixture.rs",
+      "sha256": "29497d8cd250ed3034eff8028ebd375e08681b7c0f6a5ed5f395ff92d07e7aa5",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/bin/fixture-campaign.rs",
+      "sha256": "e8bb475ab89a29fd9ebf75bdc7bd67f4b1525d46f36041fc084482dd5dff43fe",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/conflict.rs",
+      "sha256": "2f755e8f4f39884d5b5bcea9d778c972a523761a2768057b6fcb182da08fb4e0",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/contact.rs",
+      "sha256": "2519d664422a1716c27c6de1f1b9f443540eb7401b35947b64c99d12b21c46d2",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/contact_tests.rs",
+      "sha256": "2e7b1c80600930275349082cdec653c9d5e50891793ab9ca27c532124f4bd6cb",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/epoch.rs",
+      "sha256": "39256fe8376226bbc1b6d2cbe68d94ce0f49abb0e49828c699979aa3c884fd57",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/epoch_tests.rs",
+      "sha256": "f5053ffc302f123efff0f2d0d6d1185eb86540e5aa4050d7c38479a6c1b523dd",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/lib.rs",
+      "sha256": "03d3ce454b8353ba214e21e96857133fd3ef9cf1d6f56d957a109f8eb8477356",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/main.rs",
+      "sha256": "2179b4db3e647dd9aa68060acfe57a07e53f0a3f06b2a9eeee11eec477a41f35",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/signer.rs",
+      "sha256": "2460679efabe3f5acf4a901adb953de455f4d9e5ee9c5c899aa172354040b73f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/storage.rs",
+      "sha256": "c9faead858c78f7f159d8973ca93ffcf70dbea67b551e797a14e400f71aaa542",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/tests.rs",
+      "sha256": "c693ac8dd674a005f94799d29469b80dfb37373bd68a9a5d69eff0066f704408",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/wallet.rs",
+      "sha256": "a87eef41221037578745bcfa82877211f7d2e2cba7b86e07c5c05233698a396f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/wallet_agent.rs",
+      "sha256": "2395e6168dcf67f040151ac999379779a89a449d8eaea81e384ee3f7bf54b26f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/wallet_agent_tests.rs",
+      "sha256": "9f8c7236b647365cbca8cdcfa0a876e0db001d32bfbe9f1afd2c0689495c5fd9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-ledger/src/wallet_tests.rs",
+      "sha256": "8af5b0007a527fc48382a8a321da990545b292faad3b8b7eea8c101dc92f9d1e",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-wallet/app.css",
+      "sha256": "669ca184020fd9664e4eb6cf55ad021c768840212a5b844be180770de0bac752",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-wallet/app.js",
+      "sha256": "f15f0bbeb79bc96b92c02e242232a1339761cb936a6f5e2739755cb8498a7842",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional-wallet/index.html",
+      "sha256": "180b57202d3a596f4d3473cbe77b15c8b9bab05c332c17667283f10095a96989",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional_contact_campaign.py",
+      "sha256": "ff70a9fbc10516f4218a790c0c7190b658f890c8d61ee4112d87e917e1a332ee",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional_contact_node.py",
+      "sha256": "0c6ebe04b1ac9f4ea2404fa9292e18690211ca77e6e0061b98c1ab92e859b329",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/regional_wallet_app.py",
+      "sha256": "c41017b624c10f6185c8703eb916bde27ffdb076e6db081407214f63b28a513f",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_interstellar_mesh.py",
+      "sha256": "129531139b3e6e6ff196fbcf7e3d4577e510a41166f338641ddc2d26af406dcb",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_interstellar_route_budget.py",
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_interstellar_tcp.py",
+      "sha256": "2e9ad0f2175ffb8c6579f89f63ef23140732e4f30ea566b25ed7b0ccb983fa9d",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_interstellar_transfer.py",
+      "sha256": "5e8d963d681800aca7f327e8781e5e902a1dac95f94b0c3c26c005f980940373",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_regional_contact_node.py",
+      "sha256": "1b8c01587addd4c9b0935e59a2a13abd75e19b14db0894225bf54085f566c08b",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_regional_wallet.py",
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/tools/test_regional_wallet_app.py",
+      "sha256": "13cc987bf460cb0e75f0d35255495519fcc08bf068e941acc7eb50d050bc041e",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/verification.json",
+      "sha256": "c835a8d8845f040f9a0c5696029c29da9ddc2d9bb23a1756e7776d1bea48fab9",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/wallet-desktop.png",
+      "sha256": "bfdbef65b6f9329f39ef07bb2c8c71c5d699e2c4f58839b8df41c2c719cdb69b",
+      "remote_match": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-wallet-app-v10/wallet-mobile.png",
+      "sha256": "09cca556982fcfb697d6a966f7d750e8fd0a8f8241878514ef50b6d48a7d8e38",
+      "remote_match": true
+    }
+  ],
+  "private_states_published": false,
+  "mainnet_authorized": false,
+  "physical_route_qualified": false
+}

@@ -1,0 +1,14 @@
+{
+  "format": "RLD-FROZEN-MULTIREGION-CLEANUP-COUNTEREXAMPLES-V1",
+  "frozen_source_set_sha256": "b4858573a870f7c073e9fcc9df97f20a780abcf320dcb15a2b4f6b3ad1e5c673",
+  "frozen_controller_sha256": "a6eb84febb2c83570bdd53133f2d7b0a47e81057c86ed900c951bead5220fa61",
+  "observer_sha256": "58e47307bb244311415e8299f39be156da127ff67cab77cd00d54e4f026c6373",
+  "failed_wait_model_loses_original_tuple_ownership": true,
+  "actual_failed_child_exit_code": 7,
+  "actual_other_children_cleanly_stopped": 2,
+  "original_terminal_claimed_completed_despite_unclean_shutdown": true,
+  "frozen_source_unchanged": true,
+  "no_native_wallet_or_runtime_calls": true,
+  "fixture_only": true,
+  "live_rld": false
+}

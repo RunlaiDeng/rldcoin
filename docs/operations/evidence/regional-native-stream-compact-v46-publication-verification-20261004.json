@@ -1,0 +1,89 @@
+{
+  "format": "RLD-NATIVE-STREAM-COMPACT-V46-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "ddedf8468f81a92d03c026d473893eb6df7fc73f",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 27604,
+      "sha256": "01fe8f394d6906007cf103037afb037d3c298c2218cec923b7c941b14fe6c922"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/README.md",
+      "bytes": 4827,
+      "sha256": "5837b65fd454c7cf6967ce2f3b66a35518ff469ff882825674cceb2c84623688"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/SHA256SUMS",
+      "bytes": 1230,
+      "sha256": "e5d7a72affa8c9eea0b248d545a5909d2b3888bba0890799a6d407a338b86cc0"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/log-inventory.json",
+      "bytes": 800,
+      "sha256": "9cc6a6e87bbfdff498a717405960f36504e37984eae9cb310f106c8151b6dbee"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/regional-stream-compact-retry1-frozen-checks-20261004.json",
+      "bytes": 5324,
+      "sha256": "3ed0687735a522878217d664d5de574b28d8e3bb7c7b13ab6521196350bed797"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/regional-stream-compact-retry1-long-20261004.json",
+      "bytes": 2109,
+      "sha256": "84a78c54e129c97f38c2dbf3ab23903e08e30cb11d39e9b5ef9e754d12a50187"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/regional-stream-compact-retry1-runtime-custody-20261004.json",
+      "bytes": 2449,
+      "sha256": "9d9b0914a5324333eda100b2ba01b556aac1027353cf0b653a12ed89568fd714"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/regional-stream-compact-retry1-small-cli-20261004.json",
+      "bytes": 2547,
+      "sha256": "235d9196684dc6495ae04d0fa0b3189e8b5594ed0d992b995edfa1feca5d864b"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/stream-compact-retry1-long-cold-20261004.log",
+      "bytes": 941,
+      "sha256": "40c701f62ceb2c4e47a5ec5f63f2d101feb236847f89a70e6c5bfec16c7a67f5"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/stream-compact-retry1-long-generate-20261004.log",
+      "bytes": 23967,
+      "sha256": "71900dbd9b97001bdd0fe50d1eefdf6f3cd5423dc34ae285c1074b05586c0484"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/evidence/stream-compact-retry1-process-tests-20261004.log",
+      "bytes": 881,
+      "sha256": "bca48c159ddaf202762b0ec0da43a5f4fdcbbfef9481eb0898911d0f43c98687"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/source-manifest.json",
+      "bytes": 75969,
+      "sha256": "9831cd2c95f33a6976746e535c2fd455454de7ca5a432e1f5f34d38fc27316ed"
+    },
+    {
+      "path": "research/2026-10-04/regional-native-stream-compact-v46/source.tar.gz",
+      "bytes": 1800486,
+      "sha256": "c4ebd5dd724428dca61ecea1dedd941e7de96cc8fb2d10b5b3b8af62fb3f7f91"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "14e769a2bf116fffc191d4e7d4406c980f36937bd514ccc1e30a01e13c88e594",
+  "complete_native_blocks_cold_authenticated": 200009,
+  "actual_owner_payments": 200001,
+  "same_host_read_only_long_stream_sample_completed": true,
+  "ordinary_long_history_qualified": false,
+  "bft_long_history_qualified": false,
+  "issuance_era_qualified": false,
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T03:08:11.383802+00:00"
+}

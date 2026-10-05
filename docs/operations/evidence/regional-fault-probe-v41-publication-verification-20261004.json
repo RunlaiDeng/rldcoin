@@ -1,0 +1,99 @@
+{
+  "format": "RLD-FAULT-PROBE-V41-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "5447b03b07fff2f2a4a01a2779e602da93088816",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 26249,
+      "sha256": "bff6548ac88a91fafe1ed525ea85279fe706be3991cdc0eba24f746db988a12d"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/README.md",
+      "bytes": 5826,
+      "sha256": "bb26ffd8d8a73f44be483e633cf16ea655d1cdda076f9f16d93ec0c9976450c9"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/SHA256SUMS",
+      "bytes": 1704,
+      "sha256": "e9a500d7c6b43dc4a7540ca0163fd91a8e4bba16672ea91173caf14c8d87b024"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/fault-probe-controller-checks-20261004.log",
+      "bytes": 137,
+      "sha256": "6c3450c3e2615c600f8295984b46c21936a3f708f2b3709ec26ce1608ddf55ca"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/lock-timeout-joint-fault-failed-stopped-20261004.log",
+      "bytes": 2406,
+      "sha256": "69e35b5f52de0f2fec198191b6097beead60c4acd9a6532f2fa68c244864a5c9"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/log-inventory.json",
+      "bytes": 657,
+      "sha256": "616b691a4df468a9d7c24c06761898e192717883789d01d95be2b22c14c20208"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/regional-fault-probe-controller-checks-20261004.json",
+      "bytes": 1044,
+      "sha256": "f7f526fad138ecb4af631d6ff227f51f3d947e5deff46469b616537d92e1edec"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/regional-lock-timeout-joint-fault-failed-operation-observations-20261004.json",
+      "bytes": 562202,
+      "sha256": "094f8c89e6c88e7d2f7fe73872f8bd7dced48dc140df4c644171bfe97f5f190c"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/regional-lock-timeout-joint-fault-gateway-log-observations-20261004.json",
+      "bytes": 1321,
+      "sha256": "4af88f1613a0873899a0d7e4fe24bc60c60d29e8ea30a1c49e1dcded06c851af"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/regional-lock-timeout-joint-fault-owner-head-observations-20261004.json",
+      "bytes": 1500,
+      "sha256": "05cb841336bce6e52756df9387e8aa699a85a13d667ff9dffb405bc3960fea6a"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/regional-lock-timeout-retry1-joint-fault-failed-cold-observations-20261004.json",
+      "bytes": 16682,
+      "sha256": "ef884c95477cf804fe9ddd9b7750906fa5d9eed7dd6f3868944886d5b6ccb285"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/evidence/regional-lock-timeout-retry1-joint-fault-fresh-20261004.json",
+      "bytes": 28618,
+      "sha256": "08e788088107e29ca117f83b66fd20e140d65b07e037d469b202c82a3268fd84"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/source-manifest.json",
+      "bytes": 73936,
+      "sha256": "c717566610b879213d878faee4bae3263725e254effd1aa61ca1432c0b2ad43c"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/source.tar.gz",
+      "bytes": 1784339,
+      "sha256": "6a41c8935cc3336be47ed604096efc7ed1c9dbe18a74d3f1e4acd7f714011d1b"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/tools/observe-lock-timeout-joint-fault-owner-heads-20261004.py",
+      "bytes": 2687,
+      "sha256": "d7e5f4f436e062ef88d1638e198a61d050372be0b41e115b79f6ecfe6141a27c"
+    },
+    {
+      "path": "research/2026-10-04/regional-fault-probe-v41/tools/observe-lock-timeout-joint-fault-stopped-20261004.py",
+      "bytes": 5172,
+      "sha256": "ad46658c1f488f2e4173af9c5d9928068e448736225679a584179b1fa916588c"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "controller_source_set_sha256": "62a897b6f248aeddf5f2c79c7b427f7534143111336545df4ffc40942f499211",
+  "runtime_source_set_sha256": "10876f4012b0dafb09734055466846dd1e32684350a68cb6b959a42c52338fad",
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T01:41:16.783589+00:00"
+}

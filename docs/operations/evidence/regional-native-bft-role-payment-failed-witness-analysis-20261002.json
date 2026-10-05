@@ -1,0 +1,46 @@
+{
+  "format": "RLD-ROLE-PAYMENT-FAILED-WITNESS-ANALYSIS-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "completed": false,
+  "previous_campaign_remains_failed": true,
+  "source_set_sha256": "2b5a760e391b53126b9c8c9b4e4704190f1d4f9ea4961b7fd57c3eacccb028a9",
+  "native_implementation": "d1f519335dff8da5f08c62f314ca3d88395b7a750784afcc830e399fdaf840aa",
+  "binary_sha256": "d9a229b524a11b7ec68555e7f276107c4ae66f2da451c4e70ac5258cd34cbd67",
+  "failed_run_report_sha256": "b1c51d6a83903cae15f36d35ff9336cf9a91aab4fe70d568b080b8a435d53e82",
+  "campaign_log_sha256": "08a9427ee1b7810ed9a040b322965dfd320843a451ef87c0005755fded665a87",
+  "stopped_after_repeated_native_origin_refusals": true,
+  "owned_process_cleanup_verified": true,
+  "all_private_files_unchanged": true,
+  "native_cold_heights": [
+    8,
+    8,
+    8,
+    8,
+    8
+  ],
+  "native_active_era": 2,
+  "refused_voter_origins": [
+    {
+      "carrier": 0,
+      "fully_native_verified_readiness": true,
+      "fully_native_verified_activation": true,
+      "complete_epoch_statement_equal": true,
+      "selection_and_closing_headers_equal": true,
+      "closing_certificate_bytes_equal": false,
+      "new_voter_directory_absent": true
+    },
+    {
+      "carrier": 3,
+      "fully_native_verified_readiness": true,
+      "fully_native_verified_activation": true,
+      "complete_epoch_statement_equal": true,
+      "selection_and_closing_headers_equal": true,
+      "closing_certificate_bytes_equal": false,
+      "new_voter_directory_absent": true
+    }
+  ],
+  "diagnostic": "voter readiness selected a different handoff",
+  "third_owner_payment_not_signed": true,
+  "fresh_full_fault_profile_completed": false
+}

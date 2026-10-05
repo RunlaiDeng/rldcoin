@@ -1,0 +1,69 @@
+{
+  "format": "RLD-ROLE-REQUESTED-RECEIPTS-STOPPED-PHASE-OBSERVATION-V1",
+  "source_set_sha256": "360a2a0fdba18e9ada1f02d95f0b7dde006ef2f53145a41ee087d89c17d5c710",
+  "binary_sha256": "1192ab832ac8c2bcc60ef857eabb59695a858a068189789b1d2027950936f488",
+  "producer_sha256": "8c4ae00a32930b8b286d37825121ddcdaf8cfaaf876891bb252e382fca5e71b6",
+  "rows": [
+    {
+      "carrier": 0,
+      "round": 7,
+      "leader_is_local": false,
+      "distinct_prior_timeouts": 2,
+      "native_prior_timeout_certificate_available": false,
+      "native_unsigned_candidate_valid": true,
+      "unsigned_candidate_height": 12,
+      "candidate_command_kinds": [
+        "Spend"
+      ],
+      "historical_message_store_not_used_as_authority": true
+    },
+    {
+      "carrier": 2,
+      "round": 7,
+      "leader_is_local": false,
+      "distinct_prior_timeouts": 1,
+      "native_prior_timeout_certificate_available": false,
+      "native_unsigned_candidate_valid": true,
+      "unsigned_candidate_height": 12,
+      "candidate_command_kinds": [
+        "Spend"
+      ],
+      "historical_message_store_not_used_as_authority": true
+    },
+    {
+      "carrier": 3,
+      "round": 6,
+      "leader_is_local": false,
+      "distinct_prior_timeouts": 1,
+      "native_prior_timeout_certificate_available": false,
+      "native_unsigned_candidate_valid": true,
+      "unsigned_candidate_height": 12,
+      "candidate_command_kinds": [
+        "Spend"
+      ],
+      "historical_message_store_not_used_as_authority": true
+    },
+    {
+      "carrier": 4,
+      "round": 7,
+      "leader_is_local": false,
+      "distinct_prior_timeouts": 2,
+      "native_prior_timeout_certificate_available": false,
+      "native_unsigned_candidate_valid": true,
+      "unsigned_candidate_height": 12,
+      "candidate_command_kinds": [
+        "Spend"
+      ],
+      "historical_message_store_not_used_as_authority": true
+    }
+  ],
+  "all_private_files_unchanged": true,
+  "no_runtime_startup_or_signer_keys_read": true,
+  "no_sign_or_sync_or_install_or_recovery": true,
+  "unsigned_candidate_is_not_ledger_progress": true,
+  "static_final_state_not_prior_schedule_reconstruction": true,
+  "all_selected_certificates_and_commands_native_authenticated": true,
+  "all_historical_envelopes_not_cold_qualified": true,
+  "fixture_only": true,
+  "live_rld": false
+}

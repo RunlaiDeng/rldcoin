@@ -1,0 +1,76 @@
+{
+  "format": "RLD-NATIVE-PAGED-HISTORY-WEBSITE-VERIFICATION-V1",
+  "website_commit": "679911eabc6ee14733a5150669db23b15558e184",
+  "publication_commit": "ed51f597bc7242ae15bb615ab007d63e69f974f7",
+  "production_site": "https://rldcoin.com",
+  "production_build_passed": true,
+  "deployment_status": "READY",
+  "deployment_id": "dpl_5FPGFgtnSgHbe7LdtcEGXCvMuvyJ",
+  "deployment_url": "https://rldcoin-website-nzpgcglel-tradergalaxs-projects.vercel.app",
+  "network_status_tests_passed": 6,
+  "routes": [
+    {
+      "route": "/",
+      "http_status": 200,
+      "sha256": "6f5456abc5b5461cff2888cce98d91b8301cd8040aabaa6a6553cd4e864a8083",
+      "v20_entry_present": true
+    },
+    {
+      "route": "/developers",
+      "http_status": 200,
+      "sha256": "368597222ef5431a363a350df84fd26f13fd283b3d62d1dc825212b7fa329bd1",
+      "v20_entry_present": true
+    },
+    {
+      "route": "/research",
+      "http_status": 200,
+      "sha256": "479785c84c3083de35421090eed10048cee98a803ea110bfe37a551aec8c1fee",
+      "v20_entry_present": true
+    },
+    {
+      "route": "/network",
+      "http_status": 200,
+      "sha256": "2f75b779a385acad9b48c55605c21732650779385fe26a3914e88c1056f1efb0",
+      "v20_entry_present": true
+    },
+    {
+      "route": "/resources",
+      "http_status": 200,
+      "sha256": "a2f81b6a39e4f5b28988c1056190e2067d8992cede07fd686319ec0173faa0c5",
+      "v20_entry_present": true
+    }
+  ],
+  "changed_remote_source_files_verified": 6,
+  "desktop_viewport": [
+    1440,
+    1100
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "desktop_and_mobile_browser_dom_inspected": true,
+  "desktop_and_mobile_screenshots_inspected": true,
+  "screenshot_tool": "Codex in-app browser via cua_repl",
+  "initial_screenshot_limitation": "agent-browser selector capture timed out at 25 seconds; browser diagnostics passed; in-app fallback produced inspected desktop and mobile images",
+  "horizontal_overflow": false,
+  "browser_errors": false,
+  "mobile_navigation_verified": true,
+  "mobile_menu_closes_on_navigation": true,
+  "old_reproduction_anchors_retained": true,
+  "full_finite_fault_scope_explicit": true,
+  "previous_failure_link_retained": true,
+  "retired_api_http_status": 410,
+  "retired_mainnet_state": "RETIRED",
+  "old_balances_migrate": false,
+  "new_mainnet_launched": false,
+  "verified_at_utc": "2026-10-01T20:42:42.744471+00:00",
+  "screenshot_sha256": {
+    "native-history-v20-desktop-production.jpg": "4c335f128fef4686eb26e6580aef3479bb16f3878d0ba789e689cc238bdc25b3",
+    "native-history-v20-mobile-production.jpg": "bc6bb9884896272ff02cc4e4446a91c91ea0a2d61f13d90f42270ddc3266ad03"
+  },
+  "public_source_set_sha256": "1756c85e876dbca24275c77e7d035673d2b3fd4a90c5c67b0cbbbf99cd0d445b",
+  "native_tests_passed": 99,
+  "process_tests_passed": 52,
+  "transport_tests_rerun": false
+}

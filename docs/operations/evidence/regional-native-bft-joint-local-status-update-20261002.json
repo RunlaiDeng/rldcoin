@@ -1,0 +1,9 @@
+{
+  "format": "RLD-BFT-JOINT-LOCAL-STATUS-UPDATE-V1",
+  "public_commit": "f7bc928e41fda6d6dfdc82ad0315b5d94d1048d2",
+  "local_status_sha256": "b2c0ffe0ec03c788dbf688ae0fd817f6f0c6fd7e3337c746a7fa837906c5f95a",
+  "source_freeze_unchanged": true,
+  "native_implementation_unchanged": true,
+  "documentation_only_after_publication": true,
+  "overall_goal_complete": false
+}

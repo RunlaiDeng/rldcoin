@@ -1,0 +1,1468 @@
+{
+  "format": "RLD-ROLE-PROCESS-OBSERVATION-COLLECTION-V1",
+  "source_set_sha256": "aa2381b56f0682b9d1cc1f317b60e0c28b0c1d6c3ea3ad0652330532a54af4e1",
+  "recorded_events": 13031,
+  "recorded_bytes": 3829267,
+  "max_bytes": 8388608,
+  "capacity_refused": false,
+  "missing_process_events": 0,
+  "events_sha256": "b0281ab1f2f046f703a254b5ab70174c5f990f23933994b633e446c950811aa8",
+  "processes": {
+    "(0, 29037)": {
+      "sequence": 340,
+      "dropped_events": 212,
+      "rejected_events": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.01368,
+          "total_seconds": 0.038735
+        },
+        "bft-network-check": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.025212,
+          "total_seconds": 0.403088
+        },
+        "bft-network-pack": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.014985,
+          "total_seconds": 0.041317
+        },
+        "bft-quorum": {
+          "calls": 13,
+          "failures": 0,
+          "max_seconds": 0.016478,
+          "total_seconds": 0.145522
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.071535,
+          "total_seconds": 0.119607
+        },
+        "consensus-tick": {
+          "calls": 90,
+          "failures": 0,
+          "max_seconds": 0.273374,
+          "total_seconds": 3.587855
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.082055,
+          "total_seconds": 0.200924
+        }
+      }
+    },
+    "(1, 29051)": {
+      "sequence": 320,
+      "dropped_events": 192,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.011001,
+          "total_seconds": 0.019015
+        },
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.013682,
+          "total_seconds": 0.039599
+        },
+        "bft-network-check": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.022126,
+          "total_seconds": 0.418018
+        },
+        "bft-network-pack": {
+          "calls": 12,
+          "failures": 0,
+          "max_seconds": 0.017127,
+          "total_seconds": 0.136674
+        },
+        "bft-quorum": {
+          "calls": 14,
+          "failures": 0,
+          "max_seconds": 0.018848,
+          "total_seconds": 0.168035
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.049413,
+          "total_seconds": 0.409129
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.083219,
+          "total_seconds": 0.132222
+        },
+        "bft-timeout-certificate": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.011034,
+          "total_seconds": 0.024804
+        },
+        "consensus-tick": {
+          "calls": 80,
+          "failures": 0,
+          "max_seconds": 0.347619,
+          "total_seconds": 6.537272
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.090387,
+          "total_seconds": 0.213788
+        }
+      }
+    },
+    "(2, 29072)": {
+      "sequence": 322,
+      "dropped_events": 194,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.012763,
+          "total_seconds": 0.012763
+        },
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.024296,
+          "total_seconds": 0.055318
+        },
+        "bft-network-check": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.023278,
+          "total_seconds": 0.437792
+        },
+        "bft-network-pack": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.015631,
+          "total_seconds": 0.129773
+        },
+        "bft-quorum": {
+          "calls": 20,
+          "failures": 0,
+          "max_seconds": 0.018404,
+          "total_seconds": 0.229642
+        },
+        "bft-sign": {
+          "calls": 8,
+          "failures": 0,
+          "max_seconds": 0.053231,
+          "total_seconds": 0.392232
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.049054,
+          "total_seconds": 0.097126
+        },
+        "bft-timeout-certificate": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.007623,
+          "total_seconds": 0.028117
+        },
+        "consensus-tick": {
+          "calls": 79,
+          "failures": 0,
+          "max_seconds": 0.370487,
+          "total_seconds": 6.42448
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.097785,
+          "total_seconds": 0.220633
+        }
+      }
+    },
+    "(3, 29101)": {
+      "sequence": 325,
+      "dropped_events": 197,
+      "rejected_events": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.012718,
+          "total_seconds": 0.031739
+        },
+        "bft-network-check": {
+          "calls": 36,
+          "failures": 0,
+          "max_seconds": 0.02265,
+          "total_seconds": 0.429732
+        },
+        "bft-network-pack": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.022596,
+          "total_seconds": 0.126799
+        },
+        "bft-quorum": {
+          "calls": 22,
+          "failures": 0,
+          "max_seconds": 0.0186,
+          "total_seconds": 0.236854
+        },
+        "bft-sign": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.048411,
+          "total_seconds": 0.299529
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.049153,
+          "total_seconds": 0.140731
+        },
+        "bft-timeout-certificate": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.008155,
+          "total_seconds": 0.034841
+        },
+        "consensus-tick": {
+          "calls": 80,
+          "failures": 0,
+          "max_seconds": 0.393412,
+          "total_seconds": 6.270782
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.084251,
+          "total_seconds": 0.211013
+        }
+      }
+    },
+    "(4, 29136)": {
+      "sequence": 339,
+      "dropped_events": 211,
+      "rejected_events": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.013743,
+          "total_seconds": 0.040166
+        },
+        "bft-network-check": {
+          "calls": 36,
+          "failures": 0,
+          "max_seconds": 0.028095,
+          "total_seconds": 0.434934
+        },
+        "bft-network-pack": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.026581,
+          "total_seconds": 0.052422
+        },
+        "bft-quorum": {
+          "calls": 16,
+          "failures": 0,
+          "max_seconds": 0.013364,
+          "total_seconds": 0.162914
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.04979,
+          "total_seconds": 0.1452
+        },
+        "consensus-tick": {
+          "calls": 88,
+          "failures": 0,
+          "max_seconds": 0.321161,
+          "total_seconds": 3.470251
+        },
+        "finalize": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.090308,
+          "total_seconds": 0.180368
+        }
+      }
+    },
+    "(0, 33017)": {
+      "sequence": 378,
+      "dropped_events": 250,
+      "rejected_events": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.03306,
+          "total_seconds": 0.095066
+        },
+        "bft-epoch-activate": {
+          "calls": 8,
+          "failures": 0,
+          "max_seconds": 0.196653,
+          "total_seconds": 1.05229
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.025227,
+          "total_seconds": 0.025227
+        },
+        "bft-network-check": {
+          "calls": 128,
+          "failures": 0,
+          "max_seconds": 0.062134,
+          "total_seconds": 2.965133
+        },
+        "bft-network-pack": {
+          "calls": 17,
+          "failures": 0,
+          "max_seconds": 0.054454,
+          "total_seconds": 0.525914
+        },
+        "bft-quorum": {
+          "calls": 32,
+          "failures": 0,
+          "max_seconds": 0.031556,
+          "total_seconds": 0.74696
+        },
+        "bft-sign": {
+          "calls": 6,
+          "failures": 0,
+          "max_seconds": 0.148588,
+          "total_seconds": 0.637954
+        },
+        "bft-sync": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.14323,
+          "total_seconds": 0.542387
+        },
+        "consensus-tick": {
+          "calls": 70,
+          "failures": 0,
+          "max_seconds": 1.075285,
+          "total_seconds": 20.518608
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.141695,
+          "total_seconds": 0.407384
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.087988,
+          "total_seconds": 0.131728
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.051162,
+          "total_seconds": 0.051162
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.081768,
+          "total_seconds": 0.132904
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.045309,
+          "total_seconds": 0.045309
+        }
+      }
+    },
+    "(1, 33076)": {
+      "sequence": 292,
+      "dropped_events": 164,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 2,
+          "failures": 1,
+          "max_seconds": 0.023642,
+          "total_seconds": 0.045368
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.032582,
+          "total_seconds": 0.100864
+        },
+        "bft-epoch-activate": {
+          "calls": 8,
+          "failures": 0,
+          "max_seconds": 0.185845,
+          "total_seconds": 1.022858
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.021765,
+          "total_seconds": 0.021765
+        },
+        "bft-network-check": {
+          "calls": 128,
+          "failures": 0,
+          "max_seconds": 0.075321,
+          "total_seconds": 3.154602
+        },
+        "bft-network-pack": {
+          "calls": 30,
+          "failures": 0,
+          "max_seconds": 0.060718,
+          "total_seconds": 0.768602
+        },
+        "bft-quorum": {
+          "calls": 26,
+          "failures": 0,
+          "max_seconds": 0.03394,
+          "total_seconds": 0.570772
+        },
+        "bft-sign": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.190375,
+          "total_seconds": 1.31751
+        },
+        "bft-sync": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.095113,
+          "total_seconds": 0.408063
+        },
+        "consensus-tick": {
+          "calls": 47,
+          "failures": 0,
+          "max_seconds": 1.401038,
+          "total_seconds": 24.43471
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.142774,
+          "total_seconds": 0.412147
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.051884,
+          "total_seconds": 0.098616
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.027977,
+          "total_seconds": 0.027977
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.102754,
+          "total_seconds": 0.205157
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.042182,
+          "total_seconds": 0.042182
+        }
+      }
+    },
+    "(2, 33229)": {
+      "sequence": 273,
+      "dropped_events": 145,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 2,
+          "failures": 1,
+          "max_seconds": 0.031651,
+          "total_seconds": 0.059306
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.028823,
+          "total_seconds": 0.094906
+        },
+        "bft-epoch-activate": {
+          "calls": 25,
+          "failures": 0,
+          "max_seconds": 0.178593,
+          "total_seconds": 3.136402
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.025682,
+          "total_seconds": 0.025682
+        },
+        "bft-network-check": {
+          "calls": 128,
+          "failures": 0,
+          "max_seconds": 0.076797,
+          "total_seconds": 3.25028
+        },
+        "bft-network-pack": {
+          "calls": 45,
+          "failures": 0,
+          "max_seconds": 0.051021,
+          "total_seconds": 1.387617
+        },
+        "bft-quorum": {
+          "calls": 26,
+          "failures": 0,
+          "max_seconds": 0.036803,
+          "total_seconds": 0.608588
+        },
+        "bft-sign": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.205404,
+          "total_seconds": 1.320974
+        },
+        "bft-sync": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.135089,
+          "total_seconds": 0.412398
+        },
+        "consensus-tick": {
+          "calls": 41,
+          "failures": 0,
+          "max_seconds": 1.268704,
+          "total_seconds": 22.835537
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.140338,
+          "total_seconds": 0.445362
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.046528,
+          "total_seconds": 0.092962
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.023689,
+          "total_seconds": 0.023689
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.095923,
+          "total_seconds": 0.193248
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.04583,
+          "total_seconds": 0.04583
+        }
+      }
+    },
+    "(3, 33443)": {
+      "sequence": 271,
+      "dropped_events": 143,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 5,
+          "failures": 1,
+          "max_seconds": 0.029687,
+          "total_seconds": 0.099383
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.037315,
+          "total_seconds": 0.10227
+        },
+        "bft-epoch-activate": {
+          "calls": 23,
+          "failures": 0,
+          "max_seconds": 0.189835,
+          "total_seconds": 2.731412
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.024989,
+          "total_seconds": 0.024989
+        },
+        "bft-network-check": {
+          "calls": 126,
+          "failures": 0,
+          "max_seconds": 0.059865,
+          "total_seconds": 3.076393
+        },
+        "bft-network-pack": {
+          "calls": 44,
+          "failures": 0,
+          "max_seconds": 0.061365,
+          "total_seconds": 1.392614
+        },
+        "bft-quorum": {
+          "calls": 18,
+          "failures": 0,
+          "max_seconds": 0.035796,
+          "total_seconds": 0.430713
+        },
+        "bft-sign": {
+          "calls": 11,
+          "failures": 0,
+          "max_seconds": 0.19628,
+          "total_seconds": 1.345806
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.144107,
+          "total_seconds": 0.320569
+        },
+        "consensus-tick": {
+          "calls": 39,
+          "failures": 0,
+          "max_seconds": 1.353669,
+          "total_seconds": 22.517626
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.154761,
+          "total_seconds": 0.478625
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.050616,
+          "total_seconds": 0.102092
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.026505,
+          "total_seconds": 0.026505
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.098223,
+          "total_seconds": 0.209588
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.052496,
+          "total_seconds": 0.052496
+        }
+      }
+    },
+    "(4, 33679)": {
+      "sequence": 363,
+      "dropped_events": 235,
+      "rejected_events": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.025752,
+          "total_seconds": 0.086126
+        },
+        "bft-epoch-activate": {
+          "calls": 29,
+          "failures": 0,
+          "max_seconds": 0.19286,
+          "total_seconds": 3.818305
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.023024,
+          "total_seconds": 0.023024
+        },
+        "bft-network-check": {
+          "calls": 130,
+          "failures": 0,
+          "max_seconds": 0.062742,
+          "total_seconds": 3.279124
+        },
+        "bft-network-pack": {
+          "calls": 31,
+          "failures": 0,
+          "max_seconds": 0.055484,
+          "total_seconds": 1.113096
+        },
+        "bft-quorum": {
+          "calls": 22,
+          "failures": 0,
+          "max_seconds": 0.037674,
+          "total_seconds": 0.523817
+        },
+        "bft-sync": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.145353,
+          "total_seconds": 0.387861
+        },
+        "consensus-tick": {
+          "calls": 66,
+          "failures": 0,
+          "max_seconds": 0.768711,
+          "total_seconds": 11.912702
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.142798,
+          "total_seconds": 0.41203
+        }
+      }
+    },
+    "(0, 38240)": {
+      "sequence": 1252,
+      "dropped_events": 1124,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 1,
+          "max_seconds": 0.029122,
+          "total_seconds": 0.079064
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.069717,
+          "total_seconds": 0.192875
+        },
+        "bft-epoch-activate": {
+          "calls": 44,
+          "failures": 0,
+          "max_seconds": 0.271949,
+          "total_seconds": 8.450244
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.052213,
+          "total_seconds": 0.052213
+        },
+        "bft-network-check": {
+          "calls": 310,
+          "failures": 0,
+          "max_seconds": 0.124285,
+          "total_seconds": 14.585308
+        },
+        "bft-network-pack": {
+          "calls": 69,
+          "failures": 0,
+          "max_seconds": 0.111955,
+          "total_seconds": 4.782116
+        },
+        "bft-quorum": {
+          "calls": 128,
+          "failures": 0,
+          "max_seconds": 0.087021,
+          "total_seconds": 5.398256
+        },
+        "bft-sign": {
+          "calls": 20,
+          "failures": 0,
+          "max_seconds": 0.573663,
+          "total_seconds": 6.727433
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.221916,
+          "total_seconds": 0.582146
+        },
+        "bft-timeout-certificate": {
+          "calls": 50,
+          "failures": 0,
+          "max_seconds": 0.074823,
+          "total_seconds": 2.018358
+        },
+        "consensus-tick": {
+          "calls": 183,
+          "failures": 0,
+          "max_seconds": 3.135608,
+          "total_seconds": 188.177559
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.200819,
+          "total_seconds": 0.558141
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.08299,
+          "total_seconds": 0.179707
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.05035,
+          "total_seconds": 0.05035
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.203181,
+          "total_seconds": 0.604575
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.130333,
+          "total_seconds": 0.130333
+        }
+      }
+    },
+    "(1, 38406)": {
+      "sequence": 1355,
+      "dropped_events": 1227,
+      "rejected_events": 0,
+      "operations": {
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.06366,
+          "total_seconds": 0.212679
+        },
+        "bft-epoch-activate": {
+          "calls": 58,
+          "failures": 0,
+          "max_seconds": 0.294099,
+          "total_seconds": 11.62658
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.109457,
+          "total_seconds": 0.109457
+        },
+        "bft-network-check": {
+          "calls": 301,
+          "failures": 0,
+          "max_seconds": 0.144501,
+          "total_seconds": 15.274812
+        },
+        "bft-network-pack": {
+          "calls": 81,
+          "failures": 0,
+          "max_seconds": 0.128271,
+          "total_seconds": 5.623028
+        },
+        "bft-quorum": {
+          "calls": 137,
+          "failures": 0,
+          "max_seconds": 0.117873,
+          "total_seconds": 6.919528
+        },
+        "bft-sign": {
+          "calls": 6,
+          "failures": 0,
+          "max_seconds": 0.267787,
+          "total_seconds": 1.32184
+        },
+        "bft-sync": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.187822,
+          "total_seconds": 0.674487
+        },
+        "bft-timeout-certificate": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.050338,
+          "total_seconds": 0.158515
+        },
+        "consensus-tick": {
+          "calls": 214,
+          "failures": 0,
+          "max_seconds": 2.208675,
+          "total_seconds": 133.876957
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.153428,
+          "total_seconds": 0.526029
+        }
+      }
+    },
+    "(2, 38792)": {
+      "sequence": 836,
+      "dropped_events": 708,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 2,
+          "max_seconds": 0.056236,
+          "total_seconds": 0.158677
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.080862,
+          "total_seconds": 0.250429
+        },
+        "bft-epoch-activate": {
+          "calls": 132,
+          "failures": 0,
+          "max_seconds": 0.312765,
+          "total_seconds": 24.270896
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.062876,
+          "total_seconds": 0.062876
+        },
+        "bft-network-check": {
+          "calls": 298,
+          "failures": 0,
+          "max_seconds": 0.117028,
+          "total_seconds": 15.796505
+        },
+        "bft-network-pack": {
+          "calls": 169,
+          "failures": 0,
+          "max_seconds": 0.137263,
+          "total_seconds": 11.356579
+        },
+        "bft-quorum": {
+          "calls": 121,
+          "failures": 0,
+          "max_seconds": 0.115054,
+          "total_seconds": 5.726824
+        },
+        "bft-sign": {
+          "calls": 21,
+          "failures": 0,
+          "max_seconds": 0.686476,
+          "total_seconds": 8.760714
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.21463,
+          "total_seconds": 0.518364
+        },
+        "bft-timeout-certificate": {
+          "calls": 40,
+          "failures": 0,
+          "max_seconds": 0.080648,
+          "total_seconds": 1.760593
+        },
+        "consensus-tick": {
+          "calls": 104,
+          "failures": 0,
+          "max_seconds": 4.231096,
+          "total_seconds": 171.173799
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.18106,
+          "total_seconds": 0.655
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.092062,
+          "total_seconds": 0.188089
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.050798,
+          "total_seconds": 0.050798
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.285369,
+          "total_seconds": 0.783149
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.1585,
+          "total_seconds": 0.1585
+        }
+      }
+    },
+    "(3, 39332)": {
+      "sequence": 829,
+      "dropped_events": 701,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 2,
+          "max_seconds": 0.060027,
+          "total_seconds": 0.162048
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.086877,
+          "total_seconds": 0.226298
+        },
+        "bft-epoch-activate": {
+          "calls": 140,
+          "failures": 0,
+          "max_seconds": 0.300965,
+          "total_seconds": 26.057071
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.093741,
+          "total_seconds": 0.093741
+        },
+        "bft-network-check": {
+          "calls": 297,
+          "failures": 0,
+          "max_seconds": 0.144312,
+          "total_seconds": 16.067716
+        },
+        "bft-network-pack": {
+          "calls": 172,
+          "failures": 0,
+          "max_seconds": 0.138777,
+          "total_seconds": 11.428173
+        },
+        "bft-quorum": {
+          "calls": 94,
+          "failures": 0,
+          "max_seconds": 0.087733,
+          "total_seconds": 4.542565
+        },
+        "bft-sign": {
+          "calls": 15,
+          "failures": 0,
+          "max_seconds": 0.549039,
+          "total_seconds": 5.402366
+        },
+        "bft-sync": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.1933,
+          "total_seconds": 0.668583
+        },
+        "bft-timeout-certificate": {
+          "calls": 17,
+          "failures": 0,
+          "max_seconds": 0.054158,
+          "total_seconds": 0.678917
+        },
+        "consensus-tick": {
+          "calls": 112,
+          "failures": 0,
+          "max_seconds": 3.515807,
+          "total_seconds": 150.054087
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.165675,
+          "total_seconds": 0.579313
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.072705,
+          "total_seconds": 0.181698
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.08024,
+          "total_seconds": 0.08024
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.237117,
+          "total_seconds": 0.654261
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.136344,
+          "total_seconds": 0.136344
+        }
+      }
+    },
+    "(4, 39825)": {
+      "sequence": 1271,
+      "dropped_events": 1143,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 1,
+          "max_seconds": 0.052519,
+          "total_seconds": 0.131259
+        },
+        "bft-certify": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.079545,
+          "total_seconds": 0.228322
+        },
+        "bft-epoch-activate": {
+          "calls": 132,
+          "failures": 0,
+          "max_seconds": 0.278877,
+          "total_seconds": 22.393359
+        },
+        "bft-epoch-combine": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.078887,
+          "total_seconds": 0.078887
+        },
+        "bft-network-check": {
+          "calls": 313,
+          "failures": 0,
+          "max_seconds": 0.110033,
+          "total_seconds": 16.053482
+        },
+        "bft-network-pack": {
+          "calls": 141,
+          "failures": 0,
+          "max_seconds": 0.1295,
+          "total_seconds": 8.640147
+        },
+        "bft-quorum": {
+          "calls": 135,
+          "failures": 0,
+          "max_seconds": 0.092252,
+          "total_seconds": 5.993722
+        },
+        "bft-sign": {
+          "calls": 10,
+          "failures": 0,
+          "max_seconds": 0.278527,
+          "total_seconds": 1.872362
+        },
+        "bft-sync": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.205724,
+          "total_seconds": 0.583979
+        },
+        "bft-timeout-certificate": {
+          "calls": 21,
+          "failures": 0,
+          "max_seconds": 0.080351,
+          "total_seconds": 1.008451
+        },
+        "consensus-tick": {
+          "calls": 193,
+          "failures": 0,
+          "max_seconds": 2.109445,
+          "total_seconds": 133.096692
+        },
+        "finalize": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.180958,
+          "total_seconds": 0.593447
+        },
+        "joint-ready-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.094263,
+          "total_seconds": 0.182855
+        },
+        "joint-ready-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.061411,
+          "total_seconds": 0.061411
+        },
+        "joint-voter-init": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.085426,
+          "total_seconds": 0.215635
+        },
+        "joint-voter-recover-init": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.048798,
+          "total_seconds": 0.048798
+        }
+      }
+    },
+    "(0, 54007)": {
+      "sequence": 1130,
+      "dropped_events": 1002,
+      "rejected_events": 0,
+      "operations": {
+        "bft-candidate": {
+          "calls": 3,
+          "failures": 2,
+          "max_seconds": 0.044096,
+          "total_seconds": 0.127641
+        },
+        "bft-epoch-activate": {
+          "calls": 88,
+          "failures": 0,
+          "max_seconds": 0.469009,
+          "total_seconds": 21.563468
+        },
+        "bft-network-check": {
+          "calls": 486,
+          "failures": 0,
+          "max_seconds": 0.162436,
+          "total_seconds": 38.011785
+        },
+        "bft-network-pack": {
+          "calls": 117,
+          "failures": 0,
+          "max_seconds": 0.151324,
+          "total_seconds": 10.393433
+        },
+        "bft-sign": {
+          "calls": 9,
+          "failures": 0,
+          "max_seconds": 0.723471,
+          "total_seconds": 5.762981
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.201504,
+          "total_seconds": 0.201504
+        },
+        "consensus-tick": {
+          "calls": 173,
+          "failures": 0,
+          "max_seconds": 4.418069,
+          "total_seconds": 334.831758
+        }
+      }
+    },
+    "(1, 54440)": {
+      "sequence": 1163,
+      "dropped_events": 1035,
+      "rejected_events": 0,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 106,
+          "failures": 0,
+          "max_seconds": 0.366753,
+          "total_seconds": 26.204677
+        },
+        "bft-network-check": {
+          "calls": 473,
+          "failures": 0,
+          "max_seconds": 0.219301,
+          "total_seconds": 39.06191
+        },
+        "bft-network-pack": {
+          "calls": 125,
+          "failures": 0,
+          "max_seconds": 0.232159,
+          "total_seconds": 11.776232
+        },
+        "consensus-tick": {
+          "calls": 200,
+          "failures": 0,
+          "max_seconds": 2.783681,
+          "total_seconds": 310.527567
+        }
+      }
+    },
+    "(2, 54979)": {
+      "sequence": 497,
+      "dropped_events": 369,
+      "rejected_events": 0,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 210,
+          "failures": 0,
+          "max_seconds": 0.431411,
+          "total_seconds": 56.059181
+        },
+        "bft-network-check": {
+          "calls": 436,
+          "failures": 0,
+          "max_seconds": 0.259465,
+          "total_seconds": 37.902853
+        },
+        "bft-network-pack": {
+          "calls": 251,
+          "failures": 0,
+          "max_seconds": 0.276583,
+          "total_seconds": 25.501454
+        },
+        "bft-sign": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.795127,
+          "total_seconds": 5.182948
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.199371,
+          "total_seconds": 0.199371
+        },
+        "consensus-tick": {
+          "calls": 87,
+          "failures": 0,
+          "max_seconds": 6.728402,
+          "total_seconds": 261.011054
+        }
+      }
+    },
+    "(3, 55860)": {
+      "sequence": 540,
+      "dropped_events": 412,
+      "rejected_events": 0,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 233,
+          "failures": 0,
+          "max_seconds": 0.363456,
+          "total_seconds": 59.732316
+        },
+        "bft-network-check": {
+          "calls": 465,
+          "failures": 0,
+          "max_seconds": 0.229686,
+          "total_seconds": 40.43896
+        },
+        "bft-network-pack": {
+          "calls": 267,
+          "failures": 0,
+          "max_seconds": 0.228878,
+          "total_seconds": 26.01805
+        },
+        "bft-sign": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.640686,
+          "total_seconds": 4.103503
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.191357,
+          "total_seconds": 0.191357
+        },
+        "bft-timeout-certificate": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.059882,
+          "total_seconds": 0.239221
+        },
+        "consensus-tick": {
+          "calls": 102,
+          "failures": 0,
+          "max_seconds": 5.503822,
+          "total_seconds": 232.940716
+        }
+      }
+    },
+    "(4, 56721)": {
+      "sequence": 935,
+      "dropped_events": 807,
+      "rejected_events": 0,
+      "operations": {
+        "bft-epoch-activate": {
+          "calls": 219,
+          "failures": 0,
+          "max_seconds": 0.3553,
+          "total_seconds": 52.326255
+        },
+        "bft-network-check": {
+          "calls": 528,
+          "failures": 0,
+          "max_seconds": 0.166551,
+          "total_seconds": 41.398902
+        },
+        "bft-network-pack": {
+          "calls": 230,
+          "failures": 0,
+          "max_seconds": 0.140747,
+          "total_seconds": 20.307883
+        },
+        "bft-sign": {
+          "calls": 7,
+          "failures": 0,
+          "max_seconds": 0.331758,
+          "total_seconds": 2.01622
+        },
+        "bft-sync": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.191753,
+          "total_seconds": 0.191753
+        },
+        "bft-timeout-certificate": {
+          "calls": 63,
+          "failures": 0,
+          "max_seconds": 0.094733,
+          "total_seconds": 2.95744
+        },
+        "consensus-tick": {
+          "calls": 205,
+          "failures": 0,
+          "max_seconds": 2.922015,
+          "total_seconds": 201.472202
+        }
+      }
+    }
+  },
+  "event_counts": {
+    "tick-phase": 2187,
+    "tick-end": 2253,
+    "contact-tick": 2253,
+    "receive-end": 2693,
+    "sign-start": 163,
+    "sign-end": 163,
+    "quorum-search": 3319
+  },
+  "read_only_status_collection": true,
+  "no_native_or_custody_calls": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "collector_sha256": "2e20fef00a6ab7897ae20a34e53d61cab84a5d4744b3854f7a5601a1b7197105"
+}

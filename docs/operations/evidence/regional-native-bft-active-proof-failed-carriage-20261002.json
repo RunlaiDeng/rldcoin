@@ -1,0 +1,63 @@
+{
+  "format": "RLD-JOINT-FAILED-CARRIAGE-READ-V1",
+  "source_set_sha256": "0be0a01f00b6b04c11a7cb4b3012c3b8a2d1857904f1ac921ade72890d49e049",
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "observations": [
+    {
+      "replica": 1,
+      "eligible_destination_packets": 144,
+      "already_cycle_retained_complete_envelopes": 98,
+      "other_packets": 46,
+      "current_commits": {
+        "2": {
+          "transport_destination_receipts": 0,
+          "retained_by_runtime": false
+        },
+        "3": {
+          "transport_destination_receipts": 0,
+          "retained_by_runtime": false
+        }
+      }
+    },
+    {
+      "replica": 2,
+      "eligible_destination_packets": 148,
+      "already_cycle_retained_complete_envelopes": 104,
+      "other_packets": 44,
+      "current_commits": {
+        "1": {
+          "transport_destination_receipts": 1,
+          "retained_by_runtime": true
+        },
+        "3": {
+          "transport_destination_receipts": 1,
+          "retained_by_runtime": false
+        }
+      }
+    },
+    {
+      "replica": 3,
+      "eligible_destination_packets": 148,
+      "already_cycle_retained_complete_envelopes": 101,
+      "other_packets": 47,
+      "current_commits": {
+        "1": {
+          "transport_destination_receipts": 1,
+          "retained_by_runtime": true
+        },
+        "2": {
+          "transport_destination_receipts": 1,
+          "retained_by_runtime": false
+        }
+      }
+    }
+  ],
+  "all_current_source_commits_native_authenticated": true,
+  "destination_receipts_authenticated": true,
+  "private_files_unchanged": true,
+  "no_restart_signing_recovery_or_head_adoption": true,
+  "failed_profile_remains_failed": true,
+  "receipt_is_not_ledger_or_finality_authority": true,
+  "fixture_only": true,
+  "live_rld": false
+}

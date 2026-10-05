@@ -1,0 +1,260 @@
+{
+  "format": "RLD-NATIVE-BFT-AUTONOMOUS-GROUND-VERIFICATION-V1",
+  "implementation": "d014d57619a0c7d7d72213fe04ff16e0c3887cbccca4714bffcafd1a85ec231e",
+  "currency": "304d2677fafc3a4f400b83936f3df4dd25adbd47992869906ebf81d4636cfa54",
+  "named_source_files": 225,
+  "base_source_files_unchanged": 167,
+  "rust_tests_passed": 80,
+  "native_process_http_tests_passed": 34,
+  "new_autonomous_caller_recovery_tests_passed": 8,
+  "transport_tests_passed": 61,
+  "clippy_all_targets_strict": "PASS",
+  "fresh_named_source_build": {
+    "rust_tests_passed": 80,
+    "native_process_http_tests_passed": 34,
+    "transport_tests_passed": 61,
+    "clippy_all_targets_strict": "PASS",
+    "all_225_named_source_bytes_match_workspace": true,
+    "autonomous_campaign_semantics_match": true,
+    "allowed_nondeterministic_fields": [
+      "observed_ground_phases[*].elapsed_seconds"
+    ]
+  },
+  "autonomous_campaign": {
+    "format": "RLD-REGIONAL-BFT-AUTONOMOUS-GROUND-CAMPAIGN-V1",
+    "currency": "304d2677fafc3a4f400b83936f3df4dd25adbd47992869906ebf81d4636cfa54",
+    "implementation": "d014d57619a0c7d7d72213fe04ff16e0c3887cbccca4714bffcafd1a85ec231e",
+    "fixture_only": true,
+    "live_rld": false,
+    "ordinary_native_startup_used": true,
+    "node_process_starts": 8,
+    "initial_leader_offline": true,
+    "three_native_voters_progressed": true,
+    "controller_generated_consensus_messages": 0,
+    "controller_installed_checkpoints": 0,
+    "TLS_1_3_and_pinned_configured_neighbors": true,
+    "actual_two_hop_consensus_carriage": true,
+    "offline_replica_native_catchup": true,
+    "external_heads_retained_on_restart": true,
+    "signed_submission_did_not_debit": true,
+    "actual_recipient_amount": "30",
+    "pending_wallet_reservation_after_inclusion": "0",
+    "replica_heights": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "conservation": [
+      {
+        "phase": "autonomous TLS regional payment after certified leader change and restart",
+        "issued": "300",
+        "liquid": "300",
+        "pending_exports": "0",
+        "conserved": true
+      }
+    ],
+    "ground_round_timeout_seconds": 20,
+    "observed_ground_phases": [
+      {
+        "phase": "node startup 1",
+        "elapsed_seconds": 0.537,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 2",
+        "elapsed_seconds": 0.432,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 3",
+        "elapsed_seconds": 0.416,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "three autonomous voters with initial leader offline",
+        "elapsed_seconds": 62.846,
+        "observation_bound_seconds": 300
+      },
+      {
+        "phase": "node startup 0",
+        "elapsed_seconds": 0.319,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "offline replica catches up through TLS evidence",
+        "elapsed_seconds": 6.506,
+        "observation_bound_seconds": 300
+      },
+      {
+        "phase": "signed payment gossip before paused validators resume",
+        "elapsed_seconds": 4.333,
+        "observation_bound_seconds": 300
+      },
+      {
+        "phase": "node startup 0",
+        "elapsed_seconds": 2.456,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 1",
+        "elapsed_seconds": 4.408,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 2",
+        "elapsed_seconds": 4.157,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 3",
+        "elapsed_seconds": 4.386,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "restart and autonomous wallet-command inclusion",
+        "elapsed_seconds": 98.391,
+        "observation_bound_seconds": 300
+      }
+    ],
+    "same_host_same_controller": true,
+    "independent_operators_qualified": false,
+    "complete_BFT_liveness_qualified": false,
+    "BFT_reconfiguration_implemented": false,
+    "external_monotonic_custody_qualified": false,
+    "physical_interstellar_route_qualified": false
+  },
+  "rebuilt_autonomous_campaign": {
+    "format": "RLD-REGIONAL-BFT-AUTONOMOUS-GROUND-CAMPAIGN-V1",
+    "currency": "304d2677fafc3a4f400b83936f3df4dd25adbd47992869906ebf81d4636cfa54",
+    "implementation": "d014d57619a0c7d7d72213fe04ff16e0c3887cbccca4714bffcafd1a85ec231e",
+    "fixture_only": true,
+    "live_rld": false,
+    "ordinary_native_startup_used": true,
+    "node_process_starts": 8,
+    "initial_leader_offline": true,
+    "three_native_voters_progressed": true,
+    "controller_generated_consensus_messages": 0,
+    "controller_installed_checkpoints": 0,
+    "TLS_1_3_and_pinned_configured_neighbors": true,
+    "actual_two_hop_consensus_carriage": true,
+    "offline_replica_native_catchup": true,
+    "external_heads_retained_on_restart": true,
+    "signed_submission_did_not_debit": true,
+    "actual_recipient_amount": "30",
+    "pending_wallet_reservation_after_inclusion": "0",
+    "replica_heights": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "conservation": [
+      {
+        "phase": "autonomous TLS regional payment after certified leader change and restart",
+        "issued": "300",
+        "liquid": "300",
+        "pending_exports": "0",
+        "conserved": true
+      }
+    ],
+    "ground_round_timeout_seconds": 20,
+    "observed_ground_phases": [
+      {
+        "phase": "node startup 1",
+        "elapsed_seconds": 0.321,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 2",
+        "elapsed_seconds": 0.322,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 3",
+        "elapsed_seconds": 0.314,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "three autonomous voters with initial leader offline",
+        "elapsed_seconds": 51.7,
+        "observation_bound_seconds": 300
+      },
+      {
+        "phase": "node startup 0",
+        "elapsed_seconds": 1.598,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "offline replica catches up through TLS evidence",
+        "elapsed_seconds": 0.0,
+        "observation_bound_seconds": 300
+      },
+      {
+        "phase": "signed payment gossip before paused validators resume",
+        "elapsed_seconds": 4.929,
+        "observation_bound_seconds": 300
+      },
+      {
+        "phase": "node startup 0",
+        "elapsed_seconds": 2.151,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 1",
+        "elapsed_seconds": 4.824,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 2",
+        "elapsed_seconds": 5.678,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "node startup 3",
+        "elapsed_seconds": 5.36,
+        "observation_bound_seconds": 30
+      },
+      {
+        "phase": "restart and autonomous wallet-command inclusion",
+        "elapsed_seconds": 189.186,
+        "observation_bound_seconds": 300
+      }
+    ],
+    "same_host_same_controller": true,
+    "independent_operators_qualified": false,
+    "complete_BFT_liveness_qualified": false,
+    "BFT_reconfiguration_implemented": false,
+    "external_monotonic_custody_qualified": false,
+    "physical_interstellar_route_qualified": false
+  },
+  "native_three_region_BFT_conservation_checks": 12,
+  "legacy_TLS_conservation_checks": 31,
+  "failed_preliminary_ground_observations": {
+    "count": 8,
+    "outcomes": "retained private fixture state; owned node processes stopped after terminal campaign errors",
+    "findings": [
+      "duplicate already-processed consensus packets occupied receive batches",
+      "already-acknowledged next-hop packets repeated while destination validator was offline",
+      "native JSON field order was incorrectly subjected to mesh canonical serialization checks",
+      "local timeouts hid delayed complete certificates; fixed and separately tested",
+      "ground observation exceeded before the fifth block; propagation timers and unsent-pair batching corrected and actual bounded phase durations recorded",
+      "one controller result field was misnamed after actual height-five recipient validation; corrected before final complete runs"
+    ]
+  },
+  "same_host_same_controller": true,
+  "private_keys_signer_replica_wallet_state_published": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "complete_I1_I12_qualification": false,
+  "mainnet_authorized": false,
+  "remaining": [
+    "multi-region autonomous end-to-end network/value and sustained fault/partition qualification",
+    "full BFT membership/era handoff and independent safety/liveness review",
+    "independent validator operators/custody, external monotonic rollback anchors and copied-key control",
+    "payment channels and liquidity reservations",
+    "hardware/full wallet, cross-device cooperation/reorganization and independent encrypted custody review",
+    "long-term archives, algorithm eras and delayed revocation qualification",
+    "cross-host physical interstellar links, independent security and exact production adoption"
+  ]
+}

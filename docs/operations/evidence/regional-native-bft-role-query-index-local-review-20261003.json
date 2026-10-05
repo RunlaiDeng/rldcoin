@@ -1,0 +1,22 @@
+{
+  "format": "RLD-ROLE-QUERY-INDEX-SAME-HOST-ASSISTANT-REVIEW-V1",
+  "source_set_sha256": "72a58070445c96da73590a79dcff0c3b724c38f66f0dd2601c699e0ad6a7409b",
+  "review_sha256": "4468e49fb491a677e8fc7ce947cc08345b59524043a96fd207968ed4702295a3",
+  "reviewed_source_sha256": {
+    "regional_bft_node.py": "6296f0447871d412a0753ab0605c25776e9916b3d6b793c039879e1f48f3e417",
+    "regional_bft_query_index.py": "53beef870f4dab440dbde111f3eefc835048ae45aa1117eb042a06e6f2ff723d",
+    "regional_bft_retention.py": "f45f0281dcedcb3774e04a9a8dbec5c5803b7fab710c9d66040b3af532dc0020",
+    "test_regional_bft_query_index.py": "4a7efb53aa2c4a473343edeb9e743406141ecac7f4c37fb941670ba5e695683c"
+  },
+  "synthetic_boundary_checks": 9,
+  "boundary_check_source_sha256": "642b56d1c75a5dfcdf5638f396e07361c9cfbe98d98fe98aacd5e06709d351db",
+  "boundary_check_log_sha256": "5fb4dcdad7465d37225c58bda0b9910152ab9db0c8e6bcb28b4ceac838813f48",
+  "scoped_review_no_new_native_path_reachable_defect_found": true,
+  "same_host": true,
+  "native_or_node_processes_run_by_review": false,
+  "private_fixtures_opened_by_review": false,
+  "ordinary_lifecycle_or_fault_qualification": false,
+  "independent_operator_or_security_qualification": false,
+  "fixture_only": true,
+  "live_rld": false
+}

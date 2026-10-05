@@ -1,0 +1,62 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-FREEZE-RECEIPT",
+  "status": "FROZEN_AFTER_OWNER_AUTHORIZED_EDITORIAL_REVISION",
+  "frozen_at_utc": "2026-10-04T19:06:33.298175+00:00",
+  "title": "Rldcoin: A Peer-to-Peer Payment System Across Delayed Regions",
+  "publication_version_label": null,
+  "audit_commit": "5bf11e4b3637cd99b3a6ebbb8e9e90f7e3edd402",
+  "audit_parent": "32953dad3f87ca165750c7b2799ee6f4ed8397b4",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+    "bytes": 163679
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+    "bytes": 163416,
+    "pages": 38
+  },
+  "independent_review": "Parent independently reviewed the editorial migration and profile distinctions; local final validation preserves all normative IDs, algorithm blocks, figure references and all 39 bibliography entries.",
+  "changes_to_frozen_body_require_explicit_owner_decision": true,
+  "future_protocol_suite_key_epoch_evolution_required": true,
+  "qualification": "Normative design only; no mainnet, complete protocol or physical stellar-route qualification.",
+  "official_whitepaper_url": "https://rldcoin.com/whitepaper",
+  "official_pdf_url": "https://rldcoin.com/documents/rldcoin-whitepaper.pdf",
+  "files_in_audit_commit": [
+    "public/documents/rldcoin-whitepaper.md",
+    "public/documents/rldcoin-implementation-status.md",
+    "src/app/whitepaper/page.tsx",
+    "src/lib/whitepaper-design.ts",
+    "public/documents/rldcoin-overview.md",
+    "src/lib/learning.ts",
+    "src/components/whitepaper-alignment.tsx",
+    "public/documents/rldcoin-whitepaper.pdf",
+    "AGENTS.md"
+  ],
+  "private_scratch_excluded": true,
+  "owner_authorization": {
+    "date_utc": "2026-10-04",
+    "instruction": "是把需要实现的能力写到白皮书里，开发状态不要进去"
+  },
+  "editorial_scope": "Required capabilities, technical assumptions and conformance rules remain in the paper. Development and publication status are kept in separate records. No economic or consensus parameter change.",
+  "predecessor": {
+    "receipt_sha256": "e3151052c6772eda2f97f258ded83ea510e8ac7aca86e825aa87f5e5a56bd805",
+    "audit_commit": "425acdd4e6cf8d13dde4042b74ce72e0f8bbd7eb",
+    "canonical_markdown_sha256": "c906076c09bb01fedd179d2b3a2ccfbf2bd168fa093ccb15842381783d69a6c0",
+    "pdf_sha256": "f825439e6e18aa96245bc6fb65fc03f98a1071fa6d31ecff65c696dc4f6da8e4",
+    "recoverable_at_commit": "32953dad3f87ca165750c7b2799ee6f4ed8397b4"
+  },
+  "editorial_validation": {
+    "pages": 38,
+    "canonical_blocks_checked": 282,
+    "missing_pdf_blocks": [],
+    "all_canonical_text_blocks_in_pdf": true,
+    "all_characters_within_page": true,
+    "normative_ids_preserved": true,
+    "all_algorithm_blocks_and_figures_unchanged": true,
+    "bibliography_byte_identical": true,
+    "canonical_md_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+    "pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14"
+  }
+}

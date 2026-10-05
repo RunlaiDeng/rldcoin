@@ -1,0 +1,237 @@
+{
+  "format": "RLD-CUSTODY-REQUESTS-STOPPED-EVENT-OBSERVATIONS-V1",
+  "source_set_sha256": "a21f1be826d14cc4ef8d890cf416485cfa05f9b4f6c47627f624459a6e35924f",
+  "run_report_sha256": "f3f6450351a83eb9e63e3d7ada54760626371efd3faedceb9a662b1a828d8163",
+  "trace_sha256": "4cf7fa100ff0200cacde79512ea9ff61a2f689df871845b372aa10c015e1997f",
+  "analysis_sha256": "d1d552fb3b3b1042437360553fc40da39653f01a2ab0c4f552c0b1752ff65c5a",
+  "collection_sha256": "560fbab0e4d6ddda12f0289e77ae1649a4107fdb3883ff2367cf6039c0dad924",
+  "recorded_events": 12513,
+  "missing_process_events": 0,
+  "capacity_refused": false,
+  "height_11_observations": [
+    {
+      "carrier": 0,
+      "process_id": 36110,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 0.55159,
+        "native_seconds": 4.288339,
+        "consensus_seconds": 2.886855,
+        "duration_seconds": 5.903196
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0
+          ],
+          "max_distinct_votes_observed": 0,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 1,
+      "process_id": 36270,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 0.725782,
+        "native_seconds": 3.153364,
+        "consensus_seconds": 2.14376,
+        "duration_seconds": 3.998034
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0
+          ],
+          "max_distinct_votes_observed": 0,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 2,
+      "process_id": 36616,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 0.75812,
+        "native_seconds": 3.374686,
+        "consensus_seconds": 3.647208,
+        "duration_seconds": 6.765655
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0
+          ],
+          "max_distinct_votes_observed": 0,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 3,
+      "process_id": 37086,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 0.62268,
+        "native_seconds": 3.239224,
+        "consensus_seconds": 3.506738,
+        "duration_seconds": 6.233745
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0
+          ],
+          "max_distinct_votes_observed": 0,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 4,
+      "process_id": 37613,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 0.576869,
+        "native_seconds": 2.316468,
+        "consensus_seconds": 1.974338,
+        "duration_seconds": 4.103444
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0
+          ],
+          "max_distinct_votes_observed": 0,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 0,
+      "process_id": 49809,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 1.362648,
+        "native_seconds": 7.220843,
+        "consensus_seconds": 3.875136,
+        "duration_seconds": 11.013464
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "max_distinct_votes_observed": 1,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 1,
+      "process_id": 50148,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 2.681366,
+        "native_seconds": 3.561137,
+        "consensus_seconds": 3.484637,
+        "duration_seconds": 8.102865
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0
+          ],
+          "max_distinct_votes_observed": 1,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 2,
+      "process_id": 50728,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 2.885725,
+        "native_seconds": 7.443319,
+        "consensus_seconds": 6.83045,
+        "duration_seconds": 13.949826
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "max_distinct_votes_observed": 1,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 3,
+      "process_id": 51465,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 1.844835,
+        "native_seconds": 7.044342,
+        "consensus_seconds": 5.133024,
+        "duration_seconds": 13.259381
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "max_distinct_votes_observed": 1,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    },
+    {
+      "carrier": 4,
+      "process_id": 52284,
+      "contact_stage_max_seconds": {
+        "mesh_seconds": 0.850378,
+        "native_seconds": 4.330682,
+        "consensus_seconds": 2.692146,
+        "duration_seconds": 7.280054
+      },
+      "height_11_parents": [
+        {
+          "rounds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "max_distinct_votes_observed": 1,
+          "commit_sign_requests_observed": 0
+        }
+      ]
+    }
+  ],
+  "parallel_tcp_not_a_serial_contact_stage": true,
+  "not_global_clock_comparison": true,
+  "no_missing_events_reconstructed": true,
+  "unique_liveness_cause_proven": false,
+  "ordinary_liveness_passed": false,
+  "fixture_only": true,
+  "live_rld": false
+}

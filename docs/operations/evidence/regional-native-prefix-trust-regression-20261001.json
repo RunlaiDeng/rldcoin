@@ -1,0 +1,17 @@
+{
+  "format": "RLD-NATIVE-TRUST-REUSE-REGRESSION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "baseline_public_source_set_sha256": "daf6710c8170b994990bbcf96251023fd9d72ffc968de17a51a186c6e4c9843f",
+  "baseline_runtime_files_unchanged": true,
+  "baseline_added_behavioral_test_only": true,
+  "baseline_augmented_source_set_sha256": "ebf9dce764c1f4be10ad31d025946c2514bbb286f9364fc4c5e0d672ada6afee",
+  "baseline_exit_code": 101,
+  "baseline_expected_refusal_assertion_failed": true,
+  "baseline_log_sha256": "1309e11012ef5cb7edc87213ef1d1d4678fb9ee44ad1ab2d5878f5d01f793484",
+  "fixed_frozen_source_set_sha256": "47b07d586f58914881c98e32dd7abc93b8cdbfb449b7d6f15538594dd95ecd62",
+  "fixed_native_suite_tests": 86,
+  "fixed_native_suite_passed": true,
+  "long_term_history_qualified": false,
+  "independent_security_review_qualified": false
+}

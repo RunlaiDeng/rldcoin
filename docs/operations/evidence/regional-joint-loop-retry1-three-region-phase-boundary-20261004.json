@@ -1,0 +1,26 @@
+{
+  "format": "RLD-JOINT-LOOP-RETRY1-THREE-REGION-PHASE-BOUNDARY-V1",
+  "completed": true,
+  "source_set_sha256": "60c4ec2fbbf54499c71544d1a9fb2c0a0ef7047a51f14bee11bc30486340fb46",
+  "binary_sha256": "2464fe948694b8dca6b0ee51b0fd66448cd9030069b142ffbad86c62f1437d4a",
+  "cycle_report_sha256": "7bb8c896b53bfe18cf9fc669b77c7ec649d6d9baa51f46f7377a58bfac37519c",
+  "cold_report_sha256": "5697e7e4f367e58553abe63588a92903f3224dbc0316584b14a8a1249c3647cc",
+  "phases": [
+    {
+      "phase": "ordinary_cycle",
+      "exit_code": 0,
+      "duration_seconds": 663.986,
+      "log_sha256": "15f38c6ed85175cdfb1884fd030a413bbcd630c70481c86e4937343dea0535fd"
+    },
+    {
+      "phase": "complete_stopped_cold",
+      "exit_code": 0,
+      "duration_seconds": 64.977,
+      "log_sha256": "bee9b8a627ce360fd68bbb38f9e80861466f69babac340f3ae42ea6c594c8c76"
+    }
+  ],
+  "duration_source": "actual terminal runner phase results, not estimated from timestamps",
+  "fixture_only": true,
+  "live_rld": false,
+  "full_fault_profile_completed": false
+}

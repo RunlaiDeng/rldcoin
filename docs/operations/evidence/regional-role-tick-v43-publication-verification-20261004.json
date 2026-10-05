@@ -1,0 +1,116 @@
+{
+  "format": "RLD-ROLE-TICK-V43-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "5017c457ad4126878a63182e55b05b5e02f951bd",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 26755,
+      "sha256": "c538ab72e2077589b0d0eebb2d0e11f2c40f3308cda00d75e29403db59d92411"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/README.md",
+      "bytes": 4251,
+      "sha256": "6bc6cbf3f6b937e1e6cb5990609a1c856243737651c082728a5a49a18f756c7d"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/SHA256SUMS",
+      "bytes": 1943,
+      "sha256": "28437547990f157273ec90c7f6b11cb71d09fad95ad9ef22cd904f0edbe4187c"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/log-inventory.json",
+      "bytes": 1032,
+      "sha256": "1653903c760b0e0cc4289cfac4c290dc3386b60da3152a477ac40c54f302bea9"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-actual-entry-sample-20261004.json",
+      "bytes": 2383,
+      "sha256": "f05c0aaf6388595524271bf2d071ec82e28ac63c5c6cc5b96e2870fdb94cf880"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-frozen-checks-20261004.json",
+      "bytes": 4302,
+      "sha256": "f3f551ad81e31284cc20dec82104661af538f0f25e12efc45d90697182dfc82c"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-related-checks-20261004.json",
+      "bytes": 924,
+      "sha256": "80959da6f9f9839655831bcf4269beac6735a1f2f5c5a10415704b5042963549"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-role-cold-20261004.json",
+      "bytes": 6807,
+      "sha256": "14e0eba22046f4de51d18fac16483a040a02cbbd03dacb14378e1a33df27781a"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-role-collection-20261004.json",
+      "bytes": 42325,
+      "sha256": "bf28e221109141eda9f6b5de955c16aa00da2e18ad942a5661bdd4885f746003"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-role-execution-20261004.json",
+      "bytes": 1410,
+      "sha256": "8c3efb1b3973081c9f274f9004aa5b3f76c67905dc48cda34344d32df6c4dae5"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-role-keyless-20261004.json",
+      "bytes": 1232,
+      "sha256": "241fdb3a1d92661b7ea4c8b55a0559ec88789708e5f53ebb128f9733402d2a27"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-role-payment-20261004.json",
+      "bytes": 5746,
+      "sha256": "b98b33cf636b366f5fcda87028897856b8eb5cebdbe3d8e3af98544bddfe817b"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/regional-role-tick-head-runtime-custody-20261004.json",
+      "bytes": 2449,
+      "sha256": "20639cd5a267f49ac2ce0a01ed4bffba41edbace37b770a660a8b99a69b98293"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/role-tick-head-process-tests-20261004.log",
+      "bytes": 865,
+      "sha256": "97af48ff8798e6fbd086ca2621cf1c33dec06f2dc7e09f2682135bc31e982485"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/role-tick-head-related-20261004.log",
+      "bytes": 115,
+      "sha256": "73177cd95625985ca7f0d9ed744b83e1e6b0f94958b934c1a5fc3dda8c839343"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/role-tick-head-role-cold-20261004.log",
+      "bytes": 89,
+      "sha256": "dca2e350920883661f5c16775b207a7b82f579b0282a0b51c4d297e19bd742bd"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/evidence/role-tick-head-role-keyless-20261004.log",
+      "bytes": 39,
+      "sha256": "aae7ec592985c8cce577f1cd602a10dadf6049fecfb24a81115d5869d43a87f4"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/source-manifest.json",
+      "bytes": 73905,
+      "sha256": "0f1d706045e04740665f15fbcd41ddf0f1780a03977f389d0ae00fbdc15e371e"
+    },
+    {
+      "path": "research/2026-10-04/regional-role-tick-v43/source.tar.gz",
+      "bytes": 1781555,
+      "sha256": "89bf226ad96db9af8db6240d865456292fcb5c51ae75c3dee80f2dd0664df637"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "2aecc750b73b9ff45e8eca79de7f88bf0f1165330ed8dc54148285acc6308050",
+  "complete_native_envelopes_authenticated": 866,
+  "transport_archive_records_authenticated": 2435,
+  "same_host_three_era_owner_payment_sample_completed": true,
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T02:15:41.975433+00:00"
+}

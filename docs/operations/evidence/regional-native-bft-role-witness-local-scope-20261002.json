@@ -1,0 +1,71 @@
+{
+  "format": "RLD-ROLE-WITNESS-LOCAL-SCOPE-V1",
+  "runtime_source_set_sha256": "243b2d1064703820f9114c032f3f5d9f9d47640fe07ddd5b45225a155ad8f879",
+  "native_implementation": "472fc8bfcf6e2ccb969c3f795072140cd179bb6f3adbad4df016e0083cb3437f",
+  "native_source_sha256": "275144a1d97bb74c5885c0c738b0f48966eac79fe6060ad09452316eba2dab80",
+  "core_source_sha256": "8f507b0eda0dc6d5a5ce6469fd8cfda75f41d4eec6fad05e85271ef5fb3a5eae",
+  "source_files": 282,
+  "source_unchanged": true,
+  "primary_only_source_difference": [
+    "docs/PLAN_STATUS.md"
+  ],
+  "binary_sha256": "eede3e53a8b6e6913ef27e94c07fac35fd7e5521b7d3fd46fd32f097d7b16b9d",
+  "native_tests_actually_run": 165,
+  "process_tests_actually_run": 38,
+  "strict_clippy_passed": true,
+  "ordinary_three_era_payment_campaign_passed": false,
+  "previous_failed_fixture_preserved": true,
+  "revised_fixture_currency_changed": true,
+  "value_or_state_migrated": false,
+  "native_cold_heights": [
+    9,
+    9,
+    9,
+    9,
+    9
+  ],
+  "configured_voter_cold_reads": 11,
+  "configured_ready_cold_reads": 8,
+  "owner_payments_native_included": 2,
+  "third_owner_payment_absent": true,
+  "all_owned_processes_stopped": true,
+  "fresh_full_fault_profile_completed": false,
+  "published": false,
+  "adopted": false,
+  "fixture_only": true,
+  "live_rld": false,
+  "reports": [
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-payment-campaign-20261002.json",
+      "sha256": "b1c51d6a83903cae15f36d35ff9336cf9a91aab4fe70d568b080b8a435d53e82"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-payment-failed-witness-analysis-20261002.json",
+      "sha256": "8a464683216fc01a0ac63a1ce8c829c43cb530f6f825f4be48b2800f586bf1f0"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-payment-failed-cold-observations-20261002.json",
+      "sha256": "7650af97eff42fce69a8aac899a52d9f1f96487dde4027bb301195db3b837438"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-witness-checks-20261002.json",
+      "sha256": "b4e57e7997c4c7cd4c651f34d05e05fa35f34913b532b48fc104d24463b1da3e"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-witness-payment-campaign-20261002.json",
+      "sha256": "a86b47d2638cf0d160e6df093b38ea80eace37bbd54c3f92a22c2d1b13883d65"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-witness-failed-cold-profile-20261002.json",
+      "sha256": "ce7950403da4b8aaee7f2734c3c6fc56362c3d209b4f797eeaf1de7930c33c04"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-witness-scheduler-profile-20261002.json",
+      "sha256": "a883cdaf03c250887cc39454d67656cd6b4dc04cf5981fd9e27bc9fbf8e317d4"
+    },
+    {
+      "path": "docs/operations/evidence/regional-native-bft-role-witness-mesh-profile-20261002.json",
+      "sha256": "5156722a4cee7e53d88030f0fcf590dc1fb42246e732b661b7b4bfcef7c4325d"
+    }
+  ]
+}

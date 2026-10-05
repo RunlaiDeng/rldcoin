@@ -1,0 +1,13 @@
+{
+  "all_cold_native_ledgers_equal": true,
+  "all_expanded_bytes_equal": true,
+  "block_and_snapshot_bounds_unchanged": true,
+  "carried_evidence_bytes": 135413,
+  "fixture_only": true,
+  "format": "RLD-NATIVE-CARRIAGE-PREFIX-SAMPLE-V1",
+  "full_evidence_bytes": 1401393,
+  "live_rld": false,
+  "long_history_qualified": false,
+  "native_implementation": "e11ffa35e0357ec6f177fd6d53a2bc4d65544fdba6c2526ce45594b6227371e2",
+  "snapshots": 64
+}

@@ -1,0 +1,22 @@
+{
+  "format": "RLD-JOINT-ROLE-BOUNDARY-REGRESSION-V1",
+  "fixture_only": true,
+  "live_rld": false,
+  "native_implementation": "dd1a55df717c0b31cc736cbe6b3aa94efbf31ee9e8395e4e875727901af217d2",
+  "native_core_exact_v33": true,
+  "native_binary_sha256": "e6788f78b2173f1e23164bf94d7b2be33f86a0c4ab33f6cf04001a63ba2e71c8",
+  "process_test_module": "test_regional_bft_joint_epoch",
+  "process_tests_actually_run": 19,
+  "duration_seconds": 36.935,
+  "module_sha256": "2114f559bb5e3da2504609c20ae09a3563838449439bb1ea117d1c35420995c9",
+  "requirements_sha256": "1d7e6d4b219b2307f23de716676dedfc2e5fa53b19508e467935e48cb09aa1b6",
+  "log_sha256": "8591ec99926e44e9c0c3f865fd53ab57560b5dd438e1f1d163ce7b920ff53fe7",
+  "actual_old_and_new_native_signatures_use_same_v1_statement_bytes": true,
+  "native_v1_role_substitution_refused": true,
+  "native_v1_partial_overlap_refused": true,
+  "unknown_v2_approval_format_refused": true,
+  "negative_receivers_private_inventory_unchanged": true,
+  "proposed_role_scoped_admission_implemented": false,
+  "temporary_test_fixtures_cleaned_by_test_runner": true,
+  "independent_operators_qualified": false
+}

@@ -1,0 +1,417 @@
+{
+  "date": "2026-09-30",
+  "format": "RLD-NATIVE-BFT-GROUND-PUBLICATION-V1",
+  "repository": "RunlaiDeng/rldcoin-genesis",
+  "commit": "c72402908e52521dea23ba5c7c0f9b49eb0eac28",
+  "remote_main_matches": true,
+  "public_files_content_verified": 67,
+  "all_bytes_match": true,
+  "source_named_files": 221,
+  "historical_packages_changed": false,
+  "private_material_excluded": true,
+  "claimed_scope": "explicit no-value same-host BFT CLI ground profile; no autonomous pacemaker/validator network, full BFT reconfiguration, independent operations/custody or physical route qualification",
+  "artifact_checks": [
+    {
+      "path": "MASTER_PLAN.md",
+      "status": 200,
+      "sha256": "adfcb18c45086d77398cfcafc52ce336768ea144f689127e12920e2e5becd16e",
+      "matches": true
+    },
+    {
+      "path": "README.md",
+      "status": 200,
+      "sha256": "e8f0393c4a62f973e1f0d404d2f31d03c18eaf5a650b4eb74825921836a04220",
+      "matches": true
+    },
+    {
+      "path": "SHA256SUMS.current-docs-20260930",
+      "status": 200,
+      "sha256": "4973150c84ea232e407de061f626cda560ea012e9f3834938be048ef5502b719",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/PLAN_STATUS.zh-CN.md",
+      "status": 200,
+      "sha256": "7d8e18f62169fafb73bf3f90ee6b0e8c094e38b56e64e264a9bfcb9530080dd2",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/README.md",
+      "status": 200,
+      "sha256": "7574ec946f4155d4b526c15046446afc3b0a5d0245b2703337c93a6274f75fe1",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/SHA256SUMS",
+      "status": 200,
+      "sha256": "bbe6afb0ed79ef94030814c42e1ec94fd60930f6d88cca4d9cbe0851589a73ce",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/base-source-manifest.json",
+      "status": 200,
+      "sha256": "20848cd672795d3c6fd3e6d1d56a85b1ff5744620a762d266d6c79cd5c5b3d60",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/campaign-report.json",
+      "status": 200,
+      "sha256": "68538cc7d630f3a7e79ddaecfbc8995494e1f3f37b7c5714e7bfeb4e5b686233",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/RLDCOIN_MASTER_PLAN.md",
+      "status": 200,
+      "sha256": "7d2f42f62da43db8dc0de0e4a6436acb4fe0206bfa9140c09abba582d8ecc56f",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/operations/INTERSTELLAR_EVIDENCE_TRANSPORT.md",
+      "status": 200,
+      "sha256": "8a562fc5300b3145e8eee4a1a7c7e1e21b2f63f280b3d1d1da48e1bd5ca0a41e",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/operations/INTERSTELLAR_NODE_MESH.md",
+      "status": 200,
+      "sha256": "1cd4e96177f8f2dc544224719e7e36eb587c57e9057d8fdd5d6f65328936ecfd",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/operations/evidence/regional-native-bft-campaign-20260930.json",
+      "status": 200,
+      "sha256": "68538cc7d630f3a7e79ddaecfbc8995494e1f3f37b7c5714e7bfeb4e5b686233",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/operations/evidence/regional-native-bft-legacy-tls-20260930.json",
+      "status": 200,
+      "sha256": "ada17bc669302171771542ececccce97c3f4999c91163216f921de14ba6165d1",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/operations/evidence/regional-native-bft-verification-20260930.json",
+      "status": 200,
+      "sha256": "8651837ca7ab5ef68b4669ac866e4cc8d4c3b5029f9a70a0a3d9e29780980dc0",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md",
+      "status": 200,
+      "sha256": "dbec00736b8d437ae3c56f3b903807c4713dea6ee24c9c5444e4ed73fd714199",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/research/REGIONAL_FINALITY_INCIDENTS_V1.md",
+      "status": 200,
+      "sha256": "b7b2ab44850057b3387325afd35c75cded37a2642136365ae70e95cfec0d6c6f",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/research/REGIONAL_LEDGER_CANDIDATE_V1.md",
+      "status": 200,
+      "sha256": "0a6e4544b4e32843a000ca6d155b972a500113789a1e4b1628e217390e46a722",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/docs/research/REGIONAL_SIGNER_EPOCHS_V1.md",
+      "status": 200,
+      "sha256": "fda1ecce072f6a5c9d04382c35d418f3993b0e38266accd3182ff3cef22d029f",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/legacy-tls-report.json",
+      "status": 200,
+      "sha256": "ada17bc669302171771542ececccce97c3f4999c91163216f921de14ba6165d1",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/source-manifest.json",
+      "status": 200,
+      "sha256": "970f2d073b2ab3acb64a412d407d4cc00fc693aa4e7c931a6c636477ff4f33ae",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/source.tar.gz",
+      "status": 200,
+      "sha256": "e3da860db21d957c46e13a1c4d0ecc83f05e31f1dad4dd3169ed7156c2508163",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/interstellar-mesh-requirements.txt",
+      "status": 200,
+      "sha256": "4026896996503d662ae0d9b5db045d1d5ff511c681dbfc09f5d5a11ee06b28c5",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/interstellar_mesh.py",
+      "status": 200,
+      "sha256": "01992ea7900e1acf24a2c992b137cf73c517eab90108f66143d96241ce321a8d",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/interstellar_route_budget.py",
+      "status": 200,
+      "sha256": "6ea2167eb92a400e1698044064fd4cb2afd93eae76a9f4d643b50d85b5b00732",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/interstellar_tcp.py",
+      "status": 200,
+      "sha256": "47f4145ecb5ecb094ab00573c229178a3ecacb9216239bf37e36c3fefa2c3bca",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/interstellar_transfer.py",
+      "status": 200,
+      "sha256": "799ec3b5bbcb94950b1f4cc09bbc0711f859cbf196e6f29593ee7a610f6bb7da",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/Cargo.lock",
+      "status": 200,
+      "sha256": "de8ce68ee2c30857c96e4c1b2f7ee1976becc26d28f029579f0060d62dee3bda",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/Cargo.toml",
+      "status": 200,
+      "sha256": "bf7c4e60f0773a35da06bb5362f340661442c82d397109fd7bedce6916e5db5e",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/README.md",
+      "status": 200,
+      "sha256": "e5f62dddc52ade122b52147bb3648302f201efe2936431048be0369181f7a536",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/build.rs",
+      "status": 200,
+      "sha256": "0dfa707932e52dd116add44b14d4837cdeb771972290d37981d65ee6e2115cfa",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/bft.rs",
+      "status": 200,
+      "sha256": "161e097d5fda9814524aac401415fe59c95aaadc8bf3a5c47a999606e2d8b498",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/bft_tests.rs",
+      "status": 200,
+      "sha256": "c3c9f2acf29128d78eb786a39365bcfe48c9a822a1009b3b390dec8b27db4ead",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/bin/contact-fixture.rs",
+      "status": 200,
+      "sha256": "dd99163c00a81774eec0d2a4b73fe27a949311fbffdbdb1b27258d338e4e8b35",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/bin/fixture-campaign.rs",
+      "status": 200,
+      "sha256": "06e1511065f1683ddedfa10314fa56444f2c8f31c95beadc662840f7e085c411",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/conflict.rs",
+      "status": 200,
+      "sha256": "d67323c9c13bc39533f1d88b918374050d703c74a03c0730da6ea70c9f4f03ee",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/contact.rs",
+      "status": 200,
+      "sha256": "2519d664422a1716c27c6de1f1b9f443540eb7401b35947b64c99d12b21c46d2",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/contact_tests.rs",
+      "status": 200,
+      "sha256": "2e7b1c80600930275349082cdec653c9d5e50891793ab9ca27c532124f4bd6cb",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/epoch.rs",
+      "status": 200,
+      "sha256": "d8f57e921ee51939a98cb05bcd7ad706c5c59fa067655b145bcc6c48893fe88b",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/epoch_tests.rs",
+      "status": 200,
+      "sha256": "f5053ffc302f123efff0f2d0d6d1185eb86540e5aa4050d7c38479a6c1b523dd",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/keystore.rs",
+      "status": 200,
+      "sha256": "70186872ea2aea9125f1acf9a1df037389c541821c41e482e390f0074a471720",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/keystore_tests.rs",
+      "status": 200,
+      "sha256": "71b58f8a95d7a53f001cd9b2241316af9204849413283095bf1b21e6c63fc268",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/lib.rs",
+      "status": 200,
+      "sha256": "6580e164ddfdf5c94eb5d9a863f29ace6dbb63ff85d34b6f3f1c1e6458aa18bd",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/main.rs",
+      "status": 200,
+      "sha256": "1ed077b4639a25988035ae4bd9c2db3359b49f404b41b7cb3ce701f4deeaa2b5",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/signer.rs",
+      "status": 200,
+      "sha256": "770d8557a4fe8f16dc4b628a87110a5fa4acb24feedff16bfe0ea0b1d7b85654",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/storage.rs",
+      "status": 200,
+      "sha256": "d14646a950b2377b7dc9ad2408a07b48ce14e3031b938b8bcce1c63304b1dc47",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/tests.rs",
+      "status": 200,
+      "sha256": "b7f6dae7e548467201aa442c20e6e0f2497806c2e2a9f38b4589776358afa703",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/wallet.rs",
+      "status": 200,
+      "sha256": "6f9704d19a4674686b4afd75b6dc05bc2f2d0a9b3e1bdb053795f5c2d076f5d9",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/wallet_agent.rs",
+      "status": 200,
+      "sha256": "ff2b2e92bb0b1022250337c5a936ce1a55f5f46a115c7346a573a54a05fe1fe7",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/wallet_agent_tests.rs",
+      "status": 200,
+      "sha256": "604740f589c7ad23f0b9256fd10662c7a42909c14ae7dd2b4e724834c76e2b94",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-ledger/src/wallet_tests.rs",
+      "status": 200,
+      "sha256": "b8771926fe8f7318a1635912838947c712aa2da38f02fb789df7634690018770",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-wallet/app.css",
+      "status": 200,
+      "sha256": "e51cd53d5115ca2d010d5816c53e817b0dabe4d1bdc9248baaba4e993025a1f4",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-wallet/app.js",
+      "status": 200,
+      "sha256": "4ea7fef675101e2d0c0a661cc9e09841cd8db58cb7322470129265552c31d272",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional-wallet/index.html",
+      "status": 200,
+      "sha256": "da10f80eabb42c43f2c2c63c52c5c1c42e69081a28c7281652d9005ef44777ca",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional_bft_campaign.py",
+      "status": 200,
+      "sha256": "0856d00dd713d363260097a6b2135a331367e0f435ae3acbbba04e21738d0be3",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional_contact_campaign.py",
+      "status": 200,
+      "sha256": "303a318457b88b502248ef9e45d0e64c384c34e12edb47b8879f1c2fea9c7453",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional_contact_node.py",
+      "status": 200,
+      "sha256": "0a8c6b32e7fe212a631482a9d9d20ae23dbdcc17d8c918cce2a9ee2ea0312a78",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/regional_wallet_app.py",
+      "status": 200,
+      "sha256": "46eceaf1014f6104f09554eed07789ccf2a62b3b972150585dfeba1acc5661fd",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_interstellar_mesh.py",
+      "status": 200,
+      "sha256": "129531139b3e6e6ff196fbcf7e3d4577e510a41166f338641ddc2d26af406dcb",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_interstellar_route_budget.py",
+      "status": 200,
+      "sha256": "d16a10a5aa9213803ff8fb104293b9787dacf219fb79c457c0f44eed6b6f7f7d",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_interstellar_tcp.py",
+      "status": 200,
+      "sha256": "2e9ad0f2175ffb8c6579f89f63ef23140732e4f30ea566b25ed7b0ccb983fa9d",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_interstellar_transfer.py",
+      "status": 200,
+      "sha256": "5e8d963d681800aca7f327e8781e5e902a1dac95f94b0c3c26c005f980940373",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_regional_bft.py",
+      "status": 200,
+      "sha256": "cb6c8e93a40d5d9dd3690b05bd284ed0d332476541332d445adf32880ad3d46c",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_regional_contact_node.py",
+      "status": 200,
+      "sha256": "1b8c01587addd4c9b0935e59a2a13abd75e19b14db0894225bf54085f566c08b",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_regional_wallet.py",
+      "status": 200,
+      "sha256": "d65e43039e8cf9c73b65e8850bc1bac15e752f57806a8cc575b1b7c47993e631",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_regional_wallet_app.py",
+      "status": 200,
+      "sha256": "70e163ab5f765b364a4bf05c7547298e6436ed61a4ea4c6670e76ce79a9403a8",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/tools/test_regional_wallet_custody.py",
+      "status": 200,
+      "sha256": "c293d02bcb90ebc1dac7492e25c16b30aaa36fc00bf538dab7eeff4375f961aa",
+      "matches": true
+    },
+    {
+      "path": "research/2026-09-30/regional-native-bft-v13/verification.json",
+      "status": 200,
+      "sha256": "8651837ca7ab5ef68b4669ac866e4cc8d4c3b5029f9a70a0a3d9e29780980dc0",
+      "matches": true
+    }
+  ]
+}

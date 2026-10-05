@@ -1,0 +1,58 @@
+{
+  "format": "RLD-CUSTODY-FAULT-STOPPED-V48-PUBLICATION-VERIFICATION-V1",
+  "completed": true,
+  "repository": "https://github.com/RunlaiDeng/rldcoin-genesis",
+  "commit": "88a13e854669c46d4afcf590e8ffd46db61fbdbd",
+  "branch_head_matches": true,
+  "complete_reviewed_remote_inventory_matches": true,
+  "all_remote_bytes_verified": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 28114,
+      "sha256": "f95a0b005e4f0ed6038954cb7bdf94f60cb63b21169dfb2b82b8ab4f2e4f3bf7"
+    },
+    {
+      "path": "research/2026-10-04/regional-live-batch-fault-stopped-v48/README.md",
+      "bytes": 2354,
+      "sha256": "244c34aebfc2ba28d1e259bcd07763133a3c397e98aea18caaf8482fc1302d5d"
+    },
+    {
+      "path": "research/2026-10-04/regional-live-batch-fault-stopped-v48/SHA256SUMS",
+      "bytes": 606,
+      "sha256": "b0d1bbc288249a4805a6b65bdddd5fc0f5c23fc38c54de43bd7fb39374707d69"
+    },
+    {
+      "path": "research/2026-10-04/regional-live-batch-fault-stopped-v48/evidence/regional-bft-live-batch-joint-fault-owner-head-observations-20261004.json",
+      "bytes": 1500,
+      "sha256": "9a67e8f6af6343a3151458f14ab083426755638022942ed12b40c0d33e091d50"
+    },
+    {
+      "path": "research/2026-10-04/regional-live-batch-fault-stopped-v48/evidence/regional-bft-live-batch-retry2-joint-fault-failed-cold-observations-20261004.json",
+      "bytes": 19044,
+      "sha256": "d9725cf290b5d82dca8bd743904c6a9e75bd56927abcf46d6258bcee44a56ccb"
+    },
+    {
+      "path": "research/2026-10-04/regional-live-batch-fault-stopped-v48/evidence/regional-bft-live-batch-retry2-joint-fault-fresh-20261004.json",
+      "bytes": 28817,
+      "sha256": "cb62f9d5b2ba5ec3d82ec18594f9e531512beecb6515789569d2fce2e32d8c48"
+    },
+    {
+      "path": "research/2026-10-04/regional-live-batch-fault-stopped-v48/source-binding.json",
+      "bytes": 733,
+      "sha256": "c6e6e182ff1cfb913ecad6b2721ebaac23b66940e81274ca1d7e65c3d8f4291d"
+    }
+  ],
+  "fixture_only": true,
+  "live_rld": false,
+  "private_generated_material_included": false,
+  "runtime_source_set_sha256": "1912b64cbd7aaf312f9a4f1fb562871116eeeb271b752237b3c852f7f842dc63",
+  "complete_native_envelopes_authenticated": 1895,
+  "transport_archive_records_authenticated": 4190,
+  "same_host_three_region_value_return_sample_completed": false,
+  "failed_profile_remains_failed": true,
+  "strict_failed_stopped_observation_completed": true,
+  "fresh_full_fault_profile_completed": false,
+  "physical_stellar_links_qualified": false,
+  "verified_at_utc": "2026-10-04T04:22:50.604145+00:00"
+}

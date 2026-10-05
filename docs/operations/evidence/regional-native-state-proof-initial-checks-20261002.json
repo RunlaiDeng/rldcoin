@@ -1,0 +1,146 @@
+{
+  "format": "RLD-NATIVE-STATE-PROOF-INITIAL-CHECKS-V1",
+  "native_source_capture_only": true,
+  "complete_workspace_freeze": false,
+  "native_implementation": "242f2e74ffa96bd24911579cdd676631e1cc351f5a017163c892d4f42f34be7d",
+  "native_tests_passed": 128,
+  "focused_state_tests_passed": 6,
+  "strict_clippy_exit_code": 101,
+  "strict_failures": [
+    "large enum variant",
+    "manual is_multiple_of"
+  ],
+  "process_tests_run": false,
+  "fresh_cycle_run": false,
+  "files": [
+    {
+      "path": "bft.rs",
+      "sha256": "d62380998a7b96a7f157396980e42d886927b12537f9ff84f6025c3777dff62f"
+    },
+    {
+      "path": "bft_network.rs",
+      "sha256": "c1cf43068107ef6d9bafdb40c24ae4a5f1012c5ef8b47bccfb5d3ef9b65eeae4"
+    },
+    {
+      "path": "bft_tests.rs",
+      "sha256": "6e51f92ff691599b9a6b6428b85e73c992e04cb6a20da28e227f81d37d78a19a"
+    },
+    {
+      "path": "bin/contact-fixture.rs",
+      "sha256": "dd99163c00a81774eec0d2a4b73fe27a949311fbffdbdb1b27258d338e4e8b35"
+    },
+    {
+      "path": "bin/fixture-campaign.rs",
+      "sha256": "21188d36a72e2c2576fd6a2e08eea05725a735c622dc1665bb8d1dcd54d5da3c"
+    },
+    {
+      "path": "carriage.rs",
+      "sha256": "ccd7e2c67ef2f98b76ad3ca2f1f8c86149216e02c32160c2800ad0f0fad5a06d"
+    },
+    {
+      "path": "carriage_tests.rs",
+      "sha256": "5a2f50494cce753a3b8956be8747b3ea97750f03c66733108400a3e84ece49d3"
+    },
+    {
+      "path": "conflict.rs",
+      "sha256": "d67323c9c13bc39533f1d88b918374050d703c74a03c0730da6ea70c9f4f03ee"
+    },
+    {
+      "path": "contact.rs",
+      "sha256": "d2acb724f586d8f4c52f3dff988a1afcffc738445152e465df854967d33b9741"
+    },
+    {
+      "path": "contact_tests.rs",
+      "sha256": "d38771d91ab8b93930a5f2cd1f5c1747cb7cceaf9cc57d30b287096d16c1d13b"
+    },
+    {
+      "path": "epoch.rs",
+      "sha256": "d8f57e921ee51939a98cb05bcd7ad706c5c59fa067655b145bcc6c48893fe88b"
+    },
+    {
+      "path": "epoch_tests.rs",
+      "sha256": "f5053ffc302f123efff0f2d0d6d1185eb86540e5aa4050d7c38479a6c1b523dd"
+    },
+    {
+      "path": "history.rs",
+      "sha256": "41c4dce21d67b89eacf9f2e6f64e5f10a831ae1dd91360b3be8f5fbf7b518379"
+    },
+    {
+      "path": "history_archive.rs",
+      "sha256": "7b30c6bbdec8457190870719a3a02fb45a243acad1608c205e5b14cded5e9fc2"
+    },
+    {
+      "path": "history_archive_tests.rs",
+      "sha256": "15f0ee894488a716c50b1af849c5da6111d706821b3fc8889cd1df11e29d8148"
+    },
+    {
+      "path": "history_prefix_tests.rs",
+      "sha256": "9b768c22e834bed7c217f44a83a9c9945e7aa11f9a8898ddbc2c7468b04ae2c2"
+    },
+    {
+      "path": "history_tests.rs",
+      "sha256": "9ec6b3c79ac3665cdf8a58804f04b57033ace9c9f7e50232c64cc0eb941f397a"
+    },
+    {
+      "path": "keystore.rs",
+      "sha256": "70186872ea2aea9125f1acf9a1df037389c541821c41e482e390f0074a471720"
+    },
+    {
+      "path": "keystore_tests.rs",
+      "sha256": "71b58f8a95d7a53f001cd9b2241316af9204849413283095bf1b21e6c63fc268"
+    },
+    {
+      "path": "lib.rs",
+      "sha256": "c6b97e1a6ce8a91af614536ba6737faadb80326778092434db466c791212ad7a"
+    },
+    {
+      "path": "main.rs",
+      "sha256": "4750c5cbe82e6d4b50a1d5109d7020041ecc38728a09e5b23e2e8d482ec7be3e"
+    },
+    {
+      "path": "native_prefix_tests.rs",
+      "sha256": "2149008a2583d20ca83264592159ee2e4f8a92825a1ec291338e2cf23688285b"
+    },
+    {
+      "path": "signer.rs",
+      "sha256": "770d8557a4fe8f16dc4b628a87110a5fa4acb24feedff16bfe0ea0b1d7b85654"
+    },
+    {
+      "path": "state_proof.rs",
+      "sha256": "2e4dd41902603078d85877d5f5f000aee045c8276ae89f232c7b5a3c523d8c14"
+    },
+    {
+      "path": "state_proof_tests.rs",
+      "sha256": "394f944da928a741c52ec187c8f3fb64251f1a22c978ae8dca3d6aa7605d93c5"
+    },
+    {
+      "path": "storage.rs",
+      "sha256": "c0f856de3f233b9b8d80fe73b8fc007ef2cac2c4a0bef802b36e492bcba3df67"
+    },
+    {
+      "path": "tests.rs",
+      "sha256": "948351da8e0b86ce6c76482f7ebb54f9570002243d6cfa16de3bf8e56d875747"
+    },
+    {
+      "path": "wallet.rs",
+      "sha256": "6f9704d19a4674686b4afd75b6dc05bc2f2d0a9b3e1bdb053795f5c2d076f5d9"
+    },
+    {
+      "path": "wallet_agent.rs",
+      "sha256": "ff2b2e92bb0b1022250337c5a936ce1a55f5f46a115c7346a573a54a05fe1fe7"
+    },
+    {
+      "path": "wallet_agent_tests.rs",
+      "sha256": "604740f589c7ad23f0b9256fd10662c7a42909c14ae7dd2b4e724834c76e2b94"
+    },
+    {
+      "path": "wallet_tests.rs",
+      "sha256": "b8771926fe8f7318a1635912838947c712aa2da38f02fb789df7634690018770"
+    }
+  ],
+  "log_sha256": {
+    "focused": "bf359380ff308c6064cb7ac2818a9ea447b29b3a41842a161d3a61498e238edb",
+    "all-native": "6b9a77b0918cede19fdc681d739d14483b1b4be9e5592025c6b413fbb8e4051c",
+    "clippy": "3b52928d2792a23c3d24fde2f66ca1a0b76c295679016ca1e69c3fe673d97ac6"
+  }
+}

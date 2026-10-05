@@ -1,0 +1,70 @@
+{
+  "format": "RLD-BFT-SHARED-WEBSITE-VERIFICATION-V1",
+  "website_commit": "1a78138d2bdceec5a74a3b568e37dfe8fbfc1e6b",
+  "publication_commit": "195678658a7684f4aea81c5f1f6896f9e8665bf5",
+  "production_site": "https://rldcoin.com",
+  "production_build_passed": true,
+  "network_status_tests_passed": 6,
+  "routes": [
+    {
+      "route": "/",
+      "http_status": 200,
+      "sha256": "4b48e421da26d2a1dca3027d44999850a8358f550690d38a8e7ab96a652400da",
+      "v19_entry_present": true
+    },
+    {
+      "route": "/developers",
+      "http_status": 200,
+      "sha256": "15f1a7010c4ce3740a022fc214c4c162ab255b27ec1c21dfd574147d1207786c",
+      "v19_entry_present": true
+    },
+    {
+      "route": "/research",
+      "http_status": 200,
+      "sha256": "25ba617ac0f9a54c1a0b0d103340a7272f5acb5fdd56000d1cba100123e37799",
+      "v19_entry_present": true
+    },
+    {
+      "route": "/network",
+      "http_status": 200,
+      "sha256": "9fbb0ad041232bd004dd946dccfd6f27cd30d2b0c95d14f29b9aee920f3cfc20",
+      "v19_entry_present": true
+    },
+    {
+      "route": "/resources",
+      "http_status": 200,
+      "sha256": "87c99feba8e71d32fdd563917757c4cc14d7ab69d79e573d33f4d1e908f0f2b5",
+      "v19_entry_present": true
+    }
+  ],
+  "changed_remote_source_files_verified": 6,
+  "desktop_viewport": [
+    1440,
+    1100
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "desktop_and_mobile_browser_dom_inspected": true,
+  "desktop_and_mobile_screenshots_inspected": false,
+  "screenshot_limitation": "agent-browser capture stalled; controlled interruption/restart and bounded fresh Chrome capture did not produce an image; no visual screenshot qualification claimed",
+  "horizontal_overflow": false,
+  "browser_errors": false,
+  "mobile_navigation_verified": true,
+  "mobile_menu_closes_on_navigation": true,
+  "old_reproduction_anchors_retained": true,
+  "full_finite_fault_scope_explicit": true,
+  "previous_failure_link_retained": true,
+  "retired_api_http_status": 410,
+  "retired_mainnet_state": "RETIRED",
+  "old_balances_migrate": false,
+  "new_mainnet_launched": false,
+  "verified_at_utc": "2026-10-01T19:44:05.744711+00:00",
+  "production_deployment_id": "dpl_GzpLNyebe2pJJCeCFZ6Ys1WijiHn",
+  "production_deployment_url": "https://rldcoin-website-dlwlg411m-tradergalaxs-projects.vercel.app",
+  "production_deployment_ready": true,
+  "production_alias_matches": true,
+  "production_desktop_and_mobile_dom_inspected": true,
+  "production_browser_exact_guide_matches": true
+}

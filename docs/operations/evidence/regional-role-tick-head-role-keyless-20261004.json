@@ -1,0 +1,34 @@
+{
+  "format": "RLD-ROLE-KEYLESS-STOPPED-ABSENCE-V1",
+  "completed": true,
+  "fixture_only": true,
+  "live_rld": false,
+  "source_set_sha256": "2aecc750b73b9ff45e8eca79de7f88bf0f1165330ed8dc54148285acc6308050",
+  "run_report_sha256": "b98b33cf636b366f5fcda87028897856b8eb5cebdbe3d8e3af98544bddfe817b",
+  "cold_report_sha256": "14e0eba22046f4de51d18fac16483a040a02cbbd03dacb14378e1a33df27781a",
+  "observer_sha256": "c3954933d5ef8f6ec271098bb707a79957d6efcbfb2a24a57a3ab336dfd3a7c5",
+  "absence_validator_sha256": "880acb34ae70b9c4683e341043a583eb29073509ad503ee38943490f3b6116f8",
+  "absent_role_custody": [
+    {
+      "carrier": 1,
+      "era": 2,
+      "paths_checked": 4,
+      "paths_absent": true,
+      "private_slot_initialized": false
+    },
+    {
+      "carrier": 4,
+      "era": 1,
+      "paths_checked": 4,
+      "paths_absent": true,
+      "private_slot_initialized": false
+    }
+  ],
+  "all_private_fixture_files_unchanged": true,
+  "owned_process_cleanup_verified": true,
+  "native_or_signing_or_recovery_calls": 0,
+  "historical_custody_preserved": true,
+  "full_native_authentication_repeated": false,
+  "independent_freshness_or_copied_key_custody_qualified": false,
+  "fresh_full_fault_profile_completed": false
+}

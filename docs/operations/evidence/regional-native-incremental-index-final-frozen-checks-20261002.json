@@ -1,0 +1,27 @@
+{
+  "format": "RLD-NATIVE-INCREMENTAL-INDEX-FROZEN-CHECKS-V1",
+  "source_set_sha256": "f3ddc138e5ea97ce57b9eacd20614bcfdca9200901f7401b4609a7dde48ecb7f",
+  "native_implementation": "87f7bfdf37f12b4bc734f87c7ca55717ccfcb1f4cf868177ad5be8e20a8143ed",
+  "source_files": 256,
+  "source_unchanged": true,
+  "checked_release_build_passed": true,
+  "strict_clippy_passed": true,
+  "frozen_native_tests": 145,
+  "frozen_long_store_test_rerun": true,
+  "frozen_process_tests": 60,
+  "legacy_stream_optional_cli_checks_enabled": true,
+  "binary_sha256": "3de8ae62fe5c8c858a1a81fcb59a6deec158dd4e2309f5a7dbff3629fa439b27",
+  "fixture_only": true,
+  "live_rld": false,
+  "autonomous_twelve_node_cycle_run": false,
+  "fresh_full_fault_profile_run": false,
+  "full_long_history_qualified": false,
+  "published": false,
+  "resumed_completed_build_after_turn_interruption": true,
+  "log_sha256": {
+    "checked-build": "abe5976208624c2dd0adfed183d818229b499096a750c2a7c181d2ee66d1c3ee",
+    "clippy": "46d8d516a9390ffe1c4da17c26c468b29b5f892ecdb8b7e7c6d27c78c7f4b30c",
+    "native-tests": "61547bb6968a9f77ec293cd7dc40bcd2ecae896be8961994334d3408f804ade5",
+    "process-tests": "bab2189cbdefdcd136e906d32debe7aebac287c2fdf1d9cb3983e5f9d2f884f5"
+  }
+}

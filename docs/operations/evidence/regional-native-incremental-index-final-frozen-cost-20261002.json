@@ -1,0 +1,36 @@
+{
+  "changed_one_record": {
+    "branch_hashes": 12,
+    "leaf_hashes": 1,
+    "retained_bytes": 1998816,
+    "reused_branches": 4083,
+    "reused_leaves": 4095,
+    "uncached_fallback": false,
+    "witness_retained": true
+  },
+  "cold": {
+    "branch_hashes": 4095,
+    "leaf_hashes": 4096,
+    "retained_bytes": 1998816,
+    "reused_branches": 0,
+    "reused_leaves": 0,
+    "uncached_fallback": false,
+    "witness_retained": true
+  },
+  "cold_commitments_exact": true,
+  "disk_index_or_long_history_qualified": false,
+  "entries": 4096,
+  "format": "RLD-NATIVE-INCREMENTAL-INDEX-COST-V1",
+  "native_implementation": "87f7bfdf37f12b4bc734f87c7ca55717ccfcb1f4cf868177ad5be8e20a8143ed",
+  "proof_and_index_bounds_unchanged": true,
+  "synthetic_map_shape_only": true,
+  "unchanged": {
+    "branch_hashes": 0,
+    "leaf_hashes": 0,
+    "retained_bytes": 1998816,
+    "reused_branches": 4095,
+    "reused_leaves": 4096,
+    "uncached_fallback": false,
+    "witness_retained": true
+  }
+}

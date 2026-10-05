@@ -1,0 +1,37 @@
+{
+  "format": "RLD-BFT-EPOCH-PACKAGE-AUDIT-V1",
+  "source_set_sha256": "7e9b5d8cea28839313d91ed5cfc6df42dac66f85403324de858be304810ad33e",
+  "native_implementation": "a1911d35bf70ee98a6fefb7f05b003f508144b19d265d152587b7b956a3911a2",
+  "package_files": 61,
+  "all_checksums_exact": true,
+  "exact_archives": [
+    {
+      "path": "source.tar.gz",
+      "exact_files": 259,
+      "sha256": "a647fe0d0c042206f2f0c7513eb73f132f26a4a3084f6abdad3fff04fe77d218"
+    },
+    {
+      "path": "historical/initial-strict-refusal-source.tar.gz",
+      "exact_files": 259,
+      "sha256": "7d405ac256cbad7d6e93c96dedce132007a4f732a9ca6fa19969193b41706b92"
+    },
+    {
+      "path": "historical/native-process-pass-cli-refusal-source.tar.gz",
+      "exact_files": 259,
+      "sha256": "6a4dae65e04831f7111a3f4d9f094e44fe4b65b36272a8de39af0d0f140b24a2"
+    },
+    {
+      "path": "historical/initial-focused-refusal-source.tar.gz",
+      "exact_files": 258,
+      "sha256": "c022bb2fa0b8f1635c6297128b0ba8fc972dcba937386758f551462f0cd09b0b"
+    },
+    {
+      "path": "historical/initial-test-compilation-source.tar.gz",
+      "exact_files": 258,
+      "sha256": "1706c22bcf29f9e486a04c5cd3320682a6c9ba36216e3c2f10f7c40ccfaddc63"
+    }
+  ],
+  "supplemental_tools_equal_frozen_source": true,
+  "no_private_absolute_paths_or_PEM_blocks": true,
+  "full_fault_profile_run": false
+}

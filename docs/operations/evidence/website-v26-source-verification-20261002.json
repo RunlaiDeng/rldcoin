@@ -1,0 +1,37 @@
+{
+  "commit": "df4458e6b7f037107d35c9a5b80a6c03aeeebd4e",
+  "exact_remote_files": 6,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5176,
+      "sha256": "fdbe156715c4521fc06b6cc1fc8bc92047ccab01bf7a3894eedb716e3faa6a5b"
+    },
+    {
+      "path": "src/app/[slug]/page.tsx",
+      "bytes": 53792,
+      "sha256": "fc3f2acbb258b8230befefabd7b4e3ed9cbbdf62d60c2c0796a29ae101acf765"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "bytes": 10772,
+      "sha256": "85517259057afee925ea050dc2af1e825009d5aa73594ae991cf9dd5916f7144"
+    },
+    {
+      "path": "src/app/research/page.tsx",
+      "bytes": 10737,
+      "sha256": "94a9e5f7519541d5f7d4f5cfd9bf687507cb8f0f1e3ddd29f4da993da90df033"
+    },
+    {
+      "path": "src/components/footer.tsx",
+      "bytes": 3128,
+      "sha256": "10cea32a13cb39a7ee35b0852d98baf8e868e68c99b74443240f322e842fb96f"
+    },
+    {
+      "path": "src/lib/site.ts",
+      "bytes": 12811,
+      "sha256": "4d24232cf17b2030eb0bd0874b50fb08987cc2bf3fcaea1bb7c86da94d18b7bd"
+    }
+  ],
+  "public_protocol_commit": "1883272f040280e8a74b3b784556d5b0486e5d92"
+}
