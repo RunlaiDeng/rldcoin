@@ -1,0 +1,18 @@
+{
+  "completed": true,
+  "qualification": "Source-only disassembly, generated function not executed",
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 30.684564,
+  "duration_seconds": 0.013268,
+  "combined_stage_seconds": 30.697832,
+  "source": "supported exec_command wall0.013267958 rounded up to six decimals; original stage includes previous counter FAIL",
+  "recursive_LOAD_GLOBAL_missing": [
+    "hashlib"
+  ],
+  "tests_provider_present": true,
+  "production_or_fixture_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

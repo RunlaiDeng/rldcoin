@@ -1,5 +1,18 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 同一晋级目标的真实普通签名送达通过（有限地面范围）
+
+**PASS0.445624秒**：V12同一角色反例在全新无价值ground包上，一次源ordinary tick原子准备并写出原完整签名交换，一次目的ordinary tick接收。清除transit witness后冷读，原packet/routing/hop/frame字节和完整目的签名收据一致；pending pair17gap、另一ordinary类floor、full4 retry、路由认证、字节容量、冷读及失败原子护栏保持，复用来源未变的原十项检查。旧V11真实反例仍FAIL，不重跑。旧source2→目的0/3已有完整运输副本，目的1旧parent14 Native Proposal仍缺失；本次ground角色对应通过不复制/重签/重开它，也未证明唯一成熟失败原因。
+
+本次入口V2 **FAIL0.380870秒/15文件**：源ordinary tick已发送，生成函数缺tests全局而停在目的接收前；只读source-boundary V2 **FAIL0.260367秒**再定位缺hashlib。只补这两个明确生成函数全局及新unused root，生产Python192/Native89/Core171/实际CLI未变。来源disassembly0.013268秒、只读签名/source-boundary **PASS0.308387秒**后，必要一次改源码V4取得上述真实送达；旧失败15与成功16文件封存不变，不原样重复。原ground60累计 **11.896617秒**（剩48.103383），原named dependency60累计 **31.496155秒**（剩28.503845），含失败与原0.1扣账，旧58.775813来源预算不重置。
+
+真实V4证据前置条件已正向执行，独立Native范围分配护栏 **PASS0.489936秒**：完整helper及两种controller均在Native导入前拒绝未分配范围；19分配负例、44原护栏mutations拒绝，positive allocation仅内存模型且未写分配文件。V9仍绑定同453来源，整V8入口只四绑定字面量变化；V21明确binding/guard撤回还原V20，原17setup/13import/15mature/all8完整固定头cold/envelope/caller/owner/守恒/stop及180/600/60round/24height/maturity2/quorum3/容量不变。19份准确源码review副本及仅来源快照已保存，不包含钥/保管/ledger/binary，不是额外执行入口。
+
+下一具体判别是已备妥、**尚未授权/分配**的一次全新零价值原180秒Native组件：V12能否把原先卡在14的流程推进至成熟15并完成原all8完整冷验/守恒/正常停止。首护栏失败或原deadline即停止封存，不重开失败fixture、不加deadline、不以高度进展代替PASS。用户明确“局部通过不授权新180/600”，故准备来源与代码不等于授权；新180/600均0。原runtime-v4 **FAIL600/612.570/6152**、V19 **FAIL180/207.185/1856**及所有旧FAIL保留；成熟15/all8原生cold/守恒和原600/all12/keyless、VALUE-STRICT-01仍独立OPEN。下方此前delivery unknown及未实现/未分配文字均保留其当时来源和范围，不能当作当前地面结果，历史“全部通过”仅对应历史有限scope。
+
+已继续采用AGENTS/冻结receipt的当前正文2ba62421…、PDF c59f9fe8…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8；goal正文前继hash未自行改写。冻结正文/PDF/官网和外部权限范围未改，goalactive。所有项目命令显式新workdir，持久cwd仍UI待修。
+[实际送达与独立预算护栏证据](operations/evidence/regional-bft-unserved-promotion-signed-delivery-outcome-20261006.json)；[可审阅未分配下一范围](operations/evidence/regional-bft-four-cli-unserved-promotion-v21-decision-unarmed-20261006.json)。
+
 ## 2026-10-06 V12来源入口与实际启动前置拒绝
 
 本轮推进是实际fixture入口接入及拒绝行为，**不是普通送达/Native资格**。V8绑定当前453文件与Python192汇总1914160b…，整份V7入口只改四个绑定字面量，adapter只改一个入口字面量；原180/600/round60/height24/maturity2/quorum3/容量完全相同。四个新root下的原Rust raw argv控制通过；旧38入口负例/7汇总负例通过整源码精确还原复用、不重复。来源绑定 **PASS0.265684秒**，入口未分配时在Mesh导入前拒绝。

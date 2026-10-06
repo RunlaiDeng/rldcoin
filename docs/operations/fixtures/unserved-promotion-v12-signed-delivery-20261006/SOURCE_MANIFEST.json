@@ -1,0 +1,144 @@
+{
+  "format": "RLD-REVIEW-ONLY-FIXTURE-SOURCE-MANIFEST-V1",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "entries": [
+    {
+      "name": "observe-bft-unserved-promotion-ordinary-delivery-v2-unallocated-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-unserved-promotion-ordinary-delivery-v2-unallocated-20261006.py",
+      "sha256": "7e3c1273e7c4ba0e2875155b34ab7c589e3fc2c8bee8f4fe1223c9dccb730dd2",
+      "bytes": 6497,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-unserved-promotion-ordinary-delivery-v2-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-unserved-promotion-ordinary-delivery-v2-20261006.py",
+      "sha256": "d7a905f9dc69c49154a8cea5e07f5c43983c8aa1db7d40f804c5047c8af569d0",
+      "bytes": 6015,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "observe-bft-unserved-promotion-ordinary-delivery-v3-unallocated-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-unserved-promotion-ordinary-delivery-v3-unallocated-20261006.py",
+      "sha256": "fe06cd84aba241e860ad2422f20d8881a1e2e4c113080ab8be6f8c49866cd65c",
+      "bytes": 6522,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "observe-bft-unserved-promotion-ordinary-delivery-v4-unallocated-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-unserved-promotion-ordinary-delivery-v4-unallocated-20261006.py",
+      "sha256": "7d81b2ee9eb176ffed4bb9ae8e80e7955eed3a089b8471a20920281132bcf985",
+      "bytes": 6551,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-unserved-promotion-ordinary-delivery-v4-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-unserved-promotion-ordinary-delivery-v4-20261006.py",
+      "sha256": "8d48a0d69544c3c2e6b1edc1fa7de6df2dfd7f5a7a9f6e6fa7a5e2037a2586ec",
+      "bytes": 6133,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "observe-bft-ordinary-delivery-source-boundary-v2-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-ordinary-delivery-source-boundary-v2-20261006.py",
+      "sha256": "af6edc5683465829a6712b61c1e18aa55d7bb1884538d3b740d3bfa336ba46a1",
+      "bytes": 5890,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-ordinary-delivery-source-boundary-v2-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-ordinary-delivery-source-boundary-v2-20261006.py",
+      "sha256": "46de773cde4a0375f4e693c943d87ce4f4e671079d648ea0bd3ccbc9f42c96c6",
+      "bytes": 4783,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "observe-bft-ordinary-delivery-source-boundary-v3-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-ordinary-delivery-source-boundary-v3-20261006.py",
+      "sha256": "6ae2effbfeea24bec92387f3b76146b0e34306428fe74b5314c8c93e8789e061",
+      "bytes": 5950,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-ordinary-delivery-source-boundary-v3-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-ordinary-delivery-source-boundary-v3-20261006.py",
+      "sha256": "50728a5f7197ee3c19ac67a436acc187961c84749baf9a7bd8008293e73cc5b0",
+      "bytes": 4718,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "bft_unserved_delivery_precondition_v2_20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_unserved_delivery_precondition_v2_20261006.py",
+      "sha256": "1fd2c7c477fd10562d746e66dc0a90296d41de760cf23361141d81f4e3a0389f",
+      "bytes": 8561,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "first_service_diagnostic_entry_contract_v9_20261006.json",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_contract_v9_20261006.json",
+      "sha256": "20c8145b8f8e585e0cbb6bf68623325b2c563b4f0f4f330d5949663c30a538d6",
+      "bytes": 54539,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "first_service_diagnostic_entry_v9_20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_v9_20261006.py",
+      "sha256": "b719c002fd4a8450135e79ffdd90d23c2991b1072c51663df42ccd4e89f8f402",
+      "bytes": 9916,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "bft_four_cli_first_service_diagnostic_v6_20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_four_cli_first_service_diagnostic_v6_20261006.py",
+      "sha256": "eec2b8ce5c8e8aeecae6d8543cc6b28917d925e2b94dce49398580e5f20e759f",
+      "bytes": 2045,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "bind_bft_four_cli_unserved_promotion_v21_20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bind_bft_four_cli_unserved_promotion_v21_20261006.py",
+      "sha256": "abcdf97ba20128beda42bb50a63680174f584af5abeeea30227f947c933a6ebd",
+      "bytes": 2806,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "observe-bft-four-cli-service-first-service-diag-v21-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-four-cli-service-first-service-diag-v21-20261006.py",
+      "sha256": "35cf058af9cb68d5e751935eda7c077d47d303daa2d41b60e89d0b44c01162ff",
+      "bytes": 14097,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-four-cli-service-first-service-diag-v21-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-service-first-service-diag-v21-20261006.py",
+      "sha256": "bec137d0f5b5ed65ae25c1a4df768d13315109edc3aad32e2460ab9230ae1a79",
+      "bytes": 15086,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-four-cli-service-first-service-diag-v21-allocated-preview-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-service-first-service-diag-v21-allocated-preview-20261006.py",
+      "sha256": "98d0ae02c72236bd758be3379eec4c795ba6ab2b33b0c643735005eb367ecfe9",
+      "bytes": 15098,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "observe-bft-ordinary-delivery-qualified-native-budget-gate-v1-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-ordinary-delivery-qualified-native-budget-gate-v1-20261006.py",
+      "sha256": "3050065980b63db9eab63b5441dd46319a1bf5b762299d57331ab06d1dad1e3a",
+      "bytes": 8395,
+      "review_only_not_launch_entry": true
+    },
+    {
+      "name": "check-bft-ordinary-delivery-qualified-native-budget-gate-v1-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-ordinary-delivery-qualified-native-budget-gate-v1-20261006.py",
+      "sha256": "7f07f118d6fa6f9ccbc14e76c2e075d062522d2cff34f0ce91219f619a6db29e",
+      "bytes": 6118,
+      "review_only_not_launch_entry": true
+    }
+  ],
+  "contains_only_source": true,
+  "no_private_state_key_custody_ledger_binary_copies": true,
+  "authoritative_launch_sources": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930",
+  "new180_allocated": 0,
+  "new600_allocated": 0
+}

@@ -1791,3 +1791,29 @@ unqualified, original600/V19 and Native maturity/allcold/conservation stillFAIL/
 OPEN. No real new Native controller/ground allocation, no new180/600. Frozen
 body/PDF/site unchanged, allprojectcommands explicit newrldcoin, goalactive.
 See docs/operations/evidence/regional-bft-unserved-promotion-entry-launch-gate-outcome-20261006.json.
+
+
+Current signed ordinary ground delivery (2026-10-06): V12 same role-analogue
+fresh zero-value target PASS0.445624: one ordinary source tick, one destination
+tick, complete original signed packet/routing/hop/frame and cold destination
+receipt. Old source2->destination0/3 transport references retained, old Native
+parent14 Proposal destination1 still absent; no unique maturity cause, old failed
+fixture never reopened/copied/re-signed. Failed entryV2 0.380870/15 and source
+boundaryV2 0.260367 retained; exactly tests/hashlib generated-global providers
+plus unused fresh root repaired, production192/Native89/Core171/CLI unchanged.
+Ground60 cumulative11.896617, named dependency60 cumulative31.496155 including
+all failures; older58.775813 budget not reset. Positive delivery gate and actual
+independent Native-allocation refusals PASS0.489936,19 allocation negatives and
+44 original guard mutations retained; allocation positive is model only.
+V9 current453 literal-only entry/V21 complete guarded previews are reviewable,
+UNARMED. User explicitly says localPASS grants no new180/600: require explicit
+owner decision before allocating proposed one fresh zero-value original180,
+17setup13import15mature/all8 complete fixedhead cold/envelope/caller/owner/
+conservation/normalstop; no600. Original params/budgets/exit unchanged, no deadline
+extension or failed fixture reopening. Original600/V19 remainFAIL, all Native
+maturity/cold/conservation/keyless/fullfault/value strict gatesOPEN, goalactive.
+19 exact review-only source copies under docs/operations/fixtures/
+unserved-promotion-v12-signed-delivery-20261006, no state/key/custody/binary copies.
+Current normative hashes/targets and frozen paper/site unchanged. All commands
+explicit newrldcoin workdir; persistent appcwd still UI pending.
+See docs/operations/evidence/regional-bft-unserved-promotion-signed-delivery-outcome-20261006.json.

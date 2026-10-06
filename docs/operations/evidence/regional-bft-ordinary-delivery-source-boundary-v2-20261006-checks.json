@@ -1,0 +1,20 @@
+{
+  "completed": false,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 30.424197,
+  "duration_seconds": 0.260367,
+  "combined_stage_seconds": 30.684564,
+  "attempts_used": 1,
+  "helper_exit_code": 1,
+  "failure": null,
+  "stage_sha256": "8476981dad337e698acf0dab86087c678b0b79afea930ebd41a3eb620a548981",
+  "helper_sha256": "af6edc5683465829a6712b61c1e18aa55d7bb1884538d3b740d3bfa336ba46a1",
+  "controller_sha256": "46de773cde4a0375f4e693c943d87ce4f4e671079d648ea0bd3ccbc9f42c96c6",
+  "log_sha256": "06f8d66c952f103ffc0232cb958ca7425f08d2266b7fb552ef64547e2998b10f",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-ordinary-delivery-source-boundary-v2-20261006.py\", line 30, in <module>\n    globals_in(fn.__code__);assert 'tests' in names and all(name in fn.__globals__ or hasattr(builtins,name) for name in names)\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
