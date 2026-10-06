@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V18'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V19'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1314,17 +1314,21 @@ class Node:
                 transits.append(candidate);offered+=1
         # A full replay must not initialize/touch ordinary LRU positions: those
         # optional bounded hints can otherwise change the next ordinary turn.
+        priority_pair=(first_plan is not None and (self.state['transit_class_steps'][peer]//2)%2==0)
+        # Read the primitive hint before group initialization may evict it.
+        # A full retry or an already missing hint retains ordinary fallback.
+        hint=(carriage_position((self.carriage_position_domain(),'native-commit-spare'))
+              if priority_pair else None)
         pending=self.transit_groups(peer) if len(transits)<MAX_PACKET_BATCH else []
         selected_ids={digest(t['packet']) for t in transits}
         # Alternate priority pairs between newest and oldest unprepared arrival
         # order, including IDs admitted into pending. Retain the two offers and
         # one stream per recent/history class. The other pairs keep the original
         # retransmission order. Full four-packet replay still bypasses both.
-        if first_plan is not None and (self.state['transit_class_steps'][peer]//2)%2==0:
+        if priority_pair:
             arrivals=[i for i in self.state['first_arrivals']
                       if i in first_plan['pending'] or i in first_plan['arrivals']]
             if (self.state['transit_class_steps'][peer]//4)%2==0:arrivals.reverse()
-            hint=carriage_position((self.carriage_position_domain(),'native-commit-spare'))
             frames=set(hint[1]) if hint is not None else set()
             # Exact full-frame IDs came from the companion's Native-checked
             # retained envelopes, not a body identity. Every selected original

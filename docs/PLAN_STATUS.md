@@ -1,5 +1,21 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 V28终态FAIL，V19同计划缓存淘汰反例及必要V29
+
+V28 **FAIL 原180秒 / 209.128秒含正常收尾 / 1883文件封存**。四CLI exit0、owned stopped，无forced/guardian/cleanup/pin异常，旧失败保持。最后参考高度四个均15只在 **179.617秒** 出现；停止后的实际收款成熟/可花费、all8完整Native冷验、caller/owner heads及守恒未完成，参考高度和正常停止不授予这些资格。独立只读停止边界0.621497秒，无旧Node/Native/Runtime构造、签名、运输或复活。
+
+最小可证伪假设：原512条/4MiB缓存中，当前帧提示在计划入口仍有效，却被同一次普通分组初始化淘汰，随后备用槽丢失它。真实签名V18压力反例 **FAIL0.568308秒/14文件** 证实；V19只将原提示读取提前到该分组初始化之前。当前操作仅保留primitive IDs，未扩大缓存或持久化权限；原miss/eviction/restart回退、first2、另一类floor、非priority pairs、full4、全包认证/签名/路由/容量/原子护栏保留，Native授权源码未改。
+
+同一反例及 **8项相关回归 PASS2.129118秒/112文件**；同一缓存压力下真实普通source一次、relay两次、destination一次及清缓存完整冷送达 **PASS0.700291秒/14文件**。原ground60累计 **55.026308秒**，包含所有失败、不重置。内层Proposal签名真实，但Native admission/work/proof仍是模型；运输收据不替代Native成熟。raw groundcontroller的model_Runtime_methods_called=false来自旧label判别，规范化证据明确实际模型方法true/constructor0，原raw报告不改。
+
+独立source60 **PASS1.177287秒**：Python192 **62eadc87ef562fe913e53a82c59fb375981156693fdc6c2f811e8d4563899e62**，仅mesh/test两文件变化；Runtime、Native89/Core171、实际ReleaseCLI bef4d5c7…均不变，既有完整Import父块Native域签名/classifier证据有效复用。所有旧test AST不变，相关回归来源通过精确撤回唯一后加送达方法绑定到最终测试文件；453源contract/21名称/0755真实OS未分配拒绝/四原17argv/整helper-controller-guard引用反转均通过。
+
+依持续有效用户授权，必要全新V29 **原180秒/一次** 已分配（本记录创建时尚未启动）。判据仍为原17setup/13import/15mature/all8完整Native cold/每份信封/caller/owner heads/守恒/normalstop；首guard失败或原deadline即封存退出，无同参重试或延长，无新增600。假设只检验V19避免同计划自淘汰能否在原普通服务范围闭合全部组件条件，不声称唯一成熟失败原因。
+
+历史“全部通过”仅限其记录时的有限scope，所有后续FAIL、完整600/all12/keyless、VALUE-STRICT-01两clippy告警及120耗尽、独立/物理/PQ/长历史/组合资格继续OPEN。冻结正文2ba624…、PDFc59f9f…、receipt86821d…和全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8目标不改。唯一作者、显式新rldcoin workdir；persistent cwd及goal前继哈希/blocked元数据仍是界面待修，不构成新增审批门。无主网/资金/官网/白皮书/服务器/账号/外联/清理/push。
+
+[实际V28终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v28-20261006-checks.json)；[压力反例](operations/evidence/regional-bft-current-commit-hint-pressure-baseline-v18-20261006-checks.json)；[相关回归](operations/evidence/regional-bft-current-commit-hint-pressure-related-v19-20261006-checks.json)；[同压力普通冷送达](operations/evidence/regional-bft-current-commit-hint-pressure-delivery-v19-20261006-checks.json)；[最终来源](operations/evidence/regional-bft-hint-pressure-v19-v29-source-binding-20261006-checks.json)。
+
 ## 2026-10-06 V27终态FAIL，空候选块的Import父块提示V18
 
 V27实际 **FAIL 原180/206.690秒含正常收尾/1822文件封存**，四CLIexit0、owned stopped、无forced/guardian/cleanup/pin异常。参考13，成熟15/all8完整Nativecold/caller/owner/守恒未完成。全部旧600、180、反例失败保留；历史“全部通过”仅来自当时有限scope，不替代后续失败。旧Node/Native/Runtime/签名/账本/保管不重开、恢复、复签、退款或复制。

@@ -1209,6 +1209,109 @@ class MeshTests(unittest.TestCase):
             self.assertEqual(node.state['messages'][target],original)
             self.assertFalse(node.receipts())
 
+
+    def test_current_frame_hint_survives_group_position_pressure_in_same_plan(self):
+        # Inner signature and transport signatures are real fixture signatures;
+        # the empty Native proof deliberately grants no ledger qualification.
+        import regional_bft_node as bft
+        from regional_bft_retention import Messages
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        key = mesh.Ed25519PrivateKey.from_private_bytes(bytes([5]) * 32)
+        public = key.public_key().public_bytes(mesh.Encoding.Raw, mesh.PublicFormat.Raw).hex()
+        context = dict(currency=NETWORK, region='9' * 64, epoch=0, previous='0' * 64,
+                       parent_height=13, parent_block='2' * 64, parent_state='3' * 64)
+        context,proposal=signed_ground_import_parent_proposal(context,key)
+        envelope=dict(format=bft.NETWORK,currency=NETWORK,region=context['region'],
+            evidence=dict(snapshots=[]),body=dict(Signed=dict(Proposal=proposal)))
+        messages = Messages().append(mesh.digest(envelope['body']), envelope, None, True)
+        payload = evidence.canonical(envelope)
+        raw = evidence.make_frame('regional-bft', context['region'], context['region'],
+                                  evidence.hashlib.sha256(payload).hexdigest(), payload)
+        with self.f.node('earth') as node:
+            baseline = [node.enqueue(self.f.frame(), destination) for _ in range(17)]
+            for _ in range(9):
+                node.prepare_exchange(peer)
+                if set(baseline) <= set(node.state['first_carriage'][peer]['prepared']):break
+            self.assertTrue(set(baseline) <= set(node.state['first_carriage'][peer]['prepared']))
+            admitted = [node.enqueue(raw if i == 2 else self.f.frame(), destination) for i in range(32)]
+            target = admitted[2]
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            for _ in range(22):node.enqueue(self.f.frame(), destination)
+            self.assertNotIn(target, node.state['recent_transits'])
+            node.state['transit_class_steps'][peer] = 0
+            node.save()
+            original = copy.deepcopy(node.state['messages'][target])
+            if hasattr(bft, 'commit_carriage_frames'):
+                keys=tuple(mesh.Ed25519PrivateKey.from_private_bytes(bytes([n])*32).public_key().public_bytes(
+                    mesh.Encoding.Raw,mesh.PublicFormat.Raw).hex() for n in range(4,8))
+                frames = bft.commit_carriage_frames(messages, context, keys, NETWORK, context['region'])
+                for field,value in (('currency','b'*64),('region','8'*64),('parent_height',14),
+                                    ('parent_block','6'*64),('parent_state','7'*64),('epoch',1),('previous','1'*64)):
+                    altered=dict(context,**{field:value})
+                    self.assertEqual(bft.commit_carriage_frames(messages,altered,keys,NETWORK,context['region']),())
+                for field,value in (('signature','0'*128),('key','f'*64)):
+                    changed=copy.deepcopy(envelope);changed['body']['Signed']['Proposal']['leader'][field]=value
+                    invalid=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                    self.assertEqual(bft.commit_carriage_frames(invalid,context,keys,NETWORK,context['region']),())
+                changed=copy.deepcopy(envelope);changed['evidence']['snapshots']=[{'ground_only':'different complete proof'}]
+                changed_messages=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                hint_key=node.set_carriage_priority(mesh.digest(context),frames)
+                durable=node.path.read_bytes();state=copy.deepcopy(node.state)
+                node.state['messages'][target]['packet']['signature']='0'*128
+                with self.assertRaises(ValueError):node.prepare_exchange(peer)
+                self.assertEqual(node.path.read_bytes(),durable);node.state=copy.deepcopy(state)
+                with patch.object(mesh,'atomic',side_effect=OSError('Proposal spare publication')):
+                    with self.assertRaises(OSError):node.prepare_exchange(peer)
+                self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),durable)
+                mesh.forget_carriage_position(hint_key)
+                fallback=node.exchange(peer)
+                self.assertNotIn(target,[mesh.digest(t['packet']) for t in fallback['body']['transits']])
+                # Ground setup grants a one-shot primitive position, not Native authority.
+                node.set_carriage_priority(mesh.digest(context),(evidence.inspect_frame(raw)[0]['message_id'],))
+            first=node.prepare_exchange(peer)
+            first_ids=tuple(mesh.digest(t['packet']) for t in first['body']['transits'])
+            self.assertIn(target,first_ids[2:])
+            positions={k:copy.deepcopy(node.state[k]) for k in ('first_carriage','recent_transit_cursors',
+                       'history_transit_cursors','transit_class_steps')}
+            retry=node.prepare_exchange(peer,retry_packet_ids=first_ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in retry['body']['transits']),first_ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            # Both sends are lost in this preparation-only counterexample.
+            # Local prepared metadata is not a destination receipt.
+            self.assertFalse(node.receipts())
+            self.assertIn(target,node.state['first_carriage'][peer]['prepared'])
+            node.state['transit_class_steps'][peer]=0;node.save()
+            # Following turn uses the actual current Native-envelope classifier.
+            key=node.set_carriage_priority(mesh.digest(context),frames)
+            domain=node.carriage_position_domain()
+            for index in range(mesh.MAX_CARRIAGE_POSITIONS-1):
+                mesh.remember_carriage_position((domain,'ground-only-pressure',index),'')
+            # Membership does not refresh LRU; the hint is present at plan entry.
+            self.assertIn(key,mesh._carriage_positions)
+            self.assertEqual(len(mesh._carriage_positions),mesh.MAX_CARRIAGE_POSITIONS)
+            pair=tuple(node.first_carriage_plan(peer)['pending'][:2])
+            self.assertNotIn(target,pair)
+            bundle = node.prepare_exchange(peer)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], pair)
+            self.assertEqual(len(ids), 4)
+            self.assertTrue(set(ids[2:]) & set(node.state['recent_transits']))
+            self.assertEqual(node.state['messages'][target], original)
+            self.assertFalse(node.receipts())
+            self.assertIn(target, ids[2:], 'prepared Proposal with no destination receipt lost its ordinary spare priority after full4 retry')
+            positions={k:copy.deepcopy(node.state[k]) for k in ('first_carriage','recent_transit_cursors',
+                       'history_transit_cursors','transit_class_steps')}
+            replay=node.prepare_exchange(peer,retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']),ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            self.assertEqual(node.state['messages'][target],original)
+        with self.f.node('earth') as node:
+            self.assertIn(target,node.state['first_carriage'][peer]['prepared'])
+            self.assertEqual(node.state['messages'][target],original)
+            self.assertFalse(node.receipts())
+
     def test_prepared_commit_priority_reaches_destination_after_full_retry(self):
         # Inner signature and transport signatures are real fixture signatures;
         # the empty Native proof deliberately grants no ledger qualification.
@@ -1795,6 +1898,177 @@ class MeshTests(unittest.TestCase):
             node.state['transit_class_steps'][peer]=0;node.save()
             pair=tuple(node.first_carriage_plan(peer)['pending'][:2])
             self.assertNotIn(target,pair)
+            self.assertFalse(node.tick()['errors'])
+            outgoing=list((self.f.root/'links/earth-proxima').glob('*.json'))
+            self.assertEqual(len(outgoing),1)
+            bundle=mesh.load(outgoing[0],mesh.MAX_BATCH)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], pair)
+            self.assertEqual(len(ids), 4)
+            self.assertTrue(set(ids[2:]) & set(node.state['recent_transits']))
+            self.assertEqual(node.state['messages'][target], original)
+            self.assertFalse(node.receipts())
+            self.assertIn(target, ids[2:], 'current signed Commit waited behind newer non-Commit arrivals')
+            positions={k:copy.deepcopy(node.state[k]) for k in ('first_carriage','recent_transit_cursors',
+                       'history_transit_cursors','transit_class_steps')}
+            replay=node.prepare_exchange(peer,retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']),ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            self.assertEqual(node.state['messages'][target],original)
+        carried=next(t for t in bundle['body']['transits'] if mesh.digest(t['packet'])==target)
+        self.assertEqual(carried['packet'],original['packet']);self.assertEqual(carried['routing'],original['routing'])
+        # Sorted contact order reads Earth's inbox after the Andromeda branch.
+        # Two ordinary relay ticks are the exact finite bound for this route.
+        for _ in range(2):
+            with self.f.node('proxima') as node:self.assertFalse(node.tick()['errors'])
+        with self.f.node('andromeda') as node:self.assertFalse(node.tick()['errors'])
+        with mesh._verified_transits_lock:mesh._verified_transits.clear()
+        with self.f.node('andromeda') as node:
+            transit=node.state['messages'][target];receipt=node.receipts()[target]
+            mesh.transit_check(transit,NETWORK,destination,peer)
+            self.assertEqual(mesh.packet_check(transit['packet'],NETWORK)[1],raw)
+            mesh.receipt_matches(receipt,transit);self.assertEqual(mesh.receipt_check(receipt,NETWORK),target)
+            self.assertEqual(transit['packet'],original['packet']);self.assertEqual(transit['routing'],original['routing'])
+            self.assertEqual(len(transit['hops']),2)
+            self.assertEqual(receipt['body']['outcome'],'EVIDENCE_STORED_NOT_LEDGER_ACCEPTED')
+        with self.f.node('earth') as node:
+            self.assertIn(target,node.state['first_carriage'][peer]['prepared'])
+            self.assertEqual(node.state['messages'][target],original)
+            self.assertFalse(node.receipts())
+
+
+    def test_current_frame_hint_pressure_ordinary_delivery(self):
+        # Inner signature and transport signatures are real fixture signatures;
+        # the empty Native proof deliberately grants no ledger qualification.
+        import regional_bft_node as bft
+        from regional_bft_retention import Messages
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        key = mesh.Ed25519PrivateKey.from_private_bytes(bytes([5]) * 32)
+        public = key.public_key().public_bytes(mesh.Encoding.Raw, mesh.PublicFormat.Raw).hex()
+        context = dict(currency=NETWORK, region='9' * 64, epoch=0, previous='0' * 64,
+                       parent_height=13, parent_block='2' * 64, parent_state='3' * 64)
+        context,proposal=signed_ground_import_parent_proposal(context,key)
+        envelope=dict(format=bft.NETWORK,currency=NETWORK,region=context['region'],
+            evidence=dict(snapshots=[]),body=dict(Signed=dict(Proposal=proposal)))
+        messages = Messages().append(mesh.digest(envelope['body']), envelope, None, True)
+        payload = evidence.canonical(envelope)
+        raw = evidence.make_frame('regional-bft', context['region'], context['region'],
+                                  evidence.hashlib.sha256(payload).hexdigest(), payload)
+        with self.f.node('earth') as node:
+            baseline = [node.enqueue(self.f.frame(), destination) for _ in range(17)]
+            for _ in range(9):
+                node.prepare_exchange(peer)
+                if set(baseline) <= set(node.state['first_carriage'][peer]['prepared']):break
+            self.assertTrue(set(baseline) <= set(node.state['first_carriage'][peer]['prepared']))
+            admitted = [node.enqueue(raw if i == 2 else self.f.frame(), destination) for i in range(32)]
+            target = admitted[2]
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            for _ in range(22):node.enqueue(self.f.frame(), destination)
+            self.assertNotIn(target, node.state['recent_transits'])
+            node.state['transit_class_steps'][peer] = 0
+            node.save()
+            original = copy.deepcopy(node.state['messages'][target])
+            if hasattr(bft, 'commit_carriage_frames'):
+                keys=tuple(mesh.Ed25519PrivateKey.from_private_bytes(bytes([n])*32).public_key().public_bytes(
+                    mesh.Encoding.Raw,mesh.PublicFormat.Raw).hex() for n in range(4,8))
+                frames = bft.commit_carriage_frames(messages, context, keys, NETWORK, context['region'])
+                self.assertEqual(frames, (evidence.inspect_frame(raw)[0]['message_id'],))
+                for field,value in (('currency','b'*64),('region','8'*64),('parent_height',14),
+                                    ('parent_block','6'*64),('parent_state','7'*64),('epoch',1),('previous','1'*64)):
+                    altered=dict(context,**{field:value})
+                    self.assertEqual(bft.commit_carriage_frames(messages,altered,keys,NETWORK,context['region']),())
+                for field,value in (('signature','0'*128),('key','f'*64)):
+                    changed=copy.deepcopy(envelope);changed['body']['Signed']['Proposal']['leader'][field]=value
+                    invalid=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                    self.assertEqual(bft.commit_carriage_frames(invalid,context,keys,NETWORK,context['region']),())
+                for mutation in ('round','timeout','base','commands','epochs','parent','extra'):
+                    changed=copy.deepcopy(envelope);proposal=changed['body']['Signed']['Proposal'];snap=proposal['snapshot']
+                    if mutation=='round':proposal['round']=1
+                    elif mutation=='timeout':proposal['timeout']={}
+                    elif mutation=='base':snap['base']='6'*64
+                    elif mutation=='commands':snap['blocks'][1]['commands']=[{'unqualified':True}]
+                    elif mutation=='epochs':snap['epochs']=[{'unqualified':True}]
+                    elif mutation=='parent':snap['blocks'][0]['header']['state']='6'*64
+                    else:snap['bft']={}
+                    invalid=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                    self.assertEqual(bft.commit_carriage_frames(invalid,context,keys,NETWORK,context['region']),())
+                for mutation in ('over16','unknown','extra','hex','header_hash'):
+                    changed=copy.deepcopy(envelope);snap=changed['body']['Signed']['Proposal']['snapshot'];parent=snap['blocks'][0]
+                    if mutation=='over16':parent['commands']*=17
+                    elif mutation=='unknown':parent['commands']=[{'Spend':{}}]
+                    elif mutation=='extra':parent['commands'][0]['Import']['extra']=None
+                    elif mutation=='hex':parent['commands'][0]['Import']['export']='z'*64
+                    else:parent['header']['commands']='8'*64
+                    invalid=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                    self.assertEqual(bft.commit_carriage_frames(invalid,context,keys,NETWORK,context['region']),())
+                changed=copy.deepcopy(envelope);changed['evidence']['snapshots']=[{'ground_only':'different complete proof'}]
+                changed_messages=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                self.assertNotEqual(bft.commit_carriage_frames(changed_messages,context,keys,NETWORK,context['region']),frames)
+                hint_key=node.set_carriage_priority(mesh.digest(context),frames)
+                durable=node.path.read_bytes();state=copy.deepcopy(node.state)
+                node.state['messages'][target]['packet']['signature']='0'*128
+                with self.assertRaises(ValueError):node.prepare_exchange(peer)
+                self.assertEqual(node.path.read_bytes(),durable);node.state=copy.deepcopy(state)
+                with patch.object(mesh,'atomic',side_effect=OSError('Proposal spare publication')):
+                    with self.assertRaises(OSError):node.prepare_exchange(peer)
+                self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),durable)
+                mesh.forget_carriage_position(hint_key)
+                fallback=node.exchange(peer)
+                self.assertNotIn(target,[mesh.digest(t['packet']) for t in fallback['body']['transits']])
+                # Exercise actual Runtime observation/broadcast plumbing with an
+                # explicitly modelled Native admission, not a Native constructor.
+                from types import SimpleNamespace
+                from contextlib import nullcontext
+                runtime=object.__new__(bft.Runtime)
+                runtime.format=bft.FORMAT;runtime.region=context['region'];runtime.node_id=node.id
+                runtime.native=SimpleNamespace(authority=NETWORK,currency=NETWORK,ledger=self.f.root/'model-ledger')
+                runtime.transport=node.config if hasattr(node,'config') else self.f.configs['earth']
+                runtime.binding=dict(currency=NETWORK,region=context['region'],key=public)
+                destinations=(node.id,peer,destination,'f'*64)
+                runtime.peers=dict(zip(keys,destinations));runtime.joint=None
+                runtime.state=dict(messages=messages,height=13,tip=context['parent_block'],cursor=0)
+                runtime._retained_native_authenticated=True;runtime._broadcast_quiet=None
+                runtime.extra_locks=[];runtime.lock=runtime.head_lock=None
+                runtime.save=lambda state:setattr(runtime,'state',state)
+                runtime.carriage_node=lambda:nullcontext(node)
+                runtime._observe_context(context)
+                runtime.broadcast()
+                hint_key=runtime._carriage_priority_key
+                self.assertEqual(mesh.carriage_position(hint_key)[1],frames)
+                with patch.object(node,'set_carriage_priority',side_effect=AssertionError('quiet broadcast changed hint')):
+                    runtime.broadcast()
+                with self.assertRaisesRegex(ValueError,'rolled back'):
+                    runtime._observe_context(dict(context,parent_block='6'*64))
+                self.assertEqual(mesh.carriage_position(hint_key)[1],frames)
+                runtime._observe_context(dict(context,parent_height=14,parent_block='6'*64))
+                self.assertIsNone(mesh.carriage_position(hint_key))
+                runtime.broadcast()
+                self.assertEqual(mesh.carriage_position(runtime._carriage_priority_key)[1],())
+                # Restore the model's fresh current context, never a ledger or
+                # Native rollback. The separately created Runtime stub has no funds.
+                runtime.close()
+                node.set_carriage_priority(mesh.digest(context),frames)
+            first=node.prepare_exchange(peer)
+            first_ids=tuple(mesh.digest(t['packet']) for t in first['body']['transits'])
+            self.assertIn(target,first_ids[2:])
+            positions={k:copy.deepcopy(node.state[k]) for k in ('first_carriage','recent_transit_cursors',
+                       'history_transit_cursors','transit_class_steps')}
+            retry=node.prepare_exchange(peer,retry_packet_ids=first_ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in retry['body']['transits']),first_ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            self.assertFalse(node.receipts())
+            self.assertIn(target,node.state['first_carriage'][peer]['prepared'])
+            node.state['transit_class_steps'][peer]=0;node.save()
+            pair=tuple(node.first_carriage_plan(peer)['pending'][:2])
+            self.assertNotIn(target,pair)
+            key=node.set_carriage_priority(mesh.digest(context),frames)
+            domain=node.carriage_position_domain()
+            for index in range(mesh.MAX_CARRIAGE_POSITIONS-1):
+                mesh.remember_carriage_position((domain,'ground-only-pressure',index),'')
+            self.assertIn(key,mesh._carriage_positions)
+            self.assertEqual(len(mesh._carriage_positions),mesh.MAX_CARRIAGE_POSITIONS)
             self.assertFalse(node.tick()['errors'])
             outgoing=list((self.f.root/'links/earth-proxima').glob('*.json'))
             self.assertEqual(len(outgoing),1)

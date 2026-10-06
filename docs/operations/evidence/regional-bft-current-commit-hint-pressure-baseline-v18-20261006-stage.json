@@ -1,0 +1,17 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 51.628591,
+  "tests": [
+    "test_current_frame_hint_survives_group_position_pressure_in_same_plan"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "d31a62f7a9cd1a6a798bd7a780f89e6b355e83f3f9ee5b42c34403fc915bdea3",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "e655928bb379f4d7a22408fd4b571e94db803176599870f67855db74dcca0d8d",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "f830166162ac8fe75efd70fea2bc11a52673c40f7335eb8f4b6ce6c1fa323607",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-hint-pressure-baseline-v18-20261006.py": "6e7ebfbf9aa220436cde266b1789bae94dedc27ca12a186bb37d8a53c53d29f3",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-carriage-hint-pressure-ground-20261006.py": "f42da017a448991926f2b1ecc8fe131dc6295c7bbfe84cfdaec44b2a161abcc1"
+  },
+  "exit": "first guard failure or original10 deadline; retain failure; no duplicate same-source attempt; no old fixture constructors; no Native/runtime/socket calls"
+}
