@@ -1,5 +1,20 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 first-service诊断入口：类型反例与最小修复
+
+**完整fault仍FAIL/OPEN**。已读实际runtime-v4终态：原600秒耗尽、612.570秒含收尾、helper1、6152封存，owned节点/relays停止、cleanup null、无强停；V15 180/202.220秒/1816及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3及容量不变。历史“全部通过”只对应准确历史来源和有限scope。下方“下一source-only60未启动”为创建时快照，现已终态。
+
+真实地面first-service有限通过已否证稳定17pending/目标6加地面并发天然长期跳过目标，尚未解释旧Native的38个无目标full4批次。为观察真实first-plan、retry、suppression及atomic完成，已实现fixture-only独立entry/observer，借用原`--transport-python`合约并保持原driver `runpy __main__`、argv、函数参数/返回/异常。它不改production192Python/89Native/171Core/actualCLI，不调用Native/Node/socket/sign/driver main，不重开失败保管。
+
+原一次60有限检查V1 **PASS0.787秒**后，三最小typed反例 **FAIL0.012秒**：拒绝计数False、事件序号True、owner参数True可冒充整数。V2收紧整数/参数/重复JSON，相关有限矩阵 **PASS0.799秒**；随后三个绑定反例 **FAIL0.005秒**：slot False/0.0、process_id浮点仍被字典等值接受。V3将期望绑定复用严格Ring验证，并对收到绑定作准确canonical类型比较；相关有限矩阵 **PASS0.834秒，原60累计2.436秒**。两组失败、三个旧有限PASS、全部V1–V3源码各自原字节保留，15份仅源码快照，不以最后PASS重写先前失败。
+
+六标记original情形核验普通/partial2/full4/suppression/原异常/原无效输入的参数对象、输出/状态和异常身份；新字段只保留primitive ID/位置，32独立事件、192KiB每记录、8MiB发布，gap/restart/foreign/overflow明确拒绝；原ContactTrace容量与所有协议界限不变。**标记函数不是真实crypto/fsync/Native资格**，实际publisher运行、四CLI采集、driver已分配启动未资格。未分配entry主动拒绝且不导入Mesh/driver，新v16Native根和allocated文件不存在；新180/600均0。旧1816和新地面16库存字节前后不变，全部既有seal文件hash不变。
+
+**下一仅一次120源码/采集器绑定，未启动**：先实现并审阅独立四路有界文件采集，明确PID/root/slot/contract及完整序号；用全新source-only文件检验实际Publisher线程、原atomic发布/正常关闭及闭合journal独立重放。原Rust argv/guardian身份与原17setup/13import/15mature/all8完整cold/envelope/caller/owner/守恒/stop控制必须准确保持；full source/binary/独立controller绑定。首来源/路径/身份/类型/记录/容量/gap/边界差异、有限检查完成或原120退出，不重试/延长，不调用真实Native/Node/socket/key/sign，不分配600。只有该绑定通过才决定必要全新180诊断范围，实际结果再区分迟准入/重试抑制/写入失败/接收成本；不能从日志缺项指定唯一OS原因。
+
+已采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8，本次本机三哈希复核一致。goalactive；正文中的旧goal前继哈希已报告不自主改。VALUE-STRICT-01两基线/120.019耗尽独立OPEN，Core/value/lock未变，原120诊断/300修复触发未满足，不以地区/诊断替代或豁免；长期/PQ/独立保管/physical/组合profile继续OPEN。所有命令显式新rldcoin，持久cwd仍UI待修；冻结材料/官网/Library/服务器/资金/账户/权限/外联/push/清理不扩展。
+[实际源码修复、两组FAIL、有限PASS和下一采集判别](operations/evidence/regional-bft-first-service-entry-typed-repair-outcome-20261006.json)。
+
 ## 2026-10-06 真实地面first-service：准备推进完成、拒绝推测调度修复
 
 **完整fault仍FAIL/OPEN**：原runtime-v4 600/612.570秒/6152、V15 180/202.220秒/1816及全部旧失败保留；原收款成熟、keyless drain、all12完整Native cold/守恒未完成。原owner请求、600阶段/60轮/24高度/maturity2/quorum3与全部容量保持。历史“全部通过”只指其对应来源和有限scope；下方“下一地面60未启动”为创建时快照，现已终态。

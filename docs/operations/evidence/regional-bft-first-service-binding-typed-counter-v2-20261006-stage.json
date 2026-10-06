@@ -1,0 +1,8 @@
+{
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 1.597446,
+  "hypothesis": "Typed process/slot binding must not accept boolean or float equality",
+  "prototype_sha256": "477aced3daa7f6471c1c97eaad121d9204e5f8c636a84fd2e288ed3d62207166",
+  "scope": "Three source-only empty publication counterexamples, no file/private/key/driver/Native activity",
+  "Native_Runtime_Node_socket_sign_calls": 0
+}

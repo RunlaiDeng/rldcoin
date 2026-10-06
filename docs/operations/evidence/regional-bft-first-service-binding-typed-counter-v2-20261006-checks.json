@@ -1,0 +1,20 @@
+{
+  "completed": false,
+  "discriminator_completed": true,
+  "qualification": "FAIL",
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 1.597446,
+  "duration_seconds": 0.004728,
+  "combined_stage_seconds": 1.602174,
+  "invalid_binding_cases_accepted": [
+    "slot:bool",
+    "slot:float",
+    "process_id:float"
+  ],
+  "valid_control_passed": true,
+  "stage_sha256": "0a3e2397f3da973b2fd8db1c9201342b03105953e51035ef5a2626e5d6b6001d",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

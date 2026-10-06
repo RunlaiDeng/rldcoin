@@ -1,0 +1,23 @@
+{
+  "completed": false,
+  "discriminator_completed": true,
+  "qualification": "FAIL",
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 0.787163,
+  "duration_seconds": 0.011664,
+  "combined_stage_seconds": 0.798827,
+  "three_finite_cases": 3,
+  "invalid_typed_cases_accepted": [
+    "rejected-bool",
+    "event-sequence-bool",
+    "parameter-owner-bool"
+  ],
+  "valid_controls_passed": true,
+  "stage_sha256": "9035a8e8d03bfa968eed3824e21a536e2cc6aee261b449ed9352ccfff042f092",
+  "prototype_V1_finite_old_matrix_PASS_not_rewritten": true,
+  "Native_Runtime_Node_socket_sign_or_driver_main_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
