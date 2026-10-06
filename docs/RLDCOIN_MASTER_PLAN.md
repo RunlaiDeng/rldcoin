@@ -1,5 +1,14 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 协调接续：普通送达缺口保留unknown
+
+已收到同一source2→destination1 parent14 Proposal协调。复用已有完整运输/typed前缀/48模型与V11真实FAIL、V12十一项PASS，不重做诊断/已有检查。旧Proposal目的端0、3有完整运输副本，目的端1仍缺；缺口位于arrival0→pending30后未发送，尚不能证明唯一成熟失败原因。旧Native Proposal/失败保管不复制、重开或重签。
+
+本次新增最小普通送达检查 **FAIL0.200879秒**：检查入口展开函数的嵌套换行转义错误发生在创建签名夹具/Node之前；0源/目的tick、0封存文件，空失败目录及源码/日志保留。原ground60累计 **11.070123秒**，送达结论 **unknown**，不是协议候选失败或局部PASS。依退出规则已停止，无追加同参试验/180/600。入口只修复转义和未来未分配root；静态展开/编译 **PASS0.020240秒**，静态提取计数误断言FAIL另保守扣0.1秒，原依赖60累计 **29.899172秒**。纠正后的函数未执行、没有新fixture/controller分配，生产192/Native/Core/binary未变；三份仅来源快照保留。
+
+下一检查点仍是同一个地面目标：一源普通tick原子准备并写完整原交换、一目的普通tick实际接收，冷读清除transit witness后核验原packet/routing/hop/frame完整字节及目的签名收据，保持既有pending pair17gap/另一类floor/full4/route/签名/容量/原子失败护栏；不能以静态编译授予送达/Native资格。当前执行范围已停止，未来入口未分配；原ground剩余48.929877秒、原依赖剩余30.100828秒，不重置/延长，首失败或原deadline即退出。完整fault仍FAIL，成熟15/all8 cold/守恒/原600/all12/keyless及VALUE-STRICT-01独立OPEN。goalactive，新180/600均0；已知原/V19 owned PID不存在，冻结正文/PDF/官网及外部/清理范围未变，显式新workdir，持久cwd仍UI待修。
+[本次准确入口FAIL、静态修复与送达unknown](operations/evidence/regional-bft-unserved-promotion-delivery-gap-outcome-20261006.json)。
+
 ## 2026-10-06 V19终态与未发送项晋级反例修复
 
 **完整fault仍FAIL/OPEN**：runtime-v4原600/612.570秒/6152、最新V19原180/207.185秒/1856及所有旧失败/原owner请求保留。V19 helper1/ScopeDeadline，四CLI各exit0，正常停止、无forced/cleanup/pin异常；原收款成熟、keyless drain、all12完整Native cold/守恒未完成。600阶段/60轮/24高度/maturity2/quorum3/所有容量保持。历史“全部通过”仅对应当时明确来源及有限scope；下方V19“未启动”为历史创建时快照。

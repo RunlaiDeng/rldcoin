@@ -1750,3 +1750,22 @@ strict/history/PQ/independent/physical gates remainOPEN. Frozen paper/site and
 original600/60round/24height/maturity2/quorum3/bounds unchanged; goalactive.
 All project commands explicitly newrldcoin workdir, persistentcwd UI pending.
 See docs/operations/evidence/regional-bft-unserved-promotion-repair-outcome-20261006.json.
+
+
+Ordinary-delivery extension terminal (2026-10-06 coordination): old Proposal
+source2->destination1 remains missing; destination0/3 complete transport references
+retained, no unique maturity cause. Reuse V11FAIL/V12 elevenPASS/current192 map.
+One new delivery entry FAIL0.200879 at generated-function newline escape before
+any fixture/Node/sign/tick; empty failed directory and source/log retained.
+Original ground60 cumulative11.070123, deliveryUNKNOWN; stop no same-parameter
+additional test. Corrected helper is unallocated/static-only, generated function
+compilePASS0.020240 after extractor-count FAIL conservatively0.1 charged; original
+dependency60 cumulative29.899172. Production/Native/Core/binary unchanged.
+No new controller/fixture/180/600 allocation. Next criterion remains ordinary
+source preparation plus destination receive and original complete signed cold
+frame/packet/route/hop/receipt, never manual receive or old Native evidence copies.
+Static compile cannot grant delivery/maturity/fullfault qualification. Original
+remaining ground48.929877 and dependency30.100828; first guard/refusal/budget
+failure stops with retainedFAIL/unknown, no deadline extension. Frozen site/paper
+unchanged, all prior failures/value strict gatesOPEN, exactthread/goalactive.
+See docs/operations/evidence/regional-bft-unserved-promotion-delivery-gap-outcome-20261006.json.
