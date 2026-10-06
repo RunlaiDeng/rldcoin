@@ -1690,7 +1690,7 @@ never reopen/migrate the retained failures. Finite FIFO models and fresh signed
 cold tests do not establish broad liveness, Native maturity or fullfault success.
 
 
-The current V10 ground transit scheduler keeps V8's exact first-pending pair and
+The preserved V10 ground transit scheduler keeps V8's exact first-pending pair and
 all arrival metadata/capacities. On alternate durable ordinary class pairs only,
 prioritize peer arrival-waiting IDs within their existing recent/history group;
 other pairs retain their original group order. Full four-packet retry still
@@ -1711,3 +1711,14 @@ its stopped stores and both failed complete-verifier refusals. Read-only typed
 prefixes and conditional ordering models grant no Native maturity/cold authority.
 Do not adopt a new ordinary waiting order until actual fresh signed preparation
 retains the original pending pair/gap, other-class floor, full4 retry and bounds.
+
+
+The current V11 ground transit scheduler keeps that same pending pair and
+all validation/metadata/capacities. Only alternate ordinary class pairs prefer
+the newest arrival-waiting IDs within the existing recent/history groups;
+the other pairs keep original order, and full4 retries still bypass the plan.
+A real full32/22waiting ground counter fails on V10 and passes on V11 with
+original pending-gap/history-floor/cold/atomic controls. This finite source
+qualification does not prove Native maturity, fullfault or broad liveness.
+V10 private profiles refuse unchanged; retain failed state and use only fresh
+fixtures. The source-bound V7 entry and V19 controls remain unallocated.

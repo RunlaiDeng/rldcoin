@@ -1,5 +1,18 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 普通槽末项实际反例与V11单点修复
+
+**完整fault仍FAIL/OPEN**：runtime-v4原600/612.570秒/6152及最新V18原180/203.840秒/1833、全部旧失败与原owner请求保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成。600阶段/60轮/24高度/maturity2/quorum3/所有容量保持；历史“全部通过”只指其准确历史来源和有限scope，不覆盖后续FAIL。下方“下一ground未启动”是创建时快照，本节给出实际结果。
+
+在全新签名spool实际构造满32原pending与22 waiting：V10 **FAIL0.381秒**，原first2/认证/atomic失败不发布先通过，末项目标确实没进入普通槽；14文件和原来源封存，不只靠抽象模型归因。V11仅将alternate ordinary近期/历史组内现有arrival优先顺序反转、更新不兼容fixture profile，原pending前2、其他组对原序、full4无plan重放、完整认证/容量/原子发布保持。**10实际相关ground全部PASS2.355秒**，包含原17-gap、其他ordinary history floor、full4、冷原字节、认证/atomic失败/schema/capacity/实际outgoing branch；140文件保留。原ground60包括旧FAIL累计 **7.728秒**，不重置、不重跑通过长测。新测试仅新增一个真实末项反例，旧test AST全部准确不变；不是Native成熟、完整fault或永久活性资格。
+
+最终source-only绑定 **PASS0.904秒，原源码60累计58.776秒**（承接上一57.872，未重置）。整份V11 mesh只撤回一顺序赋值/profile即准确还原V10，当前branch准确等于已资格120 model candidate，复用old400外部不变证明，不重跑模型。Python192 commitment **a82d1d7a…**仅mesh/test两项改变；Native89/Core171/actualCLI分别绑定且未变。新V7完整453文件contract，汇总guard与原7负例源码原样，旧V6拒绝新来源；4 Rust fixed raw argv/38入口负例、44原helper/controller guard保持，V19整控制反转准确还原V18。最新1833及新14+140库存逐文件前后不变，66普通/7typed seal文件hash保持；19份仅来源快照，无币/钥/账本/保管/binary复制。没有重开失败Native/Runtime/Node，未启动Native/socket/TLS或发布新allocation。
+
+**下一必要原生判别，仅未来一次原180，未分配/未启动，新600仍0**：全新零值V19通过已绑定V7/原fourCLI/17setup/13import/15mature，实际最新边界包若能提前进入普通槽，应在原180内完成真实成熟和all8固定head完整cold/envelope/caller/owner/守恒/正常停止。须用准确packet/frame/peer/nonce已收前缀区分仍未准备/未准入/已服务、真实成熟或cold成本，不因日志缺项指定唯一OS/CPU原因。首来源/binary/角色/协议/negative/owned guard失败、全部原有限成熟/cold/守恒条件在180内完成、或原绝对deadline即退出，封存失败不重试/加deadline，不开旧fixture/钥/保管、不复签退款复制。有限component通过仍不能替代原600故障/all12/keyless/完整协议资格。
+
+按冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8实施，三哈希本机一致。VALUE-STRICT-01两基线及120.019耗尽仍独立OPEN，Core/value/lock未变、原120诊断/300修复触发未满足，不豁免/替代。goalactive，旧goal前继已报告不改；所有自有检查已终态。所有项目命令显式新rldcoin workdir，持久cwd仍UI待修；纸/官网/Library/服务器/资金/账户/权限/外联/push/清理范围不扩展。
+[实际签名反例、V11实现和来源/入口验证](operations/evidence/regional-bft-ordinary-newest-ground-repair-outcome-20261006.json)。
+
 ## 2026-10-06 V6入口实际接入、V18失败与普通槽反例
 
 **完整fault仍FAIL/OPEN**：自己的runtime-v4原600/612.570秒/6152原字节保留。最新V18 **FAIL原180/203.840秒含正常收尾**，helper1/ScopeDeadline，四实际CLI各exit0、无guardian/forced/cleanup/pin错误，1833文件封存。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求及600阶段/60轮/24高度/maturity2/quorum3/全部容量保持。历史“全部通过”只指对应历史来源和有限scope，不覆盖后续FAIL；下方“未分配”均为创建时快照。

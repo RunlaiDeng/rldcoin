@@ -210,6 +210,63 @@ class MeshTests(unittest.TestCase):
                 node.validate_state()
             node.state = state
 
+    def test_latest_waiting_arrival_gets_spare_slot_without_displacing_pending_pair(self):
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            for _ in range(8):
+                node.enqueue_batch([(self.f.frame(), destination)] * 4)
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            node.save()
+            pending = list(node.state['first_carriage'][peer]['pending'])
+            self.assertEqual(len(pending), 32)
+            waiting = [node.enqueue(self.f.frame(), destination) for _ in range(22)]
+            target = waiting[-1]
+            self.assertEqual(node.first_carriage_plan(peer)['arrivals'], waiting)
+            original = copy.deepcopy(node.state['messages'])
+            state = copy.deepcopy(node.state)
+            durable = node.path.read_bytes()
+            node.state['messages'][target]['packet']['signature'] = '0' * 128
+            with self.assertRaises(ValueError):
+                node.prepare_exchange(peer)
+            self.assertEqual(node.path.read_bytes(), durable)
+            node.state = copy.deepcopy(state)
+            with patch.object(mesh, 'atomic', side_effect=OSError('latest arrival publication')):
+                with self.assertRaises(OSError):
+                    node.prepare_exchange(peer)
+            self.assertEqual(node.state, state)
+            self.assertEqual(node.path.read_bytes(), durable)
+            bundle = node.prepare_exchange(peer)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], tuple(pending[:2]))
+            self.assertEqual(len(ids), 4)
+            self.assertIn(target, ids[2:])
+            self.assertTrue(set(ids[2:]) & set(pending[2:]))
+            self.assertEqual(node.state['messages'], original)
+            self.assertFalse(node.receipts())
+            self.assertIn(target, node.state['first_carriage'][peer]['prepared'])
+            self.assertNotIn(target, node.state['first_carriage'][peer]['arrivals'])
+            self.assertIn(waiting[0], node.state['first_carriage'][peer]['arrivals'])
+            positions = {k: copy.deepcopy(node.state[k]) for k in
+                         ('first_carriage', 'transit_cursors', 'recent_transit_cursors',
+                          'history_transit_cursors', 'transit_class_steps')}
+            replay = node.prepare_exchange(peer, retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']), ids)
+            self.assertEqual({k: node.state[k] for k in positions}, positions)
+            node.validate_state()
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['messages'], original)
+            self.assertIn(target, node.state['first_carriage'][peer]['prepared'])
+            self.assertFalse(node.receipts())
+            durable = node.path.read_bytes()
+            state = copy.deepcopy(node.state)
+            node.state['transit_scheduler'] = 'RLD-CONTACT-TRANSIT-SCHEDULER-V10'
+            with self.assertRaises(ValueError):
+                node.validate_state()
+            self.assertEqual(node.path.read_bytes(), durable)
+            node.state = state
+
     def test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open(self):
         self._arrival_before_recent_eviction(False)
 
