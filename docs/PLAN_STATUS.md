@@ -1,5 +1,21 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 V36终态FAIL；只读观察原优先提示V37
+
+V36 **FAIL 原180秒/191.648秒含收尾/1768文件封存**；完整原controller终态、helperexit1，四CLI正常exit0，owned stopped，無forced/guardian/cleanup/pin异常。四参考14，原15mature/all8完整Nativecold/所有信封/heads/守恒未完成；全部旧失败及完整600/all12/keyless仍FAIL/OPEN。
+
+该轮原20只读判别 **2.560414秒**，无旧Node/Native/Runtime/socket/key/sign/fixture构造，读回字节未变。Proposal2→0/1/3及Prepare2→三目的均有完整运输receipt/精确信封；Prepare0缺2、Prepare1缺2/3、Prepare3缺0，Commit0缺2、Commit1缺2/3、Commit3缺0/1。前一V35缺Proposal2→0在本轮已到，不能将两轮时间变化当作唯一修复因果。
+
+唯一准确目标Commit0→2源端firstprepare1.173738秒，首次SSL未送、原full4重试取得relay1完整peer custody和本地reply custody。Relay1有完整精确包、Native同完整信封于297622.249460625接纳（来自另一目的1包）；目标由arrival入pending26→17，首hopattempt仍0/selected0，目的2缺完整包。当前真实classifier含目标及7currentframes，合计1211029字节小于原4194304，预算超限假设已证伪；不改容量。历史live提示实际存在与目标排序没有记录，不能事后推断。
+
+为关闭这一唯一观察缺口，fixture-only diagnosticV2仅增加原prepare入口的primitive class step/priority pair、原缓存scope/完整frame IDs及匹配active packet IDs。直接只读缓存原row，不调用会移动LRU的getter；不保存key/packet/header/proof，不改变原签名/selector/锁/容量或原子行为。原32事件/192KiB事件/8MiB发布及journal界限不改。整原observer AST移除这组观察后保持，collector仅path/hash字面量替换。
+
+**14种畸形primitive模型拒绝**；实际签名普通方法在新观察下完成原两跳/receipt/清witness目的cold断言，17观察记录available/rejected0。首次方法名误用uninstall使teardown FAIL0.791804（14文件），生产及原方法断言无失败；修正为实际restore并做名称绑定后 **PASS0.798270（14文件）**，原60合计 **1.590070**，旧失败/预算保留。来源首次FAIL漏了helper-source producer的新collector导入literal，零Native/fixture调用；原producer单独保留。修正后的来源 **PASS0.892秒，原source60含保守失败0.15合计1.042**，实际已分配helper/controller/contract/receipt guard和0755OS未分配拒绝通过。Python192 **f2208c7b…**/profileV24、Native89/Core171/实际CLI未变，旧合法地面资格复用，全部原driver AST字面量反转保持。
+
+持续用户授权内，仅必要改变观察controller的V37 **原180秒/一次已分配，本记录创建时NOTSTARTED**，判别准确目标准备时提示存在/匹配资格还是仅历史轮次/队列等待。该观察不能授予Native权利；原17setup/13import/15mature/all8完整Nativecold/所有信封/heads/守恒/normalstop及终态≤180保持，首guard/原deadline封存。不重复未变scope、不延长/重开旧失败/新增600。VALUE-STRICT-01两基线告警/120耗尽、长期/PQ/独立/物理与组合仍OPEN；冻结正文/PDF/receipt、全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8/原600stage/60round/24height/maturity2/quorum3/原容量-owner请求不改。唯一作者，显式新workdir，persistent cwd与goal旧哈希-blocked元数据为UI待修，不作为审批门；无官网/白皮书/主网/资金/外联/远端/权限/清理/push。
+
+[真实V36终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v36-20261006-checks.json)；[准确relay缺口](operations/evidence/regional-bft-relay-target-opportunity-v36-20261007-checks.json)；[原缓存观察核验](operations/evidence/regional-bft-priority-hint-observer-v4-model-v2-20261007-checks.json)；[最终来源](operations/evidence/regional-bft-priority-observation-v37-source-binding-20261007-checks.json)。
+
 ## 2026-10-07 V35原180仍FAIL；提示淘汰后静默返回最小修复V24
 
 V35 **FAIL 原180秒/193.240秒含收尾/1924文件封存**；完整原控制器此次正常终态、helperexit1，四CLI正常exit0，无forced/guardian/cleanup/pin异常。四参考14，成熟15/all8完整Nativecold/所有信封/heads/守恒未完成；完整600/all12/keyless及所有旧失败不改PASS。V34错误分配在Native启动前拒绝，单独保留，不能混入本轮协议结果。

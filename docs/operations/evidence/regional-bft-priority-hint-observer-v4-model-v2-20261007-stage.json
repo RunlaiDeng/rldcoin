@@ -1,0 +1,19 @@
+{
+  "budget_seconds": 60,
+  "attempts": 1,
+  "hypothesis": "Missing live priority hint cannot be reconstructed from old traces. Observe exact class phase, primitive hint scope/frames and matching current packet IDs at original preparation without touching LRU or protocol behavior; deny malformed primitive rows and retain original byte/counter bounds.",
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-priority-hint-observer-v4-model-v2-20261007.py": "f22e1987d07165513118a77cbf0c1784217e049ef46d723dd75f053fc81d4d33",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-priority-hint-observer-v4-ground-v2-20261007.py": "744397cab4810f381974017bee54f4e4dd77b6992763ef4c0dbd2c7656baea6f",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_observer_v4_20261007.py": "a2a65df940e86bd70e56cdd45054a2a0e8131714642786bcb7ecafe789eaa9f5",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_collector_v2_20261007.py": "97275c2de1d3b02eb2dce6bb0c4943090d7accfab10b3b2749141810351d82ef",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/priority-hint-observer-v4-reversal-20261007.json": "4952fa5f73e1e405e470b6063e9bd33e70dfd2e22ce69f46b1b5aee215e9db30",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "5587d0517bf2997233f8f7834f42efaac5b0787790c1f98b5315b5ded615df00",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "9016765467cb4f8e715a504686f1b7f9642f841033cac8093bec0cef6ef6a3cc",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "e9940a6bca98911982fc463feaab8ca62261089c3988deaca7e1a8bfd8ce0d95",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "99d1656ae7823579771f4cfb07603c36b0906f31ae0f3cc6be5a03b00365d7df",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "negative_model_cases": 14,
+  "exit": "first original-function/readonly-LRU/schema/bounds guard or original60; no Native Runtime constructor/socket/oldfixture operations"
+}

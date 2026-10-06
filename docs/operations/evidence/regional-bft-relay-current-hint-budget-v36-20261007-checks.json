@@ -1,0 +1,82 @@
+{
+  "completed": true,
+  "actual_hint_budget": 4194304,
+  "total_candidate_bytes": 1211029,
+  "current_candidate_rows": [
+    {
+      "body_id": "9799f9fad89ee1fabaca1ea4df2cf18f22d36c7707168e469cd8a01ab8e48315",
+      "complete_envelope_id": "9ef4411e866f697d024377e176338af00998152a5049b79cce3258a27d82ad6f",
+      "phase": "Prepare",
+      "owned": false,
+      "size_bytes": 172833,
+      "cumulative_candidate_bytes": 172833,
+      "target": false
+    },
+    {
+      "body_id": "9b3b6e076841d0e96833fbada45dbaabed3ee0ddd8d37d0a0c13939c170a6013",
+      "complete_envelope_id": "2d9ae9f4b8a07d9f9f5bcbfd84c943c33e444e568afbdf1800da09be8b45d0cc",
+      "phase": "Prepare",
+      "owned": true,
+      "size_bytes": 172833,
+      "cumulative_candidate_bytes": 345666,
+      "target": false
+    },
+    {
+      "body_id": "bb947a3c1e21123546c641c060c6a372729fc187935a6242e110b4119a5cb790",
+      "complete_envelope_id": "50128a57a63844c43790f37545caa27fdc5ada190d3243f2bc29eb3ec09c38e5",
+      "phase": "Prepare",
+      "owned": false,
+      "size_bytes": 172833,
+      "cumulative_candidate_bytes": 518499,
+      "target": false
+    },
+    {
+      "body_id": "c12a409eea77655e4a78d47b8b87798a8699837c7241115ec6b0543c2ac98e9a",
+      "complete_envelope_id": "09b21cf393262668a6ad2cf94386648adb4ffa25cd95326174b746281afc10d4",
+      "phase": "Commit",
+      "owned": true,
+      "size_bytes": 172832,
+      "cumulative_candidate_bytes": 691331,
+      "target": false
+    },
+    {
+      "body_id": "e59a4778741d0f92bcadad50e1290db9a8752bdd86e605d163c3612692c4f414",
+      "complete_envelope_id": "213bb3936a2a5c1dfc5bd2592768c7a2e197974ce7c107f4d69a0ec5515939f1",
+      "phase": "Prepare",
+      "owned": false,
+      "size_bytes": 172833,
+      "cumulative_candidate_bytes": 864164,
+      "target": false
+    },
+    {
+      "body_id": "e8bb474ddbaf1198d16752648757cae456129ef1c339215130d1b64dfa323c47",
+      "complete_envelope_id": "8b517fce5c6b31a72d367ada74b5b86266ac2cb209dd1c913870ac8a301c66b3",
+      "phase": "Commit",
+      "owned": false,
+      "size_bytes": 172832,
+      "cumulative_candidate_bytes": 1036996,
+      "target": true
+    },
+    {
+      "body_id": "f4195f6c0e7e77ce067770a9ddce15de4e661e0ac3020658727f7efcfba8c9f5",
+      "complete_envelope_id": "c806cae76c271cead6eb88d1bf7d98e9e878ee9bc4c01a4c1ffbfdcb2ab1a730",
+      "phase": "Proposal",
+      "owned": false,
+      "size_bytes": 174033,
+      "cumulative_candidate_bytes": 1211029,
+      "target": false
+    }
+  ],
+  "current_complete_frame_hint_count": 7,
+  "actual_target_in_current_hints": true,
+  "actual_target_complete_retained_at_relay": true,
+  "actual_target_frame_id": "faaaa0476ae7ea6f4c256f26e36999888c49ed6808bb6cce38f15eabfff62fa5",
+  "live_hint_installation_unknown": true,
+  "unique_maturity_cause": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "consumed_bytes_unchanged": true,
+  "duration_seconds": 0.271537,
+  "combined_original20_seconds": 2.452648,
+  "new180": 0,
+  "new600": 0
+}

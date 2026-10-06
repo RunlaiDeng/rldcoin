@@ -1,0 +1,27 @@
+{
+  "completed": true,
+  "helper_exit_code": 0,
+  "original60_cumulative_seconds": 1.59007,
+  "prior_actual_ground_protocol_assertions_passed_but_teardown_name_failure_retained": true,
+  "duration_seconds": 0.79827,
+  "negative_cases": 14,
+  "readonly_LRU_order_and_value_byte_count_preserved": true,
+  "original_limits32events192KiB8MiB_unchanged": true,
+  "diagnostic_only_no_production_source_change": true,
+  "actual_ground_original_prepare_signed_wire_cold_assertions": [
+    {
+      "available": true,
+      "rejected": 0,
+      "records": 17,
+      "diagnostic_profile": "RLD-FIRST-SERVICE-DIAGNOSTIC-V2",
+      "original_signed_ordinary_assertions_passed": true
+    }
+  ],
+  "log_sha256": "8c5de263cab14ceb7f31265166d6624dabb4b9517944af65a2c3de5c90d82768",
+  "stage_sha256": "dbaa67fae6bb32bb44967f891838baa1a17178afeac51279d080dc28262df4bf",
+  "seal_sha256": "d2a5ac1daf99f0dbac37b6a926b98aa148c92df43c47b689469e1e5e95c3cf62",
+  "retained_files": 14,
+  "Native_Runtime_constructors_socket_oldfixture_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0
+}

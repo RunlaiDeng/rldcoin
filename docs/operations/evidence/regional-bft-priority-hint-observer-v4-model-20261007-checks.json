@@ -1,0 +1,17 @@
+{
+  "completed": false,
+  "helper_exit_code": 1,
+  "duration_seconds": 0.791804,
+  "negative_cases": 14,
+  "readonly_LRU_order_and_value_byte_count_preserved": true,
+  "original_limits32events192KiB8MiB_unchanged": true,
+  "diagnostic_only_no_production_source_change": true,
+  "actual_ground_original_prepare_signed_wire_cold_assertions": [],
+  "log_sha256": "1d4e2796b84bbf9b58f2ba9f10c9e98b7c2abbd47408aa7504f58f33846ce8d8",
+  "stage_sha256": "fefe773d3e50c8e83c9d006756966e7fe50de0d9f68b318c58c8f41a84103ce5",
+  "seal_sha256": "787aecb5143f714eafc0ecdae873e6d8350c030d4d9ae206fe690b19d31f8baa",
+  "retained_files": 14,
+  "Native_Runtime_constructors_socket_oldfixture_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0
+}

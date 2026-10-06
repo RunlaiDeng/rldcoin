@@ -1,0 +1,1829 @@
+{
+  "completed": true,
+  "actual_target_relay_events": [
+    {
+      "frame_id": "faaaa0476ae7ea6f4c256f26e36999888c49ed6808bb6cce38f15eabfff62fa5",
+      "monotonic_seconds": 297619.241167833,
+      "nonce": "72ba05b7f251490e54b434a1058c8d90fd18f2e7bf4a19798f05919432db8d71",
+      "packet_id": "945171f59a60720a25817bd3181ec7df383705130d1ff81fd20049dc8a3c0de3",
+      "peer": "e5787c0e0f0193a5d175a28d8782098c01cbed14b7f363401a279c682392bdcc",
+      "sequence": 3302,
+      "slot": 1,
+      "stage": "request_authenticated"
+    },
+    {
+      "frame_id": "faaaa0476ae7ea6f4c256f26e36999888c49ed6808bb6cce38f15eabfff62fa5",
+      "monotonic_seconds": 297619.664301375,
+      "nonce": "72ba05b7f251490e54b434a1058c8d90fd18f2e7bf4a19798f05919432db8d71",
+      "packet_id": "945171f59a60720a25817bd3181ec7df383705130d1ff81fd20049dc8a3c0de3",
+      "peer": "e5787c0e0f0193a5d175a28d8782098c01cbed14b7f363401a279c682392bdcc",
+      "sequence": 3311,
+      "slot": 1,
+      "stage": "local_transport_custody"
+    },
+    {
+      "envelope_id": "8b517fce5c6b31a72d367ada74b5b86266ac2cb209dd1c913870ac8a301c66b3",
+      "monotonic_seconds": 297621.943847541,
+      "packet_id": "38e59e28561f11bd1e37557c71ab50abcfda41a88ed0c45bb30c8127895e0178",
+      "peer": null,
+      "sequence": 3364,
+      "slot": 1,
+      "stage": "native_receive_selected"
+    },
+    {
+      "envelope_id": "8b517fce5c6b31a72d367ada74b5b86266ac2cb209dd1c913870ac8a301c66b3",
+      "monotonic_seconds": 297622.071262875,
+      "packet_id": "38e59e28561f11bd1e37557c71ab50abcfda41a88ed0c45bb30c8127895e0178",
+      "peer": null,
+      "sequence": 3365,
+      "slot": 1,
+      "stage": "native_receive_attempt"
+    },
+    {
+      "envelope_id": "8b517fce5c6b31a72d367ada74b5b86266ac2cb209dd1c913870ac8a301c66b3",
+      "monotonic_seconds": 297622.249460625,
+      "packet_id": "38e59e28561f11bd1e37557c71ab50abcfda41a88ed0c45bb30c8127895e0178",
+      "peer": null,
+      "sequence": 3374,
+      "slot": 1,
+      "stage": "native_envelope_received"
+    }
+  ],
+  "actual_target_present_prepare_records": [
+    {
+      "sequence": 95,
+      "completed": true,
+      "selected": [
+        "2dc68869b5a6aedc0f1a346eee4388205e865893076f5b4042e6b3a4cae532f2",
+        "d5ae43f58b37bbbd49e82ea0733f07c0b8576e62b6987bb576d1c1f090774186",
+        "1a376765ad4bd9feb4323198eb44e8725641760a8249879e54cf4e946f71c5c7",
+        "525b3bb2e32cb12437421be812c11d58931a06c54f632a56f45479fdf5710414"
+      ],
+      "retries": [
+        "2dc68869b5a6aedc0f1a346eee4388205e865893076f5b4042e6b3a4cae532f2",
+        "d5ae43f58b37bbbd49e82ea0733f07c0b8576e62b6987bb576d1c1f090774186",
+        "1a376765ad4bd9feb4323198eb44e8725641760a8249879e54cf4e946f71c5c7",
+        "525b3bb2e32cb12437421be812c11d58931a06c54f632a56f45479fdf5710414"
+      ],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.19732354098232463
+    },
+    {
+      "sequence": 97,
+      "completed": true,
+      "selected": [
+        "26ef22d02016307613ff6220e1d75f177570e0a27531ca0a27bf1f579c8135c6",
+        "fa4ae4dc7b311579179b181bd6d7e4aba7e7fff46f3da9c16a9071e077e5006a",
+        "dedf028771f7b23866b135a465ef5ca7c4b858881c8cb0d3166d35195d88344b",
+        "2eb0bb1aff845d06b0394f89cd063cb7100f27cf41217529fb5d1316c8974b20"
+      ],
+      "retries": [],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.24492191598983482
+    },
+    {
+      "sequence": 99,
+      "completed": true,
+      "selected": [
+        "26ef22d02016307613ff6220e1d75f177570e0a27531ca0a27bf1f579c8135c6",
+        "fa4ae4dc7b311579179b181bd6d7e4aba7e7fff46f3da9c16a9071e077e5006a",
+        "dedf028771f7b23866b135a465ef5ca7c4b858881c8cb0d3166d35195d88344b",
+        "2eb0bb1aff845d06b0394f89cd063cb7100f27cf41217529fb5d1316c8974b20"
+      ],
+      "retries": [
+        "26ef22d02016307613ff6220e1d75f177570e0a27531ca0a27bf1f579c8135c6",
+        "fa4ae4dc7b311579179b181bd6d7e4aba7e7fff46f3da9c16a9071e077e5006a",
+        "dedf028771f7b23866b135a465ef5ca7c4b858881c8cb0d3166d35195d88344b",
+        "2eb0bb1aff845d06b0394f89cd063cb7100f27cf41217529fb5d1316c8974b20"
+      ],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.18695445801131427
+    },
+    {
+      "sequence": 100,
+      "completed": true,
+      "selected": [
+        "b46a551d03c16c26e4100fa132bd5be8474d3fe481f96c63ec6a76beaa450b26",
+        "fb42b356b0880ef69cd1a5484a15ab29cea8a5a562eb8903f9cf227c9cc3ef88",
+        "fb2ce2092e33a023626fbe1964a44abaeef90c3a21abc31e7a594001cd7adc6a",
+        "2444c0af38c9b57d39b638d6cfa2a3a64306400e59c948b5e365ad83e6adc9c9"
+      ],
+      "retries": [],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.2588239579927176
+    },
+    {
+      "sequence": 102,
+      "completed": true,
+      "selected": [
+        "b46a551d03c16c26e4100fa132bd5be8474d3fe481f96c63ec6a76beaa450b26",
+        "fb42b356b0880ef69cd1a5484a15ab29cea8a5a562eb8903f9cf227c9cc3ef88",
+        "fb2ce2092e33a023626fbe1964a44abaeef90c3a21abc31e7a594001cd7adc6a",
+        "2444c0af38c9b57d39b638d6cfa2a3a64306400e59c948b5e365ad83e6adc9c9"
+      ],
+      "retries": [
+        "b46a551d03c16c26e4100fa132bd5be8474d3fe481f96c63ec6a76beaa450b26",
+        "fb42b356b0880ef69cd1a5484a15ab29cea8a5a562eb8903f9cf227c9cc3ef88",
+        "fb2ce2092e33a023626fbe1964a44abaeef90c3a21abc31e7a594001cd7adc6a",
+        "2444c0af38c9b57d39b638d6cfa2a3a64306400e59c948b5e365ad83e6adc9c9"
+      ],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.16508087498368695
+    },
+    {
+      "sequence": 103,
+      "completed": true,
+      "selected": [
+        "5d7b04f49c17342f2e90c9ba63cc730a5c85428699027bd11a4cc811357859ff",
+        "1ceb087b9965d34c72efe2c22d1441932b2e283e377f27692fd8e2d4ab75a1ed",
+        "07108f9b6f81f0f0545d4a3264054ecdcef537c6aef1c1d4d92670c2defac497",
+        "112717d3b4586dd295f4ccbeec99eeda2061452ac8d8893f318db541cfb898a0"
+      ],
+      "retries": [],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.22220479196403176
+    },
+    {
+      "sequence": 104,
+      "completed": true,
+      "selected": [
+        "5d7b04f49c17342f2e90c9ba63cc730a5c85428699027bd11a4cc811357859ff",
+        "1ceb087b9965d34c72efe2c22d1441932b2e283e377f27692fd8e2d4ab75a1ed",
+        "07108f9b6f81f0f0545d4a3264054ecdcef537c6aef1c1d4d92670c2defac497",
+        "112717d3b4586dd295f4ccbeec99eeda2061452ac8d8893f318db541cfb898a0"
+      ],
+      "retries": [
+        "5d7b04f49c17342f2e90c9ba63cc730a5c85428699027bd11a4cc811357859ff",
+        "1ceb087b9965d34c72efe2c22d1441932b2e283e377f27692fd8e2d4ab75a1ed",
+        "07108f9b6f81f0f0545d4a3264054ecdcef537c6aef1c1d4d92670c2defac497",
+        "112717d3b4586dd295f4ccbeec99eeda2061452ac8d8893f318db541cfb898a0"
+      ],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.19041500001912937
+    },
+    {
+      "sequence": 105,
+      "completed": true,
+      "selected": [
+        "75399d7064368cc8cfdc5a5f17c96baed9c7a7a282b1d8d55cde0b2056261cdb",
+        "94e3c4b04eb1497ee14fe1f9ae55c95cc126a79755dc6db7ace9d2f16d05cf99",
+        "cff02ecb4f0be4ec063a7d06cedd9d4942ef81eff4c9d608c035e4cc5003d8e7",
+        "65c8ed27b3b89f712301d612f083da5304388b43c66569f56a0de74a17712e78"
+      ],
+      "retries": [],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.24457450001500547
+    },
+    {
+      "sequence": 107,
+      "completed": true,
+      "selected": [
+        "75399d7064368cc8cfdc5a5f17c96baed9c7a7a282b1d8d55cde0b2056261cdb",
+        "94e3c4b04eb1497ee14fe1f9ae55c95cc126a79755dc6db7ace9d2f16d05cf99",
+        "cff02ecb4f0be4ec063a7d06cedd9d4942ef81eff4c9d608c035e4cc5003d8e7",
+        "65c8ed27b3b89f712301d612f083da5304388b43c66569f56a0de74a17712e78"
+      ],
+      "retries": [
+        "75399d7064368cc8cfdc5a5f17c96baed9c7a7a282b1d8d55cde0b2056261cdb",
+        "94e3c4b04eb1497ee14fe1f9ae55c95cc126a79755dc6db7ace9d2f16d05cf99",
+        "cff02ecb4f0be4ec063a7d06cedd9d4942ef81eff4c9d608c035e4cc5003d8e7",
+        "65c8ed27b3b89f712301d612f083da5304388b43c66569f56a0de74a17712e78"
+      ],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.2014437080360949
+    },
+    {
+      "sequence": 108,
+      "completed": true,
+      "selected": [
+        "0c6117bd6b96b44f3f13fcb19e00ac69d73d2d46c4abcc8a5170c318451753d0",
+        "d0b0a3e8e464b159fd102d13aa96a31bd11e4637390f864dba55b04b7528731c",
+        "72bd52d450ab5619a8ac419a2a3160669655b7b9d6fa7927f5a140bfcd8ac224",
+        "f6d38ad74c99a26309b8cc340635b181cc431fc1e0510b73d29aa49c50282e45"
+      ],
+      "retries": [],
+      "target_position_in_pending": null,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.25578658300219104
+    },
+    {
+      "sequence": 109,
+      "completed": true,
+      "selected": [
+        "0c6117bd6b96b44f3f13fcb19e00ac69d73d2d46c4abcc8a5170c318451753d0",
+        "d0b0a3e8e464b159fd102d13aa96a31bd11e4637390f864dba55b04b7528731c",
+        "72bd52d450ab5619a8ac419a2a3160669655b7b9d6fa7927f5a140bfcd8ac224",
+        "f6d38ad74c99a26309b8cc340635b181cc431fc1e0510b73d29aa49c50282e45"
+      ],
+      "retries": [
+        "0c6117bd6b96b44f3f13fcb19e00ac69d73d2d46c4abcc8a5170c318451753d0",
+        "d0b0a3e8e464b159fd102d13aa96a31bd11e4637390f864dba55b04b7528731c",
+        "72bd52d450ab5619a8ac419a2a3160669655b7b9d6fa7927f5a140bfcd8ac224",
+        "f6d38ad74c99a26309b8cc340635b181cc431fc1e0510b73d29aa49c50282e45"
+      ],
+      "target_position_in_pending": 26,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.20670308300759643
+    },
+    {
+      "sequence": 112,
+      "completed": true,
+      "selected": [
+        "534edd05273023eb07444fc3f3a1719464cb4ce43f93b926a745d4840209ec3a",
+        "c3a8943f992e16f830a04aaeb173341c942bad203138e5f42b86b15cb1dade1d",
+        "0df9b5627f639d62f9a0ed38ddaf911530f8968fff956f7e3a8fb1f186fbffd1",
+        "1ceb087b9965d34c72efe2c22d1441932b2e283e377f27692fd8e2d4ab75a1ed"
+      ],
+      "retries": [],
+      "target_position_in_pending": 26,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.2034467079793103
+    },
+    {
+      "sequence": 115,
+      "completed": true,
+      "selected": [
+        "534edd05273023eb07444fc3f3a1719464cb4ce43f93b926a745d4840209ec3a",
+        "c3a8943f992e16f830a04aaeb173341c942bad203138e5f42b86b15cb1dade1d",
+        "0df9b5627f639d62f9a0ed38ddaf911530f8968fff956f7e3a8fb1f186fbffd1",
+        "1ceb087b9965d34c72efe2c22d1441932b2e283e377f27692fd8e2d4ab75a1ed"
+      ],
+      "retries": [
+        "534edd05273023eb07444fc3f3a1719464cb4ce43f93b926a745d4840209ec3a",
+        "c3a8943f992e16f830a04aaeb173341c942bad203138e5f42b86b15cb1dade1d",
+        "0df9b5627f639d62f9a0ed38ddaf911530f8968fff956f7e3a8fb1f186fbffd1",
+        "1ceb087b9965d34c72efe2c22d1441932b2e283e377f27692fd8e2d4ab75a1ed"
+      ],
+      "target_position_in_pending": 23,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.1555887499707751
+    },
+    {
+      "sequence": 117,
+      "completed": true,
+      "selected": [
+        "698d8f300392bf39aa154e090ba8bf6497c403539e34dff5a8f22ebd9c762b6d",
+        "f1c3a8f7b99e672375727f83d423ef8f093b94965d6ac99e877b496c179ec43f",
+        "8923f450cfe5c990068043b283fdfb415bce1d4be7b636e8ac70d4800701d56b",
+        "de623d10608850cca012a6983617a8841f523c2a18dcf4a516776ea597dfbaf5"
+      ],
+      "retries": [],
+      "target_position_in_pending": 23,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.23503366694785655
+    },
+    {
+      "sequence": 118,
+      "completed": true,
+      "selected": [
+        "698d8f300392bf39aa154e090ba8bf6497c403539e34dff5a8f22ebd9c762b6d",
+        "f1c3a8f7b99e672375727f83d423ef8f093b94965d6ac99e877b496c179ec43f",
+        "8923f450cfe5c990068043b283fdfb415bce1d4be7b636e8ac70d4800701d56b",
+        "de623d10608850cca012a6983617a8841f523c2a18dcf4a516776ea597dfbaf5"
+      ],
+      "retries": [
+        "698d8f300392bf39aa154e090ba8bf6497c403539e34dff5a8f22ebd9c762b6d",
+        "f1c3a8f7b99e672375727f83d423ef8f093b94965d6ac99e877b496c179ec43f",
+        "8923f450cfe5c990068043b283fdfb415bce1d4be7b636e8ac70d4800701d56b",
+        "de623d10608850cca012a6983617a8841f523c2a18dcf4a516776ea597dfbaf5"
+      ],
+      "target_position_in_pending": 20,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.15419883298454806
+    },
+    {
+      "sequence": 120,
+      "completed": true,
+      "selected": [
+        "0015a2c0ba07eeaf197d8b23628e7f406361295555e34406ae21db85a7e50753",
+        "91294ac35c057609fad3b54d605f00b55f82df7544ff2fbd39f37e71dffdfe0f",
+        "8701a71fc604f02685f661c378e7e9786d3f287535960deb0c7e13bde5390ef0",
+        "aaba796df0c0e9dc1a40c85abb24cb8a7a1e0ea2a06d27ba9b4aafd35fd12247"
+      ],
+      "retries": [],
+      "target_position_in_pending": 20,
+      "target_hop_attempts": 0,
+      "target_suppressed": false,
+      "outer_timing": {
+        "slot": 1
+      },
+      "prepare_inclusive_seconds": 0.20611120900139213
+    }
+  ],
+  "final_tick_stage_observation": {
+    "dropped_events": 499,
+    "events": [
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 122.822564,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 500,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 122.822601,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 501,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 122.82293,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 502,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.187881,
+        "elapsed_seconds": 122.82595,
+        "kind": "tick-end",
+        "sequence": 503,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.187897,
+        "duration_seconds": 0.94729,
+        "elapsed_seconds": 122.826554,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.408846,
+        "native_seconds": 0.349906,
+        "received": 0,
+        "selected": 0,
+        "sequence": 504,
+        "tcp_seconds": null
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 123.852019,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 22.126627,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 505,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 123.852119,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 506,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 123.852153,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 507,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 123.852482,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 508,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.212367,
+        "elapsed_seconds": 123.855356,
+        "kind": "tick-end",
+        "sequence": 509,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.212383,
+        "duration_seconds": 0.695912,
+        "elapsed_seconds": 123.855964,
+        "errors": 3,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.201229,
+        "native_seconds": 0.281644,
+        "received": 0,
+        "selected": 0,
+        "sequence": 510,
+        "tcp_seconds": null
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 125.004986,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 23.279593,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 511,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 125.005104,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 512,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 125.005138,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 513,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 125.005471,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 514,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.233256,
+        "elapsed_seconds": 125.008354,
+        "kind": "tick-end",
+        "sequence": 515,
+        "succeeded": false
+      },
+      {
+        "consensus_seconds": 0.233281,
+        "duration_seconds": 0.824133,
+        "elapsed_seconds": 125.008864,
+        "errors": 3,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.238109,
+        "native_seconds": 0.352183,
+        "received": 0,
+        "selected": 0,
+        "sequence": 516,
+        "tcp_seconds": null
+      },
+      {
+        "body_id": "fcd0e9803cd0b0fb9d1cd6d5266c5271aefbb7d43126aceba2c0b8c750c77b96",
+        "context_id": "c2204b4c362cec021ecdaf63fe14008f869ae965a913ed24cf29c347753ba656",
+        "duration_seconds": 0.017964,
+        "elapsed_seconds": 126.351782,
+        "envelope_id": "e09fc832391a6804d0a9fdc40f8c8ee652f0128bdf0731aee2f75484cb578d07",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 517,
+        "succeeded": true
+      },
+      {
+        "body_id": "ef4dcc93afb962fcc991c0b05c74b2278afdc9c7b8b9620679024a97a0879e7c",
+        "context_id": "45bcd8d2ae9d9f986c6150f519417d930f4859f94256a51fe9b1e306e9ce01e8",
+        "duration_seconds": 0.015949,
+        "elapsed_seconds": 126.367754,
+        "envelope_id": "5e9fa5173772e05bdee635aaf28837bd00f9f5150744972885b6454f2547f0db",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 518,
+        "succeeded": true
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 126.767553,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 25.042161,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 519,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 126.768865,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 520,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 126.768902,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 521,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 126.769225,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 522,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.553599,
+        "elapsed_seconds": 127.11883,
+        "kind": "tick-end",
+        "sequence": 523,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.553621,
+        "duration_seconds": 1.779535,
+        "elapsed_seconds": 127.119312,
+        "errors": 1,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.679067,
+        "native_seconds": 0.546108,
+        "received": 2,
+        "selected": 2,
+        "sequence": 524,
+        "tcp_seconds": null
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 128.446692,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 26.721299,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 525,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 128.446778,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 526,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 128.446808,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 527,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 128.447128,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 528,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.204359,
+        "elapsed_seconds": 128.450038,
+        "kind": "tick-end",
+        "sequence": 529,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.204377,
+        "duration_seconds": 1.005588,
+        "elapsed_seconds": 128.45052,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.506013,
+        "native_seconds": 0.294649,
+        "received": 0,
+        "selected": 0,
+        "sequence": 530,
+        "tcp_seconds": null
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 129.798804,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 28.073412,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 531,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 129.798899,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 532,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 129.798929,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 533,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 129.799252,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 534,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.221362,
+        "elapsed_seconds": 129.802449,
+        "kind": "tick-end",
+        "sequence": 535,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.221376,
+        "duration_seconds": 1.020307,
+        "elapsed_seconds": 129.803223,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.486558,
+        "native_seconds": 0.311541,
+        "received": 0,
+        "selected": 0,
+        "sequence": 536,
+        "tcp_seconds": null
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 130.865188,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 29.139796,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 537,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 130.865279,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 538,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 130.865309,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 539,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 130.865629,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 540,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.217332,
+        "elapsed_seconds": 130.869098,
+        "kind": "tick-end",
+        "sequence": 541,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.217354,
+        "duration_seconds": 0.713628,
+        "elapsed_seconds": 130.87092,
+        "errors": 3,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.200812,
+        "native_seconds": 0.293589,
+        "received": 0,
+        "selected": 0,
+        "sequence": 542,
+        "tcp_seconds": null
+      },
+      {
+        "body_id": "9d5ef008bca29681e68d098b8c043f08a667de20a1d73a84aef99513fedc3204",
+        "context_id": "45bcd8d2ae9d9f986c6150f519417d930f4859f94256a51fe9b1e306e9ce01e8",
+        "duration_seconds": 0.013422,
+        "elapsed_seconds": 132.13986,
+        "envelope_id": "a3ecdda88286f2469f1d8afc661f5f28be0a1ba0bdc2baae3f6aa64379ecfb2b",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 543,
+        "succeeded": true
+      },
+      {
+        "body_id": "e59a4778741d0f92bcadad50e1290db9a8752bdd86e605d163c3612692c4f414",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "duration_seconds": 0.012929,
+        "elapsed_seconds": 132.152813,
+        "envelope_id": "213bb3936a2a5c1dfc5bd2592768c7a2e197974ce7c107f4d69a0ec5515939f1",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 544,
+        "succeeded": true
+      },
+      {
+        "committed": null,
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 132.553286,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 30.827893,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 545,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 132.554627,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 546,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 1,
+        "elapsed_seconds": 132.637964,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 547,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 132.638328,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 548,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "action": "Commit",
+        "context_id": "0bad05590d6db2fc8dd406030f590c6e9511daa712f297984ab564bff4dcf18b",
+        "elapsed_seconds": 132.735467,
+        "kind": "sign-start",
+        "round": 0,
+        "sequence": 549
+      },
+      {
+        "duration_seconds": 0.204492,
+        "elapsed_seconds": 132.940063,
+        "kind": "sign-stage",
+        "sequence": 550,
+        "stage": "status",
+        "succeeded": true
+      },
+      {
+        "duration_seconds": 0.000502,
+        "elapsed_seconds": 132.940589,
+        "kind": "sign-stage",
+        "sequence": 551,
+        "stage": "pending",
+        "succeeded": true
+      },
+      {
+        "duration_seconds": 0.328993,
+        "elapsed_seconds": 133.269594,
+        "kind": "sign-stage",
+        "sequence": 552,
+        "stage": "native",
+        "succeeded": true
+      },
+      {
+        "duration_seconds": 0.001539,
+        "elapsed_seconds": 133.271157,
+        "kind": "sign-stage",
+        "sequence": 553,
+        "stage": "response",
+        "succeeded": true
+      },
+      {
+        "duration_seconds": 0.51924,
+        "elapsed_seconds": 133.79041,
+        "kind": "sign-stage",
+        "sequence": 554,
+        "stage": "outbox",
+        "succeeded": true
+      },
+      {
+        "action": "Commit",
+        "duration_seconds": 1.054983,
+        "elapsed_seconds": 133.790437,
+        "kind": "sign-end",
+        "sequence": 555,
+        "succeeded": true
+      },
+      {
+        "duration_seconds": 2.326773,
+        "elapsed_seconds": 134.67072,
+        "kind": "tick-end",
+        "sequence": 556,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 2.326798,
+        "duration_seconds": 3.463009,
+        "elapsed_seconds": 134.671238,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.586181,
+        "native_seconds": 0.549475,
+        "received": 2,
+        "selected": 2,
+        "sequence": 557,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 135.745735,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 1.955297,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 558,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 135.74715,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 559,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 135.869232,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 560,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 135.869592,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 561,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.440462,
+        "elapsed_seconds": 135.970665,
+        "kind": "tick-end",
+        "sequence": 562,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.440485,
+        "duration_seconds": 0.936253,
+        "elapsed_seconds": 135.97213,
+        "errors": 3,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.201917,
+        "native_seconds": 0.292336,
+        "received": 0,
+        "selected": 0,
+        "sequence": 563,
+        "tcp_seconds": null
+      },
+      {
+        "body_id": "d3ea1c156e148ad5b2704b0aa51f7ddad302eacaf0f2620512ab6011ffba5d72",
+        "context_id": "65e8f9f5b1941f46df6085aa4464ca2fec679dba78fcc0a67ee5ee8d4f1c0715",
+        "duration_seconds": 0.019575,
+        "elapsed_seconds": 137.236959,
+        "envelope_id": "f519ca89370688d2e9e172945965dcdb79540b86d0c53cc9c3df6db9799e0fbe",
+        "kind": "receive-end",
+        "kind_received": "Proposal",
+        "phase": null,
+        "round": 0,
+        "sequence": 564,
+        "succeeded": true
+      },
+      {
+        "body_id": "b40f6f17b68e86f565b5e9c80d064cf10acc4496c23fbb6d7b6ab15edb662e04",
+        "context_id": "eac42bae78bd6d7c1aed4bae64cc2eb4345012f1e979dfb067c0de002601c75b",
+        "duration_seconds": 0.014482,
+        "elapsed_seconds": 137.25146,
+        "envelope_id": "1095455ca0cdc705d887bc8756418fca5db1b5082bcdf4dd1a09ae44cde7b47e",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 565,
+        "succeeded": true
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 137.688176,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 3.897738,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 566,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 137.689586,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 567,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 137.779086,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 568,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 137.779438,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 569,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.63589,
+        "elapsed_seconds": 138.114736,
+        "kind": "tick-end",
+        "sequence": 570,
+        "succeeded": false
+      },
+      {
+        "consensus_seconds": 0.635942,
+        "duration_seconds": 1.821619,
+        "elapsed_seconds": 138.118076,
+        "errors": 3,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.565877,
+        "native_seconds": 0.616451,
+        "received": 2,
+        "selected": 2,
+        "sequence": 571,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 138.966389,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 5.175947,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 572,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 138.966519,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 573,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 139.058674,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 574,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 139.059036,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 575,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.679102,
+        "elapsed_seconds": 139.440804,
+        "kind": "tick-end",
+        "sequence": 576,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.679122,
+        "duration_seconds": 0.997136,
+        "elapsed_seconds": 139.441345,
+        "errors": 3,
+        "kind": "contact-tick",
+        "mesh_seconds": 1.9e-05,
+        "native_seconds": 0.317411,
+        "received": 0,
+        "selected": 0,
+        "sequence": 577,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 140.905326,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 7.114888,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 578,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 140.905434,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 579,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 141.002783,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 580,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 141.003146,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 581,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.402489,
+        "elapsed_seconds": 141.096435,
+        "kind": "tick-end",
+        "sequence": 582,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.402519,
+        "duration_seconds": 1.327666,
+        "elapsed_seconds": 141.09878,
+        "errors": 1,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.566078,
+        "native_seconds": 0.356678,
+        "received": 0,
+        "selected": 0,
+        "sequence": 583,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 142.399675,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 8.609236,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 584,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 142.399786,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 585,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 142.497658,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 586,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 142.498018,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 587,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.411588,
+        "elapsed_seconds": 142.641656,
+        "kind": "tick-end",
+        "sequence": 588,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.411614,
+        "duration_seconds": 1.20861,
+        "elapsed_seconds": 142.64214,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.452384,
+        "native_seconds": 0.34408,
+        "received": 0,
+        "selected": 0,
+        "sequence": 589,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 143.931284,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 10.140844,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 590,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 143.931385,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 591,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 144.030269,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 592,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 144.030688,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 593,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.653764,
+        "elapsed_seconds": 144.37557,
+        "kind": "tick-end",
+        "sequence": 594,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.653792,
+        "duration_seconds": 1.402493,
+        "elapsed_seconds": 144.379146,
+        "errors": 1,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.408509,
+        "native_seconds": 0.33657,
+        "received": 0,
+        "selected": 0,
+        "sequence": 595,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 145.720215,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 11.929777,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 596,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 145.720319,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 597,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 145.816168,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 598,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 3,
+        "elapsed_seconds": 145.816531,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 599,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.415652,
+        "elapsed_seconds": 145.929298,
+        "kind": "tick-end",
+        "sequence": 600,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.415682,
+        "duration_seconds": 1.225694,
+        "elapsed_seconds": 145.932525,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.524093,
+        "native_seconds": 0.282655,
+        "received": 0,
+        "selected": 0,
+        "sequence": 601,
+        "tcp_seconds": null
+      },
+      {
+        "body_id": "acfc28de51da551904c48c7e02fd5d4b007604e50a017a8cd6c5a515f91d31a8",
+        "context_id": "b962fdcf7579a22444713b3f914b4cadbe99cc876b49484a98db31e3a5e0ff0d",
+        "duration_seconds": 0.017069,
+        "elapsed_seconds": 147.126645,
+        "envelope_id": "7c3fbdf2fa53c7ab2a00a6506e22682e17344aae5f54d92d4ae310e4fcfec912",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 602,
+        "succeeded": true
+      },
+      {
+        "body_id": "9799f9fad89ee1fabaca1ea4df2cf18f22d36c7707168e469cd8a01ab8e48315",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "duration_seconds": 0.014911,
+        "elapsed_seconds": 147.141578,
+        "envelope_id": "9ef4411e866f697d024377e176338af00998152a5049b79cce3258a27d82ad6f",
+        "kind": "receive-end",
+        "kind_received": "Vote",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 603,
+        "succeeded": true
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 147.544364,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 13.753927,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 604,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 147.545766,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 605,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 147.642314,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 606,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 147.64267,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 607,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.663877,
+        "elapsed_seconds": 147.990077,
+        "kind": "tick-end",
+        "sequence": 608,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.663903,
+        "duration_seconds": 1.719359,
+        "elapsed_seconds": 147.990618,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.560449,
+        "native_seconds": 0.494417,
+        "received": 2,
+        "selected": 2,
+        "sequence": 609,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 149.146763,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 15.356321,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 610,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 149.146889,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 611,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 149.24204,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 612,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 149.2424,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 613,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.396184,
+        "elapsed_seconds": 149.337657,
+        "kind": "tick-end",
+        "sequence": 614,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.396212,
+        "duration_seconds": 1.023882,
+        "elapsed_seconds": 149.340064,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.341123,
+        "native_seconds": 0.284098,
+        "received": 0,
+        "selected": 0,
+        "sequence": 615,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 150.502217,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 16.711779,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 616,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 150.502321,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 617,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 150.595434,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 618,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 150.595806,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 619,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.419308,
+        "elapsed_seconds": 150.724507,
+        "kind": "tick-end",
+        "sequence": 620,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.419329,
+        "duration_seconds": 1.062074,
+        "elapsed_seconds": 150.725041,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.346926,
+        "native_seconds": 0.295239,
+        "received": 0,
+        "selected": 0,
+        "sequence": 621,
+        "tcp_seconds": null
+      },
+      {
+        "committed": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "elapsed_seconds": 152.087046,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 18.296608,
+        "prepared": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473",
+        "round": 0,
+        "sequence": 622,
+        "stopped": false
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 152.087165,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 623,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 2,
+        "elapsed_seconds": 152.185288,
+        "kind": "quorum-search",
+        "phase": "Commit",
+        "round": 0,
+        "sequence": 624,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "context_id": "80c35ba0f697b4157ad4f60ab41fa33c0de1bbc3b45e39cec23007ef6946830c",
+        "distinct_votes": 4,
+        "elapsed_seconds": 152.185651,
+        "kind": "quorum-search",
+        "phase": "Prepare",
+        "round": 0,
+        "sequence": 625,
+        "value": "66a8fcc3fe349af34fa9bcab82a9a027e5944fa4d9a7af28c7d5be95fbf42473"
+      },
+      {
+        "duration_seconds": 0.693513,
+        "elapsed_seconds": 152.59964,
+        "kind": "tick-end",
+        "sequence": 626,
+        "succeeded": true
+      },
+      {
+        "consensus_seconds": 0.693539,
+        "duration_seconds": 1.548415,
+        "elapsed_seconds": 152.600194,
+        "errors": 2,
+        "kind": "contact-tick",
+        "mesh_seconds": 0.517669,
+        "native_seconds": 0.336613,
+        "received": 0,
+        "selected": 0,
+        "sequence": 627,
+        "tcp_seconds": null
+      }
+    ],
+    "format": "RLD-BFT-PROCESS-OBSERVATION-V1",
+    "operations": {
+      "bft-candidate": {
+        "calls": 1,
+        "failures": 0,
+        "max_seconds": 0.147822,
+        "total_seconds": 0.147822
+      },
+      "bft-network-check": {
+        "calls": 36,
+        "failures": 0,
+        "max_seconds": 0.149406,
+        "total_seconds": 3.226298
+      },
+      "bft-network-inspect-batch": {
+        "calls": 26,
+        "failures": 0,
+        "max_seconds": 0.209592,
+        "total_seconds": 3.906169
+      },
+      "bft-network-pack": {
+        "calls": 36,
+        "failures": 0,
+        "max_seconds": 0.156526,
+        "total_seconds": 3.215854
+      },
+      "bft-quorum": {
+        "calls": 104,
+        "failures": 0,
+        "max_seconds": 0.140362,
+        "total_seconds": 9.322282
+      },
+      "bft-sign": {
+        "calls": 6,
+        "failures": 0,
+        "max_seconds": 0.332162,
+        "total_seconds": 1.680224
+      },
+      "bft-sync": {
+        "calls": 2,
+        "failures": 0,
+        "max_seconds": 0.307183,
+        "total_seconds": 0.459697
+      },
+      "consensus-tick": {
+        "calls": 93,
+        "failures": 31,
+        "max_seconds": 2.32677,
+        "total_seconds": 48.965499
+      },
+      "sign-native": {
+        "calls": 6,
+        "failures": 0,
+        "max_seconds": 0.332176,
+        "total_seconds": 1.680293
+      },
+      "sign-outbox": {
+        "calls": 6,
+        "failures": 0,
+        "max_seconds": 0.519238,
+        "total_seconds": 2.442121
+      },
+      "sign-pending": {
+        "calls": 6,
+        "failures": 0,
+        "max_seconds": 0.00332,
+        "total_seconds": 0.010067
+      },
+      "sign-response": {
+        "calls": 6,
+        "failures": 0,
+        "max_seconds": 0.001538,
+        "total_seconds": 0.00564
+      },
+      "sign-status": {
+        "calls": 6,
+        "failures": 0,
+        "max_seconds": 0.217268,
+        "total_seconds": 1.003499
+      }
+    },
+    "process_id": 90307,
+    "process_local_only": true,
+    "rejected_events": 0,
+    "sequence": 627,
+    "timing_is_authority": false
+  },
+  "final_consensus": {
+    "autonomous_signing_enabled": true,
+    "caller_head_pending": false,
+    "caller_head_rollback_qualification": false,
+    "currency": "79c3607dd273aedd57416b3d448ac5abd68206882d21d643f2d512e807fb98ab",
+    "explicit_stop_height_reached": false,
+    "format": "RLD-REGIONAL-BFT-NODE-V1",
+    "height": 14,
+    "independent_bft_qualified": false,
+    "joint_active_slot": null,
+    "joint_epoch_lifecycle_enabled": false,
+    "local_ground_timing_only": true,
+    "native_records": 35,
+    "physical_interstellar_route_qualified": false,
+    "region": "1e8ec2c4cacd4a6e69c98ffd46caac4fb608571ade3e2ce4a5843882cebce5d5",
+    "retained_messages": 104,
+    "round": 0,
+    "validator": "8139770ea87d175f56a35466c34c7ecccb8d8a91b4ee37a25df60f5b8fc9b394"
+  },
+  "final_errors": [
+    "[Errno 35] local mesh turn pending; retain evidence",
+    "TCP peer refused custody; retain queued evidence"
+  ],
+  "consumed_bytes_unchanged": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "duration_seconds": 0.107761,
+  "combined_original20_seconds": 2.560414,
+  "live_hint_or_unique_maturity_cause_proved": false,
+  "new180": 0,
+  "new600": 0
+}
