@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V19'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V20'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -801,7 +801,7 @@ class Node:
             require(len(payload)==ref['size_bytes'] and hashlib.sha256(payload).hexdigest()==ref['file_id'],
                     'archive frame bytes differ; preserve custody')
             frame=evidence.decode_json(payload)
-            require(payload==evidence.canonical(frame) and isinstance(frame,dict)
+            require(payload==frame_digest.packet_body_bytes(frame) and isinstance(frame,dict)
                     and set(frame)=={'format','network','node_id','frame'}
                     and (frame['format'],frame['network'],frame['node_id'])==(ARCHIVE_FRAME,self.network,self.id)
                     and isinstance(frame['frame'],str),'archive frame domain/schema differs')
@@ -813,15 +813,20 @@ class Node:
             # Exact canonical insertion length: JSON key/colon plus an extra
             # comma only if this object already has a field. Refuse expansion
             # before constructing a larger unchecked complete archive.
-            expanded_size=len(evidence.canonical(preview))+len(evidence.canonical(frame['frame']))+8+bool(transit['packet']['body'])
+            # The complete frame object was compared to its exact canonical
+            # bytes above. Reuse that byte length, including all JSON escapes,
+            # by subtracting the same object's empty-string image. No frame
+            # encoding or authentication result survives this operation.
+            frame_size=len(payload)-len(evidence.canonical(dict(frame,frame='')))+2
+            expanded_size=len(evidence.canonical(preview))+frame_size+8+bool(transit['packet']['body'])
             require(expanded_size==body['expanded_size_bytes'] and expanded_size<=MAX_STATE,
                     'expanded archive capacity/size differs; preserve custody')
             transit['packet']['body']['frame']=frame['frame']
         blob={k:stored[k] for k in ('network','node_id','packet_id','transit','receipt')}
         blob['format']=VERSION
-        expanded=evidence.canonical(blob)
-        require(len(expanded)==body['expanded_size_bytes'] and len(expanded)<=MAX_STATE
-                and hashlib.sha256(expanded).hexdigest()==body['expanded_sha256'],
+        expanded_hash,expanded_size=frame_digest.archive_commitment(blob)
+        require(expanded_size==body['expanded_size_bytes'] and expanded_size<=MAX_STATE
+                and expanded_hash==body['expanded_sha256'],
                 'expanded archive bytes differ; preserve custody')
         transit=blob['transit']
         if body['kind'] is None:

@@ -46,8 +46,21 @@ def _split(value, path):
 
 def commitment(transit):
     """Return exact (canonical SHA-256, size); never validate a signature."""
+    return _commitment(transit, PATH)
+
+
+def archive_commitment(blob):
+    """Exact complete archive bytes, with no retained witness or authority.
+
+    Receipt-only or unsupported shapes retain the ordinary canonical path.
+    Archive read still authenticates actual files, full transit and receipt.
+    """
+    return _commitment(blob, ('transit',) + PATH)
+
+
+def _commitment(transit, path):
     value = transit
-    for key in PATH:
+    for key in path:
         if not isinstance(value, dict) or key not in value or any(type(k) is not str for k in value):
             raw = wire.canonical(transit)
             return hashlib.sha256(raw).hexdigest(), len(raw)
@@ -62,7 +75,7 @@ def commitment(transit):
     if frame.translate(None, SAFE_ASCII):
         raw = wire.canonical(transit)
         return hashlib.sha256(raw).hexdigest(), len(raw)
-    left, right = _split(transit, PATH)
+    left, right = _split(transit, path)
     digest = hashlib.sha256()
     digest.update(left)
     digest.update(frame)

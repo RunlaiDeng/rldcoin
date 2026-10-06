@@ -1,0 +1,14 @@
+{
+  "budget_seconds": 2.99551,
+  "original_ground60_prior": 57.00449,
+  "attempts": 1,
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_frame_digest.py": "9b2f75063c3fc5dd2b44645fb3e9e859ba0d84a8055fe093ad1a69c171570a71",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_frame_digest.py": "610da02116a18fcfe14997b5ebeef6592df0550962dd0f6d1e4570aa0472c3f7",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "90f7968a1956fb31bcbd1720e2a11ec0c09986119c7d9e21d23746b674fd8ee7",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "2cd571099b321641b06760f702313155d5ed4959fcc4a46449bccee870c5e41c",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-archive-stream-frame-digest-v20-20261006.py": "f4806ae0945d0a7cf4d18d4bbf7ad9007f1491cf9fdf6b4ecef5dbd6c9e30a94"
+  },
+  "exit": "first unittest failure or remaining original60; no old custody/Native/socket"
+}

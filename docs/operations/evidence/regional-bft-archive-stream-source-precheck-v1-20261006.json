@@ -1,0 +1,12 @@
+{
+  "completed": false,
+  "failure": "AST added-function whitelist omitted new nested small_metadata test guard",
+  "corrected_added_functions": [
+    "test_archive_cold_streamed_bytes_are_exact_and_authentication_stays_required",
+    "small_metadata"
+  ],
+  "source_scope_calls": 0,
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "source60_conservative_charge_seconds": 0.5,
+  "existing_generated_identity_bytes_reused_without_overwrite": true
+}

@@ -1,5 +1,21 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 V29成熟已观察但完整冷验仍FAIL，档案精确编码V20
+
+V29 **FAIL 原180/206.442秒含正常收尾/1818文件封存**；四CLI exit0，无forced/guardian/cleanup/pin异常，旧失败保留。161.077秒四个参考15，162.582秒源码绑定的停止后四次实际Native wallet-receipt断言已确认原import13/mature15/可花费净2/无隔离；随后在完整Mesh archive冷读的规范化编码中截止。all8完整Nativecold/每份信封/caller-owner heads/守恒尚未完成，成熟这一局部观察不替代整组件、完整600/all12/keyless。
+
+单一原20只读判别 **0.137882秒**，零Node/Native/Runtime/socket/key/sign/fixture构造，仅一份准确已封存档案完整读：337929字节、Node0档案154条、cold操作13.120ms，其中canonical4.611ms；同一完整blob的原canonical0.718ms与既有分段SHA/size0.135ms一致。这不证明序列化是唯一或足够的超时原因，不用跨scope时间比较作因果。
+
+真实新签名档案重复编码反例 **FAIL0.224834/7文件**。V20仅将共享frame对象canonical比较改为已有精确packet-body编码，复用该已完整比较对象的准确字符串编码长度，并按既有分段算法计算完整expanded SHA/size。每个实际文件读取/hash/大小、完整canonical域/shape、原expanded容量、packet/routing/hops/receipt全认证和全部Native信封检查继续执行，无cache/持久权限/容量扩大。原default transit分段算法完整AST保持；unsupported/receipt-only形状仍原canonical回退。
+
+6档案回归实际通过；两个先行新测试guard误拒绝空frame元数据/无frame预览的FAIL与0calls生成预检失败保留。第三次6项全部exit0后，原封存器因旧软链接负例故意留存的link拒绝，**外层仍FAIL**；独立不跟随link的既有typed库存精确封存其文本/metadata及普通文件，规范化资格复用已通过6项，不重复实验或移除负例。额外6项原frame-digest回归PASS0.161940；最终同压力普通两跳/目的完整签名receipt/清缓存冷读PASS0.792930。原ground60累计 **57.166430秒**，含所有失败及保守收尾计费，不重置。测试Native proof/work/admission仍模型。
+
+最终独立source60 PASS3.895503，加首次AST预检0.5秒保守计费合计 **4.395503秒**；Python192 **e56833ba2ee42b229528f87328fbcabd4ab0837f8c198fb7e9f294f9c8ceab7e**，仅mesh/frame_digest/test_mesh三文件变化。Runtime/Native89/Core171/实际ReleaseCLI bef4d5c7…不变，旧真实Import父块签名分类复用。全部旧test AST不改（仅新增测试与其局部guard），完整453contract/21global/0755真实OS未分配拒绝/四原17argv/整entry-helper-controller-guard字面量反转通过。普通送达原有同目标护栏全部保持。
+
+必要全新V30原180/一次已分配（本记录创建时NOTSTARTED），检验此精确编码改变后能否在原预算完成15mature/all8完整Nativecold/所有信封/caller/owner heads/守恒/normalstop。首guard或原deadline即封存退出，无同参重试、延长或新增600。历史“全部通过”仅限其有限scope；VALUE-STRICT-01原两clippy告警/120耗尽、所有旧600/180 FAIL及独立/物理/PQ/长历史/组合资格保留OPEN。冻结正文/PDF/receipt及全部S/R/I/A–G/N/P、600stage/60round/24height/maturity2/quorum3/原锁容量与owner请求不改。唯一作者，新workdir始终显式；旧cwd及goal前继哈希/blocked元数据界面待修不构成审批门。无主网/资金/官网/白皮书/服务器/账号/外联/清理/push。
+
+[真实V29终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v29-20261006-checks.json)；[准确cold边界](operations/evidence/regional-bft-archive-cold-boundary-v29-20261006-checks.json)；[档案回归及typed封存](operations/evidence/regional-bft-archive-stream-related-v20-qualified-20261006-checks.json)；[最终来源](operations/evidence/regional-bft-archive-stream-v20-v30-source-binding-20261006-checks.json)。
+
 ## 2026-10-06 V28终态FAIL，V19同计划缓存淘汰反例及必要V29
 
 V28 **FAIL 原180秒 / 209.128秒含正常收尾 / 1883文件封存**。四CLI exit0、owned stopped，无forced/guardian/cleanup/pin异常，旧失败保持。最后参考高度四个均15只在 **179.617秒** 出现；停止后的实际收款成熟/可花费、all8完整Native冷验、caller/owner heads及守恒未完成，参考高度和正常停止不授予这些资格。独立只读停止边界0.621497秒，无旧Node/Native/Runtime构造、签名、运输或复活。

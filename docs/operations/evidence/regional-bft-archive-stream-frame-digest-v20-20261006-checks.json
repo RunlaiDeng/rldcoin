@@ -1,0 +1,14 @@
+{
+  "completed": true,
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "log": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.030s\n\nOK\n",
+  "duration_seconds": 0.16194,
+  "combined_original_ground60_seconds": 57.16643,
+  "source_pins_unchanged": true,
+  "stage_sha256": "944c23aa892ee2e525e86d7509897e14b4d544684380424c34b1712d493dcd71",
+  "Native_Runtime_socket_old_fixture_calls": 0,
+  "own_fresh_ground_signature_fixture": true,
+  "full_fault_qualified": false
+}

@@ -1,0 +1,29 @@
+{
+  "completed": true,
+  "tests_passed": 6,
+  "successful_log_bound_to_exact_final_source": true,
+  "original_outer_still_FAIL": true,
+  "first_two_fixture_guard_failures_retained": true,
+  "only_new_test_guard_refinements": "exclude empty frame metadata and preview without frame; still reject every complete nonempty frame/image encoding",
+  "typed_inventory_sha256": "cdbf842c80d3c69613f91570a3dab215397bd86f461352007ba10ca8a9cfc3b1",
+  "typed_inventory": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/archive-stream-related-v20-v3-typed-inventory-20261006.json",
+  "regular_files": 39,
+  "hostile_symlinks_never_followed": 1,
+  "private_bytes_metadata_and_link_text_retained": true,
+  "stage_sha256": "21008a6d1f3009f43afc3946f016a6d3c586c0ad40c491053fef198ed1375f8c",
+  "raw_failed_checks_sha256": "e7e9e54229665f9ef14a2c460199ee4c46230ab02fb4bc5dfa2c9e1005f58714",
+  "log_sha256": "e1be7abc20fef2955027db45e9b647c1198c8b3204ce9fcdc84e474bd3e3eccd",
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "90f7968a1956fb31bcbd1720e2a11ec0c09986119c7d9e21d23746b674fd8ee7",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "e655928bb379f4d7a22408fd4b571e94db803176599870f67855db74dcca0d8d",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "2cd571099b321641b06760f702313155d5ed4959fcc4a46449bccee870c5e41c",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-archive-stream-related-v20-v3-20261006.py": "fc44e3c533e1515b3aa12f46758b64839fad04d00ced29d28799f4423e9a43c5",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-archive-stream-ground-v20-v3-20261006.py": "c828e7f9b09623d9109c70004e3bc1136f5a21a47ea1a8de4e59383aadebfb8f"
+  },
+  "combined_original_ground60_seconds": 56.21156,
+  "seal_only_duration_seconds": 0.048174,
+  "additional_tests_Node_Native_Runtime_sign_socket_calls": 0,
+  "Native_authority": false,
+  "full_fault_qualified": false
+}
