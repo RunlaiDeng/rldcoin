@@ -1,0 +1,390 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 19.426436,
+  "remaining_at_start_seconds": 40.573564000000005,
+  "duration_seconds": 0.259241,
+  "combined_stage_seconds": 19.685677,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "failure": null,
+  "stage_sha256": "e953746d68254ed115c65836bb2f836b3bd1077b6108f5f4effa58ae37cbb070",
+  "helper_sha256": "3d7b03d0d2e6e29d34f4cb3ec123c7b58cbf8fd58d8ab65efe70d01c7d4387af",
+  "controller_sha256": "875549bd741c29b0b4d5123aa163524d206b06a1ad708bfa0ad2b637aa308c5d",
+  "log_sha256": "9f7e1a06d1b4099841350937f1b4c1fd05016d44d6afef0f16bb060ba8387ecd",
+  "result": {
+    "Native_Runtime_Node_socket_key_sign_calls": 0,
+    "actual_queue_measurements": [
+      {
+        "actual_ordinary_queue_measurements": [
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 13,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 92,
+            "suppressed": false,
+            "target_arrival_position": 12,
+            "target_pending_position": null
+          },
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 11,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 94,
+            "suppressed": false,
+            "target_arrival_position": 8,
+            "target_pending_position": null
+          },
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 8,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false,
+            "target_arrival_position": 6,
+            "target_pending_position": null
+          }
+        ],
+        "destination": 0,
+        "holder": 2,
+        "next_hop": 1,
+        "source": 2
+      },
+      {
+        "actual_ordinary_queue_measurements": [
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 13,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 92,
+            "suppressed": false,
+            "target_arrival_position": 11,
+            "target_pending_position": null
+          },
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 11,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 94,
+            "suppressed": false,
+            "target_arrival_position": 7,
+            "target_pending_position": null
+          },
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 8,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false,
+            "target_arrival_position": 5,
+            "target_pending_position": null
+          }
+        ],
+        "destination": 1,
+        "holder": 2,
+        "next_hop": 1,
+        "source": 2
+      },
+      {
+        "actual_ordinary_queue_measurements": [
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 11,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 94,
+            "suppressed": false,
+            "target_arrival_position": 10,
+            "target_pending_position": null
+          },
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 8,
+            "hop_attempts": 0,
+            "pending_count": 32,
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false,
+            "target_arrival_position": 7,
+            "target_pending_position": null
+          }
+        ],
+        "destination": 0,
+        "holder": 2,
+        "next_hop": 1,
+        "source": 3
+      },
+      {
+        "actual_ordinary_queue_measurements": [
+          {
+            "actual_plan_eligibility_positive": true,
+            "arrival_backlog_count": 11,
+            "hop_attempts": 1,
+            "pending_count": 32,
+            "selected": true,
+            "sequence": 94,
+            "suppressed": false,
+            "target_arrival_position": 9,
+            "target_pending_position": null
+          }
+        ],
+        "destination": 1,
+        "holder": 2,
+        "next_hop": 1,
+        "source": 3
+      }
+    ],
+    "closed_prefix_does_not_prove_full_scope_or_unique_OS_failure": true,
+    "completed": true,
+    "duration_seconds": 0.168237,
+    "exact_deferred_admission_unknown_when_no_enqueue_event": true,
+    "full_fault_qualified": false,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "nonce_frame_join_negative_controls": [
+      "nonce",
+      "frame_id"
+    ],
+    "predicate_decision": "Actual eligibility/backlog advancement falsifies absent generation, absent route eligibility, and target suppression for source2. Exact source3-to1 forwarding requests distinguish positive receiver lock refusal from later input admission/custody. No live scheduler reconstruction or guessed repair; next only a bounded source-only mixed input-demand model keyed to this admission boundary, with original MAX_WORKERS2/0.2lock/socket3/no custody on refusal and byte-identical source retention.",
+    "receiver1_final_process_local_metrics": {
+      "deferred_input": {
+        "active": false,
+        "completed": 69,
+        "pending": 0,
+        "queue_grants_custody": false,
+        "received": 69,
+        "rejected": 0,
+        "shares_original_inbound_slots": true
+      },
+      "local_lock_exhaustions": 440,
+      "local_lock_retries": 15112,
+      "mesh_lease_costs": {
+        "acquisition_includes_open": true,
+        "duration_is_wall_not_cpu": true,
+        "format": "RLD-MESH-LEASE-COST-V1",
+        "hold_includes_open_and_close": true,
+        "hold_success_is_close_only": true,
+        "node_open_includes_validation": true,
+        "process_local_only": true,
+        "rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 55,
+              "failures": 19,
+              "last_seconds": 0.185692,
+              "max_seconds": 0.391794,
+              "saturated": false,
+              "total_seconds": 11.231121
+            },
+            "hold": {
+              "calls": 36,
+              "failures": 0,
+              "last_seconds": 0.250992,
+              "max_seconds": 0.525281,
+              "saturated": false,
+              "total_seconds": 11.217172
+            },
+            "open": {
+              "calls": 36,
+              "failures": 0,
+              "last_seconds": 0.18568,
+              "max_seconds": 0.222168,
+              "saturated": false,
+              "total_seconds": 5.136438
+            },
+            "purpose": {
+              "calls": 72,
+              "failures": 17,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 81,
+              "failures": 29,
+              "last_seconds": 0.146694,
+              "max_seconds": 0.436593,
+              "saturated": false,
+              "total_seconds": 18.133644
+            },
+            "hold": {
+              "calls": 51,
+              "failures": 0,
+              "last_seconds": 0.5047,
+              "max_seconds": 0.708138,
+              "saturated": false,
+              "total_seconds": 23.483715
+            },
+            "open": {
+              "calls": 52,
+              "failures": 0,
+              "last_seconds": 0.146687,
+              "max_seconds": 0.241704,
+              "saturated": false,
+              "total_seconds": 8.231375
+            },
+            "purpose": {
+              "calls": 100,
+              "failures": 19,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 194,
+              "failures": 140,
+              "last_seconds": 0.109246,
+              "max_seconds": 0.376981,
+              "saturated": false,
+              "total_seconds": 38.380386
+            },
+            "hold": {
+              "calls": 54,
+              "failures": 0,
+              "last_seconds": 0.438649,
+              "max_seconds": 0.54998,
+              "saturated": false,
+              "total_seconds": 16.161903
+            },
+            "open": {
+              "calls": 54,
+              "failures": 0,
+              "last_seconds": 0.1723,
+              "max_seconds": 0.210718,
+              "saturated": false,
+              "total_seconds": 6.622141
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 178,
+              "failures": 109,
+              "last_seconds": 0.168547,
+              "max_seconds": 0.394226,
+              "saturated": false,
+              "total_seconds": 37.234782
+            },
+            "hold": {
+              "calls": 69,
+              "failures": 0,
+              "last_seconds": 0.293003,
+              "max_seconds": 0.565358,
+              "saturated": false,
+              "total_seconds": 27.032923
+            },
+            "open": {
+              "calls": 69,
+              "failures": 0,
+              "last_seconds": 0.168529,
+              "max_seconds": 0.238351,
+              "saturated": false,
+              "total_seconds": 12.218851
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 283,
+              "failures": 145,
+              "last_seconds": 5e-06,
+              "max_seconds": 0.420775,
+              "saturated": false,
+              "total_seconds": 57.767435
+            },
+            "hold": {
+              "calls": 138,
+              "failures": 0,
+              "last_seconds": 0.387556,
+              "max_seconds": 0.633115,
+              "saturated": false,
+              "total_seconds": 46.057039
+            },
+            "open": {
+              "calls": 138,
+              "failures": 0,
+              "last_seconds": 0.164478,
+              "max_seconds": 0.267487,
+              "saturated": false,
+              "total_seconds": 20.89838
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "timing_is_authority": false
+      }
+    },
+    "source3_prepare_destination1_holder2_exact_requests": [
+      {
+        "attempt": 98,
+        "authenticated_requests": 1,
+        "authenticated_to_common_prefix_end_seconds": 7.733191,
+        "deferred_attempts": 0,
+        "deferred_custodies": 0,
+        "destination_receipts": 0,
+        "handler_custodies": 0,
+        "inbound_lock_refusals": 1,
+        "other_inbound_refusals": 0,
+        "send_to_first_authenticated_seconds": 0.022723
+      },
+      {
+        "attempt": 99,
+        "authenticated_requests": 1,
+        "authenticated_to_common_prefix_end_seconds": 6.789226,
+        "deferred_attempts": 0,
+        "deferred_custodies": 0,
+        "destination_receipts": 0,
+        "handler_custodies": 0,
+        "inbound_lock_refusals": 1,
+        "other_inbound_refusals": 0,
+        "send_to_first_authenticated_seconds": 0.034292
+      }
+    ],
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

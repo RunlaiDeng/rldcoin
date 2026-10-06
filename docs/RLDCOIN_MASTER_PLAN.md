@@ -1,5 +1,23 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 parent14运输边界：实际队列反例与准入观察接入
+
+**完整fault仍FAIL/OPEN**。已读取自己的原runtime-v4终态：原600秒耗尽、612.570秒含收尾、helper1、6152文件保留；owned节点/relays已停止、cleanup null、无强停。V16原180/202.841秒/1748及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3与所有容量保持。历史“全部通过”只属于相应历史来源和有限scope，停止/参考高度不授予全验收。
+
+**更正上一文字假设**：四参考image height14的parent14 Vote refs实际为 **[0,0,2,2]**，与上一outcome的数据表一致；“四节点都无parent14 Vote”文字有误。旧outcome原字节保留，本节撤销该文字假设。已核验4份parent14round0 Prepare公钥签名字节（local来源2/3）、4签名负例、716完整签名档案索引与926个完整regional-bft运输副本及全部active收据，未发现替代完整信封；目标到0/1均缺完整目的地保管/收据/参考正文。只证明运输及签名字节，不能替代Native证据、锁、成熟、冷验证或最终性。
+
+14086条PID/node/frame/envelope/nonce绑定的已收连续前缀，共同区间143.180秒；原closed/failed完整verifier仍拒绝。来源2两包正向enqueue后还有13.563秒及7个同peer完整四包批次，目标0准备。实际三普通prepare的first pending均32，目标确实eligible且在arrival backlog从位置12→8→6、11→7→5向前移动，未被抑制/签hop/入选；不是缺生成、缺路线资格或first前2被跳过。来源3发往1的包在holder2实际入选及重放；两次精确请求在接收1认证后各有BlockingIOError拒绝，剩余已收区间7.733/6.789秒，无同nonce deferred_attempt/custody。全局69/69/0不能证明这两包入队；不能凭缺日志指定OS原因或直接改公平策略。
+
+**实际两源码接入**：在原handler两槽gate处补opt-in `deferred_input_queued` / `deferred_input_not_queued`，绑定peer/packet/frame/request nonce及未入队原因runtime_stopping/input_slot_occupied/worker_capacity；原认证、拒绝回复、队列、保管、锁0.2/socket3和容量完全保持。剥除观察语句后整份TCP AST准确相同，删两stage后Trace AST准确相同；原/candidate cleanup与slot gate的64组source-only状态/启停/槽位/trace开关效果完全相同，3原primitive/gap/restart回归和4typed/private负例通过。无Node/Native/socket/key/sign；marker job不是实际认证或保管。
+
+四个实际普通source-only Popen、4原Publisher线程、独立原collector、真实atomic/fsync与闭合readback已运行：32新stage primitive记录精确PID/slot/nonce/frame/peer/packet一致，foreign/float PID、foreign binding/rejected4负例拒绝，4进程各exit0/线程正常停止，14观察文件封存。它证明诊断记录管道，**没有真实请求/Native准入资格**，不重置原故障snapshot。原一次60累计 **20.696秒**，非预算重置；源码192当前commitment66268f77…仅TCP/Trace两项改变，Native89/Core171/actualCLI未变。1748库存与56普通/7typed seal字节复核不变；15份仅源码快照，没有币/钥/账本/保管/binary复制。
+
+**下一仅原60剩余39.304秒/一次，source-only未启动，新180/600均0**：把当前源码绑定到全新未分配entry/contract及独立controller，保留原Rust raw path/17参数/17setup/13import/15mature/all8完整cold/envelope/caller/owner/守恒/stop及旧禁改guard。旧V4 contract仍绑定c447前继，必须拒绝当前6626来源，不据此重开旧Native。复用这次新stage publication覆盖；首来源/argv/path/PID/schema/角色/容量/guard差异、有限绑定完成或剩余原60退出，不重试/延长。只有实际未来准入事件能区分槽位拒绝与已入队服务等待；当前未分配live范围，不改原deadline或猜测协议修复。
+
+采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8，本机三哈希再次一致；goalactive，旧goal前继已报告不改。VALUE-STRICT-01两基线/120.019耗尽独立OPEN，Core/value/lock未改，原120诊断/300修复触发未满足，不以地区/诊断替代或豁免；长期/PQ/独立保管/physical/组合profile仍OPEN。已知原/最新owned PID不存在，本次source-only线程正常终止；所有项目命令显式新rldcoin，持久cwd仍UI待修；冻结正文/PDF/官网/Library/服务器/账户/权限/资金/外联/push/清理不扩展。
+[实际运输/队列/nonce反例、两源码接入及有限管道验证](operations/evidence/regional-bft-parent14-admission-observation-outcome-20261006.json)。
+
+
 ## 2026-10-06 真实Rust入口修复、独立采集与一次原生诊断终态
 
 **完整fault仍FAIL/OPEN**。原runtime-v4 600/612.570秒/6152、V15 180/202.220秒/1816及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3及容量保持。历史“全部通过”只指对应历史来源和有限scope；下方“下一120绑定未启动”是创建时快照，本次已到终态。

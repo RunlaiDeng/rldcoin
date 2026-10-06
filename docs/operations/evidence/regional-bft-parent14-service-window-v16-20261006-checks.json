@@ -1,0 +1,1165 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 18.990075,
+  "remaining_at_start_seconds": 41.009924999999996,
+  "duration_seconds": 0.436361,
+  "combined_stage_seconds": 19.426436,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "failure": null,
+  "stage_sha256": "e8b4a9865a089e0677e54cd4f980e5a2ff1415f76024034a9471e128346a6790",
+  "helper_sha256": "de1496369f046df88fe1023202ec3da866cdf4cae3d2c0f068d4c0113bc31e52",
+  "controller_sha256": "2627c73b57b80ff150ff92cb86e8d5b4e377afd7c116a410ec99178e602f27d1",
+  "log_sha256": "6b884ea0af3e935a05697b9a51a7e6832cf254d9f56343305230c2ac6f177be6",
+  "result": {
+    "Native_Runtime_Node_socket_key_sign_calls": 0,
+    "completed": true,
+    "duration_seconds": 0.354176,
+    "exact_packet_service_windows": [
+      {
+        "admission_to_common_prefix_end_seconds": 13.563461,
+        "complete_four_packet_batches_after_admission": 7,
+        "destination": 0,
+        "diagnostic_observed_prefix_only_no_time_join": true,
+        "diagnostic_same_peer_records": 50,
+        "exact_positive_admission_events": 1,
+        "exact_target_diagnostic_records": [
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.26247837499249727,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 92,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.182293625024613,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 93,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.2310421250294894,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 94,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19302425003843382,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 95,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.23981712496606633,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19060333300149068,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 98,
+            "suppressed": false
+          }
+        ],
+        "holder": 2,
+        "last_same_peer_nonempty_preparation_minus_admission_seconds": 11.804714,
+        "next_hop": 1,
+        "nonempty_preparation_batches_after_admission": 7,
+        "not_unique_OS_or_Native_cause": true,
+        "other_packet_preparation_events_after_admission": 28,
+        "same_peer_later_stage_counts": {
+          "contact_failed": 11,
+          "contact_start": 7,
+          "deferred_attempt": 12,
+          "deferred_local_custody": 8,
+          "destination_receipt_retained": 6,
+          "inbound_refused": 16,
+          "outgoing_failed": 28,
+          "outgoing_prepared": 28,
+          "peer_custody_authenticated": 4,
+          "request_authenticated": 16,
+          "request_sent": 24
+        },
+        "source": 2,
+        "target_preparation_events_after_admission": 0
+      },
+      {
+        "admission_to_common_prefix_end_seconds": 13.563482,
+        "complete_four_packet_batches_after_admission": 7,
+        "destination": 1,
+        "diagnostic_observed_prefix_only_no_time_join": true,
+        "diagnostic_same_peer_records": 50,
+        "exact_positive_admission_events": 1,
+        "exact_target_diagnostic_records": [
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.26247837499249727,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 92,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.182293625024613,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 93,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.2310421250294894,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 94,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19302425003843382,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 95,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.23981712496606633,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19060333300149068,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 98,
+            "suppressed": false
+          }
+        ],
+        "holder": 2,
+        "last_same_peer_nonempty_preparation_minus_admission_seconds": 11.804735,
+        "next_hop": 1,
+        "nonempty_preparation_batches_after_admission": 7,
+        "not_unique_OS_or_Native_cause": true,
+        "other_packet_preparation_events_after_admission": 28,
+        "same_peer_later_stage_counts": {
+          "contact_failed": 11,
+          "contact_start": 7,
+          "deferred_attempt": 12,
+          "deferred_local_custody": 8,
+          "destination_receipt_retained": 6,
+          "inbound_refused": 16,
+          "outgoing_failed": 28,
+          "outgoing_prepared": 28,
+          "peer_custody_authenticated": 4,
+          "request_authenticated": 16,
+          "request_sent": 24,
+          "source_enqueued": 1
+        },
+        "source": 2,
+        "target_preparation_events_after_admission": 0
+      },
+      {
+        "admission_to_common_prefix_end_seconds": 10.308159,
+        "complete_four_packet_batches_after_admission": 5,
+        "destination": 0,
+        "diagnostic_observed_prefix_only_no_time_join": true,
+        "diagnostic_same_peer_records": 50,
+        "exact_positive_admission_events": 2,
+        "exact_target_diagnostic_records": [
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.2310421250294894,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 94,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19302425003843382,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 95,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.23981712496606633,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19060333300149068,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 98,
+            "suppressed": false
+          }
+        ],
+        "holder": 2,
+        "last_same_peer_nonempty_preparation_minus_admission_seconds": 8.549412,
+        "next_hop": 1,
+        "nonempty_preparation_batches_after_admission": 5,
+        "not_unique_OS_or_Native_cause": true,
+        "other_packet_preparation_events_after_admission": 20,
+        "same_peer_later_stage_counts": {
+          "contact_failed": 8,
+          "contact_start": 5,
+          "deferred_attempt": 12,
+          "deferred_local_custody": 8,
+          "destination_receipt_retained": 6,
+          "inbound_refused": 12,
+          "outgoing_failed": 20,
+          "outgoing_prepared": 20,
+          "request_authenticated": 12,
+          "request_sent": 20
+        },
+        "source": 3,
+        "target_preparation_events_after_admission": 0
+      },
+      {
+        "admission_to_common_prefix_end_seconds": 13.356209,
+        "complete_four_packet_batches_after_admission": 11,
+        "destination": 0,
+        "diagnostic_observed_prefix_only_no_time_join": true,
+        "diagnostic_same_peer_records": 157,
+        "exact_positive_admission_events": 1,
+        "exact_target_diagnostic_records": [
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              1
+            ],
+            "prepare_inclusive_seconds": 0.13954445801209658,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 144,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.10744395799702033,
+            "retried": true,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 145,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.1282533339690417,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 146,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.1135364169604145,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 147,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.12342554202768952,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 148,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.10643233300652355,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 149,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.12145654199412093,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 150,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.15955595904961228,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 151,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.11408583400771022,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 152,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.1457876669592224,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 153,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.14826787501806393,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 154,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.18160270800581202,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 155,
+            "suppressed": true
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.16588537499774247,
+            "retried": false,
+            "retries_count": 3,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 156,
+            "suppressed": true
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.1625432079890743,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 157,
+            "suppressed": true
+          }
+        ],
+        "holder": 3,
+        "last_same_peer_nonempty_preparation_minus_admission_seconds": 12.58192,
+        "next_hop": 2,
+        "nonempty_preparation_batches_after_admission": 13,
+        "not_unique_OS_or_Native_cause": true,
+        "other_packet_preparation_events_after_admission": 47,
+        "same_peer_later_stage_counts": {
+          "contact_failed": 12,
+          "contact_start": 13,
+          "destination_receipt_retained": 3,
+          "local_transport_custody": 3,
+          "outgoing_failed": 38,
+          "outgoing_prepared": 50,
+          "peer_custody_authenticated": 16,
+          "reply_local_custody": 16,
+          "request_authenticated": 3,
+          "request_sent": 50,
+          "source_enqueued": 1
+        },
+        "source": 3,
+        "target_preparation_events_after_admission": 3
+      },
+      {
+        "admission_to_common_prefix_end_seconds": 10.30818,
+        "complete_four_packet_batches_after_admission": 5,
+        "destination": 1,
+        "diagnostic_observed_prefix_only_no_time_join": true,
+        "diagnostic_same_peer_records": 50,
+        "exact_positive_admission_events": 3,
+        "exact_target_diagnostic_records": [
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": true,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.2310421250294894,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 94,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19302425003843382,
+            "retried": true,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 95,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.23981712496606633,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 96,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.19060333300149068,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 98,
+            "suppressed": false
+          }
+        ],
+        "holder": 2,
+        "last_same_peer_nonempty_preparation_minus_admission_seconds": 8.549433,
+        "next_hop": 1,
+        "nonempty_preparation_batches_after_admission": 5,
+        "not_unique_OS_or_Native_cause": true,
+        "other_packet_preparation_events_after_admission": 18,
+        "same_peer_later_stage_counts": {
+          "contact_failed": 8,
+          "contact_start": 5,
+          "deferred_attempt": 12,
+          "deferred_local_custody": 8,
+          "destination_receipt_retained": 6,
+          "inbound_refused": 12,
+          "outgoing_failed": 20,
+          "outgoing_prepared": 20,
+          "request_authenticated": 12,
+          "request_sent": 20
+        },
+        "source": 3,
+        "target_preparation_events_after_admission": 2
+      },
+      {
+        "admission_to_common_prefix_end_seconds": 13.356229,
+        "complete_four_packet_batches_after_admission": 11,
+        "destination": 1,
+        "diagnostic_observed_prefix_only_no_time_join": true,
+        "diagnostic_same_peer_records": 157,
+        "exact_positive_admission_events": 1,
+        "exact_target_diagnostic_records": [
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              0
+            ],
+            "prepare_inclusive_seconds": 0.13954445801209658,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 144,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.10744395799702033,
+            "retried": true,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 145,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.1282533339690417,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 146,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.1135364169604145,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 147,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.12342554202768952,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 148,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.10643233300652355,
+            "retried": false,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 149,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.12145654199412093,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 150,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.15955595904961228,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 151,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [],
+            "prepare_inclusive_seconds": 0.11408583400771022,
+            "retried": true,
+            "retries_count": 4,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 152,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.1457876669592224,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 153,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 0,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.14826787501806393,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": false,
+            "sequence": 154,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.18160270800581202,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 155,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.16588537499774247,
+            "retried": true,
+            "retries_count": 3,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 156,
+            "suppressed": false
+          },
+          {
+            "after_pending_position": null,
+            "before_pending_position": null,
+            "completed": true,
+            "hop_attempts": 1,
+            "plan_arrivals": false,
+            "plan_pending_positions": [
+              null
+            ],
+            "prepare_inclusive_seconds": 0.1625432079890743,
+            "retried": false,
+            "retries_count": 0,
+            "role": "outbound",
+            "selected": true,
+            "sequence": 157,
+            "suppressed": false
+          }
+        ],
+        "holder": 3,
+        "last_same_peer_nonempty_preparation_minus_admission_seconds": 12.58194,
+        "next_hop": 2,
+        "nonempty_preparation_batches_after_admission": 13,
+        "not_unique_OS_or_Native_cause": true,
+        "other_packet_preparation_events_after_admission": 44,
+        "same_peer_later_stage_counts": {
+          "contact_failed": 12,
+          "contact_start": 13,
+          "destination_receipt_retained": 3,
+          "local_transport_custody": 3,
+          "outgoing_failed": 38,
+          "outgoing_prepared": 50,
+          "peer_custody_authenticated": 16,
+          "reply_local_custody": 16,
+          "request_authenticated": 3,
+          "request_sent": 50,
+          "source_enqueued": 1
+        },
+        "source": 3,
+        "target_preparation_events_after_admission": 6
+      }
+    ],
+    "full_fault_qualified": false,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "operation_metrics": [
+      {
+        "inclusive_operation_wall_metrics": {
+          "bft-network-check": {
+            "calls": 35,
+            "failures": 0,
+            "max_seconds": 0.101305,
+            "total_seconds": 3.008469
+          },
+          "bft-network-inspect-batch": {
+            "calls": 32,
+            "failures": 0,
+            "max_seconds": 0.176403,
+            "total_seconds": 4.280884
+          },
+          "bft-network-pack": {
+            "calls": 35,
+            "failures": 0,
+            "max_seconds": 0.103699,
+            "total_seconds": 3.037292
+          },
+          "bft-quorum": {
+            "calls": 48,
+            "failures": 0,
+            "max_seconds": 0.106682,
+            "total_seconds": 4.213956
+          },
+          "bft-sign": {
+            "calls": 3,
+            "failures": 0,
+            "max_seconds": 0.271074,
+            "total_seconds": 0.791907
+          },
+          "consensus-tick": {
+            "calls": 118,
+            "failures": 6,
+            "max_seconds": 1.565297,
+            "total_seconds": 36.77542
+          }
+        },
+        "slot": 0
+      },
+      {
+        "inclusive_operation_wall_metrics": {
+          "bft-network-check": {
+            "calls": 34,
+            "failures": 0,
+            "max_seconds": 0.10817,
+            "total_seconds": 2.957541
+          },
+          "bft-network-inspect-batch": {
+            "calls": 30,
+            "failures": 0,
+            "max_seconds": 0.175774,
+            "total_seconds": 4.122197
+          },
+          "bft-network-pack": {
+            "calls": 34,
+            "failures": 0,
+            "max_seconds": 0.139563,
+            "total_seconds": 2.949207
+          },
+          "bft-quorum": {
+            "calls": 16,
+            "failures": 0,
+            "max_seconds": 0.108086,
+            "total_seconds": 1.369179
+          },
+          "bft-sign": {
+            "calls": 4,
+            "failures": 0,
+            "max_seconds": 0.326214,
+            "total_seconds": 1.123014
+          },
+          "consensus-tick": {
+            "calls": 100,
+            "failures": 36,
+            "max_seconds": 1.75211,
+            "total_seconds": 42.08284
+          }
+        },
+        "slot": 1
+      },
+      {
+        "inclusive_operation_wall_metrics": {
+          "bft-network-check": {
+            "calls": 36,
+            "failures": 0,
+            "max_seconds": 0.112969,
+            "total_seconds": 3.154677
+          },
+          "bft-network-inspect-batch": {
+            "calls": 29,
+            "failures": 0,
+            "max_seconds": 0.169216,
+            "total_seconds": 3.75485
+          },
+          "bft-network-pack": {
+            "calls": 36,
+            "failures": 0,
+            "max_seconds": 0.133293,
+            "total_seconds": 3.248674
+          },
+          "bft-quorum": {
+            "calls": 107,
+            "failures": 0,
+            "max_seconds": 0.131575,
+            "total_seconds": 9.576428
+          },
+          "bft-sign": {
+            "calls": 5,
+            "failures": 0,
+            "max_seconds": 0.325518,
+            "total_seconds": 1.402542
+          },
+          "consensus-tick": {
+            "calls": 95,
+            "failures": 41,
+            "max_seconds": 1.999348,
+            "total_seconds": 49.306826
+          }
+        },
+        "slot": 2
+      },
+      {
+        "inclusive_operation_wall_metrics": {
+          "bft-network-check": {
+            "calls": 33,
+            "failures": 0,
+            "max_seconds": 0.156131,
+            "total_seconds": 2.939755
+          },
+          "bft-network-inspect-batch": {
+            "calls": 34,
+            "failures": 0,
+            "max_seconds": 0.215542,
+            "total_seconds": 4.892116
+          },
+          "bft-network-pack": {
+            "calls": 33,
+            "failures": 0,
+            "max_seconds": 0.14712,
+            "total_seconds": 2.908742
+          },
+          "bft-quorum": {
+            "calls": 80,
+            "failures": 0,
+            "max_seconds": 0.105671,
+            "total_seconds": 7.04592
+          },
+          "bft-sign": {
+            "calls": 3,
+            "failures": 0,
+            "max_seconds": 0.385965,
+            "total_seconds": 0.931558
+          },
+          "consensus-tick": {
+            "calls": 106,
+            "failures": 5,
+            "max_seconds": 1.778757,
+            "total_seconds": 40.632594
+          }
+        },
+        "slot": 3
+      }
+    ],
+    "operation_metrics_nested_inclusive_not_additive_CPU_or_OS_proof": true,
+    "original_failed_snapshots_unchanged": true,
+    "source_bound1748_inventory_reused_without_Native_reopen": true,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -620,6 +620,7 @@ class Server:
             pass  # No unauthenticated/corrupt request receives a custody assertion.
         finally:
             connection.close()
+            deferred_queued=False
             with self.guard:
                 self.connections.discard(tracked)
                 self.workers.discard(threading.current_thread())
@@ -633,6 +634,16 @@ class Server:
                     self.input_pending.append(deferred)
                     self.input_received=min(self.input_received+1,2**63-1)
                     self.input_wake.set()
+                    deferred_queued=True
+                # This opt-in observation closes the per-request admission gap.
+                # It grants no custody and never changes the original slot gate.
+                if deferred is not None and trace is not None:
+                    reason=('runtime_stopping' if not self.running else
+                            'input_slot_occupied' if deferred_count>=MAX_WORKERS-1 else
+                            'worker_capacity' if occupied>=MAX_WORKERS else None)
+                    trace.packets('deferred_input_queued' if deferred_queued else
+                        'deferred_input_not_queued',peer,trace_rows,nonce=body['nonce'],
+                        **({} if deferred_queued else {'failure_stage':reason}))
 
     def consume_inputs(self):
         """Retry bounded unacknowledged input, never a closed handler's ticket.

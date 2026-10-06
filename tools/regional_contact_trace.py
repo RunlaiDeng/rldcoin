@@ -26,7 +26,7 @@ FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','
 HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce'}
 STAGES={'source_enqueued','outgoing_prepared','contact_start','request_sent','peer_custody_authenticated',
         'reply_local_custody','outgoing_failed','contact_failed','request_authenticated','local_transport_custody',
-        'destination_receipt_retained','inbound_refused','deferred_attempt','deferred_local_custody',
+        'destination_receipt_retained','inbound_refused','deferred_attempt','deferred_local_custody','deferred_input_queued','deferred_input_not_queued',
         'destination_receipt_observed','native_envelope_received','native_receive_selected',
         'native_receive_attempt','native_receive_refused'}
 
