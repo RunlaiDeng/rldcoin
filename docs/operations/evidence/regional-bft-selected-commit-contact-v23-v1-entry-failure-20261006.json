@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "helper_exit_code": 1,
+  "failure": "AssertionError: attempt counter scoped to configured peer, diagnostic matched two different peers with same attempt. Empty prior output retained.",
+  "helper_sha256": "d99755d5c92b0662b244efa19e48c403e93285982eb81f7ef9ebe2682040d454",
+  "prior_empty_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "conservative_original10_seconds_charged": 0.1,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0
+}

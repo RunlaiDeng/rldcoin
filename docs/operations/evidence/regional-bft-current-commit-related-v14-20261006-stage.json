@@ -1,0 +1,33 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 19.464005,
+  "tests": [
+    "test_current_signed_commit_gets_spare_slot_before_newer_waiters",
+    "test_older_unserved_gets_alternate_priority_pair_without_displacing_offers",
+    "test_older_pending_advances_under_new_arrivals_and_full_replay",
+    "test_promoted_latest_waiter_keeps_priority_until_prepared",
+    "test_latest_waiting_arrival_gets_spare_slot_without_displacing_pending_pair",
+    "test_new_arrival_uses_ordinary_class_slot_with_full_waiting_queue",
+    "test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open",
+    "test_arrival_waiting_survives_full_admission_queue_and_cold_open",
+    "test_arrival_metadata_schema_and_original_capacity_refuse_without_write",
+    "test_first_offer_queue_is_scoped_to_actual_outgoing_branch",
+    "test_ineligible_waiting_metadata_changes_only_after_atomic_preparation",
+    "test_first_offer_survives_recent_eviction_and_cold_positions",
+    "test_first_offer_authentication_and_failed_atomic_do_not_publish_metadata",
+    "test_first_offer_metadata_schema_and_original_capacities_refuse",
+    "test_retry_preserves_ordinary_positions_and_retains_original_packets",
+    "test_retry_still_authenticates_and_obeys_suppression",
+    "test_receipt_only_archive_then_original_transit_retains_arrival_order_on_cold_open"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "667b6dbe1cad30cab683d87025e600843db79f7a35c8846d4374843b588b0229",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "fa990f2525c53ccd8712b6939b083c5018408d9599ae046cb80d903f0847f1b2",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "fb0aec5b0ce324b698609a37491b17ffc9b99ae5a61df390e5fa5443adeefc9d",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-related-v14-20261006.py": "b47d6a69c1c631f79764c3b63b41eb6e7fee2485b68bc5c5b9b3a3835913c8c7",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-current-commit-ground-20261006.py": "693e61bc4caab273a5200eac4f023a593a6a06be050ef3b591dc1307d9925626"
+  },
+  "exit": "first guard failure or original10 deadline; retain failure; no duplicate same-source attempt; no old fixture constructors; no Native/runtime/socket calls"
+}

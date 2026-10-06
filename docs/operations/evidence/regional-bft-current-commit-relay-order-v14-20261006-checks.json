@@ -1,0 +1,15 @@
+{
+  "completed": true,
+  "budget_seconds": 10,
+  "attempts": 1,
+  "duration_seconds": 0.107005,
+  "target_packet_id": "07e61329409c4d75d0f2e7db28d78d03e3aa39acd474ba43d3151278aebbc781",
+  "source_prepared": true,
+  "relay_complete_exact_original": true,
+  "destination_complete": false,
+  "relay_destination_branch_processed_before_source_inbox_branch": true,
+  "tick_per_contact_receive_then_prepare": true,
+  "failed14_files_unchanged": true,
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "next_entry_change": "Exactly2 relay ordinary ticks before exactly1 destination ordinary tick; source remains1; no protocol mutation, no Native qualification, no repeated same-entry test."
+}

@@ -34,6 +34,45 @@ MAX_BROADCAST_QUIET_SECONDS = 4.0
 MAX_BROADCAST_QUIET_CALLS = 16
 
 
+def commit_carriage_frames(messages, context, keys, currency, region):
+    """Exact-frame hints from Native-checked Messages, never Native acceptance.
+
+    The signature check only narrows scheduling. Native still checks every
+    complete envelope, dependency, lock and quorum before any authority.
+    """
+    mesh.require(isinstance(messages,Messages) and len(messages)<=MAX_MESSAGES,
+                 'Commit carriage requires bounded retained messages')
+    fields=('currency','region','epoch','previous','parent_height','parent_block','parent_state')
+    if (type(context) is not dict or set(context)!=set(fields)
+            or context['currency']!=currency or context['region']!=region):return ()
+    mesh.require(type(keys) is tuple and len(keys)==4 and len(set(keys))==4,
+                 'Commit carriage requires configured base validators')
+    for key in keys:mesh.hex32(key)
+    frames=[];expanded_bytes=0
+    for ident,body,_,_ in messages.bodies():
+        vote=body.get('Signed',{}).get('Vote',{})
+        if vote.get('phase')!='Commit' or vote.get('context')!=context:continue
+        try:
+            approval=vote['approval'];key=approval['key']
+            if key not in keys:continue
+            data=b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0'+wire.json.dumps(
+                [{k:context[k] for k in fields},vote['round'],vote['value'],'Commit',key],
+                separators=(',',':'),ensure_ascii=False).encode()
+            mesh.Ed25519PublicKey.from_public_bytes(bytes.fromhex(key)).verify(
+                bytes.fromhex(approval['signature']),data)
+            expanded_bytes+=messages.record(ident)['size_bytes']
+            if expanded_bytes>MAX_BROADCAST_HINT_BYTES:return ()
+            payload=messages.payload(ident);envelope=wire.decode_json(payload)
+            if (envelope['format']!=NETWORK or envelope['currency']!=currency
+                    or envelope['region']!=region):continue
+            raw=wire.make_frame('regional-bft',region,region,messages.content(ident),payload)
+            frames.append(wire.inspect_frame(raw)[0]['message_id'])
+        except (KeyError,TypeError,ValueError,mesh.InvalidSignature):
+            # A hint failure is ordinary scheduling fallback, never admission.
+            continue
+    return tuple(sorted(set(frames)))
+
+
 def carriage_batch(messages, pending, height, cursor):
     """Reserve carriage for this native-observed height and retained history.
 
@@ -88,6 +127,8 @@ class Runtime:
     def __init__(self, native, transport, path):
         self._signed_query_ready = False
         self._broadcast_quiet = None
+        self._carriage_context = None
+        self._carriage_priority_key = None
         self.observation = Observation()
         self.native, self.transport = Inspection(native), transport
         self.failed = False
@@ -201,6 +242,9 @@ class Runtime:
             self.native = native
 
     def close(self):
+        mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
+        self._carriage_priority_key = None
+        self._carriage_context = None
         self._broadcast_quiet = None
         self._signed_query_ready = False
         self._signed_query_index = None
@@ -373,6 +417,12 @@ class Runtime:
                      'BFT native ledger rolled back beneath retained runtime observation')
         if value['parent_height']!=self.state['height']:
             self.save(dict(self.state,height=value['parent_height'],tip=value['parent_block']))
+        if getattr(self,'format',None)==FORMAT:
+            context=wire.canonical(value)
+            if context!=getattr(self,'_carriage_context',None):
+                mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
+                self._carriage_priority_key=None
+            self._carriage_context=context
         return value
 
     def retain(self, envelope, sync=True, local=False):
@@ -532,6 +582,7 @@ class Runtime:
             raw=wire.canonical({'format':self.format,'binding':self.binding,
                 'native':[self.native.authority,self.native.currency,str(self.native.ledger)],
                 'region':self.region,'node_id':self.node_id,'transport':self.transport,
+                'carriage_context':getattr(self,'_carriage_context',None).hex() if getattr(self,'_carriage_context',None) is not None else None,
                 'domains':[NETWORK,mesh.VERSION],
                 'limits':[MAX_MESSAGES,MAX_STATE,wire.MAX_PAYLOAD,mesh.MAX_MESSAGES,
                           mesh.MAX_BATCH,mesh.MAX_PACKET_BATCH,mesh.MAX_CONTACTS,
@@ -552,6 +603,16 @@ class Runtime:
         pairs=[(content,ident,peer) for content,ident in rows for peer in recipients]
         carriage_node=getattr(self,'carriage_node',None)
         with (carriage_node() if carriage_node is not None else mesh.Node(self.transport)) as node:
+            # Only the admitted base profile and an actual Native observation
+            # can install this scheduling hint. Epoch/role profiles fall back.
+            if (self.format==FORMAT and getattr(self,'_retained_native_authenticated',False)
+                    and getattr(self,'_carriage_context',None) is not None):
+                context=wire.decode_json(self._carriage_context)
+                frames=commit_carriage_frames(self.state['messages'],context,
+                                             tuple(self.peers),self.native.currency,self.region)
+                scope=mesh.digest(dict(binding=self.binding,context=context,keys=sorted(self.peers),
+                    native=[self.native.authority,self.native.currency,str(self.native.ledger)]))
+                self._carriage_priority_key=node.set_carriage_priority(scope,frames)
             retained=set()
             for summary in node.summaries().values():
                 if summary['source']==node.id and summary['kind']=='regional-bft':

@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V13'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V14'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -66,6 +66,8 @@ _verified_archive_index_lock = threading.Lock()
 
 # Bounded process-local scheduling positions, never authentication or custody.
 # Only primitive namespace, destination, complete-frame and packet IDs survive.
+# A Native companion may supply exact current Commit frame IDs for spare slots;
+# these positions never authenticate a packet or a Native envelope.
 MAX_CARRIAGE_POSITIONS = 512
 MAX_CARRIAGE_POSITION_BYTES = 4 * 1024 * 1024
 _carriage_positions = OrderedDict()
@@ -1037,6 +1039,16 @@ class Node:
                 MAX_CARRIAGE_POSITIONS,MAX_CARRIAGE_POSITION_BYTES,
                 tuple((p,tuple(sorted(c.items()))) for p,c in sorted(self.contacts.items())))
 
+    def set_carriage_priority(self, scope, frame_ids):
+        """Process-local spare-slot hint, never receipt or Native authority."""
+        hex32(scope)
+        require(type(frame_ids) is tuple and len(frame_ids)<=MAX_CARRIAGE_POSITIONS
+                and len(set(frame_ids))==len(frame_ids), 'invalid carriage priority IDs')
+        for ident in frame_ids:hex32(ident)
+        key=(self.carriage_position_domain(),'native-commit-spare')
+        remember_carriage_position(key,(scope,frame_ids))
+        return key
+
     def first_carriage_plan(self,peer):
         """Bounded first admission with durable arrival waiting, never authority."""
         value=self.state['first_carriage'][peer];active=self.state['messages'];receipted=self.state['receipts'];prepared=[i for i in value['prepared'] if i in active]
@@ -1312,6 +1324,14 @@ class Node:
             arrivals=[i for i in self.state['first_arrivals']
                       if i in first_plan['pending'] or i in first_plan['arrivals']]
             if (self.state['transit_class_steps'][peer]//4)%2==0:arrivals.reverse()
+            hint=carriage_position((self.carriage_position_domain(),'native-commit-spare'))
+            frames=set(hint[1]) if hint is not None else set()
+            # Exact full-frame IDs came from the companion's Native-checked
+            # retained envelopes, not a body identity. Every selected original
+            # transit still authenticates below. Missing/evicted hints retain V13.
+            commits=[i for i in arrivals
+                     if self.state['messages'][i]['routing']['body']['frame_id'] in frames]
+            arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]
         streams=[iter(eligible([i for i in items if i not in retry_packet_ids and i not in selected_ids])) for items in pending]

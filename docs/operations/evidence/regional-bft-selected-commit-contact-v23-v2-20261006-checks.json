@@ -1,0 +1,45 @@
+{
+  "completed": true,
+  "budget_seconds": 10,
+  "prior_entry_failure_seconds": 0.1,
+  "combined_stage_seconds": 0.190179,
+  "source_changed_repaired_attempts": 1,
+  "helper_exit_code": 0,
+  "helper_sha256": "0945043e9f28d32f9fe1f8db4a2d4369629e89f7fab7c61e94db2a231a7fc091",
+  "prior_failure_sha256": "30c4730cecd57d87e9bb95b09d7823207e41acbe235fd6647cf62e147d73049d",
+  "peer_counter_primitive_model_passed": true,
+  "result": {
+    "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+    "actual_request_side_complete_crypto_signature_or_unique_OS_CPU_cause_proved": false,
+    "attempts": 1,
+    "budget_seconds": 10,
+    "completed": true,
+    "duration_seconds": 0.050291,
+    "failed1799_not_reopened_or_rewritten": true,
+    "full_fault_qualified": false,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "prior_checks_sha256": "e19d8ece6d5458bffe6a60ba831a143e8bce7d1bf06c44b7f5f72faf1b308e06",
+    "release_event_count": 0,
+    "source2_destination1_contacts": [
+      {
+        "attempt": 112,
+        "deferred_queue_refusal_reasons": [],
+        "error_class": "SSLEOFError",
+        "failure_stage": "connect",
+        "peer_custody_authenticated": false,
+        "prepared_time": 284080.759414916,
+        "receiver_error_classes": [],
+        "receiver_stages": [],
+        "reply_local_custody": false,
+        "request_sent": false
+      }
+    ],
+    "target_packet_id": "ff57fd04640d7e18380888fedae626ea5967934e62eb7967a30523cf73b53471",
+    "trace_journal_sha256": "d7de2248eec7cdf9e08cdb8e0610a34054fe885e1edd52bfad00ad7444511f40"
+  },
+  "stderr": "",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false
+}

@@ -1,5 +1,21 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 V23终态与V14当前Commit完整帧备用槽候选
+
+V23实际 **FAIL 原180/204.044秒含收尾，1799文件封存**；四CLI exit0、owned stopped、无forced/cleanup/pin/guardian异常，仍未达成熟15/all8完整Native cold/守恒。进程正常停止或高度13参考值不算通过。V22 FAIL49.024/524、V21 FAIL180/1630、runtime-v4 FAIL600/6152及所有旧失败保持；失败Node/Native/Runtime/保管永不重开、复签、恢复或复制。
+
+只读精确Commit frontier20秒一次PASS0.940793：source2→destination1 parent13 round0 Commit真实签名有效，完整包仍仅源端、无目的收据/对应companion保留；已prepared，37目标记录中selected1/hops2。首次接触读者错把peer-scoped attempt配到另一peer，FAIL保留；修正peer条件后10秒内累计0.190179，attempt112为connect SSLEOFError/request未发，无远端认证及本地reply custody。不证明TLS/OS/调度唯一原因，旧读者release0用错事件名，不能据此称未释放。准确source_enqueued→prepared **110.452217秒**，seq101备用第4槽入选。不是永久饥饿或唯一成熟失败证明。
+
+原ground60内真实签名V13反例 **FAIL0.508666/14文件**：32pending及22newwaiting下当前父块Commit被新普通项挤出备用槽，first2/另一类floor先通过。V14仅在已有priority pairs内把Native已完整检查、匹配当前Native观察context和配置4key、额外验证Vote签名的Commit之**完整帧ID**排到其现有类前方；仍保留first2、另一类floor、非priority pairs原顺序、full4/auth/bytes/atomic。只保留process-local primitive IDs，512条/4MiB原位置缓存，完整展开总量超过既有4MiB hint界限即空提示；淘汰/冷启动/联系域或context变化/关闭回退普通排序。只支持已配置base profile，joint/role不据此取得新资格。全部原生接纳/receive/sign/候选/执行方法AST未变，Native逐份完整信封验证不跳过。
+
+**17相关PASS4.144199/240文件**，含签名/context/key/phase负例、改变proof的完整帧分离、hint消失回退、原pending17gap/full4/atomic/另一类floor/冷读/容量。两跳送达首入口FAIL0.570298/14：中继按sorted邻居先处理目的方向再读取源inbox；独立只读0.107005核实准确完整中继包/目的缺失和分支顺序，不改协议。仅入口改为恰好2普通中继tick后 **PASS0.624536/14**；源及目的仍各1tick，原签名包/路由/两跳/目的收据/清缓存冷读通过。容量/淘汰/联系域回退 **PASS0.278021/14**。加入完整展开hint4MiB原限后最终当前来源送达 **PASS0.690510/14**，模型Runtime方法实际走观察/broadcast/quiet/rollback拒绝/height变化清提示/close；Native admission明确为stub，内层完整proof/Native成熟未获资格。旧错误报告的Runtime_calls0仅指constructor0，模型方法执行在最终证据明确记录。原ground60累计 **25.771569秒**，不重置全部失败。
+
+独立60源绑定 **PASS1.073642**：Python192 **bf1327c0a61cd1b2774f3687c0761af7553c83157b8963e25f4be81480894800**，仅mesh/Runtime/test_mesh三个来源变化；Native89/Core171/实际CLIbef4d5c7…原样。453源contract、所有旧test AST、全部原Native授权方法未变；真实旧V23准确Commit只读frame分类通过，无旧构造/签名/账本复制。V23→V24 entry/adapter/guard/完整helper/controller仅引用字面量全AST反转；实际OS执行新V12入口0755正确拒绝未分配范围，静态21个实际global名称全解析，四实际Rust原17argv核验。地面stage的3受影响源码执行期pin与189既有未变源码现场核对组合完整192来源，记录组成，非重跑Native资格。
+
+依原用户持续授权，已分配全新V24 **一次原180**，目标成熟15/all8完整Native cold/caller/owner/守恒及正常停止，创建时未启动。此为V14实际来源改变后的必要验收；任何首护栏/原deadline失败即封存，不追加同参，不延长，不新增600。原600/60round/24height/maturity2/quorum3/0.2锁/容量和owner请求不变。完整600/all12/keyless、VALUE-STRICT-01两基线clippy告警及原120耗尽、history/PQ/组合/独立/物理路线仍OPEN，任何局部通过不替代。冻结正文2ba624…/PDFc59f9f…及全部S/R/I/A–G/N/P目标保持，无官网/白皮书/主网/资金/账户/服务器/外联/清理/push操作。持续唯一作者；每命令显式新rldcoin workdir，持久appcwd与旧goal哈希/blocked元数据仅支持界面待修，均不构成新增审批门。
+[真实反例及回归](operations/evidence/regional-bft-current-commit-related-v14-20261006-checks.json)；[最终普通冷送达](operations/evidence/regional-bft-current-commit-delivery-final-v14-20261006-checks.json)；[最终源/入口绑定](operations/evidence/regional-bft-current-commit-v14-v24-source-binding-20261006-checks.json)；[必要V24范围](operations/evidence/regional-bft-four-cli-current-commit-v24-decision-allocated-20261006.json)。
+
+
 ## 2026-10-06 V22启动FAIL已定位，新入口OS执行验证后接续V23
 
 V22实际**FAIL49.024秒/原180/524文件封存**，budget未耗尽、helperexit1。4个CLI均exit1，日志同为`Permission denied (os error13)`；trace owner terminal及unclean shutdown是其后续症状。最终controller guardian确认owned stopped、无forced/signalled/cleanup guardian异常，不把正常停止替代PASS。Native setup17/recipient import13已准备，但运行期间成熟15/all8完整cold/守恒未通过。全部旧失败仍FAIL，旧Native/Runtime/Node/保管不重开、不恢复、不重签、不复制。

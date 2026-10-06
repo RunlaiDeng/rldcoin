@@ -512,6 +512,267 @@ class MeshTests(unittest.TestCase):
             self.assertEqual(transit, carried)
             self.assertEqual(receipt['body']['outcome'], 'EVIDENCE_STORED_NOT_LEDGER_ACCEPTED')
 
+    def test_current_signed_commit_gets_spare_slot_before_newer_waiters(self):
+        # Inner signature and transport signatures are real fixture signatures;
+        # the empty Native proof deliberately grants no ledger qualification.
+        import regional_bft_node as bft
+        from regional_bft_retention import Messages
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        key = mesh.Ed25519PrivateKey.from_private_bytes(bytes([4]) * 32)
+        public = key.public_key().public_bytes(mesh.Encoding.Raw, mesh.PublicFormat.Raw).hex()
+        context = dict(currency=NETWORK, region='9' * 64, epoch=0, previous='0' * 64,
+                       parent_height=13, parent_block='2' * 64, parent_state='3' * 64)
+        signed = b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0' + json.dumps(
+            [context, 0, '5' * 64, 'Commit', public], separators=(',', ':'), ensure_ascii=False).encode()
+        signature = key.sign(signed).hex()
+        key.public_key().verify(bytes.fromhex(signature), signed)
+        envelope = dict(format=bft.NETWORK, currency=NETWORK, region=context['region'],
+                        evidence=dict(snapshots=[]), body=dict(Signed=dict(Vote=dict(
+                            context=context, round=0, value='5' * 64, phase='Commit',
+                            approval=dict(key=public, signature=signature)))))
+        messages = Messages().append(mesh.digest(envelope['body']), envelope, None, True)
+        payload = evidence.canonical(envelope)
+        raw = evidence.make_frame('regional-bft', context['region'], context['region'],
+                                  evidence.hashlib.sha256(payload).hexdigest(), payload)
+        with self.f.node('earth') as node:
+            baseline = [node.enqueue(self.f.frame(), destination) for _ in range(17)]
+            for _ in range(9):
+                node.prepare_exchange(peer)
+                if set(baseline) <= set(node.state['first_carriage'][peer]['prepared']):break
+            self.assertTrue(set(baseline) <= set(node.state['first_carriage'][peer]['prepared']))
+            admitted = [node.enqueue(raw if i == 2 else self.f.frame(), destination) for i in range(32)]
+            target = admitted[2]
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            for _ in range(22):node.enqueue(self.f.frame(), destination)
+            self.assertNotIn(target, node.state['recent_transits'])
+            node.state['transit_class_steps'][peer] = 0
+            node.save()
+            original = copy.deepcopy(node.state['messages'][target])
+            if hasattr(bft, 'commit_carriage_frames'):
+                keys=tuple(mesh.Ed25519PrivateKey.from_private_bytes(bytes([n])*32).public_key().public_bytes(
+                    mesh.Encoding.Raw,mesh.PublicFormat.Raw).hex() for n in range(4,8))
+                frames = bft.commit_carriage_frames(messages, context, keys, NETWORK, context['region'])
+                self.assertEqual(frames, (evidence.inspect_frame(raw)[0]['message_id'],))
+                for field,value in (('currency','b'*64),('region','8'*64),('parent_height',14),
+                                    ('parent_block','6'*64),('parent_state','7'*64),('epoch',1),('previous','1'*64)):
+                    altered=dict(context,**{field:value})
+                    self.assertEqual(bft.commit_carriage_frames(messages,altered,keys,NETWORK,context['region']),())
+                for field,value in (('phase','Prepare'),('signature','0'*128),('key','f'*64)):
+                    changed=copy.deepcopy(envelope)
+                    vote=changed['body']['Signed']['Vote']
+                    (vote if field=='phase' else vote['approval'])[field]=value
+                    invalid=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                    self.assertEqual(bft.commit_carriage_frames(invalid,context,keys,NETWORK,context['region']),())
+                changed=copy.deepcopy(envelope);changed['evidence']['snapshots']=[{'ground_only':'different complete proof'}]
+                changed_messages=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                self.assertNotEqual(bft.commit_carriage_frames(changed_messages,context,keys,NETWORK,context['region']),frames)
+                hint_key=node.set_carriage_priority(mesh.digest(context),frames)
+                durable=node.path.read_bytes();state=copy.deepcopy(node.state)
+                node.state['messages'][target]['packet']['signature']='0'*128
+                with self.assertRaises(ValueError):node.prepare_exchange(peer)
+                self.assertEqual(node.path.read_bytes(),durable);node.state=copy.deepcopy(state)
+                with patch.object(mesh,'atomic',side_effect=OSError('Commit spare publication')):
+                    with self.assertRaises(OSError):node.prepare_exchange(peer)
+                self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),durable)
+                mesh.forget_carriage_position(hint_key)
+                fallback=node.exchange(peer)
+                self.assertNotIn(target,[mesh.digest(t['packet']) for t in fallback['body']['transits']])
+                node.set_carriage_priority(mesh.digest(context),frames)
+            bundle = node.prepare_exchange(peer)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], tuple(admitted[:2]))
+            self.assertEqual(len(ids), 4)
+            self.assertTrue(set(ids[2:]) & set(node.state['recent_transits']))
+            self.assertEqual(node.state['messages'][target], original)
+            self.assertFalse(node.receipts())
+            self.assertIn(target, ids[2:], 'current signed Commit waited behind newer non-Commit arrivals')
+            positions={k:copy.deepcopy(node.state[k]) for k in ('first_carriage','recent_transit_cursors',
+                       'history_transit_cursors','transit_class_steps')}
+            replay=node.prepare_exchange(peer,retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']),ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            self.assertEqual(node.state['messages'][target],original)
+        with self.f.node('earth') as node:
+            self.assertIn(target,node.state['first_carriage'][peer]['prepared'])
+            self.assertEqual(node.state['messages'][target],original)
+            self.assertFalse(node.receipts())
+
+    def test_native_context_commit_hint_reaches_destination_via_ordinary_ticks(self):
+        # Inner signature and transport signatures are real fixture signatures;
+        # the empty Native proof deliberately grants no ledger qualification.
+        import regional_bft_node as bft
+        from regional_bft_retention import Messages
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        key = mesh.Ed25519PrivateKey.from_private_bytes(bytes([4]) * 32)
+        public = key.public_key().public_bytes(mesh.Encoding.Raw, mesh.PublicFormat.Raw).hex()
+        context = dict(currency=NETWORK, region='9' * 64, epoch=0, previous='0' * 64,
+                       parent_height=13, parent_block='2' * 64, parent_state='3' * 64)
+        signed = b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0' + json.dumps(
+            [context, 0, '5' * 64, 'Commit', public], separators=(',', ':'), ensure_ascii=False).encode()
+        signature = key.sign(signed).hex()
+        key.public_key().verify(bytes.fromhex(signature), signed)
+        envelope = dict(format=bft.NETWORK, currency=NETWORK, region=context['region'],
+                        evidence=dict(snapshots=[]), body=dict(Signed=dict(Vote=dict(
+                            context=context, round=0, value='5' * 64, phase='Commit',
+                            approval=dict(key=public, signature=signature)))))
+        messages = Messages().append(mesh.digest(envelope['body']), envelope, None, True)
+        payload = evidence.canonical(envelope)
+        raw = evidence.make_frame('regional-bft', context['region'], context['region'],
+                                  evidence.hashlib.sha256(payload).hexdigest(), payload)
+        with self.f.node('earth') as node:
+            baseline = [node.enqueue(self.f.frame(), destination) for _ in range(17)]
+            for _ in range(9):
+                node.prepare_exchange(peer)
+                if set(baseline) <= set(node.state['first_carriage'][peer]['prepared']):break
+            self.assertTrue(set(baseline) <= set(node.state['first_carriage'][peer]['prepared']))
+            admitted = [node.enqueue(raw if i == 2 else self.f.frame(), destination) for i in range(32)]
+            target = admitted[2]
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            for _ in range(22):node.enqueue(self.f.frame(), destination)
+            self.assertNotIn(target, node.state['recent_transits'])
+            node.state['transit_class_steps'][peer] = 0
+            node.save()
+            original = copy.deepcopy(node.state['messages'][target])
+            if hasattr(bft, 'commit_carriage_frames'):
+                keys=tuple(mesh.Ed25519PrivateKey.from_private_bytes(bytes([n])*32).public_key().public_bytes(
+                    mesh.Encoding.Raw,mesh.PublicFormat.Raw).hex() for n in range(4,8))
+                frames = bft.commit_carriage_frames(messages, context, keys, NETWORK, context['region'])
+                self.assertEqual(frames, (evidence.inspect_frame(raw)[0]['message_id'],))
+                for field,value in (('currency','b'*64),('region','8'*64),('parent_height',14),
+                                    ('parent_block','6'*64),('parent_state','7'*64),('epoch',1),('previous','1'*64)):
+                    altered=dict(context,**{field:value})
+                    self.assertEqual(bft.commit_carriage_frames(messages,altered,keys,NETWORK,context['region']),())
+                for field,value in (('phase','Prepare'),('signature','0'*128),('key','f'*64)):
+                    changed=copy.deepcopy(envelope)
+                    vote=changed['body']['Signed']['Vote']
+                    (vote if field=='phase' else vote['approval'])[field]=value
+                    invalid=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                    self.assertEqual(bft.commit_carriage_frames(invalid,context,keys,NETWORK,context['region']),())
+                changed=copy.deepcopy(envelope);changed['evidence']['snapshots']=[{'ground_only':'different complete proof'}]
+                changed_messages=Messages().append(mesh.digest(changed['body']),changed,None,True)
+                self.assertNotEqual(bft.commit_carriage_frames(changed_messages,context,keys,NETWORK,context['region']),frames)
+                hint_key=node.set_carriage_priority(mesh.digest(context),frames)
+                durable=node.path.read_bytes();state=copy.deepcopy(node.state)
+                node.state['messages'][target]['packet']['signature']='0'*128
+                with self.assertRaises(ValueError):node.prepare_exchange(peer)
+                self.assertEqual(node.path.read_bytes(),durable);node.state=copy.deepcopy(state)
+                with patch.object(mesh,'atomic',side_effect=OSError('Commit spare publication')):
+                    with self.assertRaises(OSError):node.prepare_exchange(peer)
+                self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),durable)
+                mesh.forget_carriage_position(hint_key)
+                fallback=node.exchange(peer)
+                self.assertNotIn(target,[mesh.digest(t['packet']) for t in fallback['body']['transits']])
+                # Exercise actual Runtime observation/broadcast plumbing with an
+                # explicitly modelled Native admission, not a Native constructor.
+                from types import SimpleNamespace
+                from contextlib import nullcontext
+                runtime=object.__new__(bft.Runtime)
+                runtime.format=bft.FORMAT;runtime.region=context['region'];runtime.node_id=node.id
+                runtime.native=SimpleNamespace(authority=NETWORK,currency=NETWORK,ledger=self.f.root/'model-ledger')
+                runtime.transport=node.config if hasattr(node,'config') else self.f.configs['earth']
+                runtime.binding=dict(currency=NETWORK,region=context['region'],key=public)
+                destinations=(node.id,peer,destination,'f'*64)
+                runtime.peers=dict(zip(keys,destinations));runtime.joint=None
+                runtime.state=dict(messages=messages,height=13,tip=context['parent_block'],cursor=0)
+                runtime._retained_native_authenticated=True;runtime._broadcast_quiet=None
+                runtime.extra_locks=[];runtime.lock=runtime.head_lock=None
+                runtime.save=lambda state:setattr(runtime,'state',state)
+                runtime.carriage_node=lambda:nullcontext(node)
+                runtime._observe_context(context)
+                runtime.broadcast()
+                hint_key=runtime._carriage_priority_key
+                self.assertEqual(mesh.carriage_position(hint_key)[1],frames)
+                with patch.object(node,'set_carriage_priority',side_effect=AssertionError('quiet broadcast changed hint')):
+                    runtime.broadcast()
+                with self.assertRaisesRegex(ValueError,'rolled back'):
+                    runtime._observe_context(dict(context,parent_block='6'*64))
+                self.assertEqual(mesh.carriage_position(hint_key)[1],frames)
+                runtime._observe_context(dict(context,parent_height=14,parent_block='6'*64))
+                self.assertIsNone(mesh.carriage_position(hint_key))
+                runtime.broadcast()
+                self.assertEqual(mesh.carriage_position(runtime._carriage_priority_key)[1],())
+                # Restore the model's fresh current context, never a ledger or
+                # Native rollback. The separately created Runtime stub has no funds.
+                runtime.close()
+                node.set_carriage_priority(mesh.digest(context),frames)
+            self.assertFalse(node.tick()['errors'])
+            outgoing=list((self.f.root/'links/earth-proxima').glob('*.json'))
+            self.assertEqual(len(outgoing),1)
+            bundle=mesh.load(outgoing[0],mesh.MAX_BATCH)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], tuple(admitted[:2]))
+            self.assertEqual(len(ids), 4)
+            self.assertTrue(set(ids[2:]) & set(node.state['recent_transits']))
+            self.assertEqual(node.state['messages'][target], original)
+            self.assertFalse(node.receipts())
+            self.assertIn(target, ids[2:], 'current signed Commit waited behind newer non-Commit arrivals')
+            positions={k:copy.deepcopy(node.state[k]) for k in ('first_carriage','recent_transit_cursors',
+                       'history_transit_cursors','transit_class_steps')}
+            replay=node.prepare_exchange(peer,retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']),ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            self.assertEqual(node.state['messages'][target],original)
+        carried=next(t for t in bundle['body']['transits'] if mesh.digest(t['packet'])==target)
+        self.assertEqual(carried['packet'],original['packet']);self.assertEqual(carried['routing'],original['routing'])
+        # Sorted contact order reads Earth's inbox after the Andromeda branch.
+        # Two ordinary relay ticks are the exact finite bound for this route.
+        for _ in range(2):
+            with self.f.node('proxima') as node:self.assertFalse(node.tick()['errors'])
+        with self.f.node('andromeda') as node:self.assertFalse(node.tick()['errors'])
+        with mesh._verified_transits_lock:mesh._verified_transits.clear()
+        with self.f.node('andromeda') as node:
+            transit=node.state['messages'][target];receipt=node.receipts()[target]
+            mesh.transit_check(transit,NETWORK,destination,peer)
+            self.assertEqual(mesh.packet_check(transit['packet'],NETWORK)[1],raw)
+            mesh.receipt_matches(receipt,transit);self.assertEqual(mesh.receipt_check(receipt,NETWORK),target)
+            self.assertEqual(transit['packet'],original['packet']);self.assertEqual(transit['routing'],original['routing'])
+            self.assertEqual(len(transit['hops']),2)
+            self.assertEqual(receipt['body']['outcome'],'EVIDENCE_STORED_NOT_LEDGER_ACCEPTED')
+        with self.f.node('earth') as node:
+            self.assertIn(target,node.state['first_carriage'][peer]['prepared'])
+            self.assertEqual(node.state['messages'][target],original)
+            self.assertFalse(node.receipts())
+
+    def test_commit_hint_capacity_eviction_and_contact_scope_fall_back(self):
+        import regional_bft_node as bft
+        from regional_bft_retention import Messages
+        context=dict(currency=NETWORK,region='9'*64,epoch=0,previous='0'*64,
+                     parent_height=13,parent_block='2'*64,parent_state='3'*64)
+        keys=tuple(mesh.Ed25519PrivateKey.from_private_bytes(bytes([n])*32).public_key().public_bytes(
+            mesh.Encoding.Raw,mesh.PublicFormat.Raw).hex() for n in range(4,8))
+        key=mesh.Ed25519PrivateKey.from_private_bytes(bytes([4])*32)
+        data=b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0'+json.dumps(
+            [context,0,'5'*64,'Commit',keys[0]],separators=(',',':'),ensure_ascii=False).encode()
+        envelope=dict(format=bft.NETWORK,currency=NETWORK,region=context['region'],evidence=dict(snapshots=[]),
+                      body=dict(Signed=dict(Vote=dict(context=context,round=0,value='5'*64,phase='Commit',
+                      approval=dict(key=keys[0],signature=key.sign(data).hex())))))
+        messages=Messages().append(mesh.digest(envelope['body']),envelope,None,True)
+        with patch.object(bft,'MAX_BROADCAST_HINT_BYTES',1):
+            self.assertEqual(bft.commit_carriage_frames(messages,context,keys,NETWORK,context['region']),())
+        self.f.rounds()
+        with self.f.node('earth') as node:
+            raw=node.path.read_bytes();state=copy.deepcopy(node.state)
+            for scope,ids in (('bad',()),(NETWORK,['1'*64]),(NETWORK,('1'*64,'1'*64)),
+                              (NETWORK,tuple(format(i,'064x') for i in range(513)))):
+                with self.assertRaises(ValueError):node.set_carriage_priority(scope,ids)
+                self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),raw)
+            key=node.set_carriage_priority(NETWORK,('1'*64,))
+            with self.f.node('andromeda') as other:
+                self.assertNotEqual(node.carriage_position_domain(),other.carriage_position_domain())
+                self.assertIsNone(mesh.carriage_position((other.carriage_position_domain(),'native-commit-spare')))
+            with patch.object(mesh,'MAX_HOPS',mesh.MAX_HOPS-1):
+                self.assertIsNone(mesh.carriage_position((node.carriage_position_domain(),'native-commit-spare')))
+            for i in range(mesh.MAX_CARRIAGE_POSITIONS+1):
+                mesh.remember_carriage_position(('primitive-test',i),format(i,'064x'))
+            self.assertIsNone(mesh.carriage_position(key))
+            self.assertLessEqual(len(mesh._carriage_positions),mesh.MAX_CARRIAGE_POSITIONS)
+            self.assertLessEqual(mesh._carriage_position_bytes,mesh.MAX_CARRIAGE_POSITION_BYTES)
+            self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),raw)
+
     def test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open(self):
         self._arrival_before_recent_eviction(False)
 
