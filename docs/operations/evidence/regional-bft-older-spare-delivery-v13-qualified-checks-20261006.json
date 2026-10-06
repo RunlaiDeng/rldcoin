@@ -1,0 +1,40 @@
+{
+  "actual_executed_checks_sha256": "9ab3b62c89acd353bdab40aa99fac0212651e1e0ffd294fa424bda70e84c213d",
+  "combined_stage_seconds": 18.955339,
+  "completed": true,
+  "failure": null,
+  "full_fault_qualified": false,
+  "helper_exit_code": 0,
+  "helper_sha256": "f33f3c62f6711e983f53c856a5c94d386b8c4308afbde60465d2d728a5654928",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "original_budget_seconds": 60,
+  "pin_error": [],
+  "result": {
+    "actual_Native_Runtime_TLS_calls": 0,
+    "completed": true,
+    "current_profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V13",
+    "error_tests": [],
+    "failed_tests": [],
+    "fresh_ground_only": true,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "old_failed_fixture_reopens": 0,
+    "ordinary_delivery": {
+      "Native_Proposal_inner_signature_or_ledger_maturity_qualified": false,
+      "complete_hop_and_destination_receipt_authenticated": true,
+      "destination_cold_open_with_transit_witnesses_cleared": true,
+      "destination_ordinary_tick_count": 1,
+      "destination_original_frame_export_sha256": "509c404666304cd5130a7df88101e14347127ff396e456ab129a9a40b2f6c875",
+      "ground_source2_destination1_role_analogue": true,
+      "ordinary_source_tick_count": 1,
+      "original_failed_Native_Proposal_copied_or_signed": false,
+      "original_frame_sha256": "509c404666304cd5130a7df88101e14347127ff396e456ab129a9a40b2f6c875",
+      "source_signed_packet_routing_bytes_exact": true
+    },
+    "original_pending_pair_full4_auth_atomic_floor_cold_checked_on_this_same_target": true,
+    "tests_run": 1
+  },
+  "stage_sha256": "958fc718ede0cf5b01b1f339ebe3c114fd44e185e4ccfb4834de20209c4560bf",
+  "whole_goal_completed": false
+}

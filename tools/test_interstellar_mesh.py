@@ -389,6 +389,129 @@ class MeshTests(unittest.TestCase):
             self.assertIn(target, node.state['first_carriage'][peer]['prepared'])
             self.assertFalse(node.receipts())
 
+    def test_older_unserved_gets_alternate_priority_pair_without_displacing_offers(self):
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            baseline = [node.enqueue(self.f.frame(), destination) for _ in range(17)]
+            for _ in range(9):
+                node.prepare_exchange(peer)
+                if set(baseline) <= set(node.state['first_carriage'][peer]['prepared']):
+                    break
+            self.assertTrue(set(baseline) <= set(node.state['first_carriage'][peer]['prepared']))
+            admitted = [node.enqueue(self.f.frame(), destination) for _ in range(32)]
+            target = admitted[2]
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            self.assertEqual(node.state['first_carriage'][peer]['pending'], admitted)
+            for _ in range(22):
+                node.enqueue(self.f.frame(), destination)
+            self.assertNotIn(target, node.state['recent_transits'])
+            node.state['transit_class_steps'][peer] = 4
+            node.save()
+            original = copy.deepcopy(node.state['messages'])
+            state = copy.deepcopy(node.state)
+            durable = node.path.read_bytes()
+            node.state['messages'][target]['packet']['signature'] = '0' * 128
+            with self.assertRaises(ValueError):
+                node.prepare_exchange(peer)
+            self.assertEqual(node.path.read_bytes(), durable)
+            node.state = copy.deepcopy(state)
+            with patch.object(mesh, 'atomic', side_effect=OSError('older priority publication')):
+                with self.assertRaises(OSError):
+                    node.prepare_exchange(peer)
+            self.assertEqual(node.state, state)
+            self.assertEqual(node.path.read_bytes(), durable)
+            bundle = node.prepare_exchange(peer)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], tuple(admitted[:2]))
+            self.assertEqual(len(ids), 4)
+            self.assertIn(target, ids[2:], 'older unserved arrival lost alternate spare-class service')
+            self.assertTrue(set(ids[2:]) & set(node.state['recent_transits']))
+            self.assertEqual(node.state['messages'], original)
+            self.assertFalse(node.receipts())
+            positions = {k: copy.deepcopy(node.state[k]) for k in
+                         ('first_carriage', 'recent_transit_cursors',
+                          'history_transit_cursors', 'transit_class_steps')}
+            replay = node.prepare_exchange(peer, retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']), ids)
+            self.assertEqual({k: node.state[k] for k in positions}, positions)
+            self.assertIn(target, node.state['first_carriage'][peer]['prepared'])
+            node.validate_state()
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['messages'], original)
+            self.assertIn(target, node.state['first_carriage'][peer]['prepared'])
+            self.assertFalse(node.receipts())
+
+    def test_older_spare_priority_reaches_destination_via_ordinary_ticks(self):
+        self.f.rounds()
+        destination = self.f.identities['proxima']['node_id']
+        with self.f.node('earth') as node:
+            baseline = [node.enqueue(self.f.frame(), destination) for _ in range(17)]
+            for _ in range(9):
+                node.prepare_exchange(destination)
+                if set(baseline) <= set(node.state['first_carriage'][destination]['prepared']):
+                    break
+            self.assertTrue(set(baseline) <= set(node.state['first_carriage'][destination]['prepared']))
+            admitted = [node.enqueue(self.f.frame(), destination) for _ in range(32)]
+            target = admitted[2]
+            node.state['first_carriage'][destination] = node.first_carriage_plan(destination)
+            for _ in range(22):
+                node.enqueue(self.f.frame(), destination)
+            node.state['transit_class_steps'][destination] = 4
+            node.save()
+            original = copy.deepcopy(node.state['messages'][target])
+            state = copy.deepcopy(node.state)
+            durable = node.path.read_bytes()
+            node.state['messages'][target]['packet']['signature'] = '0' * 128
+            with self.assertRaises(ValueError):
+                node.prepare_exchange(destination)
+            self.assertEqual(node.path.read_bytes(), durable)
+            node.state = copy.deepcopy(state)
+            with patch.object(mesh, 'atomic', side_effect=OSError('ordinary older arrival publication')):
+                with self.assertRaises(OSError):
+                    node.prepare_exchange(destination)
+            self.assertEqual(node.state, state)
+            self.assertEqual(node.path.read_bytes(), durable)
+            result = node.tick()
+            self.assertFalse(result['errors'])
+            self.assertIn(target, node.state['first_carriage'][destination]['prepared'])
+            self.assertEqual(node.state['messages'][target], original)
+            self.assertFalse(node.receipts())
+        outgoing = list((self.f.root / 'links/earth-proxima').glob('*.json'))
+        self.assertEqual(len(outgoing), 1)
+        bundle = mesh.load(outgoing[0], mesh.MAX_BATCH)
+        transits = bundle['body']['transits']
+        ids = [mesh.digest(t['packet']) for t in transits]
+        self.assertEqual(ids[:2], admitted[:2])
+        self.assertIn(target, ids[2:])
+        with self.f.node('earth') as node:
+            self.assertTrue(set(ids[2:]) & set(node.state['recent_transits']))
+            positions = {k: copy.deepcopy(node.state[k]) for k in
+                         ('first_carriage', 'recent_transit_cursors',
+                          'history_transit_cursors', 'transit_class_steps')}
+            replay = node.prepare_exchange(destination, retry_packet_ids=tuple(ids))
+            self.assertEqual([mesh.digest(t['packet']) for t in replay['body']['transits']], ids)
+            self.assertEqual({k: node.state[k] for k in positions}, positions)
+            self.assertEqual(node.state['messages'][target], original)
+            self.assertFalse(node.receipts())
+        carried = next(t for t in transits if mesh.digest(t['packet']) == target)
+        self.assertEqual(carried['packet'], original['packet'])
+        self.assertEqual(carried['routing'], original['routing'])
+        with self.f.node('proxima') as node:
+            self.assertFalse(node.tick()['errors'])
+            self.assertIn(target, node.receipts())
+        with mesh._verified_transits_lock:
+            mesh._verified_transits.clear()
+        with self.f.node('proxima') as node:
+            transit = node.state['messages'][target]
+            receipt = node.receipts()[target]
+            mesh.transit_check(transit, NETWORK, destination, self.f.identities['earth']['node_id'])
+            self.assertEqual(mesh.receipt_check(receipt, NETWORK), target)
+            mesh.receipt_matches(receipt, transit)
+            self.assertEqual(transit, carried)
+            self.assertEqual(receipt['body']['outcome'], 'EVIDENCE_STORED_NOT_LEDGER_ACCEPTED')
+
     def test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open(self):
         self._arrival_before_recent_eviction(False)
 

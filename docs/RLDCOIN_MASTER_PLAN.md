@@ -1,5 +1,18 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 V13旧未服务备用槽修复与必要V22原生验收
+
+用户要求持续开发，不在局部测试后停止。原V21/180及runtime-v4/600仍FAIL，旧named source60终态59.845831秒不重置。第83次运输的只读10秒判别0.045307秒：目的端完整请求已认证，随后BlockingIOError拒绝，未进入deferred槽；缺少完整回复字节，不能称回复密码学失败或唯一OS原因。该诊断的queue原因读取键不完整，故原因值保持unknown；不以它优化锁或容量。
+
+必要真实签名反例V12 **FAIL0.500338秒/14文件**：oldest未服务项错过step4备用槽；原pending前2、签名负例和atomic失败检查先通过。最小修复V13仅在现有priority pairs内交替最新/最旧未服务arrival顺序、更新不兼容fixture profile；另一组对原序、每近期/历史类槽、first2/full4/auth/bytes/atomic原样。**16相关PASS3.780010秒/226文件**，包含原17-gap/latest/promotion/另一类floor/完整重放/冷读/schema/capacity；旧test AST不改。
+
+真实普通送达builder先FAIL（无fixture，保守扣0.1）；V1冷读入口FAIL0.638919秒/14文件（遗漏sender参数，非协议拒绝）。仅修正该调用后V2 **PASS0.633411秒/14文件**；随后为原Native gate在同一新目标纳入auth/atomic/full4/floor，改测试V3 **PASS0.631364秒/14文件**。各一次source/destination ordinary tick、原packet/routing/frame、完整hop/目的签名receipt及清缓存冷读均通过；不是旧Native Commit的重签或成熟资格。原ground60累计**18.955339秒**，所有旧FAIL保持。
+
+独立60秒source-only **PASS0.218242秒**：192Python新commitment a5d60aba…，只mesh/test变化；Native89/Core171/实际CLIbef4d5c7…未变。453源contract、原17项Rust argv四slot、V9→V10 entry/V21→V22 helper/controller/guard全AST反转、旧V9拒绝及未分配guard拒绝/实际送达guard正向通过。新private root未存在，原180/600/60round/24height/maturity2/quorum3/0.2锁/first2/full4/所有容量及17setup/13import/15mature/all8冷验/守恒/正常停止不变；审阅源码副本仅来源，不包含钥/保管/ledger/binary。
+
+沿既有授权已分配一次全新V22原180组件，目标是在上述最小来源修复后达成熟15并完成全部8份原生冷验及守恒；首护栏失败或原deadline封存停止，不追加同参或延长，不以高度或进程停止代替PASS。此段创建时尚未启动；随后终态另记。无新600、主网/资金/账户权限/外联/服务器/清理/push/白皮书官网操作。验收目标及冻结正文PDF保持。
+[当前来源及原生范围决定](operations/evidence/regional-bft-four-cli-older-spare-v22-decision-allocated-20261006.json)。
+
 ## 2026-10-06 同一Commit的队列推进反例与重试边界
 
 V12实际优先分支的无签名模型，独立10秒/一次，**PASS0.034397秒/16分支**。此前34次completed准备不能等同34次新项服务：17次是full4重试、无first plan，17次为普通准备；其中目标入pending后的8次普通准备确实携带17个前方项，目标从pending29推进到12，仍未prepared。有限前缀不支持“队列完全不推进”的归因；newest优先没有立即选取该旧项，也不能单独证明永久饥饿或唯一CPU/OS原因。

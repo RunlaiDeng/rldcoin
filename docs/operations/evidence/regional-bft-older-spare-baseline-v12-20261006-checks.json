@@ -1,0 +1,28 @@
+{
+  "completed": false,
+  "budget_seconds": 10,
+  "attempts": 1,
+  "duration_seconds": 0.500338,
+  "helper_exit_code": 1,
+  "helper_pid": 41089,
+  "helper_stopped": true,
+  "failure": null,
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "b450bab4f1b5e666cb94e7473a4477fbf8b0abc8a2b1dc6b6aaa7d50b1763371",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "f6ebffcf484d5b232e57c5f32e419e3b1b1b6e46687148c99fddffaa61d9a906",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-older-spare-baseline-v12-20261006.py": "03b816d5dfecd4c897c906d54d2e8fe0f5fa30b378f522a4bd0a03957eb4e247",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-older-spare-baseline-v12-20261006.py": "c4edf3e18eec82467b54147d45a922ee606bd91b5557a7af85edbd9e75695f89",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "pin_error": [],
+  "log": "test_older_unserved_gets_alternate_priority_pair_without_displacing_offers (__main__.Retained.test_older_unserved_gets_alternate_priority_pair_without_displacing_offers) ... FAIL\n\n======================================================================\nFAIL: test_older_unserved_gets_alternate_priority_pair_without_displacing_offers (__main__.Retained.test_older_unserved_gets_alternate_priority_pair_without_displacing_offers)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py\", line 429, in test_older_unserved_gets_alternate_priority_pair_without_displacing_offers\n    self.assertIn(target, ids[2:], 'older unserved arrival lost alternate spare-class service')\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'b2a806a23993a555ea2a6c65afa4101f485f61a7126b6b2e8de9be838c72eb27' not found in ('19b98111d208a5982d6d2e6abf0963dddf15cab485582af58e9f92cdae8868da', 'f65ea095c9ed9aceac1059f4fe73c4714b7cce9b09b6437635722288bcc67737') : older unserved arrival lost alternate spare-class service\n\n----------------------------------------------------------------------\nRan 1 test in 0.349s\n\nFAILED (failures=1)\n",
+  "log_sha256": "f589646181d61b38790c2f789c969f3d7658ffc0c8955b0eabf1f7b841513cfa",
+  "seal_sha256": "0f9b470a4f3ef1c38afe2d1b3bfe64099319c5ae73a607019cda75d8d569d2a7",
+  "retained_files": 14,
+  "combined_original_ground60_seconds": 13.171635,
+  "old_failed_fixtures_opened": false,
+  "Native_Runtime_socket_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false
+}

@@ -1,0 +1,34 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 13.171635,
+  "tests": [
+    "test_older_unserved_gets_alternate_priority_pair_without_displacing_offers",
+    "test_older_pending_advances_under_new_arrivals_and_full_replay",
+    "test_promoted_latest_waiter_keeps_priority_until_prepared",
+    "test_latest_waiting_arrival_gets_spare_slot_without_displacing_pending_pair",
+    "test_new_arrival_uses_ordinary_class_slot_with_full_waiting_queue",
+    "test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open",
+    "test_arrival_waiting_survives_full_admission_queue_and_cold_open",
+    "test_arrival_metadata_schema_and_original_capacity_refuse_without_write",
+    "test_first_offer_queue_is_scoped_to_actual_outgoing_branch",
+    "test_ineligible_waiting_metadata_changes_only_after_atomic_preparation",
+    "test_first_offer_survives_recent_eviction_and_cold_positions",
+    "test_first_offer_authentication_and_failed_atomic_do_not_publish_metadata",
+    "test_first_offer_metadata_schema_and_original_capacities_refuse",
+    "test_retry_preserves_ordinary_positions_and_retains_original_packets",
+    "test_retry_still_authenticates_and_obeys_suppression",
+    "test_receipt_only_archive_then_original_transit_retains_arrival_order_on_cold_open"
+  ],
+  "production_reversal_AST_equal": true,
+  "old_tests_AST_unchanged": true,
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "a8b508645fa1b3179089279227311fc51c480f35b482f70199f09b1ca079b1cc",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "f6ebffcf484d5b232e57c5f32e419e3b1b1b6e46687148c99fddffaa61d9a906",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-older-spare-related-v13-20261006.py": "4263071ab4838e41008e4590de9834b0f203f85eb755ebc809d4c247272ba8c5",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-older-spare-related-v13-20261006.py": "c06c94952a0054209e6583d254cd239479edc8e8290d2708d6b8e8047b8a1669",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/interstellar_mesh-v12-older-spare-baseline-source-20261006.py": "b450bab4f1b5e666cb94e7473a4477fbf8b0abc8a2b1dc6b6aaa7d50b1763371",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "exit": "first guard failure or10 second deadline, retain root and failure, no additional same-source attempt, no old fixture constructors or Native/runtime/socket."
+}

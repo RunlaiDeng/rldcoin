@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "failure": "Controller derivative builder required a literal12.671297 absent in original controller; failed before output helper/controller or fixture allocation.",
+  "conservative_ground60_seconds_charged": 0.1,
+  "combined_original_ground60_seconds": 17.051645,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0
+}
