@@ -1,0 +1,17 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 44.507552,
+  "tests": [
+    "test_prepared_import_parent_proposal_keeps_spare_after_native_current_hint"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "3b44a0e64d0b88bfddffac93c8520fdbeb7fac4a9aa6cab3da2de1c60aa172c4",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "70cfd1733e05e92e5c5fc75fb8fbaea572e562bef5529b5cc5f4b0137eeb95b9",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "22acb2439ee00925313a5f06838d83d701cce8210427d30307ca3d0382ee9d2e",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-import-parent-baseline-v17-20261006.py": "ef373b8e06a6a48100f6ba4a5d9083befa4a1ded1f92fa60fa41f73da667d10f",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-current-import-parent-ground-20261006.py": "83909ffb43ee05ecb7aa8a6aa5b6ccc240b0ac443d4bd21aa13341066271af2b"
+  },
+  "exit": "first guard failure or original10 deadline; retain failure; no duplicate same-source attempt; no old fixture constructors; no Native/runtime/socket calls"
+}

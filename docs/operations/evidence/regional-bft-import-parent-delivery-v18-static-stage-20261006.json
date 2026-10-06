@@ -1,0 +1,29 @@
+{
+  "Node_Native_Runtime_constructors_socket_key_sign_fixture_calls": 0,
+  "actual_function_global_providers": [
+    "AssertionError",
+    "NETWORK",
+    "OSError",
+    "ValueError",
+    "bytes",
+    "copy",
+    "dict",
+    "evidence",
+    "hasattr",
+    "len",
+    "list",
+    "mesh",
+    "next",
+    "object",
+    "patch",
+    "range",
+    "set",
+    "setattr",
+    "signed_ground_import_parent_proposal",
+    "tuple",
+    "zip"
+  ],
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-import-parent-delivery-v18-20261006.py": "f2379597aca5a3f06ff3de0ede730ad60575ed3c6855bf564a9601991c486843"
+  }
+}

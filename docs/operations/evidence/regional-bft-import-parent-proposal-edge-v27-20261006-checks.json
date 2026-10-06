@@ -1,0 +1,57 @@
+{
+  "completed": true,
+  "exact_target": "5af4c1247989ba224b3b134d1c6a4dcb54693c47f7681072461f26f85e512f3d",
+  "source": 1,
+  "destination": 3,
+  "enqueued": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "new180": 0,
+  "new600": 0,
+  "packet_id": "eeec2266a05edf89cb702a758195b598b6245ebfb966da6f27bcb0abae5bde15",
+  "actual_first_hop": "714bd6743aa442af2c47a9da121fe6850013259368c77772c82642ac07d06fd0",
+  "prepared_count": 2,
+  "selected": [
+    {
+      "sequence": 11,
+      "position": 1,
+      "retries": 0
+    },
+    {
+      "sequence": 12,
+      "position": 1,
+      "retries": 4
+    }
+  ],
+  "first_wait_seconds": 1.7359923330368474,
+  "pending_or_arrival_records": 0,
+  "source_final_pending_position": null,
+  "source_final_prepared": true,
+  "contacts": [
+    {
+      "attempt": 5,
+      "request_sent": false,
+      "failures": [
+        {
+          "failure_stage": "connect",
+          "error_class": "SSLEOFError"
+        }
+      ]
+    },
+    {
+      "attempt": 6,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    }
+  ],
+  "opportunity_seconds_after_enqueue": 140.65286245802417,
+  "duration_seconds": 0.365236,
+  "combined_original20_seconds": 2.492657,
+  "stage_sha256": "f819c15ae1f94aebafc7a8aeec9e97ec6f4b56472425d03a5e93a47fb5097abc",
+  "consumed_bytes_unchanged": true,
+  "unique_maturity_failure_cause_proved": false
+}

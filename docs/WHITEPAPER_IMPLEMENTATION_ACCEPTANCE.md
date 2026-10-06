@@ -1,5 +1,22 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 V27终态FAIL，空候选块的Import父块提示V18
+
+V27实际 **FAIL 原180/206.690秒含正常收尾/1822文件封存**，四CLIexit0、owned stopped、无forced/guardian/cleanup/pin异常。参考13，成熟15/all8完整Nativecold/caller/owner/守恒未完成。全部旧600、180、反例失败保留；历史“全部通过”仅来自当时有限scope，不替代后续失败。旧Node/Native/Runtime/签名/账本/保管不重开、恢复、复签、退款或复制。
+
+原20只读判别累计 **2.492657秒**（包含0.8秒辅助Native phase/形状读者保守计费）：parent13 round0 Prepare0/1/2及Commit1/2向三目的均完整目的签名收据/准确companion；Proposal1向0/2完整，向3缺失。四Native引用context/value一致，各Vote配置key/真实签名核验；Native latestcold/成熟不获资格。当前0/1已timeout进入round1；source2已凭TC生成round1提案，未据此恢复旧轮次签名。准确source1→destination3 round0提案已入队，首次准备 **1.735992秒**，仅普通/full4两次尝试（connect SSLEOF、response_auth ValueError），140.652862秒机会内未再选取。不是首次源饥饿或唯一TLS/锁/成熟原因。
+
+该空候选块的父块含一条真实Native Import，故原V17“父子两块均空命令”提示不覆盖。原ground60真实签名V17反例 **FAIL0.573623/14封存**：完整prepare/full4后无目的收据的Import父块提案下一ordinary spare缺目标。V18仅让同一round0/current context/baseprevious/两块/空候选/空epochs-approvals/noTimeout结构的 **父块最多原16条Import(snapshot,export)** 获得typed Native序列化签名检查和完整帧提示。严格字段/hex ID、parent命令hash、Nativeblock域parenthash/state/height、childanchor/parent/statement、配置leader及完整Proposal域签名均绑定；其他命令、超限、复杂形状、timeout轮次回退普通排序，不复制Native接纳权。
+
+**22相关PASS5.860590/310文件**；同一已prepared Import父块提案一次ordinary source、两relay、一次destination **PASS0.686826/14文件**，完整原packet/routing/hops/目的签名receipt、清缓存冷读及原护栏、五个新typed Import/16容量负例通过。测试Native admission/work/proof仍明确模型；签名和地面送达不算Native成熟。原ground60累计 **51.628591秒**，全部失败保留、不重置。raw groundcontroller模型Runtime方法字段来自旧label判别，规范化证据明确实际模型方法true/constructor0。
+
+最终独立60 source绑定 **PASS1.351134秒**：Python192 **82d5f563e2bce0afeccde203562e8ec8567f7136a42ba812eea09a0e01f3903a**，Native89/Core171/实际ReleaseCLIbef4d5c7…不变。实际旧V27完整Import父块Proposal的Rust签名域和准确完整帧经新helper核验，仅free unpack/classifier，无旧构造/签名/运输/复活。整Runtime仅原helper的typed Import父块分支与hash/docstring变化，classifier及所有Native授权方法AST完全未改；mesh仅profileV18，所有旧test AST不改。453源contract、21实际global、实际入口0755 OS拒绝未分配、四原17argv、全部helper/controller/guard整AST引用字面量反转通过。
+
+持续原授权已分配必要全新V28 **一次原180**（本记录创建时尚未启动）：假设为完整Native核验的当前空候选/Import父块提案在原spare继续服务，弥补已准备后失败缺口；仍须原17setup13import15mature/all8完整Nativecold/caller/owner/守恒/normalstop。首guard或原deadline失败封存退出，不追加同参、不延长、不新增600。原600/60round/24height/maturity2/quorum3/锁/容量、冻结正文/PDF/receipt与全部S/R/I/A–G/N/P目标保持；VALUE-STRICT-01两基线clippy告警/120耗尽、完整600/all12/keyless与独立/物理/PQ/长期组合仍OPEN。唯一作者，显式新rldcoin workdir；persistent cwd、goal旧hash/blocked元数据界面待修不构成审批门。无主网/资金/官网/白皮书/服务器/账号/外联/清理/push。
+
+[实际V27终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v27-20261006-checks.json)；[准确提案发送边界](operations/evidence/regional-bft-import-parent-proposal-edge-v27-20261006-checks.json)；[同目标回归](operations/evidence/regional-bft-current-commit-import-parent-related-v18-20261006-checks.json)；[最终真实Native提案签名/来源](operations/evidence/regional-bft-import-parent-v18-v28-source-binding-20261006-checks.json)。
+
+
 ## 2026-10-06 V26仍FAIL，当前轮次空提案提示V17
 
 V26实际 **FAIL 原180/205.650秒含正常收尾/1858文件封存**，四CLIexit0、owned stopped，无forced/guardian/cleanup/pin异常。参考高度14不能替代成熟15/all8完整Native cold/caller/owner/守恒。全部原600、V19–V26与局部失败保持；历史“全部通过”仅指当时有限scope。旧失败Node/Native/Runtime/保管永不重开、恢复、复签、退款或复制。

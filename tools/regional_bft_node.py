@@ -35,9 +35,10 @@ MAX_BROADCAST_QUIET_CALLS = 16
 
 
 def current_empty_proposal_hint(proposal, context, keys):
-    """Scheduling only for a Native-checked round-zero empty two-block proposal.
+    """Scheduling only for a Native-checked empty candidate and bounded parent.
 
-    Complex commands, epochs, timeout rounds and other shapes use ordinary
+    Only parent Import commands (original maximum 16) have a typed encoding.
+    Other commands, epochs, timeout rounds and other shapes use ordinary
     carriage. This extra exact signature check supplies no Native acceptance.
     """
     if (type(proposal) is not dict or set(proposal)!={'round','snapshot','timeout','leader'}
@@ -53,13 +54,23 @@ def current_empty_proposal_hint(proposal, context, keys):
     header_fields=('currency','region','parent','anchor','height','miner','commands','state','nonce')
     statement_fields=('currency','region','height','block','state','previous','epoch')
     headers=[];blocks=[]
-    for block in snapshot['blocks']:
-        if (type(block) is not dict or set(block)!={'header','commands'} or block['commands']!=[]
+    for index,block in enumerate(snapshot['blocks']):
+        if (type(block) is not dict or set(block)!={'header','commands'}
+                or type(block['commands']) is not list or len(block['commands'])>16
+                or index==1 and block['commands']!=[]
                 or type(block['header']) is not dict or set(block['header'])!=set(header_fields)):return False
-        h={k:block['header'][k] for k in header_fields};headers.append(h);blocks.append(dict(header=h,commands=[]))
+        commands=[]
+        for command in block['commands']:
+            if (type(command) is not dict or set(command)!={'Import'}
+                    or type(command['Import']) is not dict or set(command['Import'])!={'snapshot','export'}):return False
+            imp=command['Import'];mesh.hex32(imp['snapshot']);mesh.hex32(imp['export'])
+            commands.append({'Import':{'snapshot':imp['snapshot'],'export':imp['export']}})
+        h={k:block['header'][k] for k in header_fields};headers.append(h);blocks.append(dict(header=h,commands=commands))
     encode=lambda value:wire.json.dumps(value,separators=(',',':'),ensure_ascii=False).encode()
     block_hash=lambda h:hashlib.sha256(b'RLD-REGIONAL-FIXTURE-V1:block\0'+encode(h)).hexdigest()
     parent,child=headers;statement=snapshot['statement']
+    if (blocks[0]['commands'] and parent['commands']!=hashlib.sha256(
+            b'RLD-REGIONAL-FIXTURE-V1:commands\0'+encode(blocks[0]['commands'])).hexdigest()):return False
     if (type(statement) is not dict or set(statement)!=set(statement_fields)
             or parent['height']!=context['parent_height'] or parent['state']!=context['parent_state']
             or block_hash(parent)!=context['parent_block']
