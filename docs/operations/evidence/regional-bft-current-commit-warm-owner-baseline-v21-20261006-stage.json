@@ -1,0 +1,18 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 58.477637,
+  "tests": [
+    "test_warm_state_owner_check_avoids_unused_decode_but_cold_misses_fully_authenticate"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "0153ebb06b20a71458997d37e15b16791e8c3874fbb7b2cb0d9c3cf9f7a2641b",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_frame_digest.py": "9b2f75063c3fc5dd2b44645fb3e9e859ba0d84a8055fe093ad1a69c171570a71",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "db1ee26a9e2c19682bb27c6b341defb1367068c94ff8c1d0e5be233dbc63b671",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "e0bf1275b99cf19d893c148be7cf7e9aebdd82728d57b019ededec22ee6b7576",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-warm-owner-baseline-v21-20261006.py": "29444802f8e5046757bb12f4624244931101ad56011bcdea1dc15107bc065343",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-warm-owner-ground-v22-20261006.py": "1171eb0810243eabad5c347aa58500029709f4d5dd012b83c5f49ed85ac2c65e"
+  },
+  "exit": "first guard failure or original10 deadline; retain failure; no duplicate same-source attempt; no old fixture constructors; no Native/runtime/socket calls"
+}

@@ -1,5 +1,21 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 V31终态FAIL；暖状态无用解码最小修复V22
+
+V31 **FAIL 原180秒/209.087秒含收尾/1727文件封存**；四CLI正常exit0，owned stopped，无forced/guardian/cleanup/pin异常。15成熟/all8完整Nativecold/每份信封/caller-owner heads/守恒未完成；旧全部失败保持，历史“全部通过”仅来自当时有限scope，不能替代后续FAIL或完整600/all12/keyless验收。
+
+原20只读诊断0.752657秒，仅借用纯ReadState方法读取一份封存Node1状态，没有Node/Native/Runtime构造、签名或运输。61个完整帧共17,948,652文本字节；全冷检查0.510604秒，暖检查0.064349秒，其中61次Base64解码0.026975秒约42%。这是该次暖调用成本实测，不能推断唯一成熟失败原因或全流程提速。
+
+新真实签名反例FAIL0.231051秒：暖Node.validate_state仍重复解码其丢弃的raw输出。生成器唯一匹配预检FAIL且生产源码未写；随后不慎继续的未变小反例FAIL0.228110秒一并保留，未重跑长测。原ground60另保守计入生成预检0.05秒。V22仅新增严格bool输出选项，Node.validate_state明确不索取raw；精确暖witness才省去解码，miss始终调用原完整_transit_check，默认API完整raw输出、namespace/bytes/原512 witness/路由签名/hop/冷验/容量/原子/Native权利均保持。
+
+同一修复反例、改变字节/联系域护栏、原压力普通两跳送达及目的完整签名receipt/清缓存cold合并 **3项PASS0.816452秒/33文件**，原ground60累计 **59.803250秒**不重置。原raw label的model_Runtime_methods_called=false属于旧label判别；规范化证据明确普通送达实际模型方法true、constructor0。地面source2→destination1仍角色类比，不能授予原Native Proposal/账本成熟资格。
+
+独立source60 **PASS2.518745秒**：Python192 **b9bec5b140205ca141c4acb2df09dac3d7181fcf8d93fd0cce856010a2b9af04**，仅mesh/test_mesh变化；完整Mesh AST仅输出选项/唯一丢弃输出caller/profile，_transit_check及全部旧test AST保持。Runtime/Native89/Core171/实际ReleaseCLI bef4d5c7…/档案编码不变；已有有效分类/128ASCII与6摘要/remote quiet反例复用。453来源、21名称、0755真实OS未分配拒绝、四原17argv及整entry-helper-controller-guard字面量反转通过。
+
+沿持续有效授权，必要全新V32 **原180秒/一次** 已分配（本记录创建时NOTSTARTED），判别此实测省时修复能否闭合原17setup/13import/15mature/all8完整Nativecold/每份信封/caller-owner heads/守恒/normalstop。首guard或原deadline即封存退出，无同参重复/加deadline/失败fixture重开/新增600。冻结正文2ba624…、PDFc59f9f…、receipt86821d…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、600stage/60round/24height/maturity2/quorum3/原锁-容量-owner请求不改。VALUE-STRICT-01两clippy基线告警/120耗尽、独立/物理/PQ/长历史与组合继续OPEN。唯一作者、所有命令显式新workdir；persistent cwd与goal前继引用/blocked元数据仍界面待修，不充当新增审批障碍。无主网/资金/白皮书/官网/外联/服务器/清理/push。
+
+[真实V31终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v31-20261006-checks.json)；[暖调用实测](operations/evidence/regional-bft-warm-state-frame-decode-v31-20261006-checks.json)；[当前反例与普通送达](operations/evidence/regional-bft-current-commit-warm-owner-related-delivery-v22-v2-20261006-checks.json)；[最终来源](operations/evidence/regional-bft-warm-owner-v22-v32-source-binding-20261006-checks.json)。
+
 ## 2026-10-06 V30终态FAIL，远端完整信封遗漏静默清单V21
 
 V30 **FAIL 原180/208.053秒含正常收尾/1713文件封存**；四CLI exit0，无forced/guardian/cleanup/pin异常，最后参考四高度14，未进入停止后的15成熟/all8完整cold/heads/守恒。不能用另一V29的162.582秒成熟局部观察替代本轮。所有旧FAIL/全部冻结目标保持。

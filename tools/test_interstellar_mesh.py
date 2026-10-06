@@ -2612,6 +2612,27 @@ class MeshTests(unittest.TestCase):
             self.assertNotIn(queued,node.state['archives'])
             self.assertEqual(set(node.state['archives']),set(ids))
 
+    def test_warm_state_owner_check_avoids_unused_decode_but_cold_misses_fully_authenticate(self):
+        with self.f.node('earth') as node:
+            ident=node.enqueue(self.f.frame(),self.f.identities['andromeda']['node_id'])
+            transit=copy.deepcopy(node.state['messages'][ident])
+            original=mesh.transit_check(transit,NETWORK);durable=node.path.read_bytes()
+            with patch.object(mesh.base64,'b64decode',side_effect=AssertionError('warm owner validation decoded unused frame')):
+                node.validate_state()
+            with mesh._verified_transits_lock:mesh._verified_transits.clear()
+            full=mesh._transit_check
+            with patch.object(mesh,'_transit_check',side_effect=full) as checked:
+                packet,raw,visited=mesh.transit_check(transit,NETWORK,include_frame=False)
+                self.assertEqual(checked.call_count,1)
+            self.assertEqual(packet,original[0]);self.assertIsNone(raw);self.assertEqual(visited,original[2])
+            self.assertEqual(mesh.transit_check(transit,NETWORK),original)
+            bad=copy.deepcopy(transit);bad['packet']['signature']='0'*128
+            with self.assertRaisesRegex(ValueError,'signature'):mesh.transit_check(bad,NETWORK,include_frame=False)
+            bad=copy.deepcopy(transit);body=dict(bad['packet']['body'],frame='invalid!')
+            bad['packet']=mesh.sign(node.key,'packet',body)
+            with self.assertRaises(ValueError):mesh.transit_check(bad,NETWORK,include_frame=False)
+            self.assertEqual(node.path.read_bytes(),durable)
+
     def test_exact_transit_witness_cannot_authorize_changed_bytes_or_contact(self):
         transit=self.authenticated_transits()[0]
         recipient=self.f.identities['proxima']['node_id']

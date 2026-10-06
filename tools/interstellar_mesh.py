@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V21'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V22'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -309,12 +309,13 @@ def _packet_frame_check(value, network):
     return body, raw, frame
 
 
-def transit_check(transit, network, recipient=None, sender=None):
+def transit_check(transit, network, recipient=None, sender=None, *, include_frame=True):
     """Reuse only a bounded witness for exact previously authenticated bytes.
 
     No frame, key, mutable result or unchecked state is cached. Ownership and
     archive limits are still checked by the caller; Native Rust verifies value.
     """
+    require(type(include_frame) is bool, 'invalid transit frame output choice')
     require(isinstance(transit,dict) and set(transit)=={'packet','routing','hops'}
             and isinstance(transit['packet'],dict) and isinstance(transit['routing'],dict)
             and isinstance(transit['hops'],list),'invalid transit fields')
@@ -328,7 +329,7 @@ def transit_check(transit, network, recipient=None, sender=None):
         if visited is not None:_verified_transits.move_to_end(key)
     if visited is not None:
         packet=transit['packet']['body']
-        return packet,base64.b64decode(packet['frame'],validate=True),list(visited)
+        return packet,(base64.b64decode(packet['frame'],validate=True) if include_frame else None),list(visited)
     packet,raw,visited=_transit_check(transit,network,recipient,sender)
     with _verified_transits_lock:
         if MAX_VERIFIED_TRANSITS>0:
@@ -336,7 +337,9 @@ def transit_check(transit, network, recipient=None, sender=None):
             _verified_transits.move_to_end(key)
             while len(_verified_transits)>MAX_VERIFIED_TRANSITS:
                 _verified_transits.popitem(last=False)
-    return packet,raw,visited
+    # A miss always performs the original complete frame checks above. Only
+    # this optional output is discarded; witness bounds/domain/bytes stay exact.
+    return packet,raw if include_frame else None,visited
 
 
 def _transit_check(transit, network, recipient=None, sender=None):
@@ -637,7 +640,7 @@ class Node:
         for ident, receipt in s['receipts'].items():
             require(receipt_check(receipt, self.network) == ident, 'corrupt receipt key')
         for ident, transit in s['messages'].items():
-            packet, _, visited = transit_check(transit, self.network)
+            packet, _, visited = transit_check(transit, self.network, include_frame=False)
             # transit_check has authenticated the exact complete transit and
             # bound this source-signed route ID to its exact packet digest.
             # Reuse that same operation's binding, never unchecked metadata.

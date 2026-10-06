@@ -1,0 +1,11 @@
+{
+  "completed": false,
+  "kind": "unique source match assertion refusal before write",
+  "failed_generator_sha256": "e42ff49b3ecfa1e3c5fbbca2b5f09a84642ceb220df4e47b729ccd435f09ef89",
+  "production_source_written": false,
+  "Native_Node_Runtime_socket_fixture_calls": 0,
+  "conservative_original_ground60_charge_seconds": 0.05,
+  "following_unchanged_small_failure_retained": "regional-bft-current-commit-warm-owner-related-v22-20261006-checks.json",
+  "repaired_generator_sha256": "e4f67644d2a2c1d78ff0103bbffd6d0220ea922363c7d003307765739deb816d",
+  "old_full_failures_still_FAIL": true
+}
