@@ -10,6 +10,26 @@
 
 
 
+
+## 2026-10-06 V7最终绑定、新原生失败与首次准入缺口
+
+完整fault仍 **FAIL/OPEN**：原600/612.570秒/6152、receive-v7 6657和1766等全部旧失败保留；原owner请求、原收款成熟/keyless drain/all12完整cold/守恒未完成，600/60轮/24cap/maturity2/quorum3及容量保持。本轮production源码未改，Python192 `e0bf1803…`、Native89/Core171/实际CLI准确未变。
+
+V7一次120最终绑定 **PASS39.271秒**：helper整段text/AST除scope/identity不变，controller仅资格/source-bind/metadata，22禁改拒绝；52普通库存及两typed no-follow库存未变。原24first-offer输入模型当前V7首次为1–6次，保持明确sign/auth/atomic mocks；不是Native/付款/physical资格。
+
+必要全新 `route-offer-v12` **FAIL：原180耗尽/201.131秒含正常停止封存**，helper1，四CLI exit0，guardian/forced/cleanup/pin无错误；1773文件及498公开source-only文件保留。94288/94660/94662/94664/94666已核验不存在，无活动自有节点。最后伴随13/13/13/13不能作Native终态，mature15/all8固定头/envelope/caller/owner/守恒未完成；禁止重开其Native/Runtime/Node、恢复/复签/退款/复制失败保管，不延长或原样再跑。
+
+一次60准确只读frontier **PASS4.511秒**：18parent13/round0票按Rust确切域作Python公钥签名字节核验，756签署index/13完整Commit运输副本认证（不替代Rustkey/subgroup/trust/lock/head/cold authority）。Prepare数量2/2/4/4、Commit1/1/2/2，源Commit只2/3；六目的路径四有完整伴随信封、二无目的保管，本轮没有目的保管而缺信封的Commit样本。四送达样本receipt→selected约.414–4.642秒、→attempt .509–4.756秒、→received .723–4.880秒，不支持把这四条归为长期Native等待，不能推广到所有输入。14052行闭合连续journal仍failed，完整verifier继续拒绝；共同前缀143.323秒，Native终态/唯一原因unknown。
+
+辅助诊断字段纠正：此前v11 `exact_attempt_refusal_phase_class={}` 来自不存在的 `attempt_refused/phase`，其空计数**不资格，不证明无失败**，原报告保留。真实trace为 `outgoing_failed/failure_stage`；本轮按准确packet/frame/envelope/PID/peer/attempt/nonce核验，source3→0第一跳2有16次response_authentication/ValueError及两connect异常，已认证的下一跳保管仍不等目的保管。不是唯一TLS原因证明。
+
+source2→1准确Commit已源发布，但共同前缀无prepare/send/目的custody。新增一次60 **PASS2.300秒**：原完整294560bytes包active、未receipt、未prepared/pending、已不在recent32；停后直达路线认证，production只读 `first_carriage_plan` 仍不纳入目标，即使只有21pending/11空位。停后不重建旧live资格。原V7内核24模型（60/86/160历史；目标后32新包在下一peer准备之前逐出recent，再每轮4新/24准备；warm/cold；256active/32pending/4packet/20MiB/512hint4MiB）所有目标未进firstqueue，23组连续24成功准备不携带，一组第2次ordinary携带。sign/auth/atomic明确mock，轮不等秒；证明首次**准入前**缺口，不能只保留已入队ID而忽略仍活动未入队包。
+
+下一仅一次60有界公平准入candidate模型 **未启动**：在原32pending/256prepared/2of4slots和全部界限内，从retained/unprepared活动IDs为recent/history共享准入空位，用peer准入rotation；等待顺序跨cacheloss保持，仅primitive IDs/cursor且atomic成功后发布，原包不删除。对比新24arrival-before-prepare、原24first-offer及24另一分支输入；必须消除全部已观测24准备缺席且保留普通/另一peer/fullretry/容量边界，remaining counter不采用。首来源/字节/角色/容量/负例/库存不一致、有限cases完成或原60退出，无Native/Runtime/Node constructor/钥/sign/socket/recovery。模型资格才选择实际fresh不兼容profile修复及signed/atomic/cold回归；当前新180/full600均0，不原样重跑V7。
+
+VALUE-STRICT-01仍独立OPEN，两基线及120.019耗尽保留；Core/value/lock未改，120诊断/300修复触发未满足，无地区替代或生产豁免。全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及长期/PQ/独立/physical保持；采用冻结2ba62421/c59f9fe8/receipt86821d19，goalactive，goal前继哈希已报告不改。所有命令显式newrldcoin，持久cwdUIpending；正文/PDF/官网、服务器、账号/权限、资金、清理不扩展。
+证据：[最终来源绑定、真实终态、准确时间和准入前反例](operations/evidence/regional-bft-route-offer-and-admission-gap-outcome-20261006.json)。
+
 ## 2026-10-06 首次队列路线准入反例与V7窄修复
 
 完整fault仍 **FAIL/OPEN**：原runtime-v4 600/612.570秒/6152、receive-v7 6657及全部旧失败保留，原收款成熟/keyless drain/all12完整cold/守恒未完成，原owner请求和600/60轮/24高度/成熟/票数/容量保持。历史“全部通过”只指当段来源与有限scope。本轮未重跑600范围。

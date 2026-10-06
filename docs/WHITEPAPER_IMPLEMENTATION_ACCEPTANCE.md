@@ -1,5 +1,15 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 首次准入前缺口检查点
+
+当前V7源码/Python192e0bf1803/Native89/Core171/实际CLI未改；最终binding一次120 PASS39.271秒，22禁改拒绝，52普通/2typed库存未变，原24模型1–6次。必要新四CLI仍FAIL原180/201.131秒/1773封存，四CLI exit0/无forced-cleanup-pin错误，Native终态unknown，all8完整cold/成熟/守恒未完成；6152/6657/1766及全部旧失败保持，禁止重开/恢复/复签/退款/复制失败保管。原600/60轮/24height/maturity2/quorum3/owner请求及容量不变。
+
+准确只读4.511秒认证756index/13完整Commit/18签名字节（非Rustfullauthority），四送达样本.7–4.9秒内Native received，两缺目的保管；Prepare2/2/4/4、Commit1/1/2/2。前v11空失败计数用了错误event/field，不资格、不证明无失败，旧报告保留；本轮按真实outgoing_failed/failure_stage修正。一次60准入反例2.300秒：准确active/unreceipted/unprepared Commit已经recent标签逐出，停后直达且firstqueue21有空，下一只读计划仍不选；24原内核模型23组连续24准备缺席，全部未准入firstqueue。mocks/模型轮与现场秒区分，旧live资格/唯一原因unknown，不以journal闭合/停止/高度称PASS。
+
+下一一次60 bounded fair admission candidate未启动：原32pending/256prepared/2of4及全部auth/atomic/容量，从retained unprepared IDs共享recent/history准入和peer rotation；新24、原24、另一分支24模型必须消除已知缺席且普通/fullretry保持。首源/字节/角色/负例/容量/库存不一致、counter残留、有限cases完成或原预算退出；无Native/Runtime/Node constructor/钥/socket/sign/recovery，资格后才选择实际freshprofile修复与signed/atomic/cold回归，当前新180/full600均0。VALUE-STRICT-01/长期/PQ/独立/physicalOPEN，Core/value/lock不变、120诊断/300修复触发未满足。goalactive/当前冻结2ba62421/c59f9fe8/receipt86821d19及全部S/R/I/A–G/N/P，goal前继已报告不改。命令显式newcwd/持久cwdUIpending，正文/PDF/官网/服务器/资金/权限/清理不扩展。
+[精确终态、诊断纠正和下一模型标准](operations/evidence/regional-bft-route-offer-and-admission-gap-outcome-20261006.json)。
+
+
 ## 2026-10-06 路线准入修复验收检查点
 
 完整fault及原收款成熟/keyless drain/all12完整cold/守恒仍FAIL/OPEN，6152/6657及全部旧失败原件保持。V6一次120绑定38.644秒通过后，必要新四CLI范围仍FAIL原180/202.639秒/1766封存，四CLI正常退出、无强制或清理错误，Native终态unknown、all8cold未完成。只读4.644秒认证752index/18完整Commit路径，五完整伴随/三缺目的保管/一目的保管而缺完整伴随；不能由高度或干净停止称付款通过。路线准入原一次60首0.898秒驱动失败保留，修正3.102秒判别，原V6有13/24连续24准备缺席反例，停后部分pending全部不可经所选peer转发，历史live资格/唯一原因仍unknown。

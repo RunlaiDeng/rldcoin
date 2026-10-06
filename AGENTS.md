@@ -1661,3 +1661,10 @@ Keep pending32/prepared256/two-of-four slots and all receipt/suppression/atomic
 limits. V6 private identity/state refuse unchanged; fresh ground fixtures only.
 Route models and signed branch/atomic regressions do not establish unique live
 causality, Native maturity, broad fairness, full faults or physical qualification.
+
+
+Ground TCP failure trace rows use stage `outgoing_failed` and field
+`failure_stage`; an empty search under another event/field is not absence proof.
+Exact source packet/frame/envelope/PID/peer/attempt/nonce and the collected
+continuous prefix must bind any delivery/wait claim. Stopped routes/first-queue
+metadata never reconstruct historical live eligibility or Native authority.
