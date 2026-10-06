@@ -1928,3 +1928,12 @@ Current single-author continuation 2026-10-07: V39 remains FAIL original180/192.
 V40 is now terminal FAIL original180/192.225/1715sealed, all4CLI exit0. Never reopen it. Exact Proposal2to1 was sent/authenticated twice then input-slot refused; source3Commit absent, original Commit3to0 analogue unqualified. Next only bounded original release-wake counter before any TCP repair; no unchanged180/600.
 V27 only adds original TCP lease release notification to existing live retained input waiter; original2workers/1deferred/.2lock/3socket/auth untouched,13related PASS but no Native qualification. V41 once original180 running; all original15/full8cold/envelopes/heads/conservation/stop still required. Old V40 and all failures immutable; continue after localPASS.
 V41 is terminal FAIL180/193.225/2055sealed/all4CLI0. Reference runtime14/15/15/15 is not fullNative qualification. Signed-only current hints exclude exact latest Finalized; source3to0 final certificate reachedrelay2 but not0. Next bounded fresh signed current-finalized counter only, original Native checkpoint hash domain/order mandatory; no unchanged180/600 or oldfixture reopen.
+V28 adds only exact Native-current checkpoint Finalized full-frame scheduling, with Native checkpoint hash and original3of4quorum signatures; full Native retained/admission/heads/blocks/value/epoch still required.10related PASS is groundonly. V42 once original180 running; original15/full8cold/envelopes/heads/conservation/stop and all old failures mandatory. Do not stop at localPASS or reopen failed V41.
+
+### V42终态与已复现的混合优先类缺口
+
+V42严格 **FAIL原180/193.027含收尾/1886封存**，helper1 ScopeDeadline，四CLI均正常exit0，无forced/guardian/cleanup/pin异常。伴随refs14/14/14/14只是有限保留读数；mature15/full8 Native cold/每个完整信封/heads/守恒未完成，600/all12/keyless及VALUE-STRICT-01仍FAIL/OPEN。原V28最终证书单类模型10项PASS不能替代该范围。
+
+原20只读累计2.100081，准确Proposal2→1首次准备56.284483秒；实际priority37/53历史spare选中Finalized14副本，同时parent14 Proposal/Prepare等待。消费完整transit/frame/companion bytes认证并保持封存源不变，不能据此称唯一成熟原因。新真实原域3of4 final14+Proposal15（后者完整信封包含final14）首个eligible spare反例 **FAIL .560120/14封存**，related60累计16.797667。下一只修当前Signed和最新已完成checkpoint的优先关系，Signed不支持/错签或不存在时保留证书fallback；原4MiB/first2/另一类floor/full4/签名/原子/冷验/原Native认证不变。一次原10/剩余60相关回归判别，反例或护栏失败保留FAIL，不增加deadline或原样重跑180。
+
+[终态及下一判别](docs/operations/evidence/regional-bft-current-finalized-v42-terminal-next-20261007.json)。

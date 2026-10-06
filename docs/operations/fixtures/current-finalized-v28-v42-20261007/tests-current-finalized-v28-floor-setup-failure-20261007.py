@@ -3357,7 +3357,7 @@ class MeshTests(unittest.TestCase):
             variant=Messages().append(mesh.digest(bad['body']),bad,None,True)
             self.assertEqual(bft.commit_carriage_frames(variant,current,keys,NETWORK,context['region']),(),mode)
         with self.f.node('earth') as node:
-            for _ in range(40):node.enqueue(self.f.frame(),destination)
+            for _ in range(32):node.enqueue(self.f.frame(),destination)
             node.state['first_carriage'][peer]=node.first_carriage_plan(peer);target=node.enqueue(raw,destination);original=copy.deepcopy(node.state['messages'][target]);node.set_carriage_priority(mesh.digest(current),frames);node.state['transit_class_steps'][peer]=4;node.save();pair=tuple(node.first_carriage_plan(peer)['pending'][:2]);self.assertNotIn(target,pair)
             state=copy.deepcopy(node.state);durable=node.path.read_bytes()
             node.state['messages'][target]['packet']['signature']='0'*128

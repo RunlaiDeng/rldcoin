@@ -1,0 +1,49 @@
+{
+  "completed": true,
+  "rows": [
+    {
+      "source": 1,
+      "statement_native_serde_checkpoint_id": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "current_statement_and_retained_tip_bound": true,
+      "full_original_3of4_ordered_prepare_commit_signatures_verified": true,
+      "frame_id": "6d8e8bb4c21162cb37dcff6d790391835c2e89c6407ec313a7d3d3f4b19d94d7",
+      "candidate_current_frames": [
+        "6d8e8bb4c21162cb37dcff6d790391835c2e89c6407ec313a7d3d3f4b19d94d7"
+      ],
+      "old_generator_excluded_all_Finalized": true,
+      "derived_context_not_actual_Native_call": true
+    },
+    {
+      "source": 2,
+      "statement_native_serde_checkpoint_id": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "current_statement_and_retained_tip_bound": true,
+      "full_original_3of4_ordered_prepare_commit_signatures_verified": true,
+      "frame_id": "6d8e8bb4c21162cb37dcff6d790391835c2e89c6407ec313a7d3d3f4b19d94d7",
+      "candidate_current_frames": [
+        "6d8e8bb4c21162cb37dcff6d790391835c2e89c6407ec313a7d3d3f4b19d94d7"
+      ],
+      "old_generator_excluded_all_Finalized": true,
+      "derived_context_not_actual_Native_call": true
+    },
+    {
+      "source": 3,
+      "statement_native_serde_checkpoint_id": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "current_statement_and_retained_tip_bound": true,
+      "full_original_3of4_ordered_prepare_commit_signatures_verified": true,
+      "frame_id": "6d8e8bb4c21162cb37dcff6d790391835c2e89c6407ec313a7d3d3f4b19d94d7",
+      "candidate_current_frames": [
+        "6d8e8bb4c21162cb37dcff6d790391835c2e89c6407ec313a7d3d3f4b19d94d7"
+      ],
+      "old_generator_excluded_all_Finalized": true,
+      "derived_context_not_actual_Native_call": true
+    }
+  ],
+  "Native_Node_Runtime_socket_key_sign_fixture_calls": 0,
+  "full_Native_acceptance_and_maturity_not_qualified": true,
+  "sealed_consumed_bytes_unchanged": true,
+  "duration_seconds": 0.648629,
+  "combined_original20_seconds": 3.266446,
+  "reader_sha256": "8e7a7059746a1687d989ccea0d33aa33aa4f730de5318996f24ae88fa0768574",
+  "new180": 0,
+  "new600": 0
+}

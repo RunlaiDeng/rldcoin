@@ -1,0 +1,66 @@
+{
+  "format": "RLD-BFT-FOUR-CLI-SERVICE-CHECKS-V2",
+  "completed": false,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "duration_seconds": 193.027,
+  "helper_exit_code": 1,
+  "helper_terminal": true,
+  "guardian": {
+    "guardian_stop_used": false,
+    "signalled_owned_pids": [],
+    "forced_owned_processes": [],
+    "owned_processes_stopped": true
+  },
+  "guardian_error": null,
+  "budget_exhausted": true,
+  "forced_helper": false,
+  "pin_error": null,
+  "stage_sha256": "2ccf6f552f830cde6b1e83278826b3ed1f14482347fa2d71a4aacb11f92ffca7",
+  "log_sha256": "a82856ad0425be3e72664197d1230f7f25c07e4d5107a5c785c15ae1710a0785",
+  "helper_sha256": "9df33d4922e352ac5901a54088bd8ae6a4d6957c14a3cb1a720d6a4890ececb4",
+  "controller_sha256": "a27e6657b36e275b364ade8dd9326182ebafd5730dc61814116d110ac29eb3d9",
+  "binding_source_sha256": "913789cdce9a441a97164c74ddc21c4cff9ee28a720008d2d1116e8275150285",
+  "companion_source_commitment": "b266769dbfc015329a1cf40257eb8aae6307bda09c4a9a06f6c1fddec359f7b5",
+  "stopped_inventory_sha256": "bae11a80ea584b98e526ffec48eed293892824153bcd32eeddf6e4e4c0838c62",
+  "stopped_files": 1886,
+  "result": {
+    "completed": false,
+    "failure": "ScopeDeadline: original180second service component deadline",
+    "cleanup_failures": [],
+    "services_and_owned_threads_stopped": true,
+    "owned_processes_stopped": true,
+    "owned_process_terminal": [
+      {
+        "region": "proxima",
+        "index": 0,
+        "exit_code": 0
+      },
+      {
+        "region": "proxima",
+        "index": 1,
+        "exit_code": 0
+      },
+      {
+        "region": "proxima",
+        "index": 2,
+        "exit_code": 0
+      },
+      {
+        "region": "proxima",
+        "index": 3,
+        "exit_code": 0
+      }
+    ],
+    "raw_rejection_saved": false,
+    "failed_currency_never_reopen": true,
+    "whole_full_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "old_private_source_binary_freeze_unchanged": true,
+  "failed_currency_sealed": true,
+  "failed_currency_never_reopen": true,
+  "full_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_completed": false
+}

@@ -1,0 +1,16 @@
+{
+  "completed": false,
+  "helper_exit_code": 1,
+  "duration_seconds": 0.37965,
+  "original60_cumulative_seconds": 12.483636,
+  "stage_sha256": "b7e65c0458a87d3e3b817c3114b6c02ee8656ee6ea17e68ac5bfd5a9fc878b63",
+  "log_sha256": "d57c1e7960a0adc8539ec36d571371cb6ed21b549de32ef45de1b93dc1bff593",
+  "seal_sha256": "ff6f0ffd384c3a75296ed2dbaf0c01c933eceaa787abd38cd91424e99b1ecb1e",
+  "retained_files": 14,
+  "static_actual_provider_binding_passed": true,
+  "production_sources_freeze_and_old_inventory_unchanged": true,
+  "Native_Runtime_constructors_socket_oldfixture_calls": 0,
+  "ground_role_analogy_not_native_maturity": true,
+  "new180": 0,
+  "new600": 0
+}

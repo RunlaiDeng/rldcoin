@@ -1,0 +1,249 @@
+{
+  "completed": true,
+  "rows": [
+    {
+      "sequence": 66,
+      "class_step": 37,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 5
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "45d7ce85d8505a62bf1727cf3d7d02771167266e6528ca8278d5c4ead15983d4",
+          "frame_id": "e17628d7d54aad20e9b8e6f18f77f50a46d4721c3948224bfae42f035d69562a",
+          "envelope_id": "e27c4662d99bfdf875d3208c4644b3bc1d063f959c10459b61bec406e1668af8",
+          "kind": "Commit",
+          "height_or_parent_height": 5,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "active"
+        },
+        {
+          "packet_id": "28d38bc6212119b1bdc84b76d4784c3b7debfb18df18047619fbf737426061c8",
+          "frame_id": "9e4378ed685f25a0c837d1cc3c4360e3b4e8be8a2f9a2ae0eeadcdc8dd6e50bd",
+          "envelope_id": "0c8666748999cde3cc419409f3368846e8d8f879f1c141e3da1db0986642226e",
+          "kind": "Finalized",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "active"
+        }
+      ]
+    },
+    {
+      "sequence": 71,
+      "class_step": 41,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 5
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "a042acdc5de63322b2e046218ce13a274b803e9495b86b5fac091efbcd8a79b9",
+          "frame_id": "db4807166a0d07a4d40db7523b9574a056a0005e63fe75970b467012d632391b",
+          "envelope_id": "a0f0d2de1b3b0f311619e4fcd2531b1e33c9b81edf594637c96996d285f0cce2",
+          "kind": "Proposal",
+          "height_or_parent_height": 6,
+          "round": 0,
+          "destination": "5615b6c44ab3b70a38cbeeb1d1ba59fb0a3dae8176d5c245533b29baffbefba3",
+          "storage": "archive"
+        },
+        {
+          "packet_id": "bc8820a35bc903e2cc0c4c44dab6606732ee1db7acbd13e271b2c62b4d7dd5bc",
+          "frame_id": "c1579c18b206ed4a6271fea6f50e0bbcaddb7dec9405c3d081331158eff92879",
+          "envelope_id": "1fbe4a4f02c60ad10588eb3ca3955311a7b4df58db1725da55dd411e1dc6a35e",
+          "kind": "Prepare",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "archive"
+        }
+      ]
+    },
+    {
+      "sequence": 80,
+      "class_step": 45,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 5
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "0db24e1b31787a6711bf24a2cefd879b1b335bd5cd4beffdd475c1403417c795",
+          "frame_id": "9e564a037cbf5004e8ca0128b9d38751d2bc72c69be7a335ec7dff2eca98b319",
+          "envelope_id": "92cd73baf291aa78747d216cb9ef31d47aed57fada27386740b85053d358142f",
+          "kind": "Commit",
+          "height_or_parent_height": 11,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "active"
+        },
+        {
+          "packet_id": "c2b7637944192c817c4c3111516d246143ca98ae527b0b20b75b0394b59fce4d",
+          "frame_id": "c9e64126da193a1e948141dce1be0580556d1e1fd0318c04eab39a7825127ba3",
+          "envelope_id": "015bd58d84a573c3ab4f8586df4634a112ea350aa974a43168bbdfd9784dec32",
+          "kind": "Proposal",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "active"
+        }
+      ]
+    },
+    {
+      "sequence": 86,
+      "class_step": 49,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 5
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "a33e6b1fb3376b0b9c2ae0d82c68b9e09d84fc42ec1d3bef82c18d35947aacc2",
+          "frame_id": "943b7ccbebc897665e95be74e397144f3e987efd00bc08d26bcf4e076828bad5",
+          "envelope_id": "df7c8ff0a969d607e0b850e2854b95adc4b8ed4f81380733a4b0c02c145241e1",
+          "kind": "Commit",
+          "height_or_parent_height": 4,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "archive"
+        },
+        {
+          "packet_id": "c01dcb4ea3c28586a17d666f1f938e4ead03d8619b745a621b9a1b25146ad4f1",
+          "frame_id": "fd2ff2c5afd2009f11c71c846b287aff8aa99cde16941d335bd9cb0e9ea2f0b0",
+          "envelope_id": "1d0a6ded38569130f61727acfcc8917a93883a0c115771d053e6bade6ddffb85",
+          "kind": "Prepare",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "archive"
+        }
+      ]
+    },
+    {
+      "sequence": 94,
+      "class_step": 53,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 5
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "6fd2585e45f8e8d98d08f241dc30f361b071e3cfca3e0b13de4ac39e1d99a796",
+          "frame_id": "5a1cfd1a9fc854e8eec87f132a12b6a7ab8c03ef042dbbd89ad7bc6e87ea389a",
+          "envelope_id": "ed4e178f68d145c636980e19d93d8e3f1cdbe6df3dfc4dff964e55209469b08f",
+          "kind": "Prepare",
+          "height_or_parent_height": 8,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "archive"
+        },
+        {
+          "packet_id": "8a295ceb1553d9665e0a6ef2b13bc2cd00d44658aba8784c081d584fba77ea98",
+          "frame_id": "9e4378ed685f25a0c837d1cc3c4360e3b4e8be8a2f9a2ae0eeadcdc8dd6e50bd",
+          "envelope_id": "0c8666748999cde3cc419409f3368846e8d8f879f1c141e3da1db0986642226e",
+          "kind": "Finalized",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "5615b6c44ab3b70a38cbeeb1d1ba59fb0a3dae8176d5c245533b29baffbefba3",
+          "storage": "archive"
+        }
+      ]
+    },
+    {
+      "sequence": 99,
+      "class_step": 57,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 5
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "30947fe2400063170583734462ccb7724f0408dbbc2625111a47624075825e9f",
+          "frame_id": "03b67f2470e5ff6eb17033117959b0055a3fc292fe8e1951eebb3990db9bf110",
+          "envelope_id": "ca5aeda369e928edc6ad45f869db912f511689e9fbba2275a9c3dcb50dd42b98",
+          "kind": "Prepare",
+          "height_or_parent_height": 12,
+          "round": 0,
+          "destination": "811156307a95ea3496d0abc2acae02b4c96f4d2a9f5d51e11f11db0679a826bf",
+          "storage": "archive"
+        },
+        {
+          "packet_id": "e7eccb991ce3f4f617e815a6ba43e135455573da35520811d7bb17fede8d09d4",
+          "frame_id": "c1579c18b206ed4a6271fea6f50e0bbcaddb7dec9405c3d081331158eff92879",
+          "envelope_id": "1fbe4a4f02c60ad10588eb3ca3955311a7b4df58db1725da55dd411e1dc6a35e",
+          "kind": "Prepare",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "5615b6c44ab3b70a38cbeeb1d1ba59fb0a3dae8176d5c245533b29baffbefba3",
+          "storage": "archive"
+        }
+      ]
+    },
+    {
+      "sequence": 114,
+      "class_step": 65,
+      "consumed_hint_reads": [
+        {
+          "scope": "dc6f8c86bf74b917833da8ee98f94069ef2a4016faf25f0ff2101e63a8a81a1d",
+          "target_frame_matches": true,
+          "frame_count": 6
+        }
+      ],
+      "selected_spares": [
+        {
+          "packet_id": "9ce6240875bfec4b7b4bdcaee317d83f75db488307c54a4c7ac73d0f3f7404f6",
+          "frame_id": "943b7ccbebc897665e95be74e397144f3e987efd00bc08d26bcf4e076828bad5",
+          "envelope_id": "df7c8ff0a969d607e0b850e2854b95adc4b8ed4f81380733a4b0c02c145241e1",
+          "kind": "Commit",
+          "height_or_parent_height": 4,
+          "round": 0,
+          "destination": "5615b6c44ab3b70a38cbeeb1d1ba59fb0a3dae8176d5c245533b29baffbefba3",
+          "storage": "archive"
+        },
+        {
+          "packet_id": "22ff9b60c9014f53ae2a1e986b8e5b4b54c2ff756cff69af8a42847aadb5253f",
+          "frame_id": "fd2ff2c5afd2009f11c71c846b287aff8aa99cde16941d335bd9cb0e9ea2f0b0",
+          "envelope_id": "1d0a6ded38569130f61727acfcc8917a93883a0c115771d053e6bade6ddffb85",
+          "kind": "Prepare",
+          "height_or_parent_height": 14,
+          "round": 0,
+          "destination": "5615b6c44ab3b70a38cbeeb1d1ba59fb0a3dae8176d5c245533b29baffbefba3",
+          "storage": "archive"
+        }
+      ]
+    }
+  ],
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "unique_maturity_cause_proved": false,
+  "consumed_sealed_files": 2,
+  "consumed_bytes_unchanged": true,
+  "prior_checks_sha256": "494a0d647495bd92365f335558a7c7aa07df39fd9824da6bf3d8839df368b72a",
+  "stopped_inventory_sha256": "bae11a80ea584b98e526ffec48eed293892824153bcd32eeddf6e4e4c0838c62",
+  "stage_sha256": "b113293d5f83350236be42ff39b19c7cda84f70a246fb2df91d4a30ea9ac0177",
+  "reader_sha256": "b580129f8a9e6e483c142cd7868316c7354906949bcb49293a146047bf4eec3b",
+  "duration_seconds": 0.498304,
+  "combined_original20_seconds": 2.100081,
+  "new180": 0,
+  "new600": 0,
+  "full_fault_qualified": false
+}

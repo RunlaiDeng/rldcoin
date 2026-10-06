@@ -1,0 +1,38 @@
+{
+  "hypothesis": "V42 actual priority37 and53 selected checkpoint14 copies before active parent14 Proposal. One fresh original-domain signed3of4 final14 plus signedProposal15 complete envelope, original first2/historyfloor/atomic/auth/full4 and first eligible spare opportunity discriminate mixed current classes. Active complete envelope retains its complete final14 dependency. Unsupported active remains certificatefallback and original4MiB capacity unchanged. Ground-only not unique Native maturity cause",
+  "budget_seconds": 60,
+  "attempts": 1,
+  "prior_seconds": 16.237547,
+  "prior_Mesh_ground60_unreset": 59.80325,
+  "ground_role_analogy_only": true,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/active-before-finalized-counter-method-v28-20261007.py": "aff42f965064f83bf2f56bbc76a37cc900bcc16d56c9546bedb67eb789449a0f",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/active-before-finalized-baseline-v28-helper-20261007.py": "86e4eaeaf1bde7390ca71e7ef14660d9bc59ed770d04a43e6845eae8118681ba",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-active-before-finalized-baseline-v28-20261007.py": "a567b62a49fe7dd403a64d1777564312e3491ecb09cc3784cc6ea41cad1ff074",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "7b499f8720a5cc04fde5259517737da929d4dbeb768aa9afc5da47d46168b094",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "13e31c25434e3d38fa8f0e311119cd3afb200af665c265a17b0b1e84f7a42809",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "913789cdce9a441a97164c74ddc21c4cff9ee28a720008d2d1116e8275150285",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "b2eeb8b5b30e2a2f10993ae63a7ff62efce9e2e8755f840cc34508b02958900e",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v42-stopped-private-inventory-20261006.json": "bae11a80ea584b98e526ffec48eed293892824153bcd32eeddf6e4e4c0838c62"
+  },
+  "actual_global_providers": [
+    "NETWORK",
+    "OSError",
+    "ValueError",
+    "bytes",
+    "copy",
+    "dict",
+    "evidence",
+    "json",
+    "len",
+    "mesh",
+    "patch",
+    "range",
+    "set",
+    "sorted",
+    "tuple"
+  ],
+  "static_generate_calls": 0,
+  "exit": "first original guard or60seconds; semantic old-target failure retains FAIL and selects only ordering repair; old Native/Runtime/socket calls0"
+}

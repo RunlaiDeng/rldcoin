@@ -1524,3 +1524,27 @@ V41 **FAIL原180/193.225含收尾/2055封存/all4正常exit0**，helper1/ScopeDe
 下一剩余related60内一次10秒全新真实3-of4签名小反例，检验实际当前认证checkpoint整信封能否保留普通spare资格。只认exact实际Native当前context/checkpoint hash和原完整typed Prepare/Commit quorum/签名字节；任何不支持schema/epoch/command/错签形态仍ordinaryfallback，所有原Native认证/first2/另一类floor/full4/auth/atomic/cold/容量保持。反例不证不修，不原样重跑180/600，不恢复旧2055。
 
 [真实终态与下一判别](operations/evidence/regional-bft-input-release-wake-v41-terminal-next-20261007.json)。
+
+## 2026-10-07 当前原生最终证书运输修复V28；V42一次原180运行中
+
+V41仍FAIL原180/193.225含收尾/2055封存/all4CLI0，伴随14/15/15/15不是fullNative成熟或全8冷验/信封/heads/守恒资格。完整600/all12/keyless及全部旧失败FAIL/OPEN。source3→0当前Finalized15完整签名证书已由relay2两次原普通attempt179/192保管且源回复保管，未到0；source2own Finalized→0未prepare，不能由缺日志称唯一成熟原因。Signed-only generator排除所有Finalized是源码事实。
+
+全新真实3of4 Prepare/Commit原域签名小反例 **V27FAIL.379650/14封存**，模型emptyblocks/evidence无Native权利；完整当前checkpoint frame被排除。V28仅新增current_finalized_hint和原commit_carriage_frames内Finalized分支：Native unanimous-checkpoint域/serde7字段顺序hash精确等于实际当前Nativecontext.previous，statement高度/块/状态/币/地区/epoch匹配当前context，两完整原3或4有序独立Prepare/Commit quorum签名/同context/round/value/phase匹配。保留typedshape/32round/256blocks、原4MiB整体hint、原全部Native完整envelope/blocks/state/owner/value/epoch/auth和收件验收；这些额外签名只过滤运输，不替代Native认证。mesh仅profile27→28；TCP、Native89/Core171/实际CLI未改。
+
+首相关 **FAIL.490577/14封存**：模型32ordinary只有一个history且已在first2，不能额外要求sparehistory。仅改为40ordinary保留8个未选history，不改target/first2/floor/full4/auth/atomic判据。一次修正 **10相关PASS3.263334/140封存**，含15错context/哈希/票数/重复key/票序/round/phase/value/签名/schema回退、原稳定frame及同帧副本轮转/老帧顺序/pending17/非priority/容量/分组压力/原普通完整receipt与清witness冷读；最后普通方法只执行一次第10项，不另重测。必要小反例/相关原60累计16.237547，旧Mesh60=59.803250/TCP60=3.451646/hint60=1.392620保持。
+
+封存真实1/2/3当前最终证书的原6个签名已只读核验，原Native statement checkpoint ID **7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38** 正确匹配旧Commit value，原20累计3.266446；派生context.previous按Native域修正，旧mesh.digest错误读回原件保留、不能冒充实际Native call。消费旧2055字节不变，旧Node/Native/Runtime/sign/key/socket/fixture构造0，不授予完整Native权限。
+
+最终来源 **PASS约1.058秒**：Python192 **b266769dbfc015329a1cf40257eb8aae6307bda09c4a9a06f6c1fddec359f7b5**；新helper/分类分支完整反转回V27，原Native授权/sign/heads/check/enqueue/cold及所有旧测试文本/AST保持，453来源/原driver AST字面量反转/实际0755未分配拒绝/已分配guard通过。V42已于实际2026-10-06T23:40:31.642414Z启动唯一一次原180，本文创建时RUNNING，仍需原17setup/13import/15mature/all8固定头完整Nativecold/每个完整信封/caller-owner heads/守恒/正常停止且全阶段≤180，首guard/原deadline封存，无延长/原样重复/旧保管恢复重签退款复制/新增600。
+
+继续唯一开发主线，局部PASS不停止；冻结2ba62421/c59f9fe8/receipt86821d19及S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、VALUE-STRICT-01/长期/PQ/独立/物理/组合不減。显式新workdir、持久cwd/旧goal元数据仍UI待修，不形成审批门；官网/服务器/资金/账号权限/清理不扩大。
+
+[实际修复和全部范围](operations/evidence/regional-bft-current-finalized-v28-development-outcome-20261007.json)；[真实原签名反例](operations/evidence/regional-bft-current-finalized-baseline-v27-20261007-checks.json)；[10相关检查](operations/evidence/regional-bft-current-finalized-related-v28-v2-20261007-checks.json)；[真实证书Native域绑定](operations/evidence/regional-bft-native-checkpoint-finalized-hint-v28-20261007-checks.json)；[最终来源](operations/evidence/regional-bft-current-finalized-v28-v42-source-binding-20261007-checks.json)。
+
+### V42终态与已复现的混合优先类缺口
+
+V42严格 **FAIL原180/193.027含收尾/1886封存**，helper1 ScopeDeadline，四CLI均正常exit0，无forced/guardian/cleanup/pin异常。伴随refs14/14/14/14只是有限保留读数；mature15/full8 Native cold/每个完整信封/heads/守恒未完成，600/all12/keyless及VALUE-STRICT-01仍FAIL/OPEN。原V28最终证书单类模型10项PASS不能替代该范围。
+
+原20只读累计2.100081，准确Proposal2→1首次准备56.284483秒；实际priority37/53历史spare选中Finalized14副本，同时parent14 Proposal/Prepare等待。消费完整transit/frame/companion bytes认证并保持封存源不变，不能据此称唯一成熟原因。新真实原域3of4 final14+Proposal15（后者完整信封包含final14）首个eligible spare反例 **FAIL .560120/14封存**，related60累计16.797667。下一只修当前Signed和最新已完成checkpoint的优先关系，Signed不支持/错签或不存在时保留证书fallback；原4MiB/first2/另一类floor/full4/签名/原子/冷验/原Native认证不变。一次原10/剩余60相关回归判别，反例或护栏失败保留FAIL，不增加deadline或原样重跑180。
+
+[终态及下一判别](operations/evidence/regional-bft-current-finalized-v42-terminal-next-20261007.json)。
