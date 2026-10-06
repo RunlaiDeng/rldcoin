@@ -1,5 +1,22 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 真实Rust入口修复、独立采集与一次原生诊断终态
+
+**完整fault仍FAIL/OPEN**。原runtime-v4 600/612.570秒/6152、V15 180/202.220秒/1816及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3及容量保持。历史“全部通过”只指对应历史来源和有限scope；下方“下一120绑定未启动”是创建时快照，本次已到终态。
+
+实际源/Binary核对发现V3的真实启动缺陷：Rust固定`CARGO_MANIFEST_DIR/../../tools/regional_contact_node.py`原始拼写在四槽均被拒绝，之前合成规范路径通过不能授予真实入口资格。该反例 **FAIL0.042秒**、V3原字节/有限PASS全部保留；V4只接受原Rust固定拼写、严格解析回已绑定原driver，任意别名/父级跳转仍拒绝，并由`runpy`保留原argv0。原192Python/89Native/171Core/actualCLI不变；没有猜测修改协议、调度或签名。
+
+独立有界四路采集已实际实现并运行：一次原120 **PASS累计45.504秒**，包含上项FAIL，helper0/无强停/pin异常。四个实际普通source-only Popen、四Publisher调用原atomic、采集与8条合成记录闭合重放、73个拒绝（含两controller各22个原禁改guard）；线程/四worker正常退出，27file/1负例link typed no-follow封存。56普通/7typed及最新1816/16库存前后不变。13份仅源码快照，无币/钥/账本/保管/binary复制；合成记录不是Native/crypto资格。整份helper/controller反转与原控制AST准确一致，原17setup/13import/15mature/all8固定头完整cold/envelope/caller/owner/守恒/stop保持，原ContactTrace容量不改。
+
+据此唯一分配一次全新180观察必要live准备条件，实际四Native CLI已通过新入口正常启动。该V16 **FAIL原180/202.841秒含正常停止封存**：helper1/ScopeDeadline，四CLI各exit0，无guardian/forced/cleanup异常，1748文件封存、私有源码/binary/freeze未变；成熟15/all8完整cold/守恒未完成。末次高度14只来自参考进度，不授予Native终局或成熟资格。失败币/Native/Runtime/Node永不重开/恢复/复签/退款/复制保管；不重试原180、不分配600、不增加deadline。原driver固定映射及实际诊断发布现在得到运行接入证据，范围失败仍是失败。
+
+原一次60的只读counter **PASS累计0.844秒**（含0.1预留），1748库存前后不变。原闭合采集器snapshot仍failed=true，完整verifier仍拒绝；准确PID/root/slot/contract及522条canonical typed已收集前缀独立核对，slot0/1终态各有1条未收后缀，不称完整live范围。324次成功普通准备均选中provisional pending前2ID且原atomic返回/after一致；168次完整四包重放均无first-plan、first metadata不改，但原atomic均返回1（可发布global cursor/receipt）。因此原子发布不能代替首次运输进展，有限前缀中没有证据支持猜测改first队列。marker V3 full4 atomic0只是合成测试情形，不能推为真实Native行为。
+
+**下一仅原60剩余59.156秒/一次，只读未启动**：四停后runtime参考image均height14且无parent14 Vote body ref，尚未验证完整运输信封/Native日志权威，不能直接归因为未生成或某OS锁。先核对实际完整保留运输信封、精确body/source enqueue/preparation/nonce保管/Native receive的已收前缀，并比较实际Native/service/turn成本和生成准备条件；若谓词仍不明，用source-only控制模型判别。首源码/类型/签名/角色/字节/前缀/guard不一致、最小确切反例或有限分类完成、或剩余原60退出，无重试/延长；不构造/查询失败Native/Runtime/Node、不读key、不启动socket/sign，新180/600均0。只由可达谓词、运输反例或实测成本选最小修复，日志缺项不指定唯一原因。
+
+采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8，三哈希本机复核一致；goalactive、旧goal哈希前继已报告不改。VALUE-STRICT-01两基线/120.019耗尽独立OPEN，Core/value/lock未改、原120诊断/300修复触发未满足，不以地区/诊断替代或豁免；长期/PQ/独立保管/physical/组合profile仍OPEN。当前helper12430和四CLI12826–12829已不存在；所有项目命令显式新rldcoin，持久cwd仍UI待修；正文/PDF/官网/Library/服务器/账户/权限/资金/外联/push/清理不扩展。
+[入口实际修复、绑定PASS、准确NativeFAIL及只读前缀反例](operations/evidence/regional-bft-first-service-entry-collector-live-outcome-20261006.json)。
+
 ## 2026-10-06 first-service诊断入口：类型反例与最小修复
 
 **完整fault仍FAIL/OPEN**。已读实际runtime-v4终态：原600秒耗尽、612.570秒含收尾、helper1、6152封存，owned节点/relays停止、cleanup null、无强停；V15 180/202.220秒/1816及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3及容量不变。历史“全部通过”只对应准确历史来源和有限scope。下方“下一source-only60未启动”为创建时快照，现已终态。

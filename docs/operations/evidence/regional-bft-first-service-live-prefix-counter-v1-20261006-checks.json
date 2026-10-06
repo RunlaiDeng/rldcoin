@@ -1,0 +1,62 @@
+{
+  "format": "RLD-FIRST-SERVICE-LIVE-PREFIX-DISCRIMINATOR-CHECKS-V1",
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 0.1,
+  "duration_seconds": 0.744497,
+  "combined_stage_seconds": 0.844497,
+  "attempts_used": 1,
+  "stage_sha256": "42183607af70ef6c0c42b6824db2bb363670a13443e65301dad90daf73bb1340",
+  "original_full_completeness_verifier_refuses_failed_snapshot": true,
+  "original_snapshot_failed_true_unchanged": true,
+  "typed_canonical522_row_declared_collected_prefix_verified": true,
+  "declared_prefix_events": 522,
+  "uncollected_terminal_event_suffix": {
+    "0": 1,
+    "1": 1,
+    "2": 0,
+    "3": 0
+  },
+  "full_live_interval_or_schedule_claim": false,
+  "all4_stopped_owned_PID_contract_binding_matches": true,
+  "ordinary_actual_prepares": 324,
+  "ordinary_first_two_skipped_counterexamples": [],
+  "full_four_replay_actual_prepares": 168,
+  "full_replays_original_atomic_returns1": 168,
+  "full_replays_first_metadata_unchanged": true,
+  "per_slot": {
+    "0": {
+      "records": 159,
+      "ordinary_provisional_first_attempts": 93,
+      "ordinary_pending_nonempty": 34,
+      "full_replay_no_first_plan": 63
+    },
+    "1": {
+      "records": 107,
+      "ordinary_provisional_first_attempts": 72,
+      "ordinary_pending_nonempty": 53,
+      "full_replay_no_first_plan": 23
+    },
+    "2": {
+      "records": 99,
+      "ordinary_provisional_first_attempts": 63,
+      "ordinary_pending_nonempty": 52,
+      "full_replay_no_first_plan": 23
+    },
+    "3": {
+      "records": 157,
+      "ordinary_provisional_first_attempts": 96,
+      "ordinary_pending_nonempty": 35,
+      "full_replay_no_first_plan": 59
+    }
+  },
+  "exact_next_decision": "No real first-two skipping or full-replay first mutation counterexample in this declared prefix; reject speculative first-queue/scheduler repair. Next classify exact remaining parent14 votes across signed transport route/custody/Native received observations and compare actual service/wait metrics; no Native open or long rerun.",
+  "counterexample_found": false,
+  "stopped1748_bytes_unchanged": true,
+  "Native_Runtime_Node_socket_sign_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "original_maturity_keyless_all12cold_conservation_still_uncompleted": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
