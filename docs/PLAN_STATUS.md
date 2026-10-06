@@ -1,5 +1,16 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 同一Commit的队列推进反例与重试边界
+
+V12实际优先分支的无签名模型，独立10秒/一次，**PASS0.034397秒/16分支**。此前34次completed准备不能等同34次新项服务：17次是full4重试、无first plan，17次为普通准备；其中目标入pending后的8次普通准备确实携带17个前方项，目标从pending29推进到12，仍未prepared。有限前缀不支持“队列完全不推进”的归因；newest优先没有立即选取该旧项，也不能单独证明永久饥饿或唯一CPU/OS原因。
+
+新增真实签名回归`test_older_pending_advances_under_new_arrivals_and_full_replay`，全新地面夹具、原ground60内单次最多10秒，**PASS0.774680秒**（测试0.505秒、exit0、helper40379终止），14文件保留。global29/pending12目标在持续新项、穿插full4精确重放条件下最多7次普通准备内入选；原first2、full4不改first/class游标、原包与冷读、不授予receipt保持。旧测试AST全部不变；认证/失败原子/容量负例复用此前来源未变结果，不声称此新增回归重新执行了它们。原ground60累计**12.671297秒**，旧named source60终态59.845831秒不重置。仅测试源码变化，Python192新绑定57c40c2f…；生产mesh/V12、Native89/Core171及实际CLIbef4d5c7…未变，旧Native范围仍绑定其原来源，不重新资格化。
+
+另一个独立只读20秒/一次，**PASS0.069585秒**：按时间顺序关联准确已选packet集合，34次对应源尝试中21次response_authentication ValueError、8次连接失败、3次已认证远端回复但本地reply custody锁拒绝、2次成功；17次full4重试匹配紧邻普通失败准备。这是有限前缀关联，不是完整live调度重构，ValueError目前仍不能区分明确保管拒绝和无效回复。没有足够反例支持改优先顺序或删除重试。
+
+下一最小判别已选定、尚未分配/执行：同一source2→destination1 carrier pair的首次目标promotion，prepare sequence69 / attempt83，只按原nonce及packet集合与目的端authenticated/refused/deferred事件配对，未来独立10秒/一次；首来源差异、得到单请求边界、判别字节缺失或deadline即停止，缺失为unknown。只有违反既有精确回复/队列/保管合同的真实反例才触发最小修复，不延长锁/成熟/范围预算。这里的已选carrier包不是未发送Commit本体。V21/旧V19/原600仍FAIL，成熟15/all8 Native cold/守恒和600/all12/keyless、VALUE-STRICT-01独立OPEN。旧失败不重开/重签/退款/复制；无新180/600，白皮书/官网冻结和全部验收目标不变，命令显式新workdir，持久cwd仍UI待修。
+[本次实际回归与推进/重试判别](operations/evidence/regional-bft-commit-pending-progress-outcome-20261006.json)。
+
 ## 2026-10-06 单一parent13 Commit运输/接纳边界已判别
 
 新独立最小只读预算**20秒/一次**，实际启动helper38559并终止exit0，**PASS1.815794秒**；该预算没有续算、重置或重标旧named source60的59.845831秒终态。复用859完整运输/643档案索引的封存字节资格，仅验证准确source2→destination1 parent13 round0 Commit的签名字节/context及匹配信封；改变phase的签名负例拒绝。源码取相同参考父tip，不授予Rust内层key/subgroup/lock/quorum或原生接纳/成熟资格。

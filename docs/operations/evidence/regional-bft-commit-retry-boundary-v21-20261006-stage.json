@@ -1,0 +1,13 @@
+{
+  "format": "RLD-COMMIT-READONLY-SCOPE-RECORD-V1",
+  "timing": "scope declaration in task commentary before execution; this post-run record binds actual entry and terminal output",
+  "budget_seconds": 20,
+  "attempts": 1,
+  "helper_sha256": "2690def779be2ae42b43b4ee8e1e1d7dbbbd54d2e3898c9d8a81d5cdd67be683",
+  "checks_sha256": "cc25446d097b2b96597231dc838e4d29e3332d16279a51f8200c4ba3d30b2d7c",
+  "completed": true,
+  "duration_seconds": 0.069585,
+  "prior_source60_terminal_seconds_unchanged": 59.845831,
+  "no_Node_Native_Runtime_socket_key_sign_fixture_calls": true,
+  "no_new180_or600": true
+}

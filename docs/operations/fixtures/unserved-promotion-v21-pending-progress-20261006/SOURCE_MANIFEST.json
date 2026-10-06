@@ -1,0 +1,10 @@
+{
+  "format": "RLD-REVIEW-SOURCE-MANIFEST-V1",
+  "review_only_not_launch_entry": true,
+  "source_sha256": {
+    "observe-bft-commit-selection-model-v21-20261006.py": "f80136c06f02ab71b05993b08b4f6bc4629cbe961ac7d2147aa67f8de0961dcd",
+    "observe-bft-commit-retry-boundary-v21-20261006.py": "2690def779be2ae42b43b4ee8e1e1d7dbbbd54d2e3898c9d8a81d5cdd67be683",
+    "observe-bft-older-pending-regression-v21-20261006.py": "26a18410e0eed5b719d490187722297d2204806f6a56e2a7baf02c9076ea6e58",
+    "check-bft-older-pending-regression-v21-20261006.py": "bb7e0b5578eeb8a5f7be563201b71cbfe027a3b675199408abf6d277e93e4880"
+  }
+}
