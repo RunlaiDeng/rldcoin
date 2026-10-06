@@ -1,5 +1,15 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 路线准入修复验收检查点
+
+完整fault及原收款成熟/keyless drain/all12完整cold/守恒仍FAIL/OPEN，6152/6657及全部旧失败原件保持。V6一次120绑定38.644秒通过后，必要新四CLI范围仍FAIL原180/202.639秒/1766封存，四CLI正常退出、无强制或清理错误，Native终态unknown、all8cold未完成。只读4.644秒认证752index/18完整Commit路径，五完整伴随/三缺目的保管/一目的保管而缺完整伴随；不能由高度或干净停止称付款通过。路线准入原一次60首0.898秒驱动失败保留，修正3.102秒判别，原V6有13/24连续24准备缺席反例，停后部分pending全部不可经所选peer转发，历史live资格/唯一原因仍unknown。
+
+V7实际首次队列按原完整transit认证及该peer路线/已访节点/跳数准入；只去调度引用不删原包，保持32pending/256prepared/2of4槽/全部auth/atomic/容量；V6私有原件拒绝不转换。24候选模型1.448秒均首次准备携带、97相关signed/TLS/fsync/cold/atomic/route分支检查23.013秒通过，991files/2link自身metadata封存，不跟随links、不新增生产豁免。Python192e0bf1803…，Native89/Core171/实际CLI未改。不是live成熟/完整fault/广义公平/物理资格。
+
+下一一次120最终整份驱动绑定（52普通/2typed库存、22禁改、192Python/89Native/171Core/实际binary、原24模型复核），未启动；首源/字节/角色/模型/AST/库存不一致、完成或原预算退出，无实际Native/Node/Runtime/socket/sign。通过才另决定一次必要新180，目前新180/full600均0。原17certsetup/13import/15mature/all8fixedhead/envelope/caller/owner/守恒、600/60轮/24cap/maturity2/quorum3及owner请求不变。VALUE-STRICT-01仍独立OPEN，Core/value/lock不变、120诊断/300修复触发未满足。采用冻结2ba62421/c59f9fe8/receipt86821d19及全部S/R/I/A–G/N/P，goalactive；前继goal引用已报告不改，命令显式新workdir/持久cwdUIpending。正文/PDF/官网/服务器/资金/权限/清理不扩展。
+[完整终态与可证伪下一关](operations/evidence/regional-bft-first-offer-route-repair-outcome-20261006.json)。
+
+
 **已采用的实施验收记录：** 最终白皮书审计提交 `5bf11e4b3637cd99b3a6ebbb8e9e90f7e3edd402`；正文 `2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b`；PDF `c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14`。文档目标已对齐，全部目标的协议资格仍未完成。
 
 准确任务：`01a100ac-5340-7b13-b661-eedc397b003a`。本文件是可更新的实施/风险记录，不能自行修改冻结白皮书或降低其目标。[冻结receipt](WHITEPAPER_FREEZE_RECEIPT.json)已绑定正文/PDF内容哈希与审计提交，无白皮书展示版本号。已签fixture/旧profile不因文档改变获得新权限。

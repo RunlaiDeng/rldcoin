@@ -1,0 +1,269 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 1.447556,
+  "helper_exit_code": 0,
+  "stage_sha256": "fa0253575465d814b1438c87fdaae85cfcdaffa369f03a1df5e59a57e5461391",
+  "helper_sha256": "45e606ce9cd4d285e8a94acbf42d33a94c4311921930a0c87cc4c4250d67a671",
+  "controller_sha256": "3deaa596226ee7982d014248b5f20ac3b94c274226167556fbb37f48c4137f04",
+  "log_sha256": "ce1c8837e37ba58c3aa0c9589395b6f3d188718466ff558e074d57c728ac07bc",
+  "result": {
+    "completed": true,
+    "exact_stopped_first_queue": [],
+    "models": [
+      {
+        "cold_hints": false,
+        "history": 60,
+        "case": 0,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": false,
+        "history": 60,
+        "case": 1,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": false,
+        "history": 60,
+        "case": 2,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": false,
+        "history": 60,
+        "case": 3,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": false,
+        "history": 86,
+        "case": 0,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": false,
+        "history": 86,
+        "case": 1,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": false,
+        "history": 86,
+        "case": 2,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": false,
+        "history": 86,
+        "case": 3,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": false,
+        "history": 160,
+        "case": 0,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": false,
+        "history": 160,
+        "case": 1,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": false,
+        "history": 160,
+        "case": 2,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": false,
+        "history": 160,
+        "case": 3,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": true,
+        "history": 60,
+        "case": 0,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": true,
+        "history": 60,
+        "case": 1,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": true,
+        "history": 60,
+        "case": 2,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": true,
+        "history": 60,
+        "case": 3,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 97
+      },
+      {
+        "cold_hints": true,
+        "history": 86,
+        "case": 0,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": true,
+        "history": 86,
+        "case": 1,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": true,
+        "history": 86,
+        "case": 2,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": true,
+        "history": 86,
+        "case": 3,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 123
+      },
+      {
+        "cold_hints": true,
+        "history": 160,
+        "case": 0,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": true,
+        "history": 160,
+        "case": 1,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": true,
+        "history": 160,
+        "case": 2,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      },
+      {
+        "cold_hints": true,
+        "history": 160,
+        "case": 3,
+        "ineligible_first_queue": 32,
+        "target_admitted_to_first_queue": true,
+        "first_ordinary_target_prepare": 1,
+        "over23_preparations": false,
+        "capacity": 197
+      }
+    ],
+    "counterexamples": [],
+    "route_admission_counter_eliminated": true,
+    "authentication_sign_atomic_explicit_model": true,
+    "model_preparations_not_live_seconds": true,
+    "old_live_unique_cause_or_eligibility_unknown": true,
+    "no_native_runtime_node_socket_sign_recovery": true,
+    "private1766_unchanged": true,
+    "full_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -51,6 +51,38 @@ class MeshTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.f = Fixture(self.temporary.name)
 
+    def test_first_offer_queue_is_scoped_to_actual_outgoing_branch(self):
+        self.f.rounds();left=self.f.identities['earth']['node_id'];right=self.f.identities['andromeda']['node_id']
+        with self.f.node('proxima') as node:
+            wrong=[node.enqueue(self.f.frame(),right) for _ in range(32)]
+            original=copy.deepcopy(node.state['messages'])
+            self.assertFalse(node.prepare_exchange(left)['body']['transits'])
+            self.assertEqual(node.state['first_carriage'][left]['pending'],[])
+            target=node.enqueue(self.f.frame(),left)
+            bundle=node.prepare_exchange(left)
+            self.assertIn(target,{mesh.digest(t['packet']) for t in bundle['body']['transits']})
+            self.assertIn(target,node.state['first_carriage'][left]['prepared'])
+            self.assertEqual({i:node.state['messages'][i] for i in wrong},original)
+            self.assertFalse(node.state['receipts'])
+            # The other branch retains ordinary first service and original bytes.
+            right_ids={mesh.digest(t['packet']) for t in node.prepare_exchange(right)['body']['transits']}
+            self.assertTrue(right_ids&set(wrong));self.assertNotIn(target,right_ids)
+
+    def test_ineligible_waiting_metadata_changes_only_after_atomic_preparation(self):
+        self.f.rounds();left=self.f.identities['earth']['node_id'];right=self.f.identities['andromeda']['node_id']
+        with self.f.node('proxima') as node:
+            wrong=[node.enqueue(self.f.frame(),right) for _ in range(32)]
+            # Route changes may leave valid but currently ineligible metadata.
+            node.state['first_carriage'][left]['pending']=wrong;node.save()
+            target=node.enqueue(self.f.frame(),left);before=copy.deepcopy(node.state);raw=node.path.read_bytes()
+            with patch.object(mesh,'atomic',side_effect=OSError('first queue publication failure')):
+                with self.assertRaises(OSError):node.prepare_exchange(left)
+            self.assertEqual(node.state,before);self.assertEqual(node.path.read_bytes(),raw)
+        with self.f.node('proxima') as node:
+            self.assertIn(target,{mesh.digest(t['packet']) for t in node.prepare_exchange(left)['body']['transits']})
+            self.assertFalse(node.state['first_carriage'][left]['pending'])
+            self.assertEqual(node.state['messages'],before['messages']);self.assertFalse(node.state['receipts'])
+
     def test_first_offer_survives_recent_eviction_and_cold_positions(self):
         self.f.rounds();peer=self.f.identities['proxima']['node_id']
         with self.f.node('earth') as node:
@@ -154,7 +186,7 @@ class MeshTests(unittest.TestCase):
 
     def test_previous_scheduler_identity_refuses_without_rewrite(self):
         path=self.f.root/'earth/identity.private.json'
-        identity=json.loads(path.read_text());identity['transit_scheduler']='RLD-CONTACT-TRANSIT-SCHEDULER-V5'
+        identity=json.loads(path.read_text());identity['transit_scheduler']='RLD-CONTACT-TRANSIT-SCHEDULER-V6'
         path.write_text(json.dumps(identity));before=path.read_bytes()
         with self.assertRaises(ValueError):self.f.node('earth')
         self.assertEqual(path.read_bytes(),before)

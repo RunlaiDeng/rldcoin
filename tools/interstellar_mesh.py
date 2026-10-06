@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V6'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V7'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1023,11 +1023,22 @@ class Node:
         value=self.state['first_carriage'][peer]
         active=self.state['messages'];receipted=self.state['receipts']
         prepared=[i for i in value['prepared'] if i in active]
-        pending=[i for i in value['pending'] if i in active and i not in receipted]
+        def eligible(ident):
+            if ident not in active or ident in receipted:return False
+            transit=active[ident]
+            packet,_,visited=transit_check(transit,self.network)
+            route=self.route(packet['destination'],visited[:-1],first_hop=peer)
+            return bool(route and len(route)>=2 and route[1]==peer
+                        and len(transit['hops'])+len(route)-1<=packet['hop_limit'])
+        # First-service places belong to this neighbor's possible carriage.
+        # A packet for another branch must not occupy the entire waiting queue.
+        # Removing a scheduling ID never removes its retained complete transit;
+        # route changes can make it eligible again through ordinary selection.
+        pending=[i for i in value['pending'] if eligible(i)]
         known=set(prepared)|set(pending)
         for ident in self.state['recent_transits']:
             if len(pending)==MAX_RECENT_TRANSITS:break
-            if ident in active and ident not in receipted and ident not in known:
+            if ident not in known and eligible(ident):
                 pending.append(ident);known.add(ident)
         return {'pending':pending,'prepared':prepared}
 

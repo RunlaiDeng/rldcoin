@@ -1613,7 +1613,7 @@ No live speed or unique fault cause established; all commands explicitrldcoin,
 persistentcwd stillUIpending. See
 operations/evidence/regional-bft-loop-observation-outcome-20261006.json.
 
-The one-replay ground scheduling behavior is retained by RLD-CONTACT-TRANSIT-SCHEDULER-V6.
+The one-replay ground scheduling behavior is retained by RLD-CONTACT-TRANSIT-SCHEDULER-V7.
 A failed completed ordinary TCP preparation may retain at most four original
 packet IDs in the existing 512-entry/4-MiB process-local carriage hint pool,
 scoped to store/network/node/contact roles/profile and validation bounds.
@@ -1650,3 +1650,14 @@ V5 identity/state refuse unchanged: fresh fixtures, never failed custody convers
 Hostile test artifacts may contain intentional links; ordinary scope inventories
 must keep refusing them. A separate typed test-artifact inventory can record link
 metadata without following it, and cannot turn an earlier failed scope into PASS.
+
+
+V7 first-carriage admission authenticates the complete original transit and
+requires a possible route through that configured peer under original visited
+node/hop limits. Remove only ineligible scheduling IDs; retain all complete
+packets. Current route loss can remove first-offer priority, while ordinary
+selection can carry retained evidence after a route becomes possible again.
+Keep pending32/prepared256/two-of-four slots and all receipt/suppression/atomic
+limits. V6 private identity/state refuse unchanged; fresh ground fixtures only.
+Route models and signed branch/atomic regressions do not establish unique live
+causality, Native maturity, broad fairness, full faults or physical qualification.

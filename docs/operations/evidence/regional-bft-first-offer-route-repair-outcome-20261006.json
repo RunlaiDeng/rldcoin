@@ -1,0 +1,220 @@
+{
+  "format": "RLD-BFT-FIRST-OFFER-ROUTE-COUNTER-REPAIR-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-06T00:46:22.350426+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_status": "active",
+  "checks": {
+    "regional-bft-four-cli-first-offer-binding-20261006": {
+      "completed": true,
+      "budget_seconds": 120,
+      "duration_seconds": 38.644419,
+      "sha256": "985c763e68739cefec1d0d8e3f5b1b2196041ae0fec382f9f5224b3ac6ea6a58"
+    },
+    "regional-bft-four-cli-service-first-offer-v11-20261006": {
+      "completed": false,
+      "budget_seconds": 180,
+      "duration_seconds": 202.639,
+      "sha256": "e304ea3ed52bae79516864b0eeb5c6dbb87e6d10ea06b402d45ce96eac59b42d"
+    },
+    "regional-bft-four-cli-first-offer-frontier-counter-20261006": {
+      "completed": true,
+      "budget_seconds": 60,
+      "duration_seconds": 4.643936,
+      "sha256": "b2295c27fb86f3c8e40ba15a61182c571bf9bbb6078643185290b171951febc7"
+    },
+    "regional-bft-first-offer-route-admission-counter-20261006": {
+      "completed": false,
+      "budget_seconds": 60,
+      "duration_seconds": 0.897877,
+      "sha256": "c424e268a19c80af63bc47b41676828f41e9cb4c3292cbe2d72e6011a6b3fd2e"
+    },
+    "regional-bft-first-offer-route-admission-counter-v2-20261006": {
+      "completed": true,
+      "budget_seconds": 59,
+      "duration_seconds": 3.101924,
+      "sha256": "05861eb51ed19cc4a8c28130193dbe64ff71673ef8cabd1a64bb7aff0376fd01"
+    },
+    "regional-bft-first-offer-route-candidate-model-20261006": {
+      "completed": true,
+      "budget_seconds": 60,
+      "duration_seconds": 1.447556,
+      "sha256": "13cfa298be21cdcf078174a371f3c5a758527efeaee8d9825eb2af226359d079"
+    },
+    "regional-bft-first-offer-route-related-regression-20261006": {
+      "completed": true,
+      "budget_seconds": 60,
+      "duration_seconds": 23.013276,
+      "sha256": "2a955a0131e36c84fab7ffc9e733a5bbc5d4ca16c67dac039338fd95c7a1507f"
+    }
+  },
+  "preparation_only_failure": "NameError typed in final informational print after all new driver files prepared; exact text+AST compiled/readback validated before once120, no fixture launched by preparation.",
+  "V6_binding": {
+    "seconds": 38.644419,
+    "forbidden_changes_rejected": 22,
+    "ordinary_inventories": 51,
+    "typed_inventories": 1,
+    "completed": true,
+    "not_V7_final_binding": true
+  },
+  "V6_actual": {
+    "completed": false,
+    "budget_seconds": 180,
+    "duration_seconds": 202.639,
+    "helper_exit": 1,
+    "failure": "ScopeDeadline: original180second service component deadline",
+    "four_cli_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "forced": false,
+    "cleanup_failures": [],
+    "files": 1766,
+    "inventory_sha256": "50c4b5bd7043a95ee39ab44fd19635c214e33fbd1783940b9b225a28dd12ffb9",
+    "source_only_files": 479,
+    "source_only_manifest_sha256": "662bb5b1e7442f8f9486d933c8203103fee4eb575b44f428f986e36851dfb5d7",
+    "owned_pids_verified_absent": [
+      90091,
+      90503,
+      90504,
+      90505,
+      90506
+    ],
+    "last_companion_heights": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "native_final_height_unknown": true,
+    "receipt_maturity_full8cold_conservation_unfinished": true,
+    "old_failed_native_runtime_node_never_reopen": true
+  },
+  "frontier": {
+    "signature_bytes": 22,
+    "transport_copies": 18,
+    "signed_archive_indexes": 752,
+    "all_current_round0_parent13": true,
+    "prepare_counts": [
+      3,
+      4,
+      3,
+      4
+    ],
+    "commit_counts": [
+      2,
+      2,
+      2,
+      2
+    ],
+    "complete_envelope_paths": 5,
+    "destination_custody_missing_paths": 3,
+    "destination_custody_but_companion_envelope_missing_paths": 1,
+    "source1_to2_first_prepare_seconds": 105.291292,
+    "source2_to1_first_prepare_seconds": 93.993453,
+    "closed_journal_failed": true,
+    "closed_rows": 13910,
+    "common_prefix_seconds": 142.265144,
+    "full_verifier_still_refuses": true,
+    "not_full_Rust_Native_key_trust_lock_head_finality_authority": true,
+    "not_unique_live_cause": true
+  },
+  "route_counter": {
+    "original_first_failed_seconds": 0.897877,
+    "initial_failure": "inactive scheduling metadata ID incorrectly assumed active; before models; failure and source retained",
+    "corrected_seconds": 3.101924,
+    "original_total_seconds": 3.999801,
+    "original_budget_seconds": 60,
+    "cases": 24,
+    "continuous24_preparation_absence_counterexamples": 13,
+    "stopped_full_ineligible_queue_slot2_peer3": 32,
+    "stopped_slot1_peer0_ineligible26_inactive6": 32,
+    "stopped_not_historical_live_eligibility": true,
+    "signature_atomic_explicit_model": true
+  },
+  "repair": {
+    "source_delta": [
+      "tools/interstellar_mesh.py",
+      "tools/test_interstellar_mesh.py"
+    ],
+    "profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V7",
+    "pending_per_peer": 32,
+    "prepared_per_peer": 256,
+    "first_slots": 2,
+    "packet_slots": 4,
+    "total_state_MiB": 64,
+    "original_complete_auth_hop_route_receipt_suppression_and_atomic": true,
+    "filter_ineligible_scheduling_ID_only_no_packet_deletion": true,
+    "ordinary_routing_can_revisit_changed_routes": true,
+    "old_V6_stores_refuse_fresh_fixture_required": true,
+    "models": 24,
+    "model_target_first_preparation": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "model_report_first_ordinary_target_prepare_label_is_first_any_selected_preparation_not_ordinary_class": true,
+    "related_tests": 97,
+    "related_seconds": 23.013276,
+    "regular_test_files": 991,
+    "symlinks_without_following": 2,
+    "owned_threads_stopped": true,
+    "connect_model_observed_exception": "SSLEOFError",
+    "does_not_reproduce_unique_old_ConnectionReset_cause": true
+  },
+  "identity_sha256": "8b59c0885819822ad4b5c7411295c9dbd5bf72125f7b336fbfd3c20f48d12148",
+  "python192_commitment": "e0bf18034b15df295094d84cf3f40e752de2ecc1a41b70102b9a6fe40912f53b",
+  "native89_core171_actualCLI_unchanged": true,
+  "next": {
+    "started": false,
+    "budget_seconds": 120,
+    "attempts": 1,
+    "hypothesis": "Final V7 per-neighbor route-qualified first-offer kernel preserves original exact helper setup/import13/mature15/all8fixedhead/envelope/caller/owner/conservation/stop. Bind complete192Python, unchanged89Native/Core171/actualCLI and exact source-only driver derivative; reject22forbidden boundary changes, verify52ordinary and2typed no-follow inventories. Requalify original24first-offer traffic cases for route change within bounded source-only model gate, not a live test. Only a qualified final source/controller permits a separate necessary fresh180 decision; full600 remains0.",
+    "exit": "First source/byte/AST/role/model/negative/inventory mismatch, complete discriminator or original120deadline. No actual Native/Node/Runtime/socket/sign startup.",
+    "new180_budget": 0,
+    "new600_budget": 0
+  },
+  "original_full_fault": {
+    "completed": false,
+    "budget_seconds": 600,
+    "duration_seconds": 612.57,
+    "files": 6152,
+    "all_older_failures_retained": true,
+    "original_request_maturity_keyless_drain_all12cold_conservation_unfinished": true
+  },
+  "legacy_value_strict": "VALUE-STRICT-01 OPEN; baseline large_enum_variant/bool_assert_comparison and120.019 exhaustion retained. Unchanged Core/value/lock;120diagnostic/300repair triggers unmet; no regional substitution or production exemption.",
+  "implementation_target": "S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8",
+  "freeze_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "freeze_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_text_old_predecessor_hashes_reported_not_rewritten": true,
+  "all_commands_explicit_new_workdir": true,
+  "persistent_cwd_still_UI_pending": true,
+  "whitepaper_site_servers_accounts_funds_cleanup_unchanged": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "final_V7_source_only_files": 493,
+  "final_V7_source_only_manifest_sha256": "efc01a238fbbbfc63f5c9eb649ac425b3a6d9de5720dce536885d0eb39f389b6"
+}

@@ -9,6 +9,28 @@
 
 
 
+
+## 2026-10-06 首次队列路线准入反例与V7窄修复
+
+完整fault仍 **FAIL/OPEN**：原runtime-v4 600/612.570秒/6152、receive-v7 6657及全部旧失败保留，原收款成熟/keyless drain/all12完整cold/守恒未完成，原owner请求和600/60轮/24高度/成熟/票数/容量保持。历史“全部通过”只指当段来源与有限scope。本轮未重跑600范围。
+
+V6最终驱动绑定 **PASS38.644秒/一次120**：整份helper除scope/identity名称外text/AST不变，controller仅来源资格/typed库存检查/metadata变化；22禁改均拒绝，51普通库存及963file/2link typed库存字节未变。准备脚本最后信息打印的NameError保留，发生于全部驱动写完之后、任何fixture之前；实际编译/读回及原120绑定随后完成。
+
+必要全新 `first-offer-v11` **FAIL：原180耗尽/202.639秒含正常停止封存**，helper1，四CLI exit0，无强制/guardian/cleanup/pin错误；1766文件及479公开source-only文件保留。90091/90503–90506已核验不存在；禁止重开其Native/Runtime/Node、恢复/复签/退款/复制保管。最后伴随13/13/13/13不是Native终态，mature15/all8固定头/caller/owner/完整信封/守恒未完成。V6修复不足以通过有限成熟gate，不能延长或原样再跑。
+
+一次60只读准确Commit判别 **PASS4.644秒**：22当前parent13/round0票按确切Rust域作Python公钥签名字节核对（不替代Rust key/subgroup/trust/锁/头/冷验）；752签署index、18完整Commit运输副本认证。各节点Prepare为3/4/3/4、Commit均2；九路径中五有完整伴随信封、三无目的保管、一有目的签名receipt/完整运输包却无伴随信封。source1→2首次准备105.291秒、source2→1为93.993秒，按配置first-hop关联，不能把缺直连prepare误当多跳缺服务。13910行闭合连续journal因期限仍failed，原full verifier继续拒绝。实际Native终态和唯一故障原因unknown。
+
+原一次60路线准入判别首 **FAIL0.898秒**：在模型前把失活调度引用当作活动包，源码/失败均保留；只改失活引用分类，V2 **PASS3.102秒**，合计4.000<60。停后slot2→peer3的32pending均不可经该peer转发；slot1→peer0的32含26不可转发、6待下一plan清除的失活引用。停后不是历史live资格。原V6 route/exchange/prepare内核24组模型（32另一分支包、60/86/160历史、每轮4新、warm/cold、原256active/32pending/4packet/20MiB/512hint4MiB）中13组目标连续24成功准备仍缺席。签署/atomic明确mock，模型轮不等现场秒。
+
+实际 `tools/interstellar_mesh.py` 采用 **RLD-CONTACT-TRANSIT-SCHEDULER-V7**：首次pending保留及recent准入均完整认证原transit，按该peer的路线/已访节点/跳数判断资格。不可经该peer转发的ID不占首次槽；仅改变调度metadata，所有原包保持active/完整，路线改变后普通选择仍可重新携带。≤32pending/≤256prepared、最多2原4槽、原认证/receipt/suppression/atomic/64MiB和全部容量不改，不新增socket/Native权威。V6 identity/state原样拒绝，只用新地面fixture，失败保管不转换。
+
+同24反例candidate **PASS1.448秒/一次60**，全部目标第一准备携带；报告字段 `first_ordinary_target_prepare` 是沿用名称，准确含义为首次任何实际选择，不专指普通class。97相关实际签署Mesh/fsync/冷重开/路线分支/原包保留/atomic失败/认证/容量/完整重试/TLS/readonly inspection **PASS23.013秒/一次60**，所有自有线程停止，991普通文件及2链接自身metadata保留且不跟随。原通用scope库存器继续拒绝links，无生产豁免；此前95外层FAIL不改PASS。实际容量TLS样本connect exception为SSLEOFError，并非旧ConnectionResetError唯一原因证明。
+
+当前Python192 `e0bf1803…`，仅Mesh及其test两文件变更；Native89 `fd1e24fe…`/Core171 `de74cf78…`/实际CLI `bef4d5c7…`准确未变。下一仅一次120最终source/controller绑定 **未启动**：全部192/89/171/binary、原17setup/13import/15mature/all8fullcold/caller/owner/守恒/stop及22禁改；52普通库存与2typed no-follow库存，且对路线变化复核原24首次服务模型。首绑定/字节/角色/model/AST/负例/库存不一致、完成或原120退出，无实际Node/Native/Runtime/socket/sign启动。通过才另决定必要新180；当前新180/full600预算均0。
+
+VALUE-STRICT-01两基线告警及120.019耗尽仍独立OPEN；Core/value/lock未改，原120诊断/300修复触发未满足。全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及长期/PQ/独立/physical门槛保持。goal active，采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…；goal旧c906/f825仅前继引用已报告不改。命令显式新rldcoin，持久cwd仍UI待修。正文/PDF/官网、服务器、资金、账号权限和清理不扩展。
+证据：[实际终态、准确Commit、路线反例、源码与相关验证](operations/evidence/regional-bft-first-offer-route-repair-outcome-20261006.json)。
+
 ## 2026-10-06 首次服务反例与V6持久有界修复
 
 完整 fault 仍 **FAIL/OPEN**，原600/60轮/24高度/成熟/票数/容量及原owner请求保持。6152/6657及最近四CLI1722和全部旧失败原件保留，原收款成熟、keyless drain、all12完整cold/守恒未完成。本次没有新增180/600原生范围。
