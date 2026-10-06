@@ -9,6 +9,23 @@
 
 
 
+## 2026-10-06 独立追踪实际接入，原生成熟仍失败
+
+完整 fault 仍 **FAIL/OPEN**：原 runtime-v4 600/612.570 秒/6152 文件、receive-v7 600/616.052 秒/6657 文件及全部旧失败保留。原收款成熟、keyless drain、all12 完整 cold/守恒未完成。历史“全部通过”仅指当段绑定来源和有限 scope。
+
+已实际修改 opt-in Service 追踪：128 行/192KiB 原始发布与四个准确 PID 的独立读取均用原 .25 秒周期，脱离 Native 高度观察等待；仍按原 schema/cursor/fsync/8MiB 拒绝缺口、错误和旧文件续跑。诊断关闭时无新增线程，协议选择/签署/票数/成熟/容量不改。一次60模型0.428秒同时否证 reader-only 与 publisher-only 修复；37相关检查3.862秒及17受影响 journal 检查2.851秒合计6.713秒小于原60，包含实际文件/线程/签署/TLS及明确的模型 PID。独立整份驱动绑定36.323秒/120通过，22禁止变异拒绝、50旧库存字节未变。Python192 当前 `4ff5ca7d…`；Native89 `fd1e24fe…` / Core171 `de74cf78…` / 实际 CLI `bef4d5c7…` 未变。
+
+一次必要全新 `independent-trace-v10` **FAIL：原180秒耗尽，199.725秒含正常停止和封存**。四CLI exit0，无强制或清理失败；1722失败文件及441公开源码文件另存，禁止重开 Native/Runtime/Node、恢复/复签/退款/复制失败保管。84046/84429/84431/84432/84433已核验不存在，无活动自有测试。Native15成熟、all8固定头完整cold、caller/owner/守恒均未完成。闭合 journal 保留13269行/4926395canonical字节，四流连续；但 `failed=true` 因原期限终止，原完整 verifier 继续拒绝，不能称完整观察或付款验收通过。
+
+原一次60只读判别首两次0.139/0.144秒在读取停止库之前因驱动路径/字段名错误失败，源码/失败均另存；只修准确路径和已有 protected 字段后4.269秒通过，准确尝试补充0.794秒，合计5.346秒仍在原60内。21当前parent13原始票按确切Rust域/字段顺序做Python Ed25519签名字节核对（不替代Rust subgroup/trust/锁/头/冷验）。四节点Prepare集合为4/4/3/3、Commit为2/2/2/1。717签署档案索引、15完整Commit运输副本认证：三个源端Commit均已发布，九条目的路径中四条有目的签名收据及完整伴随信封，五条缺目的保管；没有“已保管却缺完整伴随信封”的本轮Commit样本，不把这一有限结论推广为所有原生输入。
+
+准确 Commit2→1 首准备等待80.740秒，之前同peer有23次成功准备及42次准备阶段拒绝；随后两次准确packet/frame/peer/attempt均在 connect 阶段 ConnectionResetError，0.005153/0.027794秒。其他四缺失目的须按其配置first-hop分析，缺直接目的准备不是缺路由服务的证明。真正Native终态、旧live资格和唯一根因仍unknown。
+
+下一仅一次60离线/read-only **首次准备反例，尚未启动**：保留准确Commit2→1大小/角色/直达路线，用原V5 route/transit_groups/exchange/prepare内核及声明的有界历史/新包输入，warm与安全忘hint两分支，固定4packet/256active/32recent/20MiB/512hint4MiB。逐步断言目标有资格，检查23次模型成功准备仍不选目标是否可复现；模型轮不等于现场秒。有反例才选首次服务调度修复并验证普通交通；无反例保留未知，转独立TLS准入模型。首绑定/字节/路线/负例/库存不一致、有限模型完成或原60退出。新180/full600预算均0，不重复未变长scope。
+
+VALUE-STRICT-01 两基线及120.019耗尽仍独立OPEN，Core/value/lock未改，原120诊断/300修复触发未满足，不由地区检查替代。全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及长期/PQ/独立/物理门槛保持。goal active；采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…，goal c906/f825仅前继引用已报告不自主改。所有命令显式新rldcoin；持久cwd仍UI待修，冻结白皮书/PDF/官网、服务器、账号权限、资金和清理范围不扩展。
+证据：[实际源码、有限回归、终态及准确Commit判别](operations/evidence/regional-bft-independent-trace-and-commit-frontier-outcome-20261006.json)。
+
 ## 2026-10-06 一次失败批次重试修复与完整观察缺口终态
 
 **完整fault仍FAIL/OPEN**，runtime-v4原600/612.570秒/6152、receive-v7原600/616.052秒/6657和全部旧失败不变。原收款成熟、keyless drain、all12完整cold/守恒未完成。本文历史“全部通过”仅对应当段准确来源和有限scope，不覆盖后续失败或总验收。

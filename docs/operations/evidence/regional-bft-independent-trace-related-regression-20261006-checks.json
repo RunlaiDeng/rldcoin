@@ -1,0 +1,31 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 3.862009,
+  "helper_exit_code": 0,
+  "stage_sha256": "121e9c6302c1ff30dd0a70225c34559b5c98da41fc01136f55d487003713919f",
+  "helper_sha256": "3eaf501329c5e64c010f1a24c88be04b55aaeca5b51b6f649dbd0e04316af860",
+  "controller_sha256": "6d75d538b40d4ce00a8ab3b10c69f663f2fc2422cf81e951844e7ebe98eb54bb",
+  "log_sha256": "23298590f071e9df2b23ed52eb21a1694907cb6a393cbfc3b46a99a150865ab7",
+  "result": {
+    "actual_fresh_mesh_signature_atomic_custody_pinned_TLS": true,
+    "actual_primitive_publisher_and_collector_threads_fs_sync": true,
+    "completed": true,
+    "duration_seconds": 3.751684,
+    "errors": 0,
+    "failures": 0,
+    "full_fault_qualified": false,
+    "independent_reader_process_owners_are_models": true,
+    "native_runtime_or_currency_fixture_starts": 0,
+    "new_fixture_only": true,
+    "old_fixture_node_native_runtime_opens": 0,
+    "original_bounds_unchanged": true,
+    "private1138_files_unchanged": true,
+    "tests": 37,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

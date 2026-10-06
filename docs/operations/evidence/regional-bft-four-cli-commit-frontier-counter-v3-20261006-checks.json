@@ -1,0 +1,364 @@
+{
+  "completed": true,
+  "budget_seconds": 58,
+  "attempts_used": 1,
+  "duration_seconds": 4.268979,
+  "helper_exit_code": 0,
+  "stage_sha256": "8d26bb3d8aa1f77098be43f400f009f4d758f22d0c6fc1cfd699e170aecf7357",
+  "helper_sha256": "111b1891e648d887db6ea144cf8201f7400336a0988ba380a3514559ce4cf767",
+  "controller_sha256": "df25aa867e3d4678baf916f28584c6b6069b8dbfb459e41ad33a79505fd60beb",
+  "log_sha256": "34e22a74d2089e59da1684177a2458a5e5c811019b4e85aeca5208a37a84bc34",
+  "result": {
+    "active_receipts_authenticated": 0,
+    "closed_deadline_failed_journal_rows": 13269,
+    "commit_paths": [
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 2,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 0,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "phase": "Commit",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "phase": "Commit",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 3,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": "Commit",
+        "round": 0,
+        "source": 1,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": "Commit",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": "Commit",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_native_store_envelope_present": true,
+        "destination": 3,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "phase": "Commit",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      }
+    ],
+    "common_contiguous_prefix_seconds": 143.88615,
+    "complete_commit_transport_copies_authenticated": 15,
+    "completed": true,
+    "duration_seconds": 4.158916,
+    "frontier": [
+      {
+        "commit_signers": [
+          0,
+          1
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 0
+      },
+      {
+        "commit_signers": [
+          0,
+          1
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 1
+      },
+      {
+        "commit_signers": [
+          1,
+          2
+        ],
+        "prepare_signers": [
+          1,
+          2,
+          3
+        ],
+        "slot": 2
+      },
+      {
+        "commit_signers": [
+          2
+        ],
+        "prepare_signers": [
+          0,
+          2,
+          3
+        ],
+        "slot": 3
+      }
+    ],
+    "full_archive_index_entries_authenticated": 717,
+    "full_cold_or_native_ledger_authority": false,
+    "full_fault_qualified": false,
+    "joined_events": [
+      {
+        "destination": 1,
+        "destination_receipt_events": 1,
+        "native_attempt_events": 1,
+        "native_received_events": 1,
+        "native_refusal_events": 0,
+        "positive_preparations": 2,
+        "positive_sends": 2,
+        "queue_to_first_prepare_seconds": 33.76731,
+        "receiver_exact_nonce_authenticated": 2,
+        "receiver_exact_nonce_custody": 1,
+        "receiver_exact_nonce_lock_refusals": 2,
+        "source": 0,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 2,
+        "destination_receipt_events": 0,
+        "native_attempt_events": 0,
+        "native_received_events": 0,
+        "native_refusal_events": 0,
+        "positive_preparations": 0,
+        "positive_sends": 0,
+        "queue_to_first_prepare_seconds": null,
+        "receiver_exact_nonce_authenticated": 0,
+        "receiver_exact_nonce_custody": 0,
+        "receiver_exact_nonce_lock_refusals": 0,
+        "source": 0,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 3,
+        "destination_receipt_events": 0,
+        "native_attempt_events": 0,
+        "native_received_events": 0,
+        "native_refusal_events": 0,
+        "positive_preparations": 0,
+        "positive_sends": 0,
+        "queue_to_first_prepare_seconds": null,
+        "receiver_exact_nonce_authenticated": 0,
+        "receiver_exact_nonce_custody": 0,
+        "receiver_exact_nonce_lock_refusals": 0,
+        "source": 0,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 0,
+        "destination_receipt_events": 2,
+        "native_attempt_events": 1,
+        "native_received_events": 1,
+        "native_refusal_events": 0,
+        "positive_preparations": 2,
+        "positive_sends": 2,
+        "queue_to_first_prepare_seconds": 1.585702,
+        "receiver_exact_nonce_authenticated": 2,
+        "receiver_exact_nonce_custody": 2,
+        "receiver_exact_nonce_lock_refusals": 1,
+        "source": 1,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 2,
+        "destination_receipt_events": 1,
+        "native_attempt_events": 1,
+        "native_received_events": 1,
+        "native_refusal_events": 0,
+        "positive_preparations": 2,
+        "positive_sends": 1,
+        "queue_to_first_prepare_seconds": 20.77522,
+        "receiver_exact_nonce_authenticated": 1,
+        "receiver_exact_nonce_custody": 1,
+        "receiver_exact_nonce_lock_refusals": 1,
+        "source": 1,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 3,
+        "destination_receipt_events": 0,
+        "native_attempt_events": 0,
+        "native_received_events": 0,
+        "native_refusal_events": 0,
+        "positive_preparations": 0,
+        "positive_sends": 0,
+        "queue_to_first_prepare_seconds": null,
+        "receiver_exact_nonce_authenticated": 0,
+        "receiver_exact_nonce_custody": 0,
+        "receiver_exact_nonce_lock_refusals": 0,
+        "source": 1,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 0,
+        "destination_receipt_events": 0,
+        "native_attempt_events": 0,
+        "native_received_events": 0,
+        "native_refusal_events": 0,
+        "positive_preparations": 0,
+        "positive_sends": 0,
+        "queue_to_first_prepare_seconds": null,
+        "receiver_exact_nonce_authenticated": 0,
+        "receiver_exact_nonce_custody": 0,
+        "receiver_exact_nonce_lock_refusals": 0,
+        "source": 2,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 1,
+        "destination_receipt_events": 0,
+        "native_attempt_events": 0,
+        "native_received_events": 0,
+        "native_refusal_events": 0,
+        "positive_preparations": 2,
+        "positive_sends": 0,
+        "queue_to_first_prepare_seconds": 80.739922,
+        "receiver_exact_nonce_authenticated": 0,
+        "receiver_exact_nonce_custody": 0,
+        "receiver_exact_nonce_lock_refusals": 0,
+        "source": 2,
+        "source_enqueued_in_prefix": true
+      },
+      {
+        "destination": 3,
+        "destination_receipt_events": 1,
+        "native_attempt_events": 1,
+        "native_received_events": 1,
+        "native_refusal_events": 0,
+        "positive_preparations": 1,
+        "positive_sends": 1,
+        "queue_to_first_prepare_seconds": 2.797585,
+        "receiver_exact_nonce_authenticated": 1,
+        "receiver_exact_nonce_custody": 1,
+        "receiver_exact_nonce_lock_refusals": 1,
+        "source": 2,
+        "source_enqueued_in_prefix": true
+      }
+    ],
+    "native_runtime_node_socket_signing_or_recovery": 0,
+    "original_complete_verifier_still_refuses": true,
+    "per_slot_through": {
+      "0": 2654,
+      "1": 3821,
+      "2": 4028,
+      "3": 2766
+    },
+    "private1722_files_unchanged": true,
+    "private_exact_paths_sha256": "ae07931cf18fef0a515e3d93cb031d2a01987cdd963bf848a8d4e8890713da33",
+    "retained_vote_signature_bytes_verified": 21,
+    "signature_negative_controls": [
+      "phase",
+      "round",
+      "parent_block",
+      "signature"
+    ],
+    "transport_negative_controls": [
+      "wrong-network",
+      "altered-signature",
+      "altered-receipt"
+    ],
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

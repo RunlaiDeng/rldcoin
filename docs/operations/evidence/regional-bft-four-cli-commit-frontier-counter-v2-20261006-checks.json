@@ -1,0 +1,15 @@
+{
+  "completed": false,
+  "budget_seconds": 59,
+  "attempts_used": 1,
+  "duration_seconds": 0.143682,
+  "helper_exit_code": 1,
+  "stage_sha256": "54182dc80cabce21966ab51e34a1de32a173bf3f88e0f6dc75b1d5c1b375c106",
+  "helper_sha256": "44bafbc9dca169c5f9254ab20b4177fda4930ffa2972ee4feec72328d7efafaa",
+  "controller_sha256": "6cd823b9f5d233954db359befe2dca48af2e7af6927eef9d6e931b269e9f75f2",
+  "log_sha256": "8eafb1dd4d559b85a4737962ba2453fa8de1b14359e76f72381744b9b3d69b2f",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-four-cli-commit-frontier-counter-v2-20261006.py\", line 17, in <module>\n    pins();states=[];transport=[];nodes=[]\n    ~~~~^^\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-four-cli-commit-frontier-counter-v2-20261006.py\", line 15, in pins\n    assert sha(seal)==stage['stopped_inventory_sha256']\n                      ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nKeyError: 'stopped_inventory_sha256'\n",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

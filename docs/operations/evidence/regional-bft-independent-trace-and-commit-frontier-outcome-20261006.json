@@ -1,0 +1,303 @@
+{
+  "format": "RLD-BFT-INDEPENDENT-TRACE-AND-COMMIT-FRONTIER-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-06T00:16:10.371388+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_status": "active",
+  "implementation_target": "S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8",
+  "freeze": {
+    "body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+    "pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+    "receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "goal_text_predecessor_hashes_reported_not_rewritten": true
+  },
+  "source": {
+    "python192_commitment": "4ff5ca7d97b47c61fbdf8820e9cb4f30b4e3db1a775f222c6e333f2308d90ce4",
+    "native89_implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+    "native89_manifest": "346ca668e5e798af407163bb49acea012f2d348dcadd92199a2bd9176db63acd",
+    "core171_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+    "actual_cli_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+    "delta": [
+      "tools/regional_contact_node.py",
+      "tools/regional_contact_trace.py",
+      "tools/regional_contact_trace_journal.py",
+      "tools/test_regional_contact_trace.py",
+      "tools/test_regional_contact_trace_journal.py"
+    ],
+    "native_core_binary_unchanged": true,
+    "source_only_files": 441,
+    "source_only_manifest_sha256": "05c3e94b66cfb54a6abf0513d62d2f9cced2e8dfe86290bb84ff60786c43fdb2",
+    "complete192python89native_source_maps_covered": true,
+    "no_currency_keys_custody_or_binary_copied": true
+  },
+  "checks": {
+    "regional-bft-trace-publication-collection-model-20261006": {
+      "checks_sha256": "19b42e91f41a212d8ddff2818470f9fd129131efb67ac97983ca1a8afd88be41",
+      "completed": true,
+      "duration_seconds": 0.428068,
+      "budget_seconds": 60,
+      "helper_exit_code": 0
+    },
+    "regional-bft-independent-trace-related-regression-20261006": {
+      "checks_sha256": "b9dd3540b5501b30c4e3e4640f69477b6a5fb82e10de4a791165d3df964de764",
+      "completed": true,
+      "duration_seconds": 3.862009,
+      "budget_seconds": 60,
+      "helper_exit_code": 0
+    },
+    "regional-bft-independent-trace-final-journal-regression-20261006": {
+      "checks_sha256": "1ed2efa98e01f320b65a9070dc88686903b319c7ad0de0a88b573ac709054441",
+      "completed": true,
+      "duration_seconds": 2.851306,
+      "budget_seconds": 56,
+      "helper_exit_code": 0
+    },
+    "regional-bft-four-cli-independent-trace-binding-20261006": {
+      "checks_sha256": "345f108d5cee3aa5877de62ce12c35fcfdcb4e2d55d06a3c9c4fc78a2a6ea1fb",
+      "completed": true,
+      "duration_seconds": 36.323078,
+      "budget_seconds": 120,
+      "helper_exit_code": null
+    },
+    "regional-bft-four-cli-service-independent-trace-v10-20261006": {
+      "checks_sha256": "859bb45f4c5c9c13f3145cdfe71916e22b1c341454cbcf9db60ce1a752ebd13a",
+      "completed": false,
+      "duration_seconds": 199.725,
+      "budget_seconds": 180,
+      "helper_exit_code": 1
+    },
+    "regional-bft-four-cli-commit-frontier-counter-20261006": {
+      "checks_sha256": "387762eec1f2915a24011da1943259e62ad06977570692b0bac50d102c932d1b",
+      "completed": false,
+      "duration_seconds": 0.139122,
+      "budget_seconds": 60,
+      "helper_exit_code": 1
+    },
+    "regional-bft-four-cli-commit-frontier-counter-v2-20261006": {
+      "checks_sha256": "83542bb953d369dfa2147d5409b517e7d53b0fe09487a32b1a932aad64f03f66",
+      "completed": false,
+      "duration_seconds": 0.143682,
+      "budget_seconds": 59,
+      "helper_exit_code": 1
+    },
+    "regional-bft-four-cli-commit-frontier-counter-v3-20261006": {
+      "checks_sha256": "797a8f69581dda08a6d5c8db2df74243f7c5e9a608108d8dbfbd7831d442aed2",
+      "completed": true,
+      "duration_seconds": 4.268979,
+      "budget_seconds": 58,
+      "helper_exit_code": 0
+    },
+    "regional-bft-four-cli-commit-attempts-counter-20261006": {
+      "checks_sha256": "e3bdf81c0c542f0769490f26ac0241a73238fe1f9f73cf3415b11fa04e3f19d4",
+      "completed": true,
+      "duration_seconds": 0.794347,
+      "budget_seconds": 54,
+      "helper_exit_code": 0
+    }
+  },
+  "implementation": {
+    "publication": "Opt-in Service owns primitive publisher independent of Native observation: original128ring/192KiB/.25sec, fresh path/PID, sticky errors, own close. Trace-disabled default has no additional thread.",
+    "collection": "Four original actual CLI PIDs bind independent primitive reader; same.25sec/8MiB/schema/cursor/fsync; no gaps filled or failed restart. Exact stopped poll0 final publication only before originaldeadline.",
+    "native_consensus_carriage_signing_and_bounds_unchanged": true,
+    "model": "130 events before publication defeats reader-only;64/64/2 missed publications defeats publisher-only; both modeled paths retain prefix. Not old live timing.",
+    "regression": "37 initial checks3.862009 plus17 affected journal checks2.851306 within original60. Real files/thread/signature/TLS alongside declared fake collector PID/model inputs. Original candidate source preserved.",
+    "binding": "Whole helper AST identical except scope/identity labels and reviewed diagnostic import;22 forbidden changes reject;50 sealed inventories unchanged36.323078/original120."
+  },
+  "actual_fresh_scope": {
+    "status": "FAIL",
+    "original_budget_seconds": 180,
+    "duration_seconds_including_stop_and_seal": 199.725,
+    "budget_exhausted": true,
+    "failure": "ScopeDeadline: original180second service component deadline",
+    "helper_exit_code": 1,
+    "four_cli_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "forced_processes": [],
+    "cleanup_failure": null,
+    "stopped_files": 1722,
+    "stopped_inventory_sha256": "9a32ea71a36b32653ae23cd41dfd006f01ada31afaa55614915e17eee9f39e45",
+    "helper_sha256": "69717b87abcf0405b7bc5532cd3b5cd0f1a66845f827a3ac873f91c98e1a3db0",
+    "controller_sha256": "ecaa2f9b2c317fc4bddb00f8b0683de566d9c0b9e8f7037ad3085f7a90ff9d9c",
+    "native_maturity15_full8_cold_owner_caller_conservation_completed": false,
+    "final_native_state_known": false,
+    "helper_and_node_pids_verified_absent": [
+      84046,
+      84429,
+      84431,
+      84432,
+      84433
+    ],
+    "own_tests_active": false
+  },
+  "diagnostic_prefix": {
+    "closed": true,
+    "failed": true,
+    "failure_is_original_deadline_not_success": true,
+    "all_four_recorded_intervals_contiguous": true,
+    "persisted_rows": 13269,
+    "canonical_event_bytes": 4926395,
+    "through_sequence": {
+      "0": 2654,
+      "1": 3821,
+      "2": 4028,
+      "3": 2766
+    },
+    "full_verifier_still_refuses": true,
+    "no_native_authority": true
+  },
+  "readonly_discriminator": {
+    "first_failure": ".139122s before store reads: incorrect derived sealed root; source/check/log retained.",
+    "second_failure": ".143682s before store reads: incorrect stage inventory field; source/check/log retained.",
+    "corrections": "Exact root then actual protected_sha256 field, no production/store change.",
+    "successful_frontier_seconds": 4.268979,
+    "supplement_seconds": 0.794347,
+    "aggregate_seconds_original60": 5.34613,
+    "vote_signature_limitation": "21 original current-parent signing bytes checked with configured public keys/Python Ed25519. Not Rust full key/subgroup/trust/evidence/lock/head/quorum/cold authority.",
+    "prepare_commit_frontier": [
+      {
+        "commit_signers": [
+          0,
+          1
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 0
+      },
+      {
+        "commit_signers": [
+          0,
+          1
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 1
+      },
+      {
+        "commit_signers": [
+          1,
+          2
+        ],
+        "prepare_signers": [
+          1,
+          2,
+          3
+        ],
+        "slot": 2
+      },
+      {
+        "commit_signers": [
+          2
+        ],
+        "prepare_signers": [
+          0,
+          2,
+          3
+        ],
+        "slot": 3
+      }
+    ],
+    "signed_source_commit_slots": [
+      0,
+      1,
+      2
+    ],
+    "authenticated_archive_index_entries": 717,
+    "authenticated_complete_commit_transport_copies": 15,
+    "destination_receipted_complete_companion_envelope_paths": 4,
+    "source_published_without_destination_custody_paths": 5,
+    "custody_present_companion_envelope_missing_paths": 0,
+    "exact_attempt_failures": [
+      {
+        "attempt": 104,
+        "destination": 1,
+        "error_class": "ConnectionResetError",
+        "exact_original_packet_frame_peer_attempt": true,
+        "failure_stage": "connect",
+        "prepare_to_failure_seconds": 0.005153,
+        "source": 2
+      },
+      {
+        "attempt": 105,
+        "destination": 1,
+        "error_class": "ConnectionResetError",
+        "exact_original_packet_frame_peer_attempt": true,
+        "failure_stage": "connect",
+        "prepare_to_failure_seconds": 0.027794,
+        "source": 2
+      }
+    ],
+    "initial_direct_target_wait": {
+      "destination": 1,
+      "first_target_prepare_present": true,
+      "old_live_eligibility_unknown": true,
+      "positive_same_peer_preparations_before": 23,
+      "pre_open_failures_before": 42,
+      "source": 2,
+      "source_queue_in_prefix": true,
+      "wait_to_first_prepare_or_prefix_end_seconds": 80.739922
+    },
+    "other_destinations": "Other four missing paths lack direct final-peer preparations; must examine configured first hops. Not evidence that those routes had no service.",
+    "negative_controls": {
+      "vote_fields": [
+        "phase",
+        "round",
+        "parent_block",
+        "signature"
+      ],
+      "transport": [
+        "wrong-network",
+        "altered-signature",
+        "altered-receipt"
+      ],
+      "association": [
+        "attempt",
+        "peer",
+        "packet_id",
+        "frame_id"
+      ],
+      "failed_full_verifier_refuses": true
+    },
+    "private1722_bytes_unchanged": true,
+    "native_runtime_node_socket_signing_recovery": 0,
+    "unique_root_cause_and_old_live_eligibility_unknown": true
+  },
+  "next": {
+    "started": false,
+    "budget_seconds": 60,
+    "attempts": 1,
+    "hypothesis": "Original V5 first preparation of a newly queued exact frontier Commit can be delayed by historical destination/frame rotation even when route/byte eligibility is fixed. Actual2-to1 had23 positive samepeer preparations before first target prepare; this alone cannot reconstruct old live eligibility.",
+    "inputs": "Retained exact2-to1 Commit size/roles/direct route; declared bounded history and new-target model; original route/transit_groups/exchange/prepare kernel, warm versus safely forgotten hints. No old Native/Runtime/Node construction/key/socket/signing. Selector model signature/atomic operations explicitly mocked.",
+    "discriminator": "Keep4packet/256active/32recent/20MiB/512hint4MiB; assert target eligible each step. Absence through23 modeled positive preparations selects bounded first-service repair and ordinary traffic regressions. No counterexample preserves unknown and selects independent TLS/admission model. Model rounds are not live seconds.",
+    "exit": "First source/role/byte/route/model-negative/inventory mismatch, finite warm/cold cases complete or original60deadline. No unchanged long retry.",
+    "new180_budget": 0,
+    "new600_budget": 0
+  },
+  "original_full_fault": {
+    "status": "FAIL/OPEN",
+    "runtime_v4_budget_seconds": 600,
+    "runtime_v4_duration_seconds": 612.57,
+    "runtime_v4_files": 6152,
+    "receive_v7_duration_seconds": 616.052,
+    "receive_v7_files": 6657,
+    "all_old_failures_remain_failures": true,
+    "recipient_maturity_keyless_drain_all12_fullcold_conservation_completed": false,
+    "old_owner_requests_retained": true,
+    "old_native_runtime_reopen_recovery_resign_refund_custody_copy": false
+  },
+  "legacy_value_strict": "VALUE-STRICT-01 OPEN: large_enum_variant/bool_assert_comparison/original120.019 exhaustion. Unchanged Core/value/lock; original120diagnostic/300repair triggers unmet; no exemptions or regional substitution.",
+  "persistent_cwd": "old app cwd UI pending; every command explicit /Users/galaxy/GitHub/rldcoin",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "frozen_whitepaper_site_server_accounts_funds_cleanup_unchanged": true
+}

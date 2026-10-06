@@ -1,0 +1,27 @@
+{
+  "budget_seconds": 59,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-four-cli-commit-frontier-counter-v2-20261006.py": "44bafbc9dca169c5f9254ab20b4177fda4930ffa2972ee4feec72328d7efafaa",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-commit-frontier-counter-v2-20261006.py": "6cd823b9f5d233954db359befe2dca48af2e7af6927eef9d6e931b269e9f75f2",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-independent-trace-v10-stopped-private-inventory-20261006.json": "9a32ea71a36b32653ae23cd41dfd006f01ada31afaa55614915e17eee9f39e45",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-independent-trace-v10-20261006-checks.json": "859bb45f4c5c9c13f3145cdfe71916e22b1c341454cbcf9db60ce1a752ebd13a",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional-ledger/src/bft.rs": "5f902649af8bc6ec6f72b570f91978eb33f0b504cdc6e05584c2e6689abb9a9e",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional-ledger/src/lib.rs": "9fc523a90d81a88def3310ff22c2570f1f8ba59fd45735fe7e0d08d4b186a571",
+    "/Users/galaxy/GitHub/rldcoin/crates/rld-core/src/crypto.rs": "3914969e84c6b3b1384198fd4bb591fbc62d6153ea9d39a5e74a5f4fab235aff",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "bf3659150bbd4846a91e609e547c9ff52803beab04892b135bf6b7d8a4ad5792",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "d03f08a864a34befcfd6660943f5702ddb88f753ef9e5fea377a508380d55158",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "33ae162db9ba6b132a9bed0d88cdd0e8a53e3643d9ab95e2725cf53cb7da02c7",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_tcp.py": "a8b5d13f70b607832fed6c1dbbac01fbe2ea6ec058c928347bb3dee0b469abbb",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh_inspection.py": "41264884b97d0d69eb22355cbba16dd0b9cece4e6c4034f603b232358404cc7b",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh_inspection.py": "9bd5cf0c7a128f2b2559976ec3bd9f2f990b14a09397c7c63997ad9bd6b90913",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_active_state.py": "a72f20c337f3243258c7950dba1322e10afd21b05ead4988d3b4064b5c675798",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace.py": "98ae05277e5d6d0bcb7c2cdf2e6250b1705f6574e0bed10db950242a2484bc7d",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_window.py": "b02b5e30400cd7f4b1394230d6acb9b119cb1f5ef53c07ecd1589e13cd7b3437",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_journal.py": "6c6e61371fab4e957d653c3877d04a9337adf2aa103874385281836e8e7c5889",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-independent-trace-v10-private-20261006/ordinary-process-controller/finite-trace-journal.json": "2cd4cdbaf3056d847f003a985dda248a02f32839f251c899cb7ba51910c65e3e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-independent-trace-v10-private-20261006/ordinary-process-controller/finite-trace-events.jsonl": "526044fe53356555a7797867b1bce37e656d35272fdff14251c42691e04fb8fe"
+  },
+  "hypothesis": "Original once60, first failure0.139122s before reading any store due incorrect renamed path retained; one narrow correction within remaining59. Exact current-parent13 retained Commit0/1/2 discriminator. Verify original vote signing domain bytes using public configured keys (not full Rust native authority), complete source/destination transport and destination receipt authentication plus the stopped journal continuous scalar prefix. Distinguish source not published, published without destination custody, and destination custody without complete companion envelope. Deadline-failed closed journal must still refuse the full verifier. No Native/Runtime/Node constructor, old keys, socket, signing, recovery or new180/full600. First binding, byte, role, signature, schema, negative control or1722inventory mismatch, finite paths complete or original60 exits",
+  "full_fault_qualified": false
+}

@@ -1626,3 +1626,15 @@ still take ordinary eligibility rules. No cached exchange, acknowledgment,
 pruning or extra socket attempt follows. V4 identities/states refuse unchanged;
 fresh fixtures only. Immediate retry models and fresh signed/TLS regressions
 do not qualify Native maturity, changing-contact fairness or full faults.
+
+Explicit ground contact tracing may own an independent primitive publisher and
+four-PID collector, using the existing128event/192KiB/.25second/8MiB bounds.
+Start only on fresh diagnostic paths; retain original PID/node/network/schema,
+sticky error/gap refusal, finite deadline and ordinary own-thread shutdown.
+Never fill a lost interval, resume an old trace, retain Native/keys/payloads or
+turn deadline-failed closed diagnostics into a complete verifier pass. This
+opt-in does not change Native observation/signing, consensus or carriage rules.
+Current finite Native failure and next bounded discriminator belong in
+`docs/PLAN_STATUS.md` and its independent-trace-and-commit-frontier outcome;
+transport authentication and Python vote signature bytes do not replace full
+Native key/subgroup/trust/evidence/lock/head/cold authority.

@@ -5,12 +5,14 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+import time
 from unittest.mock import patch
 from types import SimpleNamespace
 
 import interstellar_transfer as wire
-from regional_contact_trace import ContactTrace, MAX_EVENTS
-from regional_contact_trace_journal import TraceJournal, verify_journal
+import interstellar_mesh as mesh
+from regional_contact_trace import ContactTrace,TracePublisher,MAX_EVENTS,PUBLICATION_FORMAT
+from regional_contact_trace_journal import TraceJournal,IndependentTraceJournal,verify_journal
 from regional_contact_trace_window import TraceWindow
 
 
@@ -34,6 +36,86 @@ class JournalTests(unittest.TestCase):
 
     def sample(self, slot):
         return self.journal.sample(slot, self.status(slot), now=1)
+
+    def independent_fixture(self):
+        transport=[];publishers=[];serial=getattr(self,'independent_serial',0)
+        self.independent_serial=serial+1
+        for i in range(4):
+            directory=self.path.parent/('independent-'+str(serial)+'-'+str(i));directory.mkdir()
+            with patch('regional_contact_trace.os.getpid',return_value=100+i):
+                publisher=TracePublisher(self.traces[i],directory/'regional-contact-trace-status.json')
+            self.addCleanup(publisher.close);publishers.append(publisher);transport.append({'state':str(directory)})
+        controller=SimpleNamespace(processes={('proxima',i):SimpleNamespace(pid=100+i,poll=lambda:None) for i in range(4)},
+            pins=[{'node_id':self.slots[i][1]} for i in range(4)],currency=self.network,
+            deadline=time.monotonic()+10,transport=transport)
+        journal=IndependentTraceJournal.attach(controller,path=self.path.parent/('independent-events-'+str(serial)+'.jsonl'))
+        self.addCleanup(journal.close)
+        return controller,journal,publishers
+
+    def test_independent_reader_covers_native_observation_wait_model(self):
+        controller,journal,publishers=self.independent_fixture()
+        # Main-thread observation is never called for longer than a ring cycle.
+        # Event rate is a declared model; disk publication/threads/fsync are real.
+        for _ in range(13):
+            for _ in range(16):self.traces[0].event('contact_start')
+            time.sleep(.125)
+        publishers[0].publish();journal.read_once();journal.stop_collection()
+        view=journal.snapshot()
+        self.assertFalse(view['failed'])
+        self.assertTrue(all(view['intervals_complete'].values()))
+        self.assertGreater(journal.persisted_events,MAX_EVENTS)
+        self.assertEqual(journal.cursors[0].sequence,208)
+        journal.close()
+        checked=verify_journal(journal.path,journal.snapshot(),network=self.network,slots=self.slots)
+        self.assertTrue(checked['complete_collected_prefix'])
+        self.assertFalse(checked['native_ledger_authority'])
+        self.assertFalse(journal.thread.is_alive())
+
+    def test_independent_reader_retains_gap_and_original_byte_bound(self):
+        controller,journal,publishers=self.independent_fixture();journal.stop_collection()
+        for _ in range(MAX_EVENTS+2):self.traces[0].event('contact_start')
+        publishers[0].publish();journal.read_once()
+        self.assertFalse(journal.complete[0])
+        self.traces[0].event('contact_start');publishers[0].publish()
+        with patch('regional_contact_trace_journal.MAX_WINDOW_BYTES',journal.canonical_bytes):
+            with self.assertRaisesRegex(ValueError,'byte capacity'):journal.read_once()
+        self.assertTrue(journal.failed)
+
+    def test_independent_reader_refuses_publisher_failure_owner_and_old_file(self):
+        for mode in ('failure','owner','extra','format'):
+            controller,journal,publishers=self.independent_fixture();journal.stop_collection()
+            path=journal.paths[0];value=mesh.load(path,192*1024)
+            if mode=='failure':value['publisher_failed']=True
+            if mode=='owner':value['process_id']=999
+            if mode=='extra':value['private_key']='model-must-refuse'
+            if mode=='format':value['format']='old'
+            mesh.atomic(path,value)
+            with self.assertRaises(ValueError):journal.read_once()
+            self.assertTrue(journal.failed);journal.close()
+
+    def test_stopped_reader_checks_final_failure_and_exact_owner(self):
+        controller,journal,publishers=self.independent_fixture();journal.stop_collection()
+        with self.assertRaisesRegex(ValueError,'owned trace producer differs'):journal.read_once(require_live=False)
+        self.assertTrue(journal.failed)
+
+    def test_clean_stopped_final_publication_is_checked_without_node_open(self):
+        controller,journal,publishers=self.independent_fixture();journal.stop_collection()
+        self.traces[0].event('contact_start');publishers[0].publish()
+        for owner in journal.owners:owner.poll=lambda:0
+        journal.read_once(require_live=False);journal.close()
+        checked=verify_journal(journal.path,journal.snapshot(),network=self.network,slots=self.slots)
+        self.assertEqual(checked['events'],1)
+        self.assertTrue(checked['complete_collected_prefix'])
+
+    def test_async_failure_retains_only_a_bounded_primitive(self):
+        controller,journal,publishers=self.independent_fixture()
+        controller.processes['proxima',0].poll=lambda:1
+        end=time.monotonic()+2
+        while journal.error is None and time.monotonic()<end:time.sleep(.02)
+        self.assertIs(type(journal.error),str)
+        self.assertLessEqual(len(journal.error),48)
+        with self.assertRaisesRegex(ValueError,'collector failed'):journal.collect(controller)
+        journal.stop_collection();self.assertTrue(journal.failed)
 
     def test_same_8193_complete_events_refuse_v1_and_persist_exactly_in_new_profile(self):
         old = TraceWindow(self.network, self.slots, deadline=180)

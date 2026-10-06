@@ -868,3 +868,14 @@ VALUE-STRICT-01两基线及120秒耗尽保持OPEN，旧value/PoW/lock/Core源未
 
 必要新四CLI范围FAIL94.131/180，因完整trace区间缺口提前终止，未证明Native15/maturity2/all8cold/caller/owner/守恒；四CLI正常退出，1138失败封存，旧Native/Runtime/恢复/复签/退款/复制保管均禁止。只读PASS0.610/60核验4410行和slot1缺1166/1167；原128ring跨130事件准确复现，完整verifier继续拒绝。publication与collection原因未知，不能当协议或旧完整fault唯一根因。下一一次60离线发布/读取跨度模型未启动；新180/full600预算0，旧600失败6152/6657不改PASS。VALUE-STRICT-01仍独立OPEN；冻结S/R/I/A–G/N/P目标、全部阈值与长期/独立/物理门槛不减。
 见[来源、实现、有限验证、所有失败与下一判别](operations/evidence/regional-bft-failed-carriage-replay-outcome-20261006.json)。
+
+## 2026-10-06 独立追踪与准确Commit终态
+
+实际 Service 已采用 opt-in 独立primitive发布/四PID读取，原128ring/192KiB/.25秒/8MiB及失败拒绝保持，Native/共识/签署/成熟/容量不改。37+17相关回归合计6.713秒/原60、独立绑定36.323秒/120通过；Python192 4ff5ca7d…，Native89/Core171/实际CLI未变。
+
+新四CLI **FAIL原180耗尽/199.725秒含封存**，1722失败文件保留，四CLI正常退出，无强制/清理失败，禁止重开或恢复失败保管。闭合13269行四流连续但failed=true，原完整verifier拒绝；Native15/all8cold/owner/caller/守恒未完成。6152/6657及全部旧完整fault仍FAIL/OPEN。
+
+一次60只读首两个入口错误0.139/0.144失败保留，单点修正后4.269及补充.794通过，合计5.346<60。21当前票签名字节核对不等于Rust完整Native权限；717档案索引/15运输副本认证表明三个源Commit已发布，五条缺目的保管，四条已有收据及完整伴随信封。准确2→1先等待80.740秒/23成功准备/42prepare拒绝，随后两connect reset均有准确关联；未证明唯一根因或旧live资格。
+
+下一一次60首次准备内核模型未启动：准确2→1角色/大小/路线、声明历史/new-target、warm/忘hint，原4/256/32/20MiB/512hint4MiB不改；23个模型成功准备仍不选目标的反例才触发最小修复，无则转TLS准入模型；首不一致/有限模型完成/原60退出。新180/full600预算0。VALUE-STRICT-01两告警/120耗尽、全部S/R/I/A–G/N/P及长期/PQ/独立/物理保持OPEN。采用当前冻结2ba62421/c59f9fe8/receipt86821d19，旧goal哈希前继引用已报告；goal active、显式新workdir、持久cwd仍UI待修。
+详见[实际结果及下一判别](operations/evidence/regional-bft-independent-trace-and-commit-frontier-outcome-20261006.json)和[当前状态](PLAN_STATUS.md)。

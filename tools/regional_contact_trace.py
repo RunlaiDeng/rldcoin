@@ -5,6 +5,7 @@ explicit; an incomplete trace cannot prove absence, waiting or delivery.
 """
 from collections import deque
 import math
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -18,6 +19,8 @@ FORMAT='RLD-GROUND-CONTACT-TRACE-V1'
 MAX_EVENTS=128
 MAX_EVENT_BYTES=1024
 MAX_BYTES=192*1024
+PUBLICATION_FORMAT='RLD-GROUND-CONTACT-TRACE-PUBLICATION-V1'
+PUBLICATION_INTERVAL=.25
 HEX=re.compile(r'[0-9a-f]{64}\Z')
 FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class'}
 HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce'}
@@ -107,6 +110,43 @@ class ContactTrace:
         if len(wire.canonical(value))>MAX_BYTES:
             return dict(format=FORMAT,available=False,authority=False,diagnostic='trace_capacity')
         return value
+
+
+class TracePublisher:
+    """Opt-in primitive telemetry, independent of Native/service tick waits.
+
+    No node/keys/payloads/authority. The original ring still loses coverage on
+    overflow; publishing more often cannot backfill events already evicted.
+    """
+    def __init__(self, trace, path):
+        self.trace,self.path=trace,Path(path)
+        self.pid=os.getpid();self.failure=None;self.stop_event=threading.Event()
+        self.thread=threading.Thread(target=self.run,daemon=True,name='contact-trace-publication')
+        mesh.require(not self.path.exists() and not self.path.is_symlink(),
+                     'old diagnostic publication cannot resume')
+        self.publish()
+        self.thread.start()
+
+    def publish(self):
+        value=dict(format=PUBLICATION_FORMAT,process_id=self.pid,
+                   contact_trace=self.trace.snapshot(),publisher_failed=self.failure is not None)
+        mesh.require(len(wire.canonical(value))<=MAX_BYTES,'trace publication byte capacity')
+        mesh.atomic(self.path,value)
+
+    def run(self):
+        while not self.stop_event.wait(PUBLICATION_INTERVAL):
+            try:self.publish()
+            except BaseException as error:
+                # A failed diagnostic never acknowledges or changes protocol
+                # evidence. Future publications retain this failure, not a pass.
+                self.failure=type(error).__name__
+                with self.trace.lock:self.trace.available=False
+
+    def close(self):
+        self.stop_event.set()
+        if self.thread.ident is not None:self.thread.join(timeout=3)
+        mesh.require(not self.thread.is_alive(),'diagnostic publisher did not stop')
+        self.publish()
 
 
 class TraceCursor:

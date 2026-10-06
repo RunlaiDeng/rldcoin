@@ -1,0 +1,162 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 0.428068,
+  "helper_exit_code": 0,
+  "stage_sha256": "70056f12c1a7117937f03f641025a944ac4037af12f3873e7d06fa324852b5bd",
+  "helper_sha256": "5b0068aac28cae8368783e13e08b4755b6aaff7cde38589f535fe06cc4e454a9",
+  "controller_sha256": "55672e040c33e51e83db35c9bc8c6725973dd58d1a149dc9dec87fff63b1c179",
+  "log_sha256": "a3e6fde35a07a23492af2292da56dffe86ad5317f9917c9ac5a1ec8034671f9f",
+  "result": {
+    "completed": true,
+    "coverage_failure_remains_sticky": true,
+    "decision": "separate opt-in primitive trace publication and collection from Native/service observation; unchanged128/8MiB/0.25cadence and overflow still refuses, qualify bounded model/real diagnostic lifecycle first",
+    "duration_seconds": 0.326426,
+    "each_publication_read": {
+      "all_complete": true,
+      "publication_sequence_deltas": [
+        64,
+        64,
+        2
+      ],
+      "reader_results": [
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 1,
+          "through": 64
+        },
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 2,
+          "through": 128
+        },
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 3,
+          "through": 130
+        }
+      ],
+      "total_missed": 0
+    },
+    "exact128": {
+      "all_complete": true,
+      "publication_sequence_deltas": [
+        128
+      ],
+      "reader_results": [
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 1,
+          "through": 128
+        }
+      ],
+      "total_missed": 0
+    },
+    "full_fault_qualified": false,
+    "model_native_wait_not_live_seconds": true,
+    "native_runtime_mesh_sign_socket_or_recovery": 0,
+    "old_actual_publication_and_collection_attribution_unknown": true,
+    "original_ring128_bytes192KiB_aggregate8MiB_unchanged": true,
+    "over128": {
+      "all_complete": false,
+      "publication_sequence_deltas": [
+        129
+      ],
+      "reader_results": [
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": false,
+          "missed": 1,
+          "snapshot": 1,
+          "through": 129
+        }
+      ],
+      "total_missed": 1
+    },
+    "private1138_files_unchanged": true,
+    "publication_lag": {
+      "all_complete": false,
+      "publication_sequence_deltas": [
+        130
+      ],
+      "reader_results": [
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": false,
+          "missed": 2,
+          "snapshot": 1,
+          "through": 130
+        }
+      ],
+      "total_missed": 2
+    },
+    "publisher_only_falsified_for_skipped_publications": true,
+    "reader_lag": {
+      "all_complete": false,
+      "publication_sequence_deltas": [
+        64,
+        64,
+        2
+      ],
+      "reader_results": [
+        {
+          "complete": true,
+          "missed": 0,
+          "snapshot": 0,
+          "through": 0
+        },
+        {
+          "complete": false,
+          "missed": 2,
+          "snapshot": 3,
+          "through": 130
+        }
+      ],
+      "total_missed": 2
+    },
+    "sampler_only_falsified_for_unpublished130_burst": true,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

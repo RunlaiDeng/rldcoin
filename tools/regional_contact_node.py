@@ -113,6 +113,7 @@ class Service:
     def __init__(self, native, config, miner, listen=('127.0.0.1',0), insecure_tcp=False, bft_config=None, parallel_carriage=True, contact_trace=None):
         self.native, self.config, self.miner = native, config, miner
         self.contact_trace=contact_trace
+        self.trace_publisher=None
         self.lock = None
         self.tcp = None
         self.bft = None
@@ -145,6 +146,9 @@ class Service:
             mesh.atomic(self.path, self.progress)
             self.tcp = (tcp.Server(config,listen,insecure=insecure_tcp,contact_trace=contact_trace) if contact_trace is not None
                         else tcp.Server(config,listen,insecure=insecure_tcp))
+            if contact_trace is not None:
+                from regional_contact_trace import TracePublisher
+                self.trace_publisher=TracePublisher(contact_trace,self.root/'regional-contact-trace-status.json')
             if bft_config is not None:
                 mesh.require(miner is None, 'BFT validator cannot use uncertified import mining')
                 from regional_bft_node import Runtime
@@ -168,9 +172,14 @@ class Service:
         if self.tcp is not None:
             self.tcp.close()
             self.tcp = None
-        if self.lock is not None:
-            os.close(self.lock)
-            self.lock = None
+        try:
+            if self.trace_publisher is not None:
+                publisher=self.trace_publisher;self.trace_publisher=None
+                publisher.close()
+        finally:
+            if self.lock is not None:
+                os.close(self.lock)
+                self.lock = None
 
     def receive_bft_batch(self, rows, errors, rejected, deferred):
         """A local lock cannot establish envelope invalidity or acceptance."""

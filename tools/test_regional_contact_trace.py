@@ -1,14 +1,17 @@
 """Live transport boundaries and explicit observation loss; no value pass."""
 import copy
 import json
+import os
+from pathlib import Path
 import tempfile
 import threading
+import time
 import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
 import interstellar_tcp as tcp
-from regional_contact_trace import ContactTrace,TraceCursor,MAX_EVENTS
+from regional_contact_trace import ContactTrace,TraceCursor,TracePublisher,MAX_EVENTS,MAX_BYTES
 from test_interstellar_tcp import Fixture,NETWORK
 
 
@@ -59,6 +62,60 @@ class TraceTests(unittest.TestCase):
         self.assertEqual([x['sequence'] for x in row['events']],list(range(1,91)))
         with patch('regional_contact_trace.time.monotonic',side_effect=OSError('clock unavailable')):trace.event('contact_start')
         self.assertEqual(trace.snapshot()['rejected_events'],1)
+
+    def test_primitive_publisher_runs_without_service_tick_and_stops(self):
+        with tempfile.TemporaryDirectory() as root:
+            trace=self.trace();path=Path(root)/'publication'
+            publisher=TracePublisher(trace,path)
+            try:
+                trace.event('contact_start','c'*64)
+                end=time.monotonic()+2
+                while mesh.load(path,MAX_BYTES)['contact_trace']['sequence']!=1 and time.monotonic()<end:
+                    time.sleep(.02)
+                value=mesh.load(path,MAX_BYTES)
+                self.assertEqual(value['process_id'],os.getpid())
+                self.assertEqual(value['contact_trace']['sequence'],1)
+                self.assertFalse(value['publisher_failed'])
+                self.assertNotIn('private_key',json.dumps(value))
+                with self.assertRaisesRegex(ValueError,'cannot resume'):TracePublisher(trace,path)
+            finally:publisher.close()
+            self.assertFalse(publisher.thread.is_alive())
+
+    def test_failed_publisher_keeps_failure_without_authority(self):
+        with tempfile.TemporaryDirectory() as root:
+            trace=self.trace();path=Path(root)/'publication';publisher=TracePublisher(trace,path)
+            try:
+                with patch('regional_contact_trace.mesh.atomic',side_effect=OSError('disk refusal')):
+                    end=time.monotonic()+2
+                    while publisher.failure is None and time.monotonic()<end:time.sleep(.02)
+                    self.assertEqual(publisher.failure,'OSError')
+                publisher.publish();value=mesh.load(path,MAX_BYTES)
+                self.assertTrue(value['publisher_failed'])
+                self.assertFalse(value['contact_trace']['available'])
+                self.assertFalse(value['contact_trace']['authority'])
+            finally:publisher.close()
+
+    def test_publisher_byte_bound_refuses_without_replacing_previous(self):
+        with tempfile.TemporaryDirectory() as root:
+            trace=self.trace();path=Path(root)/'publication';publisher=TracePublisher(trace,path)
+            try:
+                publisher.stop_event.set();publisher.thread.join(timeout=2)
+                before=path.read_bytes()
+                with patch('regional_contact_trace.MAX_BYTES',1):
+                    with self.assertRaisesRegex(ValueError,'byte capacity'):publisher.publish()
+                self.assertEqual(path.read_bytes(),before)
+            finally:publisher.close()
+
+    def test_publisher_failure_does_not_leak_service_ownership_lock(self):
+        from regional_contact_node import Service
+        from types import SimpleNamespace
+        with tempfile.TemporaryFile() as stream:
+            service=object.__new__(Service);service.carriage=service.bft=service.tcp=None
+            service.lock=os.dup(stream.fileno());fd=service.lock
+            service.trace_publisher=SimpleNamespace(close=lambda:(_ for _ in ()).throw(OSError('diagnostic fsync')))
+            with self.assertRaises(OSError):service.close()
+            self.assertIsNone(service.lock)
+            with self.assertRaises(OSError):os.fstat(fd)
 
     def traced_fixture(self):
         temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)

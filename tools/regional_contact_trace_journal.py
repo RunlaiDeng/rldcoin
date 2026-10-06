@@ -8,6 +8,8 @@ does not repair lost producer events or resume failed/closed observations.
 import hashlib
 import math
 import os
+import threading
+import time
 from pathlib import Path
 
 import interstellar_mesh as mesh
@@ -94,6 +96,83 @@ class TraceJournal(TraceWindow):
                     lifetime_row_limit_applies=False, canonical_byte_limit=MAX_WINDOW_BYTES,
                     authority=False, ledger_acceptance_known=False,
                     actual_live_schedule_reconstructed=False)
+
+
+class IndependentTraceJournal(TraceJournal):
+    """One owned reader for four bounded primitive publications, not Native.
+
+    Uses the same row/schema/cursor/fsync/8-MiB verifier. It does not claim a
+    missing publisher/reader interval or an old observation is complete.
+    """
+    @classmethod
+    def attach(cls, controller, *, path):
+        owned=TraceWindow.attach(controller)
+        paths=tuple(Path(c['state'])/'regional-contact-trace-status.json' for c in controller.transport)
+        mesh.require(len(paths)==4,'exact four diagnostic publication paths required')
+        journal=cls(controller.currency,owned.slots,deadline=controller.deadline,path=path)
+        journal.guard=threading.RLock();journal.stop_event=threading.Event();journal.error=None
+        journal.owners=tuple(controller.processes['proxima',i] for i in range(4))
+        journal.paths=paths
+        journal.thread=threading.Thread(target=journal.run,daemon=True,name='contact-trace-collection')
+        try:journal.thread.start()
+        except BaseException:
+            journal.close()
+            raise
+        return journal
+
+    def read_once(self, *, require_live=True):
+        with self.guard:
+            try:self._read_once(require_live)
+            except BaseException:
+                self.failed=True
+                raise
+
+    def _read_once(self, require_live):
+        from regional_contact_trace import MAX_BYTES,PUBLICATION_FORMAT
+        with self.guard:
+            for i in range(4):
+                terminal=self.owners[i].poll()
+                mesh.require(self.owners[i].pid==self.slots[i][0]
+                             and (terminal is None if require_live else terminal==0),
+                             'owned trace producer differs')
+                try:value=mesh.load(self.paths[i],MAX_BYTES)
+                except FileNotFoundError:value=None
+                mesh.require(require_live or value is not None,'stopped diagnostic publication missing')
+                if value is not None:
+                    mesh.require(set(value)=={'format','process_id','contact_trace','publisher_failed'}
+                                 and value['format']==PUBLICATION_FORMAT
+                                 and value['publisher_failed'] is False,'diagnostic publisher failed or differs')
+                self.sample(i,value,now=time.monotonic())
+
+    def run(self):
+        from regional_contact_trace import PUBLICATION_INTERVAL
+        while not self.stop_event.is_set():
+            try:self.read_once()
+            except BaseException as error:
+                # Keep a bounded primitive failure, never exception tracebacks
+                # retaining decoded snapshots or other mutable call locals.
+                with self.guard:self.error=type(error).__name__[:48];self.failed=True
+                return
+            self.stop_event.wait(PUBLICATION_INTERVAL)
+
+    def collect(self, controller):
+        # Native height observation never serializes this independent reader.
+        with self.guard:
+            if self.error is not None:raise ValueError('independent trace collector failed: '+self.error)
+            mesh.require(not self.failed,'failed trace journal cannot resume')
+
+    def stop_collection(self):
+        self.stop_event.set()
+        if self.thread.ident is not None:self.thread.join(timeout=3)
+        mesh.require(not self.thread.is_alive(),'diagnostic collector did not stop')
+
+    def close(self):
+        try:self.stop_collection()
+        finally:super().close()
+
+    def snapshot(self):
+        with self.guard:
+            return dict(super().snapshot(),collection_profile='RLD-FOUR-CLI-INDEPENDENT-PUBLICATION-JOURNAL-V1')
 
 
 def verify_journal(path, snapshot, *, network, slots):
