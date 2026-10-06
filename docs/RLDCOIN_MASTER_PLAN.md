@@ -1,5 +1,14 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 单一parent13 Commit运输/接纳边界已判别
+
+新独立最小只读预算**20秒/一次**，实际启动helper38559并终止exit0，**PASS1.815794秒**；该预算没有续算、重置或重标旧named source60的59.845831秒终态。复用859完整运输/643档案索引的封存字节资格，仅验证准确source2→destination1 parent13 round0 Commit的签名字节/context及匹配信封；改变phase的签名负例拒绝。源码取相同参考父tip，不授予Rust内层key/subgroup/lock/quorum或原生接纳/成熟资格。
+
+准确Commit完整原包只在source2 active保留；目的1**无相同完整包及其匹配收据，companion body未保留**，没有同content异payload变体。487条closed+failed、非authority typed journal的34条目标准备记录均completed，但selected=0、hop_attempts=0、suppressed=0；目标仍未prepared、pending12、global arrival29、observed=true。源码中observed=sorted(active)只是源端本地active ID观察快照，**不是目的端持有或接纳证明**。因此可定位到源端准备/选取尚未完成这一边界，不能归为已送达后的Native拒绝，不能证明唯一调度/CPU/OS原因。失败1630文件字节前后不变，无Node/Native/Runtime/socket/key/sign/fixture或实际运输调用，无新180/600。
+
+下一最小反例保持同一个Commit目标：只检查V12实际ordinary优先/eligibility交集在pending12/global29情况下为何持续未选取；先声明独立最小预算，以原始分支及primitive状态模型判别，不假定历史class step/LRU/全局相对序，也不重扫已认证运输。保留first2、另一普通类floor、full4 retry、路由/签名、字节容量与原子护栏。本轮该后续范围未分配/执行，当前20秒范围在有限边界判明后停止。V21/旧V19/原600仍FAIL，成熟15/all8完整Native cold/守恒及600/all12/keyless未通过；地面/签名字节/typed准备completed均不能替代这些资格。两份准确只读源码review副本及仅来源快照保存，生产/实际binary/冻结正文PDF官网未改；全部命令显式新workdir。
+[单一Commit真实边界与签名字节结果](operations/evidence/regional-bft-single-commit-boundary-v21-outcome-20261006.json)。
+
 ## 2026-10-06 V21真实原生终态FAIL与Proposal送达边界
 
 已按既有授权执行唯一已分配V21零价值组件，原180秒/一次尝试，helper34644，当前Python192/Native89/Core171/actualbinary及原参数未变。**FAIL：ScopeDeadline原180耗尽，208.623秒含收尾；1630文件封存。**四CLI35045–35048各exit0，owned stopped、无forced/cleanup/pin异常，helper/CLI进程均已不存在。原成熟15/all8完整固定头原生cold/envelope/caller/owner/守恒未完成；不因正常停止或运输通过改为PASS。旧runtime-v4 600/6152、V19 180/1856和全部旧FAIL保留，不重开/复制/重签失败Native/Runtime/Node/保管。本段下方“未启动”仅指当时分配创建快照。

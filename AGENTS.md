@@ -1862,3 +1862,24 @@ stillOPEN. Production/freeze/site untouched; uniqueauthor and explicit newworkdi
 Runtime goal metadata lastobserved blocked, supportedtool cannotresume, not an
 approval gate. See docs/operations/evidence/
 regional-bft-unserved-promotion-v21-terminal-frontier-outcome-20261006.json.
+
+
+Current exact Commit boundary (2026-10-06): independent20/one readonly scope
+PASS1.815794, helper38559 stopped; old named source60 terminal59.845831 unchanged.
+Exact source2->destination1 parent13round0 Commit signature/context/reference-tip
+verified, altered-phase refused. Exact full packet only atsource2active; no exact
+destination complete envelope/receipt/companion body. Reused immutable859/643
+qualification, no broad recheck.487 typedclosedfailed journal rows,34target
+completed preparation rows selected0/hop0/suppressed0; sourceunprepared pending12,
+globalarrival29, observedtrue. first_carriage observed=sorted(active) is LOCAL
+admission observation, NOT remote receipt/custody/admission. Source preparation
+selection boundary identified, no unique scheduler/CPU/OS/Native rejection proof.
+1630 bytes unchanged, zeroNode/Native/Runtime/socket/key/sign/fixture/transport,
+new180/600=0. Next same-target primitive actualV12 order/eligibility counterexample
+needs its own minimum budget/first-failure exit, no historical class/LRU/order
+assumptions. Preserve first2/other-classfloor/full4/auth/bytes/atomic. No next
+scope allocated/executed here; do not reopen failed artifacts or repeat longscope.
+V21/V19/original600FAIL and Native maturity15/all8cold/conservation/all12keyless
+remainOPEN. Two exact review sources, no private copies. Freeze/site/production
+unchanged. See docs/operations/evidence/
+regional-bft-single-commit-boundary-v21-outcome-20261006.json.

@@ -1,0 +1,31 @@
+{
+  "format": "RLD-SINGLE-COMMIT-BOUNDARY-STAGE-V1",
+  "recorded_at_utc": "2026-10-06T06:40:16.663110+00:00",
+  "budget_seconds": 20,
+  "attempts": 1,
+  "prior_named_source60_terminal_seconds": 59.845831,
+  "independent_scope_not_reset_or_continuation_of_spent_source60": true,
+  "hypothesis": "Exact parent13 round0 source2 Commit destination1 may lack complete retained destination transport despite delivered Proposal14. Authenticate exact Vote signature/context, select complete original transport/receipt via previously qualified643 immutable indexes, inspect failed typed prepare prefix and exact companion body. No rejection inferred from missing labels.",
+  "success": "Exact signature/context identity plus finite sealed complete-destination versus companion-retention/typed-prepare boundary established; diagnostic only.",
+  "exit": "First source/seal/identity/signature/context/schema contradiction or original independent20 deadline; one attempt, no failed Node/Native/Runtime/key/sign/socket/transport or new180/600.",
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-single-commit-boundary-v21-20261006.py": "397f19b78b6bbc719aaf2f3e2c735bafd1cb9e50aa8ea6f690b7ab328cee481e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-single-commit-boundary-v21-20261006.py": "43af3e57c4f20fd750de9465aab2bee6edece0f291e4ec1d552c000ea119d3e1",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-proposal-transport-boundary-v21-v2-20261006-checks.json": "f9e33ae26ba030cb7637e4393e58f10fb4a070a3aa485142e57dccd6d23ee0f1",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-proposal-transport-boundary-v21-v2-20261006-stage.json": "93bae9057e29a3385a4a4c17521d7288ecd7b5c5ecaebf5a01b5758d72141596",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-unserved-promotion-v21-terminal-frontier-outcome-20261006.json": "4cfcc29064eae643f30a5ac9851107fbb86622517fb2a5fbfba91b386646ff20",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-first-service-diag-v21-20261006-checks.json": "77ecaf8aed74ea99b1e24a7dee1ab5452c0e03f6e1f7238b096ac399720f7312",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v21-stopped-private-inventory-20261006.json": "809c4160e1395727d24053d5a5e58aed211618322d63ab2c129e99de5142c209",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_observer_v3_20261006.py": "3c1a762afd1e3822a9cfcc24f3e0cb8b211f1b75f5203e58891cb9def0fafb86",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "b450bab4f1b5e666cb94e7473a4477fbf8b0abc8a2b1dc6b6aaa7d50b1763371",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_transfer.py": "61eb840b616e0606c7d260027962b376a24fab10bc322f2ece62f1aa03ee2e2b",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_retention.py": "895c6ad7626c988f0d52fdd4d0f7f4350d99674bd15a40664e5b3cce3c7d575b",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_joint_epoch.py": "1c444dfa7cbeaa928a49ea26be54b363f0e29c9a9893fb05c4d86ab5439b9f00",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_paged_fault_scope.py": "b8228c7173e1093ba7d38c15d44cb0250ccdcd1e25632da4f0d67fc66b074c5b"
+  },
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
