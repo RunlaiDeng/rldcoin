@@ -1,5 +1,16 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 V22启动FAIL已定位，新入口OS执行验证后接续V23
+
+V22实际**FAIL49.024秒/原180/524文件封存**，budget未耗尽、helperexit1。4个CLI均exit1，日志同为`Permission denied (os error13)`；trace owner terminal及unclean shutdown是其后续症状。最终controller guardian确认owned stopped、无forced/signalled/cleanup guardian异常，不把正常停止替代PASS。Native setup17/recipient import13已准备，但运行期间成熟15/all8完整cold/守恒未通过。全部旧失败仍FAIL，旧Native/Runtime/Node/保管不重开、不恢复、不重签、不复制。
+
+独立10秒只读首错核对0.000328秒，4日志相同SHA943fffe3…；源码Rust以Command::new直接执行transport入口。新V10源码文件漏了执行标记（0644），旧V9原模式0755。这是生成驱动遗漏，不是密码学/共识拒绝，也不是OS权限扩大需求。仅对新V11驱动采用原0755标记，旧V10/失败524不修改。原生产192Python a5d60aba…/Native89/Core171/实际binary继续不变。
+
+独立10秒源/实际OS入口预检**PASS0.518109秒**：真实执行新入口，rc1明确“未分配Native scope”正确拒绝，发生在Mesh/Native/Runtime导入前；0Node/Native/Runtime/socket/key/sign/fixture调用。V10→V11整entry AST反转、helper/controller producer完全匹配、原参数及全部cold/守恒/stop护栏保持；新root不存在，实际入口0755已核验。不是Native资格，也没有重做已通过地面长测。
+
+依既有授权已分配新V23一次原180组件，唯一变化为实际入口执行标记及新root/source绑定，V13仍是待Native验证的最小来源修复。V22此前未进入运输，因此不是原样重跑一个有效长测；仍保留其FAIL49.024。原600/60round/24height/maturity2/quorum3/first2/full4/锁/容量/17setup/13import/15mature/all8 cold/守恒/正常停止不变，无新600。当前段创建时未启动，终态另记；持续单一主线，不因局部预检停下。冻结白皮书/官网与全部实施目标不变，账户/外部权限/主网/资金/服务器/清理/push范围不扩大。
+[实际OS入口核验](operations/evidence/regional-bft-executable-entry-v11-v23-source-binding-20261006-checks.json)；[必要新V23范围](operations/evidence/regional-bft-four-cli-older-spare-v23-decision-allocated-20261006.json)。
+
 ## 2026-10-06 V13旧未服务备用槽修复与必要V22原生验收
 
 用户要求持续开发，不在局部测试后停止。原V21/180及runtime-v4/600仍FAIL，旧named source60终态59.845831秒不重置。第83次运输的只读10秒判别0.045307秒：目的端完整请求已认证，随后BlockingIOError拒绝，未进入deferred槽；缺少完整回复字节，不能称回复密码学失败或唯一OS原因。该诊断的queue原因读取键不完整，故原因值保持unknown；不以它优化锁或容量。

@@ -1,0 +1,29 @@
+{
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "actual_OS_exec_return_code": 1,
+  "actual_OS_exec_stderr": "regional contact node rejected: new diagnostic Native scope not allocated",
+  "attempts": 1,
+  "budget_seconds": 10,
+  "completed": true,
+  "current_entry_v11_mode": "0o755",
+  "duration_seconds": 0.518109,
+  "entry_AST_reversal_original_code_exact": true,
+  "exact_native_helper_and_controller_producer_match": true,
+  "exec_succeeded_unallocated_refusal_before_Mesh_Native": true,
+  "full_fault_qualified": false,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "old_V22_failed524_unchanged": true,
+  "old_entry_v10_mode": "0o644",
+  "original_parameters_equal": true,
+  "reference_entry_v9_mode": "0o755",
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_four_cli_first_service_diagnostic_v8_20261006.py": "0a1726c2e565e8243b4a319c3d917ad2e9d25e7c5aa1e073d5f33c50c2704437",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_older_spare_delivery_precondition_v4_20261006.py": "86bf864f99af29f40c10f404a3c73395f6431f814d6e9ffd589a7f335fe2f174",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bind_bft_four_cli_older_spare_v23_20261006.py": "02c3e1bfafd0e7d5fe0a0bfb3019e263f4e0263bc173719c97ec65e7f0fa99f9",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-service-first-service-diag-v23-allocated-preview-20261006.py": "5dbb4a501bda484f6edde873bc7f3ade6d140735a47f3bdf0febece209de3fcd",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_contract_v11_20261006.json": "a93d27970f7bbdad1abbe12f768b453dababeefbacc370cbf6b0e9e263ac0dc5",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_v11_20261006.py": "eb048a19292ce2e8508d2a479762c4e657a3f42e0dab02e716da0df25d06df66",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-four-cli-service-first-service-diag-v23-20261006.py": "0f6640c6ebfb42a214bb4085d10047ac28f5f235c8841d5b707d2f055a0b09dc"
+  }
+}
