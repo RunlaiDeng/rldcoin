@@ -1,0 +1,198 @@
+{
+  "format": "RLD-BFT-UNSERVED-PROMOTION-REPAIR-OUTCOME-V1",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "recorded_at_utc": "2026-10-06T05:28:10.709642+00:00",
+  "goal_status": "active",
+  "goal_objective_predecessor_hashes_already_reported_not_rewritten": true,
+  "project_workdir": "/Users/galaxy/GitHub/rldcoin",
+  "all_project_commands_explicit_new_workdir": true,
+  "persistent_app_cwd": "old Chinese path remains UI pending; never claimed fixed",
+  "frozen_authority": {
+    "body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+    "pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+    "receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "normative_ids": [
+      "S1-S18",
+      "R1-R24",
+      "I1-I12",
+      "A-G",
+      "N1-N10",
+      "P1-P8"
+    ],
+    "all_adopted": true,
+    "body_pdf_site_changes": 0
+  },
+  "reports_sha256": {
+    "regional-bft-four-cli-ordinary-newest-decision-unarmed-20261006.json": "7dd9d62d91deebdac43d48043c634c1dc5e69952bc0594016c732689666f1867",
+    "regional-bft-four-cli-ordinary-newest-decision-allocated-20261006.json": "d424ffd624320fa4ca55a9ea9f354ec05970a8e13d77891b788d370969e7627f",
+    "regional-bft-four-cli-service-first-service-diag-v19-20261006-stage.json": "350b2ed7eeacdc12bf4d8e88274f3cdc3638a08fe857d37966320a06f1f8cf07",
+    "regional-bft-four-cli-service-first-service-diag-v19-20261006-checks.json": "aedf9fc1efe9ef5ced54958f55dc70920d70ac5b03c0939ec56bf0dcb9ed00ea",
+    "regional-bft-ordinary-newest-entry-start-allocated-v19-20261006.json": "ba40b612876129d35de9f59f433567b0a5c2fc18e69dbdea7c934b9e29a4a3a3",
+    "regional-bft-proposal-vote-dependency-boundary-v19-20261006-stage.json": "dbf3cdaa8cb130734bc4824988b74e17342ab91469f957b275779cc316697204",
+    "regional-bft-proposal-vote-dependency-boundary-v19-20261006-checks.json": "0c5f0b3fa284906be07c5b553d34f01107fd56616eeaaeb2db03b7dbd83dc7af",
+    "regional-bft-unserved-promotion-priority-v19-20261006-stage.json": "e60eaa90e0f4ded31aaa3b5a1dd397dd1ab591fe71523ac6a27c1666625f7319",
+    "regional-bft-unserved-promotion-priority-v19-20261006-checks.json": "855c4943d10825697d91234f36484be629cdcfd65dd16785ab4cbfea7b17aab6",
+    "regional-bft-unserved-promotion-final-identity-20261006.json": "e9a086b8c4fbc79ce05afa5631bd2c22749479f5a308c18e59381b24069ff026",
+    "regional-bft-unserved-promotion-final-binding-v1-20261006-checks.json": "8d5ef975c887f01cc4bfa5dc0ebb768b16f2af4bec3170000da3d7d56cd4d84d",
+    "regional-bft-unserved-promotion-final-binding-v2-20261006-stage.json": "9636aa07cc2ffd20f44f46050798be9111a827aaacb63d621444549f5b3ae58d",
+    "regional-bft-unserved-promotion-final-binding-v2-20261006-checks.json": "12396f574cbaf85f71955da932eabf407af33a5be577c3857625b01ffc770a5e",
+    "regional-bft-unserved-promotion-ground-v1-20261006-stage.json": "43cd208fc87cb726fa052960e79dcdf3f7c9d090abad735d0395ade361be94e2",
+    "regional-bft-unserved-promotion-ground-v1-20261006-checks.json": "f58bc402e3dca15c6e48d021b4999645f0309b5c9249ae4617ca8b0f39576bcd",
+    "regional-bft-unserved-promotion-ground-v2-20261006-stage.json": "1b661eaf716ecc6017185e6ceff1488fd66b91263293246bd95a50f483e4407d",
+    "regional-bft-unserved-promotion-ground-v2-20261006-checks.json": "955a0cc1cc19cde59b871e1d0b37ddf58c6ea3bbdf7834976316daf5b91878fb",
+    "regional-bft-unserved-promotion-ground-v3-20261006-stage.json": "2e95aff6d7bfb6974abecf0a302888ff89a38150de594ffdb8fd18858a7a9667",
+    "regional-bft-unserved-promotion-ground-v3-20261006-checks.json": "7d13af9731f0704de2f6c59a1189e57b2539c009912afe85e86ba0bbc1c9574c"
+  },
+  "original600": {
+    "completed": false,
+    "budget_seconds": 600,
+    "duration_including_stop_seconds": 612.57,
+    "stopped_files": 6152,
+    "report_sha256": "61212b011c94d9def55e67d412fe3b910a1f664932bb4a97974e2aadde07bf7e",
+    "old_failure_and_owner_requests_retained": true,
+    "recipient_maturity_keyless_all12_cold_conservation_unfinished": true
+  },
+  "actual_V19": {
+    "completed": false,
+    "budget_seconds": 180,
+    "duration_including_normal_stop_seconds": 207.185,
+    "helper_exit_code": 1,
+    "failure": "ScopeDeadline: original180second service component deadline",
+    "four_cli_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "owned_processes_stopped": true,
+    "owned_pids_absent_after_stop": true,
+    "forced_processes": [],
+    "cleanup_failures": [],
+    "pin_error": null,
+    "stopped_files": 1856,
+    "stopped_inventory_sha256": "65dcdd15db7eb5f4a215b2728f6cc3f43ef8f88b72729eddf1a172db0b0220f8",
+    "reference_heights": [
+      14,
+      14,
+      14,
+      14
+    ],
+    "native_maturity15_all8_cold_owner_conservation_not_completed": true
+  },
+  "read_only_dependency": {
+    "reason_for_new_named60_phase": "New V19 terminal1856 and complete Proposal dependency not covered by prior V18 Vote-only classification; no reset of prior58.775813 source budget or original ground60.",
+    "original_budget_seconds": 60,
+    "classification_seconds": 27.811839,
+    "promotion_counter_seconds": 1.138199,
+    "failed_wrapper_syntax_actual_duration_unknown_conservative_charge_seconds": 0.1,
+    "final_binding_seconds": 0.728894,
+    "combined_stage_seconds": 29.778932,
+    "complete_signed_transport_copies": 968,
+    "signed_archive_indexes": 807,
+    "retained_vote_signature_rows": 43,
+    "typed_contact_rows": 15835,
+    "typed_first_preparation_rows": 544,
+    "common_prefix_seconds": 143.377031,
+    "proposal15_parent14_reference_nodes": [
+      0,
+      2,
+      3
+    ],
+    "proposal_missing_destination": 1,
+    "actual_promoted_unserved_targets": 4,
+    "proposal_arrival_position0_to_pending_position30": true,
+    "proposal_remained_unselected_in_retained_records": true,
+    "last_live_native_observations": {
+      "import_accepted": true,
+      "import_height": 13,
+      "local_heights": [
+        14,
+        14,
+        14,
+        14
+      ],
+      "mature_height": 15,
+      "original_output_spendable": false,
+      "not_latest_or_full_cold_authority": true
+    },
+    "reference_Proposal_inner_authentication_or_Native_ledger_not_reconstructed": true,
+    "no_historical_class_step_or_global_relative_order_claim": true,
+    "no_unique_OS_lock_or_cold_CPU_cause_claim": true,
+    "Native_Runtime_Node_socket_sign_calls": 0
+  },
+  "actual_signed_ground": {
+    "original_budget_seconds": 60,
+    "prior_spent_seconds": 7.728157,
+    "baseline_V11": {
+      "completed": false,
+      "duration_seconds": 0.314746,
+      "expected_missing_target_assertion_failure": true,
+      "stopped_files": 14
+    },
+    "first_V12": {
+      "completed": false,
+      "duration_seconds": 0.320845,
+      "target_assertion_passed": true,
+      "failed_new_floor_assertion": "New assertion wrongly excluded already-prepared ordinary historical retransmission; only new assertion corrected; unchanged old ten checks and source retained.",
+      "stopped_files": 14
+    },
+    "final_V12": {
+      "completed": true,
+      "duration_seconds": 2.505496,
+      "tests": 11,
+      "stopped_files": 154
+    },
+    "combined_stage_seconds": 10.869244,
+    "failed_fixture_reopens": 0,
+    "old_ten_tests_and_all_prior_AST_assertions_unchanged": true,
+    "authentication_atomic_failure_pending2_other_pair_history_floor_full4_cold_schema_capacity_passed": true
+  },
+  "implementation": {
+    "profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V12",
+    "python_source_commitment": "1914160b341d21f5df8ec03f74380cb0532cdbc4b302baa02875dc434f277d40",
+    "python_source_files": 192,
+    "delta": [
+      "tools/interstellar_mesh.py",
+      "tools/test_interstellar_mesh.py"
+    ],
+    "repair": "Alternate ordinary class pairs rank existing global first-arrival IDs newest-first restricted to the current peer unprepared pending or waiting. Promotion no longer removes an unserved ID from priority. Preserve first pending2, original other pair order, full4 bypass and capacities.",
+    "whole_mesh_AST_reverses_one_assignment_and_profile": true,
+    "source_branch_matches_qualified48_primitive_cases": true,
+    "model48_full4_48_other12_results_reused_not_rerun": true,
+    "native_implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+    "native_source_files": 89,
+    "core_source_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+    "core_source_files": 171,
+    "actual_cli_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+    "native_core_actual_binary_unchanged": true,
+    "source_only_snapshot_files": 20,
+    "private_state_key_custody_ledger_binary_copies": 0,
+    "current1856_and_new_ground_inventories_unchanged": true,
+    "protected66_regular7_typed_seal_hashes_unchanged": true,
+    "old_entry_V7_refuses_changed_source": true,
+    "current_profile_native_scope_started": false,
+    "future_entry_binding_qualified": false
+  },
+  "next_discriminator": {
+    "hypothesis": "A fresh unallocated entry/controller bound to V12 must preserve exact Rust raw argv, source-map aggregate refusal, original180/600/60round/24height/maturity2/quorum3 and all setup/import/cold/owner/stop guards. Old V7 must refuse changed source; no existing allocation can authorize V12.",
+    "smallest_scope": "Source-only exact entry/controller literal rebinding and required negative guards; no Node/Runtime/Native/TLS/signing or old fixture reopening.",
+    "budget": "Original named dependency60 remaining30.221068, one continuation attempt, no reset or extension.",
+    "exit": "First changed-source/argv/guard/negative/inventory mismatch, finite source-binding qualification, or original remaining30.221068; retain failure and no native allocation.",
+    "future_native_scope": "Only after entry/binary/source/controller qualification and a separate concrete relevant-source decision; one fresh original180 may test complete original maturity/all8 cold/owner/conservation. Current new180=0/new600=0. Original600 full fault/all12/keyless remains independent FAIL."
+  },
+  "value_strict_01": {
+    "status": "OPEN",
+    "large_enum_variant": true,
+    "bool_assert_comparison": true,
+    "prior_budget_exhaustion_seconds": 120.019,
+    "unchanged_Core_value_lock_sources_do_not_trigger_rerun": true,
+    "diagnosis_budget120_or_actual_fix_budget300_only_when_original_trigger_met": true,
+    "no_production_warning_waiver": true,
+    "regional_pass_not_substitute": true
+  },
+  "new180_allocated_after_repair": 0,
+  "new600_allocated_after_repair": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "no_mainnet_funds_accounts_permissions_external_contacts_server_cleanup_site_library_push": true
+}

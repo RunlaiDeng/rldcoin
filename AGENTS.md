@@ -1722,3 +1722,31 @@ original pending-gap/history-floor/cold/atomic controls. This finite source
 qualification does not prove Native maturity, fullfault or broad liveness.
 V10 private profiles refuse unchanged; retain failed state and use only fresh
 fixtures. The source-bound V7 entry and V19 controls remain unallocated.
+
+
+Current V12 transit ground candidate and V19 actual terminal (2026-10-06):
+V19 FAIL180/207.185, four CLI exit0,1856 retained; runtime-v4 remains
+FAIL600/612.570/6152. Never reopen failed Node/Runtime/Native/custody/key.
+Saved live reports: accepted import13/local14<mature15, not latest cold authority.
+Exact signed transport reference and544 preparation prefix show unserved Proposal
+arrival0 promoted pending30, losing V11 waiting-only ordinary priority; no unique
+OS/CPU or historical class-step reconstruction. V12 restricts existing reversed
+first_arrivals to this peer unprepared pending or waiting, keeping first2/other
+ordinary class pair order/full4/capacities. One assignment/profile reverses whole
+mesh AST to V11. Signed baselineFAIL0.315 and erroneous new floor-assertion
+FAIL0.321 retained; corrected new assertion allows legitimate already-prepared
+historical retransmission, all old test AST unchanged;11groundPASS2.505. Original
+ground60 cumulative10.869, named new V19 dependency60 cumulative29.779 including
+0.1 wrapper failure charge; prior58.776 source budget never reset. Current
+Python192=1914160b341d21f5df8ec03f74380cb0532cdbc4b302baa02875dc434f277d40;
+Native89/Core171/actualCLI unchanged. Original1856/new14+14+154 inventories and
+66regular/7typed seal hashes bound;20source-only files, no state/value/key copies.
+Old V7 entry now refuses source, required fresh entry qualification remainsOPEN.
+Next one source-only continuation under original remaining30.221068 checks exact
+Rust argv/source aggregate/unchanged original setup/import/maturity/cold/owner/
+stop guards; no launch/allocation before this qualification and a concrete
+source-relevant decision. New180/600=0. All fullfault/maturity/all12/keyless/value
+strict/history/PQ/independent/physical gates remainOPEN. Frozen paper/site and
+original600/60round/24height/maturity2/quorum3/bounds unchanged; goalactive.
+All project commands explicitly newrldcoin workdir, persistentcwd UI pending.
+See docs/operations/evidence/regional-bft-unserved-promotion-repair-outcome-20261006.json.

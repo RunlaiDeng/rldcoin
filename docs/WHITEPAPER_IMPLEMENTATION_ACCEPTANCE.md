@@ -1,5 +1,20 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 V19终态与未发送项晋级反例修复
+
+**完整fault仍FAIL/OPEN**：runtime-v4原600/612.570秒/6152、最新V19原180/207.185秒/1856及所有旧失败/原owner请求保留。V19 helper1/ScopeDeadline，四CLI各exit0，正常停止、无forced/cleanup/pin异常；原收款成熟、keyless drain、all12完整Native cold/守恒未完成。600阶段/60轮/24高度/maturity2/quorum3/所有容量保持。历史“全部通过”仅对应当时明确来源及有限scope；下方V19“未启动”为历史创建时快照。
+
+只读准确运输判别27.812秒：968完整运输副本、43票签名字节、807签名档案、15835 contact/544准备前缀。Proposal15(parent14)目的地1缺副本；精确记录显示其arrival位置0晋级pending位置30后仍未发送，V11只覆盖waiting，失去优先范围。4个目标有同类转换。保存live Native均import13已接受/local14<mature15、原输出不可花；不是“已成熟仅观察等候”，也不是最新/full-cold权威。Proposal内层Native认证、历史class步/全局相对序及唯一OS/CPU归因保持unknown，不因日志缺项定因。只读模型1.138秒验证这条优先范围反例，未重开失败Node/Runtime/Native。
+
+实际签名ground：V11目标断言 **FAIL0.315秒/14文件**；V12使目标入选，但新测试错误排除了已发送旧项的合法历史重传，**FAIL0.321秒/14文件**保留，仅纠正新增断言，原十项/全部旧test AST保持。最终 **11项PASS2.505秒/154文件**，原ground60累计10.869秒含两FAIL；pending前2、其他ordinary history floor、full4、冷原字节、认证/atomic/schema/capacity保持。V12仅将一个优先列表扩大到此peer未发送的pending及waiting，使用既有first_arrivals顺序、不增容量/metadata，更新不兼容fixture profile；整个mesh AST撤回一赋值/profile准确还原V11。有限ground不是Native成熟/完整fault或永久活性资格。
+
+最终来源绑定 **PASS0.729秒**。新V19依赖判别原60累计29.779秒，含外层controller语法失败0.1秒保守扣账；旧源码60的58.776秒不重置。当前Python192 commitment **1914160b…**只mesh/test变化，Native89/Core171/actualCLI未变；当前1856及新14+14+154库存、66普通/7typed seal保持，20份仅来源快照，无币/钥/账本/保管/binary复制。旧V7入口拒绝V12已验证，**当前入口资格OPEN、新Native未启动、新180/600均0**。
+
+**下一最小判别**：原依赖60剩余30.221秒/一次source-only接入，验证V12新未分配entry/controller的完整来源汇总、原Rust argv、原预算/门槛/角色/negative及所有setup/import/cold/owner/stop guard不变；旧V7继续拒绝。首来源/argv/guard/库存差异、有限绑定完成或原剩余预算即退出，无Node/Runtime/Native/TLS/sign/旧fixture、无延长。只有该资格与明确相关源码决定之后，才可能分配一次全新原180检验成熟/all8 cold/守恒；原600/all12/keyless仍独立未通过。
+
+已采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8，三哈希核验一致。VALUE-STRICT-01两基线及120.019耗尽仍OPEN，Core/value/lock未变、原120诊断/300修复触发未满足，不重跑/豁免/替代。goal active，旧goal前继已报告不改；所有本次检查终态、owned PID不存在，所有项目命令显式新rldcoin workdir，持久cwd仍UI待修。冻结正文/PDF/官网/Library/服务器/资金/账户/权限/外联/push/清理范围不扩展。
+[本次实际失败、反例、修复和有限验证](operations/evidence/regional-bft-unserved-promotion-repair-outcome-20261006.json)。
+
 ## 2026-10-06 普通槽末项实际反例与V11单点修复
 
 **完整fault仍FAIL/OPEN**：runtime-v4原600/612.570秒/6152及最新V18原180/203.840秒/1833、全部旧失败与原owner请求保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成。600阶段/60轮/24高度/maturity2/quorum3/所有容量保持；历史“全部通过”只指其准确历史来源和有限scope，不覆盖后续FAIL。下方“下一ground未启动”是创建时快照，本节给出实际结果。

@@ -1,0 +1,39 @@
+{
+  "completed": false,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 8.042903,
+  "duration_seconds": 0.320845,
+  "combined_stage_seconds": 8.363748,
+  "attempts_used": 1,
+  "helper_exit_code": 1,
+  "failure": null,
+  "pin_error": [],
+  "stage_sha256": "1b661eaf716ecc6017185e6ceff1488fd66b91263293246bd95a50f483e4407d",
+  "helper_sha256": "68460aaf749b8e579c303907c87edaf64ddfaec714ecbf07e2aedf182e8dc350",
+  "controller_sha256": "94908df4d16fda9c306fe5612767b0ce5a04d692de4c1feccc4c3a89259a4343",
+  "log_sha256": "eefe4631a8c18f600d19983e46ae4b88b0c9de5226feaa77833ef3d1e8f19a28",
+  "stopped_inventory_sha256": "a820cbc171e48e1ed4bd3e9e757d617a46f11c007500304c1b69b530fcd0dbd0",
+  "stopped_files": 14,
+  "result": {
+    "completed": false,
+    "tests_run": 1,
+    "failed_tests": [
+      "test_promoted_latest_waiter_keeps_priority_until_prepared (test_interstellar_mesh.MeshTests.test_promoted_latest_waiter_keeps_priority_until_prepared)"
+    ],
+    "error_tests": [],
+    "duration_seconds": 0.226484,
+    "latest_target_actual_ground_behavior": false,
+    "original_pending17gap_other_class_floor_full4_cold_negative_atomic": false,
+    "current_profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V12",
+    "fresh_ground_only": true,
+    "actual_Native_Runtime_TLS_calls": 0,
+    "old_failed_fixture_reopens": 0,
+    "full_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "log_tail": "test_promoted_latest_waiter_keeps_priority_until_prepared (test_interstellar_mesh.MeshTests.test_promoted_latest_waiter_keeps_priority_until_prepared) ... FAIL\n\n======================================================================\nFAIL: test_promoted_latest_waiter_keeps_priority_until_prepared (test_interstellar_mesh.MeshTests.test_promoted_latest_waiter_keeps_priority_until_prepared)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py\", line 319, in test_promoted_latest_waiter_keeps_priority_until_prepared\n    self.assertTrue(set(ids[2:]) & set(pending[2:]) - {target})\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: set() is not true\n\n----------------------------------------------------------------------\nRan 1 test in 0.158s\n\nFAILED (failures=1)\nbounded-related-result {\"completed\": false, \"tests_run\": 1, \"failed_tests\": [\"test_promoted_latest_waiter_keeps_priority_until_prepared (test_interstellar_mesh.MeshTests.test_promoted_latest_waiter_keeps_priority_until_prepared)\"], \"error_tests\": [], \"duration_seconds\": 0.226484, \"latest_target_actual_ground_behavior\": false, \"original_pending17gap_other_class_floor_full4_cold_negative_atomic\": false, \"current_profile\": \"RLD-CONTACT-TRANSIT-SCHEDULER-V12\", \"fresh_ground_only\": true, \"actual_Native_Runtime_TLS_calls\": 0, \"old_failed_fixture_reopens\": 0, \"full_fault_qualified\": false, \"whole_goal_completed\": false}\n",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
