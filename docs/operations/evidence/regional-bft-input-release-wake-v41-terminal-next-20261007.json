@@ -1,0 +1,92 @@
+{
+  "recorded_at_utc": "2026-10-06T23:36:04.172372+00:00",
+  "completed": false,
+  "V41": {
+    "format": "RLD-BFT-FOUR-CLI-SERVICE-CHECKS-V2",
+    "completed": false,
+    "budget_seconds": 180,
+    "attempts_used": 1,
+    "duration_seconds": 193.225,
+    "helper_exit_code": 1,
+    "helper_terminal": true,
+    "guardian": {
+      "guardian_stop_used": false,
+      "signalled_owned_pids": [],
+      "forced_owned_processes": [],
+      "owned_processes_stopped": true
+    },
+    "guardian_error": null,
+    "budget_exhausted": true,
+    "forced_helper": false,
+    "pin_error": null,
+    "stage_sha256": "5328e75fb01e54ce0c22e1343e72c3c9e9ac4007cf5f9e318dbddab88e5c15c6",
+    "log_sha256": "071747db7e8f45392433c541c7f31a42f6e5e4e21dd58dcb2501645915262c30",
+    "helper_sha256": "9ab5d657a2e9f52560cbc009181475b2862ffea0cbca93f4d9328b992fffd656",
+    "controller_sha256": "36364baa00b455d4b03032725dda5e7dbae12dcc9fd2e29fbab265e3f870c8e8",
+    "binding_source_sha256": "e9940a6bca98911982fc463feaab8ca62261089c3988deaca7e1a8bfd8ce0d95",
+    "companion_source_commitment": "9cc6fb32b77f4678485439976e9aec53d7c1bb8dbcd09316642bfeffdcd363ba",
+    "stopped_inventory_sha256": "28d8f91cd84904a394d9a47b8665bc2530a5c8ab04e66b1c47b2c59a77c0457f",
+    "stopped_files": 2055,
+    "result": {
+      "completed": false,
+      "failure": "ScopeDeadline: original180second service component deadline",
+      "cleanup_failures": [],
+      "services_and_owned_threads_stopped": true,
+      "owned_processes_stopped": true,
+      "owned_process_terminal": [
+        {
+          "region": "proxima",
+          "index": 0,
+          "exit_code": 0
+        },
+        {
+          "region": "proxima",
+          "index": 1,
+          "exit_code": 0
+        },
+        {
+          "region": "proxima",
+          "index": 2,
+          "exit_code": 0
+        },
+        {
+          "region": "proxima",
+          "index": 3,
+          "exit_code": 0
+        }
+      ],
+      "raw_rejection_saved": false,
+      "failed_currency_never_reopen": true,
+      "whole_full_fault_qualified": false,
+      "whole_goal_completed": false
+    },
+    "old_private_source_binary_freeze_unchanged": true,
+    "failed_currency_sealed": true,
+    "failed_currency_never_reopen": true,
+    "full_fault_qualified": false,
+    "legacy_value_strict": "OPEN",
+    "whole_goal_completed": false
+  },
+  "companion_reference_heights": [
+    14,
+    15,
+    15,
+    15
+  ],
+  "reference_is_not_full_Native_cold_qualification": true,
+  "old_Proposal2to1_and_Commit3to0_now_complete_destination_transport": true,
+  "remaining": "Commit2to0/to1 and Commit3to1 incomplete; complete current Finalized15 exists at1/2/3, exactsource3to0 certificate already arrivedrelay2 but did not reach0; source2to0 notprepared",
+  "readonly20_cumulative_seconds": 2.617814,
+  "current_Finalized_frame_in_hint": false,
+  "existing_reader_derived_previous_context_is_mesh_digest_not_native_checkpoint_hash": true,
+  "exclusion_still_direct_source_shape_fact": "commit_carriage_frames only Signed Vote/Proposal; excludes every Finalized regardless previous",
+  "unique_maturity_cause": false,
+  "next": {
+    "hypothesis": "At local observed height15, exact Native-checked current certified checkpoint frame falls out of Signed-only current hint and relay lags original recipient0. Typed current checkpoint hash bound to actual context and real3-of4 original Prepare/Commit signatures must preserve one exact full certified envelope as spare priority only.",
+    "component_budget_seconds": 10,
+    "original_related60_prior_seconds": 12.103986,
+    "attempts": 1,
+    "exit": "oldclassifier fresh signed counter; first role/hash/signature/quorum/auth/atomic/floor/full4/capacity guard; no unchanged180/600"
+  },
+  "whole_acceptance": "FAIL/OPEN; all original frozen clauses and maturity/fullcold/head/conservation mandatory"
+}

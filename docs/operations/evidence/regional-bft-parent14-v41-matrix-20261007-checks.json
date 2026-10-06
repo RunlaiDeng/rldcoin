@@ -1,0 +1,323 @@
+{
+  "completed": true,
+  "shared_original_readonly20_prior_seconds": 0.0,
+  "combined_original_readonly20_seconds": 1.466715,
+  "duration_seconds": 1.46672,
+  "budget_seconds": 20,
+  "attempts": 1,
+  "reference_heights": [
+    14,
+    15,
+    15,
+    15
+  ],
+  "rows": [
+    {
+      "source": 1,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "261c9c5fb1c121314ace8748f4a757074385fd0b5ce1bebeeb989b091c91dd4a",
+      "envelope_id": "0aef7365cb1caa0f457add5e2eee70de9b1c2f19d7caa49df4ef3d00da2ddd28",
+      "context_sha256": "3df61699062e022adbf634c96949393c939354bd4f145f77e716f86147435a96",
+      "value": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "331e2ba0522f2a598b8f7ce266d0b43cec840ed3f50232ccbf64e3afee59921a",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "ad5e0a2e5166dad9ab148796150da034ab1f8bd23ddd5faf7e66fd6df11734cd",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "658a533b93002ee83cac892ecc7f4bdfb30a576fa8c13dcc1419dde95c355b60",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 1,
+      "kind": "Commit",
+      "round": 0,
+      "body_id": "a11f70cce3717c5b3fc50d925ad8af659a6218bd9de9e8bc7dbdbf48d1ae0888",
+      "envelope_id": "160d5ec747d23390babf4b7c4a9870af295f2852232c08c9bfcd7b0b49190532",
+      "context_sha256": "3df61699062e022adbf634c96949393c939354bd4f145f77e716f86147435a96",
+      "value": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "42a327aa4281049bb9fc1ed86899bd1a2e9cf1c1c22a9a7df6a0fa7ebfcee911",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "a2fe26bad3999c96cbfb7b00e277533d384d4bb30be082b508a107d64e87dff1",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "0735c47d6281c64660be734e7d5018b23ae1798767adc22028997fd48d142c95",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Proposal",
+      "round": 0,
+      "body_id": "1a6b667ded6d3bf62695abc11e8a7b53a8e40e940bd3b479013881881769e336",
+      "envelope_id": "c939faac6e47c321a800cc7d37c72d31c0a05ba36665a5c1c378e16be0447cb7",
+      "context_sha256": null,
+      "value": null,
+      "inner_vote_signature_verified": false,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "f280900eb6fbb359d1a06f683827b29ac80c86bb2d185166150f74be04c6cb21",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "5a8a6767abdce3e706478dfbbf183cf3284023a61e509909e4979e03951d7ee1",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "5d90d3aec6cde001040511b92c6cd68c0df20610ca3038ef9b3c9f6d726f0184",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Commit",
+      "round": 0,
+      "body_id": "b7811e447e5b53eacb3cb719d779cc181f45ed5051018d5f86a7df027e7d0b79",
+      "envelope_id": "3eea3c5c13c8366952b88583a6d03b7ab8b3e0da9fa73d71e144a15caae34b41",
+      "context_sha256": "3df61699062e022adbf634c96949393c939354bd4f145f77e716f86147435a96",
+      "value": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": false,
+          "complete_transport": []
+        },
+        {
+          "destination": 1,
+          "exact_companion": false,
+          "complete_transport": []
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "ffd71c81ce191dbaee850ff73d8a35b692cb40f18cb095343e62d798dd38f3d6",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "ddc799a50c175728d45b533aca95b1edc6db7a9f3ecbf40ace6438e367c9b54e",
+      "envelope_id": "ffb07bcf5323c17b4f833443164d98cc6c6531ca7fae2995fb24d5542c18fd82",
+      "context_sha256": "3df61699062e022adbf634c96949393c939354bd4f145f77e716f86147435a96",
+      "value": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "fd078f6c7c1818a808e407d33772b385f5c35d845335bddf2cefd69a61f48a42",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "2ea0251b9b6611b60fcbe7bf189a8184fdb3b8e498528bbd6a203e2f0a00ae35",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "b720415fd53af633b29f232d99716dc31a8272f63f3d638b525681590aab41f8",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "kind": "Commit",
+      "round": 0,
+      "body_id": "5ef26219514d5ef291ce4b2d1b5375e5c33794a414d219477f268c400524b720",
+      "envelope_id": "0898c672ba40a7d71e0c31bfd7518ae7f2b5c1ee81fccd112ab3743ef63e73fc",
+      "context_sha256": "3df61699062e022adbf634c96949393c939354bd4f145f77e716f86147435a96",
+      "value": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "29550c422ec1e3f1f93a2f811d09ffb326f10873b1f575a86ba9b92665ee0e3d",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": false,
+          "complete_transport": []
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "c891f075470250c8127c64a5451f53c380a953acea531bcc7207c4e5ca08261f",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "bee962ad51cb21f993e1cf0671688ce64887015bb85ee90b790f3ba6d5530cd2",
+      "envelope_id": "24a0294a33e104f174170b183da3d6223cb15f8759ab926bca963e8edbaf0152",
+      "context_sha256": "3df61699062e022adbf634c96949393c939354bd4f145f77e716f86147435a96",
+      "value": "7a8c2b70a6e76623623c34229bf72cedfa53288b346e1bff170bbdc659b38a38",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "4ebc5ef209fcba8834120cfcbe167c9effb1b0dabce0dde37c3197276fab78d3",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "073390b9cd8050e34319280309ba1732873b18f0fcbc5a6d0522e4a2bb1af7dc",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "d1a86fae8b0662d9d9b0013c519271365eda8a3c676cfb10e0dfb065ed07c2c8",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumed_sealed_files": 12,
+  "consumed_bytes_unchanged": true,
+  "stage_sha256": "ec9b8cfd8171bbbede83a92cf0ad537cb18829bc7d3d62b22d6a2993d1b13f23",
+  "stopped_inventory_sha256": "28d8f91cd84904a394d9a47b8665bc2530a5c8ab04e66b1c47b2c59a77c0457f",
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "proposal_inner_signature_or_Native_acceptance_qualified": false,
+  "unique_maturity_cause_proved": false,
+  "new180": 0,
+  "new600": 0,
+  "full_fault_qualified": false
+}

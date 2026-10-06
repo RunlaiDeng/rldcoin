@@ -836,5 +836,46 @@ class DeferredAdmissionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'injected admission wait failure'):
             self.admission(raise_on_wait=True)
 
+
+class InputReleaseWakeTests(unittest.TestCase):
+    def server(self):
+        server=object.__new__(tcp.Server);server.guard=threading.Lock()
+        server.running=True;server.input_wake=threading.Event()
+        server.input_active=('original-unacknowledged-input-model',)
+        server.tcp_mesh_waiters=set();server.local_mesh_owner=threading.current_thread()
+        return server
+
+    def test_actual_waiting_input_wakes_on_other_original_lease_release(self):
+        server=self.server();ready=threading.Event();done=threading.Event();observed=[]
+        def waiting_input():
+            with server.guard:server.tcp_mesh_waiters.add(threading.current_thread())
+            ready.set();observed.append(server.input_wake.wait(.25));done.set()
+        thread=threading.Thread(target=waiting_input,name='rld-input-release-wake-test')
+        server.input_thread=thread;thread.start();self.assertTrue(ready.wait(1))
+        try:
+            server._release_mesh_turn();self.assertIsNone(server.local_mesh_owner)
+            self.assertTrue(done.wait(.1));self.assertEqual(observed,[True])
+            self.assertEqual(server.input_active,('original-unacknowledged-input-model',))
+            self.assertEqual(server.tcp_mesh_waiters,{thread})
+        finally:
+            server.input_wake.set();thread.join(1);self.assertFalse(thread.is_alive())
+
+    def test_release_does_not_wake_absent_job_waiter_stopped_or_self_owner(self):
+        for mode in ('no-job','no-waiter','stopped','self'):
+            with self.subTest(mode=mode):
+                server=self.server();other=threading.Thread(target=lambda:None)
+                server.input_thread=threading.current_thread() if mode=='self' else other
+                server.tcp_mesh_waiters={server.input_thread} if mode!='no-waiter' else set()
+                if mode=='no-job':server.input_active=None
+                if mode=='stopped':server.running=False
+                server._release_mesh_turn();self.assertIsNone(server.local_mesh_owner)
+                self.assertFalse(server.input_wake.is_set())
+
+    def test_wrong_release_owner_cannot_clear_lease_or_signal_input(self):
+        server=self.server();other=threading.Thread(target=lambda:None)
+        server.input_thread=other;server.local_mesh_owner=other;server.tcp_mesh_waiters={other}
+        with self.assertRaises(ValueError):server._release_mesh_turn()
+        self.assertIs(server.local_mesh_owner,other);self.assertFalse(server.input_wake.is_set())
+
 if __name__=='__main__':
     unittest.main()

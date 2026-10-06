@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-10-06T23:28:13.825355+00:00",
+  "owned_controller_pid": 11328,
+  "controller_sha256": "36364baa00b455d4b03032725dda5e7dbae12dcc9fd2e29fbab265e3f870c8e8",
+  "launcher_sha256": "d914c2cf0ff7572b6fb56d73202fcea28263f932ee47bbbd2e49c43091187133",
+  "decision_sha256": "4f72e09b5b6158baadcbf18de704e08ab95383ade7e463d0a3b361bec02d5516",
+  "workdir": "/Users/galaxy/GitHub/rldcoin",
+  "original_budget_seconds": 180,
+  "attempts": 1,
+  "finite_original_controller_detached_from_interactive_session": true,
+  "no_new_task_or_permission_change": true
+}

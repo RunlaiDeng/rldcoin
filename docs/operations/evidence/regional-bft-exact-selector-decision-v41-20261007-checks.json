@@ -1,0 +1,225 @@
+{
+  "completed": true,
+  "observed_prefix_records": {
+    "0": 178,
+    "1": 120,
+    "2": 123,
+    "3": 184
+  },
+  "missing_complete_destination_edges": 3,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "unique_maturity_cause": false,
+  "full_live_or_Native_acceptance_not_qualified": true,
+  "new180": 0,
+  "new600": 0,
+  "source": 2,
+  "destination": 0,
+  "kind": "Commit",
+  "round": 0,
+  "body_id": "b7811e447e5b53eacb3cb719d779cc181f45ed5051018d5f86a7df027e7d0b79",
+  "envelope_id": "3eea3c5c13c8366952b88583a6d03b7ab8b3e0da9fa73d71e144a15caae34b41",
+  "source_enqueued": true,
+  "packet_id": "01998341fd66518e537c0524b117eac0d8eb330d27700ec2ebded4fc9e34cce0",
+  "frame_id": "14be70ad5f394ccecdbe320a66d84f6bd8665f9c02ea78aa3545434bcef4d8e7",
+  "actual_first_hop": null,
+  "rows": [
+    {
+      "peer": "90fce17e3b3cd11ad83c3e76da590dde08e8e69ff34fa0df905d6619594cc4e9",
+      "sequence": 107,
+      "completed": true,
+      "class_step": 59,
+      "priority_pair": false,
+      "prepared_before": false,
+      "pending_before": false,
+      "full4_retry": true,
+      "entry_hint_matches": true,
+      "consumed_hint_reads": [],
+      "group_positions": [],
+      "original_transit_checks": 0,
+      "original_route": null,
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "selected_packet_ids": [
+        "db179aade83109a20dbfd1b18473d84cfe01b04de54760c8c25293c44b33f641",
+        "17f00f99847b5441c070d0eef44ae081eb43529530ff06dea24690fbaa7b0702",
+        "390eefd248594ff926353d73c43d3e5e06cd7fe9801d14161b4ddcf49778d6ee",
+        "29550c422ec1e3f1f93a2f811d09ffb326f10873b1f575a86ba9b92665ee0e3d"
+      ]
+    },
+    {
+      "peer": "ea20432f966e062f2548a14272ba3dbaf564ada295e58b41abb41ca3f3ff90f0",
+      "sequence": 108,
+      "completed": true,
+      "class_step": 54,
+      "priority_pair": false,
+      "prepared_before": false,
+      "pending_before": false,
+      "full4_retry": false,
+      "entry_hint_matches": true,
+      "consumed_hint_reads": [],
+      "group_positions": [
+        [
+          {
+            "group_index": 0,
+            "class_size": 26,
+            "target_rank": 0,
+            "current_packet_order": [
+              "01998341fd66518e537c0524b117eac0d8eb330d27700ec2ebded4fc9e34cce0",
+              "29550c422ec1e3f1f93a2f811d09ffb326f10873b1f575a86ba9b92665ee0e3d",
+              "4ebc5ef209fcba8834120cfcbe167c9effb1b0dabce0dde37c3197276fab78d3",
+              "0d3a64335d840a60e921bcca7fa5412af2fae66e21f3b18547cf028f1ab1e435",
+              "fe1e75d08046e8f5dec51d31f669f4445cf9fdb0eadc26eb3ca4026f460178c8",
+              "ffd71c81ce191dbaee850ff73d8a35b692cb40f18cb095343e62d798dd38f3d6"
+            ]
+          }
+        ]
+      ],
+      "original_transit_checks": 3,
+      "original_route": {
+        "attempts": 3,
+        "eligible": false,
+        "path_length": null
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "selected_packet_ids": [
+        "ffd71c81ce191dbaee850ff73d8a35b692cb40f18cb095343e62d798dd38f3d6"
+      ]
+    },
+    {
+      "peer": "90fce17e3b3cd11ad83c3e76da590dde08e8e69ff34fa0df905d6619594cc4e9",
+      "sequence": 109,
+      "completed": true,
+      "class_step": 59,
+      "priority_pair": false,
+      "prepared_before": false,
+      "pending_before": false,
+      "full4_retry": false,
+      "entry_hint_matches": true,
+      "consumed_hint_reads": [],
+      "group_positions": [
+        [
+          {
+            "group_index": 1,
+            "class_size": 29,
+            "target_rank": 17,
+            "current_packet_order": [
+              "4ebc5ef209fcba8834120cfcbe167c9effb1b0dabce0dde37c3197276fab78d3",
+              "0d3a64335d840a60e921bcca7fa5412af2fae66e21f3b18547cf028f1ab1e435",
+              "fe1e75d08046e8f5dec51d31f669f4445cf9fdb0eadc26eb3ca4026f460178c8",
+              "ffd71c81ce191dbaee850ff73d8a35b692cb40f18cb095343e62d798dd38f3d6",
+              "01998341fd66518e537c0524b117eac0d8eb330d27700ec2ebded4fc9e34cce0",
+              "29550c422ec1e3f1f93a2f811d09ffb326f10873b1f575a86ba9b92665ee0e3d"
+            ]
+          }
+        ]
+      ],
+      "original_transit_checks": 2,
+      "original_route": {
+        "attempts": 2,
+        "eligible": true,
+        "path_length": 3
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "selected_packet_ids": [
+        "db67d2a1d59350ac3f67f3a02621def67de5022179c718d0fcd5f985bc6cf43c",
+        "f60c7762707406f31905a37c0a19732558596514845d56b305262d771de140eb",
+        "de2c2009ac1b95e84fdf0c81692cef99329ac734669e4a1c36d69a210b65985d",
+        "4ebc5ef209fcba8834120cfcbe167c9effb1b0dabce0dde37c3197276fab78d3"
+      ]
+    },
+    {
+      "peer": "ea20432f966e062f2548a14272ba3dbaf564ada295e58b41abb41ca3f3ff90f0",
+      "sequence": 110,
+      "completed": true,
+      "class_step": 54,
+      "priority_pair": false,
+      "prepared_before": false,
+      "pending_before": false,
+      "full4_retry": false,
+      "entry_hint_matches": true,
+      "consumed_hint_reads": [],
+      "group_positions": [
+        [
+          {
+            "group_index": 0,
+            "class_size": 25,
+            "target_rank": 0,
+            "current_packet_order": [
+              "01998341fd66518e537c0524b117eac0d8eb330d27700ec2ebded4fc9e34cce0",
+              "4ebc5ef209fcba8834120cfcbe167c9effb1b0dabce0dde37c3197276fab78d3",
+              "0d3a64335d840a60e921bcca7fa5412af2fae66e21f3b18547cf028f1ab1e435",
+              "fe1e75d08046e8f5dec51d31f669f4445cf9fdb0eadc26eb3ca4026f460178c8"
+            ]
+          }
+        ]
+      ],
+      "original_transit_checks": 2,
+      "original_route": {
+        "attempts": 2,
+        "eligible": false,
+        "path_length": null
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "selected_packet_ids": [
+        "aac50cc8d0e671a582c4dab23b516b304e3f1153dacb55accba4eb6ccf7d8417",
+        "44249047f3bea056fae4eba92343328b06fa71c3b8bf2d6d913b10cc98143c00",
+        "ff53c261352f4e56e21a85bc88ee0bc3d964e9a37ba5e2497cd60ffc4abd9c34"
+      ]
+    },
+    {
+      "peer": "ea20432f966e062f2548a14272ba3dbaf564ada295e58b41abb41ca3f3ff90f0",
+      "sequence": 111,
+      "completed": true,
+      "class_step": 55,
+      "priority_pair": false,
+      "prepared_before": false,
+      "pending_before": false,
+      "full4_retry": false,
+      "entry_hint_matches": true,
+      "consumed_hint_reads": [],
+      "group_positions": [
+        [
+          {
+            "group_index": 1,
+            "class_size": 26,
+            "target_rank": 2,
+            "current_packet_order": [
+              "01998341fd66518e537c0524b117eac0d8eb330d27700ec2ebded4fc9e34cce0",
+              "4ebc5ef209fcba8834120cfcbe167c9effb1b0dabce0dde37c3197276fab78d3",
+              "0d3a64335d840a60e921bcca7fa5412af2fae66e21f3b18547cf028f1ab1e435",
+              "fe1e75d08046e8f5dec51d31f669f4445cf9fdb0eadc26eb3ca4026f460178c8"
+            ]
+          }
+        ]
+      ],
+      "original_transit_checks": 2,
+      "original_route": {
+        "attempts": 2,
+        "eligible": false,
+        "path_length": null
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "selected_packet_ids": [
+        "961a907f9a2351fce9bce4d353202e99c76642249a1ca80d72e8755e31de1dce",
+        "d0708ed528e5a7c82edcacc077eaa56c7cc274c7d23c9cadd60a59958c7d580b"
+      ]
+    }
+  ],
+  "original_attempts": [],
+  "first_prepare_wait_seconds": null,
+  "consumed_sealed_bytes_unchanged": true,
+  "matrix_checks_sha256": "2903189038135ac225f1ffb9b3a293dec56bf76cf9a1a0bab4141ad1920bf508",
+  "stage_sha256": "4090940c4d9e107566190af73720b454103b4515f1941dd992569428960a11bb",
+  "reader_sha256": "2c001c35c76d2e05831ae8982afb523cd70d697c85d21de0ee6918321c7325aa",
+  "duration_seconds": 0.347408,
+  "combined_original20_seconds": 1.814136
+}

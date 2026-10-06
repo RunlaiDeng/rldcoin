@@ -420,6 +420,14 @@ class Server:
         with self.guard:
             mesh.require(self.local_mesh_owner is threading.current_thread(),'local mesh turn owner differs')
             self.local_mesh_owner=None
+            # A retained original input already has a live bounded waiter. Its
+            # existing event follows an actual lease release instead of waiting
+            # out the polling interval. No new slot, queue or custody is granted.
+            input_owner=getattr(self,'input_thread',None)
+            if (getattr(self,'running',False) and input_owner is not threading.current_thread()
+                    and input_owner in getattr(self,'tcp_mesh_waiters',())
+                    and getattr(self,'input_active',None) is not None and input_owner.is_alive()):
+                self.input_wake.set()
 
     @contextmanager
     def _local_mesh_node(self, deadline, ordinary):

@@ -1,0 +1,14 @@
+{
+  "completed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.265127,
+  "combined_original60_seconds": 8.757876,
+  "source_and_failed_seal_unchanged": true,
+  "all_owned_counter_threads_stopped": true,
+  "stage_sha256": "2d1234c9aee503f5c0f82cec4e904bc34424a3f56594b1d8e390d491f16198e8",
+  "helper_sha256": "7c511bd9cf9eb6bf33876496354c7ec41936e75a456fb37dbde3286c47266ebe",
+  "log_sha256": "9a67791b3d5e81d74075aa0dadab9a57dbcf3aa8e1f00262b37f6a6cd44d4bf1",
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "new180": 0,
+  "new600": 0
+}
