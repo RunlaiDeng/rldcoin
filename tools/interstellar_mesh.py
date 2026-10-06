@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V5'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V6'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -45,7 +45,7 @@ MAX_SPOOL_BYTES = 64 * 1024 * 1024
 MAX_PACKET_BATCH = 4
 MAX_HOPS = 16
 HEX = re.compile(r'[0-9a-f]{64}\Z')
-STATE_KEYS = {'transit_scheduler', 'transit_cursors', 'recent_transits', 'recent_transit_cursors', 'history_transit_cursors', 'transit_class_steps', 'active_storage', 'format', 'archive_storage', 'receipt_scheduler', 'network', 'node_id', 'adverts', 'messages', 'receipts', 'archives', 'peer_inventory', 'cursor', 'receipt_cursors', 'requested_receipt_cursors'}
+STATE_KEYS = {'first_carriage', 'transit_scheduler', 'transit_cursors', 'recent_transits', 'recent_transit_cursors', 'history_transit_cursors', 'transit_class_steps', 'active_storage', 'format', 'archive_storage', 'receipt_scheduler', 'network', 'node_id', 'adverts', 'messages', 'receipts', 'archives', 'peer_inventory', 'cursor', 'receipt_cursors', 'requested_receipt_cursors'}
 MAX_RECENT_TRANSITS = 32
 # Full native certificates can make a modest packet count a large active
 # document. Archive completed custody earlier; retain the same admission,
@@ -504,6 +504,7 @@ class Node:
                               'recent_transits': [], 'recent_transit_cursors': {peer: None for peer in self.contacts},
                               'history_transit_cursors': {peer: None for peer in self.contacts},
                               'transit_class_steps': {peer: 0 for peer in self.contacts},
+                              'first_carriage': {peer: {'pending': [], 'prepared': []} for peer in self.contacts},
                               'adverts': {}, 'messages': {}, 'receipts': {}, 'archives': {}, 'peer_inventory': {}, 'cursor': 0,
                               'receipt_cursors': {peer: 0 for peer in self.contacts},
                               'requested_receipt_cursors': {peer: 0 for peer in self.contacts}}
@@ -527,6 +528,9 @@ class Node:
                 values={peer:self.state[name].get(peer,default) for peer in self.contacts}
                 class_cursors_changed=class_cursors_changed or values!=self.state[name]
                 self.state[name]=values
+            first_carriage={peer:self.state['first_carriage'].get(peer,{'pending':[],'prepared':[]}) for peer in self.contacts}
+            class_cursors_changed=class_cursors_changed or first_carriage!=self.state['first_carriage']
+            self.state['first_carriage']=first_carriage
             old = self.state['adverts'].get(self.id)
             body = {'format': VERSION, 'network': self.network, 'node_id': self.id,
                     'region': identity['region'], 'label': identity['label'], 'sequence': 1,
@@ -579,6 +583,20 @@ class Node:
                 require(hex32(peer)!=self.id,'transit class cursor self peer invalid')
                 if name=='transit_class_steps':integer(value,0,2**63-1)
                 elif value is not None:hex32(value)
+        first=s['first_carriage']
+        require(isinstance(first,dict) and len(first)<=MAX_CONTACTS,
+                'first carriage peer capacity/schema invalid')
+        for peer,value in first.items():
+            require(hex32(peer)!=self.id and isinstance(value,dict)
+                    and set(value)=={'pending','prepared'},'first carriage fields/peer invalid')
+            for name,limit in (('pending',MAX_RECENT_TRANSITS),('prepared',MAX_MESSAGES)):
+                rows=value[name]
+                require(isinstance(rows,list) and len(rows)<=limit
+                        and all(isinstance(i,str) for i in rows)
+                        and len(set(rows))==len(rows),'first carriage metadata capacity/schema invalid')
+                for ident in rows:hex32(ident)
+            require(not set(value['pending'])&set(value['prepared']),
+                    'first carriage pending/prepared overlap')
         require(isinstance(s['receipt_cursors'], dict) and len(s['receipt_cursors']) <= MAX_CONTACTS,
                 'receipt scheduler cursor capacity/schema invalid')
         for peer, cursor in s['receipt_cursors'].items():
@@ -995,6 +1013,24 @@ class Node:
                 MAX_CARRIAGE_POSITIONS,MAX_CARRIAGE_POSITION_BYTES,
                 tuple((p,tuple(sorted(c.items()))) for p,c in sorted(self.contacts.items())))
 
+    def first_carriage_plan(self, peer):
+        """Bounded original IDs awaiting first preparation, not custody.
+
+        Keep a waiting ID across recent-label eviction and optional cache loss.
+        New traffic fills only free places, never replaces these originals.
+        Full transit/route/receipt/suppression validation still occurs below.
+        """
+        value=self.state['first_carriage'][peer]
+        active=self.state['messages'];receipted=self.state['receipts']
+        prepared=[i for i in value['prepared'] if i in active]
+        pending=[i for i in value['pending'] if i in active and i not in receipted]
+        known=set(prepared)|set(pending)
+        for ident in self.state['recent_transits']:
+            if len(pending)==MAX_RECENT_TRANSITS:break
+            if ident in active and ident not in receipted and ident not in known:
+                pending.append(ident);known.add(ident)
+        return {'pending':pending,'prepared':prepared}
+
     def transit_groups(self, peer):
         pending=sorted(self.state['messages'])
         recent=set(self.state['recent_transits']);groups=[]
@@ -1207,10 +1243,21 @@ class Node:
             if len(evidence.canonical({**body,'transits':transits+[candidate]}))+512>MAX_BATCH:
                 break
             transits.append(candidate)
+        # At most half the original batch offers first service. The remainder
+        # keeps ordinary traffic eligible, including historical retransmission.
+        first_ids=()
+        if len(transits)<MAX_PACKET_BATCH:
+            first_ids=tuple(self.first_carriage_plan(peer)['pending'])
+            offered=0
+            for candidate in eligible(i for i in first_ids if i not in retry_packet_ids):
+                if offered>=MAX_PACKET_BATCH//2 or len(transits)==MAX_PACKET_BATCH:break
+                if len(evidence.canonical({**body,'transits':transits+[candidate]}))+512>MAX_BATCH:continue
+                transits.append(candidate);offered+=1
         # A full replay must not initialize/touch ordinary LRU positions: those
         # optional bounded hints can otherwise change the next ordinary turn.
         pending=self.transit_groups(peer) if len(transits)<MAX_PACKET_BATCH else []
-        streams=[iter(eligible([i for i in items if i not in retry_packet_ids])) for items in pending]
+        selected_ids={digest(t['packet']) for t in transits}
+        streams=[iter(eligible([i for i in items if i not in retry_packet_ids and i not in selected_ids])) for items in pending]
         while streams and len(transits)<MAX_PACKET_BATCH:
             remaining=[]
             for stream in streams:
@@ -1248,7 +1295,14 @@ class Node:
         updated['receipt_cursors'][peer] = (updated['receipt_cursors'][peer]
                                           + len(bundle['body']['receipts'])-wanted) % (2**63)
         pending = sorted(self.state['messages'])
-        ordinary=[t for t in bundle['body']['transits'] if digest(t['packet']) not in retry_packet_ids]
+        carried_rows=[t for t in bundle['body']['transits'] if digest(t['packet']) not in retry_packet_ids]
+        first_plan=self.first_carriage_plan(peer) if carried_rows else None
+        offered=[]
+        for transit in carried_rows:
+            ident=digest(transit['packet'])
+            if len(offered)==MAX_PACKET_BATCH//2 or ident not in first_plan['pending']:break
+            offered.append(ident)
+        ordinary=[t for t in carried_rows if digest(t['packet']) not in offered]
         if ordinary:
             last = digest(ordinary[-1]['packet'])
             require(last in self.state['messages'], 'prepared transit absent from retained pool')
@@ -1272,6 +1326,16 @@ class Node:
             name='recent_transit_cursors' if ident in self.state['recent_transits'] else 'history_transit_cursors'
             updated[name][peer]=ident
             updated['transit_class_steps'][peer]=(updated['transit_class_steps'][peer]+1)%(2**63)
+        # Persist the offer only after this complete bounded preparation.
+        # A full retry leaves ordinary first-service metadata untouched.
+        if len(bundle['body']['transits'])<MAX_PACKET_BATCH or carried_rows:
+            first=first_plan or self.first_carriage_plan(peer)
+            carried={digest(t['packet']) for t in carried_rows}
+            first['pending']=[i for i in first['pending'] if i not in carried]
+            first['prepared']=sorted(set(first['prepared'])|carried)
+            require(len(first['pending'])<=MAX_RECENT_TRANSITS
+                    and len(first['prepared'])<=MAX_MESSAGES,'first carriage metadata capacity')
+            updated['first_carriage']={**self.state['first_carriage'],peer:first}
         if updated != self.state:atomic(self.path, updated)
         self.state = updated
         # Advance optional positions only after durable ordinary preparation.

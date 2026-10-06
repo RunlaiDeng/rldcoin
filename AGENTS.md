@@ -1613,7 +1613,7 @@ No live speed or unique fault cause established; all commands explicitrldcoin,
 persistentcwd stillUIpending. See
 operations/evidence/regional-bft-loop-observation-outcome-20261006.json.
 
-The one-replay ground scheduling candidate pins RLD-CONTACT-TRANSIT-SCHEDULER-V5.
+The one-replay ground scheduling behavior is retained by RLD-CONTACT-TRANSIT-SCHEDULER-V6.
 A failed completed ordinary TCP preparation may retain at most four original
 packet IDs in the existing 512-entry/4-MiB process-local carriage hint pool,
 scoped to store/network/node/contact roles/profile and validation bounds.
@@ -1638,3 +1638,15 @@ Current finite Native failure and next bounded discriminator belong in
 `docs/PLAN_STATUS.md` and its independent-trace-and-commit-frontier outcome;
 transport authentication and Python vote signature bytes do not replace full
 Native key/subgroup/trust/evidence/lock/head/cold authority.
+
+V6 first-carriage metadata stores only original packet IDs per configured peer:
+pending<=32/prepared<=256, within the original16contacts/64MiB total state bound.
+Offer at most2 of the original4packet slots before ordinary traffic. Waiting IDs
+survive recent-label and optional-cache eviction; mark only after complete atomic
+preparation. Full retry leaves first/ordinary positions unchanged, first service
+does not advance ordinary positions, and all full auth/route/hop/receipt/suppression
+and capacity checks remain. Metadata grants no custody/signing/Native authority.
+V5 identity/state refuse unchanged: fresh fixtures, never failed custody conversion.
+Hostile test artifacts may contain intentional links; ordinary scope inventories
+must keep refusing them. A separate typed test-artifact inventory can record link
+metadata without following it, and cannot turn an earlier failed scope into PASS.

@@ -879,3 +879,12 @@ VALUE-STRICT-01两基线及120秒耗尽保持OPEN，旧value/PoW/lock/Core源未
 
 下一一次60首次准备内核模型未启动：准确2→1角色/大小/路线、声明历史/new-target、warm/忘hint，原4/256/32/20MiB/512hint4MiB不改；23个模型成功准备仍不选目标的反例才触发最小修复，无则转TLS准入模型；首不一致/有限模型完成/原60退出。新180/full600预算0。VALUE-STRICT-01两告警/120耗尽、全部S/R/I/A–G/N/P及长期/PQ/独立/物理保持OPEN。采用当前冻结2ba62421/c59f9fe8/receipt86821d19，旧goal哈希前继引用已报告；goal active、显式新workdir、持久cwd仍UI待修。
 详见[实际结果及下一判别](operations/evidence/regional-bft-independent-trace-and-commit-frontier-outcome-20261006.json)和[当前状态](PLAN_STATUS.md)。
+
+## 2026-10-06 首次服务有界持久修复
+
+V3唯一新目标模型复现cold缓存丢失下24次成功准备仍不选原有资格目标，修复实际采用V6：perpeer≤32等待/≤256已准备原包IDs、最多2/原4槽首服务，剩余普通选择；原认证/路线/跳数/receipt/256active/32recent/20MiB/64MiB整图/16contacts及Native阈值不改。等待ID跨recent/hint逐出保持，成功atomic后才标prepared，V5原件拒绝不转换。相同24模型目标1–6次准备，不能称旧live唯一原因或全部交通提速。
+
+95相关实际签署/磁盘/冷重开/篡改/容量/TLS检查24.687秒全通过；外层25.419秒因负例link封存拒绝仍FAIL保留。剩余34内.894秒只读typed库存记录963普通文件/2link自身metadata不随链接，未重复测试，原1722字节不变。真实占满两入站槽导致connect失败并保留原包，释放后原包pinnedTLS下一跳保管；具体异常class未存、不授予目的receipt/Native权限。Native89/Core171/实际CLI未变，Python192 2fe0fe56…，475source-only保留。
+
+下一一次120整份源码/驱动/22禁改/旧普通库存及新typed库存绑定未启动；原17setup/13import/15mature/all8fixedhead/caller/owner/守恒、180/600/60轮/24高度/成熟2/票3不变。首不一致/完成/原120退出。新180/full600预算0；完整fault6152/6657、最近1722及全部旧失败仍FAIL/OPEN，原收款成熟/keyless drain/all12完整cold/守恒未完成。VALUE-STRICT-01两告警/120耗尽及全部S/R/I/A–G/N/P/长期/PQ/独立/物理门槛保持；goal active、冻结当前2ba62421/c59f9fe8不改。
+见[实际修复与全部范围](operations/evidence/regional-bft-first-service-repair-outcome-20261006.json)。

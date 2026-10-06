@@ -1,0 +1,15 @@
+{
+  "completed": false,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 0.556942,
+  "helper_exit_code": 1,
+  "stage_sha256": "f99b6a05c806e57a1c7ec8bcf64ea0294b0f12827024e33a8ab54fc569476888",
+  "helper_sha256": "e070ef0d072c2f0a24010de96e68b441882d0cbb7fa09905a37ea419538bf5c5",
+  "controller_sha256": "a74e8728714425ddb98098905c44ab13cdc3bb25bfc29783956bb39f95e13637",
+  "log_sha256": "e43d44fc83ce80ea597b60faa2ba3bf8a76a534fd963b21188720b46e543434c",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-first-prepare-kernel-counter-20261006.py\", line 39, in <module>\n    reader=RouteOnly();reader.id=state['node_id'];reader.state=state;route=reader.route(packet['destination'],visited[:-1],first_hop=packet['destination']);assert route==[reader.id,packet['destination']]\n                                                                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py\", line 903, in route\n    (peer not in self.contacts or not outgoing_contact(self.contacts[peer])\n                 ^^^^^^^^^^^^^\nAttributeError: 'RouteOnly' object has no attribute 'contacts'\n",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

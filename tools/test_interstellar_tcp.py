@@ -455,6 +455,63 @@ class TcpTests(unittest.TestCase):
             self.assertIn(ident,node.state['messages'])
             self.assertNotIn(ident,node.state['receipts'])
 
+    def test_tls_capacity_connect_failure_retains_original_and_replays_after_release(self):
+        from regional_contact_trace import ContactTrace
+        self.f.rounds()
+        source=self.f.servers['earth'];destination=self.f.servers['proxima']
+        peer=self.f.ids['proxima'];trace=ContactTrace();trace.bind(NETWORK,self.f.ids['earth'])
+        source.contact_trace=trace
+        with self.f.node('earth') as node:
+            ident=node.enqueue(self.f.frame(801),self.f.ids['andromeda'])
+            original=copy.deepcopy(node.state['messages'][ident])
+        # Two real unauthenticated TLS handshakes occupy the original slots.
+        # No packet/request/receipt is acknowledged by opening a raw socket.
+        clients=[socket.create_connection(destination.address,timeout=2) for _ in range(tcp.MAX_WORKERS)]
+        before=destination.report()['refused_connections'];failures=[]
+        real_connect=tcp.client_connect
+        def observed_connect(*args,**kwargs):
+            started=time.monotonic()
+            try:return real_connect(*args,**kwargs)
+            except OSError as error:
+                failures.append((type(error).__name__,time.monotonic()-started))
+                raise
+        try:
+            self.await_condition(lambda:len(destination.workers)==tcp.MAX_WORKERS)
+            with patch.object(tcp,'client_connect',side_effect=observed_connect):result=source.tick()
+            self.assertTrue(result['errors'])
+            self.await_condition(lambda:destination.report()['refused_connections']==before+1)
+            self.assertEqual(len(failures),1)
+            events=trace.snapshot()['events']
+            refused=[v for v in events if v['stage']=='outgoing_failed' and v.get('packet_id')==ident]
+            self.assertEqual(len(refused),1)
+            self.assertEqual(refused[0]['failure_stage'],'connect')
+            self.assertEqual(refused[0]['error_class'],failures[0][0])
+            self.assertFalse(any(v['stage']=='request_sent' and v.get('packet_id')==ident for v in events))
+            with self.f.node('earth') as node:
+                self.assertEqual(node.state['messages'][ident],original)
+                self.assertNotIn(ident,node.receipts())
+                self.assertEqual(node.failed_carriage(peer),(ident,))
+            self.assertFalse(source.suppressed(peer))
+        finally:
+            for client in clients:client.close()
+        self.await_condition(lambda:not destination.workers)
+        self.assertFalse(source.tick()['errors'])
+        self.assertTrue(source.suppressed(peer))
+        with self.f.node('proxima') as node:
+            packet,raw,visited=mesh.transit_check(node.transit(ident),NETWORK)
+            self.assertEqual(raw,self.f.frame(801))
+            self.assertEqual(visited[-1],peer)
+            self.assertNotIn(ident,node.receipts())  # next-hop custody is not final-destination receipt
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['messages'][ident],original)
+            self.assertEqual(node.failed_carriage(peer),())
+            self.assertNotIn(ident,node.receipts())
+        self.capacity_observation=dict(connect_exception=failures[0][0],
+            connect_failure_seconds=failures[0][1],original_inbound_slots=tcp.MAX_WORKERS,
+            source_original_retained=True,unacknowledged_refusal=True,
+            exact_one_replay_after_slot_release=True,pinned_tls_next_hop_custody=True,
+            destination_receipt_or_native_authority=False)
+
     def test_bounded_workers_oversize_and_incomplete_input_close_cleanly(self):
         server=self.f.servers['proxima']
         clients=[socket.create_connection(server.address,timeout=2) for _ in range(tcp.MAX_WORKERS)]

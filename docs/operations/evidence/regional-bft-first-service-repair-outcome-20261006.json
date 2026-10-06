@@ -1,0 +1,184 @@
+{
+  "format": "RLD-BFT-FIRST-SERVICE-COUNTER-AND-REPAIR-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-06T00:29:34.550534+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "previous_turn": "progress: actual independent trace code and exact Commit transport evidence",
+  "goal_status": "active",
+  "checks": {
+    "regional-bft-first-prepare-kernel-counter-20261006": {
+      "checks_sha256": "3661fd8734ddb68a1966f4b92b6bf9ee48fa3d91f358e1e5ff48631c565b51b5",
+      "completed": false,
+      "budget_seconds": 60,
+      "duration_seconds": 0.556942,
+      "helper_exit_code": 1
+    },
+    "regional-bft-first-prepare-kernel-counter-v2-20261006": {
+      "checks_sha256": "1baa83ce8f295a1be8991d5391a3aa743b504a2063239fe88eec8f66b724dd21",
+      "completed": true,
+      "budget_seconds": 59,
+      "duration_seconds": 1.190321,
+      "helper_exit_code": 0
+    },
+    "regional-bft-first-prepare-kernel-counter-v3-20261006": {
+      "checks_sha256": "dca56419fdd220c0b2335846f0d782a0e35b3e79b0bca43e3a5ef0f69dc95159",
+      "completed": true,
+      "budget_seconds": 57,
+      "duration_seconds": 1.199075,
+      "helper_exit_code": 0
+    },
+    "regional-bft-first-service-candidate-model-20261006": {
+      "checks_sha256": "018350d124d858f1d287e64b377bc18ba9ff1ae0bb38639495a3988e88ef043c",
+      "completed": true,
+      "budget_seconds": 60,
+      "duration_seconds": 1.290642,
+      "helper_exit_code": 0
+    },
+    "regional-bft-first-service-related-regression-20261006": {
+      "checks_sha256": "91e15f5a8fcd701ca6abf795db22afb61a371f66a350efb22f9cd2d1d88e1286",
+      "completed": false,
+      "budget_seconds": 60,
+      "duration_seconds": 25.419101,
+      "helper_exit_code": 1
+    },
+    "regional-bft-first-service-test-seal-20261006": {
+      "checks_sha256": "acb0db535b339dccb73dc8f7d3ad4f1c3b8d404344ad6f2561253e14b7e38b24",
+      "completed": true,
+      "budget_seconds": 34,
+      "duration_seconds": 0.894127,
+      "helper_exit_code": 0
+    }
+  },
+  "identity_sha256": "e4c5b863e822c77311b7c3742e31e013c6a46b43e4921facdd2976aeac30aa10",
+  "python192_commitment": "2fe0fe56e4d9f3408e78694750338f622712c6f38c381464bc4b6ef5ed1ddeab",
+  "source_delta": [
+    "tools/interstellar_mesh.py",
+    "tools/test_interstellar_mesh.py",
+    "tools/test_interstellar_mesh_inspection.py",
+    "tools/test_interstellar_tcp.py"
+  ],
+  "native89_core171_binary_unchanged": true,
+  "source_only_files": 475,
+  "source_only_manifest_sha256": "74a12b3b43685ce4fee46a3620705a59331629b8653a1b6c18ad967ae12b71c8",
+  "first_counter": {
+    "first_failure": ".556942seconds: RouteOnly adapter omitted configured contacts, no models executed; source/log retained.",
+    "first_candidate": "V2 1.190321seconds initially reported24no-counter models; review found target serial100-103 overlaps192history. Original results retained; unique-new-target conclusion superseded, not qualified.",
+    "unique_target_correction": "V3 uses10000+case and initial+1 active count assertion; only model inputs changed, production untouched at this counter.",
+    "corrected_counter_seconds": 1.199075,
+    "aggregate_original60_seconds": 2.946338,
+    "models": 24,
+    "exact_original_target_transport_bytes": 294560,
+    "exact_original_target_frame_bytes": 219953,
+    "counterexample": [
+      {
+        "arrivals_per_successful_prepare": 4,
+        "case": 0,
+        "cold_hints_each_open": true,
+        "continuously_eligible_preparations": 24,
+        "final_active": 183,
+        "first_target_prepare": null,
+        "initial_history": 86,
+        "no_ack_or_suppression": true,
+        "retained_target_unchanged": true,
+        "twenty_three_preparations_without_first_service": true
+      }
+    ],
+    "old_live_eligibility_and_unique_failure_cause_unknown": true,
+    "model_rounds_not_live_seconds": true,
+    "model_authentication_sign_atomic_explicit": true
+  },
+  "implementation": {
+    "profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V6",
+    "persistent_primitive_id_metadata": "perpeer pending<=32, prepared<=256 under unchanged16contacts/64MiB whole state bound. No packets/proofs/keys cached. New pending IDs fill free places; waiting originals survive recent-label/optional hint eviction.",
+    "first_offer_budget": "At most2 of existing4packet slots; remainder ordinary eligible traffic. Full replay preserves first/ordinary metadata. Priority service never advances ordinary cursors/hints; selected IDs marked only after complete atomic bounded preparation.",
+    "authentication": "Original full transit/route/hop/receipt/suppression and20MiB wire remain. Metadata grants no custody/Native authority, no evidence pruning/refund/new socket attempt.",
+    "compatibility": "V5 identity/state refuse unchanged; fresh V6 ground fixtures required, never convert failed stores."
+  },
+  "candidate_model": {
+    "completed": true,
+    "duration_seconds": 1.290642,
+    "same24declared_models": true,
+    "first_target_prepares": [
+      6,
+      2,
+      4,
+      5,
+      6,
+      6,
+      6,
+      5,
+      5,
+      1,
+      6,
+      3,
+      6,
+      1,
+      6,
+      5,
+      6,
+      6,
+      6,
+      6,
+      6,
+      4,
+      4,
+      6
+    ],
+    "maximum_first_prepare": 6,
+    "counterexamples_eliminated": true,
+    "some_warm_targets_slower_not_unconditional_speed_or_fairness": true,
+    "decision_label_correction": "Candidate helper retained baseline decision string no first-service repair; that label is wrong for a candidate qualification. Correct action: qualify the bounded V6 first-service implementation. Original signed check/report is not rewritten.",
+    "native_runtime_node_socket_signing_recovery": 0
+  },
+  "related_validation": {
+    "original_outer_status": "FAIL25.419101seconds solely at seal after95tests/24.687s allOK; failure and source retained.",
+    "all95_actual_related_tests_passed": true,
+    "tests_not_repeated": true,
+    "independent_readonly_seal_seconds": 0.894127,
+    "aggregate_original60_seconds": 26.313228,
+    "regular_private_files": 963,
+    "symlink_artifacts": 2,
+    "links_never_followed": true,
+    "private_inventory_sha256": "ebe8ab998897c101a818d3011a18c219f850b5727a8a5271de80e264553e932b",
+    "private_unit_log_sha256": "46e12df373c791494926173348e908c08df1cafb2b9c0a75c0b7dcb3d898c76b",
+    "fresh_actual_signed_mesh_atomic_tls": true,
+    "new_tls_capacity_case": "Original2slots occupied by real stalled unauthenticated TLS sockets; source observed connect failure matching trace, no request/ack/suppression; original packet and one retry hint retained. After release, actual pinnedTLS next-hop custody authenticated, original retained, no final-destination receipt or Native authority.",
+    "actual_connect_exception_class_not_retained": true,
+    "exact_typed_receiver_reset_cause_in_old_live_unknown": true,
+    "original_helper_terminal_all_its_threads_terminal": true,
+    "no_old_native_runtime_node_reopen_sign_recovery": true,
+    "private1722_files_unchanged": true
+  },
+  "next": {
+    "started": false,
+    "budget_seconds": 120,
+    "attempts": 1,
+    "hypothesis": "Bind final V6 source and all original controller/finite-gate behavior before considering another fresh Native scope. Same full helper AST except scope/identity labels and existing diagnostic import; same original17setup/13import/15mature/all8fixedhead/owner/caller/conservation and600/180/60round/24height/maturity2/quorum3. Old V5 failed stores remain sealed, regular old inventories unchanged; new hostile test inventory validates regularfiles and link metadata without following links.",
+    "exit": "First source/binary/controller/negative/capacity/inventory mismatch, binding/22forbidden mutations complete or once120deadline. No Native/Runtime/Node/sign/socket actual launches. Only pass permits a separate necessary fresh180 decision; no full600 allocated.",
+    "new180_budget": 0,
+    "new600_budget": 0
+  },
+  "original_full_fault": {
+    "status": "FAIL/OPEN",
+    "runtime_v4_budget": 600,
+    "runtime_v4_duration": 612.57,
+    "runtime_v4_files": 6152,
+    "receive_v7_duration": 616.052,
+    "receive_v7_files": 6657,
+    "last_fourCLI180_duration": 199.725,
+    "last_fourCLI_files": 1722,
+    "all_old_failures_retained": true,
+    "recipient_maturity_keyless_drain_all12_full_cold_conservation_complete": false,
+    "old_owner_requests_retained": true
+  },
+  "legacy_value_strict": "VALUE-STRICT-01 OPEN, large_enum_variant/bool_assert_comparison and120.019 exhaustion; unchanged Core/value/lock,120diagnostic/300repair triggers unmet; no exemption or substitution.",
+  "implementation_target": "S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8",
+  "freeze_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "freeze_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "freeze_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "goal_text_old_hashes_predecessor_reported_not_rewritten": true,
+  "all_commands_explicit_new_workdir": true,
+  "persistent_cwd_still_UI_pending": true,
+  "whitepaper_site_servers_accounts_funds_cleanup_unchanged": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

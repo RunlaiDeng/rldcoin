@@ -1,0 +1,30 @@
+{
+  "budget_seconds": 60,
+  "attempts": 1,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-first-service-candidate-model-20261006.py": "bc6fd3e3d21d5e20a223675adc107a9a1e82a2e503b92fce262683a92ae22f28",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-first-service-candidate-model-20261006.py": "052309b90353946b6fcf82cdc8e719819ea8171bfb1dd7530ac2ff03de4c9ad1",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-independent-trace-v10-stopped-private-inventory-20261006.json": "9a32ea71a36b32653ae23cd41dfd006f01ada31afaa55614915e17eee9f39e45",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-independent-trace-v10-20261006-checks.json": "859bb45f4c5c9c13f3145cdfe71916e22b1c341454cbcf9db60ce1a752ebd13a",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft-four-cli-independent-trace-v10-commit-frontier-paths-private-20261006.json": "ae07931cf18fef0a515e3d93cb031d2a01987cdd963bf848a8d4e8890713da33",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-independent-trace-and-commit-frontier-outcome-20261006.json": "72408a2ae320545386d3225d9ad09ea19bfe04e1c446d00f6903dd0f61d378db",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-first-prepare-kernel-counter-v2-20261006-checks.json": "1baa83ce8f295a1be8991d5391a3aa743b504a2063239fe88eec8f66b724dd21",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional-ledger/src/bft.rs": "5f902649af8bc6ec6f72b570f91978eb33f0b504cdc6e05584c2e6689abb9a9e",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional-ledger/src/lib.rs": "9fc523a90d81a88def3310ff22c2570f1f8ba59fd45735fe7e0d08d4b186a571",
+    "/Users/galaxy/GitHub/rldcoin/crates/rld-core/src/crypto.rs": "3914969e84c6b3b1384198fd4bb591fbc62d6153ea9d39a5e74a5f4fab235aff",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "682a4a0b8208fd5e886e9f9cf1c46d6f1f5492687c6e2f1684c209daba93f72e",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "d03f08a864a34befcfd6660943f5702ddb88f753ef9e5fea377a508380d55158",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "af228739196440a62126d251c03737ce50d20df3b29c7e606a3701f91aec72bc",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_tcp.py": "4797a3a01c006c80186250a4a652b2124afede737f838a853f0bf264e403996f",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh_inspection.py": "41264884b97d0d69eb22355cbba16dd0b9cece4e6c4034f603b232358404cc7b",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh_inspection.py": "186794c6553650ed19ea490bd033e75809a7381742a7e6b8eae5e704f2dd9072",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_active_state.py": "a72f20c337f3243258c7950dba1322e10afd21b05ead4988d3b4064b5c675798",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace.py": "98ae05277e5d6d0bcb7c2cdf2e6250b1705f6574e0bed10db950242a2484bc7d",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_window.py": "b02b5e30400cd7f4b1394230d6acb9b119cb1f5ef53c07ecd1589e13cd7b3437",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_contact_trace_journal.py": "6c6e61371fab4e957d653c3877d04a9337adf2aa103874385281836e8e7c5889",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-independent-trace-v10-private-20261006/ordinary-process-controller/finite-trace-journal.json": "2cd4cdbaf3056d847f003a985dda248a02f32839f251c899cb7ba51910c65e3e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-independent-trace-v10-private-20261006/ordinary-process-controller/finite-trace-events.jsonl": "526044fe53356555a7797867b1bce37e656d35272fdff14251c42691e04fb8fe"
+  },
+  "hypothesis": "Once60 V6 first-service candidate in the same24models and exact294560byte new target as retained baseline. New bounded durable perpeer pending<=32/prepared<=256 original IDs, at most2 of original4 slots; complete auth/route/receipt/suppression and ordinary traffic preserved. Waiting IDs remain across recent-label/cache eviction, selected IDs marked only after complete atomic preparation. Every modeled target must be first-prepared within23successful steps. Source/model signatures and atomic are explicit mocks, oldNative/Runtime/Node/key/socket0; first mismatch,24cases complete or original60 exits. No actual180/full600 allocated.",
+  "full_fault_qualified": false
+}

@@ -1,0 +1,15 @@
+{
+  "completed": false,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 25.419101,
+  "helper_exit_code": 1,
+  "stage_sha256": "9ae2ecdbaf520c36689797727819e2f2bd5fad513b4ce6a6421a2a35ab28a9aa",
+  "helper_sha256": "af3da748dd36258990b615fa5ae18f88e991a3d2049817e01155b68bbc8b1ffb",
+  "controller_sha256": "e18c3853471e1d80a8897a31296aced7cc2e9ebf5a338cbf9c30ada5045826e8",
+  "log_sha256": "07fbc108e56edf7658a158f46f92b85a256de2872dca348fbd97609ccebbb73c",
+  "result": null,
+  "raw_private_test_log_not_published": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

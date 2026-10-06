@@ -9,6 +9,25 @@
 
 
 
+## 2026-10-06 首次服务反例与V6持久有界修复
+
+完整 fault 仍 **FAIL/OPEN**，原600/60轮/24高度/成熟/票数/容量及原owner请求保持。6152/6657及最近四CLI1722和全部旧失败原件保留，原收款成熟、keyless drain、all12完整cold/守恒未完成。本次没有新增180/600原生范围。
+
+首次准备原一次60判别：首0.557秒在模型前因只读route适配器缺contacts失败；修正V2 1.190秒初称24组无反例，但复核发现192历史中的100–103序号与新目标重叠，该唯一新目标结论不资格。两套源/日志/结果均保留。只改唯一10000+case并加initial+1数量断言，V3 **1.199秒通过判别**：86历史/每轮4新交通/每次安全忘hint分支连续24次成功准备不选该始终有资格的目标；24有限模型合计原预算2.946秒。准确原Commit2→1完整包294560bytes、直达路线和未收据状态认证，但模型签署/atomic是明确mock，不能重建旧live资格或断言唯一根因。
+
+实际 `tools/interstellar_mesh.py` 采用 **RLD-CONTACT-TRANSIT-SCHEDULER-V6**：每peer持久保存≤32个pending原包ID与≤256个prepared IDs，受原16contacts/64MiB整图界限；新ID只填空位，等待项不被recent标签或可忘hint逐出。每批最多占原4packet中的2个槽，其余保持普通选择；完整认证/路线/跳数/receipt/suppression/20MiB/256active/32recent/512hint4MiB不改。只有完整atomic准备成功才标prepared；首服务不推进普通cursor/hint，完整一次失败重试保持两类metadata。ID不授权保管、账本或签署，不缓存proof/钥、不剪证据、不新增socket attempt。V5 identity/state原样拒绝，只用新V6地面fixture，不迁移失败保管。
+
+同24模型candidate **PASS1.291秒/一次60**，首次准备为1–6次，原24缺席反例消除。部分warm目标比基线更慢，不能称所有交通无条件提速或广义无饥饿。candidate helper沿用基线decision字符串“no first-service repair”是错误描述；原报告不改，准确决定是继续资格V6有界首次服务修复。
+
+95相关实际签署Mesh/fsync/冷重开/篡改/容量/readonly inspection/TLS检查均 **24.687秒/exit0**，含新真实两入站槽占满后connect失败、原包/一次重试hint保留，无request/ack/suppression；释放槽后原包实际pinnedTLS下一跳保管，仍无目的收据/Native权限。测试中的具体connect exception class未另存，不能凭它证明旧现场两ConnectionResetError的唯一原因。
+
+外层范围仍 **FAIL25.419秒**：全部95通过后，通用封存器正确拒绝负例故意留下的symbolic link；源码/失败另封存，不把它改PASS。原剩余34内独立read-only封存 **PASS0.894秒**，合计26.313<60，保留963普通文件和两个链接自身metadata，绝不跟随链接，不重复测试；完整签署原包及成功下一跳副本核验，原1722字节未变。原helper终态exit1，所有其线程终态，当前无自有活动测试。Native/BFT Runtime/旧Node重开、旧钥使用、恢复/复签/退款/复制保管均0。
+
+当前Python192 `2fe0fe56…`，四源/test文件变更；Native89 `fd1e24fe…` / Core171 `de74cf78…` / CLI `bef4d5c7…` 未变；475公开source-only文件另存，无currency/keys/custody/binary复制。下一仅一次120独立源码/驱动绑定 **尚未启动**：整份helper AST除scope/identity和既有诊断import相同，原17setup/13import/15mature/all8固定头/caller/owner/守恒不改，22禁改反例及旧普通库存/新不随链接typed库存检查。首绑定/字节/角色/预算/负例/库存不一致、完成或原120退出，无实际Node/Native/Runtime/socket/sign启动。通过才另决定一次必要新180；当前新180/full600预算0。
+
+VALUE-STRICT-01两基线告警及120.019耗尽仍独立OPEN，Core/value/lock未改，120诊断/300修复触发未满足。采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8；旧goal c906/f825仅前继引用已报告不改。goal active；命令显式新rldcoin、持久cwd仍UI待修；白皮书/PDF/官网、服务器、账号/权限、资金、清理不扩展。
+证据：[实际反例、源码修复、全部终态与下一判别](operations/evidence/regional-bft-first-service-repair-outcome-20261006.json)。
+
 ## 2026-10-06 独立追踪实际接入，原生成熟仍失败
 
 完整 fault 仍 **FAIL/OPEN**：原 runtime-v4 600/612.570 秒/6152 文件、receive-v7 600/616.052 秒/6657 文件及全部旧失败保留。原收款成熟、keyless drain、all12 完整 cold/守恒未完成。历史“全部通过”仅指当段绑定来源和有限 scope。
