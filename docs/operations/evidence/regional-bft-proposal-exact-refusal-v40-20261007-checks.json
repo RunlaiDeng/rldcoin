@@ -1,0 +1,253 @@
+{
+  "completed": true,
+  "source": 2,
+  "destination": 1,
+  "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+  "rows": [
+    {
+      "attempt": 103,
+      "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+      "source_events": [
+        {
+          "attempt": 103,
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302003.739225583,
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4254,
+          "slot": 2,
+          "stage": "outgoing_prepared"
+        },
+        {
+          "attempt": 103,
+          "frame_id": "784c3181540853c09e5e64cb00b737e107c7f9884b5e016931f1c86464b97dc8",
+          "monotonic_seconds": 302003.749661166,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "711820e5cb4215ce43ebc654d815e5e7593d9e070b3f4fc55c70014ff4c4d1d0",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4257,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 103,
+          "frame_id": "4e76b7e54a90357e0a5582aae6e6defe2aa2aabb4f2bfda5ad5d5ec3109dd121",
+          "monotonic_seconds": 302003.749679375,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "1327d81d1e859980edf42d52c991935638ef4dc7429314b58fef95d5964337e9",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4258,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 103,
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302003.749689708,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4259,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 103,
+          "frame_id": "4e76b7e54a90357e0a5582aae6e6defe2aa2aabb4f2bfda5ad5d5ec3109dd121",
+          "monotonic_seconds": 302003.749701375,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "6e7506603f28037f7bdd984735d3b508dec7ba509fa90608eeca4efedf04ef9e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4260,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 103,
+          "error_class": "ValueError",
+          "failure_stage": "response_authentication",
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302003.983629666,
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4263,
+          "slot": 2,
+          "stage": "outgoing_failed"
+        },
+        {
+          "attempt": 103,
+          "error_class": "ValueError",
+          "failure_stage": "response_authentication",
+          "monotonic_seconds": 302003.983650208,
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4265,
+          "slot": 2,
+          "stage": "contact_failed"
+        }
+      ],
+      "exact_destination_events": [
+        {
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302003.76738775,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "09bdc0172eb80cd410ace6a8999f6d653d366e6f4673c4ef2e121a6eab98f40d",
+          "sequence": 4583,
+          "slot": 1,
+          "stage": "request_authenticated"
+        },
+        {
+          "error_class": "BlockingIOError",
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302003.971740458,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "09bdc0172eb80cd410ace6a8999f6d653d366e6f4673c4ef2e121a6eab98f40d",
+          "sequence": 4591,
+          "slot": 1,
+          "stage": "inbound_refused"
+        },
+        {
+          "failure_stage": "input_slot_occupied",
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302004.178133916,
+          "nonce": "0deb19df8941d8ced39cbf3cd36112fa97bea97ac43a5c36524c9e0b51fdc0ce",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "09bdc0172eb80cd410ace6a8999f6d653d366e6f4673c4ef2e121a6eab98f40d",
+          "sequence": 4595,
+          "slot": 1,
+          "stage": "deferred_input_not_queued"
+        }
+      ],
+      "custody_any": false
+    },
+    {
+      "attempt": 104,
+      "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+      "source_events": [
+        {
+          "attempt": 104,
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302006.412001541,
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4272,
+          "slot": 2,
+          "stage": "outgoing_prepared"
+        },
+        {
+          "attempt": 104,
+          "frame_id": "784c3181540853c09e5e64cb00b737e107c7f9884b5e016931f1c86464b97dc8",
+          "monotonic_seconds": 302006.45637725,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "711820e5cb4215ce43ebc654d815e5e7593d9e070b3f4fc55c70014ff4c4d1d0",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4275,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 104,
+          "frame_id": "4e76b7e54a90357e0a5582aae6e6defe2aa2aabb4f2bfda5ad5d5ec3109dd121",
+          "monotonic_seconds": 302006.456397041,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "1327d81d1e859980edf42d52c991935638ef4dc7429314b58fef95d5964337e9",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4276,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 104,
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302006.456406333,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4277,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 104,
+          "frame_id": "4e76b7e54a90357e0a5582aae6e6defe2aa2aabb4f2bfda5ad5d5ec3109dd121",
+          "monotonic_seconds": 302006.456414625,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "6e7506603f28037f7bdd984735d3b508dec7ba509fa90608eeca4efedf04ef9e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4278,
+          "slot": 2,
+          "stage": "request_sent"
+        },
+        {
+          "attempt": 104,
+          "error_class": "ValueError",
+          "failure_stage": "response_authentication",
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302006.71703775,
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4281,
+          "slot": 2,
+          "stage": "outgoing_failed"
+        },
+        {
+          "attempt": 104,
+          "error_class": "ValueError",
+          "failure_stage": "response_authentication",
+          "monotonic_seconds": 302006.717052625,
+          "peer": "134df08fbf7fadf725d716240ef80911abdd8f2b0d410c99ebbb1a5c7e6ed83d",
+          "sequence": 4283,
+          "slot": 2,
+          "stage": "contact_failed"
+        }
+      ],
+      "exact_destination_events": [
+        {
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302006.506325,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "09bdc0172eb80cd410ace6a8999f6d653d366e6f4673c4ef2e121a6eab98f40d",
+          "sequence": 4660,
+          "slot": 1,
+          "stage": "request_authenticated"
+        },
+        {
+          "error_class": "BlockingIOError",
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302006.709548208,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "09bdc0172eb80cd410ace6a8999f6d653d366e6f4673c4ef2e121a6eab98f40d",
+          "sequence": 4664,
+          "slot": 1,
+          "stage": "inbound_refused"
+        },
+        {
+          "failure_stage": "input_slot_occupied",
+          "frame_id": "faf4902f91bb2b9bb932a15ea94318a32ec69f7087663a143bb98809a04e03e0",
+          "monotonic_seconds": 302006.920922791,
+          "nonce": "85044c826e6b574ffaba891841fec9393b9e2a0c1c96cb63f3c4ab917181cfa4",
+          "packet_id": "8094ff1c6d13ec6b9bebda27e526452d34240e6fbd65cf97cf3926a550ff2a7e",
+          "peer": "09bdc0172eb80cd410ace6a8999f6d653d366e6f4673c4ef2e121a6eab98f40d",
+          "sequence": 4673,
+          "slot": 1,
+          "stage": "deferred_input_not_queued"
+        }
+      ],
+      "custody_any": false
+    }
+  ],
+  "source_selector_no_prepare_hypothesis_falsified": true,
+  "both_requests_sent": true,
+  "cryptographic_invalid_response_proven": false,
+  "unique_maturity_cause": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "sealed_bytes_unchanged": true,
+  "duration_seconds": 0.147282,
+  "combined_original20_seconds": 2.812518,
+  "reader_sha256": "6cddc54e7ba45535e78d1267e7a67ac805650c1d3aef83bfb85b0b1c1f1d767b",
+  "new180": 0,
+  "new600": 0
+}

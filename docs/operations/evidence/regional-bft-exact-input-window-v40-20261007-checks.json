@@ -1,0 +1,146 @@
+{
+  "completed": true,
+  "rows": [
+    {
+      "attempt": 103,
+      "target_refusal_at": 302004.178133916,
+      "recent_original_input_windows": [
+        {
+          "nonce": "036eacea9dacac65b811dc77db6341fa6d7dc4d669fe9cbd0f8b24de7be5a88f",
+          "peer": "bc648adb58f21ea064c003f1e24a1aeb58e176e2b7392d3726cb1b061830cacb",
+          "queued_at": 302002.484996291,
+          "queue_age_at_target_refusal_seconds": 1.6931376249995083,
+          "attempt_time_range": [
+            302002.499539416,
+            302004.881850541
+          ],
+          "packet_attempt_rows": 24,
+          "actual_complete_custody_times": [
+            302005.118457666,
+            302005.118471958,
+            302005.11847975,
+            302005.1184865
+          ],
+          "custody_before_target_refusal": false,
+          "queue_to_last_complete_custody_seconds": 2.6334902090020478,
+          "not_assumed_live_if_no_terminal": true
+        },
+        {
+          "nonce": "e1e21bde5d9a32c1f1253d2aad8a98d7a9baf76f427eb520f7931422cc937415",
+          "peer": "bc648adb58f21ea064c003f1e24a1aeb58e176e2b7392d3726cb1b061830cacb",
+          "queued_at": 302000.6876725,
+          "queue_age_at_target_refusal_seconds": 3.490461416018661,
+          "attempt_time_range": [
+            302000.70593975,
+            302002.164872041
+          ],
+          "packet_attempt_rows": 16,
+          "actual_complete_custody_times": [
+            302002.426020333,
+            302002.426042958,
+            302002.426051458,
+            302002.426058333
+          ],
+          "custody_before_target_refusal": true,
+          "queue_to_last_complete_custody_seconds": 1.7383858330431394,
+          "not_assumed_live_if_no_terminal": true
+        },
+        {
+          "nonce": "d62b3640991b29bcda7193874b63f9d1e6841790c019766aacba707fa735adf0",
+          "peer": "bc648adb58f21ea064c003f1e24a1aeb58e176e2b7392d3726cb1b061830cacb",
+          "queued_at": 301998.994869416,
+          "queue_age_at_target_refusal_seconds": 5.1832644999958575,
+          "attempt_time_range": [
+            301999.016074541,
+            301999.963627791
+          ],
+          "packet_attempt_rows": 12,
+          "actual_complete_custody_times": [
+            302000.401808083,
+            302000.401822958,
+            302000.401830833,
+            302000.401838125
+          ],
+          "custody_before_target_refusal": true,
+          "queue_to_last_complete_custody_seconds": 1.4069687090232037,
+          "not_assumed_live_if_no_terminal": true
+        }
+      ]
+    },
+    {
+      "attempt": 104,
+      "target_refusal_at": 302006.920922791,
+      "recent_original_input_windows": [
+        {
+          "nonce": "d02a3c94e885bf8b8c5c30990fbc503029e1b750583e4b2c35203fa0ff789c95",
+          "peer": "bc648adb58f21ea064c003f1e24a1aeb58e176e2b7392d3726cb1b061830cacb",
+          "queued_at": 302005.435045333,
+          "queue_age_at_target_refusal_seconds": 1.4858774580061436,
+          "attempt_time_range": [
+            302005.453980125,
+            302006.891549166
+          ],
+          "packet_attempt_rows": 16,
+          "actual_complete_custody_times": [
+            302007.146898166,
+            302007.14691575,
+            302007.146924583,
+            302007.146932208
+          ],
+          "custody_before_target_refusal": false,
+          "queue_to_last_complete_custody_seconds": 1.7118868749821559,
+          "not_assumed_live_if_no_terminal": true
+        },
+        {
+          "nonce": "036eacea9dacac65b811dc77db6341fa6d7dc4d669fe9cbd0f8b24de7be5a88f",
+          "peer": "bc648adb58f21ea064c003f1e24a1aeb58e176e2b7392d3726cb1b061830cacb",
+          "queued_at": 302002.484996291,
+          "queue_age_at_target_refusal_seconds": 4.435926500009373,
+          "attempt_time_range": [
+            302002.499539416,
+            302004.881850541
+          ],
+          "packet_attempt_rows": 24,
+          "actual_complete_custody_times": [
+            302005.118457666,
+            302005.118471958,
+            302005.11847975,
+            302005.1184865
+          ],
+          "custody_before_target_refusal": true,
+          "queue_to_last_complete_custody_seconds": 2.6334902090020478,
+          "not_assumed_live_if_no_terminal": true
+        },
+        {
+          "nonce": "e1e21bde5d9a32c1f1253d2aad8a98d7a9baf76f427eb520f7931422cc937415",
+          "peer": "bc648adb58f21ea064c003f1e24a1aeb58e176e2b7392d3726cb1b061830cacb",
+          "queued_at": 302000.6876725,
+          "queue_age_at_target_refusal_seconds": 6.233250291028526,
+          "attempt_time_range": [
+            302000.70593975,
+            302002.164872041
+          ],
+          "packet_attempt_rows": 16,
+          "actual_complete_custody_times": [
+            302002.426020333,
+            302002.426042958,
+            302002.426051458,
+            302002.426058333
+          ],
+          "custody_before_target_refusal": true,
+          "queue_to_last_complete_custody_seconds": 1.7383858330431394,
+          "not_assumed_live_if_no_terminal": true
+        }
+      ]
+    }
+  ],
+  "sealed_bytes_unchanged": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "unknown_rejected_input_tails_retained": true,
+  "unique_maturity_cause": false,
+  "duration_seconds": 0.050592,
+  "combined_original20_seconds": 2.863113,
+  "reader_sha256": "61350f5e92e020ebc9134c7eb112eade91598380abcdb95a98dd365ffd681b97",
+  "new180": 0,
+  "new600": 0
+}

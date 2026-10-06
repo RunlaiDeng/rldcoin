@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V25'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V26'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1332,7 +1332,7 @@ class Node:
         # Keep same-frame recipient rotation separate from the ordinary ring.
         # Capture only primitive positions before group initialization can evict
         # them. They select carriage; each original packet still authenticates.
-        current_classes={};current_positions={}
+        current_classes={};current_positions={};frame_positions={}
         if hint is not None:
             frames=set(hint[1]);recent=set(self.state['recent_transits'])
             current_classes={ident:(ident in recent,t['routing']['body']['frame_id'])
@@ -1342,8 +1342,11 @@ class Node:
             for kind,frame in sorted(set(current_classes.values())):
                 current_positions[(kind,frame)]=carriage_position(
                     (domain,peer,'native-current-copy',hint[0],kind,frame))
+            for kind in sorted({kind for kind,_ in current_classes.values()}):
+                frame_positions[kind]=carriage_position(
+                    (domain,peer,'native-current-frame',hint[0],hint[1],kind))
             if current_carriage is not None:
-                current_carriage.update(scope=hint[0],classes=current_classes)
+                current_carriage.update(scope=hint[0],frame_set=hint[1],classes=current_classes)
         pending=self.transit_groups(peer) if len(transits)<MAX_PACKET_BATCH else []
         selected_ids={digest(t['packet']) for t in transits}
         # Alternate priority pairs between newest and oldest unprepared arrival
@@ -1374,6 +1377,21 @@ class Node:
                 # Other frame positions and original two classes stay exact.
                 for index,ident in zip(positions,ordered[start:]+ordered[:start]):
                     commits[index]=ident
+            # Within a stable exact current-frame set, ordinary ring movement
+            # must not repeatedly displace a different current envelope. Rotate
+            # only current places in the same original class; changed/missing
+            # hints retain the original order and all packets authenticate below.
+            for kind,after in frame_positions.items():
+                if after is None:continue
+                positions=[j for j,i in enumerate(commits) if current_classes[i][0]==kind]
+                by_frame={}
+                for j in positions:
+                    by_frame.setdefault(current_classes[commits[j]][1],[]).append(commits[j])
+                ordered=sorted(by_frame)
+                if not ordered:continue
+                start=bisect_right(ordered,after)%len(ordered)
+                rotated=[i for frame in ordered[start:]+ordered[:start] for i in by_frame[frame]]
+                for j,i in zip(positions,rotated):commits[j]=i
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]
@@ -1479,6 +1497,9 @@ class Node:
                 if group is not None:
                     remember_carriage_position((domain,peer,'native-current-copy',
                                                current_carriage['scope'],*group),ident)
+                    remember_carriage_position((domain,peer,'native-current-frame',
+                                               current_carriage['scope'],
+                                               current_carriage['frame_set'],group[0]),group[1])
         return bundle
 
     def tick(self):

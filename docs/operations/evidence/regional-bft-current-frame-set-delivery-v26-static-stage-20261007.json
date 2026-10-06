@@ -1,0 +1,29 @@
+{
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "actual_function_global_providers": [
+    "AssertionError",
+    "NETWORK",
+    "OSError",
+    "ValueError",
+    "bytes",
+    "copy",
+    "dict",
+    "evidence",
+    "hasattr",
+    "len",
+    "list",
+    "mesh",
+    "next",
+    "object",
+    "patch",
+    "range",
+    "set",
+    "setattr",
+    "signed_ground_import_parent_proposal",
+    "tuple",
+    "zip"
+  ],
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-frame-set-related-v26-v2-20261007.py": "938507cf8e022896dc8df3d1029454c37fb36253ac8b6d3911ed563846c220b6"
+  }
+}

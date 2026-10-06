@@ -1,0 +1,283 @@
+{
+  "completed": true,
+  "source": 3,
+  "destination": 0,
+  "relay": 2,
+  "packet_id": "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa",
+  "frame_id": "b577712320b0d183dfd065f470b3bac621585347496fe5715a6f093b7d30535d",
+  "target_retained": {
+    "full_transit_signature_verified": true,
+    "original_complete_bytes": 309863,
+    "hops": 1,
+    "visited": [
+      "65ad881d970451151d7d6a6d1d1e01e457cc098da5ac7c871bc4860d1cad5133",
+      "4349335610fbb97058400c475df3da57fd683b11dbbf576a9cfbc801233ccfbd"
+    ],
+    "receipt": false
+  },
+  "rows": [
+    {
+      "sequence": 102,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 52,
+      "priority_pair": true,
+      "entry_hint_matches": true,
+      "consumed_hint": [
+        {
+          "target_matches": true,
+          "frame_count": 6
+        }
+      ],
+      "prepared_before": false,
+      "pending_position": null,
+      "arrival_position": null,
+      "groups": [
+        [
+          {
+            "index": 0,
+            "size": 25,
+            "rank": 22,
+            "current_order": [
+              "de148f5d2680435fcaa0aeaf14f2be3164ba837594b0e330e2eaea72a8e3afab",
+              "5535d3ab5ba47473956aecfafd1ddcffeafa69d8b2598955d290eccd089a6e4f",
+              "ad989f058fb8e0478329841de13efc2a566aea3271fd99b4fe578e46504bc100",
+              "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa"
+            ]
+          }
+        ]
+      ],
+      "checks": 1,
+      "original_route": {
+        "attempts": 1,
+        "eligible": true,
+        "path_length": 3
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": false
+    },
+    {
+      "sequence": 104,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 54,
+      "priority_pair": false,
+      "entry_hint_matches": true,
+      "consumed_hint": [],
+      "prepared_before": false,
+      "pending_position": null,
+      "arrival_position": 2,
+      "groups": [],
+      "checks": 0,
+      "original_route": null,
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": true
+    },
+    {
+      "sequence": 105,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 54,
+      "priority_pair": false,
+      "entry_hint_matches": true,
+      "consumed_hint": [],
+      "prepared_before": false,
+      "pending_position": null,
+      "arrival_position": 2,
+      "groups": [
+        [
+          {
+            "index": 0,
+            "size": 23,
+            "rank": 16,
+            "current_order": [
+              "5535d3ab5ba47473956aecfafd1ddcffeafa69d8b2598955d290eccd089a6e4f",
+              "ad989f058fb8e0478329841de13efc2a566aea3271fd99b4fe578e46504bc100",
+              "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa",
+              "de148f5d2680435fcaa0aeaf14f2be3164ba837594b0e330e2eaea72a8e3afab"
+            ]
+          }
+        ]
+      ],
+      "checks": 2,
+      "original_route": {
+        "attempts": 2,
+        "eligible": true,
+        "path_length": 3
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": false
+    },
+    {
+      "sequence": 106,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 56,
+      "priority_pair": true,
+      "entry_hint_matches": true,
+      "consumed_hint": [],
+      "prepared_before": false,
+      "pending_position": 27,
+      "arrival_position": null,
+      "groups": [],
+      "checks": 0,
+      "original_route": null,
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": true
+    },
+    {
+      "sequence": 107,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 56,
+      "priority_pair": true,
+      "entry_hint_matches": true,
+      "consumed_hint": [
+        {
+          "target_matches": true,
+          "frame_count": 6
+        }
+      ],
+      "prepared_before": false,
+      "pending_position": 27,
+      "arrival_position": null,
+      "groups": [
+        [
+          {
+            "index": 0,
+            "size": 25,
+            "rank": 17,
+            "current_order": [
+              "ad989f058fb8e0478329841de13efc2a566aea3271fd99b4fe578e46504bc100",
+              "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa",
+              "de148f5d2680435fcaa0aeaf14f2be3164ba837594b0e330e2eaea72a8e3afab",
+              "5535d3ab5ba47473956aecfafd1ddcffeafa69d8b2598955d290eccd089a6e4f"
+            ]
+          }
+        ]
+      ],
+      "checks": 1,
+      "original_route": {
+        "attempts": 1,
+        "eligible": true,
+        "path_length": 3
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": false
+    },
+    {
+      "sequence": 111,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 58,
+      "priority_pair": false,
+      "entry_hint_matches": true,
+      "consumed_hint": [],
+      "prepared_before": false,
+      "pending_position": 24,
+      "arrival_position": null,
+      "groups": [],
+      "checks": 0,
+      "original_route": null,
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": true
+    },
+    {
+      "sequence": 115,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 58,
+      "priority_pair": false,
+      "entry_hint_matches": true,
+      "consumed_hint": [],
+      "prepared_before": false,
+      "pending_position": 24,
+      "arrival_position": null,
+      "groups": [
+        [
+          {
+            "index": 0,
+            "size": 21,
+            "rank": 14,
+            "current_order": [
+              "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa",
+              "de148f5d2680435fcaa0aeaf14f2be3164ba837594b0e330e2eaea72a8e3afab"
+            ]
+          }
+        ]
+      ],
+      "checks": 1,
+      "original_route": {
+        "attempts": 1,
+        "eligible": true,
+        "path_length": 3
+      },
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": false
+    },
+    {
+      "sequence": 116,
+      "role": "outbound",
+      "completed": true,
+      "class_step": 60,
+      "priority_pair": true,
+      "entry_hint_matches": true,
+      "consumed_hint": [],
+      "prepared_before": false,
+      "pending_position": 21,
+      "arrival_position": null,
+      "groups": [],
+      "checks": 0,
+      "original_route": null,
+      "hop_attempts": 0,
+      "suppressed": false,
+      "selected": false,
+      "full4_retry": true
+    }
+  ],
+  "attempts": [],
+  "original_custody_trace": [
+    {
+      "frame_id": "b577712320b0d183dfd065f470b3bac621585347496fe5715a6f093b7d30535d",
+      "monotonic_seconds": 301206.53378575,
+      "nonce": "b7fd000b7b075e78f68406b9b799224eee0462024737500e023d3fc86ef5d0f4",
+      "packet_id": "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa",
+      "peer": "65ad881d970451151d7d6a6d1d1e01e457cc098da5ac7c871bc4860d1cad5133",
+      "sequence": 4356,
+      "slot": 2,
+      "stage": "local_transport_custody"
+    },
+    {
+      "frame_id": "b577712320b0d183dfd065f470b3bac621585347496fe5715a6f093b7d30535d",
+      "monotonic_seconds": 301227.649801,
+      "nonce": "300f8547d1b95dfa4b5b82e5db0d577c3a6498231c4ee3e3ddbffe011b3a7173",
+      "packet_id": "edb1a0de8cda5216456b867679c6e143cad3afaf473f707d50d0fd7bc6b0cbaa",
+      "peer": "65ad881d970451151d7d6a6d1d1e01e457cc098da5ac7c871bc4860d1cad5133",
+      "sequence": 4681,
+      "slot": 2,
+      "stage": "local_transport_custody"
+    }
+  ],
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "consumed_sealed_bytes_unchanged": true,
+  "unique_maturity_cause": false,
+  "new180": 0,
+  "new600": 0,
+  "duration_seconds": 0.465342,
+  "combined_original20_seconds": 2.151975,
+  "reader_sha256": "db4f1c9a270edd0c65fb527ef38464c496f0feef6ad1c946b51984b9959135fb"
+}

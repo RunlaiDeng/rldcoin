@@ -1,5 +1,21 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 V39终态FAIL；稳定当前信封集合轮转V26已接入一次V40
+
+V39 **FAIL原180/192.884秒含收尾/1825封存**，四CLI均正常exit0，原15mature/all8完整Nativecold/每个完整信封/caller-owner heads/守恒未完成。完整600/all12/keyless及全部旧失败继续FAIL/OPEN；历史“全部通过”只对应当时绑定来源和有限scope，不能覆盖后续失败或总验收。
+
+原20只读累计3.027557秒，包括归档路径入口FAIL0.318599，零旧Node/Native/Runtime/sign/key/socket/fixture构造，消费封存字节不变。原Prepare1→2/3现均有完整目的签名receipt和准确companion，Proposal2/Prepare1和2/Commit2三目的完整。缺Prepare3→1、Commit3→0；后者完整309863bytes/1hop已由relay2保管，源3第一次准备仅等待1.119970秒，后续suppression合法。relay2 priority52选source3 Prepare→1，priority56选同帧Commit→1；准确Commit→0两次原hint实际读取并匹配，原first-plan route允许但未进入实际spare候选。不能把缺日志/停后状态作为唯一成熟原因，也不能再修这个目标的源端。
+
+全新真实签名三当前完整信封小反例只注入已测普通ring起点干扰：原V25连续4个优先机会选两竞争信封，目标未选，**FAIL0.547137/14封存**。V26新增原512条/4MiB primitive位置，按稳定完整hint集合/原recent或history类/peer/domain轮转当前frame；集合改变或miss保持原顺序，同帧收件轮转继续，只在原atomic成功后记实际carried frame。无新增持久字段或Native权利，原first2/另一类floor/full4/非priority/route/signature/20MiB及协议界限未改。
+
+首次相关入口因方法误放__main__之后，静态provider **FAIL0.142092/生成函数0调用**，原件保留；只修实际MeshTests绑定位置。**9相关检查PASS2.861452/126封存**，原反例/fallback/不同帧旧最先顺序/同帧副本/pending17/非priority/容量域/auth及atomic失败不推进/普通两跳送达和清witness目的冷读通过。新小反例及相关原60累计8.492749，旧Mesh60=59.803250/TCP60=3.451646/hint60=1.392620不重置。修改后的setup断言允许实际轮转选任一current，但仍要求全部真实准备；原target4机会判据不改。终末ordinary原方法仅执行一次为第9项，从实际结果抽取资格，不重测。
+
+来源绑定PASS0.973263，Python192 **23affe7b8993c0591e6ce9a34e63e307236fa957a386a403a69332b7f6dd0bf3**；仅mesh _exchange_plan/prepare/profile和一个新测试变化，完整反转回V25，原test AST不变，Native89/Core171/实际CLI不变，453来源及原driver AST字面量反转/实际0755未分配拒绝/已分配guard通过。V40已于实际2026-10-06T23:17:23.987284Z启动唯一一次原180，本文记录时RUNNING，原17setup/13import/15mature/full8完整cold/全部信封/heads/守恒/正常停止且全阶段≤180才通过；首guard/原deadline封存，无新增600或旧保管重开/恢复/重签/退款/复制。
+
+继续唯一开发主线，局部PASS不停止。冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持；VALUE-STRICT-01两基线告警/120耗尽、长期/PQ/独立/物理/组合OPEN。显式新workdir，持久cwd及旧goal元数据仍界面待修，不形成审批门。官网/服务器/资金/账号权限/清理不扩大。
+
+[具体实现、全部失败和原范围](operations/evidence/regional-bft-current-frame-set-v26-development-outcome-20261007.json)；[原选取证据](operations/evidence/regional-bft-relay-selected-frames-v39-v2-20261007-checks.json)；[9相关检查](operations/evidence/regional-bft-current-frame-set-related-v26-v2-20261007-checks.json)；[最终来源](operations/evidence/regional-bft-current-frame-set-v26-v40-source-binding-20261007-checks.json)。
+
 ## 2026-10-07 V38终态FAIL；同帧收件副本公平轮转最小修复V25
 
 V38 **FAIL 原180秒/192.410秒含收尾/1836文件封存**，helper1、四CLI正常exit0、owned stopped，无forced/guardian/cleanup/pin异常；原15mature/all8完整Nativecold/完整信封/heads/守恒未完成。原完整600/all12/keyless与全部旧失败仍FAIL/OPEN。
@@ -2171,3 +2187,9 @@ Never reopen the prior failed currency or reuse its signed payment. See
 operations/evidence/regional-paged-full-fault-outcome-20261005.json and
 regional-paged-fault-receipt-observation-fix-outcome-20261005.json. VALUE-STRICT-01/
 Source66/2016/long-history/independent/physical/allgoal remainOPEN.
+
+### V40已终态，下一判别不重复原180
+
+V40严格 **FAIL原180/192.225秒含收尾/1715封存**，helper1、四CLI正常exit0，无forced/guardian/cleanup/pin异常。原生伴随四height14，mature15/full8cold/全部envelopes/heads/守恒未完成；本轮未生成source3 Commit，故不能授予旧Commit3→0角色通过，也不证明最小frame公平性修复无效。原20只读累计2.863113秒（含先前直接trace读取1.147478），消费旧字节不变；Proposal2/Prepare2仅目的3完整，Prepare3目的0/2完整。准确Proposal2→1首次prepare11.247665秒，普通及一次full4请求均实际发送且目的request_authenticated；随后pre-open BlockingIOError和input_slot_occupied，无custody，不把发送端response_authentication异常称坏签名。两个准确旧占位输入最后完整保管，queue→custody2.633490/1.711887秒，不能把其全部时间称一次验证CPU。下一原related60剩余内一次10秒实际thread/event最小反例，检验原锁释放是否遗漏现有input_wake通知导致固定.25sec睡眠；反例未证则不修，证实后只向已在原waiter集合的真实active input owner通知原释放，保持.2sec acquisition/2workers/1deferred/原deadline/全部完整校验。当前无自有活动测试，新180/600均0，不重开失败currency。
+
+[终态与下一可证伪假设](operations/evidence/regional-bft-current-frame-set-v40-terminal-next-20261007.json)。

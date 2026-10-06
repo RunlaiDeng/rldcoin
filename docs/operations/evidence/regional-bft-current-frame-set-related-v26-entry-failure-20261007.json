@@ -1,0 +1,8 @@
+{
+  "completed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.142092,
+  "original60_cumulative_seconds": 5.631297,
+  "error": "Static provider check: new method inserted below __main__, not MeshTests; generated function calls=0",
+  "production_initial_test_sha256": "e64c85a31fe184cb7b6b464db9407d2d14e20f0fb186d79eb7b70b6946548e44"
+}
