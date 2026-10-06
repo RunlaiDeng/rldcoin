@@ -1,0 +1,75 @@
+{
+  "format": "RLD-BFT-FOUR-CLI-SERVICE-CHECKS-V2",
+  "completed": false,
+  "budget_seconds": 180,
+  "attempts_used": 1,
+  "duration_seconds": 255.647,
+  "helper_exit_code": null,
+  "helper_exit_code_unavailable_after_original_controller_interruption": true,
+  "helper_terminal": true,
+  "original_controller_interrupted": true,
+  "terminal_recovery_does_not_replace_original_controller_qualification": true,
+  "guardian": {
+    "guardian_stop_used": false,
+    "signalled_owned_pids": [],
+    "forced_owned_processes": [],
+    "owned_processes_stopped": true
+  },
+  "guardian_error": null,
+  "budget_exhausted": true,
+  "forced_helper": false,
+  "pin_error": null,
+  "terminal_recovery_inventory_pin_seconds": 11.243495,
+  "stage_sha256": "2a8cdabf4ca5ed476db0c8d3ade8bf823fae716bcf247713d5f8e02c3bb4e36a",
+  "log_sha256": "f09fbfca46a3cd81653179e1611ac326800e025486b9f4e9ed41bc62b2fdf944",
+  "helper_sha256": "9cd33f89f7c76ab5de04cea4cfd3963b422c9471aa6b9dbd04b02f402aaa27f5",
+  "controller_sha256": "3add1e63008132d2038b33fd4fb1448fa9ddb2813b466b9fca918f68cc769d79",
+  "terminal_recovery_source_sha256": "05c86175e1ea8e7b656c99da79418475f007742b1107f1bfbc3757de8067625b",
+  "binding_source_sha256": "db1ee26a9e2c19682bb27c6b341defb1367068c94ff8c1d0e5be233dbc63b671",
+  "companion_source_commitment": "b9bec5b140205ca141c4acb2df09dac3d7181fcf8d93fd0cce856010a2b9af04",
+  "stopped_inventory_sha256": "0ce3f190f82a4caaadde3098dca860c5a6e79526304cf7ed8cd2ec7b4efc86be",
+  "stopped_files": 1855,
+  "result": {
+    "completed": false,
+    "failure": "ScopeDeadline: original180second ordinary CLI scope deadline",
+    "cleanup_failures": [],
+    "services_and_owned_threads_stopped": true,
+    "owned_processes_stopped": true,
+    "owned_process_terminal": [
+      {
+        "region": "proxima",
+        "index": 0,
+        "exit_code": 0
+      },
+      {
+        "region": "proxima",
+        "index": 1,
+        "exit_code": 0
+      },
+      {
+        "region": "proxima",
+        "index": 2,
+        "exit_code": 0
+      },
+      {
+        "region": "proxima",
+        "index": 3,
+        "exit_code": 0
+      }
+    ],
+    "raw_rejection_saved": false,
+    "failed_currency_never_reopen": true,
+    "whole_full_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "old_private_source_binary_freeze_unchanged": true,
+  "failed_currency_sealed": true,
+  "failed_currency_never_reopen": true,
+  "full_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_completed": false,
+  "new180_started": 0,
+  "new600_started": 0,
+  "Native_Node_Runtime_key_sign_fixture_reopens": 0,
+  "original_helper_deadline_monotonic": 294593.342547125
+}

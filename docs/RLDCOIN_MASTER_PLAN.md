@@ -1,5 +1,21 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 V33终态FAIL；原入站槽位交接V23及单次V34
+
+V33 **FAIL，原180秒，1855文件封存**；四CLI正常exit0，最后参考高度均14，成熟15/all8完整Nativecold/所有信封/caller-owner heads/守恒未完成。原控制器遭会话中断，helper仍按自身原deadline停止；helper exit code未知。255.647秒为开始至只读补封存收尾，不能当作未中断控制器耗时。无重启、forced stop或旧失败Node/Native/Runtime重开。历史“全部通过”只限其真实历史有限scope，不能覆盖后续FAIL。
+
+原20只读判别累计7.782424秒。完整Proposal2→0/1/3、Prepare2/3→三目的已有运输receipt/精确信封；Prepare0缺2/3、Prepare1缺2/3、Commit0缺2/3、Commit1缺3，Native内层Proposal及最新全冷资格仍未获授。准确source0→destination2 parent14 Commit在relay1已选中、原普通及full4两次尝试；目的因原唯一延后槽被占拒绝，另一个真实请求在拒绝后0.114716秒完成。“永久占槽”假设已证伪，不声称唯一成熟失败原因。
+
+V23最小修复仅让原已认证handler保留自己的原worker槽，在原连接deadline及最多0.2秒内等待原延后槽交接，只有占槽原因可等待。原2worker/1deferred/字节容量、完整再认证、fsync、签名、无确认不抑制重传及失败原子保持；不增加入站槽或授予custody。旧源码模型反例FAIL0.000527保留；真实TLS签名交接及8相关模型/拒绝/重试护栏 **9项PASS2.759753秒**，普通两跳完整签名receipt/清witness冷读 **PASS0.691893秒**。新必要改变TCP的相关60累计3.451646，旧Mesh ground60仍59.803250不重置；地面PASS不授予Native权利。
+
+最终来源绑定 **PASS1.673349秒**：Python192 **3eb81b420d2f6bb9577da14dec3f85749675f2023cf90fd468fc56dcce03ba4d**，仅TCP修复/test及Mesh profile V23；Native89/Core171/实际ReleaseCLI不变。453来源、实际21名称/0755未分配OS拒绝、原entry-helper-controller字面量反转、旧测试AST及完整Native权利方法保持；库存worker单独绑定。复用有效证据，无重复长测。
+
+持续用户授权内，必要新V34 **原180秒/一次已分配，本记录创建时NOTSTARTED**。可证伪假设：此具体入站丢失修复是否足够达到原17setup/13import/15mature/all8完整Nativecold/所有信封/heads/守恒/正常停止。首guard或原deadline即封存；不能延长、重开旧失败或同参重复。原控制器将作为有限自有进程独立于交互会话运行，防止界面中断丢失deadline guardian，原算法与预算不改。完整600/all12/keyless、VALUE-STRICT-01基线两告警/120耗尽、独立/物理/PQ/长期与组合仍OPEN；不因局部测试停止开发。
+
+冻结body2ba624…/PDFc59f9f…/receipt86821d…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、600stage/60round/24height/maturity2/quorum3/原锁容量-owner请求不改。唯一作者，所有命令显式新workdir；persistent cwd及goal前继引用/blocked元数据仍界面待修，不充当新增审批门。无主网/资金/白皮书/官网/外联/远端/清理/push。
+
+[真实V33失败](operations/evidence/regional-bft-four-cli-service-first-service-diag-v33-20261006-checks.json)；[准确槽位释放](operations/evidence/regional-bft-target-input-slot-v33-20261007-checks.json)；[真实签名回归](operations/evidence/regional-bft-deferred-slot-tcp-related-v23-20261007-checks.json)；[最终来源](operations/evidence/regional-bft-deferred-slot-v23-v34-source-binding-20261006-checks.json)。
+
 ## 2026-10-07 V32成熟局部通过但完整范围FAIL；只读验收并发V33
 
 V32 **FAIL 原180秒/208.116秒含收尾/1989文件封存**。168.630秒四参考15，169.723秒停止后实际四Native收款验证确认import13/mature15/可花费净2/无隔离；随后原完整冷验在首份Mesh状态认证时deadline。all8完整Nativecold/所有信封/caller-owner heads/守恒未完成，不能用该成熟局部观察补齐。四CLI正常exit0，无forced/guardian/cleanup/pin异常，旧全部FAIL保留；历史“全部通过”仅限当时有限scope。

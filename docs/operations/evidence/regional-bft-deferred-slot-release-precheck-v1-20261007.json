@@ -1,0 +1,10 @@
+{
+  "completed": false,
+  "failure": "IndentationError in extracted original block before any admission call",
+  "helper_sha256": "7b3102c5c392efc1f584154b1b89375c93618bdf6b76abb3500bc44a4dbebd12",
+  "production_source_written": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "compiled_original_function_calls": 0,
+  "conservative_original20_charge_seconds": 0.05,
+  "old_all_failures_preserved": true
+}

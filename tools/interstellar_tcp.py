@@ -620,30 +620,48 @@ class Server:
             pass  # No unauthenticated/corrupt request receives a custody assertion.
         finally:
             connection.close()
-            deferred_queued=False
             with self.guard:
                 self.connections.discard(tracked)
-                self.workers.discard(threading.current_thread())
-                occupied=len(self.workers)+len(self.input_pending)+(self.input_active is not None)
-                # Unacknowledged deferred inputs may use only one of the two
-                # original inbound slots. Keep a slot available for a fresh
-                # authenticated connection; refused sources retain originals.
-                deferred_count=len(self.input_pending)+(self.input_active is not None)
-                if (deferred is not None and self.running and occupied<MAX_WORKERS
-                        and deferred_count<MAX_WORKERS-1):
-                    self.input_pending.append(deferred)
-                    self.input_received=min(self.input_received+1,2**63-1)
-                    self.input_wake.set()
-                    deferred_queued=True
-                # This opt-in observation closes the per-request admission gap.
-                # It grants no custody and never changes the original slot gate.
-                if deferred is not None and trace is not None:
+            deferred_queued,reason=self._admit_deferred_input(deferred,deadline)
+            # An admission result still grants no acknowledgment or custody.
+            if deferred is not None and trace is not None:
+                trace.packets('deferred_input_queued' if deferred_queued else
+                    'deferred_input_not_queued',peer,trace_rows,nonce=body['nonce'],
+                    **({} if deferred_queued else {'failure_stage':reason}))
+
+    def _admit_deferred_input(self,deferred,deadline):
+        """A refused handler keeps its original slot during a bounded handoff.
+
+        Only an already authenticated immutable input can arrive here. Wait
+        without a mesh/guard lock, at most the original local wait and within
+        the original connection deadline. Never displace an active input or
+        acknowledge custody; every admitted retry still authenticates fully.
+        """
+        current=threading.current_thread()
+        until=min(deadline,time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS)
+        try:
+            while True:
+                with self.guard:
+                    # This handler already occupies one of the original slots.
+                    # Count its prospective replacement, not an extra buffer.
+                    occupied=(len(self.workers)-int(current in self.workers)
+                              +len(self.input_pending)+(self.input_active is not None))
+                    deferred_count=len(self.input_pending)+(self.input_active is not None)
+                    if (deferred is not None and self.running and occupied<MAX_WORKERS
+                            and deferred_count<MAX_WORKERS-1):
+                        self.input_pending.append(deferred)
+                        self.input_received=min(self.input_received+1,2**63-1)
+                        self.input_wake.set()
+                        return True,None
                     reason=('runtime_stopping' if not self.running else
                             'input_slot_occupied' if deferred_count>=MAX_WORKERS-1 else
                             'worker_capacity' if occupied>=MAX_WORKERS else None)
-                    trace.packets('deferred_input_queued' if deferred_queued else
-                        'deferred_input_not_queued',peer,trace_rows,nonce=body['nonce'],
-                        **({} if deferred_queued else {'failure_stage':reason}))
+                    if (deferred is None or reason!='input_slot_occupied'
+                            or current not in self.workers or time.monotonic()>=until):
+                        return False,reason
+                time.sleep(min(.005,max(0,until-time.monotonic())))
+        finally:
+            with self.guard:self.workers.discard(current)
 
     def consume_inputs(self):
         """Retry bounded unacknowledged input, never a closed handler's ticket.

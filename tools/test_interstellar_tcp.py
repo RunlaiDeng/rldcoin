@@ -749,5 +749,92 @@ class TcpTests(unittest.TestCase):
             self.assertIn(ident,node.state['receipts'])
 
 
+
+
+    def test_authenticated_refusal_hands_off_after_busy_original_input_slot_releases(self):
+        from contextlib import contextmanager
+        self.f.rounds()
+        server=self.f.servers['proxima'];gate=threading.Event();held=None
+        original=tcp.Server.mesh_node
+        @contextmanager
+        def pause_for_original_slot(runtime,deadline):
+            if runtime is server and threading.current_thread() is runtime.input_thread:
+                self.assertTrue(gate.wait(tcp.ATTEMPT_SECONDS),'input test owner exceeded budget')
+            with original(runtime,deadline) as node:yield node
+        try:
+            with patch.object(tcp.Server,'mesh_node',pause_for_original_slot):
+                held=self.f.node('proxima')
+                with self.f.node('earth') as node:node.enqueue(self.f.frame(991),self.f.ids['proxima'])
+                self.assertTrue(self.f.servers['earth'].tick()['errors'])
+                self.await_condition(lambda:server.input_active is not None)
+                before=server.input_received
+                with self.f.node('earth') as node:
+                    raw=self.f.frame(992);ident=node.enqueue(raw,self.f.ids['proxima'])
+                self.assertTrue(self.f.servers['earth'].tick()['errors'])
+                self.assertEqual(server.input_received,before)
+                self.assertNotIn(ident,held.state['messages'])
+                time.sleep(.04)
+                held.close();held=None;gate.set()
+                self.await_condition(lambda:server.input_received==before+1)
+                self.await_condition(lambda:server.input_active is None and not server.input_pending)
+            with self.f.node('proxima') as node:
+                self.assertIn(ident,node.state['receipts'])
+                self.assertEqual(mesh.transit_check(node.state['messages'][ident],NETWORK)[1],raw)
+                self.assertFalse(node.status()['payment_authorized'])
+        finally:
+            if held is not None:held.close()
+            gate.set()
+
+
+class DeferredAdmissionTests(unittest.TestCase):
+    def admission(self,release_at=None,deadline=3.0,stop_at=None,raise_on_wait=False,empty=False):
+        server=object.__new__(tcp.Server)
+        owner=threading.current_thread();job=('network','recipient','peer','pin','challenge',b'authenticated-input-model')
+        server.guard=threading.Lock();server.workers={owner};server.input_pending=[]
+        server.input_active=None if empty else ('older-input',)
+        server.running=True;server.input_received=0;server.input_wake=threading.Event()
+        clock=[0.0];occupancy=[]
+        def release_deferred_slot_clock(seconds):
+            self.assertIn(owner,server.workers)
+            self.assertTrue(server.guard.acquire(False));server.guard.release()
+            count=len(server.workers)+len(server.input_pending)+(server.input_active is not None)
+            self.assertLessEqual(count,tcp.MAX_WORKERS);occupancy.append(count)
+            if raise_on_wait:raise ValueError('injected admission wait failure')
+            clock[0]+=seconds
+            if release_at is not None and clock[0]>=release_at:server.input_active=None
+            if stop_at is not None and clock[0]>=stop_at:server.running=False
+        with patch.object(tcp.time,'monotonic',side_effect=lambda:clock[0]),patch.object(tcp.time,'sleep',side_effect=release_deferred_slot_clock):
+            try:result=server._admit_deferred_input(job,deadline)
+            finally:self.assertNotIn(owner,server.workers)
+        return result,server,job,clock[0],occupancy
+
+    def test_current_authenticated_input_waits_for_original_slot_release(self):
+        result,server,job,waited,occupancy=self.admission(release_at=.115)
+        self.assertEqual(result,(True,None));self.assertEqual(server.input_pending,[job])
+        self.assertEqual(server.input_received,1);self.assertTrue(server.input_wake.is_set())
+        self.assertGreaterEqual(waited,.115);self.assertLessEqual(waited,tcp.MAX_LOCAL_LOCK_WAIT_SECONDS)
+        self.assertTrue(occupancy);self.assertTrue(all(n==tcp.MAX_WORKERS for n in occupancy))
+
+    def test_busy_original_slot_refuses_at_original_local_wait_bound(self):
+        result,server,job,waited,_=self.admission()
+        self.assertEqual(result,(False,'input_slot_occupied'));self.assertEqual(server.input_pending,[])
+        self.assertEqual(server.input_active,('older-input',));self.assertEqual(server.input_received,0)
+        self.assertLessEqual(waited,tcp.MAX_LOCAL_LOCK_WAIT_SECONDS)
+
+    def test_connection_deadline_and_runtime_stop_never_extend_admission(self):
+        result,server,_,waited,_=self.admission(release_at=.115,deadline=.07)
+        self.assertEqual(result,(False,'input_slot_occupied'));self.assertLessEqual(waited,.07)
+        result,server,_,waited,_=self.admission(release_at=.115,stop_at=.04)
+        self.assertEqual(result,(False,'runtime_stopping'));self.assertLessEqual(waited,.045)
+        self.assertEqual(server.input_pending,[])
+
+    def test_immediate_free_slot_retains_original_expired_reply_admission(self):
+        result,server,job,waited,_=self.admission(deadline=0.0,empty=True)
+        self.assertEqual(result,(True,None));self.assertEqual(server.input_pending,[job]);self.assertEqual(waited,0.0)
+
+    def test_admission_wait_exception_releases_only_own_handler(self):
+        with self.assertRaisesRegex(ValueError,'injected admission wait failure'):
+            self.admission(raise_on_wait=True)
+
 if __name__=='__main__':
     unittest.main()
