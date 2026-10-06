@@ -1,5 +1,23 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 当前源码绑定、一次原生终态与目的地转发反例
+
+**完整fault仍FAIL/OPEN**。已读实际原runtime-v4结果：原600秒预算耗尽，612.570秒含收尾、helper1、6152文件封存；owned节点/relays停止、cleanup null、无强停。隔离/本地付款/追赶的有限通过不能替代原收款成熟、keyless drain、all12完整Native cold/守恒。全部旧失败及owner请求保留，600阶段/60轮/24高度/maturity2/quorum3/容量不变。历史“全部通过”只指其对应历史来源和有限scope，后续失败仍失败；下方“下一120未启动”是创建时快照，现已终态。
+
+当前192Python/89Native/171Core/actualCLI和整份独立驱动绑定 **PASS44.092/原一次120**（43.592执行+0.5启动前失败预留），56普通/7typed no-follow库存不变、每controller22禁改拒绝、17setup/13import/15mature/all8固定头cold/envelope/caller/owner/守恒/stop保持。准确复用未变Mesh模型来源与128旧成功+1当前签名负例；不将原129 FAIL改为PASS。未启decision原件保持false；另独立分配一次必要180，依据真实codec/操作内计划修复与最终绑定，不因文档授予原生资格。
+
+这次全新零价值V15 **FAIL180/202.220秒含正常收尾，helper1 ScopeDeadline**，4实际CLI各exit0、无guardian强停/cleanup异常，1816文件封存。单纯成本修复足以完成原生范围的假设已被否证；all8固定头完整cold/成熟/守恒尚未完成，更不能替代原all12。末次伴随高度不是Native成熟/最终性权威。当前源码无新production改动；失败币/Node/Native/Runtime不重开、恢复、重签、退款或复制保管；不原样重跑180/600或加deadline。
+
+一次原60内只读/内存判别已终态 **PASS26.539秒**。确证24份parent13round0投票签名字节、784 signed档案索引及全部784 regional-bft完整运输信封、153活动包；无Native完整evidence/锁/调用者头/cold权威重建。来源0、2到节点1的完整保管后约4.903/1.441秒进入伴随库；来源3同一签名Commit虽有发往节点0的转运副本驻留节点1，却没有发往节点1的完整保管或伴随正文，未发现另一完整信封掩盖该缺口。闭合故障journal仍拒绝完整PASS，连续共同prefix只支撑其有限区间。
+
+节点2向1在目标保管后有152个包事件，即 **38个完整full4准备批次**，目标在完整middle stream中0准备/发送；9个同full4失败相邻对只兼容重试，不证明真实hint或38普通轮次。实际TCP只重放一次；response_authentication阶段ValueError也可能是acceptedfalse，不能直接称签名失败。停止图像目标pending位置6/17，不还原历史资格。无真实签名的固定64/128hex形状上界：目标+三个当前最大包+16份最大收据约1.282MB，低于原20MB，否证当前静态字节不可装入。借用实际selector/preparation到无钥内存adapter，两个固定输入case均第4普通轮次选中目标（0或每次失败1重放），full4重放保持first metadata；原输入签名实验核验，输出形状签名/volatile atomic无保管权威。该模型使用默认advance_active=false、固定路线/无抑制/无新arrival，非现场耐久/OS/TCP或Native证明；全局cursor不参与这些选择器的first/transit选择。
+
+**下一最小新地面判别一次60/一次，未启动，新180/600均0**：全新零价值transport17pending/目标位置6，保持batch4/first2/单次重放/锁/socket/字节与容量原界，至多9普通准备及各一次必要重放。外部诊断只读记录真实准备前后资格、精确retry/suppression匹配、first pending/prepared推进、bytes和open/prepare/atomic完成；调用原方法，不增加认证或签名捷径。发现首个实际差异才缩减反例并修该分支；若正常进展则拒绝猜测改策略，进一步只选已测动态/等待条件；首来源/角色/字节/签名/metadata/负例/容量不一致、有限判别完成或原60退出，正常stop/seal，预算耗尽不重跑或延长。静态反例已否证的猜测不再优化，历史停止图像不能补造现场状态。
+
+采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…与全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8。goalactive，旧goal哈希前继已报告不改；VALUE-STRICT-01两基线/120.019耗尽独立OPEN、Core/value/lock未变，原120诊断/300修复触发未满足，不由地区/运输替代或加豁免。长期/PQ/独立保管/physical/组合profile继续OPEN。已核实已知旧/当前owned PID不存在、全部本轮helper终态；15最新driver源delta留存，不复制币/钥/账本/保管/binary。命令全部显式新rldcoin，持久cwd仍UI待修；冻结正文/PDF/官网、Library/服务器/账户/权限/资金/外联/push/清理不扩展。
+[实际终态、源/二进制/驱动绑定、最小判别与下一入口](operations/evidence/regional-bft-active-b64-scan-v15-terminal-counter-outcome-20261006.json)。
+
+
 ## 2026-10-06 存储字符扫描：实测小修复、签名负例与准确失败保留
 
 **完整fault仍FAIL/OPEN**，原600/612.570秒/6152、V13原180/201.364秒/1641及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3与全部容量不变。失败Node/Native/Runtime不重开、恢复/复签/退款/复制保管；历史“全部通过”只指准确历史来源和有限scope。下方“下一60未启动”是创建时快照，现已完成。

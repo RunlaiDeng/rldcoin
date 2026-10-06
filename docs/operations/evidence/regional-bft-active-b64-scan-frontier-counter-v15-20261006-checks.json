@@ -1,0 +1,246 @@
+{
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 4.237353,
+  "helper_exit_code": 0,
+  "stage_sha256": "e09adacbe3559bebf21664bbf22c909c218ed346721a1fd45c022a971db8e72c",
+  "helper_sha256": "2ad1756c58eb3de848b27285b2923489e94677983416e7539728a7f6b59ecba6",
+  "controller_sha256": "6b5945bd4593cfc1e1988102044499d2f4b6920c3bc5bd577782bb94179a80af",
+  "log_sha256": "0f44991d32fa83f49eb7c1f1bc833e01cffaa072ca39368458c2175d26c187b2",
+  "result": {
+    "active_receipts_authenticated": 2,
+    "all_current_commit_source_paths_to_laggard1_included": true,
+    "all_targets_round0_parent13_only": true,
+    "closed_deadline_failed_journal_rows": 14074,
+    "common_contiguous_prefix_seconds": 143.440473,
+    "complete_vote_transport_copies_authenticated": 20,
+    "completed": true,
+    "duration_seconds": 4.064253,
+    "frontier": [
+      {
+        "commit_signers": [
+          0,
+          3
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 0
+      },
+      {
+        "commit_signers": [
+          0,
+          2
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2
+        ],
+        "slot": 1
+      },
+      {
+        "commit_signers": [
+          0,
+          2,
+          3
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 2
+      },
+      {
+        "commit_signers": [
+          2,
+          3
+        ],
+        "prepare_signers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "slot": 3
+      }
+    ],
+    "full_archive_index_entries_authenticated": 784,
+    "full_cold_or_native_ledger_authority": false,
+    "full_fault_qualified": false,
+    "joined_events": [
+      {
+        "custody_to_first_attempt_seconds": 4.618156,
+        "custody_to_first_received_seconds": 4.902978,
+        "custody_to_first_selected_seconds": 4.459936,
+        "destination": 1,
+        "destination_receipt_events": 1,
+        "destination_signed_custody_to_prefix_end_seconds": 102.987432,
+        "exact_attempt_refusal_phase_class": {
+          "('response_authentication', 'ValueError')": 1
+        },
+        "first_hop": 1,
+        "native_attempt_events": 1,
+        "native_received_events": 1,
+        "native_refusal_events": 0,
+        "native_selected_events": 1,
+        "positive_preparations": 2,
+        "positive_same_peer_preparations_before_first": 3,
+        "positive_sends": 2,
+        "queue_to_first_prepare_seconds": 1.73747,
+        "receiver_exact_nonce_authenticated": 2,
+        "receiver_exact_nonce_custody": 1,
+        "receiver_exact_nonce_lock_refusals": 1,
+        "source": 0,
+        "source_enqueued_in_prefix": true,
+        "stopped_route_only_not_live_eligibility": true,
+        "target_first_pending_at_stop": false,
+        "target_prepared_at_stop": false,
+        "trace_refusals_use_exact_outgoing_failed_and_failure_stage": true
+      },
+      {
+        "custody_to_first_attempt_seconds": 1.331008,
+        "custody_to_first_received_seconds": 1.440819,
+        "custody_to_first_selected_seconds": 1.241709,
+        "destination": 1,
+        "destination_receipt_events": 1,
+        "destination_signed_custody_to_prefix_end_seconds": 14.974956,
+        "exact_attempt_refusal_phase_class": {
+          "('response_authentication', 'ValueError')": 2
+        },
+        "first_hop": 1,
+        "native_attempt_events": 1,
+        "native_received_events": 1,
+        "native_refusal_events": 0,
+        "native_selected_events": 1,
+        "positive_preparations": 2,
+        "positive_same_peer_preparations_before_first": 136,
+        "positive_sends": 2,
+        "queue_to_first_prepare_seconds": 96.359137,
+        "receiver_exact_nonce_authenticated": 2,
+        "receiver_exact_nonce_custody": 1,
+        "receiver_exact_nonce_lock_refusals": 2,
+        "source": 2,
+        "source_enqueued_in_prefix": true,
+        "stopped_route_only_not_live_eligibility": true,
+        "target_first_pending_at_stop": false,
+        "target_prepared_at_stop": false,
+        "trace_refusals_use_exact_outgoing_failed_and_failure_stage": true
+      },
+      {
+        "custody_to_first_attempt_seconds": null,
+        "custody_to_first_received_seconds": null,
+        "custody_to_first_selected_seconds": null,
+        "destination": 1,
+        "destination_receipt_events": 0,
+        "destination_signed_custody_to_prefix_end_seconds": null,
+        "exact_attempt_refusal_phase_class": {
+          "('reply_local_custody', 'BlockingIOError')": 1,
+          "('response_authentication', 'ValueError')": 6
+        },
+        "first_hop": 2,
+        "native_attempt_events": 0,
+        "native_received_events": 0,
+        "native_refusal_events": 0,
+        "native_selected_events": 0,
+        "positive_preparations": 9,
+        "positive_same_peer_preparations_before_first": 25,
+        "positive_sends": 9,
+        "queue_to_first_prepare_seconds": 6.811175,
+        "receiver_exact_nonce_authenticated": 9,
+        "receiver_exact_nonce_custody": 6,
+        "receiver_exact_nonce_lock_refusals": 6,
+        "source": 3,
+        "source_enqueued_in_prefix": true,
+        "stopped_route_only_not_live_eligibility": true,
+        "target_first_pending_at_stop": false,
+        "target_prepared_at_stop": true,
+        "trace_refusals_use_exact_outgoing_failed_and_failure_stage": true
+      }
+    ],
+    "native_runtime_node_socket_signing_or_recovery": 0,
+    "no_native_finality_or_maturity_reconstructed": true,
+    "original_complete_verifier_still_refuses": true,
+    "per_slot_through": {
+      "0": 2875,
+      "1": 4222,
+      "2": 4162,
+      "3": 2815
+    },
+    "private1816_files_unchanged": true,
+    "private_exact_paths_sha256": "1bb3a05e3d201009df14ae16575ae80eedc73195362cc5005127a9585a14868a",
+    "reference_parent13_round0_not_current_Native_authority": true,
+    "retained_vote_signature_bytes_verified": 24,
+    "signature_negative_controls": [
+      "phase",
+      "round",
+      "parent_block",
+      "signature"
+    ],
+    "stopped_companion_heights": [
+      14,
+      13,
+      14,
+      14
+    ],
+    "transport_negative_controls": [
+      "wrong-network",
+      "altered-signature",
+      "altered-receipt"
+    ],
+    "vote_paths": [
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": true,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "phase": "Commit",
+        "round": 0,
+        "source": 0,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": true,
+        "destination": 1,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "phase": "Commit",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "phase": "Commit",
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      }
+    ],
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,17 @@
+{
+  "format": "RLD-FOUR-CLI-ACTIVE-BASE64-SCAN-UNARMED-V1",
+  "completed": false,
+  "source_binding_completed": false,
+  "real_native_runtime_socket_sign_calls": 0,
+  "conditional_real_scope_budget_seconds": 0,
+  "conditional_real_scope_attempts": 0,
+  "new180_allocated": false,
+  "new600_allocated": false,
+  "requires_final_current_binding_and_separate_concrete_allocation": true,
+  "original_unarmed_and_future_allocated_pathnames_only": true,
+  "future_allocated_decision_currently_absent": true,
+  "future_controller_refuses_before_fixture_creation": true,
+  "old_failed_fixture_never_reopen": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,943 @@
+{
+  "format": "RLD-ACTIVE-B64-SCAN-V15-TERMINAL-COUNTER-OUTCOME-V1",
+  "recorded_at_utc": "2026-10-06T02:55:23.153144+00:00",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "goal_active": true,
+  "completed": true,
+  "completion_scope": "Current final driver/source binding, necessary once180 failure retained, finite original60 read-only/model discriminator concluded; not Native service/payment/fullfault completion",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "frozen_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "frozen_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "mandatory_targets": "S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8",
+  "goal_predecessor_hashes_reported_not_edited": true,
+  "current_identity_sha256": "bdb7f6542e25b6701a98314109bc382f6c17ae129c10d9b12330009eb1a885cf",
+  "python_source_commitment": "c447f62f08d1dbb0409d2ca514ed1328913df5ce98d8f0c198610fd896592dda",
+  "native_implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+  "core_source_commitment": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+  "actual_cli_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+  "production_source_change_this_stage": false,
+  "proofs": {
+    "regional-bft-four-cli-active-b64-scan-binding-v2-20261006": {
+      "path": "docs/operations/evidence/regional-bft-four-cli-active-b64-scan-binding-v2-20261006-checks.json",
+      "sha256": "a92f361150b472be241f8e828d238bb14f829b0e7a6e6d13fbe0a05521410785",
+      "completed": true,
+      "duration_seconds": 43.591655,
+      "combined_stage_seconds": 44.091655,
+      "result": {
+        "current_python_files": 192,
+        "native_files": 89,
+        "core_files": 171,
+        "ordinary_full_inventories": 56,
+        "typed_no_follow_inventories": 7,
+        "all_inventory_bytes_unchanged": true,
+        "production_codec_exact_candidate_and_control_AST_restore_to_original": true,
+        "original38490_cases_and_actual_codec_byte_negative_proofs_bound": true,
+        "only_single_existing_test_metadata_changed_AST": true,
+        "related_coverage_128_unchanged_plus1_current_exact_negative": true,
+        "original129_outer_scope_still_FAIL": true,
+        "unchanged120_mocked_Mesh_models_reused_with_exact_unchanged_Mesh_hash": true,
+        "no_new_codec_qualification_claim_from_Mesh_models": true,
+        "entire_helper_AST_scope_identity_only": true,
+        "entire_two_controllers_AST_only_qualification_metadata_and_whitelisted_decision_names": true,
+        "forbidden_guard_mutations_refused": [
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "stop_height=15"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "round_timeout=60"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "for _ in range(12):"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "receipt['mature_height']==15"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "if heights==[15]*4:break"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "cli.stop_all();assert cli.clean_terminal()"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "assert inventory(p.root)==cold_before"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "bound['head']"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "owner['pending'] is None"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "assert issued==int(p.currency['block_reward'])*4==liquid"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "receipt['original_output_spendable_now'] is False"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "helper",
+            "changed": "trace_readback=verify_journal("
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "deadline=start+180"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "owner_sign_budget=1"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "maturity=2"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "quorum=3"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "absolute_height_cap=24"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "original_mesh_lock_wait_seconds=.2"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "custody_copy_budget=0"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "result['full_fixed_head_native_cold']==8"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "result['native_conservation']"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+            "source": "controller",
+            "changed": "not guardian['guardian_stop_used']"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "stop_height=15"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "round_timeout=60"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "for _ in range(12):"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "receipt['mature_height']==15"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "if heights==[15]*4:break"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "cli.stop_all();assert cli.clean_terminal()"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "assert inventory(p.root)==cold_before"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "bound['head']"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "owner['pending'] is None"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "assert issued==int(p.currency['block_reward'])*4==liquid"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "receipt['original_output_spendable_now'] is False"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "helper",
+            "changed": "trace_readback=verify_journal("
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "deadline=start+180"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "owner_sign_budget=1"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "maturity=2"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "quorum=3"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "absolute_height_cap=24"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "original_mesh_lock_wait_seconds=.2"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "custody_copy_budget=0"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "result['full_fixed_head_native_cold']==8"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "result['native_conservation']"
+          },
+          {
+            "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+            "source": "controller",
+            "changed": "not guardian['guardian_stop_used']"
+          }
+        ],
+        "negative_mutations_per_variant": 22,
+        "arbitrary_decision_path_refused": true,
+        "original17setup13import15mature_all8fixedheadcold_caller_owner_conservation_stop_unchanged": true,
+        "original180_60round_24height_maturity2_quorum3_and_all_bounds_preserved": true,
+        "unarmed_completedfalse_budgets0_preserved": true,
+        "allocated_decision_absent": true,
+        "real_helper_controller_Node_Native_Runtime_socket_sign_calls": 0,
+        "all_original_failures_preserved": true
+      }
+    },
+    "regional-bft-four-cli-service-active-b64-scan-v15-20261006": {
+      "path": "docs/operations/evidence/regional-bft-four-cli-service-active-b64-scan-v15-20261006-checks.json",
+      "sha256": "11a4ee01221d2f452100cbb57670a4437445f7bcb605009d2fd105c25decf596",
+      "completed": false,
+      "duration_seconds": 202.22,
+      "combined_stage_seconds": null,
+      "result": {
+        "completed": false,
+        "failure": "ScopeDeadline: original180second service component deadline",
+        "cleanup_failures": [],
+        "services_and_owned_threads_stopped": true,
+        "owned_processes_stopped": true,
+        "owned_process_terminal": [
+          {
+            "region": "proxima",
+            "index": 0,
+            "exit_code": 0
+          },
+          {
+            "region": "proxima",
+            "index": 1,
+            "exit_code": 0
+          },
+          {
+            "region": "proxima",
+            "index": 2,
+            "exit_code": 0
+          },
+          {
+            "region": "proxima",
+            "index": 3,
+            "exit_code": 0
+          }
+        ],
+        "raw_rejection_saved": false,
+        "failed_currency_never_reopen": true,
+        "whole_full_fault_qualified": false,
+        "whole_goal_completed": false
+      }
+    },
+    "regional-bft-active-b64-scan-frontier-counter-v15-20261006": {
+      "path": "docs/operations/evidence/regional-bft-active-b64-scan-frontier-counter-v15-20261006-checks.json",
+      "sha256": "df8a6a487516119d40cc742ddfeaaf040c02d3904afc7b165288283ed9392938",
+      "completed": true,
+      "duration_seconds": 4.237353,
+      "combined_stage_seconds": null,
+      "result": {
+        "active_receipts_authenticated": 2,
+        "all_current_commit_source_paths_to_laggard1_included": true,
+        "all_targets_round0_parent13_only": true,
+        "closed_deadline_failed_journal_rows": 14074,
+        "common_contiguous_prefix_seconds": 143.440473,
+        "complete_vote_transport_copies_authenticated": 20,
+        "completed": true,
+        "duration_seconds": 4.064253,
+        "frontier": [
+          {
+            "commit_signers": [
+              0,
+              3
+            ],
+            "prepare_signers": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot": 0
+          },
+          {
+            "commit_signers": [
+              0,
+              2
+            ],
+            "prepare_signers": [
+              0,
+              1,
+              2
+            ],
+            "slot": 1
+          },
+          {
+            "commit_signers": [
+              0,
+              2,
+              3
+            ],
+            "prepare_signers": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot": 2
+          },
+          {
+            "commit_signers": [
+              2,
+              3
+            ],
+            "prepare_signers": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot": 3
+          }
+        ],
+        "full_archive_index_entries_authenticated": 784,
+        "full_cold_or_native_ledger_authority": false,
+        "full_fault_qualified": false,
+        "joined_events": [
+          {
+            "custody_to_first_attempt_seconds": 4.618156,
+            "custody_to_first_received_seconds": 4.902978,
+            "custody_to_first_selected_seconds": 4.459936,
+            "destination": 1,
+            "destination_receipt_events": 1,
+            "destination_signed_custody_to_prefix_end_seconds": 102.987432,
+            "exact_attempt_refusal_phase_class": {
+              "('response_authentication', 'ValueError')": 1
+            },
+            "first_hop": 1,
+            "native_attempt_events": 1,
+            "native_received_events": 1,
+            "native_refusal_events": 0,
+            "native_selected_events": 1,
+            "positive_preparations": 2,
+            "positive_same_peer_preparations_before_first": 3,
+            "positive_sends": 2,
+            "queue_to_first_prepare_seconds": 1.73747,
+            "receiver_exact_nonce_authenticated": 2,
+            "receiver_exact_nonce_custody": 1,
+            "receiver_exact_nonce_lock_refusals": 1,
+            "source": 0,
+            "source_enqueued_in_prefix": true,
+            "stopped_route_only_not_live_eligibility": true,
+            "target_first_pending_at_stop": false,
+            "target_prepared_at_stop": false,
+            "trace_refusals_use_exact_outgoing_failed_and_failure_stage": true
+          },
+          {
+            "custody_to_first_attempt_seconds": 1.331008,
+            "custody_to_first_received_seconds": 1.440819,
+            "custody_to_first_selected_seconds": 1.241709,
+            "destination": 1,
+            "destination_receipt_events": 1,
+            "destination_signed_custody_to_prefix_end_seconds": 14.974956,
+            "exact_attempt_refusal_phase_class": {
+              "('response_authentication', 'ValueError')": 2
+            },
+            "first_hop": 1,
+            "native_attempt_events": 1,
+            "native_received_events": 1,
+            "native_refusal_events": 0,
+            "native_selected_events": 1,
+            "positive_preparations": 2,
+            "positive_same_peer_preparations_before_first": 136,
+            "positive_sends": 2,
+            "queue_to_first_prepare_seconds": 96.359137,
+            "receiver_exact_nonce_authenticated": 2,
+            "receiver_exact_nonce_custody": 1,
+            "receiver_exact_nonce_lock_refusals": 2,
+            "source": 2,
+            "source_enqueued_in_prefix": true,
+            "stopped_route_only_not_live_eligibility": true,
+            "target_first_pending_at_stop": false,
+            "target_prepared_at_stop": false,
+            "trace_refusals_use_exact_outgoing_failed_and_failure_stage": true
+          },
+          {
+            "custody_to_first_attempt_seconds": null,
+            "custody_to_first_received_seconds": null,
+            "custody_to_first_selected_seconds": null,
+            "destination": 1,
+            "destination_receipt_events": 0,
+            "destination_signed_custody_to_prefix_end_seconds": null,
+            "exact_attempt_refusal_phase_class": {
+              "('reply_local_custody', 'BlockingIOError')": 1,
+              "('response_authentication', 'ValueError')": 6
+            },
+            "first_hop": 2,
+            "native_attempt_events": 0,
+            "native_received_events": 0,
+            "native_refusal_events": 0,
+            "native_selected_events": 0,
+            "positive_preparations": 9,
+            "positive_same_peer_preparations_before_first": 25,
+            "positive_sends": 9,
+            "queue_to_first_prepare_seconds": 6.811175,
+            "receiver_exact_nonce_authenticated": 9,
+            "receiver_exact_nonce_custody": 6,
+            "receiver_exact_nonce_lock_refusals": 6,
+            "source": 3,
+            "source_enqueued_in_prefix": true,
+            "stopped_route_only_not_live_eligibility": true,
+            "target_first_pending_at_stop": false,
+            "target_prepared_at_stop": true,
+            "trace_refusals_use_exact_outgoing_failed_and_failure_stage": true
+          }
+        ],
+        "native_runtime_node_socket_signing_or_recovery": 0,
+        "no_native_finality_or_maturity_reconstructed": true,
+        "original_complete_verifier_still_refuses": true,
+        "per_slot_through": {
+          "0": 2875,
+          "1": 4222,
+          "2": 4162,
+          "3": 2815
+        },
+        "private1816_files_unchanged": true,
+        "private_exact_paths_sha256": "1bb3a05e3d201009df14ae16575ae80eedc73195362cc5005127a9585a14868a",
+        "reference_parent13_round0_not_current_Native_authority": true,
+        "retained_vote_signature_bytes_verified": 24,
+        "signature_negative_controls": [
+          "phase",
+          "round",
+          "parent_block",
+          "signature"
+        ],
+        "stopped_companion_heights": [
+          14,
+          13,
+          14,
+          14
+        ],
+        "transport_negative_controls": [
+          "wrong-network",
+          "altered-signature",
+          "altered-receipt"
+        ],
+        "vote_paths": [
+          {
+            "body_retained_with_possible_different_valid_envelope": true,
+            "complete_bytes_unchanged": true,
+            "complete_companion_store_envelope_present": true,
+            "destination": 1,
+            "destination_signed_receipt_verified": true,
+            "destination_transit_present": true,
+            "kind": "Vote",
+            "observed_boundary": "companion-envelope-retained-no-native-authority",
+            "phase": "Commit",
+            "round": 0,
+            "source": 0,
+            "source_published": true
+          },
+          {
+            "body_retained_with_possible_different_valid_envelope": true,
+            "complete_bytes_unchanged": true,
+            "complete_companion_store_envelope_present": true,
+            "destination": 1,
+            "destination_signed_receipt_verified": true,
+            "destination_transit_present": true,
+            "kind": "Vote",
+            "observed_boundary": "companion-envelope-retained-no-native-authority",
+            "phase": "Commit",
+            "round": 0,
+            "source": 2,
+            "source_published": true
+          },
+          {
+            "body_retained_with_possible_different_valid_envelope": false,
+            "complete_bytes_unchanged": true,
+            "complete_companion_store_envelope_present": false,
+            "destination": 1,
+            "destination_signed_receipt_verified": false,
+            "destination_transit_present": false,
+            "kind": "Vote",
+            "observed_boundary": "source-published-no-destination-custody",
+            "phase": "Commit",
+            "round": 0,
+            "source": 3,
+            "source_published": true
+          }
+        ],
+        "whole_goal_completed": false
+      }
+    },
+    "regional-bft-active-b64-scan-midforward-counter-v15-20261006": {
+      "path": "docs/operations/evidence/regional-bft-active-b64-scan-midforward-counter-v15-20261006-checks.json",
+      "sha256": "99726be6ff2f4a5c4cf13838205f8dfa830d270b81f5258bd2b059f66c42ede4",
+      "completed": true,
+      "duration_seconds": 1.314777,
+      "combined_stage_seconds": 5.552139,
+      "result": {
+        "completed": true,
+        "rows": [
+          {
+            "original_packet_source": 3,
+            "forwarding_slot": 2,
+            "source": 2,
+            "destination": 1,
+            "phase": "Commit",
+            "target_first_batch_observed": false,
+            "queue_observed_in_common_prefix": true,
+            "common_prefix_positive_packet_events_after_queue_before_first_or_cut": 152,
+            "common_prefix_complete_prepared_batches_after_queue_before_first_or_cut": 38,
+            "common_prefix_target_prepared_batches": 0,
+            "common_prefix_full4_prior_batches": 38,
+            "same_full4_ids_after_failure_next_attempt_pairs": 9,
+            "repeat_pair_is_retry_compatible_not_proven_hint_or_ordinary_class": true,
+            "common_prefix_prepare_stage_refusals_after_queue_before_first_or_cut": 36,
+            "target_first_pending_position_at_stop": 6,
+            "target_arrival_backlog_position_at_stop": null,
+            "first_pending_count_at_stop": 17,
+            "arrival_backlog_count_at_stop": 0,
+            "target_prepared_at_stop": false,
+            "target_observed_at_stop": true,
+            "full_destination_stream_custody_events": 0,
+            "full_destination_stream_selected": 0,
+            "full_destination_stream_attempt": 0,
+            "full_destination_stream_received": 0,
+            "full_destination_stream_refused": 0,
+            "remaining_destination_continuous_stream_after_first_custody_seconds": null,
+            "own_destination_stream_not_universal_common_prefix": true,
+            "stop_metadata_not_historical_queue_eligibility": true,
+            "pure_stopped_plan_target_pending_position": 6,
+            "pure_stopped_plan_target_arrival_position": null,
+            "pure_stopped_plan_target_prepared": false,
+            "pure_stopped_plan_pending_count": 17,
+            "pure_stopped_plan_arrival_count": 0,
+            "pure_stopped_plan_transit_and_route_fully_authenticated": true,
+            "stopped_plan_not_live_historical_eligibility_or_suppression": true,
+            "actual_target_forward_prepared_events_full_middle_stream": 0,
+            "actual_target_forward_sent_events_full_middle_stream": 0
+          }
+        ],
+        "correct_metric": "outgoing_prepared is a per-packet event; batch key is exact slot/peer/attempt; complete full-journal group entirely inside common prefix with contact_start present, unique<=4packetIDs; absent first preparation cuts waiting interval at common prefix end, never counts it as first target service",
+        "original_metric_reports_preserved": true,
+        "full4_repeat_pairs_do_not_prove_private_retry_hint": true,
+        "closed_failed_trace_still_not_full_verifier_PASS": true,
+        "private1816_unchanged": true,
+        "Native_Runtime_Node_privatekey_socket_sign_recovery": 0,
+        "full_fault_qualified": false,
+        "whole_goal_completed": false
+      }
+    },
+    "regional-bft-active-b64-scan-alternate-envelope-counter-v15-20261006": {
+      "path": "docs/operations/evidence/regional-bft-active-b64-scan-alternate-envelope-counter-v15-20261006-checks.json",
+      "sha256": "9501aef93cbaedf62ba7a887628e8e795b483900ceee8d062953f4c1073e3728",
+      "completed": true,
+      "duration_seconds": 16.957676,
+      "combined_stage_seconds": 22.509826,
+      "result": {
+        "archive_index_entries_authenticated": 784,
+        "complete_active_transits_authenticated": 153,
+        "complete_regional_bft_archive_envelopes_transport_authenticated": 784,
+        "completed": true,
+        "counts": [
+          {
+            "alternative_complete_envelope_copies": 0,
+            "local_destination_transport_copies": 1,
+            "local_destination_with_receipt": 1,
+            "original_envelope_copies": 1,
+            "packet_role_counts": [
+              {
+                "copies": 1,
+                "destination": 0,
+                "source": 3
+              }
+            ],
+            "same_body_reference_retained": true,
+            "same_signed_body_copies": 1,
+            "slot": 0
+          },
+          {
+            "alternative_complete_envelope_copies": 0,
+            "local_destination_transport_copies": 0,
+            "local_destination_with_receipt": 0,
+            "original_envelope_copies": 1,
+            "packet_role_counts": [
+              {
+                "copies": 1,
+                "destination": 0,
+                "source": 3
+              }
+            ],
+            "same_body_reference_retained": false,
+            "same_signed_body_copies": 1,
+            "slot": 1
+          },
+          {
+            "alternative_complete_envelope_copies": 0,
+            "local_destination_transport_copies": 1,
+            "local_destination_with_receipt": 1,
+            "original_envelope_copies": 3,
+            "packet_role_counts": [
+              {
+                "copies": 1,
+                "destination": 0,
+                "source": 3
+              },
+              {
+                "copies": 1,
+                "destination": 1,
+                "source": 3
+              },
+              {
+                "copies": 1,
+                "destination": 2,
+                "source": 3
+              }
+            ],
+            "same_body_reference_retained": true,
+            "same_signed_body_copies": 3,
+            "slot": 2
+          },
+          {
+            "alternative_complete_envelope_copies": 0,
+            "local_destination_transport_copies": 0,
+            "local_destination_with_receipt": 0,
+            "original_envelope_copies": 3,
+            "packet_role_counts": [
+              {
+                "copies": 1,
+                "destination": 0,
+                "source": 3
+              },
+              {
+                "copies": 1,
+                "destination": 1,
+                "source": 3
+              },
+              {
+                "copies": 1,
+                "destination": 2,
+                "source": 3
+              }
+            ],
+            "same_body_reference_retained": true,
+            "same_signed_body_copies": 3,
+            "slot": 3
+          }
+        ],
+        "duration_seconds": 16.830222,
+        "full_fault_qualified": false,
+        "native_runtime_node_socket_signing_recovery": 0,
+        "no_native_full_envelope_evidence_acceptance_or_finality": true,
+        "original_envelope_transport_absence_is_not_assumed_body_absence": true,
+        "private1816_files_unchanged": true,
+        "private_paths_sha256": "b4d50951e1cf3e4ced8fb05f8cd72308c9952b7dffcddf08bd751a32194ec429",
+        "target_signed_vote": "source3 Commit parent13 round0 to laggard1",
+        "vote_signature_negative_controls": [
+          "phase",
+          "round",
+          "parent_block",
+          "signature"
+        ],
+        "whole_goal_completed": false
+      }
+    },
+    "regional-bft-active-b64-scan-byte-bound-counter-v15-20261006": {
+      "path": "docs/operations/evidence/regional-bft-active-b64-scan-byte-bound-counter-v15-20261006-checks.json",
+      "sha256": "dff882e0632b3df94bdf7e51bc019265bc104330f8e4581926e2f1d50db8acfc",
+      "completed": true,
+      "duration_seconds": 1.714901,
+      "combined_stage_seconds": 24.224749,
+      "result": {
+        "all_current_middle_receipts": 240,
+        "all_input_packet_signatures_and_archive_index_receipts_authenticated": true,
+        "any_current_four_packet_batch_containing_target_fits_with_max_current_receipts": true,
+        "complete_shape_outer_bytes": 1281362,
+        "completed": true,
+        "current_middle_active_transits": 50,
+        "full_fault_qualified": false,
+        "native_runtime_node_socket_signing_recovery": 0,
+        "no_actual_sign_or_invalid_placeholder_authority": true,
+        "original_MAX_BATCH_bytes": 20971520,
+        "placeholder_public_key_hex_length": 64,
+        "placeholder_signature_hex_length": 128,
+        "private1816_unchanged": true,
+        "receipt_upperbound_count": 16,
+        "stopped_image_not_historical_live_byte_or_route_reconstruction": true,
+        "target_alone_fits_current_upperbound": true,
+        "target_alone_upperbound_bytes": 323738,
+        "target_next_hop_transit_bytes": 295859,
+        "target_plus_three_largest_current_transits_selector_upperbound_bytes": 1281642,
+        "whole_goal_completed": false
+      }
+    },
+    "regional-bft-active-b64-scan-stopped-selector-model-v15-20261006": {
+      "path": "docs/operations/evidence/regional-bft-active-b64-scan-stopped-selector-model-v15-20261006-checks.json",
+      "sha256": "db9604b7b0fb4816f8e2534bf62f68722fc6fd527210dd7cda311f00d0ed4a06",
+      "completed": true,
+      "duration_seconds": 2.314438,
+      "combined_stage_seconds": 26.539217,
+      "result": {
+        "actual_production_selector_and_preparation_methods_borrowed": true,
+        "cases": [
+          {
+            "finite_stable_input_target_served": true,
+            "initial_pending_count": 17,
+            "one_replay_per_failed_ordinary": false,
+            "ordinary_turn_cap": 9,
+            "replay_turns": 0,
+            "target_first_selected_ordinary_turn": 4,
+            "turns": [
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 1,
+                "pending": 15,
+                "target_selected": false
+              },
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 2,
+                "pending": 13,
+                "target_selected": false
+              },
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 3,
+                "pending": 11,
+                "target_selected": false
+              },
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 4,
+                "pending": 9,
+                "target_selected": true
+              }
+            ]
+          },
+          {
+            "finite_stable_input_target_served": true,
+            "initial_pending_count": 17,
+            "one_replay_per_failed_ordinary": true,
+            "ordinary_turn_cap": 9,
+            "replay_turns": 3,
+            "target_first_selected_ordinary_turn": 4,
+            "turns": [
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 1,
+                "pending": 15,
+                "target_selected": false
+              },
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 2,
+                "pending": 13,
+                "target_selected": false
+              },
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 3,
+                "pending": 11,
+                "target_selected": false
+              },
+              {
+                "arrivals": 0,
+                "carried": 4,
+                "ordinary_turn": 4,
+                "pending": 9,
+                "target_selected": true
+              }
+            ]
+          }
+        ],
+        "completed": true,
+        "fresh_optional_hint_domains_each_case": true,
+        "full_fault_qualified": false,
+        "live_suppression_none": true,
+        "native_runtime_node_socket_signing_recovery": 0,
+        "no_actual_signature_or_durability_authority": true,
+        "no_historical_live_eligibility_or_lock_or_new_arrival_reconstruction": true,
+        "old_failed_image_never_written": true,
+        "placeholder_shape_calls": {
+          "exchange": 11,
+          "hop": 52,
+          "inventory": 11
+        },
+        "private1816_unchanged": true,
+        "source_packets_signatures_authenticated_not_mocked": true,
+        "stable_exact_stopped_inputs_only": true,
+        "volatile_only_metadata_updates": 11,
+        "whole_goal_completed": false
+      }
+    }
+  },
+  "binding_preflight_failure_retained_sha256": "a744434f175cef1379068057325b965d639510ab08205570ad89025389616736",
+  "immutable_unarmed_decision_snapshot_sha256": "72e4af097713c52b27c72ae042609bb48a30b6630f1d3f4451043e975d4dc381",
+  "separate_allocated_once180_decision_sha256": "2dab0b959366bc996aac7e75805350a6da712e7068d35f04eba1c0b0b5b2be5e",
+  "once180_exhausted_no_unchanged_repeat": true,
+  "current_failed_seal_sha256": "16131cfb95c34d731482b9f94f338804965de128d06c30f810245a97d93939de",
+  "current_failed_files": 1816,
+  "source_only_latest15_driver_manifest_sha256": "a901f1e0b26fbdd5f87226ee9dc6e3bdd338bd8d98cc0213927c6fe324d03f94",
+  "source_only_manifest_path": "tmp/default-relay-20260930/active-b64-scan-v15-failed-driver-source-private-20261006/SOURCE_MANIFEST.json",
+  "original_fullfault_checks_sha256": "61212b011c94d9def55e67d412fe3b910a1f664932bb4a97974e2aadde07bf7e",
+  "original_fullfault600_still_FAIL": true,
+  "original_fullfault_duration_seconds": 612.57,
+  "original_fullfault_files": 6152,
+  "owned_terminal": {
+    "known_pids_absent_or_reused_unrelated": true,
+    "known_pid_reuse": {},
+    "active_owned_native_processes": 0,
+    "all_started_diagnostic_helpers_terminal_exit0": true,
+    "no_signal_sent": true
+  },
+  "original_readonly60_finite_stage_completed": true,
+  "readonly60_combined_seconds": 26.539217,
+  "readonly60_unused_seconds": 33.460783,
+  "no_further_counter_allocated_in_this_finished_stage": true,
+  "discriminator_conclusions": {
+    "source0_and2_complete_companion_commit_not_native_finality": "Destination1 custody to companion received4.902978/1.440819 seconds within exact prefix",
+    "source3_vote_destination_gap": "No destination1 complete transport/receipt or companion body; same signed body for destination0 is a transit-only copy at1. All784 regional-bft archive envelopes and153 active transits scanned; no alternate complete envelope found. No Native evidence validation reconstructed.",
+    "middle2_wait": "152 per-packet events /38 complete full4 batches after observed custody in common prefix; target0 prepared/sent in full middle stream. Nine samefull4 failure pairs are retry-compatible, not actual hints.",
+    "stopped_byte_counter": "Target+3largest current transits+16largest current signedreceipts upperbound1281642 <20971520; stopped byte scope only, shapes carry no signature authority.",
+    "stopped_selector_counter": "Target selected ordinary4 in both volatile cases, with0 or1replay each modeled failure. Exact authenticated source packet inputs and actual selector/preparation; hop/inventory/exchange shape signatures and atomic volatile-only sink. Model uses default advance_activeFalse; global cursor unchanged, no production first-service/transit selector consults it. Not live durable/TCP/OS or Native proof.",
+    "falsified": "Cost reduction alone sufficient within180; alternative destination envelope masking ingestion; current static byte impossibility; fixed current firstpending structure alone indefinitely skips target.",
+    "not_proven": "Unique OS/Native cold/route/suppression/retry/arrival cause, 38ordinary rather than replay batches, maturity/finality/cold12/fullfault."
+  },
+  "failed_original_scopes_remain_failed": {
+    "runtime_v4_original600_duration612570_files6152": "FAIL",
+    "receive_v7_files6657": "FAIL",
+    "four_cli_route_offer_v12_files1773": "FAIL",
+    "four_cli_arrival_fifo_v13_original180_duration201364_files1641": "FAIL",
+    "loaded_tls_v2_original60_duration63053784_files432_helper0_does_not_override_outer_failure": "FAIL",
+    "all_other_retained_failed_scopes": "FAIL",
+    "four_cli_active_b64_scan_v15_original180_duration202220_files1816": "FAIL",
+    "all_intermediate_native_v7_v8_v9_v10_v11_v12_v13": "FAIL; each retained original scope only"
+  },
+  "uncompleted_original_full_gates": [
+    "original recipient maturity",
+    "keyless drain",
+    "all12 complete fixed-head Native cold",
+    "complete original conservation"
+  ],
+  "original_bounds_retained": {
+    "stage_seconds": 600,
+    "round_seconds": 60,
+    "height_cap": 24,
+    "maturity": 2,
+    "quorum": 3,
+    "all_capacity_bounds": true
+  },
+  "value_strict_01": "OPEN; two baseline findings and120.019 exhaustion retained; core/value/lock unchanged, original120 diagnosis/300 repair triggers unmet; no waiver",
+  "next_discriminator": {
+    "status": "NOT_STARTED",
+    "hypothesis": "Exact stable stopped selector serves target by ordinary4, while live middle2 has38 complete prepared batches with no target. A live first-service decision/metadata difference, not demonstrated static byte impossibility or infinite-retry policy, blocks progress. Determine whether fresh ordinary ground preparation under current dynamic route/suppression/arrival/replay/lock conditions advances durable pending metadata as the selector model predicts.",
+    "smallest_input": "One fresh no-value ground transport path and bounded17-pending target-at-position6 input, original batch4/first-service2 and one replay policy; ordinary outbound owner and inbound/deferred owners only as required to discriminate. Never reopen any failed Native/Runtime/Node or copy custody. No fresh native payment/fullfault until a counterexample or measured service reason and relevant repair qualification.",
+    "budget_seconds": 60,
+    "attempts": 1,
+    "turn_cap": "At most9 ordinary preparations with at most1 replay each; original lock/socket/wire/capacity limits retained",
+    "observation": "Diagnostic external read-only wrappers record exact pre/post first pending/prepared counts, target eligibility from real authenticated route/hop, ordinary versus exact retry IDs, suppression-match, bundle byte size, local open/prepare duration and atomic completion. Invoke original methods unmodified; no accepting/signing shortcuts, no missing-event inference.",
+    "outcomes": {
+      "static_live_counterexample": "Reduce to first mismatching ordinary preparation, preserve source/input/negative controls, repair only the measured selector/metadata branch",
+      "live_ground_progresses": "Record bounded progress and actual wait/source role; do not patch policy or call Native/fullfault PASS; require smallest measured contention/dynamic input before any next native scope",
+      "deadline_or_instrumentation_gap": "Stop and seal once; no repeat or deadline increase; change diagnostic method"
+    },
+    "exit": "First source/role/byte/signature/metadata/negative/capacity mismatch, finite decisive observation, or original60 deadline. Normal owned shutdown/seal mandatory; cleanup does not change FAIL.",
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "no_physical_independent_or_native_payment_qualification": true
+  },
+  "persistent_cwd_still_old_UI_pending": true,
+  "every_project_command_explicit_workdir": "/Users/galaxy/GitHub/rldcoin",
+  "no_old_failed_reopen_recovery_sign_refund_or_custody_copy": true,
+  "no_frozen_paper_site_Library_server_account_permission_funds_push_or_cleanup_changes": true
+}

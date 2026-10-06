@@ -1,0 +1,264 @@
+{
+  "completed": true,
+  "original_budget_seconds": 120,
+  "already_spent_seconds": 0.5,
+  "budget_seconds": 119.5,
+  "attempts_used": 1,
+  "duration_seconds": 43.591655,
+  "combined_stage_seconds": 44.091655,
+  "stage_sha256": "9c05b8a3579e78f32e61f5c7138de845147498878f953dfba54d91fb0f9b4e1e",
+  "controller_sha256": "d32d44a42609fcab7365a2b96a4aeec10c42615230906e107a3fb859d7942dbd",
+  "result": {
+    "current_python_files": 192,
+    "native_files": 89,
+    "core_files": 171,
+    "ordinary_full_inventories": 56,
+    "typed_no_follow_inventories": 7,
+    "all_inventory_bytes_unchanged": true,
+    "production_codec_exact_candidate_and_control_AST_restore_to_original": true,
+    "original38490_cases_and_actual_codec_byte_negative_proofs_bound": true,
+    "only_single_existing_test_metadata_changed_AST": true,
+    "related_coverage_128_unchanged_plus1_current_exact_negative": true,
+    "original129_outer_scope_still_FAIL": true,
+    "unchanged120_mocked_Mesh_models_reused_with_exact_unchanged_Mesh_hash": true,
+    "no_new_codec_qualification_claim_from_Mesh_models": true,
+    "entire_helper_AST_scope_identity_only": true,
+    "entire_two_controllers_AST_only_qualification_metadata_and_whitelisted_decision_names": true,
+    "forbidden_guard_mutations_refused": [
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "stop_height=15"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "round_timeout=60"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "for _ in range(12):"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "receipt['mature_height']==15"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "if heights==[15]*4:break"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "cli.stop_all();assert cli.clean_terminal()"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "assert inventory(p.root)==cold_before"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "bound['head']"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "owner['pending'] is None"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "assert issued==int(p.currency['block_reward'])*4==liquid"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "receipt['original_output_spendable_now'] is False"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "helper",
+        "changed": "trace_readback=verify_journal("
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "deadline=start+180"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "owner_sign_budget=1"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "maturity=2"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "quorum=3"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "absolute_height_cap=24"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "original_mesh_lock_wait_seconds=.2"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "custody_copy_budget=0"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "result['full_fixed_head_native_cold']==8"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "result['native_conservation']"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-unarmed-20261006.json",
+        "source": "controller",
+        "changed": "not guardian['guardian_stop_used']"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "stop_height=15"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "round_timeout=60"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "for _ in range(12):"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "receipt['mature_height']==15"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "if heights==[15]*4:break"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "cli.stop_all();assert cli.clean_terminal()"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "assert inventory(p.root)==cold_before"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "bound['head']"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "owner['pending'] is None"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "assert issued==int(p.currency['block_reward'])*4==liquid"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "receipt['original_output_spendable_now'] is False"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "helper",
+        "changed": "trace_readback=verify_journal("
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "deadline=start+180"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "owner_sign_budget=1"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "maturity=2"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "quorum=3"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "absolute_height_cap=24"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "original_mesh_lock_wait_seconds=.2"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "custody_copy_budget=0"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "result['full_fixed_head_native_cold']==8"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "result['native_conservation']"
+      },
+      {
+        "variant": "regional-bft-four-cli-active-b64-scan-decision-allocated-20261006.json",
+        "source": "controller",
+        "changed": "not guardian['guardian_stop_used']"
+      }
+    ],
+    "negative_mutations_per_variant": 22,
+    "arbitrary_decision_path_refused": true,
+    "original17setup13import15mature_all8fixedheadcold_caller_owner_conservation_stop_unchanged": true,
+    "original180_60round_24height_maturity2_quorum3_and_all_bounds_preserved": true,
+    "unarmed_completedfalse_budgets0_preserved": true,
+    "allocated_decision_absent": true,
+    "real_helper_controller_Node_Native_Runtime_socket_sign_calls": 0,
+    "all_original_failures_preserved": true
+  },
+  "failure": null,
+  "real_native_runtime_socket_sign_calls": 0,
+  "new180_allocated": false,
+  "new600_allocated": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
