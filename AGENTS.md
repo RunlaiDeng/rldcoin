@@ -1769,3 +1769,25 @@ remaining ground48.929877 and dependency30.100828; first guard/refusal/budget
 failure stops with retainedFAIL/unknown, no deadline extension. Frozen site/paper
 unchanged, all prior failures/value strict gatesOPEN, exactthread/goalactive.
 See docs/operations/evidence/regional-bft-unserved-promotion-delivery-gap-outcome-20261006.json.
+
+
+Current V12 entry/pre-Native guard (2026-10-06): V8 current453/192map qualified
+PASS0.265684; four exact Rust argv controls, entireV7 entry four literal reversal
+and adapter one literal; original38/7 negatives reused. V20 integrates V8 with
+actual mandatory source-bound ordinary signed-delivery prerequisite before
+Native/Runtime/fixture imports. Full helper and controller main plus guard
+actually refuse missing real ground evidence; PASS0.259341,22old guard mutations
+and2guard removals refused, allocated derivative generation refused. WholeV20
+reverses declared bindings+guard to V19;17setup13import15mature/all8 fixedhead
+cold/envelopes/caller/owner/conservation/stop/180/600/60round24height retained.
+Original dependency60 cumulative30.424197/remain29.575803, ground60 stays
+11.070123/remain48.929877, old58.775813 source budget never reset. Production
+192Python/89Native/171Core/actualbinary unchanged. Eleven current fixture/source
+review copies under docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006
+are review-only, not extra launch entry points;16private source-only snapshot
+files, no state/key/custody/ledger/binary copy. Ordinary delivery remainsUNKNOWN
+with stoppedFAIL and no same-parameter rerun; positive prerequisite path remains
+unqualified, original600/V19 and Native maturity/allcold/conservation stillFAIL/
+OPEN. No real new Native controller/ground allocation, no new180/600. Frozen
+body/PDF/site unchanged, allprojectcommands explicit newrldcoin, goalactive.
+See docs/operations/evidence/regional-bft-unserved-promotion-entry-launch-gate-outcome-20261006.json.

@@ -1,0 +1,143 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 30.164856,
+  "duration_seconds": 0.259341,
+  "combined_stage_seconds": 30.424197,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "failure": null,
+  "stage_sha256": "e1f8872e548dad821df873fa64b919678cbba8a9d0b0b18bea1c38580cfdcddf",
+  "helper_sha256": "889d29b9b890322a0baec3dbdd7925628b92df6930fe1fc9884653cc614e6b69",
+  "controller_sha256": "be373ced90c88892a426ef3c99649ced971361137fba15b91e2ff00cc02d9515",
+  "log_sha256": "11d8772f5eee32becec50df8d789dc7898c5f4d3ef5b67401c0931f1d19d4c51",
+  "result": {
+    "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+    "actual_early_unqualified_delivery_refusals": [
+      "guard",
+      "helper",
+      "controller"
+    ],
+    "allocated_variant_generation_refused": true,
+    "completed": true,
+    "current_source192_Native89_Core171_actual_binary_unchanged": true,
+    "duration_seconds": 0.197441,
+    "full_fault_qualified": false,
+    "full_future_helper_controller_main_refused_before_Native_import": true,
+    "future_fixture_helper_controller_main_refusal_dispatches": 2,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "new_guard_does_not_grant_ledger_maturity_authority": true,
+    "new_native_root_allocation_and_decision_absent": true,
+    "no_delivery_scope_rerun": true,
+    "ordinary_signed_delivery": "unknown",
+    "original17setup13import15mature_all8cold_envelopes_caller_owner_conservation_stop_preserved": true,
+    "original_guard_mutations_and_new_guard_removals_refused": [
+      {
+        "changed": "stop_height=15",
+        "source": "helper"
+      },
+      {
+        "changed": "round_timeout=60",
+        "source": "helper"
+      },
+      {
+        "changed": "for _ in range(12):",
+        "source": "helper"
+      },
+      {
+        "changed": "receipt['mature_height']==15",
+        "source": "helper"
+      },
+      {
+        "changed": "if heights==[15]*4:break",
+        "source": "helper"
+      },
+      {
+        "changed": "cli.stop_all();assert cli.clean_terminal()",
+        "source": "helper"
+      },
+      {
+        "changed": "assert inventory(p.root)==cold_before",
+        "source": "helper"
+      },
+      {
+        "changed": "bound['head']",
+        "source": "helper"
+      },
+      {
+        "changed": "owner['pending'] is None",
+        "source": "helper"
+      },
+      {
+        "changed": "assert issued==int(p.currency['block_reward'])*4==liquid",
+        "source": "helper"
+      },
+      {
+        "changed": "receipt['original_output_spendable_now'] is False",
+        "source": "helper"
+      },
+      {
+        "changed": "trace_readback=verify_journal(",
+        "source": "helper"
+      },
+      {
+        "changed": "deadline=start+180",
+        "source": "controller"
+      },
+      {
+        "changed": "owner_sign_budget=1",
+        "source": "controller"
+      },
+      {
+        "changed": "maturity=2",
+        "source": "controller"
+      },
+      {
+        "changed": "quorum=3",
+        "source": "controller"
+      },
+      {
+        "changed": "absolute_height_cap=24",
+        "source": "controller"
+      },
+      {
+        "changed": "original_mesh_lock_wait_seconds=.2",
+        "source": "controller"
+      },
+      {
+        "changed": "custody_copy_budget=0",
+        "source": "controller"
+      },
+      {
+        "changed": "result['full_fixed_head_native_cold']==8",
+        "source": "controller"
+      },
+      {
+        "changed": "result['native_conservation']",
+        "source": "controller"
+      },
+      {
+        "changed": "not guardian['guardian_stop_used']",
+        "source": "controller"
+      },
+      {
+        "changed": "remove actual ordinary delivery precondition",
+        "source": "helper"
+      },
+      {
+        "changed": "remove actual ordinary delivery precondition",
+        "source": "controller"
+      }
+    ],
+    "source_only_snapshot_files": 8,
+    "source_only_snapshot_manifest_sha256": "4a2c23ce2a3b4c60687c563ddedcd869b9f8df9d3da60ae76759362d75e8e22b",
+    "whole_V20_helper_controller_restores_V19_after_only_declared_bindings_and_guard": true,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

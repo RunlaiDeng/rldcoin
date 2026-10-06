@@ -1,0 +1,53 @@
+{
+  "format": "RLD-UNALLOCATED-FIXTURE-REVIEW-SOURCES-V1",
+  "source_only": true,
+  "review_copies_not_additional_entry_points": true,
+  "new_scope_execution_allocated": false,
+  "private_state_key_custody_ledger_binary_copies": 0,
+  "files": {
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/first_service_diagnostic_entry_contract_v8_20261006.json": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_contract_v8_20261006.json",
+      "sha256": "82d4fd6e1d4b53ca134808b2047ce394dfe6b0e87cc7a3edd7a5e26b67b51c1e"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/first_service_diagnostic_entry_v8_20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_v8_20261006.py",
+      "sha256": "bf6747efc31555a99a5fe7e2a6975ef781ea49a334f30c1019aa710e11066a73"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/bft_four_cli_first_service_diagnostic_v5_20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_four_cli_first_service_diagnostic_v5_20261006.py",
+      "sha256": "1162bb3d81fdb1a10e6d6c2dc2f57390cf7ddf66e701c62c143a0640a4bea1d4"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/bft_unserved_delivery_precondition_v1_20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft_unserved_delivery_precondition_v1_20261006.py",
+      "sha256": "7b7a0865ffead94234fafedf2c3688a45a2100493fab8f07a9876d045141e422"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/bind_bft_four_cli_unserved_promotion_20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bind_bft_four_cli_unserved_promotion_20261006.py",
+      "sha256": "0ce9f42d65b6d67568293dba95b231884c1d65577c4d216b2a97bcaad01f5d30"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/observe-bft-four-cli-service-first-service-diag-v20-20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-four-cli-service-first-service-diag-v20-20261006.py",
+      "sha256": "fd9a4a93754b7f75dfc3c4812e33e39412706393d3a377147ba8108eb0db4024"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/check-bft-four-cli-service-first-service-diag-v20-20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-four-cli-service-first-service-diag-v20-20261006.py",
+      "sha256": "6f4034725fc5f5c5e0a7ce205e2d9e08fc230fdff259afb84cc91c5c2b3ca819"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/observe-bft-unserved-promotion-entry-v8-source-binding-20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-unserved-promotion-entry-v8-source-binding-20261006.py",
+      "sha256": "5db1ad41b1c2f1ddb260b65f7aa49690dfd6b4f00b5b5a4f10541948a8f90115"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/check-bft-unserved-promotion-entry-v8-source-binding-20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-unserved-promotion-entry-v8-source-binding-20261006.py",
+      "sha256": "695e58c4a64c50be95dc1ab073f701d21c8323bbd8f7947b6e5dcdec53b9fdb4"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/observe-bft-unserved-promotion-launch-precondition-v1-20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-unserved-promotion-launch-precondition-v1-20261006.py",
+      "sha256": "889d29b9b890322a0baec3dbdd7925628b92df6930fe1fc9884653cc614e6b69"
+    },
+    "docs/operations/fixtures/unserved-promotion-v12-unallocated-20261006/check-bft-unserved-promotion-launch-precondition-v1-20261006.py": {
+      "active_source_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-unserved-promotion-launch-precondition-v1-20261006.py",
+      "sha256": "be373ced90c88892a426ef3c99649ced971361137fba15b91e2ff00cc02d9515"
+    }
+  }
+}

@@ -1,5 +1,14 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 V12来源入口与实际启动前置拒绝
+
+本轮推进是实际fixture入口接入及拒绝行为，**不是普通送达/Native资格**。V8绑定当前453文件与Python192汇总1914160b…，整份V7入口只改四个绑定字面量，adapter只改一个入口字面量；原180/600/round60/height24/maturity2/quorum3/容量完全相同。四个新root下的原Rust raw argv控制通过；旧38入口负例/7汇总负例通过整源码精确还原复用、不重复。来源绑定 **PASS0.265684秒**，入口未分配时在Mesh导入前拒绝。
+
+实际加入ordinary signed delivery前置条件：只有准确当前来源/限额/原签名包、普通源/目的tick、完整packet/route/hop/frame冷读及目的收据的source-bound资格，才可继续future Native控制入口；它永不授予账本/成熟/资金资格。**前置条件、完整V20 helper main、完整controller main三条真实拒绝路径PASS0.259341秒**，全部在Native/Runtime/fixture导入前因缺真实送达证明退出；未创建币/钥/保管/节点/端口。整V20撤回明确绑定和新增guard准确还原V19，原17setup/13import/15mature/all8固定头完整cold/envelope/caller/owner/守恒/stop保持，22原guard mutation及2新guard删除均拒绝。分配版本生成也拒绝；未跑新180/600。
+
+原依赖60累计 **30.424197秒，剩余29.575803秒**；原ground累计11.070123/剩余48.929877与原58.775813来源预算不重置。生产Python/Native/Core/actualbinary未变。11份当前控制源码已按相同哈希保存为可审阅源码副本，另16份私有仅来源快照，无钥/账本/保管/binary复制；源码副本不是额外执行入口。原普通送达范围仍 **FAIL/unknown**，不因入口/拒绝通过改PASS或重跑同参。下一行为缺口仍是同一fresh ground目标沿普通carriage到达完整签名目的端；positive receipt路径尚无真实证据，入口资格不能替代它。原600/runtime-v4及V19仍FAIL，成熟15/all8/守恒/600/all12/keyless和VALUE-STRICT-01独立OPEN；新执行范围未分配、goalactive。冻结正文/PDF/官网及服务器/资金/账户/权限/外联/push/清理范围不变，显式新workdir，持久cwd仍UI待修。
+[实际来源接入及启动前置拒绝](operations/evidence/regional-bft-unserved-promotion-entry-launch-gate-outcome-20261006.json)。
+
 ## 2026-10-06 协调接续：普通送达缺口保留unknown
 
 已收到同一source2→destination1 parent14 Proposal协调。复用已有完整运输/typed前缀/48模型与V11真实FAIL、V12十一项PASS，不重做诊断/已有检查。旧Proposal目的端0、3有完整运输副本，目的端1仍缺；缺口位于arrival0→pending30后未发送，尚不能证明唯一成熟失败原因。旧Native Proposal/失败保管不复制、重开或重签。

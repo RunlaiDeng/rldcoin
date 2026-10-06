@@ -1,0 +1,81 @@
+{
+  "format": "RLD-BFT-UNSERVED-PROMOTION-ENTRY-LAUNCH-GATE-OUTCOME-V1",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "recorded_at_utc": "2026-10-06T05:40:04.117216+00:00",
+  "goal_status": "active",
+  "previous_goal_turn_classification": "progress: bounded generated-entry escape repair and actual static refusal precondition; no ordinary delivery qualification",
+  "current_progress": "Actual current-source entry rebinding and mandatory ordinary delivery gate now executed on both full future helper/controller refusal paths before Native import; not report-count progress",
+  "prior_delivery_outcome_sha256": "69bd1487c019a1b3df621e0fccb3a6965df997ba50a96b18f5db4e669abe4e3d",
+  "checks_sha256": {
+    "regional-bft-unserved-promotion-entry-v8-source-binding-20261006-checks.json": "46e6852dc305fe10df158798f2757c85c88251e81227d89bd1c649c892a82574",
+    "regional-bft-unserved-promotion-launch-precondition-v1-20261006-checks.json": "8bbcba0a4f3aaa4c2432fe9f3b7f06ae6ca7450f886c9f8edc156ba99509c778"
+  },
+  "stages_sha256": {
+    "regional-bft-unserved-promotion-entry-v8-source-binding-20261006-stage.json": "4de5ef337aa7333acf6546b2f01868bf62de882e28f24d4a9a431b2dfbcc1c26",
+    "regional-bft-unserved-promotion-launch-precondition-v1-20261006-stage.json": "e1f8872e548dad821df873fa64b919678cbba8a9d0b0b18bea1c38580cfdcddf"
+  },
+  "entry": {
+    "completed": true,
+    "duration_seconds": 0.265684,
+    "contract_source_files": 453,
+    "current_python192_commitment": "1914160b341d21f5df8ec03f74380cb0532cdbc4b302baa02875dc434f277d40",
+    "whole_V7_source_exact_after4_literal_reversal": true,
+    "adapter_exact_after1_literal_reversal": true,
+    "original180_600_round60_height24_maturity2_quorum3_capacity_params_exact": true,
+    "synthetic_four_Rust_raw_argv_controls": 4,
+    "previous38_negative_and7_aggregate_results_reused_by_exact_source": true,
+    "new_unallocated_main_refuses_before_Mesh_import": true
+  },
+  "actual_launch_guard": {
+    "completed": true,
+    "duration_seconds": 0.259341,
+    "missing_ordinary_signed_delivery_proof_refuses": [
+      "guard",
+      "helper_main",
+      "controller_main"
+    ],
+    "refusal_before_any_Native_Runtime_fixture_import": true,
+    "full_future_helper_controller_restores_V19_after_only_declared_bindings_and_new_guard": true,
+    "original17_setup13_import15_mature_all8_fixedhead_cold_envelopes_caller_owner_conservation_stop_exact": true,
+    "original_guard_mutations_and_new_guard_removals_refused": 24,
+    "allocated_derivative_generation_refused": true,
+    "positive_receipt_path_unexercised_without_real_ground_evidence": true,
+    "no_Native_or_runtime_started": true,
+    "gate_does_not_grant_ledger_or_maturity_authority": true
+  },
+  "budgets": {
+    "original_named_dependency60_seconds": 60,
+    "prior_spent_seconds": 29.899172,
+    "entry_seconds": 0.265684,
+    "guard_seconds": 0.259341,
+    "combined_stage_seconds": 30.424197,
+    "remaining_seconds": 29.575803,
+    "original_ground60_spent_seconds": 11.070123,
+    "ground_remaining_seconds": 48.929877,
+    "prior58_775813_source_budget_not_reset": true,
+    "old_signed_delivery_scope_never_repeated": true
+  },
+  "production_python192_Native89_Core171_actual_binary_unchanged": true,
+  "source_review_manifest_sha256": "f61d8f33bdaecbdf1d43afab40b35a2cfc84fcb3566bfb241eb72912dee1c92a",
+  "source_review_file_count": 11,
+  "public_sources_contain_no_actual_key_custody_ledger_state_binary": true,
+  "source_only_private_snapshots_added": 16,
+  "next_discriminator": {
+    "target": "Ordinary complete signed ground delivery for same unserved target still unknown; current source-only prerequisite cannot substitute. Original stopped delivery FAIL and immutable V19/runtime-v4 remain retained.",
+    "current_scope": "No signed ground or Native allocation exists; V20 denies launch until exact source-bound actual ordinary receipt is separately qualified under the existing finite ground bounds.",
+    "requirement": "One fresh source ordinary tick atomically prepares original complete packet, one destination ordinary tick receives, cold-authenticate original packet/routing/hop/frame and destination receipt, preserve original pending pair17gap/history floor/full4/auth/atomic/capacity. No copy/reopen/sign old failed Native Proposal.",
+    "exit": "First actual guard/refusal/source mismatch, minimum behavior proven, or original remaining deadline. No same-parameter repeat/extra deadline/new180/600 on local qualification alone."
+  },
+  "old600_V19_180_still_FAILED": true,
+  "ordinary_ground_delivery": "unknown",
+  "maturity15_all8_Native_cold_conservation_and600_all12_keyless_unfinished": true,
+  "VALUE_STRICT_01_status": "OPEN source triggers unchanged",
+  "all_frozen_normative_targets_preserved": true,
+  "frozen_body_PDF_website_edits": 0,
+  "server_accounts_permissions_funds_external_contacts_push_cleanup_operations": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "persistent_app_cwd": "old path UI pending; commands explicit /Users/galaxy/GitHub/rldcoin"
+}
