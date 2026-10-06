@@ -1,0 +1,7 @@
+{
+  "hypothesis": "Exact retained source2 Prepare has no later hop attempts. Test saved signed route/hop/receipt eligibility and final recent-history placement; compare actual selected current frames. Saved state cannot prove missing live ordering.",
+  "budget_seconds": 20,
+  "prior_seconds": 1.940232,
+  "attempts": 1,
+  "exit": "first sealed hash/signature/route guard or original20 deadline; no constructors/key/sign/socket/custody mutation"
+}

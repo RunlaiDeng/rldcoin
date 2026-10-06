@@ -1,0 +1,44 @@
+{
+  "completed": true,
+  "pairs": [
+    [
+      "FORMAT = 'RLD-FIRST-SERVICE-DIAGNOSTIC-V3'",
+      "FORMAT = 'RLD-FIRST-SERVICE-DIAGNOSTIC-V4'"
+    ],
+    [
+      "        for group in call:ids(group,256)\n        require(len(set(call[0]+call[1]))==len(call[0]+call[1])<=256,'diagnostic disjoint classes')",
+      "        all_ids=[];size=0\n        for group in call:\n            require(type(group) is dict and set(group)=={'size','current_ids','positions'},\n                    'diagnostic focused class schema')\n            require(type(group['size']) is int and 0<=group['size']<=256,'diagnostic original class size')\n            current=ids(group['current_ids'],256);positions=group['positions']\n            require(type(positions) is list and len(positions)==len(current)\n                    and all(type(n) is int and 0<=n<group['size'] for n in positions)\n                    and positions==sorted(set(positions)),'diagnostic actual current ranks')\n            size+=group['size'];all_ids+=current\n        require(size<=256 and len(all_ids)==len(set(all_ids)),'diagnostic disjoint current classes')"
+    ],
+    [
+      "        require(type(route) is dict and set(route)=={'attempts','path'},'diagnostic route schema')\n        require(type(route['attempts']) is int and 1<=route['attempts']<=1024,'diagnostic route count')\n        if route['path'] is not None:ids(route['path'],17)",
+      "        require(type(route) is dict and set(route)=={'attempts','eligible','path_length'},'diagnostic route schema')\n        require(type(route['attempts']) is int and 1<=route['attempts']<=1024\n                and type(route['eligible']) is bool,'diagnostic original route count/eligibility')\n        length=route['path_length']\n        require(length is None or type(length) is int and 1<=length<=17,'diagnostic original path length')\n        require(not route['eligible'] or length is not None and length>=2,'diagnostic eligible missing route')"
+    ],
+    [
+      "                    rows.append([ids(list(group),256) for group in result])",
+      "                    tracked=set(context['priority']['matching_packet_ids']);groups=[]\n                    for items in result:\n                        require(type(items) is list and len(items)<=256,'diagnostic original group bound')\n                        positions=[i for i,ident in enumerate(items) if ident in tracked]\n                        groups.append(dict(size=len(items),current_ids=ids([items[i] for i in positions],256),\n                                           positions=positions))\n                    rows.append(groups)"
+    ],
+    [
+      "                    rows=context['selector']['transit_checks']\n                    require(ident in rows or len(rows)<256,'diagnostic original transit ID bound')\n                    rows[ident]=rows.get(ident,0)+1\n                    context['route_packet']=(ident,result[0]['destination'])",
+      "                    context['route_packet']=None\n                    if ident not in context['priority']['matching_packet_ids']:return\n                    rows=context['selector']['transit_checks']\n                    require(ident in rows or len(rows)<256,'diagnostic original transit ID bound')\n                    rows[ident]=rows.get(ident,0)+1\n                    context['route_packet']=(ident,result[0]['destination'],len(transit['hops']),\n                                             result[0]['hop_limit'])"
+    ],
+    [
+      "                    prior=rows.get(ident,dict(attempts=0,path=None))\n                    rows[ident]=dict(attempts=prior['attempts']+1,\n                                     path=None if result is None else ids(list(result),17))",
+      "                    prior=rows.get(ident,dict(attempts=0,eligible=False,path_length=None))\n                    rows[ident]=dict(attempts=prior['attempts']+1,\n                                     path_length=None if result is None else len(result),\n                                     eligible=bool(result and len(result)>=2 and result[1]==first_hop\n                                                   and marker[2]+len(result)-1<=marker[3]))"
+    ]
+  ],
+  "collector_pairs": [
+    [
+      "first_service_diagnostic_observer_v5_20261007.py",
+      "first_service_diagnostic_observer_v6_20261007.py"
+    ],
+    [
+      "f0e5968aa40c975071796daa64ef67c0695acd9ef647e20193b407dbbd113c9e",
+      "93d98f912f69a6238ee5666a650cab24a44ac9780c81c81efd7bad4e8dc56bc7"
+    ]
+  ],
+  "observer_sha256": "93d98f912f69a6238ee5666a650cab24a44ac9780c81c81efd7bad4e8dc56bc7",
+  "collector_sha256": "c8f424b704b4e347f59438dde6b3e53357728e2df3855ddd7120985b9c0d5c9e",
+  "exact_prior_text_after_reversal": true,
+  "focus": "Only original prepare-entry current IDs, actual original-group ranks/sizes and route eligible/path length; no all-traffic ID maps/full paths. V5 not allocated Native: avoid forecast all-traffic journal cost before scope.",
+  "original_limits32events192KiB8MiB_unchanged": true
+}

@@ -1,5 +1,19 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 V37终态FAIL；反例证伪排序猜测，V38只观察实际选取
+
+V37 **FAIL 原180秒/192.352秒含收尾/1807文件封存**，helper1，四CLI均exit0、owned正常停止，无forced/guardian/cleanup/pin异常。原15mature/all8完整Nativecold/完整信封/heads/守恒未完成；旧完整600/all12/keyless及全部失败保持FAIL/OPEN。历史“全部通过”只对应当时明确来源和有限scope。
+
+准确缺口为parent14 Prepare source2→destination0，完整目标在源端、首普通/full4遭firsthop1的原input_slot_occupied拒绝。随后优先轮80/87/97/105/112的入口提示存在且匹配目标，targetselected/hopattempts均0。封存后的完整签名路由合法、零hop/limit16、包309216字节<原20MiB、无receipt，最终为recent类；这不补作历史路由/组排序。原20只读结果累计2.175089秒（另早期直接读回0.090390秒，合计2.265479秒），零旧Node/Native/Runtime/key/sign/socket构造，字节不变，未证明唯一成熟原因。
+
+新真实签名小反例检验“旧prepared无receipt的当前Prepare在最旧优先对被同类新当前帧挤出”。**现有V24 PASS0.558143秒/14封存**，原first2、另一历史类floor、full4、auth/atomic、普通两跳receipt/清witness目的cold均完成；因此不采用猜测的排序修复。地面角色类比不能替代原失败Native权利。
+
+诊断V4仅包装原getter/groups/transit-check/route各一次，保留实际读到的primitive hint、入口当前ID在两原类中的实际位置/类大小、原认证与路由谓词；不增加getter/LRU移动、认证/签名、packet/key/proof留存或生产逻辑。先V3宽观察实际地面PASS0.564469；为避免原8MiB journal成本，在Native分配前缩为只跟踪当前ID。最终 **21畸形模型拒绝、真实签名地面PASS0.614650/14封存**，该必要小反例与观察模型60累计 **1.737262**，原Mesh ground60=59.803250/TCP-related60=3.451646/hint-related60=1.392620不重置。旧581记录的字段体积模型7055411<8388608只是模型，不是实际live资格。原32event/192KiB/8MiB发布及journal容量保持。
+
+最终来源 **PASS0.570秒**，全部原driver AST字面量反转、observer完整旧文本反转、collector仅path/hash替换、实际0755未分配入口拒绝及已分配helper/controller/contract/receipt guard通过。Python192 f2208c7b…/profileV24、Native89/Core171/实际CLI不变，合法普通资格复用。持续授权内V38 **一次原180已分配，此记录创建时NOTSTARTED**：区分实际提示消失、目标组位置、未进入原eligible、实际路由不允许；首guard/原deadline停止封存，不重开失败。仍须原17setup/13import/15mature/all8fullcold/完整信封/caller-owner heads/守恒/正常停止且全阶段≤180。无新增600、预算/成熟/票数/容量/owner请求放宽；全部冻结哈希及S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持。VALUE-STRICT-01两基线告警/120耗尽、长期/PQ/独立/物理/组合OPEN。唯一作者继续开发，显式新workdir；持久cwd/goal旧正文-blocked元数据仍UI待修，不形成新审批门。
+
+[真实V37终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v37-20261006-checks.json)；[实际入口提示](operations/evidence/regional-bft-target-live-priority-v37-20261007-checks.json)；[反例证伪](operations/evidence/regional-bft-competing-current-oldest-baseline-v24-20261007-checks.json)；[最终观察检查](operations/evidence/regional-bft-selector-observer-v6-model-20261007-checks.json)；[来源准入](operations/evidence/regional-bft-selector-observation-v38-source-binding-20261007-checks.json)。
+
 ## 2026-10-07 V36终态FAIL；只读观察原优先提示V37
 
 V36 **FAIL 原180秒/191.648秒含收尾/1768文件封存**；完整原controller终态、helperexit1，四CLI正常exit0，owned stopped，無forced/guardian/cleanup/pin异常。四参考14，原15mature/all8完整Nativecold/所有信封/heads/守恒未完成；全部旧失败及完整600/all12/keyless仍FAIL/OPEN。

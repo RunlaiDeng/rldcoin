@@ -1,0 +1,33 @@
+{
+  "completed": true,
+  "helper_exit_code": 0,
+  "budget_seconds": 60,
+  "duration_seconds": 0.564469,
+  "original60_cumulative_seconds": 1.122612,
+  "negative_cases": 16,
+  "readonly_schema_LRU_values_order_bytes_unchanged": true,
+  "original_functions_once_no_added_authentication_sign_getter_calls": true,
+  "original32events192KiB8MiB_unchanged": true,
+  "actual_ground_result": [
+    {
+      "completed": true,
+      "records": 11,
+      "available": true,
+      "rejected": 0,
+      "actual_hint_reads": 10,
+      "actual_groups": 10,
+      "actual_checked_ids": 153,
+      "actual_route_ids": 153,
+      "original_signed_oldest_pair_and_ordinary_delivery_cold_assertions_passed": true
+    }
+  ],
+  "stage_sha256": "edb543cae52fc47d205cb9d094dd314087b9de5218887e564a6e26bc01b21cea",
+  "log_sha256": "56fb19bf786238a8a75e2471aa94d1f3216dcdc0b6e018e4d2a265d5e3b03d01",
+  "seal_sha256": "312d867e57247fcf88f6c2a72ccb8df3644fec384c6212e84bd1e20141b7e463",
+  "retained_files": 14,
+  "production_sources_freeze_and_old_failed_inventory_unchanged": true,
+  "Native_Runtime_constructors_socket_oldfixture_calls": 0,
+  "ground_role_analogy_only": true,
+  "new180": 0,
+  "new600": 0
+}

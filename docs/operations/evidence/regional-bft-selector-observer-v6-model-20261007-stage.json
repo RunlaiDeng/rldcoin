@@ -1,0 +1,25 @@
+{
+  "hypothesis": "V37 records before planner cannot establish the hint actually consumed or actual recent/history ID order/route eligibility. Wrap original getters/groups/checks/routes once and retain only primitive original results; no extra LRU touch or protocol calls. V24 freshest signed multiple-frame counter passed, so no production ordering repair is supported.",
+  "budget_seconds": 60,
+  "prior_seconds": 1.122612,
+  "attempts": 1,
+  "negative_cases": 21,
+  "original_Mesh_ground60_unreset": 59.80325,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-selector-observer-v6-20261007.py": "c48230d2a18e678d177a3b8e74571829ad28dce251360e22344dcab6e2812d11",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/selector-observer-v6-ground-helper-20261007.py": "9f225f6d868d2914ac15f9b750c5b13f83679bdd869e26fc97e3689ca6a981ff",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_observer_v6_20261007.py": "93d98f912f69a6238ee5666a650cab24a44ac9780c81c81efd7bad4e8dc56bc7",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_collector_v4_20261007.py": "c8f424b704b4e347f59438dde6b3e53357728e2df3855ddd7120985b9c0d5c9e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/selector-observer-v6-reversal-20261007.json": "a6ea7a366211b2aea9c134e4c92a569b8499e63db9e59fc503d889ada2485d0c",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/competing-current-oldest-baseline-v24-helper-20261007.py": "5f1bbe864b0a82dbef083258474beee23775866629fd096a3434a8eb0c4f4824",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/competing-current-oldest-baseline-v24-stopped-inventory-20261007.json": "3df217f24fcb3f8fca19c1a541857ff8f3f59afe1d402d853302d2c8e7a9a126",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "5587d0517bf2997233f8f7834f42efaac5b0787790c1f98b5315b5ded615df00",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "99d1656ae7823579771f4cfb07603c36b0906f31ae0f3cc6be5a03b00365d7df",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "e9940a6bca98911982fc463feaab8ca62261089c3988deaca7e1a8bfd8ce0d95",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "9016765467cb4f8e715a504686f1b7f9642f841033cac8093bec0cef6ef6a3cc",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v37-private-20261006/ordinary-process-controller/first-service-events.jsonl": "7d236b446b31b7ee70027f5da0f36f7fc7f9901e6e555ae8d4023d758c513b76",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v37-stopped-private-inventory-20261006.json": "4c9dc168b3d26e7998ad0a8173c6ce9a03aa13839eac33e7a7441727718f69bd"
+  },
+  "exit": "first original-function/schema/bound/byte guard or original60 deadline; never old Native/Runtime/socket/keys"
+}
