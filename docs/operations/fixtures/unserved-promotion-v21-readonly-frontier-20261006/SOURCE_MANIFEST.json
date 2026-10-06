@@ -1,0 +1,37 @@
+{
+  "format": "RLD-REVIEW-ONLY-FIXTURE-SOURCE-MANIFEST-V1",
+  "task_id": "01a100ac-5340-7b13-b661-eedc397b003a",
+  "entries": [
+    {
+      "name": "observe-bft-proposal-transport-boundary-v21-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-proposal-transport-boundary-v21-20261006.py",
+      "sha256": "94c52112385b6cab77f688ef3f3e568673c8c430ff3964b3f640cc6b83c74fb0",
+      "bytes": 7017,
+      "review_only": true
+    },
+    {
+      "name": "check-bft-proposal-transport-boundary-v21-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-proposal-transport-boundary-v21-20261006.py",
+      "sha256": "edc1c434644eb57ec7feabaefbc70504d0683c8ece6b303f1ec5e7d801819565",
+      "bytes": 3590,
+      "review_only": true
+    },
+    {
+      "name": "observe-bft-proposal-transport-boundary-v21-v2-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-proposal-transport-boundary-v21-v2-20261006.py",
+      "sha256": "fbb1b805b2b0e611157a8b877b1285b14908044e1aad59076849df320fbea0bf",
+      "bytes": 7929,
+      "review_only": true
+    },
+    {
+      "name": "check-bft-proposal-transport-boundary-v21-v2-20261006.py",
+      "original_path": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-proposal-transport-boundary-v21-v2-20261006.py",
+      "sha256": "0a48866ce7563c4dd4b101ec372768c9e9e5209a11bb55e95952ab5a1cd4ebb6",
+      "bytes": 3641,
+      "review_only": true
+    }
+  ],
+  "contains_only_source": true,
+  "failed_and_repaired_sources_preserved": true,
+  "no_private_state_key_custody_ledger_binary_copies": true
+}

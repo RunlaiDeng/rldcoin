@@ -1,5 +1,16 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 V21真实原生终态FAIL与Proposal送达边界
+
+已按既有授权执行唯一已分配V21零价值组件，原180秒/一次尝试，helper34644，当前Python192/Native89/Core171/actualbinary及原参数未变。**FAIL：ScopeDeadline原180耗尽，208.623秒含收尾；1630文件封存。**四CLI35045–35048各exit0，owned stopped、无forced/cleanup/pin异常，helper/CLI进程均已不存在。原成熟15/all8完整固定头原生cold/envelope/caller/owner/守恒未完成；不因正常停止或运输通过改为PASS。旧runtime-v4 600/6152、V19 180/1856和全部旧FAIL保留，不重开/复制/重签失败Native/Runtime/Node/保管。本段下方“未启动”仅指当时分配创建快照。
+
+必要只读判别先**FAIL13.877455秒**：遍历目的消息却取循环遗留的最后源对象，KeyError属于诊断取值错误，不是协议拒绝。只修正目的receiver，八个无签名原始store模型核对同一实际表达式；改入口后**PASS14.472221秒**。无Node/Native/Runtime/socket/key/sign/fixture调用；1630字节库存前后不变，643完整签名档案索引/859完整regional-bft运输副本/11active receipt认证。新封存参考高度均13；高度14 Proposal由source1本地释放，目的0/2/3均有原完整签名运输信封且对应companion body保留。故本次停滞不支持“Proposal未生成/未送达”解释；内层Proposal/Vote签名、Native接纳/成熟与最新完整cold仍未获资格。
+
+原named dependency60累计**59.845831秒，剩0.154169**，含本次诊断FAIL，当前范围停止、不延长/重置。原ground60累计11.896617和旧58.775813预算保持。保存的参考消息表仅slot2/3有本地parent13 Commit，slot0/1未保留Commit标签；这不能单独定因。下一可证伪目标是准确source2→destination1 parent13 round0 Commit：复用859运输/643索引字节资格，核对准确Vote签名字节/context、目的完整包/receipt与typed attempt/companion接纳边界，区分缺运输与已送达但未接纳；不得从标签缺项推出Native拒绝、OS或性能原因。该下一范围本轮未分配/执行，必要后续须独立声明证据驱动的最小时间/尝试预算，不能重置已用原60、原样再跑180或新增600。
+
+四份真实失败/修正只读源码review副本及仅来源快照保留，无私有钥/保管/ledger/binary复制。VALUE-STRICT-01、成熟15/all8 cold/守恒及完整600/all12/keyless继续独立OPEN。冻结正文/PDF/官网、全部规范验收目标和原owner请求不改。goal元状态仍是工具上次读到的误标blocked，现有工具不能恢复active；开发授权已纠正，该元状态不是逐次审批门。命令均显式新workdir，持久cwd仍UI待修。
+[真实V21失败及新的只读边界证据](operations/evidence/regional-bft-unserved-promotion-v21-terminal-frontier-outcome-20261006.json)。
+
 ## 2026-10-06 授权来源更正：撤销误加的逐次审批门
 
 此前“用户明确局部通过不授权新180/600”的归属判断错误：该句是协调概括，不能作为原用户逐字禁令，也不能撤销原任务持续有效的本地开发授权。实际要求是无副作用的语法/导入/名称绑定预检后，在原预算沿原定单目标继续。现有17名称provider核验及V4普通送达已足够，不新增或重复这两类检查。当前准入条件中的owner_authorized表示既有真实用户任务授权，不要求每个本地组件重新批准；保留完整来源/限额/一次性新root与失败退出护栏。

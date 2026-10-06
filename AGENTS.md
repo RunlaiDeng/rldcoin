@@ -1837,3 +1837,28 @@ repair is exact-task official thread/goal/set status=active only, no objective/
 budget/permission edits, task-store bypass or writer-lock workaround. This is
 not a new development approval requirement. See docs/operations/evidence/
 regional-bft-unserved-promotion-authorization-provenance-correction-20261006.json.
+
+
+Current real V21 terminal (2026-10-06): already-allocated zero-value original180
+executed once, FAIL ScopeDeadline;208.623 inclstop/1630 sealed. All fourCLIexit0,
+helper34644/CLI35045-35048 absent, noforced/cleanup/pinerror. Retain V21 plus
+V19/runtime-v4 and all oldFAIL; never reopen failed Native/Runtime/Node/custody.
+Earlier NOT STARTED allocation labels are historical creation-time snapshots.
+Read-only frontier entry stale-source receiver FAIL13.877455 retained; one
+explicit destination-store fix+8 primitive receiver models, PASS14.472221. No
+Node/Native/Runtime/socket/key/sign/fixture calls;1630 bytes unchanged,643 indexes/
+859 complete transport copies/11active receipts authenticated. Proposal14 source1
+is completely delivered to0/2/3 and companion body retained; saved heights13 are
+reference only, no inner Proposal/Vote/Native/maturity/latestcold qualification.
+Original named dependency60 cumulative59.845831/remain0.154169 STOPPED; ground
+11.896617 and older58.775813 not reset. Next minimal falsifiable target parent13
+round0 Commit source2->destination1 exact signature/context and complete signed
+transport versus companion admission/typed attempts, reusing qualified bytes.
+Missing Commit reference labels alone cannot establish cause. No next scope
+allocated/executed here; declare distinct evidence-driven minimum budget/exit
+before necessary continuation, no unchanged180 or new600. Original maturity15/
+all8 fullcold/envelope/caller/owner/conservation/stop and full600/all12/keyless
+stillOPEN. Production/freeze/site untouched; uniqueauthor and explicit newworkdir.
+Runtime goal metadata lastobserved blocked, supportedtool cannotresume, not an
+approval gate. See docs/operations/evidence/
+regional-bft-unserved-promotion-v21-terminal-frontier-outcome-20261006.json.
