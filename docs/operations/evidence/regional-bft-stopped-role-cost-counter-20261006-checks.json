@@ -1,0 +1,751 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 19.850542,
+  "budget_seconds": 40.149457999999996,
+  "duration_seconds": 0.683978,
+  "helper_exit_code": 0,
+  "stage_sha256": "41cab4587e06f7ec31140fde16d58eb3230d5f1b331df4917bc6c4ac4149dae0",
+  "helper_sha256": "78e8becb5817c7287f489ba9a44e21fc0fcd76258f6a8464a23cf7350e1244b0",
+  "controller_sha256": "bb4d28d97bbb5d1e938e21c3c39ef99ca1c12050fb70f347ea76fac9c5c6615c",
+  "log_sha256": "755d1661cd6556673f60525645a8b1bc6c1a3235a495b777a7b650a1788de1d1",
+  "result": {
+    "completed": true,
+    "rows": [
+      {
+        "slot": 0,
+        "local_lock_exhaustions": 71,
+        "local_lock_retries": 3748,
+        "role_cost_rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 49,
+              "failures": 4,
+              "last_seconds": 0.298275,
+              "max_seconds": 0.335279,
+              "saturated": false,
+              "total_seconds": 6.561132
+            },
+            "hold": {
+              "calls": 45,
+              "failures": 0,
+              "last_seconds": 0.133889,
+              "max_seconds": 0.362503,
+              "saturated": false,
+              "total_seconds": 8.599591
+            },
+            "open": {
+              "calls": 45,
+              "failures": 0,
+              "last_seconds": 0.096899,
+              "max_seconds": 0.138754,
+              "saturated": false,
+              "total_seconds": 4.082168
+            },
+            "purpose": {
+              "calls": 55,
+              "failures": 6,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 118,
+              "failures": 10,
+              "last_seconds": 0.09713,
+              "max_seconds": 0.327065,
+              "saturated": false,
+              "total_seconds": 16.20293
+            },
+            "hold": {
+              "calls": 108,
+              "failures": 0,
+              "last_seconds": 0.225032,
+              "max_seconds": 0.462855,
+              "saturated": false,
+              "total_seconds": 29.802627
+            },
+            "open": {
+              "calls": 108,
+              "failures": 0,
+              "last_seconds": 0.097121,
+              "max_seconds": 0.143443,
+              "saturated": false,
+              "total_seconds": 11.022701
+            },
+            "purpose": {
+              "calls": 123,
+              "failures": 4,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 54,
+              "failures": 9,
+              "last_seconds": 0.106211,
+              "max_seconds": 0.308222,
+              "saturated": false,
+              "total_seconds": 8.271046
+            },
+            "hold": {
+              "calls": 45,
+              "failures": 0,
+              "last_seconds": 0.318338,
+              "max_seconds": 0.413723,
+              "saturated": false,
+              "total_seconds": 13.204636
+            },
+            "open": {
+              "calls": 45,
+              "failures": 0,
+              "last_seconds": 0.106184,
+              "max_seconds": 0.132928,
+              "saturated": false,
+              "total_seconds": 4.356551
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 14,
+              "failures": 5,
+              "last_seconds": 0.227715,
+              "max_seconds": 0.300582,
+              "saturated": false,
+              "total_seconds": 2.67542
+            },
+            "hold": {
+              "calls": 9,
+              "failures": 0,
+              "last_seconds": 0.287684,
+              "max_seconds": 0.424904,
+              "saturated": false,
+              "total_seconds": 3.020771
+            },
+            "open": {
+              "calls": 9,
+              "failures": 0,
+              "last_seconds": 0.096985,
+              "max_seconds": 0.147621,
+              "saturated": false,
+              "total_seconds": 1.079185
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 216,
+              "failures": 43,
+              "last_seconds": 0.099373,
+              "max_seconds": 0.330067,
+              "saturated": false,
+              "total_seconds": 32.269425
+            },
+            "hold": {
+              "calls": 173,
+              "failures": 0,
+              "last_seconds": 0.186127,
+              "max_seconds": 0.394057,
+              "saturated": false,
+              "total_seconds": 38.605488
+            },
+            "open": {
+              "calls": 173,
+              "failures": 0,
+              "last_seconds": 0.099352,
+              "max_seconds": 0.162581,
+              "saturated": false,
+              "total_seconds": 18.106139
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "native_observation_available": true,
+        "status_native_observation_not_complete_cold_or_maturity": true,
+        "final_snapshot_sha256": "fd629b1b7e36194601516a55c5e3f97ae647cb3650196b7d237eb539b1218b3c"
+      },
+      {
+        "slot": 1,
+        "local_lock_exhaustions": 427,
+        "local_lock_retries": 14730,
+        "role_cost_rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 48,
+              "failures": 14,
+              "last_seconds": 0.219746,
+              "max_seconds": 0.375376,
+              "saturated": false,
+              "total_seconds": 10.290581
+            },
+            "hold": {
+              "calls": 34,
+              "failures": 0,
+              "last_seconds": 0.291388,
+              "max_seconds": 0.593876,
+              "saturated": false,
+              "total_seconds": 11.480885
+            },
+            "open": {
+              "calls": 34,
+              "failures": 0,
+              "last_seconds": 0.212279,
+              "max_seconds": 0.249477,
+              "saturated": false,
+              "total_seconds": 5.1924
+            },
+            "purpose": {
+              "calls": 76,
+              "failures": 28,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 84,
+              "failures": 45,
+              "last_seconds": 0.380374,
+              "max_seconds": 0.460193,
+              "saturated": false,
+              "total_seconds": 18.809293
+            },
+            "hold": {
+              "calls": 38,
+              "failures": 0,
+              "last_seconds": 0.735134,
+              "max_seconds": 0.856838,
+              "saturated": false,
+              "total_seconds": 19.587835
+            },
+            "open": {
+              "calls": 39,
+              "failures": 0,
+              "last_seconds": 0.211893,
+              "max_seconds": 0.273344,
+              "saturated": false,
+              "total_seconds": 6.472001
+            },
+            "purpose": {
+              "calls": 98,
+              "failures": 14,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 173,
+              "failures": 131,
+              "last_seconds": 0.204683,
+              "max_seconds": 0.446704,
+              "saturated": false,
+              "total_seconds": 35.143594
+            },
+            "hold": {
+              "calls": 42,
+              "failures": 0,
+              "last_seconds": 0.517772,
+              "max_seconds": 0.59968,
+              "saturated": false,
+              "total_seconds": 14.380189
+            },
+            "open": {
+              "calls": 42,
+              "failures": 0,
+              "last_seconds": 0.224477,
+              "max_seconds": 0.258624,
+              "saturated": false,
+              "total_seconds": 6.00708
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 176,
+              "failures": 107,
+              "last_seconds": 0.365397,
+              "max_seconds": 0.440928,
+              "saturated": false,
+              "total_seconds": 39.496377
+            },
+            "hold": {
+              "calls": 69,
+              "failures": 0,
+              "last_seconds": 0.482874,
+              "max_seconds": 0.626776,
+              "saturated": false,
+              "total_seconds": 28.967067
+            },
+            "open": {
+              "calls": 69,
+              "failures": 0,
+              "last_seconds": 0.200347,
+              "max_seconds": 0.269933,
+              "saturated": false,
+              "total_seconds": 13.016152
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 253,
+              "failures": 130,
+              "last_seconds": 0.200445,
+              "max_seconds": 0.471056,
+              "saturated": false,
+              "total_seconds": 53.930443
+            },
+            "hold": {
+              "calls": 123,
+              "failures": 0,
+              "last_seconds": 0.70712,
+              "max_seconds": 0.774005,
+              "saturated": false,
+              "total_seconds": 52.050509
+            },
+            "open": {
+              "calls": 123,
+              "failures": 0,
+              "last_seconds": 0.252131,
+              "max_seconds": 0.286907,
+              "saturated": false,
+              "total_seconds": 21.30293
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "native_observation_available": true,
+        "status_native_observation_not_complete_cold_or_maturity": true,
+        "final_snapshot_sha256": "d02119bb3585e0ad3952677c5e059e12478aaeca5bce533160038ee0eb1cebf1"
+      },
+      {
+        "slot": 2,
+        "local_lock_exhaustions": 500,
+        "local_lock_retries": 16609,
+        "role_cost_rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 49,
+              "failures": 15,
+              "last_seconds": 0.200491,
+              "max_seconds": 0.369529,
+              "saturated": false,
+              "total_seconds": 10.292291
+            },
+            "hold": {
+              "calls": 34,
+              "failures": 0,
+              "last_seconds": 0.30356,
+              "max_seconds": 0.560754,
+              "saturated": false,
+              "total_seconds": 12.092234
+            },
+            "open": {
+              "calls": 34,
+              "failures": 0,
+              "last_seconds": 0.218095,
+              "max_seconds": 0.23976,
+              "saturated": false,
+              "total_seconds": 5.580978
+            },
+            "purpose": {
+              "calls": 74,
+              "failures": 25,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 85,
+              "failures": 38,
+              "last_seconds": 0.21767,
+              "max_seconds": 0.423353,
+              "saturated": false,
+              "total_seconds": 19.473328
+            },
+            "hold": {
+              "calls": 47,
+              "failures": 0,
+              "last_seconds": 0.691801,
+              "max_seconds": 0.787242,
+              "saturated": false,
+              "total_seconds": 24.754335
+            },
+            "open": {
+              "calls": 47,
+              "failures": 0,
+              "last_seconds": 0.21766,
+              "max_seconds": 0.241425,
+              "saturated": false,
+              "total_seconds": 8.23296
+            },
+            "purpose": {
+              "calls": 99,
+              "failures": 14,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 184,
+              "failures": 142,
+              "last_seconds": 0.351697,
+              "max_seconds": 0.426657,
+              "saturated": false,
+              "total_seconds": 38.361699
+            },
+            "hold": {
+              "calls": 41,
+              "failures": 0,
+              "last_seconds": 0.502044,
+              "max_seconds": 0.57652,
+              "saturated": false,
+              "total_seconds": 14.981984
+            },
+            "open": {
+              "calls": 42,
+              "failures": 0,
+              "last_seconds": 0.195792,
+              "max_seconds": 0.236838,
+              "saturated": false,
+              "total_seconds": 5.979567
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 211,
+              "failures": 147,
+              "last_seconds": 0.201076,
+              "max_seconds": 0.451531,
+              "saturated": false,
+              "total_seconds": 45.011065
+            },
+            "hold": {
+              "calls": 64,
+              "failures": 0,
+              "last_seconds": 0.48495,
+              "max_seconds": 0.627023,
+              "saturated": false,
+              "total_seconds": 26.701642
+            },
+            "open": {
+              "calls": 64,
+              "failures": 0,
+              "last_seconds": 0.187547,
+              "max_seconds": 0.282383,
+              "saturated": false,
+              "total_seconds": 12.193477
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 267,
+              "failures": 158,
+              "last_seconds": 0.200584,
+              "max_seconds": 0.413889,
+              "saturated": false,
+              "total_seconds": 57.979835
+            },
+            "hold": {
+              "calls": 109,
+              "failures": 0,
+              "last_seconds": 0.575654,
+              "max_seconds": 0.749436,
+              "saturated": false,
+              "total_seconds": 47.652307
+            },
+            "open": {
+              "calls": 109,
+              "failures": 0,
+              "last_seconds": 0.212506,
+              "max_seconds": 0.284875,
+              "saturated": false,
+              "total_seconds": 18.935199
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "native_observation_available": true,
+        "status_native_observation_not_complete_cold_or_maturity": true,
+        "final_snapshot_sha256": "22fcaa97ca2fe314a008439cfb2ab0a8f724ffbb1deeb5b7d4cc43dfb8345cb1"
+      },
+      {
+        "slot": 3,
+        "local_lock_exhaustions": 49,
+        "local_lock_retries": 3066,
+        "role_cost_rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 46,
+              "failures": 2,
+              "last_seconds": 0.085252,
+              "max_seconds": 0.325913,
+              "saturated": false,
+              "total_seconds": 5.929748
+            },
+            "hold": {
+              "calls": 44,
+              "failures": 0,
+              "last_seconds": 0.225683,
+              "max_seconds": 0.330996,
+              "saturated": false,
+              "total_seconds": 8.376628
+            },
+            "open": {
+              "calls": 44,
+              "failures": 0,
+              "last_seconds": 0.08524,
+              "max_seconds": 0.12748,
+              "saturated": false,
+              "total_seconds": 3.866532
+            },
+            "purpose": {
+              "calls": 53,
+              "failures": 7,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 106,
+              "failures": 9,
+              "last_seconds": 0.087151,
+              "max_seconds": 0.305604,
+              "saturated": false,
+              "total_seconds": 15.448774
+            },
+            "hold": {
+              "calls": 97,
+              "failures": 0,
+              "last_seconds": 0.208172,
+              "max_seconds": 0.458814,
+              "saturated": false,
+              "total_seconds": 25.772631
+            },
+            "open": {
+              "calls": 97,
+              "failures": 0,
+              "last_seconds": 0.087141,
+              "max_seconds": 0.135099,
+              "saturated": false,
+              "total_seconds": 9.511284
+            },
+            "purpose": {
+              "calls": 109,
+              "failures": 2,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 45,
+              "failures": 8,
+              "last_seconds": 0.104088,
+              "max_seconds": 0.302616,
+              "saturated": false,
+              "total_seconds": 6.504724
+            },
+            "hold": {
+              "calls": 37,
+              "failures": 0,
+              "last_seconds": 0.278221,
+              "max_seconds": 0.44353,
+              "saturated": false,
+              "total_seconds": 11.431992
+            },
+            "open": {
+              "calls": 37,
+              "failures": 0,
+              "last_seconds": 0.096747,
+              "max_seconds": 0.127812,
+              "saturated": false,
+              "total_seconds": 3.599437
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 8,
+              "failures": 0,
+              "last_seconds": 0.194738,
+              "max_seconds": 0.292025,
+              "saturated": false,
+              "total_seconds": 1.447087
+            },
+            "hold": {
+              "calls": 8,
+              "failures": 0,
+              "last_seconds": 0.314256,
+              "max_seconds": 0.405616,
+              "saturated": false,
+              "total_seconds": 2.59098
+            },
+            "open": {
+              "calls": 8,
+              "failures": 0,
+              "last_seconds": 0.101915,
+              "max_seconds": 0.139176,
+              "saturated": false,
+              "total_seconds": 0.883646
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 211,
+              "failures": 30,
+              "last_seconds": 0.087065,
+              "max_seconds": 0.309951,
+              "saturated": false,
+              "total_seconds": 29.440004
+            },
+            "hold": {
+              "calls": 181,
+              "failures": 0,
+              "last_seconds": 0.191252,
+              "max_seconds": 0.361223,
+              "saturated": false,
+              "total_seconds": 39.711649
+            },
+            "open": {
+              "calls": 181,
+              "failures": 0,
+              "last_seconds": 0.087053,
+              "max_seconds": 0.174915,
+              "saturated": false,
+              "total_seconds": 18.579745
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "native_observation_available": true,
+        "status_native_observation_not_complete_cold_or_maturity": true,
+        "final_snapshot_sha256": "7fc4d815fa645fd571b0144711123d0e0f399f58d2aefb1176b006b09307822b"
+      }
+    ],
+    "private1641_unchanged": true,
+    "all4_snapshot_exact_original_PID_roles": true,
+    "counters_not_saturated": true,
+    "cumulative_wall_times_not_cpu_or_packet_specific": true,
+    "hold_and_acquire_include_open_do_not_add_as_independent_costs": true,
+    "hold_success_close_only_not_validation_or_custody": true,
+    "in_process_turn_and_OS_lock_owner_not_differentiated": true,
+    "full_fault_qualified": false,
+    "whole_goal_completed": false,
+    "no_Node_Runtime_Native_key_socket_recovery": true
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "combined_stage_seconds": 20.53452
+}

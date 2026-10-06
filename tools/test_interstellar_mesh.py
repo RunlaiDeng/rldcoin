@@ -51,6 +51,37 @@ class MeshTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.f = Fixture(self.temporary.name)
 
+    def test_prepare_plan_is_local_to_one_operation_and_revalidates_new_arrival(self):
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            for _ in range(8):
+                node.enqueue(self.f.frame(), destination)
+            with patch.object(node, 'first_carriage_plan', wraps=node.first_carriage_plan) as plans:
+                first = node.prepare_exchange(peer)
+                self.assertEqual(plans.call_count, 1)
+                ids = tuple(mesh.digest(t['packet']) for t in first['body']['transits'])
+                self.assertEqual(len(ids), 4)
+                before = copy.deepcopy(node.state['first_carriage'])
+                node.prepare_exchange(peer, retry_packet_ids=ids)
+                self.assertEqual(plans.call_count, 1)
+                self.assertEqual(node.state['first_carriage'], before)
+                target = node.enqueue(self.f.frame(), destination)
+                transit = copy.deepcopy(node.state['messages'][target])
+                durable = node.path.read_bytes()
+                node.state['messages'][target]['packet']['signature'] = '0' * 128
+                with self.assertRaises(ValueError):
+                    node.prepare_exchange(peer)
+                self.assertEqual(plans.call_count, 2)
+                self.assertEqual(node.path.read_bytes(), durable)
+                node.state['messages'][target] = transit
+        with self.f.node('earth') as node:
+            with patch.object(node, 'first_carriage_plan', wraps=node.first_carriage_plan) as plans:
+                node.prepare_exchange(peer)
+                self.assertEqual(plans.call_count, 1)
+            node.validate_state()
+
     def _arrival_before_recent_eviction(self, full):
         self.f.rounds();peer=self.f.identities['proxima']['node_id'];destination=self.f.identities['andromeda']['node_id']
         with self.f.node('earth') as node:

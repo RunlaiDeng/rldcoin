@@ -1,0 +1,77 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 22.156354,
+  "budget_seconds": 37.843646,
+  "duration_seconds": 12.886476,
+  "helper_exit_code": 0,
+  "stage_sha256": "de7053d9daee30dd65de50d03c3827584ac9033d6978d314aa6899dde9e556bb",
+  "helper_sha256": "87768eda34da5b3e7ab7817ab3fa188dfe69fff9cc939077c726909113011135",
+  "controller_sha256": "da4b9f2eae69b2e222e2999007e042a2b3ff3946470a2e13123bd7b2d620f48a",
+  "log_sha256": "cfccb985e9e37fd42bfe27e6d34a2aafec7816e551fb0de732a57cb30008288d",
+  "result": {
+    "completed": true,
+    "original120_model_outputs_exact": true,
+    "paired_cases": [
+      {
+        "byte_bound": 20971520,
+        "explicit_retry_count": 0,
+        "exact_signed_mock_bundle_state_and_optional_positions_equal": true,
+        "old_plan_calls": 6,
+        "candidate_plan_calls": 3,
+        "atomic_refusal_leaves_image_unchanged": true
+      },
+      {
+        "byte_bound": 20971520,
+        "explicit_retry_count": 2,
+        "exact_signed_mock_bundle_state_and_optional_positions_equal": true,
+        "old_plan_calls": 6,
+        "candidate_plan_calls": 3,
+        "atomic_refusal_leaves_image_unchanged": true
+      },
+      {
+        "byte_bound": 20971520,
+        "explicit_retry_count": 4,
+        "exact_signed_mock_bundle_state_and_optional_positions_equal": true,
+        "old_plan_calls": 4,
+        "candidate_plan_calls": 2,
+        "atomic_refusal_leaves_image_unchanged": true
+      },
+      {
+        "byte_bound": 18000,
+        "explicit_retry_count": 0,
+        "exact_signed_mock_bundle_state_and_optional_positions_equal": true,
+        "old_plan_calls": 6,
+        "candidate_plan_calls": 3,
+        "atomic_refusal_leaves_image_unchanged": true
+      },
+      {
+        "byte_bound": 18000,
+        "explicit_retry_count": 2,
+        "exact_signed_mock_bundle_state_and_optional_positions_equal": true,
+        "old_plan_calls": 6,
+        "candidate_plan_calls": 3,
+        "atomic_refusal_leaves_image_unchanged": true
+      },
+      {
+        "byte_bound": 18000,
+        "explicit_retry_count": 4,
+        "exact_signed_mock_bundle_state_and_optional_positions_equal": true,
+        "old_plan_calls": 4,
+        "candidate_plan_calls": 2,
+        "atomic_refusal_leaves_image_unchanged": true
+      }
+    ],
+    "operation_local_plan_not_cross_operation_cache": true,
+    "old_generic24_burst_counterexamples_not_claimed_fixed": true,
+    "model_sign_auth_atomic_explicit_mocks": true,
+    "no_Node_constructor_real_cold_or_live_speed_claim": true,
+    "full4retry_and_all_bounds_preserved": true,
+    "full_fault_qualified": false,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false,
+  "combined_stage_seconds": 35.04283
+}

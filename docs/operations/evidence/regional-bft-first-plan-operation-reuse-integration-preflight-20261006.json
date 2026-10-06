@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "preflight_assertion": "literal AST differed only in prepare_exchange docstring indentation caused by wrapping dedented module methods inside Node",
+  "production_write_had_not_started": true,
+  "all3_control_flow_AST_equal_excluding_docstrings": true,
+  "no_helper_Node_Native_Runtime_socket_started": true,
+  "reserved_original_once60_seconds": 0.5,
+  "original_once60_including_reserve_seconds": 35.54283
+}

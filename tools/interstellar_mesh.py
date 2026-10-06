@@ -1221,7 +1221,7 @@ class Node:
             sync_retained(self.path)
         self.state = updated
 
-    def exchange(self, peer, accepted_transits=None, retry_packet_ids=()):
+    def _exchange_plan(self, peer, accepted_transits=None, retry_packet_ids=()):
         require(peer in self.contacts and outgoing_contact(self.contacts[peer]),
                 'unconfigured outgoing exchange peer')
         require(isinstance(retry_packet_ids,tuple) and len(retry_packet_ids)<=MAX_PACKET_BATCH
@@ -1292,9 +1292,9 @@ class Node:
             transits.append(candidate)
         # At most half the original batch offers first service. The remainder
         # keeps ordinary traffic eligible, including historical retransmission.
-        first_ids=()
+        first_ids=();first_plan=None
         if len(transits)<MAX_PACKET_BATCH:
-            first_ids=tuple(self.first_carriage_plan(peer)['pending'])
+            first_plan=self.first_carriage_plan(peer);first_ids=tuple(first_plan['pending'])
             offered=0
             for candidate in eligible(i for i in first_ids if i not in retry_packet_ids):
                 if offered>=MAX_PACKET_BATCH//2 or len(transits)==MAX_PACKET_BATCH:break
@@ -1313,11 +1313,15 @@ class Node:
                 # Keep the original signed-wire ceiling and whole-packet
                 # refusal. Class preparation rotates on the following call.
                 if len(evidence.canonical({**body,'transits':transits+[candidate]}))+512>MAX_BATCH:
-                    return sign(self.key,'exchange',body)
+                    return sign(self.key,'exchange',body),first_plan
                 transits.append(candidate);remaining.append(stream)
                 if len(transits)==MAX_PACKET_BATCH:break
             streams=remaining
-        return sign(self.key, 'exchange', body)
+        return sign(self.key, 'exchange', body),first_plan
+
+    def exchange(self, peer, accepted_transits=None, retry_packet_ids=()):
+        bundle, _ = self._exchange_plan(peer, accepted_transits, retry_packet_ids)
+        return bundle
 
     def prepare_exchange(self, peer, accepted_transits=None, advance_active=False, retry_packet_ids=()):
         """Durably rotate this peer's active start and selected receipts before I/O.
@@ -1325,7 +1329,7 @@ class Node:
         Preparation grants no custody. Failed/lost sends retain every receipt
         and revisit it after bounded rotation; cold open retains these cursors.
         """
-        bundle = self.exchange(peer, accepted_transits, retry_packet_ids)
+        bundle, first_plan = self._exchange_plan(peer, accepted_transits, retry_packet_ids)
         require(len(evidence.canonical(bundle)) <= MAX_BATCH, 'exchange bytes exceed bound')
         # The diagnostic global cursor preserves its historical cadence.
         # Active selection depends only on this prepared peer, including failed
@@ -1343,7 +1347,7 @@ class Node:
                                           + len(bundle['body']['receipts'])-wanted) % (2**63)
         pending = sorted(self.state['messages'])
         carried_rows=[t for t in bundle['body']['transits'] if digest(t['packet']) not in retry_packet_ids]
-        first_plan=self.first_carriage_plan(peer) if carried_rows else None
+        require(not carried_rows or first_plan is not None, 'prepared first plan missing')
         offered=[]
         for transit in carried_rows:
             ident=digest(transit['packet'])
@@ -1376,7 +1380,7 @@ class Node:
         # Persist the offer only after this complete bounded preparation.
         # A full retry leaves ordinary first-service metadata untouched.
         if len(bundle['body']['transits'])<MAX_PACKET_BATCH or carried_rows:
-            first=first_plan or self.first_carriage_plan(peer)
+            first=first_plan if first_plan is not None else self.first_carriage_plan(peer)
             carried={digest(t['packet']) for t in carried_rows}
             first['pending']=[i for i in first['pending'] if i not in carried]
             first['arrivals']=[i for i in first['arrivals'] if i not in carried]

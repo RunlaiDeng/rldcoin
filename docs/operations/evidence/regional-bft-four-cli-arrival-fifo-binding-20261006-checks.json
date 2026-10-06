@@ -1,0 +1,13 @@
+{
+  "completed": false,
+  "budget_seconds": 120,
+  "attempts_used": 1,
+  "duration_seconds": 22.719077,
+  "stage_sha256": "fbd99662edacfc251f667ac1766a65d26dc42a84c9202e5117f8e9cc8b85a688",
+  "controller_sha256": "5cd4e70bb303238457479e1f171fdffd513a175293e457282f262bd4bb971623",
+  "result": null,
+  "failure": "NameError: name 'json' is not defined",
+  "real_native_runtime_socket_sign_calls": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

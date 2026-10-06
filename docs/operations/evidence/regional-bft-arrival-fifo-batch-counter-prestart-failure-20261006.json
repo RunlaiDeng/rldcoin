@@ -1,0 +1,10 @@
+{
+  "completed": false,
+  "error": "unterminated string literal (detected at line 4) (<unknown>, line 4)",
+  "before_helper_launch": true,
+  "controller_sha256": "b589adebf0f81e09c43bafb9ea21210e3933c4d7f3708f6b4da7b6c99fe1efb5",
+  "helper_sha256": "d9069eac14460dc5ade3c09756dd70cb5dbb04862708558bdeb1d1430b17b705",
+  "reserved_original_once60_seconds": 0.5,
+  "no_Native_Runtime_Node_socket_sign_started": true,
+  "full_fault_qualified": false
+}

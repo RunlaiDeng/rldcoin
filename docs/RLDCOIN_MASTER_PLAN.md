@@ -1,5 +1,39 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 操作内共享已认证计划：实际修复与有限回归
+
+**完整fault仍FAIL/OPEN**。原600/612.570秒/6152、新V13原180/201.364秒/1641及6657/1773等全部失败保留，原收款成熟/keyless drain/all12完整Native cold/守恒未完成。原owner请求、600阶段/60轮/24height/maturity2/quorum3及全部容量保持，禁止重开/恢复/复签/退款/复制失败保管。下方“全部通过”只对应准确历史来源/有限scope；下方前一检查点的“下一仲裁模型未启动”是创建时快照，现已完成。
+
+空闲lease、持续可运行角色需求的实际仲裁代码模型0.678秒检查540起态/1071状态，未发现全拒绝或无限非outbound循环，模型内最多3个其他成功grant后outbound可用；实际Node open成功是模型假设，不证明OS/成本/现场公平。复用既有四PID成本快照0.684秒核验：中间节点累计本地尝试耗尽427/500，outbound acquire失败130/253与158/267，hold最大0.774/0.749秒。计数未饱和、1641字节未变；acquire/hold都包含open，不能相加为独立耗时。它们是累计墙钟而非CPU/准确票据延迟，OS锁持有者与进程内仲裁仍未分开。
+
+两个准确停后transport image仅借用纯方法、实际传输认证，不构造Node/Native/Runtime、不读钥或写保管：每次first计划分别有47/44个transit_check调用，重算计划完全相同；首/次墙钟为0.256/0.035与0.231/0.034秒，缓存命中未独立测，不称性能benchmark或现场唯一原因。依此选择最小修复：`tools/interstellar_mesh.py`私有_exchange_plan把一个操作内认证计划传给完整prepare，public exchange仍返回原签署bundle；无跨操作缓存、新metadata或storage/wire/scheduler版本改变。完整4retry仍不推进first/ordinary，原认证/route/hop/receipt/suppression/原子发布与所有界限保持。
+
+候选只运行新内核，复用旧120精确结果：12.886秒核对同120输出，另6对普通/partial2/full4retry/收紧字节/atomic失败的bundle、durable image及optional positions一致且计划调用减少。原一次60判别/候选合计35.543秒，含两个prestart保守预留；AST literal因docstring缩进差异的接入preflight在源写入前拒绝，原记录保留，剔除docstring后3方法控制AST准确相同。第一未执行helper的original_size路径在预检改为原绑定294560bytes，原源保留，没有启动失败夹具。19/24到达突发+重试缺席反例与原120有限通过都保持；此性能修复不宣称消除通用24准备缺口或付款故障。
+
+实际接入后必要新一次60相关回归 **102/102 PASS25.383秒，helper0**：真实签署ordinary一计划、full4retry零计划、新到篡改下一操作拒绝且磁盘不变、真实冷重开/全部Mesh/TCP/inspection/fsync/原子/容量/负例保持；1063file/2link typed seal不跟随，原1773/1641未变，所有自有TCP线程停止、无活动线程、无Native/货币启动或旧钥/旧Node重开。新实际Python192仅两源改变，Native89fd1e24fe…/Core171de74cf78…/actualCLIbef4d5c7…未变；16最新代码/驱动source-only delta保留，无币/钥/保管/二进制复制。不能把102检查或关闭线程称Native成熟/fullfault或实际提速。
+
+**下一仅一次120最终当前源码/独立驱动绑定，未启动**：54普通/5typed no-follow库存、192/89/171/actualbinary、120当前实际模型及22禁改反例；actual模型新adapter仅补私有_exchange_plan别名。原17setup/13import/15mature/all8固定头完整cold/envelope/caller/owner/守恒/stop不变；首源/字节/角色/AST/model/负例/库存不一致、有限完成或预算退出，无实际Native/Runtime/Node/socket/sign启动。绑定本身不分配新180/600，仍先需当前源码有界loaded成本判别，不原样长重跑或加deadline。
+
+采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及全部S/R/I/A–G/N/P，goalactive、旧goal前继已报告不改。VALUE-STRICT-01两基线/120.019耗尽独立OPEN，Core/value/lock未变、原120诊断/300修复触发未满足，不由地区/运输替代。长期/PQ/独立保管/physical/复合profile保持OPEN。命令全部显式newrldcoin，持久cwd仍UI待修；正文/PDF/官网/Library、服务器/账户/权限/资金/外联/push/清理不扩展。
+[实际修复、完整失败保留及下一绑定](operations/evidence/regional-bft-first-plan-operation-reuse-repair-outcome-20261006.json)。
+
+## 2026-10-06 V8原生终态、批次纠正与到达突发反例
+
+**完整fault仍FAIL/OPEN**：原runtime-v4 600秒预算耗尽、含收尾612.570秒、helper1、6152封存，正常停止/无forced/cleanup failure；receive-v7 6657、V12 1773及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24height/maturity2/quorum3及容量不变。下方历史“全部通过”只对应准确历史来源/有限scope，不能覆盖后续失败或全项目。
+
+V8最终binding首轮模型adapter缺json **FAIL22.719秒**，失败源码保留；只补import后，原剩余预算内 **PASS54.065秒，合计76.784/原120**。实际内核同120输入、22禁改拒绝、53普通/4typed no-follow seal未变；整份helper/独立controller控制流、17setup/13import/15mature/all8固定头cold/caller/owner/守恒条件不变。不是实际付款资格。
+
+必要新V13四实际CLI组件 **FAIL原180/201.364秒含正常收尾**，ScopeDeadline/helper1，四CLI exit0、无强制/guardian/cleanup/pin错误，1641封存。Native成熟15/all8完整cold未完成。伴随停后[13,13,13,14]仅为参考JSON，不能称Native终局或成熟；永不重开/恢复/复签/退款/复制这套失败保管。当前Python19250bed8b5…、Native89fd1e24fe…、Core171de74cf78…、actualCLIbef4d5c7…准确未改；475源码和最后2诊断源另作source-only封存，不复制币/钥/保管/二进制。
+
+只读参考parent13/round0：认证652archive indexes、47完整Vote transport copies、21路径（12Prepare/9Commit），15完整伴随信封、5缺目的保管、1目的保管但缺伴随接入。原生key/subgroup/lock/head/cold权威不由Python签名字节代替；13591闭合连续journal仍deadlineFAIL，完整verifier仍拒绝。原“112 positive preparations”实际是112包事件，准确slot/peer/attempt为28完整批次；1→2 Commit首次前43次prepare拒绝，2→0 Commit观察22批次/44拒绝仍未携带、停后pending零基22。完整组须全在共同前缀且有contact_start；没有首次准备时等待区间只到前缀终点。旧报告保留，重复四ID仅retry-compatible，不证明私有hint。1→2保管后目的自身连续流仅0.527秒，不能认定长期Native等待；停后metadata不重建历史live资格。
+
+原一次60内加入反例，当前合计 **19.173秒**（含prestart SyntaxError保守0.5预留），未重置预算。第一突发模型seed随模式变化，比较差异不资格，原件保留；修正同初始image的24处理 **4.909秒完成，19组在原24准备窗口仍缺目标**。32条先于目标到达即有无retry反例；无先到突发但每普通失败完整4retry也有反例。保持32pending/256active/2of4、原wire/state/原子与完整重试规则，最大包26370bytes，明确auth/sign/atomic mocks；canonical roundtrip非真实Node冷开、准备次数非高度或秒。原120通过只适用于原输入，不能推出通用24次服务界。进一步同image固定队列零基22、稳定直达/无receipt/suppression/新到达的8处理 **0.514秒通过**：8–11成功普通准备、15–21含重试总准备内携带，两次原子拒绝不推进。这个模型中的固定队列不推进假设被否证，现场唯一原因/持续资格与实际可用普通机会仍unknown。
+
+**下一仅原60剩余40.827秒/一次，未启动**：借用实际Server._claim_mesh_turn的离线可运行角色模型，核查持续ordinary/outbound/deferred-input/handler需求与空闲lease边界能否全部拒绝或持续跳过outbound。首源/角色/状态/界限不一致、确切反例、有限状态完成或剩余预算即退出；无Server/Node构造、Native/Runtime/钥/socket/旧保管。找到可达反例才选最小仲裁修复；无反例则转单独测loaded open/hold/prepare成本，不按日志缺项归因。当前新180/full600未分配，不原样重跑、不加deadline。完整资格仍需原成熟/票数/容量/冷验。
+
+VALUE-STRICT-01两基线与120.019耗尽独立OPEN，Core/value/lock未变、原120诊断/300修复触发未满足，地区/运输不替代。长期/PQ/独立保管/physical/复合profile及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持；采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…，goalactive，goal旧c906/f825已报告不改。命令全部显式新rldcoin，持久cwd仍UI待修；正文/PDF/官网/Library、服务器、资金、账号/权限、push、清理不扩展。
+[准确终态、反例、计数纠正和下一判别](operations/evidence/regional-bft-arrival-fifo-terminal-and-burst-outcome-20261006.json)。
+
 ## 2026-10-06 首次准入等待按到达顺序持久保留（V8）
 
 **完整fault仍FAIL/OPEN**。原runtime-v4 600/612.570秒/6152、receive-v7 600/6657、最近route-offer-v12 180/201.131秒/1773及全部旧失败保持。原收款成熟、keyless drain、all12完整cold/守恒未完成；原owner请求、600阶段/60轮/24height/maturity2/quorum3及容量不变。下方历史“全部通过”只对应当段准确来源和有限scope，不能覆盖后续失败或总验收。
