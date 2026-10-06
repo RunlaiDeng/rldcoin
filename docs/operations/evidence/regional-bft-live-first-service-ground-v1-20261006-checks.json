@@ -1,0 +1,755 @@
+{
+  "format": "RLD-LIVE-FIRST-SERVICE-GROUND-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 6.49372,
+  "helper_exit_code": 0,
+  "helper_terminal": true,
+  "budget_exhausted": false,
+  "forced_helper": false,
+  "pin_error": null,
+  "stage_sha256": "9322d086e058ae57da622a44d193aa0dac8c5d6d74bb74c950c4b9b5e14e6edd",
+  "helper_sha256": "bc2cf736fc7e947dc247a08c409f8526554da6d9684944dacdd02e80adb01df3",
+  "controller_sha256": "d11988f5b97497273db2700f13c135dabfac3afc75e5611df5b2601f48243b28",
+  "log_sha256": "de4f59753c0b55e5296a38e48e77bc2aaaf657e1430ceda00dd4830cd836f03f",
+  "stopped_inventory_sha256": "bea01d61f50e718deff3a6fb65418730458c79dea8ecd2d2c1e72f253d6a7f67",
+  "stopped_files": 16,
+  "result": {
+    "actual_original_functions_called_no_crypto_or_atomic_mock": true,
+    "actual_outbound_owners": 3,
+    "actual_pinned_three_peer_TLS13_no_downgrade": true,
+    "actual_same_nonce_twohop_destination_receipt_verified": true,
+    "bootstrap_controller_preparations": 6,
+    "completed": true,
+    "controller_setup_not_ordinary_transport_proof": true,
+    "costs": {
+      "andromeda": {
+        "acquisition_includes_open": true,
+        "duration_is_wall_not_cpu": true,
+        "format": "RLD-MESH-LEASE-COST-V1",
+        "hold_includes_open_and_close": true,
+        "hold_success_is_close_only": true,
+        "node_open_includes_validation": true,
+        "process_local_only": true,
+        "rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "hold": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "open": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "hold": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "open": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 8,
+              "failures": 0,
+              "last_seconds": 0.120329,
+              "max_seconds": 0.120329,
+              "saturated": false,
+              "total_seconds": 0.143385
+            },
+            "hold": {
+              "calls": 8,
+              "failures": 0,
+              "last_seconds": 0.339349,
+              "max_seconds": 0.339349,
+              "saturated": false,
+              "total_seconds": 0.596648
+            },
+            "open": {
+              "calls": 8,
+              "failures": 0,
+              "last_seconds": 0.08327,
+              "max_seconds": 0.08327,
+              "saturated": false,
+              "total_seconds": 0.106262
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "hold": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "open": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 27,
+              "failures": 0,
+              "last_seconds": 0.033893,
+              "max_seconds": 0.190909,
+              "saturated": false,
+              "total_seconds": 0.883258
+            },
+            "hold": {
+              "calls": 27,
+              "failures": 0,
+              "last_seconds": 0.197058,
+              "max_seconds": 0.197058,
+              "saturated": false,
+              "total_seconds": 1.290171
+            },
+            "open": {
+              "calls": 27,
+              "failures": 0,
+              "last_seconds": 0.033879,
+              "max_seconds": 0.079487,
+              "saturated": false,
+              "total_seconds": 0.743427
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "timing_is_authority": false
+      },
+      "earth": {
+        "acquisition_includes_open": true,
+        "duration_is_wall_not_cpu": true,
+        "format": "RLD-MESH-LEASE-COST-V1",
+        "hold_includes_open_and_close": true,
+        "hold_success_is_close_only": true,
+        "node_open_includes_validation": true,
+        "process_local_only": true,
+        "rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "hold": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "open": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "hold": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "open": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 7,
+              "failures": 0,
+              "last_seconds": 0.071562,
+              "max_seconds": 0.071562,
+              "saturated": false,
+              "total_seconds": 0.079818
+            },
+            "hold": {
+              "calls": 7,
+              "failures": 0,
+              "last_seconds": 0.144813,
+              "max_seconds": 0.144813,
+              "saturated": false,
+              "total_seconds": 0.160641
+            },
+            "open": {
+              "calls": 7,
+              "failures": 0,
+              "last_seconds": 0.071552,
+              "max_seconds": 0.071552,
+              "saturated": false,
+              "total_seconds": 0.079744
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "hold": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "open": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 9,
+              "failures": 0,
+              "last_seconds": 0.056517,
+              "max_seconds": 0.10781,
+              "saturated": false,
+              "total_seconds": 0.737076
+            },
+            "hold": {
+              "calls": 9,
+              "failures": 0,
+              "last_seconds": 0.108727,
+              "max_seconds": 0.263753,
+              "saturated": false,
+              "total_seconds": 1.751596
+            },
+            "open": {
+              "calls": 9,
+              "failures": 0,
+              "last_seconds": 0.056506,
+              "max_seconds": 0.107798,
+              "saturated": false,
+              "total_seconds": 0.73698
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "timing_is_authority": false
+      },
+      "proxima": {
+        "acquisition_includes_open": true,
+        "duration_is_wall_not_cpu": true,
+        "format": "RLD-MESH-LEASE-COST-V1",
+        "hold_includes_open_and_close": true,
+        "hold_success_is_close_only": true,
+        "node_open_includes_validation": true,
+        "process_local_only": true,
+        "rows": {
+          "carriage": {
+            "acquire": {
+              "calls": 5,
+              "failures": 1,
+              "last_seconds": 0.20063,
+              "max_seconds": 0.202658,
+              "saturated": false,
+              "total_seconds": 0.871319
+            },
+            "hold": {
+              "calls": 4,
+              "failures": 0,
+              "last_seconds": 0.150619,
+              "max_seconds": 0.150619,
+              "saturated": false,
+              "total_seconds": 0.420007
+            },
+            "open": {
+              "calls": 4,
+              "failures": 0,
+              "last_seconds": 0.121958,
+              "max_seconds": 0.121958,
+              "saturated": false,
+              "total_seconds": 0.333783
+            },
+            "purpose": {
+              "calls": 5,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "receive": {
+            "acquire": {
+              "calls": 6,
+              "failures": 1,
+              "last_seconds": 0.328175,
+              "max_seconds": 0.328175,
+              "saturated": false,
+              "total_seconds": 1.178814
+            },
+            "hold": {
+              "calls": 5,
+              "failures": 0,
+              "last_seconds": 0.249215,
+              "max_seconds": 0.249215,
+              "saturated": false,
+              "total_seconds": 1.024598
+            },
+            "open": {
+              "calls": 5,
+              "failures": 0,
+              "last_seconds": 0.125303,
+              "max_seconds": 0.125303,
+              "saturated": false,
+              "total_seconds": 0.454103
+            },
+            "purpose": {
+              "calls": 6,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-handler": {
+            "acquire": {
+              "calls": 25,
+              "failures": 9,
+              "last_seconds": 0.270889,
+              "max_seconds": 0.270889,
+              "saturated": false,
+              "total_seconds": 2.407875
+            },
+            "hold": {
+              "calls": 16,
+              "failures": 0,
+              "last_seconds": 0.180984,
+              "max_seconds": 0.180984,
+              "saturated": false,
+              "total_seconds": 0.543066
+            },
+            "open": {
+              "calls": 16,
+              "failures": 0,
+              "last_seconds": 0.077031,
+              "max_seconds": 0.091026,
+              "saturated": false,
+              "total_seconds": 0.297278
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-input": {
+            "acquire": {
+              "calls": 7,
+              "failures": 4,
+              "last_seconds": 0.12527,
+              "max_seconds": 0.208659,
+              "saturated": false,
+              "total_seconds": 1.198906
+            },
+            "hold": {
+              "calls": 3,
+              "failures": 0,
+              "last_seconds": 0.153472,
+              "max_seconds": 0.153472,
+              "saturated": false,
+              "total_seconds": 0.288915
+            },
+            "open": {
+              "calls": 3,
+              "failures": 0,
+              "last_seconds": 0.125258,
+              "max_seconds": 0.125258,
+              "saturated": false,
+              "total_seconds": 0.248205
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          },
+          "tcp-outbound": {
+            "acquire": {
+              "calls": 9,
+              "failures": 3,
+              "last_seconds": 0.120527,
+              "max_seconds": 0.234849,
+              "saturated": false,
+              "total_seconds": 1.538188
+            },
+            "hold": {
+              "calls": 6,
+              "failures": 0,
+              "last_seconds": 0.19166,
+              "max_seconds": 0.21413,
+              "saturated": false,
+              "total_seconds": 0.956157
+            },
+            "open": {
+              "calls": 6,
+              "failures": 0,
+              "last_seconds": 0.120517,
+              "max_seconds": 0.120517,
+              "saturated": false,
+              "total_seconds": 0.445559
+            },
+            "purpose": {
+              "calls": 0,
+              "failures": 0,
+              "last_seconds": 0.0,
+              "max_seconds": 0.0,
+              "saturated": false,
+              "total_seconds": 0.0
+            }
+          }
+        },
+        "timing_is_authority": false
+      }
+    },
+    "costs_not_additive_or_unique_OS_cause": true,
+    "custody_copies": 0,
+    "first_actual_target_ordinary_ordinal": 2,
+    "first_actual_target_replay_count": 0,
+    "full_fault_qualified": false,
+    "ground_only_not_native_payment_or_bft": true,
+    "input_pending": 17,
+    "large_ground_payload_padding_bytes": 163840,
+    "native_runtime_starts": 0,
+    "native_value_owner_signs": 0,
+    "observer_includes_extra_measurement_cost_not_speed_benchmark": true,
+    "old_failed_fixture_opens": 0,
+    "ordinary_mesh_selection": {
+      "carriage": 4,
+      "receive": 5,
+      "refused": 2
+    },
+    "original_all17_source_and_middle_packets_retained": true,
+    "original_batch4_first2_and_wire_limits": true,
+    "original_lock_seconds": 0.2,
+    "original_socket_seconds": 3,
+    "original_wrappers_restored": true,
+    "phase_elapsed_seconds": {
+      "actual_ordinary_target_prepared_and_destination_custody": 4.475488,
+      "all_real_services_closed_wrappers_restored": 5.298143,
+      "fresh_authenticated17_input_and_observers_ready": 1.663537,
+      "three_fresh_ground_cold_complete_bytes_unchanged": 5.660127
+    },
+    "preparations": [
+      {
+        "actual_atomic_returns": 1,
+        "actual_target_candidate_suppressed": false,
+        "actual_target_hop_signed": 0,
+        "advance_active": true,
+        "after": {
+          "arrival_count": 0,
+          "pending_count": 13,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": 2,
+          "target_prepared": false
+        },
+        "before": {
+          "arrival_count": 0,
+          "pending_count": 0,
+          "target_arrival_position": null,
+          "target_observed": false,
+          "target_pending_position": null,
+          "target_prepared": false
+        },
+        "complete_bundle_bytes": 1182578,
+        "completed": true,
+        "durable_metadata": {
+          "arrival_count": 0,
+          "pending_count": 13,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": 2,
+          "target_prepared": false
+        },
+        "ordinary_ordinal": 1,
+        "ordinary_outbound": true,
+        "original_prepare_plus_observer_seconds": 0.107955,
+        "outbound_owner": true,
+        "plan_calls": 1,
+        "provisional_pending_count": 17,
+        "provisional_target_pending_position": 6,
+        "provisional_target_prepared": false,
+        "retry_count": 0,
+        "selected_count": 4,
+        "selected_target": false,
+        "suppression_count": 0,
+        "target_in_retry": false
+      },
+      {
+        "actual_atomic_returns": 1,
+        "actual_target_candidate_suppressed": false,
+        "actual_target_hop_signed": 2,
+        "advance_active": true,
+        "after": {
+          "arrival_count": 0,
+          "pending_count": 9,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": null,
+          "target_prepared": true
+        },
+        "before": {
+          "arrival_count": 0,
+          "pending_count": 13,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": 2,
+          "target_prepared": false
+        },
+        "complete_bundle_bytes": 1187741,
+        "completed": true,
+        "durable_metadata": {
+          "arrival_count": 0,
+          "pending_count": 9,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": null,
+          "target_prepared": true
+        },
+        "ordinary_ordinal": 2,
+        "ordinary_outbound": true,
+        "original_prepare_plus_observer_seconds": 0.126579,
+        "outbound_owner": true,
+        "plan_calls": 1,
+        "provisional_pending_count": 13,
+        "provisional_target_pending_position": 2,
+        "provisional_target_prepared": false,
+        "retry_count": 0,
+        "selected_count": 4,
+        "selected_target": true,
+        "suppression_count": 4,
+        "target_in_retry": false
+      },
+      {
+        "actual_atomic_returns": 1,
+        "actual_target_candidate_suppressed": false,
+        "actual_target_hop_signed": 0,
+        "advance_active": true,
+        "after": {
+          "arrival_count": 0,
+          "pending_count": 5,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": null,
+          "target_prepared": true
+        },
+        "before": {
+          "arrival_count": 0,
+          "pending_count": 9,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": null,
+          "target_prepared": true
+        },
+        "complete_bundle_bytes": 1192905,
+        "completed": true,
+        "durable_metadata": {
+          "arrival_count": 0,
+          "pending_count": 5,
+          "target_arrival_position": null,
+          "target_observed": true,
+          "target_pending_position": null,
+          "target_prepared": true
+        },
+        "ordinary_ordinal": 2,
+        "ordinary_outbound": false,
+        "original_prepare_plus_observer_seconds": 0.082945,
+        "outbound_owner": false,
+        "plan_calls": 1,
+        "provisional_pending_count": 9,
+        "provisional_target_pending_position": null,
+        "provisional_target_prepared": true,
+        "retry_count": 0,
+        "selected_count": 4,
+        "selected_target": false,
+        "suppression_count": 8,
+        "target_in_retry": false
+      }
+    ],
+    "private_observer_rows_complete": true,
+    "process_cpu_seconds": 6.165341,
+    "services_and_owned_threads_stopped": true,
+    "target_initial_zero_based_pending_position": 6,
+    "three_fresh_ground_full_cold_and_bytes_unchanged": true,
+    "trace_events": 290,
+    "trace_no_gap_or_rejection": true,
+    "whole_goal_completed": false
+  },
+  "latest_failed1816_bytes_unchanged": true,
+  "old_failed_scopes_not_reopened": true,
+  "failed_scope_sealed": false,
+  "failed_scope_never_reopen": false,
+  "native_payment_maturity_qualified": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

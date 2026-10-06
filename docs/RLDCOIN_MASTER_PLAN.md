@@ -1,5 +1,23 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 真实地面first-service：准备推进完成、拒绝推测调度修复
+
+**完整fault仍FAIL/OPEN**：原runtime-v4 600/612.570秒/6152、V15 180/202.220秒/1816及全部旧失败保留；原收款成熟、keyless drain、all12完整Native cold/守恒未完成。原owner请求、600阶段/60轮/24高度/maturity2/quorum3与全部容量保持。历史“全部通过”只指其对应来源和有限scope；下方“下一地面60未启动”为创建时快照，现已终态。
+
+最小新地面范围 **PASS6.494/原一次60，helper0，16文件封存、无强停或pin异常**。三个全新pinned TLS1.3节点、17个约165KB payload的ground-only source-finality包、3真实outbound owner+普通middle receive/carriage。初次两跳输入用6个controller setup交换取得，明确不算ordinary首次运输；随后真实source重放目标2次，其中1次精确nonce中间保管，live middle→destination请求nonce与目的地收据关联，完整原packet/frame/两跳visited及签名收据核验。没有复制失败保管、旧投票/钥或启动Native/BFT/owner签署。
+
+外部窄wrapper每次调用原prepare/first_plan/sign/atomic且保留原参数与返回值，没有crypto/fsync mock。实际第一次provisional pending17/目标位置6→durable pending13/位置2；第2普通轮次目标入选，pending9、prepared=true，实际hop候选不在suppression中，每次实际atomic返回1。记录还保留1个outbound owner释放后的shutdown handler准备，**不算第3 ordinary轮次**。普通receive5/carriage4成功；已有0.2锁/3秒socket与batch4/first2不变。角色耗时包含open及观察额外计算，不能相加、当CPU或判定唯一OS原因。
+
+所有服务/owned线程关闭、wrapper恢复原函数，三新地面节点清空witness后完整Mesh cold、所有source/middle17原包留存及私有字节不变；旧1816库存前后不变，56+7旧seal文件hash保持，复用准确已完成全库存来源，不重复原600/长测。仅两个source-only driver快照，不复制钥/币/账本/保管/binary。当前192Python/89Native/171Core/actualCLI未改。
+
+该实测否证“稳定17pending/目标6+实际地面并发天然长期跳过目标”，**不证明Native sustained-load或原故障资格**。新三地面store的arrival/LRU/prepared与旧Native50active/240receipt图像不同，2个真实轮次与4个静态模型轮次不是配对提速benchmark。没有依据就不改scheduler；原Native现场38个无目标batch的真正live first-plan/retry/suppression/atomic变化仍未观察。
+
+**下一仅source-only诊断接入口资格一次60/一次，未启动；新180/600均0**：已只读确认actualCLI的17参数合约及既有`--transport-python`入口，由原Rust逻辑映射为`regional_contact_node.py`既有参数，可由新fixture-only Python entry安装调用原函数的observer，保持Native权限/参数与旧trace容量。先做准确新scope/path/源码/driver/argv/角色guard、完整bounded记录/丢失显式拒绝、正常与full4retry输出/参数/返回一致性和负例，不调用contact main/Native/Runtime/Node/socket/sign。首source/path/argv/role/字节/negative/容量/gap不一致、有限资格完成或原60退出。资格后才另绑定准确最终source/binary/controller并决定必要新diagnostic Native scope，用真实准备前后数据区分迟准入/抑制/重放/写入失败与Native接收成本；当前未分配长范围，旧失败不重开。
+
+采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…与全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8。goalactive、旧goal前继已报告不改；VALUE-STRICT-01两基线/120.019耗尽独立OPEN，Core/value/lock未改、原120诊断/300修复触发未满足，不以地区/运输替代或豁免。长期/PQ/独立保管/physical/组合profile继续OPEN。所有项目命令显式新rldcoin，持久cwd仍UI待修；正文/PDF/官网/Library、服务器/账户/权限/资金/外联/push/清理不扩展。
+[真实准备、nonce/cold/停止证据与下一source-only资格](operations/evidence/regional-bft-live-first-service-ground-outcome-20261006.json)。
+
+
 ## 2026-10-06 当前源码绑定、一次原生终态与目的地转发反例
 
 **完整fault仍FAIL/OPEN**。已读实际原runtime-v4结果：原600秒预算耗尽，612.570秒含收尾、helper1、6152文件封存；owned节点/relays停止、cleanup null、无强停。隔离/本地付款/追赶的有限通过不能替代原收款成熟、keyless drain、all12完整Native cold/守恒。全部旧失败及owner请求保留，600阶段/60轮/24高度/maturity2/quorum3/容量不变。历史“全部通过”只指其对应历史来源和有限scope，后续失败仍失败；下方“下一120未启动”是创建时快照，现已终态。
