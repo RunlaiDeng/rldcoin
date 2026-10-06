@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "error": "KeyError first_carriage: packed mesh state is storage reference; no failed Node/Native/Runtime constructor",
+  "exit_code": 1,
+  "conservative_seconds": 0.3,
+  "original20_cumulative": 1.50678,
+  "reader": "tmp/default-relay-20260930/observe-bft-prepare-edge-v25-20261006.py",
+  "repair": "read bound mesh state through free load_state_storage as matrix did, no Node constructor or writes"
+}

@@ -1,0 +1,36 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 32.174686,
+  "tests": [
+    "test_prepared_prepare_keeps_spare_after_native_current_commit_hint",
+    "test_prepared_unreceipted_commit_keeps_spare_slot_after_full_retry",
+    "test_current_signed_commit_gets_spare_slot_before_newer_waiters",
+    "test_commit_hint_capacity_eviction_and_contact_scope_fall_back",
+    "test_older_unserved_gets_alternate_priority_pair_without_displacing_offers",
+    "test_older_pending_advances_under_new_arrivals_and_full_replay",
+    "test_promoted_latest_waiter_keeps_priority_until_prepared",
+    "test_latest_waiting_arrival_gets_spare_slot_without_displacing_pending_pair",
+    "test_new_arrival_uses_ordinary_class_slot_with_full_waiting_queue",
+    "test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open",
+    "test_arrival_waiting_survives_full_admission_queue_and_cold_open",
+    "test_arrival_metadata_schema_and_original_capacity_refuse_without_write",
+    "test_first_offer_queue_is_scoped_to_actual_outgoing_branch",
+    "test_ineligible_waiting_metadata_changes_only_after_atomic_preparation",
+    "test_first_offer_survives_recent_eviction_and_cold_positions",
+    "test_first_offer_authentication_and_failed_atomic_do_not_publish_metadata",
+    "test_first_offer_metadata_schema_and_original_capacities_refuse",
+    "test_retry_preserves_ordinary_positions_and_retains_original_packets",
+    "test_retry_still_authenticates_and_obeys_suppression",
+    "test_receipt_only_archive_then_original_transit_retains_arrival_order_on_cold_open"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "2b74f1c537c591c48db486968af8b9c0de3f99362535a3f9bb5a4524d3dccede",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "7f5ac72f3b8830c2608531ff692278e3917eb5257a6125280fbb77512c452fd1",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "05ead813b928bcd509e359b552dba8bfdb086cb267597bebb1ff3a5f0f3fbe4c",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-prepare-related-v16-20261006.py": "1cec8cd9e8ec150bafeab51d5dec2e7a64293e83146d7dd61e81f3d2c127f286",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-current-prepare-ground-20261006.py": "0b6d89d365380983259fa86324f02717ed879abca008641e36e5124785a8e56f"
+  },
+  "exit": "first guard failure or original10 deadline; retain failure; no duplicate same-source attempt; no old fixture constructors; no Native/runtime/socket calls"
+}

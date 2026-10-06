@@ -1,0 +1,312 @@
+{
+  "completed": true,
+  "exact_target": "a33857b65ad4f89525a49d0b294ba62636ad5fefad9757e03d8c742186c37898",
+  "source": 3,
+  "destination": 1,
+  "enqueued": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "new180": 0,
+  "new600": 0,
+  "packet_id": "548841962e56546ee0a18efc527290d7d4bd0aeee36c0ac86c3a742bf46ba886",
+  "actual_first_hop": "5d510d5d9fa24f8ce650b7045337b86797cf35fa7c088fe1cb25c825e4fb16e4",
+  "prepared_count": 20,
+  "selected": [
+    {
+      "sequence": 18,
+      "position": 1,
+      "retries": 0
+    },
+    {
+      "sequence": 19,
+      "position": 1,
+      "retries": 4
+    },
+    {
+      "sequence": 36,
+      "position": 2,
+      "retries": 0
+    },
+    {
+      "sequence": 37,
+      "position": 2,
+      "retries": 4
+    },
+    {
+      "sequence": 50,
+      "position": 2,
+      "retries": 0
+    },
+    {
+      "sequence": 51,
+      "position": 2,
+      "retries": 4
+    },
+    {
+      "sequence": 60,
+      "position": 0,
+      "retries": 0
+    },
+    {
+      "sequence": 61,
+      "position": 0,
+      "retries": 4
+    },
+    {
+      "sequence": 76,
+      "position": 0,
+      "retries": 0
+    },
+    {
+      "sequence": 77,
+      "position": 0,
+      "retries": 4
+    },
+    {
+      "sequence": 88,
+      "position": 2,
+      "retries": 0
+    },
+    {
+      "sequence": 89,
+      "position": 2,
+      "retries": 4
+    },
+    {
+      "sequence": 100,
+      "position": 0,
+      "retries": 0
+    },
+    {
+      "sequence": 117,
+      "position": 0,
+      "retries": 0
+    },
+    {
+      "sequence": 118,
+      "position": 0,
+      "retries": 4
+    },
+    {
+      "sequence": 127,
+      "position": 1,
+      "retries": 0
+    },
+    {
+      "sequence": 128,
+      "position": 1,
+      "retries": 4
+    },
+    {
+      "sequence": 133,
+      "position": 1,
+      "retries": 0
+    },
+    {
+      "sequence": 134,
+      "position": 1,
+      "retries": 4
+    },
+    {
+      "sequence": 139,
+      "position": 1,
+      "retries": 0
+    }
+  ],
+  "first_wait_seconds": 0.6916925830300897,
+  "pending_or_arrival_records": 0,
+  "source_final_pending_position": null,
+  "source_final_prepared": true,
+  "contacts": [
+    {
+      "attempt": 18,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 19,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 39,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 40,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 56,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 57,
+      "request_sent": true,
+      "failures": []
+    },
+    {
+      "attempt": 67,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 68,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 86,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 87,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 98,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 99,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 113,
+      "request_sent": true,
+      "failures": []
+    },
+    {
+      "attempt": 132,
+      "request_sent": false,
+      "failures": [
+        {
+          "failure_stage": "connect",
+          "error_class": "SSLEOFError"
+        }
+      ]
+    },
+    {
+      "attempt": 133,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 142,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 143,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 148,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 149,
+      "request_sent": true,
+      "failures": [
+        {
+          "failure_stage": "response_authentication",
+          "error_class": "ValueError"
+        }
+      ]
+    },
+    {
+      "attempt": 156,
+      "request_sent": true,
+      "failures": []
+    }
+  ],
+  "opportunity_seconds_after_enqueue": 132.49338670802535,
+  "duration_seconds": 0.364465,
+  "combined_original20_seconds": 1.871249,
+  "stage_sha256": "3da4c284a7edc408341020025555a83bc31e54a8606cf0183dcfe34c6c46b481",
+  "consumed_bytes_unchanged": true,
+  "unique_maturity_failure_cause_proved": false
+}

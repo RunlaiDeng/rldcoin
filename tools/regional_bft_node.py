@@ -35,7 +35,7 @@ MAX_BROADCAST_QUIET_CALLS = 16
 
 
 def commit_carriage_frames(messages, context, keys, currency, region):
-    """Exact-frame hints from Native-checked Messages, never Native acceptance.
+    """Exact current Prepare/Commit frames from Native-checked Messages.
 
     The signature check only narrows scheduling. Native still checks every
     complete envelope, dependency, lock and quorum before any authority.
@@ -51,12 +51,12 @@ def commit_carriage_frames(messages, context, keys, currency, region):
     frames=[];expanded_bytes=0
     for ident,body,_,_ in messages.bodies():
         vote=body.get('Signed',{}).get('Vote',{})
-        if vote.get('phase')!='Commit' or vote.get('context')!=context:continue
+        if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
         try:
             approval=vote['approval'];key=approval['key']
             if key not in keys:continue
             data=b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0'+wire.json.dumps(
-                [{k:context[k] for k in fields},vote['round'],vote['value'],'Commit',key],
+                [{k:context[k] for k in fields},vote['round'],vote['value'],vote['phase'],key],
                 separators=(',',':'),ensure_ascii=False).encode()
             mesh.Ed25519PublicKey.from_public_bytes(bytes.fromhex(key)).verify(
                 bytes.fromhex(approval['signature']),data)

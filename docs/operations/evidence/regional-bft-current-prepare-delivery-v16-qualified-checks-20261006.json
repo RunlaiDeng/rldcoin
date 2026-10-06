@@ -1,0 +1,42 @@
+{
+  "actual_executed_checks_sha256": "a27a21d045f0fafb273cd147cd0bbc30063eaac9428aea9a4af16fd2e53c8da9",
+  "combined_stage_seconds": 37.814874,
+  "completed": true,
+  "failure": null,
+  "full_fault_qualified": false,
+  "helper_exit_code": 0,
+  "helper_sha256": "a4bac1d61242f9efdc91f868851ebe2aa26245882afc515aeb581eeddd3437b7",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "original_budget_seconds": 60,
+  "pin_error": [],
+  "result": {
+    "actual_Native_Runtime_TLS_calls": 0,
+    "completed": true,
+    "current_profile": "RLD-CONTACT-TRANSIT-SCHEDULER-V16",
+    "error_tests": [],
+    "failed_tests": [],
+    "fresh_ground_only": true,
+    "model_Runtime_methods_called": true,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "old_failed_fixture_reopens": 0,
+    "ordinary_delivery": {
+      "Native_Proposal_inner_signature_or_ledger_maturity_qualified": false,
+      "complete_hop_and_destination_receipt_authenticated": true,
+      "destination_cold_open_with_transit_witnesses_cleared": true,
+      "destination_ordinary_tick_count": 1,
+      "destination_original_frame_export_sha256": "0c68178c0db0de7d5f9654596839ac755c14fa692af83bc483dc89f487100ac2",
+      "ground_source2_destination1_role_analogue": true,
+      "ordinary_source_tick_count": 1,
+      "original_failed_Native_Proposal_copied_or_signed": false,
+      "original_frame_sha256": "0c68178c0db0de7d5f9654596839ac755c14fa692af83bc483dc89f487100ac2",
+      "relay_ordinary_tick_count": 2,
+      "source_signed_packet_routing_bytes_exact": true
+    },
+    "original_pending_pair_full4_auth_atomic_floor_cold_checked_on_this_same_target": true,
+    "tests_run": 1
+  },
+  "stage_sha256": "59ab90f60430f8c24b03d180a31e61a7e685384e1bdf821cdf944cd25669d9e9",
+  "whole_goal_completed": false
+}

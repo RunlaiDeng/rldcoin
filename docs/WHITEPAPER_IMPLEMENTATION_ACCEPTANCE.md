@@ -1,5 +1,22 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 V25终态FAIL，当前Prepare完整帧提示最小修复V16
+
+V25实际 **FAIL 原180秒/204.868秒含正常收尾/1829文件封存**，helperexit1、四CLIexit0、owned stopped，无forced/guardian/cleanup/pin异常。参考height全部13，成熟15/all8完整Native cold/caller/owner/守恒未完成；所有旧FAIL、原600/all12/keyless仍FAIL或OPEN。历史“全部通过”仅指其记录时的有限scope，不能覆盖本次及后续失败。失败Node/Native/Runtime/保管永不重开、恢复、复签、退款或复制。
+
+同一原20只读判别累计 **2.565809秒**（含两入口字段误读各保守0.3），零构造/签名/运输/fixture。四节点父13round0矩阵：source0 Prepare/Commit向三目的完整签名收据及准确companion信封都有；source1 Proposal缺dest2、Prepare缺dest2/3；source3 Prepare缺dest1；source2没有该上下文新本地票。所有已生成Vote的配置key/context/value/内层签名核验；Proposal内层/Native最新cold不获资格。选择准确source3→destination1 Prepare：源首次准备0.691693秒、20次已prepare，不支持只改源优先范围；完整原包在relay2及source3、目的无收据。relay2仅两次普通/full4发送，目的两次锁拒绝且input_slot_occupied未入延后槽。既非密码学错误也非唯一成熟原因证明，不调整锁/容量/deadline。
+
+原ground60真实签名V15反例 **FAIL0.565166/14封存**：准备及full4后无目的收据的Prepare不在当前Native提示集，下一普通备用槽缺目标。地面setup明确一次primitive position用于首次准备，不构成Native授权。V16仅在原exact current context、配置四keys、实际Ed25519 phase域签名和完整proof帧绑定下筛Prepare及Commit；所有Native接纳/receive/sign/候选/执行AST未改。原first2/另一类floor/非priority pairs/full4/认证/atomic/route/hop/512条4MiB/字节容量不变。
+
+**20相关PASS4.949657/282文件**；已prepared Prepare一次普通source tick、两普通中继tick、一次普通destination tick，完整原packet/routing/hops/目的签名receipt与清缓存冷读 **PASS0.690531/14文件**。该入口实际模型Runtime方法执行，原raw controller字段model_Runtime_methods_called=false来自旧label前缀判别，仅constructor0正确；当前规范化来源记录明确true。Native admission仍stub，不能授予完整Native proof/成熟资格。原ground60累计 **37.814874秒**，全部失败计入、不重置。
+
+最终独立60 source绑定先因AST反转漏docstring FAIL保守0.5，保留首identity原字节；仅诊断入口修正后PASS1.415973，原60累计 **1.915977秒**。Python192 **d46eaa52c8c97777fda1aaa85e2c5ba2f5179d74d2a7743a00f23e4c6b89ffc3**，Native89/Core171/Release实际CLIbef4d5c7…未变；整mesh仅profile、整Runtime仅classifier phase筛选/签名域及docstring反转，全部旧test AST不改。准确旧V25 Prepare完整帧e60bf700…只读实际新classifier匹配，非Nativecold权威。453来源contract、21实际global、入口0755 OS拒绝未分配、4 Rust原17argv、全部入口/controller/helper/guard整AST引用字面量反转通过。
+
+按持续原用户授权分配唯一必要新V26 **一次原180**（本记录创建时未启动）。当前假设：对已Native核验的当前Prepare/Commit保留备用服务可闭合票据传播，仍须原17setup13import15mature/all8完整cold/caller/owner/守恒/正常stop；首guard失败或原deadline即封存退出，不重跑同参、不延长、不新增600。局部PASS不代表该假设在真实Native成立。冻结正文2ba624…/PDFc59f9f…/receipt86821d…及S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持，VALUE-STRICT-01两基线告警及120耗尽仍OPEN。无官网/白皮书/主网/资金/账号/服务器/外联/清理/push。唯一作者、每命令显式新rldcoin；persistent cwd/旧goal前继hash和blocked元数据仅界面待修，不构成新审批门。
+
+[实际V25终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v25-20261006-checks.json)；[最小真实签名反例及相关回归](operations/evidence/regional-bft-current-commit-prepare-related-v16-20261006-checks.json)；[同目标普通冷送达](operations/evidence/regional-bft-current-commit-prepare-delivery-v16-20261006-checks.json)；[当前来源入口绑定](operations/evidence/regional-bft-current-prepare-v16-v26-source-binding-20261006-checks.json)。
+
+
 ## 2026-10-06 V24仍FAIL，已准备无目的收据Commit的V15最小修复
 
 V24实际 **FAIL 原180/205.711秒含收尾/1715文件封存**，四CLI exit0、owned stopped，无forced/guardian/cleanup/pin异常；成熟15/all8完整Native cold/caller/owner/守恒未完成。全部旧600与180失败保持，失败Native/Runtime/Node/保管永不重开/恢复/复签/复制。

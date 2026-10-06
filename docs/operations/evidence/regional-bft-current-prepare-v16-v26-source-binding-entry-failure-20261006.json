@@ -1,0 +1,11 @@
+{
+  "completed": false,
+  "exit_code": 1,
+  "budget_seconds": 60,
+  "conservative_seconds": 0.5,
+  "error": "AST reversal omitted changed classifier docstring; no protocol error",
+  "generated_identity_only": true,
+  "Native_Node_Runtime_socket_key_sign_fixture_calls": 0,
+  "new180": 0,
+  "new600": 0
+}
