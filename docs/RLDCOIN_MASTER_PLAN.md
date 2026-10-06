@@ -1,5 +1,19 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 V32成熟局部通过但完整范围FAIL；只读验收并发V33
+
+V32 **FAIL 原180秒/208.116秒含收尾/1989文件封存**。168.630秒四参考15，169.723秒停止后实际四Native收款验证确认import13/mature15/可花费净2/无隔离；随后原完整冷验在首份Mesh状态认证时deadline。all8完整Nativecold/所有信封/caller-owner heads/守恒未完成，不能用该成熟局部观察补齐。四CLI正常exit0，无forced/guardian/cleanup/pin异常，旧全部FAIL保留；历史“全部通过”仅限当时有限scope。
+
+新原20只读判别累计 **5.437476秒**，无旧Node/Native/Runtime构造、签名、运输、fixture或Native调用。准确Node0完整Mesh冷读state0.276904/archives1.784618/加载0.049128秒，178档案/299读文件字节未变；Runtime0纯不可变payload125份/2138refs/20distinct snapshots，unpack及两遍payload0.202262/0.195181/0.195670秒。Native批量耗时未记录，不能事后归因；这些数据不支持再微调编码器。120个封存root无重复，101911文件不能靠去重减少核验。
+
+四代表性封存root7141文件：原完整inventory逐文件SHA/模式/uid/mtime/路径/软链/容量检查串行 **2.156813秒**，四独立只读进程 **0.365627秒**，全部exit0/停止/精确原库存相等。这仅是该样本，不是全库存/全scope benchmark。V33只修改验收驱动执行方式：八个互异停止账本的完整冷验最多4worker，全部旧封存root原inventory最多4独立进程；原每份信封/Native pinned full replay/Mesh档案/8caller/owner/守恒/前后私有字节相等/正常停止与最终duration<=180仍逐项强制。
+
+独立source60：纯模型 **84种逐副本字段/完整冷验失败均拒绝**，原逐副本检查完整AST仅聚合变量转为local后精确相同，8jobs/4workers/返回顺序及计数保持；0.035994秒。最终来源预检1.723002秒，合计 **1.759003秒**。整helper/controller撤回两处只读执行块与引用后原AST相同，原成熟/owner/守恒/result/180否决条件完全保持。Python192 b9bec5b1…、Native89/Core171/实际ReleaseCLI均未改，复用合法当前普通送达证据，原ground60累计59.803250不重置。453来源、0755实际OS未分配拒绝、四原17argv绑定通过。模型不是实际Native资格。
+
+持续有效授权内，仅必要改变驱动的新V33 **原180秒/一次** 已分配（本记录创建时NOTSTARTED）。首guard/原deadline即封存退出，不追加deadline、不原样重跑、不重开旧失败Node/Native/Runtime/keys/保管，不新增600。完整600/all12/keyless、VALUE-STRICT-01两clippy基线告警/120耗尽、独立/物理/PQ/长期组合仍OPEN。冻结正文2ba624…/PDFc59f9f…/receipt86821d…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8、600stage/60round/24height/maturity2/quorum3/原锁容量-owner请求不改。唯一作者、显式新workdir；persistent cwd与goal前继哈希-blocked元数据仍为界面待修，不作为新审批门。无主网/资金/官网/白皮书/外联/服务器/清理/push。
+
+[真实V32终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v32-20261006-checks.json)；[完整只读Mesh成本](operations/evidence/regional-bft-complete-mesh-cold-v32-20261006-checks.json)；[原库存并发对照](operations/evidence/regional-bft-sealed-inventory-bounded-processes-20261007-checks.json)；[84种拒绝模型](operations/evidence/regional-bft-bounded-readonly-cold-model-v1-20261007-checks.json)；[最终来源](operations/evidence/regional-bft-bounded-readonly-v33-source-binding-20261007-checks.json)。
+
 ## 2026-10-06 V31终态FAIL；暖状态无用解码最小修复V22
 
 V31 **FAIL 原180秒/209.087秒含收尾/1727文件封存**；四CLI正常exit0，owned stopped，无forced/guardian/cleanup/pin异常。15成熟/all8完整Nativecold/每份信封/caller-owner heads/守恒未完成；旧全部失败保持，历史“全部通过”仅来自当时有限scope，不能替代后续FAIL或完整600/all12/keyless验收。

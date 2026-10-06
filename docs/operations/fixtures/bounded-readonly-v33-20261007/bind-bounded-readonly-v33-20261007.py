@@ -1,0 +1,44 @@
+from pathlib import Path
+import ast,copy,datetime,hashlib,importlib.util,json,os,stat,subprocess,sys,time
+r=Path.cwd();assert r==Path('/Users/galaxy/GitHub/rldcoin');b=r/'tmp/default-relay-20260930';e=r/'docs/operations/evidence';start=time.monotonic();deadline=start+60;sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+def save(p,value):
+ assert not p.exists(),str(p);p.write_text(json.dumps(value,indent=2)+'\n')
+def load(p,n):
+ spec=importlib.util.spec_from_file_location(n,p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+def same_ast(a,z):assert ast.dump(ast.parse(a),include_attributes=False)==ast.dump(ast.parse(z),include_attributes=False)
+x=json.loads((e/'regional-bft-warm-owner-v22-identity-20261006.json').read_text());assert all(sha(r/p)==h for p,h in x['python_source_sha256'].items());assert all(sha(r/p)==h for p,h in x['native_source_sha256'].items());assert sha(b/'native-loop-observation-build-v2-private-20261006/rld-regional-ledger-candidate')==x['actual_cli_sha256']
+previous=e/'regional-bft-warm-owner-v22-v32-source-binding-20261006-checks.json';prior=json.loads(previous.read_text());assert prior['completed'];model=e/'regional-bft-bounded-readonly-cold-model-v1-20261007-checks.json';q=json.loads(model.read_text());assert q['completed'] and q['all_original_per_replica_cold_predicates_AST_exact_after_only_local_aggregation'] and q['negative_replica_field_cases']==84 and q['all_bad_replica_failures_propagate']
+probe=e/'regional-bft-sealed-inventory-bounded-processes-20261007-checks.json';q2=json.loads(probe.read_text());assert q2['completed'] and q2['candidate_faster_in_this_representative_sample'] and q2['all_children_stopped']
+seal=b/'native-bft-four-cli-service-first-service-diag-v32-stopped-private-inventory-20261006.json';terminal=e/'regional-bft-four-cli-service-first-service-diag-v32-20261006-checks.json';failed=json.loads(terminal.read_text());assert not failed['completed'] and failed['guardian']['owned_processes_stopped'] and sha(seal)==failed['stopped_inventory_sha256'];x['protected_private_inventory_sha256'][str(seal)]=sha(seal);identity=e/'regional-bft-bounded-readonly-v33-identity-20261007.json';save(identity,x)
+oldcontract=b/'first_service_diagnostic_entry_contract_v20_20261006.json';contract=json.loads(oldcontract.read_text());root=b/'native-bft-four-cli-service-first-service-diag-v33-private-20261006';assert not root.exists();contract['root']=str(root);contract_path=b/'first_service_diagnostic_entry_contract_v21_20261007.json';save(contract_path,contract)
+oldentry=b/'first_service_diagnostic_entry_v20_20261006.py';entry=b/'first_service_diagnostic_entry_v21_20261007.py';t=json.loads((b/'bounded-readonly-v33-transformation-20261007.json').read_text());pairs=list(t['literals'].items())
+def replace(s,pairs):
+ for a,z in pairs:
+  if a in s:s=s.replace(a,z)
+ return s
+entry_pairs=[(oldcontract.name,contract_path.name),(sha(oldcontract),sha(contract_path)),('regional-bft-warm-owner-entry-start-allocated-v32-20261006.json','regional-bft-bounded-readonly-entry-start-allocated-v33-20261007.json'),('native-bft-four-cli-service-first-service-diag-v32-private-20261006','native-bft-four-cli-service-first-service-diag-v33-private-20261006')];assert not entry.exists();entry.write_text(replace(oldentry.read_text(),entry_pairs));entry.chmod(stat.S_IMODE(oldentry.stat().st_mode));assert stat.S_IMODE(entry.stat().st_mode)==0o755
+adapter_old=b/'bft_four_cli_first_service_diagnostic_v17_20261006.py';adapter=b/'bft_four_cli_first_service_diagnostic_v18_20261007.py';adapter.write_text(adapter_old.read_text().replace(oldentry.name,entry.name))
+guard_old=b/'bft_warm_owner_delivery_precondition_v13_20261006.py';guard=b/'bft_bounded_readonly_delivery_precondition_v14_20261007.py';guard_text=replace(guard_old.read_text(),pairs).replace(oldcontract.name,contract_path.name);assert not guard.exists();guard.write_text(guard_text)
+helper=b/'observe-bft-four-cli-service-first-service-diag-v33-20261006.py';controller=b/'check-bft-four-cli-service-first-service-diag-v33-allocated-preview-20261006.py';assert sha(helper)==q['helper_sha256']
+helper_old=b/'observe-bft-four-cli-service-first-service-diag-v32-20261006.py';controller_old=b/'check-bft-four-cli-service-first-service-diag-v32-allocated-preview-20261006.py'
+for newer,older,oldblock,newblock in [(helper,helper_old,t['old_cold'],t['new_cold']),(controller,controller_old,t['old_pins'],t['new_pins'])]:
+ s=newer.read_text();assert s.count(newblock)==1;s=s.replace(newblock,oldblock)
+ for a,z in reversed(pairs):s=s.replace(z,a)
+ same_ast(s,older.read_text());compile(newer.read_text(),str(newer),'exec')
+# Producer reconstructs literal references and exactly the reviewed read-only blocks.
+producer=b/'bind_bft_four_cli_bounded_readonly_v33_20261007.py';assert not producer.exists()
+producer.write_text("from pathlib import Path\nimport json\nBASE=Path('/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930')\nT=json.loads((BASE/'bounded-readonly-v33-transformation-20261007.json').read_text())\ndef change(s):\n for a,z in T['literals'].items():s=s.replace(a,z)\n return s\ndef helper_source():return change((BASE/'observe-bft-four-cli-service-first-service-diag-v32-20261006.py').read_text()).replace(T['old_cold'],T['new_cold'])\ndef controller_source(decision='regional-bft-four-cli-bounded-readonly-v33-decision-allocated-20261007.json'):\n assert decision=='regional-bft-four-cli-bounded-readonly-v33-decision-allocated-20261007.json'\n return change((BASE/'check-bft-four-cli-service-first-service-diag-v32-allocated-preview-20261006.py').read_text()).replace(T['old_pins'],T['new_pins'])\n")
+p=load(producer,'readonly_producer');assert p.helper_source()==helper.read_text() and p.controller_source()==controller.read_text()
+sys.path.insert(0,str(b));os.environ['PYTHONDONTWRITEBYTECODE']='1';m=load(entry,'readonly_entry');assert m.load_contract()==contract and not m.ALLOCATED.exists();g=load(guard,'readonly_guard');assert g.require_current_delivery()['completed']
+try:g.require_ready_native_scope();raise AssertionError('unallocated Native scope accepted')
+except ValueError:pass
+actual=subprocess.run([str(entry)],cwd=r,capture_output=True,text=True,timeout=5,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',RLD_GROUND_CONTACT_TRACE='1'));assert actual.returncode==1 and actual.stdout=='' and actual.stderr.strip()=='regional contact node rejected: new diagnostic Native scope not allocated'
+# Every argument slot remains identical in shape, role, bounds and custody paths.
+slots=[]
+for n in range(4):slots.append(dict(zip(m.FLAGS,[contract['binary'],str(root/'proxima'/str(n)/'ledger'),'b'*64,'a'*64,'0.25',str(root/f'component-mesh-config-{n}.json'),str(root/f'component-bft-config-{n}.json'),f'127.0.0.1:{20000+n}'])))
+a=dict(format='RLD-FIRST-SERVICE-ENTRY-ALLOCATED-V1',completed=True,root=str(root),budget_seconds=180,attempts=1,native_starts=4,entry_sha256=sha(entry),contract_sha256=sha(contract_path),original_parameters=contract['original_parameters'],slots=slots)
+for n in range(4):argv=tuple([contract['driver_argv']]+[item for flag in m.FLAGS for item in (flag,slots[n][flag])]);assert m.validate_invocation(argv,contract,a)==(n,argv)
+paths=[identity,contract_path,entry,adapter,guard,helper,controller,producer,model,probe,previous,terminal,b/'readonly_inventory_worker_v1_20261007.py',b/'derive-bounded-readonly-v33-20261007.py',b/'bounded-readonly-v33-transformation-20261007.json',b/'check-bounded-readonly-cold-model-v1-20261007.py',b/'observe-sealed-inventory-bounded-processes-20261007.py',Path(__file__)]
+assert time.monotonic()<deadline
+report=dict(completed=True,budget_seconds=60,attempts=1,duration_seconds=round(time.monotonic()-start,6),combined_source60_seconds=round(.035994+time.monotonic()-start,6),python192_and_Native89_Core171_actual_Release_binary_unchanged=True,python_source_commitment=x['python_source_commitment'],profile=x['profile'],original_complete_ground_delivery_reused_without_duplicate=True,original_ground60_cumulative_unchanged=59.80325,all_original_replica_assertions_and_helper_result_fields_preserved=True,whole_helper_controller_AST_exact_after_two_readonly_blocks_and_literals_reversed=True,maximum_independent_readonly_workers=4,Native_sign_receive_accept_epochs_quorum_maturity_capacity_unchanged=True,actual_entry_mode='0o755',actual_unallocated_exec_exit=actual.returncode,all4_original_argv_qualified=True,contract_source_files=len(contract['source_sha256']),all_old_failures_protected=True,source_sha256={str(p):sha(p) for p in paths},Native_Node_Runtime_fixture_key_sign_socket_calls=0,new180=0,new600=0,fullfault_qualified=False,whole_goal_completed=False)
+save(e/'regional-bft-bounded-readonly-v33-source-binding-20261007-checks.json',report);print(json.dumps({k:v for k,v in report.items() if k!='source_sha256'},sort_keys=True))
