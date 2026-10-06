@@ -1,5 +1,22 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 V26仍FAIL，当前轮次空提案提示V17
+
+V26实际 **FAIL 原180/205.650秒含正常收尾/1858文件封存**，四CLIexit0、owned stopped，无forced/guardian/cleanup/pin异常。参考高度14不能替代成熟15/all8完整Native cold/caller/owner/守恒。全部原600、V19–V26与局部失败保持；历史“全部通过”仅指当时有限scope。旧失败Node/Native/Runtime/保管永不重开、恢复、复签、退款或复制。
+
+本次独立原20只读累计 **1.622735秒**：parent14 round0 Prepare source2/3向所有三目的均完整签名receipt与准确companion信封保留，同context/value/配置key签名核验；源0/1没有本地current Prepare/Commit。源2高度15Proposal向dest3完整收据/信封，dest0/1缺失。准确dest0包d8a653b8…已source入队，35pending/arrival准备记录后首次完整准备，**等待107.082579秒**；只有末尾一次request发送，response_auth ValueError不是唯一密码学/OS拒绝证明。该路径有实际107秒机会，不等同V24 Proposal仅1.29秒的晚入队。Proposal只是参考retained来源，本读者不授予内层/Nativecold权利。
+
+原ground60真实签名V16反例 **FAIL0.562764/14封存**：当前轮次空提案准备/full4丢失后，提示只覆盖Vote，下一ordinary spare缺目标。V17仅新增 **round0、base=current previous、两个完整空命令块、空epochs/approvals、无timeout** 的当前提案提示；精确parentheader Native block域hash/height/state/current context、childparent/anchor/statement、配置当轮leader及完整Native Proposal签名域核验。其他命令/epoch/timeout/形状完全回退普通排序；不复制Native授权/准入。所有Native接纳/receive/sign/候选/执行方法AST未改，first2/另一类floor/非priority pairs/full4/route/hop/签名/atomic/512条4MiB/容量保持。
+
+**21相关PASS5.445741/296文件**；同一已prepared目标一次ordinary source、两relay、一次destination **PASS0.684173/14文件**，原packet/routing/hops/目的receipt与清缓存冷读及7种unsupported/mutated proposal负例通过。测试提案内层签名是真的，Native work/proof/admission明确stub，不授予成熟。原ground60累计 **44.507552秒**（含所有失败）。raw groundcontroller model_Runtime_methods_called=false仅继承label判别；规范化证据明确实际模型Runtime methods=true、constructor0。
+
+最终来源独立60 **PASS1.279235秒**：Python192 **366b0ccf32bbf260acb77f852bd7b0394817612baa77f131353b35265b0a7aa6**，Native89/Core171/实际ReleaseCLIbef4d5c7…仍原样。真实旧V26完整Proposal的Rust序列化签名域及准确完整帧实际新helper分类通过，仅free unpack/classifier，无旧Native/Runtime/Node构造/签名/运输。全部旧test AST未改；整Runtime除新增helper及唯一classifier分支外精确反转、mesh仅profile。453contract/21实际global/0755真实OS拒绝未分配、四原17argv和helper/controller/guard整AST仅引用字面量变更通过。
+
+依持续原用户授权分配必要全新V27 **一次原180**（本记录创建时未启动），唯一假设为同源current空提案的备用carriage可闭合本次提案传播；仍须原17setup13import15mature/all8完整Nativecold/caller/owner/守恒/normalstop，首guard或原deadline失败封存退出，不追加同参、不延长、不新增600。局部成功不代表该假设在Native验收成立。冻结正文/PDF/receipt与全部S/R/I/A–G/N/P目标、原600/60round/24height/maturity2/quorum3/锁/容量保持；完整600/all12/keyless及VALUE-STRICT-01基线两clippy告警/120耗尽、独立/物理/PQ/长期组合仍OPEN。无资金/主网/官网/白皮书/服务器/账号/外联/清理/push，唯一作者，所有项目命令显式新rldcoin workdir，persistent cwd及旧goal哈希/blocked元数据只是界面待修。
+
+[实际V26终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v26-20261006-checks.json)；[本次票据/提案矩阵](operations/evidence/regional-bft-parent14-v26-matrix-20261006-checks.json)；[107秒准确提案边界](operations/evidence/regional-bft-proposal-edge-v26-20261006-checks.json)；[回归](operations/evidence/regional-bft-current-commit-proposal-related-v17-20261006-checks.json)；[最终来源和真实提案签名绑定](operations/evidence/regional-bft-empty-proposal-v17-v27-source-binding-20261006-checks.json)。
+
+
 ## 2026-10-06 V25终态FAIL，当前Prepare完整帧提示最小修复V16
 
 V25实际 **FAIL 原180秒/204.868秒含正常收尾/1829文件封存**，helperexit1、四CLIexit0、owned stopped，无forced/guardian/cleanup/pin异常。参考height全部13，成熟15/all8完整Native cold/caller/owner/守恒未完成；所有旧FAIL、原600/all12/keyless仍FAIL或OPEN。历史“全部通过”仅指其记录时的有限scope，不能覆盖本次及后续失败。失败Node/Native/Runtime/保管永不重开、恢复、复签、退款或复制。

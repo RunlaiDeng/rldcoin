@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V16'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V17'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1330,7 +1330,7 @@ class Node:
             # retained envelopes, not a body identity. Every selected original
             # transit still authenticates below. Missing/evicted hints retain V13.
             # Prepared is only local selection, not a destination receipt. A
-            # current Prepare/Commit whose send/replay failed remains spare-eligible;
+            # current signed frame whose send/replay failed remains spare-eligible;
             # ordinary transit checks still skip receipts and accepted hops.
             commits=[i for items in pending for i in items
                      if self.state['messages'][i]['routing']['body']['frame_id'] in frames]
