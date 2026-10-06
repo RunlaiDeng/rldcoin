@@ -1,5 +1,14 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 授权来源更正：撤销误加的逐次审批门
+
+此前“用户明确局部通过不授权新180/600”的归属判断错误：该句是协调概括，不能作为原用户逐字禁令，也不能撤销原任务持续有效的本地开发授权。实际要求是无副作用的语法/导入/名称绑定预检后，在原预算沿原定单目标继续。现有17名称provider核验及V4普通送达已足够，不新增或重复这两类检查。当前准入条件中的owner_authorized表示既有真实用户任务授权，不要求每个本地组件重新批准；保留完整来源/限额/一次性新root与失败退出护栏。
+
+已按既有授权记录**一次全新零价值原180秒组件的独立范围分配，尚未启动**，new600=0；未改已验证可执行入口/生产Python192/Native89/Core171/实际binary。成熟15、all8完整固定头原生cold/envelope/caller/owner/守恒/正常stop和原参数完全保持；首护栏失败或180秒deadline即终态封存，不复活失败fixture、不复制/重签旧Proposal、不延长预算。该分配来自原任务授权及实际来源相关修复，绝非由地面receipt授予原生权利。旧未分配预览和此前报告作为历史原样保留；其owner_authorized=false反映当时误判，不代表现在缺用户授权。
+
+原ground60累计11.896617、named dependency60累计31.496155不变，全部旧FAIL保留；ground角色类比不能替代旧Native内层Proposal签名、成熟15/all8 cold/守恒或完整600/all12验收。本轮运输/签名/Native/新fixture调用0，未执行新测试。goal被误标blocked后，本工具只能设complete/blocked/paused，不能恢复active；最小元状态操作是支持接口对准确任务仅设active，目标/预算/权限不改。此元状态待修不是新增用户审批门，也不撤销既有开发授权。冻结正文/PDF/官网不改；全部命令显式新workdir。
+[授权来源更正](operations/evidence/regional-bft-unserved-promotion-authorization-provenance-correction-20261006.json)；[既有授权下的单次范围记录（未启动）](operations/evidence/regional-bft-four-cli-unserved-promotion-v21-decision-allocated-20261006.json)。
+
 ## 2026-10-06 同一晋级目标的真实普通签名送达通过（有限地面范围）
 
 **PASS0.445624秒**：V12同一角色反例在全新无价值ground包上，一次源ordinary tick原子准备并写出原完整签名交换，一次目的ordinary tick接收。清除transit witness后冷读，原packet/routing/hop/frame字节和完整目的签名收据一致；pending pair17gap、另一ordinary类floor、full4 retry、路由认证、字节容量、冷读及失败原子护栏保持，复用来源未变的原十项检查。旧V11真实反例仍FAIL，不重跑。旧source2→目的0/3已有完整运输副本，目的1旧parent14 Native Proposal仍缺失；本次ground角色对应通过不复制/重签/重开它，也未证明唯一成熟失败原因。
@@ -8,7 +17,7 @@
 
 真实V4证据前置条件已正向执行，独立Native范围分配护栏 **PASS0.489936秒**：完整helper及两种controller均在Native导入前拒绝未分配范围；19分配负例、44原护栏mutations拒绝，positive allocation仅内存模型且未写分配文件。V9仍绑定同453来源，整V8入口只四绑定字面量变化；V21明确binding/guard撤回还原V20，原17setup/13import/15mature/all8完整固定头cold/envelope/caller/owner/守恒/stop及180/600/60round/24height/maturity2/quorum3/容量不变。19份准确源码review副本及仅来源快照已保存，不包含钥/保管/ledger/binary，不是额外执行入口。
 
-下一具体判别是已备妥、**尚未授权/分配**的一次全新零价值原180秒Native组件：V12能否把原先卡在14的流程推进至成熟15并完成原all8完整冷验/守恒/正常停止。首护栏失败或原deadline即停止封存，不重开失败fixture、不加deadline、不以高度进展代替PASS。用户明确“局部通过不授权新180/600”，故准备来源与代码不等于授权；新180/600均0。原runtime-v4 **FAIL600/612.570/6152**、V19 **FAIL180/207.185/1856**及所有旧FAIL保留；成熟15/all8原生cold/守恒和原600/all12/keyless、VALUE-STRICT-01仍独立OPEN。下方此前delivery unknown及未实现/未分配文字均保留其当时来源和范围，不能当作当前地面结果，历史“全部通过”仅对应历史有限scope。
+该段创建时的下一具体判别是已备妥、**当时未分配**的一次全新零价值原180秒Native组件：V12能否把原先卡在14的流程推进至成熟15并完成原all8完整冷验/守恒/正常停止。首护栏失败或原deadline即停止封存，不重开失败fixture、不加deadline、不以高度进展代替PASS。当时将协调概括误归为用户逐字要求并据此等待逐次批准；该归属现已更正，不能撤销既有任务授权。当时新180/600均0（历史创建时状态）。原runtime-v4 **FAIL600/612.570/6152**、V19 **FAIL180/207.185/1856**及所有旧FAIL保留；成熟15/all8原生cold/守恒和原600/all12/keyless、VALUE-STRICT-01仍独立OPEN。下方此前delivery unknown及未实现/未分配文字均保留其当时来源和范围，不能当作当前地面结果，历史“全部通过”仅对应历史有限scope。
 
 已继续采用AGENTS/冻结receipt的当前正文2ba62421…、PDF c59f9fe8…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8；goal正文前继hash未自行改写。冻结正文/PDF/官网和外部权限范围未改，goalactive。所有项目命令显式新workdir，持久cwd仍UI待修。
 [实际送达与独立预算护栏证据](operations/evidence/regional-bft-unserved-promotion-signed-delivery-outcome-20261006.json)；[可审阅未分配下一范围](operations/evidence/regional-bft-four-cli-unserved-promotion-v21-decision-unarmed-20261006.json)。

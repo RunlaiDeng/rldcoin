@@ -1806,8 +1806,11 @@ all failures; older58.775813 budget not reset. Positive delivery gate and actual
 independent Native-allocation refusals PASS0.489936,19 allocation negatives and
 44 original guard mutations retained; allocation positive is model only.
 V9 current453 literal-only entry/V21 complete guarded previews are reviewable,
-UNARMED. User explicitly says localPASS grants no new180/600: require explicit
-owner decision before allocating proposed one fresh zero-value original180,
+UNARMED was the creation-time allocation state. The per-attempt new-owner-
+approval requirement was mistakenly inferred from a coordinator paraphrase,
+not an original-user prohibition. Existing original task authorization applies
+to the same source-relevant finite local development component. Separately
+allocate one fresh zero-value original180 with one attempt and unchanged limits,
 17setup13import15mature/all8 complete fixedhead cold/envelope/caller/owner/
 conservation/normalstop; no600. Original params/budgets/exit unchanged, no deadline
 extension or failed fixture reopening. Original600/V19 remainFAIL, all Native
@@ -1817,3 +1820,20 @@ unserved-promotion-v12-signed-delivery-20261006, no state/key/custody/binary cop
 Current normative hashes/targets and frozen paper/site unchanged. All commands
 explicit newrldcoin workdir; persistent appcwd still UI pending.
 See docs/operations/evidence/regional-bft-unserved-promotion-signed-delivery-outcome-20261006.json.
+
+
+Authorization provenance correction (2026-10-06): no original-user requirement
+for a fresh approval on every local component was found in this task. Retain
+real task limits and independent Native qualification; transport receipt is not
+Native authority. Qualified executable sources remain unchanged. One original
+180/one-attempt zero-value V21 allocation now records existing task authority,
+not a new coordinator grant; it is NOT STARTED, new600=0. Historical unarmed
+preview and all old results/failed state retained byte-exact. No additional
+static/ground/Native/transport/signature test in this correction. Next original
+maturity15/all8 full cold/envelope/caller/owner/conservation/stop predicates and
+failure/deadline exits remain. Runtime goal metadata still blocked from erroneous
+prior interpretation; available goal tools cannot resume. Supported metadata
+repair is exact-task official thread/goal/set status=active only, no objective/
+budget/permission edits, task-store bypass or writer-lock workaround. This is
+not a new development approval requirement. See docs/operations/evidence/
+regional-bft-unserved-promotion-authorization-provenance-correction-20261006.json.
