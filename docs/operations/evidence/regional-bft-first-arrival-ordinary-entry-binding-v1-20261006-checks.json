@@ -1,0 +1,329 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 29.594954,
+  "remaining_at_start_seconds": 30.405046,
+  "duration_seconds": 0.957647,
+  "combined_stage_seconds": 30.552601,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "failure": null,
+  "stage_sha256": "a57b0aedddb2cfd650988a06f68ac7b1f0ec492c9cde0d357e21737557539d84",
+  "helper_sha256": "77b8730d425ef4357b744545fca04bfd44761e9d5fbfc9028bbc2a313e26bd2f",
+  "controller_sha256": "aec2ae167674e2dc189e70b7d1f8535cf0f143cb9555fabbe7910e460525f09e",
+  "log_sha256": "7d1a9658fdd0b485d80431d392b83e8c43efb1d957951204fec076dd6ac28a11",
+  "result": {
+    "Native_Runtime_Node_socket_sign_driver_main_calls": 0,
+    "actual_Rust_argv_result": {
+      "Native_Runtime_Node_socket_sign_driver_main_calls": 0,
+      "actual_Rust_four_argv_controls": 4,
+      "completed": true,
+      "entry_guard_negatives": [
+        "completed",
+        "budget_seconds",
+        "attempts",
+        "native_starts",
+        "entry_sha256",
+        "contract_sha256",
+        "root",
+        "bound:component_seconds",
+        "bound:full_fault_seconds",
+        "bound:round_seconds",
+        "bound:height_cap",
+        "bound:maturity",
+        "bound:quorum",
+        "bound:owner_first_signs",
+        "bound:old_failed_reopens",
+        "bound:custody_copies",
+        "bound:mesh_lock_seconds",
+        "bound:socket_seconds",
+        "bound:packet_batch",
+        "bound:first_slots",
+        "arg:--binary",
+        "arg:--ledger",
+        "arg:--interval",
+        "arg:--mesh-config",
+        "arg:--bft-config",
+        "arg:--listen",
+        "arg:--currency",
+        "arg:--authority",
+        "wrong-driver",
+        "extra-flag",
+        "duplicate-flag",
+        "copied-ledger",
+        "old-contract-root",
+        "parent-escape",
+        "alternate-driver-spelling",
+        "alternate-driver-spelling",
+        "alternate-driver-spelling",
+        "contract-driver-argv"
+      ],
+      "full_fault_qualified": false,
+      "raw_driver_spelling_and_argv_preserved": true,
+      "runpy_original_argv0_AST_preserved": true,
+      "unallocated_main_refuses_before_import": true,
+      "whole_goal_completed": false
+    },
+    "actual_current_profile_source9_ground_and400_branch_proof_reused": true,
+    "completed": true,
+    "current_contract_source_bindings": 453,
+    "current_pipeline14_and_oldNative1748_private_bytes_unchanged": true,
+    "duration_seconds": 0.895159,
+    "exact_two_python_source_changes": [
+      "tools/interstellar_mesh.py",
+      "tools/test_interstellar_mesh.py"
+    ],
+    "full_fault_qualified": false,
+    "negative_original_guards_per_variant": 22,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "new_python_commitment_guard_verified": true,
+    "new_root_and_actual_allocation_absent": true,
+    "old_V5_contract_bytes_never_changed": true,
+    "old_V5_source_contract_refuses_current": true,
+    "old_failed_currencies_never_reopen": true,
+    "old_original_parameters_exact": true,
+    "original17setup13import15mature_all8cold_caller_owner_conservation_stop_preserved": true,
+    "original_guard_mutations_refused": [
+      {
+        "changed": "stop_height=15",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "round_timeout=60",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "for _ in range(12):",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "receipt['mature_height']==15",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "if heights==[15]*4:break",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "cli.stop_all();assert cli.clean_terminal()",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "assert inventory(p.root)==cold_before",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "bound['head']",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "owner['pending'] is None",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "assert issued==int(p.currency['block_reward'])*4==liquid",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "receipt['original_output_spendable_now'] is False",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "trace_readback=verify_journal(",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "deadline=start+180",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "owner_sign_budget=1",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "maturity=2",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "quorum=3",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "absolute_height_cap=24",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "original_mesh_lock_wait_seconds=.2",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "custody_copy_budget=0",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "result['full_fixed_head_native_cold']==8",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "result['native_conservation']",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "not guardian['guardian_stop_used']",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json"
+      },
+      {
+        "changed": "stop_height=15",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "round_timeout=60",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "for _ in range(12):",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "receipt['mature_height']==15",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "if heights==[15]*4:break",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "cli.stop_all();assert cli.clean_terminal()",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "assert inventory(p.root)==cold_before",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "bound['head']",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "owner['pending'] is None",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "assert issued==int(p.currency['block_reward'])*4==liquid",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "receipt['original_output_spendable_now'] is False",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "trace_readback=verify_journal(",
+        "source": "helper",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "deadline=start+180",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "owner_sign_budget=1",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "maturity=2",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "quorum=3",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "absolute_height_cap=24",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "original_mesh_lock_wait_seconds=.2",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "custody_copy_budget=0",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "result['full_fixed_head_native_cold']==8",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "result['native_conservation']",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      },
+      {
+        "changed": "not guardian['guardian_stop_used']",
+        "source": "controller",
+        "variant": "regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json"
+      }
+    ],
+    "python_commitment_negatives": [
+      "old_label",
+      "bool_label",
+      "altered_map_digest",
+      "bool_digest",
+      "bad_digest_alphabet",
+      "missing_python",
+      "foreign_python"
+    ],
+    "retained_oldV5_map_matched_launch192_but_label_stale": true,
+    "source_bound_new32_stage_pipeline_reused": true,
+    "whole_entry_and_adapter_AST_restores_original": true,
+    "whole_goal_completed": false,
+    "whole_helper_controller_AST_restores_V17_original_and_reuses_prior_restoration": true
+  },
+  "log_tail": null,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

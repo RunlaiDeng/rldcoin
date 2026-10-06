@@ -1,0 +1,434 @@
+{
+  "Native89_Core171_actual_binary_unchanged": true,
+  "VALUE_STRICT_01": "OPEN; two baseline lint warnings and120.019-second exhaustion unchanged; Core/value/lock source triggers for original120 diagnosis or300 repaired check unmet; no waiver/substitution",
+  "all_original_failure_custody_requests_and_bounds_preserved": true,
+  "current_head": "ca3518e21b0192e9e954a20abb1cf479e7d86f7c",
+  "current_python_source_commitment": "738a7204a2be89c382f3441a23570a8cfdf4c276525c483dd514793195208488",
+  "entry_guard": {
+    "actual_Rust_argv_controls": 4,
+    "completed": true,
+    "duration_seconds": 0.957647,
+    "entry_negatives": 38,
+    "new_python_commitment_negatives": 7,
+    "not_unique_runtime_fault_cause": true,
+    "old_V5_actual_source_map_bound_but_metadata_stale": true,
+    "old_V5_bytes_unchanged": true,
+    "original453_file_bindings": true,
+    "original60_combined_seconds": 30.552601,
+    "original_guard_mutations": 44
+  },
+  "evidence_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-first-arrival-ordinary-controller-identity-20261006.json": "acdb4425c62f9afa8ecc21cb598de334c3f38c62de524e0a4d7bb0e228c2f100",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-first-arrival-ordinary-entry-binding-v1-20261006-checks.json": "ec7a4180d305dd4b9a94bc36d12c91fc52d41a77f0dbe0a658ffbb05bab1e74c",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-first-arrival-ordinary-entry-start-allocated-v18-20261006.json": "82c2024ab164383e2ff6bf9b926c56fade630be98bd33deffffe6b7934907715",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-first-arrival-ordinary-decision-allocated-20261006.json": "8777c2a88f145b27d732e9d775a4186d4ef73789111f32ac695d35d25fd58ce9",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-first-arrival-ordinary-decision-unarmed-20261006.json": "3b86bda1720cffa7889455457c5be8f73db7728641ff5e9fb15f81949567f670",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-four-cli-service-first-service-diag-v18-20261006-checks.json": "88579ba9ab585be8b4a8b1ece7c92f5d1d33be9bbb2d59bbeb57a551ed8167af",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-frontier-admission-boundary-v18-20261006-checks.json": "0ffb2b3aa04a3e0ee0f70edc7e15331c1cf21631fa8f88bccba5414a9ce06bf7",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-frontier-first-queue-counter-v18-20261006-checks.json": "42b3448a1882832b65e9990bcc48a435e1f68859ac87dcc94322ab0a77704de5",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-paged-full-fault-runtime-v4-20261005-checks.json": "61212b011c94d9def55e67d412fe3b910a1f664932bb4a97974e2aadde07bf7e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/bft-frontier-admission-boundary-v18-paths-private-20261006.json": "4d76f9be0f48cec98def225f6b1d0d286ddb42c61a112f6f0ce52894855f5699",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first-arrival-ordinary-entry-v6-source-private-20261006/source-manifest.json": "860ac225e6a2137a3c04e0df4b068b05f0e2153834d515652fac1dd1abcd02b8",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_contract_v5_20261006.json": "86a80c9e4aa49b67822de877f2a242fa08229b838ec8cfcca3cf42ae225f70aa",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/first_service_diagnostic_entry_contract_v6_20261006.json": "4530ebfac838d932e3ea43f6d060cc567db42e2e43450df53c6f314019106239",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v18-stopped-private-inventory-20261006.json": "7ef48046d971e5785d9a537fdd44b9c09e5fbaa89b8c41432d576ac1d12e9064"
+  },
+  "format": "RLD-FIRST-ARRIVAL-ENTRY-ACTUAL-NATIVE-OUTCOME-V1",
+  "frozen_body_sha256": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+  "frozen_pdf_sha256": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+  "frozen_receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+  "full_fault_qualified": false,
+  "goal_status": "active",
+  "implementation_progress": "V6 actual Python manifest commitment guard implemented and qualified; four true Native CLI reached the fresh V10 binding. V18 original180 FAIL falsifies sufficient finite maturity claim; source-only complete transport and exact typed queue evidence select ordinary-slot backlog/floor model.",
+  "mandatory_acceptance": "S1-S18/R1-R24/I1-I12/A-G/N1-N10/P1-P8",
+  "new_native_scope": {
+    "all4_CLI_exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "attempts": 1,
+    "budget_seconds": 180,
+    "cleanup_failures": [],
+    "completed": false,
+    "duration_including_normal_cleanup_seconds": 203.84,
+    "failed_currency_never_reopen": true,
+    "forced_owned_processes": [],
+    "guardian_stop_used": false,
+    "helper_exit_code": 1,
+    "no_maturity15_or_all8_cold_conservation_qualification": true,
+    "pin_error": null,
+    "reference_heights": [
+      14,
+      14,
+      14,
+      14
+    ],
+    "stopped_files": 1833
+  },
+  "next_minimal_discriminator": {
+    "already_spent_seconds": 57.790128,
+    "attempts": 1,
+    "exit": "First exact source/schema/order/guard mismatch, finite selection counterexample plus original pending/history floor controls, or remaining2.209872 seconds. No extension/repeat; if budget cannot complete then record unresolved and select a separately justified minimal next phase, not another180/600.",
+    "hypothesis": "With the actual observed full32 pending pair and parent14 arrival positions21/20/19, only6-7 ordinary plans plus6-7 full4 retry bypasses were available. V10 oldest waiting order spends these spare slots before frontier votes. A bounded recency preference confined to alternate ordinary class slots may serve a later current-boundary arrival earlier while keeping the original pending pair, ordinary history floor, route/authentication/byte/capacity/atomic and full4 retry exact. Do not adopt or infer that model output is Native authority.",
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "original_budget_seconds": 60,
+    "remaining_seconds": 2.209872,
+    "scope": "Only source AST branch model and exact already-qualified public counter; no failed Node/Runtime/Native constructor, signer/key/custody/socket or new180/600. Current production V10 stays unchanged pending a falsifiable selection counterexample.",
+    "started": false
+  },
+  "no_push": true,
+  "no_scope_expansion": true,
+  "old_goal_hashes": "Predecessor already reported; no goal or frozen text edit",
+  "old_runtime_full600_result": {
+    "budget_seconds": 600,
+    "completed": false,
+    "duration_seconds": 612.57,
+    "never_reopened": true,
+    "stopped_files": 6152
+  },
+  "persistent_cwd": "old Chinese UI pending; all commands explicit /Users/galaxy/GitHub/rldcoin",
+  "readonly_counter": {
+    "actual_admission": [
+      {
+        "admission": null,
+        "authenticated_to_common_prefix_end_seconds": 10.777649,
+        "classification": "direct_custody",
+        "custody_events": 1,
+        "deferred_attempts": 0,
+        "destination": 0,
+        "not_queued_reason": null,
+        "parent_height": 14,
+        "phase": "Prepare",
+        "queued_to_first_custody_seconds": null,
+        "queued_to_first_service_seconds": null,
+        "refusal_class": null,
+        "refused": false,
+        "request_authenticated": true,
+        "source": 2
+      },
+      {
+        "admission": null,
+        "authenticated_to_common_prefix_end_seconds": 44.950975,
+        "classification": "direct_custody",
+        "custody_events": 1,
+        "deferred_attempts": 0,
+        "destination": 3,
+        "not_queued_reason": null,
+        "parent_height": 14,
+        "phase": "Prepare",
+        "queued_to_first_custody_seconds": null,
+        "queued_to_first_service_seconds": null,
+        "refusal_class": null,
+        "refused": false,
+        "request_authenticated": true,
+        "source": 2
+      },
+      {
+        "admission": null,
+        "authenticated_to_common_prefix_end_seconds": 42.965172,
+        "classification": "direct_custody",
+        "custody_events": 1,
+        "deferred_attempts": 0,
+        "destination": 3,
+        "not_queued_reason": null,
+        "parent_height": 14,
+        "phase": "Prepare",
+        "queued_to_first_custody_seconds": null,
+        "queued_to_first_service_seconds": null,
+        "refusal_class": null,
+        "refused": false,
+        "request_authenticated": true,
+        "source": 2
+      },
+      {
+        "admission": "deferred_input_queued",
+        "authenticated_to_common_prefix_end_seconds": 39.848175,
+        "classification": "queued_custody",
+        "custody_events": 1,
+        "deferred_attempts": 1,
+        "destination": 2,
+        "not_queued_reason": null,
+        "parent_height": 14,
+        "phase": "Prepare",
+        "queued_to_first_custody_seconds": 0.523013,
+        "queued_to_first_service_seconds": 0.019534,
+        "refusal_class": "BlockingIOError",
+        "refused": true,
+        "request_authenticated": true,
+        "source": 3
+      }
+    ],
+    "actual_parent14_vote_paths": [
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": true,
+        "destination": 0,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "parent_height": 14,
+        "phase": "Prepare",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "parent_height": 14,
+        "phase": "Prepare",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": true,
+        "destination": 3,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "parent_height": 14,
+        "phase": "Prepare",
+        "round": 0,
+        "source": 2,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": false,
+        "destination": 0,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "parent_height": 14,
+        "phase": "Prepare",
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": false,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": false,
+        "destination": 1,
+        "destination_signed_receipt_verified": false,
+        "destination_transit_present": false,
+        "kind": "Vote",
+        "observed_boundary": "source-published-no-destination-custody",
+        "parent_height": 14,
+        "phase": "Prepare",
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      },
+      {
+        "body_retained_with_possible_different_valid_envelope": true,
+        "complete_bytes_unchanged": true,
+        "complete_companion_store_envelope_present": true,
+        "destination": 2,
+        "destination_signed_receipt_verified": true,
+        "destination_transit_present": true,
+        "kind": "Vote",
+        "observed_boundary": "companion-envelope-retained-no-native-authority",
+        "parent_height": 14,
+        "phase": "Prepare",
+        "round": 0,
+        "source": 3,
+        "source_published": true
+      }
+    ],
+    "actual_queue_frontier": [
+      {
+        "arrival_positions": [
+          20,
+          17,
+          14,
+          11,
+          7
+        ],
+        "destination": 0,
+        "full_four_replay_without_plan_records": 4,
+        "holder": 2,
+        "normal_plan_records": 5,
+        "original_first_pair_selected_counts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "pending_counts": [
+          32
+        ],
+        "removed_ahead_IDs_remain_unknown": true,
+        "source": 2,
+        "target_selected_plans": 1
+      },
+      {
+        "arrival_positions": [
+          21,
+          18,
+          15,
+          12,
+          8,
+          5,
+          1
+        ],
+        "destination": 1,
+        "full_four_replay_without_plan_records": 7,
+        "holder": 2,
+        "normal_plan_records": 7,
+        "original_first_pair_selected_counts": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "pending_counts": [
+          32
+        ],
+        "removed_ahead_IDs_remain_unknown": true,
+        "source": 2,
+        "target_selected_plans": 0
+      },
+      {
+        "arrival_positions": [
+          20,
+          17,
+          14,
+          10,
+          7,
+          3
+        ],
+        "destination": 0,
+        "full_four_replay_without_plan_records": 6,
+        "holder": 2,
+        "normal_plan_records": 6,
+        "original_first_pair_selected_counts": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "pending_counts": [
+          32
+        ],
+        "removed_ahead_IDs_remain_unknown": true,
+        "source": 3,
+        "target_selected_plans": 0
+      },
+      {
+        "arrival_positions": [
+          19,
+          16,
+          13,
+          9,
+          6,
+          2
+        ],
+        "destination": 1,
+        "full_four_replay_without_plan_records": 6,
+        "holder": 2,
+        "normal_plan_records": 6,
+        "original_first_pair_selected_counts": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "pending_counts": [
+          32
+        ],
+        "removed_ahead_IDs_remain_unknown": true,
+        "source": 3,
+        "target_selected_plans": 0
+      }
+    ],
+    "both_complete_failed_verifiers_still_refuse": true,
+    "boundary_duration_seconds": 24.489526,
+    "common_prefix_seconds": 142.420732,
+    "complete_regional_bft_transport_copies": 947,
+    "completed": true,
+    "native_runtime_node_socket_key_sign_calls": 0,
+    "no_unique_OS_or_CPU_cause_proof": true,
+    "original60_combined_seconds": 57.790128,
+    "queue_duration_seconds": 2.748001,
+    "retained_vote_signature_bytes_verified": 34,
+    "saved_live_native_reports": [
+      {
+        "last_report_not_full_cold_or_latest_authority": true,
+        "live_import_height": 13,
+        "live_local_height": 14,
+        "live_maturity_height": 15,
+        "live_native_report_import_accepted": true,
+        "live_original_output_spendable": false,
+        "slot": 0
+      },
+      {
+        "last_report_not_full_cold_or_latest_authority": true,
+        "live_import_height": 13,
+        "live_local_height": 14,
+        "live_maturity_height": 15,
+        "live_native_report_import_accepted": true,
+        "live_original_output_spendable": false,
+        "slot": 1
+      },
+      {
+        "last_report_not_full_cold_or_latest_authority": true,
+        "live_import_height": 13,
+        "live_local_height": 14,
+        "live_maturity_height": 15,
+        "live_native_report_import_accepted": true,
+        "live_original_output_spendable": false,
+        "slot": 2
+      },
+      {
+        "last_report_not_full_cold_or_latest_authority": true,
+        "live_import_height": 13,
+        "live_local_height": 14,
+        "live_maturity_height": 15,
+        "live_native_report_import_accepted": true,
+        "live_original_output_spendable": false,
+        "slot": 3
+      }
+    ],
+    "signed_archive_indexes": 786,
+    "typed_contact_trace_prefix_rows": 15186,
+    "typed_preparation_prefix_rows": 548
+  },
+  "recorded_at_utc": "2026-10-06T04:56:37.518730+00:00",
+  "source_bound_seals": {
+    "current1833_preserved": true,
+    "regular": 63,
+    "typed": 7
+  },
+  "source_only_snapshot": {
+    "files": 14,
+    "keys_ledgers_currency_custody_binary_copies": 0,
+    "manifest_sha256": "860ac225e6a2137a3c04e0df4b068b05f0e2153834d515652fac1dd1abcd02b8"
+  },
+  "whole_goal_completed": false
+}

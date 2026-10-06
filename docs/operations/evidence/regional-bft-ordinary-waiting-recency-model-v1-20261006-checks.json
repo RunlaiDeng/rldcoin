@@ -1,0 +1,46 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 57.790128,
+  "duration_seconds": 0.081662,
+  "combined_stage_seconds": 57.87179,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "failure": null,
+  "stage_sha256": "27a4217321e1aad77d8b453a7bf191cc3d36c44a06c837b24e222e0429337dc1",
+  "helper_sha256": "37ad710f7953398470eb0d82fe7a962b37b1b33c7f0506aa84b4c145555a1f2b",
+  "controller_sha256": "65e62f64d37533f9e7108f82b8eec46e267048cf9d7fd56cfec1cf4e09342a26",
+  "log_sha256": "4a61fbe8edf8a7aff4e095a30042a76445de13a56a60f1ec3ef98da05b05b8da",
+  "result": {
+    "Native_Runtime_Node_socket_key_sign_calls": 0,
+    "actual_V10_AST_branch_cases": 120,
+    "candidate_is_model_only_no_production_change": true,
+    "completed": true,
+    "conditional_late_waiting_order_counterexample": [
+      {
+        "conditions": "Primitive one recent and one history class, target new and eligible, full32 original pending pair separate; conditional order counterexample only",
+        "model_newest_first_selected_target": true,
+        "original_oldest_first_selected_target": false,
+        "target_waiting_position": 21,
+        "waiting_count": 22
+      }
+    ],
+    "duration_seconds": 0.01702,
+    "first_pending_pair_and_other_protocol_AST_unchanged": true,
+    "full4_no_plan_order_controls": 120,
+    "full_fault_qualified": false,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "not_a_crypto_route_eligibility_wire_atomic_native_or_cold_qualification": true,
+    "original_other_pair_order_controls": 60,
+    "original_seven_offers_not_enough_for22nd_waiting": true,
+    "prior400_V10_AST_and9_actual_ground_qualification_reused": true,
+    "whole_actual_branch_AST_exact_after_one_expression_reversal": true,
+    "whole_goal_completed": false
+  },
+  "log_tail": null,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

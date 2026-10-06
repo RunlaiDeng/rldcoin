@@ -1,0 +1,21 @@
+{
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 57.790128,
+  "remaining_seconds": 2.209871999999997,
+  "attempts": 1,
+  "hypothesis": "Exact V10 FIFO waiting order in ordinary class slots can leave the22nd new/eligible waiting target unselected after7 normal plans; model reverse only arrival assignment on alternate ordinary pairs to test earlier conditional order while keeping first pair/other-class floor/full4 bypass. Do not adopt a model as live eligibility, signing or maturity.",
+  "exit": "First exact AST/identity/order failure, finite counterexample and floor/full4 controls, or original remaining2.209872. No restart/extension/new180/600.",
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-ordinary-waiting-recency-model-v1-20261006.py": "37ad710f7953398470eb0d82fe7a962b37b1b33c7f0506aa84b4c145555a1f2b",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-bft-ordinary-waiting-recency-model-v1-20261006.py": "65e62f64d37533f9e7108f82b8eec46e267048cf9d7fd56cfec1cf4e09342a26",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "31fc951632f94adf74471364e9d4332923807b62776f1db780327cce6f13364c",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "6f75fc504c7672ce5dc4d419bcb0425e0ec84b4f69513a145ad63956f22707ce",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-frontier-first-queue-counter-v18-20261006-checks.json": "42b3448a1882832b65e9990bcc48a435e1f68859ac87dcc94322ab0a77704de5",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-frontier-admission-boundary-v18-20261006-checks.json": "0ffb2b3aa04a3e0ee0f70edc7e15331c1cf21631fa8f88bccba5414a9ce06bf7",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-first-arrival-ordinary-final-bind-v2-20261006-checks.json": "a3bed4051acd4990b30e4e8f16dc2c996d7e63376652892729b566bc9fa6b451",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/regional-bft-first-arrival-ordinary-entry-native-outcome-20261006.json": "dc40e913be6a99e553c5d00c9116c868e4f0803a82c8a16b6bd44deb639f8da8",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v18-stopped-private-inventory-20261006.json": "7ef48046d971e5785d9a537fdd44b9c09e5fbaa89b8c41432d576ac1d12e9064"
+  },
+  "new180_allocated": 0,
+  "new600_allocated": 0
+}

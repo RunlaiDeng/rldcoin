@@ -1,5 +1,20 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 V6入口实际接入、V18失败与普通槽反例
+
+**完整fault仍FAIL/OPEN**：自己的runtime-v4原600/612.570秒/6152原字节保留。最新V18 **FAIL原180/203.840秒含正常收尾**，helper1/ScopeDeadline，四实际CLI各exit0、无guardian/forced/cleanup/pin错误，1833文件封存。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求及600阶段/60轮/24高度/maturity2/quorum3/全部容量保持。历史“全部通过”只指对应历史来源和有限scope，不覆盖后续FAIL；下方“未分配”均为创建时快照。
+
+**实际fixture修复**：旧V5的453文件map与其启动来源一致，但Python汇总标签仍c447前继。保留旧字节，V6新增按完整192 Python map计算/核对汇总承诺的拒绝检查；不是旧runtime故障原因证明。来源绑定PASS0.958秒、原60累计30.553秒，4实际Rust argv、38入口负例、7汇总负例、44原guard均拒绝/保持。当前Python738a7204…、Native89/Core171/actualCLI未变；唯一新180范围的四Native CLI已实际通过V6启动，不是只写文档。V10普通arrival优先仍不足以完成原成熟/cold门，不能以参考高度14改PASS。
+
+封存后原60剩余29.447秒内只读counter **PASS24.490秒**；进一步队列counter **PASS2.748秒**，没有重开失败Native/Runtime/Node。核验34票签名字节、786签名档案索引、947完整regional-bft运输副本、15186条typed contact前缀及548准备记录，共同142.421秒；两个原failed完整verifier继续拒绝。parent14仅来源2/3 Prepare、无Commit。来源2→1 target在14条准备中0入选；holder2满32 pending，7普通/7full4重放，arrival位置21→18→15→12→8→5→1，原first2每次均入选。来源3到0/1在holder2各6普通/6full4，位置最终3/2仍未入选；移出active的ahead IDs保持unknown。另来源2→0完整目的地保管后1.281秒实际native_received；精确目的地请求3direct/1queued custody，queued19.5毫秒开始服务，不能把所有缺口归因于接收OS锁或coldCPU。保存live Native报告均import13已接受/local14<mature15、原输出不可花；它们不是全cold或最新权威。
+
+原离线60内最小真实AST分支模型 **PASS0.082秒，累计57.872秒**：120组branch顺序、60其他组对原序、120 full4/no-plan控制；model-only反转一条arrival顺序赋值即可在“目标新且eligible、22 waiting/7普通offer”条件反例中提前选择末项，整branch反转准确。只证明条件选择顺序，不认证路线/crypto/atomic/Native或真实CPU。production仍V10，未采用新candidate。14+2份仅源码快照保留，没有币/钥/账本/保管/binary复制；所有旧失败及63普通/7typed seal保持。
+
+**下一仅原ground60剩余55.007820秒/一次，未启动，新180/600均0**（前已花4.992180秒，不重置预算）：只在alternate ordinary class内做上述单赋值候选及不兼容fixture profile，用全新signed ground检验满32/22waiting的实际准备；必须保持原pending first2/17-gap、其他组对history floor、full4重放、冷字节、签名/route/容量/atomic失败不发布，并做必要相关回归。首guard差异、最小实际行为及相关检查完成、或原剩余55.008秒即退出；候选失败封存不豁免，不重复未变180/600、不开旧fixture或延长。只有实际ground及完整来源/binary/controller绑定资格才可能另决必要Native范围。
+
+已采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…与全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8，本机三哈希一致。VALUE-STRICT-01两基线及120.019耗尽独立OPEN，Core/value/lock触发未变、原120诊断/300修复门未触发，不以地区通过替代或豁免。goal active、旧goal前继已报告不改；所有自有测试已终态，22686/23062–23065不存在；全显式新rldcoin workdir，持久cwd仍UI待修。冻结官网/正文/PDF/Library/服务器/资金/账户/权限/外联/push/清理范围不扩展。
+[实际入口修复、Native失败、只读队列与条件模型](operations/evidence/regional-bft-first-arrival-ordinary-entry-native-final-outcome-20261006.json)。
+
 ## 2026-10-06 原生准入实际终态与普通轮转最小修复
 
 **完整fault仍FAIL/OPEN**。自己的runtime-v4原600/612.570秒/6152终态再次读回一致；最新V17 **FAIL原180/202.563秒含收尾**，helper1/ScopeDeadline，四CLI各exit0、无guardian/forced/cleanup/pin错误，1700文件封存。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求及600阶段/60轮/24高度/maturity2/quorum3/所有容量保持。历史“全部通过”只属于当时明确来源和有限scope，不覆盖后续FAIL。下方旧“未启动”均为创建时快照，本节给出最新终态。

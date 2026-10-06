@@ -1700,3 +1700,14 @@ V9's attempted split of the pending pair failed the existing preparation-gap
 bound and is not qualified. V8/V9 private scheduler identities refuse unchanged;
 use fresh fixtures without reopening/migrating failed state. Current finite
 source/ground tests do not prove Native maturity or full-fault completion.
+
+
+Fixture entry contracts must check the declared Python source commitment against
+their exact complete canonical file map in addition to checking each file hash.
+A stale aggregate label does not invalidate an independently bound file map or
+prove the runtime failure cause, but new entries must refuse the inconsistency.
+The latest V10/V6 fourCLI scope failed at its original180-second deadline; retain
+its stopped stores and both failed complete-verifier refusals. Read-only typed
+prefixes and conditional ordering models grant no Native maturity/cold authority.
+Do not adopt a new ordinary waiting order until actual fresh signed preparation
+retains the original pending pair/gap, other-class floor, full4 retry and bounds.
