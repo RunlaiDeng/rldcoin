@@ -634,7 +634,8 @@ class Runtime:
         rows=[(self.state['messages'].content(ident),ident) for ident in messages]
         inventory=None
         if (getattr(self,'_retained_native_authenticated',False)
-                and len(rows)<=MAX_MESSAGES and len(recipients)<=mesh.MAX_CONTACTS):
+                and len(rows)<=MAX_MESSAGES and len(self.state['messages'])<=MAX_MESSAGES
+                and len(recipients)<=mesh.MAX_CONTACTS):
             raw=wire.canonical({'format':self.format,'binding':self.binding,
                 'native':[self.native.authority,self.native.currency,str(self.native.ledger)],
                 'region':self.region,'node_id':self.node_id,'transport':self.transport,
@@ -644,7 +645,14 @@ class Runtime:
                           mesh.MAX_BATCH,mesh.MAX_PACKET_BATCH,mesh.MAX_CONTACTS,
                           MAX_BROADCAST_HINT_BYTES,MAX_BROADCAST_QUIET_SECONDS,
                           MAX_BROADCAST_QUIET_CALLS],
-                'local_complete_envelope_ids':rows,'recipients':recipients})
+                'local_complete_envelope_ids':rows,
+                # Remote Native-checked envelopes also supply current-frame
+                # scheduling hints. A new complete retained frame must invalidate
+                # this quiet inventory even when all local recipient pairs match.
+                # Exact IDs only; no proof, context or signing authority cached.
+                'retained_complete_envelope_ids':[(self.state['messages'].content(i),i)
+                                                 for i in sorted(self.state['messages'])],
+                'recipients':recipients})
             if len(raw)<=MAX_BROADCAST_HINT_BYTES:inventory=raw
         quiet=getattr(self,'_broadcast_quiet',None)
         if (inventory is not None and quiet is not None and inventory==quiet[0]

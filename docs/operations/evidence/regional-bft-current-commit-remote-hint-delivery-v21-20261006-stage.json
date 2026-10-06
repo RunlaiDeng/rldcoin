@@ -1,0 +1,18 @@
+{
+  "budget_seconds": 10,
+  "attempts": 1,
+  "original_ground60_prior_seconds": 57.787063,
+  "tests": [
+    "test_current_frame_hint_pressure_ordinary_delivery"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "0153ebb06b20a71458997d37e15b16791e8c3874fbb7b2cb0d9c3cf9f7a2641b",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_frame_digest.py": "9b2f75063c3fc5dd2b44645fb3e9e859ba0d84a8055fe093ad1a69c171570a71",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "db1ee26a9e2c19682bb27c6b341defb1367068c94ff8c1d0e5be233dbc63b671",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "57ef996723306cac083deb405e480de4b97b07f15912ae6ca33df70fa586e361",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-remote-hint-delivery-v21-20261006.py": "9f8f8773f8a9fdbc2b6bde4e420da1b3809f52ea36f7c92f1d2bdfc73c77a796",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-remote-hint-quiet-ground-v21-20261006.py": "ae14a5151e4e2ace6a83b9dec647c240f0c682b6ccfaaf75a827eabc6096e41b"
+  },
+  "exit": "first guard failure or original10 deadline; retain failure; no duplicate same-source attempt; no old fixture constructors; no Native/runtime/socket calls"
+}

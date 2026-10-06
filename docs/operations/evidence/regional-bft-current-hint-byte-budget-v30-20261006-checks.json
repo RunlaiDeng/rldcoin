@@ -1,0 +1,183 @@
+{
+  "completed": true,
+  "duration_seconds": 0.828229,
+  "combined_original20_seconds": 2.26549,
+  "hypothesis": "Current exact-context Native-checked frame hint may be all-empty because complete qualified envelopes exceed original4MiB; compare actual returned hints and bounded typed complete bytes without changing capacity or reopening Native.",
+  "rows": [
+    {
+      "slot": 0,
+      "frame_hints_returned": 6,
+      "eligible_complete_bytes": 1038177,
+      "original_bound": 4194304,
+      "qualified_shapes": [
+        {
+          "body_id": "17377c393f384c7fd16134f4c7b3ff4534a960f89d510d48d24c00372a43f3ae",
+          "size_bytes": 174028,
+          "kind": "Proposal",
+          "round": 0
+        },
+        {
+          "body_id": "2d2c8d8d6b5ff982b144bbef5db42a1f6173beba5156127c8521acecb560fb7a",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "5333d53d005a006d95b493a8f9d6531f22daff6738ffc424c2523a16e3ef8e5c",
+          "size_bytes": 172829,
+          "kind": "Commit",
+          "round": 0
+        },
+        {
+          "body_id": "6f383dc4bc6e5e2bb3180b9abe923638e756fd213f6a870f1b814b7b8144e889",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "b04e5edda2409c46d33522a36add53e5d5748e870a44514488cc88742f3c7b61",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "efec643519d714a388043427a2f38dbfd0819037cd3d5435c30a30c7db001c79",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        }
+      ],
+      "target_companion_retained": true
+    },
+    {
+      "slot": 1,
+      "frame_hints_returned": 5,
+      "eligible_complete_bytes": 865347,
+      "original_bound": 4194304,
+      "qualified_shapes": [
+        {
+          "body_id": "17377c393f384c7fd16134f4c7b3ff4534a960f89d510d48d24c00372a43f3ae",
+          "size_bytes": 174028,
+          "kind": "Proposal",
+          "round": 0
+        },
+        {
+          "body_id": "2d2c8d8d6b5ff982b144bbef5db42a1f6173beba5156127c8521acecb560fb7a",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "5333d53d005a006d95b493a8f9d6531f22daff6738ffc424c2523a16e3ef8e5c",
+          "size_bytes": 172829,
+          "kind": "Commit",
+          "round": 0
+        },
+        {
+          "body_id": "6f383dc4bc6e5e2bb3180b9abe923638e756fd213f6a870f1b814b7b8144e889",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "b04e5edda2409c46d33522a36add53e5d5748e870a44514488cc88742f3c7b61",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        }
+      ],
+      "target_companion_retained": true
+    },
+    {
+      "slot": 2,
+      "frame_hints_returned": 5,
+      "eligible_complete_bytes": 865347,
+      "original_bound": 4194304,
+      "qualified_shapes": [
+        {
+          "body_id": "0c6db16a64706156d9c23a62310f14950f59245a7a65738b34f989c46e8def1a",
+          "size_bytes": 172829,
+          "kind": "Commit",
+          "round": 0
+        },
+        {
+          "body_id": "17377c393f384c7fd16134f4c7b3ff4534a960f89d510d48d24c00372a43f3ae",
+          "size_bytes": 174028,
+          "kind": "Proposal",
+          "round": 0
+        },
+        {
+          "body_id": "2d2c8d8d6b5ff982b144bbef5db42a1f6173beba5156127c8521acecb560fb7a",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "b04e5edda2409c46d33522a36add53e5d5748e870a44514488cc88742f3c7b61",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "efec643519d714a388043427a2f38dbfd0819037cd3d5435c30a30c7db001c79",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        }
+      ],
+      "target_companion_retained": false
+    },
+    {
+      "slot": 3,
+      "frame_hints_returned": 6,
+      "eligible_complete_bytes": 1038177,
+      "original_bound": 4194304,
+      "qualified_shapes": [
+        {
+          "body_id": "0c6db16a64706156d9c23a62310f14950f59245a7a65738b34f989c46e8def1a",
+          "size_bytes": 172829,
+          "kind": "Commit",
+          "round": 0
+        },
+        {
+          "body_id": "17377c393f384c7fd16134f4c7b3ff4534a960f89d510d48d24c00372a43f3ae",
+          "size_bytes": 174028,
+          "kind": "Proposal",
+          "round": 0
+        },
+        {
+          "body_id": "2d2c8d8d6b5ff982b144bbef5db42a1f6173beba5156127c8521acecb560fb7a",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "6f383dc4bc6e5e2bb3180b9abe923638e756fd213f6a870f1b814b7b8144e889",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "b04e5edda2409c46d33522a36add53e5d5748e870a44514488cc88742f3c7b61",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        },
+        {
+          "body_id": "efec643519d714a388043427a2f38dbfd0819037cd3d5435c30a30c7db001c79",
+          "size_bytes": 172830,
+          "kind": "Prepare",
+          "round": 0
+        }
+      ],
+      "target_companion_retained": false
+    }
+  ],
+  "consumed_bytes_unchanged": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_constructors": 0,
+  "free_actual_signature_classifier_calls": 4,
+  "Native_authority": false,
+  "unique_failure_cause": false,
+  "new180": 0,
+  "new600": 0
+}

@@ -1,0 +1,29 @@
+{
+  "Node_Native_Runtime_constructors_socket_key_sign_fixture_calls": 0,
+  "actual_function_global_providers": [
+    "AssertionError",
+    "NETWORK",
+    "OSError",
+    "ValueError",
+    "bytes",
+    "copy",
+    "dict",
+    "evidence",
+    "hasattr",
+    "len",
+    "list",
+    "mesh",
+    "next",
+    "object",
+    "patch",
+    "range",
+    "set",
+    "setattr",
+    "signed_ground_import_parent_proposal",
+    "tuple",
+    "zip"
+  ],
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-current-commit-remote-hint-delivery-v21-20261006.py": "9f8f8773f8a9fdbc2b6bde4e420da1b3809f52ea36f7c92f1d2bdfc73c77a796"
+  }
+}

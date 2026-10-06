@@ -1,5 +1,23 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-06 V30终态FAIL，远端完整信封遗漏静默清单V21
+
+V30 **FAIL 原180/208.053秒含正常收尾/1713文件封存**；四CLI exit0，无forced/guardian/cleanup/pin异常，最后参考四高度14，未进入停止后的15成熟/all8完整cold/heads/守恒。不能用另一V29的162.582秒成熟局部观察替代本轮。所有旧FAIL/全部冻结目标保持。
+
+原20只读判别合计 **3.559589秒**（结构化3.359589，辅助现有Native收款/准备时间行保守0.2），无旧Node/Native/Runtime构造、签名、socket、fixture、复制或恢复。完整当前提案2→0/1/3及Prepare1/3→三目的已有完整目的签名receipt/准确companion；Prepare0缺2、Prepare2缺1、Commit0缺2/3、Commit3缺0/1。实际内层Vote签名/同context/value/配置key核验，Proposal/Native latestcold仍不获资格。现有4MiB提示过量假设已证伪：四返回5/6个提示，合格完整字节865347–1038177均低于原界限；不改容量。
+
+唯一目标source0→destination2 Commit包61c99981…首次prepare **0.944963秒**，六次ordinary/full4选择；有真实peer custody回复但本地reply custody BlockingIO，拒绝不等于密码学坏。完整目标已在relay1 active并完整签名核验，relay1入队deferred custody后保留arrival24，11次相关prepare（含6fullretry）selected0/hop0/suppressed0，目的2缺准确包。Native envelope_received显示其同完整信封在relay1已接纳运输输入，不能重构未记录的实时hint存在/丢失或证明唯一成熟原因。
+
+最小真实签名模型反例 **FAIL0.223466/5文件**：当前Native-checked远端Commit新加入immutable Messages(local=false)，本地完整recipient pairs不变，原quiet inventory只含local rows而返回，新的当前完整帧不进入提示。V21仅为原quiet清单追加 **全部已保留完整envelope ID/body ID**（原最多512、原4MiB清单限），新远端内容必miss并走原完整Mesh路径/分类；未变清单仍quiet、4秒/16次探测/容量回退/上下文-绑定/关闭清除保持。仅primitive IDs，无Native proof/admission/sign/receive/quorum/epoch/owner/head/锁授权修改。
+
+**3相关PASS0.397167/33文件**（新增反例、容量淘汰/联系域回退、全包认证/失败原子），当前原压力普通两跳/目的完整签名receipt/清缓存cold **PASS0.690574/14文件**；原ground60累计 **58.477637秒**，全部失败保留，不重置。该地面送达仍source2→destination1角色类比；新增remote quiet反例只证明提示刷新，不能授予真实Native权利或称已解决准确relay缺口。Native admission/work/proof为模型。
+
+独立source60 **PASS2.217913秒**；Python192 **097d026dc3110f792fb05b2abf0c93e114349ae4a83c11d44bd53be7cd0dee3a**，仅mesh profile/Runtime quiet inventory/test_mesh变化。整个Runtime AST仅原broadcast的bounded complete-ID字段与同原512 guard变化；所有旧test AST、frame_digest及全部Native权利方法不改，旧有效真实Import Proposal分类/档案128ASCII与6摘要回归复用。453完整来源、21实际名称、0755真实OS未分配拒绝、四原17argv、整entry/helper/controller/guard引用反转通过。
+
+必要全新V31 **原180/一次** 已分配（本记录创建时NOTSTARTED），检验新远端帧及时刷新后能否达到原15mature/all8完整Nativecold/每份信封/caller/owner/守恒/normalstop。首guard或原deadline即封存退出；无同参重试/延长/新增600，不重新打开旧失败。历史“全部通过”仅为有限scope，完整600/all12/keyless、VALUE-STRICT-01两基线clippy告警/120耗尽、独立/物理/PQ/长期组合仍OPEN。冻结正文/PDF/receipt、全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及600stage/60round/24height/maturity2/quorum3/原容量-锁-owner条件不改。唯一作者、新workdir显式；persistent cwd/goal前继哈希-blocked元数据仍UI待修，不新增审批门。无主网/资金/官网/白皮书/服务器/账号/外联/清理/push。
+
+[真实V30终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v30-20261006-checks.json)；[当前目的矩阵](operations/evidence/regional-bft-parent14-v30-matrix-20261006-checks.json)；[准确relay边界](operations/evidence/regional-bft-exact-relay-commit-v30-20261006-checks.json)；[真实反例](operations/evidence/regional-bft-current-commit-remote-hint-baseline-v20-20261006-checks.json)；[最终来源](operations/evidence/regional-bft-remote-hint-v21-v31-source-binding-20261006-checks.json)。
+
 ## 2026-10-06 V29成熟已观察但完整冷验仍FAIL，档案精确编码V20
 
 V29 **FAIL 原180/206.442秒含正常收尾/1818文件封存**；四CLI exit0，无forced/guardian/cleanup/pin异常，旧失败保留。161.077秒四个参考15，162.582秒源码绑定的停止后四次实际Native wallet-receipt断言已确认原import13/mature15/可花费净2/无隔离；随后在完整Mesh archive冷读的规范化编码中截止。all8完整Nativecold/每份信封/caller-owner heads/守恒尚未完成，成熟这一局部观察不替代整组件、完整600/all12/keyless。

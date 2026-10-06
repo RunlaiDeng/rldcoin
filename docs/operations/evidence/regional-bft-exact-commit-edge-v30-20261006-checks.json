@@ -1,0 +1,8 @@
+{
+  "completed": false,
+  "failure": "StopIteration: generated target predicate still source1 Proposal rather than source0 Commit",
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "conservative_original20_charge_seconds": 0.2,
+  "combined_original20_seconds": 2.46549,
+  "old_failed_source_and_stage_preserved": true
+}
