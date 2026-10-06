@@ -1,5 +1,20 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-06 存储字符扫描：实测小修复、签名负例与准确失败保留
+
+**完整fault仍FAIL/OPEN**，原600/612.570秒/6152、V13原180/201.364秒/1641及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求、600阶段/60轮/24高度/maturity2/quorum3与全部容量不变。失败Node/Native/Runtime不重开、恢复/复签/退款/复制保管；历史“全部通过”只指准确历史来源和有限scope。下方“下一60未启动”是创建时快照，现已完成。
+
+一次原60内，无钥纯image adapter借用实际decode/validate/只读archive方法，六cold/warm测量 **PASS2.468秒**：逐包解码和立即校验对相同对象计算相同承诺，但重复仅每次约0.016–0.017秒，**不采用新的承诺信任复用**。剩余预算实际cProfile **PASS2.573秒**，冷校验约0.283–0.288秒/暖0.043–0.052秒；冷签名/JSON/Base64与解码正则扫描更大，原Base64扫描约0.027秒。转发actual结果，无签名mock、Node/Native/Runtime/Server构造/钥/lock/socket/保管写入；成功432库存不变。inclusive计时不能相加、profiler有观察开销，非OS/GIL/现场唯一原因证明。
+
+最小纯候选保持原字母表/末尾最多2等号、空串/类型异常与str子类fallback；38,490 oracle、三实际image exact decode/pack字节、21相同拒绝、实际unbound cold活动签名及archive metadata核验 **PASS3.996秒**，原60合计 **9.037秒**。同实际frame串5对交替顺序，仅字符扫描中位原0.027–0.028秒/新约0.0097秒；不是Node/live/付款整体提速。已接入`interstellar_active_state.py`，只有纯helper/constant和两个scan调用，原控制AST归一完全一致；无新cache/metadata/storage/wire/scheduler/signature或容量变化。新增两个原规则oracle/大型尾部/pad-bit不授予权威测试。
+
+必要一次60相关回归首轮 **FAIL25.467秒，129中128成功**：旧storage签名负例改包ID未更新V8 first_arrivals，先被arrival-order拒绝，未到预期signature。1148file/2link typed no-follow封存，所有线程停止；不改该报告为PASS、不重开。只修负例first_arrivals/recent IDs，原“signature必须拒绝且磁盘不变”断言保持；其余测试方法AST准确未改、128成功复用。V2 singleton-suite TypeError **FAIL0.568秒**、未启动测试/fixture/Node，0file根封存；V3 preflight非exist guard误含已有protected artifacts **FAIL启动前**，源码/记录保留并计0.1秒保守预留。修驱动后V4全新精确负例 **PASS1/1 0.912秒/6file**，原60合计 **27.047秒**；这是128旧成功+1当前成功的组合覆盖，不是一次全129 PASS。两旧1641/成功432字节不变，无Native币启动/旧钥恢复，当前无活动自有节点/测试。
+
+当前Python192新完整commitment见final identity，仅codec/test两源改变；Native89fd1e24fe…/Core171de74cf78…/actualCLIbef4d5c7…未变。56普通seal/7typed no-follow及18最新代码/驱动source-only delta保留；没有币/钥/保管/二进制复制。**下一仅一次120当前最终源码/独立驱动绑定，未启动**：完整192/89/171/binary和56+7库存、当前38490/精确codec/组合相关负例；不变Mesh控制AST才复用120 plan模型来源，22禁改拒绝、17setup/13import/15mature/all8固定头完整cold/envelope/caller/owner/守恒/stop不放宽。首源码/AST/负例/字节/角色/边界/库存不一致、有限完成或原120退出，无实际Node/Native/Runtime/socket/钥/sign启动。新180/600仍0，不原样长重跑或加deadline。
+
+采用冻结2ba62421…/c59f9fe8…/receipt86821d19…与全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8；goalactive，旧goal前继已报告不改。VALUE-STRICT-01两基线/120.019耗尽独立OPEN，Core/value/lock未改，原120诊断/300修复触发未满足，不以地区/运输替代或豁免；长期/PQ/独立保管/physical/组合profile仍OPEN。所有命令显式新rldcoin，持久cwd仍UI待修；冻结正文/PDF/官网、Library/服务器/账户/权限/资金/外联/push/清理不扩展。
+[实际纯扫描修复、精确反例、失败保留和下一绑定](operations/evidence/regional-bft-active-b64-scan-repair-outcome-20261006.json)。
+
 ## 2026-10-06 操作内计划修复：最终绑定与真实负载运输终态
 
 **完整fault仍FAIL/OPEN**：原600/612.570秒/6152、V13原180/201.364秒/1641及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求及600阶段/60轮/24高度/maturity2/quorum3与容量不变，失败Native/Runtime/Node不重开、不恢复/复签/退款/复制保管。历史“全部通过”仅指当段准确来源和有限scope；下方“下一120未启动”是当时快照，现已完成。

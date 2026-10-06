@@ -16,6 +16,20 @@ HEX = re.compile(r'[0-9a-f]{64}\Z')
 B64 = re.compile(r'[A-Za-z0-9+/]*={0,2}\Z')
 
 
+BASE64_ASCII = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+
+def base64_text(value):
+    """Same bounded ASCII alphabet/padding test; no decoding or authority."""
+    if type(value) is not str:
+        return bool(B64.fullmatch(value))
+    if not value.isascii():
+        return False
+    padding = 2 if value.endswith('==') else 1 if value.endswith('=') else 0
+    raw = value.encode('ascii')
+    return not raw[:len(raw)-padding if padding else len(raw)].translate(None, BASE64_ASCII)
+
+
 def require(ok, message):
     if not ok:raise ValueError(message)
 
@@ -73,7 +87,7 @@ def pack(state, *, max_state, max_messages, max_transit):
         require(0<complete_size<=max_transit,'active transit expanded bound exceeded')
         frame=transit['packet']['body'].get('frame')
         require(isinstance(frame,str) and frame.isascii() and len(frame)<=wire.MAX_FRAME*2
-                and B64.fullmatch(frame),'active frame encoding/bound invalid')
+                and base64_text(frame),'active frame encoding/bound invalid')
         # One call only: exact string equality shares storage, never validation.
         ref=exact_frames.get(frame)
         if ref is None:
@@ -125,7 +139,7 @@ def _unpack(image, *, image_size, network, node_id, max_state, max_messages, max
                 'active frame ownership/domain differs')
         frame=obj['frame']
         require(isinstance(frame,str) and frame.isascii() and len(frame)<=wire.MAX_FRAME*2
-                and B64.fullmatch(frame),'active frame encoding/bound invalid')
+                and base64_text(frame),'active frame encoding/bound invalid')
         require(digest(obj)==ref,'active frame bytes differ')
         pool[ref]=frame
     records={};referenced=set()

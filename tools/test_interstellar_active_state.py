@@ -92,7 +92,9 @@ class ActiveStateTests(unittest.TestCase):
     def test_storage_hashes_do_not_replace_native_packet_signature_or_routing_checks(self):
         state=copy.deepcopy(self.original);old=next(iter(state['messages']));transit=state['messages'].pop(old)
         transit['packet']['body']['nonce']='f'*64
-        state['messages'][mesh.digest(transit['packet'])]=transit
+        new=mesh.digest(transit['packet']);state['messages'][new]=transit
+        for field in ('first_arrivals','recent_transits'):
+            state[field]=[new if ident==old else ident for ident in state[field]]
         self.write(mesh.pack_state_storage(state))
         retained=self.path.read_bytes()
         with mesh._verified_transits_lock:mesh._verified_transits.clear()
@@ -212,6 +214,30 @@ class CanonicalImageTests(unittest.TestCase):
         with patch.object(wire,'canonical',side_effect=metadata_only):
             self.assertEqual(codec.image_bytes(image,max_messages=256),expected)
             self.assertEqual(codec.digest(image['frames']['z']),expected_digest)
+
+
+class Base64TextTests(unittest.TestCase):
+    def test_original_alphabet_padding_and_type_errors_are_preserved(self):
+        class Text(str):pass
+        values=[chr(c)+suffix for c in range(256) for suffix in ('', '=', '==', '===')]
+        values+=['', 'a=b', '=a', 'a\n', 'a\x00', '界', '\ud800',
+                 Text('AA=='), Text('a==='), None, b'AA==', 7, [], {}]
+        for value in values:
+            with self.subTest(value=value):
+                try:expected=bool(codec.B64.fullmatch(value))
+                except TypeError:
+                    with self.assertRaises(TypeError):codec.base64_text(value)
+                else:self.assertEqual(codec.base64_text(value),expected)
+
+    def test_large_tail_errors_and_pad_bits_are_not_storage_authority(self):
+        frame=base64.b64encode(b'ground fixture'*75000).decode()
+        for value in (frame, frame+'=', frame+'===', frame+'\n', frame+'\x00',
+                      frame[:1000]+'='+frame[1001:], 'AB==', 'AA=='):
+            self.assertEqual(codec.base64_text(value),bool(codec.B64.fullmatch(value)))
+        # Alphabet/padding validity alone never grants canonical decoding,
+        # a verified signature, transport custody or native ledger acceptance.
+        self.assertTrue(codec.base64_text('AB=='))
+        self.assertNotEqual(base64.b64encode(base64.b64decode('AB==')).decode(),'AB==')
 
 
 if __name__=='__main__':unittest.main()

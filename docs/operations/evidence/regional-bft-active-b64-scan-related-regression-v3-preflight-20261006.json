@@ -1,0 +1,10 @@
+{
+  "completed": false,
+  "failure": "AssertionError: protected existing artifacts accidentally included in new-scope nonexistence guard",
+  "before_stage_or_helper_launch": true,
+  "Node_fixture_tests_started": 0,
+  "conservative_original60_reserve_seconds": 0.1,
+  "source_sha256": "463e93136f91d2585b72fc8041d62386c6f6bf17087de89be65dfcd0ede33937",
+  "failed_source_preserved": true,
+  "full_fault_qualified": false
+}

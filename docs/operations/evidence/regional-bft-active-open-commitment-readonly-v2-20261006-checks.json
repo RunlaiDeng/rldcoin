@@ -1,0 +1,3250 @@
+{
+  "format": "RLD-ACTIVE-OPEN-COMMITMENT-READONLY-CHECKS-V1",
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 2.467814,
+  "budget_seconds": 57.532186,
+  "attempts_used": 1,
+  "duration_seconds": 2.573341,
+  "combined_stage_seconds": 5.041155,
+  "helper_exit_code": 0,
+  "helper_terminal": true,
+  "budget_exhausted": false,
+  "forced_helper": false,
+  "pin_error": null,
+  "stage_sha256": "9871b8609ab310dfb23c45dd7592bbe47f9a58635a7e4bc54c5fff4e0ddfbc7d",
+  "helper_sha256": "0a6f1fa9be625e2d85c20c0c8b6574725943ada6b6165ee50d3f8e15971200bd",
+  "controller_sha256": "b6446cdbeb826d279fe6d6490aee27e1c5b68953da48e4559e712b973aefbec4",
+  "log_sha256": "bc0c4e18a75b574869cd0cd5ac32b6573be88735c82fefe05440b5a4ec3bdd46",
+  "result": {
+    "Node_Server_Native_Runtime_constructor_socket_key_sign_custody_calls": 0,
+    "OS_lock_GIL_live_causality_or_speedup_benchmark_proven": false,
+    "actual_forwarded_commitment_function_no_authentication_mocks": true,
+    "completed": true,
+    "exact_duplicate_per_active_transit_proven": true,
+    "fresh_successful432_inventory_unchanged": true,
+    "full_fault_qualified": false,
+    "measurements": [
+      {
+        "active_messages": 68,
+        "cache_state": "cold",
+        "decode_commitment_inclusive_seconds": 0.020256,
+        "decode_seconds": 0.105165,
+        "exact_same_object_same_commitment_pairs": 68,
+        "full_actual_signature_validation_not_mocked": true,
+        "peer_label": "earth",
+        "signed_archive_index_rows": 64,
+        "state_bytes_unchanged": true,
+        "validate_commitment_inclusive_seconds": 0.019838,
+        "validate_seconds": 0.3009
+      },
+      {
+        "active_messages": 68,
+        "cache_state": "warm",
+        "decode_commitment_inclusive_seconds": 0.019078,
+        "decode_seconds": 0.100629,
+        "exact_same_object_same_commitment_pairs": 68,
+        "full_actual_signature_validation_not_mocked": true,
+        "peer_label": "earth",
+        "signed_archive_index_rows": 64,
+        "state_bytes_unchanged": true,
+        "validate_commitment_inclusive_seconds": 0.018998,
+        "validate_seconds": 0.053695
+      },
+      {
+        "active_messages": 52,
+        "cache_state": "cold",
+        "decode_commitment_inclusive_seconds": 0.018426,
+        "decode_seconds": 0.100488,
+        "exact_same_object_same_commitment_pairs": 52,
+        "full_actual_signature_validation_not_mocked": true,
+        "peer_label": "proxima",
+        "signed_archive_index_rows": 80,
+        "state_bytes_unchanged": true,
+        "validate_commitment_inclusive_seconds": 0.018781,
+        "validate_seconds": 0.297519
+      },
+      {
+        "active_messages": 52,
+        "cache_state": "warm",
+        "decode_commitment_inclusive_seconds": 0.018061,
+        "decode_seconds": 0.098782,
+        "exact_same_object_same_commitment_pairs": 52,
+        "full_actual_signature_validation_not_mocked": true,
+        "peer_label": "proxima",
+        "signed_archive_index_rows": 80,
+        "state_bytes_unchanged": true,
+        "validate_commitment_inclusive_seconds": 0.01827,
+        "validate_seconds": 0.048076
+      },
+      {
+        "active_messages": 68,
+        "cache_state": "cold",
+        "decode_commitment_inclusive_seconds": 0.019348,
+        "decode_seconds": 0.100643,
+        "exact_same_object_same_commitment_pairs": 68,
+        "full_actual_signature_validation_not_mocked": true,
+        "peer_label": "andromeda",
+        "signed_archive_index_rows": 64,
+        "state_bytes_unchanged": true,
+        "validate_commitment_inclusive_seconds": 0.019298,
+        "validate_seconds": 0.294902
+      },
+      {
+        "active_messages": 68,
+        "cache_state": "warm",
+        "decode_commitment_inclusive_seconds": 0.019193,
+        "decode_seconds": 0.100435,
+        "exact_same_object_same_commitment_pairs": 68,
+        "full_actual_signature_validation_not_mocked": true,
+        "peer_label": "andromeda",
+        "signed_archive_index_rows": 64,
+        "state_bytes_unchanged": true,
+        "validate_commitment_inclusive_seconds": 0.019156,
+        "validate_seconds": 0.054702
+      }
+    ],
+    "profiler_observer_overhead_not_speed_benchmark": true,
+    "profiles": [
+      {
+        "cache_state": "cold",
+        "peer_label": "earth",
+        "phase": "decode",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "load_state_storage",
+            "inclusive_seconds": 0.105132,
+            "line": 152,
+            "own_seconds": 2.6e-05,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.103138,
+            "line": 94,
+            "own_seconds": 0.000544,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "_unpack",
+            "inclusive_seconds": 0.067557,
+            "line": 109,
+            "own_seconds": 0.000474,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.0277,
+            "line": 0,
+            "own_seconds": 0.0277,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.027611,
+            "line": 0,
+            "own_seconds": 0.027611,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.02376,
+            "line": 15,
+            "own_seconds": 0.002434,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "counted",
+            "inclusive_seconds": 0.02036,
+            "line": 20,
+            "own_seconds": 0.000105,
+            "primitive_calls": 68,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.020209,
+            "line": 47,
+            "own_seconds": 0.000353,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.017567,
+            "line": 32,
+            "own_seconds": 0.001963,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode_json",
+            "inclusive_seconds": 0.017468,
+            "line": 51,
+            "own_seconds": 4e-06,
+            "primitive_calls": 1,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "loads",
+            "inclusive_seconds": 0.017464,
+            "line": 304,
+            "own_seconds": 1.3e-05,
+            "primitive_calls": 1,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 68,
+            "function": "digest",
+            "inclusive_seconds": 0.017264,
+            "line": 28,
+            "own_seconds": 5.9e-05,
+            "primitive_calls": 68,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.016369,
+            "line": 340,
+            "own_seconds": 7e-06,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.016358,
+            "line": 351,
+            "own_seconds": 0.016085,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.0277,
+            "line": 0,
+            "own_seconds": 0.0277,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.027611,
+            "line": 0,
+            "own_seconds": 0.027611,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.016358,
+            "line": 351,
+            "own_seconds": 0.016085,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.006173,
+            "line": 0,
+            "own_seconds": 0.006173,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.005965,
+            "line": 0,
+            "own_seconds": 0.005965,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.02376,
+            "line": 15,
+            "own_seconds": 0.002434,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.017567,
+            "line": 32,
+            "own_seconds": 0.001963,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'read' of '_io.BufferedReader' objects>",
+            "inclusive_seconds": 0.001847,
+            "line": 0,
+            "own_seconds": 0.001847,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "dumps",
+            "inclusive_seconds": 0.004895,
+            "line": 185,
+            "own_seconds": 0.00177,
+            "primitive_calls": 2593,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 205,
+            "function": "iterencode",
+            "inclusive_seconds": 0.001532,
+            "line": 207,
+            "own_seconds": 0.001532,
+            "primitive_calls": 205,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 2797,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.001411,
+            "line": 0,
+            "own_seconds": 0.001411,
+            "primitive_calls": 2797,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.001071,
+            "line": 0,
+            "own_seconds": 0.001071,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 682,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.015664,
+            "line": 0,
+            "own_seconds": 0.001003,
+            "primitive_calls": 546,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "canonical",
+            "inclusive_seconds": 0.006165,
+            "line": 37,
+            "own_seconds": 0.000974,
+            "primitive_calls": 2593,
+            "source_name": "interstellar_transfer.py"
+          }
+        ]
+      },
+      {
+        "cache_state": "cold",
+        "peer_label": "earth",
+        "phase": "validate",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "validate_state",
+            "inclusive_seconds": 0.300853,
+            "line": 570,
+            "own_seconds": 0.000431,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "transit_check",
+            "inclusive_seconds": 0.242578,
+            "line": 310,
+            "own_seconds": 0.000363,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "_transit_check",
+            "inclusive_seconds": 0.221972,
+            "line": 340,
+            "own_seconds": 0.000206,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "_packet_frame_check",
+            "inclusive_seconds": 0.170782,
+            "line": 289,
+            "own_seconds": 0.000741,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 364,
+            "function": "verify",
+            "inclusive_seconds": 0.099355,
+            "line": 251,
+            "own_seconds": 0.001959,
+            "primitive_calls": 364,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "inspect_frame",
+            "inclusive_seconds": 0.095941,
+            "line": 120,
+            "own_seconds": 0.0013,
+            "primitive_calls": 68,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 3145,
+            "function": "canonical",
+            "inclusive_seconds": 0.086884,
+            "line": 37,
+            "own_seconds": 0.001245,
+            "primitive_calls": 3145,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 3145,
+            "function": "dumps",
+            "inclusive_seconds": 0.084633,
+            "line": 185,
+            "own_seconds": 0.002258,
+            "primitive_calls": 3145,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 3145,
+            "function": "encode",
+            "inclusive_seconds": 0.081933,
+            "line": 185,
+            "own_seconds": 0.001273,
+            "primitive_calls": 3145,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 969,
+            "function": "iterencode",
+            "inclusive_seconds": 0.07993,
+            "line": 207,
+            "own_seconds": 0.07993,
+            "primitive_calls": 969,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 364,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.078738,
+            "line": 0,
+            "own_seconds": 0.078738,
+            "primitive_calls": 364,
+            "source_name": "~"
+          },
+          {
+            "calls": 64,
+            "function": "archive_entry",
+            "inclusive_seconds": 0.041691,
+            "line": 753,
+            "own_seconds": 0.000345,
+            "primitive_calls": 64,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 136,
+            "function": "b64decode",
+            "inclusive_seconds": 0.038222,
+            "line": 62,
+            "own_seconds": 7.8e-05,
+            "primitive_calls": 136,
+            "source_name": "base64.py"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.037545,
+            "line": 0,
+            "own_seconds": 0.037545,
+            "primitive_calls": 136,
+            "source_name": "~"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 969,
+            "function": "iterencode",
+            "inclusive_seconds": 0.07993,
+            "line": 207,
+            "own_seconds": 0.07993,
+            "primitive_calls": 969,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 364,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.078738,
+            "line": 0,
+            "own_seconds": 0.078738,
+            "primitive_calls": 364,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.037545,
+            "line": 0,
+            "own_seconds": 0.037545,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method binascii.b2a_base64>",
+            "inclusive_seconds": 0.026485,
+            "line": 0,
+            "own_seconds": 0.026485,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.017858,
+            "line": 0,
+            "own_seconds": 0.017858,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 636,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.013688,
+            "line": 0,
+            "own_seconds": 0.013688,
+            "primitive_calls": 636,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.010552,
+            "line": 351,
+            "own_seconds": 0.010506,
+            "primitive_calls": 68,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005995,
+            "line": 0,
+            "own_seconds": 0.005995,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 4145,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.002305,
+            "line": 0,
+            "own_seconds": 0.002305,
+            "primitive_calls": 4145,
+            "source_name": "~"
+          },
+          {
+            "calls": 3145,
+            "function": "dumps",
+            "inclusive_seconds": 0.084633,
+            "line": 185,
+            "own_seconds": 0.002258,
+            "primitive_calls": 3145,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 268,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.002092,
+            "line": 0,
+            "own_seconds": 0.002092,
+            "primitive_calls": 268,
+            "source_name": "~"
+          },
+          {
+            "calls": 364,
+            "function": "verify",
+            "inclusive_seconds": 0.099355,
+            "line": 251,
+            "own_seconds": 0.001959,
+            "primitive_calls": 364,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 3246,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.001563,
+            "line": 0,
+            "own_seconds": 0.001563,
+            "primitive_calls": 3246,
+            "source_name": "~"
+          },
+          {
+            "calls": 364,
+            "function": "<built-in method ed25519.from_public_bytes>",
+            "inclusive_seconds": 0.001549,
+            "line": 0,
+            "own_seconds": 0.001549,
+            "primitive_calls": 364,
+            "source_name": "~"
+          }
+        ]
+      },
+      {
+        "cache_state": "warm",
+        "peer_label": "earth",
+        "phase": "decode",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "load_state_storage",
+            "inclusive_seconds": 0.100598,
+            "line": 152,
+            "own_seconds": 2.6e-05,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.098527,
+            "line": 94,
+            "own_seconds": 0.000595,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "_unpack",
+            "inclusive_seconds": 0.065311,
+            "line": 109,
+            "own_seconds": 0.000469,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027113,
+            "line": 0,
+            "own_seconds": 0.027113,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.026683,
+            "line": 0,
+            "own_seconds": 0.026683,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022855,
+            "line": 15,
+            "own_seconds": 0.002195,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "counted",
+            "inclusive_seconds": 0.019178,
+            "line": 20,
+            "own_seconds": 0.000102,
+            "primitive_calls": 68,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.019033,
+            "line": 47,
+            "own_seconds": 0.000322,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "digest",
+            "inclusive_seconds": 0.016891,
+            "line": 28,
+            "own_seconds": 5.5e-05,
+            "primitive_calls": 68,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016694,
+            "line": 32,
+            "own_seconds": 0.001848,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode_json",
+            "inclusive_seconds": 0.015926,
+            "line": 51,
+            "own_seconds": 1e-06,
+            "primitive_calls": 1,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "loads",
+            "inclusive_seconds": 0.015925,
+            "line": 304,
+            "own_seconds": 5e-06,
+            "primitive_calls": 1,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.015051,
+            "line": 340,
+            "own_seconds": 4e-06,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.015044,
+            "line": 351,
+            "own_seconds": 0.014725,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027113,
+            "line": 0,
+            "own_seconds": 0.027113,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.026683,
+            "line": 0,
+            "own_seconds": 0.026683,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.015044,
+            "line": 351,
+            "own_seconds": 0.014725,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.005852,
+            "line": 0,
+            "own_seconds": 0.005852,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005843,
+            "line": 0,
+            "own_seconds": 0.005843,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022855,
+            "line": 15,
+            "own_seconds": 0.002195,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'read' of '_io.BufferedReader' objects>",
+            "inclusive_seconds": 0.001911,
+            "line": 0,
+            "own_seconds": 0.001911,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016694,
+            "line": 32,
+            "own_seconds": 0.001848,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 2593,
+            "function": "dumps",
+            "inclusive_seconds": 0.004431,
+            "line": 185,
+            "own_seconds": 0.001647,
+            "primitive_calls": 2593,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 2797,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.001353,
+            "line": 0,
+            "own_seconds": 0.001353,
+            "primitive_calls": 2797,
+            "source_name": "~"
+          },
+          {
+            "calls": 205,
+            "function": "iterencode",
+            "inclusive_seconds": 0.00129,
+            "line": 207,
+            "own_seconds": 0.00129,
+            "primitive_calls": 205,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 682,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.014901,
+            "line": 0,
+            "own_seconds": 0.001,
+            "primitive_calls": 546,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "canonical",
+            "inclusive_seconds": 0.005615,
+            "line": 37,
+            "own_seconds": 0.000901,
+            "primitive_calls": 2593,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.000862,
+            "line": 0,
+            "own_seconds": 0.000862,
+            "primitive_calls": 1,
+            "source_name": "~"
+          }
+        ]
+      },
+      {
+        "cache_state": "warm",
+        "peer_label": "earth",
+        "phase": "validate",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "validate_state",
+            "inclusive_seconds": 0.053666,
+            "line": 570,
+            "own_seconds": 0.000218,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "transit_check",
+            "inclusive_seconds": 0.041287,
+            "line": 310,
+            "own_seconds": 0.000235,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "b64decode",
+            "inclusive_seconds": 0.021746,
+            "line": 62,
+            "own_seconds": 2.9e-05,
+            "primitive_calls": 68,
+            "source_name": "base64.py"
+          },
+          {
+            "calls": 68,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.02141,
+            "line": 0,
+            "own_seconds": 0.02141,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "counted",
+            "inclusive_seconds": 0.019123,
+            "line": 20,
+            "own_seconds": 0.000114,
+            "primitive_calls": 68,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.018959,
+            "line": 47,
+            "own_seconds": 0.000321,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.008893,
+            "line": 0,
+            "own_seconds": 0.008893,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 36,
+            "function": "verify",
+            "inclusive_seconds": 0.007403,
+            "line": 251,
+            "own_seconds": 0.000157,
+            "primitive_calls": 36,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 36,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.006638,
+            "line": 0,
+            "own_seconds": 0.006638,
+            "primitive_calls": 36,
+            "source_name": "~"
+          },
+          {
+            "calls": 16,
+            "function": "receipt_check",
+            "inclusive_seconds": 0.006597,
+            "line": 384,
+            "own_seconds": 2.9e-05,
+            "primitive_calls": 16,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005835,
+            "line": 0,
+            "own_seconds": 0.005835,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "archive_inventory",
+            "inclusive_seconds": 0.00373,
+            "line": 739,
+            "own_seconds": 0.000298,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1601,
+            "function": "canonical",
+            "inclusive_seconds": 0.003594,
+            "line": 37,
+            "own_seconds": 0.000541,
+            "primitive_calls": 1601,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 272,
+            "function": "_split",
+            "inclusive_seconds": 0.003428,
+            "line": 35,
+            "own_seconds": 0.000506,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 68,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.02141,
+            "line": 0,
+            "own_seconds": 0.02141,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.008893,
+            "line": 0,
+            "own_seconds": 0.008893,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 36,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.006638,
+            "line": 0,
+            "own_seconds": 0.006638,
+            "primitive_calls": 36,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005835,
+            "line": 0,
+            "own_seconds": 0.005835,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 256,
+            "function": "<built-in method posix.stat>",
+            "inclusive_seconds": 0.001353,
+            "line": 0,
+            "own_seconds": 0.001271,
+            "primitive_calls": 256,
+            "source_name": "~"
+          },
+          {
+            "calls": 1601,
+            "function": "dumps",
+            "inclusive_seconds": 0.002886,
+            "line": 185,
+            "own_seconds": 0.000996,
+            "primitive_calls": 1601,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 241,
+            "function": "iterencode",
+            "inclusive_seconds": 0.000948,
+            "line": 207,
+            "own_seconds": 0.000948,
+            "primitive_calls": 241,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 1809,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.000762,
+            "line": 0,
+            "own_seconds": 0.000762,
+            "primitive_calls": 1809,
+            "source_name": "~"
+          },
+          {
+            "calls": 1601,
+            "function": "canonical",
+            "inclusive_seconds": 0.003594,
+            "line": 37,
+            "own_seconds": 0.000541,
+            "primitive_calls": 1601,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 272,
+            "function": "_split",
+            "inclusive_seconds": 0.003428,
+            "line": 35,
+            "own_seconds": 0.000506,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 128,
+            "function": "<built-in method posix.lstat>",
+            "inclusive_seconds": 0.000517,
+            "line": 0,
+            "own_seconds": 0.000484,
+            "primitive_calls": 128,
+            "source_name": "~"
+          },
+          {
+            "calls": 1601,
+            "function": "encode",
+            "inclusive_seconds": 0.00171,
+            "line": 185,
+            "own_seconds": 0.000449,
+            "primitive_calls": 1601,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 750,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.00035,
+            "line": 0,
+            "own_seconds": 0.00035,
+            "primitive_calls": 750,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.018959,
+            "line": 47,
+            "own_seconds": 0.000321,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          }
+        ]
+      },
+      {
+        "cache_state": "cold",
+        "peer_label": "proxima",
+        "phase": "decode",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "load_state_storage",
+            "inclusive_seconds": 0.10046,
+            "line": 152,
+            "own_seconds": 2.1e-05,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.098616,
+            "line": 94,
+            "own_seconds": 0.000592,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "_unpack",
+            "inclusive_seconds": 0.063958,
+            "line": 109,
+            "own_seconds": 0.00037,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.027162,
+            "line": 0,
+            "own_seconds": 0.027162,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 262,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.026982,
+            "line": 0,
+            "own_seconds": 0.026982,
+            "primitive_calls": 262,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022858,
+            "line": 15,
+            "own_seconds": 0.002235,
+            "primitive_calls": 104,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 52,
+            "function": "counted",
+            "inclusive_seconds": 0.018509,
+            "line": 20,
+            "own_seconds": 8.1e-05,
+            "primitive_calls": 52,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 52,
+            "function": "commitment",
+            "inclusive_seconds": 0.018391,
+            "line": 47,
+            "own_seconds": 0.000279,
+            "primitive_calls": 52,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.017046,
+            "line": 32,
+            "own_seconds": 0.001889,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode_json",
+            "inclusive_seconds": 0.017018,
+            "line": 51,
+            "own_seconds": 3e-06,
+            "primitive_calls": 1,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "loads",
+            "inclusive_seconds": 0.017015,
+            "line": 304,
+            "own_seconds": 8e-06,
+            "primitive_calls": 1,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 52,
+            "function": "digest",
+            "inclusive_seconds": 0.016748,
+            "line": 28,
+            "own_seconds": 5.2e-05,
+            "primitive_calls": 52,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.016039,
+            "line": 340,
+            "own_seconds": 6e-06,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.01603,
+            "line": 351,
+            "own_seconds": 0.01577,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 156,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.027162,
+            "line": 0,
+            "own_seconds": 0.027162,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 262,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.026982,
+            "line": 0,
+            "own_seconds": 0.026982,
+            "primitive_calls": 262,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.01603,
+            "line": 351,
+            "own_seconds": 0.01577,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 104,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.005927,
+            "line": 0,
+            "own_seconds": 0.005927,
+            "primitive_calls": 104,
+            "source_name": "~"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005862,
+            "line": 0,
+            "own_seconds": 0.005862,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022858,
+            "line": 15,
+            "own_seconds": 0.002235,
+            "primitive_calls": 104,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.017046,
+            "line": 32,
+            "own_seconds": 0.001889,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'read' of '_io.BufferedReader' objects>",
+            "inclusive_seconds": 0.001711,
+            "line": 0,
+            "own_seconds": 0.001711,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 157,
+            "function": "iterencode",
+            "inclusive_seconds": 0.00134,
+            "line": 207,
+            "own_seconds": 0.00134,
+            "primitive_calls": 157,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 1985,
+            "function": "dumps",
+            "inclusive_seconds": 0.003855,
+            "line": 185,
+            "own_seconds": 0.001323,
+            "primitive_calls": 1985,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 2141,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.001273,
+            "line": 0,
+            "own_seconds": 0.001273,
+            "primitive_calls": 2141,
+            "source_name": "~"
+          },
+          {
+            "calls": 522,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.015203,
+            "line": 0,
+            "own_seconds": 0.000984,
+            "primitive_calls": 418,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.000961,
+            "line": 0,
+            "own_seconds": 0.000961,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 1985,
+            "function": "canonical",
+            "inclusive_seconds": 0.004817,
+            "line": 37,
+            "own_seconds": 0.00074,
+            "primitive_calls": 1985,
+            "source_name": "interstellar_transfer.py"
+          }
+        ]
+      },
+      {
+        "cache_state": "cold",
+        "peer_label": "proxima",
+        "phase": "validate",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "validate_state",
+            "inclusive_seconds": 0.297483,
+            "line": 570,
+            "own_seconds": 0.000445,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 52,
+            "function": "transit_check",
+            "inclusive_seconds": 0.234938,
+            "line": 310,
+            "own_seconds": 0.000309,
+            "primitive_calls": 52,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 52,
+            "function": "_transit_check",
+            "inclusive_seconds": 0.215508,
+            "line": 340,
+            "own_seconds": 0.00019,
+            "primitive_calls": 52,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 52,
+            "function": "_packet_frame_check",
+            "inclusive_seconds": 0.166654,
+            "line": 289,
+            "own_seconds": 0.000699,
+            "primitive_calls": 52,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 352,
+            "function": "verify",
+            "inclusive_seconds": 0.096044,
+            "line": 251,
+            "own_seconds": 0.001923,
+            "primitive_calls": 352,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 52,
+            "function": "inspect_frame",
+            "inclusive_seconds": 0.095145,
+            "line": 120,
+            "own_seconds": 0.001241,
+            "primitive_calls": 52,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 2574,
+            "function": "canonical",
+            "inclusive_seconds": 0.086559,
+            "line": 37,
+            "own_seconds": 0.001047,
+            "primitive_calls": 2574,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 2574,
+            "function": "dumps",
+            "inclusive_seconds": 0.084511,
+            "line": 185,
+            "own_seconds": 0.001907,
+            "primitive_calls": 2574,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 2574,
+            "function": "encode",
+            "inclusive_seconds": 0.082259,
+            "line": 185,
+            "own_seconds": 0.001082,
+            "primitive_calls": 2574,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 910,
+            "function": "iterencode",
+            "inclusive_seconds": 0.080549,
+            "line": 207,
+            "own_seconds": 0.080549,
+            "primitive_calls": 910,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 352,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.07636,
+            "line": 0,
+            "own_seconds": 0.07636,
+            "primitive_calls": 352,
+            "source_name": "~"
+          },
+          {
+            "calls": 80,
+            "function": "archive_entry",
+            "inclusive_seconds": 0.0521,
+            "line": 753,
+            "own_seconds": 0.000419,
+            "primitive_calls": 80,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 104,
+            "function": "b64decode",
+            "inclusive_seconds": 0.038447,
+            "line": 62,
+            "own_seconds": 6.2e-05,
+            "primitive_calls": 104,
+            "source_name": "base64.py"
+          },
+          {
+            "calls": 104,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.037839,
+            "line": 0,
+            "own_seconds": 0.037839,
+            "primitive_calls": 104,
+            "source_name": "~"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 910,
+            "function": "iterencode",
+            "inclusive_seconds": 0.080549,
+            "line": 207,
+            "own_seconds": 0.080549,
+            "primitive_calls": 910,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 352,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.07636,
+            "line": 0,
+            "own_seconds": 0.07636,
+            "primitive_calls": 352,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.037839,
+            "line": 0,
+            "own_seconds": 0.037839,
+            "primitive_calls": 104,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "<built-in method binascii.b2a_base64>",
+            "inclusive_seconds": 0.026391,
+            "line": 0,
+            "own_seconds": 0.026391,
+            "primitive_calls": 104,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.01809,
+            "line": 0,
+            "own_seconds": 0.01809,
+            "primitive_calls": 104,
+            "source_name": "~"
+          },
+          {
+            "calls": 561,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.013673,
+            "line": 0,
+            "own_seconds": 0.013673,
+            "primitive_calls": 561,
+            "source_name": "~"
+          },
+          {
+            "calls": 52,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.010351,
+            "line": 351,
+            "own_seconds": 0.010312,
+            "primitive_calls": 52,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005949,
+            "line": 0,
+            "own_seconds": 0.005949,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 3486,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.002223,
+            "line": 0,
+            "own_seconds": 0.002223,
+            "primitive_calls": 3486,
+            "source_name": "~"
+          },
+          {
+            "calls": 236,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.002093,
+            "line": 0,
+            "own_seconds": 0.002093,
+            "primitive_calls": 236,
+            "source_name": "~"
+          },
+          {
+            "calls": 352,
+            "function": "verify",
+            "inclusive_seconds": 0.096044,
+            "line": 251,
+            "own_seconds": 0.001923,
+            "primitive_calls": 352,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 2574,
+            "function": "dumps",
+            "inclusive_seconds": 0.084511,
+            "line": 185,
+            "own_seconds": 0.001907,
+            "primitive_calls": 2574,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 3345,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.001612,
+            "line": 0,
+            "own_seconds": 0.001612,
+            "primitive_calls": 3345,
+            "source_name": "~"
+          },
+          {
+            "calls": 320,
+            "function": "<built-in method posix.stat>",
+            "inclusive_seconds": 0.001611,
+            "line": 0,
+            "own_seconds": 0.001521,
+            "primitive_calls": 320,
+            "source_name": "~"
+          }
+        ]
+      },
+      {
+        "cache_state": "warm",
+        "peer_label": "proxima",
+        "phase": "decode",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "load_state_storage",
+            "inclusive_seconds": 0.098752,
+            "line": 152,
+            "own_seconds": 2.2e-05,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.096784,
+            "line": 94,
+            "own_seconds": 0.000605,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "_unpack",
+            "inclusive_seconds": 0.06353,
+            "line": 109,
+            "own_seconds": 0.000349,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 262,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027105,
+            "line": 0,
+            "own_seconds": 0.027105,
+            "primitive_calls": 262,
+            "source_name": "~"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.026854,
+            "line": 0,
+            "own_seconds": 0.026854,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022382,
+            "line": 15,
+            "own_seconds": 0.002023,
+            "primitive_calls": 104,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 52,
+            "function": "counted",
+            "inclusive_seconds": 0.018137,
+            "line": 20,
+            "own_seconds": 7.7e-05,
+            "primitive_calls": 52,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 52,
+            "function": "commitment",
+            "inclusive_seconds": 0.018026,
+            "line": 47,
+            "own_seconds": 0.000254,
+            "primitive_calls": 52,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 52,
+            "function": "digest",
+            "inclusive_seconds": 0.016579,
+            "line": 28,
+            "own_seconds": 4.5e-05,
+            "primitive_calls": 52,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016531,
+            "line": 32,
+            "own_seconds": 0.001925,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode_json",
+            "inclusive_seconds": 0.016117,
+            "line": 51,
+            "own_seconds": 2e-06,
+            "primitive_calls": 1,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "loads",
+            "inclusive_seconds": 0.016116,
+            "line": 304,
+            "own_seconds": 6e-06,
+            "primitive_calls": 1,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.015071,
+            "line": 340,
+            "own_seconds": 5e-06,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.015061,
+            "line": 351,
+            "own_seconds": 0.014459,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 262,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027105,
+            "line": 0,
+            "own_seconds": 0.027105,
+            "primitive_calls": 262,
+            "source_name": "~"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.026854,
+            "line": 0,
+            "own_seconds": 0.026854,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.015061,
+            "line": 351,
+            "own_seconds": 0.014459,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 104,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.005794,
+            "line": 0,
+            "own_seconds": 0.005794,
+            "primitive_calls": 104,
+            "source_name": "~"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005784,
+            "line": 0,
+            "own_seconds": 0.005784,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 104,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022382,
+            "line": 15,
+            "own_seconds": 0.002023,
+            "primitive_calls": 104,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016531,
+            "line": 32,
+            "own_seconds": 0.001925,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'read' of '_io.BufferedReader' objects>",
+            "inclusive_seconds": 0.001801,
+            "line": 0,
+            "own_seconds": 0.001801,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 1985,
+            "function": "dumps",
+            "inclusive_seconds": 0.003648,
+            "line": 185,
+            "own_seconds": 0.001274,
+            "primitive_calls": 1985,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 2141,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.001246,
+            "line": 0,
+            "own_seconds": 0.001246,
+            "primitive_calls": 2141,
+            "source_name": "~"
+          },
+          {
+            "calls": 157,
+            "function": "iterencode",
+            "inclusive_seconds": 0.001238,
+            "line": 207,
+            "own_seconds": 0.001238,
+            "primitive_calls": 157,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 522,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.014649,
+            "line": 0,
+            "own_seconds": 0.001042,
+            "primitive_calls": 418,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.001031,
+            "line": 0,
+            "own_seconds": 0.001031,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 1985,
+            "function": "canonical",
+            "inclusive_seconds": 0.004571,
+            "line": 37,
+            "own_seconds": 0.000714,
+            "primitive_calls": 1985,
+            "source_name": "interstellar_transfer.py"
+          }
+        ]
+      },
+      {
+        "cache_state": "warm",
+        "peer_label": "proxima",
+        "phase": "validate",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "validate_state",
+            "inclusive_seconds": 0.04804,
+            "line": 570,
+            "own_seconds": 0.00022,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 52,
+            "function": "transit_check",
+            "inclusive_seconds": 0.0406,
+            "line": 310,
+            "own_seconds": 0.000218,
+            "primitive_calls": 52,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 52,
+            "function": "b64decode",
+            "inclusive_seconds": 0.021828,
+            "line": 62,
+            "own_seconds": 2.9e-05,
+            "primitive_calls": 52,
+            "source_name": "base64.py"
+          },
+          {
+            "calls": 52,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.02149,
+            "line": 0,
+            "own_seconds": 0.02149,
+            "primitive_calls": 52,
+            "source_name": "~"
+          },
+          {
+            "calls": 52,
+            "function": "counted",
+            "inclusive_seconds": 0.018389,
+            "line": 20,
+            "own_seconds": 0.000111,
+            "primitive_calls": 52,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 52,
+            "function": "commitment",
+            "inclusive_seconds": 0.018234,
+            "line": 47,
+            "own_seconds": 0.000291,
+            "primitive_calls": 52,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 52,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.008923,
+            "line": 0,
+            "own_seconds": 0.008923,
+            "primitive_calls": 52,
+            "source_name": "~"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005773,
+            "line": 0,
+            "own_seconds": 0.005773,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "archive_inventory",
+            "inclusive_seconds": 0.00443,
+            "line": 739,
+            "own_seconds": 0.000362,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1204,
+            "function": "canonical",
+            "inclusive_seconds": 0.003067,
+            "line": 37,
+            "own_seconds": 0.000425,
+            "primitive_calls": 1204,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 208,
+            "function": "_split",
+            "inclusive_seconds": 0.00277,
+            "line": 35,
+            "own_seconds": 0.000421,
+            "primitive_calls": 52,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1204,
+            "function": "dumps",
+            "inclusive_seconds": 0.002499,
+            "line": 185,
+            "own_seconds": 0.000765,
+            "primitive_calls": 1204,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 7,
+            "function": "verify",
+            "inclusive_seconds": 0.00163,
+            "line": 251,
+            "own_seconds": 5e-05,
+            "primitive_calls": 7,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1204,
+            "function": "encode",
+            "inclusive_seconds": 0.001595,
+            "line": 185,
+            "own_seconds": 0.000345,
+            "primitive_calls": 1204,
+            "source_name": "encoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 52,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.02149,
+            "line": 0,
+            "own_seconds": 0.02149,
+            "primitive_calls": 52,
+            "source_name": "~"
+          },
+          {
+            "calls": 52,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.008923,
+            "line": 0,
+            "own_seconds": 0.008923,
+            "primitive_calls": 52,
+            "source_name": "~"
+          },
+          {
+            "calls": 156,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005773,
+            "line": 0,
+            "own_seconds": 0.005773,
+            "primitive_calls": 156,
+            "source_name": "~"
+          },
+          {
+            "calls": 320,
+            "function": "<built-in method posix.stat>",
+            "inclusive_seconds": 0.001581,
+            "line": 0,
+            "own_seconds": 0.001495,
+            "primitive_calls": 320,
+            "source_name": "~"
+          },
+          {
+            "calls": 7,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.001384,
+            "line": 0,
+            "own_seconds": 0.001384,
+            "primitive_calls": 7,
+            "source_name": "~"
+          },
+          {
+            "calls": 164,
+            "function": "iterencode",
+            "inclusive_seconds": 0.001009,
+            "line": 207,
+            "own_seconds": 0.001009,
+            "primitive_calls": 164,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 1204,
+            "function": "dumps",
+            "inclusive_seconds": 0.002499,
+            "line": 185,
+            "own_seconds": 0.000765,
+            "primitive_calls": 1204,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 1322,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.000759,
+            "line": 0,
+            "own_seconds": 0.000759,
+            "primitive_calls": 1322,
+            "source_name": "~"
+          },
+          {
+            "calls": 160,
+            "function": "<built-in method posix.lstat>",
+            "inclusive_seconds": 0.000641,
+            "line": 0,
+            "own_seconds": 0.000598,
+            "primitive_calls": 160,
+            "source_name": "~"
+          },
+          {
+            "calls": 1204,
+            "function": "canonical",
+            "inclusive_seconds": 0.003067,
+            "line": 37,
+            "own_seconds": 0.000425,
+            "primitive_calls": 1204,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 208,
+            "function": "_split",
+            "inclusive_seconds": 0.00277,
+            "line": 35,
+            "own_seconds": 0.000421,
+            "primitive_calls": 52,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "archive_inventory",
+            "inclusive_seconds": 0.00443,
+            "line": 739,
+            "own_seconds": 0.000362,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1204,
+            "function": "encode",
+            "inclusive_seconds": 0.001595,
+            "line": 185,
+            "own_seconds": 0.000345,
+            "primitive_calls": 1204,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 749,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.000316,
+            "line": 0,
+            "own_seconds": 0.000316,
+            "primitive_calls": 749,
+            "source_name": "~"
+          }
+        ]
+      },
+      {
+        "cache_state": "cold",
+        "peer_label": "andromeda",
+        "phase": "decode",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "load_state_storage",
+            "inclusive_seconds": 0.100614,
+            "line": 152,
+            "own_seconds": 2.3e-05,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.098758,
+            "line": 94,
+            "own_seconds": 0.00048,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "_unpack",
+            "inclusive_seconds": 0.065713,
+            "line": 109,
+            "own_seconds": 0.000431,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027215,
+            "line": 0,
+            "own_seconds": 0.027215,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.027028,
+            "line": 0,
+            "own_seconds": 0.027028,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.02283,
+            "line": 15,
+            "own_seconds": 0.002144,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "counted",
+            "inclusive_seconds": 0.019437,
+            "line": 20,
+            "own_seconds": 8.8e-05,
+            "primitive_calls": 68,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.019308,
+            "line": 47,
+            "own_seconds": 0.000322,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "digest",
+            "inclusive_seconds": 0.016929,
+            "line": 28,
+            "own_seconds": 5.8e-05,
+            "primitive_calls": 68,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016824,
+            "line": 32,
+            "own_seconds": 0.001919,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode_json",
+            "inclusive_seconds": 0.01574,
+            "line": 51,
+            "own_seconds": 6e-06,
+            "primitive_calls": 1,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "loads",
+            "inclusive_seconds": 0.015734,
+            "line": 304,
+            "own_seconds": 7e-06,
+            "primitive_calls": 1,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 682,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.014958,
+            "line": 0,
+            "own_seconds": 0.001024,
+            "primitive_calls": 546,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.014638,
+            "line": 340,
+            "own_seconds": 5e-06,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027215,
+            "line": 0,
+            "own_seconds": 0.027215,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.027028,
+            "line": 0,
+            "own_seconds": 0.027028,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.014629,
+            "line": 351,
+            "own_seconds": 0.014373,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005881,
+            "line": 0,
+            "own_seconds": 0.005881,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.005837,
+            "line": 0,
+            "own_seconds": 0.005837,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.02283,
+            "line": 15,
+            "own_seconds": 0.002144,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016824,
+            "line": 32,
+            "own_seconds": 0.001919,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'read' of '_io.BufferedReader' objects>",
+            "inclusive_seconds": 0.001703,
+            "line": 0,
+            "own_seconds": 0.001703,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "dumps",
+            "inclusive_seconds": 0.004572,
+            "line": 185,
+            "own_seconds": 0.001696,
+            "primitive_calls": 2593,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 205,
+            "function": "iterencode",
+            "inclusive_seconds": 0.001375,
+            "line": 207,
+            "own_seconds": 0.001375,
+            "primitive_calls": 205,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 2797,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.001163,
+            "line": 0,
+            "own_seconds": 0.001163,
+            "primitive_calls": 2797,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.001082,
+            "line": 0,
+            "own_seconds": 0.001082,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 682,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.014958,
+            "line": 0,
+            "own_seconds": 0.001024,
+            "primitive_calls": 546,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "canonical",
+            "inclusive_seconds": 0.005786,
+            "line": 37,
+            "own_seconds": 0.000937,
+            "primitive_calls": 2593,
+            "source_name": "interstellar_transfer.py"
+          }
+        ]
+      },
+      {
+        "cache_state": "cold",
+        "peer_label": "andromeda",
+        "phase": "validate",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "validate_state",
+            "inclusive_seconds": 0.294868,
+            "line": 570,
+            "own_seconds": 0.000402,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "transit_check",
+            "inclusive_seconds": 0.238339,
+            "line": 310,
+            "own_seconds": 0.000335,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "_transit_check",
+            "inclusive_seconds": 0.218333,
+            "line": 340,
+            "own_seconds": 0.000203,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "_packet_frame_check",
+            "inclusive_seconds": 0.167806,
+            "line": 289,
+            "own_seconds": 0.000692,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 368,
+            "function": "verify",
+            "inclusive_seconds": 0.097266,
+            "line": 251,
+            "own_seconds": 0.001763,
+            "primitive_calls": 368,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "inspect_frame",
+            "inclusive_seconds": 0.094275,
+            "line": 120,
+            "own_seconds": 0.001241,
+            "primitive_calls": 68,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 3151,
+            "function": "canonical",
+            "inclusive_seconds": 0.08497,
+            "line": 37,
+            "own_seconds": 0.001212,
+            "primitive_calls": 3151,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 3151,
+            "function": "dumps",
+            "inclusive_seconds": 0.082772,
+            "line": 185,
+            "own_seconds": 0.002142,
+            "primitive_calls": 3151,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 3151,
+            "function": "encode",
+            "inclusive_seconds": 0.080235,
+            "line": 185,
+            "own_seconds": 0.001172,
+            "primitive_calls": 3151,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 975,
+            "function": "iterencode",
+            "inclusive_seconds": 0.07837,
+            "line": 207,
+            "own_seconds": 0.07837,
+            "primitive_calls": 975,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 368,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.078331,
+            "line": 0,
+            "own_seconds": 0.078331,
+            "primitive_calls": 368,
+            "source_name": "~"
+          },
+          {
+            "calls": 64,
+            "function": "archive_entry",
+            "inclusive_seconds": 0.041152,
+            "line": 753,
+            "own_seconds": 0.000321,
+            "primitive_calls": 64,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 136,
+            "function": "b64decode",
+            "inclusive_seconds": 0.038014,
+            "line": 62,
+            "own_seconds": 6.5e-05,
+            "primitive_calls": 136,
+            "source_name": "base64.py"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.037417,
+            "line": 0,
+            "own_seconds": 0.037417,
+            "primitive_calls": 136,
+            "source_name": "~"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 975,
+            "function": "iterencode",
+            "inclusive_seconds": 0.07837,
+            "line": 207,
+            "own_seconds": 0.07837,
+            "primitive_calls": 975,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 368,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.078331,
+            "line": 0,
+            "own_seconds": 0.078331,
+            "primitive_calls": 368,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.037417,
+            "line": 0,
+            "own_seconds": 0.037417,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method binascii.b2a_base64>",
+            "inclusive_seconds": 0.025906,
+            "line": 0,
+            "own_seconds": 0.025906,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.017617,
+            "line": 0,
+            "own_seconds": 0.017617,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 642,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.013418,
+            "line": 0,
+            "own_seconds": 0.013418,
+            "primitive_calls": 642,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.010258,
+            "line": 351,
+            "own_seconds": 0.010218,
+            "primitive_calls": 68,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005758,
+            "line": 0,
+            "own_seconds": 0.005758,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 4159,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.002223,
+            "line": 0,
+            "own_seconds": 0.002223,
+            "primitive_calls": 4159,
+            "source_name": "~"
+          },
+          {
+            "calls": 3151,
+            "function": "dumps",
+            "inclusive_seconds": 0.082772,
+            "line": 185,
+            "own_seconds": 0.002142,
+            "primitive_calls": 3151,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 268,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.002032,
+            "line": 0,
+            "own_seconds": 0.002032,
+            "primitive_calls": 268,
+            "source_name": "~"
+          },
+          {
+            "calls": 368,
+            "function": "verify",
+            "inclusive_seconds": 0.097266,
+            "line": 251,
+            "own_seconds": 0.001763,
+            "primitive_calls": 368,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 3264,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.00155,
+            "line": 0,
+            "own_seconds": 0.00155,
+            "primitive_calls": 3264,
+            "source_name": "~"
+          },
+          {
+            "calls": 256,
+            "function": "<built-in method posix.stat>",
+            "inclusive_seconds": 0.001386,
+            "line": 0,
+            "own_seconds": 0.001316,
+            "primitive_calls": 256,
+            "source_name": "~"
+          }
+        ]
+      },
+      {
+        "cache_state": "warm",
+        "peer_label": "andromeda",
+        "phase": "decode",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "load_state_storage",
+            "inclusive_seconds": 0.100405,
+            "line": 152,
+            "own_seconds": 2.4e-05,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.098373,
+            "line": 94,
+            "own_seconds": 0.000553,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "_unpack",
+            "inclusive_seconds": 0.065506,
+            "line": 109,
+            "own_seconds": 0.000427,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027172,
+            "line": 0,
+            "own_seconds": 0.027172,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.026959,
+            "line": 0,
+            "own_seconds": 0.026959,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022247,
+            "line": 15,
+            "own_seconds": 0.00143,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "counted",
+            "inclusive_seconds": 0.019292,
+            "line": 20,
+            "own_seconds": 0.0001,
+            "primitive_calls": 68,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.019149,
+            "line": 47,
+            "own_seconds": 0.00033,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "digest",
+            "inclusive_seconds": 0.016888,
+            "line": 28,
+            "own_seconds": 5.6e-05,
+            "primitive_calls": 68,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode_json",
+            "inclusive_seconds": 0.016158,
+            "line": 51,
+            "own_seconds": 1e-06,
+            "primitive_calls": 1,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 1,
+            "function": "loads",
+            "inclusive_seconds": 0.016157,
+            "line": 304,
+            "own_seconds": 5e-06,
+            "primitive_calls": 1,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016155,
+            "line": 32,
+            "own_seconds": 0.001889,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "decode",
+            "inclusive_seconds": 0.015143,
+            "line": 340,
+            "own_seconds": 4e-06,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.015135,
+            "line": 351,
+            "own_seconds": 0.014878,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 342,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.027172,
+            "line": 0,
+            "own_seconds": 0.027172,
+            "primitive_calls": 342,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.026959,
+            "line": 0,
+            "own_seconds": 0.026959,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "raw_decode",
+            "inclusive_seconds": 0.015135,
+            "line": 351,
+            "own_seconds": 0.014878,
+            "primitive_calls": 1,
+            "source_name": "decoder.py"
+          },
+          {
+            "calls": 136,
+            "function": "<built-in method _hashlib.openssl_sha256>",
+            "inclusive_seconds": 0.005864,
+            "line": 0,
+            "own_seconds": 0.005864,
+            "primitive_calls": 136,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005806,
+            "line": 0,
+            "own_seconds": 0.005806,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "image_bytes",
+            "inclusive_seconds": 0.016155,
+            "line": 32,
+            "own_seconds": 0.001889,
+            "primitive_calls": 1,
+            "source_name": "interstellar_active_state.py"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'read' of '_io.BufferedReader' objects>",
+            "inclusive_seconds": 0.001878,
+            "line": 0,
+            "own_seconds": 0.001878,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "dumps",
+            "inclusive_seconds": 0.004479,
+            "line": 185,
+            "own_seconds": 0.001657,
+            "primitive_calls": 2593,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 136,
+            "function": "packet_body_bytes",
+            "inclusive_seconds": 0.022247,
+            "line": 15,
+            "own_seconds": 0.00143,
+            "primitive_calls": 136,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 205,
+            "function": "iterencode",
+            "inclusive_seconds": 0.001334,
+            "line": 207,
+            "own_seconds": 0.001334,
+            "primitive_calls": 205,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 2797,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.001293,
+            "line": 0,
+            "own_seconds": 0.001293,
+            "primitive_calls": 2797,
+            "source_name": "~"
+          },
+          {
+            "calls": 682,
+            "function": "<method 'join' of 'bytes' objects>",
+            "inclusive_seconds": 0.014322,
+            "line": 0,
+            "own_seconds": 0.001012,
+            "primitive_calls": 546,
+            "source_name": "~"
+          },
+          {
+            "calls": 1,
+            "function": "<method 'decode' of 'bytes' objects>",
+            "inclusive_seconds": 0.001001,
+            "line": 0,
+            "own_seconds": 0.001001,
+            "primitive_calls": 1,
+            "source_name": "~"
+          },
+          {
+            "calls": 2593,
+            "function": "canonical",
+            "inclusive_seconds": 0.005682,
+            "line": 37,
+            "own_seconds": 0.000918,
+            "primitive_calls": 2593,
+            "source_name": "interstellar_transfer.py"
+          }
+        ]
+      },
+      {
+        "cache_state": "warm",
+        "peer_label": "andromeda",
+        "phase": "validate",
+        "top_inclusive_functions": [
+          {
+            "calls": 1,
+            "function": "validate_state",
+            "inclusive_seconds": 0.054669,
+            "line": 570,
+            "own_seconds": 0.000223,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "transit_check",
+            "inclusive_seconds": 0.041676,
+            "line": 310,
+            "own_seconds": 0.000236,
+            "primitive_calls": 68,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 68,
+            "function": "b64decode",
+            "inclusive_seconds": 0.02195,
+            "line": 62,
+            "own_seconds": 3e-05,
+            "primitive_calls": 68,
+            "source_name": "base64.py"
+          },
+          {
+            "calls": 68,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.021601,
+            "line": 0,
+            "own_seconds": 0.021601,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "counted",
+            "inclusive_seconds": 0.019288,
+            "line": 20,
+            "own_seconds": 0.000121,
+            "primitive_calls": 68,
+            "source_name": "observe-bft-active-open-commitment-readonly-v2-20261006.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.019114,
+            "line": 47,
+            "own_seconds": 0.000342,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 68,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.008867,
+            "line": 0,
+            "own_seconds": 0.008867,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 38,
+            "function": "verify",
+            "inclusive_seconds": 0.008165,
+            "line": 251,
+            "own_seconds": 0.000171,
+            "primitive_calls": 38,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 17,
+            "function": "receipt_check",
+            "inclusive_seconds": 0.007376,
+            "line": 384,
+            "own_seconds": 3.6e-05,
+            "primitive_calls": 17,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 38,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.007311,
+            "line": 0,
+            "own_seconds": 0.007311,
+            "primitive_calls": 38,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005821,
+            "line": 0,
+            "own_seconds": 0.005821,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 1603,
+            "function": "canonical",
+            "inclusive_seconds": 0.003779,
+            "line": 37,
+            "own_seconds": 0.000575,
+            "primitive_calls": 1603,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 17,
+            "function": "receipt_route_check",
+            "inclusive_seconds": 0.003645,
+            "line": 367,
+            "own_seconds": 2.7e-05,
+            "primitive_calls": 17,
+            "source_name": "interstellar_mesh.py"
+          },
+          {
+            "calls": 1,
+            "function": "archive_inventory",
+            "inclusive_seconds": 0.00352,
+            "line": 739,
+            "own_seconds": 0.00028,
+            "primitive_calls": 1,
+            "source_name": "interstellar_mesh.py"
+          }
+        ],
+        "top_own_functions": [
+          {
+            "calls": 68,
+            "function": "<built-in method binascii.a2b_base64>",
+            "inclusive_seconds": 0.021601,
+            "line": 0,
+            "own_seconds": 0.021601,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 68,
+            "function": "<method 'translate' of 'bytes' objects>",
+            "inclusive_seconds": 0.008867,
+            "line": 0,
+            "own_seconds": 0.008867,
+            "primitive_calls": 68,
+            "source_name": "~"
+          },
+          {
+            "calls": 38,
+            "function": "<method 'verify' of 'cryptography.hazmat.bindings._rust.openssl.ed25519.Ed25519PublicKey' objects>",
+            "inclusive_seconds": 0.007311,
+            "line": 0,
+            "own_seconds": 0.007311,
+            "primitive_calls": 38,
+            "source_name": "~"
+          },
+          {
+            "calls": 204,
+            "function": "<method 'update' of '_hashlib.HASH' objects>",
+            "inclusive_seconds": 0.005821,
+            "line": 0,
+            "own_seconds": 0.005821,
+            "primitive_calls": 204,
+            "source_name": "~"
+          },
+          {
+            "calls": 256,
+            "function": "<built-in method posix.stat>",
+            "inclusive_seconds": 0.001237,
+            "line": 0,
+            "own_seconds": 0.001171,
+            "primitive_calls": 256,
+            "source_name": "~"
+          },
+          {
+            "calls": 243,
+            "function": "iterencode",
+            "inclusive_seconds": 0.001046,
+            "line": 207,
+            "own_seconds": 0.001046,
+            "primitive_calls": 243,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 1603,
+            "function": "dumps",
+            "inclusive_seconds": 0.003026,
+            "line": 185,
+            "own_seconds": 0.001013,
+            "primitive_calls": 1603,
+            "source_name": "__init__.py"
+          },
+          {
+            "calls": 1815,
+            "function": "<method 'encode' of 'str' objects>",
+            "inclusive_seconds": 0.00087,
+            "line": 0,
+            "own_seconds": 0.00087,
+            "primitive_calls": 1815,
+            "source_name": "~"
+          },
+          {
+            "calls": 1603,
+            "function": "canonical",
+            "inclusive_seconds": 0.003779,
+            "line": 37,
+            "own_seconds": 0.000575,
+            "primitive_calls": 1603,
+            "source_name": "interstellar_transfer.py"
+          },
+          {
+            "calls": 272,
+            "function": "_split",
+            "inclusive_seconds": 0.003514,
+            "line": 35,
+            "own_seconds": 0.000509,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 128,
+            "function": "<built-in method posix.lstat>",
+            "inclusive_seconds": 0.00051,
+            "line": 0,
+            "own_seconds": 0.000477,
+            "primitive_calls": 128,
+            "source_name": "~"
+          },
+          {
+            "calls": 1603,
+            "function": "encode",
+            "inclusive_seconds": 0.001822,
+            "line": 185,
+            "own_seconds": 0.000459,
+            "primitive_calls": 1603,
+            "source_name": "encoder.py"
+          },
+          {
+            "calls": 68,
+            "function": "commitment",
+            "inclusive_seconds": 0.019114,
+            "line": 47,
+            "own_seconds": 0.000342,
+            "primitive_calls": 68,
+            "source_name": "interstellar_frame_digest.py"
+          },
+          {
+            "calls": 760,
+            "function": "<method 'fullmatch' of 're.Pattern' objects>",
+            "inclusive_seconds": 0.00034,
+            "line": 0,
+            "own_seconds": 0.00034,
+            "primitive_calls": 760,
+            "source_name": "~"
+          }
+        ]
+      }
+    ],
+    "scope_duration_seconds": 2.236687,
+    "six_finite_pairs_complete": true,
+    "whole_goal_completed": false
+  },
+  "new180_allocated": false,
+  "new600_allocated": false,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

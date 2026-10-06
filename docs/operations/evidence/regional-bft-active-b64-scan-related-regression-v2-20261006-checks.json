@@ -1,0 +1,22 @@
+{
+  "completed": false,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 25.467246,
+  "budget_seconds": 34.532754,
+  "attempts_used": 1,
+  "duration_seconds": 0.568018,
+  "combined_stage_seconds": 26.035264,
+  "helper_exit_code": 1,
+  "helper_terminal": true,
+  "budget_exhausted": false,
+  "forced_helper": false,
+  "pin_ok": true,
+  "stage_sha256": "9f9b052d8c362f25e49276bf4a285edf54be52aa9f7fe5b220227bddd2693157",
+  "helper_sha256": "951e8b563b33b19c16d7194ca3ea9597e6d4c80fb5791e288c9d960ffe0ff180",
+  "controller_sha256": "018ba5e004949fc8621833b25bc48eb05572d78a953036b9c08385d551d7ce4f",
+  "log_sha256": "3b375f07c86e537ac2f84e8cf53584bbff62078300083aee84f9860cc4131038",
+  "result": null,
+  "raw_private_test_log_not_published": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
