@@ -1,5 +1,20 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 操作内计划修复：最终绑定与真实负载运输终态
+
+**完整fault仍FAIL/OPEN**：原600/612.570秒/6152、V13原180/201.364秒/1641及全部旧失败保留。原收款成熟、keyless drain、all12完整Native cold/守恒未完成；原owner请求及600阶段/60轮/24高度/maturity2/quorum3与容量不变，失败Native/Runtime/Node不重开、不恢复/复签/退款/复制保管。历史“全部通过”仅指当段准确来源和有限scope；下方“下一120未启动”是当时快照，现已完成。
+
+当前源码/独立驱动最终绑定 **PASS53.503/原一次120**：192Python/89Native/171Core/actualCLI一致，同120模型输出、22禁改拒绝、54普通和5typed no-follow完整库存未变。V14整份helper/独立controller保留原17setup/13import/15mature/all8固定头完整cold/envelope/caller/owner/守恒/stop；未运行Native/Runtime/Node/socket/sign。当前Python18f42147…，Nativefd1e24fe…/Corede74cf78…/actualbinarybef4d5c7…未改；本轮无新production变更。
+
+修复后必要全新三节点地面TLS负载判别 **PASS33.967/原一次60、helper0**，包含来源/两旧库存前后核验和新封存：每节点64 signed archives/51个165KB未知路线待发包，3真实outbound owner+1普通receive/carriage selector，同原nonce延迟保管、两跳完整packet/frame/目的收据、153背景包未消失且无receipt；清除witness后208完整档案冷核验，线程/服务正常关闭，432文件封存。旧loadedTLSV2 63.054/60即使helper0仍FAIL，不能由本次改判；两次调度/来源与controller库存范围不同，**不声称配对提速benchmark或原生付款资格**。本scope复用刚完成54+5全库存绑定、重哈希全部seal文件，仅重新完整核验1641+旧432两库存，不称重复扫描54库。原始controller报告和private trace保留，公开投影仅省peer索引的邻居observation，结果/耗时/计数均准确不变。
+
+中间节点仍69次本地耗尽，outbound acquire25/28失败；成功open最大0.624秒、hold0.995秒，计数未饱和。释放刻意held lease后同nonce保管2.688秒，普通receive/carriage各3成功/18拒绝；完整cold段1.468秒。计数是累计墙钟，acquire/hold含open不能相加；helper CPU34.419秒含全部线程，不能归为特定角色/OS锁/GIL或现场唯一原因。完成地面transport否证该有限输入下“始终不能完成”的假设，不证明原生import/成熟或消除19/24突发+retry反例。
+
+**下一仅离线只读一次60/一次，未启动**：借用actual load_state_storage/validate_state/只读archive方法到无钥纯image adapter，对本次成功的三地面transport image作同图像cold/warm六测；完整转发计数/计时actual承诺函数，判别解码后立即校验是否重复计算相同完整active transit承诺。首来源/字段/签名/容量/字节不一致、六有限测量完成和库存不变、或原60退出，不重试/延长；没有确切重复就拒绝复用，若存在另资格最小candidate后才改production。无Node/Server/Native/Runtime构造、socket/钥/保管/sign/recovery/旧失败重开。新180/600均0，原V14未启门继续false。
+
+采用冻结2ba62421…/c59f9fe8…/receipt86821d19…及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8；goalactive，旧goal前继已报告不改。VALUE-STRICT-01两基线及120.019耗尽独立OPEN，Core/value/lock未变，原120诊断/300修复触发未满足，不以地区/运输替代或加豁免。长期/PQ/独立保管/physical/复合profile均OPEN；全部命令显式新rldcoin，持久cwd仍UI待修，冻结正文/PDF/官网、Library/服务器/账户/权限/资金/外联/push/清理不扩展。
+[最终绑定、真实负载运输、准确库存范围和下一只读判别](operations/evidence/regional-bft-operation-reuse-binding-loaded-outcome-20261006.json)。
+
 ## 2026-10-06 操作内共享已认证计划：实际修复与有限回归
 
 **完整fault仍FAIL/OPEN**。原600/612.570秒/6152、新V13原180/201.364秒/1641及6657/1773等全部失败保留，原收款成熟/keyless drain/all12完整Native cold/守恒未完成。原owner请求、600阶段/60轮/24height/maturity2/quorum3及全部容量保持，禁止重开/恢复/复签/退款/复制失败保管。下方“全部通过”只对应准确历史来源/有限scope；下方前一检查点的“下一仲裁模型未启动”是创建时快照，现已完成。
