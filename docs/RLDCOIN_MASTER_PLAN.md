@@ -1,5 +1,9 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 V34启动前来源拒绝已保留；修正分配引用V35
+
+V34入口FAIL：分配记录误用了V33控制器摘要，实际guard在任何Native/Runtime/Node/socket/key/sign/fixture操作前拒绝；原180范围从未开始，未创建夹具。旧分配、控制器stderr和launch receipt原字节保留，不将此归为Native成熟失败。V35仅派生全套路径/合同及准确控制器摘要，整driver AST字面量反转保持；实际已分配guard/helper/controller/contract/receipt检查PASS，零副作用，原source60累计1.764678秒。生产Python192/V23修复、Native89/Core171/CLI及全部目标未改。仅原定一次180继续，15mature/all8fullcold/所有信封/heads/守恒/正常停止仍必需；新600为0。下文V34 NOTSTARTED记录为创建时历史，不是活动范围。
+
 ## 2026-10-07 V33终态FAIL；原入站槽位交接V23及单次V34
 
 V33 **FAIL，原180秒，1855文件封存**；四CLI正常exit0，最后参考高度均14，成熟15/all8完整Nativecold/所有信封/caller-owner heads/守恒未完成。原控制器遭会话中断，helper仍按自身原deadline停止；helper exit code未知。255.647秒为开始至只读补封存收尾，不能当作未中断控制器耗时。无重启、forced stop或旧失败Node/Native/Runtime重开。历史“全部通过”只限其真实历史有限scope，不能覆盖后续FAIL。
