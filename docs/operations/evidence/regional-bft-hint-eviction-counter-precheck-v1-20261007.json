@@ -1,0 +1,10 @@
+{
+  "completed": false,
+  "failure": "SyntaxError before definition: generated try-body indentation",
+  "actual_generated_function_called": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "production_written": false,
+  "conservative_related60_charge": 0.05,
+  "second_missing_controller_call_exit": 2,
+  "second_call_had_no_fixture_or_source_side_effects": true
+}

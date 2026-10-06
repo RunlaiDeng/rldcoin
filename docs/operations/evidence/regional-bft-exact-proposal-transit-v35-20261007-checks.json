@@ -1,0 +1,145 @@
+{
+  "completed": true,
+  "exact_packet_id": "746f076dc8b073b51a664e2651c10b0e5aad657ded45704d56ef89de70f3e97c",
+  "source": 2,
+  "destination": 0,
+  "rows": [
+    {
+      "slot": 0,
+      "node_id": "17fbb8b25be10fdec6035588389fb0ae5facf42ace6b140cdcd6b2300ad02570",
+      "exact_active_transit_fully_authenticated": false,
+      "exact_archived_index_present": false,
+      "receipt": false,
+      "events": 0,
+      "selections": [],
+      "prepared": [],
+      "refused_or_deferred": [],
+      "final_first_carriage": []
+    },
+    {
+      "slot": 1,
+      "node_id": "3dfc6b55606df46bd7c6205508ba5ca0d1f3e8bae8dfac23cd1e09bf5d3faf1d",
+      "exact_active_transit_fully_authenticated": false,
+      "exact_archived_index_present": false,
+      "receipt": false,
+      "events": 3,
+      "selections": [],
+      "prepared": [],
+      "refused_or_deferred": [
+        {
+          "stage": "inbound_refused",
+          "monotonic_seconds": 296700.2638175,
+          "peer": "3b854c1391bf7a7af819f024e3e05a4b09cab0823240ed6e364f6cd2b7ed0d64",
+          "error_class": "BlockingIOError"
+        },
+        {
+          "stage": "deferred_input_not_queued",
+          "monotonic_seconds": 296700.469756708,
+          "peer": "3b854c1391bf7a7af819f024e3e05a4b09cab0823240ed6e364f6cd2b7ed0d64"
+        }
+      ],
+      "final_first_carriage": []
+    },
+    {
+      "slot": 2,
+      "node_id": "3b854c1391bf7a7af819f024e3e05a4b09cab0823240ed6e364f6cd2b7ed0d64",
+      "exact_active_transit_fully_authenticated": true,
+      "exact_archived_index_present": false,
+      "receipt": false,
+      "events": 6,
+      "selections": [
+        {
+          "sequence": 80,
+          "position": 2,
+          "retries": 0
+        },
+        {
+          "sequence": 82,
+          "position": 2,
+          "retries": 4
+        }
+      ],
+      "prepared": [
+        {
+          "peer": "3dfc6b55606df46bd7c6205508ba5ca0d1f3e8bae8dfac23cd1e09bf5d3faf1d",
+          "attempt": 66,
+          "at": 296700.01991875,
+          "stages": [
+            "outgoing_prepared",
+            "outgoing_prepared",
+            "outgoing_prepared",
+            "outgoing_prepared",
+            "contact_start",
+            "request_sent",
+            "request_sent",
+            "request_sent",
+            "request_sent",
+            "outgoing_failed",
+            "outgoing_failed",
+            "outgoing_failed",
+            "outgoing_failed",
+            "contact_failed"
+          ],
+          "failures": [
+            {
+              "failure_stage": "response_authentication",
+              "error_class": "ValueError"
+            }
+          ]
+        },
+        {
+          "peer": "3dfc6b55606df46bd7c6205508ba5ca0d1f3e8bae8dfac23cd1e09bf5d3faf1d",
+          "attempt": 68,
+          "at": 296702.610651333,
+          "stages": [
+            "outgoing_prepared",
+            "outgoing_prepared",
+            "outgoing_prepared",
+            "outgoing_prepared",
+            "contact_start",
+            "outgoing_failed",
+            "outgoing_failed",
+            "outgoing_failed",
+            "outgoing_failed",
+            "contact_failed"
+          ],
+          "failures": [
+            {
+              "failure_stage": "connect",
+              "error_class": "SSLEOFError"
+            }
+          ]
+        }
+      ],
+      "refused_or_deferred": [],
+      "final_first_carriage": [
+        {
+          "peer": "3dfc6b55606df46bd7c6205508ba5ca0d1f3e8bae8dfac23cd1e09bf5d3faf1d",
+          "pending_position": null,
+          "arrival_position": null,
+          "prepared": true
+        }
+      ]
+    },
+    {
+      "slot": 3,
+      "node_id": "b1728346926e3bc913ef34d172b99b9c121cb83e4ea25d777bfb05b4dce6d793",
+      "exact_active_transit_fully_authenticated": false,
+      "exact_archived_index_present": false,
+      "receipt": false,
+      "events": 0,
+      "selections": [],
+      "prepared": [],
+      "refused_or_deferred": [],
+      "final_first_carriage": []
+    }
+  ],
+  "duration_seconds": 0.444399,
+  "combined_original20_seconds": 2.138521,
+  "consumed_bytes_unchanged": true,
+  "Node_Native_Runtime_key_socket_sign_fixture_calls": 0,
+  "Native_authority": false,
+  "unique_maturity_cause": false,
+  "new180": 0,
+  "new600": 0
+}

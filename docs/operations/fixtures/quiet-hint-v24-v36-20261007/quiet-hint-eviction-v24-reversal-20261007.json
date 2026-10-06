@@ -1,0 +1,5 @@
+{
+  "old_broadcast_fragment": "        if (inventory is not None and quiet is not None and inventory==quiet[0]\n                and time.monotonic()-quiet[1]<MAX_BROADCAST_QUIET_SECONDS",
+  "new_broadcast_fragment": "        # Quiet inventory equality cannot preserve a discarded scheduling hint.\n        # A missing bounded position takes the existing complete Mesh path;\n        # this availability check grants no authentication or custody.\n        priority_key=getattr(self,'_carriage_priority_key',None)\n        if (inventory is not None and quiet is not None and inventory==quiet[0]\n                and (priority_key is None or mesh.carriage_position(priority_key) is not None)\n                and time.monotonic()-quiet[1]<MAX_BROADCAST_QUIET_SECONDS",
+  "prior_runtime_sha256": "db1ee26a9e2c19682bb27c6b341defb1367068c94ff8c1d0e5be233dbc63b671"
+}

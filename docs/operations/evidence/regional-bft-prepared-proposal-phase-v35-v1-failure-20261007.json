@@ -1,0 +1,10 @@
+{
+  "completed": false,
+  "failure": "AssertionError: cannot reconstruct original per-peer class steps exactly",
+  "reader_sha256": "f8de9bd1d19d3d597f3df1d9170bb9dfd0f6b6c806bb80f92658c735bb2b4cbc",
+  "conservative_budget_seconds": 0.25,
+  "prior_original20_seconds": 2.138521,
+  "combined_original20_seconds": 2.388521,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "production_bytes_changed": false
+}

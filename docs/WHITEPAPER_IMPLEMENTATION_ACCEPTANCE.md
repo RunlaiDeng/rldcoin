@@ -1,5 +1,21 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 V35原180仍FAIL；提示淘汰后静默返回最小修复V24
+
+V35 **FAIL 原180秒/193.240秒含收尾/1924文件封存**；完整原控制器此次正常终态、helperexit1，四CLI正常exit0，无forced/guardian/cleanup/pin异常。四参考14，成熟15/all8完整Nativecold/所有信封/heads/守恒未完成；完整600/all12/keyless及所有旧失败不改PASS。V34错误分配在Native启动前拒绝，单独保留，不能混入本轮协议结果。
+
+本轮原20只读判别累计3.349651秒，包含不能完整重建步数及两次reader字段错误的失败和保守0.75秒费用；无旧Node/Native/Runtime/socket/key/sign/fixture构造。实际Prepare1→三目的全到；Proposal2缺0，Prepare2缺1、Prepare3缺1，Commit2/3缺0；每个已到路径均完整运输receipt及精确信封，不能授予最新Native冷验。准确Proposal2→0初prepare39.128465秒，第一跳1 signed拒绝/第二次SSL连接失败，目的及relay无完整包；随后12相关准备未再次选中。仅可核实后缀显示原优先轮仍切换，“优先phase永久冻结”假设已证伪；不据此改轮次。实际完整Proposal内层Rust域签名及原classifier核验PASS，当前6frames含目标；历史live提示是否存在仍unknown，不推断唯一成熟原因。
+
+新增真实签名小反例 **FAIL0.230121秒/5文件**：原有界LRU淘汰当前Proposal提示后，完整库存不变，Runtime.broadcast仍quiet return，提示为空。生成器语法预检失败0calls保留，并保守计0.05秒；源码此前未写。V24仅在原quiet判据增加已绑定primitive提示key仍存在的条件，miss走原完整Mesh分类/广播，不存Proof、不增缓存/容量/权限；close/context/原4秒16calls及非base fallback保持，全部Native认证/签名/锁/heads方法不改。
+
+改变后的实际组位置缓存淘汰→重新填充、旧远端quiet invalidation、同plan容量压力、普通两跳完整签名receipt及清witness目的cold **4项PASS1.112499秒/38文件**。新必要hint-eviction相关60累计 **1.392620**，旧ground60 **59.803250**、TCP交接相关60 **3.451646**均不重置。普通方法在该四项suite作为第四项实际执行一次，资格只抽取这一真实结果，不另跑同参。地面/模型不授予Native成熟。
+
+最终source60 **PASS1.535秒**：Python192 **f2208c7b253b96e3cbc7042f3016c93c975a11b8c415b79f6ccf0abc0010c5df**，Runtime仅quiet可用性条件/mesh profileV24/test新增，全部旧方法与测试AST保持；Native89/Core171/实际CLI unchanged，453来源/21名称、实际0755OS未分配拒绝、完整driver字面量反转、实际已分配helper-controller-contract-receipt guard通过。库存worker和所有失败封存继续绑定。
+
+持续用户授权内，V36 **一次原180已分配，创建时NOTSTARTED**。唯一可证伪目标：该具体hint丢失修复是否足够闭合原17setup/13import/15mature/all8完整Nativecold/所有信封/heads/守恒/normalstop。首guard/原deadline封存，不延长、不原样重跑、不重开旧失败；原有限controller独立于交互会话。局部通过后继续开发，完整600须独立满足原准入而非本地PASS替代。VALUE-STRICT-01基线两告警/120耗尽、长期/PQ/物理/独立与组合保持OPEN。全部冻结哈希和S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及原预算/高度/成熟/票数/容量/owner请求不变。所有命令显式新workdir，持久cwd/goal前继哈希-blocked元数据仍UI待修，不作为审批门；无纸面/官网/资金/主网/远端/外联/权限/清理/push。
+
+[真实V35终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v35-20261006-checks.json)；[原签名反例](operations/evidence/regional-bft-current-commit-hint-eviction-baseline-v23-20261006-checks.json)；[当前相关及普通送达](operations/evidence/regional-bft-current-commit-hint-eviction-related-v24-20261006-checks.json)；[最终来源](operations/evidence/regional-bft-quiet-hint-v24-v36-source-binding-20261007-checks.json)。
+
 ## 2026-10-07 V34启动前来源拒绝已保留；修正分配引用V35
 
 V34入口FAIL：分配记录误用了V33控制器摘要，实际guard在任何Native/Runtime/Node/socket/key/sign/fixture操作前拒绝；原180范围从未开始，未创建夹具。旧分配、控制器stderr和launch receipt原字节保留，不将此归为Native成熟失败。V35仅派生全套路径/合同及准确控制器摘要，整driver AST字面量反转保持；实际已分配guard/helper/controller/contract/receipt检查PASS，零副作用，原source60累计1.764678秒。生产Python192/V23修复、Native89/Core171/CLI及全部目标未改。仅原定一次180继续，15mature/all8fullcold/所有信封/heads/守恒/正常停止仍必需；新600为0。下文V34 NOTSTARTED记录为创建时历史，不是活动范围。

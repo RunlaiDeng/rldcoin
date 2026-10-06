@@ -655,7 +655,12 @@ class Runtime:
                 'recipients':recipients})
             if len(raw)<=MAX_BROADCAST_HINT_BYTES:inventory=raw
         quiet=getattr(self,'_broadcast_quiet',None)
+        # Quiet inventory equality cannot preserve a discarded scheduling hint.
+        # A missing bounded position takes the existing complete Mesh path;
+        # this availability check grants no authentication or custody.
+        priority_key=getattr(self,'_carriage_priority_key',None)
         if (inventory is not None and quiet is not None and inventory==quiet[0]
+                and (priority_key is None or mesh.carriage_position(priority_key) is not None)
                 and time.monotonic()-quiet[1]<MAX_BROADCAST_QUIET_SECONDS
                 and quiet[2]<MAX_BROADCAST_QUIET_CALLS):
             self._broadcast_quiet=(inventory,quiet[1],quiet[2]+1)
