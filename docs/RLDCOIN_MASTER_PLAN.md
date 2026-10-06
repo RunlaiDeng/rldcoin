@@ -1,5 +1,21 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 V38终态FAIL；同帧收件副本公平轮转最小修复V25
+
+V38 **FAIL 原180秒/192.410秒含收尾/1836文件封存**，helper1、四CLI正常exit0、owned stopped，无forced/guardian/cleanup/pin异常；原15mature/all8完整Nativecold/完整信封/heads/守恒未完成。原完整600/all12/keyless与全部旧失败仍FAIL/OPEN。
+
+原20只读判别 **1.842132秒**，零旧Node/Native/Runtime/sign/key/socket/fixture调用、封存字节不变。Proposal2与Prepare2/3到三目的均有完整签名运输receipt及精确companion；Commit1到三目的完整。缺Prepare1→2/3；另round1 Proposal/Prepare3未完整运输。前轮Prepare2→0在本轮完整到达，不能据此授予Native成熟或唯一修复因果。
+
+准确Prepare1→2初prepare17.071404秒，普通/full4发送失败；之后priority60/64实际getter提示存在并匹配目标，两原类内目标仍在recent，但未进入原eligible。其同帧不同目的3的副本却反复占相同类备用槽，两副本309200字节/无receipt。原入口/选取器提示丢失和这些机会的路由拒绝不支持；实际已读提示、原组位置/原route检查把缺口定位到同帧收件副本选取，未证明唯一Native成熟原因。
+
+全新真实签名小反例只注入上述已测普通ring起点，其余完整包/签名/路由/first2/history floor/full4未改：同一Prepare的两个已准备无收据副本在两个优先机会中重复选一个，**V24 FAIL0.664594秒/14文件封存**。V25最小修复：同一当前完整frame/同一类/同一peer/同一Native scope用原512条/4MiB可忘记primitive位置轮转收件副本；提示位置在原分组初始化之前取出，只在原atomic准备成功后更新。只替换该帧/类原有位置，其他帧位置、前2/另一类floor、非priority对、full4、miss/eviction/cold/联系域回退、20MiB wire/全包认证/路由/容量保持。没有新增持久字段，准备与轮转不授予custody/Native/收款权利。
+
+**8相关检查PASS2.540212秒/112文件封存**：新同帧反例、不同当前帧原顺序、原pending/非priority/oldest公平性、cache容量/联系域/分组压力及普通source tick→两relay tick→destination tick→清witness目的cold。新复制cursor在签名和atomic失败后未前进，full4未改原元数据；全部旧test AST完整不变。最后普通方法仅执行一次为第8项，资格从实际结果抽取，无重复运行。该必要小反例/观察/相关60累计 **4.942068**，原Mesh ground60=59.803250/TCP-related60=3.451646/hint-related60=1.392620不重置。
+
+最终来源 **PASS0.957669秒**：仅mesh _exchange_plan/prepare_exchange/profile与一个新测试变更，完整反转回V24；Runtime/所有Native授权方法/Native89/Core171/实际CLI不变。Python192 **4dbb5e58b11181807bd0494c9ef049ce92ec52db43f175e36fd338dccb291d7f**；453来源、全部原driver AST字面量反转、实际0755未分配入口拒绝与已分配helper/controller/contract/receipt guard通过。V39持续授权内 **原180秒/一次已分配，本记录创建时NOTSTARTED**，仅检验这一修复能否满足原17setup/13import/15mature/all8完整Nativecold/全部信封/caller-owner heads/守恒/正常停止且全阶段≤180；首guard/原deadline封存，不延长、不重开旧失败/重签/复制/新增600。冻结白皮书/官网/全部条款、原600stage/60round/24height/maturity2/quorum3/容量/owner请求不改，VALUE-STRICT-01及长期/PQ/独立/物理/组合OPEN。唯一作者继续，不在局部PASS停止。
+
+[真实V38终态](operations/evidence/regional-bft-four-cli-service-first-service-diag-v38-20261006-checks.json)；[实际选取](operations/evidence/regional-bft-exact-selector-decision-v38-20261007-checks.json)；[同帧副本](operations/evidence/regional-bft-competing-current-copy-v38-20261007-checks.json)；[原签名反例](operations/evidence/regional-bft-same-current-copy-baseline-v24-20261007-checks.json)；[8相关检查](operations/evidence/regional-bft-current-copy-related-v25-20261007-checks.json)；[最终来源](operations/evidence/regional-bft-current-copy-v25-v39-source-binding-20261007-checks.json)。
+
 ## 2026-10-07 V37终态FAIL；反例证伪排序猜测，V38只观察实际选取
 
 V37 **FAIL 原180秒/192.352秒含收尾/1807文件封存**，helper1，四CLI均exit0、owned正常停止，无forced/guardian/cleanup/pin异常。原15mature/all8完整Nativecold/完整信封/heads/守恒未完成；旧完整600/all12/keyless及全部失败保持FAIL/OPEN。历史“全部通过”只对应当时明确来源和有限scope。

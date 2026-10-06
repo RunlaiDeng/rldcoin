@@ -1361,19 +1361,21 @@ class Node:
             # Prepared is only local selection, not a destination receipt. A
             # current signed frame whose send/replay failed remains spare-eligible;
             # ordinary transit checks still skip receipts and accepted hops.
-            commits=[i for items in pending for i in items if i in current_classes]
-            copies={}
-            for index,ident in enumerate(commits):
-                copies.setdefault(current_classes[ident],[]).append(index)
-            for group,positions in copies.items():
-                after=current_positions[group]
-                if after is None:continue
-                ordered=sorted(commits[index] for index in positions)
-                start=bisect_right(ordered,after)%len(ordered)
-                # Replace only this same-frame/class group's existing places.
-                # Other frame positions and original two classes stay exact.
-                for index,ident in zip(positions,ordered[start:]+ordered[:start]):
-                    commits[index]=ident
+            commits=[]
+            for items in pending:
+                copies={}
+                for ident in items:
+                    if ident in current_classes:
+                        copies.setdefault(current_classes[ident],[]).append(ident)
+                for group,identifiers in copies.items():
+                    after=current_positions[group]
+                    if after is not None:
+                        ordered=sorted(identifiers)
+                        start=bisect_right(ordered,after)%len(ordered)
+                        identifiers=ordered[start:]+ordered[:start]
+                    # Preserve inter-frame order and the two original classes.
+                    # Only sibling recipient packets of one exact frame rotate.
+                    commits.extend(identifiers)
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]

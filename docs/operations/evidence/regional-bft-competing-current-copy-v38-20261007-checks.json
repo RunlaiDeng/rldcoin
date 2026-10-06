@@ -1,0 +1,31 @@
+{
+  "completed": true,
+  "rows": [
+    {
+      "packet_id": "ff088d7540e297b6c75dc25d2527016966db884cb3cf4cf26935e137620f12c2",
+      "destination": "4e74bc941a89f24eb5fa0c8759925c26a168b7819e3c47b1ea4a13b8fb5bc7aa",
+      "source": "d150335d17ecaa9852fac52cb098b97b3918c540e0a4cb40526fa11a9067c039",
+      "frame_id": "7b696a6d9c89ea2b53e6c3c41c3c46217070b0d4f5259b5a1f54254a34dcf3bf",
+      "recent": true,
+      "receipt": false,
+      "original_complete_bytes": 309200
+    },
+    {
+      "packet_id": "0ca4e5307513774cb852722b6e2d0907da95b39b97fddfe5fc4a0dab26b2268d",
+      "destination": "1042eeaef26dd05d52e5a3ce0462509008a58b17bdb7eb7027ca5f65da1156f7",
+      "source": "d150335d17ecaa9852fac52cb098b97b3918c540e0a4cb40526fa11a9067c039",
+      "frame_id": "7b696a6d9c89ea2b53e6c3c41c3c46217070b0d4f5259b5a1f54254a34dcf3bf",
+      "recent": true,
+      "receipt": false,
+      "original_complete_bytes": 309200
+    }
+  ],
+  "same_current_frame": true,
+  "different_destinations": true,
+  "consumed_sealed_bytes_unchanged": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "unique_maturity_cause": false,
+  "duration_seconds": 0.161306,
+  "combined_original20_seconds": 1.842132,
+  "reader_sha256": "f602756b42ca77c9323341ca6297e0aa7d55092c9454e33318643ccb5e88c1e0"
+}

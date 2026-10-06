@@ -1,0 +1,9 @@
+{
+  "completed": true,
+  "original_whole_tests_AST_after_only_new_method_removal": true,
+  "method": "test_same_current_frame_revisits_distinct_unreceipted_destinations",
+  "before_sha256": "9016765467cb4f8e715a504686f1b7f9642f841033cac8093bec0cef6ef6a3cc",
+  "after_sha256": "02ee671280085340b542af163b564a0247d29613236bbd202d7b923560cb046f",
+  "baseline_counter_unchanged": true,
+  "new_guards": "actual current-copy cursor unchanged after authentication and atomic refusal"
+}
