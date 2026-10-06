@@ -1,0 +1,58 @@
+{
+  "completed": true,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 28.941966,
+  "duration_seconds": 0.1967,
+  "combined_stage_seconds": 29.138666,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "failure": null,
+  "stage_sha256": "140b9cd3eccacf9fc30e7a797f5d9e4e2604105510c41e8c3acd055723e6fbd7",
+  "helper_sha256": "5953b8ca76f62a682281e4f4e183363f9a5a467caea3a5726e0965d6cf596e1d",
+  "controller_sha256": "4b251aaed6744a2849ee046d0ed22af132648271a1596b5eb55b5331f2ee3e17",
+  "log_sha256": "4dcf8933bab0193c4611a32a74eaad33e9088352e6e069d51da6682305bbdc05",
+  "result": {
+    "actual_Native_Runtime_Node_socket_key_sign_calls": 0,
+    "actual_source2_queue_position_counters": [
+      {
+        "actual_arrival_position": 6,
+        "actual_original_full4_no_plan_records": 14,
+        "actual_original_normal_plan_records": 16,
+        "destination": 0,
+        "no_historical_run_or_timing_claim": true,
+        "pure_candidate_fixed_queue_ordinary_offers_to_target": 7,
+        "source": 2
+      },
+      {
+        "actual_arrival_position": 2,
+        "actual_original_full4_no_plan_records": 12,
+        "actual_original_normal_plan_records": 14,
+        "destination": 1,
+        "no_historical_run_or_timing_claim": true,
+        "pure_candidate_fixed_queue_ordinary_offers_to_target": 3,
+        "source": 2
+      }
+    ],
+    "at_most_two_first_offer_slots_preserved": true,
+    "class_order_and_no_loss_duplicate_or_input_mutation": true,
+    "completed": true,
+    "continuous_arrival_old_pending_nonstarvation": true,
+    "duration_seconds": 0.114288,
+    "finite_id_cases": 36,
+    "full4retry_skips_original_plan_unchanged": true,
+    "full_fault_qualified": false,
+    "model_not_crypto_custody_or_real_elapsed_performance": true,
+    "new180_allocated": 0,
+    "new600_allocated": 0,
+    "one_pure_helper_two_selection_sites_and_profile_version_only": true,
+    "original_signature_evidence_atomic_schema_and_capacity_AST_unchanged": true,
+    "production_source_not_yet_applied": true,
+    "whole_goal_completed": false,
+    "whole_mesh_original_AST_exact_after_four_site_reversal": true
+  },
+  "log_tail": null,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -1688,3 +1688,15 @@ prevents recent/unreceipted service. IDs never authorize custody, ledger or sign
 LegacyV7 private identity/state refuses without rewrite; use fresh fixture stores,
 never reopen/migrate the retained failures. Finite FIFO models and fresh signed
 cold tests do not establish broad liveness, Native maturity or fullfault success.
+
+
+The current V10 ground transit scheduler keeps V8's exact first-pending pair and
+all arrival metadata/capacities. On alternate durable ordinary class pairs only,
+prioritize peer arrival-waiting IDs within their existing recent/history group;
+other pairs retain their original group order. Full four-packet retry still
+bypasses this selection. Complete transit/hop/suppression/byte and atomic checks
+remain mandatory; priority never grants custody, Native acceptance or value.
+V9's attempted split of the pending pair failed the existing preparation-gap
+bound and is not qualified. V8/V9 private scheduler identities refuse unchanged;
+use fresh fixtures without reopening/migrating failed state. Current finite
+source/ground tests do not prove Native maturity or full-fault completion.

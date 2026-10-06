@@ -130,6 +130,86 @@ class MeshTests(unittest.TestCase):
             self.assertIn(target,first['prepared']);self.assertNotIn(target,first['pending']+first['arrivals'])
             self.assertEqual(node.state['messages'][target],original);self.assertNotIn(target,node.receipts())
 
+    def test_other_ordinary_pair_keeps_original_recent_and_history_order(self):
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            for _ in range(10):
+                node.enqueue_batch([(self.f.frame(), destination)] * 4)
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            node.state['transit_class_steps'][peer] = 2
+            node.save()
+            pending = tuple(node.state['first_carriage'][peer]['pending'][:2])
+            node.enqueue(self.f.frame(), destination)
+            original = copy.deepcopy(node.state['messages'])
+            groups = node.transit_groups(peer)
+            expected = tuple(next(i for i in group if i not in pending) for group in groups)
+            self.assertEqual(len(expected), 2)
+            bundle = node.prepare_exchange(peer)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], pending)
+            self.assertEqual(ids[2:], expected)
+            self.assertEqual(node.state['transit_class_steps'][peer], 4)
+            self.assertEqual(node.state['messages'], original)
+            self.assertFalse(node.receipts())
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['transit_class_steps'][peer], 4)
+            self.assertEqual(node.state['messages'], original)
+
+    def test_new_arrival_uses_ordinary_class_slot_with_full_waiting_queue(self):
+        self.f.rounds()
+        peer = self.f.identities['proxima']['node_id']
+        destination = self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            for _ in range(8):
+                node.enqueue_batch([(self.f.frame(), destination)] * 4)
+            node.state['first_carriage'][peer] = node.first_carriage_plan(peer)
+            node.save()
+            pending = list(node.state['first_carriage'][peer]['pending'])
+            self.assertEqual(len(pending), 32)
+            target = node.enqueue(self.f.frame(), destination)
+            original = copy.deepcopy(node.state['messages'])
+            state = copy.deepcopy(node.state)
+            durable = node.path.read_bytes()
+            node.state['messages'][target]['packet']['signature'] = '0' * 128
+            with self.assertRaises(ValueError):
+                node.prepare_exchange(peer)
+            self.assertEqual(node.path.read_bytes(), durable)
+            node.state = copy.deepcopy(state)
+            with patch.object(mesh, 'atomic', side_effect=OSError('arrival offer publication')):
+                with self.assertRaises(OSError):
+                    node.prepare_exchange(peer)
+            self.assertEqual(node.state, state)
+            self.assertEqual(node.path.read_bytes(), durable)
+            bundle = node.prepare_exchange(peer)
+            ids = tuple(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertEqual(ids[:2], tuple(pending[:2]))
+            self.assertIn(target, ids[2:])
+            self.assertEqual(len(ids), 4)
+            first = node.state['first_carriage'][peer]
+            self.assertEqual(first['pending'], [i for i in pending if i not in ids])
+            self.assertIn(target, first['prepared'])
+            self.assertNotIn(target, first['arrivals'])
+            self.assertEqual(node.state['messages'], original)
+            self.assertFalse(node.receipts())
+            positions = {k: copy.deepcopy(node.state[k]) for k in
+                         ('first_carriage', 'transit_cursors', 'recent_transit_cursors',
+                          'history_transit_cursors', 'transit_class_steps')}
+            replay = node.prepare_exchange(peer, retry_packet_ids=ids)
+            self.assertEqual(tuple(mesh.digest(t['packet']) for t in replay['body']['transits']), ids)
+            self.assertEqual({k: node.state[k] for k in positions}, positions)
+            node.validate_state()
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['messages'], original)
+            self.assertIn(target, node.state['first_carriage'][peer]['prepared'])
+            self.assertFalse(node.receipts())
+            state = copy.deepcopy(node.state)
+            node.state['transit_scheduler'] = 'RLD-CONTACT-TRANSIT-SCHEDULER-V8'
+            with self.assertRaises(ValueError):
+                node.validate_state()
+            node.state = state
+
     def test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open(self):
         self._arrival_before_recent_eviction(False)
 

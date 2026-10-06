@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V8'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V10'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1304,6 +1304,15 @@ class Node:
         # optional bounded hints can otherwise change the next ordinary turn.
         pending=self.transit_groups(peer) if len(transits)<MAX_PACKET_BATCH else []
         selected_ids={digest(t['packet']) for t in transits}
+        # On alternate ordinary class pairs, try this peer's new waiting IDs
+        # before the existing class order. Keep the original two pending offers
+        # and one stream per recent/history class. The other pairs retain the
+        # original retransmission order, so new arrivals cannot monopolize it.
+        # Full four-packet replay still bypasses the plan and ordinary classes.
+        if first_plan is not None and (self.state['transit_class_steps'][peer]//2)%2==0:
+            arrivals=first_plan['arrivals']
+            pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
+                     for items in pending]
         streams=[iter(eligible([i for i in items if i not in retry_packet_ids and i not in selected_ids])) for items in pending]
         while streams and len(transits)<MAX_PACKET_BATCH:
             remaining=[]

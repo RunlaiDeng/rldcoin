@@ -1,0 +1,20 @@
+{
+  "completed": false,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 22.732611,
+  "duration_seconds": 0.590363,
+  "combined_stage_seconds": 23.322974,
+  "attempts_used": 1,
+  "helper_exit_code": 1,
+  "failure": null,
+  "stage_sha256": "d30203aa549bf5d789af6395cdc54bd1ab728292ffe02bd6fbf0c4a08959e880",
+  "helper_sha256": "2dd1750c1f438b82d274adedf8ad97123dddfb8f68f9103b833e73985f2a80b6",
+  "controller_sha256": "2cc33d026029ef37430001fd7970fd3bc44e81bd0eef10cdff09650c4c79bc8f",
+  "log_sha256": "3c5302f02c92b3fe5160729001944cc8d4b15c5bc38e9a6d73c7a4685bd8b441",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-frontier-first-queue-counter-v17-20261006.py\", line 20, in <module>\n    bound();packet,raw,visited=mesh.transit_check(t,network);assert visited[-1]==nodes[i] and mesh.digest(packet)==pid;frame,payload=wire.inspect_frame(raw)\n                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,20 @@
+{
+  "completed": false,
+  "original_budget_seconds": 60,
+  "already_spent_seconds": 23.322974,
+  "duration_seconds": 2.046173,
+  "combined_stage_seconds": 25.369147,
+  "attempts_used": 1,
+  "helper_exit_code": 1,
+  "failure": null,
+  "stage_sha256": "3d49cd0d43ebed5bf6d0259e206aa32c2a2e2e7fc7e5b3fa2a30a5ef025b9d12",
+  "helper_sha256": "fb9768ab6d2dc85e135d129abc0569fbccea7c0fcda981fb2def02646241da94",
+  "controller_sha256": "6e35bbe1941f8df42b1893b86e1b8058a2eec22a9b63b2032edb496f1872c991",
+  "log_sha256": "2a38e5382d919b9025186d7870be8c8a3d680556f51b3ecc653e3290bd1e1bc0",
+  "result": null,
+  "log_tail": "Traceback (most recent call last):\n  File \"/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-frontier-first-queue-counter-v17-v2-20261006.py\", line 22, in <module>\n    envelope=wire.decode_json(payload);assert payload==wire.canonical(envelope) and hashlib.sha256(payload).hexdigest()==frame['export_id'];body=signed_body(envelope['body']);kind=next(iter(body));v=body[kind];ctx=v.get('context') if isinstance(v,dict) else None\n                                                                                                                                                                                    ~~~~^^^^^^^^^^^^\nStopIteration\n",
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}
