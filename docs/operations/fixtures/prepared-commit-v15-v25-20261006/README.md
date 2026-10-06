@@ -1,0 +1,1 @@
+Review-only source and public evidence copies. Launch uses exact source-bound project tmp entries, never these copies. No retained ledger, identity seed/key, custody, failed fixture or binary copied. Runtime stub tests model Native admission; only the separate original180 component can qualify Native maturity15/all8 complete cold/conservation.

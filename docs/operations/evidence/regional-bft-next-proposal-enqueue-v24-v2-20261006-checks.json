@@ -1,0 +1,64 @@
+{
+  "completed": true,
+  "budget_seconds": 10,
+  "attempts": 1,
+  "duration_seconds": 0.106287,
+  "combined_original10_seconds": 0.206292,
+  "stage_sha256": "d454c8aba7bb759c1160698ccb74ac46ea7899ff6a13ab3d5357e922dcf3f5b2",
+  "trace_sha256": "717e06798b864ed33dfe544137c0b103146a9c45d67af176ee65624f25a6f908",
+  "parent13_Commit_enqueue_to_first_prepare_seconds": 23.851259,
+  "parent13_Commit_contacts": [
+    {
+      "attempt": 37,
+      "prepared_seconds": 285785.881202541,
+      "request_sent": false,
+      "peer_custody_authenticated": false,
+      "reply_local_custody": false,
+      "failure_stage": "connect",
+      "error_class": "ConnectionResetError"
+    },
+    {
+      "attempt": 39,
+      "prepared_seconds": 285787.596767083,
+      "request_sent": true,
+      "peer_custody_authenticated": false,
+      "reply_local_custody": false,
+      "failure_stage": "response_authentication",
+      "error_class": "ValueError"
+    }
+  ],
+  "next_Proposal_enqueued_to_slots": [
+    0,
+    3
+  ],
+  "next_Proposal_source_enqueued_rows": [
+    {
+      "envelope_id": "79576765f3b5bb787c5df5814d01e1ad82d7aa9e2555cdf45510f5db395d6374",
+      "frame_id": "2b7dfac30454ea05d6e69f563287102092d38968dcb2b4b1ee577bce4b55af94",
+      "monotonic_seconds": 285883.413023125,
+      "packet_id": "8d65e51722c6efb3ae9a2114974b5ee09d3bafd641fe5cd927d5ff64ec3e2708",
+      "peer": "3d69d93ac4f457ef6cd70e91b8febdb170e6bf0c860db477cb20a728e394ddcf",
+      "sequence": 4276,
+      "slot": 2,
+      "stage": "source_enqueued"
+    },
+    {
+      "envelope_id": "79576765f3b5bb787c5df5814d01e1ad82d7aa9e2555cdf45510f5db395d6374",
+      "frame_id": "2b7dfac30454ea05d6e69f563287102092d38968dcb2b4b1ee577bce4b55af94",
+      "monotonic_seconds": 285883.413030875,
+      "packet_id": "17382572cbb3bdb99e66a94eef64ec3faccf5207eba381829fbb8d6d477a78c8",
+      "peer": "6fee8ceb6df115631c83e7e6f43a8fadd0700a2cb32d0b182f53fb250d5a0b0f",
+      "sequence": 4277,
+      "slot": 2,
+      "stage": "source_enqueued"
+    }
+  ],
+  "next_Proposal_first_retained_enqueue_seconds": 285883.413023125,
+  "source2_last_retained_event_seconds": 285884.703054125,
+  "source2_Proposal_creation_time_unknown": true,
+  "Native_admission_or_sign_generation_stall_or_unique_current_priority_cause_proved": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "full_fault_qualified": false
+}

@@ -1,0 +1,154 @@
+{
+  "Native_ledger_rejection_or_maturity_or_unique_scheduling_cause_proved": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "attempts": 1,
+  "budget_seconds": 20,
+  "complete_original_copies": [
+    {
+      "holder": 1,
+      "packet_id": "f899e39af40273b1d0885973fb5a8ff44710e46e906ba176dab7273dff8056e6",
+      "receipt": true,
+      "storage": "archive"
+    },
+    {
+      "holder": 2,
+      "packet_id": "f899e39af40273b1d0885973fb5a8ff44710e46e906ba176dab7273dff8056e6",
+      "receipt": true,
+      "storage": "archive"
+    }
+  ],
+  "completed": true,
+  "destination_complete_receipt": true,
+  "destination_exact_companion_body_retained": true,
+  "duration_seconds": 1.053232,
+  "full_fault_qualified": false,
+  "new180_allocated": 0,
+  "new600_allocated": 0,
+  "prior_checks_sha256": "0d3cd8b8d38001c055220de4e6822538a2d17ec1343b9687601fa3cdb8cc0685",
+  "reference_companion_heights": {
+    "1": 14,
+    "2": 14
+  },
+  "seal_sha256": "b8b5ea09f85937ff5a33d43f9f01d2ebf8ce05ab1efa96d802591ad4a3079c0f",
+  "source2_local_parent13_votes": [
+    {
+      "body_id": "969f833b33173a2b90cf5999e587085586ec4c32d125a01c9ef3861516bc7b44",
+      "phase": "Commit",
+      "round": 0
+    },
+    {
+      "body_id": "fec993dbd562af4df7acb4f236b622835881af3bffc124e90e6ca1e182f3b04d",
+      "phase": "Prepare",
+      "round": 0
+    }
+  ],
+  "source_current_frontier": [
+    {
+      "arrival_position": null,
+      "packet_id": "f899e39af40273b1d0885973fb5a8ff44710e46e906ba176dab7273dff8056e6",
+      "pending_position": null,
+      "prepared": false
+    }
+  ],
+  "source_typed_target_rows": [
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 1,
+      "retries": 0,
+      "selected": false,
+      "sequence": 27
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 1,
+      "retries": 4,
+      "selected": false,
+      "sequence": 29
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 1,
+      "retries": 0,
+      "selected": false,
+      "sequence": 31
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 0,
+      "retries": 4,
+      "selected": false,
+      "sequence": 32
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 1,
+      "retries": 0,
+      "selected": false,
+      "sequence": 33
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 0,
+      "retries": 4,
+      "selected": false,
+      "sequence": 36
+    },
+    {
+      "completed": true,
+      "hop_attempts": 1,
+      "plan_count": 1,
+      "retries": 0,
+      "selected": true,
+      "sequence": 41
+    },
+    {
+      "completed": true,
+      "hop_attempts": 1,
+      "plan_count": 0,
+      "retries": 4,
+      "selected": true,
+      "sequence": 42
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 1,
+      "retries": 0,
+      "selected": false,
+      "sequence": 44
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 0,
+      "retries": 4,
+      "selected": false,
+      "sequence": 45
+    },
+    {
+      "completed": true,
+      "hop_attempts": 0,
+      "plan_count": 1,
+      "retries": 0,
+      "selected": false,
+      "sequence": 47
+    }
+  ],
+  "target": {
+    "body_id": "969f833b33173a2b90cf5999e587085586ec4c32d125a01c9ef3861516bc7b44",
+    "parent_height": 13,
+    "payload_sha256": "d19ba184b56641c8585acd21d437cfe198671b46ce47b89e14e37985600e2516",
+    "phase": "Commit",
+    "round": 0,
+    "signature_verified": true
+  },
+  "target_generated": true,
+  "stage_sha256": "a313e7973cbb630fc34573f65e312813494b9883cd24c7cbbdd7f770bb492768",
+  "outer_duration_seconds": 1.15489
+}

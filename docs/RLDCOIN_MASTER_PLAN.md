@@ -1,5 +1,23 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 V24仍FAIL，已准备无目的收据Commit的V15最小修复
+
+V24实际 **FAIL 原180/205.711秒含收尾/1715文件封存**，四CLI exit0、owned stopped，无forced/guardian/cleanup/pin异常；成熟15/all8完整Native cold/caller/owner/守恒未完成。全部旧600与180失败保持，失败Native/Runtime/Node/保管永不重开/恢复/复签/复制。
+
+只读20一次PASS1.053232：此前source2→destination1 parent13 round0 Commit现在两端归档有完整原始签名包/路由/hop及目的签名收据，对应目的companion完整信封保留。参考源/目的高度14不是新Native cold权威。10秒enqueue读者先因不存在的identity.json路径FAIL（未读取任何identity/key字节，保守扣0.1）；仅用已绑定mesh-state公共node_id后PASS0.106287，原10累计0.206292。该Commit入队到首次准备 **23.851259秒**；跨范围110.452→23.851不是benchmark或唯一V14因果证明。源两次尝试connect ConnectionReset/response_auth ValueError，不能说两次失败意味着没有后续目的收据。下一个height15 Proposal向0/3已入队，距源最后事件仅1.290031秒，dest1没有准确完整包；创建时刻未知，不凭未入队缺项改broadcast。已核实bef4d5c7…实际Release构建，排除“误用Debug”假设，无重建或新性能实验。
+
+另原10内只读post-prepare边界PASS1.019254；首读者把目的node当第一hop，source0多跳接触匹配不完整，原报告保留。仅从准确packet outgoing_prepared绑定第一hop，接续PASS1.015924/累计2.035182：source0→destination2 parent13 Commit签名有效，经peer1；99后prepared记录中92未入选，先seq60备用准备、seq61full4，之后115/116、135/136、154/155再选/重试；准确目的companion body未保留。source1对应Commit已入队但无准备，source3此Commit未生成。阶段差异/远端保管拒绝根因与唯一成熟原因未证明；中间hop保管不能替代目的收据。
+
+原ground60内真实签名V14反例 **FAIL0.564191/14封存**：当前Commit首次完整准备及full4后两发送按丢失，无目的收据，下一ordinary spare丢失Native提示。V15仅把原提示匹配的候选从unprepared arrival列表扩大到现有recent/history组的候选，使prepared但未收据完成的当前Commit继续有备用槽资格；Native context/配置keys/签名/完整帧绑定与512/4MiB提示限不变。receipts、accepted-hop suppression、route/hop/全包认证仍原eligible判别，first2/另一类floor/非priority pairs/full4/容量/原子/冷读保持。整mesh AST反转**一个generator及profile**即V14；Runtime与全部Native授权方法字节/AST未变，不能把prepared当收据或账本权利。
+
+**19相关PASS4.587996/268文件**，全部旧测试AST不改；同一已prepared且full4后仍无收据的目标，实际一次普通source tick、恰好2普通中继tick、一次普通destination tick **PASS0.685764/14文件**，原签名包/路由/两hop/目的签名receipt及清缓存冷读通过，原first2/full4/floor/auth/atomic控制保留。Native admission仍明确模型，不授予内层完整proof/成熟资格。原ground60累计 **31.609520秒**，所有失败累计、不重置。
+
+独立60源绑定 **PASS1.026780**：Python192 **d954ce7133317e7b6fe95e5771f060c0e0e62b5d09ad589d504cfb3b42e2a9aa**，相对V14仅mesh/test变化，Native89/Core171/Release实际CLIbef4d5c7…/Runtime未变。189/190源组成按受影响源码/前继来源明确记录；所有旧test AST、完整helper/controller/guard/entry仅引用字面量反转；实际新V13入口0755正确拒绝未分配scope、21实际global静态解析、四原Rust17argv核验，旧有效Runtime实际NativeVote分类复用未重做。17setup13import15mature/all8原生cold/caller/owner/守恒/stop及原180/600/60round/24height/maturity2/quorum3/0.2锁/所有容量保持。
+
+依持续原用户授权已分配必要全新V25 **一次原180**，创建时尚未启动；首guard/原deadline失败封存退出，不追加同参、不延长、不新增600。完整600/all12/keyless、VALUE-STRICT-01原两clippy告警和120耗尽、长期/组合/独立/物理/PQ仍OPEN，不因局部通过换PASS。冻结白皮书/网站及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持；无资金/主网/服务器/账号权限/外联/清理/push操作。持续唯一作者，所有命令显式新rldcoin workdir，持久cwd/旧goal哈希及blocked元数据仍仅界面待修，不构成新审批门。
+[真实反例与19回归](operations/evidence/regional-bft-current-commit-prepared-related-v15-20261006-checks.json)；[当前来源同目标普通冷送达](operations/evidence/regional-bft-current-commit-delivery-final-v15-20261006-checks.json)；[最终来源绑定](operations/evidence/regional-bft-prepared-commit-v15-v25-source-binding-20261006-checks.json)；[必要V25原生范围](operations/evidence/regional-bft-four-cli-prepared-commit-v25-decision-allocated-20261006.json)。
+
+
 ## 2026-10-06 V23终态与V14当前Commit完整帧备用槽候选
 
 V23实际 **FAIL 原180/204.044秒含收尾，1799文件封存**；四CLI exit0、owned stopped、无forced/cleanup/pin/guardian异常，仍未达成熟15/all8完整Native cold/守恒。进程正常停止或高度13参考值不算通过。V22 FAIL49.024/524、V21 FAIL180/1630、runtime-v4 FAIL600/6152及所有旧失败保持；失败Node/Native/Runtime/保管永不重开、复签、恢复或复制。
