@@ -51,6 +51,77 @@ class MeshTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.f = Fixture(self.temporary.name)
 
+    def _arrival_before_recent_eviction(self, full):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id'];destination=self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            for _ in range(10):node.enqueue_batch([(self.f.frame(),destination)]*4)
+            node.prepare_exchange(peer)
+            if full:
+                node.state['first_carriage'][peer]=node.first_carriage_plan(peer)
+                self.assertEqual(len(node.state['first_carriage'][peer]['pending']),32)
+                node.save()
+            target=node.enqueue(self.f.frame(),destination)
+            original=copy.deepcopy(node.state['messages'][target])
+            for _ in range(8):node.enqueue_batch([(self.f.frame(),destination)]*4)
+            self.assertNotIn(target,node.state['recent_transits'])
+            self.assertNotIn(target,node.state['first_carriage'][peer]['pending'])
+            self.assertIn(target,node.state['first_arrivals'])
+            # A fresh exact authenticated outgoing hop can be suppressed without
+            # granting a destination receipt. This forces a durable waiting test
+            # even if ordinary rotation would otherwise choose the target early.
+            outgoing=node.exchange(peer,retry_packet_ids=(target,))['body']['transits'][0]
+            self.assertEqual(mesh.digest(outgoing['packet']),target)
+            suppressed={mesh.digest(outgoing)}
+            state=copy.deepcopy(node.state);raw=node.path.read_bytes()
+            with patch.object(mesh,'atomic',side_effect=OSError('arrival publication failure')):
+                with self.assertRaises(OSError):node.prepare_exchange(peer,suppressed)
+            self.assertEqual(node.state,state);self.assertEqual(node.path.read_bytes(),raw)
+            node.prepare_exchange(peer,suppressed)
+            first=node.state['first_carriage'][peer]
+            self.assertIn(target,first['arrivals']+first['pending'])
+            self.assertNotIn(target,first['prepared']);node.validate_state()
+            order=list(node.state['first_arrivals']);metadata=copy.deepcopy(first)
+        found=None
+        for turn in range(17):
+            with mesh._carriage_position_lock:
+                mesh._carriage_positions.clear();mesh._carriage_position_bytes=0
+            with self.f.node('earth') as node:
+                if turn==0:
+                    self.assertEqual(node.state['first_arrivals'],order)
+                    self.assertEqual(node.state['first_carriage'][peer],metadata)
+                self.assertEqual(node.state['messages'][target],original)
+                ids={mesh.digest(t['packet']) for t in node.prepare_exchange(peer)['body']['transits']}
+                node.validate_state()
+                if target in ids:found=turn+1;break
+        self.assertIsNotNone(found)
+        with self.f.node('earth') as node:
+            first=node.state['first_carriage'][peer]
+            self.assertIn(target,first['prepared']);self.assertNotIn(target,first['pending']+first['arrivals'])
+            self.assertEqual(node.state['messages'][target],original);self.assertNotIn(target,node.receipts())
+
+    def test_arrival_waiting_survives_preparation_gap_atomic_failure_and_cold_open(self):
+        self._arrival_before_recent_eviction(False)
+
+    def test_arrival_waiting_survives_full_admission_queue_and_cold_open(self):
+        self._arrival_before_recent_eviction(True)
+
+    def test_arrival_metadata_schema_and_original_capacity_refuse_without_write(self):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id']
+        with self.f.node('earth') as node:
+            ident=node.enqueue(self.f.frame(),self.f.identities['andromeda']['node_id'])
+            original=copy.deepcopy(node.state);raw=node.path.read_bytes()
+            for rows in ([ident,ident],[],['f'*64],['x'],[format(i,'064x') for i in range(257)]):
+                node.state=copy.deepcopy(original);node.state['first_arrivals']=rows
+                with self.assertRaisesRegex(ValueError,'arrival order|invalid 32-byte identifier'):node.validate_state()
+                self.assertEqual(node.path.read_bytes(),raw)
+            for field,value in (('arrivals',[format(i,'064x') for i in range(257)]),('observed',[format(i,'064x') for i in range(257)]),('observed','not-a-list'),('next_kind',True),('next_kind',2),('history_after','x')):
+                node.state=copy.deepcopy(original);node.state['first_carriage'][peer][field]=value
+                with self.assertRaises(ValueError):node.validate_state()
+                self.assertEqual(node.path.read_bytes(),raw)
+            node.state=copy.deepcopy(original);first=node.state['first_carriage'][peer];first['arrivals']=[ident];first['pending']=[ident]
+            with self.assertRaisesRegex(ValueError,'waiting/prepared overlap'):node.validate_state()
+            self.assertEqual(node.path.read_bytes(),raw);node.state=original
+
     def test_first_offer_queue_is_scoped_to_actual_outgoing_branch(self):
         self.f.rounds();left=self.f.identities['earth']['node_id'];right=self.f.identities['andromeda']['node_id']
         with self.f.node('proxima') as node:
@@ -130,10 +201,10 @@ class MeshTests(unittest.TestCase):
         with self.f.node('earth') as node:
             ident=node.enqueue(self.f.frame(),self.f.identities['andromeda']['node_id'])
             original=copy.deepcopy(node.state['first_carriage']);before=node.path.read_bytes()
-            invalid=[{'pending':[ident],'prepared':[ident]},
-                {'pending':[format(i,'064x') for i in range(33)],'prepared':[]},
-                {'pending':[],'prepared':[format(i,'064x') for i in range(257)]},
-                {'pending':['x'],'prepared':[]},{'pending':[],'prepared':[],'authority':True}]
+            invalid=[{**mesh.empty_first_carriage(),'pending':[ident],'prepared':[ident]},
+                {**mesh.empty_first_carriage(),'pending':[format(i,'064x') for i in range(33)],'prepared':[]},
+                {**mesh.empty_first_carriage(),'pending':[],'prepared':[format(i,'064x') for i in range(257)]},
+                {**mesh.empty_first_carriage(),'pending':['x'],'prepared':[]},{**mesh.empty_first_carriage(),'pending':[],'prepared':[],'authority':True}]
             for value in invalid:
                 node.state['first_carriage'][peer]=value
                 with self.assertRaises(ValueError):node.validate_state()
@@ -186,7 +257,7 @@ class MeshTests(unittest.TestCase):
 
     def test_previous_scheduler_identity_refuses_without_rewrite(self):
         path=self.f.root/'earth/identity.private.json'
-        identity=json.loads(path.read_text());identity['transit_scheduler']='RLD-CONTACT-TRANSIT-SCHEDULER-V6'
+        identity=json.loads(path.read_text());identity['transit_scheduler']='RLD-CONTACT-TRANSIT-SCHEDULER-V7'
         path.write_text(json.dumps(identity));before=path.read_bytes()
         with self.assertRaises(ValueError):self.f.node('earth')
         self.assertEqual(path.read_bytes(),before)
@@ -409,6 +480,29 @@ class MeshTests(unittest.TestCase):
             bundle=node.exchange(ids['source'])
         with mesh.Node(cfg['source']) as node:
             node.receive(bundle,ids['return']);self.assertIn(ident,node.state['receipts'])
+            self.assertFalse(node.status()['payment_authorized'])
+
+    def test_receipt_only_archive_then_original_transit_retains_arrival_order_on_cold_open(self):
+        ids,cfg=self.routed_fixture(['source','forward','destination','return'],
+            [('source','forward'),('forward','destination'),('destination','return'),('return','source')])
+        with mesh.Node(cfg['source']) as node:
+            ident=node.enqueue(self.f.frame(),ids['destination']);bundle=node.exchange(ids['forward'])
+            later=node.exchange(ids['return'])
+            self.assertIn(ident,{mesh.digest(t['packet']) for t in later['body']['transits']})
+        with mesh.Node(cfg['forward']) as node:
+            node.receive(bundle,ids['source']);bundle=node.exchange(ids['destination'])
+        with mesh.Node(cfg['destination']) as node:
+            node.receive(bundle,ids['forward']);bundle=node.exchange(ids['return'])
+        with mesh.Node(cfg['return']) as node,patch.object(mesh,'ARCHIVE_HIGH_WATER',1):
+            node.receive(bundle,ids['destination']);node.archive_completed()
+            with self.assertRaisesRegex(ValueError,'no frame'):node.transit(ident)
+            node.receive(later,ids['source'])
+            self.assertIn(ident,node.state['messages']);self.assertIn(ident,node.state['first_arrivals'])
+            self.assertNotIn(ident,node.state['recent_transits']);node.validate_state()
+            original=copy.deepcopy(node.state['messages'][ident])
+        with mesh.Node(cfg['return']) as node:
+            self.assertEqual(node.state['messages'][ident],original)
+            self.assertIn(ident,node.state['first_arrivals']);self.assertIn(ident,node.receipts())
             self.assertFalse(node.status()['payment_authorized'])
 
     def test_archive_batches_are_bounded_and_unacknowledged_packets_remain_active(self):

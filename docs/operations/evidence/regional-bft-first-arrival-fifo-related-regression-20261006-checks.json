@@ -1,0 +1,58 @@
+{
+  "completed": false,
+  "budget_seconds": 60,
+  "attempts_used": 1,
+  "duration_seconds": 27.015426,
+  "helper_exit_code": 1,
+  "stage_sha256": "7455758f472696f25bebc3440d70f92d5d05d557e3655cbea480b9f2a977084a",
+  "helper_sha256": "36715ca3290113673af5301517010ddf24b2a83275f21fdea411687c47eb33b8",
+  "controller_sha256": "86b9f136ca145264346bec0bd872d117e01da034f53e64e4dc7e1ac8827c07a0",
+  "log_sha256": "83ab8ec495b8efeebf851b25ecc70406717658463bf8941229a677489aa27a28",
+  "result": {
+    "active_owned_tcp_threads": [],
+    "actual_fresh_signed_mesh_atomic_fs_fsafety_pinned_tls": true,
+    "capacity_observation": {
+      "connect_exception": "SSLEOFError",
+      "connect_failure_seconds": 0.0006037919956725091,
+      "destination_receipt_or_native_authority": false,
+      "exact_one_replay_after_slot_release": true,
+      "original_inbound_slots": 2,
+      "pinned_tls_next_hop_custody": true,
+      "source_original_retained": true,
+      "unacknowledged_refusal": true
+    },
+    "completed": false,
+    "duration_seconds": 26.841512,
+    "error_tests": [
+      "test_interstellar_mesh_inspection.InspectionTests.test_complete_state_archive_receipt_transit_without_private_or_writes",
+      "test_interstellar_mesh_inspection.InspectionTests.test_missing_shared_object_and_unindexed_residue_preserved",
+      "test_interstellar_mesh_inspection.InspectionTests.test_private_identity_absent_still_authenticates_public_anchored_store",
+      "test_interstellar_mesh_inspection.InspectionTests.test_shared_payload_and_wrapper_corruption_refuse_under_warm_witness"
+    ],
+    "failed_tests": [
+      "__main__.RetainedMesh.test_arrival_metadata_schema_and_original_capacity_refuse_without_write",
+      "test_interstellar_mesh_inspection.InspectionTests.test_bad_advert_active_packet_active_receipt_and_archive_signatures",
+      "test_interstellar_mesh_inspection.InspectionTests.test_config_drift_refuses_without_rewriting_advert_or_inventory",
+      "test_interstellar_mesh_inspection.InspectionTests.test_requested_receipt_cursor_map_must_match_external_contacts_without_repair",
+      "test_interstellar_mesh_inspection.InspectionTests.test_transit_cursor_map_must_match_pinned_contacts_without_repair",
+      "test_interstellar_mesh_inspection.InspectionTests.test_valid_outer_archive_hashes_and_signature_do_not_hide_bad_inner_packet",
+      "test_interstellar_mesh_inspection.InspectionTests.test_valid_outer_archive_signature_does_not_hide_bad_embedded_receipt"
+    ],
+    "full_fault_qualified": false,
+    "native_runtime_currency_starts": 0,
+    "old_native_runtime_node_reopen_sign_recovery": 0,
+    "original_two_inbound_slots": true,
+    "owned_tcp_threads_stopped": true,
+    "private1773_files_unchanged": true,
+    "private_unit_log_sha256": "14d6fabc3d876ef24f6794cc53c707eafd55a680541f06bc359bde5e0a0a7c0a",
+    "regular_files": 1033,
+    "stopped_inventory_sha256": "acd921f16f2ca5c45eb779c25069be5d1c3b260d2005eb38642a21b3b98ed710",
+    "symlinks_recorded_without_following": 2,
+    "tests": 100,
+    "tests_run": 100,
+    "whole_goal_completed": false
+  },
+  "raw_private_test_log_not_published": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

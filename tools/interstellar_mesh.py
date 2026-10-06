@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V7'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V8'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -45,7 +45,7 @@ MAX_SPOOL_BYTES = 64 * 1024 * 1024
 MAX_PACKET_BATCH = 4
 MAX_HOPS = 16
 HEX = re.compile(r'[0-9a-f]{64}\Z')
-STATE_KEYS = {'first_carriage', 'transit_scheduler', 'transit_cursors', 'recent_transits', 'recent_transit_cursors', 'history_transit_cursors', 'transit_class_steps', 'active_storage', 'format', 'archive_storage', 'receipt_scheduler', 'network', 'node_id', 'adverts', 'messages', 'receipts', 'archives', 'peer_inventory', 'cursor', 'receipt_cursors', 'requested_receipt_cursors'}
+STATE_KEYS = {'first_arrivals', 'first_carriage', 'transit_scheduler', 'transit_cursors', 'recent_transits', 'recent_transit_cursors', 'history_transit_cursors', 'transit_class_steps', 'active_storage', 'format', 'archive_storage', 'receipt_scheduler', 'network', 'node_id', 'adverts', 'messages', 'receipts', 'archives', 'peer_inventory', 'cursor', 'receipt_cursors', 'requested_receipt_cursors'}
 MAX_RECENT_TRANSITS = 32
 # Full native certificates can make a modest packet count a large active
 # document. Archive completed custody earlier; retain the same admission,
@@ -453,6 +453,12 @@ def incoming_contact(contact):
     return 'host' in contact or 'inbox' in contact
 
 
+def empty_first_carriage():
+    # Primitive scheduling metadata only; every list is independently owned.
+    return {'pending': [], 'prepared': [], 'arrivals': [], 'observed': None,
+            'history_after': None, 'next_kind': 0}
+
+
 class Node:
     def __init__(self, config, nonblocking=False):
         require(isinstance(config, dict) and set(config) == {'format', 'state', 'network', 'contacts'}, 'invalid config fields')
@@ -501,10 +507,10 @@ class Node:
                 self.validate_state()
             else:
                 self.state = {'transit_scheduler': TRANSIT_SCHEDULER, 'transit_cursors': {peer: None for peer in self.contacts}, 'active_storage': ACTIVE_STORAGE, 'format': VERSION, 'archive_storage': ARCHIVE_STORAGE, 'receipt_scheduler': RECEIPT_SCHEDULER, 'network': self.network, 'node_id': self.id,
-                              'recent_transits': [], 'recent_transit_cursors': {peer: None for peer in self.contacts},
+                              'first_arrivals': [], 'recent_transits': [], 'recent_transit_cursors': {peer: None for peer in self.contacts},
                               'history_transit_cursors': {peer: None for peer in self.contacts},
                               'transit_class_steps': {peer: 0 for peer in self.contacts},
-                              'first_carriage': {peer: {'pending': [], 'prepared': []} for peer in self.contacts},
+                              'first_carriage': {peer: empty_first_carriage() for peer in self.contacts},
                               'adverts': {}, 'messages': {}, 'receipts': {}, 'archives': {}, 'peer_inventory': {}, 'cursor': 0,
                               'receipt_cursors': {peer: 0 for peer in self.contacts},
                               'requested_receipt_cursors': {peer: 0 for peer in self.contacts}}
@@ -528,7 +534,7 @@ class Node:
                 values={peer:self.state[name].get(peer,default) for peer in self.contacts}
                 class_cursors_changed=class_cursors_changed or values!=self.state[name]
                 self.state[name]=values
-            first_carriage={peer:self.state['first_carriage'].get(peer,{'pending':[],'prepared':[]}) for peer in self.contacts}
+            first_carriage={peer:self.state['first_carriage'].get(peer,empty_first_carriage()) for peer in self.contacts}
             class_cursors_changed=class_cursors_changed or first_carriage!=self.state['first_carriage']
             self.state['first_carriage']=first_carriage
             old = self.state['adverts'].get(self.id)
@@ -588,15 +594,19 @@ class Node:
                 'first carriage peer capacity/schema invalid')
         for peer,value in first.items():
             require(hex32(peer)!=self.id and isinstance(value,dict)
-                    and set(value)=={'pending','prepared'},'first carriage fields/peer invalid')
-            for name,limit in (('pending',MAX_RECENT_TRANSITS),('prepared',MAX_MESSAGES)):
+                    and set(value)==set(empty_first_carriage()),'first carriage fields/peer invalid')
+            for name,limit in (('pending',MAX_RECENT_TRANSITS),('prepared',MAX_MESSAGES),('arrivals',MAX_MESSAGES),('observed',MAX_MESSAGES)):
                 rows=value[name]
+                if name=='observed' and rows is None:continue
                 require(isinstance(rows,list) and len(rows)<=limit
                         and all(isinstance(i,str) for i in rows)
                         and len(set(rows))==len(rows),'first carriage metadata capacity/schema invalid')
                 for ident in rows:hex32(ident)
-            require(not set(value['pending'])&set(value['prepared']),
-                    'first carriage pending/prepared overlap')
+            require(not set(value['pending'])&set(value['prepared'])
+                    and not set(value['arrivals'])&(set(value['pending'])|set(value['prepared'])),
+                    'first carriage waiting/prepared overlap')
+            integer(value['next_kind'],0,1)
+            if value['history_after'] is not None:hex32(value['history_after'])
         require(isinstance(s['receipt_cursors'], dict) and len(s['receipt_cursors']) <= MAX_CONTACTS,
                 'receipt scheduler cursor capacity/schema invalid')
         for peer, cursor in s['receipt_cursors'].items():
@@ -614,6 +624,12 @@ class Node:
             if cursor is not None:hex32(cursor)
         for name, bound in [('adverts', MAX_NODES), ('messages', MAX_MESSAGES), ('receipts', MAX_MESSAGES)]:
             require(isinstance(s[name], dict) and len(s[name]) <= bound, 'state capacity or schema invalid')
+        arrivals=s['first_arrivals']
+        require(isinstance(arrivals,list) and len(arrivals)<=MAX_MESSAGES
+                and all(isinstance(i,str) for i in arrivals)
+                and len(set(arrivals))==len(arrivals),'arrival order capacity/schema invalid')
+        for ident in arrivals:hex32(ident)
+        require(set(arrivals)==set(s['messages']),'arrival order differs from retained pool')
         for ident, advert in s['adverts'].items():
             require(advert_check(advert, self.network)['node_id'] == ident, 'corrupt advert key')
         for ident, receipt in s['receipts'].items():
@@ -997,6 +1013,7 @@ class Node:
                     'outcome': 'EVIDENCE_STORED_NOT_LEDGER_ACCEPTED'})
 
     def refresh_recent(self, state, added=()):
+        added=tuple(added)
         # Scheduling labels only. Eviction/receipt removes no packet or proof.
         values=[ident for ident in state['recent_transits']
                 if ident in state['messages'] and ident not in state['receipts']]
@@ -1004,6 +1021,13 @@ class Node:
             require(ident in state['messages'],'recent transit absent from retained pool')
             if ident not in state['receipts'] and ident not in values:values.append(ident)
         state['recent_transits']=values[-MAX_RECENT_TRANSITS:] if MAX_RECENT_TRANSITS else []
+        # Full retained arrival order survives canonical sorting/recent eviction.
+        # Only packet IDs are stored; complete original packets remain active.
+        arrivals=[i for i in state['first_arrivals'] if i in state['messages']]
+        for ident in added:
+            if ident not in arrivals:arrivals.append(ident)
+        require(len(arrivals)<=MAX_MESSAGES,'arrival ID capacity')
+        state['first_arrivals']=arrivals
 
     def carriage_position_domain(self):
         return (str(self.root),self.network,self.id,VERSION,TRANSIT_SCHEDULER,
@@ -1013,34 +1037,43 @@ class Node:
                 MAX_CARRIAGE_POSITIONS,MAX_CARRIAGE_POSITION_BYTES,
                 tuple((p,tuple(sorted(c.items()))) for p,c in sorted(self.contacts.items())))
 
-    def first_carriage_plan(self, peer):
-        """Bounded original IDs awaiting first preparation, not custody.
-
-        Keep a waiting ID across recent-label eviction and optional cache loss.
-        New traffic fills only free places, never replaces these originals.
-        Full transit/route/receipt/suppression validation still occurs below.
-        """
-        value=self.state['first_carriage'][peer]
-        active=self.state['messages'];receipted=self.state['receipts']
-        prepared=[i for i in value['prepared'] if i in active]
+    def first_carriage_plan(self,peer):
+        """Bounded first admission with durable arrival waiting, never authority."""
+        value=self.state['first_carriage'][peer];active=self.state['messages'];receipted=self.state['receipts'];prepared=[i for i in value['prepared'] if i in active]
         def eligible(ident):
             if ident not in active or ident in receipted:return False
-            transit=active[ident]
-            packet,_,visited=transit_check(transit,self.network)
-            route=self.route(packet['destination'],visited[:-1],first_hop=peer)
-            return bool(route and len(route)>=2 and route[1]==peer
-                        and len(transit['hops'])+len(route)-1<=packet['hop_limit'])
-        # First-service places belong to this neighbor's possible carriage.
-        # A packet for another branch must not occupy the entire waiting queue.
-        # Removing a scheduling ID never removes its retained complete transit;
-        # route changes can make it eligible again through ordinary selection.
-        pending=[i for i in value['pending'] if eligible(i)]
-        known=set(prepared)|set(pending)
-        for ident in self.state['recent_transits']:
-            if len(pending)==MAX_RECENT_TRANSITS:break
-            if ident not in known and eligible(ident):
-                pending.append(ident);known.add(ident)
-        return {'pending':pending,'prepared':prepared}
+            transit=active[ident];packet,_,visited=transit_check(transit,self.network);route=self.route(packet['destination'],visited[:-1],first_hop=peer)
+            return bool(route and len(route)>=2 and route[1]==peer and len(transit['hops'])+len(route)-1<=packet['hop_limit'])
+        pending=[i for i in value['pending'] if eligible(i)];known=set(prepared)|set(pending);initial=value['observed'] is None
+        # At this peer's first preparation, existing recent traffic takes its
+        # previous32 admission places; older history remains ordinary/background.
+        # Afterwards new complete IDs retain original arrival order independent of
+        # recent label and sorted canonical mapping keys. Never replace pending IDs.
+        if initial:
+            for ident in self.state['recent_transits']:
+                if len(pending)==MAX_RECENT_TRANSITS:break
+                if ident not in known and eligible(ident):pending.append(ident);known.add(ident)
+            arrivals=[]
+        else:
+            arrivals=[i for i in value['arrivals'] if i not in known and eligible(i)];seen=set(value['observed']);already=set(arrivals)
+            for ident in self.state['first_arrivals']:
+                if ident not in seen and ident not in known and ident not in already and eligible(ident):arrivals.append(ident);already.add(ident)
+        require(len(arrivals)<=MAX_MESSAGES,'first arrival backlog capacity')
+        priority=iter(arrivals);reserved=set(arrivals);history=sorted(i for i in active if i not in known and i not in reserved and i not in receipted);after=value['history_after'];start=0 if after is None or not history else bisect_right(history,after)%len(history);background=iter(history[start:]+history[:start]);next_kind=value['next_kind']
+        def take(kind):
+            for ident in priority if kind==0 else background:
+                if ident not in known and eligible(ident):return ident
+            return None
+        while len(pending)<MAX_RECENT_TRANSITS:
+            kind=next_kind;ident=take(kind)
+            if ident is None:kind=1-kind;ident=take(kind)
+            if ident is None:break
+            pending.append(ident);known.add(ident)
+            if kind==1:after=ident
+            next_kind=1-kind
+        # Plan construction is pure. The existing complete atomic preparation
+        # publishes this provisional ID metadata only on success; full4retry skips.
+        return dict(pending=pending,prepared=prepared,arrivals=[i for i in arrivals if i not in known],observed=sorted(active),history_after=after,next_kind=next_kind)
 
     def transit_groups(self, peer):
         pending=sorted(self.state['messages'])
@@ -1156,7 +1189,10 @@ class Node:
             else:
                 require(len(updated['messages']) < MAX_MESSAGES, 'message capacity reached; retain incoming file')
                 updated['messages'][ident] = transit
-                if ident not in self.state['archives']:added.append(ident)
+                # A receipt-only archive can precede this first complete active
+                # transit. It still needs arrival metadata; the retained receipt
+                # keeps it out of recent/unreceipted service and grants no value.
+                added.append(ident)
         for receipt in body['receipts']:
             ident = receipt_check(receipt, self.network)
             archived=updated['archives'].get(ident)
@@ -1343,6 +1379,7 @@ class Node:
             first=first_plan or self.first_carriage_plan(peer)
             carried={digest(t['packet']) for t in carried_rows}
             first['pending']=[i for i in first['pending'] if i not in carried]
+            first['arrivals']=[i for i in first['arrivals'] if i not in carried]
             first['prepared']=sorted(set(first['prepared'])|carried)
             require(len(first['pending'])<=MAX_RECENT_TRANSITS
                     and len(first['prepared'])<=MAX_MESSAGES,'first carriage metadata capacity')

@@ -51,7 +51,7 @@ class Fixture:
                            config_sha256=config_commitment(self.config))
         advert = mesh.sign(self.key, 'advert', dict(format=mesh.VERSION, network=NETWORK,
             node_id=self.node, region='b' * 64, label='synthetic-inspection', sequence=1, neighbors=[]))
-        self.state = dict(first_carriage={}, transit_scheduler=mesh.TRANSIT_SCHEDULER, transit_cursors={},
+        self.state = dict(first_arrivals=[], first_carriage={}, transit_scheduler=mesh.TRANSIT_SCHEDULER, transit_cursors={},
                           recent_transits=[], recent_transit_cursors={}, history_transit_cursors={},
                           transit_class_steps={}, active_storage=mesh.ACTIVE_STORAGE, format=mesh.VERSION, archive_storage=mesh.ARCHIVE_STORAGE,
                           receipt_scheduler=mesh.RECEIPT_SCHEDULER, receipt_cursors={}, requested_receipt_cursors={},
@@ -61,6 +61,7 @@ class Fixture:
         self.archive(self.packet_id, transit, receipt)
         self.active_id, transit, receipt = self.packet(2)
         self.state['messages'][self.active_id] = transit
+        self.state['first_arrivals'].append(self.active_id)
         self.state['receipts'][self.active_id] = receipt
         self.persist()
 

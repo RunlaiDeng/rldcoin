@@ -1,5 +1,25 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-06 首次准入等待按到达顺序持久保留（V8）
+
+**完整fault仍FAIL/OPEN**。原runtime-v4 600/612.570秒/6152、receive-v7 600/6657、最近route-offer-v12 180/201.131秒/1773及全部旧失败保持。原收款成熟、keyless drain、all12完整cold/守恒未完成；原owner请求、600阶段/60轮/24height/maturity2/quorum3及容量不变。下方历史“全部通过”只对应当段准确来源和有限scope，不能覆盖后续失败或总验收。
+
+按摘要轮转共享recent/history的候选 **资格FAIL4.589秒**：72有限模型仍16组连续24成功准备不携带目标。剩余预算内1.801秒精确分辨：14组从未准入，2组到第15/16次才准入，零基位置29/31；每次有≥2空位并携带4包，最高26366bytes<原20MiB。不是Native锁/服务CPU或现场唯一原因证明。该候选第三组24输入实际为294560bytes大包变体，不是原小包输入；旧报告保留，此处更正范围。两次生成驱动错误（newline SyntaxError、tuple.read_text）均在helper之前，源/失败另存，没有原生启动或更改参数。
+
+依据反例改用显式到达FIFO等待：120模型 **资格PASS13.486秒**，分别含原24gap、24到达时queueFULL、原24first、原24另一分支小包及24大包变体，目标首次携带最高15/17/14/12/12次。原一次60模型合计19.875秒，保守计入两个prestart失败预留后20.375秒；sign/auth/atomic为明确mock，canonical roundtrip不是实际Node冷启动，有限次序不等现场秒或广义无饥饿。部分原first目标比此前慢，不能称所有交通无条件提速。
+
+实际 `tools/interstellar_mesh.py` 采用 **RLD-CONTACT-TRANSIT-SCHEDULER-V8**：全局≤256到达IDs、每peer≤256 observed IDs/≤256 arrival等待IDs及nullable history cursor/0-or1步，新增调度metadata仍计入原64MiB。既有32pending/256prepared、最多2原4槽、16contacts/256active/32recent/20MiB/512hint4MiB及完整认证/route/hop/receipt/suppression/fsync保持。首次peer准备保留recent策略；后来新到的完整有资格原包即使recent标签逐出、pending已满，仍在FIFO等待，空位与history共享；既有pending不替换。只有完整atomic成功才发布，普通携带的arrival引用同一image移除，完整4retry不推进两类metadata。receipt-only archive后首次到达完整活动包仍记录到达ID；原包/证明不删除，IDs不提供账本/保管/签署权限。V7原件拒绝不转换，只用fresh地面fixture。
+
+首次100相关检查外层 **FAIL27.015秒**：两新真实签署/队列满/原子失败/冷重开行为已通过，但手工readonly fixture缺新字段、新格式负例期待错误文字错误。1033file/2links及失败源/报告保留。准确补新fixture字段、修预期、修receipt先于原包的到达接入并加真实签署cold反例后，原剩余32.985内 **101检查PASS24.705秒**；合计51.721<原60，不扩大预算。全部实际Mesh/TCP/readonly签署/fsync/篡改/容量/普通/完整重试/冷重开控制通过，1049file/2link自身metadata保留，typed seal不跟随链接、普通inventory仍拒links；两新库存核对未变，原1773未变，所有自有TCP线程终态，无强制停止。不是Native冷验、真实power-loss或完整付款资格。
+
+当前Python192 **50bed8b5…**，仅Mesh及Mesh/readonly inspection tests三源变化；Native89 fd1e24fe…/manifest346ca668…、Core171 de74cf78…、实际CLI bef4d5c7…准确未变，最终3文件source-only delta另存，原base提交可重建未变来源，无currency/key/custody/binary复制。
+
+**下一仅一次120最终源码/独立驱动绑定，未启动**：完整192/89/171/actualbinary、53普通seal/4typed no-follow seal及22禁改反例；实际生产内核复核相同120输入和严格atomic backlog清理。整份helper AST/text仅scope/identity名称，controller仅资格/pins metadata；原17setup/13import/15mature/all8固定头完整cold/envelope/caller/owner/守恒与stop保持。首源/字节/角色/AST/model/负例/库存不一致、有限条件完成或原120退出；无实际Native/Runtime/Node/socket/sign启动。通过才另决定一次必要全新180，当前新180/full600均0，不原样重跑或放宽。
+
+VALUE-STRICT-01两基线与120.019耗尽独立OPEN；Core/value/lock未变，原120诊断/300修复触发未满足，不由地区/运输检查替代，不加生产豁免。全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8及长期/PQ/独立/physical保持；采用冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…，goalactive，goal c906/f825为已报告前继引用不改。所有命令显式新rldcoin，持久cwd仍UI待修；正文/PDF/官网/Library、服务器、账号/权限、资金、清理不扩展。
+[准确反例、失败保留、实际V8与下一绑定标准](operations/evidence/regional-bft-first-arrival-fifo-repair-outcome-20261006.json)。
+
+
 ## 2026-10-06 首次准入前缺口检查点
 
 当前V7源码/Python192e0bf1803/Native89/Core171/实际CLI未改；最终binding一次120 PASS39.271秒，22禁改拒绝，52普通/2typed库存未变，原24模型1–6次。必要新四CLI仍FAIL原180/201.131秒/1773封存，四CLI exit0/无forced-cleanup-pin错误，Native终态unknown，all8完整cold/成熟/守恒未完成；6152/6657/1766及全部旧失败保持，禁止重开/恢复/复签/退款/复制失败保管。原600/60轮/24height/maturity2/quorum3/owner请求及容量不变。

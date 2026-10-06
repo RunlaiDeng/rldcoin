@@ -1668,3 +1668,23 @@ Ground TCP failure trace rows use stage `outgoing_failed` and field
 Exact source packet/frame/envelope/PID/peer/attempt/nonce and the collected
 continuous prefix must bind any delivery/wait claim. Stopped routes/first-queue
 metadata never reconstruct historical live eligibility or Native authority.
+
+
+The V8 ground transit scheduler retains a global arrival-order list of at most
+256 active original packet IDs and each configured peer's at most256 observed
+IDs and256 arrival-waiting IDs, plus a nullable history cursor and0-or1 admission
+step. Charge this added primitive metadata to the original64-MiB state image.
+Existing first-pending32/prepared256 and at most2of4 carriage slots remain.
+Capture new arrivals independently of recent-label eviction; a full first queue
+must not silently forget a later packet before its first admission. Preserve
+explicit list order across canonical storage; Python mapping order or a rotating
+sorted hash pool is not a durable arrival-order substitute. All route/transit/
+hop/receipt/suppression checks remain mandatory. Publish only after complete
+atomic preparation; remove every actually carried original ID from both waiting
+lists in that image, including ordinary-carried arrivals. A full4 replay leaves
+all admission and ordinary positions unchanged. A complete active transit arriving
+after a receipt-only archive still needs an arrival ID, while its retained receipt
+prevents recent/unreceipted service. IDs never authorize custody, ledger or signing.
+LegacyV7 private identity/state refuses without rewrite; use fresh fixture stores,
+never reopen/migrate the retained failures. Finite FIFO models and fresh signed
+cold tests do not establish broad liveness, Native maturity or fullfault success.
