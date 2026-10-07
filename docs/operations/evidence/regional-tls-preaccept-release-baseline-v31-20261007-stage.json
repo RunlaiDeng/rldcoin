@@ -1,0 +1,33 @@
+{
+  "budget_seconds": 10,
+  "original_TCP60_prior_seconds": 3.451646,
+  "attempts": 1,
+  "hypothesis": "V45 exactProposal2to1 original73/79 prepared but both connect SSLEOF before any request; exact oldcause unknown. Fresh actual original2TLS slots, release30ms after originalclient connect, tests whether listener capacity accept-close discards imminent available originalconnection. Only measured baseline can justify original.2s preaccept waiting; no socket/native authority, original2workers/backlog2/oneinput/client3s/pins/custody/limits unchanged.",
+  "static_actual_global_providers": [
+    "NETWORK",
+    "OSError",
+    "copy",
+    "dict",
+    "len",
+    "mesh",
+    "patch",
+    "range",
+    "socket",
+    "tcp",
+    "threading",
+    "time",
+    "type"
+  ],
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/tls-preaccept-release-counter-method-v31-20261007.py": "12edc6f846d1e7e21341d20fe08ac69a876ea365e15a3b45d88d1956565c3589",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/tls-preaccept-release-baseline-v31-helper-20261007.py": "7533d3dc88eb36c1ffcc7fa734f889ea6e3c1ea876cf72769e3074ec2ca2d644",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-tls-preaccept-release-baseline-v31-20261007.py": "0681b547680539c0d66fbc47e6fc6bdcd122e06382a8f302c8889fe24c3a5ec8",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "13e31c25434e3d38fa8f0e311119cd3afb200af665c265a17b0b1e84f7a42809",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_tcp.py": "4efb1c0ec42c687cd47a0d626e9289bb3f2c7773eeccc4bc06539c6d3de8d92d",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "1c0b13ecf5359e426b203baa0e3c5699ae9d17f81865f8ebeea2cfc4ee6abee4",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "587b7f5b012a6a626c18ff40eb68cd3468a35f68b14c7c8ff183ad7fa9aee804",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v45-stopped-private-inventory-20261006.json": "6f38e1ab06a2ff662faf6d4b2a6f084a9660c2478cd3191c572c0b9bf62c5088"
+  },
+  "exit": "first originalguard/original10/remaining60; no retry on samefixture; retainFAIL/allbytes"
+}

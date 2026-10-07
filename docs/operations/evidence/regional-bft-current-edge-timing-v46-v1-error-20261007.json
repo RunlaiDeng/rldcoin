@@ -1,0 +1,7 @@
+{
+  "completed": false,
+  "error": "AssertionError reader assumed each retained local Signed had collected source_enqueued trace; refused rather than fabricated times. Guard failed before report; stage/source retained.",
+  "old_fixture_constructors_calls": 0,
+  "production_source_unchanged": true,
+  "unique_cause_not_proved": true
+}

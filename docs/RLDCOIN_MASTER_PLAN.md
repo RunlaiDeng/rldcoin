@@ -1596,3 +1596,17 @@ V45 **FAIL原180/193.453含收尾/1774封存**，四CLI正常exit0、helper1 Sco
 下一一次原10/剩余TCP60全新真实固定TLS小反例：原2槽占用，在源连接开始30ms后释放，原连接是否立即EOF而未等到空位。只在反例支持后候选原.2秒内接收前等待；原2worker/1input/内核backlog2/客户端3秒/TLS固定身份/签名/拒绝/保管/冷验不减，先相关护栏再决定必要新scope。不原样重跑180/600，不重开旧1774。冻结与全条款保持，唯一作者继续。
 
 [终态与具体判别](operations/evidence/regional-bft-cross-class-copy-v45-terminal-next-20261007.json)。
+
+### TCP候选V32：原槽位的短时接收前等待；V46原范围运行
+
+真实原2TLS槽在源连接后30ms释放，旧源码counter v2 **FAIL .511415/8封存**，连接.000698秒SSLEOF且未发送请求。v1 wrapper先构造test再赋方法，**ERROR .251388/0文件/0fixture或socket**；其actual_fresh_loopback_TLS=true元数据不准确，已另记、不用于资格，原件保留。原V45两次EOF的唯一原因仍未由旧记录证明。
+
+只在TCP serve接收前按原.2秒等待原占用槽释放，pending留原kernel backlog2；原postaccept满2拒绝与race guard保持。无新增应用queue/worker/input/原客户端3秒deadline、TLS pin/nonce/签名/保管权利；Mesh profileV31/wireADAPTER/Native89/Core171/BFT/Mesh/binary不变。**18相关PASS5.318940/122封存**，TCP60累计9.533389、相关60累计38.748770；原双槽持续占用仍拒绝及一次真实释放后重放、TLS12/明文/跨连接请求重放拒绝、原deferred5/wake3/真实custody4/一次originalordinaryMesh完整冷读全过。
+
+绑定v1 evidence prefix错误，在分配前拒绝、无source变化或Native调用；保留。最终v2 **453来源PASS .799702**，旧TCP完整文本剥离新增等待即原件，旧所有TCP/Mesh测试AST不变除一个新TLS反例；Python192 `85933f9ec99d36b33954f1a41554c53aa092afe1f4b82d83d676165905179075`。V46唯一原180/一次于2026-10-07T00:40:20.011851Z启动，仍须原17setup/13import/15mature/all8Nativecold/每个信封/heads/守恒/normalstop whole<=180。V45及所有完整旧范围仍FAIL，无新增600/旧fixture恢复或复制/预算与标准下降。白皮书、官网及VALUE-STRICT-01/长期/PQ/独立/物理/组合保持。
+
+[实际修复和有限运行](operations/evidence/regional-bft-tls-preaccept-v32-development-outcome-20261007.json)。
+
+### V46终态与同context本地/转发竞争
+
+V46仍FAIL原180/196.377含收尾/1817封存，四CLI正常exit0；成熟15/full8Nativecold/全信封/heads/守恒未完成。21实际目的边14完整/7缺失，三个Commit真实签名同context/value；签名不代表全部已入队或送达。准确Proposal2→1已入队且路由eligible，始终未prepare；newest56/64再次选转发Prepare3→1/0，本地Proposal仍等候。source0Commit接近终止签名成功但无已收集enqueue，仍unknown，不据有损ring称未调用或唯一成熟原因。下一一次原10/remaining related60真实签名小反例，判别同context转发首服务后下一newest本地未服务是否被重复转发压住；不动oldest/first2/floor/full4/auth/atomic/容量/冷读。原18TLS回归保持，旧完整失败及冻结全部标准不变；原20结构化成功读累计1.880529，首失败reader耗时未计量另列。

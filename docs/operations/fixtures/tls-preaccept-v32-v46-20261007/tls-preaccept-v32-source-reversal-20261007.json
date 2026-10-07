@@ -1,0 +1,12 @@
+{
+  "before": {
+    "tools/interstellar_tcp.py": "13e31c25434e3d38fa8f0e311119cd3afb200af665c265a17b0b1e84f7a42809",
+    "tools/test_interstellar_tcp.py": "4efb1c0ec42c687cd47a0d626e9289bb3f2c7773eeccc4bc06539c6d3de8d92d"
+  },
+  "after": {
+    "tools/interstellar_tcp.py": "30647950e4b67d9a4a5d65dcb42dabbecddb79c758a4f8c06029fab2ffea7616",
+    "tools/test_interstellar_tcp.py": "e659a19654a15e961a50f7d6bad6eff62a5129631fc33ffb6211bf38e469277c"
+  },
+  "addition": "            # Keep pending connections in the original bounded kernel backlog\n            # during a brief occupied-slot handoff. Never add an application\n            # queue/worker or hold the guard across this original local wait.\n            until=time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS\n            while self.running:\n                with self.guard:\n                    occupied=len(self.workers)+len(self.input_pending)+(self.input_active is not None)\n                remaining=until-time.monotonic()\n                if occupied<MAX_WORKERS or remaining<=0:break\n                time.sleep(min(.005,remaining))\n            if not self.running:break\n",
+  "scope": "Only serve preaccept waiting max original.2 while existing original2 capacity full. Original postaccept race capacity close retained. No newworkers/input/socket/applicationqueue/backlog/deadline/auth/authority. WireADAPTER and MeshprofileV31 unchanged; one realTLS counter."
+}

@@ -542,6 +542,17 @@ class Server:
 
     def serve(self):
         while self.running:
+            # Keep pending connections in the original bounded kernel backlog
+            # during a brief occupied-slot handoff. Never add an application
+            # queue/worker or hold the guard across this original local wait.
+            until=time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS
+            while self.running:
+                with self.guard:
+                    occupied=len(self.workers)+len(self.input_pending)+(self.input_active is not None)
+                remaining=until-time.monotonic()
+                if occupied<MAX_WORKERS or remaining<=0:break
+                time.sleep(min(.005,remaining))
+            if not self.running:break
             try:
                 connection,_=self.socket.accept()
             except socket.timeout:
