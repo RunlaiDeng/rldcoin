@@ -26,7 +26,7 @@ from regional_fixture_native_json import decode_native_json
 from regional_fixture_transport_contract import verify_original_limits
 from regional_paged_fault_launch import PHASES, SLOTS
 from regional_paged_fault_prepared import Bound
-from regional_paged_fault_scope import REGIONS, RULES, digest, document, inventory, raw, require, safe
+from regional_paged_fault_scope import REGIONS, RULES, digest, document, inventory, require, safe
 from verify_regional_bft_stopped_batch import verify_stopped_state_pinned
 
 CAPS = dict(earth=27, proxima=24, andromeda=24)
@@ -199,7 +199,6 @@ class Driver:
         self.regions={label:self.observed['heads'][REGIONS.index(label)*4]['region'] for label in REGIONS}
         self.processes,self.logs,self.relays,self.owners,self.cold={},{},[],{},[]
         self.calls,self.starts,self.events,self.terminal=[],0,[],[]
-        self.stopped_observations={}
         self.stopped_heads={};self.unknowns=0;self.phase=None;self.signed_count=0;self.prepared_inventory=inventory(self.root)
         self.mesh_anchors={slot:dict(public_key=document(self.root/'mesh'/f'{slot[0]}-{slot[1]}'/'identity.private.json')['public_key'],node_id=self.observed['transport_pins'][i]['node_id'],network=self.currency,config_sha256=config_commitment(json.loads(self.configs[PHASES[-1],*slot].mesh))) for i,slot in enumerate(SLOTS)}
         self.tls_observations=set()
@@ -312,25 +311,6 @@ class Driver:
             except BaseException:log.close();del self.logs[label,n];raise
             self.processes[label,n]=process;self.starts+=1;self.record('ordinary-node-start',region=label,index=n,keyless=phase=='keyless-drain')
 
-    def remember_stopped_observation(self, slot, pid):
-        """An exact own clean predecessor report is unknown, never new progress."""
-        self.stopped_observations.pop(slot, None)
-        path=self.root/'mesh'/f'{slot[0]}-{slot[1]}'/'regional-contact-status.json'
-        if not path.exists():return
-        try:
-            data=raw(path);value=decode_native_json(data)
-            conf=self.configs[self.phase,*slot]
-            pin=self.observed['transport_pins'][SLOTS.index(slot)]
-            listener=conf.argv[conf.argv.index('--mesh-listen')+1].split(':')
-            require(value['region']==self.regions[slot[0]],'stopped observation region differs')
-            observation_height(value,pid,self.currency,pin['tls_cert_sha256'],
-                dict(host=listener[0],port=int(listener[1])),CAPS[slot[0]])
-        except (OSError, ValueError, KeyError, TypeError):
-            # An absent/unusable optional report cannot grant a startup exception.
-            return
-        self.stopped_observations[slot]=dict(sha256=hashlib.sha256(data).hexdigest(),
-            pid=pid,currency=self.currency,region=self.regions[slot[0]])
-
     def stop_all(self):
         if not self.processes:return
         deadline=time.monotonic()+5
@@ -343,8 +323,6 @@ class Driver:
                 os.killpg(process.pid,signal.SIGKILL);process.wait(timeout=5);unclean=True
             self.terminal.append(dict(region=slot[0],index=slot[1],exit_code=process.returncode))
             unclean|=process.returncode!=0
-            if process.returncode==0:self.remember_stopped_observation(slot,process.pid)
-            else:self.stopped_observations.pop(slot,None)
             self.logs[slot].close();del self.logs[slot];del self.processes[slot]
         require(not unclean,'owned ordinary node shutdown was unclean')
 
@@ -354,14 +332,7 @@ class Driver:
             require(process.poll() is None,'owned ordinary node exited prematurely')
             path=self.root/'mesh'/f'{label}-{n}'/'regional-contact-status.json'
             if not path.exists():heights[label,n]=None;continue
-            data=raw(path);value=decode_native_json(data)
-            stale=self.stopped_observations.get((label,n))
-            if (stale is not None and stale['currency']==self.currency
-                    and stale['region']==self.regions[label]
-                    and stale['sha256']==hashlib.sha256(data).hexdigest()):
-                heights[label,n]=None;self.unknowns+=1;continue
-            require(value['region']==self.regions[label],'observation region differs')
-            conf=self.configs[self.phase,label,n]
+            value=document(path);conf=self.configs[self.phase,label,n]
             pin=self.observed['transport_pins'][SLOTS.index((label,n))]
             listener=conf.argv[conf.argv.index('--mesh-listen')+1].split(':')
             heights[label,n]=observation_height(value,process.pid,self.currency,pin['tls_cert_sha256'],
@@ -370,7 +341,6 @@ class Driver:
             if type(value.get('transport')) is dict and value['transport'].get('progress_observation_available',True) is True:self.tls_observations.add((label,n))
             if self.phase=='keyless-drain' and heights[label,n] is not None:
                 require(value['consensus']['autonomous_signing_enabled'] is False,'keyless observer began signing')
-            self.stopped_observations.pop((label,n),None)
         return heights
 
     def wait(self, label, check):

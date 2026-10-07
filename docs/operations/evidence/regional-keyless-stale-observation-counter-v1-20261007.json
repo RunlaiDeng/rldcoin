@@ -1,0 +1,16 @@
+{
+  "format": "RLD-KEYLESS-STALE-OBSERVATION-COUNTER-V1",
+  "completed": false,
+  "expected_counterexample": true,
+  "duration_seconds": 0.002863,
+  "budget_seconds": 15.056131,
+  "attempts": 1,
+  "driver_sha256": "74468bb15c433fe2c3bd8de18d19413395b82886631231cf0e3bf833b03d4d5d",
+  "model_sha256": "0f072e5263a9754e15f8d2b2787b6b935eae0b784729b0ab76f9599743e9d1ee",
+  "actual_driver_observations": true,
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "failure": "ValueError: observation belongs to another process/domain",
+  "related60_before": 44.943869,
+  "related60_after": 44.946732,
+  "full_fault_qualified": false
+}

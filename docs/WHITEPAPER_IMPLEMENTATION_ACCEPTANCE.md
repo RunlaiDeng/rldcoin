@@ -1837,3 +1837,13 @@ apply-v9 **FAIL243.853秒/原600/5526封存**，helper1；原错误`actual Nativ
 新einval-v13准备原180一次运行；准备controller v1在预算前将existing evidence误插fresh-output guard而拒绝，零Native/fixture，原件保留，v2仅准确修正hash loop。准备通过后必要einval-v10原600一次仍按原60round/24height E27/P24/A24/maturity2/quorum3/原owner3/完整cold/守恒/stop接受；fixture仅捕获原fatal guard消费的准确参数并原样再抛出，没有额外Native采样。首准确errno22来源或原guard/deadline退出；若无再现，不能称唯一原因已修复。V47组件与真正lock probe经精确复合桥复用，观察本身不成为协议资格。冻结白皮书/PDF/官网和S/R/I/A–G/N/P、VALUE-STRICT-01/长期/PQ/独立/组合/物理均保持原标准，唯一作者继续。
 
 einval-v13原180准备PASS30.608秒/668新文件，12独立Native/caller/voter/实际成熟输入与守恒、原三unsigned fault reviews/source453均通过；普通fault owner尚未first-sign。einval-v10最终helper实际全LOAD_GLOBAL provider预检通过，make/Tracked/guard wrapper未执行、zero Native/网络/签名；必要一次原600立即继续，错误来源观察不替代任何成熟/cold/守恒或长期资格。
+
+### 完整fault einval-v10终态FAIL；自有进程重启状态反例与最小修复
+
+einval-v10 **FAIL384.478秒/原600/6796封存**，helper1；真正单一原收款Native evidence/import/maturity/spendable/remaining9/finality/notquarantined通过，完整keyless/all12固定头cold/完整信封/heads/守恒没有完成。原12普通进程均exit0；新12keyless均exit-15、cleanup失败，不把stopped或无SIGKILL称normalstop。精确37封存文件只读.236632秒证明12status仍是各自旧普通PID、keyless日志空；无errno22记录不证明旧原因消失。三原owner/failed6796及全部旧失败保留，永不重开/复制/重签/退款。
+
+真实Driver.observations无Native入口反例FAIL .002863。仅控制器保留同一活动scope、同slot自有exit0进程的完整合格status字节hash/域；新进程alive且仍是完全相同已停字节时unknown，不给高度/TLS/keyless或Native资格，不删或改status。新当前PID/域/region/TLS/cap/errors/keyless仍严格核验，第一次合法新发布后退役旧字节例外；变化/其他slot/foreignPID/未洁停/回放/PID复用/原期限都由6新模型拒绝或保持未知，旧17测试原字节保留。23相关PASS .124450，原related60累计45.071182；Native/Core/实际CLI/Mesh/TCP/BFT/生产Service未改。17 Driver其余方法AST准确不变，包括query/receipt/owner/fullcold/守恒/run/cleanup。
+
+Python192 `bc4824f94c2eca47bd300751abbc0a84cf31a7bb3b3a84e069c735488b630426`；driver `647318e3e051858e5217bfef0cbced329e347adaf101d55916dae80465adf52b`，terminal49f不变。453最终来源与冻结正文/PDF/receipt核验 .030115秒；V47原180/成熟15/all8cold/413完整信封与真实lock/release probe经复合来源桥复用，未重复长测，不冒称新192组件重新资格。下一单线为全新stale-v14准备原180一次；通过后必要stale-v11原600一次检验是否能发布真正keyless新PID状态并完成原全12冷验/heads/守恒/normalstop。原60round/24height E27/P24/A24/maturity2/quorum3/三原owner及600whole/5cleanup不减；首guard或原期限封存，不同参重试。旧FAIL、VALUE-STRICT-01与S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8全部原标准/长期/PQ/组合/独立/物理保持，冻结白皮书及官网不变。持久cwd/goal旧前继引用仍界面待修；明确新workdir内持续唯一作者开发不因已授权局部通过停止。
+
+stale-v14新12Native准备原180 PASS30.710秒/668文件；真实E8/P5/A5成熟发行/8目的收据/独立caller-voter/TLS/守恒与三原unsigned reviews通过，原fault owner尚未first-sign。stale-v11最终入口37个实际LOAD_GLOBAL provider静态检查PASS .090030秒，make/Tracked/guard未执行，零Native/网络/签名；必要一次原600于2026-10-07T02:06:34.030439+00:00开始。来源绑定当前driver647/192bc48，terminal49f/Native89/Core171/actualbinary不变；所有原成熟/容量/预算/full12cold/normalstop条件保持，旧失败不改。

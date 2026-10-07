@@ -1,0 +1,181 @@
+{
+  "completed": true,
+  "budget_seconds": 10,
+  "attempts": 1,
+  "duration_seconds": 0.236632,
+  "read_files": 37,
+  "sealed_bytes_unchanged": true,
+  "seal_sha256": "ab61d222bdd7cea5fc4f674ac1e3a1e7c2154fd2d9b12de0c4897f18c296a591",
+  "rows": [
+    {
+      "region": "earth",
+      "index": 0,
+      "final_status_pid": 67559,
+      "previous_ordinary_service_pids": [
+        67559
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "b300dd15202673883c63f5babb0ca36d37305ffa8f1886fc5a7ce6209eadb533",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "earth",
+      "index": 1,
+      "final_status_pid": 62685,
+      "previous_ordinary_service_pids": [
+        62685
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "b300dd15202673883c63f5babb0ca36d37305ffa8f1886fc5a7ce6209eadb533",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "earth",
+      "index": 2,
+      "final_status_pid": 62686,
+      "previous_ordinary_service_pids": [
+        62686
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "b300dd15202673883c63f5babb0ca36d37305ffa8f1886fc5a7ce6209eadb533",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "earth",
+      "index": 3,
+      "final_status_pid": 62687,
+      "previous_ordinary_service_pids": [
+        62687
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "b300dd15202673883c63f5babb0ca36d37305ffa8f1886fc5a7ce6209eadb533",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "proxima",
+      "index": 0,
+      "final_status_pid": 62688,
+      "previous_ordinary_service_pids": [
+        62688
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "9bb1369951c96da3174782131df32da8d2df62aa29080af7f6ee1c8250cf67e9",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "proxima",
+      "index": 1,
+      "final_status_pid": 62689,
+      "previous_ordinary_service_pids": [
+        62689
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "9bb1369951c96da3174782131df32da8d2df62aa29080af7f6ee1c8250cf67e9",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "proxima",
+      "index": 2,
+      "final_status_pid": 62690,
+      "previous_ordinary_service_pids": [
+        62690
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "9bb1369951c96da3174782131df32da8d2df62aa29080af7f6ee1c8250cf67e9",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "proxima",
+      "index": 3,
+      "final_status_pid": 62691,
+      "previous_ordinary_service_pids": [
+        62691
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "9bb1369951c96da3174782131df32da8d2df62aa29080af7f6ee1c8250cf67e9",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "andromeda",
+      "index": 0,
+      "final_status_pid": 62692,
+      "previous_ordinary_service_pids": [
+        62692
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "0f0d6c6ca0df13fbbcb70864cf68fa81a456dd3b25b20b6b7ac4b6f7807c874e",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "andromeda",
+      "index": 1,
+      "final_status_pid": 62693,
+      "previous_ordinary_service_pids": [
+        62693
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "0f0d6c6ca0df13fbbcb70864cf68fa81a456dd3b25b20b6b7ac4b6f7807c874e",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "andromeda",
+      "index": 2,
+      "final_status_pid": 62694,
+      "previous_ordinary_service_pids": [
+        62694
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "0f0d6c6ca0df13fbbcb70864cf68fa81a456dd3b25b20b6b7ac4b6f7807c874e",
+      "retained_os_error22_origins": []
+    },
+    {
+      "region": "andromeda",
+      "index": 3,
+      "final_status_pid": 62695,
+      "previous_ordinary_service_pids": [
+        62695
+      ],
+      "final_status_matches_previous_own_service_pid": true,
+      "keyless_log_bytes": 0,
+      "final_status_currency": "d49671f6fd531866122cac9ab67347a49635eb71e43e73ab803797526c3ae858",
+      "final_status_region": "0f0d6c6ca0df13fbbcb70864cf68fa81a456dd3b25b20b6b7ac4b6f7807c874e",
+      "retained_os_error22_origins": []
+    }
+  ],
+  "actual_latest_single_native_receipt": {
+    "evidence_verified": true,
+    "import_accepted": true,
+    "maturity_reached": true,
+    "original_output_spendable_now": true,
+    "original_output_remaining": "9",
+    "local_finality_covers_import": true,
+    "quarantined": false
+  },
+  "Native_Runtime_Node_socket_sign_key_fixture_calls": 0,
+  "full_fault_status": "FAIL",
+  "original_error22_cause": "No recorded origins in this run does not prove old cause resolved",
+  "next": "Test a genuinely new process against exact retained status of its own cleanly terminated predecessor. Exact unchanged stopped bytes must remain unknown; only newly published current process/domain/TLS/cap/ keyless-mode fields may give observation credit. Unknown until original deadline must still fail.",
+  "whole_goal_completed": false
+}
