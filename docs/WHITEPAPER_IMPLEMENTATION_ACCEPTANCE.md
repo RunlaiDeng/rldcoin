@@ -1,5 +1,13 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 连续主线：ML-KEM768 keygen/dkey边界通过；继续完整联合续证公开格式
+
+封装阶段已ordinary main推送 **f70e3c22f91de23bcb07318003df296007b8f620**，remoteSHA/tree一致，CI runs0。仅known-public标准输入新keygen/dkey工具，不改Core182d728/TLS/Native/value/冻结材料。来源V12 **FAIL1.418328**：两份GET成功但答案组无parameterSet导致KeyError；原件/FAIL保留，只读格式核验0.010090、原30累计1.428418，无重复GET/原语。V13 **FAIL1.433975**：Rust unused SharedSecretKey strict，0cases/0files/0生成。仅删除unused import、不豁免，复用未变C actual compile，V14 **PASS10.818353、原120累计12.252328**。
+
+两实现25official keyGen group2完整ek1184/dk2400逐字一致；10official group9全2400bytes/5bad检查相符。独立stored-H错误、embedded-ek4095且重算正确SHA3H均拒绝；wrong expected ek/dk、4短输入/symlink也拒绝，共88actual calls。仅公开known d/z，在RAM生成/比较test材料，无production-keygen/真实wallet-TLS-Native钥/secret输出/socket/Native-Runtime-Node/旧encap-decap重测。[有限profile](operations/evidence/pq-mlkem-keygen-reference-v1-qualified-profile-20261007.json)、[实际结果](operations/evidence/pq-mlkem-keygen-v14-20261007-checks.json)、[源码及全部FAIL](operations/fixtures/pq-mlkem-keygen-v1-20261007/README.md)。119known-standard项封存、forced[]/own terminal；来源、actual C/Rust binaries/controller分开绑定。全部旧FAIL不改PASS，旧source-bound Native/value/Core资格不转授新源。
+
+下一唯一具体缺口：当前Core联合旧/新双签续证只有逻辑对象，没有完整canonical有界公开wire。实现/实测完整4签+新policy是否在独立32KiB候选bound内，经严格冷decode仍实际joint verify，拒缺半签/错predecessor-policy/alternate JSON/重复未知字段/超限，anchor保持原locks/consumed/latest nonce，不由wire发现旧trust。一次相关120/首guard或期限，必要最终Core全套/全目标300；不增运输12288/票数/成熟/账本cap，不重复无变更Native180/600。此verification-only codec不安装采用suite或重建永久锁/消费记录，持久原子采用/独立custody/review/全transaction-archive/生产随机源/恒时/长期/PQ/物理/P1–P8/全目标继续OPEN。冻结2ba62421/c59f9fe8/86821d19及全部S/R/I/A–G/N/P不改，唯一作者持续开发审阅普通main推送。
+
 ## 2026-10-07 连续主线：ML-KEM-768封装/同长度非规范公钥边界通过；继续keygen/dkey检查
 
 V10不同实现解封装已ordinary main推送 **c87a9a8eb348f24ec19fcdeee82b69c2a01f00a4**，remoteSHA/tree一致，CI runs0。新增仅known-test C/Rust封装比较器，不改Core182d728/旧TLS/Native/value/冻结材料。支持的OpenSSL3.6.3 ikme及固定fips2030.4.3 encaps_from_seed仅测试，default RNG仍disabled；不注入生产entropy。V11 **PASS10.871585/一次120**，含严格C/Rust全目标及offline actual build：25official group2 complete c1088/k32在两实现逐字一致；10official group10全1184bytes/5bad准确拒绝，另独立packed coefficient4095同长度拒绝，不把错误长度当modulus验证。错expected c/k、4短输入/symlink也拒绝，共86actual calls，0generation/real钥/secret输出/socket/Native-Runtime-Node/decap重测。
