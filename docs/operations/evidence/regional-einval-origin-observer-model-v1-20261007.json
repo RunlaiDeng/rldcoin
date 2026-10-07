@@ -1,0 +1,22 @@
+{
+  "completed": true,
+  "exit_code": 0,
+  "attempts": 1,
+  "budget_seconds": 10,
+  "duration_seconds": 0.196501,
+  "original_related60_prior_seconds": 44.603652,
+  "original_related60_cumulative_seconds": 44.800153,
+  "log_sha256": "e220f35054c142d1391ded398e7cda8f2e5ed19b9b576d761e62d7bef0ba911e",
+  "source_sha256": {
+    "tools/interstellar_tcp.py": "7e6f6ec427b65e2ffe8a1012204ec167b4d309c26a51947de45547137f5ea3f0",
+    "tools/regional_contact_node.py": "cfc6292ff660cbc357edb178d47f9e660853b7c9cd4063fbf50c2b6e04763943",
+    "tools/test_regional_bft_receive_deferred.py": "bb34613dd39b9fa31dd83b6f339520b4ca572ad08c4e5cdb72aed160102d26c7",
+    "docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+  },
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "all_custody_transport_models": true,
+  "original_protocol_errors_still_fail": true,
+  "old_failures_never_reopen": true,
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

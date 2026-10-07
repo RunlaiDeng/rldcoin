@@ -293,6 +293,10 @@ class Service:
         received, routes, adverts = [], {}, {}
         errors = list(socket_observation['errors']) if socket_observation is not None else []
         rejected, deferred = [], []
+        local_os_errors=list(socket_observation.get('local_os_errors',())) if socket_observation is not None else []
+        def observe_os_error(error, stage):
+            origin=tcp._local_os_error_origin(error,stage)
+            if origin is not None and len(local_os_errors)<16:local_os_errors.append(origin)
         selected=[]
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
@@ -329,6 +333,7 @@ class Service:
                 'fresh native identity differs from startup binding')
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:
             errors.append(str(error))
+            observe_os_error(error,'native-contact-status')
         if native_observation is not None:
             accepted = {c['message_id'] for c in native_observation['contacts']
                 if c['import_accepted'] or (self.miner is None and c['evidence_verified'])}
@@ -355,6 +360,7 @@ class Service:
                 except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                     flush_bft()
                     errors.append(str(error))
+                    observe_os_error(error,'native-contact-apply')
                     # Only the exact complete typed contact-apply lock refusal
                     # leaves Native validity unknown. Retain the original frame
                     # for full verification on a later tick; no import/seen or
@@ -406,11 +412,13 @@ class Service:
                             node.enqueue(raw, destination)
             except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
+                observe_os_error(error,'native-outgoing')
             try:
                 native_observation = self.native.call('contact-status')
             except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                 native_observation = None
                 errors.append(str(error))
+                observe_os_error(error,'native-contact-status-final')
         consensus = None
         stage_seconds['native_receive_and_outgoing'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()
@@ -419,6 +427,7 @@ class Service:
                 consensus=self.bft.tick()
             except (OSError,ValueError,subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
+                observe_os_error(error,'consensus')
                 consensus={'autonomous_signing_enabled':not self.bft.failed,'progress_observation_available':False,
                            'diagnostic':str(error)[:256],'independent_bft_qualified':False}
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
@@ -427,6 +436,7 @@ class Service:
             socket_observation = self.tcp.tick()
             stage_seconds['tcp'] = round(time.monotonic()-stage_started, 6)
             errors.extend(socket_observation['errors'])
+            local_os_errors.extend(socket_observation.get('local_os_errors',()))
         elif self.carriage is not None:
             socket_observation=self.carriage.snapshot()
             # Parallel CPU/socket duration is not a serial contact-tick stage.
@@ -435,12 +445,15 @@ class Service:
         stage_seconds['before_status_publication'] = round(time.monotonic()-tick_started, 6)
         self.progress['cursor'] = (self.progress['cursor'] + MAX_PER_TICK) % (2**63)
         mesh.atomic(self.path, self.progress)
+        # Process-only bounded history keeps a captured exact origin through
+        # later snapshots and graceful stop; it never changes current errors.
+        self.local_os_error_history=tuple((list(getattr(self,'local_os_error_history',()))+local_os_errors)[-16:])
         report = {'format': FORMAT, 'process_id': os.getpid(), 'currency': self.native.currency, 'region': self.region,
             'relay_enabled': True, 'local_import_mining_enabled': self.miner is not None,
             'observed_at_unix': int(time.time()), 'transport': transport,
             'native_observation': native_observation, 'native_observation_available': native_observation is not None,
             'applied': applied, 'rejected': rejected, 'deferred': deferred,
-            'errors': errors[:16], 'fixture_only': True,
+            'errors': errors[:16], 'local_os_errors': list(self.local_os_error_history), 'local_os_errors_are_process_history': True, 'fixture_only': True,
             'consensus': consensus,
             'physical_route_verified': False, 'independent_operators': False,
             'transport_receipt_is_payment_authority': False, 'remote_current_state_known': False}

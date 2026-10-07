@@ -139,5 +139,92 @@ class ContactApplyDeferredTests(unittest.TestCase):
  def test_corrupt_frame_refuses_before_native_call_even_after_deferral(self):
   service,pid,raw=self.service(NativeRefusal('contact-apply',1,BUSY));self.tick(service,raw);report=self.tick(service,raw+b'corrupt');self.assertEqual(len(report['rejected']),1);self.assertEqual(report['deferred'],[]);self.assertEqual(service.native.apply.call_count,1)
 
+
+class LocalOsErrorOriginTests(unittest.TestCase):
+    def test_exact_errno_and_bounded_trace_contain_no_arguments_or_locals(self):
+        import interstellar_tcp as tcp
+        def leaf(private_value):
+            raise OSError(22, 'Invalid argument')
+        try:
+            leaf('never-retained-private-model')
+        except OSError as error:
+            origin = tcp._local_os_error_origin(error, 'connect')
+        self.assertEqual(origin['errno'], 22)
+        self.assertEqual(origin['frames'][-1]['function'], 'leaf')
+        self.assertFalse(origin['diagnostic_is_authority'])
+        self.assertLessEqual(len(origin['frames']), 8)
+        self.assertTrue(all(set(row) == {'file', 'function', 'line'} for row in origin['frames']))
+        self.assertNotIn('never-retained-private-model', repr(origin))
+
+    def test_other_refusals_do_not_acquire_einval_origin(self):
+        import interstellar_tcp as tcp
+        for error in (OSError(35, 'busy'), OSError('untyped'), ValueError('[Errno 22] Invalid argument'),
+                      NativeRefusal('contact-apply', 1, BUSY)):
+            self.assertIsNone(tcp._local_os_error_origin(error, 'connect'))
+
+    def test_original_transport_origin_survives_later_snapshot(self):
+        import interstellar_tcp as tcp
+        case = ContactApplyDeferredTests()
+        service, _, raw = case.service(None)
+        service.native.apply.return_value = dict(evidence_verified=True, import_accepted=False)
+        origin = tcp._local_os_error_origin(OSError(22, 'Invalid argument'), 'connect')
+        snapshots = iter([dict(errors=['[Errno 22] Invalid argument'], local_os_errors=[origin]),
+                          dict(errors=[], local_os_errors=[])])
+        service.carriage = SimpleNamespace(snapshot=lambda: next(snapshots))
+        report = case.tick(service, raw)
+        self.assertEqual(report['errors'], ['[Errno 22] Invalid argument'])
+        self.assertEqual(report['transport']['tcp']['errors'], [])
+        self.assertEqual(report['local_os_errors'], [origin])
+        self.assertEqual(report['rejected'], [])
+
+    def test_native_apply_os_error_remains_rejected_with_exact_stage(self):
+        case = ContactApplyDeferredTests()
+        service, _, raw = case.service(OSError(22, 'Invalid argument'))
+        report = case.tick(service, raw)
+        self.assertEqual(len(report['rejected']), 1)
+        self.assertEqual(report['applied'], [])
+        self.assertEqual(report['deferred'], [])
+        self.assertEqual(report['local_os_errors'][0]['stage'], 'native-contact-apply')
+        self.assertEqual(report['local_os_errors'][0]['errno'], 22)
+        self.assertEqual(service.bft_seen, {'unchanged'})
+
+    def test_original_tcp_refusal_keeps_stage_and_never_marks_custody(self):
+        from contextlib import nullcontext
+        import threading
+        from unittest.mock import patch
+        import interstellar_tcp as tcp
+        peer = 'b'*64
+        node = SimpleNamespace(id='a'*64, failed_carriage=lambda _: (),
+                               carriage_position_domain=lambda: ('a'*64,))
+        server = SimpleNamespace(guard=threading.Lock(), peers={peer: dict(host='127.0.0.1', port=1,
+                                  tls_cert_sha256='c'*64)}, cursor=0, running=True,
+                                 contact_trace=None, peer_attempts={}, accepted_transits={}, id='a'*64,
+                                 network='d'*64, insecure=False, suppressed=lambda _: (),
+                                 mesh_node=lambda _: nullcontext(node), mark=Mock(),
+                                 observation=lambda errors: dict(errors=errors))
+        def failed_connect(*_):
+            raise OSError(22, 'Invalid argument')
+        with patch.object(tcp, 'outgoing', return_value=dict(body=dict(transits=[]))), \
+                patch.object(tcp, 'client_connect', side_effect=failed_connect):
+            report = tcp.Server._outbound_tick(server)
+        self.assertEqual(report['errors'], ['[Errno 22] Invalid argument'])
+        self.assertEqual(report['local_os_errors'][0]['stage'], 'connect')
+        self.assertEqual(report['local_os_errors'][0]['frames'][-1]['function'], 'failed_connect')
+        self.assertEqual(server.accepted_transits, {})
+        server.mark.assert_called_once_with(peer, 'outbound', False)
+
+    def test_origin_survives_next_success_without_becoming_a_current_error(self):
+        case = ContactApplyDeferredTests()
+        service, _, raw = case.service(OSError(22, 'Invalid argument'))
+        first = case.tick(service, raw)
+        service.native.apply.side_effect = None
+        service.native.apply.return_value = dict(evidence_verified=True, import_accepted=False)
+        second = case.tick(service, raw)
+        self.assertEqual(second['errors'], [])
+        self.assertEqual(second['rejected'], [])
+        self.assertEqual(second['local_os_errors'], first['local_os_errors'])
+        self.assertTrue(second['local_os_errors_are_process_history'])
+        self.assertFalse(second['local_os_errors'][0]['diagnostic_is_authority'])
+
 if __name__ == '__main__':
     unittest.main()

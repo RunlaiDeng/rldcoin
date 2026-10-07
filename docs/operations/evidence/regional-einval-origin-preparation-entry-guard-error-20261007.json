@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "failure": "Source-only builder inserted existing guard evidence into fresh-output absence guard instead of protected hash loop; prebudget rejected. Exact insertion now limited to protected hash loop.",
+  "Native_Runtime_Node_socket_sign_fixture_calls": 0,
+  "root_absent": true,
+  "budget_not_started": true,
+  "protocol_sources_unchanged": true,
+  "controller_v1_preserved": true
+}

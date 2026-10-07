@@ -44,6 +44,23 @@ MAX_CUSTODY_REPLY_BYTES = 64 * 1024
 CERTIFICATE_DAYS = 90
 
 
+def _local_os_error_origin(error, stage):
+    """Bounded exact EINVAL origin only; no arguments, locals or authority."""
+    if not (isinstance(error, OSError) and type(error.errno) is int and error.errno == 22):
+        return None
+    frames = []
+    current = error.__traceback__
+    while current is not None:
+        code = current.tb_frame.f_code
+        frames.append(dict(file=os.path.basename(code.co_filename)[:128],
+                           function=code.co_name[:128], line=current.tb_lineno))
+        if len(frames) > 8:
+            del frames[0]
+        current = current.tb_next
+    return dict(stage=stage, error_class=type(error).__name__, errno=22,
+                frames=frames, diagnostic_is_authority=False)
+
+
 def certificate_check(cert, network, peer, now=None):
     now=now or datetime.datetime.now(datetime.timezone.utc)
     mesh.require(cert.not_valid_before_utc <= now <= cert.not_valid_after_utc,
@@ -774,6 +791,7 @@ class Server:
 
     def _outbound_tick(self):
         errors=[]
+        local_os_errors=[]
         peers=sorted(self.peers)
         if peers:
             offset=self.cursor%len(peers)
@@ -861,11 +879,15 @@ class Server:
                         if ids:mesh.remember_carriage_position((carriage_domain,peer,'failed-carriage'),ids)
                     self.mark(peer,'outbound',False)
                     errors.append(str(error)[:256])
+                    origin=_local_os_error_origin(error,failure_stage)
+                    if origin is not None:local_os_errors.append(origin)
                     if trace is not None:
                         trace.packets('outgoing_failed',peer,trace_rows,attempt=count,
                             failure_stage=failure_stage,error_class=type(error).__name__)
                         trace.event('contact_failed',peer,attempt=count,failure_stage=failure_stage,error_class=type(error).__name__)
-        return self.observation(errors)
+        result=self.observation(errors)
+        result['local_os_errors']=local_os_errors
+        return result
 
     def observation(self, errors=()):
         return {'adapter':ADAPTER,'listener':{'host':self.address[0],'port':self.address[1]},

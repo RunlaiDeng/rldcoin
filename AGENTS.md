@@ -2023,3 +2023,15 @@ origin-v8 **FAIL152.088秒/原600/4067封存**，helper1，首次普通Native完
 Python192 `a963630cc6db9d6bb87bc17bc5a984bcd1af049594ae6b1c0b1895bc8d8fab2a`；Native89/Core171/binary/MeshV32/TCP/BFT不变。V47 old192组件PASS161.681经Service整文本反转及原测试文本保留的明确source bridge复用，不称已新192完整重测。反转预检最初多一空行，后full helper生成多一缩进，均在fixture调用前ERROR留存；准确去除新增分隔空行+class恢复原测试整文本，AST不变。新apply-v12全新12准备原180一次正在运行，通过后才必要apply-v9原600一次；原60round/24height E27/P24/A24 cap/maturity2/quorum3/三原owner请求/full12cold/全信封/heads/保管/守恒/normalstop及whole<=600不减。VALUE-STRICT-01及长期/PQ/组合/独立/物理仍OPEN；冻结正文/PDF/官网不改，唯一作者继续。
 
 apply-v12原180准备 **PASS31.230秒/668文件**，12Native/voter/caller、实际E8/P5/A5成熟输入/8完整目的收据/守恒、12独立TLS、三原unsigned fault reviews；fault owner尚未first-sign。必要fullfault apply-v9入口已完成语法、导入和全部实际LOAD_GLOBAL provider预检，make/Tracked函数未执行、无额外Native/Runtime/Node/socket/sign调用；driver744/terminal49f/原600/60/24/成熟2/票3/owner3/cold/守恒护栏不变。下一立即运行一次相关来源修复后的完整fault，不因准备或probe局部通过结束任务。
+
+### 完整fault apply-v9终态FAIL；准确系统错误来源尚未知
+
+apply-v9 **FAIL243.853秒/原600/5526封存**，helper1；原错误`actual Native/Service error: [Errno 22] Invalid argument`，无forced/cleanup/pin异常，节点/中继正常停。隔离和offline追赶仅有限通过，原收款成熟/keyless/all12cold/完整信封/heads/守恒仍未完成，三原owner请求保留，旧币/钥/保管永不重开/复制/重签/退款。精确12个封存status只读 **.005924秒**，Andromeda index2有该错误、所有节点rejected0；不能由停后TCP错误列表不同排除运输来源。真实Service.tick无Native模型 **.092185秒**证明先取错误、后发布另一TCP快照，原来源尚unknown。
+
+一次剩余原TCP60的全新6邻居真实TLS/ordinary worker诊断 **34.789793秒**，249 connect/1472 Node init/6完整签名目的receipt及清witnesscold通过，未复现EINVAL；原TCP60累计44.323182，不声称原Native/十二服务或唯一原因。全部worker/server正常停，30文件封存，无Native/Runtime/ledger/owner调用，无旧数据拷贝。故没有改运输逻辑或添加忽略错误；旧价值两告警的Box/布尔谓词草案仅未应用scratch，未运行Cargo或改变Core。
+
+唯一新增为`RLD-LOCAL-EINVAL-ORIGIN-V1`诊断：仅实际OSError errno22记录原阶段+最多8个代码位置（basename/function/line）、最多16条进程history，在snapshot变化/正常停后保留；没有args/locals/payload/key、wire/selector/custody/签名权利或错误字符串/失败guard改变。26相关无Native模型PASS .196501；最后history的6项PASS .143716，原related60累计44.943869；全部旧测试及生产文本剥离观察准确恢复。453来源+复合桥已检查，Python192 `c7d539b16a578c36d10b320c26221ce32f5d27c695a355f9b9f88726341590bb`，Native89/Core171/binary/MeshV32/原driver744-terminal49f保持。
+
+新einval-v13准备原180一次运行；准备controller v1在预算前将existing evidence误插fresh-output guard而拒绝，零Native/fixture，原件保留，v2仅准确修正hash loop。准备通过后必要einval-v10原600一次仍按原60round/24height E27/P24/A24/maturity2/quorum3/原owner3/完整cold/守恒/stop接受；fixture仅捕获原fatal guard消费的准确参数并原样再抛出，没有额外Native采样。首准确errno22来源或原guard/deadline退出；若无再现，不能称唯一原因已修复。V47组件与真正lock probe经精确复合桥复用，观察本身不成为协议资格。冻结白皮书/PDF/官网和S/R/I/A–G/N/P、VALUE-STRICT-01/长期/PQ/独立/组合/物理均保持原标准，唯一作者继续。
+
+einval-v13原180准备PASS30.608秒/668新文件，12独立Native/caller/voter/实际成熟输入与守恒、原三unsigned fault reviews/source453均通过；普通fault owner尚未first-sign。einval-v10最终helper实际全LOAD_GLOBAL provider预检通过，make/Tracked/guard wrapper未执行、zero Native/网络/签名；必要一次原600立即继续，错误来源观察不替代任何成熟/cold/守恒或长期资格。

@@ -1,0 +1,18 @@
+{
+  "completed": true,
+  "exit_code": 0,
+  "budget_seconds": 5,
+  "attempts": 1,
+  "duration_seconds": 0.143716,
+  "source_sha256": {
+    "tools/interstellar_tcp.py": "7e6f6ec427b65e2ffe8a1012204ec167b4d309c26a51947de45547137f5ea3f0",
+    "tools/regional_contact_node.py": "d586ab9c240ad6db1206e679440e472b421190bf496edfeeefaa5d0da0a9ed7f",
+    "tools/test_regional_bft_receive_deferred.py": "89770cc2266306f2ba5e208f53afaef14b04c6ca1f6dab2024ee3d066b7967c5"
+  },
+  "log_sha256": "9e20a72f703486e67121dbac07ac69ce12223a4a4ab5cf1e2e55549bf19c1772",
+  "original_related60_cumulative_seconds": 44.943869,
+  "Native_Runtime_Node_socket_sign_fixture_calls": 0,
+  "scope": "Final bounded process history adds one retention check, reruns only six affected OS-origin models, prior26 unmodified authority/ring/codec checks reused under exact reversal, no real fixture or same long scope.",
+  "full_fault_qualified": false,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,12 @@
+{
+  "completed": true,
+  "duration_seconds": 0.092185,
+  "budget_seconds": 5,
+  "attempts": 1,
+  "counter": "Actual production Service.tick consumes first carriage snapshot errors, but publishes second later snapshot. Different reported TCP errors do not exclude a TCP origin of original retained error.",
+  "native_mesh_custody_models": true,
+  "Native_Runtime_Node_socket_sign_fixture_calls": 0,
+  "source_unchanged": true,
+  "full_fault_status": "FAIL",
+  "next": "Once bounded fresh six-peer actual TLS ordinary workers, exact original TCP calls wrapped only to retain OS-error errno+stage+bounded traceback without changing their results; no Native or copied old payload. EINVAL observed selects syscall-specific reproducer; absent leaves original origin unknown, no error waiver or arbitrary protocol patch."
+}
