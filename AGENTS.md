@@ -2003,3 +2003,13 @@ V46仍FAIL原180/196.377含收尾/1817封存，四CLI正常exit0；成熟15/full
 ### V32当前origin轮转；V47原范围运行
 
 真实同context转发/本地竞争oldV31反例FAIL .568134/14封存。MeshV32仅原newest current spare在实际原子prepare后记同peer/context primitive origin，下一newest让另一类先服务；cold/miss保持转发先，oldest/first2/另一类floor/full4/512/4MiB/20MiB/auth/atomic/冷读不变。14相关PASS4.845044/198封存，原related60累计44.161948；原ordinary第14项完整签名送达/清witness冷读复用未另跑。该报告TCP字段3.451646是历史继承，当前原TCP60仍9.533389、不重置。binder v1 nullable route预检ERROR发生在分配前留存，v2来源453 PASS1.126351。Python192 `271378c1a9b0cc333cdec417412b1d96115854a1f9f4c12b7e5036b9b1693242`，Native89/Core171/实际CLI/TCP/BFT不变。V47唯一原180/一次于2026-10-07T00:58:41.483933Z启动，原17setup/13import/15mature/全8Nativecold/每个完整信封/heads/守恒/normalstop及whole<=180保持。V46及所有旧scope仍FAIL；无新增600或旧fixture恢复，冻结全部验收/长期/PQ/物理/独立/组合及VALUE-STRICT-01不变。goal旧hash/blocked与持久cwd仍界面待修，不阻断明确workdir下已授权开发。
+
+### V47组件首次完整通过；原完整fault仍未通过
+
+V47原180完整PASS **161.681秒**，四CLI普通协议自行达到成熟15（135.919秒实际成熟确认），全8固定头Nativecold、413完整信封、1179运输cold文件、8caller/独立owner heads/守恒与normalstop全部通过；1716封存，helper0，无forced/guardian/pin异常。原ledger/Runtime并未因地面receipt获得权利；这是实际Native终态。全部旧180/600失败保留，完整fault/all12/keyless仍未验收，不能称全协议通过。下一单线为当前来源下全新12Native无网络准备原180/一次，严格资金来源/668保管/三份原owner unsigned reviews通过后，必要一次原600完整fault保持60round/24height/maturity2/quorum3/owner请求与全12完整cold/守恒；不恢复、复制或重签旧fixture，不放宽标准。VALUE-STRICT-01/长期/PQ/组合/独立/物理继续OPEN，冻结不改。
+
+### 当前来源全新准备通过；必要一次原600完整fault运行
+
+origin-v11无网络准备原180 **PASS31.188秒/668文件**，12Native/voter/caller、全新原生发行及实际成熟E8/P5/A5输入、8完整目的收据/守恒、12独立TLS身份、三份原unsigned owner reviews均核验；没有复制旧账本/钥/保管或启动Runtime。准备源码和边界测试哈希未变，合法来源证据复用。入口静态预检首用systemPython缺cryptography，在任何Native/fixture调用前ERROR；正确venv35个LOAD_GLOBAL实际provider解析通过，生成函数未执行。首次完整controller在budget前错误要求历史零文件且从未创建的TLS wrapper夹具目录存在，拒绝且无Native/网络/owner调用；准确原因不是迁移旧路径。仅改为非空保管必须存在，空历史封存允许未建目录，原错误留存、不改历史字节。
+
+唯一真实origin-v8原600/一次已于2026-10-07T01:08:35.496643Z开始，11普通节点在missing-leader隔离阶段启动。当前Python192/Native89/Core171/实际CLI/完整driver744/terminal49f各自绑定；原60round/24height（E27/P24/A24 cap）/maturity2/quorum3/三原owner first-sign、完整隔离/追赶/恢复9net成熟/keyless drain/全12固定头与每个信封/heads/保管/守恒/normalstop全程<=600保持。旧封存hash核验，不因本次重复递归扫旧私有库；新scope自身完整Nativecold/保管仍必须检验。V47只闭合组件；全部旧600失败、VALUE-STRICT-01及长期/PQ/物理/独立/组合仍FAIL/OPEN。冻结白皮书、官网与权限范围不变，唯一作者继续，不在局部测试通过后停止。

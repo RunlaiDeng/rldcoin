@@ -1,0 +1,6 @@
+{
+  "status": "ERROR",
+  "cause": "Static import preflight mistakenly used system Python without cryptography; rejected at import before prepared observation reads/Native/Runtime/Node/socket/key/sign/fixture calls.",
+  "new600_started": false,
+  "production_sources_changed": false
+}
