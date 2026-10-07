@@ -1,11 +1,13 @@
-# VALUE-STRICT-01：旧价值库严格验收
+# Strict value-library qualification
 
-历史两处基线告警`large_enum_variant`/`bool_assert_comparison`及120秒耗尽曾使本项OPEN；地区账本strict不替代它。必要最小修复无告警豁免，V13全67测试与6包严格检查在172.226276秒/原300通过，来源Core177 `bc623ebe132c25c47553740c7d8a9682f32e0b3b468c8c8dcae412f48601eea8`；原失败及预算记录本地保留。此有限历史PASS不授当前改动版本或主网资格。
+`rld-value-successor` requires its own strict checks and affected behavior tests;
+regional-ledger compilation cannot substitute. Production warning exemptions are
+not permitted. Source, toolchain, dependency or relevant environment changes and
+contrary evidence trigger a bounded minimal reproducer, related regressions and a
+justified complete scope. Retain all earlier failures locally.
 
-| 事项 | 触发/影响/预算/完成条件 |
-| --- | --- |
-| 来源不变诊断 | 相关价值/PoW/编码/授权/Cargo/toolchain/资源环境出现实际改变或矛盾证据时，先命名最小反例；一次120秒，复用来源不变的证据。无触发不重复长测。 |
-| 必要修复与回归 | 限相关库和直接依赖；严格exit0、无生产告警豁免，编码/授权负例与所有受影响行为通过，必要完整67一次原300，首guard/预算失败封存退出。 |
-| 独立采用 | 原67/strict是同机有限工程证据；完整A–G/长期/独立review/新零分配认证采用仍需各自验收。 |
-
-[当前来源与资格边界](../PLAN_STATUS.md)及[稳定入口](VERIFICATION.md)。
+Complete qualification requires strict exit0 and every affected encoding,
+authorization and value behavior. Existing `large_enum_variant` and
+`bool_assert_comparison` defects must be repaired or source-bound diagnosis must
+show they are absent; budget exhaustion is unavailable qualification. Independent
+review and adoption remain separate requirements.

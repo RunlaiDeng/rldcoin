@@ -1,47 +1,16 @@
-# 2026-09-30 全新测试链与新版主网验收
+# Fresh test-chain and adoption boundary
 
-当前开发使用从高度 0、零发行和空历史开始的独立测试链；主网尚未上线。已废弃主网的资料不再作为实现或完成度依据。所有测试密钥为公开夹具，测试奖励、余额、通道和出口永不迁入主网。
+Development test chains use separate signed zero-allocation genesis and public
+fixture keys. Test rewards, balances, channels, exports and key material never
+migrate into a valuable network. A running test service cannot establish adoption.
 
-## 正在运行的网络
+Consumer signing and encrypted backups require hardware/cross-device and stale
+backup qualification. Complete channels, dispute windows, guardians, bidirectional
+exports/imports/returns require actual native execution and retained latest heads.
+Security, long history, full storage, faults and custody need separately declared
+qualification. Independent operators/control, external review and physical routes
+cannot be substituted by processes belonging to one owner.
 
-| 项目 | 精确身份或状态 |
-| --- | --- |
-| 协议源码承诺 | `d4fdaf6dbb05d00e1820f585dc7ddeb5f0d10f927b003d4551c0429a92d66b54` |
-| 测试源链 | `e8a8dd66eac5a8fe70816901c6b06035fc92b2193213d8fa0f00d2f10a32438e` |
-| 测试目的链 | `6f952ed6eff0aa16d27bd18ab6c760357a21770a954952fffeb4852537c5363a` |
-| 源节点与目的节点 | Linux 独立目录、受资源限制的常驻服务 |
-| 观察节点与测试钱包 | macOS 常驻进程，通过私有连接独立重放 |
-| 运营者 | 同一所有者；不计外部独立运营 |
-| 区域规则 | 600 秒资格配置；公开低难度与 10 秒挖矿轮询仅用于测试 |
-| 货币价值与正式采用 | `test_only=true`、`has_monetary_value=false`、`mainnet_authorized=false` |
-
-[源状态](https://api.rldcoin.com/v1/testnet/earth/status) · [目的状态](https://api.rldcoin.com/v1/testnet/earth-destination/status) · [公开工件](https://github.com/RunlaiDeng/rldcoin-genesis/tree/main/earth/testnet-20260930)
-
-## 本轮实际证据
-
-- 精确源码清单独立校验 MATCH：184 个文件、8,672,435 字节；共识源码没有因部署工具或钱包适配而改写。
-- macOS 和 Linux 各通过 104 项协议测试，0 失败、2 忽略。包括签名区域规则、PoW、后继链、运行进程与迁移研究回归；迁移回归通过不表示本测试网启用了旧资产迁移。
-- 新测试钱包 macOS 23 项测试通过，0 失败、1 忽略；包含持续 1000 次通道付款、挑战/结算和跨区记录。此类测试采用隔离夹具，不是常驻测试网中已经完成 1000 次支付的声明。
-- Linux 源节点和 macOS 观察节点在高度 964 的链 ID、链头、累计工作量、状态根完全相同；分别重启后仍相同，两侧存储健康。
-- 浏览器钱包下载完整加密备份并验证恢复，接收 1 枚测试 RLD，签名发送 0.25 枚、手续费 0.000001 枚；转账进入选定链后余额为 0.749999 枚。钱包记录先持久保存再提交，过时预览被拒绝。
-- 手机宽度 390 像素检查无横向溢出。公网测试 API 每个正常或错误 JSON 响应均标记无货币价值，拒绝外部操作员终局写入。
-
-证据目录：fresh-testnet-20260930（历史证据保留于本地归档）。测试钱包、通道和恢复包仍是测试工件；公开目录不包含任何主网私钥、私有备份或钱包会话令牌。
-
-## 仍须完成的主网上线条件
-
-| 条件 | 当前缺口 | 完成依据 |
-| --- | --- | --- |
-| 消费钱包与恢复 | 硬件签名、跨设备恢复和防旧备份回滚尚未验收 | 实际设备、两台签名设备的冲突/恢复演练和持久决策证据 |
-| 持续支付和跨区运行 | 当前常驻新链完成普通转账；持续通道、监护、完整争议期、双向出口/导入/返程尚未在该常驻网络全部完成 | 新链身份下双方和守护进程的持续付款、断联、挑战、结算和跨区资产重放 |
-| 安全与长期容量 | 新区域参数的长历史、满载、持续攻击、掉电/损坏恢复和多所有者冲突资产复核仍缺 | 新版本、新参数和真实资源上的运行报告；不由旧版 PASS 自动继承 |
-| 正式创世工件 | 正式时间/难度和独立签名密钥未确定，主网包未签署 | 非测试密钥、空历史/零发行、精确实现/规则签名和加密异机试恢复 |
-| 外部资源 | 外部运营者、独立密钥保管和复核、赔付资源及真实物理远方路线未提供 | 对应主体、资源和可核验事实；同一人的多个节点不替代 |
-| 真实上线 | 尚未启动新主网 | 全部适用条件通过后，实际源/目的、钱包、矿工、守护、官网/API 的身份与服务核验 |
-
-总路线已经获授权。缺少资源或某项验收时保持该项未完成；不自动签署主网采用、不把测试账本更名为主网，也不宣称主计划全部完成。旧主网资料、状态及归档按用户要求清除，不进入当前测试网验收或新主网采用。
-
-
-## 新增：节点渐进发现与多跳中继资格
-
-未来节点须具备[息壤中继器式的网络延伸能力](../research/INTERSTELLAR_NODE_MESH_REQUIREMENTS.md)：发现邻居、逐跳学习远端、异步多跳传递、断联持久续传。已有[独立传输原型与地面演练](INTERSTELLAR_NODE_MESH.md)，16 项 mesh 检查通过，连同原传输/预算合计 34 项。原型不包含在已固定测试网共识源码内，不自动替换现有 peer 桥或授权区域价值。真实适配器、地区账本离线自治、容量、安全、独立运营与物理路线仍须完成对应资格。
+A future mainnet requires a newly authorized exact rule set, independent signatures
+and a new zero-allocation signed genesis. Obsolete mainnet records and test assets
+provide no authorization. See the [complete frozen implementation targets](../WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md).

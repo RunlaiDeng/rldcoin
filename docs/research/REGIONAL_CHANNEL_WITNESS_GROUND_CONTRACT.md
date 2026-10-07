@@ -42,21 +42,3 @@ Owner 先保存自己的原签名/最高状态，见证再签署并持久保存�
 Owner 每日志仍为 128 记录/8 MiB；见证为 256 有序项、完整组合文件 8 MiB。
 完整编码、原生历史/evidence/档案容量均保持；不能丢弃未确认记录或提高限额。
 限额上的真实长期服务连续性与见证轮换仍需单独实现/验收。
-
-## 已验证范围与下一判别
-
-准确结果（历史证据保留于本地归档）
-区分首轮严格拒绝、原生正常样本、恢复顺序反例、修复及各来源的检查。合成
-`witness.next` 是发布边界样本，不能称实际 SIGKILL、掉电、跨设备或完整 fault pass。
-
-V5 Receipt/Close/Challenge 的完整 party proof 尚不携带见证认证；返回的 witness_head
-只说明本地签署服务观察，不能被接收方当原生资金权限。实际 V5 CLI 收据接受样本
-已显示这种范围：双方收据通过且 monetary ledger 未变，但没有见证 proof 字段。
-下一主线先规定并实施完整签署见证证明、原生 receiver/state-action 的认证关系及
-latest-state 信任边界；遗漏/错角色/旧 inception 的完整 party-only 证明必须被新 profile
-拒绝，原认证双方+见证可继续。不能只把 digest/head 放进 receipt 或放宽旧 profile。
-
-下一次范围须在当前检查终态后选择；先模型/最小原生反例，单次 120 秒/1 次，
-来源变化必须新 signed no-value fixture，网络 campaign 预算 0。到反例、拒绝、完成或
-预算即停止保留原件；再按实际行为决定实现验证。独立/全回滚、wallet-app、加密完整
-channel backup、watcher/inclusion、重组/完整窗口/长期历史、完整网络及物理资格仍开放。

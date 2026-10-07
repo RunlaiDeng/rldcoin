@@ -51,6 +51,4 @@ Only successful child termination inside the original3-second deadline releases
 `RLD-PQ-PUBLIC-ARCHIVE-SPOOL-RECEIPT-V1`. Failure retains raw bytes/staging and
 releases no archive receipt. Ordinary transport receipt remains distinct.
 Neither receipt proves inner signature validity, ledger acceptance or spendability.
-The measured193-packet64-entry same-host scope and two real refusal paths passed;
-this is not independent custody, physical delays, cross-host/power-loss qualification
-or a full requalification of all historical TLS observations on the changed source.
+Independent custody, physical delay, cross-host and power-loss qualification remain separate requirements.

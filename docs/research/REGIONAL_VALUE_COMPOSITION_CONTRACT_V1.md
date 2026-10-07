@@ -76,8 +76,6 @@ T 是选中来源里未唯一导入的出口总额，包含尚未终局的扣款
 该选择标记为 orphaned，移除尚未消费的找零/费用并恢复原输入。已有终局、
 导入、费用消费或来源后继时拒绝。一般完整分叉后缀仍须另做重放模型与原生验证。
 
-## 已执行的反例与范围
-
 本轮 12 个行为场景通过，包含所有小整数拆分/合并/费用分配、真实 cap 边界、
 未终局/不完整/错目的导入、重复信用、孤立尾部、三地区返程、混合通道和储备、
 精确 2016 挑战边界、使用/退回费用、事故前后及无关谱系付款。
@@ -108,20 +106,11 @@ T 是选中来源里未唯一导入的出口总额，包含尚未终局的扣款
 存储和钱包的最新状态见证必须在通道签署、承接/恢复及释放响应前检查；
 全状态/见证一起回滚与复制钥匙并行使用仍须独立资格，不能由同机模型通过替代。
 
-首个可证伪假设：新的原生通道承接规则在实际混合资金+争议费用样本中，
-保持互斥 U/E/T，拒绝每种新支出/结算并保留无关原生进度；缺任何签名、
-来源、费用或字段即拒绝且账本/调用者头不变。先做最小原生转换/拒绝样本，
-再按改变范围决定冷恢复、容量及普通三地区范围；不因模型通过重跑旧长测试。
-新原生范围另定源绑定预算。完整协议组合、动态时代、同序号状态冲突、
-一般分叉后缀、独立保管/恢复和物理资格继续保持未完成。
-
-## 独立原生执行核及边界修复：2026-10-04
+## 独立原生执行核及边界修复
 
 `tools/regional-ledger/src/channels.rs` 实现原生类型/签名/金额组件，完整规则为
 `src/channel_rules.md` 的 `RLD-REGIONAL-CHANNEL-KERNEL-V1`，规则哈希
 `a7d41f0b24018093bb807cc8c5ebaf00ff31686699d4557f78011d33d14f949a`。
-最终区域源码身份 `26c9077a...`，组合 implementation `d46df694...`，核心
-171 文件仍逐字节绑定 `de74cf78...`，发行组件既有有效证据未重复运行。
 这不是完整 profile；组件声明须货币权威签署准确 currency/region/source/rules，
 既有普通命令格式没有通道入口，不能采用这个声明来激活旧网络。
 
@@ -139,31 +128,7 @@ T 是选中来源里未唯一导入的出口总额，包含尚未终局的扣款
 实际普通成熟输入填满 16 笔储备，第 17 笔在原界限原子拒绝；金额、
 已留储备、输入和头均不变。没有提升界限、剪除证据或迁移旧 fixture。
 
-首轮使用不存在的 fixture API 编译失败，保留原件后仅修正为现有
-`Safety::from_conflicts`。随后 188 项原生回归及严格静态检查在 233.806 秒
-通过，只绑定当时的精确来源。白皮书逐条复核再发现关闭同高度挑战缺口；
-3.075 秒的真实失败断言确认旧核接受该挑战，失败源码和日志全部保留。
-修复为 c+1…c+2016，最终五个组件场景及严格静态检查在 4.752 秒通过。
-c 与截止后一高度拒绝，下一高度和截止高度成功；结算严格晚于截止。
-这些高度是组件算术上下文，并非真实运行 2016 个普通区块。
-不把早先回归推广到最终改动，不重复未受影响的长网络/历史范围。
-证据：执行核结果（历史证据保留于本地归档）。
-
-下一可证伪假设：明确新准入的通道动作通过普通共享区块执行和从创世冷重放
-得到一致 U/E/谱系状态根；旧准入拒绝，无效尾部不改变链/头/价值。
-网络范围预算当前为零；先完成原生集成与最小拒绝，再据改变范围定义唯一新预算。
-同序号冲突证据及支付后代隔离、充分储备的收据接受/top-up、状态根、
-普通 BFT、钱包签署/恢复和持久冷重放仍待接入。全部目标仍未完成。
-
-## 普通原生账本集成：2026-10-04 21 UTC 后检查点
-
-后续新来源 `3dab638a...` / implementation `2afd38e3...` 增加明确签署的
-`RLD-REGIONAL-BFT-VALUE-CHANNELS-FIXTURE-V1` 和
-`RLD-REGIONAL-SEGMENTED-VALUE-CHANNELS-FIXTURE-V1`。
-`Admission.value_rules` 在新签名域绑定完整原生 profile 文本、执行核及发行规则，
-profile 哈希 `6da1555427cadbd8ff9b5a06bf5468b55ea0ad50b6bd5b258b3dc30ecb3b6c42`，
-当前执行核规则 `ccc681c8...`。早先执行核与测试的哈希/失败仍按其原来源保留。
-完整权威签名若缺少正确规则也拒绝；旧准入不得带非空新规则或接受通道命令。
+## 普通原生账本集成
 
 `Ledger.channel_state` 保留完整声明及通道/储备，普通共享执行重放所有动作。
 状态承诺绑定整个 NativeState，不能用摘要代替原生历史权限；普通币记录证明
@@ -179,29 +144,7 @@ profile 哈希 `6da1555427cadbd8ff9b5a06bf5468b55ea0ad50b6bd5b258b3dc30ecb3b6c42
 认证，其祖先在前一生成动作检查。不存在的引用仍由原生执行拒绝。
 多动作开通并预留已有成熟费用币的实际区块，从创世冷重放一致。
 
-已实际通过的新增行为包括：普通纳入、磁盘重启且另存 exact latest head、
-旧头拒绝、原子拒绝篡改状态根尾部、关闭后下一普通区块挑战、保留完整储备；
-从创世认证检查点得到相同账本，省略通道根的币证明拒绝；BFT 提交/运输
-排队不扣款，未认证直接接受拒绝，三取四 prepare/commit 后才原子纳入。
-实际 BFT 全前缀重放及带头私有镜像验证一致。九个通道场景及严格静态检查
-24.582 秒通过，只证明该同机原生行为；未启动默认网络循环。
-首两次验证代码引用错误接口而编译失败、没有执行测试，源码/日志原样保留。
-其余受影响的 184 项原生回归在单次 300 秒预算内 224.195 秒通过，跳过上述
-九项与已通过严格检查。同一精确来源共 193 项通过。检查包装器曾因缺逗号
-在启动原生进程前拒绝，其原件保留；修正包装器后未改变任何原生字节。
-见最终结果记录（历史证据保留于本地归档）。
-
-下一关键缺口是同序号双签冲突的原生完整证据及通道/储备/支付后代隔离，
-再接所有者独立签署/恢复和充分储备收据。当前结果没有验证真实 2016 个
-普通区块后的结算、完整跨地区通道付款/故障、独立 custody 或最新保护。
-核心 171 文件 `de74cf78...` 未改，原发行有效证据复用；其余全部冻结目标仍未完成。
-
 ## 原生通道事故与全资金谱系：V2 ground candidate
-
-后续来源 `05ac7769...` / implementation `a608bb58...` 使用新签署的
-BFT/segmented value-channel V2 准入，完整 profile 哈希 `ecc6a0fb...`，
-执行核规则 `5dae337b...`。旧来源、失败 fixture、签署头及余额保留，
-不迁移或追加资格。完整规范身份见事故结果记录（历史证据保留于本地归档）。
 
 原生 Coin/Export/Escrow/Reservation 保留完整 checkpoint 与 channel funding
 身份并集，合计至多 64 个引用。Open 将准确签署 intent 身份加入容量、找零、
@@ -229,26 +172,11 @@ contact 不改头，有效事故后保留既有永久进口和全部负债。另
 能保留 damaged residue 后恢复读取；私有 seal/fresh-target restore 全重放
 事故且旧头拒绝，不复制 key/wallet/signer/caller custody。
 
-首次编译因测试把 Manifest.head 当字段及漏 Box 拒绝，没有运行 fixture；
-修正后的第一行为范围为 11 通过、1 失败：返程输入缺本地 finality，原生
-按原规则拒绝。原失败源码/私有 fixture 保留；新 fixture 增加真实原生四签
-checkpoint，未改成熟、票数或返程权限。后续 13 行为通过而严格静态检查
-拒绝过大的事故 enum；仅将两个 typed variant 放入 Box，序列化完整原件
-保持。最终 13 行为及严格静态检查 19.716 秒通过。源码逐字节 guard 不变，
-其余受影响 184 原生回归另用一次 300 秒，在 224.694 秒通过，
-跳过已过 13 行为/strict。同一最终来源共 197 项通过。
-
 有限结论：原生明确提交完整通道事故及已测试后代隔离实现了相应行为。
 自动观察/生成 off-chain 冲突、强制充分储备的 receipt acceptance/top-up、
 所有者独立首次签署/恢复、真实 2016 普通区块结算、完整默认网络故障、
 独立最新状态/跨设备/长期历史/PQC/物理路线及完整冻结目标仍未完成。
 核心 171 文件与冻结正文/PDF/receipt 不变，原有效发行来源证据复用。
-
-下一可证伪假设：普通收款方只有在原生全重放的准确 channel、完整双方签署
-状态及一笔准确、成熟、未消费且足额的费用储备同时满足后才接受
-付款收据；不足、过期/旧头、坏状态或占用储备时拒绝且不改变任何价值。
-先定义准确 fee/receipt/owner-custody 新契约与最小反例，再在新无价值来源
-推进；既有网络 campaign 预算保持零，不以报告或活动计作完成。
 
 上述下一步数量要求已纠正：先前动态记录误将 16 条储备的容量上限写为
 最低接受数量。冻结 §7 只要求准确成熟储备足以支付挑战费用，原 V2
@@ -256,13 +184,6 @@ checkpoint，未改成熟、票数或返程权限。后续 13 行为通过而严
 纠错另记在 `regional-native-channel-receipt-stage-20261004.json`，不改冻结正文。
 
 ## 发票收据的普通原生持久接受：V3 ground candidate
-
-新来源 `ef4e853b...` / implementation `40582c17...` 使用 BFT/segmented
-value-channel V3；完整 profile `905c2d87...`、执行核 `0578e6f0...`。
-`RLD-NATIVE-CHANNEL-RECEIPT-V1` 完整保留两个前后双方签署状态和双方
-签署的发票声明，声明绑定 payer/recipient、准确金额差、checkpoint、
-储备 ID、挑战费用预算及前一收据/状态 ID。新接受仅发生于准确当前认证
-open channel，另存 current storage head 与当地 invoice expectation 必须匹配。
 
 现有挑战费用整数下限为 1 runlai；收款方可钉住更高且双方签署的预算。
 一笔准确、成熟、未消费的原生储备需以其实际授权 fee_limit 完整覆盖预算。
@@ -287,35 +208,7 @@ open channel，另存 current storage head 与当地 invoice expectation 必须�
 重放通过，257 拒绝且原头/事件/金额保持。Contact/receipt 合计限额 256，
 事件页、逻辑 8 MiB、snapshot/active blocks/objects/archive 上限均未抬高。
 
-最终 19 通道行为及严格检查 70.665 秒通过。独立冻结 Python fixture
-controller 仅用公开测试 seed；在同一 Source/binary 上实际 CLI init、
-普通纳入/认证、收据接受/落盘、旧头拒绝、每次独立进程重开、原始重试
-及同 ID 坏签名拒绝 2.598 秒通过。CLI `channel-receipt-accept` 开库也先
-检查 caller exact storage head，不先采用/恢复一个未锚定的头。
-私有 ledger image 完整重放收据/序号；无效新 journal tail 和 publication
-失败均不改变金额/已接受头，原 journal.next 保留并拒绝 archive seal。
-
-这些结果只证明有限原生收据接受及所列过程边界，不是新的 U 余额、独立
-最新保护或首次 owner signing 服务。最高“已接受”与最高“已签署”须区别；
-双方实际签署/看守/调用者保管、全回滚/复制钥匙、reorganization、实际
-2016-block settlement、默认网络 fault/独立/PQC/历史/物理仍为必需门槛。
-下一主线是具备独立 caller head、durable exact response 和 purpose 的原生
-channel owner signing/receiver/watcher custody；需要明确签署/恢复契约和
-反例，不从签署测试向量推断服务已实现。网络 campaign 预算继续为零。
-
-本轮其余 184 受影响 Native 回归，在单次 300 秒范围内 242.398 秒通过，
-跳过已通过 19 通道行为/strict 与 CLI；同一最终来源共 203 Native 检查通过。
-核心 171 文件 `de74cf78...` 及新冻结正文/PDF/receipt 字节未变，原发行
-证据复用。完整原件、精确来源、失败与尚未获得资格的范围见
-收据结果（历史证据保留于本地归档）。
-
 ## 通道所有者首次签署：V4 地面保管组件
-
-V4 来源 `e2357a40...` / implementation `89bcf211...`、profile `6b51d0ca...`
-实现 `RLD-NATIVE-CHANNEL-OWNER-V1`。每个私有目录分别钉用途、准确
-currency/region/channel/profile/实际 owner；持有 OS 锁，保留初始状态及
-递增状态/发票的自身部分批准，持久化后才返回。没有保存或代签对手批准。
-初始化仍为 unsigned；准备/审核不签署、不给新币，也不接受收据。
 
 初始状态由完整原生认证的 open funding 派生；付款审核要求完整双方 prior
 状态、正确金额差、当前准确认证 checkpoint、足额成熟实际储备及正常事故
@@ -339,13 +232,6 @@ observation、prior-head 和 invoice；没有序号缓存授予权限。
 publication 失败不返回批准、使该句柄拒绝继续，残留保持。
 原 128 记录与 8 MiB owner 上限不提高、不丢最高状态。
 
-首次编译因本模块 IO formatter 缺失和测试 review 名称遮蔽，4.660 秒拒绝，
-完整源/日志保留且未启动 fixture。修复后的 25 native channel 行为与全部
-targets 严格检查单次 180 秒预算内 50.408 秒通过。实际独立 CLI subprocess
-新签零分配 fixture：原生创建/审核/双方首次签署/组合/接受、删除测试 key 后
-keyless 原始恢复、单份/坏签名/unsigned 接受拒绝、同序号再签及旧头拒绝，
-42 steps / 5.605 秒通过，普通 U/E/T 始终不变。没有迁移旧值或保管。
-
 **仍不具备 owner 唯一 inception 与独立最新保护。** 本实现的锁与最高序号
 是 per-directory；新的同 key/channel 目录没有认证“从未有过旧保管”的证据。
 不能据此把 fresh create 当 restore、把幸存 caller head 可拒旧库推广成复制钥匙/
@@ -360,28 +246,6 @@ process/power interruption、看守/包含、重组/实际窗口、全部网络/
 独立/物理资格仍需继续。旧 `rld-value-successor` 严格检查独立保持
 `VALUE-STRICT-01 / OPEN`，本地区库 all-targets strict 不替代它。
 
-同一最终来源其余 184 shared Native 回归单次 300 秒预算内 222.917 秒通过，
-跳过已过的 25 行为/strict/CLI，同来源共 209 Native 检查。
-核心 171 文件及冻结正文/PDF/receipt 未改，原发行证据继续复用。
-
-**创建缺口已实际证伪，不是未观察猜测。** 一次全新无价值 fixture 的独立
-controller 在同一原生认证视图、原 owner 最新头和旧私有日志仍存活时，
-另一 fresh 目录仍能用同测试 key 初始化，然后首次签出序号 1 / 分配 40/20；
-原有效自身部分批准同为序号 1 / 分配 50/10。两份 own state 签名实际验证
-通过，counterparty 未重置、第二 receipt 未接受、所有账面与旧头保持。
-该 6.170 秒反例的 completed 只表示已观察到失败，不表示 inception 安全通过。
-完整新源/私有 fixture 保留；不能把209回归与正常CLI通过称为 S11/独立保管通过。
-
-下一可证伪假设：幸存 caller head 下，另一同 owner/channel 目录不能消除
-原最高签署状态；缺独立最新见证时保持只读。先定义完整 authenticated
-inception/continuation 与 witness 的 authority、用途、scope、conflict/failclosed
-契约，拒绝自证环、hash-only 以及从 birth/备份观察自行采用最新头；再开发
-准确 reset 拒绝及原保管续用/恢复。变更 native 来源必须新签无价值 fixture。
-单次新 focused/strict 180 秒，单次必要实际CLI反例120秒，网络 campaign预算0；
-遇失败/完成/预算即停，保留原件，不能降低规则或原样再试。
-实际反例与所有边界见所有者签署结果（历史证据保留于本地归档）。
-
-
 ## V5 有界签署见证与发布前验证
 
 V4 目录重置反例仍失败；后继V5通过签署funding明确见证用途，完整原生认证
@@ -390,15 +254,6 @@ birth/advance与独立留存三头约束公开owner API。缺见证只读；相�
 真实执行反例发现错误owner头已发布pending witness；修复在发布前完整验证
 caller/响应/所属，并拒其他owner请求发布它。合成pending不是实际进程/电源故障。
 
-最终来源 `b40fdba7...` 的29 focused/build/strict及49实际CLI步骤通过；184未受
-影响回归通过于修复前 `f4815c09...`，不冒称最终源码213全部重跑。每失败来源、
-日志/私有fixture及初始strict/编译拒绝保留。接收方/state-action仍缺完整见证
-proof，同机服务约束不证明独立最新、全部rollback/copied keys或S11完成。
-下条权限/最新边界、预算及未完成义务详见
-[地面见证契约](REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md)与
-准确源绑定结果（历史证据保留于本地归档）。
-
-
 ## V6 接收/结算共同认证完整见证状态
 
 新profile的funding必须选择单独角色，完整state必须双方+完整见证授权；Native
@@ -406,18 +261,6 @@ receipt还绑定准确invoice、前后原始inceptions及上一完整授权声�
 没有授权。Witness V2以全原生原始birth/已确认最高own partials签署并持久seal，
 保留每个seal原限额内；失败不返回，无钥只恢复准确已有seal。原生Close/Challenge/
 conflict/cold也检查完整proof。见证签署的起点承诺不是独立最新/私有custody证明。
-
-215 native行为检查通过于 `0e76e12c...`；最终 `02a15cfc...` 只纠正两处规范版本
-标签，所有Rust/Cargo/build/test字节相同。新身份strict/build及全新56步CLI通过，
-未复跑215或旧network长测试，不冒称全部最终身份重跑。新款无价值genesis，
-不迁移旧profile/值/保管。每一观察器/编译/资金选择失败保留。原限额、票数、
-费用、成熟、c+1..c+2016窗口/义务不降低。三头/同机签署不是S11/独立/全回滚资格。
-
-历史有效较旧状态仍可进入关闭窗口；下一主线为native最高已接受完整状态的
-自动watch/委托fee challenge/普通纳入，不能用proof本身声称已有看守。见
-[完整角色与边界](REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md)、
-实现结果（历史证据保留于本地归档）及
-最终内容身份（历史证据保留于本地归档）。
 
 ## V7 自动原生看守及未通过的费用覆盖
 
@@ -434,12 +277,3 @@ accepted 状态随后失去费用覆盖。Watcher 的诊断与账本守恒不是
 完整网络/故障/2016历史、独立 latest/custody、所有 S/R/I/A-G/N/P 仍需验收。
 
 ## V8 显式累计费用授权，保留未用预算
-
-独立模型执行旧single/distinct-pot失败，原V7真实q1耗尽q2反例不改。
-新ReserveBudget以完整owner签署明确max_fee；每次Challenge只付fee，余额
-保留E与原始授权/root/full provenance，累计spent受签署ceiling约束；settlement
-才返未用金额。新receipt检查2016*16*fee_limit的最坏余额/授权覆盖量，不是
-16储备最低条数/增容/提高每次fee，不声称克服审查或末块响应延迟。
-36 focused/build/strict、新源native两次q1/q2和完整CLI/cold通过；精确failed
-observer/fixture保留，不复跑未变长checks。旧184仅按相同未变分支来源复用，
-不冒称新身份全部220重跑。[完整规则、限制及下一主线](REGIONAL_CHANNEL_FEE_BUDGET_REQUIREMENTS.md)。

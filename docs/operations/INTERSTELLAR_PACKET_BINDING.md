@@ -18,11 +18,9 @@ perform complete authentication.
 This removes repeated canonical serialization within the same operation. It
 changes no signed bytes, Native code, storage or wire formats, capacities,
 timeouts or custody rules. It does not establish an ordinary liveness improvement
-without measurement and fresh ordinary evidence. The currently running frozen
-requested-receipt fixture continues to use its original source.
+without measurement and fresh ordinary evidence. Qualification remains bound to its selected source and input scope.
 
-Eighty-one related checks passed. Three additional real private-store checks
-refuse a wrong map key with cold and warm authentication, a correctly re-signed
-route to another packet ID, and a valid signed hop whose final node is not the
-store owner. Each refusal preserves the exact stored bytes. Failed fixtures
-remain stopped; no balances, signing journals or caller heads are migrated.
+Required negative checks include wrong map keys under cold and warm authentication,
+re-signed routes bound to another packet, and signed hops ending at a different
+store owner. Every refusal must preserve complete retained bytes. Failed fixture
+state cannot be migrated or reused to qualify a changed implementation.

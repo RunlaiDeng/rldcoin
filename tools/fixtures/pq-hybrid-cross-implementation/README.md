@@ -38,14 +38,6 @@ Core refusal exits1. The new public-fixture generator takes fresh anchor path,
 fresh caller metadata path, one empty owned private output directory and count1–64.
 All signing keys remain RAM-only; outputs are public test material.
 
-The current two-entry cold scope passed after a retained fixture-width failure,
-within the original120-second budget. A separate source-bound scope then verified64 complete real renewals (1581531B),
-with the caller retaining the latest head; a63-entry valid prefix refused. Actual
-cold read took0.309571 seconds with5193728B process peakRSS on the measured host.
-A retained first byte-size prediction failure is not a passing scope. This remains
-a finite same-controller observation, not independent witness/custody, long horizons
-or production adoption.
-
 `rld-hybrid-archive-manifest-core-candidate` takes a separate caller-authenticated
 policy/current observation, canonical binary manifest and detached dual-signed
 public envelope. Bounds are8192/4389/12288 bytes respectively; private owned
@@ -55,14 +47,6 @@ not verify entry signatures, install state or consume a nonce. Core refusal is1,
 file/input unavailability is2. Its RAM-only public generator takes manifest input
 and two fresh public output paths; generated policy is test data, never trust.
 
-Core1835d1691dc full293 and strict passed. Actual offline V33 retained a wrong
-expected return code for a truncated manifest (Core refused1, fixture expected2).
-V34 corrected only that expectation, reused17 prior passing cases/strict/build
-and completed remaining guards in the original120-second cumulative27.532662.
-Epoch2 signatures accepted at independent current7/8 and refused at9; wrong
-scope, nonce, unavailable/revoked/broken authority and either bad half refused.
-These observations grant no physical horizon or authenticated ledger adoption.
-
 The renewal-archive reader also accepts the explicit optional suffix
 `--authorized-manifest <separate-policy> <manifest> <detached-envelope>`.
 In this mode it verifies manifest dual authorization, exact currency/region and
@@ -71,9 +55,3 @@ directory descriptor, and finally runs actual Core four-signature renewal checks
 against the separate initial anchor and latest observations. It never learns
 those heads/locks from the manifest. Ordinary mode retains its original output.
 A valid manifest signature cannot rehabilitate an invalid inner renewal signature.
-
-The current combined V36 scope passed in3.152514 seconds, original120 cumulative
-3.912544 after retained V35 syntax failure before signing/transport calls. All64
-real entries reached era/key_epoch/nonce65 and unchanged caller/consumed roots;
-a complete freshly manifest-authorized archive with one bad inner PQ half refused.
-No nonce/state installation, TLS, Native or old failed custody was involved.

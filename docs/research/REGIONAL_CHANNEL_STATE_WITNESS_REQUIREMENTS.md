@@ -1,9 +1,5 @@
 # 原生通道状态见证授权 V6 候选契约
 
-V5 已记录的实际 native acceptance 接受缺少见证 proof 的完整双方收据；本次只读
-复核了准确来源、录制响应/receipt ID 及两方真实签名，不启动旧 fixture。两个独立
-观察器的域/返回字段错误记录单独保留，不能称 native 拒绝或安全通过。
-
 新的 ground admission/kernel/profile V6 要求所有新 Open 资金条款明确单独 witness
 角色；无钥条款、双方/authority/validator 角色复用必须拒绝。该用途只是双方选择的
 状态共同授权与保管见证，不能单方支付/发币/终局。原共识票数、挑战窗口、金额、
@@ -30,12 +26,6 @@ heads/完整 body/signatures/角色均在变更前检查。所有旧字节与失
 interrupt/power loss/长期容量/轮换；原有效旧状态在挑战模型中仍是历史授权，不能
 声称单个证明代表最新。Watcher/2016窗口/独立安全与全部S/R/I/A-G/N/P目标仍需完成。
 
-单一实现负责人，先 typed native proof + receiver/state shared checks + durable sealing，
-新来源一次focused/build/strict 180秒/1次、必要一次实际CLI 120秒/1次；网络长测预算0。
-按实际新行为决定其余共享回归；失败/终态/预算即停止保留，改变后用反例导向检查，
-不原样重试、不退款/复活旧 fixture、不迁移保管、不改冻结官网或正文/PDF。
-
-
 ## 最高确认与最新保护的边界
 
 见证按完整自身日志重建两方已确认的原生签署记录；不能将它们称为某个
@@ -44,8 +34,3 @@ interrupt/power loss/长期容量/轮换；原有效旧状态在挑战模型中�
 旧 body 再次首次 seal 必须拒绝；其历史公开授权只能准确 recover，不变成
 最新观察。所有者准备/签署/见证 advance/seal 逐条核对原始 Birth，Native
 Receipt前后保持相同起点及上一完整授权声明。全钥/日志/头同回滚仍未解决。
-
-Native Close 仍可提出一个历史有效的较旧状态，走原 c+1..c+2016 挑战窗口；
-单份见证 proof 不是“全球最新”，此候选不移除/缩短窗口也不自动证明 watcher
-已工作。下一实质主线是已接受更高状态的自动 native 看守/费用授权挑战及
-普通纳入路径，保持本金/费用/窗口/票数/容量与原失败，缺进度不能称安全付款。

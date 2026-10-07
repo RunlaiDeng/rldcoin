@@ -1,28 +1,31 @@
 # Hybrid reference admission risks
 
 The reference tools are verification-only candidates outside adopted monetary
-profiles. A passing finite scope never replaces independent review or P1–P8.
+profiles. Independent security review and authenticated P1–P8 adoption remain
+required; another implementation under the same author is not independent custody
+or a complete independently audited protocol implementation.
 
-## PQ-REF-01: weak Ed25519 public-key admission
+## Weak Ed25519 public-key admission
 
-**Confirmed and locally repaired; broader review remains open.** Under source
-published at a95447d7c, the actual OpenSSL reference accepted an identity Ed25519
-public key and identity-R/zero-S forgery alongside an unchanged valid ML-DSA87
-half over the same public manifest. Actual Core1835d169 refused it. No private
-key or signing was needed. V38 is FAIL, retained with source and public inputs;
-V37 remains only its limited original23-case observation, not safe admission.
+The earlier reference delegated key admission to OpenSSL. An identity Ed25519
+public key and identity-R/zero-S forgery could pass alongside a valid ML-DSA87
+half over the same message. The Core admission checks reject this key. A valid PQ
+half must not hide the loss of the classical authorization half.
 
-The fix explicitly decodes canonical compressed public points, rejects identity,
-small-order and mixed-order points by the prime-subgroup condition, and requires
-canonical nonidentity prime-order signature R and scalar below the group order
-before calling OpenSSL. Public-point arithmetic follows
-[RFC8032 sections5.1.3/6](https://www.rfc-editor.org/rfc/rfc8032.html); it neither
-handles secrets nor replaces signature verification. Both actual signature halves
-remain mandatory. No adopted Core/Native rules, keys, balances or locks changed.
+The reference now explicitly decodes canonical compressed points and rejects
+identity, small-order and mixed-order public keys using the prime-subgroup
+condition. Signature R must be canonical, nonidentity and prime-order; its scalar
+must be below the group order. These checks precede OpenSSL verification, and
+both actual signature halves remain mandatory. Regression sources cover the
+forgery, malformed points/signatures, finite policy scope and original dual paths.
 
-V39 passed three public-point regressions, the related23 manifest cases, six
-additional forgery/encoding guards and an existing genuine PAYMENT dual signature
-in1.784655 seconds, original60 cumulative2.245997 including V38. Original evidence,
-backend/source/controller bindings and all failures stay local. Full malicious
-key/proof corpora, independent security review, side-channel qualification,
-complete protocol interoperability and monetary adoption remain open.
+Public-point arithmetic follows
+[RFC8032 sections5.1.3/6](https://www.rfc-editor.org/rfc/rfc8032.html). It handles
+public data only and does not replace signature verification or provide a
+production cryptographic qualification. Adopted Core/Native keys, rules, balances
+and locks are not changed by this reference repair.
+
+Full malicious-key/proof corpora, independent security review, side-channel and
+entropy qualification, complete protocol interoperability, delayed revocation,
+finite journey horizons and monetary adoption remain open. Internal reproducer
+outputs and historical failures are retained locally.

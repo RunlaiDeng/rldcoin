@@ -45,7 +45,6 @@ change, complete discrimination or budget exits without unchanged retries.
 Independent custody/rollback, full fault liveness,2016challenge/Source66 dependencies,
 post64 ordinary history, physical and all normative protocol gates remain separate.
 
-
 The composed preflight is a separate once120seconds/network0 scope. After that
 exact reviewed entry, only `history-check --expected-head` may invoke Native,
 with explicit project cwd, no private input and at most30seconds per call within

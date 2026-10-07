@@ -1,93 +1,11 @@
-# 全跳计量范围：失败状态与资源观察
+# Interpreting bounded resource observations
 
-2026-10-04。原冻结节点的已通过范围保持原判定。此次是加入全部配置跳 relay 与
-采集器的新增无价值、同机、同控制者范围，不是相同环境的无干扰重放或独立压力资格。
-节点来源 `8831a6348cbb08772d09f302ea2620a595b0b97b13d9d6e90fc0c3e90c140199`，
-控制器/观察来源 `20d5427a2547fdb699cca679aec152136b3e2a756f044a082a0347a21891e2a7`。
-Native、默认二进制、票数、成熟、容量、600 秒阶段/60 秒轮/24 高度均未改变。
+A bounded diagnostic ring may evict events or omit an unpublished tail. Retained
+iterations cannot reconstruct complete timing, infer the oldest pending work or
+prove a unique contention cause. Parallel transport time must not be added to
+serial phases as if both measured CPU. Native subprocess CPU, replay, fsync,
+bytes, offered load and refusal need their own declared measurements.
 
-## 实际结果与价值边界
-
-- 新增完整有限故障范围**失败**：控制器内部 929.440 秒；外围含采集收尾 938.715 秒。
-- 缺席 leader 223.957 秒、隔离当地付款 0.014 秒、离线追赶 42.920 秒通过。
-- 恢复接触后，新净额 9 在 Proxima 高度 13 导入；停止为 E13/P14/A13，四副本一致。
-  成熟要求 P15，故原 600 秒内未成熟，原金额 9 不可花费，未隔离。
-- 兼容认证前缀的 issued/liquid/in_transit 为 300/300/0。liquid 包含未成熟输出，
-  因而守恒与导入不能替代成熟、当前可花费或整个故障范围通过。
-- 三份原 owner 请求仍 INCLUDED_IN_LOCAL_LEDGER，独立最新头与原签署高度重放匹配，
-  预留为零；不签替换请求，不退还已包含出口，不恢复失败源或改写失败判定。
-
-停止后严格检查 240.425 秒完成：12 原生、4 收款状态、4 时代保管、
-1,990 完整 BFT 信封和 4,317 运输档案；私有字节和权限不变。
-检查不调用 Runtime 启动、首次签署、响应恢复或头采用；MeshInspection 不加载私有身份。
-这证明所保留失败状态的真实性，不补记一次完整故障成功。
-
-## 采样与流计量
-
-| 度量 | 实际观察 | 解释边界 |
-| --- | --- | --- |
-| 主接触进程 | 12 个已启动控制器的实际后代，92 个十秒样本 | 不是完整短命 Native 子进程普查 |
-| 单进程 RSS | 采样最大 824,901,632 字节，约 786.7 MiB | 不是瞬间峰值、Node 全树或部署内存承诺 |
-| 单主进程 CPU | 相邻样本单核百分比最大约 91.30% | 不含全部子进程 CPU，不是系统/节点总 CPU |
-| 缺测与间隙 | 24 进程未知样本、0 存储未知、0 超间隔 | 停止过程也产生未知，不能填零或宣称完全覆盖 |
-| 存储范围 | 12 Mesh 与 12 BFT 目录的元数据 | 非原子；不含 Native 历史、钱包、TLS 等完整节点存储 |
-| 运输档案 | 停止单节点最大 690 文件、74,578,103 字节 | 停止观察，不是全程峰值或全节点存储 |
-| 22 方向加密流 | 累计实际转发 4,938,970,911 字节 | 含各跳重复承载及握手；不是唯一有效载荷、付款吞吐或物理 TCP/IP 字节 |
-
-原始采样日志保持 0600 私有，逐条关联和完整来源/运行/冷检查摘要已验证。
-每个目录的采样最大值及未知次数在绑定报告中单列，不混成“总存储”。
-此前只读停止基线、当前采样和原运行的不同观察范围均保留，不改写历史数值。
-
-## 下一步应解决的实际缺口
-
-停止的 Proxima 当前父高度 14：四个 companion 保留的同值 Prepare 组分别只有
-1/2/2/2 个不同签署者，没有当前父块 Commit 组。Native P0 已在 round 1，其他在 round 0；
-独立 signer/caller 头匹配，pending/outbox 均无遗留。该观察源于已完全冷认证的原信封，
-不组合证书、不安装区块、不证明具体实时调度原因，也不把缺签解释为异常签署许可。
-
-后续只读路径检查完成，四份 Proxima 运输状态重新认证且私有字节不变：
-5 份当前父块本地完整信封形成 15 条目标路径，7 条目标已保留完全相同信封，
-其余 8 条既无目标回执、也无目标 BFT 信封。源与中继仍保留待传包。
-其中 P1 Prepare 到 P2/P3 留在 P1；P2 Proposal/Prepare 到 P0 留在 P2；
-P2 Prepare 到 P1 留在 P2；P3 Prepare 到 P0 已到 P2；
-P0 Timeout 到 P2/P3 已到 P1。该停止快照将缺口定位到尚未取得目标保管的路径，
-不能推出当时服务时间、首次失败位置或计量器的因果影响，也不能手工补票继续失败范围。
-
-原状态文件中的有界诊断环另保留四进程最近 41/28/22/22 次接触迭代，
-其中 23/14/15/11 次选中零项；这些保留迭代的最大墙钟时间为 2.319301 秒。
-每进程已经淘汰 3,775–4,064 个旧事件，不能据此复原完整实时轨迹、推算最老等待
-或归因所有零选择。并行 TCP 时间仍为 null，不把它与串行阶段相加；
-这些诊断时间也不替代 Native 子进程 CPU、fsync 或源状态的原生认证。
-
-后续须定位完整已签控制消息在普通调度、实际接触和 Native 接受之间的停留，
-同时完成 CPU/内存、fsync 与未交付等待预算。先取得真实路径/分配与服务成本证据，
-不凭 RSS 推断缓存泄漏或 CPU 原因，不用新微优化版本代替持续负载/长期历史门槛。
-所有仍有效证据和锁须保留，任何修复使用全新来源/无价值范围和相关验证。
-
-macOS 子进程 CPU 观察另有能力检查：`ps -S` 未通过实际退出子进程试验；
-原始计时误按纳秒也未通过。当前 `proc_pid_rusage` V1 与本机 Mach timebase 转换
-已由实际约 0.3 CPU 秒的子进程验证，三项检查通过，仅观察已退出子进程的累计 CPU。
-它没有接入本次旧采样，不得回填其数值；活跃子进程 CPU/RSS、Native 命令普查、
-跨平台以及完整节点成本仍未完成。
-
-后续已将该观察接入采集器的显式 V2 模式，独立头部绑定观察源码并核对内核启动锚。
-真实父进程在三次采集中显示退出子进程增量约 0.518 CPU 秒，实际停止后返回未知；
-36 项组件及 11 项日志核验通过。这些仅验证可测量工具，未接入旧 92 样本、
-未重启任何节点或升级失败范围。原始能力报告保留旧源码身份，后续报告各自绑定新字节。
-
-后续成本探针否定了“512 个 witness 保留完整帧解释高 RSS”的猜测，
-保留了停止 Native 命令、薄运输 fsync 和修正后分配观察；详见
-[有预算的判别与下一活动假设](GROUND_RESOURCE_COST_DECISION_20261004.md)。
-其决定是先取得普通选择/接触/目标回执的实时链，不能据停止快照继续优化或重跑故障范围。
-
-证据：`regional-ground-metered-joint-fault-fresh-20261004.json`、
-`regional-ground-metered-resource-observations-20261004.json`、
-`regional-ground-metered-joint-fault-failed-cold-observations-20261004.json`、
-`regional-ground-metered-failed-evidence-binding-20261004.json`、
-`regional-ground-metered-joint-fault-owner-head-observations-20261004.json`、
-`regional-ground-metered-proxima-stopped-parent-observations-20261004.json`、
-`regional-ground-metered-fault-current-proxima-path-observations-20261004.json`、
-`regional-ground-metered-retained-timing-observations-20261004.json`、
-`regional-ground-child-cpu-capability-20261004.json`。
-后续工具：`regional-ground-child-cpu-recorder-checks-20261004.json`、
-`regional-ground-child-cpu-log-binding-20261004.json`。
+Conservation may include immature outputs. It does not imply spendability,
+replica agreement or successful completion of the original fault/deadline scope.
+Unknown telemetry remains unknown. Preserve all raw observations locally.

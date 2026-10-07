@@ -26,16 +26,6 @@ changed. Rebuild the native executable from the exact new frozen checkout so
 its embedded companion path executes this code. Use fresh transport and private
 fixture directories; failed payment source/value/custody remains stopped.
 
-The exact prior frozen source reproduces a one-test negative: after a real
-ordinary selection, another pending selection again excludes TCP even though
-the first already completed. New tests exercise the same Service interface,
-repeated foreground requests, actual outgoing-owner timeout retention, dead
-inbound tickets, outgoing/inbound turns, constructor refusal, expired sockets,
-ordinary CPU beyond the acquisition budget and actual pinned-TLS custody.
-These are local scheduling/custody checks. They do not reconstruct the previous
-failure's exact scheduling or uniquely explain it; only a fresh ordinary payment
-cycle, separate complete cold validation and fault scope can qualify progress.
-
 A signal can arrive while ordinary selection is awaiting admission. That exact
 local stopping refusal has its own type. The main loop accepts it as graceful
 only after the installed SIGINT/SIGTERM handler has stopped the loop; unexpected

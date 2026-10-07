@@ -8,4 +8,7 @@ Cold batches run before the companion's later custody recovery/outbox/signing st
 
 The implementation commitment changes: use a fresh signed no-value fixture genesis/currency and fresh directories. Older private stores/value are not converted or resumed. All existing 512-message/32-MiB retention, history, transport, quorum and time bounds remain. Passing cold checks does not establish ordinary owner-payment liveness, full fault profiles, independent custody or physical interstellar links.
 
-The candidate's actual local checks passed 171 Native tests, strict Clippy and formatting. Seven Python boundary tests cover ordered streaming, aggregate limits, response binding, refusal, fsync and empty input. Actual Native CLI checks authenticate five signed envelopes as batches 4/1, compare every result with individual verification, reopen actual Runtime, and refuse a later forged signature without output or private state mutation. These component checks use the root source build; frozen ordinary qualification remains separate.
+Required checks cover ordered streaming, aggregate limits, complete response
+binding, refusal, fsync and empty input. Batch results must equal complete
+individual verification; a later forged signature must withhold success without
+changing private state. These checks do not establish ordinary liveness.

@@ -684,8 +684,6 @@ run has passed. Only its completed report proves the specific observed ground ru
 Long-term liveness, independent custody/operators, full BFT handoff, physical
 routes, archival/cryptographic horizons and exact production adoption remain open.
 
-## Native paged disk storage candidate
-
 ### Private native ledger images and fresh-target recovery candidate
 
 `history-archive` seals the native ledger under its OS lock into a fresh private
@@ -758,7 +756,6 @@ archive index is bounded at 8 MiB; locks and filesystem directory metadata are
 not included in the reported retained-native byte count. This clarification
 does not change native limits or the frozen source used by the running campaign.
 
-
 ### Native disk checkpoint prefix sharing (V2 candidate)
 
 Normal creation now uses `RLD-NATIVE-HISTORY-MANIFEST-V2` and
@@ -776,11 +773,6 @@ permanent import records and private archive recovery rules remain unchanged.
 This changed implementation requires a new signed no-value fixture genesis;
 V1 private stores refuse unchanged. No adopted upgrade or old-value migration.
 The disk improvement is not compact remote proof or long-history qualification.
-
-The first frozen disk-prefix candidate exposed an unintended duplicate-checkpoint refusal in complete regression. Exact repeats and independently authenticated equivalent BFT quorum encodings remain valid native evidence. Storage now retains every listed proof and selects the earliest exact predecessor object for deterministic prefix sharing; it does not normalize away native authorization checks. The first full frozen source and failed logs are retained; a seventh focused regression covers exact repeats and forged duplicate rejection. Final frozen qualification is pending.
-
-The final disk-prefix source is published as [revision 22](https://github.com/RunlaiDeng/rldcoin-genesis/tree/main/research/2026-10-02/regional-native-history-prefix-v22). Exact remote verification covers 52 changed files. Final frozen checks pass 116 native / 57 process tests, a fresh cycle, one 705.36-second finite fault profile and separate cold / 24 private fresh-target ledger image audits. Exact 64-checkpoint snapshot object bytes fall from 1,314,584 to 149,192 with full native bytes unchanged. The first 87-pass/28-fail frozen source and logs are preserved. Full transport/memory histories, unchanged limits and independent/long-term/physical gates remain open.
-
 
 ### Native checkpoint-prefix transport candidate
 
@@ -805,11 +797,7 @@ transport blocks but does not implement compact Merkle/state witnesses, extend
 full native history/memory/index capacity or qualify long/independent/physical
 operations. Final frozen source/lifecycle checks remain pending.
 
-The first complete 244-file carriage freeze passes all 122 native tests but strict clippy rejects an explicit loop counter in the expansion-limit test. The full frozen source and logs remain retained; the test now uses an explicit height range without relaxing bounds or warnings. Final source qualification is pending, with no process/cycle/fault pass transferred from the first freeze.
-
-
 The next incompatible ground candidate uses `RLD-REGIONAL-STATE-COMMITMENT-V1` for native header/checkpoint state roots. Ordered coin/export/permanent-import indexes commit exact typed keys/records and entry counts, with separate leaf/branch/padding/empty domains and minted/received counters. `state-proof --checkpoint ID --collection coins|exports|imports --key HASH` constructs a bounded historical member/absence witness from the fully replayed certificate. `state-proof-check` also requires those caller-selected arguments and refuses missing native checkpoints, substituted queries, roots, paths, records and malformed adjacent ranges. No proof signs, imports, debits or declares a historical output currently spendable. Current incidents remain separate native checks. Full signed Evidence and full native replay are still mandatory; proof generation rebuilds bounded maps and is not incremental durable indexing or complete compact remote authorization. Fresh signed zero-allocation fixture genesis/currency is required, with no older candidate state/value migration. Current 256-block/64-checkpoint/8-MiB and 4,096-entry limits remain. Final frozen, process and new-cycle/fault qualification is pending.
-
 
 ## Bounded native stream replay groundwork
 
@@ -852,7 +840,6 @@ recovery beyond 200,000 blocks, independent archives, cryptographic horizons
 and physical/independent qualification remain open. Final frozen whole-native,
 process, command-line and new-source lifecycle checks are pending.
 
-
 ## Signed bounded checkpoint segments (local candidate)
 
 `RLD-REGIONAL-SEGMENTED-UNANIMOUS-FIXTURE-V1` is a new explicitly signed
@@ -881,18 +868,6 @@ comparison uses overlapping absolute heights, avoiding a false conflict between
 different compatible segments. Neither ancestry headers nor signatures alone
 prove a valid ledger; full native execution remains mandatory.
 
-The source changed and needs fresh signed fixture genesis/currency. Older stores,
-retired/adopted/test balances never migrate. Local focused proof/value tests
-pass a 1,032-height / 1,024-owner-payment certified history, a newly created
-post-256 export, onward/return net 78/59/49 and exact cold genesis verification.
-Full current native regression passes 135 tests and strict clippy; 59 existing
-process tests pass. The new ordinary-store process test reached height 275 with
-actual persistent signer/wallet operations and return value. Its first two
-runs exposed test-only assumptions: contact re-delivery is idempotent (not a
-second import), and the archive CLI uses --archive. Exact failed tests/logs and
-private stores remain retained. Final fresh process/recovery qualification is
-pending; no new public source or frozen lifecycle qualification is claimed yet.
-
 The ordinary Journal still retains its original total event and 8-MiB limits,
 evidence still retains at most 64 snapshots, permanent maps at most 4,096
 entries, and the archive all retained objects at most 4,096 files / 256 MiB.
@@ -903,9 +878,6 @@ recovery. Native stream replay V1 remains a separate read-only legacy-profile
 verifier and does not adopt this profile. Complete incident-aware storage,
 independent latest-state protection, custody, physical routes and independent
 operations remain separate requirements.
-
-
-Current segmented candidate verification completes 135 native tests, 59 existing process tests and one new ordinary-store process test, with strict clippy and checked release build. The new test passes at ordinary native height 275 after 267 real signed local payments, native persisted signer/wallet operations, post-256 newly created funds export/return (net 98), idempotent contact re-delivery, explicit duplicate-import refusal and exact private fresh-target ledger image recovery. The separate native value test passes 1,032 height / 1,024 signed payments and full cold genesis verification. Failed expiry/idempotence/archive-option fixture sources, logs and private directories remain retained. These results are current workspace checks, not a frozen-rebuild, autonomous twelve-node or new full-fault qualification; the candidate is not publicly published. Journal/evidence/archive bounds and whole persistent/BFT/beyond-era/independent/physical obligations remain open.
 
 ## Incremental state-root and record-proof computation candidate
 

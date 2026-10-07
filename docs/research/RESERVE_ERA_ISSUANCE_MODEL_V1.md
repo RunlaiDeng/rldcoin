@@ -31,40 +31,19 @@ R=1 时 B=1、q=0、m=1，第一槽释放一单位，后续槽及零储备时代
 
 ## 实质差异和修复
 
-原 `rld-pow::cumulative_emission` 使用 C>>era 的剩余量、ceil-half 预算以及
-floor(m*t/L) 的尾数分配。实际重编译判别 17 点有 10 点差异：例如高度
-5800001 的原奖励少一 runlai；高度 23400000 原代码已全发，正确值仍剩一单位，
-应在 23400001 释放。保留了原编译库、完整 167 文件源集、探测二进制和失败向量。
+The legacy shift/ceil-half and distributed remainder formula differs from the
+frozen reserve recurrence. For example, height5800001 differs by one runlai;
+the last unit must be released at23400001 rather than23400000. Correct arithmetic
+is necessary, but it does not establish actual long-history ledger execution.
 
-新 Rust 函数使用上述模型，Python 以直接槽位奖励另行重算。新组件
+Rust 发行函数使用上述模型，Python 以直接槽位奖励另行重算。新组件
 `RLD-ISSUANCE-RESERVE-ERA-V1` 绑定完整规则字节，其哈希为
 `a0ae7b36b695c787b840d3726fa1fd55e1d5f3874e173346fbf791b7b2ac2153`。
 直接价值采用必须提供该哈希，使用新格式和签名域
 `RLD-EARTH-SUCCESSOR-ADOPTION-ISSUANCE-V1`。缺字段、不同规则哈希、旧格式
 和旧域签名均拒绝；全四签也不能替换本机精确规则身份。
 
-旧 `vectors/earth-pow/vectors.json` 字节保留。新向量另外绑定规则、参考实现和
-旧向量哈希；旧格式不自动转换。首轮测试类型编译拒绝及后续旧向量失败保留，
-不能将它们记为通过。修复后的两库 69 项检查通过，新独立参考实现检查 21 点，
-13 个错误域/编码/数值/边界输入拒绝。
-
-发行库严格 Clippy 通过。完整价值库严格检查因原有 `large_enum_variant`
-和 `bool_assert_comparison` 拒绝；对应两个文件与保留的旧来源逐字节相同。
-不改变生产代码或加入 lint 豁免。另一次限定基线告警的检查在 120 秒预算边界
-终止，因此该限定检查也不记通过。完整静态检查仍是未完成事项，不能用两库
-69 项行为测试替代。预算、原失败日志哈希和限定命令见发行 lint 阶段/结果记录。
-
-一次新的签名零发行 fixture 在 240 秒预算内 15.602 秒完成。新 171 文件源集
-承诺为 `de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c`。
-生成新 founder/四 validator fixture 身份和新 Earth 创世，不采用旧创世或余额。
-两层精确四签采用通过；错误发行组件的全四签和旧域全四签拒绝。实际首块原生
-执行发行 250000 RLD。另一个无钥进程从新签创世、完整采用和原块重放，得到
-同一高度/发行；拒绝的尾部不改变状态，全部私有 fixture JSON 字节未变。
-源码集、探测程序/二进制和实际命令日志均绑定结果记录，生成身份/fixture 留在
-私有目录。这仍是同机单控制者组件样本，不是普通历史、独立保管或网络采用资格。
-
-这些百万级高度是算术函数输入，不是执行了百万块账本。普通历史/存储上限未
-增加，完整 200000 块时代、跨平台运行、后量子、独立运营/保管与完整组合证明
-仍未资格。新原生源码的发行/采用组件使用了新的签名零价值创世/currency；完整
-区域节点资格仍须新 fixture，不能复活、迁移或重签旧 fixture。以前 `7e729cd6...`
-的有限通过与失败继续只属于它们精确的冻结来源。
+Legacy vectors are retained without automatic conversion. New vectors and signed
+adoption rules must bind their exact recurrence and domain. Full value-library
+strict checks, long-history execution, independent review and monetary adoption
+remain separately required.

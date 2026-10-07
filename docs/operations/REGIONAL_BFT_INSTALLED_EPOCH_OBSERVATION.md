@@ -18,11 +18,3 @@ still takes Native activation; invalid later envelopes refuse before comparison,
 deduplication, signing or head changes. No Python witness or hash initializes a
 ledger, selects an epoch or substitutes for signature or owner/value execution.
 Original body/envelope bytes, local flags, all evidence and all bounds stay retained.
-
-A previous stopped ordinary cycle recorded 59–144 explicit activation calls in its
-last processes, taking 29.2–82.45 seconds per process. Those stage observations are
-not a unique failure cause or an isolated benchmark. This candidate needs its own
-Native/process regressions and fresh ordinary three-era payments/cold verification.
-Its changed Native implementation requires fresh signed no-value genesis/currency;
-no retained failed balances, private stores or custody migrate. Full fault,
-independent custody/freshness, long-history and physical qualifications remain open.

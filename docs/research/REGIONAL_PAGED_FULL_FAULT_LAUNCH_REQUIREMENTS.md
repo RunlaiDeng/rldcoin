@@ -1,9 +1,6 @@
 # Explicit fresh paged full-fault launch
 
-The existing Source89 ordinary cycle and13read-only preflight calls remain valid
-under their exact source. Original5050stopped files and all failed currencies stay
-closed and unchanged. Legacy full-fault owner20 reward assumptions are incompatible
-with origin-only V8 issuance; no remote balance may be fabricated or migrated.
+Legacy reward assumptions cannot supply imported remote balances. Failed currencies remain closed; no balance is fabricated or migrated.
 
 The blueprint is immutable configuration bytes, not runtime authorization. It may
 select only the explicit paged-value profile under complete source/implementation/
@@ -55,22 +52,11 @@ The complete finite fault scope retains:
   terminal, Native/owner/head/proof/capacity failure or stage budget fails the whole
   scope and seals its entire new currency. No recovery/re-sign/refund/replacement.
 
-No full fault budget is launched by the blueprint test. Next bounded fresh Native
+A launch blueprint alone grants no runtime qualification. Fresh Native
 preparation must prove actual funding/custody and all immutable transport setup
 requirements before an ordinary fault driver may start. The full fault scope is not
 whole-protocol,2016challenge/Source66 capacity, long-history, independent custody,
 physical route or cryptographic-horizon qualification.
-
-
-The first launch-spec scope failed3.406seconds on the standard venv Python leaf
-symlink before any fixture/Native/network creation; retain its original observer,
-controller, source stage and failure. The narrow V2 launch contract preserves the
-venv invocation path for package lookup and requires an explicit SHA256 of the
-resolved regular interpreter, with bounded64-MiB read. Python parent-directory
-symlinks and every custody/config/fixture-root symlink still refuse. This does not
-qualify dependencies or cryptography. The changed source gets one120second launch
-spec discriminator; no Native/network budget or unchanged full-cycle rerun.
-
 
 Recipient observation is asynchronous: a complete Native wallet-receipt query
 must not require simultaneous available telemetry from all12ordinary processes.
@@ -84,7 +70,6 @@ head/envelope/custody/value cold gate is unchanged. Retain exact successful live
 receipt observations privately and categorical native read-lock/no-evidence/fatal
 refusals; these observations do not authorize signing or refund. The original
 600timeout scope remains failed; finite fake-Native counterexamples do not pass it.
-
 
 Candidate trial contention is an unknown validity observation. Retain the complete
 bounded native diagnostic and actual action/exit; an exact native candidate lock

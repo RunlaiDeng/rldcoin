@@ -76,12 +76,6 @@ retains the expected manifest SHA512 independently. Missing objects/pieces remai
 unavailable; duplicate, mixed, altered or changed-root inventories refuse. This
 pure byte layer never authenticates caller policy or installs a ledger anchor.
 
-A finite64-entry signed example was reassembled from reversed manifest/pieces and
-read by the actual unchanged Core cold adapter. A complete byte-valid altered-PQ
-archive still failed actual Core validation. This is same-host in-memory packet
-carriage plus complete cold files, not actual network/TLS relay, independent
-custody, asynchronous physical-route qualification or adopted monetary rules.
-
 ## Public packet custody candidate
 
 `tools/pq_public_archive_spool_candidate.py` supports explicit `init`, `accept`
@@ -98,22 +92,6 @@ derived public-packet gross-byte limit; this does not change any existing Native
 mesh, entry or aggregate protocol cap. Only a current operation's successfully
 committed temporary link is removed; older failed residue remains. Receipt means
 durable received bytes, never valid inner signatures, a ledger head, value or refund.
-
-The bounded multi-process example stops after half of193 packets, refuses incomplete
-publication in a fresh process, receives the remainder in reverse order, repeats
-exact custody, and reconstructs64 complete entries for actual Core. Injected write
-and directory-fsync failures release no receipt and retain residue. This proves
-those process/filesystem paths only; hardware power loss, concurrent independent
-custody, sustained adversarial load, real contacts and monetary adoption remain
-unqualified. No old failed signed custody is reopened or pruned.
-
-The C TLS archive-spool mode described in the fixture README couples its explicit
-archive receipt to actual pinned spool admission. A complete finite64-entry scope
-used193 real loopback TLS sessions, process-cold partial refusal, reverse completion
-and actual Core. Foreign entry and actual256-file capacity refusal issued no
-archive receipt; retained raw transport bytes are a separate custody layer.
-This uses fresh fixture credentials only and does not qualify long-delay key
-validity, independent operators, adopted nodes or physical routes.
 
 ## Offline authorized manifest and inner archives
 
@@ -139,14 +117,14 @@ Original limits64/32768/2097152 remain. Missing trust, retired/expired originals
 stale prefixes, half rotation, changed locks/consumed roots and any bad half refuse.
 It does not import Core, sign, consume nonce or install its returned candidate head.
 
-The finite2-entry23-case scope and actual64-entry/256-half cold verification agree
-with their separately source-bound Core observations. The latter measured complete
-valid data, valid63-prefix refusal and a complete bad-last-PQ archive; it is not
-proof of independent authors, complete protocol, long-history or adopted custody.
+Native and Core sources jointly determine the currency implementation identity.
+Use the standalone lock and the selected target's cached dependencies. A missing
+platform dependency is unavailable, rather than a compilation result for another
+platform. Never reuse a signed currency to qualify a changed implementation.
 
-The Native standalone lock now includes the fixed Core PQ transitive dependencies.
-Actual Mac locked/offline all-target strict compilation passed, with Native Rust
-and signed profiles unchanged. All-platform offline metadata separately remains
-unavailable for an uncached existing Windows package. Compilation is not a new
-Native fault qualification; Currency implementation identity binds both Native
-and Core source, so never reuse old currency/custody under a changed executable.
+## Public content review
+
+Run `python3 -B tools/review_publication_content.py --root . --scan-tracked-documents`
+and the corresponding unit tests before publication. Exact publication selections
+also require explicit per-file content classification and human blob review.
+Internal results, inventories and local experiment schedules are retained locally.

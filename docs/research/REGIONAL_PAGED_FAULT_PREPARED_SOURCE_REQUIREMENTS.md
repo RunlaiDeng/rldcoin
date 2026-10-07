@@ -19,7 +19,6 @@ sample/adopt caller heads, copy custody or silently activate synthetic configs.
 Distinct remote recipients remain15/16 in the actual new unsigned requests;
 profile membership/round/quota/miner/owner/input/fee/maturity must all match.
 
-
 Bind the successful checks/stage/source/CLI/Core171 hashes, exact complete668-file
 inventory and separately retained original12Native/voter/caller/4owner journals.
 All three fault owners have unsigned reviews; the preparation owner has exactly

@@ -15,12 +15,10 @@ inventory. Successfully decoding storage cannot authorize an invalid signature.
 
 This removes a duplicate whole-image serialization from ordinary open. Signed
 bytes, private storage format, capacities and custody remain unchanged. It adds
-no witness or serialized state. The currently running frozen requested-receipt
-fixture is unchanged. Old failed fixtures are read only and remain failed.
+no witness or serialized state. Qualification remains source-bound. Old failed fixtures are read only and remain failed.
 
-Eighty-eight related checks passed, including four new raw admission cases:
-exact capacity and roundtrip; oversized input refused before decoding;
-noncanonical bytes, duplicates and wrong identity refused; complete object
-digest/expanded bounds refused; recomputed storage hashes still fail ordinary
-packet authentication with the exact image retained. Runtime performance and
-fresh ordinary qualification require their own evidence.
+Required checks cover exact-capacity roundtrips, predecode oversize refusal,
+noncanonical/duplicate/wrong-identity input, complete object digest and expanded
+bounds. Recomputed storage hashes cannot rehabilitate bad packet signatures.
+Refusal must preserve exact retained images. Ordinary runtime qualification is
+separate from codec correctness.

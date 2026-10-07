@@ -36,12 +36,3 @@ worker delivery with both classes and retained destination receipts. Synthetic
 transport authentication is separate from Native inclusion and spendability.
 Fresh frozen ordinary payments, full cold verification and subsequent fault
 qualification remain required; local checks alone cannot qualify them.
-
-The first frozen candidate passed its existing 339 regression tests, then a new
-one-test counterexample reproduced starvation behind 30 suppressed history rows.
-Its supervisor was held while the child tests finished, then terminated before
-custody/payment directories were created. Its exact source and logs are retained;
-that supervisor termination is not a successful full run. The corrected candidate
-selects eligible candidates independently inside each class and preserves original
-whole-packet wire refusal and durable cursor publication. Its 26 focused tests
-passed; full new frozen/ordinary/cold/fault evidence still remains separate.

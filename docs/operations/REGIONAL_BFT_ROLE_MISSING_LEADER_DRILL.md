@@ -42,13 +42,6 @@ It independently checks the actual missing-leader Native checkpoint and gate.
 It emits `RLD-ROLE-MISSING-LEADER-STOPPED-COLD-V1`, never a new payment/full-fault
 report. Different fully authenticated certificate variants remain retained.
 
-Twenty-eight local boundary/model checks actually pass, including six new
-finite-profile/controller/inventory/timing refusals. The original 27-check
-source bytes and reports remain separately retained. The actual retained failed
-certified-leader cycle also refuses at the CLI before source/binary/private
-access. These are negative/local results only: positive drill entry, actual
-missing-leader consensus and its full stopped cold mode have not yet executed.
-
 This finite post-activation sample is not missing Old/New approvals during both
 handoffs, partition recovery, a repeated cross-region value cycle, real SIGKILL,
 power loss, independent operators, copied-key concurrency or full R11. Copied

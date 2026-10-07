@@ -1,13 +1,5 @@
 # Lock refusal must not suppress native timeout carriage
 
-The frozen activation-observation ordinary payment sample reported repeated
-native `proposal violates durable prepared lock without a newer valid prepare QC`
-refusals at one carrier. Its tick exited before ordinary timeout/broadcast. This
-is a bounded diagnostic, not unique causal proof. The sample subsequently failed
-its unchanged 600-second third-era payment/maturity gate after 899.396 seconds.
-The original sample, caller reviews and locks are retained unchanged; its failure
-does not become a passing cycle or a missing-leader/full fault qualification.
-
 The new supplemental scheduling candidate tries complete current/future proposals
 through ordinary native signing. Only that exact native lock refusal may take
 the alternate path. The exact pending Prepare review must still exist with no
