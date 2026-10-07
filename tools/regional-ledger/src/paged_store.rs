@@ -2,6 +2,8 @@
 //! Every mutation/cold open executes the entire complete event stream natively.
 use super::*;
 use crate::retained_pages::{Purpose, Scope, Stream};
+#[path = "paged_store/body_witness.rs"]
+mod body_witness;
 const HEADER: &str = "ledger-header.json";
 const EVENTS: &str = "ledger-events";
 const FORMAT: &str = "RLD-NATIVE-PAGED-BFT-STORE-V1";
@@ -56,7 +58,8 @@ struct Replay {
     chain: Chain,
     evidence: VerifiedEvidence,
     // Created only by this process's full native execution, never loaded.
-    bodies: BTreeMap<Hash, Hash>,
+    bodies: body_witness::Bodies,
+    executed: body_witness::ExecutedPrefix,
     receipts: crate::channel_receipt::Replay,
     receipt_anchors: BTreeSet<Hash>,
     incidents: BTreeSet<Hash>,
@@ -80,11 +83,13 @@ impl Replay {
         header.scope(&trust)?;
         let chain = Chain::new(header.region, &trust)?;
         let evidence = VerifiedEvidence::verify(&Evidence::default(), &trust)?;
+        let executed = body_witness::ExecutedPrefix::new(header.scope(&trust)?)?;
         Ok(Self {
             trust,
             chain,
             evidence,
-            bodies: BTreeMap::new(),
+            bodies: Default::default(),
+            executed,
             receipts: Default::default(),
             receipt_anchors: BTreeSet::new(),
             incidents: BTreeSet::new(),
@@ -133,30 +138,45 @@ impl Replay {
         }
         Ok(())
     }
-    fn authenticate(&mut self, snapshot: &Snapshot) -> Result<(Hash, bool)> {
+    fn authenticate(
+        &mut self,
+        snapshot: &Snapshot,
+        stream: &Stream<Record>,
+    ) -> Result<(Hash, bool)> {
         let sid = snapshot.statement.id()?;
         let complete = body(snapshot)?;
-        if let Some(old) = self.bodies.get(&sid) {
+        if let Some(old) = self.prior_body(sid, stream)? {
             // A body hash is usable only after native genesis execution in THIS
             // invocation. Every new complete envelope/certificate authenticates.
             crate::conflict::CertifiedHistory::from_snapshot(snapshot).verify(&self.trust)?;
             crate::segmented::shape(snapshot, &self.trust)?;
             require(
-                *old == complete,
+                old == complete,
                 "historical certificate changes native complete body",
             )?;
             return Ok((sid, false));
         }
-        require(
-            self.bodies.len() < MAX_COINS,
-            "paged BFT native body witness capacity",
-        )?;
         self.retain_for_next()?;
         self.evidence.add(snapshot.clone(), &self.trust)?;
-        self.bodies.insert(sid, complete);
+        self.bodies.remember(sid, complete)?;
         Ok((sid, true))
     }
-    fn apply(&mut self, record: &Record) -> Result<()> {
+    fn prior_body(&mut self, sid: Hash, stream: &Stream<Record>) -> Result<Option<Hash>> {
+        if let Some(complete) = self.bodies.get(&sid) {
+            return Ok(Some(*complete));
+        }
+        let found = self.executed.find(stream, sid)?;
+        if let Some(complete) = found {
+            self.bodies.remember(sid, complete)?;
+        }
+        Ok(found)
+    }
+    fn apply_retained(&mut self, record: &Record, stream: &Stream<Record>) -> Result<()> {
+        stream.require_scope(&self.executed.scope)?;
+        self.apply(record, stream)?;
+        self.executed.advance(record)
+    }
+    fn apply(&mut self, record: &Record, stream: &Stream<Record>) -> Result<()> {
         match record {
             Record::Certified(snapshot) => {
                 require(
@@ -169,7 +189,7 @@ impl Replay {
                 let complete = body(snapshot)?;
                 if snapshot.statement.height <= self.chain.height() {
                     require(
-                        self.bodies.get(&sid) == Some(&complete),
+                        self.prior_body(sid, stream)? == Some(complete),
                         "historical paged certificate body not natively executed",
                     )?;
                 } else {
@@ -179,12 +199,9 @@ impl Replay {
                     )?;
                     if let Some(old) = self.bodies.get(&sid) {
                         require(*old == complete, "paged BFT later certificate body differs")?;
-                    } else {
-                        require(
-                            self.bodies.len() < MAX_COINS,
-                            "paged BFT native body witness capacity",
-                        )?;
                     }
+                    // A new local height executes fully under its exact current
+                    // native predecessor; cache occupancy grants no authority.
                     self.retain_for_next()?;
                     let mut chain =
                         crate::paged_bft::replay(snapshot, &self.trust, &self.evidence)?;
@@ -199,7 +216,7 @@ impl Replay {
                         .snapshots
                         .entry(sid)
                         .or_insert_with(|| (*snapshot.clone(), chain.ledger.clone()));
-                    self.bodies.insert(sid, complete);
+                    self.bodies.remember(sid, complete)?;
                     chain.install(sid, &self.evidence)?;
                     self.chain = chain;
                 }
@@ -211,7 +228,7 @@ impl Replay {
                 )?;
                 encode("evidence", evidence)?;
                 for s in &evidence.snapshots {
-                    self.authenticate(s)?;
+                    self.authenticate(s, stream)?;
                 }
             }
             Record::Receipt(receipt) => {
@@ -251,7 +268,7 @@ impl Replay {
                 let checked = VerifiedEvidence::verify(&bundle.evidence, &self.trust)?;
                 record.verify(&self.trust, &checked, self.chain.region)?;
                 for snapshot in &bundle.evidence.snapshots {
-                    self.authenticate(snapshot)?;
+                    self.authenticate(snapshot, stream)?;
                 }
                 record.verify(&self.trust, &self.evidence, self.chain.region)?;
                 if let Some(old) = self.contacts.get(&record.message_id) {
@@ -443,7 +460,7 @@ impl Store {
             None => Stream::<Record>::observe_head(&dir.join(EVENTS), &scope)?,
         };
         let stream = Stream::open(&dir.join(EVENTS), &scope, expected)?;
-        stream.visit(expected, |record| replay.apply(record))?;
+        stream.visit(expected, |record| replay.apply_retained(record, &stream))?;
         let journal = replay.journal(&header);
         let (conflicts, safety) = read_incidents(dir, &journal, &replay.trust, None)?;
         let retained = conflicts
@@ -509,9 +526,9 @@ impl Store {
         let mut replay = Replay::new(&header, &self.authority, self.pin)?;
         let stream = self.paged.as_ref().ok_or("not a native paged store")?;
         let head = stream.storage_head();
-        stream.visit(head, |record| replay.apply(record))?;
+        stream.visit(head, |record| replay.apply_retained(record, stream))?;
         for record in records {
-            replay.apply(record)?;
+            replay.apply(record, stream)?;
         }
         let journal = replay.journal(&header);
         let (conflicts, safety) = read_incidents(&self.dir, &journal, &replay.trust, None)?;
@@ -597,8 +614,10 @@ impl Store {
         let header = read_header(&self.dir)?;
         let mut replay = Replay::new(&header, &self.authority, self.pin)?;
         let stream = self.paged.as_ref().ok_or("paged contact stream missing")?;
-        stream.visit(stream.storage_head(), |old| replay.apply(old))?;
-        replay.apply(&record)?;
+        stream.visit(stream.storage_head(), |old| {
+            replay.apply_retained(old, stream)
+        })?;
+        replay.apply(&record, stream)?;
         // Authenticate every complete later frame before exact retry suppression.
         // An exact retained retry neither grows the archive nor grants an import.
         if replay.contacts == self.journal.contact_records {
@@ -668,7 +687,9 @@ impl Store {
         let header = read_header(&self.dir)?;
         let mut replay = Replay::new(&header, &self.authority, self.pin)?;
         let stream = self.paged.as_ref().ok_or("not a native paged store")?;
-        stream.visit(stream.storage_head(), |record| replay.apply(record))?;
+        stream.visit(stream.storage_head(), |record| {
+            replay.apply_retained(record, stream)
+        })?;
         require(
             replay.chain.ledger == self.chain.ledger
                 && replay.chain.finalized == self.chain.finalized
@@ -688,7 +709,7 @@ impl Store {
         };
         let stream = self.paged.as_ref().ok_or("not a native paged store")?;
         stream.visit(stream.storage_head(), |record| {
-            replay.apply(record)?;
+            replay.apply_retained(record, stream)?;
             if replay.chain.height() == height {
                 selected = Some((replay.chain.clone(), replay.evidence.clone()));
             }
@@ -737,6 +758,7 @@ pub(super) fn events(
 /// Any look-ahead remains complete and is executed before state can be released.
 pub(crate) struct Historical<'a> {
     replay: Replay,
+    stream: &'a Stream<Record>,
     records: crate::retained_pages::Records<'a, Record>,
     pending: Option<Record>,
     last_requested: u64,
@@ -762,7 +784,7 @@ impl Historical<'_> {
                 self.pending = Some(record);
                 break;
             }
-            self.replay.apply(&record)?;
+            self.replay.apply_retained(&record, self.stream)?;
         }
         require(
             self.replay.chain.height() == height,
@@ -781,10 +803,10 @@ impl Historical<'_> {
     /// boundary rechecks exact retained bytes, header, selection and incidents.
     pub(crate) fn check_complete(&mut self, node: &Store) -> Result<()> {
         if let Some(record) = self.pending.take() {
-            self.replay.apply(&record)?;
+            self.replay.apply_retained(&record, self.stream)?;
         }
         for record in self.records.by_ref() {
-            self.replay.apply(&record?)?;
+            self.replay.apply_retained(&record?, self.stream)?;
         }
         let stream = node
             .paged
@@ -845,6 +867,7 @@ impl Store {
         let storage_head = stream.storage_head();
         Ok(Historical {
             replay,
+            stream,
             records: stream.records(storage_head)?,
             pending: None,
             last_requested: 0,
@@ -853,3 +876,7 @@ impl Store {
         })
     }
 }
+
+#[cfg(test)]
+#[path = "paged_store/body_witness_tests.rs"]
+mod body_witness_tests;
