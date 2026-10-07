@@ -353,3 +353,25 @@ receipt, an accepted evidence event or a storage hash grants no value on its own
 This interface does not implement transport, complete incident proofs, ordinary
 node lifecycle, signer custody, independent freshness or new cryptographic
 adoption. Those interfaces require separate composition and qualification.
+
+
+## Complete contact wire acceptance
+
+`append_contact` accepts only the existing canonical complete Native contact wire
+under exact current caller anchors. It checks the full frame and payload bounds,
+route, payload digest and message commitment before staging the original contact
+event. Every complete inner certificate and command authenticates through Native
+replay. Its dependency closure must verify from signed genesis independently of
+the destination's already authenticated active evidence; cached predecessors cannot
+fill an omission from the supplied wire. Wrong currency, export or destination,
+substituted commands, invalid votes and noncanonical or changed bytes refuse.
+
+Contact acceptance retains evidence and its complete event durably but advances
+no local block height and creates no recipient credit. A separate local certified
+import and configured maturity remain necessary. Cold opening rechecks the full
+original wire and all Native dependencies before later dependent records.
+Incident-carrying contacts refuse because this entry has no complete separate
+incident custody store; it cannot discard an incident or substitute its identifier.
+Transport acknowledgments, peer identities, routing signatures, signer custody
+and ordinary-node lifecycle are outside this API. The same aggregate archive
+ceiling and semantic/persistence failure rules apply to contact events.

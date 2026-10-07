@@ -460,6 +460,23 @@ impl NativeContinuationCandidate {
             independently_current,
         )
     }
+    /// Complete existing contact wire envelope, with stand-alone Native proof.
+    /// Receipt of bytes is never a ledger import, transport acknowledgment,
+    /// identity admission or permission to sign. Complete incident custody is
+    /// outside this entry, so incident-carrying contacts refuse.
+    pub fn append_contact(
+        &mut self,
+        raw: &[u8],
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<NativeContinuationPinsCandidate> {
+        self.require_current(independently_current)?;
+        let (frame, bundle) = crate::contact::Frame::unpack(raw)?;
+        require(
+            bundle.incidents.is_empty(),
+            "continuation contact needs complete separate incident proof store",
+        )?;
+        self.append_record(Record::Contact(Box::new(frame)), independently_current)
+    }
     fn append_record(
         &mut self,
         record: Record,

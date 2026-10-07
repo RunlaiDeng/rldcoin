@@ -1191,6 +1191,75 @@ fn complete_remote_evidence_actual_import_maturity_onward_payment_and_cold() {
     let before = inventory(&root);
     assert!(destination.append_evidence(&evidence, &old).is_err());
     assert_eq!(inventory(&root), before);
+    let bundle = crate::contact::Bundle {
+        format: crate::contact::FORMAT.into(),
+        currency,
+        source: source_h.region,
+        destination: destination_h.region,
+        snapshot,
+        export,
+        evidence: evidence.clone(),
+        incidents: vec![],
+    };
+    let raw = crate::contact::Frame::pack(&bundle).unwrap();
+    let (frame, _) = crate::contact::Frame::unpack(&raw).unwrap();
+    let before = inventory(&root);
+    // Even already verified cached predecessors cannot fill an incomplete wire
+    // envelope: the original complete contact must authenticate alone.
+    for choice in 0..6 {
+        let mut bad = bundle.clone();
+        match choice {
+            0 => {
+                bad.evidence.snapshots.remove(0);
+            }
+            1 => bad.destination = source_h.region,
+            2 => bad.export = Hash([9; 32]),
+            3 => bad.currency = Hash([9; 32]),
+            4 => bad.evidence.snapshots[2]
+                .blocks
+                .last_mut()
+                .unwrap()
+                .commands
+                .clear(),
+            _ => {
+                bad.evidence.snapshots[2]
+                    .bft
+                    .as_mut()
+                    .unwrap()
+                    .committed
+                    .votes[0]
+                    .approval
+                    .signature = "00".repeat(64)
+            }
+        }
+        match crate::contact::Frame::pack(&bad) {
+            Ok(raw) => assert!(destination.append_contact(&raw, &destination_pins).is_err()),
+            Err(_) => assert_eq!(choice, 1),
+        }
+        assert_eq!(inventory(&root), before);
+    }
+    let mut changed = frame.clone();
+    changed.payload_sha256 = Hash([9; 32]);
+    assert!(destination
+        .append_contact(&changed.retained_bytes().unwrap(), &destination_pins)
+        .is_err());
+    let mut noncanonical = raw.clone();
+    noncanonical.push(b' ');
+    assert!(destination
+        .append_contact(&noncanonical, &destination_pins)
+        .is_err());
+    assert!(destination.append_contact(&raw, &old).is_err());
+    assert_eq!(inventory(&root), before);
+    destination_pins = destination.append_contact(&raw, &destination_pins).unwrap();
+    destination_hot
+        .apply(&Record::Contact(Box::new(frame)), &destination_flat)
+        .unwrap();
+    assert_eq!(destination_pins.latest.height, 0);
+    assert_eq!(destination_pins.latest.record_count, 2);
+    assert!(destination
+        .coins(&public(20), &destination_pins)
+        .unwrap()
+        .is_empty());
     destination_pins = submit_proposal(
         &mut destination,
         &mut destination_hot,
@@ -1249,7 +1318,7 @@ fn complete_remote_evidence_actual_import_maturity_onward_payment_and_cold() {
         &destination_pins,
     );
     assert_eq!(destination_pins.latest.height, 3);
-    assert_eq!(destination_pins.latest.record_count, 4);
+    assert_eq!(destination_pins.latest.record_count, 5);
     assert!(destination
         .coins(&public(20), &destination_pins)
         .unwrap()
@@ -1322,7 +1391,7 @@ fn complete_remote_evidence_actual_import_maturity_onward_payment_and_cold() {
     assert!(String::from_utf8_lossy(&output.stdout)
         .contains("actual-native-regional-cold regions2 source3 destination3"));
     assert_eq!(inventory(&root), before);
-    println!("actual-native-regional-payment source_export9=true destination_fee2=true recipient7=true mature2=true onward6_fee1=true duplicate_import_refused=true all_retained_original_cold=true global_conservation=true no_transport_or_signer_adoption=true");
+    println!("actual-native-regional-payment source_export9=true destination_fee2=true recipient7=true mature2=true onward6_fee1=true duplicate_import_refused=true all_retained_original_cold=true global_conservation=true complete_contact_standalone=true contact_never_credits_value=true no_transport_or_signer_adoption=true");
 }
 #[test]
 #[ignore = "separate cold child for two actual complete Native no-value regional histories"]
