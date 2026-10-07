@@ -847,3 +847,43 @@ fn two_native_worker_witness_cold_child() {
     assert_eq!(inventory(&b_root), b_before);
     println!("actual-two-native-worker-witness a_repeat_leaf_hashes={} b_repeat_leaf_hashes={} complete_independent_uncached_roots_equal=true bytes_unchanged=true full_library_timeout_cause_not_proven=true",a_cost.leaf_hashes,b_cost.leaf_hashes);
 }
+
+#[test]
+fn actual_native_genesis_projection_measures_historical_leaf_eviction() {
+    let (root, mut node) = fresh();
+    let genesis = node.chain.ledger.clone();
+    assert!(genesis.coins.is_empty());
+    for _ in 0..8 {
+        node.finalize(next(&node)).unwrap();
+    }
+    let current = node.chain.ledger.clone();
+    assert_eq!(current.coins.len(), 8);
+    let before = inventory(&root);
+    let (first, _, _) = crate::state_index::compute(&current, None).unwrap();
+    let (warm, _, warm_cost) = crate::state_index::compute(&current, None).unwrap();
+    assert_eq!(warm_cost.leaf_hashes, 0);
+    let (zero, _, _) = crate::state_index::compute(&genesis, None).unwrap();
+    let (again, _, repeat) = crate::state_index::compute(&current, None).unwrap();
+    assert_eq!(repeat.leaf_hashes, 0);
+    assert_eq!(repeat.reused_leaves, 8);
+    assert_eq!(first, warm);
+    assert_eq!(first, again);
+    assert_eq!(
+        first,
+        crate::state_proof::Commitment::from_ledger_uncached(&current).unwrap()
+    );
+    assert_eq!(
+        zero,
+        crate::state_proof::Commitment::from_ledger_uncached(&genesis).unwrap()
+    );
+    assert_eq!(node.chain.ledger, current);
+    assert_eq!(inventory(&root), before);
+    let head = node.storage_head().unwrap();
+    let pin = node.pin;
+    drop(node);
+    let cold = Store::open_pinned(&root.join("node"), &public(1), pin, head).unwrap();
+    assert_eq!(cold.chain.height(), 8);
+    assert_eq!(cold.chain.ledger, current);
+    assert_eq!(inventory(&root), before);
+    println!("actual-native-history-leaf-cycle warm_rehash={} after_actual_genesis_rehash={} exact_independent_roots=true no_native_projection_mutation=true full_genesis_cold8=true", warm_cost.leaf_hashes, repeat.leaf_hashes);
+}

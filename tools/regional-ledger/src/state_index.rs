@@ -14,6 +14,7 @@ static WITNESS: Mutex<Witnesses> = Mutex::new(Witnesses {
     slots: std::collections::VecDeque::new(),
 });
 const MAX_WITNESSES: usize = 2;
+const MAX_RETIRED_LEAVES: usize = 256;
 const RECORD_OVERHEAD: usize = 256;
 
 #[derive(Clone)]
@@ -25,6 +26,9 @@ struct Entry {
 #[derive(Clone, Default)]
 struct Index {
     entries: BTreeMap<Hash, Arc<Entry>>,
+    // Exact previously hashed records absent from this current index. They
+    // never enter roots/proofs; only full current typed equality may reuse a hash.
+    retired: BTreeMap<Hash, Arc<Entry>>,
     levels: Vec<Vec<Hash>>,
     retained_bytes: usize,
 }
@@ -95,7 +99,7 @@ impl Index {
     ) -> Result<Option<Self>> {
         let mut next = Self::default();
         for (key, record) in records(ledger, kind) {
-            let old = previous.and_then(|p| p.entries.get(&key));
+            let old = previous.and_then(|p| p.entries.get(&key).or_else(|| p.retired.get(&key)));
             let entry = if let Some(entry) = old.filter(|e| record.matches(&e.value)) {
                 cost.reused_leaves += 1;
                 Arc::clone(entry)
@@ -237,7 +241,28 @@ fn calculate(
         };
         indexes.push(index);
     }
-    let indexes: [Index; 3] = indexes.try_into().map_err(|_| "state index collections")?;
+    let mut indexes: [Index; 3] = indexes.try_into().map_err(|_| "state index collections")?;
+    // Current audited records and their exact tree always take capacity first.
+    // Only the remaining original budget may retain prior typed leaf material.
+    // Retired records supply no membership, count, value or proof output.
+    if let Some(previous) = witness.as_ref() {
+        for (index, old) in indexes.iter_mut().zip(&previous.indexes) {
+            for (key, entry) in old.entries.iter().chain(&old.retired) {
+                if index.retired.len() == MAX_RETIRED_LEAVES {
+                    break;
+                }
+                if index.entries.contains_key(key) || index.retired.contains_key(key) {
+                    continue;
+                }
+                if entry.retained_bytes > MAX_BYTES.saturating_sub(budget) {
+                    continue;
+                }
+                budget += entry.retained_bytes;
+                index.retained_bytes += entry.retained_bytes;
+                index.retired.insert(*key, Arc::clone(entry));
+            }
+        }
+    }
     let state = Commitment {
         format: proof::FORMAT.into(),
         coins: indexes[0].root(Collection::Coins)?,

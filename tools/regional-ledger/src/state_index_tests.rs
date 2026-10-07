@@ -266,3 +266,74 @@ fn bounded_worker_witnesses_preserve_failed_audit_and_share_original_total_budge
     assert_eq!(witnesses.slots.len(), 2);
     assert!(witnesses.retained_bytes() <= MAX_BYTES);
 }
+
+#[test]
+fn historical_leaf_material_cannot_supply_spent_membership_or_changed_value() {
+    // Synthetic hashing-only shape, never a Native ledger initializer.
+    let mut witness = None;
+    let value = ledger(8);
+    checked(&mut witness, &value);
+    let empty = Ledger::default();
+    let (root, selected, _) = calculate(&mut witness, &empty, Some(Collection::Coins)).unwrap();
+    assert_eq!(root.coins.entries, 0);
+    assert!(selected.unwrap().values.is_empty());
+    assert_eq!(witness.as_ref().unwrap().indexes[0].retired.len(), 8);
+    assert!(witness.as_ref().unwrap().indexes[0].entries.is_empty());
+    let absence = proof::Proof::from_ledger(&empty, Collection::Coins, key(2)).unwrap();
+    assert_eq!(
+        absence
+            .verify(root.hash().unwrap(), Collection::Coins, key(2))
+            .unwrap(),
+        None
+    );
+    let original = checked(&mut witness, &value);
+    assert_eq!((original.leaf_hashes, original.reused_leaves), (0, 8));
+    checked(&mut witness, &empty);
+    let mut changed = value.clone();
+    changed.coins.get_mut(&key(2)).unwrap().mature += 1;
+    let cost = checked(&mut witness, &changed);
+    assert_eq!((cost.leaf_hashes, cost.reused_leaves), (1, 7));
+    let mut bad = empty;
+    bad.minted = Amount(1);
+    let retained_before = witness.as_ref().unwrap().retained_bytes();
+    assert!(calculate(&mut witness, &bad, None).is_err());
+    assert_eq!(witness.as_ref().unwrap().retained_bytes(), retained_before);
+    assert_eq!(checked(&mut witness, &changed).leaf_hashes, 0);
+}
+#[test]
+fn current_typed_records_take_original_budget_before_optional_historical_material() {
+    // Synthetic large hashing shape only: no issuance, signature or custody rights.
+    let mut original = ledger(MAX_COINS);
+    for coin in original.coins.values_mut() {
+        coin.payment.owner = "x".repeat(900);
+    }
+    let mut current = original.clone();
+    current.coins = current
+        .coins
+        .into_iter()
+        .map(|(old, coin)| {
+            let n = u32::from_be_bytes(old.0[28..].try_into().unwrap());
+            (key(n + 100000), coin)
+        })
+        .collect();
+    let mut witness = None;
+    checked(&mut witness, &original);
+    let (_, selected, cost) = calculate(&mut witness, &current, Some(Collection::Coins)).unwrap();
+    assert!(cost.witness_retained && !cost.uncached_fallback);
+    assert!(cost.retained_bytes <= MAX_BYTES);
+    assert_eq!(
+        selected.unwrap().values,
+        cold_prepared(&current, Collection::Coins).unwrap().values
+    );
+    let retained = &witness.as_ref().unwrap().indexes[0];
+    assert_eq!(retained.entries.len(), MAX_COINS);
+    assert_eq!(retained.retired.len(), MAX_RETIRED_LEAVES);
+    assert!(retained
+        .entries
+        .keys()
+        .all(|key| !retained.retired.contains_key(key)));
+    let back = checked(&mut witness, &original);
+    assert!(back.leaf_hashes > 0 && back.reused_leaves > 0);
+    assert!(back.retained_bytes <= MAX_BYTES);
+    assert_eq!(checked(&mut witness, &original).leaf_hashes, 0);
+}
