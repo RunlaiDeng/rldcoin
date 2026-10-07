@@ -1,0 +1,204 @@
+{
+  "format": "RLD-PAGED-FAULT-NATIVE-PREPARATION-CHECKS-V1",
+  "completed": true,
+  "budget_seconds": 180,
+  "duration_seconds": 30.666,
+  "attempts_used": 1,
+  "helper_exit_code": 0,
+  "budget_exhausted": false,
+  "helper_terminal": true,
+  "pin_error": null,
+  "stage_sha256": "0ad2bfc890832e02b543187e5db3523654b9ba2ae18dd21df4f32c13728e6818",
+  "log_sha256": "19f80516b2b8c0de1c11913d6bdf3e9905a347a8619a87614e1352bc705d2a59",
+  "private_inventory_sha256": "3f672bbd0de350bb81d2b726a82cfb6cffb12cafde4b307dbb99e49a3e97e73d",
+  "new_private_files": 668,
+  "helper_sha256": "51ca61e32456b98027f44da8b24b9823140ca90773f5c42f96142c9c4ba8590f",
+  "controller_sha256": "24d7c3d55a509baf8dffe484356d7d4d662461a389927b751e1813492f62eee1",
+  "preparation_source_sha256": "e81fc4fc09179d08da9bc97959f8b29700c5acf7fed14dbc15580738441121c8",
+  "source_commitment": "346ca668e5e798af407163bb49acea012f2d348dcadd92199a2bd9176db63acd",
+  "implementation": "fd1e24fee6d996f2222380ef704821e31fd2d5708ce4c9fb06b2a53e97f56b39",
+  "cli_binary_sha256": "bef4d5c7bfee1a2455845334fd0824c784df8fdae63a74baea093155fdfb2000",
+  "result": {
+    "completed": true,
+    "label_boundary_tests": 0,
+    "unchanged_preparation_boundary_tests_reused": true,
+    "duration_seconds": 30.39,
+    "native_replicas": 12,
+    "voter_caller_pairs": 12,
+    "zero_allocation_from_fresh_signed_genesis": true,
+    "no_state_or_value_copy": true,
+    "genesis_native_issuance_only": true,
+    "actual_heights": {
+      "earth": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "proxima": [
+        5,
+        5,
+        5,
+        5
+      ],
+      "andromeda": [
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "preparation_owner_first_signs": 3,
+    "original_preparation_owner_journal_count": 1,
+    "preparation_local_payment": "95",
+    "preparation_export_gross": [
+      "3",
+      "3"
+    ],
+    "preparation_import_net": [
+      "2",
+      "2"
+    ],
+    "destination_receipts_fully_native_verified": 8,
+    "maturity": 2,
+    "fault_owner_first_signs": 0,
+    "unsigned_fault_reviews": 3,
+    "funding": [
+      {
+        "region": "earth",
+        "input_id": "dbab9f1417c0c6fbecface7612eb4da87140423e0324902f365cbc1a2c043ae6",
+        "amount": "95",
+        "mature_height": 4,
+        "native_height": 8,
+        "first_signed": false
+      },
+      {
+        "region": "proxima",
+        "input_id": "85992c6b9b30cd6b4fe7d3ff1a8f7f26d3c5878264ff0af397b3f579301b5c89",
+        "amount": "2",
+        "mature_height": 3,
+        "native_height": 5,
+        "first_signed": false
+      },
+      {
+        "region": "andromeda",
+        "input_id": "133a5b62665a6507642bd89757672d85ce9dead7272fc6154393a344dc316ba6",
+        "amount": "2",
+        "mature_height": 3,
+        "native_height": 5,
+        "first_signed": false
+      }
+    ],
+    "native_accounting": {
+      "issued": "2000000000000000000000000000000",
+      "liquid": "2000000000000000000000000000000",
+      "escrow": "0",
+      "pending_exports": "0",
+      "pending_export_net": "0",
+      "origin_height": 8,
+      "observed_exports": 2,
+      "observed_permanent_imports": 2,
+      "conserved": true,
+      "derived_from_pinned_native_replay": true,
+      "independent_freshness_or_signing_authority": false
+    },
+    "native_calls": 473,
+    "native_command_summary": {
+      "bft-candidate": {
+        "count": 18,
+        "wall_seconds": 0.661762
+      },
+      "bft-certify": {
+        "count": 18,
+        "wall_seconds": 0.441476
+      },
+      "bft-context": {
+        "count": 42,
+        "wall_seconds": 0.969479
+      },
+      "bft-init": {
+        "count": 12,
+        "wall_seconds": 0.531199
+      },
+      "bft-quorum": {
+        "count": 36,
+        "wall_seconds": 0.909482
+      },
+      "bft-sign": {
+        "count": 162,
+        "wall_seconds": 15.882475
+      },
+      "bft-status": {
+        "count": 12,
+        "wall_seconds": 0.848971
+      },
+      "contact-apply": {
+        "count": 8,
+        "wall_seconds": 0.679906
+      },
+      "contact-export": {
+        "count": 2,
+        "wall_seconds": 0.044481
+      },
+      "finalize": {
+        "count": 72,
+        "wall_seconds": 5.131335
+      },
+      "history-check": {
+        "count": 12,
+        "wall_seconds": 0.40061
+      },
+      "history-head": {
+        "count": 12,
+        "wall_seconds": 0.402936
+      },
+      "init": {
+        "count": 12,
+        "wall_seconds": 0.576032
+      },
+      "status": {
+        "count": 30,
+        "wall_seconds": 0.633679
+      },
+      "wallet-init": {
+        "count": 4,
+        "wall_seconds": 0.254459
+      },
+      "wallet-prepare": {
+        "count": 6,
+        "wall_seconds": 0.408691
+      },
+      "wallet-receipt": {
+        "count": 8,
+        "wall_seconds": 0.354567
+      },
+      "wallet-sign": {
+        "count": 3,
+        "wall_seconds": 0.331802
+      },
+      "wallet-view": {
+        "count": 4,
+        "wall_seconds": 0.411431
+      }
+    },
+    "fresh_mesh_tls_identities": 12,
+    "fresh_tls_reopen_retention": true,
+    "network_starts": 0,
+    "runtime_starts": 0,
+    "full_fault_qualified": false,
+    "configuration_bound": false,
+    "independent_freshness_qualified": false,
+    "launch_authority": false
+  },
+  "failed_currency_sealed": false,
+  "failed_currency_never_reopen_native_or_runtime": false,
+  "old_private_source_freeze_unchanged": true,
+  "old_retained_private_bytes_not_rescanned": true,
+  "old_retained_inventory_hashes_verified": true,
+  "old_custody_copied": false,
+  "configuration_bound": false,
+  "network_launch_qualified": false,
+  "full_fault_qualified": false,
+  "legacy_value_strict": "OPEN",
+  "whole_goal_completed": false
+}
