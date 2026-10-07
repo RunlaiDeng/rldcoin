@@ -1,0 +1,155 @@
+{
+  "completed": true,
+  "rows": [
+    {
+      "sequence": 49,
+      "step": 25,
+      "newest_pair": true,
+      "target_selected": false,
+      "spares": [
+        {
+          "packet_id": "1a06f53bc6b3bb56f010edcddf648ea6de05aa32e813123261ab912f33a7a19c",
+          "source": 3,
+          "destination": 0,
+          "forwarded": true,
+          "kind": "Commit",
+          "parent_height": 7,
+          "current_frame": false,
+          "prepared_before": false
+        },
+        {
+          "packet_id": "41156db67d4f0c7ee014665f8f768ae5681fe3c748c3f0c6421278de0df27443",
+          "source": 2,
+          "destination": 1,
+          "forwarded": false,
+          "kind": "Prepare",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": false
+        }
+      ]
+    },
+    {
+      "sequence": 53,
+      "step": 29,
+      "newest_pair": false,
+      "target_selected": false,
+      "spares": [
+        {
+          "packet_id": "1e9aa9f304d138364565db6745a21d68530c987a0fe5d0d0ef07d35ed55bebeb",
+          "source": 3,
+          "destination": 1,
+          "forwarded": true,
+          "kind": "Commit",
+          "parent_height": 3,
+          "current_frame": false,
+          "prepared_before": false
+        },
+        {
+          "packet_id": "824eb7f2fd11433336d2af40e6ddd6e9ec0cd1a5b8e10c2409192d6afdce28da",
+          "source": 2,
+          "destination": 1,
+          "forwarded": false,
+          "kind": "Proposal",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": false
+        }
+      ]
+    },
+    {
+      "sequence": 60,
+      "step": 33,
+      "newest_pair": true,
+      "target_selected": false,
+      "spares": [
+        {
+          "packet_id": "824eb7f2fd11433336d2af40e6ddd6e9ec0cd1a5b8e10c2409192d6afdce28da",
+          "source": 2,
+          "destination": 1,
+          "forwarded": false,
+          "kind": "Proposal",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": true
+        },
+        {
+          "packet_id": "4bfaf3524e622377b2e21ab7b23b7d1c6b8611fb51d48f94c5c0a484fc2b814d",
+          "source": 3,
+          "destination": 0,
+          "forwarded": true,
+          "kind": "Prepare",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": false
+        }
+      ]
+    },
+    {
+      "sequence": 73,
+      "step": 37,
+      "newest_pair": false,
+      "target_selected": false,
+      "spares": [
+        {
+          "packet_id": "467b2b0f1aae5760fa53cff37a156dade9661b20672c5617755c3d01898bfec5",
+          "source": 2,
+          "destination": 0,
+          "forwarded": false,
+          "kind": "Prepare",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": false
+        },
+        {
+          "packet_id": "5587b164ae0e0d15a816cfe7e93d5385dff6705309a873466842ae027bfe5452",
+          "source": 3,
+          "destination": 1,
+          "forwarded": true,
+          "kind": "Prepare",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": false
+        }
+      ]
+    },
+    {
+      "sequence": 82,
+      "step": 41,
+      "newest_pair": true,
+      "target_selected": true,
+      "spares": [
+        {
+          "packet_id": "5fb03dfb09962117383d378929b8d83e5e479b80ef6ab33976a4481d4785f5ae",
+          "source": 2,
+          "destination": 0,
+          "forwarded": false,
+          "kind": "Proposal",
+          "parent_height": 14,
+          "current_frame": true,
+          "prepared_before": false
+        },
+        {
+          "packet_id": "5ca87c22e596a57a8fe519781e67feaaef5d7969ab1b6b1765560ab46e20fb1e",
+          "source": 2,
+          "destination": 0,
+          "forwarded": false,
+          "kind": "Commit",
+          "parent_height": 10,
+          "current_frame": false,
+          "prepared_before": false
+        }
+      ]
+    }
+  ],
+  "prepared_retransmission_starves_target_hypothesis_falsified": false,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "consumed_sealed_bytes_unchanged": true,
+  "unique_maturity_cause_proved": false,
+  "reader_sha256": "ec075b9d2b03761143d7e19cc7fd2720a9f8a31ae543bc41de76833fa584a02a",
+  "stage_sha256": "0ef77ccd28c9c152306803af4c010ce2fd7be364f74d747ba17d9e37e44c4ce9",
+  "duration_seconds": 0.534402,
+  "combined_original20_seconds": 2.938038,
+  "new180": 0,
+  "new600": 0
+}

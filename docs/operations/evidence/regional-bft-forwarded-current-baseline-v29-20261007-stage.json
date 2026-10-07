@@ -1,0 +1,39 @@
+{
+  "hypothesis": "V43 exact source3 Prepareto0 durableatrelay2 waited57.456 beforeforwarding despite matching consumedhint; newest49 chose localPrepare2to1 after newest41 source3 Prepareto1. Prepared retransmission displacement falsified. Fresh3node signed sourcepacket/fullincominghop plus2local currentframes, pressure actual ordinary currentring to localfirst, one existing newestprioritypair distinguishes foreign current first. Oldestpair local/failedframe order, originalfirst2/otherfloor/full4/auth/atomic/cold preserved. Empty Native proof groundonly",
+  "budget_seconds": 10,
+  "attempts": 1,
+  "prior_seconds": 20.378813,
+  "prior_Mesh_ground60_unreset": 59.80325,
+  "ground_role_analogy_only": true,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/forwarded-current-counter-method-v29-20261007.py": "b9f8841f35c8d791dbaf6afe42951ad393c355efc2f85a016c293d766e234c4f",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/forwarded-current-baseline-v29-helper-20261007.py": "640b84875b7dbeceae7b31c93f7de06b3c7086f785d51885d6262c02a942250a",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-forwarded-current-baseline-v29-20261007.py": "f3f3ad893a40f2c3f09755a8f7c17f20df1e7c4612dd7135186e97f414b732d7",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "a923f53691ca52df4af202b13c61331b393cbab0ea6671a251213986ea20fffd",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "13e31c25434e3d38fa8f0e311119cd3afb200af665c265a17b0b1e84f7a42809",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "587b7f5b012a6a626c18ff40eb68cd3468a35f68b14c7c8ff183ad7fa9aee804",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "bb52b431a843981fa833dae5b862fdc30096d55a6ca880c73bda9d0b81ea03be",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v42-stopped-private-inventory-20261006.json": "bae11a80ea584b98e526ffec48eed293892824153bcd32eeddf6e4e4c0838c62"
+  },
+  "actual_global_providers": [
+    "NETWORK",
+    "OSError",
+    "ValueError",
+    "bytes",
+    "copy",
+    "dict",
+    "evidence",
+    "json",
+    "len",
+    "mesh",
+    "next",
+    "patch",
+    "range",
+    "set",
+    "sorted",
+    "tuple"
+  ],
+  "static_generate_calls": 0,
+  "exit": "first original guard or60seconds; semantic old-target failure retains FAIL and selects only ordering repair; old Native/Runtime/socket calls0"
+}

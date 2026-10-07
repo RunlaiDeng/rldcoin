@@ -1949,3 +1949,21 @@ V43 **FAIL原180/193.653含收尾/2043封存**，helper1 ScopeDeadline，四CLI�
 已证伪“prepared重传挤占未prepare目标”：6个实际current spare均未prepare，不能据该假设修。准确新分辨是relay2 newest41转发source3 Prepare到1，newest49却选自身Prepare2到1，推迟同源Prepare3到0；oldest原对仍保留本地历史优先。下一只在remaining related60做一份全新真实签名小反例，验证既有newest prioritypair内转发current与本地current的最小公平排序。原first2/pending17gap/另一类floor/full4/旧prepared-current oldestpair/认证/原子/容量/冷验不动；反例不证不修，不原样重跑180或延长budget。结构化原20读数累计3.046411；交互只读未计时另列，不声称全诊断准确累计。
 
 [终态与下一判别](docs/operations/evidence/regional-bft-active-finalized-v43-terminal-next-20261007.json)。
+
+### V30：已复现的转发当前消息选择缺口；V44原范围运行
+
+旧V29全新真实签名小反例 **FAIL .487423/14封存**，准确复现原V43中继newest49选本地current而非已保管转发current。V30仅在既有newest prioritypair、同frame与frame-set轮转之后，稳定排序转发current在本地current之前；oldest pair保留原失败准备优先，first2、另一类floor、full4 retry、签名/路由/原子/容量/冷读及Native/BFT/TCP源码不变。12相关检查 **PASS3.936972/169封存**，原related60累计24.803208；新反例普通两跳完整packet/routing/receipt及清witness冷读通过。原ordinary第12项复用未另跑。
+
+Python192 `51a36379873d1fe83bf0f0cf0f01509d28620f75426d1587e0d90fa948bf9dff`，Native89/Core171/实际CLI不变；453来源绑定 **PASS1.069785**，原入口未分配实际拒绝、分配guard接受，驱动字面恢复AST及旧测试AST保持。唯一V44原180/一次于2026-10-07T00:13:36.645590Z启动，成熟15/全8Native冷验/每个完整信封/独立heads/守恒/正常退出且全程<=180才通过。地面结果不授予Native资格，不声称唯一成熟原因；V43及所有旧失败、600/all12/keyless/VALUE-STRICT-01/长期/PQ/组合/独立/物理均仍FAIL/OPEN。冻结正文/PDF/官网不改。
+
+[实际修复和运行范围](docs/operations/evidence/regional-bft-forwarded-current-v30-development-outcome-20261007.json)。
+
+### V44终态；同帧副本跨近期/历史类的选择缺口
+
+V44严格 **FAIL原180/193.844含收尾/1929封存**，helper1 ScopeDeadline，四CLI均正常exit0，无forced/guardian/cleanup/pin异常。refs14/14/14/14；15成熟/全8原生冷验/每个信封/heads/守恒未完成，所有旧完整范围仍FAIL。实际生成18目的边完整原信封/receipt/companion保持；source3Prepare→0在relay2 custody→prepare23.147982秒（V43同角色57.456231），不同fixture不称受控benchmark或唯一成熟因果。源端Proposal2→0首prepare58.298886秒。
+
+实际step29先选同帧Proposal2→1；从recent转history后newest33又选已prepare的同一副本，Proposal2→0仍未prepare。原hint匹配消费，原classes由step奇偶与groups位置严格识别；当前copy位置按kind区分。原20只读累计2.938038；首reader错误用终态active索引标记archive帧为非current，保留原件，V2依据完整认证frame和实际hint修正，不将V1错误用于资格。
+
+下一一次原10/remaining related60全新签名小反例：同帧两目的完整消息从recent变history时，缺失新类copy位置是否重置选择。只在newest pair缺本类位置、且同peer/scope/frame另一类已有精确位置时候选fallback；oldest与双miss原行为、512/4MiB/first2/另一类floor/full4/auth/atomic/cold不变。反例不证不修，不原样重跑180/600。冻结白皮书与验收标准保持，唯一作者继续。
+
+[真实终态与下一判别](docs/operations/evidence/regional-bft-forwarded-current-v44-terminal-next-20261007.json)。

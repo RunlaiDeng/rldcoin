@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V29'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V30'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1392,6 +1392,15 @@ class Node:
                 start=bisect_right(ordered,after)%len(ordered)
                 rotated=[i for frame in ordered[start:]+ordered[:start] for i in by_frame[frame]]
                 for j,i in zip(positions,rotated):commits[j]=i
+            # The newest priority pair serves a retained forwarded current frame
+            # before a locally originated one. This preserves order within each
+            # group and the oldest pair's existing failed-send selection.
+            if (self.state['transit_class_steps'][peer]//4)%2==0:
+                forwarded=[i for i in commits
+                           if self.state['messages'][i]['packet']['body']['node_id']!=self.id]
+                local=[i for i in commits
+                       if self.state['messages'][i]['packet']['body']['node_id']==self.id]
+                commits=forwarded+local
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]
