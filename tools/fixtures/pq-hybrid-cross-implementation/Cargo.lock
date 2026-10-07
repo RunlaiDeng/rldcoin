@@ -284,6 +284,7 @@ dependencies = [
  "fips204",
  "hex",
  "libc",
+ "rand",
  "rld-core",
  "serde",
  "serde_json",

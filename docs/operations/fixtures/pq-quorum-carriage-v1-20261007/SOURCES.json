@@ -1,0 +1,72 @@
+[
+  {
+    "path": "pq_public_carriage_candidate.py",
+    "source": "tools/pq_public_carriage_candidate.py",
+    "sha256": "8c1902108621b659b7f32ab2ebb3ac45c3c80d825b8506906f4404c571572fdc",
+    "bytes": 3444,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "test_pq_public_carriage_candidate.py",
+    "source": "tools/test_pq_public_carriage_candidate.py",
+    "sha256": "f28583fbf88d01597450ae386d9007af55ba82f3fd13dff557dc675c9795815c",
+    "bytes": 2987,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "rld-hybrid-quorum-core-candidate.rs",
+    "source": "tools/fixtures/pq-hybrid-cross-implementation/src/bin/rld-hybrid-quorum-core-candidate.rs",
+    "sha256": "478f0d91096aad7a0ae26f6415fbad56ed6449d96fb1dfe5cf6996e81368f9b9",
+    "bytes": 4911,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "rld-hybrid-quorum-public-fixture-candidate.rs",
+    "source": "tools/fixtures/pq-hybrid-cross-implementation/src/bin/rld-hybrid-quorum-public-fixture-candidate.rs",
+    "sha256": "c0516a6869ab452063e2b3e89edf04c8f37177b2aa6eb1d32e8ac324656338e0",
+    "bytes": 4080,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "v5-failed-generator-source.rs",
+    "source": "tmp/default-relay-20260930/pq-quorum-carriage-v5-failed-generator-source-20261007.rs",
+    "sha256": "078709f31927b31ca5781b33ce18e3e06a3da6af703949e0097bf1be82870d34",
+    "bytes": 4073,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "check-pq-quorum-carriage-v5-20261007.py",
+    "source": "tmp/default-relay-20260930/check-pq-quorum-carriage-v5-20261007.py",
+    "sha256": "1336ea3142371b1e4dd3cafb4ef147a3636f8b48adc3d0b43eaa3c58a6a8c5a8",
+    "bytes": 17029,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "check-pq-quorum-carriage-v6-20261007.py",
+    "source": "tmp/default-relay-20260930/check-pq-quorum-carriage-v6-20261007.py",
+    "sha256": "037312d9aedccaceb836225190877aa1607e05a0ed240a3e157de31e4307c5f2",
+    "bytes": 17967,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "check-pq-quorum-reverse-provider-v7-20261007.py",
+    "source": "tmp/default-relay-20260930/check-pq-quorum-reverse-provider-v7-20261007.py",
+    "sha256": "f2927e7dcfc229fbb64aef106b36016fd2f9399294c091dafc81481c983f0506",
+    "bytes": 6726,
+    "public_generated_fixture": false
+  },
+  {
+    "path": "caller-trusted-public-roster.json",
+    "source": "tmp/default-relay-20260930/pq-quorum-carriage-v6-20261007-private/caller-trusted-public-roster.json",
+    "sha256": "96371633a1cd26c900ecbedb6111d69abd5091b8f6c000f5d612d8507cce602b",
+    "bytes": 22584,
+    "public_generated_fixture": true
+  },
+  {
+    "path": "genuine-public-quorum.json",
+    "source": "tmp/default-relay-20260930/pq-quorum-carriage-v6-20261007-private/genuine-public-quorum.json",
+    "sha256": "222b007ca588f193ceb707813af31d5fd9ad16d6716c588afb7b68ef8c595ff5",
+    "bytes": 29679,
+    "public_generated_fixture": true
+  }
+]

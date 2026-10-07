@@ -1,5 +1,15 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 连续主线：完整三签原包上限分片运输/冷重组/Core及反向实现互通通过
+
+实际新增pure公开分片与全quorum Core adapter/新RAM-only公钥签名夹具，未改Core182d728/完整284或现有C5234/TLS2388/Node/Native/旧网络账本规则。whole固定32768、每片保留原12288上限，独立预期SHA512，exact count/index/12000 data/最后片长度；未知版本、错误大小/次序值、缺/重/混/篡改/总root拒绝，任何到达顺序不改变原字节。暂缺是unavailable，无文件/币/保管/nonce/签名锁授权；重组/运输receipt不等于finality。
+
+V5 **FAIL7.867987**保留，唯一作者新公开生成器final Result String/&str编译错误；已过5纯分片回归，未生成任何钥/签/文件/网络。仅修正owned error转换，旧源和空seal保存，不重跑5个不变真实测试。V6 **PASS26.483852、原120累计34.351839**：全新互认证证书+新RAM4个dual身份/3dual签，完整29679B各三片实际TLS按2→0→1送达；每片 **12108/12108/5787B**，冷读完整重组逐字相等，实际Core合法exit0、内层坏PQ同样运输完整但Core exit1。缺/重复/篡改冷数据拒绝且输入未变。23私有项封存、forced[]，自有进程正常终态，不重开任何旧failed币/钥/保管。
+
+原budget内V7 **PASS0.105415、总34.457254/120**：只读成功夹具两份公开文件，由不同OpenSSL3.6.3实现实际验证本轮Rust-fips204/dalek三成员全部6signature halves；改Ed/改PQ/错context三拒绝。0private-key read/签/网络/Native/Runtime/Node。不是新增重复TLS运输或标准全套；同源互验与两实现互通分开记录。[最终有限profile](operations/evidence/pq-quorum-carriage-reference-v1-qualified-profile-20261007.json)、[三片实际结果](operations/evidence/pq-quorum-carriage-v6-20261007-checks.json)、[反向provider](operations/evidence/pq-quorum-reverse-provider-v7-20261007-checks.json)、[源码/公开向量/失败](operations/fixtures/pq-quorum-carriage-v1-20261007/README.md)。公开样本policy不是已采用trusted政策，真实接收方须独立获取；新Root输入不授任何P1–P8/主网/币权。
+
+已推送前阶段main2b97191b（Core284）且远端SHA/tree一致，记录CI无运行；当前完成阶段同样审阅ordinary main push，CI只补原read-only stdlib job五项，不更改账号/权限/服务器/官网。下一最小命题为实际OpenSSL ML-KEM-768在固定官方FIPS203标准向量是否执行exact decapsulation/implicit-rejection，而不是由TLS group标签推断原语资格：先读取官方来源/API、选择一个有界最小实际反例，保留当前有限通过，未知接口或矛盾即不授资格/停止该方法。完整FIPS203/204、独立review/完整transaction/archive/续证治理资源链/持久PQ采用/长期/异步物理/P1–P8及全目标仍OPEN。冻结2ba62421/c59f9fe8/86821d19及全部S/R/I/A–G/N/P不改，原预算/票数/成熟/容量、所有旧FAIL均保持，唯一作者持续。
+
 ## 2026-10-07 连续主线：固定三取四混合quorum完成Core有限回归；继续完整分片运输
 
 新Core `hybrid_quorum.rs`为未采用的固定3-of-4 Finality候选：调用者独立认证4身份/每个本地trust-epoch-nonce，exact3/sorted/distinct member逐份执行真实Ed25519 AND ML-DSA-87；整个配置共享任一Ed或PQ半份身份拒绝，任何缺票/未知/重复/错member/错role-root-nonce-horizon/trust/坏半签拒绝，不从重复成功single验签计3票。四种三人子集均通过，不可用未投票第四人不降低threshold。候选wire whole32KiB parse前拒超长、canonical再编码拒duplicate/unknown/alternateJSON/混合intent；decode不授finality权限，无Native票制/账本激活/锁安装改变。

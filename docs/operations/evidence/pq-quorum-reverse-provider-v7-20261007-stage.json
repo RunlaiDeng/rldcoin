@@ -1,0 +1,22 @@
+{
+  "format": "RLD-PQ-QUORUM-REVERSE-PROVIDER-V7",
+  "budget_seconds": 120,
+  "attempts": 1,
+  "previous_used_seconds": 34.351839,
+  "protected_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-pq-quorum-reverse-provider-v7-20261007.py": "f2927e7dcfc229fbb64aef106b36016fd2f9399294c091dafc81481c983f0506",
+    "/Users/galaxy/GitHub/rldcoin/docs/operations/evidence/pq-quorum-carriage-v6-20261007-checks.json": "46ed89496ef4fb538951545ffbd3035c26e9c6188bd1634a735ea60853f9a3d7",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-quorum-carriage-v6-20261007-private/PRIVATE_INVENTORY.json": "43f5979fa378e7db5a1b939345751bf436af59c3d3912b84745c528a7796c8cd",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-quorum-carriage-v6-20261007-private/caller-trusted-public-roster.json": "96371633a1cd26c900ecbedb6111d69abd5091b8f6c000f5d612d8507cce602b",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-quorum-carriage-v6-20261007-private/genuine-public-quorum.json": "222b007ca588f193ceb707813af31d5fd9ad16d6716c588afb7b68ef8c595ff5",
+    "/opt/homebrew/opt/openssl@3/bin/openssl": "103fc7706cf6646f226d96f29242d81890363499afc730e7ef1fadd64b3a123c",
+    "/opt/homebrew/Cellar/openssl@3/3.6.3/lib/libcrypto.3.dylib": "a12805a18cd5e4f733fa8727b91afa08b587f9da5a760517cd79cb508a3a3f71"
+  },
+  "hypothesis": "Verify all three fresh fips204/dalek public quorum signatures in independent OpenSSL3.6.3 default implementation, rather than only self-library verification or prior OpenSSL-to-Rust direction. Read exact two public files from successful V6, never retained private keys. Verify six actual halves and refuse changed Ed/PQ/wrongcontext with no signing/network/Node/Native/Runtime. Continue remaining original120 including public extraction and sealing; old V5 FAIL and V6 source-bound pass preserved.",
+  "exit": "First guard/outcome/provider error or original120 refuses and preserves failure; no unchanged retry or authorization grant.",
+  "core_source": "d728ef48902986aa2b6e98b21c08ea23c12eab0f414a4a7ddad41c435783ba9a",
+  "production_source_changes": 0,
+  "signing_calls": 0,
+  "network_calls": 0,
+  "whole_goal_completed": false
+}
