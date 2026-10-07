@@ -444,6 +444,10 @@ class Service:
             except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
                 observe_os_error(error,'native-outgoing')
+        # Finish the current contact unit before obeying stop. Never start
+        # another consensus/signing unit; already retained effects stay intact.
+        if getattr(self.tcp, 'running', True) is False:
+            raise tcp.MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
         consensus = None
         stage_seconds['native_receive_and_outgoing'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()
