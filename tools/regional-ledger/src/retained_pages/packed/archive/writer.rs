@@ -174,7 +174,7 @@ impl<T: Serialize + DeserializeOwned> LosslessArchiveWriterCandidate<T> {
     }
 
     #[cfg(test)]
-    pub(super) fn pending_candidate(&self) -> (usize, usize, usize) {
+    pub(crate) fn pending_candidate(&self) -> (usize, usize, usize) {
         (self.group.len(), self.held, self.builder.packs.len())
     }
 

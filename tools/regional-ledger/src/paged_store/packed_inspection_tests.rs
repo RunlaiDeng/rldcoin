@@ -505,6 +505,11 @@ fn actual4112_heights_evict_old_body_and_complete_late_certificate_cold_matches(
 fn streaming32_signed_native_heights_cold_matches_without_whole_page_list() {
     consolidated_native_history(32, 0, true)
 }
+#[test]
+#[ignore = "single bounded long-history parent only; public no-value keys, no network or adopted state"]
+fn streaming200016_native_heights_cross_halving_and_late_original_cold_matches() {
+    consolidated_native_history(200016, 16, true)
+}
 fn consolidated_native_history(heights: u64, late_retries: usize, streaming: bool) {
     use super::body_witness_tests::certified_with_commands;
     use crate::tests::signature;
@@ -525,6 +530,7 @@ fn consolidated_native_history(heights: u64, late_retries: usize, streaming: boo
         .unwrap()
     });
     let mut payments = 0;
+    let mut pending_group_peak = 0usize;
     let started = std::time::Instant::now();
     let mut original_bytes = 0;
     let mut first_record = None;
@@ -593,9 +599,15 @@ fn consolidated_native_history(heights: u64, late_retries: usize, streaming: boo
             previous = Some(Hash(Sha256::digest(&raw).into()));
             if let Some(writer) = writer.as_mut() {
                 writer.retain_complete_page(raw).unwrap();
+                let (pages, held, _) = writer.pending_candidate();
+                assert!(pages <= 64 && held <= MAX_BYTES);
+                pending_group_peak = pending_group_peak.max(held);
             } else {
                 pages.push(Ok(raw));
             }
+        }
+        if streaming && height % 8192 == 0 {
+            println!("streaming-native-progress height={} signed_payments={} original_bytes={} pending_group_peak={} elapsed_seconds={:.3}", height, payments, original_bytes, pending_group_peak, started.elapsed().as_secs_f64());
         }
     }
     if late_retries > 0 {
@@ -625,6 +637,9 @@ fn consolidated_native_history(heights: u64, late_retries: usize, streaming: boo
         original_bytes += raw.len();
         if let Some(writer) = writer.as_mut() {
             writer.retain_complete_page(raw).unwrap();
+            let (pages, held, _) = writer.pending_candidate();
+            assert!(pages <= 64 && held <= MAX_BYTES);
+            pending_group_peak = pending_group_peak.max(held);
         } else {
             pages.push(Ok(raw));
         }
@@ -690,5 +705,5 @@ fn consolidated_native_history(heights: u64, late_retries: usize, streaming: boo
         .values()
         .map(|(_, bytes, _)| bytes)
         .sum::<u64>();
-    println!("lossless-consolidated-complete height={} records={} signed_payments={} coins={} active={} original_page_bytes={} retained_archive_bytes={} hot_seconds={:.6} seal_seconds={:.6} cold_child_seconds={:.6} source_root={} streaming={} native_200001_qualification=false",expected.height,expected.record_count,payments,r.chain.ledger.coins.len(),r.evidence.snapshots.len(),original_bytes,archive_bytes,hot_seconds,seal_seconds,cold_seconds,expected.ledger_root.to_hex(),streaming);
+    println!("lossless-consolidated-complete height={} records={} signed_payments={} coins={} active={} original_page_bytes={} retained_archive_bytes={} hot_seconds={:.6} seal_seconds={:.6} cold_child_seconds={:.6} source_root={} streaming={} pending_group_peak={} complete_adoption_qualification=false",expected.height,expected.record_count,payments,r.chain.ledger.coins.len(),r.evidence.snapshots.len(),original_bytes,archive_bytes,hot_seconds,seal_seconds,cold_seconds,expected.ledger_root.to_hex(),streaming,pending_group_peak);
 }
