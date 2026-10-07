@@ -9,7 +9,7 @@ from unittest.mock import patch
 import interstellar_mesh as mesh
 import interstellar_transfer as wire
 import regional_bft_pinned_cold as cold
-from regional_bft_retention import Messages, pack_state
+from regional_bft_retention import Messages, pack_state, unpack_state
 from verify_regional_bft_stopped_batch import verify_stopped_state_pinned, verify_stopped_state_pinned_observed
 
 
@@ -166,6 +166,28 @@ class PinnedColdTests(unittest.TestCase):
         result=verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
         self.assertEqual(result['messages_authenticated'],5)
         self.assertEqual([action for action,_ in self.native.calls],['bft-network-check-plan-observed'])
+
+    def test_stopped_observed_expanded_byte_total_reuses_authenticated_batch_sizes(self):
+        before=self.messages(10,1234)
+        directory=self.root/'one-materialization';directory.mkdir(mode=0o700)
+        config=dict(state=str(directory),format='RLD-REGIONAL-BFT-NODE-V1',key='3'*64)
+        state=dict(format=config['format'],binding=dict(currency='1'*64,region='2'*64,key='3'*64),
+            messages=self.runtime.state['messages'],height=10,tip='4'*64,snapshot_cache=[],cursor=0)
+        path=directory/'state.json';mesh.atomic(path,pack_state(state));retained=path.read_bytes()
+        packed_messages=unpack_state(wire.decode_json(retained))['messages']
+        expected={ident:packed_messages.payload(ident) for ident in packed_messages}
+        original=Messages.payload;calls=[]
+        def counted(table,ident):
+            calls.append((ident,__import__('sys')._getframe(1).f_code.co_name))
+            return original(table,ident)
+        with patch.object(Messages,'payload',new=counted):
+            result=verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+        self.assertEqual(result['expanded_envelope_bytes_authenticated'],sum(map(len,before.values())))
+        self.assertEqual([wire.canonical(item) for batch in self.native.inputs[0]
+                          for item in wire.decode_json(batch)],list(expected.values()))
+        self.assertEqual(path.read_bytes(),retained)
+        required=[(ident,'unpack') for ident in expected]+[(ident,'check_retained_pinned') for ident in expected]
+        self.assertEqual(calls,required,'complete payloads must not be materialized again solely for byte total')
 
     def observed_state(self,count=5):
         self.messages(count,20)

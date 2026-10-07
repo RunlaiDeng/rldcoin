@@ -85,8 +85,16 @@ def _verify_stopped_state(native, config, current, root, expected_history_head=N
     # Temporary inputs live outside the private source; no Runtime is opened.
     # The existing Native batch checks every complete envelope and binds exact
     # request bytes, ordered values, domain and nonmutating response flags.
-    total = sum(len(state['messages'].payload(ident)) for ident in state['messages'])
     pinned = None if authenticated_state is None else authenticated_state[1]
+    if authenticated_state is None:
+        total = sum(len(state['messages'].payload(ident)) for ident in state['messages'])
+    else:
+        # Already fully authenticated exact batch bytes contain each payload
+        # plus one comma per extra item and two brackets per batch: N + B.
+        # Reuse only this operation's sizes; unpack and Native checks stay full.
+        total = pinned.get('processed_envelope_batch_bytes', 0) - len(state['messages']) - pinned['batches']
+        mesh.require(type(total) is int and total >= len(state['messages']),
+                     'authenticated complete envelope byte total differs')
     if authenticated_state is None:
         with tempfile.TemporaryDirectory(prefix='rld-stopped-bft-batch-') as scratch:
             request = SimpleNamespace(root=Path(scratch).resolve(), native=native,
