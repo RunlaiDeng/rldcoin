@@ -1578,3 +1578,21 @@ V44严格 **FAIL原180/193.844含收尾/1929封存**，helper1 ScopeDeadline，�
 下一一次原10/remaining related60全新签名小反例：同帧两目的完整消息从recent变history时，缺失新类copy位置是否重置选择。只在newest pair缺本类位置、且同peer/scope/frame另一类已有精确位置时候选fallback；oldest与双miss原行为、512/4MiB/first2/另一类floor/full4/auth/atomic/cold不变。反例不证不修，不原样重跑180/600。冻结白皮书与验收标准保持，唯一作者继续。
 
 [真实终态与下一判别](operations/evidence/regional-bft-forwarded-current-v44-terminal-next-20261007.json)。
+
+### V31：同帧跨类位置的最小回退，原V45运行
+
+全新真实签名oldV30反例 **FAIL .681392/14封存**；V31仅在newest原优先对缺本类copy位置时，借用同peer/context/frame另一类精确primitive位置。oldest及双miss原顺序、first2/另一类floor/full4/512/4MiB/auth/atomic/cold均保持。第一次13相关在第6项cold失败2.607224/85封存，v2第1项cold失败.840516/14封存；地面relay缺实际companion的current-frame提示且普通contact顺序随机，两个ground方法补同一已签名帧提示，不增加原2relayticks、不缩减cold断言。原13首报告的once_final_ordinary_executed=true元数据误置，failfast未到13，未用于资格。全部失败留存。
+
+最终v3 **13PASS4.497490/183封存**，原related60累计33.429830。旧方法仅上述relay提示模型变更，其余旧测试完整AST不变；新反例ordinary完整两跳packet/routing/receipt/清witness冷读、oldest与双miss通过，原第13项ordinary资格仅执行一次复用。Python192 `e4f243b6e6d0e26dc77f289860b0d66f9fe6d138c6976f0b99fafcff9b542de3`，Native89/Core171/BFT/TCP/实际binary不变，453绑定 **PASS1.005986**，原0755入口未分配拒绝/已分配guard接受。V45唯一原180/一次于2026-10-07T00:26:44.934245Z启动；成熟15/全8Nativecold/每个信封/heads/守恒/正常停且whole<=180仍必需。V44及全部历史完整范围FAIL，600/all12/keyless与VALUE-STRICT-01/长期/PQ/物理/独立/组合OPEN；冻结白皮书与全部验收不减。
+
+[实际源与有限范围](operations/evidence/regional-bft-cross-class-copy-v31-development-outcome-20261007.json)。
+
+### V45终态与连接阶段的下一最小判别
+
+V45 **FAIL原180/193.453含收尾/1774封存**，四CLI正常exit0、helper1 ScopeDeadline，无forced/guardian/cleanup/pin异常。refs14/14/14/14，15成熟/全8Nativecold/每个信封/heads/守恒未完成。实际parent14仅生成Proposal2、Prepare2/3的9条目的边，6完整，Prepare2→0/1、Proposal2→1缺完整目的保管。原V31同帧跨类13项有限通过保持，不替代真实范围。
+
+准确Proposal2→1源首prepare4.850158秒，original73/79均connect阶段SSLEOFError，无request_sent/ACK；“首次选取太晚”不适用于此准确目标。旧记录没有接收槽占用的准确连接归因，不能据缺日志称唯一原因。结构化原20累计1.756954，额外终态支持读数未计时另记；边timing读者使用的destination事件过滤未含native_envelope_received，空列表不能作Native缺失证据。
+
+下一一次原10/剩余TCP60全新真实固定TLS小反例：原2槽占用，在源连接开始30ms后释放，原连接是否立即EOF而未等到空位。只在反例支持后候选原.2秒内接收前等待；原2worker/1input/内核backlog2/客户端3秒/TLS固定身份/签名/拒绝/保管/冷验不减，先相关护栏再决定必要新scope。不原样重跑180/600，不重开旧1774。冻结与全条款保持，唯一作者继续。
+
+[终态与具体判别](operations/evidence/regional-bft-cross-class-copy-v45-terminal-next-20261007.json)。

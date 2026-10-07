@@ -1,0 +1,2165 @@
+{
+  "completed": true,
+  "edges": [
+    {
+      "source": 2,
+      "destination": 0,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "2d5f27b06a4371be65110ad3aa60bf07e5cfd768b8271484efed58f7778861b8",
+      "packet_id": "cb3a69e2160c958f30630d9db02696af0c51e51bc70582d6c3eaa7ace78b63b8",
+      "path": [
+        {
+          "slot": 0,
+          "first_custody_since_enqueue": null,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "destination": 1,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "2d5f27b06a4371be65110ad3aa60bf07e5cfd768b8271484efed58f7778861b8",
+      "packet_id": "a14c96a9718090d67f0c98c3aeabf8513666c7919b333ffa6eb375d6387212c4",
+      "path": [
+        {
+          "slot": 1,
+          "first_custody_since_enqueue": null,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "destination": 3,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "2d5f27b06a4371be65110ad3aa60bf07e5cfd768b8271484efed58f7778861b8",
+      "packet_id": "2ed261acdff5dd0f7a9013f6fdba5ee97e9a65155eae7c2305a0a587f778edc0",
+      "path": [
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 1.666768499999307,
+          "custody_to_first_prepare_seconds": 1.666768499999307,
+          "first_next_peer": 3,
+          "events": []
+        },
+        {
+          "slot": 3,
+          "first_custody_since_enqueue": 1.9460082090226933,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "destination": 0,
+      "kind": "Proposal",
+      "round": 0,
+      "body_id": "b1d432d533b9c21369a4b3ec8e5ef0c9d33e1f2922c98f655439f3a241901b1f",
+      "packet_id": "07c51fc38d3725f793e156c95b19ee2b96678723cf15fa0df9fd65a0c288eb4f",
+      "path": [
+        {
+          "slot": 0,
+          "first_custody_since_enqueue": 41.532580374972895,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 1,
+          "first_custody_since_enqueue": 40.1547440829454,
+          "first_prepare_since_enqueue": 41.22137395798927,
+          "custody_to_first_prepare_seconds": 1.0666298750438727,
+          "first_next_peer": 0,
+          "events": []
+        },
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 34.2553058329504,
+          "custody_to_first_prepare_seconds": 34.2553058329504,
+          "first_next_peer": 1,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "destination": 1,
+      "kind": "Proposal",
+      "round": 0,
+      "body_id": "b1d432d533b9c21369a4b3ec8e5ef0c9d33e1f2922c98f655439f3a241901b1f",
+      "packet_id": "920f1671f78a8b1cc10feff0251b4b1b01421c91eeadab0563ffdc0f82689f41",
+      "path": [
+        {
+          "slot": 1,
+          "first_custody_since_enqueue": null,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 4.850157624983694,
+          "custody_to_first_prepare_seconds": 4.850157624983694,
+          "first_next_peer": 1,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "destination": 3,
+      "kind": "Proposal",
+      "round": 0,
+      "body_id": "b1d432d533b9c21369a4b3ec8e5ef0c9d33e1f2922c98f655439f3a241901b1f",
+      "packet_id": "a1bfd38361953bcca383f92c8fb8e4b4142380ed8cf4d9717310c28a71f93306",
+      "path": [
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 0.718564625014551,
+          "custody_to_first_prepare_seconds": 0.718564625014551,
+          "first_next_peer": 3,
+          "events": []
+        },
+        {
+          "slot": 3,
+          "first_custody_since_enqueue": 0.9645172500167973,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "destination": 0,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "9a30b8c9a9bdf457db39db62b6e228bcb71c3f87c9a044e7a7fba74406be7951",
+      "packet_id": "d358bf32e2b47fa07bb7508b0f5f039f409fd274fa0dbd3316a46952b5dd3d84",
+      "path": [
+        {
+          "slot": 0,
+          "first_custody_since_enqueue": 47.12476891599363,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 1,
+          "first_custody_since_enqueue": 46.18718533299398,
+          "first_prepare_since_enqueue": 46.823925958015025,
+          "custody_to_first_prepare_seconds": 0.6367406250210479,
+          "first_next_peer": 0,
+          "events": []
+        },
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 3.3218275000108406,
+          "first_prepare_since_enqueue": 42.523652750009205,
+          "custody_to_first_prepare_seconds": 39.201825249998365,
+          "first_next_peer": 1,
+          "events": []
+        },
+        {
+          "slot": 3,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 1.1911204580101185,
+          "custody_to_first_prepare_seconds": 1.1911204580101185,
+          "first_next_peer": 2,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "destination": 1,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "9a30b8c9a9bdf457db39db62b6e228bcb71c3f87c9a044e7a7fba74406be7951",
+      "packet_id": "e5d8b9a149a4a53268db2616881899ca6f6cde8c877b0f8f928a5f53356364b2",
+      "path": [
+        {
+          "slot": 1,
+          "first_custody_since_enqueue": 15.260223874996882,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 3.321834583010059,
+          "first_prepare_since_enqueue": 13.890643874998204,
+          "custody_to_first_prepare_seconds": 10.568809291988146,
+          "first_next_peer": 1,
+          "events": []
+        },
+        {
+          "slot": 3,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 1.1911256249877624,
+          "custody_to_first_prepare_seconds": 1.1911256249877624,
+          "first_next_peer": 2,
+          "events": []
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "destination": 2,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "9a30b8c9a9bdf457db39db62b6e228bcb71c3f87c9a044e7a7fba74406be7951",
+      "packet_id": "0a6bc091e650c4432883d9042639bb326637840a2b51c3d361d660fd325ba0c9",
+      "path": [
+        {
+          "slot": 2,
+          "first_custody_since_enqueue": 3.32182970904978,
+          "first_prepare_since_enqueue": null,
+          "custody_to_first_prepare_seconds": null,
+          "first_next_peer": null,
+          "events": []
+        },
+        {
+          "slot": 3,
+          "first_custody_since_enqueue": 0.0,
+          "first_prepare_since_enqueue": 1.1911326670087874,
+          "custody_to_first_prepare_seconds": 1.1911326670087874,
+          "first_next_peer": 2,
+          "events": []
+        }
+      ]
+    }
+  ],
+  "original_observations": [
+    {
+      "slot": 0,
+      "dropped_events": 416,
+      "last_phase": {
+        "committed": null,
+        "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+        "elapsed_seconds": 153.217343,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 36.898365,
+        "prepared": null,
+        "round": 1,
+        "sequence": 540,
+        "stopped": false
+      },
+      "retained_quorums": [
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 142.027502,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 486,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 142.027529,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 487,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 143.115453,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 491,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 143.115477,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 492,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 144.219586,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 496,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 144.219611,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 497,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 145.219983,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 501,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 145.220005,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 502,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 146.567906,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 508,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 146.567932,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 509,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 147.732211,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 513,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 147.732239,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 514,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 148.680807,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 518,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 148.680837,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 519,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 149.695342,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 523,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 149.695365,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 524,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 1,
+          "elapsed_seconds": 150.998383,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 531,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 150.998408,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 532,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 1,
+          "elapsed_seconds": 152.151578,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 536,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 152.151603,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 537,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 1,
+          "elapsed_seconds": 153.217448,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 541,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 153.217475,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 542,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        }
+      ],
+      "retained_sign_actions": [],
+      "retained_current_receive_ends": [
+        {
+          "body_id": "b1d432d533b9c21369a4b3ec8e5ef0c9d33e1f2922c98f655439f3a241901b1f",
+          "context_id": "c34b84a65f07ec9f6884e8c0743ecb0c648f6134d675a1f044428ae7b8fb972d",
+          "duration_seconds": 0.010791,
+          "elapsed_seconds": 141.606928,
+          "envelope_id": "a85dffa8ab29da25b38c772fe5d2a10bda0d5579cf0ccdfda752b018862b35ec",
+          "kind": "receive-end",
+          "kind_received": "Proposal",
+          "phase": null,
+          "round": 0,
+          "sequence": 483,
+          "succeeded": true
+        },
+        {
+          "body_id": "9a30b8c9a9bdf457db39db62b6e228bcb71c3f87c9a044e7a7fba74406be7951",
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "duration_seconds": 0.009068,
+          "elapsed_seconds": 150.604254,
+          "envelope_id": "1024f3ea9ea94d91a31461f4cead69022ceae111b0142420e2124ee211f3c30e",
+          "kind": "receive-end",
+          "kind_received": "Vote",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 529,
+          "succeeded": true
+        }
+      ],
+      "operations": {
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.088378,
+          "total_seconds": 0.088378
+        },
+        "bft-network-check": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.138197,
+          "total_seconds": 3.113322
+        },
+        "bft-network-inspect-batch": {
+          "calls": 32,
+          "failures": 0,
+          "max_seconds": 0.175335,
+          "total_seconds": 4.424581
+        },
+        "bft-network-pack": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.152515,
+          "total_seconds": 2.945917
+        },
+        "bft-quorum": {
+          "calls": 34,
+          "failures": 0,
+          "max_seconds": 0.108142,
+          "total_seconds": 2.988451
+        },
+        "bft-sign": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.304385,
+          "total_seconds": 0.815087
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.256603,
+          "total_seconds": 0.405407
+        },
+        "consensus-tick": {
+          "calls": 116,
+          "failures": 2,
+          "max_seconds": 1.686092,
+          "total_seconds": 39.968035
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.205959,
+          "total_seconds": 0.205959
+        },
+        "sign-native": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.304406,
+          "total_seconds": 0.815137
+        },
+        "sign-outbox": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.509339,
+          "total_seconds": 1.187411
+        },
+        "sign-pending": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.000762,
+          "total_seconds": 0.001643
+        },
+        "sign-response": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.000515,
+          "total_seconds": 0.001408
+        },
+        "sign-status": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.197483,
+          "total_seconds": 0.493468
+        }
+      },
+      "no_absence_inference_from_evicted_ring": true
+    },
+    {
+      "slot": 1,
+      "dropped_events": 366,
+      "last_phase": {
+        "committed": null,
+        "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+        "elapsed_seconds": 152.481785,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 29.424933,
+        "prepared": null,
+        "round": 1,
+        "sequence": 492,
+        "stopped": false
+      },
+      "retained_quorums": [],
+      "retained_sign_actions": [
+        {
+          "action": "Timeout",
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "elapsed_seconds": 122.040616,
+          "kind": "sign-start",
+          "round": 0,
+          "sequence": 415
+        },
+        {
+          "action": "Timeout",
+          "duration_seconds": 1.016238,
+          "elapsed_seconds": 123.056847,
+          "kind": "sign-end",
+          "sequence": 421,
+          "succeeded": true
+        }
+      ],
+      "retained_current_receive_ends": [
+        {
+          "body_id": "9a30b8c9a9bdf457db39db62b6e228bcb71c3f87c9a044e7a7fba74406be7951",
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "duration_seconds": 0.008715,
+          "elapsed_seconds": 119.538695,
+          "envelope_id": "1024f3ea9ea94d91a31461f4cead69022ceae111b0142420e2124ee211f3c30e",
+          "kind": "receive-end",
+          "kind_received": "Vote",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 407,
+          "succeeded": true
+        }
+      ],
+      "operations": {
+        "bft-candidate": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.086456,
+          "total_seconds": 0.086456
+        },
+        "bft-certify": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.059143,
+          "total_seconds": 0.059143
+        },
+        "bft-network-check": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.145563,
+          "total_seconds": 3.106324
+        },
+        "bft-network-inspect-batch": {
+          "calls": 29,
+          "failures": 0,
+          "max_seconds": 0.177907,
+          "total_seconds": 4.058264
+        },
+        "bft-network-pack": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.130587,
+          "total_seconds": 3.087394
+        },
+        "bft-quorum": {
+          "calls": 14,
+          "failures": 0,
+          "max_seconds": 0.097648,
+          "total_seconds": 1.166212
+        },
+        "bft-sign": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.341622,
+          "total_seconds": 1.105224
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.227771,
+          "total_seconds": 0.37247
+        },
+        "consensus-tick": {
+          "calls": 98,
+          "failures": 24,
+          "max_seconds": 1.884726,
+          "total_seconds": 42.5538
+        },
+        "finalize": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.196153,
+          "total_seconds": 0.196153
+        },
+        "sign-native": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.341631,
+          "total_seconds": 1.105268
+        },
+        "sign-outbox": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.49623,
+          "total_seconds": 1.520218
+        },
+        "sign-pending": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.00248,
+          "total_seconds": 0.007828
+        },
+        "sign-response": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.006476,
+          "total_seconds": 0.008661
+        },
+        "sign-status": {
+          "calls": 4,
+          "failures": 0,
+          "max_seconds": 0.175134,
+          "total_seconds": 0.564351
+        }
+      },
+      "no_absence_inference_from_evicted_ring": true
+    },
+    {
+      "slot": 2,
+      "dropped_events": 525,
+      "last_phase": {
+        "committed": null,
+        "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+        "elapsed_seconds": 153.302786,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 52.015178,
+        "prepared": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e",
+        "round": 0,
+        "sequence": 648,
+        "stopped": false
+      },
+      "retained_quorums": [
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 126.184012,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 527,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 126.184038,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 528,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 126.184363,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 529,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 127.648746,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 533,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 127.648771,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 534,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 127.649096,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 535,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 128.98549,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 539,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 128.985515,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 540,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 128.985852,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 541,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 130.437271,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 545,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 130.437296,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 546,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 130.437629,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 547,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 132.031369,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 552,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 132.031397,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 553,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 132.031717,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 554,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 133.065111,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 558,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 133.065139,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 559,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 133.065476,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 560,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 134.110123,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 564,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 134.11015,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 565,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 134.110478,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 566,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 135.999765,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 570,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 135.999792,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 571,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 136.000127,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 572,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 137.242988,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 576,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 137.243014,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 577,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 137.243338,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 578,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 138.869996,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 584,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 138.870034,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 585,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 138.87036,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 586,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 139.940104,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 590,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 139.940129,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 591,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 139.94046,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 592,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 141.298704,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 596,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 141.29873,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 597,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 141.299072,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 598,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 142.647166,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 602,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 142.647196,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 603,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 142.647531,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 604,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 144.108184,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 608,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 144.108209,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 609,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 144.108542,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 610,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 145.800811,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 616,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 145.800838,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 617,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 145.801158,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 618,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 147.20144,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 622,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 147.201467,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 623,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 147.201795,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 624,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 148.997775,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 630,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 148.997801,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 631,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 148.998121,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 632,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 150.51465,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 636,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 150.514676,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 637,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 150.515004,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 638,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 151.731946,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 642,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 151.731973,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 643,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 151.732298,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 644,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 153.304418,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 649,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 153.304448,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 650,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 153.304759,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 651,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        }
+      ],
+      "retained_sign_actions": [],
+      "retained_current_receive_ends": [],
+      "operations": {
+        "bft-candidate": {
+          "calls": 1,
+          "failures": 0,
+          "max_seconds": 0.150259,
+          "total_seconds": 0.150259
+        },
+        "bft-network-check": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.147641,
+          "total_seconds": 3.159916
+        },
+        "bft-network-inspect-batch": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.187015,
+          "total_seconds": 4.746937
+        },
+        "bft-network-pack": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.147241,
+          "total_seconds": 3.002032
+        },
+        "bft-quorum": {
+          "calls": 80,
+          "failures": 0,
+          "max_seconds": 0.130759,
+          "total_seconds": 7.119497
+        },
+        "bft-sign": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.358471,
+          "total_seconds": 1.443393
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.32349,
+          "total_seconds": 0.462085
+        },
+        "consensus-tick": {
+          "calls": 94,
+          "failures": 28,
+          "max_seconds": 2.14142,
+          "total_seconds": 48.816091
+        },
+        "sign-native": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.358482,
+          "total_seconds": 1.44345
+        },
+        "sign-outbox": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.520474,
+          "total_seconds": 2.073685
+        },
+        "sign-pending": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.003217,
+          "total_seconds": 0.007536
+        },
+        "sign-response": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.001707,
+          "total_seconds": 0.004435
+        },
+        "sign-status": {
+          "calls": 5,
+          "failures": 0,
+          "max_seconds": 0.229241,
+          "total_seconds": 0.848495
+        }
+      },
+      "no_absence_inference_from_evicted_ring": true
+    },
+    {
+      "slot": 3,
+      "dropped_events": 572,
+      "last_phase": {
+        "committed": null,
+        "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+        "elapsed_seconds": 153.161205,
+        "height": 14,
+        "kind": "tick-phase",
+        "phase_age_seconds": 50.715227,
+        "prepared": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e",
+        "round": 0,
+        "sequence": 695,
+        "stopped": false
+      },
+      "retained_quorums": [
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 131.920824,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 573,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 131.921151,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 574,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 133.081476,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 578,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 133.081503,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 579,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 133.081826,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 580,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 134.102879,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 584,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 134.102905,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 585,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 134.103233,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 586,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 135.173293,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 590,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 135.17332,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 591,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 135.173647,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 592,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 136.563104,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 600,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 136.56313,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 601,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 136.563454,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 602,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 137.630078,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 606,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 137.630105,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 607,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 137.630433,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 608,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 138.563028,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 612,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 138.563053,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 613,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 138.563381,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 614,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 139.500506,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 618,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 139.500532,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 619,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 139.500852,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 620,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 140.666534,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 626,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 140.666559,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 627,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 140.666877,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 628,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 141.810295,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 632,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 141.810323,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 633,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 141.810661,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 634,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 142.94296,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 638,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 142.942985,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 639,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 142.943313,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 640,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 144.005207,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 644,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 144.005235,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 645,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 144.005566,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 646,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 145.003549,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 650,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 145.003576,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 651,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 145.003903,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 652,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 146.406682,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 658,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 146.406714,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 659,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 146.407036,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 660,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 147.636949,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 664,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 147.636974,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 665,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 147.637294,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 666,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 148.91655,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 672,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 148.916578,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 673,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 148.916901,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 674,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 150.04607,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 678,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 150.046096,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 679,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 150.046423,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 680,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 151.110786,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 684,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 151.110811,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 685,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 151.11115,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 686,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 152.088516,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 690,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 152.088542,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 691,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 152.088871,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 692,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 153.161317,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 696,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 0,
+          "elapsed_seconds": 153.161344,
+          "kind": "quorum-search",
+          "phase": "Commit",
+          "round": 0,
+          "sequence": 697,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        },
+        {
+          "context_id": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+          "distinct_votes": 2,
+          "elapsed_seconds": 153.161687,
+          "kind": "quorum-search",
+          "phase": "Prepare",
+          "round": 0,
+          "sequence": 698,
+          "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e"
+        }
+      ],
+      "retained_sign_actions": [],
+      "retained_current_receive_ends": [],
+      "operations": {
+        "bft-network-check": {
+          "calls": 33,
+          "failures": 0,
+          "max_seconds": 0.144147,
+          "total_seconds": 2.907061
+        },
+        "bft-network-inspect-batch": {
+          "calls": 35,
+          "failures": 0,
+          "max_seconds": 0.195506,
+          "total_seconds": 4.678911
+        },
+        "bft-network-pack": {
+          "calls": 33,
+          "failures": 0,
+          "max_seconds": 0.149463,
+          "total_seconds": 2.852778
+        },
+        "bft-quorum": {
+          "calls": 78,
+          "failures": 0,
+          "max_seconds": 0.111937,
+          "total_seconds": 6.604315
+        },
+        "bft-sign": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.332858,
+          "total_seconds": 0.851297
+        },
+        "bft-sync": {
+          "calls": 2,
+          "failures": 0,
+          "max_seconds": 0.325357,
+          "total_seconds": 0.465029
+        },
+        "consensus-tick": {
+          "calls": 115,
+          "failures": 3,
+          "max_seconds": 1.691216,
+          "total_seconds": 41.590933
+        },
+        "sign-native": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.332872,
+          "total_seconds": 0.851332
+        },
+        "sign-outbox": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.517001,
+          "total_seconds": 1.219709
+        },
+        "sign-pending": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.000597,
+          "total_seconds": 0.001752
+        },
+        "sign-response": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.001146,
+          "total_seconds": 0.002132
+        },
+        "sign-status": {
+          "calls": 3,
+          "failures": 0,
+          "max_seconds": 0.205099,
+          "total_seconds": 0.490783
+        }
+      },
+      "no_absence_inference_from_evicted_ring": true
+    }
+  ],
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "consumed_sealed_bytes_unchanged": true,
+  "reader_sha256": "2fb563392d8bef0945035836b98470e24eee09aa9e926b858ca70b46c1b61db0",
+  "stage_sha256": "e4e78d991140fc6328b93ea9bfaf7760c7d752f1d6d022de6c53580367bca02c",
+  "duration_seconds": 0.158193,
+  "combined_original20_seconds": 1.349868,
+  "unique_maturity_cause_proved": false,
+  "new180": 0,
+  "new600": 0
+}

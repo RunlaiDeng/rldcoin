@@ -1,0 +1,53 @@
+{
+  "budget_seconds": 10,
+  "original_related60_prior_seconds": 25.4846,
+  "attempts": 1,
+  "hypothesis": "V44 measured originalrecent->history transition repeats alreadyprepared sameframe sibling atnewest33. Fresh V30 genuine signedcounter FAIL .681392/14sealed. V31 only same exactpeer/scope/frame other-kind position fallback for newestpair missing current-kind position.13 relevant regressions verify counter ordinarytwo-hop receipt/cold, oldestnochange/doublemiss/full4/floor/sign/atomic and prior12; one10/remaining original60.",
+  "tests": [
+    "test_same_current_copy_survives_recent_to_history_transition",
+    "test_newest_current_pair_keeps_forwarded_prepare_ahead_of_local",
+    "test_active_proposal_precedes_completed_checkpoint_spare",
+    "test_current_finalized_checkpoint_keeps_complete_spare_carriage",
+    "test_stable_current_frame_set_survives_ordinary_ring_interference",
+    "test_same_current_frame_revisits_distinct_unreceipted_destinations",
+    "test_failed_current_prepare_oldest_pair_precedes_newer_current",
+    "test_new_arrival_uses_ordinary_class_slot_with_full_waiting_queue",
+    "test_other_ordinary_pair_keeps_original_recent_and_history_order",
+    "test_older_unserved_gets_alternate_priority_pair_without_displacing_offers",
+    "test_commit_hint_capacity_eviction_and_contact_scope_fall_back",
+    "test_current_frame_hint_survives_group_position_pressure_in_same_plan",
+    "test_current_frame_hint_pressure_ordinary_delivery"
+  ],
+  "actual_global_providers": [
+    "NETWORK",
+    "OSError",
+    "ValueError",
+    "bytes",
+    "copy",
+    "dict",
+    "evidence",
+    "json",
+    "len",
+    "list",
+    "mesh",
+    "patch",
+    "range",
+    "set",
+    "sorted",
+    "tuple"
+  ],
+  "source_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_mesh.py": "1c0b13ecf5359e426b203baa0e3c5699ae9d17f81865f8ebeea2cfc4ee6abee4",
+    "/Users/galaxy/GitHub/rldcoin/tools/test_interstellar_mesh.py": "ea8404b155fcf281394d1d5615fd4d17bbfcd15ba05f987b87da7058cfe58da6",
+    "/Users/galaxy/GitHub/rldcoin/tools/interstellar_tcp.py": "13e31c25434e3d38fa8f0e311119cd3afb200af665c265a17b0b1e84f7a42809",
+    "/Users/galaxy/GitHub/rldcoin/tools/regional_bft_node.py": "587b7f5b012a6a626c18ff40eb68cd3468a35f68b14c7c8ff183ad7fa9aee804",
+    "/Users/galaxy/GitHub/rldcoin/docs/WHITEPAPER_FREEZE_RECEIPT.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/observe-bft-cross-class-copy-related-v31-20261007.py": "b388249449d51f0ce5afdc175ea2cac7ee374671f58ca1db341fdf5e2a846a5a",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/check-cross-class-copy-related-v31-20261007.py": "8a7f59e9ac9933e2863e7bcaf7ccb2fc7080ed55559b1ac74a66b6bbc19f6334",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/competing-current-oldest-method-v24-20261007.py": "0d5b92c5065bde6974a2b33183d92169ee24da8c60f3c6f07c1fbfa1e00f12ff",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/cross-class-copy-v31-source-reversal-20261007.json": "4da00dbab6cd90174023d550efcff3ce183e4e5770f87d7b7b2311bdc193cd9a",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/current-finalized-baseline-v27-stopped-inventory-20261007.json": "ff6f0ffd384c3a75296ed2dbaf0c01c933eceaa787abd38cd91424e99b1ecb1e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-bft-four-cli-service-first-service-diag-v44-stopped-private-inventory-20261006.json": "36aaf5b1c7a8adf2aa89c4fc1422b3bf713789d6df7520a4ae36ca874f6c4727"
+  },
+  "exit": "first guard or original10/remaining60; retain all failures, no old Native/Runtime/sign/key/socket fixture calls"
+}

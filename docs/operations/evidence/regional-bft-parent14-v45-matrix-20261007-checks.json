@@ -1,0 +1,143 @@
+{
+  "completed": true,
+  "shared_original_readonly20_prior_seconds": 0.0,
+  "combined_original_readonly20_seconds": 1.191664,
+  "duration_seconds": 1.19167,
+  "budget_seconds": 20,
+  "attempts": 1,
+  "reference_heights": [
+    14,
+    14,
+    14,
+    14
+  ],
+  "rows": [
+    {
+      "source": 2,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "2d5f27b06a4371be65110ad3aa60bf07e5cfd768b8271484efed58f7778861b8",
+      "envelope_id": "e5ddc9c5601b26a5ef53ed77cdf4caa491835acbfbb04b69b3414f70c5a71158",
+      "context_sha256": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+      "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": false,
+          "complete_transport": []
+        },
+        {
+          "destination": 1,
+          "exact_companion": false,
+          "complete_transport": []
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "2ed261acdff5dd0f7a9013f6fdba5ee97e9a65155eae7c2305a0a587f778edc0",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Proposal",
+      "round": 0,
+      "body_id": "b1d432d533b9c21369a4b3ec8e5ef0c9d33e1f2922c98f655439f3a241901b1f",
+      "envelope_id": "a85dffa8ab29da25b38c772fe5d2a10bda0d5579cf0ccdfda752b018862b35ec",
+      "context_sha256": null,
+      "value": null,
+      "inner_vote_signature_verified": false,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "07c51fc38d3725f793e156c95b19ee2b96678723cf15fa0df9fd65a0c288eb4f",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": false,
+          "complete_transport": []
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "a1bfd38361953bcca383f92c8fb8e4b4142380ed8cf4d9717310c28a71f93306",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "9a30b8c9a9bdf457db39db62b6e228bcb71c3f87c9a044e7a7fba74406be7951",
+      "envelope_id": "1024f3ea9ea94d91a31461f4cead69022ceae111b0142420e2124ee211f3c30e",
+      "context_sha256": "fc4671f1ea1da7a679cd61dd6744aa27163226569313407f98042a2264bf135f",
+      "value": "8de1b5e72947d62460032a7158ed790e0be80fc716c9ec3646687ae63ff7e29e",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "d358bf32e2b47fa07bb7508b0f5f039f409fd274fa0dbd3316a46952b5dd3d84",
+              "storage": "active",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "e5d8b9a149a4a53268db2616881899ca6f6cde8c877b0f8f928a5f53356364b2",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "0a6bc091e650c4432883d9042639bb326637840a2b51c3d361d660fd325ba0c9",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumed_sealed_files": 12,
+  "consumed_bytes_unchanged": true,
+  "stage_sha256": "518d7c960288c8a118ee7cde6412dd42ddb2d146c96686785894d695fe55ceea",
+  "stopped_inventory_sha256": "6f38e1ab06a2ff662faf6d4b2a6f084a9660c2478cd3191c572c0b9bf62c5088",
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "proposal_inner_signature_or_Native_acceptance_qualified": false,
+  "unique_maturity_cause_proved": false,
+  "new180": 0,
+  "new600": 0,
+  "full_fault_qualified": false
+}

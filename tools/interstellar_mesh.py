@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V30'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V31'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1342,6 +1342,14 @@ class Node:
             for kind,frame in sorted(set(current_classes.values())):
                 current_positions[(kind,frame)]=carriage_position(
                     (domain,peer,'native-current-copy',hint[0],kind,frame))
+                # Moving an exact frame copy between recent/history must not
+                # reset its recipient turn. Only the newest priority pair may
+                # borrow the identical peer/scope/frame's other-class position.
+                # Missing positions in both classes preserve cold ordering.
+                if (current_positions[(kind,frame)] is None
+                        and (self.state['transit_class_steps'][peer]//4)%2==0):
+                    current_positions[(kind,frame)]=carriage_position(
+                        (domain,peer,'native-current-copy',hint[0],not kind,frame))
             for kind in sorted({kind for kind,_ in current_classes.values()}):
                 frame_positions[kind]=carriage_position(
                     (domain,peer,'native-current-frame',hint[0],hint[1],kind))
