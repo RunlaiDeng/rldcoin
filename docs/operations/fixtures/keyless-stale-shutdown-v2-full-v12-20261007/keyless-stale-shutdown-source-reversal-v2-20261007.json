@@ -1,0 +1,24 @@
+{
+  "format": "RLD-CLEAN-STOP-EXACT-SHUTDOWN-SOURCE-REVERSAL-V2",
+  "before_driver_sha256": "647318e3e051858e5217bfef0cbced329e347adaf101d55916dae80465adf52b",
+  "after_driver_sha256": "bb594cb23a6ad6778f809615968717e0f560fec4652f1929244425775f85625a",
+  "before": "            observation_height(value,pid,self.currency,pin['tls_cert_sha256'],\n",
+  "after": "            require(type(value['errors']) is list,'stopped observation errors must be a list')\n            stopped_value=dict(value)\n            # Only stop_all after own exit0 may retain this exact shutdown marker.\n            # It remains fatal in a live report; saved old bytes grant no progress.\n            stopped_value['errors']=[error for error in value['errors']\n                if error!='TCP runtime is stopping; preserve evidence']\n            observation_height(stopped_value,pid,self.currency,pin['tls_cert_sha256'],\n",
+  "new_test_methods": "    def test_exact_shutdown_marker_only_after_clean_stop_is_unknown(self):\n        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:\n            d,p,v=self.setup_model(Path(t));v['errors']=['TCP runtime is stopping; preserve evidence'];mesh.atomic(p,v)\n            before=p.read_bytes();d.stop_all();self.restart(d)\n            self.assertEqual(d.observations(),{('earth',0):None});self.assertFalse(d.tls_observations)\n            self.assertEqual(p.read_bytes(),before)\n            v['process_id']=102;v['consensus']['autonomous_signing_enabled']=False;mesh.atomic(p,v)\n            with self.assertRaisesRegex(ValueError,'actual Native/Service error'):d.observations()\n            v['errors']=[];mesh.atomic(p,v);self.assertEqual(d.observations(),{('earth',0):12})\n    def test_shutdown_marker_never_hides_other_stop_errors(self):\n        for error in ('native rejected: invalid complete finality proof','[Errno 22] Invalid argument','TCP runtime is stopping; preserve evidence extra','regional candidate rejected: Permission denied (os error 13)'):\n            with self.subTest(error=error),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:\n                d,p,v=self.setup_model(Path(t));v['errors']=['TCP runtime is stopping; preserve evidence',error];mesh.atomic(p,v)\n                d.stop_all();self.assertFalse(d.stopped_observations);self.restart(d)\n                with self.assertRaises(ValueError):d.observations()\n        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:\n            d,p,v=self.setup_model(Path(t));v['errors']=['TCP runtime is stopping; preserve evidence'];v['rejected']=['complete envelope'];mesh.atomic(p,v)\n            d.stop_all();self.assertFalse(d.stopped_observations);self.restart(d)\n            with self.assertRaises(ValueError):d.observations()\n",
+  "previous_revision": "keyless-stale-observation-source-reversal-v1-20261007.json",
+  "actual_failed_stale_v11_seal_sha256": "6a7d3a281944301337f120a80a06dd4421264c6cd917f2ab0f834d4c98188860",
+  "live_shutdown_remains_fatal": true,
+  "unchanged_stopped_bytes_unknown_only": true,
+  "files": {
+    "tools/regional_paged_fault_driver.py": {
+      "old_sha256": "74468bb15c433fe2c3bd8de18d19413395b82886631231cf0e3bf833b03d4d5d",
+      "new_sha256": "bb594cb23a6ad6778f809615968717e0f560fec4652f1929244425775f85625a",
+      "backup": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/regional_paged_fault_driver-before-stale-v1-20261007.py"
+    },
+    "tools/test_regional_paged_fault_driver.py": {
+      "old_sha256": "facb44250e320fe92067b39bd90dd591e8aa97f663967ddac47cb6f71d027b4d",
+      "new_sha256": "ee9a93c76bacc33255da144bf41ef2d3a9322436c754d83ce80daecae0a9f1b7",
+      "backup": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/test_regional_paged_fault_driver-before-stale-v1-20261007.py"
+    }
+  }
+}

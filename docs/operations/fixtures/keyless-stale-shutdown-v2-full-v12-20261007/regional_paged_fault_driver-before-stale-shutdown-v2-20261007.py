@@ -323,13 +323,7 @@ class Driver:
             pin=self.observed['transport_pins'][SLOTS.index(slot)]
             listener=conf.argv[conf.argv.index('--mesh-listen')+1].split(':')
             require(value['region']==self.regions[slot[0]],'stopped observation region differs')
-            require(type(value['errors']) is list,'stopped observation errors must be a list')
-            stopped_value=dict(value)
-            # Only stop_all after own exit0 may retain this exact shutdown marker.
-            # It remains fatal in a live report; saved old bytes grant no progress.
-            stopped_value['errors']=[error for error in value['errors']
-                if error!='TCP runtime is stopping; preserve evidence']
-            observation_height(stopped_value,pid,self.currency,pin['tls_cert_sha256'],
+            observation_height(value,pid,self.currency,pin['tls_cert_sha256'],
                 dict(host=listener[0],port=int(listener[1])),CAPS[slot[0]])
         except (OSError, ValueError, KeyError, TypeError):
             # An absent/unusable optional report cannot grant a startup exception.

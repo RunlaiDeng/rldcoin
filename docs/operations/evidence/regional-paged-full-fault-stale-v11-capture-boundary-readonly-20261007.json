@@ -1,0 +1,125 @@
+{
+  "completed": true,
+  "budget_seconds": 20,
+  "attempts": 1,
+  "duration_seconds": 0.271815,
+  "read_files": 37,
+  "sealed_bytes_unchanged": true,
+  "seal_sha256": "6a7d3a281944301337f120a80a06dd4421264c6cd917f2ab0f834d4c98188860",
+  "rows": [
+    {
+      "region": "earth",
+      "index": 0,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": 13,
+      "full_free_guard_failure": null,
+      "exact_actual_capture_function_retains_status": true,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "earth",
+      "index": 1,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "earth",
+      "index": 2,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "earth",
+      "index": 3,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": 13,
+      "full_free_guard_failure": null,
+      "exact_actual_capture_function_retains_status": true,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "proxima",
+      "index": 0,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": null,
+      "exact_actual_capture_function_retains_status": true,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "proxima",
+      "index": 1,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "proxima",
+      "index": 2,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "proxima",
+      "index": 3,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "andromeda",
+      "index": 0,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "andromeda",
+      "index": 1,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "andromeda",
+      "index": 2,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": null,
+      "full_free_guard_failure": "ValueError: actual Native/Service error: TCP runtime is stopping; preserve evidence",
+      "exact_actual_capture_function_retains_status": false,
+      "keyless_log_bytes": 0
+    },
+    {
+      "region": "andromeda",
+      "index": 3,
+      "final_status_matches_previous_own_pid": true,
+      "full_free_guard_height": 14,
+      "full_free_guard_failure": null,
+      "exact_actual_capture_function_retains_status": true,
+      "keyless_log_bytes": 0
+    }
+  ],
+  "Native_Runtime_Node_socket_sign_key_fixture_calls": 0,
+  "Driver_constructor_calls": 0,
+  "free_capture_function_only": true,
+  "qualification": "Read-only final stopped bytes cannot reconstruct intermediate stop-time bytes or prove exclusive original cause",
+  "full_fault_status": "FAIL",
+  "whole_goal_completed": false
+}
