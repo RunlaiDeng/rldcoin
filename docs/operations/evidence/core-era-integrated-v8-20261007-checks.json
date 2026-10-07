@@ -1,0 +1,53 @@
+{
+  "format": "RLD-CORE-ERA-INTEGRATED-V8",
+  "completed": false,
+  "duration_seconds": 6.821042,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.728825,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 101,
+      "duration_seconds": 6.065256,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "5226e8dfaf5422d370ce5d2eed500fae04b7fbfb71f70b4f8f9d11139aa566c9",
+  "stage_sha256": "fcab200847d1f8312bb996d92546d1a5c37cdb66e9f836f5cd04446f83e3b44a",
+  "controller_sha256": "4620b85bf1666fce9a945f5c95f517302295a7fb347c61f2394ff55b21ebdee2",
+  "log_sha256": "0b92373c3d002bf8d344b2432a31f2070bb77ac3f12628cc9678d2399cabc760",
+  "core_source": "963cd873d6d867304ba6a7bf356a1ee69d3aa98b9b9e720d93ab133cae22a1b3",
+  "core_file_count": 177,
+  "full_core_suite_passed": false,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,77 @@
+{
+  "format": "RLD-CORE-ERA-INTEGRATED-V11",
+  "completed": true,
+  "duration_seconds": 74.736507,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.732078,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.337775,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 69.639591,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "a994a3eb2ef4e7bbdf3b0852367cc3d5f95a0b92f5172b1b8ff1facb7898ce58",
+  "stage_sha256": "24c84ff63e883dcedf85bfeeb7641f01388668911d4c44ad295f7ca3024d6de2",
+  "controller_sha256": "f8b0bbb58dfbf3fddeeb2b5ee74c330a42983de9ae9283e82c375371b76f0ca0",
+  "log_sha256": "83788a71367a249c5f9e6f549c09b56ffce984fa313e125fc1f9da873b7b2fd9",
+  "core_source": "ffb05d225c8c8b73ee951ac2ff433ac9a5b2a034c28ceaedfa6079104f8cb3cf",
+  "core_file_count": 177,
+  "full_core_suite_passed": true,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

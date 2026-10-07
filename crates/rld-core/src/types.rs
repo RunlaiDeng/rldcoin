@@ -3240,6 +3240,31 @@ pub struct CryptoSuiteDescriptor {
     pub encoding: String,
 }
 
+impl CryptoSuiteDescriptor {
+    /// This reference implementation executes Ed25519 and SHA-256 only.
+    /// These retained encoding names are candidate formats, not an adopted
+    /// cryptographic profile, review or finite-horizon qualification.
+    pub fn validate_reference_implementation(&self, testnet: bool) -> Result<(), String> {
+        if self.suite_id.trim().is_empty() {
+            return Err("reference cryptographic suite id is empty".into());
+        }
+        match self.signature_algorithm.as_str() {
+            "ED25519" | "Ed25519" => {}
+            "ED25519-TEST" if testnet => {}
+            _ => return Err("unimplemented reference signature algorithm".into()),
+        }
+        match self.hash_algorithm.as_str() {
+            "SHA-256" => {}
+            "SHA-256-TEST" if testnet => {}
+            _ => return Err("unimplemented reference hash algorithm".into()),
+        }
+        match self.encoding.as_str() {
+            "RLD-CANONICAL-V1" | "RLD-WIRE-V1" => Ok(()),
+            _ => Err("unimplemented reference cryptographic encoding".into()),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct EraContinuityCertificate {
     pub zone_id: String,
@@ -3944,7 +3969,111 @@ impl AuditProofBundle {
             .map_err(|error| error.to_string())
     }
 
+    fn verify_era_chain(&self) -> Result<(), String> {
+        self.zone_descriptor.validate_identity()?;
+        let mut protocol_era = 1u64;
+        let mut crypto_era = 1u64;
+        let genesis_predecessor = hash_parts(&[
+            b"RLD-GENESIS-ERA",
+            self.zone_descriptor.zone_id.as_bytes(),
+            &protocol_era.to_be_bytes(),
+            &crypto_era.to_be_bytes(),
+        ]);
+        let mut predecessor = genesis_predecessor.as_str();
+        let mut validators = self.zone_descriptor.genesis_validator_keys.as_slice();
+        let mut notaries = self.zone_descriptor.genesis_notary_keys.as_slice();
+        let checkpoints = self
+            .checkpoints
+            .iter()
+            .enumerate()
+            .map(|(index, checkpoint)| (checkpoint.checkpoint_hash.as_str(), (index, checkpoint)))
+            .collect::<BTreeMap<_, _>>();
+        let mut previous_activation = None;
+        for certificate in &self.era_certificates {
+            certificate
+                .new_suite
+                .validate_reference_implementation(self.zone_descriptor.testnet)?;
+            let next_protocol = protocol_era
+                .checked_add(1)
+                .ok_or("audit protocol era overflow")?;
+            let next_crypto = crypto_era
+                .checked_add(1)
+                .ok_or("audit crypto era overflow")?;
+            let subject = certificate.subject_hash();
+            if certificate.zone_id != self.zone_descriptor.zone_id
+                || certificate.previous_protocol_era != protocol_era
+                || certificate.previous_crypto_era != crypto_era
+                || certificate.new_protocol_era != next_protocol
+                || certificate.new_crypto_era != next_crypto
+                || certificate.previous_certificate_hash != predecessor
+                || certificate.previous_validator_keys != validators
+                || certificate.previous_notary_keys != notaries
+                || certificate.certificate_hash != subject
+                || certificate.old_crypto_qc.subject_hash != subject
+                || certificate.new_crypto_qc.subject_hash != subject
+                || certificate.notary_qc.subject_hash != subject
+                || certificate.new_suite.suite_id.trim().is_empty()
+            {
+                return Err("audit era certificate chain binding mismatch".into());
+            }
+            let (index, activation) = checkpoints
+                .get(certificate.activation_checkpoint.as_str())
+                .ok_or("audit era activation checkpoint is missing")?;
+            let activated = index
+                .checked_add(1)
+                .and_then(|next| self.checkpoints.get(next))
+                .ok_or("audit era activated checkpoint is missing")?;
+            if previous_activation.is_some_and(|previous| *index <= previous)
+                || activation.height >= certificate.irreversible_height
+                || activation.protocol_era != protocol_era
+                || activation.crypto_era != crypto_era
+                || activated.height != certificate.irreversible_height
+                || activated.protocol_era != next_protocol
+                || activated.crypto_era != next_crypto
+            {
+                return Err("audit era activation checkpoint binding mismatch".into());
+            }
+            let simulated = certificate.old_crypto_qc.testnet_simulated
+                && certificate.new_crypto_qc.testnet_simulated
+                && certificate.notary_qc.testnet_simulated;
+            let simulation_allowed = self.zone_descriptor.testnet
+                && certificate.previous_validator_keys.is_empty()
+                && certificate.previous_notary_keys.is_empty()
+                && certificate.new_validator_keys.is_empty()
+                && certificate.new_notary_keys.is_empty();
+            if simulated && !simulation_allowed {
+                return Err("audit simulated era quorum is forbidden for this signer set".into());
+            }
+            if !simulated {
+                certificate.old_crypto_qc.verify(validators)?;
+                certificate
+                    .new_crypto_qc
+                    .verify(&certificate.new_validator_keys)?;
+                certificate.notary_qc.verify(notaries)?;
+            }
+            protocol_era = next_protocol;
+            crypto_era = next_crypto;
+            predecessor = &certificate.certificate_hash;
+            validators = &certificate.new_validator_keys;
+            notaries = &certificate.new_notary_keys;
+            previous_activation = Some(*index);
+        }
+        if self.zone_descriptor.protocol_era != protocol_era
+            || self.zone_descriptor.crypto_era != crypto_era
+            || (!self.era_certificates.is_empty()
+                && (self.zone_descriptor.validator_keys != validators
+                    || self.zone_descriptor.notary_keys != notaries))
+            || self.checkpoints.last().is_some_and(|checkpoint| {
+                checkpoint.protocol_era != protocol_era || checkpoint.crypto_era != crypto_era
+            })
+        {
+            return Err("audit terminal era descriptor mismatch".into());
+        }
+        Ok(())
+    }
+
     pub fn verify_structure(&self) -> Result<(), String> {
+        self.verify_era_chain()?;
         if self.currency_genesis_root != self.zone_descriptor.currency_genesis_root {
             return Err("audit bundle currency genesis root mismatch".into());
         }
@@ -4001,7 +4130,19 @@ impl AuditProofBundle {
             return Err("audit bundle has no continuity checkpoints".into());
         }
         let mut previous: Option<&ContinuityCheckpoint> = None;
+        let mut activated_eras = self.era_certificates.iter().peekable();
+        let mut checkpoint_era = (1, 1);
         for checkpoint in &self.checkpoints {
+            while activated_eras
+                .peek()
+                .is_some_and(|certificate| certificate.irreversible_height <= checkpoint.height)
+            {
+                let activated = activated_eras.next().expect("peeked era certificate");
+                checkpoint_era = (activated.new_protocol_era, activated.new_crypto_era);
+            }
+            if (checkpoint.protocol_era, checkpoint.crypto_era) != checkpoint_era {
+                return Err("audit checkpoint claims an unactivated era".into());
+            }
             if checkpoint.zone_id != self.zone_descriptor.zone_id
                 || !checkpoint.supply.valid
                 || checkpoint.supply.zone_id != self.zone_descriptor.zone_id

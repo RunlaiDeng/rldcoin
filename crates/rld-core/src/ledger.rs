@@ -11365,6 +11365,10 @@ impl Ledger {
         &mut self,
         certificate: EraContinuityCertificate,
     ) -> Result<ContinuityCheckpoint, LedgerError> {
+        certificate
+            .new_suite
+            .validate_reference_implementation(self.descriptor.testnet)
+            .map_err(LedgerError::EraTransition)?;
         let subject = certificate.subject_hash();
         let expected_protocol_era =
             self.descriptor.protocol_era.checked_add(1).ok_or_else(|| {
@@ -11379,7 +11383,13 @@ impl Ledger {
             .height
             .checked_add(1)
             .ok_or_else(|| LedgerError::Invalid("ledger height counter overflow".into()))?;
+        let expected_previous_certificate_hash = self
+            .era_certificates
+            .last()
+            .map(|previous| previous.certificate_hash.as_str())
+            .unwrap_or(self.era_continuity_accumulator.as_str());
         if certificate.zone_id != self.descriptor.zone_id
+            || certificate.previous_certificate_hash != expected_previous_certificate_hash
             || certificate.previous_protocol_era != self.descriptor.protocol_era
             || certificate.previous_crypto_era != self.descriptor.crypto_era
             || certificate.new_protocol_era != expected_protocol_era
@@ -12133,6 +12143,12 @@ impl Ledger {
             return Ok(());
         };
 
+        certificate
+            .new_suite
+            .validate_reference_implementation(
+                self.descriptor.testnet && capsule.source_descriptor.testnet,
+            )
+            .map_err(LedgerError::EraTransition)?;
         let subject = certificate.subject_hash();
         if certificate.zone_id != capsule.source_zone
             || certificate.new_protocol_era != capsule.source_descriptor.protocol_era
@@ -16615,6 +16631,397 @@ mod tests {
         ledger.apply_era_transition(certificate).unwrap();
         assert_eq!(ledger.descriptor.protocol_era, 2);
         assert_eq!(ledger.descriptor.crypto_era, 2);
+    }
+
+    #[test]
+    fn signed_era_transition_requires_exact_local_predecessor_atomically() {
+        let validators = (0..4).map(|_| generate_identity()).collect::<Vec<_>>();
+        let notaries = (0..4).map(|_| generate_identity()).collect::<Vec<_>>();
+        let mut ledger = Ledger::genesis_zone(
+            "Earth-era-predecessor",
+            validators
+                .iter()
+                .map(|key| key.public_key.clone())
+                .collect(),
+            notaries.iter().map(|key| key.public_key.clone()).collect(),
+            true,
+        )
+        .unwrap();
+        let genesis_predecessor = ledger.era_continuity_accumulator.clone();
+        let signed = |ledger: &Ledger, previous: String| {
+            let mut certificate = EraContinuityCertificate {
+                zone_id: ledger.descriptor.zone_id.clone(),
+                previous_protocol_era: ledger.descriptor.protocol_era,
+                new_protocol_era: ledger.descriptor.protocol_era + 1,
+                previous_crypto_era: ledger.descriptor.crypto_era,
+                new_crypto_era: ledger.descriptor.crypto_era + 1,
+                previous_certificate_hash: previous,
+                activation_checkpoint: ledger.latest_checkpoint().unwrap().checkpoint_hash.clone(),
+                irreversible_height: ledger.height + 1,
+                new_suite: CryptoSuiteDescriptor {
+                    suite_id: "linked-ed25519-candidate".into(),
+                    signature_algorithm: "ED25519".into(),
+                    hash_algorithm: "SHA-256".into(),
+                    encoding: "RLD-CANONICAL-V1".into(),
+                },
+                previous_validator_keys: ledger.descriptor.validator_keys.clone(),
+                previous_notary_keys: ledger.descriptor.notary_keys.clone(),
+                new_validator_keys: ledger.descriptor.validator_keys.clone(),
+                new_notary_keys: ledger.descriptor.notary_keys.clone(),
+                old_crypto_qc: simulated_qc(),
+                new_crypto_qc: simulated_qc(),
+                notary_qc: simulated_qc(),
+                certificate_hash: String::new(),
+            };
+            let subject = certificate.subject_hash();
+            certificate.certificate_hash.clone_from(&subject);
+            certificate.old_crypto_qc = signed_qc(&subject, &validators, 3);
+            certificate.new_crypto_qc = signed_qc(&subject, &validators, 3);
+            certificate.notary_qc = signed_qc(&subject, &notaries, 3);
+            certificate
+        };
+        for _ in 0..2 {
+            let expected = ledger
+                .era_certificates
+                .last()
+                .map(|certificate| certificate.certificate_hash.clone())
+                .unwrap_or_else(|| genesis_predecessor.clone());
+            let mut invalid = vec![String::new(), "ff".repeat(32)];
+            if expected != genesis_predecessor {
+                invalid.push(genesis_predecessor.clone());
+                // The rolling accumulator is distinct from the previous
+                // individual certificate after the first accepted handoff.
+                invalid.push(ledger.era_continuity_accumulator.clone());
+            }
+            for previous in invalid {
+                assert_ne!(previous, expected);
+                let certificate = signed(&ledger, previous);
+                certificate
+                    .old_crypto_qc
+                    .verify(&certificate.previous_validator_keys)
+                    .unwrap();
+                certificate
+                    .new_crypto_qc
+                    .verify(&certificate.new_validator_keys)
+                    .unwrap();
+                certificate
+                    .notary_qc
+                    .verify(&certificate.previous_notary_keys)
+                    .unwrap();
+                let before = serde_json::to_vec(&ledger).unwrap();
+                assert!(
+                    matches!(
+                        ledger.apply_era_transition(certificate),
+                        Err(LedgerError::EraTransition(_))
+                    ),
+                    "genuinely signed handoff with a false predecessor must refuse"
+                );
+                assert_eq!(serde_json::to_vec(&ledger).unwrap(), before);
+            }
+            let certificate = signed(&ledger, expected);
+            let id = certificate.certificate_hash.clone();
+            let next_era = certificate.new_protocol_era;
+            ledger.apply_era_transition(certificate).unwrap();
+            assert_eq!(ledger.descriptor.protocol_era, next_era);
+            assert_eq!(ledger.era_certificates.last().unwrap().certificate_hash, id);
+            ledger.assert_conservation().unwrap();
+        }
+    }
+
+    #[test]
+    fn audit_era_chain_requires_complete_authenticated_handoffs() {
+        let validators = (0..4).map(|_| generate_identity()).collect::<Vec<_>>();
+        let successors = (0..4).map(|_| generate_identity()).collect::<Vec<_>>();
+        let notaries = (0..4).map(|_| generate_identity()).collect::<Vec<_>>();
+        let keys = |members: &[crate::Identity]| {
+            members
+                .iter()
+                .map(|key| key.public_key.clone())
+                .collect::<Vec<_>>()
+        };
+        let mut ledger = Ledger::genesis_zone(
+            "Earth-audit-era-chain",
+            keys(&validators),
+            keys(&notaries),
+            true,
+        )
+        .unwrap();
+        let certify = |certificate: &mut EraContinuityCertificate,
+                       old: &[crate::Identity],
+                       new: &[crate::Identity]| {
+            let subject = certificate.subject_hash();
+            certificate.certificate_hash.clone_from(&subject);
+            certificate.old_crypto_qc = signed_qc(&subject, old, 3);
+            certificate.new_crypto_qc = signed_qc(&subject, new, 3);
+            certificate.notary_qc = signed_qc(&subject, &notaries, 3);
+        };
+        for (old, new) in [(&validators, &successors), (&successors, &validators)] {
+            let mut certificate = EraContinuityCertificate {
+                zone_id: ledger.descriptor.zone_id.clone(),
+                previous_protocol_era: ledger.descriptor.protocol_era,
+                new_protocol_era: ledger.descriptor.protocol_era + 1,
+                previous_crypto_era: ledger.descriptor.crypto_era,
+                new_crypto_era: ledger.descriptor.crypto_era + 1,
+                previous_certificate_hash: ledger
+                    .era_certificates
+                    .last()
+                    .map(|previous| previous.certificate_hash.clone())
+                    .unwrap_or_else(|| ledger.era_continuity_accumulator.clone()),
+                activation_checkpoint: ledger.latest_checkpoint().unwrap().checkpoint_hash.clone(),
+                irreversible_height: ledger.height + 1,
+                new_suite: CryptoSuiteDescriptor {
+                    suite_id: "audit-linked-ed25519-candidate".into(),
+                    signature_algorithm: "ED25519".into(),
+                    hash_algorithm: "SHA-256".into(),
+                    encoding: "RLD-CANONICAL-V1".into(),
+                },
+                previous_validator_keys: keys(old),
+                previous_notary_keys: keys(&notaries),
+                new_validator_keys: keys(new),
+                new_notary_keys: keys(&notaries),
+                old_crypto_qc: simulated_qc(),
+                new_crypto_qc: simulated_qc(),
+                notary_qc: simulated_qc(),
+                certificate_hash: String::new(),
+            };
+            certify(&mut certificate, old, new);
+            ledger.apply_era_transition(certificate).unwrap();
+            if ledger.descriptor.protocol_era == 2 {
+                // Ordinary intermediate checkpoints must retain the current
+                // era until the next actually authorized handoff.
+                ledger.create_checkpoint().unwrap();
+                ledger.create_checkpoint().unwrap();
+            }
+        }
+        let bundle = ledger.audit_proof_bundle().unwrap();
+        bundle.verify_structure().unwrap();
+        let refusal = |mut altered: AuditProofBundle, reason: &str| {
+            // A recomputable container digest is not continuity authority.
+            altered.commitment_hash = altered.compute_commitment().unwrap();
+            assert!(
+                altered.verify_structure().is_err(),
+                "audit must refuse {reason}"
+            );
+        };
+        let mut premature = bundle.clone();
+        assert_eq!(premature.checkpoints[2].protocol_era, 2);
+        assert_eq!(premature.checkpoints[2].crypto_era, 2);
+        premature.checkpoints[2].protocol_era = 3;
+        premature.checkpoints[2].crypto_era = 3;
+        refusal(
+            premature,
+            "intermediate checkpoint claims an unactivated era",
+        );
+        let mut missing = bundle.clone();
+        missing.era_certificates.clear();
+        refusal(missing, "missing entire certificate chain");
+        let mut truncated = bundle.clone();
+        truncated.era_certificates.remove(0);
+        refusal(truncated, "missing genesis handoff");
+        let mut reordered = bundle.clone();
+        reordered.era_certificates.reverse();
+        refusal(reordered, "reordered signed handoffs");
+        let mut broken = bundle.clone();
+        broken.era_certificates[1].previous_certificate_hash = "ff".repeat(32);
+        certify(&mut broken.era_certificates[1], &successors, &validators);
+        refusal(broken, "genuinely signed false predecessor");
+        let mut skipped = bundle.clone();
+        skipped.era_certificates[1].new_protocol_era += 1;
+        certify(&mut skipped.era_certificates[1], &successors, &validators);
+        refusal(skipped, "genuinely signed skipped protocol era");
+        let mut forged = bundle.clone();
+        forged.era_certificates[1]
+            .old_crypto_qc
+            .attestations
+            .clear();
+        refusal(forged, "missing actual old-validator signatures");
+        let mut wrong_source = bundle.clone();
+        wrong_source.era_certificates[1].previous_validator_keys = keys(&validators);
+        certify(
+            &mut wrong_source.era_certificates[1],
+            &validators,
+            &validators,
+        );
+        refusal(
+            wrong_source,
+            "genuinely signed incorrect preceding signer set",
+        );
+        let mut wrong_checkpoint = bundle.clone();
+        wrong_checkpoint.era_certificates[1].activation_checkpoint =
+            bundle.checkpoints[0].checkpoint_hash.clone();
+        certify(
+            &mut wrong_checkpoint.era_certificates[1],
+            &successors,
+            &validators,
+        );
+        refusal(
+            wrong_checkpoint,
+            "genuinely signed stale activation checkpoint",
+        );
+        let mut descriptor_mismatch = bundle.clone();
+        descriptor_mismatch.zone_descriptor.crypto_era += 1;
+        refusal(
+            descriptor_mismatch,
+            "terminal descriptor not reached by signed handoffs",
+        );
+        bundle.verify_structure().unwrap();
+
+        let mut accepted = Vec::new();
+        let mut forged_genesis = bundle.clone();
+        forged_genesis.zone_descriptor.genesis_validator_keys = keys(&successors);
+        forged_genesis.era_certificates[0].previous_validator_keys = keys(&successors);
+        certify(
+            &mut forged_genesis.era_certificates[0],
+            &successors,
+            &successors,
+        );
+        forged_genesis.era_certificates[1].previous_certificate_hash =
+            forged_genesis.era_certificates[0].certificate_hash.clone();
+        certify(
+            &mut forged_genesis.era_certificates[1],
+            &successors,
+            &validators,
+        );
+        forged_genesis.commitment_hash = forged_genesis.compute_commitment().unwrap();
+        assert!(forged_genesis.zone_descriptor.validate_identity().is_err());
+        if forged_genesis.verify_structure().is_ok() {
+            accepted.push("forged immutable genesis signer anchor");
+        }
+        for (field, unsupported) in [
+            ("signature", "UNIMPLEMENTED-SIGNATURE"),
+            ("hash", "UNIMPLEMENTED-HASH"),
+            ("encoding", "UNIMPLEMENTED-ENCODING"),
+        ] {
+            let mut certificate = bundle.era_certificates.last().unwrap().clone();
+            certificate.previous_protocol_era = ledger.descriptor.protocol_era;
+            certificate.previous_crypto_era = ledger.descriptor.crypto_era;
+            certificate.new_protocol_era = ledger.descriptor.protocol_era + 1;
+            certificate.new_crypto_era = ledger.descriptor.crypto_era + 1;
+            certificate.previous_validator_keys = keys(&validators);
+            certificate.previous_certificate_hash = ledger
+                .era_certificates
+                .last()
+                .unwrap()
+                .certificate_hash
+                .clone();
+            certificate.activation_checkpoint =
+                ledger.latest_checkpoint().unwrap().checkpoint_hash.clone();
+            certificate.irreversible_height = ledger.height + 1;
+            if field == "signature" {
+                let mut supported = certificate.clone();
+                certify(&mut supported, &validators, &validators);
+                ledger.clone().apply_era_transition(supported).unwrap();
+            }
+            let mut unsupported_archive = bundle.clone();
+            let archived_suite = &mut unsupported_archive.era_certificates[1].new_suite;
+            match field {
+                "signature" => archived_suite.signature_algorithm = unsupported.into(),
+                "hash" => archived_suite.hash_algorithm = unsupported.into(),
+                "encoding" => archived_suite.encoding = unsupported.into(),
+                _ => unreachable!(),
+            }
+            certify(
+                &mut unsupported_archive.era_certificates[1],
+                &successors,
+                &validators,
+            );
+            refusal(unsupported_archive, unsupported);
+            match field {
+                "signature" => certificate.new_suite.signature_algorithm = unsupported.into(),
+                "hash" => certificate.new_suite.hash_algorithm = unsupported.into(),
+                "encoding" => certificate.new_suite.encoding = unsupported.into(),
+                _ => unreachable!(),
+            }
+            certify(&mut certificate, &validators, &validators);
+            certificate
+                .old_crypto_qc
+                .verify(&keys(&validators))
+                .unwrap();
+            certificate
+                .new_crypto_qc
+                .verify(&keys(&validators))
+                .unwrap();
+            certificate.notary_qc.verify(&keys(&notaries)).unwrap();
+            let mut candidate = ledger.clone();
+            let before = serde_json::to_vec(&candidate).unwrap();
+            match candidate.apply_era_transition(certificate) {
+                Ok(_) => accepted.push(unsupported),
+                Err(LedgerError::EraTransition(_)) => {
+                    assert_eq!(serde_json::to_vec(&candidate).unwrap(), before);
+                }
+                Err(error) => panic!("suite must refuse at era gate: {error}"),
+            }
+        }
+        assert!(
+            accepted.is_empty(),
+            "invalid era authority accepted: {accepted:?}"
+        );
+
+        // Exercise the complete import gate with fresh in-memory test value,
+        // actual owner approval, both source QCs and all three era QCs.
+        let alice = generate_identity();
+        let bob = generate_identity();
+        let mut source = ledger.clone();
+        let mut destination =
+            Ledger::empty_zone("Earth-audit-era-recipient", vec![], vec![], true).unwrap();
+        let source_zone = source.descriptor.zone_id.clone();
+        let destination_zone = destination.descriptor.zone_id.clone();
+        let (coin, _) = source
+            .bootstrap_service_reward(
+                "era-import-client".into(),
+                alice.address(&source_zone),
+                ServiceRole::Relay,
+                "era-import-test".into(),
+                Amount::from_rld_whole(10).unwrap(),
+            )
+            .unwrap();
+        let mut intent = signed_intent(
+            &alice,
+            &source_zone,
+            &destination_zone,
+            &bob.address(&destination_zone),
+            &coin.object_id,
+            Amount::from_rld_whole(1).unwrap(),
+        );
+        intent.protocol_era = source.descriptor.protocol_era;
+        intent.crypto_era = source.descriptor.crypto_era;
+        intent.signature = sign_bytes(&alice.secret_key, &intent.signing_bytes()).unwrap();
+        let mut capsule = source
+            .export_payment(intent, TransportClass::SublightDtn)
+            .unwrap();
+        let subject = capsule.subject_hash();
+        capsule.validator_qc = signed_qc(&subject, &validators, 3);
+        capsule.notary_qc = signed_qc(&subject, &notaries, 3);
+        let mut accepted_destination = destination.clone();
+        accepted_destination
+            .import_capsule(capsule.clone())
+            .unwrap();
+        accepted_destination.assert_conservation().unwrap();
+        source.assert_conservation().unwrap();
+        for field in ["signature", "hash", "encoding"] {
+            let mut unsupported = capsule.clone();
+            let certificate = unsupported.era_certificate.as_mut().unwrap();
+            match field {
+                "signature" => {
+                    certificate.new_suite.signature_algorithm = "UNIMPLEMENTED-SIGNATURE".into()
+                }
+                "hash" => certificate.new_suite.hash_algorithm = "UNIMPLEMENTED-HASH".into(),
+                "encoding" => certificate.new_suite.encoding = "UNIMPLEMENTED-ENCODING".into(),
+                _ => unreachable!(),
+            }
+            certify(certificate, &successors, &validators);
+            unsupported.operational_proof.era_certificate_hash =
+                certificate.certificate_hash.clone();
+            let subject = unsupported.subject_hash();
+            unsupported.validator_qc = signed_qc(&subject, &validators, 3);
+            unsupported.notary_qc = signed_qc(&subject, &notaries, 3);
+            let before = serde_json::to_vec(&destination).unwrap();
+            assert!(matches!(
+                destination.import_capsule(unsupported),
+                Err(LedgerError::EraTransition(_))
+            ));
+            assert_eq!(serde_json::to_vec(&destination).unwrap(), before);
+        }
     }
 
     #[test]

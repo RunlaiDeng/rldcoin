@@ -1,0 +1,52 @@
+{
+  "format": "RLD-CORE-ERA-AUTHORITY-BASELINE-V6",
+  "completed": false,
+  "duration_seconds": 24.972738,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "ledger::tests::audit_era_chain_requires_complete_authenticated_handoffs",
+        "--",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "duration_seconds": 24.945807,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "740312c812b1e900086d60943bc583fa70812b0e3e00ce66a87e5e4e04b8963b",
+  "stage_sha256": "bb4288516fbae403cc884c05244b347c27b312724c19740b69930355ff800a63",
+  "controller_sha256": "e3d25a0d7e9e65cbd5ec3c53c9c0226d323db32ca5eb20c2eed9f1b756cb516c",
+  "log_sha256": "8efd07caf9bc26260d49274037533248aa707747fe87795abe06480f6a808d45",
+  "core_source": "56b6494ffbfe280b8c75006d31258b29e2165af0a56c6ed59915fe7c0b7eb5d0",
+  "core_file_count": 177,
+  "regression_test_passed": false,
+  "expected_baseline_regression_failure": true,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

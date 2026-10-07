@@ -1,5 +1,21 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 当前串行主线：Core时代续接与归档护栏完成有限回归；继续原生epoch验收
+
+冻结正文 **2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b**、PDF **c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14**、receipt **86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965**及全部 **S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8**仍为实施验收目标；正文/PDF/官网未改。
+
+本次实际源码只改Core ledger/types：真实三组3/4签名也必须绑定本地实际前继；完整归档链绑定创世身份、顺序/签名/前后委员、启用检查点与最终时代；所有中间检查点须符合已签名生效高度。合法未逐操作建检查点的高度进度仍允许。激活、归档和完整接收入口拒绝未实现的签名/哈希/编码声明；当前仅保留已执行的Ed25519/SHA-256参考格式，未来算法仍须实现与独立认证，不能由文本标签获得资格。
+
+真实反例 **V1 FAIL43.091**（错误前继）、**V3 FAIL24.652**（删除整个归档续接链）、**V6 FAIL24.973**（创世签名者替换及三类未实现算法）、**V10 FAIL14.700**（中间检查点提前时代）均保留。修复中 **V4 FAIL60.038**为检查点高度过严，**V8 FAIL6.821**为新增测试方法名错误，均未抹除或改PASS。中间V2/V5/V7/V9通过仅绑定各自当时来源。
+
+最终 **V11 PASS74.736507/原300一次**：格式、6包全部target严格检查零告警、**267 Core单元/0失败/0忽略/0过滤**。真实不同委员会连续交接、全部上述反例、原带值资源拒绝、一万次参考迁移、实际owner与双source QC/三era QC的完整内存import及错误suite目的端字节原子拒绝通过。固定Rust1.98.0、opt1/debug assertions/overflow checks均开启、复用原本地cache。完整Source177 **ffb05d225c8c8b73ee951ac2ff433ac9a5b2a034c28ceaedfa6079104f8cb3cf**；实际unit binary **b35697b69c1945ae33128fe4c8c0499ae98ef2e5a6d55edc093ddda1fc195de7**及匹配compiler manifest/controller绑定已保存。
+
+[最终有限profile](operations/evidence/core-era-continuity-reference-v1-qualified-profile-20261007.json)、[实际完整检查](operations/evidence/core-era-integrated-v11-20261007-checks.json)、[source-only控制器及全部失败索引](operations/fixtures/core-era-continuity-reference-v1-20261007/README.md)。Core267 PASS不替代Native、PQ、长期/独立/物理/组合/P1–P8或整个目标；VALUE-STRICT-01在旧bc623ebe来源的完整V13资格、head-v16旧de74/bef4原600资格保持历史来源，不自动转移至新Core。所有旧失败与私有封存未重开、重签、复制或清理；未重跑地区长测。
+
+下一主线只读核对现有Native joint epoch关闭后旧票、连续委员与独立新head护栏及其既有来源证据，先找实际缺口，不据Core局部通过启动未变长scope。唯一作者继续授权开发，不在局部PASS停止。所有命令显式新workdir；持久cwd仍旧，原goal元数据仍blocked且正文仍前继c906/f825，当前工具无active设置能力；它们是应用待修元数据，不作为新的开发审批门。
+
+历史有限scope记录（“全部通过”仅对应各自来源和范围；后续FAIL不被替代）：
+
 ## 2026-10-07 当前串行主线：旧价值入口已实现；严格工作区通过，完整价值预算失败保留
 
 原 head-v16 精确三地区/12副本无价值地面完整 fault **PASS430.830/原600**，所有旧FAIL保留。它固定 historical Core171 de74/actual Native CLI bef4，不是当前 Core 或全部白皮书资格。冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及 S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8继续为实施目标；长期、PQ、组合、独立运营/保管与物理路线仍OPEN。
