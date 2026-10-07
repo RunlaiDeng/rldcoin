@@ -1,0 +1,526 @@
+{
+  "format": "RLD-PQ-RENEWAL-CARRIAGE-V17",
+  "completed": true,
+  "duration_seconds": 28.928744,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "error": null,
+  "pin_error": null,
+  "previous_used_seconds": 0,
+  "cumulative_seconds": 28.928744,
+  "source_bound_five_framing_tests_reused": true,
+  "installed_policy": false,
+  "actual_locks_consumed_records_reconstructed": false,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.735976
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--all-targets",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 5.182132
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--bin",
+        "rld-hybrid-renewal-core-candidate",
+        "--bin",
+        "rld-hybrid-renewal-public-fixture-candidate"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 19.061907
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.00965
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "req",
+        "-new",
+        "-x509",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "-days",
+        "90",
+        "-subj",
+        "/CN=RLD-PQ-TLS-CANDIDATE-server",
+        "-addext",
+        "basicConstraints=critical,CA:FALSE",
+        "-addext",
+        "keyUsage=critical,digitalSignature",
+        "-addext",
+        "extendedKeyUsage=serverAuth,clientAuth",
+        "-addext",
+        "subjectAltName=IP:127.0.0.1",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.011578
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "x509",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "-outform",
+        "DER",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.der"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.016416
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.009211
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "req",
+        "-new",
+        "-x509",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "-days",
+        "90",
+        "-subj",
+        "/CN=RLD-PQ-TLS-CANDIDATE-client",
+        "-addext",
+        "basicConstraints=critical,CA:FALSE",
+        "-addext",
+        "keyUsage=critical,digitalSignature",
+        "-addext",
+        "extendedKeyUsage=serverAuth,clientAuth",
+        "-addext",
+        "subjectAltName=IP:127.0.0.1",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.011437
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "x509",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "-outform",
+        "DER",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.der"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.014671
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-renewal-public-fixture-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/caller-trusted-public-anchor.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-public-renewal.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.251043
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "61383",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "b7e8199aa158c7d75e20dbef1da55e81dbcf196d957404d0f4b9ce52690d0afb",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-part2-source.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.012461
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "38b25996e2cc25c826bcfcc24eccbc30dc8da6b554eb7df103b45c55082d9c12",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-part2-received.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.126458
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "61385",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "b7e8199aa158c7d75e20dbef1da55e81dbcf196d957404d0f4b9ce52690d0afb",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-part0-source.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.013971
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "38b25996e2cc25c826bcfcc24eccbc30dc8da6b554eb7df103b45c55082d9c12",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-part0-received.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.127059
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "61388",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "b7e8199aa158c7d75e20dbef1da55e81dbcf196d957404d0f4b9ce52690d0afb",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-part1-source.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.012939
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "38b25996e2cc25c826bcfcc24eccbc30dc8da6b554eb7df103b45c55082d9c12",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-part1-received.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.125201
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-renewal-core-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/caller-trusted-public-anchor.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-reassembled.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.218937
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "61390",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "b7e8199aa158c7d75e20dbef1da55e81dbcf196d957404d0f4b9ce52690d0afb",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-part2-source.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.013054
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "38b25996e2cc25c826bcfcc24eccbc30dc8da6b554eb7df103b45c55082d9c12",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-part2-received.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.127165
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "61392",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "b7e8199aa158c7d75e20dbef1da55e81dbcf196d957404d0f4b9ce52690d0afb",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-part0-source.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.01252
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "38b25996e2cc25c826bcfcc24eccbc30dc8da6b554eb7df103b45c55082d9c12",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-part0-received.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.126386
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "61394",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "b7e8199aa158c7d75e20dbef1da55e81dbcf196d957404d0f4b9ce52690d0afb",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-part1-source.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.012548
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/client-cert.pem",
+        "38b25996e2cc25c826bcfcc24eccbc30dc8da6b554eb7df103b45c55082d9c12",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-part1-received.bin"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.125924
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-renewal-core-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/caller-trusted-public-anchor.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/forged-inner-PQ-complete-renewal-reassembled.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.005512
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-renewal-core-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/changed-caller-policy_trust.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-reassembled.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.005177
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-renewal-core-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/changed-caller-caller_locks_root.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-renewal-carriage-v17-20261007-private/genuine-complete-renewal-reassembled.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.005054
+    }
+  ],
+  "cases": [
+    {
+      "case": "genuine-complete-renewal-part2",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 815,
+      "payload_sha256": "e4480ccf05ee5993ea1c1172e2b0967ef54c502ac8a7191090151e9627061f06",
+      "loopback_port": 61383
+    },
+    {
+      "case": "genuine-complete-renewal-part0",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 12108,
+      "payload_sha256": "f494ccf6388aaa9a802366582c9be0152120fbe19eced10125ccd4e5a5c43b1b",
+      "loopback_port": 61385
+    },
+    {
+      "case": "genuine-complete-renewal-part1",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 12108,
+      "payload_sha256": "c657d495f71eb7e85a346b5bba6a5ce682d15fdf1f576cc7b0e364b26ff21943",
+      "loopback_port": 61388
+    },
+    {
+      "case": "genuine-complete-renewal-cold-reassembled-actual-Core",
+      "whole_bytes": 24707,
+      "parts": 3,
+      "part_sizes": [
+        12108,
+        12108,
+        815
+      ],
+      "whole_sha512": "51323037ce924f702c58ea319fcfe2bf7cac074fd8e930d5d353cf8b3df7a8efcd8a0fe7064390f454a880be1d853708ac3b75249fefdb14e32565430e7c3351",
+      "exact_cold_bytes": true,
+      "actual_Core_exit": 0
+    },
+    {
+      "case": "forged-inner-PQ-complete-renewal-part2",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 815,
+      "payload_sha256": "cea32e24108b05570bb51f3da202fed1dc590987378a22d9556dcd68c22e882c",
+      "loopback_port": 61390
+    },
+    {
+      "case": "forged-inner-PQ-complete-renewal-part0",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 12108,
+      "payload_sha256": "05f319023d4298de4d7189fca54480f0d2e2e58a356077c37b9fcc955c2e1b5c",
+      "loopback_port": 61392
+    },
+    {
+      "case": "forged-inner-PQ-complete-renewal-part1",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 12108,
+      "payload_sha256": "f05c54bdd8762436cd3e055392b245662dfb6e632c2898994faf03325822900b",
+      "loopback_port": 61394
+    },
+    {
+      "case": "forged-inner-PQ-complete-renewal-cold-reassembled-actual-Core",
+      "whole_bytes": 24707,
+      "parts": 3,
+      "part_sizes": [
+        12108,
+        12108,
+        815
+      ],
+      "whole_sha512": "9a4949766ebd247f681a0ecdf89c592bf6e700eae090b7e42ac3fcdb6c0794d23d168c5bf63db8bb6a5a452b0e914a5872ca93711a1dc092fb3328c8e2c6d34e",
+      "exact_cold_bytes": true,
+      "actual_Core_exit": 1
+    },
+    {
+      "case": "separate-caller-policy_trust-refused",
+      "actual_Core_exit": 1,
+      "original_anchor_unchanged": true
+    },
+    {
+      "case": "separate-caller-caller_locks_root-refused",
+      "actual_Core_exit": 1,
+      "original_anchor_unchanged": true
+    }
+  ],
+  "forced_owned_processes": [],
+  "owned_processes_stopped": true,
+  "controller_sha256": "07efe9cf1635a22b6e0721772d96013781ee7d61de8cd0fad091d4f1620e19c5",
+  "stage_sha256": "2885b8ea91cd11f2904b61722f66a6508c51de567cc98a3253a36f7af60edc78",
+  "log_sha256": "9ab51e7cd1e8689bc7393a9d121e63042ce1d34ac346d3178399bf5c2969392b",
+  "source_sha256": "5234a3a42b1e3098b8099d434c476b022a9d9e5050b00cfff92c1811ace1d636",
+  "actual_TLS_binary_sha256": "2388a3d0987e0515a4d805b5c325426452b758f7235be11b6bdd476b36cb7f2b",
+  "actual_Core_adapter_binary_sha256": "9b813a99eb8d5944adb43863512190071d489149eef7ce7115515b41d9fdfd65",
+  "core_source": "ee1f46b69457ace45d1b1ade842eb75ad97066b3d1d5b41598f2f000a6885b4a",
+  "final_standalone_lock_sha256": "29f9d130702dbe167f1fc5f833dc00c041ef01bc0cb40d0245f71698f0f0cd27",
+  "private_inventory_sha256": "34fadcd19917361f716a1db40e3f9e5c901e0a7e5a3851e590971af0847822ec",
+  "private_file_count": 25,
+  "actual_public_fixture_producer_binary_sha256": "2ece8e48abad10394fcb5d4ecbc1045bdb31d46d55bad8d9e8da674b1ea1ca33",
+  "public_fragment_source_sha256": "8c1902108621b659b7f32ab2ebb3ac45c3c80d825b8506906f4404c571572fdc",
+  "full_public_renewal_bytes": 24707,
+  "parts_per_renewal": 3,
+  "whole_candidate_bound": 32768,
+  "public_fragment_bound": 12288,
+  "budget_exhausted": false,
+  "source_policy_bridge": {
+    "peer-policy": "f9611b7d666cfc84cd69a07f8db0a81a63d5c7af357c641df91fb8dc94607173",
+    "TLS-context-policy": "3f0bd098dbb757c5736b11a211b7a645c2a1ddf81fa6a2dff41d906c8b3684ec"
+  },
+  "all_current_source_six_TLS_policy_cases_requalified": false,
+  "native_Node_Runtime_calls": 0,
+  "loopback_only": true,
+  "transport_is_value_authorization": false,
+  "adopted_profile": false,
+  "independent_review": false,
+  "physical": false,
+  "whole_goal_completed": false,
+  "old_failures_retained": true
+}

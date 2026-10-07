@@ -1,5 +1,13 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 连续主线：完整联合续证认证运输/cold/Core组合通过；继续连续归档/最新头边界
+
+完整wire/Core287阶段已ordinary main推送 **021a1df636aa04d5b925bcc0effcaf1a19624511**，remoteSHA/tree一致，CI runs0。V17 **PASS28.928744/一次120**：新verification-only actualCore adapter+RAM-only续证fixture/freshTLS，完整24707B以原12288下三片 **12108/12108/815** 按2/0/1实际认证送达；独立caller wholeSHA512/cold重组逐字相等，实际Core182ee1f合法4签exit0/坏新PQ同样full transport但Core1。独立旧trust UNAVAILABLE/改callerlocks也Core1，原caller anchor未改，next logicalera2/keyepoch2/nonce2/locks-consumed保持，无状态安装或记录重建。
+
+[有限组合profile](operations/evidence/pq-renewal-carriage-reference-v1-qualified-profile-20261007.json)、[实际结果](operations/evidence/pq-renewal-carriage-v17-20261007-checks.json)、[源码/仅公开验证输入](operations/fixtures/pq-renewal-carriage-v1-20261007/README.md)。既有Csource5234/actualTLS2388、pure5 exact framing回归复用，未新声称六TLSpolicy PASS，不重测未变KEM/Native/value。25私有项封存、forced[]/own terminal；所有旧FAIL/冻结字节/历史来源资格不变，不恢复/重开/复制失败钥或币。运输receipt只是bytes，不授续证/锁/价值权利。
+
+下一可证伪缺口：多个完整已签续证从独立原始anchor连续cold重建时，缺尾但每份签名都合法的旧prefix是否会被错误当成最新；必须对独立保留的expected latest transition核验，缺/重/换序/中段badproof/未知或broken旧policy拒绝，输入anchor及locks/consumed原样不动。采用verification-only finite archive，逐份保留原32768 bound、固定有限entry数/总资源拒绝，wholeledger/network/transport caps不变。一次必要相关120/首guard或deadline，最终全Core/strict300；不借同控制者成为独立custody、不安装suite、不重复旧Native180/600。持久采用/完整transaction-archive治理链/长期/独立安全/物理/P1–P8/wholegoal仍OPEN，冻结2ba62421/c59f9fe8/86821d19/全部S/R/I/A–G/N/P及原票数成熟经济共识预算容量不改，唯一作者持续阶段发布。
+
 ## 2026-10-07 连续主线：完整四签联合续证wire/Core全287通过；继续认证运输冷读组合
 
 knownML-KEM keygen阶段已ordinary main推送 **5ac0a922822ce6e246022efce2063072a8b784e8**，remoteSHA/tree一致，CI无run。Core新增verification-only完整联合续证codec，保留旧/新Ed+ML87共4签、完整新policy/前继/era/key/启用字段；旧trusted anchor/观察/locks/永久consumed记录独立caller提供，不从wire/TLS学习，不重建/释放/安装。新whole32768 parser不增加原transport12288/账本cap；whole实测 **24707B**，需要原上限分片。
