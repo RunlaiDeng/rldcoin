@@ -444,7 +444,7 @@ fn lossless_native_cold_child() {
     )
     .unwrap();
     assert_eq!(got, expected);
-    println!("actual-lossless-native-cold-height16 all_complete_signatures=true no_store_or_signer_adoption=true");
+    println!("actual-lossless-native-cold-height{} all_complete_signatures=true no_store_or_signer_adoption=true",got.height);
 }
 #[test]
 fn lossless_hash_consistent_bad_final_certificate_never_returns_native_boundary() {
@@ -491,4 +491,144 @@ fn lossless_hash_consistent_bad_final_certificate_never_returns_native_boundary(
     .unwrap_err();
     assert_eq!(failure, signature_failure);
     assert_eq!(inventory(&root), before);
+}
+
+#[test]
+fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() {
+    use super::body_witness_tests::certified_with_commands;
+    use crate::tests::signature;
+    let h = header();
+    let mut r = replay(&h);
+    let (root, flat) = stream(&h, &r);
+    let scope = h.scope(&r.trust).unwrap();
+    let mut logical = scope.initial().unwrap();
+    let mut previous = None;
+    let mut pending = Vec::new();
+    let mut pages = vec![];
+    let mut payments = 0;
+    let started = std::time::Instant::now();
+    let mut original_bytes = 0;
+    for height in 1..=128u64 {
+        let mature = r
+            .chain
+            .ledger
+            .coins
+            .iter()
+            .filter(|(_, c)| c.payment.owner == public(10) && c.mature <= height)
+            .take(3)
+            .map(|(id, c)| (*id, c.payment.amount))
+            .collect::<Vec<_>>();
+        let commands = if mature.len() == 3 {
+            let total = mature
+                .iter()
+                .try_fold(Amount::ZERO, |v, (_, a)| v.checked_add(*a))
+                .unwrap();
+            let intent = Intent {
+                currency: r.trust.currency().unwrap(),
+                region: r.chain.region,
+                inputs: mature.iter().map(|(id, _)| *id).collect(),
+                outputs: vec![Payment {
+                    owner: public(10),
+                    amount: total.checked_sub(Amount(1)).unwrap(),
+                }],
+                fee: Amount(1),
+                destination: None,
+                remote: None,
+                destination_fee: Amount::ZERO,
+                valid_through: height + 8,
+            };
+            let signed = SignedIntent {
+                approvals: vec![Approval {
+                    key: public(10),
+                    signature: signature(10, &intent.bytes().unwrap()),
+                }],
+                intent,
+            };
+            payments += 1;
+            vec![Command::Spend(Box::new(signed))]
+        } else {
+            vec![]
+        };
+        let record = Record::Certified(Box::new(certified_with_commands(&r, commands)));
+        r.apply(&record, &flat).unwrap();
+        assert_eq!(r.chain.height(), height);
+        assert!(r.chain.ledger.coins.len() <= 12);
+        assert!(r.evidence.snapshots.len() <= MAX_SNAPSHOTS);
+        r.chain.ledger.audit().unwrap();
+        logical = crate::retained_pages::next_head(logical, height - 1, &record).unwrap();
+        pending.push(record);
+        if pending.len() == 16 {
+            let raw = serde_json::to_vec(&CompletePage {
+                format: "RLD-NATIVE-COMPLETE-STREAM-PAGES-V1".into(),
+                scope: scope.clone(),
+                first: height - 16,
+                previous,
+                records: std::mem::take(&mut pending),
+            })
+            .unwrap();
+            original_bytes += raw.len();
+            previous = Some(Hash(Sha256::digest(&raw).into()));
+            pages.push(Ok(raw));
+        }
+    }
+    assert!(payments > 100);
+    assert!(pending.is_empty());
+    assert_eq!(
+        r.chain.ledger.minted,
+        Amount(rld_pow::cumulative_emission(128))
+    );
+    let hot_seconds = started.elapsed().as_secs_f64();
+    let at = std::time::Instant::now();
+    let dir = root.join("lossless-native");
+    let archive =
+        PackedArchiveCandidate::<Record>::seal_lossless_candidate(&dir, scope, logical, pages)
+            .unwrap();
+    let manifest = archive.manifest_reference_candidate().unwrap();
+    drop(archive);
+    let seal_seconds = at.elapsed().as_secs_f64();
+    let caller = IndependentCaller {
+        bootstrap: h.bootstrap.clone(),
+        region: h.region,
+        storage_head: logical,
+        height: 128,
+        finalized: r.chain.finalized,
+        epoch: r.chain.epoch,
+        ledger_root: r.chain.ledger.root().unwrap(),
+        count: 128,
+    };
+    let expected = caller.boundary();
+    let separate = LosslessCaller { caller, manifest };
+    crate::keystore::private_create(
+        &root.join("lossless-caller.json"),
+        &serde_json::to_vec(&separate).unwrap(),
+    )
+    .unwrap();
+    let before = inventory(&root);
+    let at = std::time::Instant::now();
+    let output = Process::new(std::env::current_exe().unwrap())
+        .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .args([
+            "storage::paged::packed_inspection_tests::lossless_native_cold_child",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("RLD_LOSSLESS_NATIVE_CHILD", &root)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&output.stdout).contains("actual-lossless-native-cold-height128")
+    );
+    assert_eq!(inventory(&root), before);
+    let cold_seconds = at.elapsed().as_secs_f64();
+    let archive_bytes = inventory(&dir)
+        .values()
+        .map(|(_, bytes, _)| bytes)
+        .sum::<u64>();
+    println!("lossless-consolidated-complete height={} records={} signed_payments={} coins={} active={} original_page_bytes={} retained_archive_bytes={} hot_seconds={:.6} seal_seconds={:.6} cold_child_seconds={:.6} source_root={} native_200001_qualification=false",expected.height,expected.record_count,payments,r.chain.ledger.coins.len(),r.evidence.snapshots.len(),original_bytes,archive_bytes,hot_seconds,seal_seconds,cold_seconds,expected.ledger_root.to_hex());
 }

@@ -39,6 +39,9 @@ pub(super) fn replay(h: &Header) -> Replay {
     Replay::new(h, &public(1), h.bootstrap.currency.id().unwrap()).unwrap()
 }
 pub(super) fn certified(r: &Replay) -> Snapshot {
+    certified_with_commands(r, vec![])
+}
+pub(super) fn certified_with_commands(r: &Replay, commands: Vec<Command>) -> Snapshot {
     let mut chain = r.chain.clone();
     let context = Context {
         currency: r.trust.currency().unwrap(),
@@ -51,7 +54,7 @@ pub(super) fn certified(r: &Replay) -> Snapshot {
     };
     crate::paged_bft::prepare_parent(&mut chain, &r.evidence).unwrap();
     let mut block = chain
-        .template(vec![], public(10), &r.trust, &r.evidence)
+        .template(commands, public(10), &r.trust, &r.evidence)
         .unwrap();
     mine(&mut block).unwrap();
     chain.accept(block, &r.trust, &r.evidence).unwrap();
