@@ -38,7 +38,7 @@ class Clock:
 def methods(source=SOURCE, clock_override=None):
     tree = ast.parse(source.read_text())
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'Runtime')
-    names = {'tick', '_tick', 'signed', 'quorum', 'timeout_certificate', 'report', '_try_prepare'}
+    names = {'tick', '_tick', 'signed', 'quorum', 'timeout_certificate', 'report', '_try_prepare', '_broadcast_after_observation'}
     extracted = ast.Module(body=[ast.ClassDef(name='ExactRuntime', bases=[], keywords=[],
         body=[n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name in names],
         decorator_list=[])], type_ignores=[])

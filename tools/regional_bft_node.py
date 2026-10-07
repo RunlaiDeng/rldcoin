@@ -1102,8 +1102,30 @@ class Runtime:
                 round_number = None
                 self.slot = None
             if self.format==FORMAT and self.joint is None:self._carriage_round=round_number
-        self.broadcast()
+        self._broadcast_after_observation()
         return self.report(context,round_number,status,stopped)
+
+    def _broadcast_after_observation(self):
+        """A keyless Native observation is separate from an occupied mesh lease.
+
+        Only the typed pre-Node scheduling refusal may defer this broadcast.
+        Native/caller/outbox checks, delayed finalization and all retained bytes
+        still precede this point. Never defer active signing, epochs, corruption,
+        persistence failures or untyped OS errors; never claim enqueue/custody.
+        """
+        from interstellar_tcp import MeshTurnPending
+        self._carriage_deferred=False
+        try:self.broadcast()
+        except MeshTurnPending:
+            if not (self.format==FORMAT and self.joint is None
+                    and getattr(self,'_retained_native_authenticated',False) is True
+                    and (self.key_file is None or not self.key_file.exists())
+                    and self.head['head'] is not None and self.head['pending'] is None
+                    and self.head.get('outbox') is None):
+                raise
+            self._carriage_deferred=True
+            observation=getattr(self,'observation',None)
+            if observation is not None:observation.event('keyless-carriage-deferred')
 
     def report(self, context, round_number, status, stopped):
         return {'format':self.format,'currency':self.native.currency,'region':self.region,'validator':self.key,
@@ -1112,4 +1134,5 @@ class Runtime:
                 'joint_epoch_lifecycle_enabled':self.joint is not None,'joint_active_slot':self.joint.active if self.joint is not None else None,
                 'explicit_stop_height_reached':self.state['height']>=self.stop_height,'caller_head_pending':self.head['pending'] is not None,
                 'caller_head_rollback_qualification':False,'independent_bft_qualified':False,
-                'physical_interstellar_route_qualified':False,'local_ground_timing_only':True}
+                'physical_interstellar_route_qualified':False,'local_ground_timing_only':True,
+                **({'carriage_deferred':True} if getattr(self,'_carriage_deferred',False) else {})}

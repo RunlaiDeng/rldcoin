@@ -72,6 +72,21 @@ cold checks and conservation remain mandatory under the same total deadline.
 These caller-retained fixture heads do not qualify independent freshness,
 rollback witnesses, suite adoption or authority for real funds.
 
+## Keyless observation and carriage deferral
+
+After a base-profile keyless tick has checked its current Native ledger and
+separate caller head, an occupied local mesh lease may defer its final broadcast.
+The report explicitly marks `carriage_deferred: true`; all complete envelopes
+remain retained for a later ordinary attempt. This reports Native state only,
+with no enqueue, transport receipt or custody-success claim. The typed scheduling
+refusal originates before opening the mesh Node. Active keys, joint/role profiles,
+pending caller/outbox work, bad signatures, persistence failures, generic OS
+errors and stopping runtimes keep their original refusal behavior.
+
+Delayed complete certificates still require the original Native finalization
+path. Current observations do not qualify stopped drain, complete fixed-head
+cold verification or conservation; those remain mandatory separate checks.
+
 ## Evidence, deadlines and remaining gates
 
 Run the smallest falsifiable reproducer, then related regressions, then a justified

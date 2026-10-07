@@ -26,6 +26,10 @@ import interstellar_transfer as wire
 from interstellar_mesh_cost import MeshCosts
 
 
+class MeshTurnPending(BlockingIOError):
+    """The local fair lease is occupied; no Node/custody work has begun."""
+
+
 class MeshRuntimeStopping(ValueError):
     """Local admission refused because this runtime has stopped accepting work."""
 
@@ -438,7 +442,7 @@ class Server:
                                           and last_inbound!='input') or (
                         current is input_owner and other_handler and last_inbound=='input')
             if busy or deferred:
-                raise BlockingIOError(errno.EAGAIN,'local mesh turn pending; retain evidence')
+                raise MeshTurnPending(errno.EAGAIN,'local mesh turn pending; retain evidence')
             self.local_mesh_owner=current
 
     def _release_mesh_turn(self):
