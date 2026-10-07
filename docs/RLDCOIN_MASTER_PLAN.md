@@ -1,5 +1,13 @@
 # Rldcoin 主计划：人类跨星际点对点支付
 
+## 2026-10-07 连续主线：连续四签续证归档/独立latest-head边界及全290通过；继续实际冷文件入口
+
+完整续证运输已ordinary main推送 **e51282164d2433d50b3d141f909d011700841634**，remoteSHA/tree一致，CI无run。新增verification-only连续归档：从独立trusted initial anchor/逐步观察核验每个完整4签续证，最终必须匹配caller另存expected latest transition；有效单步prefix仍合法但不当最新。缺尾/缺首/换序/重复/旧expectedhead/中尾坏PQ/旧policy未知broken-revoked均拒绝，初始anchor/locks/consumed不变，不安装或重建记录。所有资源先于crypto核验：1..64 entries/每项原32768/总2097152（独立候选模型，不改Native/ledger/network/transport cap）。实际合法 **2项/49414B**，未测完整64性能或长期链。
+
+V18 **PASS38.263059/原120**，3新真实RAM-only连续签名回归+6包alltarget strict，无豁免；V19 **PASS40.539654/原300**，同最终源全 **290 Core/0失败/0忽略/0过滤**，精确复用strict。Core182 **f5adb88060a13055d26cc78f12c654cadebcb53f4bf842eb2647f058218c98d1**，actual compiled manifest/immutable unit/controller分绑；新归档之前所有旧authorization/renewal/codec函数byte-identical projection留证，旧scope不转授新Core/Native。[有限profile](operations/evidence/core-hybrid-renewal-archive-reference-v1-qualified-profile-20261007.json)、[全套结果](operations/evidence/core-hybrid-renewal-archive-integrated-v19-20261007-checks.json)、[源码及限定](operations/fixtures/core-hybrid-renewal-archive-v1-20261007/README.md)。全部旧FAIL/私有保管/原预算经济票数成熟容量保持，0Native180/600/旧TLS长测。
+
+下一唯一目标：实际新的Core冷文件archive adapter在逐份owned nonsymlink/限定leaf name/不可逃出caller已打开目录的读取下，接受完整合法2份公开续证+独立caller latest/观察，拒完整签名的stale prefix/坏尾/未知旧trust/路径逃逸/symlink/缺文件/超数超项且输入bytes不变。全新RAM-only公开2步fixture、once120包含严格实际build/cold/护栏/终态封存，不网络或重复旧运输。实际记录/信任独立保管、总全文件回滚见证、持久原子suite采用、完整transaction/governance/长期/物理/P1–P8/wholegoal仍OPEN；冻结2ba62421/c59f9fe8/86821d19/全部S/R/I/A–G/N/P不变，唯一作者持续阶段审阅普通main推送。
+
 ## 2026-10-07 连续主线：完整联合续证认证运输/cold/Core组合通过；继续连续归档/最新头边界
 
 完整wire/Core287阶段已ordinary main推送 **021a1df636aa04d5b925bcc0effcaf1a19624511**，remoteSHA/tree一致，CI runs0。V17 **PASS28.928744/一次120**：新verification-only actualCore adapter+RAM-only续证fixture/freshTLS，完整24707B以原12288下三片 **12108/12108/815** 按2/0/1实际认证送达；独立caller wholeSHA512/cold重组逐字相等，实际Core182ee1f合法4签exit0/坏新PQ同样full transport但Core1。独立旧trust UNAVAILABLE/改callerlocks也Core1，原caller anchor未改，next logicalera2/keyepoch2/nonce2/locks-consumed保持，无状态安装或记录重建。

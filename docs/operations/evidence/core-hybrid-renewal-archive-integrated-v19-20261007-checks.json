@@ -1,0 +1,51 @@
+{
+  "format": "RLD-CORE-HYBRID-RENEWAL-ARCHIVE-INTEGRATED-V19",
+  "completed": true,
+  "duration_seconds": 40.539654,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 40.483788,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "5fe7dc8fe26815ef9ade26c3782e2692f021a2559ed5c0ce31212a75e183a9e1",
+  "stage_sha256": "d1b0e1e5ac8f321dcf3ef2a464b64c1090ae77f92f9a33a18df3f238f5fb6dde",
+  "controller_sha256": "b51787a7c61ece31a16a10106f0abe994f185dbabea5defd988f23e6f51819a2",
+  "log_sha256": "bce1804a89f2cac9a73036b44189d447e13734cf496618c2816c8b4f86f0f2e2",
+  "core_source": "f5adb88060a13055d26cc78f12c654cadebcb53f4bf842eb2647f058218c98d1",
+  "core_file_count": 182,
+  "full_core_suite_passed": true,
+  "related_strict_evidence_reused": true,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

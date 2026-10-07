@@ -1,0 +1,52 @@
+{
+  "format": "RLD-CORE-HYBRID-RENEWAL-ARCHIVE-REFERENCE-V1",
+  "recorded_at_utc": "2026-10-07T07:42:17.331495+00:00",
+  "candidate_only": true,
+  "completed": true,
+  "Core_source": "f5adb88060a13055d26cc78f12c654cadebcb53f4bf842eb2647f058218c98d1",
+  "Core_file_count": 182,
+  "related_tests": 3,
+  "related_duration_seconds": 38.263059,
+  "related_budget_seconds": 120,
+  "whole_workspace_alltarget_strict_same_source_reused": true,
+  "full_Core_tests": 290,
+  "filtered": 0,
+  "ignored": 0,
+  "full_duration_seconds": 40.539654,
+  "full_budget_seconds": 300,
+  "actual_test_binary": {
+    "path": "tmp/default-relay-20260930/core-hybrid-renewal-archive-integrated-v19-20261007-qualified-test-binary",
+    "sha256": "8214939f89c01f1b16fae01e76b0b129bdae51b491ffea8eba3c43eaaf198aac",
+    "bytes": 23969896
+  },
+  "compiled_manifests": [
+    {
+      "path": "target/value-tests-rust198-opt1/debug/build/rld-core-95064c49a5a4e2a6/out/implementation-source.json",
+      "sha256": "3a34ca1a5f73b1c9cdd99f1b040835cec1de3d69dc1bd55a3731b9aa13e83ff3"
+    }
+  ],
+  "controller_sha256": "b51787a7c61ece31a16a10106f0abe994f185dbabea5defd988f23e6f51819a2",
+  "stage_sha256": "d1b0e1e5ac8f321dcf3ef2a464b64c1090ae77f92f9a33a18df3f238f5fb6dde",
+  "checks_sha256": "eb62a535496ef9a279af0d5e61ec43e3fdedbedde2e162ec39520144df846947",
+  "source_manifest_sha256": "5fe7dc8fe26815ef9ade26c3782e2692f021a2559ed5c0ce31212a75e183a9e1",
+  "valid_full_signed_chain_actual_entries": 2,
+  "actual_complete_bytes": 49414,
+  "per_entry_bound": 32768,
+  "max_entries": 64,
+  "max_total_bytes": 2097152,
+  "all64_valid_entry_cost_qualified": false,
+  "expected_latest_head_separately_caller_retained": true,
+  "per_step_observations_independently_caller_authenticated_required": true,
+  "full_current_scope_all_files_rollback_independent_custody": false,
+  "unchanged_prior_authorization_renewal_codec_functions_sha256": "1c634ad5fcab22fe1f01639a2ed61460a7f3cdcb3cddd8c6d6ccc2653da99c67",
+  "valid_stale_prefix_is_latest": false,
+  "input_anchor_mutated": false,
+  "actual_locks_consumed_records_reconstructed": false,
+  "durable_atomic_adoption": false,
+  "complete_transaction_archive_governance_qualification": false,
+  "Native_value_profile_transferred": false,
+  "independent_review_custody": false,
+  "physical_longterm": false,
+  "whole_goal_completed": false,
+  "old_failures_retained": true
+}

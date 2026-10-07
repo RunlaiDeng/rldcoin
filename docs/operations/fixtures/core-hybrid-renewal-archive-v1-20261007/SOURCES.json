@@ -1,0 +1,20 @@
+{
+  "format": "RLD-SOURCE-ONLY-BUNDLE",
+  "files": [
+    {
+      "path": "crates/rld-core/src/hybrid_authorization.rs",
+      "sha256": "54ce3ddb4cb4efe307a72f8b4712d4b358188f2b1374a0504dde69bf689adb42",
+      "bytes": 63074
+    },
+    {
+      "path": "tmp/default-relay-20260930/check-core-hybrid-renewal-archive-related-v18-20261007.py",
+      "sha256": "235dd92742d3e198b619855b5506e02ef4f6b937b667ced484b240f07affa20e",
+      "bytes": 7797
+    },
+    {
+      "path": "tmp/default-relay-20260930/check-core-hybrid-renewal-archive-integrated-v19-20261007.py",
+      "sha256": "b51787a7c61ece31a16a10106f0abe994f185dbabea5defd988f23e6f51819a2",
+      "bytes": 7774
+    }
+  ]
+}

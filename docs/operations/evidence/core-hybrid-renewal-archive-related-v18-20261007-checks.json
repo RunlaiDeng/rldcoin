@@ -1,0 +1,80 @@
+{
+  "format": "RLD-CORE-HYBRID-RENEWAL-ARCHIVE-RELATED-V18",
+  "completed": true,
+  "duration_seconds": 38.263059,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.772804,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.688366,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "joint_renewal_archive",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 32.714935,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "5fe7dc8fe26815ef9ade26c3782e2692f021a2559ed5c0ce31212a75e183a9e1",
+  "stage_sha256": "d7ba5410965d191c629bd5e7458eb9eac670944e10905d5f81f5368e861b3eeb",
+  "controller_sha256": "235dd92742d3e198b619855b5506e02ef4f6b937b667ced484b240f07affa20e",
+  "log_sha256": "6532aa9602433d1e3efcc1bc9fb423373562528a271b0f9580c94301939fccbf",
+  "core_source": "f5adb88060a13055d26cc78f12c654cadebcb53f4bf842eb2647f058218c98d1",
+  "core_file_count": 182,
+  "full_core_suite_passed": false,
+  "related_three_tests_passed": true,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}
