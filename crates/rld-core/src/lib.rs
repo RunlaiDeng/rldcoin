@@ -10,6 +10,7 @@ pub mod command_wire;
 pub mod consensus_epoch;
 pub mod crypto;
 pub mod genesis;
+pub mod hybrid_archive;
 pub mod hybrid_authorization;
 pub mod hybrid_quorum;
 pub mod implementation_source;
