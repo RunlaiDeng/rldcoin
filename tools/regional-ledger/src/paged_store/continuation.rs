@@ -284,13 +284,10 @@ impl NativeContinuationCandidate {
         )?;
         Ok(replay)
     }
-    /// Return only after full Native authentication and durable complete tail
-    /// publication. Caller stores these resulting anchors independently.
-    pub fn append_certified(
-        &mut self,
-        snapshot: &Snapshot,
+    fn require_current(
+        &self,
         independently_current: &NativeContinuationPinsCandidate,
-    ) -> Result<NativeContinuationPinsCandidate> {
+    ) -> Result<()> {
         require(
             self.healthy && *independently_current == self.current,
             "continuation unhealthy or independently current process boundary differs",
@@ -310,6 +307,106 @@ impl NativeContinuationCandidate {
             boundary(&self.warm, self.current.latest.record_count)? == self.current.latest,
             "continuation actual process Native state differs",
         )?;
+        Ok(())
+    }
+    fn context(&self) -> Result<crate::bft::Context> {
+        let chain = &self.warm.chain;
+        Ok(crate::bft::Context {
+            currency: self.warm.trust.currency()?,
+            region: chain.region,
+            epoch: chain.epoch,
+            previous: chain.finalized,
+            parent_height: chain.height(),
+            parent_block: chain.tip()?,
+            parent_state: chain.ledger.root()?,
+        })
+    }
+    /// Unsigned template only; no balance, signature lock or record changes.
+    /// Owner authorization and exact native execution precede its return.
+    pub fn template(
+        &self,
+        commands: Vec<Command>,
+        miner: String,
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<(crate::bft::Context, Block)> {
+        self.require_current(independently_current)?;
+        encode("commands", &commands)?;
+        let context = self.context()?;
+        let mut chain = self.warm.chain.clone();
+        crate::paged_bft::prepare_parent(&mut chain, &self.warm.evidence)?;
+        let block = chain.template(commands, miner, &self.warm.trust, &self.warm.evidence)?;
+        encode("block", &block)?;
+        Ok((context, block))
+    }
+    /// Public ledger coins at this exact Native boundary, including explicit
+    /// maturity. Private wallet reservations are not part of this projection.
+    pub fn coins(
+        &self,
+        owner: &str,
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<Vec<(Hash, Coin)>> {
+        self.require_current(independently_current)?;
+        validate_ed25519_public_key(owner)?;
+        let coins = self
+            .warm
+            .chain
+            .ledger
+            .coins
+            .iter()
+            .filter(|(_, coin)| coin.payment.owner == owner)
+            .map(|(id, coin)| (*id, coin.clone()))
+            .collect::<Vec<_>>();
+        encode("continuation-public-coins", &coins)?;
+        Ok(coins)
+    }
+    /// Build complete original Native evidence only after actual block work,
+    /// commands, current parent and all configured prepare/commit votes verify.
+    /// Construction itself neither publishes the block nor authorizes signing.
+    pub fn snapshot_for_certificate(
+        &self,
+        block: &Block,
+        certificate: &crate::bft::Certificate,
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<Snapshot> {
+        self.require_current(independently_current)?;
+        encode("block", block)?;
+        encode("bft-certificate", certificate)?;
+        let context = self.context()?;
+        let mut chain = self.warm.chain.clone();
+        crate::paged_bft::prepare_parent(&mut chain, &self.warm.evidence)?;
+        chain.accept(block.clone(), &self.warm.trust, &self.warm.evidence)?;
+        let snapshot = Snapshot {
+            base: chain.snapshot_base(),
+            bft: Some(certificate.clone()),
+            statement: chain.statement(&self.warm.trust)?,
+            blocks: chain.blocks,
+            epochs: vec![],
+            approvals: vec![],
+        };
+        encode("snapshot", &snapshot)?;
+        certificate.verify(
+            &context,
+            snapshot.statement.id()?,
+            &context.keys(&self.warm.trust, &self.warm.evidence)?,
+        )?;
+        let source = Source {
+            prefix: &self.prefix,
+            tail: &self.tail,
+            scope: &self.scope,
+            pins: independently_current,
+        };
+        let mut staged = self.warm.clone();
+        staged.apply_retained(&Record::Certified(Box::new(snapshot.clone())), &source)?;
+        Ok(snapshot)
+    }
+    /// Return only after full Native authentication and durable complete tail
+    /// publication. Caller stores these resulting anchors independently.
+    pub fn append_certified(
+        &mut self,
+        snapshot: &Snapshot,
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<NativeContinuationPinsCandidate> {
+        self.require_current(independently_current)?;
         let mut replay = self.warm.clone();
         let record = Record::Certified(Box::new(snapshot.clone()));
         require(

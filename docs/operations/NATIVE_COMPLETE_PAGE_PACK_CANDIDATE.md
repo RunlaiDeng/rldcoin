@@ -275,3 +275,31 @@ record while retaining full source byte checks; total I/O still grows with stora
 Continuation rotation, general event interfaces, complete incident integration,
 large live-node service costs and ordinary-node/signing/recovery adoption remain
 distinct work. No old private archive is converted or resumed.
+
+
+## Native proposal and public coin interfaces
+
+A continuation handle's `template` checks exact caller-current anchors and all
+retained source bytes before constructing an unsigned block through normal Native
+execution. Owner signatures, input existence, maturity, balances and fees must
+verify before return. Mining and validator signing remain caller responsibilities;
+template construction changes neither retained records nor the committed ledger.
+The returned BFT context binds the actual current finalized parent, height, block,
+state and epoch, rather than a caller-supplied state description.
+
+`snapshot_for_certificate` accepts an actually mined block and complete configured
+prepare/commit certificate. It verifies the block, commands, current parent and
+every vote, then stages the resulting complete original snapshot through Native
+replay. Invalid work, substituted commands, unknown keys, incorrect phases, parent
+mismatches and insufficient votes refuse without publication. The caller must
+separately invoke `append_certified` for durable acceptance. Construction grants
+no signature lock or signer custody.
+
+`coins` returns public coin identifiers, payments and explicit maturity from the
+exact actually executed process state. It is not a private wallet reservation
+view. Local payment outputs follow the existing local-payment rule; issuance
+rewards and fees retain the configured reward maturity. Imported payments require
+their separate Native import rules. No caller can select earlier anchors to bypass
+these checks. Cold opening still executes every retained original record from
+signed genesis and checks independently retained current anchors. These interfaces
+do not adopt a new ordinary-node profile or supply signer/recovery authority.

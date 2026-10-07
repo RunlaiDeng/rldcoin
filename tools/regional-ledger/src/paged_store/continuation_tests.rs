@@ -413,3 +413,361 @@ fn held_process_state_refuses_any_changed_complete_prefix_object() {
     assert!(store.inspect(&pins).is_err());
     assert_eq!(inventory(&root), before);
 }
+
+fn owner_payment(
+    h: &Header,
+    inputs: Vec<Hash>,
+    outputs: Vec<Payment>,
+    owner: u8,
+    valid_through: u64,
+) -> SignedIntent {
+    let intent = Intent {
+        currency: h.bootstrap.currency.id().unwrap(),
+        region: h.region,
+        inputs,
+        outputs,
+        fee: Amount(1),
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through,
+    };
+    SignedIntent {
+        approvals: vec![Approval {
+            key: public(owner),
+            signature: crate::tests::signature(owner, &intent.bytes().unwrap()),
+        }],
+        intent,
+    }
+}
+fn proposal_certificate(
+    hot: &Replay,
+    context: &crate::bft::Context,
+    block: &Block,
+) -> crate::bft::Certificate {
+    use crate::bft::{Phase, Quorum, Vote};
+    let mut chain = hot.chain.clone();
+    crate::paged_bft::prepare_parent(&mut chain, &hot.evidence).unwrap();
+    chain
+        .accept(block.clone(), &hot.trust, &hot.evidence)
+        .unwrap();
+    let value = chain.statement(&hot.trust).unwrap().id().unwrap();
+    let mut seeds = [2, 3, 4, 5];
+    seeds.sort_by_key(|seed| public(*seed));
+    let quorum = |phase| Quorum {
+        context: context.clone(),
+        round: 0,
+        value,
+        phase,
+        votes: seeds[..3]
+            .iter()
+            .map(|seed| {
+                let mut vote = Vote {
+                    context: context.clone(),
+                    round: 0,
+                    value,
+                    phase,
+                    approval: Approval {
+                        key: public(*seed),
+                        signature: String::new(),
+                    },
+                };
+                vote.approval.signature = crate::tests::signature(*seed, &vote.bytes().unwrap());
+                vote
+            })
+            .collect(),
+    };
+    crate::bft::Certificate {
+        prepared: quorum(Phase::Prepare),
+        committed: quorum(Phase::Commit),
+    }
+}
+fn submit_proposal(
+    store: &mut NativeContinuationCandidate,
+    hot: &mut Replay,
+    flat: &Stream<Record>,
+    commands: Vec<Command>,
+    miner: u8,
+    pins: &NativeContinuationPinsCandidate,
+) -> NativeContinuationPinsCandidate {
+    let (context, mut block) = store.template(commands, public(miner), pins).unwrap();
+    mine(&mut block).unwrap();
+    let certificate = proposal_certificate(hot, &context, &block);
+    let snapshot = store
+        .snapshot_for_certificate(&block, &certificate, pins)
+        .unwrap();
+    hot.apply(&Record::Certified(Box::new(snapshot.clone())), flat)
+        .unwrap();
+    let expected_head = crate::retained_pages::next_head(
+        pins.complete_head,
+        pins.latest.record_count,
+        &Record::Certified(Box::new(snapshot.clone())),
+    )
+    .unwrap();
+    let updated = store.append_certified(&snapshot, pins).unwrap();
+    assert_eq!(updated.complete_head, expected_head);
+    assert_eq!(updated.latest.ledger_root, hot.chain.ledger.root().unwrap());
+    hot.chain.ledger.audit().unwrap();
+    updated
+}
+#[derive(Serialize, Deserialize)]
+struct PaymentCaller {
+    caller: Caller,
+    coins: BTreeMap<String, Vec<(Hash, Coin)>>,
+}
+#[test]
+fn guarded_proposal_actual_owner_payment_reward_maturity_and_independent_cold() {
+    let (root, h, mut hot, flat, prefix) = fixture();
+    let original = inventory(&root.join("prefix"));
+    let (mut store, mut pins) = create(&root, &h, &prefix);
+    let mature = store
+        .coins(&public(10), &pins)
+        .unwrap()
+        .into_iter()
+        .filter(|(_, coin)| coin.mature <= 17)
+        .take(3)
+        .collect::<Vec<_>>();
+    assert_eq!(mature.len(), 3);
+    let total = mature
+        .iter()
+        .try_fold(Amount::ZERO, |sum, (_, coin)| {
+            sum.checked_add(coin.payment.amount)
+        })
+        .unwrap();
+    let signed = owner_payment(
+        &h,
+        mature.iter().map(|(id, _)| *id).collect(),
+        vec![
+            Payment {
+                owner: public(20),
+                amount: Amount(7),
+            },
+            Payment {
+                owner: public(10),
+                amount: total.checked_sub(Amount(8)).unwrap(),
+            },
+        ],
+        10,
+        24,
+    );
+    let before = inventory(&root);
+    let mut bad = signed.clone();
+    bad.approvals[0].signature = "00".repeat(64);
+    assert!(store
+        .template(vec![Command::Spend(Box::new(bad))], public(30), &pins)
+        .is_err());
+    assert_eq!(inventory(&root), before);
+    let (context, mut block) = store
+        .template(
+            vec![Command::Spend(Box::new(signed.clone()))],
+            public(30),
+            &pins,
+        )
+        .unwrap();
+    assert_eq!(context.parent_height, 16);
+    assert_eq!(inventory(&root), before);
+    mine(&mut block).unwrap();
+    let certificate = proposal_certificate(&hot, &context, &block);
+    for choice in 0..5 {
+        let mut bad = certificate.clone();
+        match choice {
+            0 => {
+                bad.committed.votes.pop();
+            }
+            1 => bad.committed.votes[0].approval.signature = "00".repeat(64),
+            2 => bad.prepared.phase = crate::bft::Phase::Commit,
+            3 => bad.committed.context.parent_state = Hash([9; 32]),
+            _ => bad.committed.votes[0].approval.key = public(7),
+        }
+        assert!(store.snapshot_for_certificate(&block, &bad, &pins).is_err());
+        assert_eq!(inventory(&root), before);
+    }
+    let mut altered = block.clone();
+    altered.commands.clear();
+    assert!(store
+        .snapshot_for_certificate(&altered, &certificate, &pins)
+        .is_err());
+    assert_eq!(inventory(&root), before);
+    let snapshot = store
+        .snapshot_for_certificate(&block, &certificate, &pins)
+        .unwrap();
+    assert_eq!(inventory(&root), before);
+    hot.apply(&Record::Certified(Box::new(snapshot.clone())), &flat)
+        .unwrap();
+    let old = pins.clone();
+    pins = store.append_certified(&snapshot, &pins).unwrap();
+    assert_eq!(pins.latest.ledger_root, hot.chain.ledger.root().unwrap());
+    let before = inventory(&root);
+    assert!(store.template(vec![], public(30), &old).is_err());
+    assert!(store.coins(&public(20), &old).is_err());
+    assert_eq!(inventory(&root), before);
+    let received = store.coins(&public(20), &pins).unwrap();
+    assert_eq!(received.len(), 1);
+    assert_eq!(received[0].1.payment.amount, Amount(7));
+    assert_eq!(received[0].1.mature, 17);
+    for (id, _) in &mature {
+        assert!(!hot.chain.ledger.coins.contains_key(id));
+    }
+    let change = id("output", &(signed.intent.id().unwrap(), 1u32)).unwrap();
+    assert_eq!(
+        hot.chain.ledger.coins[&change].payment.amount,
+        total.checked_sub(Amount(8)).unwrap()
+    );
+    let miner = store.coins(&public(30), &pins).unwrap();
+    assert_eq!(miner.len(), 2);
+    assert!(miner.iter().all(|(_, coin)| coin.mature == 19));
+    assert_eq!(
+        miner
+            .iter()
+            .try_fold(Amount::ZERO, |sum, (_, coin)| sum
+                .checked_add(coin.payment.amount))
+            .unwrap(),
+        rld_pow::subsidy(17)
+            .unwrap()
+            .checked_add(Amount(1))
+            .unwrap()
+    );
+    let immature = owner_payment(
+        &h,
+        miner.iter().map(|(id, _)| *id).collect(),
+        vec![Payment {
+            owner: public(40),
+            amount: rld_pow::subsidy(17).unwrap(),
+        }],
+        30,
+        24,
+    );
+    let before = inventory(&root);
+    assert!(store
+        .template(
+            vec![Command::Spend(Box::new(immature.clone()))],
+            public(50),
+            &pins
+        )
+        .unwrap_err()
+        .contains("immature input"));
+    assert_eq!(inventory(&root), before);
+    let onward = owner_payment(
+        &h,
+        vec![received[0].0],
+        vec![Payment {
+            owner: public(21),
+            amount: Amount(6),
+        }],
+        20,
+        24,
+    );
+    pins = submit_proposal(
+        &mut store,
+        &mut hot,
+        &flat,
+        vec![Command::Spend(Box::new(onward))],
+        30,
+        &pins,
+    );
+    assert!(store.coins(&public(20), &pins).unwrap().is_empty());
+    assert_eq!(
+        store.coins(&public(21), &pins).unwrap()[0].1.payment.amount,
+        Amount(6)
+    );
+    pins = submit_proposal(
+        &mut store,
+        &mut hot,
+        &flat,
+        vec![Command::Spend(Box::new(immature))],
+        50,
+        &pins,
+    );
+    assert_eq!(pins.latest.height, 19);
+    assert_eq!(
+        store.coins(&public(40), &pins).unwrap()[0].1.payment.amount,
+        rld_pow::subsidy(17).unwrap()
+    );
+    assert_eq!(store.inspect(&pins).unwrap(), pins.latest);
+    hot.chain.ledger.audit().unwrap();
+    let coins = [10, 20, 21, 30, 40, 50]
+        .iter()
+        .map(|owner| {
+            let key = public(*owner);
+            let got = store.coins(&key, &pins).unwrap();
+            let expected = hot
+                .chain
+                .ledger
+                .coins
+                .iter()
+                .filter(|(_, coin)| coin.payment.owner == key)
+                .map(|(id, coin)| (*id, coin.clone()))
+                .collect::<Vec<_>>();
+            assert_eq!(got, expected);
+            (key, expected)
+        })
+        .collect();
+    drop(store);
+    assert_eq!(inventory(&root.join("prefix")), original);
+    let caller = Caller {
+        bootstrap: h.bootstrap.clone(),
+        prefix_head: prefix.storage_head,
+        prefix_manifest: prefix.manifest,
+        prefix_height: 16,
+        prefix_finalized: prefix.latest.finalized,
+        prefix_epoch: prefix.latest.epoch,
+        prefix_root: prefix.latest.ledger_root,
+        tail_head: pins.tail_head,
+        whole_head: pins.complete_head,
+        height: 19,
+        finalized: hot.chain.finalized,
+        epoch: hot.chain.epoch,
+        root: hot.chain.ledger.root().unwrap(),
+        count: 19,
+    };
+    crate::keystore::private_create(
+        &root.join("payment-caller.json"),
+        &serde_json::to_vec(&PaymentCaller { caller, coins }).unwrap(),
+    )
+    .unwrap();
+    let before = inventory(&root);
+    let output = Process::new(std::env::current_exe().unwrap())
+        .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .args([
+            "storage::paged::continuation_tests::payment_cold_child",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("RLD_CONTINUATION_PAYMENT_CHILD", &root)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout)
+        .contains("actual-native-payment-cold height19 records19"));
+    assert_eq!(inventory(&root), before);
+    println!("actual-native-template-payments owner10_to20=7 owner20_to21=6 mature_miner30_to40=true fee1_each=true QC3_each_phase=true reward_maturity2=true full_cold_height19=true no_ordinary_signer_adoption=true");
+}
+#[test]
+#[ignore = "separate cold child with independently retained complete payment state"]
+fn payment_cold_child() {
+    let root = PathBuf::from(std::env::var_os("RLD_CONTINUATION_PAYMENT_CHILD").unwrap());
+    let expected: PaymentCaller = serde_json::from_slice(
+        &crate::keystore::private_read(&root.join("payment-caller.json"), MAX_BYTES).unwrap(),
+    )
+    .unwrap();
+    let pins = expected.caller.pins();
+    let store = NativeContinuationCandidate::open(
+        &root.join("prefix"),
+        &root.join("tail"),
+        &expected.caller.bootstrap,
+        &public(1),
+        pins.latest.currency,
+        &pins,
+    )
+    .unwrap();
+    assert_eq!(store.inspect(&pins).unwrap(), pins.latest);
+    for (owner, coins) in expected.coins {
+        assert_eq!(store.coins(&owner, &pins).unwrap(), coins);
+    }
+    println!("actual-native-payment-cold height19 records19 complete_native_balances=true");
+}
