@@ -1,0 +1,161 @@
+{
+  "format": "RLD-PQ-HYBRID-POLICY-V2",
+  "completed": true,
+  "duration_seconds": 0.102904,
+  "previous_used_seconds": 0.180233,
+  "cumulative_seconds": 0.283137,
+  "budget_seconds": 60,
+  "attempts": 1,
+  "error": null,
+  "results": [
+    {
+      "case": "both-actual-signatures",
+      "expected": "candidate_signatures_verified",
+      "actual": "candidate_signatures_verified",
+      "duration_seconds": 0.016099,
+      "scratch_created": true
+    },
+    {
+      "case": "only-valid-classical",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 5.8e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "only-valid-pq",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 1.7e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "valid-ed-forged-pq",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 0.015468,
+      "scratch_created": true
+    },
+    {
+      "case": "valid-pq-forged-ed",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 0.015832,
+      "scratch_created": true
+    },
+    {
+      "case": "wrong-pinned-pq-key",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 0.016139,
+      "scratch_created": true
+    },
+    {
+      "case": "wrong-purpose",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 5.5e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "wrong-currency-root",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 1.4e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "wrong-region-root",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 1e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "changed-nonce",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 0.016343,
+      "scratch_created": true
+    },
+    {
+      "case": "expired-observation",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 6e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "premature-intent",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 1.9e-05,
+      "scratch_created": false
+    },
+    {
+      "case": "unknown-profile",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 2e-06,
+      "scratch_created": false
+    },
+    {
+      "case": "boolean-epoch",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 7e-06,
+      "scratch_created": false
+    },
+    {
+      "case": "unbounded-horizon",
+      "expected": "candidate_signatures_rejected",
+      "actual": "candidate_signatures_rejected",
+      "duration_seconds": 3e-06,
+      "scratch_created": false
+    },
+    {
+      "case": "malformed-wire-0",
+      "expected": "refused",
+      "actual": "refused"
+    },
+    {
+      "case": "malformed-wire-1",
+      "expected": "refused",
+      "actual": "refused"
+    },
+    {
+      "case": "malformed-wire-2",
+      "expected": "refused",
+      "actual": "refused"
+    },
+    {
+      "case": "malformed-wire-3",
+      "expected": "refused",
+      "actual": "refused"
+    },
+    {
+      "case": "malformed-wire-4",
+      "expected": "refused",
+      "actual": "refused"
+    },
+    {
+      "case": "malformed-wire-5",
+      "expected": "refused",
+      "actual": "refused"
+    }
+  ],
+  "source_sha256": "e66a2cd817a70bad5caa2754be4f053246b185eef6645ee3f98f510870b0cd0a",
+  "controller_sha256": "d4069db2f5069828d099f8d74b99e14002e2606e09e2646a5db36358bac033bf",
+  "stage_sha256": "c02d094b261960ede8397be879361d06d78ef6f1c3dac733e6574c01165323ed",
+  "private_inventory_sha256": "5fbdd98ebec89f112ee4d1e46349771fb6448789b855bda370c5d53e07423b8e",
+  "private_file_count": 25,
+  "old_provider_seal_unchanged": true,
+  "core_source": "ffb05d225c8c8b73ee951ac2ff433ac9a5b2a034c28ceaedfa6079104f8cb3cf",
+  "core_source_unchanged": true,
+  "hybrid_AND_policy_implemented": true,
+  "standard_KAT_qualified": false,
+  "independent_implementation_qualified": false,
+  "native_integration_qualified": false,
+  "mainnet": false,
+  "whole_goal_completed": false
+}

@@ -3241,7 +3241,9 @@ pub struct CryptoSuiteDescriptor {
 }
 
 impl CryptoSuiteDescriptor {
-    /// This reference implementation executes Ed25519 and SHA-256 only.
+    /// Ledger/era authorization paths execute Ed25519 and SHA-256 only.
+    /// The separate hybrid candidate verifier is not integrated into these
+    /// paths and must not enable a suite by its descriptor alone.
     /// These retained encoding names are candidate formats, not an adopted
     /// cryptographic profile, review or finite-horizon qualification.
     pub fn validate_reference_implementation(&self, testnet: bool) -> Result<(), String> {

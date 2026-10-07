@@ -1,0 +1,77 @@
+{
+  "format": "RLD-CORE-HYBRID-INTEGRATED-V9",
+  "completed": true,
+  "duration_seconds": 84.375414,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.767431,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 8.125963,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 75.408425,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "b3becd77f959fb00db034b387fa5e417fb3748f7963c199b9a18357bf28d09c3",
+  "stage_sha256": "93dc7c5a9b9a9c8f672a9e4f80c44bdc70bed72cdd36c1ca0f1849ea877bc30d",
+  "controller_sha256": "7231796975ba2e9cbd02c78814d7da0a6833d081f0d00b417fd30f477d4ffdfd",
+  "log_sha256": "2e59d413133447a5991ebcf141bda580586af8d958e1bb8d555b1a356b18b7b9",
+  "core_source": "4070549af45f5a03c454da30bd15443db41a9f619ab1f0c6941f23e4f9a3d319",
+  "core_file_count": 181,
+  "full_core_suite_passed": true,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

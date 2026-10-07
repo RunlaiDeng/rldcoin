@@ -1,0 +1,33 @@
+{
+  "format": "RLD-PQ-PUBLIC-VECTORS-V1",
+  "candidate_only": true,
+  "nist_commit": "a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324",
+  "nist_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324/gen-val/json-files/ML-DSA-sigVer-FIPS204/prompt.json",
+      "sha256": "e2cba4589389756fa0bea1a7e6837138bf0a81f9d14234c9ee8f6d33caa1654e",
+      "bytes": 3125947,
+      "path": "tmp/default-relay-20260930/pq-nist-external-source-v4-20261007-public/prompt.json"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324/gen-val/json-files/ML-DSA-sigVer-FIPS204/expectedResults.json",
+      "sha256": "e1d84ef1b2f35196278ab0b0ed6a46ec62cc03d2dfa92c564199e1999bfb8ea6",
+      "bytes": 13956,
+      "path": "tmp/default-relay-20260930/pq-nist-external-source-v4-20261007-public/expectedResults.json"
+    }
+  ],
+  "scope": "All group5 ML-DSA-87 external pure SigVer cases61..75; not complete FIPS204",
+  "provider": "OpenSSL3.6.3 default, Ed25519 and ML-DSA-87 public vector only",
+  "provider_report_sha256": "39bff6e2776dc4b5ac2c600cb0ff4c65f5b8edb2a162b19b9be281fc54ed7394",
+  "private_bytes_included": false,
+  "files": {
+    "nist-external-pure-sigver.json": {
+      "sha256": "eac5e16893689e69731f60d5a55849ad2811b0bc5ad7f91c106e621fe1e3850f",
+      "bytes": 348517
+    },
+    "openssl-hybrid-public.json": {
+      "sha256": "fabc7e49fb86adde6e39b3412174f91ff1541994777ca8dfaf79e7554712430e",
+      "bytes": 31180
+    }
+  }
+}

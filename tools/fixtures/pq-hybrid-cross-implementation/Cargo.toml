@@ -1,0 +1,12 @@
+[package]
+name = "rld-pq-hybrid-interop-candidate"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.98"
+license = "Apache-2.0"
+
+[workspace]
+
+[dependencies]
+fips204 = { version = "=0.4.6", default-features = false, features = ["ml-dsa-87"] }
+ed25519-dalek = "=2.1.1"

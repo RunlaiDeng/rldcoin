@@ -1,0 +1,407 @@
+{
+  "format": "RLD-PQ-HYBRID-PROVIDER-V1",
+  "completed": true,
+  "duration_seconds": 0.180233,
+  "budget_seconds": 60,
+  "attempts": 1,
+  "error": null,
+  "observations": {
+    "openssl_version": "OpenSSL 3.6.3 9 Jun 2026 (Library: OpenSSL 3.6.3 9 Jun 2026)",
+    "ed_signature_bytes": 64,
+    "pq_signature_bytes": 4627,
+    "combined_signature_bytes": 4691,
+    "ed_public_der_bytes": 44,
+    "pq_public_der_bytes": 2614,
+    "changed_message_both_refused": true,
+    "changed_pq_context_refused": true,
+    "wrong_pq_key_refused": true,
+    "changed_signature_both_refused": true
+  },
+  "commands": [
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "version"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.012364
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ED25519",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-secret.pem"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008357
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkey",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-secret.pem",
+        "-pubout",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-public.pem"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008265
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkey",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-secret.pem",
+        "-pubout",
+        "-outform",
+        "DER",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-public.der"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008909
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-secret.pem"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008686
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkey",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-secret.pem",
+        "-pubout",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-public.pem"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008701
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkey",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-secret.pem",
+        "-pubout",
+        "-outform",
+        "DER",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-public.der"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008285
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/wrong-pq-secret.pem"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008326
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkey",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/wrong-pq-secret.pem",
+        "-pubout",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/wrong-pq-public.pem"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008243
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkey",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/wrong-pq-secret.pem",
+        "-pubout",
+        "-outform",
+        "DER",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/wrong-pq-public.der"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008323
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-sign",
+        "-rawin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-secret.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-signature.bin",
+        "-provider",
+        "default"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.00769
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-signature.bin",
+        "-provider",
+        "default"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.007482
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/changed-intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-signature.bin",
+        "-provider",
+        "default"
+      ],
+      "expected": 1,
+      "exit_code": 1,
+      "duration_seconds": 0.007773
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-sign",
+        "-rawin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-secret.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-signature.bin",
+        "-provider",
+        "default",
+        "-pkeyopt",
+        "context-string:RLDCOIN-PQ-AUTH-CANDIDATE-V1"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.008615
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-signature.bin",
+        "-provider",
+        "default",
+        "-pkeyopt",
+        "context-string:RLDCOIN-PQ-AUTH-CANDIDATE-V1"
+      ],
+      "expected": 0,
+      "exit_code": 0,
+      "duration_seconds": 0.007616
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/changed-intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-signature.bin",
+        "-provider",
+        "default",
+        "-pkeyopt",
+        "context-string:RLDCOIN-PQ-AUTH-CANDIDATE-V1"
+      ],
+      "expected": 1,
+      "exit_code": 1,
+      "duration_seconds": 0.007727
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-signature.bin",
+        "-provider",
+        "default",
+        "-pkeyopt",
+        "context-string:RLDCOIN-WRONG-PURPOSE"
+      ],
+      "expected": 1,
+      "exit_code": 1,
+      "duration_seconds": 0.007585
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/wrong-pq-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-signature.bin",
+        "-provider",
+        "default",
+        "-pkeyopt",
+        "context-string:RLDCOIN-PQ-AUTH-CANDIDATE-V1"
+      ],
+      "expected": 1,
+      "exit_code": 1,
+      "duration_seconds": 0.007535
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/ed-altered-signature.bin",
+        "-provider",
+        "default"
+      ],
+      "expected": 1,
+      "exit_code": 1,
+      "duration_seconds": 0.007288
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/openssl@3/3.6.3/bin/openssl",
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        "-pubin",
+        "-inkey",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-public.pem",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/intent.bin",
+        "-sigfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-provider-v1-20261007-private/pq-altered-signature.bin",
+        "-provider",
+        "default",
+        "-pkeyopt",
+        "context-string:RLDCOIN-PQ-AUTH-CANDIDATE-V1"
+      ],
+      "expected": 1,
+      "exit_code": 1,
+      "duration_seconds": 0.007385
+    }
+  ],
+  "controller_sha256": "5f8087af5a78fce93bfdeb8967c8626f36afd6434c4a7754cecc8478a70ea3af",
+  "stage_sha256": "f001b64b48abafeab0dfa82fb3d032d70b31777e20032a72535404b7a84e425c",
+  "log_sha256": "2e02013b0d50c36f35c559a705d5a778044ed86928c5596d36914e22d20b035c",
+  "private_inventory_sha256": "ebdb3dc623c25cb780582fbf27124811bc83a8472544b42f4247b9502aba01a4",
+  "private_file_count": 15,
+  "openssl_binary_sha256": "103fc7706cf6646f226d96f29242d81890363499afc730e7ef1fadd64b3a123c",
+  "openssl_library_sha256": {
+    "/opt/homebrew/Cellar/openssl@3/3.6.3/lib/libcrypto.3.dylib": "a12805a18cd5e4f733fa8727b91afa08b587f9da5a760517cd79cb508a3a3f71",
+    "/opt/homebrew/Cellar/openssl@3/3.6.3/lib/libssl.3.dylib": "ffd8ac6981000def0928367924b6cb1e7a98712efbc06e2a2f3f750138bd89ca"
+  },
+  "core_source": "ffb05d225c8c8b73ee951ac2ff433ac9a5b2a034c28ceaedfa6079104f8cb3cf",
+  "core_source_unchanged": true,
+  "primitive_and_negative_checks_only": true,
+  "hybrid_AND_policy_implemented": false,
+  "standard_KAT_qualified": false,
+  "independent_implementation_qualified": false,
+  "native_integration_qualified": false,
+  "mainnet": false,
+  "whole_goal_completed": false
+}

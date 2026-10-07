@@ -1,0 +1,12 @@
+{
+  "format": "RLD-CORE-ERA-REFERENCE-GIT-ANCHOR-V1",
+  "git_commit": "7599d11b48765deb0f7fa7c4f732b9311a62c54e",
+  "implementation_source": "ffb05d225c8c8b73ee951ac2ff433ac9a5b2a034c28ceaedfa6079104f8cb3cf",
+  "source_count": 177,
+  "all_source_files_tracked": true,
+  "source_diff_to_commit": [],
+  "qualified_profile": "docs/operations/evidence/core-era-continuity-reference-v1-qualified-profile-20261007.json",
+  "qualified_profile_sha256": "ae3f6cfe5981cb8e7b54793815c56459332c71f6c8527a83d1faef1255c95907",
+  "pushed": false,
+  "whole_goal_completed": false
+}

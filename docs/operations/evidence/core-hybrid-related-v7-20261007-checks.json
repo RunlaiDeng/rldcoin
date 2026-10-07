@@ -1,0 +1,88 @@
+{
+  "format": "RLD-CORE-HYBRID-RELATED-V7",
+  "completed": true,
+  "duration_seconds": 55.527748,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.758431,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "rld-core",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 9.226655,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "hybrid_authorization::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 45.481859,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "6ad4270867d70f1f76b5cdc00a2a160f59f2bb2094e997593602f8e11b3e93a5",
+  "stage_sha256": "a66b3905029ed0e551661ca5ceab8aaf1c10ae2110331687120ab9fd5b02fe36",
+  "controller_sha256": "81885fbb2f3ce49a1e2912d6f5e32eb20bda10e32148b6a27a82c1229392cf7a",
+  "log_sha256": "81c2e1562831c1306761ab203c02f549bede39b1e4036ade12c67ee3cb9e4602",
+  "core_source": "6063eb0620fef2a1dfad55a2348b87d299590dd9da076e8831e75b6b56616220",
+  "core_file_count": 181,
+  "related_hybrid_subset_passed": true,
+  "full_core_suite_passed": false,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

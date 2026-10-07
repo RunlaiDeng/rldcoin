@@ -1,5 +1,21 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 当前串行主线：Core混合双签/四签续证及有界入口完成有限验收；继续运输策略缺口
+
+仍采用冻结正文 **2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b**、PDF **c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14**、receipt **86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965**与全部 **S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8**；正文/PDF/官网未改，所有旧失败保留。
+
+实际新增Core `hybrid_authorization.rs`，锁定fips2040.4.6的ML-DSA-87，严格Ed25519和PQ两份签名必须验证同一规范意图；独立认证的本地政策绑定currency/region/purpose、预期nonce及有限逻辑epoch期限。撤销、broken、unknown/过期政策在验证新接受前拒绝，无OR或经典回退。四签续证把旧/新双签同时绑定前继、全部新旧政策、连续crypto/key epochs、nonce和原caller锁/永久consumed-export承诺；先前失可信原件不能靠新签恢复。迟到原件只在两政策仍可信期限内允许。返回新candidate anchor不安装账本、不重建或释放实际锁/消费记录，不证明独立保管；已推进head拒旧重放及另一冲突后继。
+
+新12KiB候选公开入口在parse前拒超界，严格拒缺半份、重复/未知字段、大小/格式/角色/profile混淆、浮点/bool/零位置、深度/尾随数据与非规范JSON/hex；解码坏PQ仍须被实际AND验证拒绝。此新候选bound不提高任何既有网络/账本/容量限额。当前Ledger/era仍拒绝混合suite声明，尚无PQ实际交易/共识/采用资格。
+
+真实Provider V1 PASS0.180233；V2政策/畸形21项PASS0.102904，原60累计0.283137；两套不同实现实际互通V3 PASS45.073423/120。NIST公开固定commit a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324 external/pure ML-DSA-87 group5全部15个SigVer案例，Rust和OpenSSL均符合3正/12负，V5 PASS2.317741/120（V4取源17.243802/30只代表取源）。不是完整FIPS204、CAVP/FIPS140认证或独立安全审查。
+
+V6严格 **FAIL14.821360**保留：新测试三处多余Box分配，直接改为原Box内部替换，零豁免。V7六相关实际测试PASS55.527748/120，V8完整275+全工作区strict PASS91.651247/300；最终有界入口V9 **完整277/0失败/0忽略/0过滤+6包all-target严格零告警 PASS84.375414/原300一次**。最终Core181 **4070549af45f5a03c454da30bd15443db41a9f619ab1f0c6941f23e4f9a3d319**，实际immutable unit binary **74e495cbb67d2efce42858a414ca8cb220649c6398bb782713eaf8db803960b9**、匹配compiler manifest/controller独立绑定。复用固定Rust1.98.0/opt1/debug assertions+overflow checks；没有重跑地区180/600或旧价值长套件、没有旧失败Native/Runtime/keys/保管重开/签名/复制/清理。
+
+[最终有限profile](operations/evidence/core-hybrid-bounded-reference-v2-qualified-profile-20261007.json)、[真实完整检查](operations/evidence/core-hybrid-integrated-v9-20261007-checks.json)、[取源及两实现标准子集](operations/evidence/pq-nist-external-v5-20261007-checks.json)、[source-only控制器/全部失败/复现](operations/fixtures/pq-hybrid-reference-v1-20261007/README.md)。历史Core177 ffb05/267、legacy177 bc623/67和regionalhead-v16 de74/bef4的PASS仍只绑定其历史source与有限scope，不转授新Native或整个验收；所有后续/早期FAIL未改PASS。
+
+下一具体判别为现有运输后端能否明确限定并核验实际协商混合KEX，而不是只检查TLS版本/证书pin；先只读取本机API与官方primary文档，再选择一个必要有界反例。原生PQ接入、全transaction/quorum/archive尺寸、独立cryptographic/实现review、完整反回滚/在途出口/延迟撤销组合、KEM、长期/物理/P1–P8仍OPEN。唯一作者连续推进，不在局部PASS停止。全部命令显式新workdir；持久app cwd和旧goal正文/blocked元数据仍UI待修，不作为审批门。无主网/资金/官网/白皮书/外联/远端/账号权限/push/清理。
+
 ## 2026-10-07 V38终态FAIL；同帧收件副本公平轮转最小修复V25
 
 V38 **FAIL 原180秒/192.410秒含收尾/1836文件封存**，helper1、四CLI正常exit0、owned stopped，无forced/guardian/cleanup/pin异常；原15mature/all8完整Nativecold/完整信封/heads/守恒未完成。原完整600/all12/keyless与全部旧失败仍FAIL/OPEN。
@@ -610,7 +626,7 @@ V7实际首次队列按原完整transit认证及该peer路线/已访节点/跳�
 | I8 / S13–S14 / R12/R16 | 固定TLS ordinary startup、多跳、持久收件、默认中继地面样本。 | N1–N10完整native与实际长延迟adapter、合法custody删除、独立资源/替代物理接触。 | C/F/G及全部N1–N10；receipt不是ledger credit。 |
 | I9 / S18 / R20 | Native/wallet区分queued/verified/import/maturity/owner heads有候选。 | 完整状态、污染余额、独立验证、过期显示与真实consumer flow。 | E/F，每stage端到端，stale/伪receipt/credit claim不当native money。 |
 | I10 / S11/S16 / R10/R11/R22 | 已有严格停止重放，私有字节不变及外部caller-head样本。 | 总本地回滚独立见证、跨设备、>200000历史/实际scale、灾难全恢复与费用。 | D/G，旧全文件backup/clone/见证丢失拒签/拒支出，不恢复已消费ID。 |
-| I11 / §11–12 / R7/R8/R21 | 当前Ed25519/SHA256/TLS1.3；无PQ交易/共识实现。 | 认证suite/parameter/era，reviewed PQ授权/KEM、反降级、迁移/退休、可信原始证据续证。 | D/F/G，标准向量/全proof成本、迟到撤销、broken旧钥伪migration、休眠余额/旧视图、反回滚。 |
+| I11 / §11–12 / R7/R8/R21 | 现有ledger仍Ed25519/SHA256/TLS1.3；新增Core候选AND双签、四签续证及有界公开入口，15个NIST external SigVer子集和两不同实现互通通过。无实际PQ交易/共识/运输或独立审查资格。 | 认证suite/parameter/era，reviewed PQ授权/KEM、反降级、迁移/退休、可信原始证据续证。 | D/F/G，标准向量/全proof成本、迟到撤销、broken旧钥伪migration、休眠余额/旧视图、反回滚。 |
 | I12 / S12/S14–S17 / R9/R13/R17–R19/R24 | 有限同控制者普通scope/组件证据，现无mainnet。 | 独立运营/控制/保管/两独立验证实现，费用/储存/负载/钱包/供应链/隐私审查与维护。 | 全A–G与I1–I12/N1–N10；P1–P8明确采用；真实route另证。 |
 
 ## 保留的 traced 基线与当前关键路径
