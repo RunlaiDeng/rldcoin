@@ -114,3 +114,18 @@ and actual Core. Foreign entry and actual256-file capacity refusal issued no
 archive receipt; retained raw transport bytes are a separate custody layer.
 This uses fresh fixture credentials only and does not qualify long-delay key
 validity, independent operators, adopted nodes or physical routes.
+
+## Offline authorized manifest and inner archives
+
+The Rust manifest adapter and explicit authorized-manifest renewal-archive mode
+verify separately authenticated policy/freshness, complete ordered roots/bytes,
+then real inner four-signature renewals and independent latest heads. Their
+fixture README describes bounded inputs. Neither mode installs ledger state.
+
+`tools/pq_archive_manifest_reference_candidate.py` implements separate Python
+canonical decoding and actual OpenSSL dual verification without Core. It requires
+an independently selected absolute backend and SHA256, separate policy, manifest,
+envelope, and fresh scratch under an owned private parent. It retains only public
+verification inputs. Result0 verifies finite manifest authority;1 refuses;2 is
+unavailable. This does not verify inner entry signatures or grant nonce/state,
+independent-author/operating custody, complete protocol or adoption qualification.
