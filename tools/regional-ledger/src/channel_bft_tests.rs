@@ -90,7 +90,15 @@ fn native_channel_bft_submission_certified_inclusion_and_cold_head_replay() {
 
 #[test]
 fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_cold_replay() {
-    let mut h = Harness::with_rules(channels::BFT_RULES);
+    channel_watch_cycle(channels::BFT_RULES);
+}
+#[test]
+fn native_paged_channel_watch_ordinary_candidate_two_receipts_full_finality_and_cold_replay() {
+    channel_watch_cycle(crate::paged_bft::RULES);
+}
+fn channel_watch_cycle(rules: &str) {
+    let mut h = Harness::with_rules(rules);
+    h.retain = true;
     for _ in 0..3 {
         certify(&mut h, vec![]);
     }
@@ -141,14 +149,14 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
         );
         let receipt =
             crate::tests::channel_receipts::receipt(&h.node, *reserve, 1, prior, 10, None);
-        let head = crate::history::manifest(&h.root.join("node"))
-            .unwrap()
-            .head()
-            .unwrap();
+        let head = h.node.storage_head().unwrap();
         h.node
             .accept_channel_receipt(receipt.clone(), &receipt.statement.expected, head)
             .unwrap();
         paid.push(receipt);
+    }
+    if crate::paged_bft::is_profile(rules) {
+        assert_eq!(h.node.paged_receipt_history().unwrap().len(), 2);
     }
     let before = h.node.chain.ledger.clone();
     let mut projected = h.node.chain.clone();
@@ -193,10 +201,7 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
     }
     certify(&mut h, closes);
     let close_height = h.node.chain.height();
-    let head = crate::history::manifest(&h.root.join("node"))
-        .unwrap()
-        .head()
-        .unwrap();
+    let head = h.node.storage_head().unwrap();
     let current = h.node.chain.ledger.clone();
     let watch = h.node.channel_watch(public(10), head).unwrap();
     assert_eq!(watch.commands.len(), 2);
@@ -204,13 +209,7 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
     let candidate = h.node.bft_candidate(vec![], public(10)).unwrap();
     assert_eq!(candidate.blocks.last().unwrap().commands, watch.commands);
     assert_eq!(h.node.chain.ledger, current);
-    assert_eq!(
-        crate::history::manifest(&h.root.join("node"))
-            .unwrap()
-            .head()
-            .unwrap(),
-        head
-    );
+    assert_eq!(h.node.storage_head().unwrap(), head);
     let proposal = h.proposal(0, None, candidate);
     let prepared = h.prepare(&proposal, &[0, 1, 2]);
     let committed = h.commit(&proposal, &prepared, &[0, 1, 2]);
@@ -244,10 +243,7 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
     let (issued, liquid, escrow, outbound) =
         conservation_with_escrow(&[h.node.chain.clone()]).unwrap();
     assert_eq!(issued, add(add(liquid, escrow).unwrap(), outbound).unwrap());
-    let head = crate::history::manifest(&h.root.join("node"))
-        .unwrap()
-        .head()
-        .unwrap();
+    let head = h.node.storage_head().unwrap();
     assert!(h
         .node
         .channel_watch(public(10), head)
@@ -255,6 +251,44 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
         .commands
         .is_empty());
     let pin = h.node.trust.currency().unwrap();
+    if crate::paged_bft::is_profile(rules) {
+        let pins = ChannelColdPins {
+            currency: pin,
+            head,
+            ledger: h.node.chain.ledger.clone(),
+            height: h.node.chain.height(),
+            receipts: paid.clone(),
+        };
+        let root = h.root.clone();
+        crate::keystore::private_create(
+            &root.join("channel-cold-pins.json"),
+            &serde_json::to_vec(&pins).unwrap(),
+        )
+        .unwrap();
+        // Only this newly successful fixture is closed for a full pinned cold
+        // child. Prior failed targets are never reopened by this test.
+        drop(h);
+        let result = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "tests::regional_bft::value_channels::native_paged_channel_receipt_cold_child",
+                "--ignored",
+                "--nocapture",
+            ])
+            .env("RLD_PAGED_CHANNEL_COLD_ROOT", &root)
+            .current_dir("/Users/galaxy/GitHub/rldcoin")
+            .output()
+            .unwrap();
+        println!("{}", String::from_utf8_lossy(&result.stdout));
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        assert!(String::from_utf8_lossy(&result.stdout).contains("test result: ok. 1 passed"));
+        assert_eq!(crate::channel_receipt::WATCH_SLOTS, 4);
+        return;
+    }
     crate::storage::verify_pinned_image(&h.root.join("node"), &public(1), pin, head).unwrap();
     for receipt in &paid {
         receipt
@@ -262,4 +296,52 @@ fn native_channel_watch_bft_ordinary_candidate_two_challenges_full_finality_and_
             .unwrap();
     }
     assert_eq!(crate::channel_receipt::WATCH_SLOTS, 4);
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ChannelColdPins {
+    currency: Hash,
+    head: Hash,
+    ledger: Ledger,
+    height: u64,
+    receipts: Vec<crate::channel_receipt::Receipt>,
+}
+#[test]
+#[ignore = "fresh bounded parent supplies independently retained complete caller pins"]
+fn native_paged_channel_receipt_cold_child() {
+    let root = PathBuf::from(
+        std::env::var_os("RLD_PAGED_CHANNEL_COLD_ROOT").expect("private fresh caller root"),
+    );
+    let pins: ChannelColdPins =
+        crate::storage::read_json(&root.join("channel-cold-pins.json")).unwrap();
+    let before = super::retained_native_replay::inventory(&root);
+    let node =
+        Store::open_pinned(&root.join("node"), &public(1), pins.currency, pins.head).unwrap();
+    assert_eq!(node.chain.ledger, pins.ledger);
+    assert_eq!(node.chain.height(), pins.height);
+    assert_eq!(node.paged_receipt_history().unwrap().len(), 2);
+    for receipt in &pins.receipts {
+        receipt.verify_anchor(&node.trust, &node.evidence).unwrap();
+        let channels::Phase::Closing { state, .. } = &node
+            .chain
+            .ledger
+            .channel_state
+            .as_ref()
+            .unwrap()
+            .book
+            .channels[&receipt.statement.expected.channel]
+            .phase
+        else {
+            panic!()
+        };
+        assert_eq!(state.as_ref(), &receipt.next);
+    }
+    assert!(node
+        .channel_watch(public(10), pins.head)
+        .unwrap()
+        .commands
+        .is_empty());
+    assert_eq!(super::retained_native_replay::inventory(&root), before);
+    println!("paged-channel full_native_genesis_cold=true two_complete_signed_receipts=true two_challenges_finalized=true unchanged_bytes=true");
 }

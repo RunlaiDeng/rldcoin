@@ -232,6 +232,8 @@ impl Replay {
         self.executed.advance(record)
     }
     fn apply(&mut self, record: &Record, stream: &dyn body_witness::History) -> Result<()> {
+        #[cfg(test)]
+        current_tests::note_actual_record_execution();
         match record {
             Record::Certified(snapshot) => {
                 require(
@@ -690,13 +692,13 @@ impl Store {
         }
         Ok(())
     }
-    fn current_paged_contact_replay(&self) -> Result<Replay> {
+    fn current_paged_replay(&self) -> Result<Replay> {
         require(
             self.healthy && read_guard(&self.dir)?.is_zero(),
-            "paged contact requires healthy current Store without pending native incident",
+            "paged current read requires healthy current Store without pending native incident",
         )?;
         let header = read_header(&self.dir)?;
-        let stream = self.paged.as_ref().ok_or("paged contact stream missing")?;
+        let stream = self.paged.as_ref().ok_or("paged current stream missing")?;
         let replay = self
             .paged_replay
             .as_ref()
@@ -711,7 +713,7 @@ impl Store {
                 == replay.incidents
                 && safety.regions == self.safety.regions
                 && safety.channels == self.safety.channels,
-            "paged contact complete retained incident set/safety differs",
+            "paged current complete retained incident set/safety differs",
         )?;
         let outside = outside_usage(&self.dir)?;
         let usage = stream.retained_usage_candidate()?;
@@ -724,7 +726,7 @@ impl Store {
                     .1
                     .checked_add(usage.1)
                     .is_some_and(|n| n <= crate::history::MAX_ARCHIVE_BYTES),
-            "paged contact complete current archive capacity",
+            "paged current complete archive capacity",
         )?;
         Ok(replay)
     }
@@ -733,15 +735,15 @@ impl Store {
         frame: crate::contact::Frame,
         evidence: &Evidence,
     ) -> Result<()> {
-        let mut replay = self.current_paged_contact_replay()?;
+        let mut replay = self.current_paged_replay()?;
         self.check_paged_evidence_conflicts(evidence)?;
         let record = Record::Contact(Box::new(frame));
-        let stream = self.paged.as_ref().ok_or("paged contact stream missing")?;
+        let stream = self.paged.as_ref().ok_or("paged current stream missing")?;
         replay.apply(&record, stream)?;
         // Authenticate every complete later frame before exact retry suppression.
         // An exact retained retry neither grows the archive nor grants an import.
         if replay.contacts == self.journal.contact_records {
-            self.current_paged_contact_replay()?;
+            self.current_paged_replay()?;
             return Ok(());
         }
         self.append_paged(&[record])
@@ -804,20 +806,10 @@ impl Store {
         Ok(sid)
     }
     pub(crate) fn paged_receipt_history(&self) -> Result<crate::channel_receipt::Replay> {
-        let header = read_header(&self.dir)?;
-        let mut replay = Replay::new(&header, &self.authority, self.pin)?;
-        let stream = self.paged.as_ref().ok_or("not a native paged store")?;
-        stream.visit(stream.storage_head(), |record| {
-            replay.apply_retained(record, stream)
-        })?;
-        require(
-            replay.chain.ledger == self.chain.ledger
-                && replay.chain.finalized == self.chain.finalized
-                && replay.chain.height() == self.chain.height()
-                && replay.chain.epoch == self.chain.epoch,
-            "paged receipt history differs from complete selected native replay",
-        )?;
-        Ok(replay.receipts)
+        // Only this invocation's actual committed Native replay can supply receipts.
+        // The same complete current byte/projection/incident/capacity guards used
+        // by contact preflight must succeed; cold opens still execute from genesis.
+        Ok(self.current_paged_replay()?.receipts)
     }
     pub(crate) fn paged_history_at(&self, height: u64) -> Result<(Chain, VerifiedEvidence)> {
         let header = read_header(&self.dir)?;

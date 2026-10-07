@@ -345,8 +345,10 @@ fn index(node: &Store) -> Result<Replay> {
 }
 
 /// Read-only native observation for a caller-pinned current store. Complete
-/// ordered history is replayed; neither a serialized plan nor a cached sequence
-/// can authorize a challenge. Inclusion still needs ordinary block finality.
+/// ordered history is Native-executed from genesis on cold open. Paged live reads
+/// use only private actual committed execution after full current-source guards;
+/// neither a serialized plan nor a cached sequence can authorize a challenge.
+/// Inclusion still needs ordinary block finality.
 #[derive(Debug, Serialize)]
 pub struct Watch {
     pub format: &'static str,

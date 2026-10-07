@@ -353,3 +353,86 @@ fn ordinary_current_contact_exact_retry_refuses_pending_guard_and_safety_project
     assert_eq!(destination.chain.height(), 0);
     // Retain the new pending target and guard unchanged; no reopen or recovery.
 }
+
+thread_local! {
+    static EXECUTED_RECORDS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+pub(super) fn note_actual_record_execution() {
+    EXECUTED_RECORDS.with(|count| count.set(count.get() + 1));
+}
+fn take_actual_record_executions() -> u64 {
+    EXECUTED_RECORDS.with(|count| count.replace(0))
+}
+#[test]
+fn receipt_read_and_ordinary_candidate_actual_native_history_execution_boundary() {
+    let (root, mut node) = fresh();
+    for _ in 0..4 {
+        node.finalize(next(&node)).unwrap();
+    }
+    let before = inventory(&root);
+    take_actual_record_executions();
+    let receipts = node.paged_receipt_history().unwrap();
+    let receipt_records = take_actual_record_executions();
+    assert_eq!(receipt_records, 0);
+    assert_eq!(receipts.len(), 0);
+    let candidate = node.bft_candidate(vec![], public(10)).unwrap();
+    let candidate_records = take_actual_record_executions();
+    assert_eq!(candidate_records, 0);
+    assert_eq!(candidate.statement.height, 5);
+    assert_eq!(node.chain.height(), 4);
+    assert_eq!(inventory(&root), before);
+    println!("actual-original-receipt-read Native_records={receipt_records} actual-ordinary-candidate Native_records={candidate_records} no_state_or_bytes_changed=true");
+}
+
+#[test]
+fn current_receipt_and_candidate_refuse_public_projection_and_pending_incident() {
+    let (root, mut node) = fresh();
+    node.finalize(next(&node)).unwrap();
+    let chain = node.chain.clone();
+    let safety = node.safety.clone();
+    let before = inventory(&root);
+    node.chain.ledger.minted = Amount(1);
+    assert!(node.paged_receipt_history().is_err());
+    assert!(node.bft_candidate(vec![], public(10)).is_err());
+    assert_eq!(inventory(&root), before);
+    node.chain = chain;
+    node.safety
+        .regions
+        .insert(node.chain.region, BTreeSet::from([Hash([9; 32])]));
+    assert!(node.paged_receipt_history().is_err());
+    assert!(node.bft_candidate(vec![], public(10)).is_err());
+    assert_eq!(inventory(&root), before);
+    node.safety = safety;
+    write_guard(&root.join("node"), Hash([9; 32])).unwrap();
+    let before = inventory(&root);
+    assert!(node.paged_receipt_history().is_err());
+    assert!(node.bft_candidate(vec![], public(10)).is_err());
+    assert_eq!(inventory(&root), before);
+    // Keep the fresh pending target unchanged; no reopening or clearing guard.
+}
+#[test]
+fn current_receipt_and_candidate_refuse_changed_complete_page_bytes() {
+    let (root, mut node) = fresh();
+    for _ in 0..16 {
+        node.finalize(next(&node)).unwrap();
+    }
+    // Select an actual committed complete page, not a fabricated cache identity.
+    let files = inventory(&root);
+    let page = files
+        .keys()
+        .find(|path| {
+            path.parent()
+                .is_some_and(|p| p.file_name() == Some(std::ffi::OsStr::new("pages")))
+        })
+        .expect("actual Native page");
+    let path = page;
+    let mut bytes = fs::read(path).unwrap();
+    bytes[0] ^= 1;
+    fs::write(path, bytes).unwrap();
+    let before = inventory(&root);
+    assert!(node.paged_receipt_history().is_err());
+    assert!(node.bft_candidate(vec![], public(10)).is_err());
+    assert_eq!(inventory(&root), before);
+    assert_eq!(node.chain.height(), 16);
+    // Retain this new deliberately corrupt target; no reopening or byte repair.
+}

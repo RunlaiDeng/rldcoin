@@ -87,3 +87,22 @@ original guarded atomic append transaction. This avoids replaying the destinatio
 old Native history during contact preflight; it does not skip incoming proof
 execution, incident checks or separate local import and maturity. Historical
 signing cursors retain their full independent Native replay requirements.
+
+
+## Ordinary receipt and candidate reads
+
+Paged receipt history reads use the same privately held committed Native replay
+and complete current-source guards as contact preflight. The returned receipt
+index derives only from records this invocation actually executed. All current
+header, stream bytes, executed boundaries, public projections, incident proofs,
+pending incident guard, derived safety and shared archive capacity must match.
+A modified page or projection cannot be replaced by a cached receipt view.
+
+Normal paged candidate generation invokes this guarded read for channel watching.
+It preserves the existing challenge slots, owner and fee authorization, absolute
+challenge windows and complete new Native command execution. New receipt records
+still authenticate their complete funded-state and invoice signatures on the
+original atomic append path. A read or unsigned candidate changes no ledger or
+stored bytes, and cannot promise inclusion. Full cold reads and historical signing
+cursors retain their independent execution from genesis; no serialized receipt
+index can initialize current authority.
