@@ -18,6 +18,7 @@ struct Caller {
     prefix_head: Hash,
     prefix_manifest: crate::history::Reference,
     prefix_height: u64,
+    prefix_count: u64,
     prefix_finalized: Option<Hash>,
     prefix_epoch: Hash,
     prefix_root: Hash,
@@ -44,7 +45,7 @@ impl Caller {
                     finalized: self.prefix_finalized,
                     epoch: self.prefix_epoch,
                     ledger_root: self.prefix_root,
-                    record_count: 16,
+                    record_count: self.prefix_count,
                 },
             },
             tail_head: self.tail_head,
@@ -181,6 +182,7 @@ fn actual16_plus16_native_tail_append_and_separate_cold_matches() {
         prefix_head: prefix.storage_head,
         prefix_manifest: prefix.manifest,
         prefix_height: 16,
+        prefix_count: 16,
         prefix_finalized: prefix.latest.finalized,
         prefix_epoch: prefix.latest.epoch,
         prefix_root: prefix.latest.ledger_root,
@@ -709,6 +711,7 @@ fn guarded_proposal_actual_owner_payment_reward_maturity_and_independent_cold() 
         prefix_head: prefix.storage_head,
         prefix_manifest: prefix.manifest,
         prefix_height: 16,
+        prefix_count: 16,
         prefix_finalized: prefix.latest.finalized,
         prefix_epoch: prefix.latest.epoch,
         prefix_root: prefix.latest.ledger_root,
@@ -770,4 +773,205 @@ fn payment_cold_child() {
         assert_eq!(store.coins(&owner, &pins).unwrap(), coins);
     }
     println!("actual-native-payment-cold height19 records19 complete_native_balances=true");
+}
+
+#[test]
+fn authenticated_genesis_prefix_first_proposal_payment_and_separate_cold() {
+    let h = header();
+    let mut hot = replay(&h);
+    let (root, flat) = stream(&h, &hot);
+    let currency = h.bootstrap.currency.id().unwrap();
+    let before = inventory(&root);
+    for choice in 0..5 {
+        let mut bad = h.bootstrap.clone();
+        let mut authority = public(1);
+        let mut pin = currency;
+        let mut region = h.region;
+        match choice {
+            0 => authority = public(7),
+            1 => pin = Hash([9; 32]),
+            2 => region = Hash([9; 32]),
+            3 => bad.currency.signature = "00".repeat(64),
+            _ => bad.admissions[0].signature = "00".repeat(64),
+        }
+        assert!(NativeContinuationCandidate::create_genesis_prefix(
+            &root.join("refused-prefix"),
+            &bad,
+            &authority,
+            pin,
+            region,
+        )
+        .is_err());
+        assert!(!root.join("refused-prefix").exists());
+        assert_eq!(inventory(&root), before);
+    }
+    let prefix = NativeContinuationCandidate::create_genesis_prefix(
+        &root.join("prefix"),
+        &h.bootstrap,
+        &public(1),
+        currency,
+        h.region,
+    )
+    .unwrap();
+    assert_eq!(prefix.latest.record_count, 0);
+    assert_eq!(prefix.latest.height, 0);
+    assert_eq!(prefix.latest.finalized, None);
+    assert_eq!(prefix.latest.ledger_root, hot.chain.ledger.root().unwrap());
+    let original = inventory(&root.join("prefix"));
+    assert!(NativeContinuationCandidate::create_genesis_prefix(
+        &root.join("prefix"),
+        &h.bootstrap,
+        &public(1),
+        currency,
+        h.region,
+    )
+    .is_err());
+    assert_eq!(inventory(&root.join("prefix")), original);
+    let mut bad = prefix.clone();
+    bad.latest.ledger_root = Hash([9; 32]);
+    assert!(NativeContinuationCandidate::create(
+        &root.join("prefix"),
+        &root.join("refused-tail"),
+        &h.bootstrap,
+        &public(1),
+        currency,
+        &bad,
+    )
+    .is_err());
+    assert!(!root.join("refused-tail").exists());
+    let (mut store, mut pins) = create(&root, &h, &prefix);
+    assert_eq!(store.inspect(&pins).unwrap(), prefix.latest);
+    assert!(store.coins(&public(10), &pins).unwrap().is_empty());
+    let (context, _) = store.template(vec![], public(10), &pins).unwrap();
+    assert_eq!(context.parent_height, 0);
+    assert_eq!(context.previous, None);
+    pins = submit_proposal(&mut store, &mut hot, &flat, vec![], 10, &pins);
+    assert_eq!(pins.latest.height, 1);
+    let reward = store.coins(&public(10), &pins).unwrap();
+    assert_eq!(reward.len(), 1);
+    assert_eq!(reward[0].1.mature, 3);
+    let amount = reward[0].1.payment.amount.checked_sub(Amount(1)).unwrap();
+    let payment = owner_payment(
+        &h,
+        vec![reward[0].0],
+        vec![Payment {
+            owner: public(20),
+            amount,
+        }],
+        10,
+        24,
+    );
+    let before = inventory(&root);
+    assert!(store
+        .template(
+            vec![Command::Spend(Box::new(payment.clone()))],
+            public(30),
+            &pins
+        )
+        .unwrap_err()
+        .contains("immature input"));
+    assert_eq!(inventory(&root), before);
+    pins = submit_proposal(&mut store, &mut hot, &flat, vec![], 30, &pins);
+    pins = submit_proposal(
+        &mut store,
+        &mut hot,
+        &flat,
+        vec![Command::Spend(Box::new(payment))],
+        30,
+        &pins,
+    );
+    assert_eq!(pins.latest.height, 3);
+    assert_eq!(pins.latest.record_count, 3);
+    assert!(store.coins(&public(10), &pins).unwrap().is_empty());
+    let received = store.coins(&public(20), &pins).unwrap();
+    assert_eq!(received.len(), 1);
+    assert_eq!(received[0].1.payment.amount, amount);
+    assert_eq!(received[0].1.mature, 3);
+    hot.chain.ledger.audit().unwrap();
+    let coins = [10, 20, 30]
+        .iter()
+        .map(|owner| {
+            let key = public(*owner);
+            let expected = hot
+                .chain
+                .ledger
+                .coins
+                .iter()
+                .filter(|(_, coin)| coin.payment.owner == key)
+                .map(|(id, coin)| (*id, coin.clone()))
+                .collect::<Vec<_>>();
+            assert_eq!(store.coins(&key, &pins).unwrap(), expected);
+            (key, expected)
+        })
+        .collect();
+    assert_eq!(store.inspect(&pins).unwrap(), pins.latest);
+    drop(store);
+    assert_eq!(inventory(&root.join("prefix")), original);
+    let caller = Caller {
+        bootstrap: h.bootstrap.clone(),
+        prefix_head: prefix.storage_head,
+        prefix_manifest: prefix.manifest,
+        prefix_height: 0,
+        prefix_count: 0,
+        prefix_finalized: None,
+        prefix_epoch: prefix.latest.epoch,
+        prefix_root: prefix.latest.ledger_root,
+        tail_head: pins.tail_head,
+        whole_head: pins.complete_head,
+        height: 3,
+        finalized: hot.chain.finalized,
+        epoch: hot.chain.epoch,
+        root: hot.chain.ledger.root().unwrap(),
+        count: 3,
+    };
+    crate::keystore::private_create(
+        &root.join("genesis-caller.json"),
+        &serde_json::to_vec(&PaymentCaller { caller, coins }).unwrap(),
+    )
+    .unwrap();
+    let before = inventory(&root);
+    let output = Process::new(std::env::current_exe().unwrap())
+        .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .args([
+            "storage::paged::continuation_tests::genesis_cold_child",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("RLD_CONTINUATION_GENESIS_CHILD", &root)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout)
+        .contains("actual-native-genesis-cold height3 records3"));
+    assert_eq!(inventory(&root), before);
+    println!("actual-native-genesis-start empty_prefix=true first_QC3=true reward_maturity2=true actual_owner_payment=true full_cold_height3=true no_ordinary_node_adoption=true");
+}
+#[test]
+#[ignore = "separate cold child for fresh authenticated no-value genesis continuation"]
+fn genesis_cold_child() {
+    let root = PathBuf::from(std::env::var_os("RLD_CONTINUATION_GENESIS_CHILD").unwrap());
+    let expected: PaymentCaller = serde_json::from_slice(
+        &crate::keystore::private_read(&root.join("genesis-caller.json"), MAX_BYTES).unwrap(),
+    )
+    .unwrap();
+    let pins = expected.caller.pins();
+    let store = NativeContinuationCandidate::open(
+        &root.join("prefix"),
+        &root.join("tail"),
+        &expected.caller.bootstrap,
+        &public(1),
+        pins.latest.currency,
+        &pins,
+    )
+    .unwrap();
+    assert_eq!(store.inspect(&pins).unwrap(), pins.latest);
+    for (owner, coins) in expected.coins {
+        assert_eq!(store.coins(&owner, &pins).unwrap(), coins);
+    }
+    println!("actual-native-genesis-cold height3 records3 actual_balances_maturity=true");
 }

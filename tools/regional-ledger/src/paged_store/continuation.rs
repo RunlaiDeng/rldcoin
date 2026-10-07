@@ -123,6 +123,36 @@ pub struct NativeContinuationCandidate {
     current: NativeContinuationPinsCandidate,
 }
 impl NativeContinuationCandidate {
+    /// Fresh empty prefix only, derived from independently authenticated Native
+    /// genesis before any writes. No existing history, balance or key migrates.
+    pub fn create_genesis_prefix(
+        dir: &Path,
+        bootstrap: &Bootstrap,
+        authority: &str,
+        pin: Hash,
+        region: Hash,
+    ) -> Result<NativePrefixPinsCandidate> {
+        let header = Header {
+            format: FORMAT.into(),
+            bootstrap: bootstrap.clone(),
+            region,
+        };
+        let replay = Replay::new(&header, authority, pin)?;
+        let scope = header.scope(&replay.trust)?;
+        let storage_head = scope.initial()?;
+        let latest = boundary(&replay, 0)?;
+        let prefix = PackedArchiveCandidate::<Record>::seal_lossless_candidate(
+            dir,
+            scope,
+            storage_head,
+            std::iter::empty::<Result<Vec<u8>>>(),
+        )?;
+        Ok(NativePrefixPinsCandidate {
+            storage_head,
+            manifest: prefix.manifest_reference_candidate()?,
+            latest,
+        })
+    }
     fn prefix(
         dir: &Path,
         bootstrap: &Bootstrap,
@@ -131,8 +161,8 @@ impl NativeContinuationCandidate {
         pins: &NativePrefixPinsCandidate,
     ) -> Result<(Header, Replay, Scope, PackedArchiveCandidate<Record>)> {
         require(
-            pins.latest.currency == pin && pins.latest.record_count > 0,
-            "continuation independent prefix currency/count",
+            pins.latest.currency == pin,
+            "continuation independent prefix currency",
         )?;
         let header = Header {
             format: FORMAT.into(),
@@ -266,6 +296,12 @@ impl NativeContinuationCandidate {
         };
         let mut replay = Replay::new(&self.header, &self.authority, self.pin)?;
         let mut count = 0u64;
+        if pins.prefix.latest.record_count == 0 {
+            require(
+                boundary(&replay, 0)? == pins.prefix.latest,
+                "continuation executed Native genesis prefix differs",
+            )?;
+        }
         source.visit(&mut |record| {
             record_guard(record)?;
             replay.apply_retained(record, &source)?;

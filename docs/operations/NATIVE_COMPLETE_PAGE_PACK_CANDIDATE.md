@@ -303,3 +303,25 @@ their separate Native import rules. No caller can select earlier anchors to bypa
 these checks. Cold opening still executes every retained original record from
 signed genesis and checks independently retained current anchors. These interfaces
 do not adopt a new ordinary-node profile or supply signer/recovery authority.
+
+
+## Fresh authenticated genesis prefix
+
+`NativeContinuationCandidate::create_genesis_prefix` accepts a complete signed
+bootstrap and independently supplied authority, currency and region. Native trust,
+explicit signed paged profile and actual empty genesis ledger verify before any
+target creation. It seals an empty lossless archive whose logical head is the
+Native scope origin and returns its complete manifest reference and actual genesis
+boundary. Invalid pins, signatures or region selection cannot create a prefix.
+The target must be absent under an existing private parent; existing or marked
+targets refuse without conversion or recovery.
+
+An empty prefix is valid only when its independently retained boundary exactly
+matches Native genesis. Creation and cold opening check that boundary before
+executing any tail records, then use the same original atomic append transaction,
+complete certificates, reward maturity, capacity and caller-current guards as
+nonempty prefixes. A returned genesis boundary cannot initialize state from a
+serialized ledger. The caller retains the complete bootstrap and current anchors
+separately. This entry is restricted by the authenticated no-value fixture currency;
+it neither migrates prior balances nor starts a production network. Ordinary node
+lifecycle, signer custody and independent rollback protection remain separate.
