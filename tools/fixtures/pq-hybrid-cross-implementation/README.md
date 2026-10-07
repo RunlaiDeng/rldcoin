@@ -39,5 +39,9 @@ fresh caller metadata path, one empty owned private output directory and count1â
 All signing keys remain RAM-only; outputs are public test material.
 
 The current two-entry cold scope passed after a retained fixture-width failure,
-within the original120-second budget. It does not qualify a64-entry valid archive,
-independent witness/custody, long horizons or production adoption.
+within the original120-second budget. A separate source-bound scope then verified64 complete real renewals (1581531B),
+with the caller retaining the latest head; a63-entry valid prefix refused. Actual
+cold read took0.309571 seconds with5193728B process peakRSS on the measured host.
+A retained first byte-size prediction failure is not a passing scope. This remains
+a finite same-controller observation, not independent witness/custody, long horizons
+or production adoption.
