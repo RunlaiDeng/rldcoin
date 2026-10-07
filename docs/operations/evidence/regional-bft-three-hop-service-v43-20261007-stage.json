@@ -1,0 +1,7 @@
+{
+  "hypothesis": "Source Prepare3to0 firstprepared .242196 and first refused handler later durably stored input at relay2. Follow exact original packet along2->1->0: first custody-to-prepare gap and actual hint consumption distinguishes forwarding selection from request/local custody; compare per-hop original attempts and destination Native receive. Original node0 Timeout precedes thirdPrepare by observed sequence, no Native failure claim.",
+  "budget_seconds": 10,
+  "prior_readonly20_seconds": 1.968367,
+  "attempts": 1,
+  "exit": "first exact source/seal/nonce/schema guard or original10/remaining20; no old constructor/sign/socket/fixture"
+}

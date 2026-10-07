@@ -1,0 +1,332 @@
+{
+  "completed": true,
+  "rows": [
+    {
+      "sequence": 70,
+      "step": 37,
+      "newest_pair": false,
+      "target_prepared_before": false,
+      "target_pending_before": false,
+      "target_selected": false,
+      "hint_reads_target": [
+        true
+      ],
+      "spares": [
+        {
+          "packet_id": "3265200c0ff5ceca9022e002137486e7776b6033ac86d101baa53026657dff2a",
+          "prepared_before": false,
+          "pending_before": true,
+          "current_frame": false
+        },
+        {
+          "packet_id": "da2018a6be093f5e79a41be7f2b264ed4b861cbac8205a67b556ab7e0d45bbe6",
+          "prepared_before": false,
+          "pending_before": false,
+          "current_frame": true
+        }
+      ],
+      "groups": [
+        [
+          {
+            "current_ids": [
+              "ae577223f23102a9f0c07831e7b5ca0f114a64051d04e341e8205dd6bca819fb"
+            ],
+            "positions": [
+              42
+            ],
+            "size": 61
+          },
+          {
+            "current_ids": [
+              "da2018a6be093f5e79a41be7f2b264ed4b861cbac8205a67b556ab7e0d45bbe6",
+              "8bff846fed938d279f2a8f08a779e0958d86d08cdc5d143d2c349a0c10aaf72d",
+              "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024",
+              "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5",
+              "70e6edd9b293872604e724fb064a41aacc9e372cd3ad0314ab4bb46e75143ff6",
+              "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+              "68694bcef87c588925d61da7ed09ebf832f962ac1e61b970ce1e157fa84d1278"
+            ],
+            "positions": [
+              7,
+              9,
+              13,
+              16,
+              18,
+              19,
+              26
+            ],
+            "size": 28
+          }
+        ]
+      ]
+    },
+    {
+      "sequence": 76,
+      "step": 41,
+      "newest_pair": true,
+      "target_prepared_before": false,
+      "target_pending_before": false,
+      "target_selected": false,
+      "hint_reads_target": [
+        true
+      ],
+      "spares": [
+        {
+          "packet_id": "9e55ed37dc6637a48ff8931edde24ffdc5ee4baf3b549f6e8aede4b5b3afeb81",
+          "prepared_before": false,
+          "pending_before": false,
+          "current_frame": false
+        },
+        {
+          "packet_id": "8bff846fed938d279f2a8f08a779e0958d86d08cdc5d143d2c349a0c10aaf72d",
+          "prepared_before": false,
+          "pending_before": false,
+          "current_frame": true
+        }
+      ],
+      "groups": [
+        [
+          {
+            "current_ids": [
+              "da2018a6be093f5e79a41be7f2b264ed4b861cbac8205a67b556ab7e0d45bbe6"
+            ],
+            "positions": [
+              12
+            ],
+            "size": 56
+          },
+          {
+            "current_ids": [
+              "8bff846fed938d279f2a8f08a779e0958d86d08cdc5d143d2c349a0c10aaf72d",
+              "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024",
+              "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5",
+              "70e6edd9b293872604e724fb064a41aacc9e372cd3ad0314ab4bb46e75143ff6",
+              "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b"
+            ],
+            "positions": [
+              0,
+              4,
+              7,
+              10,
+              13
+            ],
+            "size": 28
+          }
+        ]
+      ]
+    },
+    {
+      "sequence": 84,
+      "step": 45,
+      "newest_pair": false,
+      "target_prepared_before": false,
+      "target_pending_before": false,
+      "target_selected": false,
+      "hint_reads_target": [
+        true
+      ],
+      "spares": [
+        {
+          "packet_id": "2d4ccc41378a44882815da59340bcf09edd793bf149e819cc54d46f981110b5d",
+          "prepared_before": false,
+          "pending_before": true,
+          "current_frame": false
+        },
+        {
+          "packet_id": "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024",
+          "prepared_before": false,
+          "pending_before": false,
+          "current_frame": true
+        }
+      ],
+      "groups": [
+        [
+          {
+            "current_ids": [],
+            "positions": [],
+            "size": 48
+          },
+          {
+            "current_ids": [
+              "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024",
+              "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5",
+              "d5225181213c4235402298c99631eda51812014a13a7fee634c9d96dd0bc2a1d",
+              "70e6edd9b293872604e724fb064a41aacc9e372cd3ad0314ab4bb46e75143ff6",
+              "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+              "8b03a5a708ef343a378d89a3755255994667f6ada14501d475f1f1237b518525"
+            ],
+            "positions": [
+              2,
+              5,
+              7,
+              8,
+              9,
+              20
+            ],
+            "size": 25
+          }
+        ]
+      ]
+    },
+    {
+      "sequence": 91,
+      "step": 49,
+      "newest_pair": true,
+      "target_prepared_before": false,
+      "target_pending_before": false,
+      "target_selected": false,
+      "hint_reads_target": [
+        true
+      ],
+      "spares": [
+        {
+          "packet_id": "33597304168b68774592ee00428f500232ec88b747cf8c487acf2e1c34306585",
+          "prepared_before": false,
+          "pending_before": true,
+          "current_frame": false
+        },
+        {
+          "packet_id": "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5",
+          "prepared_before": false,
+          "pending_before": false,
+          "current_frame": true
+        }
+      ],
+      "groups": [
+        [
+          {
+            "current_ids": [],
+            "positions": [],
+            "size": 37
+          },
+          {
+            "current_ids": [
+              "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5",
+              "d5225181213c4235402298c99631eda51812014a13a7fee634c9d96dd0bc2a1d",
+              "70e6edd9b293872604e724fb064a41aacc9e372cd3ad0314ab4bb46e75143ff6",
+              "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+              "8b03a5a708ef343a378d89a3755255994667f6ada14501d475f1f1237b518525",
+              "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024"
+            ],
+            "positions": [
+              1,
+              3,
+              4,
+              5,
+              16,
+              22
+            ],
+            "size": 24
+          }
+        ]
+      ]
+    },
+    {
+      "sequence": 98,
+      "step": 53,
+      "newest_pair": false,
+      "target_prepared_before": false,
+      "target_pending_before": false,
+      "target_selected": false,
+      "hint_reads_target": [
+        true
+      ],
+      "spares": [
+        {
+          "packet_id": "9bf50bfdae7b0742205e9fcddc2da9e178adcb64d9b5e49ff9e1adc648eb83b2",
+          "prepared_before": false,
+          "pending_before": true,
+          "current_frame": false
+        },
+        {
+          "packet_id": "d5225181213c4235402298c99631eda51812014a13a7fee634c9d96dd0bc2a1d",
+          "prepared_before": false,
+          "pending_before": false,
+          "current_frame": true
+        }
+      ],
+      "groups": [
+        [
+          {
+            "current_ids": [],
+            "positions": [],
+            "size": 30
+          },
+          {
+            "current_ids": [
+              "d5225181213c4235402298c99631eda51812014a13a7fee634c9d96dd0bc2a1d",
+              "70e6edd9b293872604e724fb064a41aacc9e372cd3ad0314ab4bb46e75143ff6",
+              "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+              "8b03a5a708ef343a378d89a3755255994667f6ada14501d475f1f1237b518525",
+              "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024",
+              "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5"
+            ],
+            "positions": [
+              0,
+              1,
+              4,
+              15,
+              21,
+              23
+            ],
+            "size": 25
+          }
+        ]
+      ]
+    },
+    {
+      "sequence": 104,
+      "step": 57,
+      "newest_pair": true,
+      "target_prepared_before": false,
+      "target_pending_before": true,
+      "target_selected": true,
+      "hint_reads_target": [
+        true
+      ],
+      "spares": [
+        {
+          "packet_id": "6e004a463c810a5b160e29c4ef16d7fbfd819a86774ce899e868f2597d4f1137",
+          "prepared_before": false,
+          "pending_before": true,
+          "current_frame": false
+        },
+        {
+          "packet_id": "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+          "prepared_before": false,
+          "pending_before": true,
+          "current_frame": true
+        }
+      ],
+      "groups": [
+        [
+          {
+            "current_ids": [],
+            "positions": [],
+            "size": 20
+          },
+          {
+            "current_ids": [
+              "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+              "8b03a5a708ef343a378d89a3755255994667f6ada14501d475f1f1237b518525"
+            ],
+            "positions": [
+              0,
+              11
+            ],
+            "size": 18
+          }
+        ]
+      ]
+    }
+  ],
+  "consumed_sealed_bytes_unchanged": true,
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "unique_maturity_cause_proved": false,
+  "reader_sha256": "51c276f9cbe7483f80a85ea2d4c441e7f9e448f304d46d2af89411a251dfa22f",
+  "stage_sha256": "746e4e5ee0f91bc237a4072946f60f4ccf8a56aa0ed6b8c08372c4d644245cc9",
+  "duration_seconds": 0.221077,
+  "combined_original20_seconds": 2.543029,
+  "new180": 0,
+  "new600": 0
+}

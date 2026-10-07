@@ -1548,3 +1548,15 @@ V42严格 **FAIL原180/193.027含收尾/1886封存**，helper1 ScopeDeadline，�
 原20只读累计2.100081，准确Proposal2→1首次准备56.284483秒；实际priority37/53历史spare选中Finalized14副本，同时parent14 Proposal/Prepare等待。消费完整transit/frame/companion bytes认证并保持封存源不变，不能据此称唯一成熟原因。新真实原域3of4 final14+Proposal15（后者完整信封包含final14）首个eligible spare反例 **FAIL .560120/14封存**，related60累计16.797667。下一只修当前Signed和最新已完成checkpoint的优先关系，Signed不支持/错签或不存在时保留证书fallback；原4MiB/first2/另一类floor/full4/签名/原子/冷验/原Native认证不变。一次原10/剩余60相关回归判别，反例或护栏失败保留FAIL，不增加deadline或原样重跑180。
 
 [终态及下一判别](operations/evidence/regional-bft-current-finalized-v42-terminal-next-20261007.json)。
+
+V29最小混合类修复：当前Signed Proposal/Vote整信封先于已完成checkpoint；没有eligible Signed时仍检查并提示最新Finalized。每一选定类原4MiB不变，原Native认证与其余Runtime源码逐字不变，Mesh仅profile28→29。真实oldV28反例FAIL.560120，新11项PASS3.581146/154封存，related60累计20.378813；原ordinary第11项送达/清缓存冷读复用未重跑。Python192 f92a303a08e771b139027a6ed6153faa36cb6eeee43e40cdab3e8d7c8f848249，Native89/Core171/实际CLI不变；453绑定1.170806通过，原完整入口未分配调用确实拒绝，分配guard确实接受。一条全新V43原180/一次已备妥，成熟15/全8Nativecold/每个信封/heads/守恒/正常停且全程<=180仍必需；无600/旧failed reopen/预算放宽。局部通过不授予原生资格，V42及全部历史失败仍FAIL。
+
+### V43终态；原目标完整送达，缺口转到中继2的当前转发
+
+V43 **FAIL原180/193.653含收尾/2043封存**，helper1 ScopeDeadline，四CLI正常exit0，forced/guardian/cleanup/pin均空。refs14/14/14/14；mature15/full8Nativecold/每个信封/heads/守恒未完成，600/all12/keyless及VALUE-STRICT-01仍FAIL/OPEN。V29最小源排序保持局部11项通过，真实scope不能称PASS。
+
+原Proposal2→1和实际生成Prepare0/2/3、Commit2/3的18个目的边均有完整原信封/receipt/准确companion。Prepare1/Commit0/1未生成；Node0原Timeout0成功后才观察第三Prepare，不把未知或旧ring丢失称Native签名失败。source3 Prepare→0首次prepare仅.242196秒，relay2首完整custody2.554318秒、随后57.456231秒才首prepare，经relay1仅1.363917秒到下一跳；目的Native完整receive62.916139秒。原匹配hint实际消费，没有源码排队缺项归因。
+
+已证伪“prepared重传挤占未prepare目标”：6个实际current spare均未prepare，不能据该假设修。准确新分辨是relay2 newest41转发source3 Prepare到1，newest49却选自身Prepare2到1，推迟同源Prepare3到0；oldest原对仍保留本地历史优先。下一只在remaining related60做一份全新真实签名小反例，验证既有newest prioritypair内转发current与本地current的最小公平排序。原first2/pending17gap/另一类floor/full4/旧prepared-current oldestpair/认证/原子/容量/冷验不动；反例不证不修，不原样重跑180或延长budget。结构化原20读数累计3.046411；交互只读未计时另列，不声称全诊断准确累计。
+
+[终态与下一判别](operations/evidence/regional-bft-active-finalized-v43-terminal-next-20261007.json)。

@@ -1,0 +1,58 @@
+{
+  "completed": false,
+  "status": "FAIL",
+  "original_budget_seconds": 180,
+  "duration_including_terminal_collection_seconds": 193.653,
+  "stopped_files": 2043,
+  "all_four_cli_exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "helper_exit_code": 1,
+  "forced_owned_processes": [],
+  "reference_heights_only": [
+    14,
+    14,
+    14,
+    14
+  ],
+  "mature15_full8_native_cold_all_envelopes_heads_conservation": false,
+  "whole600_all12_keyless_drain": "FAIL/OPEN",
+  "legacy_value_strict": "OPEN",
+  "sources": {
+    "docs/operations/evidence/regional-bft-four-cli-service-first-service-diag-v43-20261006-checks.json": "3ae20dcee6848692261d59669ee1d1f7d09846fd2b994bd660186d745da28bd2",
+    "docs/operations/evidence/regional-bft-parent14-v43-matrix-20261007-checks.json": "2e2d234e9642a32ceea2d1ddd5dd28fc2ce4ecf13f15bb488d3075c47967890f",
+    "docs/operations/evidence/regional-bft-exact-selector-decision-v43-20261007-checks.json": "b2e17144c874bbc14089d968d0fc28378bc9bbf901d805451387cfd3c86a0b84",
+    "docs/operations/evidence/regional-bft-exact-refusal-phase-v43-20261007-checks.json": "726be27a0993614f9b9a311637ab08a03f6873fbda6d67c54aff938e62dc23e6",
+    "docs/operations/evidence/regional-bft-three-hop-service-v43-20261007-checks.json": "a617242cf27fbf204416e9377e5c2fe6522688019758ab1abd9b54da529fd453",
+    "docs/operations/evidence/regional-bft-relay-newest-first-service-v43-20261007-checks.json": "ee71e03d41de5c54da10207f1b2baefe4717bfe49aa19ceca9d8ca10b4d8b706",
+    "docs/operations/evidence/regional-bft-relay-local-forwarded-v43-20261007-checks.json": "515e8dbab07ecf3550e53a5c4546fcc1fc397c493c760fe6fcabc382203b5f3d"
+  },
+  "sealed_private_never_reopen": true,
+  "structured_readonly20_cumulative_seconds": 3.046411,
+  "preliminary_interactive_reads_not_instrumented": true,
+  "preliminary_system_python_import_failure_no_project_dependencies": true,
+  "related60_cumulative_seconds": 20.378813,
+  "actual_generated_parent14_transport_edges_complete": 18,
+  "original_Proposal2to1_complete_receipt_and_companion": true,
+  "generated_Prepare0_2_3_Commit2_3_complete_each_destination": true,
+  "Native_remaining": "No Prepare1 or Commit0/1 generated; Node0 observed third Prepare after successful original round0 Timeout; source missing preparation falsified. No full cold Native qualification or unique cause.",
+  "next_target": {
+    "source": 3,
+    "relay": 2,
+    "destination": 0,
+    "kind": "Prepare",
+    "parent_height": 14,
+    "source_first_prepare_seconds": 0.2421964579843916,
+    "relay_first_custody_seconds": 2.554318249982316,
+    "relay_custody_to_first_prepare_seconds": 57.45623087504646,
+    "destination_Native_receive_since_enqueue_seconds": 62.91613879101351
+  },
+  "falsified": "Prepared retransmission displacing unprepared target: all six actually selected current spares were unprepared. No repair on this false hypothesis.",
+  "actual_minimum_distinction": "At newestpriority41 relay forwards source3 Prepare to1; newestpriority49 then selects its own local Prepare2to1 ahead of waiting source3 Prepare3to0. Matching actual hint never absent. Preserve oldest prioritypairs/local first2/floor/full4/allauth; only counterexample for forwarded versus local current frames in existing newest prioritypairs, no generic transport changes.",
+  "next": "One new signed ground counter within remaining originalrelated60. If minimum newestpair forwardedcurrent fairness counter falsifies no fix; if proves minimum Mesh ordering repair and necessary related regressions, including old preparedcurrent oldestpair, unchanged currentframe/copy rotations, capacity/auth/atomic/cold. No unchanged180retry/deadlineextension.",
+  "paper_pdf_site": "FROZEN_UNCHANGED",
+  "whole_goal_completed": false
+}

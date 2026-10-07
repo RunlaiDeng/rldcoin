@@ -1,0 +1,7 @@
+{
+  "hypothesis": "Exact Prepare3to0 was prepared promptly but nine original attempts include custody refusals. Match original nonces/firsthop/input windows and original node0 quorum versus Timeout sequence. Distinguish source selection from delayed custody and late Native phase; no log absence attribution or old Native constructor.",
+  "budget_seconds": 10,
+  "original_readonly20_prior_seconds": 1.835706,
+  "attempts": 1,
+  "exit": "first byte/schema/nonce guard or original10/remaining20; no old Native/Runtime/Node/key/sign/socket/fixture"
+}

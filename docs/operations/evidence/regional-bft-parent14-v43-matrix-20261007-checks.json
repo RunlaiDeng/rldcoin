@@ -1,0 +1,296 @@
+{
+  "completed": true,
+  "shared_original_readonly20_prior_seconds": 0.0,
+  "combined_original_readonly20_seconds": 1.488373,
+  "duration_seconds": 1.488379,
+  "budget_seconds": 20,
+  "attempts": 1,
+  "reference_heights": [
+    14,
+    14,
+    14,
+    14
+  ],
+  "rows": [
+    {
+      "source": 0,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "35311fef2c89b6f0da68519920263fa2d908b86aae12e395b4df5a320759616b",
+      "envelope_id": "9260dd9457c918f8ba8ad58d426cdcf0bebd9e1b4f536d623a253f54285abc30",
+      "context_sha256": "1197559435b697700960db54ec42cb2c1a145c96676d52ffc1d928860d4bcd69",
+      "value": "9baf5eef6dfae78a48bc1b53c115b83247835c5fd861d3a373952cbbd8d09fa5",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "fae7190a28ccbbde63a77bc9200647b98e338de8ab5e9fbe09708d69ce33eb63",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "61190c3db70ce19d40c0a84ff4dd8325f083f8392adcc8623b9cee934c0630aa",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "4d467702f7cb7d0781d637be71a37e1cc1398351a36c038eef084f05e159a667",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Proposal",
+      "round": 0,
+      "body_id": "2e3521200d1901f1e5b6226efdd762faa5e13fb395649e66ea75b263c50e24f0",
+      "envelope_id": "35e6b2b3b1cf340c945c03d6094923f52a7d03f8c52da1c19e92b50f9320927a",
+      "context_sha256": null,
+      "value": null,
+      "inner_vote_signature_verified": false,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "95c6d96c71e705ec123820a5f96527f9b7b6f048b8798bc3a1d41f328b3aa4b2",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "f20a5065bbcca2f0c980125970359be4a78a2530e1aa7c02a2e7dc82a7bc3024",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "8a6d7fad7a3a62ee06cbbd1c5cd1017c5c301f5136464558f03e30599f972c5c",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "3f7a90fad4dbb32c03b48b97844ffa1cde10bf18709722e04a9a011bec3ec43e",
+      "envelope_id": "fcad4086e71a387e170313fc27bf5520d85c23e2ed2c20443a576ce9d3d286b2",
+      "context_sha256": "1197559435b697700960db54ec42cb2c1a145c96676d52ffc1d928860d4bcd69",
+      "value": "9baf5eef6dfae78a48bc1b53c115b83247835c5fd861d3a373952cbbd8d09fa5",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "68694bcef87c588925d61da7ed09ebf832f962ac1e61b970ce1e157fa84d1278",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "f9ec92f631465318ed8dc5039b8dfc583c028d02ce0a29acda507cf3bb9d43e5",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "318513852fac614fc6e3c426a80dc8aafae469c5868e672842ca5d0fdc5d64a5",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 2,
+      "kind": "Commit",
+      "round": 0,
+      "body_id": "c1c948dfe0fea014b028c694d51d9f9a7e66455b05d404384ab822a21afde11b",
+      "envelope_id": "aa096467c5f1699f759c41cf6fe101bf4da25372cea10f65c4c7943964315f5d",
+      "context_sha256": "1197559435b697700960db54ec42cb2c1a145c96676d52ffc1d928860d4bcd69",
+      "value": "9baf5eef6dfae78a48bc1b53c115b83247835c5fd861d3a373952cbbd8d09fa5",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "da2018a6be093f5e79a41be7f2b264ed4b861cbac8205a67b556ab7e0d45bbe6",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "70e6edd9b293872604e724fb064a41aacc9e372cd3ad0314ab4bb46e75143ff6",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 3,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "ae577223f23102a9f0c07831e7b5ca0f114a64051d04e341e8205dd6bca819fb",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "kind": "Prepare",
+      "round": 0,
+      "body_id": "4e4714457b5990d023c398a421b46f091f2594fcc06c5ae7862ca66256caabaa",
+      "envelope_id": "c04cfdd28ccdab5875b9094e6d96b4e1d7331b2221b8cae115deb86fd28e65b9",
+      "context_sha256": "1197559435b697700960db54ec42cb2c1a145c96676d52ffc1d928860d4bcd69",
+      "value": "9baf5eef6dfae78a48bc1b53c115b83247835c5fd861d3a373952cbbd8d09fa5",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "e2925cc7e58fc7c54a702afe54f3430fcd2ed879818b8ceb3eea16bd9aab5a9b",
+              "storage": "active",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "8bff846fed938d279f2a8f08a779e0958d86d08cdc5d143d2c349a0c10aaf72d",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "a5306888d20abfedaf85b7acd589b69036c0108a73a637d2e9b6d9ba9742ff87",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": 3,
+      "kind": "Commit",
+      "round": 0,
+      "body_id": "c7fbe6af93e22f719e2cec8c661261231f24abcf9df6374b7945048dd4da13d5",
+      "envelope_id": "e10a9979614ab8fe13c05e3bdf9bf164dc0798495ed0b82a4f1bd6fca7d0f479",
+      "context_sha256": "1197559435b697700960db54ec42cb2c1a145c96676d52ffc1d928860d4bcd69",
+      "value": "9baf5eef6dfae78a48bc1b53c115b83247835c5fd861d3a373952cbbd8d09fa5",
+      "inner_vote_signature_verified": true,
+      "destinations": [
+        {
+          "destination": 0,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "8b03a5a708ef343a378d89a3755255994667f6ada14501d475f1f1237b518525",
+              "storage": "active",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 1,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "d5225181213c4235402298c99631eda51812014a13a7fee634c9d96dd0bc2a1d",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        },
+        {
+          "destination": 2,
+          "exact_companion": true,
+          "complete_transport": [
+            {
+              "packet_id": "855dd5ee23518d3a45da71ece6a61b6d2f60ae27a9a72b003158d4db1b4386bd",
+              "storage": "archive",
+              "receipt": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumed_sealed_files": 12,
+  "consumed_bytes_unchanged": true,
+  "stage_sha256": "9feae298962fd6b8bd96b7d39cb50dc483b0fb84d440e4bd47526f2bc77ab5b1",
+  "stopped_inventory_sha256": "082473af926fa6cd1a08ac541658ec3b0966fd0b2d0a1a757246dfa4ebe15406",
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "proposal_inner_signature_or_Native_acceptance_qualified": false,
+  "unique_maturity_cause_proved": false,
+  "new180": 0,
+  "new600": 0,
+  "full_fault_qualified": false
+}

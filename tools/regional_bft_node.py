@@ -156,13 +156,14 @@ def commit_carriage_frames(messages, context, keys, currency, region):
     mesh.require(type(keys) is tuple and len(keys)==4 and len(set(keys))==4,
                  'Commit carriage requires configured base validators')
     for key in keys:mesh.hex32(key)
-    frames=[];expanded_bytes=0
+    frames=[];expanded_bytes=0;finalized_ids=[]
     for ident,body,_,_ in messages.bodies():
         signed=body.get('Signed',{});vote=signed.get('Vote',{});proposal=signed.get('Proposal');finalized=body.get('Finalized')
         try:
             if finalized is not None:
-                if not current_finalized_hint(finalized,context,keys):continue
-            elif proposal is not None:
+                finalized_ids.append(ident)
+                continue
+            if proposal is not None:
                 if not current_empty_proposal_hint(proposal,context,keys):continue
             else:
                 if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
@@ -182,6 +183,25 @@ def commit_carriage_frames(messages, context, keys, currency, region):
             frames.append(wire.inspect_frame(raw)[0]['message_id'])
         except (KeyError,TypeError,ValueError,mesh.InvalidSignature):
             # A hint failure is ordinary scheduling fallback, never admission.
+            continue
+    if frames:return tuple(sorted(set(frames)))
+    # A complete current Signed envelope carries its predecessor evidence and
+    # advances live consensus. A latest finalized checkpoint is fallback for
+    # quiescent/lagging peers; it must not displace active current frames or
+    # spend their original expansion budget. Native admission is unchanged.
+    expanded_bytes=0
+    for ident in finalized_ids:
+        try:
+            finalized=messages.record(ident)['body']['Finalized']
+            if not current_finalized_hint(finalized,context,keys):continue
+            expanded_bytes+=messages.record(ident)['size_bytes']
+            if expanded_bytes>MAX_BROADCAST_HINT_BYTES:return ()
+            payload=messages.payload(ident);envelope=wire.decode_json(payload)
+            if (envelope['format']!=NETWORK or envelope['currency']!=currency
+                    or envelope['region']!=region):continue
+            raw=wire.make_frame('regional-bft',region,region,messages.content(ident),payload)
+            frames.append(wire.inspect_frame(raw)[0]['message_id'])
+        except (KeyError,TypeError,ValueError,mesh.InvalidSignature):
             continue
     return tuple(sorted(set(frames)))
 
