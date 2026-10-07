@@ -129,3 +129,17 @@ envelope, and fresh scratch under an owned private parent. It retains only publi
 verification inputs. Result0 verifies finite manifest authority;1 refuses;2 is
 unavailable. This does not verify inner entry signatures or grant nonce/state,
 independent-author/operating custody, complete protocol or adoption qualification.
+
+`tools/pq_renewal_archive_reference_candidate.py` independently decodes canonical
+complete renewal policies/proofs, reconstructs Old/New signed payload and head
+commitments, and verifies both Ed25519/ML-DSA87 halves for each role using the
+selected OpenSSL backend. It requires separate trusted initial anchor, caller
+observations/latest-head, private owned entry directory and fresh public scratch.
+Original limits64/32768/2097152 remain. Missing trust, retired/expired originals,
+stale prefixes, half rotation, changed locks/consumed roots and any bad half refuse.
+It does not import Core, sign, consume nonce or install its returned candidate head.
+
+The finite2-entry23-case scope and actual64-entry/256-half cold verification agree
+with their separately source-bound Core observations. The latter measured complete
+valid data, valid63-prefix refusal and a complete bad-last-PQ archive; it is not
+proof of independent authors, complete protocol, long-history or adopted custody.

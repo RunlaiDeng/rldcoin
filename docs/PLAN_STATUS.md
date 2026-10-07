@@ -56,9 +56,15 @@ V26四相关真实文件/注入write与dir-fsync反例通过，核心方法prefi
 
 V38 **FAIL0.461342秒**确认真实反例：同一成功公开manifest及有效PQ半签，identity Ed公钥+identityR/zeroS伪签无需私钥，实际OpenSSL reference错误exit0，Core183正确exit1。7项及脆弱源码封存；V37原23项PASS仅其有限scope，不能授安全key-admission。最小补规范compressed点、非identity/prime-subgroup、公钥与R及S<order，先检查再实际AND验签；Core/Native账本规则未改。V39 **PASS1.784655秒、原60累计2.245997秒**，3公开点回归、23相关实际判据、6新增伪签/编码及既有PAYMENT真实双签通过；58项公开字节封存，0签署/网络/Native/安装。详见[风险记录](operations/PQ_REFERENCE_RISKS.md)，独立安全及全恶意语料/生产资格仍OPEN。
 
+## 四签续证档案的第二参考实现
+
+新增不导入Core的Python规范政策/Old-New payload/head、era/epoch/nonce连续与实际OpenSSL四签验证。V40 **PASS1.910371秒/60一次**，两真实完整条及22拒绝判据，时代/epoch/nonce3、独立latest-head及原locks/consumed一致；坏任一四半签、旧unknown/revoked/broken、过期、旧前缀/乱序/重复、半轮换、错根与checked overflow均拒绝，136公开文件封存。
+
+同源必要全64V41 **PASS9.777099秒/原120一次**：1581531B、实际256签名半份重构时代/epoch/nonce65及准确最终头/原locks/consumed；合法63旧前缀明确拒绝，一份完整且其清单已新双签授权、但末尾内层PQ坏的64档案仍实际拒绝。1911公开验证文件封存，实际子进程最大RSS29261824B（Darwin该有限scope，不是跨平台/长期成本保证）；selectedOpenSSL103fc770/source/controller分别绑定，Core0calls/签署0/网络0/Native0/nonce消费0/安装0。第二参考实现不等于独立作者、两完整协议实现、安全审查或P1–P8采用。
+
 ## 下一单一主线
 
-同一完整续证档案仍由一个Core协议实现判断。继续建立不导入Core的规范四签Old/New续证与有序归档第二参考实现：明确旧根/current-trust/独立latest/locks/consumed，实际OpenSSL逐条AND验签和连续时代约束，先最小2条及坏半签/角色/根/序/退役反例，再有理由的完整64 scope；原预算/门槛不变，不签署旧失败保管、不重跑TLS/Native。它仍不等于独立作者/运营或P1–P8采用。
+离线档案授权/续证与现有真实账本仍分离。先读当前Native已签suite/时代规则及密码接口，确定不降级、不迁移旧失败状态的最小无价值集成反例；源码阅读不会授采用/新主网/基金/权限，原成熟/票数/容量/预算不变。须以实际角色/authority/profile绑定明确下一单一修复，不能从档案PASS推断支付或终局资格。
 
 ## 尚未完成
 
