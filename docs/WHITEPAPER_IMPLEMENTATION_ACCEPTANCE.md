@@ -1,5 +1,15 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 连续主线：固定三取四混合quorum完成Core有限回归；继续完整分片运输
+
+新Core `hybrid_quorum.rs`为未采用的固定3-of-4 Finality候选：调用者独立认证4身份/每个本地trust-epoch-nonce，exact3/sorted/distinct member逐份执行真实Ed25519 AND ML-DSA-87；整个配置共享任一Ed或PQ半份身份拒绝，任何缺票/未知/重复/错member/错role-root-nonce-horizon/trust/坏半签拒绝，不从重复成功single验签计3票。四种三人子集均通过，不可用未投票第四人不降低threshold。候选wire whole32KiB parse前拒超长、canonical再编码拒duplicate/unknown/alternateJSON/混合intent；decode不授finality权限，无Native票制/账本激活/锁安装改变。
+
+V10六相关真实RAM-only新钥案例 **PASS48.787071/原120**，277过滤是局部范围，不称full。加全4子集第七案例后，最终V11 **PASS55.979042/原300**：**全部284 Core/0失败/0忽略/0过滤+6包all-target严格零告警豁免**。Core182 **d728ef48902986aa2b6e98b21c08ea23c12eab0f414a4a7ddad41c435783ba9a**，实际immutable unit binary/compiled manifest/controller分别绑定；Rust1.98.0/opt1/assertions-overflow true和现有cache实际复用。旧Core407/277和TLS V4等只保持各自historical来源，不转授新Native，未重复旧value67或Native180/600，全部旧FAIL/私有保管未重开/复制/重签/清理。
+
+实测完整public quorum **29679B**，3份dual sig **14073B**，4套publickey **10496B**；一次验签耗时仅该本机fixture观察，不是性能保证。明确 **超过旧single transport12288B**，不提高或称适配；也不称完整transaction/archive/aggregation资格。[有限profile](operations/evidence/core-hybrid-quorum-reference-v1-qualified-profile-20261007.json)、[最终完整检查](operations/evidence/core-hybrid-quorum-integrated-v11-20261007-checks.json)、[source-only控制器](operations/fixtures/core-hybrid-quorum-v1-20261007/README.md)。
+
+上一完整TLS/Core组合实现已按最新用户阶段发布规则普通推送main **ad9155eb195eda157ad70d0ca7bedf5df31ed1f5**，remoteSHA/tree一致；当时CI runs0，仓库Actions enabled/workflow active但未见运行，绝不称PASS。新完成quorum同样审阅commit/push，唯一原线程持续下一明确目标：完整29679B分成不超过原12288的三包，经原认证TLS完整送达，以固定whole32KiB、独立预期wholeSHA512、exactcount/index/长度、无缺/重复/混片/篡改重组，再调用实际新Core 3-of4；新purpose/quorum验证不是重测旧single scope。一次必要新120含构建/预检/发送/冷读/实际Core/封存，首guard或期限FAIL退出，不加上限、不学peer authority、不改旧Native/资金/共识。正文2ba62421/PDFc59f9fe8/receipt86821d19及全部S/R/I/A–G/N/P保持，独立审查/完整PQ采用/长期/物理/P1–P8/全目标仍OPEN，唯一作者继续。
+
 ## 2026-10-07 连续主线：有界混合TLS/Core组合通过；继续多签资源判别
 
 冻结正文2ba62421/PDFc59f9fe8/receipt86821d19及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持。新V4一次原120 **PASS41.430553**，含离线固定依赖解析、全目标strict零豁免、实际构建及全新互认证证书；Core1814070549a/既有Node-TCP/冻结字节均未变。完整9847字节规范公开双签信封通过实际混合TLS原样送达；相同长度坏PQ半份运输同样完整成功，但实际Core decode/AND exit1明确拒绝，合法原件exit0。运输SHA512 receipt不授予值/状态/Native权限。

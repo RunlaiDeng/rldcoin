@@ -52,6 +52,10 @@ changes. Verify the actual remote commit and report actual CI state. Publication
 does not broaden any source-bound scope or turn a failure into a pass; continue
 the authorized serial implementation after the publication boundary.
 
+## Hybrid candidate integration boundary
+
+`crates/rld-core/src/hybrid_authorization.rs` and `hybrid_quorum.rs` are verification-only candidates, never an adopted ledger suite. Exact dual signatures/finite caller-authenticated policy and observations remain mandatory. The quorum candidate requires exactly three distinct configured identities out of four, rejects shared key halves and mixed intents, and grants no signer-lock/finality/value authority. Its separate32KiB parser bound does not increase any transport/ledger/network cap. Measured full quorum29679B exceeds the single candidate TLS12288B; fragment and verify the complete root without raising that cap. `tools/fixtures/pq-tls-candidate/transport.c` is loopback-only; payload SHA512 receipts prove bytes only. The actual Core adapter obtains policy independently of transport. Preserve all historical source-qualified results; new Core182d728 full284 does not qualify old/new Native, PQ adoption, independent review or physical routes. See the finite profiles and source-only fixtures in docs/operations; publish verified stages under the rule above and continue the single mainline.
+
 The node-network target is progressive neighbor discovery and multi-hop evidence relay, illustrated by Earth–Proxima Centauri–Andromeda and the user's Endfield relay analogy. Physical contact is a prerequisite. Distant connections are asynchronous and respect causal propagation; there is no mandatory always-online Earth directory or instantaneous global state.
 
 Development decisions must serve the future interstellar peer-to-peer payment goal:
