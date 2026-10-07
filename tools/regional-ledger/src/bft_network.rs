@@ -7,6 +7,39 @@ pub const FORMAT: &str = "RLD-REGIONAL-BFT-NETWORK-V2";
 pub const COLD_BATCH_FORMAT: &str = "RLD-BFT-COLD-NETWORK-CHECK-V1";
 pub const MAX_COLD_BATCH: usize = 4;
 pub const LIVE_BATCH_FORMAT: &str = "RLD-BFT-LIVE-NETWORK-INSPECTION-V1";
+pub const LOCAL_ENVELOPE_FORMAT: &str = "RLD-BFT-LOCAL-ENVELOPE-V1";
+
+#[derive(Debug, Serialize)]
+pub struct LocalEnvelope {
+    pub envelope: WireEnvelope,
+    pub checked: LiveChecked,
+}
+
+/// Generate the original complete proof and run both original pack and wire
+/// verification under one fully replayed store. This read changes no ledger,
+/// caller head, signer, nonce or voting lock; no result survives the operation.
+pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
+    require(
+        serde_json::to_vec(&body).map_err(|e| e.to_string())?.len() <= crate::contact::MAX_PAYLOAD,
+        "local network body exceeds payload bound",
+    )?;
+    let envelope = Envelope {
+        format: FORMAT.into(),
+        currency: node.trust.currency()?,
+        region: node.chain.region,
+        evidence: node.proof()?,
+        body,
+    };
+    // Preserve the original full envelope verification before packing.
+    envelope.verify(node)?;
+    let envelope = envelope.pack()?;
+    // Preserve the independent reconstructed-wire verification used by retain.
+    let mut checked = inspect_live_batch(vec![envelope.clone()], node)?;
+    Ok(LocalEnvelope {
+        envelope,
+        checked: checked.pop().ok_or("local network inspection absent")?,
+    })
+}
 
 #[derive(Debug, Serialize)]
 pub struct LiveChecked {

@@ -1284,3 +1284,87 @@ mod paged_remote;
 
 #[path = "paged_bft_cycle_tests.rs"]
 mod paged_cycle;
+
+#[test]
+fn local_envelope_preserves_complete_wire_bytes_after_native_history_and_all_heads() {
+    use crate::bft_network::{self, Body, Envelope, FORMAT};
+    for rules in [bft::RULES, crate::paged_bft::RULES] {
+        let mut h = Harness::with_rules(rules);
+        for height in 0..=2 {
+            let proposal = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
+            let body = Body::Signed(Box::new(Message::Proposal(Box::new(proposal.clone()))));
+            let before = retained_native_replay::inventory(&h.root);
+            let heads = h.heads.clone();
+            let original = Envelope {
+                format: FORMAT.into(),
+                currency: h.node.trust.currency().unwrap(),
+                region: h.node.chain.region,
+                evidence: h.node.proof().unwrap(),
+                body: body.clone(),
+            };
+            let ident = original.verify(&h.node).unwrap();
+            let wire = original.pack().unwrap();
+            let result = bft_network::local_envelope(body, &h.node).unwrap();
+            assert_eq!(
+                serde_json::to_vec(&result.envelope).unwrap(),
+                serde_json::to_vec(&wire).unwrap()
+            );
+            assert_eq!(result.checked.message_id, ident);
+            assert_eq!(result.checked.value, original.value().unwrap());
+            assert_eq!(result.checked.evidence, original.evidence);
+            assert_eq!(result.checked.epochs, original.carried_epochs());
+            assert_eq!(heads, h.heads);
+            assert_eq!(before, retained_native_replay::inventory(&h.root));
+            if height < 2 {
+                let prepared = h.prepare(&proposal, &[0, 1, 2]);
+                let snapshot = h.commit(&proposal, &prepared, &[0, 1, 2]);
+                h.node.finalize(snapshot).unwrap();
+            }
+        }
+    }
+}
+
+#[test]
+fn local_envelope_refuses_changed_signature_parent_and_foreign_domain_without_append() {
+    use crate::bft_network::{self, Body};
+    for rules in [bft::RULES, crate::paged_bft::RULES] {
+        let mut h = Harness::with_rules(rules);
+        let proposal = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
+        let before = retained_native_replay::inventory(&h.root);
+        for kind in 0..3 {
+            let mut changed = proposal.clone();
+            match kind {
+                0 => changed.leader.signature = "00".repeat(64),
+                1 => changed.snapshot.statement.height += 1,
+                _ => changed.snapshot.statement.region = Hash::ZERO,
+            }
+            assert!(bft_network::local_envelope(
+                Body::Signed(Box::new(Message::Proposal(Box::new(changed)))),
+                &h.node
+            )
+            .is_err());
+            assert_eq!(before, retained_native_replay::inventory(&h.root));
+        }
+    }
+}
+
+#[test]
+fn local_envelope_refuses_oversize_and_incomplete_final_quorum_without_partial_result() {
+    use crate::bft_network::{self, Body};
+    let mut h = Harness::with_rules(crate::paged_bft::RULES);
+    let proposal = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
+    let prepared = h.prepare(&proposal, &[0, 1, 2]);
+    let mut final_block = h.commit(&proposal, &prepared, &[0, 1, 2]);
+    let before = retained_native_replay::inventory(&h.root);
+    final_block.bft.as_mut().unwrap().committed.votes.pop();
+    assert!(bft_network::local_envelope(Body::Finalized(Box::new(final_block)), &h.node).is_err());
+    let mut oversize = proposal;
+    oversize.leader.signature = "0".repeat(crate::contact::MAX_PAYLOAD);
+    let refusal = bft_network::local_envelope(
+        Body::Signed(Box::new(Message::Proposal(Box::new(oversize)))),
+        &h.node,
+    )
+    .unwrap_err();
+    assert!(refusal.contains("payload bound"));
+    assert_eq!(before, retained_native_replay::inventory(&h.root));
+}

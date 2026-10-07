@@ -476,7 +476,13 @@ class Runtime:
 
     def flush_outbox(self):
         if self.head['outbox'] is not None:
-            self.retain(self.envelope({'Signed':self.head['outbox']}),sync=False,local=True)
+            if getattr(self,'format',None)==FORMAT and self.joint is None:
+                from regional_bft_local_envelope import pack
+                envelope,verified=pack(self,{'Signed':self.head['outbox']})
+                self._retain_checked(envelope,verified,sync=False,local=True)
+            else:
+                self.retain(self.envelope({'Signed':self.head['outbox']}),sync=False,local=True)
+            # Clear only after full Native authentication and durable retention.
             self.save_head(dict(self.head,outbox=None))
 
     def sign(self, request):

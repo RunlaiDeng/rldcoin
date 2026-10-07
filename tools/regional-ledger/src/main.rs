@@ -73,6 +73,11 @@ enum Action {
         #[arg(long)]
         file: PathBuf,
     },
+    /// One complete local proof, pack and wire check; no signing or ledger write.
+    BftNetworkLocalEnvelope {
+        #[arg(long)]
+        file: PathBuf,
+    },
     BftSync {
         #[arg(long)]
         file: PathBuf,
@@ -899,6 +904,7 @@ fn run() -> Result<()> {
         )?,
         Action::BftNetworkCheckBatch { .. }
         | Action::BftNetworkInspectBatch { .. }
+        | Action::BftNetworkLocalEnvelope { .. }
         | Action::BftLoopStatus { .. } => Store::open_inspection(&args.dir, &args.authority, pin)?,
         Action::HistoryCheck { expected_head }
         | Action::ChannelReceiptAccept { expected_head, .. }
@@ -1004,6 +1010,29 @@ fn run() -> Result<()> {
             let output = serde_json::to_vec(&response).map_err(|e| e.to_string())?;
             if output.len() > MAX_BYTES {
                 return Err("live network batch response exceeds bound".into());
+            }
+            println!("{}", String::from_utf8(output).map_err(|e| e.to_string())?);
+        }
+
+        Action::BftNetworkLocalEnvelope { file } => {
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let body: bft_network::Body =
+                serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let result = bft_network::local_envelope(body, &store)?;
+            let response = serde_json::json!({
+                "format": bft_network::LOCAL_ENVELOPE_FORMAT,
+                "currency": pin,
+                "region": store.chain.region,
+                "request_sha256": Hash(Sha256::digest(&raw).into()),
+                "envelope": result.envelope,
+                "checked": result.checked,
+                "verified": true,
+                "ledger_changed": false,
+                "signing_authority": false
+            });
+            let output = serde_json::to_vec(&response).map_err(|e| e.to_string())?;
+            if output.len() > MAX_BYTES {
+                return Err("local network envelope response exceeds bound".into());
             }
             println!("{}", String::from_utf8(output).map_err(|e| e.to_string())?);
         }
