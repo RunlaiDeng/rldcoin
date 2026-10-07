@@ -20,6 +20,7 @@ from regional_bft_retention import Messages, pack_state, unpack_state
 from regional_bft_query_index import lookup as signed_lookup
 from regional_bft_observation import Observation
 from regional_bft_cold_batch import check_retained as check_cold_retained
+from regional_bft_pinned_cold import check_retained_pinned
 from regional_bft_live_batch import inspect as inspect_live_batch
 from regional_bft_joint_epoch import JointEpoch, JointLoopStatus, FORMAT as JOINT_FORMAT, signed_body
 from regional_bft_joint_roles import RoleJoint, FORMAT as ROLE_FORMAT, readonly_head
@@ -291,10 +292,14 @@ class Runtime:
         fields={'format','state','signer_dir','head_file','key_file','key','miner','validators','block_interval','round_timeout','stop_height'}
         role_fields={'format','state','miner','validators','block_interval','round_timeout','stop_height','initial_slot','handoffs'}
         roles = config['format']==ROLE_FORMAT
-        mesh.require((set(config)==fields and config['format']==FORMAT)
+        mesh.require((set(config) in (fields,fields|{'startup_native_history_head'}) and config['format']==FORMAT)
                      or (set(config)==fields|{'joint_epoch'} and config['format']==JOINT_FORMAT)
                      or (set(config)==role_fields and roles),
                      'BFT configuration fields/version invalid')
+        startup_head=config.get('startup_native_history_head')
+        if 'startup_native_history_head' in config:
+            mesh.hex32(startup_head)
+            mesh.require(startup_head!='0'*64,'explicit nonzero startup Native history head required')
         self.format=config['format']
         self.miner = mesh.hex32(config['miner'])
         self.root = mesh.safe_dir(config['state'])
@@ -356,9 +361,11 @@ class Runtime:
                 mesh.integer(self.state['cursor'],0,2**63-1)
                 mesh.require(isinstance(self.state['messages'],Messages) and len(self.state['messages'])<=MAX_MESSAGES
                              and isinstance(self.state['snapshot_cache'],list) and len(self.state['snapshot_cache'])<=64, 'BFT runtime retained capacity invalid')
-                check_cold_retained(self)
+                if startup_head is None:check_cold_retained(self)
+                else:check_retained_pinned(self,startup_head)
             else:
                 self.state = {'format':self.format,'binding':self.binding,'messages':Messages(),'height':0,'tip':self.region,'snapshot_cache':[],'cursor':0}
+                if startup_head is not None:check_retained_pinned(self,startup_head)
                 self.save(self.state)
             self._retained_native_authenticated = True
             if self.joint is not None:

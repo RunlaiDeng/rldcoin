@@ -44,6 +44,22 @@ class BudgetTests(unittest.TestCase):
         self.assertEqual(inspection.lock_refusals, 1)
         self.assertGreater(inspection.contention_seconds, 0)
 
+    def test_explicit_startup_plan_and_empty_history_keep_same_shared_lock_budget(self):
+        for request in (('bft-network-check-plan','--file','complete-plan.json','--expected-head','7'*64),
+                        ('history-check','--expected-head','7'*64)):
+            native=ScriptNative([ValueError(LOCK_REFUSAL),{'verified':True}])
+            inspection=Inspection(native,Clock())
+            self.assertEqual(inspection.call(*request),{'verified':True})
+            self.assertEqual(native.calls,[ (request,{}), (request,{}) ])
+            native=ScriptNative([ValueError(LOCK_REFUSAL)]*200)
+            inspection=Inspection(native,Clock())
+            with self.assertRaises(ValueError):inspection.call(*request)
+            self.assertAlmostEqual(inspection.contention_seconds,MAX_CONTENTION_SECONDS)
+            self.assertLessEqual(inspection.lock_refusals,MAX_LOCK_REFUSALS)
+            native=ScriptNative([ValueError('invalid pinned complete proof'),'must not run'])
+            with self.assertRaisesRegex(ValueError,'invalid pinned'):Inspection(native,Clock()).call(*request)
+            self.assertEqual(len(native.calls),1)
+
     def test_mutating_and_recovery_commands_never_retry(self):
         requests = [
             ('bft-sign',), ('bft-sign', '--recover-only'), ('bft-init',),

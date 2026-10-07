@@ -57,6 +57,7 @@ class Model(Driver):
         if self.fail_at==self.phase:raise ValueError('synthetic phase failure')
         return True
     def stop_all(self):self.sequence.append('stop');self.processes.clear()
+    def prepare_keyless_startup(self):self.sequence.append('startup-pins')
     def record(self,kind,**data):self.sequence.append(kind)
     def stopped_drain(self):
         if self.processes:raise AssertionError('model fixed-head drain before stop')
@@ -672,5 +673,79 @@ class StoppedReaderPoolTests(unittest.TestCase):
                 with self.assertRaises(ValueError):driver.stopped_reads(slots,lambda *slot:read.append(slot))
                 self.assertFalse(read)
 
+
+
+
+
+class StartupPinDriverTests(unittest.TestCase):
+    def driver(self,root):
+        d=Driver.__new__(Driver);d.root=root;d.output=root/'output';d.output.mkdir(mode=0o700)
+        d.phase=PHASES[2];d.processes={};d.keyless_startup={};d.configs={}
+        d.terminal=[dict(region=r,index=n,exit_code=0) for r,n in SLOTS]
+        d.deadline=time.monotonic()+60;d.pins=[]
+        absent=root/'absent';absent.mkdir(mode=0o700)
+        for r,n in SLOTS:
+            config=dict(key_file=str(absent/f'{r}-{n}.json'),state=str(root/f'state-{r}-{n}'))
+            original=d.output/PHASES[-1]/f'bft-{r}-{n}.json';original.parent.mkdir(mode=0o700,exist_ok=True)
+            mesh.atomic(original,config)
+            d.configs[PHASES[-1],r,n]=Config(PHASES[-1],r,n,True,b'{}',original.read_bytes(),
+                ('unused','--bft-config',str(original),'--unchanged','literal'))
+        def pin(r,n,prefix):
+            d.pins.append((r,n));return dict(history_head=f'{len(d.pins):064x}')
+        d.pin_head=pin;return d
+
+    def test_all12_pins_precede_config_derivation_and_original_bytes_argv_stay_exact(self):
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as tmp:
+            d=self.driver(Path(tmp));original=dict(d.configs)
+            file=d.file
+            def write(name,value):
+                self.assertEqual(d.pins,list(SLOTS));return file(name,value)
+            d.file=write;d.prepare_keyless_startup()
+            self.assertEqual(d.configs,original);self.assertEqual(set(d.keyless_startup),set(SLOTS))
+            for slot in SLOTS:
+                conf=original[PHASES[-1],*slot];row=d.keyless_startup[slot]
+                config=json.loads(conf.bft);derived=json.loads(row['path'].read_bytes())
+                self.assertEqual(set(derived)-set(config),{'startup_native_history_head'})
+                self.assertEqual({k:derived[k] for k in config},config)
+                argv=list(conf.argv);argv[argv.index('--bft-config')+1]=str(row['path'])
+                self.assertEqual(tuple(argv),row['argv'])
+                self.assertEqual(Path(conf.argv[2]).read_bytes(),conf.bft)
+            with self.assertRaises(ValueError):d.prepare_keyless_startup()
+
+    def test_unsafe_stop_partial_pin_wrong_argv_or_bound_config_refuse_without_launch(self):
+        for why in ('active','unclean','wrong-phase','missing-slot','pin-failure','changed-config','wrong-argv'):
+            with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as tmp:
+                d=self.driver(Path(tmp))
+                if why=='active':d.processes[('earth',0)]=object()
+                elif why=='unclean':d.terminal[-1]['exit_code']=1
+                elif why=='wrong-phase':d.phase=PHASES[-1]
+                elif why=='missing-slot':d.terminal.pop()
+                elif why=='pin-failure':
+                    def fail(*args):raise ValueError('original pin refusal')
+                    d.pin_head=fail
+                elif why=='changed-config':Path(d.configs[PHASES[-1],'earth',0].argv[2]).write_bytes(b'{}')
+                else:
+                    c=d.configs[PHASES[-1],'earth',0]
+                    d.configs[PHASES[-1],'earth',0]=Config(c.phase,c.region,c.index,c.started,c.mesh,c.bft,('unused',))
+                with self.assertRaises(ValueError):d.prepare_keyless_startup()
+                self.assertEqual(d.keyless_startup,{})
+
+    def test_actual_launch_uses_bound_derived_argv_and_changed_bytes_refuse_before_spawn(self):
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as tmp:
+            d=self.driver(Path(tmp));d.prepare_keyless_startup();d.phase=PHASES[-1]
+            d.project=PROJECT;d.logs={};d.starts=0;d.record=lambda *a,**kw:None
+            slot=('earth',0);seen=[]
+            def spawn(argv,**kw):
+                seen.append((argv,kw));return SimpleNamespace(pid=123)
+            with patch('regional_paged_fault_driver.subprocess.Popen',spawn):d.start(d.phase,[slot])
+            try:
+                self.assertEqual(seen[0][0],d.keyless_startup[slot]['argv'])
+                self.assertEqual(seen[0][1]['cwd'],PROJECT)
+                self.assertEqual(d.starts,1)
+            finally:d.logs[slot].close()
+            other=('earth',1);d.keyless_startup[other]['path'].write_bytes(b'{}')
+            with patch('regional_paged_fault_driver.subprocess.Popen',side_effect=AssertionError('no launch')):
+                with self.assertRaises(ValueError):d.start(d.phase,[other])
+            self.assertEqual(d.starts,1)
 
 if __name__=='__main__':unittest.main()

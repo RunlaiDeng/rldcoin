@@ -15,7 +15,7 @@ RETRY_DELAY_SECONDS = 0.025
 OBSERVATIONS = frozenset({
     'contact-status', 'bft-context', 'bft-status', 'bft-retained-messages',
     'proof', 'bft-network-pack', 'bft-network-check', 'bft-network-check-batch',
-    'bft-installed-epochs',
+    'bft-installed-epochs', 'bft-network-check-plan', 'history-check',
 })
 
 

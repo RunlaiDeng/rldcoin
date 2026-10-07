@@ -201,7 +201,7 @@ class Driver:
         self.processes,self.logs,self.relays,self.owners,self.cold={},{},[],{},[]
         self.calls,self.starts,self.events,self.terminal=[],0,[],[]
         self.stopped_observations={}
-        self.stopped_heads={};self.unknowns=0;self.phase=None;self.signed_count=0;self.prepared_inventory=inventory(self.root)
+        self.stopped_heads={};self.keyless_startup={};self.unknowns=0;self.phase=None;self.signed_count=0;self.prepared_inventory=inventory(self.root)
         self.mesh_anchors={slot:dict(public_key=document(self.root/'mesh'/f'{slot[0]}-{slot[1]}'/'identity.private.json')['public_key'],node_id=self.observed['transport_pins'][i]['node_id'],network=self.currency,config_sha256=config_commitment(json.loads(self.configs[PHASES[-1],*slot].mesh))) for i,slot in enumerate(SLOTS)}
         self.tls_observations=set()
         self.original_states=None;self.original_objects={slot:inventory(self.root/slot[0]/f'native-{slot[1]}') for slot in SLOTS}
@@ -314,15 +314,58 @@ class Driver:
         self.file('trusted-prelaunch-mesh-anchors', {label+'-'+str(n):anchor for (label,n),anchor in self.mesh_anchors.items()})
         self.original_states={label:[self.call(label,n,'status') for n in range(4)] for label in REGIONS}
 
+    def prepare_keyless_startup(self):
+        """Pin the normally stopped warm scope; preserve its original configs.
+
+        These explicit heads are local observations, never independent freshness
+        authority. Every new Runtime must fully authenticate against its own pin
+        before recovery/signing. No partial preparation may launch any replica.
+        """
+        self.remaining();terminal=self.terminal[-len(SLOTS):]
+        require(self.phase==PHASES[2] and not self.processes and not self.keyless_startup
+            and len(terminal)==len(SLOTS)
+            and {(v['region'],v['index']) for v in terminal}==set(SLOTS)
+            and all(v['exit_code']==0 for v in terminal),
+            'startup pins require all12 own warm processes normally stopped once')
+        heads={slot:self.pin_head(*slot,'keyless-startup-native') for slot in SLOTS}
+        prepared={}
+        for label,n in SLOTS:
+            self.remaining();conf=self.configs[PHASES[-1],label,n]
+            original=self.output/PHASES[-1]/f'bft-{label}-{n}.json'
+            require(raw(original)==conf.bft,'original bound keyless config changed')
+            config=json.loads(conf.bft)
+            require('startup_native_history_head' not in config
+                and not Path(config['key_file']).exists() and not Path(config['key_file']).is_symlink(),
+                'original keyless absent-key config required')
+            derived=dict(config,startup_native_history_head=heads[label,n]['history_head'])
+            path=self.file(f'keyless-drain/pinned-bft-{label}-{n}',derived)
+            argv=list(conf.argv)
+            require(argv.count('--bft-config')==1,'one explicit BFT config argument required')
+            index=argv.index('--bft-config')+1
+            require(index<len(argv) and argv[index]==str(original),'bound BFT config argument differs')
+            argv[index]=str(path)
+            prepared[label,n]=dict(argv=tuple(argv),path=path,sha256=digest(path))
+            self.file(f'keyless-startup-native/config-binding-{label}-{n}',dict(
+                original_sha256=digest(original),derived_sha256=digest(path),
+                startup_native_history_head=heads[label,n]['history_head'],
+                only_added_field='startup_native_history_head',independent_freshness_qualified=False))
+        self.keyless_startup=prepared
+
     def start(self,phase,slots):
         for label,n in slots:
             self.remaining();require((label,n) not in self.processes,'copied/concurrent own custody refused')
             conf=self.configs[phase,label,n]
             require(conf.started,'initial missing validator must remain stopped')
+            argv=conf.argv
+            if phase==PHASES[-1]:
+                require(set(self.keyless_startup)==set(SLOTS),'all12 explicit startup pins required')
+                pinned=self.keyless_startup[label,n]
+                require(digest(pinned['path'])==pinned['sha256'],'pinned launch config changed')
+                argv=pinned['argv']
             log_path=self.output/phase/f'service-{label}-{n}.log'
             log=os.fdopen(os.open(log_path,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600),'wb')
             self.logs[label,n]=log
-            try:process=subprocess.Popen(conf.argv,cwd=self.project,stdout=log,stderr=log,start_new_session=True)
+            try:process=subprocess.Popen(argv,cwd=self.project,stdout=log,stderr=log,start_new_session=True)
             except BaseException:log.close();del self.logs[label,n];raise
             self.processes[label,n]=process;self.starts+=1;self.record('ordinary-node-start',region=label,index=n,keyless=phase=='keyless-drain')
 
@@ -636,7 +679,7 @@ class Driver:
         for relay in self.relays:relay.enable()
         self.record('both-directed-original-contacts-restored')
         self.wait('original export native import/maturity before unchanged caps',self.live_receipt)
-        self.stop_all();self.phase=PHASES[3]
+        self.stop_all();self.prepare_keyless_startup();self.phase=PHASES[3]
         self.start(self.phase,SLOTS)
         self.wait('all12 keyless current observations agree before fixed-head drain',self.keyless_observations_ready)
         self.stop_all()

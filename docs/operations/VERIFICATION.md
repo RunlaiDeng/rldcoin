@@ -52,6 +52,26 @@ Historical `regional_channel_missing_leader_drill.py` requires exact retained lo
 reports and source/binary pins; it is not a portable CI or recovery entry. Missing
 prerequisites must refuse. Do not run it on old custody to verify tree cleanup.
 
+## Explicit Native startup pins
+
+The base BFT companion config optionally accepts `startup_native_history_head`,
+an explicit nonzero 32-byte hex commitment retained by its caller. Before any
+pending-response recovery or signing, Native replays the exact pinned history
+and authenticates every complete retained envelope in one bounded plan. Empty
+retained tables still require `history-check`. A wrong pin or bad complete input
+refuses without a fallback; omitting the field keeps the original batch path.
+Joint/role profiles reject this optional field. Original envelope, batch, state
+and aggregate plan limits remain in force. Exact read-lock refusals share the
+existing constructor contention budget; this never retries a mutation.
+
+The full fault controller captures and checks all twelve warm Native heads only
+after its own normal process stop, then derives separate launch configs by adding
+this field. All original configs remain byte-identical. The original current
+all-twelve keyless observation gate, normal stop, separate stopped heads, complete
+cold checks and conservation remain mandatory under the same total deadline.
+These caller-retained fixture heads do not qualify independent freshness,
+rollback witnesses, suite adoption or authority for real funds.
+
 ## Evidence, deadlines and remaining gates
 
 Run the smallest falsifiable reproducer, then related regressions, then a justified
