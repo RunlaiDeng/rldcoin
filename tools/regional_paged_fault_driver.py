@@ -287,12 +287,25 @@ class Driver:
         self.record('original-owner-first-sign-once-queued',region=label,queue_did_not_debit=True)
         return signed
 
+    def prepare_keyless_directory(self):
+        """Create only an empty private parent; no validator key is available."""
+        self.remaining();parent=safe(self.root/'keyless-absent')
+        require(not parent.exists() and not parent.is_symlink(),'retain existing keyless path')
+        for label,n in SLOTS:
+            config=json.loads(self.configs[PHASES[-1],label,n].bft)
+            require(config['key_file']==str(parent/f'{label}-{n}.json'),
+                'keyless phase must use exact absent own key path')
+        parent.mkdir(mode=0o700)
+        require(parent.stat().st_uid==os.getuid() and parent.stat().st_mode&0o777==0o700
+            and not any(parent.iterdir()),'keyless parent must be empty and private')
+
     def materialize(self):
         self.remaining();require(inventory(self.root)==self.prepared_inventory,'prepared custody changed before launch')
         self.output.mkdir(mode=0o700)
         mesh.atomic(self.root/'fault-scope-started.json',dict(format='RLD-PAGED-FAULT-ONCE-STARTED-V1',
             output=str(self.output),currency=self.currency,original_preparation_inventory=self.bound.preparation_inventory,
             one_attempt=True,failed_scope_never_resume=True))
+        self.prepare_keyless_directory()
         for conf in self.bound.configs:
             for kind,raw in (('mesh',conf.mesh),('bft',conf.bft)):
                 p=self.output/conf.phase/f'{kind}-{conf.region}-{conf.index}.json'

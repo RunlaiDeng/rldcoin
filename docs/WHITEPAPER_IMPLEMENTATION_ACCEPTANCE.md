@@ -1867,3 +1867,11 @@ shutdown-v12 **FAIL421.062秒/原600/6972封存**，原单Native收款import13/m
 下一唯一全新hook-v16准备原180一次，通过后在准确最终helper上直接执行无Native停止hook模型（含真实字典输出及重复停止保留首输出），实际名称绑定预检，之后必要hook-v13原600一次。最终有限入口若失败不启动Runtime；首原guard/原deadline封存，不同参重跑或重开旧保管。V47组件/实际lockprobe与当前25 source-bound模型复用不重复；VALUE-STRICT-01、长期/PQ/物理/独立/组合及全部冻结条款保持。旧价值候选v2仅scratch未应用：改善完整enum原编码byte相等检查，未更改任何Core/value/Cargo或运行检查。唯一作者继续，不在局部终态结束用户目标。
 
 hook-v16新12Native准备原180 PASS30.858秒/668保管；actual E8/P5/A5成熟资金/8完整目的收据/守恒/独立caller-voter-TLS/三原unsigned reviews通过。准确最终helper直接stop hook模型PASS .098890秒，原related60累计45.425171；原status字节保留、crypto-region未覆写、重复stop不改首输出，zero Native/Runtime/Node/socket/sign。最终37 actual LOAD_GLOBAL providers及完整源文本反转PASS .095900秒；仅新路径与slot_region诊断key差异，driver/current192/25模型资格复用不重复。必要一次原600于2026-10-07T02:31:15.552912+00:00开始；原60round/24height/成熟2/票3/原owner3/全12固定头cold/完整信封/heads/守恒/normalstop/5cleanup及whole600不减，旧FAIL及冻结保持。
+
+### hook-v13完整FAIL；无钥私有父目录反例与最小夹具修复
+
+hook-v13 FAIL365.437秒/原600/6568封存；原Native净9收款import12/mature14/spendable/finality/notquarantined通过，原12exit0，但keyless节点exit1/-15、cleanup失败，全12固定头cold/完整信封/heads/守恒未完成。封存日志准确ENOENT为keyless-absent父目录缺失；原Runtime.private(missing=True)允许缺私钥叶，仍要求已存在私有父目录，不修改Runtime或权限/首次签名规则。旧FAIL和原三owner/钥/保管不重开、复制、重签或退款。
+
+实际Driver.materialize+原Runtime.private无Native反例FAIL .036053；初模型非canonical配置entry错误.011797单独保留。最小Driver修复仅首次materialize创建空0700自有keyless父目录，核对全部12原key路径、拒绝已有/foreign/symlink；无钥创建或复制。28 source-bound相关模型PASS .206590、原related60累计45.679611；旧17测试原字节、其他16Driver方法AST及实际stop-hook模型不变，全部运行时/成熟/票数/容量/冷验/签名/原预算护栏保持。Driver a612982537029f7cf6f296b402cb43eb05c6b2064dd7a735bc9264f505a3ef39；Python192 e78de3272be68f74dc1de40d6bbb6c3a7cb3f66e38d92076424f95eaa2cfc633。453来源绑定PASS .029919，Native89/Core171/actualbinary/Service/Runtime/Mesh/TCP/BFT/terminal未改；旧V47组件、真正lockprobe与stop-hook经准确来源桥复用，不重复长测。
+
+下一单线：directory-v17全新12准备一次原180，通过且最终入口语法/导入/实际名称provider检查后，必要directory-v14一次原600。判别真实无钥当前进程status和完整原全12cold/全信封/heads/守恒/normalstop；原60round/24height/E27P24A24/maturity2/quorum3/三原owner/5cleanup/whole600保持。首原guard或期限封存退出，不同参重跑或加deadline。局部PASS不停止持续开发，也不授予完整/长期/PQ/组合/独立/物理资格。VALUE-STRICT-01继续OPEN，冻结正文/PDF/receipt及所有S/R/I/A–G/N/P保持；goal元数据旧前继哈希与blocked/persistent旧cwd仍待界面修复，不妨碍用户明确授权的新workdir持续执行。
