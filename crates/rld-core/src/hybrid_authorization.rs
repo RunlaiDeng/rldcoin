@@ -31,6 +31,7 @@ pub enum HybridPurposeV1 {
     Governance,
     Renewal,
     ArchiveManifest,
+    PermanentImportAppend,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -326,6 +327,7 @@ fn policy_commitment_bytes(policy: &HybridPolicyCandidateV1) -> Vec<u8> {
         HybridPurposeV1::Governance => 4,
         HybridPurposeV1::Renewal => 5,
         HybridPurposeV1::ArchiveManifest => 6,
+        HybridPurposeV1::PermanentImportAppend => 7,
     });
     bytes.extend_from_slice(&policy.valid_from_epoch.to_be_bytes());
     bytes.extend_from_slice(&policy.valid_until_epoch.to_be_bytes());
