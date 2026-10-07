@@ -30,6 +30,28 @@ and finite-horizon requalification, not an eternal guarantee. This instruction
 does not authorize mainnet, real funds, account/permission changes or external
 contacts. A file update does not establish that the running thread received it.
 
+## Stage publication (owner instruction 2026-10-07)
+
+After each verifiable implementation stage passes its necessary checks, commit
+explicitly reviewed source and safe necessary public evidence, then promptly use
+the existing authenticated ordinary push to `origin`:
+`https://github.com/RunlaiDeng/rldcoin.git`, existing `main` only. Do not accumulate
+completed stages without pushing. The owner's new instruction supersedes earlier
+no-push restrictions for this exact destination; historical `pushed:false` records
+remain true of their recording time and must not be rewritten as past publication.
+
+Follow `docs/operations/STAGE_PUBLICATION_WORKFLOW.md`. Review all new reachable
+blob versions, including subsequently deleted files, before pushing. Private keys,
+credentials, generated seeds, private node/config/ledger/owner/voter/TLS/keyless
+state, binaries and tmp/target are excluded. Preserve local failures. If an
+ancestor contains unsuitable content, report its file/category and stop the
+publication rather than blind-push or rewrite history. Push only the exact reviewed
+commit to `refs/heads/main`; no force, mirror, all-branch/tag push, old
+rldcoin-genesis history branches, permissions, mainnet, website or frozen-paper
+changes. Verify the actual remote commit and report actual CI state. Publication
+does not broaden any source-bound scope or turn a failure into a pass; continue
+the authorized serial implementation after the publication boundary.
+
 The node-network target is progressive neighbor discovery and multi-hop evidence relay, illustrated by Earth–Proxima Centauri–Andromeda and the user's Endfield relay analogy. Physical contact is a prerequisite. Distant connections are asynchronous and respect causal propagation; there is no mandatory always-online Earth directory or instantaneous global state.
 
 Development decisions must serve the future interstellar peer-to-peer payment goal:
