@@ -16,6 +16,7 @@ use std::{
 };
 
 const FORMAT: &str = "RLD-NATIVE-IMMUTABLE-PACKED-ARCHIVE-CANDIDATE-V1";
+const LOSSLESS_FORMAT: &str = "RLD-NATIVE-IMMUTABLE-LOSSLESS-PACKED-ARCHIVE-CANDIDATE-V1";
 const MANIFEST: &str = "packed.json";
 const MARKER: &str = "ARCHIVING";
 const OBJECTS: &str = "packs";
@@ -27,6 +28,8 @@ struct Manifest {
     packs: Vec<history::Reference>,
     count: u64,
     head: Hash,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    original_packs: Vec<history::Reference>,
 }
 fn err(_: std::io::Error) -> String {
     "packed private archive operation unavailable".into()
@@ -106,6 +109,8 @@ struct Builder {
     head: Hash,
     count: u64,
     packs: Vec<history::Reference>,
+    originals: Vec<history::Reference>,
+    lossless: bool,
 }
 impl Builder {
     fn flush<T: Serialize + DeserializeOwned>(
@@ -118,7 +123,17 @@ impl Builder {
         }
         let pages = group.iter().map(Vec::as_slice).collect::<Vec<_>>();
         let verified = checked_pages::<T>(&self.context, &pages)?;
-        let (reference, raw) = encode_complete_page_pack_candidate::<T>(&self.context, &pages)?;
+        let (original_ref, original) =
+            encode_complete_page_pack_candidate::<T>(&self.context, &pages)?;
+        let (reference, raw) = if self.lossless {
+            super::lossless::encode_lossless_complete_pack_candidate::<T>(
+                &self.context,
+                &original_ref,
+                &original,
+            )?
+        } else {
+            (original_ref.clone(), original)
+        };
         require(
             self.packs
                 .len()
@@ -128,12 +143,22 @@ impl Builder {
         )?;
         let mut proposed = self.packs.clone();
         proposed.push(reference.clone());
+        let mut originals = self.originals.clone();
+        if self.lossless {
+            originals.push(original_ref);
+        }
         let future = bytes(&Manifest {
-            format: FORMAT.into(),
+            format: if self.lossless {
+                LOSSLESS_FORMAT
+            } else {
+                FORMAT
+            }
+            .into(),
             scope: self.context.scope.clone(),
             packs: proposed,
             count: self.count,
             head: self.head,
+            original_packs: originals.clone(),
         })?;
         let reserved = (raw.len() as u64)
             .checked_add(future.len() as u64)
@@ -144,6 +169,7 @@ impl Builder {
         self.context.previous_page = Some(verified.last_page);
         self.context.previous_pack = Some(reference.hash);
         self.packs.push(reference);
+        self.originals = originals;
         group.clear();
         Ok(())
     }
@@ -170,6 +196,23 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
             independently_expected_head,
             complete_pages,
             None,
+            false,
+        )
+    }
+    /// Separate explicit format; ordinary raw opens never reinterpret it.
+    pub fn seal_lossless_candidate(
+        dir: &Path,
+        scope: Scope,
+        independently_expected_head: Hash,
+        complete_pages: impl IntoIterator<Item = Result<Vec<u8>>>,
+    ) -> Result<Self> {
+        Self::seal_inner(
+            dir,
+            scope,
+            independently_expected_head,
+            complete_pages,
+            None,
+            true,
         )
     }
     fn seal_inner(
@@ -178,6 +221,7 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
         expected: Hash,
         complete_pages: impl IntoIterator<Item = Result<Vec<u8>>>,
         interrupt: Option<u8>,
+        lossless: bool,
     ) -> Result<Self> {
         private_dir(dir.parent().ok_or("packed archive parent missing")?)?;
         require(!exists(dir)?, "packed archive requires absent fresh target")?;
@@ -185,11 +229,14 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
         keystore::private_create(&dir.join("LOCK"), b"")?;
         let guard = lock(dir)?;
         make_dir(&dir.join(OBJECTS))?;
-        keystore::private_create(&dir.join(MARKER), &bytes(&(FORMAT, &scope, expected))?)?;
+        let format = if lossless { LOSSLESS_FORMAT } else { FORMAT };
+        keystore::private_create(&dir.join(MARKER), &bytes(&(format, &scope, expected))?)?;
         let mut builder = Builder {
             head: scope.initial()?,
             count: 0,
             packs: vec![],
+            originals: vec![],
+            lossless,
             context: PackedPageContextCandidateV1 {
                 scope: scope.clone(),
                 first_record: 0,
@@ -258,11 +305,12 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
             "packed archive independently expected complete head differs",
         )?;
         let manifest = Manifest {
-            format: FORMAT.into(),
+            format: format.into(),
             scope,
             packs: builder.packs,
             count: builder.count,
             head: builder.head,
+            original_packs: builder.originals,
         };
         let raw = bytes(&manifest)?;
         preflight(dir, 1, raw.len() as u64)?;
@@ -282,15 +330,53 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
         Ok(result)
     }
     pub fn open(dir: &Path, independently_scope: &Scope, independently_head: Hash) -> Result<Self> {
+        Self::open_inner(dir, independently_scope, independently_head, None)
+    }
+    /// Require a separately retained COMPLETE current manifest reference before
+    /// parsing its encoded/decoded pack references or inflating any object.
+    pub fn open_lossless_candidate(
+        dir: &Path,
+        independently_scope: &Scope,
+        independently_head: Hash,
+        independently_manifest: &history::Reference,
+    ) -> Result<Self> {
+        Self::open_inner(
+            dir,
+            independently_scope,
+            independently_head,
+            Some(independently_manifest),
+        )
+    }
+    fn open_inner(
+        dir: &Path,
+        independently_scope: &Scope,
+        independently_head: Hash,
+        independently_manifest: Option<&history::Reference>,
+    ) -> Result<Self> {
         private_dir(dir)?;
         let guard = lock(dir)?;
         require(
             !exists(&dir.join(MARKER))?,
             "incomplete packed archive; retain original residue",
         )?;
-        let manifest: Manifest = decode(&keystore::private_read(&dir.join(MANIFEST), MAX_BYTES)?)?;
+        let raw = keystore::private_read(&dir.join(MANIFEST), MAX_BYTES)?;
+        if let Some(reference) = independently_manifest {
+            require(
+                reference.bytes == raw.len()
+                    && reference.hash == Hash(sha2::Sha256::digest(&raw).into()),
+                "lossless archive independent complete manifest differs",
+            )?;
+        }
+        let manifest: Manifest = decode(&raw)?;
         require(
-            manifest.format == FORMAT && manifest.scope == *independently_scope,
+            manifest.format
+                == (if independently_manifest.is_some() {
+                    LOSSLESS_FORMAT
+                } else {
+                    FORMAT
+                })
+                && manifest.scope == *independently_scope
+                && (independently_manifest.is_some() || manifest.original_packs.is_empty()),
             "packed archive current scope/format; no conversion",
         )?;
         let archive = Self {
@@ -323,6 +409,14 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
                 && self.manifest.head == independently_head,
             "packed archive current head/reference capacity",
         )?;
+        let lossless = self.manifest.format == LOSSLESS_FORMAT;
+        require(
+            (lossless && self.manifest.original_packs.len() == self.manifest.packs.len())
+                || (!lossless
+                    && self.manifest.format == FORMAT
+                    && self.manifest.original_packs.is_empty()),
+            "packed archive exact format/complete original references",
+        )?;
         let mut context = PackedPageContextCandidateV1 {
             scope: self.manifest.scope.clone(),
             first_record: 0,
@@ -331,17 +425,32 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
         };
         let mut head = context.scope.initial()?;
         let mut count = 0u64;
-        for reference in &self.manifest.packs {
+        for (position, reference) in self.manifest.packs.iter().enumerate() {
             let raw = keystore::private_read(
                 &self.dir.join(OBJECTS).join(name(reference.hash)),
                 MAX_BYTES,
             )?;
-            let verified = verify_complete_page_pack_candidate::<T>(&context, reference, &raw)?;
+            let (verified, decoded);
+            let complete_raw: &[u8] = if lossless {
+                let restored = super::lossless::verify_lossless_complete_pack_candidate::<T>(
+                    &context,
+                    &self.manifest.original_packs[position],
+                    reference,
+                    &raw,
+                )?;
+                verified = restored.complete;
+                decoded = restored.original_pack;
+                &decoded
+            } else {
+                verified = verify_complete_page_pack_candidate::<T>(&context, reference, &raw)?;
+                &raw
+            };
             let mut offset = header(&context, verified.complete_pages.len())?.len();
             for _ in &verified.complete_pages {
                 let len =
-                    u32::from_be_bytes(take(&raw, &mut offset, 4)?.try_into().unwrap()) as usize;
-                let page: Page<T> = decode(take(&raw, &mut offset, len)?)?;
+                    u32::from_be_bytes(take(complete_raw, &mut offset, 4)?.try_into().unwrap())
+                        as usize;
+                let page: Page<T> = decode(take(complete_raw, &mut offset, len)?)?;
                 for record in &page.records {
                     consumer(record)?;
                     head = next_head(head, count, record)?;
@@ -363,6 +472,15 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
             "packed archive exact complete head/count",
         )?;
         Ok(count)
+    }
+    /// Retain this after successful local sealing; a peer-selected reference is
+    /// not an independent latest anchor and cannot initialize Native authority.
+    pub fn manifest_reference_candidate(&self) -> Result<history::Reference> {
+        let raw = bytes(&self.manifest)?;
+        Ok(history::Reference {
+            hash: Hash(sha2::Sha256::digest(&raw).into()),
+            bytes: raw.len(),
+        })
     }
     pub(crate) fn require_scope(&self, scope: &Scope) -> Result<()> {
         require(
@@ -534,7 +652,8 @@ mod tests {
                 s.clone(),
                 expected,
                 pageinputs,
-                boundary
+                boundary,
+                false
             )
             .is_err());
             let before = inventory(&root);
@@ -584,6 +703,165 @@ mod tests {
             .err()
             .unwrap()
             .contains("file capacity"));
+        assert_eq!(inventory(&root), before);
+    }
+
+    #[test]
+    fn lossless65_full_pages_cold_child_requires_exact_manifest_and_raw_open_refuses() {
+        let root = fresh_root();
+        let s = scope();
+        let (pages, head) = fixture_pages(&s, 65);
+        let dir = root.join("lossless");
+        let archive =
+            PackedArchiveCandidate::<u64>::seal_lossless_candidate(&dir, s.clone(), head, pages)
+                .unwrap();
+        assert_eq!(archive.manifest.packs.len(), 2);
+        assert_eq!(archive.manifest.original_packs.len(), 2);
+        let manifest = archive.manifest_reference_candidate().unwrap();
+        drop(archive);
+        keystore::private_create(&root.join("scope.json"), &bytes(&s).unwrap()).unwrap();
+        let before = inventory(&root);
+        let output = Command::new(std::env::current_exe().unwrap())
+            .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+            .args([
+                "retained_pages::packed::archive::tests::lossless_cold_child",
+                "--exact",
+                "--ignored",
+            ])
+            .env("RLD_LOSSLESS_ARCHIVE_CHILD_DIR", &root)
+            .env("RLD_LOSSLESS_ARCHIVE_CHILD_HEAD", head.to_hex())
+            .env(
+                "RLD_LOSSLESS_ARCHIVE_CHILD_MANIFEST_HASH",
+                manifest.hash.to_hex(),
+            )
+            .env(
+                "RLD_LOSSLESS_ARCHIVE_CHILD_MANIFEST_BYTES",
+                manifest.bytes.to_string(),
+            )
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(PackedArchiveCandidate::<u64>::open(&dir, &s, head).is_err());
+        let mut wrong = manifest.clone();
+        wrong.hash = Hash([9; 32]);
+        assert!(
+            PackedArchiveCandidate::<u64>::open_lossless_candidate(&dir, &s, head, &wrong).is_err()
+        );
+        assert!(PackedArchiveCandidate::<u64>::open_lossless_candidate(
+            &dir,
+            &s,
+            Hash([9; 32]),
+            &manifest
+        )
+        .is_err());
+        assert_eq!(inventory(&root), before);
+        let held =
+            PackedArchiveCandidate::<u64>::open_lossless_candidate(&dir, &s, head, &manifest)
+                .unwrap();
+        assert!(
+            PackedArchiveCandidate::<u64>::open_lossless_candidate(&dir, &s, head, &manifest)
+                .is_err()
+        );
+        drop(held);
+    }
+    #[test]
+    #[ignore = "separate cold process with independent manifest and current head"]
+    fn lossless_cold_child() {
+        let root = PathBuf::from(std::env::var_os("RLD_LOSSLESS_ARCHIVE_CHILD_DIR").unwrap());
+        let s: Scope =
+            decode(&keystore::private_read(&root.join("scope.json"), MAX_BYTES).unwrap()).unwrap();
+        let head =
+            Hash::from_hex(&std::env::var("RLD_LOSSLESS_ARCHIVE_CHILD_HEAD").unwrap()).unwrap();
+        let manifest = history::Reference {
+            hash: Hash::from_hex(
+                &std::env::var("RLD_LOSSLESS_ARCHIVE_CHILD_MANIFEST_HASH").unwrap(),
+            )
+            .unwrap(),
+            bytes: std::env::var("RLD_LOSSLESS_ARCHIVE_CHILD_MANIFEST_BYTES")
+                .unwrap()
+                .parse()
+                .unwrap(),
+        };
+        let archive = PackedArchiveCandidate::<u64>::open_lossless_candidate(
+            &root.join("lossless"),
+            &s,
+            head,
+            &manifest,
+        )
+        .unwrap();
+        let mut count = 0;
+        archive
+            .visit(head, |record| {
+                require(*record == count, "lossless original record order")?;
+                count += 1;
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(count, 1040);
+    }
+    #[test]
+    fn lossless_interruption_and_missing_original_reference_keep_all_residue() {
+        for boundary in [Some(0), Some(1)] {
+            let root = fresh_root();
+            let s = scope();
+            let (pages, head) = fixture_pages(&s, 2);
+            let dir = root.join("failed-lossless");
+            assert!(PackedArchiveCandidate::<u64>::seal_inner(
+                &dir,
+                s.clone(),
+                head,
+                pages,
+                boundary,
+                true
+            )
+            .is_err());
+            let before = inventory(&root);
+            let unavailable = history::Reference {
+                hash: Hash([9; 32]),
+                bytes: 1,
+            };
+            assert!(PackedArchiveCandidate::<u64>::open_lossless_candidate(
+                &dir,
+                &s,
+                head,
+                &unavailable
+            )
+            .is_err());
+            let (pages, _) = fixture_pages(&s, 2);
+            assert!(PackedArchiveCandidate::<u64>::seal_lossless_candidate(
+                &dir,
+                s.clone(),
+                head,
+                pages
+            )
+            .is_err());
+            assert_eq!(inventory(&root), before);
+        }
+        let root = fresh_root();
+        let s = scope();
+        let (pages, head) = fixture_pages(&s, 1);
+        let dir = root.join("malformed-lossless");
+        let archive =
+            PackedArchiveCandidate::<u64>::seal_lossless_candidate(&dir, s.clone(), head, pages)
+                .unwrap();
+        let mut manifest = archive.manifest.clone();
+        drop(archive);
+        manifest.original_packs.clear();
+        let raw = bytes(&manifest).unwrap();
+        fs::write(dir.join(MANIFEST), &raw).unwrap();
+        let pinned = history::Reference {
+            hash: Hash(sha2::Sha256::digest(&raw).into()),
+            bytes: raw.len(),
+        };
+        let before = inventory(&root);
+        assert!(
+            PackedArchiveCandidate::<u64>::open_lossless_candidate(&dir, &s, head, &pinned)
+                .is_err()
+        );
         assert_eq!(inventory(&root), before);
     }
 }

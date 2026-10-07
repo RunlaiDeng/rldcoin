@@ -38,6 +38,46 @@ pub fn inspect_packed_native_candidate(
     storage_head: Hash,
     independently_latest: &PackedNativeBoundaryCandidate,
 ) -> Result<PackedNativeBoundaryCandidate> {
+    inspect(
+        dir,
+        bootstrap,
+        authority,
+        currency_pin,
+        storage_head,
+        None,
+        independently_latest,
+    )
+}
+/// Separate lossless format: complete current manifest, storage head and Native
+/// ending state are three independent caller anchors. No ordinary adoption.
+pub fn inspect_lossless_packed_native_candidate(
+    dir: &Path,
+    bootstrap: &Bootstrap,
+    authority: &str,
+    currency_pin: Hash,
+    storage_head: Hash,
+    independently_manifest: &crate::history::Reference,
+    independently_latest: &PackedNativeBoundaryCandidate,
+) -> Result<PackedNativeBoundaryCandidate> {
+    inspect(
+        dir,
+        bootstrap,
+        authority,
+        currency_pin,
+        storage_head,
+        Some(independently_manifest),
+        independently_latest,
+    )
+}
+fn inspect(
+    dir: &Path,
+    bootstrap: &Bootstrap,
+    authority: &str,
+    currency_pin: Hash,
+    storage_head: Hash,
+    independently_manifest: Option<&crate::history::Reference>,
+    independently_latest: &PackedNativeBoundaryCandidate,
+) -> Result<PackedNativeBoundaryCandidate> {
     require(
         independently_latest.currency == currency_pin,
         "packed Native current currency differs",
@@ -49,7 +89,15 @@ pub fn inspect_packed_native_candidate(
     };
     let mut replay = Replay::new(&header, authority, currency_pin)?;
     let scope = header.scope(&replay.trust)?;
-    let archive = PackedArchiveCandidate::<Record>::open(dir, &scope, storage_head)?;
+    let archive = match independently_manifest {
+        Some(reference) => PackedArchiveCandidate::<Record>::open_lossless_candidate(
+            dir,
+            &scope,
+            storage_head,
+            reference,
+        )?,
+        None => PackedArchiveCandidate::<Record>::open(dir, &scope, storage_head)?,
+    };
     let source = PackedHistory {
         archive: &archive,
         scope,

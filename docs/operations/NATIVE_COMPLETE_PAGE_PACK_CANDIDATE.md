@@ -148,9 +148,53 @@ at independently pinned genesis and must match the complete latest caller
 boundary. A decoded object cannot initialize a ledger from a snapshot.
 
 Lossless representation does not establish a whole-history compression ratio,
-CPU/RAM/recovery budget or retention funding. Durable compressed archives and
-ordinary appends still need explicit formats, complete residue accounting and
-Native integration under the unchanged 4,096-file / 256-MiB physical archive
-ceiling. No old private archive is converted or implicitly reinterpreted.
+CPU/RAM/recovery budget or retention funding. The immutable compressed archive uses its own explicit format and complete
+residue accounting. Ordinary appends still require Native integration under the
+unchanged 4,096-file / 256-MiB physical archive ceiling. No old private archive is converted or implicitly reinterpreted.
 Independent security review, new cryptographic adoption and long-history value
 qualification remain separate gates.
+
+
+## Immutable lossless archive and Native cold inspection
+
+`PackedArchiveCandidate::seal_lossless_candidate` seals only a fresh absent
+owned private target. The separate format is
+`RLD-NATIVE-IMMUTABLE-LOSSLESS-PACKED-ARCHIVE-CANDIDATE-V1`. Its canonical manifest
+retains the complete scope, ordered encoded pack references, aligned
+`original_packs` references, complete record count and logical record head.
+Each original reference binds the exact bounded decoded pack bytes. The original
+page predecessor hashes and every original record commitment remain unchanged;
+pack predecessor hashes bind the actual retained encoded objects.
+
+A caller retains `manifest_reference_candidate()` after successful local sealing.
+`open_lossless_candidate` requires this independently retained complete manifest
+reference as well as the scope and latest logical head. It authenticates the whole
+manifest before parsing its references or inflating any retained object. The
+original `open` accepts the raw format only and refuses a compressed archive.
+The lossless entry likewise refuses the raw format; there is no format sniffing,
+automatic conversion or fallback.
+
+`storage::inspect_lossless_packed_native_candidate` separately requires the
+complete current manifest reference, storage head and ending Native boundary,
+along with authority/currency pins and complete signed bootstrap. It executes all
+original records from pinned genesis using the same process-local executed-prefix
+resolver. It returns an inspection boundary only after full compressed integrity,
+complete Native signature/value replay and the independent ending boundary match.
+No result can initialize an ordinary Store, signature lock or caller head.
+
+Sealing durably marks the new target before publishing complete encoded packs
+and reserves the complete future manifest before each publication. The marker is
+removed only after the independently expected complete logical head matches and
+the canonical manifest is durably published. Interruptions, wrong ending heads
+and missing input keep all marked residue; another seal and ordinary open refuse.
+Every encoded object, original decoded object and manifest remains at most 8 MiB.
+All retained physical objects, orphans, locks, markers and manifests count under
+the unchanged 4,096-file / 256-MiB ceiling. Reference misalignment, altered bytes,
+missing objects and lock conflicts refuse; no records are pruned for compression.
+
+This is immutable read-only retention and inspection. Incremental append,
+complete Store-side incident proofs and accounting, signer custody, independent
+freshness witnesses, storage funding and long-history value recovery still need
+implementation and their own qualification. A peer-selected manifest reference
+is not an independently current anchor. Compression does not make those adoption
+requirements optional.

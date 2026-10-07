@@ -891,7 +891,10 @@ mod body_witness_tests;
 
 #[path = "paged_store/packed_inspection.rs"]
 mod packed_inspection;
-pub use packed_inspection::{inspect_packed_native_candidate, PackedNativeBoundaryCandidate};
+pub use packed_inspection::{
+    inspect_lossless_packed_native_candidate, inspect_packed_native_candidate,
+    PackedNativeBoundaryCandidate,
+};
 
 #[cfg(test)]
 #[path = "paged_store/packed_inspection_tests.rs"]

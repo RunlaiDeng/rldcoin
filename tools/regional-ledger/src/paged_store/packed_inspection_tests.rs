@@ -322,3 +322,173 @@ fn actual_signed_native_page_recovers_exact_bytes_and_executes_after_lossless_de
     assert!(encoded.len() < original_pack.len());
     println!("lossless-native-complete original_pack_bytes={} encoded_bytes={} decoded_bytes={} actual_height={} original_signatures_preserved=true long_history_qualification=false",original_pack.len(),encoded.len(),restored.original_pack.len(),got.height);
 }
+
+#[derive(Serialize, Deserialize)]
+struct LosslessCaller {
+    caller: IndependentCaller,
+    manifest: crate::history::Reference,
+}
+#[test]
+fn lossless_durable_actual16_heights_cold_child_matches_and_raw_entry_refuses() {
+    let (root, _h, scope, records, caller) = fixture();
+    let expected = caller.boundary();
+    let page = serde_json::to_vec(&CompletePage {
+        format: "RLD-NATIVE-COMPLETE-STREAM-PAGES-V1".into(),
+        scope: scope.clone(),
+        first: 0,
+        previous: None,
+        records,
+    })
+    .unwrap();
+    let dir = root.join("lossless-native");
+    let archive = PackedArchiveCandidate::<Record>::seal_lossless_candidate(
+        &dir,
+        scope,
+        caller.storage_head,
+        [Ok(page)],
+    )
+    .unwrap();
+    let manifest = archive.manifest_reference_candidate().unwrap();
+    drop(archive);
+    let got = inspect_lossless_packed_native_candidate(
+        &dir,
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        caller.storage_head,
+        &manifest,
+        &expected,
+    )
+    .unwrap();
+    assert_eq!(got, expected);
+    let separate = LosslessCaller { caller, manifest };
+    crate::keystore::private_create(
+        &root.join("lossless-caller.json"),
+        &serde_json::to_vec(&separate).unwrap(),
+    )
+    .unwrap();
+    let before = inventory(&root);
+    let output = Process::new(std::env::current_exe().unwrap())
+        .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .args([
+            "storage::paged::packed_inspection_tests::lossless_native_cold_child",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("RLD_LOSSLESS_NATIVE_CHILD", &root)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&output.stdout).contains("actual-lossless-native-cold-height16")
+    );
+    let caller = &separate.caller;
+    assert!(inspect_packed_native_candidate(
+        &dir,
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        caller.storage_head,
+        &expected
+    )
+    .is_err());
+    let mut wrong = separate.manifest.clone();
+    wrong.hash = Hash([9; 32]);
+    assert!(inspect_lossless_packed_native_candidate(
+        &dir,
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        caller.storage_head,
+        &wrong,
+        &expected
+    )
+    .is_err());
+    let mut wrong = expected.clone();
+    wrong.finalized = Some(Hash([9; 32]));
+    assert!(inspect_lossless_packed_native_candidate(
+        &dir,
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        caller.storage_head,
+        &separate.manifest,
+        &wrong
+    )
+    .is_err());
+    assert_eq!(inventory(&root), before);
+}
+#[test]
+#[ignore = "separate Native cold process, independent complete current manifest"]
+fn lossless_native_cold_child() {
+    let root = PathBuf::from(std::env::var_os("RLD_LOSSLESS_NATIVE_CHILD").unwrap());
+    let separate: LosslessCaller = serde_json::from_slice(
+        &crate::keystore::private_read(&root.join("lossless-caller.json"), MAX_BYTES).unwrap(),
+    )
+    .unwrap();
+    let caller = separate.caller;
+    let expected = caller.boundary();
+    let got = inspect_lossless_packed_native_candidate(
+        &root.join("lossless-native"),
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        caller.storage_head,
+        &separate.manifest,
+        &expected,
+    )
+    .unwrap();
+    assert_eq!(got, expected);
+    println!("actual-lossless-native-cold-height16 all_complete_signatures=true no_store_or_signer_adoption=true");
+}
+#[test]
+fn lossless_hash_consistent_bad_final_certificate_never_returns_native_boundary() {
+    let (root, h, scope, mut records, mut caller) = fixture();
+    let Record::Certified(last) = records.last_mut().unwrap() else {
+        unreachable!()
+    };
+    last.bft.as_mut().unwrap().committed.votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    let signature_failure = crate::conflict::CertifiedHistory::from_snapshot(last)
+        .verify(&replay(&h).trust)
+        .unwrap_err();
+    let mut head = scope.initial().unwrap();
+    for (i, record) in records.iter().enumerate() {
+        head = crate::retained_pages::next_head(head, i as u64, record).unwrap();
+    }
+    caller.storage_head = head;
+    let expected = caller.boundary();
+    let page = serde_json::to_vec(&CompletePage {
+        format: "RLD-NATIVE-COMPLETE-STREAM-PAGES-V1".into(),
+        scope: scope.clone(),
+        first: 0,
+        previous: None,
+        records,
+    })
+    .unwrap();
+    let dir = root.join("bad-lossless-native");
+    let archive =
+        PackedArchiveCandidate::<Record>::seal_lossless_candidate(&dir, scope, head, [Ok(page)])
+            .unwrap();
+    let manifest = archive.manifest_reference_candidate().unwrap();
+    drop(archive);
+    let before = inventory(&root);
+    let failure = inspect_lossless_packed_native_candidate(
+        &dir,
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        head,
+        &manifest,
+        &expected,
+    )
+    .unwrap_err();
+    assert_eq!(failure, signature_failure);
+    assert_eq!(inventory(&root), before);
+}
