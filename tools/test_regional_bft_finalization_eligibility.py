@@ -87,6 +87,9 @@ class RecordingRuntime(Runtime):
     def retain(self, body, **kwargs):
         self.events.append(('retain', None))
 
+    def retain_local_body(self, body):
+        self.retain(self.envelope(body), sync=False, local=True)
+
     def observe(self):
         return self.context
 

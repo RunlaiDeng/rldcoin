@@ -102,6 +102,7 @@ class CombinedCandidateTests(unittest.TestCase):
         f.with_json=native
         f.envelope=lambda body: body
         f.retain=lambda body,**kwargs: f.messages.add(body)
+        f.retain_local_body=lambda body: f.retain(f.envelope(body),sync=False,local=True)
         observations = [f.tick()]
         self.assertEqual(f.requests,[])
         self.assertEqual(f.counts['bft-certify'],1)

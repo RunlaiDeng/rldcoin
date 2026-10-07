@@ -368,11 +368,11 @@ class Runtime:
                 if not directory.exists():continue
                 for message in self.native.call('bft-retained-messages','--signer-dir',directory):
                     if retained_responses.reuse(message):continue
-                    self.retain(self.envelope({'Signed':message}),sync=False,local=True)
+                    self.retain_local_body({'Signed':message})
             proof=self.native.call('proof')
             local=[s for s in proof['snapshots'] if s['statement']['region']==self.region and s['statement']['height']==self.state['height']]
             if local:
-                self.retain(self.envelope({'Finalized':local[0]}),sync=False,local=True)
+                self.retain_local_body({'Finalized':local[0]})
             self._signed_query_index = None
             self._signed_query_ready = True
             self.slot = None
@@ -476,14 +476,23 @@ class Runtime:
 
     def flush_outbox(self):
         if self.head['outbox'] is not None:
-            if getattr(self,'format',None)==FORMAT and self.joint is None:
-                from regional_bft_local_envelope import pack
-                envelope,verified=pack(self,{'Signed':self.head['outbox']})
-                self._retain_checked(envelope,verified,sync=False,local=True)
-            else:
-                self.retain(self.envelope({'Signed':self.head['outbox']}),sync=False,local=True)
+            self.retain_local_body({'Signed':self.head['outbox']})
             # Clear only after full Native authentication and durable retention.
             self.save_head(dict(self.head,outbox=None))
+
+    def retain_local_body(self, body):
+        """Construct and fully authenticate local bytes before durable retention.
+
+        The base profile uses one operation-local Native replay. Other profiles
+        keep their original decorated envelope and independent verification.
+        Incoming envelopes always retain their complete receive checks.
+        """
+        if getattr(self,'format',None)==FORMAT and self.joint is None:
+            from regional_bft_local_envelope import pack
+            envelope,verified=pack(self,body)
+            self._retain_checked(envelope,verified,sync=False,local=True)
+        else:
+            self.retain(self.envelope(body),sync=False,local=True)
 
     def sign(self, request):
         observation = getattr(self, 'observation', None)
@@ -995,7 +1004,7 @@ class Runtime:
                 if prepared is not None:
                     certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
                     self.with_json('finalize',certificate)
-                    self.retain(self.envelope({'Finalized':certificate}),sync=False,local=True)
+                    self.retain_local_body({'Finalized':certificate})
                     self.observe()
                     self.broadcast()
                     return self.report(context,round_number,status,stopped=self.state['height']>=self.stop_height)
