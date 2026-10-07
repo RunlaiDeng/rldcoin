@@ -259,8 +259,23 @@ pub(crate) fn verify_pinned_image(
     head: Hash,
 ) -> Result<()> {
     safe_dir(dir)?;
+    if paged::present(dir) {
+        paged::verify_pinned_image(dir, authority, pin, head)?;
+        return Ok(());
+    }
     load_image(dir, authority, pin, Some(head))?;
     Ok(())
+}
+/// Archive/restore transaction must hold its own lock and recheck complete
+/// inventory around this full cold read. This grants no signer/caller recovery.
+pub(crate) fn verify_paged_image_binding(
+    dir: &Path,
+    authority: &str,
+    pin: Hash,
+    head: Hash,
+) -> Result<Hash> {
+    safe_dir(dir)?;
+    paged::verify_pinned_image(dir, authority, pin, head)
 }
 impl Store {
     pub(crate) fn require_storage_head(&self, expected: Hash) -> Result<()> {

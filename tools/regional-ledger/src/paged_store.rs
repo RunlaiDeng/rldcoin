@@ -458,6 +458,81 @@ fn outside_usage(dir: &Path) -> Result<(usize, u64)> {
     )?;
     Ok((count, total))
 }
+struct ColdImage {
+    header: Header,
+    replay: Replay,
+    stream: Stream<Record>,
+    conflicts: Vec<Incident>,
+    safety: Safety,
+}
+// Caller holds the native or archive transaction lock; Stream owns its own lock.
+// Full cold execution is required even for a previously inspected byte image.
+fn load_image(dir: &Path, authority: &str, pin: Hash, head: Option<Hash>) -> Result<ColdImage> {
+    require(
+        read_guard(dir)?.is_zero(),
+        "paged BFT pending incident requires explicit recovery",
+    )?;
+    let header = read_header(dir)?;
+    let mut replay = Replay::new(&header, authority, pin)?;
+    let scope = header.scope(&replay.trust)?;
+    let expected = match head {
+        Some(head) => head,
+        None => Stream::<Record>::observe_head(&dir.join(EVENTS), &scope)?,
+    };
+    let stream = Stream::open(&dir.join(EVENTS), &scope, expected)?;
+    stream.visit(expected, |record| replay.apply_retained(record, &stream))?;
+    let journal = replay.journal(&header);
+    let (conflicts, safety) = read_incidents(dir, &journal, &replay.trust, None)?;
+    let retained = conflicts
+        .iter()
+        .map(|p| p.id())
+        .collect::<Result<BTreeSet<_>>>()?;
+    require(
+        retained == journal.incident_ids,
+        "paged BFT unindexed retained incidents refuse",
+    )?;
+    // Full stream capacity is checked on open; root-side files are counted
+    // together here using private full reads, never pruned on a refusal.
+    let (outside, bytes) = outside_usage(dir)?;
+    let mut files = outside;
+    let mut total = bytes;
+    fn count_tree(dir: &Path, files: &mut usize, total: &mut u64) -> Result<()> {
+        for e in fs::read_dir(dir).map_err(io)? {
+            let p = e.map_err(io)?.path();
+            if fs::symlink_metadata(&p).map_err(io)?.is_dir() {
+                count_tree(&p, files, total)?;
+            } else {
+                let raw = crate::keystore::private_read(&p, MAX_BYTES)?;
+                *files += 1;
+                *total = total
+                    .checked_add(raw.len() as u64)
+                    .ok_or("paged archive overflow")?;
+            }
+        }
+        Ok(())
+    }
+    count_tree(&dir.join(EVENTS), &mut files, &mut total)?;
+    require(
+        files <= crate::history::MAX_FILES && total <= crate::history::MAX_ARCHIVE_BYTES,
+        "paged BFT complete archive capacity",
+    )?;
+    Ok(ColdImage {
+        header,
+        replay,
+        stream,
+        conflicts,
+        safety,
+    })
+}
+pub(super) fn verify_pinned_image(
+    dir: &Path,
+    authority: &str,
+    pin: Hash,
+    head: Hash,
+) -> Result<Hash> {
+    let image = load_image(dir, authority, pin, Some(head))?;
+    Ok(image.replay.chain.region)
+}
 impl Store {
     pub(super) fn create_paged(
         dir: &Path,
@@ -510,54 +585,14 @@ impl Store {
         pin: Hash,
         head: Option<Hash>,
     ) -> Result<Self> {
-        require(
-            read_guard(dir)?.is_zero(),
-            "paged BFT pending incident requires explicit recovery",
-        )?;
-        let header = read_header(dir)?;
-        let mut replay = Replay::new(&header, authority, pin)?;
-        let scope = header.scope(&replay.trust)?;
-        let expected = match head {
-            Some(head) => head,
-            None => Stream::<Record>::observe_head(&dir.join(EVENTS), &scope)?,
-        };
-        let stream = Stream::open(&dir.join(EVENTS), &scope, expected)?;
-        stream.visit(expected, |record| replay.apply_retained(record, &stream))?;
+        let ColdImage {
+            header,
+            replay,
+            stream,
+            conflicts,
+            safety,
+        } = load_image(dir, authority, pin, head)?;
         let journal = replay.journal(&header);
-        let (conflicts, safety) = read_incidents(dir, &journal, &replay.trust, None)?;
-        let retained = conflicts
-            .iter()
-            .map(|p| p.id())
-            .collect::<Result<BTreeSet<_>>>()?;
-        require(
-            retained == journal.incident_ids,
-            "paged BFT unindexed retained incidents refuse",
-        )?;
-        // Full stream capacity is checked on open; root-side files are counted
-        // together here using private full reads, never pruned on a refusal.
-        let (outside, bytes) = outside_usage(dir)?;
-        let mut files = outside;
-        let mut total = bytes;
-        fn count_tree(dir: &Path, files: &mut usize, total: &mut u64) -> Result<()> {
-            for e in fs::read_dir(dir).map_err(io)? {
-                let p = e.map_err(io)?.path();
-                if fs::symlink_metadata(&p).map_err(io)?.is_dir() {
-                    count_tree(&p, files, total)?;
-                } else {
-                    let raw = crate::keystore::private_read(&p, MAX_BYTES)?;
-                    *files += 1;
-                    *total = total
-                        .checked_add(raw.len() as u64)
-                        .ok_or("paged archive overflow")?;
-                }
-            }
-            Ok(())
-        }
-        count_tree(&dir.join(EVENTS), &mut files, &mut total)?;
-        require(
-            files <= crate::history::MAX_FILES && total <= crate::history::MAX_ARCHIVE_BYTES,
-            "paged BFT complete archive capacity",
-        )?;
         Ok(Self {
             dir: dir.into(),
             _lock: lock,

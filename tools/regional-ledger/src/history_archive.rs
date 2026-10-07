@@ -11,6 +11,7 @@ use std::{
 };
 
 pub const FORMAT: &str = "RLD-NATIVE-HISTORY-ARCHIVE-V1";
+pub const PAGED_FORMAT: &str = "RLD-NATIVE-PAGED-BFT-HISTORY-ARCHIVE-V1";
 const MARKER: &[u8] = b"RLD-NATIVE-HISTORY-RESTORING-V1\n";
 const SEALING: &[u8] = b"RLD-NATIVE-HISTORY-ARCHIVING-V1\n";
 const MAX_FILES: usize = history::MAX_FILES + 2 * conflict::MAX_INCIDENTS + 2;
@@ -180,7 +181,19 @@ fn inventory(
     dir: &Path,
     strict: bool,
     controls: &[&str],
+    format: &str,
 ) -> Result<(BTreeMap<String, Record>, u64)> {
+    require(
+        format == FORMAT || format == PAGED_FORMAT,
+        "unsupported Native archive layout",
+    )?;
+    if format == PAGED_FORMAT {
+        return inventory_paged(dir, strict, controls);
+    }
+    require(
+        !exists(&dir.join("ledger-header.json"))? && !exists(&dir.join("ledger-events"))?,
+        "mixed Native archive layouts refuse",
+    )?;
     safe_dir(dir)?;
     let mut files = BTreeMap::new();
     let mut total = 0u64;
@@ -270,6 +283,112 @@ fn inventory(
     }
     Ok((files, total))
 }
+fn inventory_paged(
+    dir: &Path,
+    strict: bool,
+    controls: &[&str],
+) -> Result<(BTreeMap<String, Record>, u64)> {
+    safe_dir(dir)?;
+    require(
+        !exists(&dir.join("journal.json"))? && !exists(&dir.join("history"))?,
+        "mixed Native archive layouts refuse",
+    )?;
+    let mut files = BTreeMap::new();
+    let mut total = 0u64;
+    let mut add = |name: String| -> Result<()> {
+        let raw = read(&dir.join(&name), strict)?;
+        total = total
+            .checked_add(raw.len() as u64)
+            .ok_or("paged archive byte overflow")?;
+        require(
+            total <= history::MAX_ARCHIVE_BYTES && files.len() < history::MAX_FILES,
+            "paged archive original combined capacity",
+        )?;
+        require(
+            files
+                .insert(
+                    name,
+                    Record {
+                        bytes: raw.len() as u64,
+                        sha256: hash(&raw),
+                    },
+                )
+                .is_none(),
+            "duplicate paged archive entry",
+        )?;
+        Ok(())
+    };
+    for name in [
+        "ledger-header.json",
+        "INCIDENT_GUARD",
+        "ledger-events/stream.json",
+        "ledger-events/LOCK",
+    ] {
+        add(name.into())?;
+    }
+    for (kind, bound) in [
+        ("ledger-events/pages", history::MAX_FILES),
+        ("incidents", conflict::MAX_INCIDENTS),
+    ] {
+        let path = dir.join(kind);
+        safe_dir(&path)?;
+        if strict {
+            private_dir(&path)?;
+        }
+        let mut count = 0usize;
+        for entry in fs::read_dir(&path).map_err(io)? {
+            let name = entry.map_err(io)?.file_name();
+            let name = name.to_str().ok_or("paged archive filename encoding")?;
+            count += 1;
+            require(
+                object_name(name) && count <= bound,
+                "paged archive complete objects/incident count",
+            )?;
+            add(format!("{kind}/{name}"))?;
+        }
+    }
+    // Fixed structural names only; never traverse paths supplied by an index.
+    for entry in fs::read_dir(dir.join("ledger-events")).map_err(io)? {
+        let name = entry.map_err(io)?.file_name();
+        require(
+            matches!(name.to_str(), Some("stream.json" | "LOCK" | "pages")),
+            "paged archive unresolved stream residue or unexpected entry",
+        )?;
+    }
+    let mut residue = 0usize;
+    for entry in fs::read_dir(dir).map_err(io)? {
+        let name = entry.map_err(io)?.file_name();
+        let name = name.to_str().ok_or("paged archive root encoding")?;
+        if name.starts_with("damaged-incident-") {
+            residue += 1;
+            require(
+                residue_name(name) && residue <= conflict::MAX_INCIDENTS,
+                "paged archive incident residue",
+            )?;
+            add(name.into())?;
+        } else if strict
+            && !matches!(
+                name,
+                "ledger-header.json" | "INCIDENT_GUARD" | "ledger-events" | "incidents"
+            )
+        {
+            require(
+                controls.contains(&name),
+                "unexpected paged archive image root entry",
+            )?;
+        }
+    }
+    Ok((files, total))
+}
+fn require_paged_archive_capacity(index: &Archive) -> Result<()> {
+    if index.format == PAGED_FORMAT {
+        let raw = serde_json::to_vec(index).map_err(|e| e.to_string())?;
+        require(index.files.len().checked_add(3).is_some_and(|n|n <= history::MAX_FILES)
+            && index.retained_bytes.checked_add(raw.len() as u64).and_then(|n|n.checked_add(SEALING.len() as u64)).is_some_and(|n|n <= history::MAX_ARCHIVE_BYTES),
+            "complete paged archive includes index/lock/interruption marker under original capacity")?;
+    }
+    Ok(())
+}
 fn copy_image(
     source: &Path,
     target: &Path,
@@ -277,7 +396,13 @@ fn copy_image(
     private: bool,
     mut copied: impl FnMut(usize) -> Result<()>,
 ) -> Result<()> {
-    new_dir(&target.join("history"))?;
+    if index.format == PAGED_FORMAT {
+        new_dir(&target.join("ledger-events"))?;
+        new_dir(&target.join("ledger-events/pages"))?;
+    } else {
+        require(index.format == FORMAT, "unsupported copy archive layout")?;
+        new_dir(&target.join("history"))?;
+    }
     new_dir(&target.join("incidents"))?;
     for (n, (name, record)) in index.files.iter().enumerate() {
         let bytes = read(&source.join(name), private)?;
@@ -288,12 +413,18 @@ fn copy_image(
         new_file(&target.join(name), &bytes)?;
         copied(n + 1)?;
     }
-    sync(&target.join("history"))?;
+    if index.format == PAGED_FORMAT {
+        sync(&target.join("ledger-events/pages"))?;
+        sync(&target.join("ledger-events"))?;
+    } else {
+        sync(&target.join("history"))?;
+    }
     sync(&target.join("incidents"))?;
     sync(target)
 }
 fn same_image(dir: &Path, index: &Archive, controls: &[&str]) -> Result<()> {
-    let (files, total) = inventory(dir, true, controls)?;
+    require_paged_archive_capacity(index)?;
+    let (files, total) = inventory(dir, true, controls, &index.format)?;
     require(
         files == index.files && total == index.retained_bytes,
         "archive inventory differs from exact retained image",
@@ -307,12 +438,19 @@ fn verify_binding(
     head: Hash,
 ) -> Result<()> {
     require(
-        index.format == FORMAT
+        (index.format == FORMAT || index.format == PAGED_FORMAT)
             && index.currency == pin
             && index.native_head == head
             && !head.is_zero(),
         "archive differs from externally retained native domain/head",
     )?;
+    if index.format == PAGED_FORMAT {
+        require(
+            storage::verify_paged_image_binding(dir, authority, pin, head)? == index.region,
+            "paged archive fully Native verified region differs",
+        )?;
+        return Ok(());
+    }
     let native = history::manifest(dir)?;
     require(
         native.region == index.region
@@ -338,9 +476,14 @@ pub fn seal(
         "unresolved native manifest residue; preserve source before archive",
     )?;
     fresh(archive, source)?;
-    let (files, retained_bytes) = inventory(source, false, &[])?;
+    let format = if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
+        PAGED_FORMAT
+    } else {
+        FORMAT
+    };
+    let (files, retained_bytes) = inventory(source, false, &[], format)?;
     let index = Archive {
-        format: FORMAT.into(),
+        format: format.into(),
         currency: node.trust.currency()?,
         region: node.chain.region,
         native_head: head,
@@ -348,6 +491,7 @@ pub fn seal(
         files,
     };
     // Capacity and native replay are checked before any output directory.
+    require_paged_archive_capacity(&index)?;
     let encoded = serde_json::to_vec(&index).map_err(|e| e.to_string())?;
     require(encoded.len() <= MAX_BYTES, "archive index bound")?;
     new_dir(archive)?;
@@ -360,11 +504,9 @@ pub fn seal(
     copy_image(source, &data, &index, false, |_| Ok(()))?;
     same_image(&data, &index, &[])?;
     verify_binding(&data, &index, authority, pin, head)?;
-    let (after, bytes) = inventory(source, false, &[])?;
+    let (after, bytes) = inventory(source, false, &[], format)?;
     require(
-        after == index.files
-            && bytes == retained_bytes
-            && history::manifest(source)?.head()? == head,
+        after == index.files && bytes == retained_bytes && node.storage_head()? == head,
         "native source changed while sealing archive",
     )?;
     new_file(&archive.join("archive.json"), &encoded)?;
@@ -467,4 +609,50 @@ pub(crate) fn interrupt_restore(
     restore_inner(archive, target, authority, pin, head, |n| {
         require(n < 2, "injected interruption after copied native files")
     })
+}
+
+#[cfg(test)]
+mod paged_capacity_tests {
+    use super::*;
+    #[test]
+    fn paged_archive_metadata_and_marker_count_toward_original_byte_and_file_caps() {
+        let mut index = Archive {
+            format: PAGED_FORMAT.into(),
+            currency: Hash([1; 32]),
+            region: Hash([2; 32]),
+            native_head: Hash([3; 32]),
+            retained_bytes: 0,
+            files: BTreeMap::new(),
+        };
+        // Only the fixed metadata bound is exercised; no synthetic ledger,
+        // Native execution, archived signature or value authority is introduced.
+        for n in 0..history::MAX_FILES - 3 {
+            index.files.insert(
+                format!("ledger-events/pages/{n:064x}.json"),
+                Record {
+                    bytes: 1,
+                    sha256: Hash([4; 32]),
+                },
+            );
+        }
+        require_paged_archive_capacity(&index).unwrap();
+        index.files.insert(
+            "ledger-header.json".into(),
+            Record {
+                bytes: 1,
+                sha256: Hash([4; 32]),
+            },
+        );
+        assert!(require_paged_archive_capacity(&index).is_err());
+        index.files.clear();
+        // The length of the canonical integer itself is included in this cap.
+        index.retained_bytes = history::MAX_ARCHIVE_BYTES;
+        let encoded = serde_json::to_vec(&index).unwrap().len() as u64;
+        index.retained_bytes = history::MAX_ARCHIVE_BYTES - encoded - SEALING.len() as u64;
+        let actual = serde_json::to_vec(&index).unwrap().len() as u64;
+        index.retained_bytes = history::MAX_ARCHIVE_BYTES - actual - SEALING.len() as u64;
+        require_paged_archive_capacity(&index).unwrap();
+        index.retained_bytes += 1;
+        assert!(require_paged_archive_capacity(&index).is_err());
+    }
 }

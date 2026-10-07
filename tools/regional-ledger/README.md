@@ -702,6 +702,16 @@ The exact latest head must survive outside the image's rollback domain. Restore
 authenticates inventory and fully replays native currency, finality, ownership,
 value, import identity and incident evidence before creating its fresh target,
 then verifies the complete copied image again before clearing `RESTORING`.
+Ordinary signed paged BFT stores use the distinct
+`RLD-NATIVE-PAGED-BFT-HISTORY-ARCHIVE-V1` layout. Its header, full event stream,
+all complete original pages and retained incidents are carried byte for byte.
+Both formats require full Native execution under their signed genesis; an index
+cannot supply a ledger. Mixed layouts and archive format relabelling refuse.
+The paged layout counts its index, lock and interruption marker under the
+original shared 4096-file / 256-MiB ceiling. No lossless profile or signer/wallet
+custody is installed by this representation. See
+[the stable paged archive contract](../../docs/operations/PAGED_NATIVE_HISTORY_ARCHIVE.md).
+
 Files are created privately and synchronized; existing or interrupted targets
 are retained unchanged and refuse normal startup and incident recovery. No merge,
 resume, signer or wallet custody restoration is offered. An archive digest is
