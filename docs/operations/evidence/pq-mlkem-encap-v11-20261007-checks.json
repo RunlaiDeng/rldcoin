@@ -1,0 +1,1626 @@
+{
+  "format": "RLD-PQ-MLKEM-ENCAP-V11",
+  "completed": true,
+  "duration_seconds": 10.871585,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "error": null,
+  "pin_error": null,
+  "results": [
+    {
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+        "-isysroot",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-I/opt/homebrew/Cellar/openssl@3/3.6.3/include",
+        "-L/opt/homebrew/Cellar/openssl@3/3.6.3/lib",
+        "-Wl,-rpath,/opt/homebrew/Cellar/openssl@3/3.6.3/lib",
+        "-DRLD_MLKEM_CANDIDATE_SOURCE=\"c2fcf9372c7fb47ce5c7272415379ac18550e50c8fb9459cfcb83fa609632134\"",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-tls-candidate/mlkem768_encap_kat.c",
+        "-lcrypto",
+        "-o",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.095255
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.734422
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--all-targets",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.243706
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--bin",
+        "rld-ml-kem-768-encap-kat-candidate"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.336817
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.349315
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.310903
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006547
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/27-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004277
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006549
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/28-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00418
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006131
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/29-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004353
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006436
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/30-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00426
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006406
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/31-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004379
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006683
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/32-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004154
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006303
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/33-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004654
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006531
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/34-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.0045
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006626
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/35-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004719
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006378
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/36-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004335
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006489
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/37-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004334
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00644
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/38-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004644
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006428
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/39-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004424
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006421
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/40-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004509
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006545
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/41-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004616
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006404
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/42-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004451
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00651
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/43-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004399
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006812
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/44-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004475
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00636
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/45-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004557
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006532
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/46-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004373
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006412
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/47-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004448
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006502
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/48-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004587
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006499
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/49-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004426
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006519
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/50-k.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004509
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-136.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006397
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-136.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004357
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-137.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006476
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-137.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004379
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-138.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006499
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-138.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004202
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-139.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006389
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-139.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004466
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-140.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00636
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-140.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004328
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-141.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006314
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-141.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004308
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-142.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.00646
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-142.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004417
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-143.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006446
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-143.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004341
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-144.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.006524
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-144.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.004339
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-145.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006362
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/keycheck-145.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004297
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/noncanonical-coefficient4095-ek1184.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006063
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "check",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/noncanonical-coefficient4095-ek1184.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004226
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/changed-expected-2.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006655
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/changed-expected-2.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004618
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/changed-expected-3.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.006707
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/changed-expected-3.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.004396
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-0.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.005591
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-0.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.004228
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-1.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.005264
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-1.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.00446
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-2.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.005452
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-2.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.004193
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-3.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.005477
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/short-3.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.004003
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-binary",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/symlink-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.005663
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-encap-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/symlink-ek.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-m.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-c.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-encap-v11-20261007-private/26-k.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.004463
+    }
+  ],
+  "cases": [
+    {
+      "case": "official-encap-26",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-26",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-27",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-27",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-28",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-28",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-29",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-29",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-30",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-30",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-31",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-31",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-32",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-32",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-33",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-33",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-34",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-34",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-35",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-35",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-36",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-36",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-37",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-37",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-38",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-38",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-39",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-39",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-40",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-40",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-41",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-41",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-42",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-42",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-43",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-43",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-44",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-44",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-45",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-45",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-46",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-46",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-47",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-47",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-48",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-48",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-49",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-49",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-50",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-encap-50",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-136",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-136",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-137",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-137",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-138",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-138",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-139",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-139",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-140",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-140",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-141",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-141",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-142",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-142",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-143",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-143",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-144",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-144",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 0,
+      "actual_exit": 0
+    },
+    {
+      "case": "official-keycheck-145",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "official-keycheck-145",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "independent-same-length-coefficient4095",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "independent-same-length-coefficient4095",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "wrong-expected-2",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "wrong-expected-2",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "wrong-expected-3",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "wrong-expected-3",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 1,
+      "actual_exit": 1
+    },
+    {
+      "case": "short-input-0",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-0",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-1",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-1",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-2",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-2",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-3",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "short-input-3",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "symlink-ek-refused",
+      "engine": "pq-mlkem-encap-v11-20261007-binary",
+      "expected_exit": 2,
+      "actual_exit": 2
+    },
+    {
+      "case": "symlink-ek-refused",
+      "engine": "rld-ml-kem-768-encap-kat-candidate",
+      "expected_exit": 2,
+      "actual_exit": 2
+    }
+  ],
+  "forced_owned_processes": [],
+  "owned_processes_stopped": true,
+  "controller_sha256": "25457c055822b12b8b8a0922599ce616fd557e0352d673f279e69ac2301280d5",
+  "stage_sha256": "ca34679234c3db90e64db3023c8dccb1a74ffcc02a135e9893bc68c875d07d39",
+  "actual_C_binary_sha256": "c58c0322f5e375fd0534379f7c5eeada4f43a0463e1058e4b5c1d81df33655ca",
+  "actual_Rust_binary_sha256": "2f59494bc6554395604c2a79e205345174a9eeedf2ba26966cc81cfa6319cd47",
+  "private_inventory_sha256": "3b138de522afc9500327b252421af39e2bd1cfa8d8f12de07e885899d1c0d9d2",
+  "private_files": 118,
+  "Core_source": "d728ef48902986aa2b6e98b21c08ea23c12eab0f414a4a7ddad41c435783ba9a",
+  "test_only_entropy": true,
+  "real_wallet_TLS_Native_key_reads": 0,
+  "key_generation_calls": 0,
+  "socket_calls": 0,
+  "Native_Runtime_Node_calls": 0,
+  "decap_retests": 0,
+  "full_FIPS203_KAT": false,
+  "constant_time_qualification": false,
+  "adopted_profile": false,
+  "independent_review": false,
+  "physical": false,
+  "whole_goal_completed": false,
+  "old_failures_retained": true
+}

@@ -1,5 +1,13 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 连续主线：ML-KEM-768封装/同长度非规范公钥边界通过；继续keygen/dkey检查
+
+V10不同实现解封装已ordinary main推送 **c87a9a8eb348f24ec19fcdeee82b69c2a01f00a4**，remoteSHA/tree一致，CI runs0。新增仅known-test C/Rust封装比较器，不改Core182d728/旧TLS/Native/value/冻结材料。支持的OpenSSL3.6.3 ikme及固定fips2030.4.3 encaps_from_seed仅测试，default RNG仍disabled；不注入生产entropy。V11 **PASS10.871585/一次120**，含严格C/Rust全目标及offline actual build：25official group2 complete c1088/k32在两实现逐字一致；10official group10全1184bytes/5bad准确拒绝，另独立packed coefficient4095同长度拒绝，不把错误长度当modulus验证。错expected c/k、4短输入/symlink也拒绝，共86actual calls，0generation/real钥/secret输出/socket/Native-Runtime-Node/decap重测。
+
+[有限封装profile](operations/evidence/pq-mlkem-encap-reference-v1-qualified-profile-20261007.json)、[实际结果](operations/evidence/pq-mlkem-encap-v11-20261007-checks.json)、[源码及精确限制](operations/fixtures/pq-mlkem-encap-v1-20261007/README.md)。source/controller/immutable actual C/Rust binaries分别绑定，118known-standard材料封存、forced[]/own terminal。stage沿用旧DECAP-V9 format标签，profile明确披露，controller/report实际封装V11语义不变，不重写旧记录或重跑。旧全部FAIL保持，全部已有PASS限定历史来源，局部观察不授币/peer认证或生产key-establishment权利。
+
+下一可证伪命题：ML-KEM768 official keygen的全部ek1184/dk2400应在两实现从同一公开known d/z测试输入精确生成，且group9同长度坏dk的hash/embedded-ek检查必须拒绝。先核对官方固定来源和支持API，必要下载一次30，实际新的最小keygen/dkey范围一次120/首错误或期限封存，不重复已过encap/decap/TLS/Native长测。完整FIPS203/204、恒时/独立review/生产随机源、完整transaction/archive/PQ采用/续证治理/长期/物理/P1–P8/全目标仍OPEN；冻结2ba62421/c59f9fe8/86821d19及全部S/R/I/A–G/N/P/原经济共识/预算票数成熟容量不改。唯一作者持续开发及阶段审阅普通main推送。
+
 ## 2026-10-07 连续主线：两种实现ML-KEM-768解封装一致；继续封装/非规范键边界
 
 上一C官方10及6guard已ordinary main推送 **5cb68c1864f0b98971c4dece7ef6f8ede02b8cb2**，remoteSHA/tree一致，当时CI无run，不能授PASS。新增独立Rust known标准KAT工具，锁fips203 **0.4.3**、only ml-kem-768/default-RNG disabled；只增加1锁定pkg，原锁包version全保持。实际crate download checksum **c8bdb6454f692ca2a2b45cd554c6828c639d7f9c968cf83a678899ec4443a280**/全部source/Rust1.98/opt1 assertions-overflow true/actual binary/controller独立绑定，Core182d728/旧TLS5234/2388全部字节未变。
