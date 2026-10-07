@@ -18,6 +18,8 @@ for p in (e/'regional-keyless-stopped-drain-full-v15-entry-preflight-20261007.js
 for p in (e/'regional-terminal-head-encoding-v1-identity-20261007.json',e/'regional-terminal-head-encoding-model-v1-20261007.json',e/'regional-terminal-head-encoding-counter-v1-20261007.json',e/'regional-terminal-head-encoding-source-gate-v1-20261007.json',e/'regional-paged-full-fault-stopped-v15-20261007-checks.json',b/'terminal-head-encoding-source-reversal-v1-20261007.json',b/'terminal-head-encoding-combined-source-reversal-v1-20261007.json',b/'terminal_head_encoding_source_bridge_v1.py',b/'regional_paged_fault_terminal-before-head-encoding-v1-20261007.py',b/'test_regional_paged_fault_terminal-before-head-encoding-v1-20261007.py'):
  protected[str(p)]=sha(p)
 protected[str(e/'regional-terminal-head-encoding-v1-source-binding-20261007.json')]=sha(e/'regional-terminal-head-encoding-v1-source-binding-20261007.json')
+for p in (e/'regional-terminal-head-encoding-full-v16-entry-preflight-20261007.json',b/'preflight-terminal-head-encoding-full-v16-20261007.py'):
+ protected[str(p)]=sha(p)
 def pins(before=False):
  assert all(sha(Path(p))==v for p,v in protected.items()),'bound source/report/freeze changed'
  for p,roots in sealed.items():
