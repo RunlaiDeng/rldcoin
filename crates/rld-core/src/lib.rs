@@ -16,6 +16,7 @@ pub mod hybrid_quorum;
 pub mod implementation_source;
 pub mod ledger;
 pub mod m0_candidate_replay;
+pub mod permanent_import_candidate;
 pub mod stake_epoch;
 pub mod stake_evidence;
 pub mod stake_resource_accounting;
