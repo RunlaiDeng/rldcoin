@@ -134,14 +134,21 @@ class Tests(unittest.TestCase):
 
     def test_stopped_observed_plan_precedes_unpinned_reads_and_binds_exact_head(self):
         driver=Driver.__new__(Driver);driver.processes={};driver.root=PROJECT/'tmp/unused-no-native'
-        driver.currency='2'*64;head={'history_head':'3'*64}
-        driver.pin_head=lambda label,n,prefix:head
-        conf=dict(state=str(driver.root/'state'))
-        driver.configs={(PHASES[-1],'earth',0):Config(PHASES[-1],'earth',0,True,b'{}',json.dumps(conf).encode(),('/not-run',))}
+        driver.currency='2'*64;head={'history_head':'3'*64};captured=[]
+        driver.phase=PHASES[-1];driver.deadline=time.monotonic()+600
+        driver.terminal=[dict(region=label,index=n,exit_code=0) for label,n in SLOTS]
+        def pin(label,n,prefix):captured.append((label,n));return head
+        driver.pin_head=pin;driver.configs={}
+        for label,n in SLOTS:
+            conf=dict(state=str(driver.root/f'state-{label}-{n}'),signer_dir=str(driver.root/f'signer-{label}-{n}'),
+                head_file=str(driver.root/f'caller-{label}-{n}.json'))
+            driver.configs[PHASES[-1],label,n]=Config(PHASES[-1],label,n,True,b'{}',json.dumps(conf).encode(),('/not-run',))
         driver.call=lambda *args:self.fail('unpinned Native read before complete observed pinned plan')
         class StopAtObserved(Exception):pass
         def observed(native,config,root,pin):
-            self.assertEqual((config,root,pin),(conf,driver.root,head['history_head']))
+            self.assertEqual(set(captured),set(SLOTS));self.assertEqual(len(captured),12)
+            self.assertEqual((root,pin),(driver.root,head['history_head']))
+            self.assertTrue(config['state'].startswith(str(driver.root/'state-')))
             self.assertEqual(native.currency,driver.currency)
             raise StopAtObserved
         with patch('regional_paged_fault_driver.inventory',return_value={}),patch(
@@ -617,5 +624,53 @@ class StoppedDrainTests(unittest.TestCase):
     if why=='head':
      with self.assertRaises(ValueError):d.stopped_drain()
     if why=='group':d.group=True;self.assertFalse(d.stopped_drain())
+
+class StoppedReaderPoolTests(unittest.TestCase):
+    def model(self,root):
+        return StoppedDrainTests().model(root)
+    def test_all12_results_keep_order_and_two_reader_bound(self):
+        import threading
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='stopped-reader-model-') as tmp:
+            driver=self.model(Path(tmp));lock=threading.Lock();barrier=threading.Barrier(2)
+            active=0;maximum=0;completed=[]
+            def read(label,n):
+                nonlocal active,maximum
+                with lock:active+=1;maximum=max(maximum,active)
+                try:
+                    barrier.wait(timeout=2)
+                    return label,n
+                finally:
+                    with lock:active-=1;completed.append((label,n))
+            self.assertEqual(driver.stopped_reads(SLOTS,read),list(SLOTS))
+            self.assertEqual(maximum,2);self.assertEqual(active,0);self.assertEqual(set(completed),set(SLOTS))
+    def test_any_refusal_cancels_pending_joins_running_and_never_returns_partial_rows(self):
+        import threading
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='stopped-reader-failure-') as tmp:
+            driver=self.model(Path(tmp));entered=threading.Event();released=threading.Event();finished=threading.Event();started=[]
+            class ExactRefusal(ValueError):pass
+            def read(label,n):
+                started.append((label,n))
+                if (label,n)==SLOTS[0]:
+                    entered.set();self.assertTrue(released.wait(2));time.sleep(.03);finished.set();return 'complete'
+                self.assertEqual((label,n),SLOTS[1]);self.assertTrue(entered.wait(2));released.set()
+                raise ExactRefusal('original full Native refusal model')
+            with self.assertRaisesRegex(ExactRefusal,'original full Native refusal model'):
+                driver.stopped_reads(SLOTS,read)
+            self.assertTrue(finished.is_set());self.assertEqual(set(started),set(SLOTS[:2]))
+    def test_duplicate_slots_shared_custody_and_expired_budget_refuse_before_read(self):
+        for why in ('duplicate','signer','caller','expired'):
+            with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='stopped-reader-alias-') as tmp:
+                driver=self.model(Path(tmp));slots=SLOTS[:2];read=[]
+                if why=='duplicate':slots=(SLOTS[0],SLOTS[0])
+                elif why=='expired':driver.deadline=time.monotonic()-1
+                else:
+                    first=json.loads(driver.configs[PHASES[-1],*SLOTS[0]].bft)
+                    second=json.loads(driver.configs[PHASES[-1],*SLOTS[1]].bft)
+                    field='signer_dir' if why=='signer' else 'head_file';second[field]=first[field]
+                    old=driver.configs[PHASES[-1],*SLOTS[1]]
+                    driver.configs[PHASES[-1],*SLOTS[1]]=Config(old.phase,old.region,old.index,old.started,old.mesh,encoded(second),old.argv)
+                with self.assertRaises(ValueError):driver.stopped_reads(slots,lambda *slot:read.append(slot))
+                self.assertFalse(read)
+
 
 if __name__=='__main__':unittest.main()

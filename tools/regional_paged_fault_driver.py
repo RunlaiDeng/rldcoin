@@ -5,6 +5,7 @@ controller first-signs the three retained owner reviews once, operates processes
 and opaque directed outage relays, and obtains fresh Native observations. No
 copy, genesis initialization, recovery, vote, checkpoint installation or refund.
 """
+from concurrent.futures import FIRST_EXCEPTION, ThreadPoolExecutor, wait
 import hashlib
 import json
 import math
@@ -449,6 +450,48 @@ class Driver:
         return (all(type(heights.get(slot)) is int for slot in SLOTS)
             and all(len({heights[label,n] for n in range(4)})==1 for label in REGIONS))
 
+    def stopped_reads(self, slots, read):
+        """At most two independent readers after the original all12 clean stop.
+
+        Retain input order and every check. Any refusal cancels pending reads;
+        running Native readers keep their original command and total deadline.
+        No partial collection can qualify the stopped phase.
+        """
+        self.remaining();slots=tuple(slots);terminal=self.terminal[-len(SLOTS):]
+        require(self.phase==PHASES[-1] and not self.processes
+            and len(terminal)==len(SLOTS)
+            and {(v['region'],v['index']) for v in terminal}==set(SLOTS)
+            and all(v['exit_code']==0 for v in terminal),
+            'parallel reads require all own keyless processes normally stopped')
+        require(0<len(slots)<=len(SLOTS) and len(set(slots))==len(slots)
+            and set(slots)<=set(SLOTS),'distinct stopped replica slots required')
+        configs=[json.loads(self.configs[PHASES[-1],*slot].bft) for slot in slots]
+        require(all(len({safe(Path(config[field])).resolve() for config in configs})==len(slots)
+            for field in ('signer_dir','head_file')),'stopped readers share signer or caller custody')
+        stopped=threading.Event();errors=[];lock=threading.Lock()
+        def check(slot):
+            if stopped.is_set():return None
+            try:
+                self.remaining()
+                return read(*slot)
+            except BaseException as error:
+                with lock:
+                    if not errors:errors.append(error)
+                    stopped.set()
+                raise
+        pool=ThreadPoolExecutor(max_workers=2)
+        try:
+            futures=[pool.submit(check,slot) for slot in slots]
+            _,pending=wait(futures,timeout=self.remaining(),return_when=FIRST_EXCEPTION)
+            if errors:raise errors[0]
+            require(not pending,'original stopped-read deadline exhausted')
+            values=[future.result() for future in futures]
+            self.remaining()
+            return values
+        finally:
+            stopped.set()
+            pool.shutdown(wait=True,cancel_futures=True)
+
     def stopped_drain(self):
         # Same active scope, after own normal keyless stop, before full cold.
         # Keep the original caller/signer/pending/commit-group predicate below.
@@ -459,14 +502,14 @@ class Driver:
             and {(v['region'],v['index']) for v in terminal}==set(SLOTS)
             and all(v['exit_code']==0 for v in terminal),
             'drain reads require all own keyless processes normally stopped')
-        heights={}
-        for label,n in SLOTS:
+        def height(label,n):
             state=self.call(label,n,'status')
             require(state['currency']==self.currency and state['region']==self.regions[label]
                 and type(state['height']) is int and 0<=state['height']<=CAPS[label],
                 'stopped drain Native domain or height cap differs')
-            heights[label,n]=state['height']
-        return self.drain_ready(heights)
+            return state['height']
+        heights=dict(zip(SLOTS,self.stopped_reads(SLOTS,height)))
+        return self.drain_ready(heights,stopped=True)
 
     def loop_read(self,label,n,config,caller,retained=False):
         args=['bft-loop-status','--signer-dir',config['signer_dir'],'--expected-head',caller['head']]
@@ -483,15 +526,19 @@ class Driver:
         if retained:require(type(value['retained_messages']) is list,'complete retained Native messages required')
         return value
 
-    def drain_ready(self,heights):
+    def drain_ready(self,heights,*,stopped=False):
         if not all(type(heights.get((label,n))) is int for label in REGIONS for n in range(4)):return False
         for label in REGIONS:
             if len({heights[label,n] for n in range(4)})!=1:return False
             messages=[];context=None
-            for n in range(4):
+            def observe(label,n):
                 config=json.loads(self.configs[PHASES[-1],label,n].bft);caller=document(config['head_file'])
-                if caller['pending'] is not None or caller['outbox'] is not None:return False
-                value=self.loop_read(label,n,config,caller,retained=True)
+                if caller['pending'] is not None or caller['outbox'] is not None:return None
+                return self.loop_read(label,n,config,caller,retained=True)
+            values=(self.stopped_reads([(label,n) for n in range(4)],observe) if stopped
+                else (observe(label,n) for n in range(4)))
+            for n,value in enumerate(values):
+                if value is None:return False
                 current=value['native']['context']
                 if current['parent_height']!=heights[label,n]:return False
                 if n==0:context=current
@@ -499,45 +546,52 @@ class Driver:
             if has_complete_commit_group(messages,context):return False
         return True
 
+    def stopped_replica(self,label,n,head):
+        conf=json.loads(self.configs[PHASES[-1],label,n].bft);before=inventory(Path(conf['state']))
+        cold=verify_stopped_state_pinned_observed(self.native(label,n),conf,self.root,head['history_head'])
+        require(inventory(Path(conf['state']))==before,'stopped complete envelope check changed retained bytes')
+        state=self.call(label,n,'status');proof=self.call(label,n,'proof')
+        require(all(state[k]==head[k] for k in ('currency','region','height','tip','state','finality')),
+            'stopped actual checkpoint changed')
+        caller=document(conf['head_file'])
+        require(caller['pending'] is None and caller['outbox'] is None,
+            'final separate native voter/caller heads differ')
+        value=self.loop_read(label,n,conf,caller)
+        context=value['native']
+        require(context['rules']==RULES and context['keys']==[v['key'] for v in conf['validators']]
+            and context['context']['parent_height']==state['height'],'final original membership differs')
+        after=inventory(self.root/label/f'native-{n}')
+        retain_original_objects(self.original_objects[label,n],after,'ledger-events/stream.json')
+        retain_original_objects(self.original_voter_objects[label,n],inventory(Path(conf['signer_dir'])),
+            'bft-records/stream.json')
+        pin=self.observed['transport_pins'][SLOTS.index((label,n))]
+        config=json.loads(self.configs[PHASES[-1],label,n].mesh)
+        with MeshInspection(config,**self.mesh_anchors[label,n]) as image:transport=dict(image.summary)
+        row=dict(region=label,index=n,height=state['height'],history_head=head['history_head'],
+            envelopes=cold,transport=transport,separate_caller_head_verified=True)
+        if label=='proxima':
+            receipt=self.call(label,n,'wallet-receipt','--file',self.expectation_path)
+            require(receipt['expected']==self.expectation and receipt['evidence_verified'] and receipt['import_accepted']
+                and receipt['maturity_reached'] and receipt['original_output_spendable_now']
+                and receipt['original_output_remaining']=='9' and receipt['local_finality_covers_import']
+                and not receipt['quarantined'] and receipt['mature_height']==receipt['import_height']+2<=state['height'],
+                'all four actual stopped recipient imports lack original maturity')
+        require(all(state['ledger'][field].get(k)==v for field in ('exports','imports')
+            for k,v in self.original_states[label][n]['ledger'][field].items()), 'original debit/import tombstone changed')
+        return state,proof,row
+
     def stopped(self):
         require(not self.processes,'full cold checks require stopped own nodes')
-        states={};proofs={}
+        configs=[json.loads(self.configs[PHASES[-1],*slot].bft) for slot in SLOTS]
+        require(len({safe(Path(config['state'])).resolve() for config in configs})==len(SLOTS),
+            'stopped cold readers share retained runtime state')
+        # Capture every separate head before any parallel complete cold read.
+        heads=dict(zip(SLOTS,self.stopped_reads(SLOTS,lambda label,n:self.pin_head(label,n,'stopped'))))
+        values=self.stopped_reads(SLOTS,lambda label,n:self.stopped_replica(label,n,heads[label,n]))
+        states={label:[] for label in REGIONS};proofs={label:[] for label in REGIONS}
+        for (label,n),(state,proof,row) in zip(SLOTS,values):
+            states[label].append(state);proofs[label].append(proof);self.cold.append(row)
         for label in REGIONS:
-            states[label]=[];proofs[label]=[]
-            for n in range(4):
-                head=self.pin_head(label,n,'stopped')
-                conf=json.loads(self.configs[PHASES[-1],label,n].bft);before=inventory(Path(conf['state']))
-                cold=verify_stopped_state_pinned_observed(self.native(label,n),conf,self.root,head['history_head'])
-                require(inventory(Path(conf['state']))==before,'stopped complete envelope check changed retained bytes')
-                state=self.call(label,n,'status');proof=self.call(label,n,'proof')
-                require(all(state[k]==head[k] for k in ('currency','region','height','tip','state','finality')),
-                    'stopped actual checkpoint changed')
-                caller=document(conf['head_file'])
-                require(caller['pending'] is None and caller['outbox'] is None,
-                    'final separate native voter/caller heads differ')
-                value=self.loop_read(label,n,conf,caller)
-                context=value['native']
-                require(context['rules']==RULES and context['keys']==[v['key'] for v in conf['validators']]
-                    and context['context']['parent_height']==state['height'],'final original membership differs')
-                after=inventory(self.root/label/f'native-{n}')
-                retain_original_objects(self.original_objects[label,n],after,'ledger-events/stream.json')
-                retain_original_objects(self.original_voter_objects[label,n],inventory(Path(conf['signer_dir'])),
-                    'bft-records/stream.json')
-                pin=self.observed['transport_pins'][SLOTS.index((label,n))]
-                config=json.loads(self.configs[PHASES[-1],label,n].mesh)
-                with MeshInspection(config,**self.mesh_anchors[label,n]) as image:transport=dict(image.summary)
-                self.cold.append(dict(region=label,index=n,height=state['height'],history_head=head['history_head'],
-                    envelopes=cold,transport=transport,separate_caller_head_verified=True))
-                if label=='proxima':
-                    receipt=self.call(label,n,'wallet-receipt','--file',self.expectation_path)
-                    require(receipt['expected']==self.expectation and receipt['evidence_verified'] and receipt['import_accepted']
-                        and receipt['maturity_reached'] and receipt['original_output_spendable_now']
-                        and receipt['original_output_remaining']=='9' and receipt['local_finality_covers_import']
-                        and not receipt['quarantined'] and receipt['mature_height']==receipt['import_height']+2<=state['height'],
-                        'all four actual stopped recipient imports lack original maturity')
-                require(all(state['ledger'][field].get(k)==v for field in ('exports','imports')
-                    for k,v in self.original_states[label][n]['ledger'][field].items()), 'original debit/import tombstone changed')
-                states[label].append(state);proofs[label].append(proof)
             compatible(states[label],proofs[label])
             require(len({(s['height'],s['tip'],s['state'],s['finality']) for s in states[label]})==1, 'full stopped region has not converged')
         self.check_wallets()
