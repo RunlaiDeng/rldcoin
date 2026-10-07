@@ -666,6 +666,22 @@ impl State {
         trust: &Trust,
         evidence: &VerifiedEvidence,
     ) -> Result<Message> {
+        self.apply_authenticated_with_proposal(
+            request,
+            key,
+            trust,
+            evidence,
+            |proposal, trust, evidence| proposal.verify(trust, evidence),
+        )
+    }
+    fn apply_authenticated_with_proposal(
+        &mut self,
+        request: &Request,
+        key: &str,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+        mut verify_proposal: impl FnMut(&Proposal, &Trust, &VerifiedEvidence) -> Result<Option<Quorum>>,
+    ) -> Result<Message> {
         require(
             self.epoch_fence.is_none() && !matches!(request, Request::EpochFence { .. }),
             "ordinary BFT action requires unfenced authenticated context",
@@ -700,7 +716,7 @@ impl State {
                 })))
             }
             Request::Prepare(p) => {
-                let high = p.verify(trust, evidence)?;
+                let high = verify_proposal(p, trust, evidence)?;
                 let value = p.snapshot.statement.id()?;
                 self.round(p.round)?;
                 require(
@@ -726,7 +742,7 @@ impl State {
                 proposal: p,
                 prepared: q,
             } => {
-                p.verify(trust, evidence)?;
+                verify_proposal(p, trust, evidence)?;
                 q.verify(&keys)?;
                 let value = p.snapshot.statement.id()?;
                 require(
@@ -1299,3 +1315,35 @@ mod paged_agent;
 #[cfg(test)]
 #[path = "paged_sign_cost.rs"]
 pub(crate) mod sign_cost;
+
+#[cfg(test)]
+pub(crate) use replay::ProposalProof;
+#[cfg(test)]
+impl State {
+    pub(crate) fn reference_proposal_apply(
+        &mut self,
+        request: &Request,
+        key: &str,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+    ) -> Result<Message> {
+        self.apply_authenticated(request, key, trust, evidence)
+    }
+    pub(crate) fn scoped_proposal_apply(
+        &mut self,
+        request: &Request,
+        key: &str,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+        executed: Hash,
+        proof: &mut ProposalProof,
+    ) -> Result<Message> {
+        self.apply_authenticated_with_proposal(
+            request,
+            key,
+            trust,
+            evidence,
+            |proposal, trust, evidence| proof.verify(proposal, trust, evidence, executed),
+        )
+    }
+}

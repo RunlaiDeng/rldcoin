@@ -259,8 +259,14 @@ impl Agent {
         let stream = self.paged.as_ref().ok_or("paged signer stream missing")?;
         stream.require_scope(&scope)?;
         let mut replay = replay::PagedReplay::new(&h.journal, node, scope.initial()?)?;
+        #[cfg(test)]
+        cost.mark_preflight(0);
         stream.visit(head, |record| replay.push(record))?;
+        #[cfg(test)]
+        cost.mark_preflight(1);
         let mut state = replay.authenticate_current(head)?;
+        #[cfg(test)]
+        cost.mark_preflight(2);
         #[cfg(test)]
         cost.mark(0);
         let count = stream.record_count();

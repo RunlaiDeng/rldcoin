@@ -233,6 +233,8 @@ impl Replay {
     }
     fn apply(&mut self, record: &Record, stream: &dyn body_witness::History) -> Result<()> {
         #[cfg(test)]
+        let mut cost = crate::bft::sign_cost::NativeRecordClock::new();
+        #[cfg(test)]
         current_tests::note_actual_record_execution();
         match record {
             Record::Certified(snapshot) => {
@@ -346,7 +348,11 @@ impl Replay {
                 self.incidents = ids.clone();
             }
         }
+        #[cfg(test)]
+        cost.mark(0);
         encode("paged-bft-native-ledger", &self.chain.ledger)?;
+        #[cfg(test)]
+        cost.mark(1);
         let active = Evidence {
             snapshots: self
                 .evidence
@@ -355,7 +361,14 @@ impl Replay {
                 .map(|(s, _)| s.clone())
                 .collect(),
         };
+        #[cfg(not(test))]
         encode("evidence", &active)?;
+        #[cfg(test)]
+        {
+            let encoded = encode("evidence", &active)?;
+            cost.mark(2);
+            cost.finish(encoded.len());
+        }
         Ok(())
     }
     fn journal(&self, header: &Header) -> Journal {
@@ -938,6 +951,18 @@ impl Historical<'_> {
             "paged historical signing prefix missing",
         )?;
         Ok((
+            &self.replay.trust,
+            &self.replay.evidence,
+            &self.replay.chain,
+        ))
+    }
+    pub(crate) fn at_with_executed_head(
+        &mut self,
+        height: u64,
+    ) -> Result<(Hash, &Trust, &VerifiedEvidence, &Chain)> {
+        self.at(height)?;
+        Ok((
+            self.replay.executed.observed_executed_head(),
             &self.replay.trust,
             &self.replay.evidence,
             &self.replay.chain,

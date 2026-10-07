@@ -77,6 +77,9 @@ impl ExecutedPrefix {
             "actual executed Native prefix differs from retained current boundary",
         )
     }
+    pub(super) fn observed_executed_head(&self) -> Hash {
+        self.head
+    }
     #[cfg(test)]
     pub(super) fn corrupt_head_for_fixture(&mut self) {
         self.head = Hash([9; 32]);

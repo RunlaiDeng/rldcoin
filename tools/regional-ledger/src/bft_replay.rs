@@ -137,6 +137,45 @@ impl<'a> Replay<'a> {
 /// New signed paged custody keeps its complete original record chain in pages.
 /// Native genesis replay supplies every historical parent; no decoded cache or
 /// active evidence from the final height may authorize an old request.
+/// One exact nested proof already fully verified against this invocation's
+/// actually executed Native prefix. It is never serialized or shared across
+/// signer calls; every outer response and commit quorum still verifies.
+#[derive(Default)]
+pub(crate) struct ProposalProof {
+    retained: Option<(Hash, Hash, Proposal, Option<Quorum>)>,
+    #[cfg(test)]
+    pub(crate) full_checks: usize,
+    #[cfg(test)]
+    pub(crate) reused_checks: usize,
+}
+impl ProposalProof {
+    pub(crate) fn verify(
+        &mut self,
+        proposal: &Proposal,
+        trust: &Trust,
+        evidence: &VerifiedEvidence,
+        executed: Hash,
+    ) -> Result<Option<Quorum>> {
+        if let Some((head, binding, original, selected)) = &self.retained {
+            if *head == executed && *binding == trust.binding && original == proposal {
+                #[cfg(test)]
+                {
+                    self.reused_checks += 1;
+                    crate::bft::sign_cost::note_proposal_proof(false);
+                }
+                return Ok(selected.clone());
+            }
+        }
+        #[cfg(test)]
+        {
+            self.full_checks += 1;
+            crate::bft::sign_cost::note_proposal_proof(true);
+        }
+        let selected = proposal.verify(trust, evidence)?;
+        self.retained = Some((executed, trust.binding, proposal.clone(), selected.clone()));
+        Ok(selected)
+    }
+}
 pub(super) struct PagedReplay<'a> {
     journal: &'a Journal,
     node: &'a Store,
@@ -145,6 +184,9 @@ pub(super) struct PagedReplay<'a> {
     state: State,
     head: Hash,
     count: u64,
+    proposal_proof: ProposalProof,
+    #[cfg(test)]
+    proposal_probe: Option<(Hash, Hash, Proposal)>,
 }
 impl<'a> PagedReplay<'a> {
     pub(super) fn new(journal: &'a Journal, node: &'a Store, head: Hash) -> Result<Self> {
@@ -179,6 +221,9 @@ impl<'a> PagedReplay<'a> {
             state: State::default(),
             head,
             count: 0,
+            proposal_proof: ProposalProof::default(),
+            #[cfg(test)]
+            proposal_probe: None,
         })
     }
     pub(super) fn push(&mut self, record: &Record) -> Result<()> {
@@ -188,7 +233,9 @@ impl<'a> PagedReplay<'a> {
             record.previous_head == self.head && record.message.approval().key == self.owner.owner,
             "paged BFT complete predecessor/key mismatch",
         )?;
-        let (trust, evidence, chain) = self.history.at(record.observation.pin.height)?;
+        let (executed, trust, evidence, chain) = self
+            .history
+            .at_with_executed_head(record.observation.pin.height)?;
         record
             .observation
             .check_selected(self.node, &self.owner, chain)?;
@@ -206,9 +253,27 @@ impl<'a> PagedReplay<'a> {
         )?;
         #[cfg(test)]
         cost.mark(0);
-        let mut expected =
-            self.state
-                .apply_authenticated(&record.request, &self.owner.owner, trust, evidence)?;
+        let proof = &mut self.proposal_proof;
+        let mut expected = self.state.apply_authenticated_with_proposal(
+            &record.request,
+            &self.owner.owner,
+            trust,
+            evidence,
+            |proposal, trust, evidence| proof.verify(proposal, trust, evidence, executed),
+        )?;
+        #[cfg(test)]
+        if let Request::Prepare(proposal) | Request::Commit { proposal, .. } = &record.request {
+            let duplicate =
+                self.proposal_probe
+                    .as_ref()
+                    .is_some_and(|(old_head, old_trust, old)| {
+                        *old_head == executed
+                            && *old_trust == trust.binding
+                            && old == proposal.as_ref()
+                    });
+            crate::bft::sign_cost::note_original_proposal_check(duplicate);
+            self.proposal_probe = Some((executed, trust.binding, *proposal.clone()));
+        }
         expected.set_approval(record.message.approval().clone());
         require(
             expected == record.message,

@@ -88,12 +88,27 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
     assert_eq!(cost.completed_new_signatures, 90);
     let total_ns: u128 = cost.phases_ns.iter().sum();
     assert!(total_ns > 0);
+    let preflight_ns: u128 = cost.preflight_ns.iter().sum();
+    assert!(preflight_ns > 0 && preflight_ns <= cost.phases_ns[0]);
     let publication_ns: u128 = cost.publication_ns.iter().sum();
     assert!(publication_ns > 0 && publication_ns <= cost.phases_ns[4]);
     assert_eq!(cost.completed_stream_appends, 90);
     assert!(cost.completed_old_records > 90);
     let replay_ns: u128 = cost.replay_ns.iter().sum();
     assert!(replay_ns > 0 && replay_ns <= cost.phases_ns[0]);
+    let native_ns: u128 = cost.native_record_ns.iter().sum();
+    assert!(native_ns > 0 && native_ns <= cost.phases_ns[0]);
+    assert!(cost.native_records > 90 && cost.active_evidence_serialized_bytes > 0);
+    assert!(cost.original_proposal_checks > 90 && cost.repeated_exact_proposal_checks > 90);
+    assert!(cost.full_proposal_proofs > 90 && cost.reused_proposal_proofs > 90);
+    assert_eq!(
+        cost.full_proposal_proofs + cost.reused_proposal_proofs,
+        cost.original_proposal_checks
+    );
+    assert_eq!(
+        cost.reused_proposal_proofs,
+        cost.repeated_exact_proposal_checks
+    );
     let append_ns: u128 = cost.append_ns.iter().sum();
     assert!(append_ns > 0 && append_ns <= cost.publication_ns[0]);
     let replay_and_validation_fraction =
@@ -150,8 +165,18 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
             "public_key_material_full_validations":material.material_validations,
             "actual_strict_message_verification_attempts":material.strict_attempts,
             "heights":10,"actual_signatures":cost.completed_new_signatures,
+            "actual_full_nested_proposal_proofs":cost.full_proposal_proofs,
+            "actual_reused_nested_proposal_proofs_this_invocation":cost.reused_proposal_proofs,
+            "actual_original_proposal_checks":cost.original_proposal_checks,
+            "actual_repeated_exact_proposal_checks_same_executed_native_and_trust":cost.repeated_exact_proposal_checks,
+            "preflight_phase_names":["original_header_and_native_cursor_initialization","full_retained_signer_record_visit_and_native_history_replay","complete_current_native_cursor_and_byte_guard"],
+            "preflight_phase_seconds":cost.preflight_ns.map(|ns|ns as f64/1e9),
             "phase_names":["first_complete_replay","exact_request_scan","current_execution_and_sign","new_record_and_current_recheck","durable_append"],
             "publication_phase_names":["original_durable_stream_append","postpublication_header_and_signer_stream_read","final_native_history_guard_and_response_head"],
+            "native_record_phase_names":["full_native_record_authentication_and_execution","canonical_current_ledger_capacity_serialization","clone_and_canonical_whole_active_evidence_capacity_serialization"],
+            "native_record_phase_seconds":cost.native_record_ns.map(|ns|ns as f64/1e9),
+            "actual_native_history_records":cost.native_records,
+            "actual_whole_active_evidence_bytes_serialized":cost.active_evidence_serialized_bytes,
             "old_record_replay_phase_names":["native_history_context_and_observation","original_request_proof_lock_and_deterministic_response","own_response_signature_and_stream_head"],
             "old_record_replay_phase_seconds":cost.replay_ns.map(|ns|ns as f64/1e9),
             "actual_old_record_replays":cost.completed_old_records,
@@ -169,4 +194,159 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
             "actual_over128_or_height65":false,"full_fault":false,"independent_freshness":false,"total_test_seconds":started.elapsed().as_secs_f64()
         })
     );
+}
+
+#[test]
+fn scoped_proposal_proof_matches_reference_and_warm_bad_quorum_still_refuses() {
+    // Fresh signed no-value Native inputs; the shadow kernels grant no custody.
+    let mut h = Harness::with_rules(crate::paged_bft::RULES);
+    h.retain = true;
+    let candidate = h.node.bft_candidate(vec![], public(10)).unwrap();
+    let proposal = h.proposal(0, None, candidate);
+    let prepared = h.prepare(&proposal, &[0, 1, 2]);
+    let boundary = h.node.storage_head().unwrap();
+    let mut proof = bft::ProposalProof::default();
+    let reference = proposal.verify(&h.node.trust, &h.node.evidence).unwrap();
+    assert_eq!(
+        proof
+            .verify(&proposal, &h.node.trust, &h.node.evidence, boundary)
+            .unwrap(),
+        reference
+    );
+    assert_eq!(
+        proof
+            .verify(&proposal, &h.node.trust, &h.node.evidence, boundary)
+            .unwrap(),
+        reference
+    );
+    assert_eq!((proof.full_checks, proof.reused_checks), (1, 1));
+    let mut altered = proposal.clone();
+    let mut signature = hex::decode(&altered.leader.signature).unwrap();
+    signature[0] ^= 1;
+    altered.leader.signature = hex::encode(signature);
+    assert!(proposal.verify(&h.node.trust, &h.node.evidence).is_ok());
+    assert_eq!(
+        proof.verify(&altered, &h.node.trust, &h.node.evidence, boundary),
+        altered.verify(&h.node.trust, &h.node.evidence)
+    );
+    assert!(altered.verify(&h.node.trust, &h.node.evidence).is_err());
+    // A failed replacement leaves only the old exact proof, never the bad one.
+    assert_eq!(
+        proof
+            .verify(&proposal, &h.node.trust, &h.node.evidence, boundary)
+            .unwrap(),
+        reference
+    );
+    let mut changed_trust = h.node.trust.clone();
+    changed_trust.binding = Hash([9; 32]);
+    assert_eq!(
+        proof.verify(&proposal, &changed_trust, &h.node.evidence, boundary),
+        proposal.verify(&changed_trust, &h.node.evidence)
+    );
+    assert!(proposal.verify(&changed_trust, &h.node.evidence).is_err());
+    // Changed execution metadata forces a new full proof; this synthetic token
+    // test never initializes a Native ledger or signer history.
+    let full = proof.full_checks;
+    assert_eq!(
+        proof
+            .verify(&proposal, &h.node.trust, &h.node.evidence, Hash([8; 32]))
+            .unwrap(),
+        reference
+    );
+    assert_eq!(proof.full_checks, full + 1);
+
+    let before = inventory(&h.root);
+    let signing_key = public(h.seeds[0]);
+    let mut oracle = bft::State::default();
+    let mut scoped = bft::State::default();
+    let mut scoped_proof = bft::ProposalProof::default();
+    let prepare = Request::Prepare(Box::new(proposal.clone()));
+    assert_eq!(
+        oracle.reference_proposal_apply(&prepare, &signing_key, &h.node.trust, &h.node.evidence),
+        scoped.scoped_proposal_apply(
+            &prepare,
+            &signing_key,
+            &h.node.trust,
+            &h.node.evidence,
+            boundary,
+            &mut scoped_proof
+        )
+    );
+    assert_eq!(
+        serde_json::to_vec(&oracle).unwrap(),
+        serde_json::to_vec(&scoped).unwrap()
+    );
+    let previous = serde_json::to_vec(&scoped).unwrap();
+    let mut bad_quorum = prepared.clone();
+    let mut signature = hex::decode(&bad_quorum.votes[0].approval.signature).unwrap();
+    signature[0] ^= 1;
+    bad_quorum.votes[0].approval.signature = hex::encode(signature);
+    let bad = Request::Commit {
+        proposal: Box::new(proposal.clone()),
+        prepared: bad_quorum,
+    };
+    let refused =
+        oracle.reference_proposal_apply(&bad, &signing_key, &h.node.trust, &h.node.evidence);
+    assert!(refused.is_err());
+    assert_eq!(
+        refused,
+        scoped.scoped_proposal_apply(
+            &bad,
+            &signing_key,
+            &h.node.trust,
+            &h.node.evidence,
+            boundary,
+            &mut scoped_proof
+        )
+    );
+    assert_eq!(serde_json::to_vec(&scoped).unwrap(), previous);
+    assert_eq!(serde_json::to_vec(&oracle).unwrap(), previous);
+    let commit = Request::Commit {
+        proposal: Box::new(proposal.clone()),
+        prepared: prepared.clone(),
+    };
+    assert_eq!(
+        oracle.reference_proposal_apply(&commit, &signing_key, &h.node.trust, &h.node.evidence),
+        scoped.scoped_proposal_apply(
+            &commit,
+            &signing_key,
+            &h.node.trust,
+            &h.node.evidence,
+            boundary,
+            &mut scoped_proof
+        )
+    );
+    assert_eq!(
+        serde_json::to_vec(&oracle).unwrap(),
+        serde_json::to_vec(&scoped).unwrap()
+    );
+    assert_eq!(scoped_proof.full_checks, 1);
+    assert_eq!(scoped_proof.reused_checks, 2);
+    assert_eq!(inventory(&h.root), before);
+    let certified = h.commit(&proposal, &prepared, &[0, 1, 2]);
+    h.node.finalize(certified).unwrap();
+    for n in 0..4 {
+        retain(&h.root, n, h.heads[n]);
+    }
+    let root = h.root.clone();
+    let head = h.node.storage_head().unwrap();
+    let currency = h.node.trust.currency().unwrap();
+    let ledger = h.node.chain.ledger.clone();
+    let heads = h.heads.clone();
+    let seeds = h.seeds.clone();
+    drop(h);
+    let before = inventory(&root);
+    let cold = Store::open_pinned(&root.join("node"), &public(1), currency, head).unwrap();
+    assert_eq!(cold.chain.height(), 1);
+    assert_eq!(cold.chain.ledger, ledger);
+    for (n, seed) in seeds.iter().enumerate() {
+        let signer = Agent::open(&root.join(format!("signer-{seed}")), &cold).unwrap();
+        assert_eq!(signer.head().unwrap(), heads[n]);
+        assert_eq!(
+            fs::read(root.join(format!("caller-{n}.head"))).unwrap(),
+            heads[n].0
+        );
+    }
+    assert_eq!(inventory(&root), before);
+    println!("same-invocation nested proof exact Native/trust/input binding, reference states equal, warm changedproof/wrongtrust/badquorum refuses, all outer and QC signatures remain, fullNative1 all4signer cold unchanged");
 }

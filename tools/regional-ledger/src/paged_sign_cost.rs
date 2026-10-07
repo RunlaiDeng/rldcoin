@@ -6,16 +6,25 @@ use std::{
 #[derive(Clone, Default)]
 pub(crate) struct Summary {
     pub phases_ns: [u128; 5],
+    pub preflight_ns: [u128; 3],
     pub publication_ns: [u128; 3],
     pub append_ns: [u128; 3],
     pub replay_ns: [u128; 3],
+    pub native_record_ns: [u128; 3],
+    pub native_records: usize,
+    pub original_proposal_checks: usize,
+    pub full_proposal_proofs: usize,
+    pub reused_proposal_proofs: usize,
+    pub repeated_exact_proposal_checks: usize,
+    pub active_evidence_serialized_bytes: usize,
     pub completed_old_records: usize,
     pub completed_stream_appends: usize,
     pub completed_new_signatures: usize,
 }
 thread_local! {
     static COST: RefCell<Summary> = const { RefCell::new(Summary {
-        phases_ns: [0; 5], publication_ns: [0; 3], append_ns: [0; 3],
+        phases_ns: [0; 5], preflight_ns: [0; 3], publication_ns: [0; 3], append_ns: [0; 3],
+        native_record_ns: [0; 3], native_records: 0, original_proposal_checks: 0, full_proposal_proofs: 0, reused_proposal_proofs: 0, repeated_exact_proposal_checks: 0, active_evidence_serialized_bytes: 0,
         replay_ns: [0; 3], completed_old_records: 0, completed_stream_appends: 0, completed_new_signatures: 0,
     }) };
     static REPLAY_ACTIVE: Cell<bool> = const { Cell::new(false) };
@@ -26,6 +35,8 @@ pub(crate) fn take() -> Summary {
 }
 pub(crate) struct Clock {
     previous: Instant,
+    preflight_previous: Instant,
+    preflight_ns: [u128; 3],
     phases_ns: [u128; 5],
     publication_ns: [u128; 3],
     publication_previous: Option<Instant>,
@@ -33,8 +44,11 @@ pub(crate) struct Clock {
 impl Clock {
     pub(crate) fn new() -> Self {
         REPLAY_ACTIVE.with(|active| active.set(true));
+        let now = Instant::now();
         Self {
-            previous: Instant::now(),
+            previous: now,
+            preflight_previous: now,
+            preflight_ns: [0; 3],
             phases_ns: [0; 5],
             publication_ns: [0; 3],
             publication_previous: None,
@@ -52,6 +66,11 @@ impl Clock {
             APPEND_ACTIVE.with(|active| active.set(true));
         }
     }
+    pub(crate) fn mark_preflight(&mut self, phase: usize) {
+        let now = Instant::now();
+        self.preflight_ns[phase] = now.duration_since(self.preflight_previous).as_nanos();
+        self.preflight_previous = now;
+    }
     pub(crate) fn mark_publication(&mut self, phase: usize) {
         if phase == 0 {
             APPEND_ACTIVE.with(|active| active.set(false));
@@ -66,6 +85,9 @@ impl Clock {
         COST.with(|cost| {
             let mut cost = cost.borrow_mut();
             for (sum, part) in cost.phases_ns.iter_mut().zip(self.phases_ns) {
+                *sum += part;
+            }
+            for (sum, part) in cost.preflight_ns.iter_mut().zip(self.preflight_ns) {
                 *sum += part;
             }
             for (sum, part) in cost.publication_ns.iter_mut().zip(self.publication_ns) {
@@ -144,5 +166,58 @@ impl ReplayClock {
                 cost.completed_old_records += 1;
             });
         }
+    }
+}
+
+/// Original Native history record execution and exact resource serialization.
+pub(crate) struct NativeRecordClock {
+    previous: Option<Instant>,
+    phases_ns: [u128; 3],
+}
+impl NativeRecordClock {
+    pub(crate) fn new() -> Self {
+        Self {
+            previous: REPLAY_ACTIVE.with(|active| active.get().then(Instant::now)),
+            phases_ns: [0; 3],
+        }
+    }
+    pub(crate) fn mark(&mut self, phase: usize) {
+        if let Some(previous) = self.previous {
+            let now = Instant::now();
+            self.phases_ns[phase] = now.duration_since(previous).as_nanos();
+            self.previous = Some(now);
+        }
+    }
+    pub(crate) fn finish(self, evidence_bytes: usize) {
+        if self.previous.is_some() {
+            COST.with(|cost| {
+                let mut cost = cost.borrow_mut();
+                for (sum, part) in cost.native_record_ns.iter_mut().zip(self.phases_ns) {
+                    *sum += part;
+                }
+                cost.native_records += 1;
+                cost.active_evidence_serialized_bytes += evidence_bytes;
+            });
+        }
+    }
+}
+
+pub(crate) fn note_original_proposal_check(repeated: bool) {
+    if REPLAY_ACTIVE.with(Cell::get) {
+        COST.with(|cost| {
+            let mut cost = cost.borrow_mut();
+            cost.original_proposal_checks += 1;
+            cost.repeated_exact_proposal_checks += usize::from(repeated);
+        });
+    }
+}
+
+pub(crate) fn note_proposal_proof(full: bool) {
+    if REPLAY_ACTIVE.with(Cell::get) {
+        COST.with(|cost| {
+            let mut cost = cost.borrow_mut();
+            cost.full_proposal_proofs += usize::from(full);
+            cost.reused_proposal_proofs += usize::from(!full);
+        });
     }
 }

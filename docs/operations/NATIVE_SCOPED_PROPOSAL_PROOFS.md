@@ -1,0 +1,11 @@
+# Invocation-scoped nested Proposal proof reuse
+
+Paged signer history replay starts from the authenticated Native genesis on every invocation. It may retain one complete nested Proposal proof during that invocation. The retained entry contains the exact typed Proposal, the full trust binding, the head of the actually executed Native record prefix, and the selected timeout high quorum returned by the original verifier.
+
+Reuse requires equality of all three inputs. The prefix head advances only after successful execution of a complete Native record, including evidence, contact and incident records that do not increase block height. A caller-supplied height, decoded state, manifest digest or independently supplied head cannot initialize the retained entry. Changed Proposal bytes, trust binding or executed prefix invoke the original full Proposal verifier. Failed verification never replaces a valid retained entry with unchecked input.
+
+Each replay owns its entry. It is neither serialized nor shared across signer calls, cold opens or recovery operations. Its payload remains subject to the original complete record and object bounds. This changes no archive, ledger, transport or signer admission capacity.
+
+Only the repeated nested Proposal proof in historical Prepare and Commit records may reuse this result. Every outer signer approval and every complete prepare quorum used by Commit still receives its original independent signature verification. Replay still checks every historical observation, context, deterministic response, predecessor, state transition and signer lock. Native history still executes from signed genesis and completes its current source, byte, incident and safety guards. New signing requests use the original full proof path before private-key use. Durable publication and separately retained caller heads remain mandatory.
+
+Reference-kernel comparisons cover valid Prepare and Commit transitions, changed nested signatures, changed trust bindings and a corrupt quorum following a valid retained proof. Separate Native and signer cold checks reconstruct history rather than trusting retained runtime entries. These checks do not authorize a suite or epoch transition, independent custody, production value or a physical route.
