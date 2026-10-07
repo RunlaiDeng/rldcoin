@@ -51,3 +51,45 @@ old custody. Neither independent implementation is an independent operator or
 external security review. Root installation, permanent deduplication during value
 import, rollback protection, archival funding, full long-history recovery and
 profile adoption remain separate requirements.
+
+## Complete append archive candidate
+
+`crates/rld-core/src/hybrid_permanent_import_archive.rs` verifies a complete finite
+chain. Separate initial and latest anchors bind the root, committed key count,
+next nonce, archive head and unchanged caller signing-lock root. Each entry must
+carry its complete proof and detached dual-signature envelope. Independent
+per-entry trust/epoch/nonce observations are separate inputs; their chronology
+cannot run backward. The verifier returns only the complete final candidate after
+it equals the independent latest anchor. A valid prefix cannot supply that anchor.
+
+The archive has at most 64 entries and 2 MiB of logical query/proof/envelope bytes.
+Its binary wire is:
+
+```
+RLD-PERMANENT-IMPORT-APPEND-ARCHIVE-CANDIDATE-V1\0
+count[u16 BE]
+repeated: query[32] || proof_size[u32 BE] || complete_proof
+          || envelope_size[u32 BE] || complete_detached_envelope
+```
+
+The wire bound adds only the domain, count and eight length bytes per entry to
+the logical bound. The complete envelope remains at most 12,288 bytes and the
+proof at most 32,768 bytes. Unknown counts, truncation and trailing bytes refuse.
+The successor archive head is SHA-512 over this exact order:
+
+```
+RLD-PERMANENT-IMPORT-APPEND-ARCHIVE-HEAD-CANDIDATE-V1\0
+currency_root[32] || destination_root[32] || previous_archive_head[64]
+|| caller_locks_root[64] || nonce[u64 BE] || signed_epoch[u64 BE]
+|| append_payload_root[64] || SHA512(complete_detached_envelope)[64]
+```
+
+The offline Core reader takes `POLICY CALLER ARCHIVE`. The separately selected
+caller JSON contains `initial`, `latest` and `observations`. Anchors have
+`current_root`, `key_count`, `next_nonce`, `archive_head`, `caller_locks_root`;
+observations have `current_epoch`, `next_nonce`, `policy_trust`. Owned private
+caller files are bounded to 16,384 bytes. The current policy must remain trusted
+and within its finite horizon, even when retained historical observations were
+trusted. The independent Python/OpenSSL reader is
+`tools/pq_permanent_import_archive_reference_candidate.py`. Both interfaces remain
+verification-only; neither recovers signing custody nor installs a current head.

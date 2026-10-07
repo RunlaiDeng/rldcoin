@@ -148,3 +148,5 @@ pub fn verify_import_append_files(
         .map_err(|e| e.to_string()),
     )
 }
+
+pub mod append_archive;

@@ -18,6 +18,12 @@ verification paths. Existing Native profiles retain their classical rules and
 reject unknown adoption/suite profiles. No candidate result installs ledger state,
 consumes a nonce, authorizes a new network or migrates old currency/custody.
 
+Permanent-ID compressed commitments, dedicated dual-authorized append and complete
+append-chain verification are also candidates. They require independent current
+roots and latest heads; missing, reordered or invalid tails cannot produce partial
+updated anchors. These interfaces do not replace Native permanent import maps,
+value replay, rollback witnesses or archived-history limits.
+
 Full long-history recovery, permanent deduplication at target scale, arbitrary
 multi-source value composition, independent operators and custody, security and
 supply-chain review, authenticated suite/epoch adoption, funding/resource models,
