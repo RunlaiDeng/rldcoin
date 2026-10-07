@@ -44,9 +44,13 @@ V26四相关真实文件/注入write与dir-fsync反例通过，核心方法prefi
 
 新增分离policy/observation、规范manifest及detached envelope的actualCore入口，8192/4389/12288边界/no-follow/owned正规文件；全新RAM-only双签、64条清单1581531B不生成持久钥、不消费nonce。V33 strict/build及17实际判据已通过后 **FAIL27.433337秒**：截短manifest正确Core拒绝exit1，控制器错误预期文件错误exit2；20项失败封存。仅修正该预期，复用17有效结果和同源实际binary/严格构建；V34 **PASS0.099325秒、原120累计27.532662秒**，余下截短/过界/非规范/重复字段/symlink/已存在output拒绝，10项封存。Core1835d169/source、reader `0c426aeeb8a9553550da7e28574658a128a1181fc5dc957ece58c0dece3de1ef`、generator `a9385708981b1931d55ba02e6ce5fcfa4f3df5e0212ec1e26144dce243b04928`及controller分别绑定；0网络/Native/Runtime/Node/状态安装。依赖锁仅新增已有sha2=0.10.8直接引用，原包版本/checksum/deps完全不变。
 
+## 清单授权与内层完整档案的同进程冷核验
+
+实际reader新增显式authorized-manifest模式：独立policy双签授权、准确currency/region/count，再在同一owned directory fd逐项检查有序size/SHA512，最后以独立anchor/observations/latest-head执行实际Core全部四签续证；ordinary输出保持相同。V35静态 **FAIL0.760030秒**，输出括号遗漏，0签名/运输；失败源码保留。仅修正语法，V36 **PASS3.152514秒、原120累计3.912544秒**：64完整终态65及原locks/consumed正确，遗漏/重排/重复/缺档/错区/未知权威/超期/坏manifestPQ拒绝；完整字节且新RAM-only合法清单双签、但坏内层PQ的归档仍明确Core拒绝。82项封存，newactualreader `fff3de9ac02b483464a21e4e462aa8620939fafdb8d8bbf921ad0f8f05e8b464`/generator `074680f1be905ec16f5851e827e15db18dc5a5bfacbad157657ecb1a658a89ac`、Core1835d169与controller分别绑定；原文件不变，0网络/Native/Runtime/Node/nonce消费/安装。不授新Native/独立保管或物理资格。
+
 ## 下一单一主线
 
-实际有效清单双签仍不证明条目完整或内层授权。下一最小命题：完整冷读入口先验证独立policy与清单授权，再逐条核对有序size/SHA512，并用同一当前Core183验证原完整四签续证和独立latest-head；遗漏、重排、改字节、完整却坏内签均不可获得有效归档结果。一次120秒必要构建/相关回归，使用公开成功字节，不开启旧失败保管或重复193TLS/Native长测；不消费nonce/安装/退款。P1–P8采用及任何物理期限仍不授资格。
+以独立Python规范解析及OpenSSL实际密码实现核验同一公开清单双签，检查purpose/root/nonce/有限horizon并与Core结果比较，一次60秒，首失败退出；只读成功公开字节、不重新签署旧失败输入或重跑TLS/Native。两个密码实现一致仍不等于独立运营/完整协议实现审查或采用。P1–P8及物理期限保持独立。
 
 ## 尚未完成
 

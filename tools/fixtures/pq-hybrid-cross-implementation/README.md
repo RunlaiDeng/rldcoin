@@ -62,3 +62,18 @@ and completed remaining guards in the original120-second cumulative27.532662.
 Epoch2 signatures accepted at independent current7/8 and refused at9; wrong
 scope, nonce, unavailable/revoked/broken authority and either bad half refused.
 These observations grant no physical horizon or authenticated ledger adoption.
+
+The renewal-archive reader also accepts the explicit optional suffix
+`--authorized-manifest <separate-policy> <manifest> <detached-envelope>`.
+In this mode it verifies manifest dual authorization, exact currency/region and
+entry count, then hashes each ordered complete entry as read under the same owned
+directory descriptor, and finally runs actual Core four-signature renewal checks
+against the separate initial anchor and latest observations. It never learns
+those heads/locks from the manifest. Ordinary mode retains its original output.
+A valid manifest signature cannot rehabilitate an invalid inner renewal signature.
+
+The current combined V36 scope passed in3.152514 seconds, original120 cumulative
+3.912544 after retained V35 syntax failure before signing/transport calls. All64
+real entries reached era/key_epoch/nonce65 and unchanged caller/consumed roots;
+a complete freshly manifest-authorized archive with one bad inner PQ half refused.
+No nonce/state installation, TLS, Native or old failed custody was involved.

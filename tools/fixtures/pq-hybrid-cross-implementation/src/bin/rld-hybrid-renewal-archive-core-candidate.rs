@@ -8,6 +8,7 @@ use rld_core::hybrid_authorization::{
     HYBRID_RENEWAL_CANDIDATE_MAX_PUBLIC_WIRE_BYTES,
 };
 use serde::Deserialize;
+use sha2::{Digest, Sha512};
 use std::{
     ffi::CString,
     fs::{File, OpenOptions},
@@ -130,8 +131,8 @@ fn trust(s: &str) -> Result<HybridPolicyTrustV1, String> {
     }
 }
 fn verify(args: &[String]) -> Result<Result<HybridRenewalAnchorCandidateV1, String>, String> {
-    if args.len() != 4 {
-        return Err("expected separate trusted initial anchor, caller latest/observations and public entry directory".into());
+    if args.len() != 4 && !(args.len() == 8 && args[4] == "--authorized-manifest") {
+        return Err("expected trusted initial anchor, caller latest/observations, entry directory; optionally --authorized-manifest plus separate policy, manifest and envelope".into());
     }
     let t: TrustedAnchor = serde_json::from_slice(&bounded(&args[1], 8192)?)
         .map_err(|_| "anchor malformed/duplicate/unknown")?;
@@ -169,6 +170,25 @@ fn verify(args: &[String]) -> Result<Result<HybridRenewalAnchorCandidateV1, Stri
         caller_locks_root: fixed(&t.caller_locks_root)?,
         consumed_exports_root: fixed(&t.consumed_exports_root)?,
     };
+    let authorized = if args.len() == 8 {
+        match rld_pq_hybrid_interop_candidate::verify_manifest_files(&args[5], &args[6], &args[7])?
+        {
+            Ok(verified) => {
+                if verified.verified_intent.currency_root != initial.policy.currency_root
+                    || verified.verified_intent.region_root != initial.policy.region_root
+                    || verified.entries.len() != caller.entries.len()
+                {
+                    return Ok(Err(
+                        "authorized manifest differs from independent archive scope/count".into(),
+                    ));
+                }
+                Some(verified)
+            }
+            Err(error) => return Ok(Err(error)),
+        }
+    } else {
+        None
+    };
     let dir = OpenOptions::new()
         .read(true)
         .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
@@ -183,8 +203,17 @@ fn verify(args: &[String]) -> Result<Result<HybridRenewalAnchorCandidateV1, Stri
     let mut raw = Vec::with_capacity(caller.entries.len());
     let mut observations = Vec::with_capacity(caller.entries.len());
     let mut total = 0usize;
-    for item in caller.entries {
+    for (index, item) in caller.entries.into_iter().enumerate() {
         let bytes = entry(&dir, &item.file)?;
+        if let Some(manifest) = &authorized {
+            let record = &manifest.entries[index];
+            let digest: [u8; 64] = Sha512::digest(&bytes).into();
+            if record.size_bytes as usize != bytes.len() || record.sha512 != digest {
+                return Ok(Err(
+                    "complete ordered entry differs from authorized manifest".into(),
+                ));
+            }
+        }
         total = total
             .checked_add(bytes.len())
             .ok_or("archive size overflow")?;
@@ -209,11 +238,15 @@ fn main() {
         rld_core::implementation_source::IMPLEMENTATION_SOURCE_COMMITMENT
     );
     match verify(&std::env::args().collect::<Vec<_>>()) {
-        Ok(Ok(next)) => println!(
-            "{}",
-            serde_json::json!({"candidate_only":true,"installed":false,"crypto_era":next.crypto_era,"key_epoch":next.key_epoch,
-            "next_nonce":next.next_nonce,"last_transition":hex::encode(next.last_transition),"caller_locks_root":hex::encode(next.caller_locks_root),"consumed_exports_root":hex::encode(next.consumed_exports_root)})
-        ),
+        Ok(Ok(next)) => {
+            let authorized = std::env::args().len() == 8;
+            let mut result = serde_json::json!({"candidate_only":true,"installed":false,"crypto_era":next.crypto_era,"key_epoch":next.key_epoch,
+                "next_nonce":next.next_nonce,"last_transition":hex::encode(next.last_transition),"caller_locks_root":hex::encode(next.caller_locks_root),"consumed_exports_root":hex::encode(next.consumed_exports_root)});
+            if authorized {
+                result["manifest_authorization_verified"] = serde_json::json!(true);
+            }
+            println!("{result}");
+        }
         Ok(Err(e)) => {
             eprintln!("candidate Core refused: {e}");
             std::process::exit(1);
