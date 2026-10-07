@@ -28,3 +28,16 @@ The ML-DSA-87 and ML-KEM-768 KAT comparators use fixed fips204 0.4.6 and fips203
 [the C fixture tools](../pq-tls-candidate/README.md). These are known-answer
 comparators, not production entropy or real-key services. See
 [verification and remaining gates](../../../docs/operations/VERIFICATION.md).
+
+`rld-hybrid-renewal-archive-core-candidate` takes an independently trusted initial
+anchor, separate caller latest-head/ordered observations, and owned private archive
+directory. It uses directory-FD-relative no-follow leaf reads, at most64 entries,
+32768 bytes per entry and2097152 bytes total. Valid output is only a candidate
+anchor; it never installs state. Missing/malformed/path/size inputs exit2; actual
+Core refusal exits1. The new public-fixture generator takes fresh anchor path,
+fresh caller metadata path, one empty owned private output directory and count1–64.
+All signing keys remain RAM-only; outputs are public test material.
+
+The current two-entry cold scope passed after a retained fixture-width failure,
+within the original120-second budget. It does not qualify a64-entry valid archive,
+independent witness/custody, long horizons or production adoption.
