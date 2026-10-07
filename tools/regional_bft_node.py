@@ -24,6 +24,7 @@ from regional_bft_live_batch import inspect as inspect_live_batch
 from regional_bft_joint_epoch import JointEpoch, JointLoopStatus, FORMAT as JOINT_FORMAT, signed_body
 from regional_bft_joint_roles import RoleJoint, FORMAT as ROLE_FORMAT, readonly_head
 from regional_native_startup import Inspection
+from regional_bft_timeout_hint import ordered_timeout
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
@@ -38,19 +39,26 @@ def current_empty_proposal_hint(proposal, context, keys):
     """Scheduling only for a Native-checked empty candidate and bounded parent.
 
     Only parent Import commands (original maximum 16) have a typed encoding.
-    Other commands, epochs, timeout rounds and other shapes use ordinary
-    carriage. This extra exact signature check supplies no Native acceptance.
+    Other commands, epochs and other shapes use ordinary carriage. Later
+    rounds require a complete bounded timeout certificate and its signatures.
+    This extra exact signature check supplies no Native acceptance.
     """
     if (type(proposal) is not dict or set(proposal)!={'round','snapshot','timeout','leader'}
-            or type(proposal['round']) is not int or proposal['round']!=0
-            or proposal['timeout'] is not None):return False
+            or type(proposal['round']) is not int or not 0<=proposal['round']<32):return False
+    round_number=proposal['round'];timeout=None;selected_high=None
+    if round_number==0:
+        if proposal['timeout'] is not None:return False
+    else:
+        try:
+            timeout,selected_high=ordered_timeout(proposal['timeout'],context,keys,round_number)
+        except (KeyError,TypeError,ValueError,mesh.InvalidSignature):return False
     snapshot=proposal['snapshot'];leader=proposal['leader']
     if (type(snapshot) is not dict or set(snapshot)!={'base','statement','approvals','blocks','epochs'}
             or snapshot['base'] is None or snapshot['base']!=context['previous']
             or snapshot['approvals']!=[] or snapshot['epochs']!=[]
             or type(snapshot['blocks']) is not list or len(snapshot['blocks'])!=2
             or type(leader) is not dict or set(leader)!={'key','signature'}
-            or leader['key']!=keys[context['parent_height']%4]):return False
+            or leader['key']!=keys[(context['parent_height']+round_number)%4]):return False
     header_fields=('currency','region','parent','anchor','height','miner','commands','state','nonce')
     statement_fields=('currency','region','height','block','state','previous','epoch')
     headers=[];blocks=[]
@@ -81,7 +89,9 @@ def current_empty_proposal_hint(proposal, context, keys):
                 block=block_hash(child),state=child['state'],previous=context['previous'],epoch=context['epoch'])):return False
     ordered=dict(base=snapshot['base'],statement={k:statement[k] for k in statement_fields},
                  approvals=[],blocks=blocks,epochs=[])
-    data=b'RLD-REGIONAL-FIXTURE-V1:bft-proposal-v1\0'+encode([0,ordered,None,leader['key']])
+    if selected_high is not None and selected_high!=hashlib.sha256(
+            b'RLD-REGIONAL-FIXTURE-V1:unanimous-checkpoint\0'+encode(ordered['statement'])).hexdigest():return False
+    data=b'RLD-REGIONAL-FIXTURE-V1:bft-proposal-v1\0'+encode([round_number,ordered,timeout,leader['key']])
     mesh.Ed25519PublicKey.from_public_bytes(bytes.fromhex(leader['key'])).verify(
         bytes.fromhex(leader['signature']),data)
     return True
