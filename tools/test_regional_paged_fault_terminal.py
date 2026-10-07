@@ -98,4 +98,72 @@ class HeadEncodingTests(unittest.TestCase):
                 self.assertTrue(answer['failed_currency_never_reopen'])
                 self.assertEqual(len(json.loads(path.read_text())['exact_stopped_native_heads']),12)
 
+class DeadlineCleanupTests(unittest.TestCase):
+    def signal_case(self, *, late, primary=False, cleanup_error=False):
+        import json
+        import os
+        import signal
+        import socket
+        import time
+        from regional_paged_fault_driver import LiteralFaultRelay
+        clock=[0]; deliveries=[]
+        original=signal.getsignal(signal.SIGTERM)
+        def deadline_signal(signum, frame):
+            deliveries.append(signum)
+            raise TimeoutError('original deadline signal')
+        signal.signal(signal.SIGTERM,deadline_signal)
+        # Fresh loopback sockets only. No Native, Runtime, signing or custody.
+        with socket.socket() as target, socket.socket() as probe:
+            target.bind(('127.0.0.1',0)); target.listen(1)
+            probe.bind(('127.0.0.1',0)); port=probe.getsockname()[1]
+            probe.close()
+            relay=LiteralFaultRelay(port,target.getsockname())
+            try:
+                with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='terminal-deadline-') as tmp:
+                    root=Path(tmp); path=root/'raw.json'
+                    class Scenario(Fake):
+                        def run(self):
+                            if primary:raise ValueError('original Native refusal model')
+                            return super().run()
+                        def cleanup(self):
+                            self.processes.clear();clock[0]=11 if late else 0
+                            os.kill(os.getpid(),signal.SIGTERM)
+                            relay.close()
+                            if cleanup_error:raise ValueError('actual cleanup refusal model')
+                    driver=Scenario(root);driver.relays=[relay]
+                    started=time.monotonic()
+                    answer=execute(lambda:driver,10,path,now=lambda:clock[0])
+                    elapsed=time.monotonic()-started
+                    self.assertLess(elapsed,5)
+                    self.assertIs(signal.getsignal(signal.SIGTERM),deadline_signal)
+                    self.assertFalse(answer['completed']);self.assertFalse(answer['full_fault_qualified'])
+                    self.assertTrue(answer['failed_currency_never_reopen'])
+                    raw=json.loads(path.read_text())
+                    if primary:self.assertIn('original Native refusal model',raw['failure'])
+                    if cleanup_error:self.assertIn('actual cleanup refusal model',raw['cleanup_failure'])
+                    else:self.assertIn('original deadline signal',raw['cleanup_failure'])
+                    self.assertEqual(answer['owned_relays_stopped'],late)
+                    if not cleanup_error:self.assertEqual(deliveries,[signal.SIGTERM])
+                    return answer
+            finally:
+                signal.signal(signal.SIGTERM,original)
+                relay.close()
+    def test_real_expired_signal_closes_relay_preserves_primary_and_refuses_pass(self):
+        self.signal_case(late=True,primary=True)
+    def test_expired_signal_alone_never_qualifies_even_after_clean_closure(self):
+        self.signal_case(late=True)
+    def test_real_signal_before_deadline_remains_immediate(self):
+        self.signal_case(late=False)
+    def test_cleanup_over_deadline_without_signal_cannot_qualify(self):
+        clock=[0]
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='terminal-total-deadline-') as tmp:
+            root=Path(tmp);driver=Fake(root)
+            def cleanup():driver.processes.clear();clock[0]=11
+            driver.cleanup=cleanup
+            answer=execute(lambda:driver,10,root/'raw.json',now=lambda:clock[0])
+            self.assertFalse(answer['completed']);self.assertFalse(answer['full_fault_qualified'])
+    def test_expired_signal_cannot_hide_an_actual_cleanup_refusal(self):
+        self.signal_case(late=True,cleanup_error=True)
+
+
 if __name__=='__main__':unittest.main()

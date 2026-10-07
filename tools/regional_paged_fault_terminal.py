@@ -5,6 +5,8 @@ stop, all12cold checks must finish, and the original total deadline must hold.
 Private raw evidence never becomes a public identity/key/config/custody export.
 """
 from pathlib import Path
+import signal
+import threading
 import time
 
 import interstellar_mesh as mesh
@@ -50,6 +52,27 @@ def completed_body(result):
             for v in result['all12fixed_head_native_and_complete_envelopes']))
 
 
+def _cleanup(driver, deadline, now):
+    """Deliver an expired deadline signal after the existing bounded cleanup.
+
+    Keep earlier termination immediate and restore the caller's handler. Never
+    grant more body time: an expired signal is still an error after closure.
+    Workers and callers without an exception handler keep their signal policy.
+    """
+    handler=signal.getsignal(signal.SIGTERM)
+    if threading.current_thread() is not threading.main_thread() or not callable(handler):
+        return driver.cleanup()
+    deferred=[]
+    def deliver(signum, frame):
+        if now()>=deadline:
+            if not deferred:deferred.append((signum,frame))
+        else:handler(signum,frame)
+    signal.signal(signal.SIGTERM,deliver)
+    try:driver.cleanup()
+    finally:signal.signal(signal.SIGTERM,handler)
+    if deferred:handler(*deferred[0])
+
+
 def execute(make_driver, deadline, private_report, *, now=time.monotonic):
     """The caller separately pins source/CLI/provenance and authorizes once600.
 
@@ -74,12 +97,16 @@ def execute(make_driver, deadline, private_report, *, now=time.monotonic):
     except BaseException as error:primary=error
     finally:
         if driver is not None:
-            try:driver.cleanup()
+            try:_cleanup(driver,deadline,now)
             except BaseException as error:cleanup=error
         processes_stopped=driver is not None and not driver.processes
         relay_stopped=(driver is not None and all(r.closed.is_set() and not r.thread.is_alive()
             and not any(w.is_alive() for w in r.workers) for r in driver.relays))
-        complete=primary is None and cleanup is None and processes_stopped and relay_stopped and body_on_time
+        terminal_on_time=now()<=deadline
+        if not terminal_on_time and primary is None and cleanup is None:
+            primary=TimeoutError('original600second whole body/cold/cleanup deadline exceeded')
+        complete=(primary is None and cleanup is None and processes_stopped and relay_stopped
+            and body_on_time and terminal_on_time)
         private=dict(format='RLD-PAGED-FULL-FAULT-TERMINAL-PRIVATE-V1',completed=complete,
             failure=reason(primary) if primary is not None else None,
             cleanup_failure=reason(cleanup) if cleanup is not None else None,
