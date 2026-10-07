@@ -444,7 +444,11 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
         external_files: usize,
         external_bytes: u64,
     ) -> Result<Hash> {
+        #[cfg(test)]
+        let mut cost = crate::bft::sign_cost::AppendClock::new();
         self.visit(expected_head, |_| Ok(()))?;
+        #[cfg(test)]
+        cost.mark(0);
         require(
             !records.is_empty() && records.len() <= PAGE,
             "complete stream append batch bound",
@@ -533,6 +537,8 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
                     .is_some_and(|n| n <= history::MAX_ARCHIVE_BYTES),
             "complete stream total archive capacity",
         )?;
+        #[cfg(test)]
+        cost.mark(1);
         let outcome = (|| {
             // Marker precedes page publication: every interrupted write is a
             // refusing scope, even if the old manifest still matches its head.
@@ -579,6 +585,11 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
         }
         outcome?;
         self.manifest = proposed;
+        #[cfg(test)]
+        {
+            cost.mark(2);
+            cost.finish();
+        }
         Ok(self.manifest.head)
     }
 }

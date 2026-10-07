@@ -1,9 +1,12 @@
 //! Bounded, incompatible, fixture-only generic regional ledger candidate.
 //! No existing genesis, live assets, BFT protocol or production mode.
-use rld_core::{validate_ed25519_public_key, verify_bytes, AdmissionHash32 as Hash, Amount};
+use rld_core::{validate_ed25519_public_key, AdmissionHash32 as Hash, Amount};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
+
+mod verification_keys;
+use verification_keys::verify_bytes;
 
 pub type Result<T> = std::result::Result<T, String>;
 pub const MAX_BLOCKS: usize = 256;

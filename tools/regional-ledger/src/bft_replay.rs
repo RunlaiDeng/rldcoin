@@ -182,6 +182,8 @@ impl<'a> PagedReplay<'a> {
         })
     }
     pub(super) fn push(&mut self, record: &Record) -> Result<()> {
+        #[cfg(test)]
+        let mut cost = crate::bft::sign_cost::ReplayClock::new();
         require(
             record.previous_head == self.head && record.message.approval().key == self.owner.owner,
             "paged BFT complete predecessor/key mismatch",
@@ -202,6 +204,8 @@ impl<'a> PagedReplay<'a> {
                 && c.epoch == self.journal.creation.pin.epoch,
             "paged BFT request differs from complete historical parent",
         )?;
+        #[cfg(test)]
+        cost.mark(0);
         let mut expected =
             self.state
                 .apply_authenticated(&record.request, &self.owner.owner, trust, evidence)?;
@@ -210,6 +214,8 @@ impl<'a> PagedReplay<'a> {
             expected == record.message,
             "paged BFT response differs from original deterministic request/lock",
         )?;
+        #[cfg(test)]
+        cost.mark(1);
         verify_bytes(
             &self.owner.owner,
             &record.message.bytes()?,
@@ -220,6 +226,11 @@ impl<'a> PagedReplay<'a> {
             .count
             .checked_add(1)
             .ok_or("paged signer count overflow")?;
+        #[cfg(test)]
+        {
+            cost.mark(2);
+            cost.finish();
+        }
         Ok(())
     }
     /// No cursor/state survives this invocation. Native history and every old

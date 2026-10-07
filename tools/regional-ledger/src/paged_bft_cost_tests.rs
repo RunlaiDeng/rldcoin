@@ -10,6 +10,7 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
         retain(&h.root, n, h.heads[n]);
     }
     bft::sign_cost::take();
+    crate::verification_keys::cost::take();
     crate::keystore::private_create(
         &h.root.join("owner-key.json"),
         &serde_json::to_vec(&serde_json::json!({"secret_key":hex::encode([10;32])})).unwrap(),
@@ -78,9 +79,23 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
         );
     }
     let cost = bft::sign_cost::take();
+    let material = crate::verification_keys::cost::take();
+    assert!(material.material_hits > 90 && material.strict_attempts > 90);
+    assert_eq!(
+        material.strict_attempts,
+        material.material_hits + material.material_validations
+    );
     assert_eq!(cost.completed_new_signatures, 90);
     let total_ns: u128 = cost.phases_ns.iter().sum();
     assert!(total_ns > 0);
+    let publication_ns: u128 = cost.publication_ns.iter().sum();
+    assert!(publication_ns > 0 && publication_ns <= cost.phases_ns[4]);
+    assert_eq!(cost.completed_stream_appends, 90);
+    assert!(cost.completed_old_records > 90);
+    let replay_ns: u128 = cost.replay_ns.iter().sum();
+    assert!(replay_ns > 0 && replay_ns <= cost.phases_ns[0]);
+    let append_ns: u128 = cost.append_ns.iter().sum();
+    assert!(append_ns > 0 && append_ns <= cost.publication_ns[0]);
     let replay_and_validation_fraction =
         (cost.phases_ns[0] + cost.phases_ns[3]) as f64 / total_ns as f64;
     owner.as_ref().unwrap().view(&h.node, owner_head).unwrap();
@@ -131,8 +146,19 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
     println!(
         "paged-cost-result {}",
         serde_json::json!({
+            "public_key_material_hits":material.material_hits,
+            "public_key_material_full_validations":material.material_validations,
+            "actual_strict_message_verification_attempts":material.strict_attempts,
             "heights":10,"actual_signatures":cost.completed_new_signatures,
             "phase_names":["first_complete_replay","exact_request_scan","current_execution_and_sign","new_record_and_current_recheck","durable_append"],
+            "publication_phase_names":["original_durable_stream_append","postpublication_header_and_signer_stream_read","final_native_history_guard_and_response_head"],
+            "old_record_replay_phase_names":["native_history_context_and_observation","original_request_proof_lock_and_deterministic_response","own_response_signature_and_stream_head"],
+            "old_record_replay_phase_seconds":cost.replay_ns.map(|ns|ns as f64/1e9),
+            "actual_old_record_replays":cost.completed_old_records,
+            "append_phase_names":["old_structural_stream_visit","stage_complete_records_and_shared_capacity","original_durable_pending_pages_manifest_and_cleanup"],
+            "append_phase_seconds":cost.append_ns.map(|ns|ns as f64/1e9),
+            "actual_observed_stream_appends":cost.completed_stream_appends,
+            "publication_phase_seconds":cost.publication_ns.map(|ns|ns as f64/1e9),
             "phase_seconds":cost.phases_ns.map(|ns|ns as f64/1e9),"measured_sign_seconds":total_ns as f64/1e9,
             "replay_and_validation_fraction":replay_and_validation_fraction,
         "first_replay_fraction":cost.phases_ns[0] as f64/total_ns as f64,

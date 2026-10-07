@@ -357,6 +357,8 @@ impl Agent {
             self.healthy = false;
             return Err(e);
         }
+        #[cfg(test)]
+        cost.mark_publication(0);
         // A post-publication failure retains the original signed record and
         // refuses response release; separate caller recovery remains mandatory.
         let release = (|| {
@@ -368,6 +370,8 @@ impl Agent {
                 .as_ref()
                 .ok_or("paged signer stream missing")?
                 .visit(next, |_| Ok(()))?;
+            #[cfg(test)]
+            cost.mark_publication(1);
             replay.finish(next)?;
             Ok(())
         })();
@@ -381,6 +385,7 @@ impl Agent {
         )?;
         #[cfg(test)]
         {
+            cost.mark_publication(2);
             cost.mark(4);
             cost.finish();
         }
