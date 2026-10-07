@@ -62,9 +62,15 @@ V38 **FAIL0.461342秒**确认真实反例：同一成功公开manifest及有效P
 
 同源必要全64V41 **PASS9.777099秒/原120一次**：1581531B、实际256签名半份重构时代/epoch/nonce65及准确最终头/原locks/consumed；合法63旧前缀明确拒绝，一份完整且其清单已新双签授权、但末尾内层PQ坏的64档案仍实际拒绝。1911公开验证文件封存，实际子进程最大RSS29261824B（Darwin该有限scope，不是跨平台/长期成本保证）；selectedOpenSSL103fc770/source/controller分别绑定，Core0calls/签署0/网络0/Native0/nonce消费0/安装0。第二参考实现不等于独立作者、两完整协议实现、安全审查或P1–P8采用。
 
+## 当前Native依赖锁阻塞解除
+
+V42只读 **FAIL exit101/0.179642秒**：Core新增固定fips204，而独立Native锁缺该依赖，locked离线真实拒绝，锁原件未改。V43离线解锁仅新增与已核验主锁完全相同的fips2040.4.6/keccak0.1.6/sha3 0.10.9/zeroize_derive1.5.0及Core/zeroize两个必要引用，原版本/checksum不变；all-platform metadata因缺缓存的既有windows-sys0.59.0 **FAIL101**、未下载，不是Mac编译失败。
+
+V44实际Mac原120一次all-target locked/offline strict **PASS17.195588秒/exit0**，复用已有opt1缓存，无warning豁免、网络或Native/Runtime/Node运行。89 Native文件中仅Cargo.lock变化，所有Rust/profile字节不变。新Native源码`dd25c9b4a90a19ed7b6c7f767687564c82c27f753d741487309bbd5ec0c328cb`、当前Core1835d169、编译controller/log分别绑定；未发射新Native二进制，编译不授新故障或货币资格。实际Currency实施ID绑定自身源码及Core来源，计算新实现`500cec16de3492608e1a44220acc0ea8a50f5be589ea310cdc12d02ca111c6ce`；旧signed currency/保管不转换，历史head-v16仍只绑定旧源和原binary。
+
 ## 下一单一主线
 
-离线档案授权/续证与现有真实账本仍分离。先读当前Native已签suite/时代规则及密码接口，确定不降级、不迁移旧失败状态的最小无价值集成反例；源码阅读不会授采用/新主网/基金/权限，原成熟/票数/容量/预算不变。须以实际角色/authority/profile绑定明确下一单一修复，不能从档案PASS推断支付或终局资格。
+当前签署Native profile没有算法/时代迁移，默认仍经典规则；未知PQ或更长历史profile必须拒绝。继续最小离线容量反例：>200000块在每16原事件一页且4096文件上限的原profile下是否结构上已不可达；先准确绑定源码/不创建节点或签署、不重跑长测，再选择保留全部原证据与永久去重的显式新profile设计。原16/4096/256MiB/64/成熟/票数及现有fault600/60/24均不变，独立审查问题仅未来采用门槛，不暂停可行本地开发。
 
 ## 尚未完成
 

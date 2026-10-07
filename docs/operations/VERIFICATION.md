@@ -143,3 +143,10 @@ The finite2-entry23-case scope and actual64-entry/256-half cold verification agr
 with their separately source-bound Core observations. The latter measured complete
 valid data, valid63-prefix refusal and a complete bad-last-PQ archive; it is not
 proof of independent authors, complete protocol, long-history or adopted custody.
+
+The Native standalone lock now includes the fixed Core PQ transitive dependencies.
+Actual Mac locked/offline all-target strict compilation passed, with Native Rust
+and signed profiles unchanged. All-platform offline metadata separately remains
+unavailable for an uncached existing Windows package. Compilation is not a new
+Native fault qualification; Currency implementation identity binds both Native
+and Core source, so never reuse old currency/custody under a changed executable.
