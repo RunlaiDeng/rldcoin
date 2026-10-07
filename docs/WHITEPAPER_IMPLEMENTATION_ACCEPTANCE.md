@@ -1,5 +1,13 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 连续主线：完整四签联合续证wire/Core全287通过；继续认证运输冷读组合
+
+knownML-KEM keygen阶段已ordinary main推送 **5ac0a922822ce6e246022efce2063072a8b784e8**，remoteSHA/tree一致，CI无run。Core新增verification-only完整联合续证codec，保留旧/新Ed+ML87共4签、完整新policy/前继/era/key/启用字段；旧trusted anchor/观察/locks/永久consumed记录独立caller提供，不从wire/TLS学习，不重建/释放/安装。新whole32768 parser不增加原transport12288/账本cap；whole实测 **24707B**，需要原上限分片。
+
+V15 **PASS44.252585/原120**：3个新真实RAM-only回归+6包alltarget strict，无告警豁免；完整roundtrip真实4签verify/roots/nonce/replay，坏decoded4half/untrusted老policy/错caller lock及严格canonical/缺字段/重复未知/alternate/noninteger/oversize拒绝。最终同源V16 **PASS38.128351/原300**，全 **287 Core/0失败/0忽略/0过滤**，精确复用V15 strict，无额外无变更重测。Core182 **ee1f46b69457ace45d1b1ade842eb75ad97066b3d1d5b41598f2f000a6885b4a**，编译actual manifest/immutable unit binary/controller分别绑定。[有限profile](operations/evidence/core-hybrid-renewal-wire-reference-v1-qualified-profile-20261007.json)、[全套结果](operations/evidence/core-hybrid-renewal-wire-integrated-v16-20261007-checks.json)、[源码及限制](operations/fixtures/core-hybrid-renewal-wire-v1-20261007/README.md)。旧Native/value来源仍historical不转授新Core，所有旧FAIL/私有保管保持，0Native长测/重开/复制/重签。
+
+下一唯一判别：完整24707B联合续证经原12288/3片/独立wholeSHA512及原互认证PQ TLS实际送达后，冷读重组仍须由实际新Core在独立caller anchor验证完整4签，坏新PQ即使transport成功也拒绝，原locks/consumed/latest policy/nonce输入bytes保持；缺/重/混/坏片不能拼出授权。必要once120含新的Core adapter/build/全新RAM-only公开续证和全新本地TLScredentials/送达/cold/护栏/正常终态封存，复用未变Cbinary/纯分片已有测试，不重复旧TLSpolicy/Native/value。持久原子采用/独立custody/review/完整transaction-archive/长期/物理/P1–P8/PQ采用/wholegoal继续OPEN，冻结2ba62421/c59f9fe8/86821d19及全部S/R/I/A–G/N/P/原经济共识预算票数成熟容量不改，唯一作者持续阶段发布。
+
 ## 2026-10-07 连续主线：ML-KEM768 keygen/dkey边界通过；继续完整联合续证公开格式
 
 封装阶段已ordinary main推送 **f70e3c22f91de23bcb07318003df296007b8f620**，remoteSHA/tree一致，CI runs0。仅known-public标准输入新keygen/dkey工具，不改Core182d728/TLS/Native/value/冻结材料。来源V12 **FAIL1.418328**：两份GET成功但答案组无parameterSet导致KeyError；原件/FAIL保留，只读格式核验0.010090、原30累计1.428418，无重复GET/原语。V13 **FAIL1.433975**：Rust unused SharedSecretKey strict，0cases/0files/0生成。仅删除unused import、不豁免，复用未变C actual compile，V14 **PASS10.818353、原120累计12.252328**。

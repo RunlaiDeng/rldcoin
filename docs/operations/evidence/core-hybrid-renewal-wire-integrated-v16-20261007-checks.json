@@ -1,0 +1,51 @@
+{
+  "format": "RLD-CORE-HYBRID-RENEWAL-WIRE-INTEGRATED-V16",
+  "completed": true,
+  "duration_seconds": 38.128351,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-core",
+        "--lib",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 38.074038,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "84876c08b53ca11e70a0dab18720ba4561f16b121f9264b2a0aa589085abcf8d",
+  "stage_sha256": "4227f03eeca13fd420959885c89a2619e0937eae08d681e96355226ad841a5d1",
+  "controller_sha256": "81c14ce89405b933769d01bbeb1d27ff879f6764961c11bdacee0305fe142ebb",
+  "log_sha256": "63207761d1413f59dd6b3ea2463d5d3d7bbaaa5b39bced1c78ddbb185c37234f",
+  "core_source": "ee1f46b69457ace45d1b1ade842eb75ad97066b3d1d5b41598f2f000a6885b4a",
+  "core_file_count": 182,
+  "full_core_suite_passed": true,
+  "related_strict_evidence_reused": true,
+  "expected_baseline_regression_failure": false,
+  "whole_era_qualification": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}
