@@ -12,6 +12,7 @@ from pathlib import Path
 from types import SimpleNamespace
 import unittest
 from regional_bft_joint_epoch import JointEpoch, JointLoopStatus, FORMAT as JOINT_FORMAT
+from regional_bft_node import FORMAT, private, signed_lookup, wire
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT/'regional_bft_node.py'
@@ -46,6 +47,7 @@ def methods(source=SOURCE, clock_override=None):
         if not condition: raise ValueError(text)
     scope = dict(mesh=SimpleNamespace(require=require, digest=lambda v: hashlib.sha256(json.dumps(v,sort_keys=True).encode()).hexdigest()),
                  time=clock, signed_body=lambda b: b.get('Signed', b.get('EpochSigned',{}).get('message',{})),
+                 FORMAT=FORMAT, private=private, signed_lookup=signed_lookup, wire=wire,
                  JOINT_FORMAT=JOINT_FORMAT, JointEpoch=JointEpoch, JointLoopStatus=JointLoopStatus)
     exec(compile(ast.fix_missing_locations(extracted), str(source), 'exec'), scope)
     return scope['ExactRuntime'], clock

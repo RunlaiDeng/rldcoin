@@ -112,6 +112,70 @@ class TimeoutCarriageTests(unittest.TestCase):
             self.assertEqual(encoded(ordered),encoded(before))
             self.assertEqual(certificate,before)
 
+    def test_actual_broadcast_native_round_model_does_not_prioritize_old_proposal(self):
+        # The Native observation flag/round is simulated. Complete signatures
+        # and Mesh operations are real; no Native or ledger authority follows.
+        from pathlib import Path
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        import regional_bft_node as bft
+        import interstellar_transfer as wire
+        from test_interstellar_mesh import Fixture
+        with tempfile.TemporaryDirectory(prefix='rld-carriage-round-') as directory:
+            fixture=Fixture(directory)
+            runtime=bft.Runtime.__new__(bft.Runtime)
+            runtime.format=bft.FORMAT;runtime.joint=None
+            runtime.region=self.context['region'];runtime.key=self.keys[1]
+            runtime.node_id=fixture.identities['earth']['node_id']
+            runtime.peers={self.keys[1]:runtime.node_id,self.keys[0]:fixture.identities['proxima']['node_id'],
+                           self.keys[2]:fixture.identities['andromeda']['node_id'],self.keys[3]:'9'*64}
+            runtime.peers=dict(sorted(runtime.peers.items()))
+            runtime.binding=dict(currency=self.context['currency'],region=runtime.region,key=runtime.key)
+            runtime.native=SimpleNamespace(currency=self.context['currency'],authority='public-ground-only',
+                                           ledger=Path(directory)/'absent-native-ledger')
+            runtime.transport=fixture.configs['earth']
+            runtime._retained_native_authenticated=True
+            runtime._carriage_context=wire.canonical(self.context);runtime._carriage_round=1
+            messages=Messages();current=self.proposal()
+            for proposal,local in ((self.base,True),(current,False)):
+                body={'Signed':{'Proposal':proposal}}
+                envelope=dict(format=NETWORK,currency=self.context['currency'],region=runtime.region,
+                              evidence={'snapshots':[]},body=body)
+                messages=messages.append(mesh.digest(body),envelope,None,local)
+            runtime.state=dict(messages=messages,height=self.context['parent_height'],cursor=0)
+            runtime.save=lambda state:setattr(runtime,'state',state)
+            expected=self.body_frames({'Signed':{'Proposal':current}})
+            captured=[];original=mesh.Node.set_carriage_priority
+            def priority(node,scope,frames):
+                captured.append(frames)
+                return original(node,scope,frames)
+            with patch.object(mesh.Node,'set_carriage_priority',priority):runtime.broadcast()
+            self.assertEqual(captured,[expected])
+            self.assertIs(runtime.state['messages'],messages)
+            # A changed operation-local round must invalidate even a complete
+            # quiet inventory. This synthetic phase change grants no authority.
+            runtime._carriage_round=0
+            with patch.object(mesh.Node,'set_carriage_priority',priority):runtime.broadcast()
+            self.assertEqual(captured[-1],self.body_frames({'Signed':{'Proposal':self.base}}))
+
+    def test_phase_filter_keeps_previous_timeout_and_ordinary_fallback(self):
+        import regional_bft_node as bft
+        messages=Messages()
+        for round_number in (0,1,2):
+            timeout=self.single_timeout(round_number=round_number)
+            body={'Signed':{'Timeout':timeout}}
+            envelope=dict(format=NETWORK,currency=self.context['currency'],region=self.context['region'],
+                          evidence={'snapshots':[]},body=body)
+            messages=messages.append(mesh.digest(body),envelope,None,True)
+        def frames(round_number=None):
+            return bft.commit_carriage_frames(messages,self.context,self.keys,
+                self.context['currency'],self.context['region'],round_number)
+        self.assertEqual(len(frames()),3)
+        self.assertEqual(len(frames(0)),1)
+        self.assertEqual(len(frames(1)),2)
+        self.assertEqual(len(frames(2)),2)
+        for invalid in (True,-1,32,'1'):self.assertEqual(frames(invalid),())
+
     def test_real_round_zero_and_later_complete_timeout_signatures_get_one_frame(self):
         self.assertEqual(len(self.frames(self.base)), 1)
         for round_number in (1, 2, 31):

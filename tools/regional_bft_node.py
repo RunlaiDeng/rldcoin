@@ -152,7 +152,7 @@ def current_finalized_hint(snapshot, context, keys):
     return True
 
 
-def commit_carriage_frames(messages, context, keys, currency, region):
+def commit_carriage_frames(messages, context, keys, currency, region, round_number=None):
     """Exact current votes and bounded empty proposals from Native-checked Messages.
 
     The signature check only narrows scheduling. Native still checks every
@@ -163,6 +163,7 @@ def commit_carriage_frames(messages, context, keys, currency, region):
     fields=('currency','region','epoch','previous','parent_height','parent_block','parent_state')
     if (type(context) is not dict or set(context)!=set(fields)
             or context['currency']!=currency or context['region']!=region):return ()
+    if round_number is not None and (type(round_number) is not int or not 0<=round_number<32):return ()
     mesh.require(type(keys) is tuple and len(keys)==4 and len(set(keys))==4,
                  'Commit carriage requires configured base validators')
     for key in keys:mesh.hex32(key)
@@ -174,11 +175,14 @@ def commit_carriage_frames(messages, context, keys, currency, region):
                 finalized_ids.append(ident)
                 continue
             if timeout is not None:
+                if round_number is not None and not max(0,round_number-1)<=timeout['round']<=round_number:continue
                 ordered_timeout_vote(timeout,context,keys,timeout['round'])
             elif proposal is not None:
+                if round_number is not None and proposal['round']!=round_number:continue
                 if not current_empty_proposal_hint(proposal,context,keys):continue
             else:
                 if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
+                if round_number is not None and vote.get('round')!=round_number:continue
                 approval=vote['approval'];key=approval['key']
                 if key not in keys:continue
                 data=b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0'+wire.json.dumps(
@@ -390,6 +394,7 @@ class Runtime:
         mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
         self._carriage_priority_key = None
         self._carriage_context = None
+        self._carriage_round = None
         self._broadcast_quiet = None
         self._signed_query_ready = False
         self._signed_query_index = None
@@ -582,6 +587,7 @@ class Runtime:
             if context!=getattr(self,'_carriage_context',None):
                 mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
                 self._carriage_priority_key=None
+                self._carriage_round=None
             self._carriage_context=context
         return value
 
@@ -744,6 +750,7 @@ class Runtime:
                 'native':[self.native.authority,self.native.currency,str(self.native.ledger)],
                 'region':self.region,'node_id':self.node_id,'transport':self.transport,
                 'carriage_context':getattr(self,'_carriage_context',None).hex() if getattr(self,'_carriage_context',None) is not None else None,
+                'carriage_round':getattr(self,'_carriage_round',None),
                 'domains':[NETWORK,mesh.VERSION],
                 'limits':[MAX_MESSAGES,MAX_STATE,wire.MAX_PAYLOAD,mesh.MAX_MESSAGES,
                           mesh.MAX_BATCH,mesh.MAX_PACKET_BATCH,mesh.MAX_CONTACTS,
@@ -782,8 +789,9 @@ class Runtime:
                     and getattr(self,'_carriage_context',None) is not None):
                 context=wire.decode_json(self._carriage_context)
                 frames=commit_carriage_frames(self.state['messages'],context,
-                                             tuple(self.peers),self.native.currency,self.region)
-                scope=mesh.digest(dict(binding=self.binding,context=context,keys=sorted(self.peers),
+                                             tuple(self.peers),self.native.currency,self.region,
+                                             getattr(self,'_carriage_round',None))
+                scope=mesh.digest(dict(binding=self.binding,context=context,round=getattr(self,'_carriage_round',None),keys=sorted(self.peers),
                     native=[self.native.authority,self.native.currency,str(self.native.ledger)]))
                 self._carriage_priority_key=node.set_carriage_priority(scope,frames)
             retained=set()
@@ -980,6 +988,7 @@ class Runtime:
                 status=self.signer_status()
         active=status['state'] if status['state'] is not None and status['state']['context']==context else {'round':0,'prepared':None,'committed':None,'proposed':False}
         round_number=active['round']
+        if self.format==FORMAT and self.joint is None:self._carriage_round=round_number
         slot=(mesh.digest(context),round_number)
         if self.slot!=slot:
             self.slot,self.entered_at=slot,time.monotonic()
@@ -1083,6 +1092,7 @@ class Runtime:
             else:
                 round_number = None
                 self.slot = None
+            if self.format==FORMAT and self.joint is None:self._carriage_round=round_number
         self.broadcast()
         return self.report(context,round_number,status,stopped)
 
