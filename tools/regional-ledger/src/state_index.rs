@@ -1,12 +1,19 @@
 //! Incremental computation of the unchanged V1 ordered Merkle commitment.
-//! One private process-local witness retains exact typed records and levels.
+//! At most two private worker witnesses retain exact typed records and levels
+//! within the original shared process retention budget.
 //! Every invocation audits and compares all current records; no stored digest,
 //! ledger, trust context or proof can initialize native value execution.
 use super::*;
 use crate::state_proof::{self as proof, Collection, Commitment, IndexRoot, Value};
 use std::sync::{Arc, Mutex};
 
-static WITNESS: Mutex<Option<StateIndex>> = Mutex::new(None);
+struct Witnesses {
+    slots: std::collections::VecDeque<(std::thread::ThreadId, StateIndex)>,
+}
+static WITNESS: Mutex<Witnesses> = Mutex::new(Witnesses {
+    slots: std::collections::VecDeque::new(),
+});
+const MAX_WITNESSES: usize = 2;
 const RECORD_OVERHEAD: usize = 256;
 
 #[derive(Clone)]
@@ -251,6 +258,53 @@ fn calculate(
     *witness = Some(StateIndex { indexes });
     Ok((state, prepared, cost))
 }
+impl StateIndex {
+    fn retained_bytes(&self) -> usize {
+        self.indexes.iter().map(|index| index.retained_bytes).sum()
+    }
+}
+impl Witnesses {
+    fn retained_bytes(&self) -> usize {
+        self.slots
+            .iter()
+            .map(|(_, witness)| witness.retained_bytes())
+            .sum()
+    }
+    fn compute(
+        &mut self,
+        thread: std::thread::ThreadId,
+        ledger: &Ledger,
+        selected: Option<Collection>,
+    ) -> Result<(Commitment, Option<Prepared>, Cost)> {
+        let position = self.slots.iter().position(|(owner, _)| *owner == thread);
+        let mut current = position.and_then(|p| self.slots.remove(p)).map(|(_, w)| w);
+        let result = calculate(&mut current, ledger, selected);
+        if result.is_err() {
+            // calculate installs a replacement only after complete successful
+            // audit/root construction. Preserve the old slot and its order.
+            if let (Some(position), Some(witness)) = (position, current) {
+                self.slots.insert(position, (thread, witness));
+            }
+            return result;
+        }
+        if let Some(witness) = current {
+            let bytes = witness.retained_bytes();
+            require(bytes <= MAX_BYTES, "state witness original retention bound")?;
+            while self.slots.len() >= MAX_WITNESSES
+                || self
+                    .retained_bytes()
+                    .checked_add(bytes)
+                    .is_none_or(|total| total > MAX_BYTES)
+            {
+                self.slots
+                    .pop_front()
+                    .ok_or("bounded witness eviction invariant")?;
+            }
+            self.slots.push_back((thread, witness));
+        }
+        result
+    }
+}
 pub(crate) fn compute(
     ledger: &Ledger,
     selected: Option<Collection>,
@@ -259,12 +313,17 @@ pub(crate) fn compute(
         Ok(witness) => witness,
         Err(error) => {
             let mut witness = error.into_inner();
-            *witness = None;
+            witness.slots.clear();
             WITNESS.clear_poison();
             witness
         }
     };
-    calculate(&mut witness, ledger, selected)
+    witness.compute(std::thread::current().id(), ledger, selected)
+}
+#[cfg(test)]
+pub(crate) fn retained_witness_usage() -> (usize, usize) {
+    let witness = WITNESS.lock().unwrap();
+    (witness.slots.len(), witness.retained_bytes())
 }
 
 #[cfg(test)]

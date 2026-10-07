@@ -724,3 +724,126 @@ fn ordinary_paged_archive_fake_current_head_bad_native_vote_refuses_before_outpu
     assert_eq!(inventory(&root), before);
     // Retain this new malformed source; no reopen for value or source repair.
 }
+
+#[test]
+fn two_actual_native_ledgers_alternating_workers_measure_shared_hash_witness_eviction() {
+    fn named(label: &str) -> (PathBuf, Store) {
+        let mut h = header();
+        h.bootstrap.currency.origin = label.into();
+        h.bootstrap.currency.signature =
+            crate::tests::signature(1, &h.bootstrap.currency.bytes().unwrap());
+        h.bootstrap.admissions[0].currency = h.bootstrap.currency.id().unwrap();
+        h.bootstrap.admissions[0].region = label.into();
+        h.bootstrap.admissions[0].signature =
+            crate::tests::signature(1, &h.bootstrap.admissions[0].bytes().unwrap());
+        h.region = h.bootstrap.admissions[0].id().unwrap();
+        let actual = replay(&h);
+        let (root, flat) = stream(&h, &actual);
+        drop(flat);
+        let mut node = Store::create(
+            &root.join("node"),
+            h.bootstrap.clone(),
+            h.region,
+            &public(1),
+            h.bootstrap.currency.id().unwrap(),
+        )
+        .unwrap();
+        for _ in 0..8 {
+            node.finalize(next(&node)).unwrap();
+        }
+        (root, node)
+    }
+    let (a_root, a) = named("witness-a");
+    let (b_root, b) = named("witness-b");
+    let pins = WorkerWitnessPins {
+        nodes: [
+            (a_root.clone(), a.pin, a.storage_head().unwrap()),
+            (b_root.clone(), b.pin, b.storage_head().unwrap()),
+        ],
+    };
+    crate::keystore::private_create(
+        &a_root.join("worker-witness-pins.json"),
+        &serde_json::to_vec(&pins).unwrap(),
+    )
+    .unwrap();
+    drop(a);
+    drop(b);
+    let a_before = inventory(&a_root);
+    let b_before = inventory(&b_root);
+    let result = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "storage::paged::current_tests::two_native_worker_witness_cold_child",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("RLD_WORKER_WITNESS_ROOT", &a_root)
+        .current_dir("/Users/galaxy/GitHub/rldcoin")
+        .output()
+        .unwrap();
+    println!("{}", String::from_utf8_lossy(&result.stdout));
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    assert!(String::from_utf8_lossy(&result.stdout).contains("test result: ok. 1 passed"));
+    assert_eq!(inventory(&a_root), a_before);
+    assert_eq!(inventory(&b_root), b_before);
+}
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct WorkerWitnessPins {
+    nodes: [(PathBuf, Hash, Hash); 2],
+}
+#[test]
+#[ignore = "fresh bounded parent supplies two actual Native cold pins; isolate pure hash workers from other test threads"]
+fn two_native_worker_witness_cold_child() {
+    let root = PathBuf::from(
+        std::env::var_os("RLD_WORKER_WITNESS_ROOT").expect("new private caller root"),
+    );
+    let pins: WorkerWitnessPins =
+        crate::storage::read_json(&root.join("worker-witness-pins.json")).unwrap();
+    let [(a_root, a_currency, a_head), (b_root, b_currency, b_head)] = pins.nodes;
+    let a_before = inventory(&a_root);
+    let b_before = inventory(&b_root);
+    let a = Store::open_pinned(&a_root.join("node"), &public(1), a_currency, a_head).unwrap();
+    let b = Store::open_pinned(&b_root.join("node"), &public(1), b_currency, b_head).unwrap();
+    assert_eq!(a.chain.height(), 8);
+    assert_eq!(b.chain.height(), 8);
+    let ledgers = [a.chain.ledger.clone(), b.chain.ledger.clone()];
+    let (a_tx, a_rx) = std::sync::mpsc::sync_channel::<()>(0);
+    let (b_tx, b_rx) = std::sync::mpsc::sync_channel::<()>(0);
+    let [a_ledger, b_ledger] = ledgers;
+    let worker_a = std::thread::spawn(move || {
+        let expected = crate::state_proof::Commitment::from_ledger_uncached(&a_ledger).unwrap();
+        let first = crate::state_index::compute(&a_ledger, None).unwrap();
+        assert_eq!(first.0, expected);
+        a_tx.send(()).unwrap();
+        b_rx.recv().unwrap();
+        let repeated = crate::state_index::compute(&a_ledger, None).unwrap();
+        assert_eq!(repeated.0, expected);
+        a_tx.send(()).unwrap();
+        repeated.2
+    });
+    let worker_b = std::thread::spawn(move || {
+        a_rx.recv().unwrap();
+        let expected = crate::state_proof::Commitment::from_ledger_uncached(&b_ledger).unwrap();
+        let first = crate::state_index::compute(&b_ledger, None).unwrap();
+        assert_eq!(first.0, expected);
+        b_tx.send(()).unwrap();
+        a_rx.recv().unwrap();
+        let repeated = crate::state_index::compute(&b_ledger, None).unwrap();
+        assert_eq!(repeated.0, expected);
+        repeated.2
+    });
+    let a_cost = worker_a.join().unwrap();
+    let b_cost = worker_b.join().unwrap();
+    assert_eq!(a_cost.leaf_hashes, 0);
+    assert_eq!(b_cost.leaf_hashes, 0);
+    let (slots, bytes) = crate::state_index::retained_witness_usage();
+    assert!(slots <= 2 && bytes <= MAX_BYTES);
+    assert_eq!(inventory(&a_root), a_before);
+    assert_eq!(inventory(&b_root), b_before);
+    println!("actual-two-native-worker-witness a_repeat_leaf_hashes={} b_repeat_leaf_hashes={} complete_independent_uncached_roots_equal=true bytes_unchanged=true full_library_timeout_cause_not_proven=true",a_cost.leaf_hashes,b_cost.leaf_hashes);
+}

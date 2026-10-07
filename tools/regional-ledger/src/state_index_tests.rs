@@ -219,3 +219,50 @@ fn warm_selected_proofs_match_cold_tree_and_do_not_hide_spent_or_permanent_recor
         state
     );
 }
+
+#[test]
+fn bounded_worker_witnesses_preserve_failed_audit_and_share_original_total_budget() {
+    let mut witnesses = Witnesses {
+        slots: std::collections::VecDeque::new(),
+    };
+    let a = std::thread::current().id();
+    let b = std::thread::spawn(|| std::thread::current().id())
+        .join()
+        .unwrap();
+    let c = std::thread::spawn(|| std::thread::current().id())
+        .join()
+        .unwrap();
+    let mut value = ledger(MAX_COINS);
+    for coin in value.coins.values_mut() {
+        coin.payment.owner = "x".repeat(900);
+    }
+    // Synthetic retention shape only; no fake coin gains Native authority.
+    let expected = Commitment::from_ledger_uncached(&value).unwrap();
+    for thread in [a, b, c, a, b] {
+        let result = witnesses.compute(thread, &value, None).unwrap();
+        assert_eq!(result.0, expected);
+        assert!(witnesses.slots.len() <= MAX_WITNESSES);
+        assert!(witnesses.retained_bytes() <= MAX_BYTES);
+        assert!(result.2.witness_retained);
+    }
+    // Each large slot exceeds half the shared cap: another such worker evicts
+    // it rather than multiplying the original per-process retention budget.
+    assert!(witnesses.retained_bytes() > MAX_BYTES / 2);
+    assert_eq!(witnesses.slots.len(), 1);
+    let original_bytes = witnesses.retained_bytes();
+    let mut bad = value.clone();
+    bad.minted.0 += 1;
+    assert!(witnesses.compute(b, &bad, None).is_err());
+    assert_eq!(witnesses.slots.len(), 1);
+    assert_eq!(witnesses.retained_bytes(), original_bytes);
+    let retained = witnesses.compute(b, &value, None).unwrap();
+    assert_eq!(retained.2.leaf_hashes, 0);
+    // Small independent workers coexist, with third-worker least-recent eviction.
+    let small = ledger(8);
+    witnesses.compute(a, &small, None).unwrap();
+    witnesses.compute(b, &small, None).unwrap();
+    assert_eq!(witnesses.slots.len(), 2);
+    witnesses.compute(c, &small, None).unwrap();
+    assert_eq!(witnesses.slots.len(), 2);
+    assert!(witnesses.retained_bytes() <= MAX_BYTES);
+}
