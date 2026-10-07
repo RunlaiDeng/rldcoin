@@ -15,11 +15,16 @@ class ObservationScopeTests(unittest.TestCase):
         calls = []
         def call(command, *args):
             calls.append(command)
-            if command == 'contact-status':
+            if command in ('contact-status','contact-observation'):
                 count = calls.count(command)
                 if initial_failure or (final_failure and count == 2):
                     raise ValueError('Native locked; result unknown')
-                return dict(currency='currency', region='region', contacts=[], observation=count)
+                status=dict(currency='currency',region='region',contacts=[],observation=count,source_http_required=False)
+                if command=='contact-status':return status
+                return dict(format='RLD-NATIVE-CONTACT-OBSERVATION-V1',currency='currency',region='region',
+                    status=status,outgoing=dict(currency='currency',region='region',offers=[],
+                        all_offers_require_native_contact_export_validation=not outgoing_failure),
+                    ledger_changed=False,signing_authority=False)
             if command == 'contact-outgoing':
                 if outgoing_failure:raise ValueError('Native outgoing refused')
                 return {'offers': []}
@@ -60,18 +65,18 @@ class ObservationScopeTests(unittest.TestCase):
 
     def test_read_only_tick_requires_one_full_native_read(self):
         service=self.service();report=self.tick(service)
-        self.assertEqual(service.calls,['contact-status','contact-outgoing'])
+        self.assertEqual(service.calls,['contact-observation'])
         self.assertTrue(report['native_observation_available'])
         self.assertEqual(report['native_observation']['observation'],1)
 
     def test_next_tick_never_reuses_prior_observation(self):
         service=self.service();self.tick(service);report=self.tick(service)
-        self.assertEqual(service.calls.count('contact-status'),2)
+        self.assertEqual(service.calls.count('contact-observation'),2)
         self.assertEqual(report['native_observation']['observation'],2)
 
     def test_initial_refusal_is_unknown_and_prevents_receive_outgoing(self):
         service=self.service(kind='regional-bft',initial_failure=True);report=self.tick(service)
-        self.assertEqual(service.calls,['contact-status'])
+        self.assertEqual(service.calls,['contact-observation'])
         self.assertFalse(report['native_observation_available'])
         self.assertIsNone(report['native_observation'])
 
@@ -80,7 +85,7 @@ class ObservationScopeTests(unittest.TestCase):
             for failure in (False,True):
                 with self.subTest(kind=kind,failure=failure):
                     service=self.service(kind=kind,mutation_failure=failure);report=self.tick(service)
-                    self.assertEqual(service.calls.count('contact-status'),2)
+                    self.assertEqual(service.calls.count('contact-observation'),2)
                     self.assertEqual(report['native_observation']['observation'],2)
 
     def test_post_attempt_refusal_cannot_publish_first_read_as_fresh(self):
@@ -89,11 +94,46 @@ class ObservationScopeTests(unittest.TestCase):
         self.assertIsNone(report['native_observation'])
         self.assertTrue(report['errors'])
 
-    def test_read_only_outgoing_refusal_retains_same_tick_observation_and_error(self):
+    def test_incomplete_combined_projection_cannot_release_first_status(self):
         service=self.service(outgoing_failure=True);report=self.tick(service)
-        self.assertEqual(service.calls.count('contact-status'),1)
-        self.assertTrue(report['native_observation_available'])
+        self.assertEqual(service.calls.count('contact-observation'),1)
+        self.assertFalse(report['native_observation_available'])
+        self.assertIsNone(report['native_observation'])
         self.assertTrue(report['errors'])
+
+    def test_combined_domain_flags_and_projection_identity_refuse(self):
+        for mode in ('format','currency','region','ledger','signing','status-domain','offer-domain','extra'):
+            with self.subTest(mode=mode):
+                service=self.service()
+                original=service.native.call
+                def changed(command,*args):
+                    value=original(command,*args)
+                    if mode=='format':value['format']='unknown'
+                    elif mode=='currency':value['currency']='foreign'
+                    elif mode=='region':value['region']='foreign'
+                    elif mode=='ledger':value['ledger_changed']=True
+                    elif mode=='signing':value['signing_authority']=True
+                    elif mode=='status-domain':value['status']['currency']='foreign'
+                    elif mode=='offer-domain':value['outgoing']['region']='foreign'
+                    else:value['unexpected']='field'
+                    return value
+                service.native.call=changed
+                report=self.tick(service)
+                self.assertEqual(service.calls,['contact-observation'])
+                self.assertIsNone(report['native_observation'])
+                self.assertTrue(report['errors'])
+
+    def test_unknown_write_must_refresh_before_outgoing_projection(self):
+        service=self.service(kind='regional-bft',mutation_failure=True)
+        self.tick(service)
+        self.assertEqual(service.calls,['contact-observation','bft-receive','contact-observation'])
+
+    def test_refresh_refusal_suppresses_all_outgoing_before_exports(self):
+        service=self.service(kind='regional-bft',final_failure=True)
+        report=self.tick(service)
+        self.assertEqual(service.calls,['contact-observation','bft-receive','contact-observation'])
+        self.assertIsNone(report['native_observation'])
+        self.assertEqual(report['applied'],[])
 
 
 if __name__ == '__main__':unittest.main()

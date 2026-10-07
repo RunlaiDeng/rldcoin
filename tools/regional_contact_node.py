@@ -276,6 +276,26 @@ class Service:
         offset = self.progress['cursor'] % len(eligible)
         return (eligible[offset:] + eligible[:offset])[:MAX_PER_TICK]
 
+    def contact_observation(self):
+        # Operation-local projections from the original full inspection replay.
+        # No cached ledger, shared lock, recovery bypass or transport authority.
+        value=self.native.call('contact-observation')
+        mesh.require(type(value) is dict and set(value)=={
+            'format','currency','region','status','outgoing','ledger_changed','signing_authority'}
+            and value['format']=='RLD-NATIVE-CONTACT-OBSERVATION-V1'
+            and value['currency']==self.native.currency and value['region']==self.region
+            and value['ledger_changed'] is False and value['signing_authority'] is False,
+            'fresh native contact observation binding differs')
+        status,outgoing=value['status'],value['outgoing']
+        mesh.require(type(status) is dict and type(outgoing) is dict
+            and status.get('currency')==outgoing.get('currency')==self.native.currency
+            and status.get('region')==outgoing.get('region')==self.region
+            and type(status.get('contacts')) is list and type(outgoing.get('offers')) is list
+            and status.get('source_http_required') is False
+            and outgoing.get('all_offers_require_native_contact_export_validation') is True,
+            'native contact projections differ')
+        return status,outgoing
+
     def tick(self):
         tick_started = time.monotonic()
         stage_started = tick_started
@@ -328,9 +348,7 @@ class Service:
         native_observation = None
         applied = []
         try:
-            native_observation = self.native.call('contact-status')
-            mesh.require(native_observation['currency'] == self.native.currency and native_observation['region'] == self.region,
-                'fresh native identity differs from startup binding')
+            native_observation,outgoing = self.contact_observation()
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:
             errors.append(str(error))
             observe_os_error(error,'native-contact-status')
@@ -384,11 +402,19 @@ class Service:
                     else:
                         rejected.append({'packet_id': packet_id, 'reason': str(error)})
             flush_bft()
+            # Any write attempt (including an unknown result) invalidates both
+            # initial projections. Never export or display the pre-write view.
+            if native_write_attempted:
+                try:
+                    native_observation,outgoing=self.contact_observation()
+                except (OSError, ValueError, subprocess.TimeoutExpired) as error:
+                    native_observation=None;outgoing=None
+                    errors.append(str(error))
+                    observe_os_error(error,'native-contact-status-final')
             # Export authority is obtained from the actual native ledger. A
             # region advertised by a mesh key selects only a candidate carrier.
             try:
-                outgoing = self.native.call('contact-outgoing')
-                offers = outgoing['offers']
+                offers = outgoing['offers'] if outgoing is not None else []
                 if offers:
                     offset = self.progress['cursor'] % len(offers)
                     offers = (offers[offset:] + offers[:offset])[:MAX_PER_TICK]
@@ -418,17 +444,6 @@ class Service:
             except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
                 observe_os_error(error,'native-outgoing')
-            # The first full read belongs only to this contact stage. Outgoing
-            # queries are read-only; any receive/write attempt, including an
-            # unknown outcome, requires a new complete read. Never reuse across
-            # ticks or authorize consensus/signing from this display observation.
-            if native_write_attempted:
-                try:
-                    native_observation = self.native.call('contact-status')
-                except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-                    native_observation = None
-                    errors.append(str(error))
-                    observe_os_error(error,'native-contact-status-final')
         consensus = None
         stage_seconds['native_receive_and_outgoing'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()

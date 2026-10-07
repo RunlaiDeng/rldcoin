@@ -146,7 +146,7 @@ class NativeCarriageTests(unittest.TestCase):
                                         for t in node.summaries().values()))
                 call=native.call
                 def blocked(action,*args):
-                    if action=='contact-status':native_entered.set();native_release.wait(15)
+                    if action=='contact-observation':native_entered.set();native_release.wait(15)
                     return call(action,*args)
                 def run_tick():
                     try:results.append(service.tick())

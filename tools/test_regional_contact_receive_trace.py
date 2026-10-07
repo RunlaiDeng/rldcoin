@@ -42,9 +42,12 @@ class ReceiveTraceTests(unittest.TestCase):
         native_status = dict(currency=network, region=service.region, contacts=[])
 
         def native_call(action):
-            if action == 'contact-status':
+            if action == 'contact-observation':
                 if mode == 'status-unavailable': raise OSError('Native observation unavailable')
-                return native_status
+                return dict(format='RLD-NATIVE-CONTACT-OBSERVATION-V1',currency=network,region=service.region,
+                    status=dict(native_status,source_http_required=False),outgoing=dict(currency=network,
+                        region=service.region,offers=[],all_offers_require_native_contact_export_validation=True),
+                    ledger_changed=False,signing_authority=False)
             if action == 'contact-outgoing': return {'offers': []}
             raise AssertionError('unexpected Native operation')
 

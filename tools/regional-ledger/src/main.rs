@@ -568,6 +568,8 @@ enum Action {
     },
     ContactStatus,
     ContactOutgoing,
+    /// Both contact read projections from one completely replayed locked store.
+    ContactObservation,
     ContactResume {
         #[arg(long)]
         message: String,
@@ -903,6 +905,7 @@ fn run() -> Result<()> {
             Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
         )?,
         Action::BftNetworkCheckBatch { .. }
+        | Action::ContactObservation
         | Action::BftNetworkInspectBatch { .. }
         | Action::BftNetworkLocalEnvelope { .. }
         | Action::BftLoopStatus { .. } => Store::open_inspection(&args.dir, &args.authority, pin)?,
@@ -1926,7 +1929,7 @@ fn run() -> Result<()> {
                     .map_err(|e| e.to_string())?
             );
         }
-        Action::ContactOutgoing => {
+        Action::ContactOutgoing | Action::ContactObservation => {
             let mut offers = vec![];
             if let Some(sid) = store.chain.finalized {
                 for (eid, record) in &store.chain.ledger.exports {
@@ -1935,10 +1938,22 @@ fn run() -> Result<()> {
                     }
                 }
             }
-            println!(
-                "{}",
-                serde_json::json!({"currency":pin,"region":store.chain.region,"offers":offers,"all_offers_require_native_contact_export_validation":true})
-            );
+            let outgoing = serde_json::json!({"currency":pin,"region":store.chain.region,"offers":offers,"all_offers_require_native_contact_export_validation":true});
+            if matches!(action, Action::ContactObservation) {
+                let contacts = store
+                    .journal
+                    .contact_records
+                    .keys()
+                    .map(|id| store.contact_status(*id))
+                    .collect::<Result<Vec<_>>>()?;
+                let status = serde_json::json!({"currency":pin,"region":store.chain.region,"local_height":store.chain.height(),"contacts":contacts,"source_http_required":false});
+                println!(
+                    "{}",
+                    serde_json::json!({"format":"RLD-NATIVE-CONTACT-OBSERVATION-V1","currency":pin,"region":store.chain.region,"status":status,"outgoing":outgoing,"ledger_changed":false,"signing_authority":false})
+                );
+            } else {
+                println!("{outgoing}");
+            }
         }
         Action::ContactStatus => {
             let contacts = store
