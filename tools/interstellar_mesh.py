@@ -1578,8 +1578,12 @@ class Node:
                     require(evidence.read_file(target, MAX_BATCH) == data, 'exchange file collision')
             except (OSError, ValueError) as error:
                 errors.append(str(error))
-        self.state['cursor'] = (self.state['cursor'] + 1) % (2**63 - 1)
-        self.save()
+        # Socket preparation owns its durable cursors outside this spool tick.
+        # Archive publication above remains mandatory; an otherwise idle socket
+        # observation need not repack and rewrite all pending signed frames.
+        if not self.contacts or any('host' not in contact for contact in self.contacts.values()):
+            self.state['cursor'] = (self.state['cursor'] + 1) % (2**63 - 1)
+            self.save()
         report = self.status()
         report['errors'] = errors[:16]
         atomic(self.root / 'status.json', report)

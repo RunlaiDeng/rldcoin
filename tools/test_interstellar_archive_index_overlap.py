@@ -20,6 +20,7 @@ class ArchiveIndexOverlapTests(unittest.TestCase):
             with fixture.node('earth'):pass
             state=mesh.load(path,mesh.MAX_STATE)
             state['messages'][ident]=transit
+            state['first_arrivals'].append(ident)
             mesh.atomic(path,state);before=path.read_bytes()
             with self.assertRaisesRegex(ValueError,'duplicate active/archived'):
                 fixture.node('earth')

@@ -66,6 +66,7 @@ class ArchiveEntryWitnessTests(unittest.TestCase):
                         with self.assertRaisesRegex(ValueError,'file missing'):node.validate_state()
                 else:
                     node.state['messages'][ident]=node.archived(ident)['transit']
+                    node.state['first_arrivals'].append(ident)
                     with self.assertRaisesRegex(ValueError,'duplicate active/archived'):node.validate_state()
 
     def test_bound_reduction_and_changed_store_force_full_verification(self):
