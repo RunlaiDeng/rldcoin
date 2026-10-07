@@ -114,3 +114,43 @@ complete proofs and account for all external Store files under the same complete
 archive ceiling. Incremental appends, signer custody, adopted profiles, permanent
 import composition, rollback protection and long-history qualification remain
 separate requirements.
+
+## Bounded lossless complete packs
+
+`packed::lossless` provides a separate byte representation of a complete original
+canonical pack. Existing archives do not adopt it. Encoding first checks the
+complete original typed pack against the caller's scope, offset, predecessors
+and independently retained original reference. Every original page byte, full
+certificate and command remains recoverable without alteration or omission.
+
+The fixed frame is:
+
+```
+RLD-NATIVE-LOSSLESS-COMPLETE-PACK-CANDIDATE-V1\0
+codec[1 byte = 1] || original_length[u32 BE] || original_SHA256[32]
+|| complete_raw_DEFLATE_stream
+```
+
+Codec 1 fixes `miniz_oxide` 0.8.9 at level 6. The caller supplies both complete
+encoded and original references independently. The decoder authenticates the
+whole encoded object before parsing or allocating an output buffer. It requires
+the exact separately retained original length and digest, allocates that fixed
+length, and accepts only a completed stream consuming every input byte and
+producing exactly that length. A fixed-codec re-encoding must match the complete
+compressed stream. Unknown codecs, alternative encodings, trailing bytes,
+truncation, excessive expansion and reference mismatches refuse.
+
+Both encoded and decoded complete objects remain at most 8 MiB. The recovered
+original digest and complete typed page structure verify before any bytes are
+returned. The result supplies exact original bytes and an integrity description,
+never ledger state, custody or signing authority. Native execution still begins
+at independently pinned genesis and must match the complete latest caller
+boundary. A decoded object cannot initialize a ledger from a snapshot.
+
+Lossless representation does not establish a whole-history compression ratio,
+CPU/RAM/recovery budget or retention funding. Durable compressed archives and
+ordinary appends still need explicit formats, complete residue accounting and
+Native integration under the unchanged 4,096-file / 256-MiB physical archive
+ceiling. No old private archive is converted or implicitly reinterpreted.
+Independent security review, new cryptographic adoption and long-history value
+qualification remain separate gates.

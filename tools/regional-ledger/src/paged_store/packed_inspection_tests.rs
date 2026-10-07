@@ -250,3 +250,75 @@ fn hash_consistent_packed_bad_last_native_certificate_returns_no_boundary() {
     );
     assert_eq!(inventory(&root), before);
 }
+
+#[test]
+fn actual_signed_native_page_recovers_exact_bytes_and_executes_after_lossless_decode() {
+    use crate::retained_pages::packed::{
+        encode_complete_page_pack_candidate,
+        lossless::{
+            encode_lossless_complete_pack_candidate, verify_lossless_complete_pack_candidate,
+        },
+        PackedPageContextCandidateV1,
+    };
+    let (root, _h, scope, records, caller) = fixture();
+    let expected = caller.boundary();
+    let page = serde_json::to_vec(&CompletePage {
+        format: "RLD-NATIVE-COMPLETE-STREAM-PAGES-V1".into(),
+        scope: scope.clone(),
+        first: 0,
+        previous: None,
+        records,
+    })
+    .unwrap();
+    let ctx = PackedPageContextCandidateV1 {
+        scope: scope.clone(),
+        first_record: 0,
+        previous_page: None,
+        previous_pack: None,
+    };
+    let (original_ref, original_pack) =
+        encode_complete_page_pack_candidate::<Record>(&ctx, &[&page]).unwrap();
+    let (encoded_ref, encoded) =
+        encode_lossless_complete_pack_candidate::<Record>(&ctx, &original_ref, &original_pack)
+            .unwrap();
+    let restored = verify_lossless_complete_pack_candidate::<Record>(
+        &ctx,
+        &original_ref,
+        &encoded_ref,
+        &encoded,
+    )
+    .unwrap();
+    assert_eq!(restored.original_pack, original_pack);
+    assert_eq!(restored.complete.next_record, 16);
+    let offset = b"RLD-NATIVE-COMPLETE-PAGE-PACK-CANDIDATE-V1\0".len() + 32 + 8 + 1 + 1 + 2;
+    let n = u32::from_be_bytes(
+        restored.original_pack[offset..offset + 4]
+            .try_into()
+            .unwrap(),
+    ) as usize;
+    assert_eq!(offset + 4 + n, restored.original_pack.len());
+    let recovered_page = restored.original_pack[offset + 4..].to_vec();
+    assert_eq!(recovered_page, page);
+    let dir = root.join("recovered");
+    drop(
+        PackedArchiveCandidate::<Record>::seal(
+            &dir,
+            scope,
+            caller.storage_head,
+            [Ok(recovered_page)],
+        )
+        .unwrap(),
+    );
+    let got = inspect_packed_native_candidate(
+        &dir,
+        &caller.bootstrap,
+        &public(1),
+        expected.currency,
+        caller.storage_head,
+        &expected,
+    )
+    .unwrap();
+    assert_eq!(got, expected);
+    assert!(encoded.len() < original_pack.len());
+    println!("lossless-native-complete original_pack_bytes={} encoded_bytes={} decoded_bytes={} actual_height={} original_signatures_preserved=true long_history_qualification=false",original_pack.len(),encoded.len(),restored.original_pack.len(),got.height);
+}

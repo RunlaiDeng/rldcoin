@@ -349,3 +349,6 @@ mod tests {
 
 /// Fresh immutable archive candidate; existing Native stores do not adopt it.
 pub mod archive;
+
+/// Separate bounded lossless byte representation; existing archives do not adopt it.
+pub mod lossless;
