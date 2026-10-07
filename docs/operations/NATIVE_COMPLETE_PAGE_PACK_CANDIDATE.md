@@ -198,3 +198,32 @@ freshness witnesses, storage funding and long-history value recovery still need
 implementation and their own qualification. A peer-selected manifest reference
 is not an independently current anchor. Compression does not make those adoption
 requirements optional.
+
+
+## One-pass fresh lossless construction
+
+`LosslessArchiveWriterCandidate::begin` owns an absent private target under its
+OS lock and creates the durable `ARCHIVING` marker. `retain_complete_page`
+accepts only the next exact canonical original sixteen-record page in the same
+scope. It checks the incoming page before publishing a preceding group. A group
+contains at most 64 pages; its encoded original-pack size remains at most 8 MiB.
+Complete packs are durably retained as generation progresses. This removes the
+need to keep the whole history's page bytes or an unbounded raw scratch archive.
+Encoding, decoding and compression still use bounded object buffers; 8 MiB is
+an object/group bound, not a claim that the entire process uses only 8 MiB RAM.
+
+A failed retain permanently poisons the writer. Dropping it, an interrupted
+finish, a capacity refusal or a wrong ending head leaves the marked target and
+all durable residue. Neither another writer nor an ordinary open can resume it.
+Every physical object and the complete future manifest still count under the
+original archive limits. No incomplete records are made authoritative.
+
+`finish(independently_expected_head)` consumes the writer and requires the
+producer's separately computed complete ending record head. The producer must
+execute Native records itself and retain its own latest Native boundary; a
+writer hash never supplies ledger authority. Successful construction emits the
+same lossless manifest and object format as the immutable seal entry. Cold opens
+still require its separately retained complete manifest reference, scope and
+head; Native inspection still replays from independently pinned signed genesis.
+This API constructs a fresh immutable archive. It grants no existing-store
+append, recovery, signer custody or network adoption rights.

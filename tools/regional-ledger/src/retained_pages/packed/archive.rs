@@ -15,6 +15,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
+mod writer;
+pub use writer::LosslessArchiveWriterCandidate;
+
 const FORMAT: &str = "RLD-NATIVE-IMMUTABLE-PACKED-ARCHIVE-CANDIDATE-V1";
 const LOSSLESS_FORMAT: &str = "RLD-NATIVE-IMMUTABLE-LOSSLESS-PACKED-ARCHIVE-CANDIDATE-V1";
 const MANIFEST: &str = "packed.json";
@@ -862,6 +865,163 @@ mod tests {
             PackedArchiveCandidate::<u64>::open_lossless_candidate(&dir, &s, head, &pinned)
                 .is_err()
         );
+        assert_eq!(inventory(&root), before);
+    }
+    #[test]
+    fn streaming65_pages_flush_bounded_group_and_cold_reads_exact_records() {
+        let root = fresh_root();
+        let s = scope();
+        let dir = root.join("lossless");
+        let mut writer = LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).unwrap();
+        let mut previous = None;
+        let mut head = s.initial().unwrap();
+        for index in 0..65 {
+            let first = index * PAGE as u64;
+            let records = (first..first + PAGE as u64).collect::<Vec<_>>();
+            for record in &records {
+                head = next_head(head, *record, record).unwrap();
+            }
+            let raw = bytes(&Page {
+                format: super::super::super::FORMAT.into(),
+                scope: s.clone(),
+                first,
+                previous,
+                records,
+            })
+            .unwrap();
+            previous = Some(Hash(sha2::Sha256::digest(&raw).into()));
+            writer.retain_complete_page(raw).unwrap();
+            let (pages, held, packs) = writer.pending_candidate();
+            assert!(pages <= MAX_PACKED_PAGES_CANDIDATE && held <= MAX_BYTES);
+            assert_eq!(packs, usize::from(index == 64));
+        }
+        let archive = writer.finish(head).unwrap();
+        assert_eq!(archive.record_count(), 1040);
+        assert_eq!(archive.manifest.packs.len(), 2);
+        let manifest = archive.manifest_reference_candidate().unwrap();
+        drop(archive);
+        keystore::private_create(&root.join("scope.json"), &bytes(&s).unwrap()).unwrap();
+        let before = inventory(&root);
+        let output = Command::new(std::env::current_exe().unwrap())
+            .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+            .args([
+                "retained_pages::packed::archive::tests::lossless_cold_child",
+                "--exact",
+                "--ignored",
+            ])
+            .env("RLD_LOSSLESS_ARCHIVE_CHILD_DIR", &root)
+            .env("RLD_LOSSLESS_ARCHIVE_CHILD_HEAD", head.to_hex())
+            .env(
+                "RLD_LOSSLESS_ARCHIVE_CHILD_MANIFEST_HASH",
+                manifest.hash.to_hex(),
+            )
+            .env(
+                "RLD_LOSSLESS_ARCHIVE_CHILD_MANIFEST_BYTES",
+                manifest.bytes.to_string(),
+            )
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let mut wrong = manifest.clone();
+        wrong.hash = Hash([9; 32]);
+        assert!(
+            PackedArchiveCandidate::<u64>::open_lossless_candidate(&dir, &s, head, &wrong).is_err()
+        );
+        assert_eq!(inventory(&root), before);
+    }
+
+    #[test]
+    fn streaming_bad_page_poison_cannot_continue_finish_or_reopen() {
+        for variant in 0..4 {
+            let root = fresh_root();
+            let s = scope();
+            let dir = root.join("failed-writer");
+            let (mut pages, head) = fixture_pages(&s, 2);
+            let mut writer = LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).unwrap();
+            writer
+                .retain_complete_page(pages.remove(0).unwrap())
+                .unwrap();
+            let good = pages.remove(0).unwrap();
+            let mut bad: Page<u64> = decode(&good).unwrap();
+            match variant {
+                0 => bad.first += 16,
+                1 => bad.previous = Some(Hash([9; 32])),
+                2 => bad.records.pop().map(|_| ()).unwrap(),
+                _ => bad.scope.currency = Hash([9; 32]),
+            }
+            let before = inventory(&root);
+            assert!(writer.retain_complete_page(bytes(&bad).unwrap()).is_err());
+            assert!(writer.retain_complete_page(good).is_err());
+            assert!(writer.finish(head).is_err());
+            assert!(LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).is_err());
+            let missing = history::Reference {
+                hash: Hash([9; 32]),
+                bytes: 1,
+            };
+            assert!(PackedArchiveCandidate::<u64>::open_lossless_candidate(
+                &dir, &s, head, &missing
+            )
+            .is_err());
+            assert_eq!(inventory(&root), before);
+        }
+    }
+
+    #[test]
+    fn streaming_finish_boundaries_wrong_head_and_abandon_keep_marked_residue() {
+        for boundary in 0..4 {
+            let root = fresh_root();
+            let s = scope();
+            let dir = root.join("interrupted-writer");
+            let (pages, head) = fixture_pages(&s, 1);
+            let mut writer = LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).unwrap();
+            writer
+                .retain_complete_page(pages.into_iter().next().unwrap().unwrap())
+                .unwrap();
+            match boundary {
+                0 | 1 => assert!(writer.finish_interrupted_candidate(head, boundary).is_err()),
+                2 => assert!(writer.finish(Hash([9; 32])).is_err()),
+                _ => drop(writer),
+            }
+            assert!(dir.join(MARKER).exists());
+            assert_eq!(dir.join(MANIFEST).exists(), boundary == 1);
+            let before = inventory(&root);
+            let missing = history::Reference {
+                hash: Hash([9; 32]),
+                bytes: 1,
+            };
+            assert!(PackedArchiveCandidate::<u64>::open_lossless_candidate(
+                &dir, &s, head, &missing
+            )
+            .is_err());
+            assert!(LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).is_err());
+            assert_eq!(inventory(&root), before);
+        }
+    }
+
+    #[test]
+    fn streaming_reserves_manifest_and_counts_all_retained_orphans() {
+        let root = fresh_root();
+        let s = scope();
+        let dir = root.join("capacity-writer");
+        let (pages, head) = fixture_pages(&s, 1);
+        let mut writer = LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).unwrap();
+        for i in 0..history::MAX_FILES - 3 {
+            let hash = crate::id("streaming-retained-capacity-orphan", &i).unwrap();
+            keystore::private_create(&dir.join(OBJECTS).join(name(hash)), b"").unwrap();
+        }
+        writer
+            .retain_complete_page(pages.into_iter().next().unwrap().unwrap())
+            .unwrap();
+        let before = inventory(&root);
+        assert!(writer
+            .finish(head)
+            .err()
+            .unwrap()
+            .contains("retained capacity"));
         assert_eq!(inventory(&root), before);
     }
 }

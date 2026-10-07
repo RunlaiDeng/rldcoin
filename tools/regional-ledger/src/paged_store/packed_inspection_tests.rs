@@ -495,13 +495,17 @@ fn lossless_hash_consistent_bad_final_certificate_never_returns_native_boundary(
 
 #[test]
 fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() {
-    consolidated_native_history(128, 0)
+    consolidated_native_history(128, 0, false)
 }
 #[test]
 fn actual4112_heights_evict_old_body_and_complete_late_certificate_cold_matches() {
-    consolidated_native_history(4112, 16)
+    consolidated_native_history(4112, 16, false)
 }
-fn consolidated_native_history(heights: u64, late_retries: usize) {
+#[test]
+fn streaming32_signed_native_heights_cold_matches_without_whole_page_list() {
+    consolidated_native_history(32, 0, true)
+}
+fn consolidated_native_history(heights: u64, late_retries: usize, streaming: bool) {
     use super::body_witness_tests::certified_with_commands;
     use crate::tests::signature;
     let h = header();
@@ -512,6 +516,14 @@ fn consolidated_native_history(heights: u64, late_retries: usize) {
     let mut previous = None;
     let mut pending = Vec::new();
     let mut pages = vec![];
+    let dir = root.join("lossless-native");
+    let mut writer = streaming.then(|| {
+        crate::retained_pages::packed::archive::LosslessArchiveWriterCandidate::<Record>::begin(
+            &dir,
+            scope.clone(),
+        )
+        .unwrap()
+    });
     let mut payments = 0;
     let started = std::time::Instant::now();
     let mut original_bytes = 0;
@@ -579,7 +591,11 @@ fn consolidated_native_history(heights: u64, late_retries: usize) {
             .unwrap();
             original_bytes += raw.len();
             previous = Some(Hash(Sha256::digest(&raw).into()));
-            pages.push(Ok(raw));
+            if let Some(writer) = writer.as_mut() {
+                writer.retain_complete_page(raw).unwrap();
+            } else {
+                pages.push(Ok(raw));
+            }
         }
     }
     if late_retries > 0 {
@@ -607,7 +623,11 @@ fn consolidated_native_history(heights: u64, late_retries: usize) {
         })
         .unwrap();
         original_bytes += raw.len();
-        pages.push(Ok(raw));
+        if let Some(writer) = writer.as_mut() {
+            writer.retain_complete_page(raw).unwrap();
+        } else {
+            pages.push(Ok(raw));
+        }
     }
     assert!(payments > heights.saturating_sub(10));
     assert!(pending.is_empty());
@@ -617,10 +637,13 @@ fn consolidated_native_history(heights: u64, late_retries: usize) {
     );
     let hot_seconds = started.elapsed().as_secs_f64();
     let at = std::time::Instant::now();
-    let dir = root.join("lossless-native");
-    let archive =
+    let archive = if let Some(writer) = writer {
+        assert!(pages.is_empty());
+        writer.finish(logical).unwrap()
+    } else {
         PackedArchiveCandidate::<Record>::seal_lossless_candidate(&dir, scope, logical, pages)
-            .unwrap();
+            .unwrap()
+    };
     let manifest = archive.manifest_reference_candidate().unwrap();
     drop(archive);
     let seal_seconds = at.elapsed().as_secs_f64();
@@ -667,5 +690,5 @@ fn consolidated_native_history(heights: u64, late_retries: usize) {
         .values()
         .map(|(_, bytes, _)| bytes)
         .sum::<u64>();
-    println!("lossless-consolidated-complete height={} records={} signed_payments={} coins={} active={} original_page_bytes={} retained_archive_bytes={} hot_seconds={:.6} seal_seconds={:.6} cold_child_seconds={:.6} source_root={} native_200001_qualification=false",expected.height,expected.record_count,payments,r.chain.ledger.coins.len(),r.evidence.snapshots.len(),original_bytes,archive_bytes,hot_seconds,seal_seconds,cold_seconds,expected.ledger_root.to_hex());
+    println!("lossless-consolidated-complete height={} records={} signed_payments={} coins={} active={} original_page_bytes={} retained_archive_bytes={} hot_seconds={:.6} seal_seconds={:.6} cold_child_seconds={:.6} source_root={} streaming={} native_200001_qualification=false",expected.height,expected.record_count,payments,r.chain.ledger.coins.len(),r.evidence.snapshots.len(),original_bytes,archive_bytes,hot_seconds,seal_seconds,cold_seconds,expected.ledger_root.to_hex(),streaming);
 }
