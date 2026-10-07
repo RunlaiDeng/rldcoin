@@ -182,7 +182,9 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
                 if not current_empty_proposal_hint(proposal,context,keys):continue
             else:
                 if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
-                if round_number is not None and vote.get('round')!=round_number:continue
+                # Another signer can still complete the preceding phase after
+                # this relay timed out. Native alone accepts delayed certificates.
+                if round_number is not None and not max(0,round_number-1)<=vote.get('round',-1)<=round_number:continue
                 approval=vote['approval'];key=approval['key']
                 if key not in keys:continue
                 data=b'RLD-REGIONAL-FIXTURE-V1:bft-vote-v1\0'+wire.json.dumps(

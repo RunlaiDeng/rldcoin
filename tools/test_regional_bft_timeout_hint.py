@@ -176,6 +176,37 @@ class TimeoutCarriageTests(unittest.TestCase):
         self.assertEqual(len(frames(2)),2)
         for invalid in (True,-1,32,'1'):self.assertEqual(frames(invalid),())
 
+    def test_previous_phase_votes_keep_carriage_without_old_proposal_priority(self):
+        # A relay may have timed out while another admitted signer is still
+        # completing that same parent. Carriage never authorizes a late vote.
+        for phase in ('Prepare','Commit'):
+            messages=Messages()
+            for round_number in (0,1,2):
+                key=self.keys[0];value=self.high()['value']
+                vote=dict(context=self.context,round=round_number,value=value,phase=phase,
+                          approval=self.sign(key,'bft-vote-v1',
+                                             [self.context,round_number,value,phase,key]))
+                body={'Signed':{'Vote':vote}}
+                envelope=dict(format=NETWORK,currency=self.context['currency'],region=self.context['region'],
+                              evidence={'snapshots':[]},body=body)
+                messages=messages.append(mesh.digest(body),envelope,value,False)
+            def frames(round_number):
+                return commit_carriage_frames(messages,self.context,self.keys,
+                    self.context['currency'],self.context['region'],round_number)
+            self.assertEqual(len(frames(1)),2)
+            self.assertEqual(len(frames(2)),2)
+            self.assertEqual(len(frames(0)),1)
+            self.assertEqual(frames(4),())
+            # The preceding vote still needs its exact original signature.
+            corrupt=copy.deepcopy(vote);corrupt['round']=1
+            corrupt['approval']['signature']='0'*128
+            body={'Signed':{'Vote':corrupt}}
+            envelope=dict(format=NETWORK,currency=self.context['currency'],region=self.context['region'],
+                          evidence={'snapshots':[]},body=body)
+            bad=Messages().append(mesh.digest(body),envelope,value,False)
+            self.assertEqual(commit_carriage_frames(bad,self.context,self.keys,
+                self.context['currency'],self.context['region'],2),())
+
     def test_real_round_zero_and_later_complete_timeout_signatures_get_one_frame(self):
         self.assertEqual(len(self.frames(self.base)), 1)
         for round_number in (1, 2, 31):
@@ -234,7 +265,10 @@ class TimeoutCarriageTests(unittest.TestCase):
     def test_single_timeout_ordinary_delivery_preserves_retry_pending_floor_and_cold_receipt(self):
         self.ordinary_delivery({'Signed':{'Timeout':self.single_timeout(high=self.high())}})
 
-    def ordinary_delivery(self, body):
+    def test_previous_prepare_ordinary_delivery_at_next_round_relay(self):
+        self.ordinary_delivery({'Signed':{'Vote':self.high()['votes'][0]}},round_number=1)
+
+    def ordinary_delivery(self, body, round_number=None):
         from test_interstellar_mesh import Fixture
         import interstellar_transfer as wire
         with tempfile.TemporaryDirectory(prefix='rld-timeout-carriage-') as directory:
@@ -245,7 +279,7 @@ class TimeoutCarriageTests(unittest.TestCase):
                             region=self.context['region'], evidence={'snapshots': []}, body=body)
             messages = Messages().append(mesh.digest(body), envelope, None, True)
             frames = commit_carriage_frames(messages, self.context, self.keys,
-                                            self.context['currency'], self.context['region'])
+                                            self.context['currency'], self.context['region'],round_number)
             self.assertEqual(len(frames), 1)
             payload = wire.canonical(envelope)
             raw = wire.make_frame('regional-bft', self.context['region'], self.context['region'],
@@ -283,7 +317,10 @@ class TimeoutCarriageTests(unittest.TestCase):
                 node.state['transit_class_steps'][peer] = 0;node.save()
                 self.assertFalse(node.tick()['errors'])
             for _ in range(2):
-                with fixture.node('proxima') as node:self.assertFalse(node.tick()['errors'])
+                with fixture.node('proxima') as node:
+                    if round_number is not None:
+                        node.set_carriage_priority(mesh.digest(dict(context=self.context,round=round_number)),frames)
+                    self.assertFalse(node.tick()['errors'])
             with fixture.node('andromeda') as node:self.assertFalse(node.tick()['errors'])
             with mesh._verified_transits_lock:mesh._verified_transits.clear()
             with fixture.node('andromeda') as node:
