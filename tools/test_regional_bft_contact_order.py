@@ -58,7 +58,12 @@ class ContactOrderTests(unittest.TestCase):
                     return dict(errors=[])
                 with patch.object(service.tcp, 'tick', side_effect=outgoing):
                     report = service.tick()
-                    service.tick()
+                    with patch.object(runtime, 'with_json', wraps=runtime.with_json) as native_calls:
+                        service.tick()
+                    # The real signer has already committed and only its own
+                    # Commit is present. A second Prepare aggregate is unused;
+                    # finalization still awaits the complete Commit quorum.
+                    self.assertNotIn('bft-quorum', [call.args[0] for call in native_calls.call_args_list])
                 self.assertEqual(observations, [2, 2])
                 self.assertEqual(report['consensus']['native_records'], 2)
                 self.assertEqual(native.call('status')['height'], 0)

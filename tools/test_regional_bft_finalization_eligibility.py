@@ -101,6 +101,20 @@ class RecordingRuntime(Runtime):
 
 
 class FinalizationEligibilityTests(unittest.TestCase):
+    def test_durable_commit_waiting_for_missing_commit_does_not_aggregate_unused_prepare(self):
+        runtime = RecordingRuntime()
+        runtime.active['committed'] = runtime.value
+        runtime._tick()
+        self.assertEqual(runtime.events, [('broadcast', None)])
+
+    def test_durable_commit_still_requires_both_complete_native_quorums_to_finalize(self):
+        runtime = RecordingRuntime(commit_count=3)
+        runtime.active['committed'] = runtime.value
+        runtime._tick()
+        self.assertEqual(runtime.events[:4], [('bft-quorum', 'Commit'),
+                         ('bft-quorum', 'Prepare'), ('bft-certify', None), ('finalize', None)])
+        self.assertNotIn(('native-sign', 'Commit'), runtime.events)
+
     def test_incomplete_commit_aggregates_prepare_only_for_current_signing(self):
         runtime = RecordingRuntime()
         runtime._tick()

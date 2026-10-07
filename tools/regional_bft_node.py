@@ -1011,7 +1011,11 @@ class Runtime:
         if not stopped:
             current_proposals=self.signed(context,round_number,'Proposal')
             for proposal,value in current_proposals:
-                prepared=self.quorum(context,round_number,'Prepare',value)
+                # A persisted Prepare and Commit cannot use another Prepare
+                # aggregate here. The finalization path above still requires
+                # both complete Native quorums before certifying any value.
+                prepared=(None if active['prepared'] is not None and active['committed'] is not None
+                          else self.quorum(context,round_number,'Prepare',value))
                 if active['prepared'] is None:
                     if not self._try_prepare(proposal):
                         continue
