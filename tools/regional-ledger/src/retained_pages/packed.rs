@@ -346,3 +346,6 @@ mod tests {
         assert_eq!(pages(&c, 1), original);
     }
 }
+
+/// Fresh immutable archive candidate; existing Native stores do not adopt it.
+pub mod archive;

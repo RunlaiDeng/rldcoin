@@ -45,3 +45,40 @@ profile, ordinary ledger/signer integration and complete cold Native replay are
 still required. Larger file collections cannot bypass the existing 4,096-file /
 256-MiB complete archive ceiling. The flat profile's long-history capacity failure
 remains a failure; synthetic container records are not signed long-history blocks.
+
+## Immutable private archive interface
+
+`retained_pages/packed/archive.rs` supplies a separate `PackedArchiveCandidate<T>`
+with `seal`, `open` and complete ordered `visit` interfaces. It accepts only a
+fresh absent target and caller-supplied complete canonical pages. It does not
+copy, convert or recover a private Native stream. The same original record-head
+function commits each typed record in order from the independently selected
+scope's origin. The caller supplies the expected ending head separately.
+
+A seal creates an owned private directory and OS lock, then durably retains an
+`ARCHIVING` marker before object publication. Complete packs are written without
+replacement and synced before the final canonical `packed.json` manifest. The
+marker is removed and the directory synced only after the full manifest and
+expected ending head agree. An interruption, missing input or wrong ending head
+leaves the marked target and all original residue; ordinary open and another seal
+refuse. There is no implicit resume, repair, overwrite or discarded partial tail.
+
+The manifest binds the exact scope, ordered complete pack references, total record
+count and record head. Every cold open checks the independent scope/head and
+streams all original typed records. A held object rechecks its canonical disk
+manifest, all pack references and the complete count/head before successful
+completion. Consumers must stage their semantic state until the whole call returns
+success. Storage verification alone cannot initialize a Native ledger or signer.
+
+Every retained object, orphan, marker, lock and manifest counts toward the original
+4,096-file / 256-MiB complete archive ceiling. Each object and manifest remains at
+most 8 MiB. Capacity admission reserves the complete future manifest before
+publishing another pack. Unsafe names, symlinks, links, ownership/mode drift,
+oversized objects, missing packs and altered manifests refuse; residues cannot be
+hidden behind an index. Sealed source data stays immutable under the held lock.
+
+This immutable archive does not implement ordinary incremental appends, signature
+custody or an adopted Native profile. It does not establish independent rollback
+protection, financial retention reserves, power-loss durability or long-history
+value execution. Those requirements remain separate from byte retention and cold
+integrity checks.
