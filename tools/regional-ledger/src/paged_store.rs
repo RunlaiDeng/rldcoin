@@ -690,25 +690,58 @@ impl Store {
         }
         Ok(())
     }
+    fn current_paged_contact_replay(&self) -> Result<Replay> {
+        require(
+            self.healthy && read_guard(&self.dir)?.is_zero(),
+            "paged contact requires healthy current Store without pending native incident",
+        )?;
+        let header = read_header(&self.dir)?;
+        let stream = self.paged.as_ref().ok_or("paged contact stream missing")?;
+        let replay = self
+            .paged_replay
+            .as_ref()
+            .ok_or("paged actual process replay missing")?
+            .stage(self, &header, stream)?;
+        let (retained, safety) = read_incidents(&self.dir, &self.journal, &replay.trust, None)?;
+        require(
+            retained
+                .iter()
+                .map(|p| p.id())
+                .collect::<Result<BTreeSet<_>>>()?
+                == replay.incidents
+                && safety.regions == self.safety.regions
+                && safety.channels == self.safety.channels,
+            "paged contact complete retained incident set/safety differs",
+        )?;
+        let outside = outside_usage(&self.dir)?;
+        let usage = stream.retained_usage_candidate()?;
+        require(
+            outside
+                .0
+                .checked_add(usage.0)
+                .is_some_and(|n| n <= crate::history::MAX_FILES)
+                && outside
+                    .1
+                    .checked_add(usage.1)
+                    .is_some_and(|n| n <= crate::history::MAX_ARCHIVE_BYTES),
+            "paged contact complete current archive capacity",
+        )?;
+        Ok(replay)
+    }
     pub(crate) fn add_paged_contact(
         &mut self,
         frame: crate::contact::Frame,
         evidence: &Evidence,
     ) -> Result<()> {
-        self.paged_signing_history()?.finish(self)?;
+        let mut replay = self.current_paged_contact_replay()?;
         self.check_paged_evidence_conflicts(evidence)?;
         let record = Record::Contact(Box::new(frame));
-        let header = read_header(&self.dir)?;
-        let mut replay = Replay::new(&header, &self.authority, self.pin)?;
         let stream = self.paged.as_ref().ok_or("paged contact stream missing")?;
-        stream.visit(stream.storage_head(), |old| {
-            replay.apply_retained(old, stream)
-        })?;
         replay.apply(&record, stream)?;
         // Authenticate every complete later frame before exact retry suppression.
         // An exact retained retry neither grows the archive nor grants an import.
         if replay.contacts == self.journal.contact_records {
-            self.paged_signing_history()?.finish(self)?;
+            self.current_paged_contact_replay()?;
             return Ok(());
         }
         self.append_paged(&[record])

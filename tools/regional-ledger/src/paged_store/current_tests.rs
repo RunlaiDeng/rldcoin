@@ -133,3 +133,223 @@ fn all_original_durable_interruptions_keep_committed_process_state_and_poison_ha
         // Retain the fresh failed target; no reopen, repair or fixture recovery.
     }
 }
+
+fn fresh_regional_contact() -> (PathBuf, Store, Store, Vec<u8>) {
+    let mut h = header();
+    let mut admission = h.bootstrap.admissions[0].clone();
+    admission.region = "proxima".into();
+    admission.signature = crate::tests::signature(1, &admission.bytes().unwrap());
+    let destination_region = admission.id().unwrap();
+    h.bootstrap.admissions.push(admission);
+    let r = replay(&h);
+    let (root, flat) = stream(&h, &r);
+    drop(flat);
+    let pin = h.bootstrap.currency.id().unwrap();
+    let mut source = Store::create(
+        &root.join("source"),
+        h.bootstrap.clone(),
+        h.region,
+        &public(1),
+        pin,
+    )
+    .unwrap();
+    let destination = Store::create(
+        &root.join("destination"),
+        h.bootstrap.clone(),
+        destination_region,
+        &public(1),
+        pin,
+    )
+    .unwrap();
+    for _ in 0..2 {
+        source.finalize(next(&source)).unwrap();
+    }
+    let input = source
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, coin)| coin.mature == 3)
+        .unwrap();
+    let intent = Intent {
+        currency: pin,
+        region: h.region,
+        inputs: vec![*input.0],
+        outputs: vec![Payment {
+            owner: public(10),
+            amount: input.1.payment.amount.checked_sub(Amount(10)).unwrap(),
+        }],
+        fee: Amount(1),
+        destination: Some(destination_region),
+        remote: Some(Payment {
+            owner: public(20),
+            amount: Amount(9),
+        }),
+        destination_fee: Amount(2),
+        valid_through: 24,
+    };
+    let export = intent.id().unwrap();
+    let signed = SignedIntent {
+        approvals: vec![Approval {
+            key: public(10),
+            signature: crate::tests::signature(10, &intent.bytes().unwrap()),
+        }],
+        intent,
+    };
+    let snapshot = super::body_witness_tests::certified_with_commands(
+        &source.paged_replay.as_ref().unwrap().replay,
+        vec![Command::Spend(Box::new(signed))],
+    );
+    source.finalize(snapshot).unwrap();
+    let raw = source.contact_export(export).unwrap();
+    (root, source, destination, raw)
+}
+#[test]
+fn ordinary_current_contact_standalone_proof_pending_import_mature_payment_cold() {
+    let (root, source, mut destination, raw) = fresh_regional_contact();
+    let (_, bundle) = crate::contact::Frame::unpack(&raw).unwrap();
+    let before = inventory(&root);
+    for choice in 0..3 {
+        let mut bad = bundle.clone();
+        match choice {
+            0 => {
+                bad.evidence.snapshots.remove(0);
+            }
+            1 => bad
+                .evidence
+                .snapshots
+                .last_mut()
+                .unwrap()
+                .blocks
+                .last_mut()
+                .unwrap()
+                .commands
+                .clear(),
+            _ => {
+                bad.evidence
+                    .snapshots
+                    .last_mut()
+                    .unwrap()
+                    .bft
+                    .as_mut()
+                    .unwrap()
+                    .committed
+                    .votes[0]
+                    .approval
+                    .signature = "00".repeat(64)
+            }
+        }
+        assert!(destination
+            .contact_apply(&crate::contact::Frame::pack(&bad).unwrap(), None)
+            .is_err());
+        assert_eq!(inventory(&root), before);
+    }
+    let status = destination.contact_apply(&raw, None).unwrap();
+    assert!(status.evidence_verified && !status.import_accepted);
+    assert_eq!(destination.chain.height(), 0);
+    assert!(destination.chain.ledger.coins.is_empty());
+    let head = destination.storage_head().unwrap();
+    let before = inventory(&root);
+    destination.contact_apply(&raw, None).unwrap();
+    assert_eq!(destination.storage_head().unwrap(), head);
+    assert_eq!(inventory(&root), before);
+    let certified_import = super::body_witness_tests::certified_with_commands(
+        &destination.paged_replay.as_ref().unwrap().replay,
+        vec![Command::Import {
+            snapshot: bundle.snapshot,
+            export: bundle.export,
+        }],
+    );
+    destination.finalize(certified_import).unwrap();
+    let status = destination.contact_status(status.message_id).unwrap();
+    assert!(status.import_accepted && !status.original_recipient_output_spendable_now);
+    assert_eq!(status.recipient_mature_height, Some(3));
+    let before = inventory(&root);
+    destination.contact_apply(&raw, None).unwrap();
+    assert_eq!(inventory(&root), before);
+    let recipient = id("output", &(bundle.export, 0u32)).unwrap();
+    assert_eq!(
+        destination.chain.ledger.coins[&recipient].payment.amount,
+        Amount(7)
+    );
+    let intent = Intent {
+        currency: destination.pin,
+        region: destination.chain.region,
+        inputs: vec![recipient],
+        outputs: vec![Payment {
+            owner: public(21),
+            amount: Amount(6),
+        }],
+        fee: Amount(1),
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through: 24,
+    };
+    let signed = SignedIntent {
+        approvals: vec![Approval {
+            key: public(20),
+            signature: crate::tests::signature(20, &intent.bytes().unwrap()),
+        }],
+        intent,
+    };
+    assert!(destination
+        .bft_candidate(vec![Command::Spend(Box::new(signed.clone()))], public(10))
+        .is_err());
+    destination.finalize(next(&destination)).unwrap();
+    let payment = super::body_witness_tests::certified_with_commands(
+        &destination.paged_replay.as_ref().unwrap().replay,
+        vec![Command::Spend(Box::new(signed))],
+    );
+    destination.finalize(payment).unwrap();
+    let status = destination.contact_status(status.message_id).unwrap();
+    assert_eq!(status.local_height, 3);
+    assert_eq!(status.original_recipient_output_remaining, Amount::ZERO);
+    assert!(destination
+        .chain
+        .ledger
+        .imports
+        .contains_key(&bundle.export));
+    assert_eq!(
+        conservation(&[source.chain.clone(), destination.chain.clone()])
+            .unwrap()
+            .2,
+        Amount::ZERO
+    );
+    let head = destination.storage_head().unwrap();
+    let ledger = destination.chain.ledger.clone();
+    let pin = destination.pin;
+    drop(destination);
+    let mut destination =
+        Store::open_pinned(&root.join("destination"), &public(1), pin, head).unwrap();
+    assert_eq!(destination.chain.ledger, ledger);
+    let before = inventory(&root);
+    destination.contact_apply(&raw, None).unwrap();
+    assert_eq!(inventory(&root), before);
+    println!("ordinary-current-contact actual_full_wire=true retry_no_write=true certified_import=true maturity2=true owner7_to6_fee1=true full_cold_import_tombstone=true global_conservation=true");
+}
+#[test]
+fn ordinary_current_contact_exact_retry_refuses_pending_guard_and_safety_projection() {
+    let (root, _source, mut destination, raw) = fresh_regional_contact();
+    let status = destination.contact_apply(&raw, None).unwrap();
+    let before = inventory(&root);
+    destination
+        .safety
+        .regions
+        .insert(destination.chain.region, BTreeSet::from([Hash([9; 32])]));
+    assert!(destination.contact_apply(&raw, None).is_err());
+    assert_eq!(inventory(&root), before);
+    destination.safety = Safety::default();
+    assert!(
+        !destination
+            .contact_status(status.message_id)
+            .unwrap()
+            .import_accepted
+    );
+    write_guard(&root.join("destination"), Hash([9; 32])).unwrap();
+    let before = inventory(&root);
+    assert!(destination.contact_apply(&raw, None).is_err());
+    assert_eq!(inventory(&root), before);
+    assert_eq!(destination.chain.height(), 0);
+    // Retain the new pending target and guard unchanged; no reopen or recovery.
+}

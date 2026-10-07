@@ -62,7 +62,28 @@ and public views. A persistence refusal poisons the handle and retains its prior
 committed process state and all durable residue. Cold opens never load this cache.
 
 This removes historical Native re-execution from the append transaction. Full
-source I/O, historical conflict scans, contact preflight and signer-history
-verification retain their separate costs and authority checks. It does not adopt
+source I/O, historical conflict scans and signer-history verification retain their
+separate costs and authority checks. It does not adopt
 lossless prefix storage for ordinary nodes, change any signature custody format
 or supply new independent rollback, resource, cryptographic or route qualification.
+
+
+## Ordinary contact preflight
+
+Ordinary paged contact preflight stages the same private current Native replay.
+Before release it requires a healthy Store, zero pending incident guard, unchanged
+complete stream/header and exact public projections. It rereads and authenticates
+every complete retained incident, requires the incident set and derived safety
+view to match actual execution, and accounts for all root-side and stream-side
+objects together under the original archive ceiling. A new pending guard, orphan
+incident or altered safety projection refuses even an exact contact retry.
+
+The incoming complete contact still verifies its Native signatures, commands and
+stand-alone dependency closure from genesis. Current local evidence cannot fill
+a wire omission. Contact conflict scanning remains over complete original records.
+After full incoming authentication, an exact retained retry checks current local
+guards again and neither appends nor grants an import. A new contact uses the
+original guarded atomic append transaction. This avoids replaying the destination's
+old Native history during contact preflight; it does not skip incoming proof
+execution, incident checks or separate local import and maturity. Historical
+signing cursors retain their full independent Native replay requirements.
