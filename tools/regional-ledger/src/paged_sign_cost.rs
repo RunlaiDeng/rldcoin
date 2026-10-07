@@ -12,6 +12,8 @@ pub(crate) struct Summary {
     pub replay_ns: [u128; 3],
     pub native_record_ns: [u128; 3],
     pub native_records: usize,
+    pub original_key_admission_calls: usize,
+    pub original_key_admission_ns: u128,
     pub original_proposal_checks: usize,
     pub full_proposal_proofs: usize,
     pub reused_proposal_proofs: usize,
@@ -24,7 +26,7 @@ pub(crate) struct Summary {
 thread_local! {
     static COST: RefCell<Summary> = const { RefCell::new(Summary {
         phases_ns: [0; 5], preflight_ns: [0; 3], publication_ns: [0; 3], append_ns: [0; 3],
-        native_record_ns: [0; 3], native_records: 0, original_proposal_checks: 0, full_proposal_proofs: 0, reused_proposal_proofs: 0, repeated_exact_proposal_checks: 0, active_evidence_serialized_bytes: 0,
+        native_record_ns: [0; 3], native_records: 0, original_key_admission_calls: 0, original_key_admission_ns: 0, original_proposal_checks: 0, full_proposal_proofs: 0, reused_proposal_proofs: 0, repeated_exact_proposal_checks: 0, active_evidence_serialized_bytes: 0,
         replay_ns: [0; 3], completed_old_records: 0, completed_stream_appends: 0, completed_new_signatures: 0,
     }) };
     static REPLAY_ACTIVE: Cell<bool> = const { Cell::new(false) };
@@ -218,6 +220,17 @@ pub(crate) fn note_proposal_proof(full: bool) {
             let mut cost = cost.borrow_mut();
             cost.full_proposal_proofs += usize::from(full);
             cost.reused_proposal_proofs += usize::from(!full);
+        });
+    }
+}
+
+/// Observe the unchanged Core material predicate only inside original preflight.
+pub(crate) fn note_original_key_admission(ns: u128) {
+    if REPLAY_ACTIVE.with(Cell::get) {
+        COST.with(|cost| {
+            let mut cost = cost.borrow_mut();
+            cost.original_key_admission_calls += 1;
+            cost.original_key_admission_ns += ns;
         });
     }
 }

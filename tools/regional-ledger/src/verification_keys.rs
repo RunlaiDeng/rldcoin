@@ -41,6 +41,8 @@ impl Keys {
     }
 }
 fn validated_material(canonical: &str, keys: &Mutex<Keys>) -> Result<VerifyingKey, String> {
+    #[cfg(test)]
+    cost::request();
     if let Ok(mut keys) = keys.lock() {
         if let Some(key) = keys.lookup(canonical) {
             #[cfg(test)]
@@ -52,7 +54,12 @@ fn validated_material(canonical: &str, keys: &Mutex<Keys>) -> Result<VerifyingKe
     // cannot hit an exact canonical entry or initialize material retention.
     #[cfg(test)]
     cost::validate();
-    rld_core::validate_ed25519_public_key(canonical)?;
+    #[cfg(test)]
+    let at = std::time::Instant::now();
+    let checked = rld_core::validate_ed25519_public_key(canonical);
+    #[cfg(test)]
+    crate::bft::sign_cost::note_original_key_admission(at.elapsed().as_nanos());
+    checked?;
     let public: [u8; 32] = hex::decode(canonical)
         .map_err(|error| error.to_string())?
         .try_into()
@@ -81,6 +88,11 @@ fn verify_using(
     key.verify_strict(bytes, &Signature::from_bytes(&raw))
         .map_err(|error| error.to_string())
 }
+pub(crate) fn validate_ed25519_public_key(public: &str) -> Result<(), String> {
+    #[cfg(test)]
+    cost::admission();
+    validated_material(public, &KEYS).map(|_| ())
+}
 pub(crate) fn verify_bytes(public: &str, bytes: &[u8], signature: &str) -> Result<(), String> {
     verify_using(&KEYS, public, bytes, signature)
 }
@@ -91,13 +103,21 @@ pub(crate) mod cost {
     #[derive(Default)]
     pub(crate) struct Cost {
         pub material_hits: usize,
+        pub material_requests: usize,
+        pub key_admission_requests: usize,
         pub material_validations: usize,
         pub strict_attempts: usize,
     }
     thread_local! {
         static COST: RefCell<Cost> = const { RefCell::new(Cost {
-            material_hits: 0, material_validations: 0, strict_attempts: 0,
+            material_hits: 0, material_requests: 0, key_admission_requests: 0, material_validations: 0, strict_attempts: 0,
         }) };
+    }
+    pub(super) fn request() {
+        COST.with(|cost| cost.borrow_mut().material_requests += 1);
+    }
+    pub(super) fn admission() {
+        COST.with(|cost| cost.borrow_mut().key_admission_requests += 1);
     }
     pub(super) fn hit() {
         COST.with(|cost| cost.borrow_mut().material_hits += 1);
@@ -207,5 +227,67 @@ mod tests {
             );
         }
         assert!(keys.lock().err().unwrap().into_inner().entries.is_empty());
+    }
+    #[test]
+    fn admission_material_matches_core_after_warm_signature_eviction_and_poison() {
+        let keys = Mutex::new(Keys::default());
+        let (public, signature) = pair(95, b"original");
+        verify_using(&keys, &public, b"original", &signature).unwrap();
+        for _ in 0..2 {
+            for value in [
+                public.clone(),
+                public.to_uppercase(),
+                "00".repeat(32),
+                format!("01{}", "00".repeat(31)),
+                format!("ed{}7f", "ff".repeat(30)),
+                "ff".repeat(32),
+                "zz".repeat(32),
+                "00".into(),
+                "9599999999999999999999999999999999999999999999999999999999999999".into(),
+            ] {
+                assert_eq!(
+                    validated_material(&value, &keys).map(|_| ()),
+                    rld_core::validate_ed25519_public_key(&value)
+                );
+                assert_eq!(keys.lock().unwrap().entries.len(), 1);
+            }
+        }
+        assert!(rld_core::validate_ed25519_public_key(
+            "9599999999999999999999999999999999999999999999999999999999999999"
+        )
+        .unwrap_err()
+        .contains("prime-order subgroup"));
+        for seed in 1..=MAX_KEYS as u8 + 1 {
+            let (candidate, _) = pair(seed, b"original");
+            assert_eq!(
+                validated_material(&candidate, &keys).map(|_| ()),
+                rld_core::validate_ed25519_public_key(&candidate)
+            );
+            assert!(keys.lock().unwrap().entries.len() <= MAX_KEYS);
+        }
+        assert!(keys.lock().unwrap().lookup(&public).is_none());
+        assert_eq!(
+            validated_material(&public, &keys).map(|_| ()),
+            rld_core::validate_ed25519_public_key(&public)
+        );
+        assert_eq!(
+            verify_using(&keys, &public, b"changed", &signature),
+            rld_core::verify_bytes(&public, b"changed", &signature)
+        );
+        let _ = std::panic::catch_unwind(|| {
+            let _guard = keys.lock().unwrap();
+            panic!("fresh public material mutex poison");
+        });
+        for value in [
+            public,
+            "9599999999999999999999999999999999999999999999999999999999999999".into(),
+            "zz".into(),
+        ] {
+            assert_eq!(
+                validated_material(&value, &keys).map(|_| ()),
+                rld_core::validate_ed25519_public_key(&value)
+            );
+        }
+        assert!(keys.is_poisoned());
     }
 }

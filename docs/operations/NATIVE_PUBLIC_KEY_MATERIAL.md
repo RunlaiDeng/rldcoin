@@ -5,7 +5,11 @@ public keys and their parsed verification material in one shared process cache.
 Only the unchanged Core canonical encoding, curve point, weak-key and prime-order
 subgroup checks may initialize an entry. Cache lookup compares the entire
 canonical lowercase public key. Uppercase or otherwise altered encodings cannot
-reuse a validated entry. Admission still invokes the original Core validator.
+reuse a validated entry. Native key-material admission and message verification
+share these entries. Each material miss invokes the original Core validator;
+a hit returns the same fixed-suite material predicate result. Currency identity,
+implementation, rules, validator membership, role, epoch and purpose are still
+checked independently at every original authorization boundary.
 
 Every received or retained message independently runs the same strict Ed25519
 signature verification over its complete signing bytes. Signature bytes, message
@@ -27,7 +31,10 @@ process memory or transient verifier allocations.
 
 The source unit cases compare exact results with the original Core verifier
 for warm valid messages, changed messages, wrong signatures, malformed signatures,
-noncanonical and small-order keys, eviction and poisoned retention. Test signing
+noncanonical, small-order and mixed-order keys, eviction and poisoned retention.
+Key-material predicate cases also compare exact success and error results with
+the original Core validator after warm signature verification, eviction and
+poisoning. A changed message still requires its own strict verification. Test signing
 seeds are public no-value verification vectors. The ordinary signed Native
 fixture observes material reuse while still counting actual strict verification
 attempts, then independently replays Native and complete signer/wallet journals

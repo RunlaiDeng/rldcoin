@@ -82,12 +82,21 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
     let material = crate::verification_keys::cost::take();
     assert!(material.material_hits > 90 && material.strict_attempts > 90);
     assert_eq!(
-        material.strict_attempts,
+        material.material_requests,
         material.material_hits + material.material_validations
     );
     assert_eq!(cost.completed_new_signatures, 90);
     let total_ns: u128 = cost.phases_ns.iter().sum();
     assert!(total_ns > 0);
+    assert!(material.key_admission_requests > 90);
+    assert_eq!(
+        material.material_requests,
+        material.strict_attempts + material.key_admission_requests
+    );
+    // The original Core predicate still runs on misses; this exact fresh
+    // fixture already admitted every replay key before preflight begins.
+    assert_eq!(cost.original_key_admission_calls, 0);
+    assert_eq!(cost.original_key_admission_ns, 0);
     let preflight_ns: u128 = cost.preflight_ns.iter().sum();
     assert!(preflight_ns > 0 && preflight_ns <= cost.phases_ns[0]);
     let publication_ns: u128 = cost.publication_ns.iter().sum();
@@ -165,6 +174,7 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
             "public_key_material_full_validations":material.material_validations,
             "actual_strict_message_verification_attempts":material.strict_attempts,
             "heights":10,"actual_signatures":cost.completed_new_signatures,
+            "Core_key_material_requests_admission_first_replay_misses_seconds":(material.material_requests,material.key_admission_requests,cost.original_key_admission_calls,cost.original_key_admission_ns as f64/1e9),
             "actual_full_nested_proposal_proofs":cost.full_proposal_proofs,
             "actual_reused_nested_proposal_proofs_this_invocation":cost.reused_proposal_proofs,
             "actual_original_proposal_checks":cost.original_proposal_checks,
