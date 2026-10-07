@@ -497,6 +497,41 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
     pub(crate) fn retained_usage_candidate(&self) -> Result<(usize, u64)> {
         usage(&self.dir)
     }
+    /// Byte identity under the held lock only. A Native caller may reuse its
+    /// own fully executed process state only after a prior whole Native replay.
+    /// This check never decodes a ledger or authenticates new record semantics.
+    pub(crate) fn require_unchanged_candidate(
+        &self,
+        scope: &Scope,
+        head: Hash,
+        manifest: &history::Reference,
+    ) -> Result<()> {
+        self.require_scope(scope)?;
+        require(
+            !exists(&self.dir.join(MARKER))?,
+            "incomplete packed archive; retain original residue",
+        )?;
+        usage(&self.dir)?;
+        require(
+            self.manifest.head == head
+                && self.manifest_reference_candidate()? == *manifest
+                && *keystore::private_read(&self.dir.join(MANIFEST), MAX_BYTES)?
+                    == bytes(&self.manifest)?,
+            "held packed archive current manifest differs",
+        )?;
+        for reference in &self.manifest.packs {
+            let raw = keystore::private_read(
+                &self.dir.join(OBJECTS).join(name(reference.hash)),
+                MAX_BYTES,
+            )?;
+            require(
+                raw.len() == reference.bytes
+                    && Hash(sha2::Sha256::digest(&*raw).into()) == reference.hash,
+                "held packed archive complete object differs",
+            )?;
+        }
+        Ok(())
+    }
 }
 
 #[cfg(test)]

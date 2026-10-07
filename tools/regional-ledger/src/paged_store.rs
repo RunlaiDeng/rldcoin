@@ -53,6 +53,7 @@ impl Record {
         })
     }
 }
+#[derive(Clone)]
 struct Replay {
     trust: Trust,
     chain: Chain,

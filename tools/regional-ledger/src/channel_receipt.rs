@@ -261,7 +261,7 @@ impl Receipt {
         Ok(())
     }
 }
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(crate) struct Replay {
     accepted: BTreeMap<Hash, Receipt>,
     invoices: BTreeSet<Hash>,

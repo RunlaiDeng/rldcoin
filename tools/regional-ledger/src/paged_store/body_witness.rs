@@ -16,7 +16,7 @@ impl History for Stream<Record> {
     }
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(super) struct Bodies {
     values: BTreeMap<Hash, Hash>,
     order: VecDeque<Hash>,
@@ -46,6 +46,7 @@ impl Bodies {
     }
 }
 
+#[derive(Clone)]
 pub(super) struct ExecutedPrefix {
     pub(super) scope: Scope,
     count: u64,

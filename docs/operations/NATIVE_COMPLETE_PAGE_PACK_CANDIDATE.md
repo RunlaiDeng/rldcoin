@@ -245,8 +245,11 @@ Native boundary. Verification executes prefix then tail from genesis, checking
 both the prefix boundary and ending boundary before returning. A tail hash is
 not a Native predecessor or an independent freshness witness.
 
-`append_certified` authenticates the complete current prefix/tail and executes
-the supplied complete certificate through the existing Native kernel. It uses
+`append_certified` requires exact caller-current anchors and unchanged complete
+prefix/tail bytes. It executes the supplied complete certificate through the
+existing Native kernel on a staged clone of this process's actually verified
+Native execution. That state originates only in full genesis replay and successful
+prior durable appends; no decoded cache or peer-selected ledger initializes it. It uses
 the original stream's durable pending/page/manifest transaction. Only successful
 publication returns new caller anchors. A persistence failure makes the handle
 unusable, and pending targets refuse cold open and recreation. Signature or
@@ -258,8 +261,17 @@ not each receive another allowance. Every retained object remains bounded by
 8 MiB. Complete incident proofs, normal Store metadata and signer/caller custody
 are not part of this entry; nonempty incident identifiers refuse.
 
-This first continuation interface replays the complete history for each append.
-It provides a correctness baseline, not a qualified large-node service budget.
-Persistent process-local Native execution, continuation rotation, general event
-interfaces, complete incident integration and ordinary-node/signing/recovery
-adoption remain distinct work. No old private archive is converted or resumed.
+The live handle retains only process-local Native execution. Opening and
+inspection still execute the complete source from pinned genesis. Before a live
+append, every encoded prefix object's digest and length must match the complete
+references already verified in this invocation; the canonical manifest must be
+unchanged. Tail structure, bytes and current head verify through the original
+stream. A hash check alone cannot create Native state or authenticate new
+semantics. All new signatures and carried block commands still execute natively.
+The staged Native state and executed-prefix commitment replace the committed
+process state only after durable tail publication. Failed semantics or persistence
+cannot advance it. This avoids repeating historical Native execution for each new
+record while retaining full source byte checks; total I/O still grows with storage.
+Continuation rotation, general event interfaces, complete incident integration,
+large live-node service costs and ordinary-node/signing/recovery adoption remain
+distinct work. No old private archive is converted or resumed.

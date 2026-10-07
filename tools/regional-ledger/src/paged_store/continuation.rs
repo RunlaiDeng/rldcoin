@@ -107,8 +107,9 @@ fn tail_scope(header: &Header, trust: &Trust, prefix: &NativePrefixPinsCandidate
 }
 
 /// Locked no-value candidate persistence, preserving every prefix and tail
-/// record. Every entry reconstructs Native state from signed genesis; no hot
-/// cache, wallet, signature-lock or normal node entry adopts it implicitly.
+/// record. Open and inspection reconstruct Native state from signed genesis. Live
+/// appends stage only this process's actually executed Native state; no
+/// deserialized cache, wallet, signature lock or normal node adopts it implicitly.
 pub struct NativeContinuationCandidate {
     header: Header,
     authority: String,
@@ -118,6 +119,8 @@ pub struct NativeContinuationCandidate {
     tail: Stream<Record>,
     scope: Scope,
     healthy: bool,
+    warm: Replay,
+    current: NativeContinuationPinsCandidate,
 }
 impl NativeContinuationCandidate {
     fn prefix(
@@ -205,6 +208,8 @@ impl NativeContinuationCandidate {
                 tail,
                 scope,
                 healthy: true,
+                warm: replay,
+                current: pins.clone(),
             },
             pins,
         ))
@@ -224,7 +229,7 @@ impl NativeContinuationCandidate {
             &tail_scope(&header, &replay.trust, &pins.prefix)?,
             pins.tail_head,
         )?;
-        let result = Self {
+        let mut result = Self {
             header,
             authority: authority.into(),
             pin,
@@ -233,8 +238,10 @@ impl NativeContinuationCandidate {
             tail,
             scope,
             healthy: true,
+            warm: replay,
+            current: pins.clone(),
         };
-        result.replay(pins)?;
+        result.warm = result.replay(pins)?;
         Ok(result)
     }
     fn replay(&self, pins: &NativeContinuationPinsCandidate) -> Result<Replay> {
@@ -284,7 +291,26 @@ impl NativeContinuationCandidate {
         snapshot: &Snapshot,
         independently_current: &NativeContinuationPinsCandidate,
     ) -> Result<NativeContinuationPinsCandidate> {
-        let mut replay = self.replay(independently_current)?;
+        require(
+            self.healthy && *independently_current == self.current,
+            "continuation unhealthy or independently current process boundary differs",
+        )?;
+        self.prefix.require_unchanged_candidate(
+            &self.scope,
+            self.prefix_pins.storage_head,
+            &self.prefix_pins.manifest,
+        )?;
+        self.tail
+            .require_unchanged(independently_current.tail_head)?;
+        capacity(
+            self.prefix.retained_usage_candidate()?,
+            self.tail.retained_usage_candidate()?,
+        )?;
+        require(
+            boundary(&self.warm, self.current.latest.record_count)? == self.current.latest,
+            "continuation actual process Native state differs",
+        )?;
+        let mut replay = self.warm.clone();
         let record = Record::Certified(Box::new(snapshot.clone()));
         require(
             serde_json::to_vec(&record)
@@ -299,7 +325,7 @@ impl NativeContinuationCandidate {
             scope: &self.scope,
             pins: independently_current,
         };
-        replay.apply(&record, &source)?;
+        replay.apply_retained(&record, &source)?;
         let count = independently_current
             .latest
             .record_count
@@ -324,12 +350,15 @@ impl NativeContinuationCandidate {
                 return Err(error);
             }
         };
-        Ok(NativeContinuationPinsCandidate {
+        let result = NativeContinuationPinsCandidate {
             prefix: self.prefix_pins.clone(),
             tail_head,
             complete_head,
             latest,
-        })
+        };
+        self.warm = replay;
+        self.current = result.clone();
+        Ok(result)
     }
     pub fn inspect(
         &self,

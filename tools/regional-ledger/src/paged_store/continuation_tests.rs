@@ -355,3 +355,61 @@ fn aggregate_prefix_orphans_cannot_hide_behind_separate_tail_capacity() {
         .contains("aggregate retained capacity"));
     assert_eq!(inventory(&root), before);
 }
+
+#[test]
+fn signed_qc_bad_carried_body_never_advances_process_state_or_disk() {
+    let (root, h, hot, _flat, prefix) = fixture();
+    let (mut store, pins) = create(&root, &h, &prefix);
+    let next = certified(&hot);
+    let mut bad = next.clone();
+    bad.blocks
+        .last_mut()
+        .unwrap()
+        .commands
+        .push(Command::Import {
+            snapshot: Hash([9; 32]),
+            export: Hash([8; 32]),
+        });
+    // The real original QC authenticates the unchanged headers, not these
+    // altered carried command bytes. Full Native execution must still refuse.
+    crate::conflict::CertifiedHistory::from_snapshot(&bad)
+        .verify(&hot.trust)
+        .unwrap();
+    let before = inventory(&root);
+    assert!(store.append_certified(&bad, &pins).is_err());
+    assert_eq!(inventory(&root), before);
+    assert_eq!(store.inspect(&pins).unwrap(), pins.latest);
+    let updated = store.append_certified(&next, &pins).unwrap();
+    assert_eq!(updated.latest.height, 17);
+    assert_eq!(store.inspect(&updated).unwrap(), updated.latest);
+    // A complete original certificate arriving again changes record count only.
+    let duplicate = store.append_certified(&next, &updated).unwrap();
+    assert_eq!(duplicate.latest.height, 17);
+    assert_eq!(duplicate.latest.record_count, 18);
+    assert_eq!(duplicate.latest.ledger_root, updated.latest.ledger_root);
+    assert_eq!(store.inspect(&duplicate).unwrap(), duplicate.latest);
+}
+#[test]
+fn held_process_state_refuses_any_changed_complete_prefix_object() {
+    let (root, h, hot, _flat, prefix) = fixture();
+    let (mut store, pins) = create(&root, &h, &prefix);
+    let object = fs::read_dir(root.join("prefix/packs"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    let mut raw = fs::read(&object).unwrap();
+    let last = raw.len() - 1;
+    raw[last] ^= 1;
+    fs::write(&object, raw).unwrap();
+    let before = inventory(&root);
+    let next = certified(&hot);
+    assert!(store
+        .append_certified(&next, &pins)
+        .unwrap_err()
+        .contains("complete object differs"));
+    assert_eq!(inventory(&root), before);
+    assert!(store.inspect(&pins).is_err());
+    assert_eq!(inventory(&root), before);
+}
