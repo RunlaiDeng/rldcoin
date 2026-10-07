@@ -13,6 +13,8 @@ for p in (e/'regional-paged-full-fault-hook-v13-20261007-stage.json',e/'regional
 for p in (e/'regional-keyless-stopped-drain-v1-identity-20261007.json',e/'regional-keyless-stopped-drain-driver-source-gate-v1-20261007.json',e/'regional-keyless-stopped-drain-model-v2-20261007.json',e/'regional-keyless-stopped-drain-counter-v1-20261007.json',e/'regional-keyless-stopped-drain-model-v1-20261007.json',e/'regional-keyless-stopped-drain-model-entry-error-20261007.json',e/'regional-paged-full-fault-directory-v14-20261007-checks.json',e/'regional-keyless-drain-directory-v14-readonly-20261007.json',b/'keyless-stopped-drain-source-reversal-v1-20261007.json',b/'keyless-stopped-drain-combined-source-reversal-v1-20261007.json',b/'keyless_stopped_drain_source_bridge_v1.py',b/'regional_paged_fault_driver-before-stopped-drain-v1-20261007.py',b/'test_regional_paged_fault_driver-before-stopped-drain-v1-20261007.py'):
  protected[str(p)]=sha(p)
 protected[str(e/'regional-keyless-stopped-drain-v1-source-binding-20261007.json')]=sha(e/'regional-keyless-stopped-drain-v1-source-binding-20261007.json')
+for p in (e/'regional-keyless-stopped-drain-full-v15-entry-preflight-20261007.json',b/'preflight-keyless-stopped-drain-full-v15-20261007.py'):
+ protected[str(p)]=sha(p)
 def pins(before=False):
  assert all(sha(Path(p))==v for p,v in protected.items()),'bound source/report/freeze changed'
  for p,roots in sealed.items():
