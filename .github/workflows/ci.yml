@@ -20,6 +20,7 @@ jobs:
       - run: python3 -B -m unittest discover -s tools/source-evidence -v
       - run: python3 -B -m unittest discover -s tools/implementation-source -v
       - run: python3 -B -m unittest discover -s tools -p test_pq_authorization_candidate.py -v
+      - run: python3 -B -m unittest discover -s tools -p test_permanent_import_index_candidate.py -v
       - run: python3 -B -m unittest discover -s tools -p test_pq_public_carriage_candidate.py -v
       - run: python3 -B -m unittest discover -s tools -p test_pq_public_archive_candidate.py -v
       - run: python3 -B -m unittest discover -s tools -p test_pq_public_archive_spool_candidate.py -v
