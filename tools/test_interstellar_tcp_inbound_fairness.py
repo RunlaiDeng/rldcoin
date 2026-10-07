@@ -28,6 +28,7 @@ class InboundFairnessTests(unittest.TestCase):
     def setup(self):
         server = tcp.Server.__new__(tcp.Server)
         server.guard = threading.Lock()
+        server.input_wake = threading.Event()
         server.running = True
         server.config = 'synthetic-no-custody'
         server.selection_owner = server.selection_purpose = server.selection_attempt_owner = None

@@ -160,7 +160,8 @@ def read_exact(connection, length, deadline):
     remaining = length
     while remaining:
         available = deadline-time.monotonic()
-        mesh.require(available > 0, 'TCP local attempt deadline reached; retain evidence')
+        if available <= 0:
+            raise TimeoutError('TCP local attempt timed out; retain evidence')
         connection.settimeout(available)
         chunk = connection.recv(min(remaining, 65536))
         mesh.require(bool(chunk), 'incomplete TCP frame; retain evidence')
@@ -182,7 +183,8 @@ def send(connection, value, deadline):
     data = wire.canonical(value)
     mesh.require(0 < len(data) <= MAX_WIRE, 'TCP wire byte bound; retain evidence')
     remaining = deadline-time.monotonic()
-    mesh.require(remaining > 0, 'TCP local attempt deadline reached; retain evidence')
+    if remaining <= 0:
+        raise TimeoutError('TCP local attempt timed out; retain evidence')
     connection.settimeout(remaining)
     connection.sendall(struct.pack('!I',len(data))+data)
 
@@ -499,7 +501,8 @@ class Server:
             acquired=True
             if costs is not None:costs.record(role,'acquire',time.monotonic()-attempt_started,True)
             # Ordinary's bound covers lock attempts, not full validation CPU.
-            if not ordinary:mesh.require(time.monotonic()<deadline,'TCP local attempt deadline reached; retain evidence')
+            if not ordinary and time.monotonic()>=deadline:
+                raise TimeoutError('TCP local attempt timed out; retain evidence')
             yield node
         finally:
             try:

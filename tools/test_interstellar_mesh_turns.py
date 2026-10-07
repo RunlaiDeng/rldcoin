@@ -166,7 +166,7 @@ class MeshTurnTests(unittest.TestCase):
 
     def test_expired_socket_never_gets_custody_and_releases_its_admission(self):
         before=(self.f.root/'earth/mesh-state.json').read_bytes()
-        with self.assertRaisesRegex(ValueError,'deadline'):
+        with self.assertRaisesRegex(TimeoutError,'timed out; retain evidence'):
             with self.server.mesh_node(time.monotonic()-1):self.fail('expired socket admitted')
         self.assertIsNone(self.server.local_mesh_owner);self.assertEqual(self.server.tcp_mesh_waiters,set())
         self.assertEqual((self.f.root/'earth/mesh-state.json').read_bytes(),before)
