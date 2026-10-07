@@ -1,5 +1,15 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 连续主线：实际混合TLS政策观察；继续Core公开信封与运输组合
+
+Core277/严格有限资格见下文，不转授Native/PQ采用。现有Python3.14.7/OpenSSL3.6.3接口实际拒X25519MLKEM768，且无negotiated-group getter；只读源码与官方API定位为NID/接口缺口，不能由TLS版本/pin推断混合交换。
+
+新增独立loopback C候选直接拥有SSL对象，用受支持SSL_CTX_set1_groups_list/SSL_get0_group_name：固定TLS1.3/X25519MLKEM768/mldsa87/AES256GCM_SHA384、互相精确认证peer证书及pin/算法/有效期/自签，拒resume/ticket；唯一绝对3秒deadline，确认前不交换任何公开marker。现有Node/TCP默认/Native/Core1814070549a未改。真实一正及经典KEX/认证/TLS版本/缺clientcert/错pin共六观察，不能据此授予value、Native或物理资格。
+
+V1 **FAIL0.222197**（系统SDK头未显式提供，零key/socket）；只加官方xcrun SDK编译路径。V2 **FAIL3.242761**（缺证CLI提前EOF返回0，错误退出码oracle），四已完成实际观察复用，未将其完整范围改PASS。V3生成语法preflight在写/执行前拒，0calls/保守计0.05。只修改CLI采集ignoreEOF、仅剩两项用全新证书目录与原不变实际binary检查：**V3 PASS1.630681，原60累计5.145639**。旧全部FAIL/私有fixture/keys封存未重开。source **6745b86c17f976cb2c13dbcf9b56e187f99bc044e39ef8e8a4fae2c7bd9db174**；binary **4be58419db8619d82f7c3263e513479101343882cbd1337c646a1901cd41a0eb**、实际库/全部OpenSSL headers/SDK/controller绑定。
+
+[有限跨阶段观察profile](operations/evidence/pq-tls-native-reference-v1-observation-profile-20261007.json)、[仅剩两项真实拒绝](operations/evidence/pq-tls-native-v3-20261007-checks.json)、[源码/全部失败](operations/fixtures/pq-tls-native-v1-20261007/README.md)。不是单次六项stage PASS、完整FIPS203、独立审查、采用或既有Node运输接入。下一可证伪目标：公开hybrid授权信封通过同类本地PQTLS完整送达后，实际Core仍须验证双签；坏内层即使运输认证成功也拒绝。先补有界公开payload IPC，不变TLS认证/原阈值/冻结白皮书与官网；不重跑无变化长测，继续唯一作者主线。
+
 ## 2026-10-07 当前串行主线：Core混合双签/四签续证及有界入口完成有限验收；继续运输策略缺口
 
 仍采用冻结正文 **2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b**、PDF **c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14**、receipt **86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965**与全部 **S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8**；正文/PDF/官网未改，所有旧失败保留。

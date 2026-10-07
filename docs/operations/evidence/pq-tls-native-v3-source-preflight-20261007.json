@@ -1,0 +1,10 @@
+{
+  "format": "RLD-PQ-TLS-SOURCE-PREFLIGHT-V3",
+  "completed": false,
+  "error": "SyntaxError in generator-inserted hypothesis apostrophe, caught before file write or execution",
+  "controller_generated": false,
+  "controller_executed": false,
+  "key_sign_socket_calls": 0,
+  "conservative_budget_charge_seconds": 0.05,
+  "original_budget_seconds": 60
+}

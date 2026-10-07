@@ -1,0 +1,74 @@
+{
+  "format": "RLD-PQ-TLS-REFERENCE-OBSERVATIONS-V1",
+  "recorded_at_utc": "2026-10-07T06:25:38.495348+00:00",
+  "scope": "Loopback native negotiation-policy candidate only; six source-bound observations across V2 FAIL and V3 remaining-two PASS",
+  "source_sha256": "6745b86c17f976cb2c13dbcf9b56e187f99bc044e39ef8e8a4fae2c7bd9db174",
+  "actual_binary": {
+    "path": "tmp/default-relay-20260930/pq-tls-native-v2-20261007-binary",
+    "sha256": "4be58419db8619d82f7c3263e513479101343882cbd1337c646a1901cd41a0eb",
+    "bytes": 38208,
+    "source_commitment_embedded": true
+  },
+  "core_source": "4070549af45f5a03c454da30bd15443db41a9f619ab1f0c6941f23e4f9a3d319",
+  "openssl_binary_sha256": "103fc7706cf6646f226d96f29242d81890363499afc730e7ef1fadd64b3a123c",
+  "budget_seconds": 60,
+  "cumulative_seconds": 5.145639,
+  "cases": [
+    {
+      "origin": "V2_FAILED_STAGE_PARTIAL_OBSERVATION",
+      "case": "genuine-mutual-hybrid",
+      "client_exit": 0,
+      "server_exit": 0,
+      "application_marker_accepted": true,
+      "loopback_port": 58629
+    },
+    {
+      "origin": "V2_FAILED_STAGE_PARTIAL_OBSERVATION",
+      "case": "classical-group",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58631
+    },
+    {
+      "origin": "V2_FAILED_STAGE_PARTIAL_OBSERVATION",
+      "case": "classical-auth",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58633
+    },
+    {
+      "origin": "V2_FAILED_STAGE_PARTIAL_OBSERVATION",
+      "case": "TLS1.2",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58635
+    },
+    {
+      "origin": "V3_REMAINING_TWO_PASSED",
+      "case": "missing-client-cert",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58732
+    },
+    {
+      "origin": "V3_REMAINING_TWO_PASSED",
+      "case": "wrong-server-pin",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58734
+    }
+  ],
+  "whole_six_case_single_stage_passed": false,
+  "old_failures_retained": true,
+  "existing_node_integration": false,
+  "full_FIPS203_KAT": false,
+  "independent_security_review": false,
+  "adopted_transport": false,
+  "physical": false,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,256 @@
+{
+  "format": "RLD-PQ-TLS-NATIVE-V3",
+  "completed": true,
+  "duration_seconds": 1.630681,
+  "previous_used_seconds": 3.514958,
+  "cumulative_seconds": 5.145639,
+  "budget_seconds": 60,
+  "attempts": 1,
+  "error": null,
+  "budget_exhausted": false,
+  "results": [
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-key.pem"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.121432
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "req",
+        "-new",
+        "-x509",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-key.pem",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.pem",
+        "-days",
+        "90",
+        "-subj",
+        "/CN=RLD-PQ-TLS-CANDIDATE-server",
+        "-addext",
+        "basicConstraints=critical,CA:FALSE",
+        "-addext",
+        "keyUsage=critical,digitalSignature",
+        "-addext",
+        "extendedKeyUsage=serverAuth,clientAuth",
+        "-addext",
+        "subjectAltName=IP:127.0.0.1",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.126687
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "x509",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.pem",
+        "-outform",
+        "DER",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.der"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.130497
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-key.pem"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.137864
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "req",
+        "-new",
+        "-x509",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-key.pem",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-cert.pem",
+        "-days",
+        "90",
+        "-subj",
+        "/CN=RLD-PQ-TLS-CANDIDATE-client",
+        "-addext",
+        "basicConstraints=critical,CA:FALSE",
+        "-addext",
+        "keyUsage=critical,digitalSignature",
+        "-addext",
+        "extendedKeyUsage=serverAuth,clientAuth",
+        "-addext",
+        "subjectAltName=IP:127.0.0.1",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.122094
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "x509",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-cert.pem",
+        "-outform",
+        "DER",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-cert.der"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.125685
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "s_client",
+        "-connect",
+        "127.0.0.1:58732",
+        "-brief",
+        "-ign_eof",
+        "-verify_return_error",
+        "-CAfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.pem",
+        "-groups",
+        "X25519MLKEM768",
+        "-sigalgs",
+        "mldsa87",
+        "-tls1_3",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.117131
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v2-20261007-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-cert.pem",
+        "e8411dff2bd8aa12f6d01db3c09b956f17ba74b5640f8a483c119527726bdc37"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.125628
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v2-20261007-binary",
+        "client",
+        "58734",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.pem",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.113362
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v2-20261007-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-tls-native-v3-20261007-private/client-cert.pem",
+        "e8411dff2bd8aa12f6d01db3c09b956f17ba74b5640f8a483c119527726bdc37"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.124032
+    }
+  ],
+  "cases": [
+    {
+      "case": "missing-client-cert",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58732
+    },
+    {
+      "case": "wrong-server-pin",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58734
+    }
+  ],
+  "owned_processes_stopped": true,
+  "controller_sha256": "65c4be69d3ea36a0057d273440d725b1c36a5721af8bfed29a4c2b7ff86331cf",
+  "stage_sha256": "01f6c1fe8fe0e7fe80eaf1a991c674f0de5a2c1a598b63723b2968ec52745c67",
+  "log_sha256": "25ee4bba1b662bb425c07963b49b5e943b7bff2bfc284535ba39d0f84cf79d4c",
+  "source_sha256": "6745b86c17f976cb2c13dbcf9b56e187f99bc044e39ef8e8a4fae2c7bd9db174",
+  "actual_binary_sha256": "4be58419db8619d82f7c3263e513479101343882cbd1337c646a1901cd41a0eb",
+  "openssl_binary_sha256": "103fc7706cf6646f226d96f29242d81890363499afc730e7ef1fadd64b3a123c",
+  "private_inventory_sha256": "bd4f9d018570e6cdbf0857b8324133d7fcd3e9659ac81968420d0bd8feffc2ff",
+  "private_file_count": 6,
+  "core_source": "4070549af45f5a03c454da30bd15443db41a9f619ab1f0c6941f23e4f9a3d319",
+  "pin_error": null,
+  "core_source_unchanged": true,
+  "existing_tcp_source_unchanged": true,
+  "native_Node_Runtime_calls": 0,
+  "loopback_only": true,
+  "remaining_two_rejections_verified": true,
+  "hybrid_group_negotiated_in_prior_source_bound_case": true,
+  "MLDSA87_mutual_peer_authentication_in_prior_source_bound_case": true,
+  "prior_partial_cases_reused": [
+    {
+      "case": "genuine-mutual-hybrid",
+      "client_exit": 0,
+      "server_exit": 0,
+      "application_marker_accepted": true,
+      "loopback_port": 58629
+    },
+    {
+      "case": "classical-group",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58631
+    },
+    {
+      "case": "classical-auth",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58633
+    },
+    {
+      "case": "TLS1.2",
+      "client_exit": 1,
+      "server_exit": 1,
+      "application_marker_accepted": false,
+      "loopback_port": 58635
+    }
+  ],
+  "whole_six_case_single_stage_passed": false,
+  "independent_security_review": false,
+  "existing_node_transport_integration": false,
+  "physical_link": false,
+  "adopted_profile": false,
+  "whole_goal_completed": false
+}
