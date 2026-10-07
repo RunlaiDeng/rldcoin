@@ -833,6 +833,10 @@ class Server:
                         trace_rows=trace.packet_rows(prepared)
                         trace.packets('outgoing_prepared',peer,trace_rows,attempt=count)
                         trace.event('contact_start',peer,attempt=count)
+                    # Complete preparation stays atomic; a received stop must
+                    # not start another connection or discard its retry custody.
+                    if not self.running:
+                        raise MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
                     failure_stage='connect'
                     # No mesh lock is held across connect/write/read.
                     deadline=time.monotonic()+ATTEMPT_SECONDS
