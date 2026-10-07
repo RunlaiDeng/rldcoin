@@ -979,9 +979,14 @@ class Runtime:
         # even in read-only/keyless mode; only Rust authorizes the state change.
         for certified_round in range(32):
             for proposal,value in self.signed(context,certified_round,'Proposal'):
-                prepared=self.quorum(context,certified_round,'Prepare',value)
+                # Incomplete Commit cannot finalize. Avoid aggregating Prepare
+                # here only to aggregate it again for the signing phase below.
+                # Complete pairs still require both original Native checks.
                 committed=self.quorum(context,certified_round,'Commit',value)
-                if prepared is not None and committed is not None:
+                if committed is None:
+                    continue
+                prepared=self.quorum(context,certified_round,'Prepare',value)
+                if prepared is not None:
                     certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
                     self.with_json('finalize',certificate)
                     self.retain(self.envelope({'Finalized':certificate}),sync=False,local=True)

@@ -114,7 +114,9 @@ class CombinedCandidateTests(unittest.TestCase):
         f = Fixture(); f.proposal(0,variants=4); f.votes(0,'Prepare',3)
         observations = [f.tick()]
         self.assertEqual(f.requests,[dict(kind='Prepare',round=0),dict(kind='Commit',round=0)])
-        self.assertEqual(f.counts['bft-quorum'],5)
+        # Duplicate proof variants cannot finalize without Commit quorum.
+        # Prepare aggregation remains exactly once for the signing request.
+        self.assertEqual(f.counts['bft-quorum'],1)
         self.assertTrue(all(q['signers']==3 for q in f.qc_calls))
         f.capture(self._testMethodName,observations)
 
