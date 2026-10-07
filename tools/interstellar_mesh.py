@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V31'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V32'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1332,13 +1332,15 @@ class Node:
         # Keep same-frame recipient rotation separate from the ordinary ring.
         # Capture only primitive positions before group initialization can evict
         # them. They select carriage; each original packet still authenticates.
-        current_classes={};current_positions={};frame_positions={}
+        current_classes={};current_positions={};frame_positions={};current_origin=None
         if hint is not None:
             frames=set(hint[1]);recent=set(self.state['recent_transits'])
             current_classes={ident:(ident in recent,t['routing']['body']['frame_id'])
                              for ident,t in self.state['messages'].items()
                              if t['routing']['body']['frame_id'] in frames}
             domain=self.carriage_position_domain()
+            if (self.state['transit_class_steps'][peer]//4)%2==0:
+                current_origin=carriage_position((domain,peer,'native-current-origin',hint[0]))
             for kind,frame in sorted(set(current_classes.values())):
                 current_positions[(kind,frame)]=carriage_position(
                     (domain,peer,'native-current-copy',hint[0],kind,frame))
@@ -1354,7 +1356,8 @@ class Node:
                 frame_positions[kind]=carriage_position(
                     (domain,peer,'native-current-frame',hint[0],hint[1],kind))
             if current_carriage is not None:
-                current_carriage.update(scope=hint[0],frame_set=hint[1],classes=current_classes)
+                current_carriage.update(scope=hint[0],frame_set=hint[1],classes=current_classes,
+                    newest=(self.state['transit_class_steps'][peer]//4)%2==0)
         pending=self.transit_groups(peer) if len(transits)<MAX_PACKET_BATCH else []
         selected_ids={digest(t['packet']) for t in transits}
         # Alternate priority pairs between newest and oldest unprepared arrival
@@ -1400,15 +1403,17 @@ class Node:
                 start=bisect_right(ordered,after)%len(ordered)
                 rotated=[i for frame in ordered[start:]+ordered[:start] for i in by_frame[frame]]
                 for j,i in zip(positions,rotated):commits[j]=i
-            # The newest priority pair serves a retained forwarded current frame
-            # before a locally originated one. This preserves order within each
-            # group and the oldest pair's existing failed-send selection.
+            # Start a cold newest pair with forwarded current carriage. After
+            # actually preparing one origin, offer the other on the next newest
+            # pair in this exact context. Retained failed sends stay eligible;
+            # neither origin monopolizes these existing spare slots. Preserve
+            # within-origin order and the oldest failed-send selection.
             if (self.state['transit_class_steps'][peer]//4)%2==0:
                 forwarded=[i for i in commits
                            if self.state['messages'][i]['packet']['body']['node_id']!=self.id]
                 local=[i for i in commits
                        if self.state['messages'][i]['packet']['body']['node_id']==self.id]
-                commits=forwarded+local
+                commits=local+forwarded if current_origin is False else forwarded+local
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]
@@ -1517,6 +1522,11 @@ class Node:
                     remember_carriage_position((domain,peer,'native-current-frame',
                                                current_carriage['scope'],
                                                current_carriage['frame_set'],group[0]),group[1])
+            if current_carriage['newest']:
+                for transit in ordinary:
+                    if digest(transit['packet']) in current_carriage['classes']:
+                        remember_carriage_position((domain,peer,'native-current-origin',
+                            current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
         return bundle
 
     def tick(self):

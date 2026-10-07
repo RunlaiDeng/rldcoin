@@ -1999,3 +1999,7 @@ V45 **FAIL原180/193.453含收尾/1774封存**，四CLI正常exit0、helper1 Sco
 ### V46终态与同context本地/转发竞争
 
 V46仍FAIL原180/196.377含收尾/1817封存，四CLI正常exit0；成熟15/full8Nativecold/全信封/heads/守恒未完成。21实际目的边14完整/7缺失，三个Commit真实签名同context/value；签名不代表全部已入队或送达。准确Proposal2→1已入队且路由eligible，始终未prepare；newest56/64再次选转发Prepare3→1/0，本地Proposal仍等候。source0Commit接近终止签名成功但无已收集enqueue，仍unknown，不据有损ring称未调用或唯一成熟原因。下一一次原10/remaining related60真实签名小反例，判别同context转发首服务后下一newest本地未服务是否被重复转发压住；不动oldest/first2/floor/full4/auth/atomic/容量/冷读。原18TLS回归保持，旧完整失败及冻结全部标准不变；原20结构化成功读累计1.880529，首失败reader耗时未计量另列。
+
+### V32当前origin轮转；V47原范围运行
+
+真实同context转发/本地竞争oldV31反例FAIL .568134/14封存。MeshV32仅原newest current spare在实际原子prepare后记同peer/context primitive origin，下一newest让另一类先服务；cold/miss保持转发先，oldest/first2/另一类floor/full4/512/4MiB/20MiB/auth/atomic/冷读不变。14相关PASS4.845044/198封存，原related60累计44.161948；原ordinary第14项完整签名送达/清witness冷读复用未另跑。该报告TCP字段3.451646是历史继承，当前原TCP60仍9.533389、不重置。binder v1 nullable route预检ERROR发生在分配前留存，v2来源453 PASS1.126351。Python192 `271378c1a9b0cc333cdec417412b1d96115854a1f9f4c12b7e5036b9b1693242`，Native89/Core171/实际CLI/TCP/BFT不变。V47唯一原180/一次于2026-10-07T00:58:41.483933Z启动，原17setup/13import/15mature/全8Nativecold/每个完整信封/heads/守恒/normalstop及whole<=180保持。V46及所有旧scope仍FAIL；无新增600或旧fixture恢复，冻结全部验收/长期/PQ/物理/独立/组合及VALUE-STRICT-01不变。goal旧hash/blocked与持久cwd仍界面待修，不阻断明确workdir下已授权开发。

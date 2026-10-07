@@ -1,0 +1,42 @@
+{
+  "status": "RUNNING_ORIGINAL180",
+  "source192_commitment": "271378c1a9b0cc333cdec417412b1d96115854a1f9f4c12b7e5036b9b1693242",
+  "minimal_fix": "Only existing newest current spare alternates forwarded and local origin after durable actual spare; cold scoped primitive miss uses original forwarded-first; oldest and complete native authority methods unchanged.",
+  "baseline_FAIL_seconds": 0.568134,
+  "baseline_sealed_files": 14,
+  "related_PASS_tests": 14,
+  "related_seconds": 4.845044,
+  "related_sealed_files": 198,
+  "original_related60_cumulative_seconds": 44.161948,
+  "original_TCP60_cumulative_seconds": 9.533389,
+  "related_report_TCP_prior_field_3_451646_is_historical_not_current": true,
+  "binder_v1_nullable_route_error_before_identity_or_allocation": true,
+  "binder_v2_PASS_seconds": 1.126351,
+  "Native89_Core171_actualCLI_unchanged": true,
+  "original_scope": {
+    "version": 47,
+    "budget_seconds": 180,
+    "attempts": 1,
+    "setup17": true,
+    "import13": true,
+    "maturity15": true,
+    "all8_fullNativecold": true,
+    "every_envelope_heads_conservation_normal_stop_and_whole180_required": true
+  },
+  "launch": {
+    "recorded_at_utc": "2026-10-07T00:58:41.483933+00:00",
+    "owned_controller_pid": 37209,
+    "controller_sha256": "b511ab98da7069e5ba9ec6052499a7dde67eee3acef5f87b26a2cd87c9a94c34",
+    "launcher_sha256": "f6a02d04e38236ce87c93c071a25e64be267e91bde5f21473fe4867b4eeadbbb",
+    "decision_sha256": "668b47b719d178d24e9d4b676203c2b84ad9162f2e5a8b47e0ddaca51b98018e",
+    "workdir": "/Users/galaxy/GitHub/rldcoin",
+    "original_budget_seconds": 180,
+    "attempts": 1,
+    "finite_original_controller_detached_from_interactive_session": true,
+    "no_new_task_or_permission_change": true
+  },
+  "all_old_failures_still_FAIL": true,
+  "new600": 0,
+  "whitepaper_website_unchanged": true,
+  "goal_old_hashes_blocked_and_persistent_cwd_UI_pending_not_execution_approval_gate": true
+}
