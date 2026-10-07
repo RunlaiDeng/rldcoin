@@ -27,11 +27,11 @@ from regional_fixture_transport_contract import verify_original_limits
 from regional_paged_fault_launch import PHASES, SLOTS
 from regional_paged_fault_prepared import Bound
 from regional_paged_fault_scope import REGIONS, RULES, digest, document, inventory, raw, require, safe
-from verify_regional_bft_stopped_batch import verify_stopped_state_pinned
+from verify_regional_bft_stopped_batch import verify_stopped_state_pinned_observed
 
 CAPS = dict(earth=27, proxima=24, andromeda=24)
 READS = frozenset(('status', 'proof', 'bft-context', 'wallet-receipt', 'wallet-view',
-    'history-head', 'history-check', 'bft-status', 'bft-retained-messages', 'bft-network-check-plan'))
+    'history-head', 'history-check', 'bft-status', 'bft-retained-messages', 'bft-network-check-plan', 'bft-network-check-plan-observed'))
 WRITES = frozenset(('wallet-sign', 'bft-submit'))
 
 
@@ -491,12 +491,12 @@ class Driver:
             states[label]=[];proofs[label]=[]
             for n in range(4):
                 head=self.pin_head(label,n,'stopped')
+                conf=json.loads(self.configs[PHASES[-1],label,n].bft);before=inventory(Path(conf['state']))
+                cold=verify_stopped_state_pinned_observed(self.native(label,n),conf,self.root,head['history_head'])
+                require(inventory(Path(conf['state']))==before,'stopped complete envelope check changed retained bytes')
                 state=self.call(label,n,'status');proof=self.call(label,n,'proof')
                 require(all(state[k]==head[k] for k in ('currency','region','height','tip','state','finality')),
                     'stopped actual checkpoint changed')
-                conf=json.loads(self.configs[PHASES[-1],label,n].bft);before=inventory(Path(conf['state']))
-                cold=verify_stopped_state_pinned(self.native(label,n),conf,self.root,head['history_head'])
-                require(inventory(Path(conf['state']))==before,'stopped complete envelope check changed retained bytes')
                 caller=document(conf['head_file']);signer=self.call(label,n,'bft-status','--signer-dir',conf['signer_dir'])
                 require(caller['head']==signer['head'] and caller['binding']==signer['binding']
                     and caller['pending'] is None and caller['outbox'] is None, 'final separate native voter/caller heads differ')

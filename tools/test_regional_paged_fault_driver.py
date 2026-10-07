@@ -66,6 +66,47 @@ class Model(Driver):
 
 
 class Tests(unittest.TestCase):
+    def test_observed_cold_read_adapter_keeps_lock_unknown_and_other_refusals_fatal(self):
+        driver=Driver.__new__(Driver);driver.project=PROJECT;driver.root=PROJECT/'tmp/unused-no-native'
+        driver.authority='1'*64;driver.currency='2'*64;driver.calls=[];driver.remaining=lambda:1
+        driver.configs={(PHASES[0],'earth',1):Config(PHASES[0],'earth',1,True,b'{}',b'{}',('/not-run',))}
+        driver.write_counts={}
+        command='bft-network-check-plan-observed'
+        def respond(message,code=1):
+            def fake_run(*args,**kw):
+                self.assertEqual(args[0][-1],command);self.assertEqual(kw['cwd'],PROJECT)
+                kw['stderr'].write(message);return SimpleNamespace(returncode=code)
+            return fake_run
+        diagnostic=b'regional candidate rejected: complete stream already locked\n'
+        with patch('regional_paged_fault_driver.subprocess.run',respond(diagnostic)):
+            with self.assertRaises(NativeReadBusy):driver.call('earth',1,command)
+            self.assertEqual(driver.calls[-1]['observation_kind'],'NATIVE_READ_BUSY')
+        for text,code in [(diagnostic+b' '*3000+b'invalid checkpoint proof\n',1),
+                (b'regional candidate rejected: invalid proof: already locked\n',1),
+                (b'regional candidate rejected: network plan head differs\n',1),
+                (diagnostic,2)]:
+            with self.subTest(text=text,code=code),patch('regional_paged_fault_driver.subprocess.run',respond(text,code)):
+                with self.assertRaises(ValueError) as error:driver.call('earth',1,command)
+                self.assertNotIsInstance(error.exception,NativeReadBusy)
+                self.assertEqual(driver.calls[-1]['observation_kind'],'FATAL_NATIVE_REFUSAL')
+        self.assertFalse(driver.write_counts);self.assertEqual(len(driver.calls),5)
+
+    def test_stopped_observed_plan_precedes_unpinned_reads_and_binds_exact_head(self):
+        driver=Driver.__new__(Driver);driver.processes={};driver.root=PROJECT/'tmp/unused-no-native'
+        driver.currency='2'*64;head={'history_head':'3'*64}
+        driver.pin_head=lambda label,n,prefix:head
+        conf=dict(state=str(driver.root/'state'))
+        driver.configs={(PHASES[-1],'earth',0):Config(PHASES[-1],'earth',0,True,b'{}',json.dumps(conf).encode(),('/not-run',))}
+        driver.call=lambda *args:self.fail('unpinned Native read before complete observed pinned plan')
+        class StopAtObserved(Exception):pass
+        def observed(native,config,root,pin):
+            self.assertEqual((config,root,pin),(conf,driver.root,head['history_head']))
+            self.assertEqual(native.currency,driver.currency)
+            raise StopAtObserved
+        with patch('regional_paged_fault_driver.inventory',return_value={}),patch(
+                'regional_paged_fault_driver.verify_stopped_state_pinned_observed',observed,create=True):
+            with self.assertRaises(StopAtObserved):driver.stopped()
+
     def test_full_sequence_keeps_cut_through_offline_catchup_and_never_firstsigns_again(self):
         with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='paged-fault-driver-model-') as tmp:
             model=Model(Path(tmp));Relay.instances=[]
