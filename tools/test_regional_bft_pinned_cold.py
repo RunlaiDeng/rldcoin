@@ -10,7 +10,7 @@ import interstellar_mesh as mesh
 import interstellar_transfer as wire
 import regional_bft_pinned_cold as cold
 from regional_bft_retention import Messages, pack_state
-from verify_regional_bft_stopped_batch import verify_stopped_state_pinned
+from verify_regional_bft_stopped_batch import verify_stopped_state_pinned, verify_stopped_state_pinned_observed
 
 
 class PinnedNative:
@@ -18,6 +18,7 @@ class PinnedNative:
     def __init__(self):
         self.calls, self.inputs = [], []
         self.change = self.history_change = None
+        self.observed_change = None
     def call(self, action, *args):
         self.calls.append((action, args))
         if action == 'history-check':
@@ -26,7 +27,7 @@ class PinnedNative:
                           height=10, tip='4' * 64, logical_native_replay_complete=True,
                           independent_latest_state_anchor_qualified=False, fixture_only=True, live_rld=False)
             return self.history_change(result) if self.history_change else result
-        assert action == 'bft-network-check-plan' and args[0] == '--file'
+        assert action in ('bft-network-check-plan','bft-network-check-plan-observed') and args[0] == '--file'
         assert args[2:] == ('--expected-head', '7' * 64)
         path = Path(args[1]); raw = path.read_bytes(); plan = wire.decode_json(raw)
         assert not path.stat().st_mode & 0o077
@@ -45,7 +46,16 @@ class PinnedNative:
         result = dict(format=cold.FORMAT, currency=self.currency, region='2' * 64,
                       history_head='7' * 64, request_sha256=hashlib.sha256(raw).hexdigest(),
                       batches=results, verified=True, ledger_changed=False, signing_authority=False)
-        return self.change(result) if self.change else result
+        result=self.change(result) if self.change else result
+        if action=='bft-network-check-plan-observed':
+            current=dict(history_head='7'*64,currency=self.currency,region='2'*64,height=10,
+                tip='4'*64,logical_native_replay_complete=True,
+                independent_latest_state_anchor_qualified=False,fixture_only=True,live_rld=False)
+            if self.history_change:current=self.history_change(current)
+            value=dict(format=cold.OBSERVED_FORMAT,checked=result,current=current,
+                       ledger_changed=False,signing_authority=False)
+            return self.observed_change(value) if self.observed_change else value
+        return result
 
 
 class PinnedColdTests(unittest.TestCase):
@@ -145,6 +155,77 @@ class PinnedColdTests(unittest.TestCase):
             cold.check_retained_pinned(self.runtime, '7' * 64)
         self.assertEqual(len(self.native.calls), 1)
         self.assertFalse(list(self.root.iterdir()))
+
+    def test_stopped_observed_plan_needs_one_complete_pinned_replay(self):
+        self.messages(5)
+        directory=self.root/'observed-state';directory.mkdir(mode=0o700)
+        config=dict(state=str(directory),format='RLD-REGIONAL-BFT-NODE-V1',key='3'*64)
+        state=dict(format=config['format'],binding=dict(currency='1'*64,region='2'*64,key='3'*64),
+            messages=self.runtime.state['messages'],height=10,tip='4'*64,snapshot_cache=[],cursor=0)
+        mesh.atomic(directory/'state.json',pack_state(state))
+        result=verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+        self.assertEqual(result['messages_authenticated'],5)
+        self.assertEqual([action for action,_ in self.native.calls],['bft-network-check-plan-observed'])
+
+    def observed_state(self,count=5):
+        self.messages(count,20)
+        directory=self.root/'observed-retention';directory.mkdir(mode=0o700)
+        config=dict(state=str(directory),format='RLD-REGIONAL-BFT-NODE-V1',key='3'*64)
+        state=dict(format=config['format'],binding=dict(currency='1'*64,region='2'*64,key='3'*64),
+            messages=self.runtime.state['messages'],height=10,tip='4'*64,snapshot_cache=[],cursor=0)
+        path=directory/'state.json';mesh.atomic(path,pack_state(state))
+        return config,state,path
+
+    def test_observed_plan_current_and_whole_result_refuse_without_fallback(self):
+        config,_,path=self.observed_state();before=path.read_bytes()
+        mutations=[lambda r:{**r,'format':'unknown'},lambda r:{**r,'ledger_changed':True},
+            lambda r:{**r,'signing_authority':True},lambda r:{**r,'extra':1},
+            lambda r:{**r,'current':{**r['current'],'history_head':'8'*64}},
+            lambda r:{**r,'current':{**r['current'],'currency':'f'*64}},
+            lambda r:{**r,'current':{**r['current'],'region':'f'*64}},
+            lambda r:{**r,'current':{**r['current'],'logical_native_replay_complete':1}},
+            lambda r:{**r,'current':{**r['current'],'height':True}},
+            lambda r:{**r,'current':{**r['current'],'height':9}},
+            lambda r:{**r,'current':{**r['current'],'tip':'5'*64}},
+            lambda r:{**r,'checked':{**r['checked'],'verified':1}},
+            lambda r:{**r,'checked':{**r['checked'],'batches':r['checked']['batches'][:-1]}}]
+        for mutate in mutations:
+            self.native.calls.clear();self.native.observed_change=mutate
+            with self.subTest(mutate=mutate),self.assertRaises(ValueError):
+                verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+            self.assertEqual([a for a,_ in self.native.calls],['bft-network-check-plan-observed'])
+            self.assertEqual(path.read_bytes(),before)
+
+    def test_observed_plan_preserves_empty_actual_history_and_explicit_profile(self):
+        config,_,_=self.observed_state(0)
+        result=verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+        self.assertEqual(result['messages_authenticated'],0)
+        self.assertEqual([a for a,_ in self.native.calls],['history-check'])
+        self.native.calls.clear();config['format']='RLD-REGIONAL-BFT-NODE-JOINT-V1'
+        with self.assertRaises(ValueError):
+            verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+        self.assertEqual(self.native.calls,[])
+
+    def test_observed_plan_cannot_reuse_verified_input_after_any_byte_change(self):
+        config,_,path=self.observed_state()
+        def change_source(response):
+            path.write_bytes(path.read_bytes()+b'\n')
+            return response
+        self.native.observed_change=change_source
+        with self.assertRaisesRegex(ValueError,'state changed'):
+            verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+        self.assertEqual([a for a,_ in self.native.calls],['bft-network-check-plan-observed'])
+
+    def test_observed_plan_later_envelope_refusal_returns_no_partial_success(self):
+        config,_,path=self.observed_state();before=path.read_bytes()
+        def corrupt(response):
+            response['batches'][-1]['results'][0]['value']='f'*64
+            return response
+        self.native.change=corrupt
+        with self.assertRaises(ValueError):
+            verify_stopped_state_pinned_observed(self.native,config,self.root,'7'*64)
+        self.assertEqual(path.read_bytes(),before)
+        self.assertEqual([a for a,_ in self.native.calls],['bft-network-check-plan-observed'])
 
 
 if __name__ == '__main__':

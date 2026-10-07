@@ -9,6 +9,7 @@ import interstellar_mesh as mesh
 import interstellar_transfer as wire
 
 FORMAT = 'RLD-BFT-COLD-NETWORK-PLAN-V1'
+OBSERVED_FORMAT = 'RLD-BFT-COLD-NETWORK-OBSERVED-PLAN-V1'
 MAX_BATCH = 4
 MAX_INPUT = 8 * 1024 * 1024
 MAX_MESSAGES = 512
@@ -19,6 +20,10 @@ def checked_history(native, expected_head):
     mesh.hex32(expected_head)
     mesh.require(expected_head != '0' * 64, 'explicit nonzero latest history head required')
     current = native.call('history-check', '--expected-head', expected_head)
+    return check_history_response(native,current,expected_head)
+
+
+def check_history_response(native,current,expected_head):
     mesh.require(type(current) is dict and current.get('history_head') == expected_head
                  and current.get('currency') == native.currency
                  and current.get('logical_native_replay_complete') is True
@@ -31,7 +36,7 @@ def checked_history(native, expected_head):
     return current
 
 
-def check_retained_pinned(runtime, expected_head):
+def check_retained_pinned(runtime, expected_head, *, observed=False):
     """Keep only ordered IDs/values; Native authenticates every complete wire.
 
     Native message IDs identify expanded typed envelopes, not Python body IDs.
@@ -39,13 +44,15 @@ def check_retained_pinned(runtime, expected_head):
     No Runtime construction, head adoption, cache authority or partial success.
     """
     mesh.hex32(expected_head)
+    mesh.require(type(observed) is bool,'pinned cold observation mode differs')
     mesh.require(expected_head != '0' * 64, 'explicit nonzero latest history head required')
     messages = runtime.state['messages']
     mesh.require(len(messages) <= MAX_MESSAGES, 'pinned cold retained count exceeds bound')
     if not messages:
         current = checked_history(runtime.native, expected_head)
         mesh.require(current['region'] == runtime.region, 'pinned cold empty region differs')
-        return {'messages_authenticated': 0, 'batches': 0, 'history_head': expected_head}
+        return {'messages_authenticated': 0, 'batches': 0, 'history_head': expected_head,
+                **({'current':current} if observed else {})}
 
     with tempfile.TemporaryDirectory(dir=runtime.root, prefix='.native-pinned-cold-') as scratch:
         root = Path(scratch).resolve()
@@ -115,8 +122,18 @@ def check_retained_pinned(runtime, expected_head):
             os.close(descriptor)
         started, succeeded = time.monotonic(), False
         try:
-            result = runtime.native.call('bft-network-check-plan', '--file', plan,
+            result = runtime.native.call('bft-network-check-plan-observed' if observed else
+                                         'bft-network-check-plan', '--file', plan,
                                          '--expected-head', expected_head)
+            current=None
+            if observed:
+                mesh.require(type(result) is dict and set(result)=={
+                    'format','checked','current','ledger_changed','signing_authority'}
+                    and result['format']==OBSERVED_FORMAT and result['ledger_changed'] is False
+                    and result['signing_authority'] is False,'observed cold plan response differs')
+                current=check_history_response(runtime.native,result['current'],expected_head)
+                mesh.require(current['region']==runtime.region,'observed cold plan region differs')
+                result=result['checked']
             mesh.require(type(result) is dict and set(result) == {
                 'format', 'currency', 'region', 'history_head', 'request_sha256', 'batches',
                 'verified', 'ledger_changed', 'signing_authority'}
@@ -141,4 +158,5 @@ def check_retained_pinned(runtime, expected_head):
             if observation is not None:
                 observation.operation('bft-network-check-plan', started, succeeded)
         return {'messages_authenticated': len(messages), 'batches': len(manifests),
-                'history_head': expected_head, 'processed_envelope_batch_bytes': processed}
+                'history_head': expected_head, 'processed_envelope_batch_bytes': processed,
+                **({'current':current} if observed else {})}

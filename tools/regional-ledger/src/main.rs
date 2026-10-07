@@ -64,6 +64,13 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    /// Original complete plan plus current history from the same pinned replay.
+    BftNetworkCheckPlanObserved {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     /// Full bounded live authentication only; no ledger installation or signing.
     BftNetworkInspectBatch {
         #[arg(long)]
@@ -898,12 +905,15 @@ fn run() -> Result<()> {
         )?;
     }
     let mut store = match &action {
-        Action::BftNetworkCheckPlan { expected_head, .. } => Store::open_pinned_inspection(
-            &args.dir,
-            &args.authority,
-            pin,
-            Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
-        )?,
+        Action::BftNetworkCheckPlan { expected_head, .. }
+        | Action::BftNetworkCheckPlanObserved { expected_head, .. } => {
+            Store::open_pinned_inspection(
+                &args.dir,
+                &args.authority,
+                pin,
+                Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
+            )?
+        }
         Action::BftNetworkCheckBatch { .. }
         | Action::ContactObservation
         | Action::BftNetworkInspectBatch { .. }
@@ -999,6 +1009,40 @@ fn run() -> Result<()> {
                 "{}",
                 serde_json::to_string(&checked).map_err(|e| e.to_string())?
             );
+        }
+        Action::BftNetworkCheckPlanObserved {
+            file,
+            expected_head,
+        } => {
+            let checked = cold_plan::check(
+                &file,
+                &store,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+            )?;
+            let (format, pages, tail) = store.history_layout()?;
+            let current = serde_json::json!({
+                "format":format,"history_head":store.storage_head()?,
+                "sealed_event_pages":pages,"retained_tail_events":tail,
+                "event_page_bound":history::PAGE_EVENTS,
+                "currency":pin,"region":store.chain.region,"height":store.chain.height(),
+                "tip":store.chain.tip()?,"state":store.chain.ledger.root()?,
+                "finality":store.chain.finalized,"validator_epoch":store.chain.epoch,
+                "import_commitment":id("native-history-imports",&store.chain.ledger.imports)?,
+                "permanent_import_entries":store.chain.ledger.imports.len(),
+                "logical_native_replay_complete":true,"retain_head_separately":true,
+                "independent_latest_state_anchor_qualified":false,
+                "long_history_qualified":false,"fixture_only":true,"live_rld":false
+            });
+            let raw = serde_json::to_string(&serde_json::json!({
+                "format":"RLD-BFT-COLD-NETWORK-OBSERVED-PLAN-V1",
+                "checked":checked,"current":current,
+                "ledger_changed":false,"signing_authority":false
+            }))
+            .map_err(|e| e.to_string())?;
+            if raw.len() > MAX_BYTES {
+                return Err("observed cold plan response bound".into());
+            }
+            println!("{raw}");
         }
         Action::BftNetworkInspectBatch { file } => {
             let raw = storage::read_bytes(&file, MAX_BYTES)?;
