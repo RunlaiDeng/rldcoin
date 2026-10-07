@@ -52,11 +52,65 @@ class TimeoutCarriageTests(unittest.TestCase):
 
     def frames(self, proposal, context=None):
         body = {'Signed': {'Proposal': proposal}}
+        return self.body_frames(body, context)
+
+    def body_frames(self, body, context=None):
         envelope = dict(format=NETWORK, currency=self.context['currency'], region=self.context['region'],
                         evidence={'snapshots': []}, body=body)
         messages = Messages().append(mesh.digest(body), envelope, None, True)
         return commit_carriage_frames(messages, context or self.context, self.keys,
                                       self.context['currency'], self.context['region'])
+
+    def single_timeout(self, high=None, round_number=0):
+        key=self.keys[0]
+        return dict(context=self.context,round=round_number,high=copy.deepcopy(high),
+                    approval=self.sign(key,'bft-timeout-v1',[self.context,round_number,high,key]))
+
+    def test_single_signed_timeout_gets_carriage_before_timeout_quorum_exists(self):
+        for high in (None,self.high()):
+            timeout=self.single_timeout(high=high)
+            before=copy.deepcopy(timeout)
+            self.assertEqual(len(self.body_frames({'Signed':{'Timeout':timeout}})),1)
+            self.assertEqual(timeout,before)
+
+    def test_single_timeout_wrong_context_signature_round_or_nested_high_is_no_hint(self):
+        for mode in ('context','signature','round','membership','high-count','high-signature','high-phase'):
+            high=self.high() if mode.startswith('high-') else None
+            if mode=='high-count':high['votes'].pop()
+            elif mode=='high-signature':high['votes'][0]['approval']['signature']='0'*128
+            elif mode=='high-phase':high['phase']='Commit'
+            timeout=self.single_timeout(high=high)
+            if mode=='context':timeout['context']=dict(self.context,epoch='9'*64)
+            elif mode=='signature':timeout['approval']['signature']='0'*128
+            elif mode=='round':timeout['round']=True
+            elif mode=='membership':timeout['approval']['key']='9'*64
+            before=copy.deepcopy(timeout)
+            self.assertEqual(self.body_frames({'Signed':{'Timeout':timeout}}),())
+            self.assertEqual(timeout,before)
+
+    def test_single_timeout_complete_frame_and_expansion_bounds_remain_exact(self):
+        from unittest.mock import patch
+        import regional_bft_node as bft
+        timeout=self.single_timeout(high=self.high());body={'Signed':{'Timeout':timeout}}
+        frames=self.body_frames(body)
+        self.assertEqual(len(frames),1)
+        with patch.object(bft,'MAX_BROADCAST_HINT_BYTES',1):self.assertEqual(self.body_frames(body),())
+        timeout['round']=32
+        self.assertEqual(self.body_frames({'Signed':{'Timeout':timeout}}),())
+
+    def test_single_vote_priority_cannot_reduce_certificate_quorum_or_change_signed_bytes(self):
+        timeout=self.single_timeout(high=self.high())
+        self.assertEqual(len(self.body_frames({'Signed':{'Timeout':timeout}})),1)
+        for count in (1,2):
+            certificate=self.proposal(high=self.high())['timeout']
+            certificate['votes']=certificate['votes'][:count]
+            with self.assertRaises(ValueError):ordered_timeout(certificate,self.context,self.keys,1)
+        for high in (None,self.high()):
+            certificate=self.proposal(high=high)['timeout']
+            before=copy.deepcopy(certificate)
+            ordered,_=ordered_timeout(certificate,self.context,self.keys,1)
+            self.assertEqual(encoded(ordered),encoded(before))
+            self.assertEqual(certificate,before)
 
     def test_real_round_zero_and_later_complete_timeout_signatures_get_one_frame(self):
         self.assertEqual(len(self.frames(self.base)), 1)
@@ -111,14 +165,18 @@ class TimeoutCarriageTests(unittest.TestCase):
             self.assertEqual(self.frames(self.proposal(high=high)), ())
 
     def test_later_timeout_proposal_ordinary_delivery_preserves_retry_and_pending_floor(self):
+        self.ordinary_delivery({'Signed':{'Proposal':self.proposal(high=self.high())}})
+
+    def test_single_timeout_ordinary_delivery_preserves_retry_pending_floor_and_cold_receipt(self):
+        self.ordinary_delivery({'Signed':{'Timeout':self.single_timeout(high=self.high())}})
+
+    def ordinary_delivery(self, body):
         from test_interstellar_mesh import Fixture
         import interstellar_transfer as wire
         with tempfile.TemporaryDirectory(prefix='rld-timeout-carriage-') as directory:
             fixture = Fixture(directory);fixture.rounds()
             peer = fixture.identities['proxima']['node_id']
             destination = fixture.identities['andromeda']['node_id']
-            proposal = self.proposal(high=self.high())
-            body = {'Signed': {'Proposal': proposal}}
             envelope = dict(format=NETWORK, currency=self.context['currency'],
                             region=self.context['region'], evidence={'snapshots': []}, body=body)
             messages = Messages().append(mesh.digest(body), envelope, None, True)

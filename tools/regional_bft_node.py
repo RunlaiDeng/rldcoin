@@ -24,7 +24,7 @@ from regional_bft_live_batch import inspect as inspect_live_batch
 from regional_bft_joint_epoch import JointEpoch, JointLoopStatus, FORMAT as JOINT_FORMAT, signed_body
 from regional_bft_joint_roles import RoleJoint, FORMAT as ROLE_FORMAT, readonly_head
 from regional_native_startup import Inspection
-from regional_bft_timeout_hint import ordered_timeout
+from regional_bft_timeout_hint import ordered_timeout, ordered_timeout_vote
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
@@ -168,12 +168,14 @@ def commit_carriage_frames(messages, context, keys, currency, region):
     for key in keys:mesh.hex32(key)
     frames=[];expanded_bytes=0;finalized_ids=[]
     for ident,body,_,_ in messages.bodies():
-        signed=body.get('Signed',{});vote=signed.get('Vote',{});proposal=signed.get('Proposal');finalized=body.get('Finalized')
+        signed=body.get('Signed',{});vote=signed.get('Vote',{});proposal=signed.get('Proposal');finalized=body.get('Finalized');timeout=signed.get('Timeout')
         try:
             if finalized is not None:
                 finalized_ids.append(ident)
                 continue
-            if proposal is not None:
+            if timeout is not None:
+                ordered_timeout_vote(timeout,context,keys,timeout['round'])
+            elif proposal is not None:
                 if not current_empty_proposal_hint(proposal,context,keys):continue
             else:
                 if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
