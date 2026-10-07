@@ -89,7 +89,8 @@ def execute(make_driver, deadline, private_report, *, now=time.monotonic):
             native_calls=driver.calls if driver is not None else [],
             attempted_owner_signs=getattr(driver,'attempted_owner_signs',None),
             released_owner_responses=driver.signed_count if driver is not None else 0,
-            exact_stopped_native_heads=driver.stopped_heads if driver is not None else {},
+            exact_stopped_native_heads={f'{label}:{index}':head
+                for (label,index),head in driver.stopped_heads.items()} if driver is not None else {},
             failed_currency_never_reopen=not complete,private_state_retained=True)
         private_report.parent.mkdir(mode=0o700,parents=True,exist_ok=True)
         mesh.atomic(private_report,private)

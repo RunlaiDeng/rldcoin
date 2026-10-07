@@ -61,4 +61,41 @@ class Tests(unittest.TestCase):
         self.assertEqual(answer['released_owner_responses'],0);self.assertIn('source mismatch',raw)
 
 
+class HeadEncodingTests(unittest.TestCase):
+    def heads(self):
+        return {(label,n):f'{i+1:064x}' for i,(label,n) in enumerate(
+            (label,n) for label in ('earth','proxima','andromeda') for n in range(4))}
+    def modeled(self, root, **kwargs):
+        driver=Fake(root,**kwargs);driver.stopped_heads=self.heads();return driver
+    def test_actual_terminal_roundtrips_all12_nonempty_fixed_heads_privately(self):
+        import json
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='terminal-head-encoding-') as tmp:
+            root=Path(tmp);path=root/'raw.json';d=self.modeled(root)
+            answer=execute(lambda:d,10,path,now=lambda:0);raw=json.loads(path.read_text())
+            self.assertTrue(answer['completed']);self.assertEqual(raw['exact_stopped_native_heads'],
+                {f'{label}:{index}':head for (label,index),head in self.heads().items()})
+            self.assertEqual(len(raw['exact_stopped_native_heads']),12)
+            self.assertNotIn('exact_stopped_native_heads',answer);self.assertFalse(answer['whole_goal_completed'])
+    def test_nonempty_heads_preserve_primary_and_cleanup_failures(self):
+        import json
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='terminal-head-encoding-') as tmp:
+            root=Path(tmp);path=root/'raw.json';d=self.modeled(root,cleanup_error=True)
+            def fail():raise ValueError('original modeled Native guard refusal')
+            d.run=fail
+            answer=execute(lambda:d,10,path,now=lambda:0);raw=json.loads(path.read_text())
+            self.assertFalse(answer['completed']);self.assertFalse(answer['full_fault_qualified'])
+            self.assertIn('original modeled Native guard refusal',raw['failure'])
+            self.assertIn('retained cleanup failure',raw['cleanup_failure'])
+            self.assertEqual(len(raw['exact_stopped_native_heads']),12)
+    def test_head_encoding_never_overrides_deadline_or_missing_cold_or_live_process(self):
+        import json
+        for why in ('deadline','missing-cold','live'):
+            with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='terminal-head-encoding-') as tmp:
+                root=Path(tmp);path=root/'raw.json';d=self.modeled(root,keep_process=why=='live')
+                if why=='missing-cold':d.result['all12fixed_head_native_and_complete_envelopes'].pop()
+                answer=execute(lambda:d,10,path,now=lambda:11 if why=='deadline' else 0)
+                self.assertFalse(answer['completed']);self.assertFalse(answer['full_fault_qualified'])
+                self.assertTrue(answer['failed_currency_never_reopen'])
+                self.assertEqual(len(json.loads(path.read_text())['exact_stopped_native_heads']),12)
+
 if __name__=='__main__':unittest.main()

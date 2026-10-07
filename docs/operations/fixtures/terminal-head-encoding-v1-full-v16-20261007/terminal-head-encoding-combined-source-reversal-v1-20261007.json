@@ -1,0 +1,34 @@
+{
+  "format": "RLD-KEYLESS-PRIVATE-PARENT-SOURCE-REVERSAL-V1",
+  "new_method": "    def prepare_keyless_directory(self):\n        \"\"\"Create only an empty private parent; no validator key is available.\"\"\"\n        self.remaining();parent=safe(self.root/'keyless-absent')\n        require(not parent.exists() and not parent.is_symlink(),'retain existing keyless path')\n        for label,n in SLOTS:\n            config=json.loads(self.configs[PHASES[-1],label,n].bft)\n            require(config['key_file']==str(parent/f'{label}-{n}.json'),\n                'keyless phase must use exact absent own key path')\n        parent.mkdir(mode=0o700)\n        require(parent.stat().st_uid==os.getuid() and parent.stat().st_mode&0o777==0o700\n            and not any(parent.iterdir()),'keyless parent must be empty and private')\n\n",
+  "materialize_insertion": "        self.prepare_keyless_directory()\n",
+  "new_test_class": "class KeylessDirectoryTests(unittest.TestCase):\n    def model(self, directory):\n        d=Driver.__new__(Driver);d.root=directory/'root';d.root.mkdir(mode=0o700);d.output=directory/'output';d.currency='1'*64;d.deadline=time.monotonic()+600\n        d.mesh_anchors={s:dict(public_key='2'*64,node_id='3'*64,network=d.currency,config_sha256='4'*64) for s in SLOTS}\n        d.configs={}\n        for phase in PHASES:\n            for label,n in SLOTS:\n                key=d.root/'keyless-absent'/f'{label}-{n}.json' if phase==PHASES[-1] else d.root/label/f'public-fixture-key-{n}.json'\n                d.configs[phase,label,n]=Config(phase,label,n,True,encoded({}),encoded(dict(key_file=str(key))),('never-executed',))\n        d.bound=SimpleNamespace(configs=tuple(d.configs.values()),preparation_inventory='5'*64);d.prepared_inventory=inventory(d.root);d.fake_reads=[]\n        def status(label,n,command,*args):\n            self.assertEqual(command,'status');d.fake_reads.append((label,n));return {'modeled_only':True}\n        d.call=status\n        return d\n    def test_actual_materialization_all12_private_missing_key_paths_without_any_key(self):\n        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='keyless-directory-model-') as t:\n            d=self.model(Path(t));d.materialize();parent=d.root/'keyless-absent'\n            for label,n in SLOTS:\n                key=parent/f'{label}-{n}.json';self.assertEqual(private(key,missing=True),key);self.assertFalse(key.exists())\n            self.assertEqual(parent.stat().st_mode&0o777,0o700);self.assertEqual(list(parent.iterdir()),[])\n            self.assertEqual(d.fake_reads,list(SLOTS))\n            with self.assertRaises(ValueError):d.materialize()\n    def test_foreign_key_paths_and_preexisting_directory_refuse_before_fake_native_reads(self):\n        for reason in ('existing','foreign','symlink'):\n            with self.subTest(reason=reason),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='keyless-directory-model-') as t:\n                d=self.model(Path(t));p=d.root/'keyless-absent'\n                if reason=='existing':p.mkdir(mode=0o700)\n                elif reason=='symlink':p.symlink_to(d.root/'elsewhere',target_is_directory=True)\n                else:\n                    c=d.configs[PHASES[-1],'earth',0];d.configs[PHASES[-1],'earth',0]=Config(c.phase,c.region,c.index,c.started,c.mesh,json.dumps(dict(key_file=str(d.root/'earth/public-fixture-key-0.json'))).encode(),c.argv)\n                with self.assertRaises((ValueError,FileExistsError)):d.prepare_keyless_directory()\n                self.assertFalse(d.fake_reads)\n    def test_original_runtime_private_permissions_and_symlink_guards_still_refuse(self):\n        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='keyless-directory-model-') as t:\n            d=self.model(Path(t));d.materialize();p=d.root/'keyless-absent';p.chmod(0o755)\n            with self.assertRaises(ValueError):private(p/'earth-0.json',missing=True)\n            p.chmod(0o700);(p/'earth-0.json').symlink_to(p/'nonexistent')\n            with self.assertRaises(ValueError):private(p/'earth-0.json',missing=True)\n",
+  "Runtime_source_unchanged": true,
+  "signer_keys_created_or_copied": 0,
+  "original_run_cold_sign_calls_error_permission_guards_unchanged": false,
+  "files": {
+    "tools/regional_paged_fault_driver.py": {
+      "old_sha256": "74468bb15c433fe2c3bd8de18d19413395b82886631231cf0e3bf833b03d4d5d",
+      "new_sha256": "276f92c53368807f351e546ac41c2c3abca8f4d82cb2d42547828e8f419811e0",
+      "backup": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/regional_paged_fault_driver-before-stale-v1-20261007.py"
+    },
+    "tools/test_regional_paged_fault_driver.py": {
+      "old_sha256": "facb44250e320fe92067b39bd90dd591e8aa97f663967ddac47cb6f71d027b4d",
+      "new_sha256": "3be7e2f840c717e25095daf9d6d1c1a84a85411f2d932a65abb35be15196b865",
+      "backup": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/test_regional_paged_fault_driver-before-stale-v1-20261007.py"
+    },
+    "tools/regional_paged_fault_terminal.py": {
+      "old_sha256": "49f3c5a19c2b1abd87f7148a0b56ce29cff6547cea9bb924e74ef3aeee4384b7",
+      "new_sha256": "c7e439547fc08cb6d7d8c839b422dfac661a34cfac36a82594698eb1471109e8",
+      "backup": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/regional_paged_fault_terminal-before-head-encoding-v1-20261007.py"
+    },
+    "tools/test_regional_paged_fault_terminal.py": {
+      "old_sha256": "8b94d34f5e1768407a8cedb30076e57dd64e7246b32b6cd587a67ee8efedc84d",
+      "new_sha256": "cd5598efe2878a9fcb2eebdd9c053a07b08b82d7f8294ec8155e06437b20847f",
+      "backup": "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/test_regional_paged_fault_terminal-before-head-encoding-v1-20261007.py"
+    }
+  },
+  "fixed_head_drain_reversal_sha256": "cc74e6e595674d2e69e9ee6860b7e4d63460ca5e1496cfa12b74ef97d7b09f79",
+  "run_changes_only_stop_then_same_drain_before_unchanged_fullcold": true,
+  "terminal_head_encoding_reversal_sha256": "a19e5c5eb373ebb7475fd480bcde62cc62d7c4c397c356e66450b4dc15fd507f"
+}
