@@ -100,5 +100,44 @@ class ReceiveDeferredTests(unittest.TestCase):
         self.assertEqual(service.bft_seen, {'previous', '0', '1'})
 
 
+class ContactApplyDeferredTests(unittest.TestCase):
+ def service(self,error):
+  from contextlib import nullcontext
+  from pathlib import Path
+  import interstellar_transfer as wire
+  service=Service.__new__(Service);service.region='b'*64;network='a'*64;node_id='c'*64;pid='d'*64
+  raw=wire.make_frame('finalized-import','e'*64,service.region,'f'*64,b'complete-ground-proof-model')
+  service.contact_trace=None;service.bft_seen={'unchanged'};service.bft_individual_retry=False;service.receive_after={'novel':None,'background':None};service.progress={'cursor':0};service.miner=None;service.carriage=None;service.root=Path('/synthetic-not-opened');service.path=service.root/'progress.json';service.bft=None
+  def call(action):
+   if action=='contact-status':return dict(currency=network,region=service.region,contacts=[])
+   if action=='contact-outgoing':return dict(offers=[])
+   raise AssertionError(action)
+  service.native=SimpleNamespace(currency=network,call=call,apply=Mock(side_effect=error));service.tcp=SimpleNamespace(tick=lambda:dict(errors=[]))
+  node=SimpleNamespace(id=node_id,network=network,state={'adverts':{}},tick=lambda:dict(errors=[]),summaries=lambda:{pid:dict(destination=node_id,kind='finalized-import',export_id='f'*64)},receipts=lambda:{pid:{'modeled':True}},transit=lambda _:dict(modeled=True))
+  service.selection_node=lambda:nullcontext(node)
+  return service,pid,raw
+ def tick(self,service,raw):
+  from unittest.mock import patch
+  import interstellar_mesh as mesh
+  with patch.object(mesh,'transit_check',return_value=({},raw,[])),patch.object(mesh,'receipt_matches'),patch.object(mesh,'atomic'):
+   return service.tick()
+ def test_exact_contact_apply_lock_is_unknown_not_rejected(self):
+  for text in (BUSY,'regional candidate rejected: complete stream already locked'):
+   with self.subTest(diagnostic=text):
+    service,pid,raw=self.service(NativeRefusal('contact-apply',1,text));before=set(service.bft_seen);report=self.tick(service,raw);service.native.apply.assert_called_once_with(raw,None)
+    self.assertEqual(report['applied'],[]);self.assertEqual(service.bft_seen,before);self.assertEqual(report['rejected'],[],'exact typed contact-apply lock was treated as complete-envelope rejection')
+    self.assertEqual(report['deferred'],[dict(packet_id=pid,stage='native-validation-pending',command='contact-apply',exit_code=1,diagnostic=text,ledger_acceptance_known=False,signing_authority=False)])
+ def test_complete_original_bytes_retry_requires_native_success_before_applied(self):
+  service,pid,raw=self.service(NativeRefusal('contact-apply',1,BUSY));before=set(service.bft_seen);self.tick(service,raw);service.native.apply.side_effect=None;service.native.apply.return_value=dict(evidence_verified=True,import_accepted=False)
+  report=self.tick(service,raw);self.assertEqual(report['rejected'],[]);self.assertEqual(report['deferred'],[]);self.assertEqual(report['applied'],[dict(packet_id=pid,native=dict(evidence_verified=True,import_accepted=False))]);self.assertEqual(service.bft_seen,before);self.assertEqual(service.native.apply.call_count,2);self.assertEqual([call.args for call in service.native.apply.call_args_list],[(raw,None),(raw,None)])
+ def test_unbound_wrong_action_exit_and_long_later_proof_error_refuse(self):
+  for error in (ValueError('native rejected: '+BUSY),NativeRefusal('bft-sign',1,BUSY),NativeRefusal('contact-apply',2,BUSY),NativeRefusal('contact-apply',True,BUSY),NativeRefusal('contact-apply',1,BUSY+' '*2200+'bad proof'),NativeRefusal('contact-apply',1,'Permission denied'),OSError('persistence failure')):
+   with self.subTest(error=str(error)):
+    service,pid,raw=self.service(error);report=self.tick(service,raw);self.assertEqual(len(report['rejected']),1);self.assertEqual(report['deferred'],[]);self.assertEqual(report['applied'],[]);self.assertEqual(service.bft_seen,{'unchanged'})
+ def test_later_invalid_proof_refuses_after_prior_deferral(self):
+  service,pid,raw=self.service(NativeRefusal('contact-apply',1,BUSY));self.tick(service,raw);service.native.apply.side_effect=NativeRefusal('contact-apply',1,'invalid later proof');report=self.tick(service,raw);self.assertEqual(len(report['rejected']),1);self.assertEqual(report['deferred'],[]);self.assertEqual(report['applied'],[]);self.assertEqual(service.bft_seen,{'unchanged'})
+ def test_corrupt_frame_refuses_before_native_call_even_after_deferral(self):
+  service,pid,raw=self.service(NativeRefusal('contact-apply',1,BUSY));self.tick(service,raw);report=self.tick(service,raw+b'corrupt');self.assertEqual(len(report['rejected']),1);self.assertEqual(report['deferred'],[]);self.assertEqual(service.native.apply.call_count,1)
+
 if __name__ == '__main__':
     unittest.main()

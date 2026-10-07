@@ -355,7 +355,23 @@ class Service:
                 except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                     flush_bft()
                     errors.append(str(error))
-                    rejected.append({'packet_id': packet_id, 'reason': str(error)})
+                    # Only the exact complete typed contact-apply lock refusal
+                    # leaves Native validity unknown. Retain the original frame
+                    # for full verification on a later tick; no import/seen or
+                    # signing credit is released by this local refusal.
+                    if (isinstance(error, NativeRefusal)
+                            and error.command == 'contact-apply'
+                            and type(error.exit_code) is int and error.exit_code == 1
+                            and error.diagnostic.strip() in (
+                                'regional candidate rejected: lock acquisition failed because the operation would block',
+                                'regional candidate rejected: complete stream already locked',
+                            )):
+                        deferred.append(dict(packet_id=packet_id,
+                            stage='native-validation-pending',command=error.command,
+                            exit_code=error.exit_code,diagnostic=error.diagnostic.strip(),
+                            ledger_acceptance_known=False,signing_authority=False))
+                    else:
+                        rejected.append({'packet_id': packet_id, 'reason': str(error)})
             flush_bft()
             # Export authority is obtained from the actual native ledger. A
             # region advertised by a mesh key selects only a candidate carrier.

@@ -1,0 +1,16 @@
+{
+  "completed": false,
+  "exit_code": 1,
+  "duration_seconds": 0.142521,
+  "budget_seconds": 10,
+  "attempts": 1,
+  "remaining_original_Mesh_related60_prior_seconds": 44.161948,
+  "source_sha256": "2d4a3b82d24b4ac1a63c710f49f07c0b67f10b26aa2aab7b3d0b36ae24149f02",
+  "helper_sha256": "8e2bc31932a632f322d71469464e9ed8206548aa071ecbe8f4f113e881f139c4",
+  "log_sha256": "e1e8df9ddeb886669ad6133d38085c73ff50632ebed5e5cbdc94ab650c6ea32a",
+  "log": "test_exact_contact_apply_lock_is_unknown_not_rejected (__main__.ContactApplyDeferredTests.test_exact_contact_apply_lock_is_unknown_not_rejected) ... \n  test_exact_contact_apply_lock_is_unknown_not_rejected (__main__.ContactApplyDeferredTests.test_exact_contact_apply_lock_is_unknown_not_rejected) (diagnostic='regional candidate rejected: lock acquisition failed because the operation would block') ... FAIL\n\n======================================================================\nFAIL: test_exact_contact_apply_lock_is_unknown_not_rejected (__main__.ContactApplyDeferredTests.test_exact_contact_apply_lock_is_unknown_not_rejected) (diagnostic='regional candidate rejected: lock acquisition failed because the operation would block')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<string>\", line 31, in test_exact_contact_apply_lock_is_unknown_not_rejected\n    self.assertEqual(report['applied'],[]);self.assertEqual(service.bft_seen,before);self.assertEqual(report['rejected'],[],'exact typed contact-apply lock was treated as complete-envelope rejection')\n                                                                                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: [{'packet_id': 'dddddddddddddddddddddddddd[153 chars]ck'}] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n{'packet_id': 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd', 'reason': 'native rejected: regional candidate rejected: lock acquisition failed because the operation would block'}\n\n+ []\n- [{'packet_id': 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',\n-   'reason': 'native rejected: regional candidate rejected: lock acquisition '\n-             'failed because the operation would block'}] : exact typed contact-apply lock was treated as complete-envelope rejection\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nFAILED (failures=1)\n",
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "all_custody_and_transport_are_models": true,
+  "source_and_all_old_fixtures_unchanged": true,
+  "new600": 0
+}

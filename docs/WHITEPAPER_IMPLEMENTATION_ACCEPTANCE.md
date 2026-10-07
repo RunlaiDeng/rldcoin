@@ -1815,3 +1815,13 @@ V47原180完整PASS **161.681秒**，四CLI普通协议自行达到成熟15（13
 origin-v11无网络准备原180 **PASS31.188秒/668文件**，12Native/voter/caller、全新原生发行及实际成熟E8/P5/A5输入、8完整目的收据/守恒、12独立TLS身份、三份原unsigned owner reviews均核验；没有复制旧账本/钥/保管或启动Runtime。准备源码和边界测试哈希未变，合法来源证据复用。入口静态预检首用systemPython缺cryptography，在任何Native/fixture调用前ERROR；正确venv35个LOAD_GLOBAL实际provider解析通过，生成函数未执行。首次完整controller在budget前错误要求历史零文件且从未创建的TLS wrapper夹具目录存在，拒绝且无Native/网络/owner调用；准确原因不是迁移旧路径。仅改为非空保管必须存在，空历史封存允许未建目录，原错误留存、不改历史字节。
 
 唯一真实origin-v8原600/一次已于2026-10-07T01:08:35.496643Z开始，11普通节点在missing-leader隔离阶段启动。当前Python192/Native89/Core171/实际CLI/完整driver744/terminal49f各自绑定；原60round/24height（E27/P24/A24 cap）/maturity2/quorum3/三原owner first-sign、完整隔离/追赶/恢复9net成熟/keyless drain/全12固定头与每个信封/heads/保管/守恒/normalstop全程<=600保持。旧封存hash核验，不因本次重复递归扫旧私有库；新scope自身完整Nativecold/保管仍必须检验。V47只闭合组件；全部旧600失败、VALUE-STRICT-01及长期/PQ/物理/独立/组合仍FAIL/OPEN。冻结白皮书、官网与权限范围不变，唯一作者继续，不在局部测试通过后停止。
+
+### 原完整fault origin-v8失败；普通导入锁忙分类的最小修复
+
+origin-v8 **FAIL152.088秒/原600/4067封存**，helper1，首次普通Native完整信封拒绝触发退出；节点/中继正常停止，无forced/cleanup/pin异常。隔离missing-leader9/本地付款及offline追赶仅有限通过；原收款成熟、keyless、全12固定头/全信封/heads/守恒未完成。旧失败不恢复、不复制、不重签或退款。完整原packet实际kind finalized-import；旧status只留缩短的lock显示，不能据此断言唯一原生原因。
+
+新无Native模型counter FAIL .142521；仅普通Service.tick的contact-apply完整typed命令/exit1/两条准确lock诊断变为待验证，import/seen/签名权利均unknown；证明/权限/其他命令/退出/完整长诊断仍拒绝。21相关模型 **PASS .206998**，原related60累计44.511467。真实全新8Native OS锁/释放同完整签名frame probe **PASS5.329329/原60一次/202封存**，两次生产Service.tick/Native.apply、8固定头cold、caller/owner和锁忙账本字节不变、原packet/receipt及清witness冷读通过；目的height0/importfalse/无可花费币，TCP仅noop模型，不授予成熟或完整fault资格。
+
+Python192 `a963630cc6db9d6bb87bc17bc5a984bcd1af049594ae6b1c0b1895bc8d8fab2a`；Native89/Core171/binary/MeshV32/TCP/BFT不变。V47 old192组件PASS161.681经Service整文本反转及原测试文本保留的明确source bridge复用，不称已新192完整重测。反转预检最初多一空行，后full helper生成多一缩进，均在fixture调用前ERROR留存；准确去除新增分隔空行+class恢复原测试整文本，AST不变。新apply-v12全新12准备原180一次正在运行，通过后才必要apply-v9原600一次；原60round/24height E27/P24/A24 cap/maturity2/quorum3/三原owner请求/full12cold/全信封/heads/保管/守恒/normalstop及whole<=600不减。VALUE-STRICT-01及长期/PQ/组合/独立/物理仍OPEN；冻结正文/PDF/官网不改，唯一作者继续。
+
+apply-v12原180准备 **PASS31.230秒/668文件**，12Native/voter/caller、实际E8/P5/A5成熟输入/8完整目的收据/守恒、12独立TLS、三原unsigned fault reviews；fault owner尚未first-sign。必要fullfault apply-v9入口已完成语法、导入和全部实际LOAD_GLOBAL provider预检，make/Tracked函数未执行、无额外Native/Runtime/Node/socket/sign调用；driver744/terminal49f/原600/60/24/成熟2/票3/owner3/cold/守恒护栏不变。下一立即运行一次相关来源修复后的完整fault，不因准备或probe局部通过结束任务。

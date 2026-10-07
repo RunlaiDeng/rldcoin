@@ -1,0 +1,196 @@
+{
+  "completed": true,
+  "budget_seconds": 10,
+  "attempts": 1,
+  "duration_seconds": 0.00542,
+  "sealed_reads_sha256": {
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/earth-0/regional-contact-status.json": "11fbe195be1035b652b7240d8c7b8aadede1e9e02a14d52c2df5d16b2ae5f8f8",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/earth-1/regional-contact-status.json": "94f583445651fc1c4f20e87d797ee12dc1511416820dec098a55800a8bbe39ee",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/earth-2/regional-contact-status.json": "943248fbf05c7c73519d9dbdae4038caccf409c61186e763a31a9cb283a7ea17",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/earth-3/regional-contact-status.json": "cdf809e21a39ac0c1ed03ef1360c1a4ee200ee7c66eba39242bcf9d976e2b470",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/proxima-0/regional-contact-status.json": "7881fcdce1439580cc6391d65f36aa91b3f57eeffb67eeb519a07552d9df3c33",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/proxima-1/regional-contact-status.json": "ded182a55e9472f7de531103eb008077ac468f2256be07a42220131d107f74eb",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/proxima-2/regional-contact-status.json": "e2d4c8a3d96f68732e125871577d304ad8c975d75127122017367ca47770046b",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/proxima-3/regional-contact-status.json": "47cc2c05491355b0e2441ae92ac51e02395aa8a7077cd1004d71a3e41f07d5f7",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/andromeda-0/regional-contact-status.json": "b77831c903ebefc729d704be4bdd0c1b4a34ea7bc29c6bb79fd9e61859bef823",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/andromeda-1/regional-contact-status.json": "af37b79291d8e83aa37ab4e4d9ded79bd78d191fb3b6be2bd86924160cd9d060",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/andromeda-2/regional-contact-status.json": "2a6c8696f4795299d483395ebba9dd36ca785226df64bab27f156ad76064df1e",
+    "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/native-paged-full-fault-native-preparation-origin-v11-private-20261007/mesh/andromeda-3/regional-contact-status.json": "b4d0688b8893395e24b38ae8d6a8e76d69965dc27b2e43811619ecdbff539123"
+  },
+  "rows": [
+    {
+      "region": "earth",
+      "index": 0,
+      "rejected": [],
+      "errors": [
+        "[Errno 54] Connection reset by peer",
+        "TCP runtime is stopping; preserve evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 46278
+    },
+    {
+      "region": "earth",
+      "index": 1,
+      "rejected": [],
+      "errors": [
+        "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "[Errno 35] ordinary other-purpose retry pending; retain evidence"
+      ],
+      "deferred": [],
+      "height": 9,
+      "process_id": 41145
+    },
+    {
+      "region": "earth",
+      "index": 2,
+      "rejected": [],
+      "errors": [
+        "[Errno 54] Connection reset by peer",
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 41146
+    },
+    {
+      "region": "earth",
+      "index": 3,
+      "rejected": [],
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] ordinary other-purpose retry pending; retain evidence"
+      ],
+      "deferred": [],
+      "height": 9,
+      "process_id": 41147
+    },
+    {
+      "region": "proxima",
+      "index": 0,
+      "rejected": [],
+      "errors": [
+        "TCP peer refused custody; retain queued evidence"
+      ],
+      "deferred": [],
+      "height": 10,
+      "process_id": 41148
+    },
+    {
+      "region": "proxima",
+      "index": 1,
+      "rejected": [],
+      "errors": [
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)",
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 41149
+    },
+    {
+      "region": "proxima",
+      "index": 2,
+      "rejected": [
+        {
+          "packet_id": "0cb634029611ef90e5c072d5fa65ef343f5b6b28207e47af4c054339a35703b6",
+          "reason": "native rejected: regional candidate rejected: lock acquisition failed because the operation would block"
+        }
+      ],
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "native rejected: regional candidate rejected: lock acquisition failed because the operation would block",
+        "native rejected: regional candidate rejected: lock acquisition failed because the operation would block"
+      ],
+      "deferred": [
+        {
+          "command": "bft-network-inspect-batch",
+          "diagnostic": "regional candidate rejected: lock acquisition failed because the operation would block",
+          "exit_code": 1,
+          "ledger_acceptance_known": false,
+          "packet_id": "d17bee913cee8ab8f5ba9ef24d03e90a522bd4636e6d660f2a28897e15d84df2",
+          "signing_authority": false,
+          "stage": "native-validation-pending"
+        },
+        {
+          "command": "bft-network-inspect-batch",
+          "diagnostic": "regional candidate rejected: lock acquisition failed because the operation would block",
+          "exit_code": 1,
+          "ledger_acceptance_known": false,
+          "packet_id": "1404cbb5d85642ed8affd1ce950a6617228318a97e3833b32a8ffbdf76200645",
+          "signing_authority": false,
+          "stage": "native-validation-pending"
+        }
+      ],
+      "height": 10,
+      "process_id": 41150
+    },
+    {
+      "region": "proxima",
+      "index": 3,
+      "rejected": [],
+      "errors": [
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 41151
+    },
+    {
+      "region": "andromeda",
+      "index": 0,
+      "rejected": [],
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 41152
+    },
+    {
+      "region": "andromeda",
+      "index": 1,
+      "rejected": [],
+      "errors": [
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 41153
+    },
+    {
+      "region": "andromeda",
+      "index": 2,
+      "rejected": [],
+      "errors": [],
+      "deferred": [],
+      "height": 10,
+      "process_id": 41154
+    },
+    {
+      "region": "andromeda",
+      "index": 3,
+      "rejected": [],
+      "errors": [
+        "TCP runtime is stopping; preserve evidence"
+      ],
+      "deferred": [],
+      "height": null,
+      "process_id": 41155
+    }
+  ],
+  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
+  "consumed_sealed_bytes_unchanged": true,
+  "old_failures_still_FAIL": true
+}
