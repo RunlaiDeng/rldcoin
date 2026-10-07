@@ -52,9 +52,13 @@ V26四相关真实文件/注入write与dir-fsync反例通过，核心方法prefi
 
 独立Python规范解析/清单size-root/用途/nonce/有限horizon层与实际OpenSSL3.6.3双验签，不导入Core或签署；V37 **PASS1.327605秒/原60一次**，23实际判据与保留的Core接受/拒绝结论一致，包括坏任一半签、错域/nonce/期限/未知权威、非规范/重复JSON及错误backend hash先拒绝。51公开验证输入封存，actualOpenSSL `103fc7706cf6646f226d96f29242d81890363499afc730e7ef1fadd64b3a123c`和各源/controller绑定。仅在原Python五用途集合追加ARCHIVE_MANIFEST，其他原实现体逐字相同；旧五用途资格保持旧源，不追认新源全资格。这不是两独立完整协议实现、独立作者/运营、生产算法或P1–P8采用。
 
+## 实际小阶公钥接受分歧与修复
+
+V38 **FAIL0.461342秒**确认真实反例：同一成功公开manifest及有效PQ半签，identity Ed公钥+identityR/zeroS伪签无需私钥，实际OpenSSL reference错误exit0，Core183正确exit1。7项及脆弱源码封存；V37原23项PASS仅其有限scope，不能授安全key-admission。最小补规范compressed点、非identity/prime-subgroup、公钥与R及S<order，先检查再实际AND验签；Core/Native账本规则未改。V39 **PASS1.784655秒、原60累计2.245997秒**，3公开点回归、23相关实际判据、6新增伪签/编码及既有PAYMENT真实双签通过；58项公开字节封存，0签署/网络/Native/安装。详见[风险记录](operations/PQ_REFERENCE_RISKS.md)，独立安全及全恶意语料/生产资格仍OPEN。
+
 ## 下一单一主线
 
-新reference结构层尚未显式排除Ed25519非规范/小阶/混合阶policy key，而Core具备这些检查。下一最小可证伪离线命题：同一公开成功manifest/PQ半签，替换caller Ed钥为identity与identity零标量伪签，比较实际OpenSSL与已绑定Core的结果；一次60秒，无任何签署/运输，若两者不一致保留反例并最小补结构检查；一致则记录该反例未证实并转下一判据。全项目验收及所有物理/独立门槛不变。
+同一完整续证档案仍由一个Core协议实现判断。继续建立不导入Core的规范四签Old/New续证与有序归档第二参考实现：明确旧根/current-trust/独立latest/locks/consumed，实际OpenSSL逐条AND验签和连续时代约束，先最小2条及坏半签/角色/根/序/退役反例，再有理由的完整64 scope；原预算/门槛不变，不签署旧失败保管、不重跑TLS/Native。它仍不等于独立作者/运营或P1–P8采用。
 
 ## 尚未完成
 

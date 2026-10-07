@@ -49,6 +49,59 @@ def digest(value, width):
             "invalid canonical root")
 
 
+# Public-point admission only; not a secret-key or signature implementation.
+# Edwards arithmetic/encoding: RFC8032 sections5.1.3/6, with this candidate's
+# explicit nonidentity prime-subgroup restriction matching Core admission.
+ED_FIELD = (1 << 255) - 19
+ED_ORDER = (1 << 252) + 27742317777372353535851937790883648493
+ED_D = -121665 * pow(121666, ED_FIELD - 2, ED_FIELD) % ED_FIELD
+ED_SQRT_MINUS_ONE = pow(2, (ED_FIELD - 1) // 4, ED_FIELD)
+
+
+def prime_order_ed_point(encoded):
+    if type(encoded) is not bytes or len(encoded) != 32:
+        return False
+    n = int.from_bytes(encoded, 'little')
+    y, sign = n & ((1 << 255) - 1), n >> 255
+    if y >= ED_FIELD:
+        return False
+    yy = y * y % ED_FIELD
+    denominator = (ED_D * yy + 1) % ED_FIELD
+    if denominator == 0:
+        return False
+    xx = (yy - 1) * pow(denominator, ED_FIELD - 2, ED_FIELD) % ED_FIELD
+    x = pow(xx, (ED_FIELD + 3) // 8, ED_FIELD)
+    if x * x % ED_FIELD != xx:
+        x = x * ED_SQRT_MINUS_ONE % ED_FIELD
+    if x * x % ED_FIELD != xx or (x == 0 and sign):
+        return False
+    if x & 1 != sign:
+        x = (-x) % ED_FIELD
+    if x == 0 and y == 1:
+        return False
+
+    def add(left, right):
+        lx, ly, lz, lt = left
+        rx, ry, rz, rt = right
+        a = (ly - lx) * (ry - rx) % ED_FIELD
+        b = (ly + lx) * (ry + rx) % ED_FIELD
+        c = 2 * ED_D * lt * rt % ED_FIELD
+        d = 2 * lz * rz % ED_FIELD
+        e, f, g, h = b - a, d - c, d + c, b + a
+        return tuple(v % ED_FIELD for v in (e * f, g * h, f * g, e * h))
+
+    point = (x, y, 1, x * y % ED_FIELD)
+    result = (0, 1, 1, 0)
+    scalar = ED_ORDER
+    while scalar:
+        if scalar & 1:
+            result = add(result, point)
+        point = add(point, point)
+        scalar >>= 1
+    px, py, pz, _ = result
+    return pz != 0 and px == 0 and py == pz
+
+
 @dataclass(frozen=True)
 class Policy:
     profile: str
@@ -70,6 +123,8 @@ class Policy:
         require(self.valid_from_epoch <= self.valid_until_epoch, "invalid finite epoch horizon")
         require(type(self.ed_public_der) is bytes and len(self.ed_public_der) == 44
                 and self.ed_public_der.startswith(ED_SPKI), "wrong classical key encoding")
+        require(prime_order_ed_point(self.ed_public_der[len(ED_SPKI):]),
+                "classical key needs canonical nonidentity prime-order point")
         require(type(self.pq_public_der) is bytes and len(self.pq_public_der) == 2614
                 and self.pq_public_der.startswith(PQ_SPKI), "wrong ML-DSA-87 key encoding")
 
@@ -136,6 +191,9 @@ def verify_candidate(policy, intent, proof, trusted_epoch, scratch, openssl, dea
         require(type(proof.ed_signature) is bytes and len(proof.ed_signature) == 64
                 and type(proof.pq_signature) is bytes and len(proof.pq_signature) == 4627,
                 "both complete signature halves are mandatory")
+        require(prime_order_ed_point(proof.ed_signature[:32])
+                and int.from_bytes(proof.ed_signature[32:], "little") < ED_ORDER,
+                "classical signature needs canonical prime-order R and scalar")
     except (Rejected, TypeError):
         return Result.REJECTED
     try:
