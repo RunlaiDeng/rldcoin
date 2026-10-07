@@ -1,7 +1,8 @@
 # Process-local Native body witnesses
 
 The paged Store executes all complete ordered records from pinned genesis on
-every cold open and mutation. Its process-local body identity cache contains at
+every cold open. Live mutations stage its privately held actual Native replay
+after verifying the full unchanged current stream. Its body identity cache contains at
 most 4,096 entries, in insertion order. An eviction removes only a redundant
 identity witness. It does not remove original records, active verified ledgers,
 receipt or contact anchors, permanent imports, incidents, or signer locks.
@@ -37,3 +38,31 @@ imply constant-cost lookup or long-history throughput. Page packing is a separat
 representation candidate. Neither mechanism establishes the required long-history
 value execution, recovery, retention funding, independent rollback protection,
 cryptographic adoption or physical route qualification.
+
+
+## Ordinary current-process commit state
+
+The ordinary paged Store holds a private `CurrentReplay`, created only after
+authenticated empty genesis or full cold Native execution. It has no serialization
+or deserialization interface. Its exact header, retained record head and executed
+prefix remain separate from the Store's public chain, journal and evidence views.
+A live append verifies the complete current stream, scope, count and logical head,
+then requires every public chain field, ledger, trust binding, evidence snapshot
+and epoch set, and journal to match that actually executed state. Altering a public
+projection cannot initialize a ledger or supply Native authority.
+
+The original bounded batch is staged on a clone of that private replay. Each new
+complete record still authenticates and executes natively. During staging, the
+executed-prefix resolver consults only the committed prefix; new authenticated
+bodies stay in the process witness. The staged prefix advances through the
+successfully executed batch before publication. Complete incident proofs and the
+original shared root/stream capacity must verify before the original durable
+transaction. Only successful publication installs the new private process state
+and public views. A persistence refusal poisons the handle and retains its prior
+committed process state and all durable residue. Cold opens never load this cache.
+
+This removes historical Native re-execution from the append transaction. Full
+source I/O, historical conflict scans, contact preflight and signer-history
+verification retain their separate costs and authority checks. It does not adopt
+lossless prefix storage for ordinary nodes, change any signature custody format
+or supply new independent rollback, resource, cryptographic or route qualification.

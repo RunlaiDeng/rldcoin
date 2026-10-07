@@ -203,6 +203,7 @@ pub struct Store {
     pin: Hash,
     healthy: bool,
     paged: Option<crate::retained_pages::Stream<paged::Record>>,
+    paged_replay: Option<paged::CurrentReplay>,
 }
 pub fn ensure_not_restoring(dir: &Path) -> Result<()> {
     match fs::symlink_metadata(dir.join("RESTORING")) {
@@ -368,6 +369,7 @@ impl Store {
             pin,
             healthy: true,
             paged: None,
+            paged_replay: None,
             safety: Safety::default(),
             conflicts: vec![],
         };
@@ -468,6 +470,7 @@ impl Store {
             pin,
             healthy: true,
             paged: None,
+            paged_replay: None,
             safety,
             conflicts,
         };

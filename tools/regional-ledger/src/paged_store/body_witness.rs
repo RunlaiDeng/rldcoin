@@ -71,6 +71,12 @@ impl ExecutedPrefix {
         self.head = head;
         Ok(())
     }
+    pub(super) fn require_boundary(&self, scope: &Scope, count: u64, head: Hash) -> Result<()> {
+        require(
+            self.scope == *scope && self.count == count && self.head == head,
+            "actual executed Native prefix differs from retained current boundary",
+        )
+    }
     #[cfg(test)]
     pub(super) fn corrupt_head_for_fixture(&mut self) {
         self.head = Hash([9; 32]);

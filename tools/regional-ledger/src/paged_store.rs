@@ -1,5 +1,6 @@
 //! Ordinary Store persistence for the explicit signed paged BFT profile.
-//! Every mutation/cold open executes the entire complete event stream natively.
+//! Cold open executes all records from genesis. Live commits stage only the
+//! privately retained actual Native replay after complete current-byte checks.
 use super::*;
 use crate::retained_pages::{Purpose, Scope, Stream};
 #[path = "paged_store/body_witness.rs"]
@@ -65,6 +66,51 @@ struct Replay {
     receipt_anchors: BTreeSet<Hash>,
     incidents: BTreeSet<Hash>,
     contacts: BTreeMap<Hash, crate::contact::Record>,
+}
+/// Process-only Native execution, created only by authenticated genesis or full
+/// cold replay. Never serialized and never initialized from Store projections.
+pub(super) struct CurrentReplay {
+    header: Header,
+    replay: Replay,
+    head: Hash,
+}
+impl CurrentReplay {
+    fn stage(&self, node: &Store, header: &Header, stream: &Stream<Record>) -> Result<Replay> {
+        require(
+            self.head == stream.storage_head()
+                && serde_json::to_vec(&self.header).map_err(|e| e.to_string())?
+                    == serde_json::to_vec(header).map_err(|e| e.to_string())?,
+            "paged actual process header/head differs",
+        )?;
+        let scope = header.scope(&self.replay.trust)?;
+        stream.require_scope(&scope)?;
+        stream.require_unchanged(self.head)?;
+        self.replay
+            .executed
+            .require_boundary(&scope, stream.record_count(), self.head)?;
+        let actual = &self.replay.chain;
+        require(
+            node.trust.binding == self.replay.trust.binding
+                && node.evidence.trust_binding == self.replay.evidence.trust_binding
+                && node.evidence.snapshots == self.replay.evidence.snapshots
+                && node.evidence.epochs.regions == self.replay.evidence.epochs.regions
+                && node.chain.region == actual.region
+                && node.chain.trust_binding == actual.trust_binding
+                && node.chain.currency == actual.currency
+                && node.chain.prefix_height == actual.prefix_height
+                && node.chain.prefix_tip == actual.prefix_tip
+                && node.chain.segmented == actual.segmented
+                && node.chain.blocks == actual.blocks
+                && node.chain.ledger == actual.ledger
+                && node.chain.finalized == actual.finalized
+                && node.chain.epoch == actual.epoch
+                && serde_json::to_vec(&node.journal).map_err(|e| e.to_string())?
+                    == serde_json::to_vec(&self.replay.journal(header))
+                        .map_err(|e| e.to_string())?,
+            "public paged Store projection differs from actual Native execution",
+        )?;
+        Ok(self.replay.clone())
+    }
 }
 fn body(snapshot: &Snapshot) -> Result<Hash> {
     id(
@@ -439,6 +485,11 @@ impl Store {
             dir: dir.into(),
             _lock: lock,
             journal: replay.journal(&header),
+            paged_replay: Some(CurrentReplay {
+                header: header.clone(),
+                replay: replay.clone(),
+                head: stream.storage_head(),
+            }),
             trust: replay.trust,
             evidence: replay.evidence,
             chain: replay.chain,
@@ -509,6 +560,11 @@ impl Store {
             dir: dir.into(),
             _lock: lock,
             journal,
+            paged_replay: Some(CurrentReplay {
+                header: header.clone(),
+                replay: replay.clone(),
+                head: stream.storage_head(),
+            }),
             trust: replay.trust,
             evidence: replay.evidence,
             chain: replay.chain,
@@ -532,12 +588,25 @@ impl Store {
             "paged BFT store requires cold replay after persistence failure",
         )?;
         let header = read_header(&self.dir)?;
-        let mut replay = Replay::new(&header, &self.authority, self.pin)?;
+        require(
+            !records.is_empty() && records.len() <= 16,
+            "paged original complete append batch bound",
+        )?;
         let stream = self.paged.as_ref().ok_or("not a native paged store")?;
         let head = stream.storage_head();
-        stream.visit(head, |record| replay.apply_retained(record, stream))?;
+        let mut replay = self
+            .paged_replay
+            .as_ref()
+            .ok_or("paged actual process replay missing")?
+            .stage(self, &header, stream)?;
         for record in records {
             replay.apply(record, stream)?;
+        }
+        // During this bounded batch, the resolver may consult only the committed
+        // prefix. Its newly authenticated bodies remain in the bounded process
+        // witness; unpublished records cannot resolve historical identities.
+        for record in records {
+            replay.executed.advance(record)?;
         }
         let journal = replay.journal(&header);
         let (conflicts, safety) = read_incidents(&self.dir, &journal, &replay.trust, None)?;
@@ -559,6 +628,15 @@ impl Store {
             self.healthy = false;
             return Err(error);
         }
+        self.paged_replay = Some(CurrentReplay {
+            header,
+            replay: replay.clone(),
+            head: self
+                .paged
+                .as_ref()
+                .ok_or("paged committed stream missing")?
+                .storage_head(),
+        });
         self.journal = journal;
         self.trust = replay.trust;
         self.evidence = replay.evidence;
@@ -910,3 +988,7 @@ pub use continuation::{
 #[cfg(test)]
 #[path = "paged_store/continuation_tests.rs"]
 mod continuation_tests;
+
+#[cfg(test)]
+#[path = "paged_store/current_tests.rs"]
+mod current_tests;

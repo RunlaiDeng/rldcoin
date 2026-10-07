@@ -62,7 +62,7 @@ impl Caller {
         }
     }
 }
-fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)> {
+pub(super) fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)> {
     fn walk(path: &Path, out: &mut BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)>) {
         for entry in fs::read_dir(path).unwrap() {
             let path = entry.unwrap().path();
