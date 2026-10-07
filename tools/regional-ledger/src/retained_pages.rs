@@ -640,3 +640,6 @@ pub(crate) use recovery::rewrite_last_pending_for_fixture;
 
 #[cfg(test)]
 mod tests;
+
+/// Separate complete-page packing candidate; flat streams never adopt it.
+pub mod packed;
