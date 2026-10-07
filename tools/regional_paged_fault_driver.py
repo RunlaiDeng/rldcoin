@@ -253,12 +253,14 @@ class Driver:
             def call(self,*args):return driver.call(label,n,*args)
         return Read()
 
-    def pin_head(self,label,n,prefix):
+    def pin_head(self,label,n,prefix,*,retain_stopped=True):
         require((label,n) not in self.processes,'fixed-head inspection requires stopped own process')
         head=self.call(label,n,'history-head');self.file(prefix+'/head-'+label+'-'+str(n),head)
         checked=checked_history(self.native(label,n),head['history_head'])
         require(checked['region']==self.regions[label] and checked['height']<=CAPS[label], 'stopped Native domain/cap differs')
-        self.stopped_heads[label,n]=head['history_head'];return head
+        require(type(retain_stopped) is bool,'explicit stopped-pin bookkeeping mode required')
+        if retain_stopped:self.stopped_heads[label,n]=head['history_head']
+        return head
 
     def sign_original(self,label):
         require(label not in self.owners and not self.processes,'owner approval once before node startup required')
@@ -327,7 +329,7 @@ class Driver:
             and {(v['region'],v['index']) for v in terminal}==set(SLOTS)
             and all(v['exit_code']==0 for v in terminal),
             'startup pins require all12 own warm processes normally stopped once')
-        heads={slot:self.pin_head(*slot,'keyless-startup-native') for slot in SLOTS}
+        heads={slot:self.pin_head(*slot,'keyless-startup-native',retain_stopped=False) for slot in SLOTS}
         prepared={}
         for label,n in SLOTS:
             self.remaining();conf=self.configs[PHASES[-1],label,n]

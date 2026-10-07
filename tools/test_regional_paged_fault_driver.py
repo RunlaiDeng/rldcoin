@@ -690,7 +690,8 @@ class StartupPinDriverTests(unittest.TestCase):
             mesh.atomic(original,config)
             d.configs[PHASES[-1],r,n]=Config(PHASES[-1],r,n,True,b'{}',original.read_bytes(),
                 ('unused','--bft-config',str(original),'--unchanged','literal'))
-        def pin(r,n,prefix):
+        def pin(r,n,prefix,*,retain_stopped=True):
+            self.assertFalse(retain_stopped)
             d.pins.append((r,n));return dict(history_head=f'{len(d.pins):064x}')
         d.pin_head=pin;return d
 
@@ -721,7 +722,7 @@ class StartupPinDriverTests(unittest.TestCase):
                 elif why=='wrong-phase':d.phase=PHASES[-1]
                 elif why=='missing-slot':d.terminal.pop()
                 elif why=='pin-failure':
-                    def fail(*args):raise ValueError('original pin refusal')
+                    def fail(*args,**kwargs):raise ValueError('original pin refusal')
                     d.pin_head=fail
                 elif why=='changed-config':Path(d.configs[PHASES[-1],'earth',0].argv[2]).write_bytes(b'{}')
                 else:
@@ -729,6 +730,18 @@ class StartupPinDriverTests(unittest.TestCase):
                     d.configs[PHASES[-1],'earth',0]=Config(c.phase,c.region,c.index,c.started,c.mesh,c.bft,('unused',))
                 with self.assertRaises(ValueError):d.prepare_keyless_startup()
                 self.assertEqual(d.keyless_startup,{})
+
+    def test_warm_startup_pin_never_populates_post_keyless_terminal_head_collection(self):
+        d=Driver.__new__(Driver);d.processes={};d.stopped_heads={}
+        d.regions={'earth':'2'*64};d.currency='1'*64
+        head={'history_head':'3'*64};d.call=lambda *a:dict(head);d.file=lambda *a:None
+        d.native=lambda *a:None
+        checked=dict(region='2'*64,height=12)
+        with patch('regional_paged_fault_driver.checked_history',return_value=checked):
+            self.assertEqual(d.pin_head('earth',0,'startup',retain_stopped=False),head)
+            self.assertEqual(d.stopped_heads,{})
+            self.assertEqual(d.pin_head('earth',0,'stopped'),head)
+            self.assertEqual(d.stopped_heads,{('earth',0):head['history_head']})
 
     def test_actual_launch_uses_bound_derived_argv_and_changed_bytes_refuse_before_spawn(self):
         with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as tmp:
