@@ -379,7 +379,13 @@ class Server:
                 raise MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
             mesh.require(self.selection_owner is None or self.selection_owner is current,
                          'ordinary mesh selection already has another owner')
-            if (self.selection_owner is current and self.selection_purpose!=purpose):
+            # A finished bounded refusal retains priority only for its original
+            # window. Switching the idle same owner's purpose still takes the
+            # ordinary fair lease and full Mesh admission below.
+            if (self.selection_owner is current and self.selection_purpose!=purpose
+                    and (self.selection_attempt_owner is not None
+                         or self.selection_preference_until <= 0
+                         or time.monotonic() < self.selection_preference_until)):
                 costs=getattr(self,'mesh_costs',None)
                 if costs is not None:costs.record(purpose,'purpose',0.0,False)
                 raise BlockingIOError(errno.EAGAIN,
