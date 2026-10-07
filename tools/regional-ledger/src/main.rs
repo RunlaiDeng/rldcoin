@@ -96,6 +96,9 @@ enum Action {
         signer_dir: PathBuf,
         #[arg(long)]
         expected_head: String,
+        /// Include complete retained signed responses under the same Native lock.
+        #[arg(long)]
+        include_retained_messages: bool,
     },
     /// Exact historical proofs actually installed by fully replayed local events.
     BftInstalledEpochs,
@@ -1198,6 +1201,7 @@ fn run() -> Result<()> {
         Action::BftLoopStatus {
             signer_dir,
             expected_head,
+            include_retained_messages,
         } => {
             if !matches!(std::fs::symlink_metadata(args.dir.join("journal.next")),
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound)
@@ -1210,9 +1214,16 @@ fn run() -> Result<()> {
                     "BFT loop inspection differs from separately retained caller head".into(),
                 );
             }
-            let value = serde_json::json!({"format":"RLD-BFT-LOOP-OBSERVATION-V1",
+            let mut value = serde_json::json!({"format":"RLD-BFT-LOOP-OBSERVATION-V1",
                 "native":bft_context_observation(&store)?,"signer":status,
                 "signing_authority":false,"independent_freshness_qualified":false});
+            if include_retained_messages {
+                // This keeps the original complete message authentication. Only
+                // separate Native/Agent opens are shared by this locked read.
+                value["retained_messages"] = serde_json::to_value(agent.retained_messages(&store)?)
+                    .map_err(|e| e.to_string())?;
+                value["format"] = serde_json::json!("RLD-BFT-LOOP-RETAINED-OBSERVATION-V1");
+            }
             let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
             if raw.len() > MAX_BYTES {
                 return Err("BFT loop observation bytes bound".into());

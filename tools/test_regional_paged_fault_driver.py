@@ -66,6 +66,47 @@ class Model(Driver):
 
 
 class Tests(unittest.TestCase):
+    def test_loop_read_refuses_changed_heads_authority_and_incomplete_messages(self):
+        d=Driver.__new__(Driver)
+        caller=dict(head='1'*64,binding={'region':'fixture'})
+        config=dict(signer_dir='/never-opened')
+        valid=dict(format='RLD-BFT-LOOP-RETAINED-OBSERVATION-V1',native={'context':{}},
+            signer=dict(head=caller['head'],binding=caller['binding']),retained_messages=[],
+            signing_authority=False,independent_freshness_qualified=False)
+        seen=[]
+        def response(*args):seen.append(args);return copy.deepcopy(valid)
+        d.call=response
+        self.assertEqual(d.loop_read('earth',0,config,caller,True)['retained_messages'],[])
+        self.assertEqual(seen[-1],('earth',0,'bft-loop-status','--signer-dir',config['signer_dir'],
+            '--expected-head',caller['head'],'--include-retained-messages'))
+        for why in ('head','binding','authority','freshness','messages','format','missing'):
+            value=copy.deepcopy(valid)
+            if why=='head':value['signer']['head']='2'*64
+            elif why=='binding':value['signer']['binding']={}
+            elif why=='authority':value['signing_authority']=True
+            elif why=='freshness':value['independent_freshness_qualified']=True
+            elif why=='messages':value['retained_messages']=False
+            elif why=='format':value['format']='RLD-BFT-LOOP-OBSERVATION-V1'
+            else:value.pop('retained_messages')
+            d.call=lambda *args:copy.deepcopy(value)
+            with self.subTest(why=why),self.assertRaises(ValueError):d.loop_read('earth',0,config,caller,True)
+
+    def test_loop_adapter_classifies_only_exact_read_lock_as_unknown(self):
+        driver=Driver.__new__(Driver);driver.project=PROJECT;driver.root=PROJECT/'tmp/unused-no-native'
+        driver.authority='1'*64;driver.currency='2'*64;driver.calls=[];driver.remaining=lambda:1
+        driver.configs={(PHASES[0],'earth',1):Config(PHASES[0],'earth',1,True,b'{}',b'{}',('/not-run',))}
+        driver.write_counts={}
+        def reply(message):
+            def fake_run(*args,**kw):kw['stderr'].write(message);return SimpleNamespace(returncode=1)
+            return fake_run
+        text=b'regional candidate rejected: BFT signer is already locked\n'
+        with patch('regional_paged_fault_driver.subprocess.run',reply(text)):
+            with self.assertRaises(NativeReadBusy):driver.call('earth',1,'bft-loop-status')
+        with patch('regional_paged_fault_driver.subprocess.run',reply(text+b'bad signature')):
+            with self.assertRaises(ValueError) as error:driver.call('earth',1,'bft-loop-status')
+            self.assertNotIsInstance(error.exception,NativeReadBusy)
+        self.assertFalse(driver.write_counts)
+
     def test_observed_cold_read_adapter_keeps_lock_unknown_and_other_refusals_fatal(self):
         driver=Driver.__new__(Driver);driver.project=PROJECT;driver.root=PROJECT/'tmp/unused-no-native'
         driver.authority='1'*64;driver.currency='2'*64;driver.calls=[];driver.remaining=lambda:1
@@ -514,7 +555,11 @@ class StoppedDrainTests(unittest.TestCase):
    caller=p/f'{label}-{n}.json';caller.write_text(json.dumps(dict(pending=None,outbox=None,head='3'*64,binding='4'*64)));d.configs[PHASES[-1],label,n]=Config(PHASES[-1],label,n,True,encoded({}),encoded(dict(head_file=str(caller),signer_dir=str(p/f'never-opened-{label}-{n}'))),('never-executed',))
   def call(label,n,command,*args):
    d.queries.append((label,n,command))
-   if not d.closed and (label,n,command)==('earth',1,'bft-status'):raise NativeReadBusy('model exact live lock refusal')
+   if not d.closed and (label,n,command)==('earth',1,'bft-loop-status'):raise NativeReadBusy('model exact live lock refusal')
+   if command=='bft-loop-status':
+    context=dict(parent_height=d.native_heights[label,n],currency=d.currency,region=d.regions[label],round=1)
+    messages=[dict(Vote=dict(phase='Commit',context=context,round=1,value='5'*64,approval={'key':str(i)})) for i in range(3)] if d.group else []
+    return dict(format='RLD-BFT-LOOP-RETAINED-OBSERVATION-V1',native=dict(context=context),signer=dict(head='3'*64,binding='4'*64),retained_messages=messages,signing_authority=False,independent_freshness_qualified=False)
    if command=='status':return dict(currency='9'*64 if d.foreign else d.currency,region=d.regions[label],height=d.native_heights[label,n])
    if command=='bft-context':return {'context':dict(parent_height=d.native_heights[label,n],currency=d.currency,region=d.regions[label],round=1)}
    if command=='bft-status':return dict(head='3'*64,binding='4'*64)
@@ -529,10 +574,10 @@ class StoppedDrainTests(unittest.TestCase):
    for _ in range(5):
     try:success=bool(d.drain_ready(d.heights))
     except NativeReadBusy:pass
-   self.assertFalse(success);self.assertEqual(sum(q==('earth',0,'bft-retained-messages') for q in d.queries),5);self.assertFalse(any(q[0]!='earth' for q in d.queries))
+   self.assertFalse(success);self.assertEqual(sum(q==('earth',0,'bft-loop-status') for q in d.queries),5);self.assertFalse(any(q[0]!='earth' for q in d.queries))
  def test_same_original_drain_predicate_after_clean_stop_checks_all12(self):
   with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
-   d=self.model(Path(t));d.closed=True;self.assertTrue(d.stopped_drain());self.assertEqual({(l,n) for l,n,c in d.queries if c=='bft-retained-messages'},set(SLOTS));self.assertEqual(sum(c=='status' for l,n,c in d.queries),12)
+   d=self.model(Path(t));d.closed=True;self.assertTrue(d.stopped_drain());self.assertEqual({(l,n) for l,n,c in d.queries if c=='bft-loop-status'},set(SLOTS));self.assertEqual(sum(c=='status' for l,n,c in d.queries),12)
  def test_live_process_unclean_stop_or_wrong_phase_refuse_before_read(self):
   for why in ('live','unclean','phase','incomplete'):
    with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:

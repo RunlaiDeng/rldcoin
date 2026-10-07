@@ -31,7 +31,7 @@ from verify_regional_bft_stopped_batch import verify_stopped_state_pinned_observ
 
 CAPS = dict(earth=27, proxima=24, andromeda=24)
 READS = frozenset(('status', 'proof', 'bft-context', 'wallet-receipt', 'wallet-view',
-    'history-head', 'history-check', 'bft-status', 'bft-retained-messages', 'bft-network-check-plan', 'bft-network-check-plan-observed'))
+    'history-head', 'history-check', 'bft-status', 'bft-retained-messages', 'bft-network-check-plan', 'bft-network-check-plan-observed', 'bft-loop-status'))
 WRITES = frozenset(('wallet-sign', 'bft-submit'))
 
 
@@ -468,19 +468,34 @@ class Driver:
             heights[label,n]=state['height']
         return self.drain_ready(heights)
 
+    def loop_read(self,label,n,config,caller,retained=False):
+        args=['bft-loop-status','--signer-dir',config['signer_dir'],'--expected-head',caller['head']]
+        if retained:args.append('--include-retained-messages')
+        value=self.call(label,n,*args)
+        fields={'format','native','signer','signing_authority','independent_freshness_qualified'}
+        if retained:fields.add('retained_messages')
+        require(set(value)==fields and value['format']==('RLD-BFT-LOOP-RETAINED-OBSERVATION-V1'
+            if retained else 'RLD-BFT-LOOP-OBSERVATION-V1') and value['signing_authority'] is False
+            and value['independent_freshness_qualified'] is False,'complete Native loop observation domain differs')
+        signer=value['signer']
+        require(signer['head']==caller['head'] and signer['binding']==caller['binding'],
+            'keyless caller/signer head differs')
+        if retained:require(type(value['retained_messages']) is list,'complete retained Native messages required')
+        return value
+
     def drain_ready(self,heights):
         if not all(type(heights.get((label,n))) is int for label in REGIONS for n in range(4)):return False
         for label in REGIONS:
             if len({heights[label,n] for n in range(4)})!=1:return False
-            context=self.call(label,0,'bft-context')['context']
-            if context['parent_height']!=heights[label,0]:return False
-            messages=[]
+            messages=[];context=None
             for n in range(4):
                 config=json.loads(self.configs[PHASES[-1],label,n].bft);caller=document(config['head_file'])
                 if caller['pending'] is not None or caller['outbox'] is not None:return False
-                signer=self.call(label,n,'bft-status','--signer-dir',config['signer_dir'])
-                require(signer['head']==caller['head'] and signer['binding']==caller['binding'],'keyless caller/signer head differs')
-                messages.extend(self.call(label,n,'bft-retained-messages','--signer-dir',config['signer_dir']))
+                value=self.loop_read(label,n,config,caller,retained=True)
+                current=value['native']['context']
+                if current['parent_height']!=heights[label,n]:return False
+                if n==0:context=current
+                messages.extend(value['retained_messages'])
             if has_complete_commit_group(messages,context):return False
         return True
 
@@ -497,10 +512,11 @@ class Driver:
                 state=self.call(label,n,'status');proof=self.call(label,n,'proof')
                 require(all(state[k]==head[k] for k in ('currency','region','height','tip','state','finality')),
                     'stopped actual checkpoint changed')
-                caller=document(conf['head_file']);signer=self.call(label,n,'bft-status','--signer-dir',conf['signer_dir'])
-                require(caller['head']==signer['head'] and caller['binding']==signer['binding']
-                    and caller['pending'] is None and caller['outbox'] is None, 'final separate native voter/caller heads differ')
-                context=self.call(label,n,'bft-context')
+                caller=document(conf['head_file'])
+                require(caller['pending'] is None and caller['outbox'] is None,
+                    'final separate native voter/caller heads differ')
+                value=self.loop_read(label,n,conf,caller)
+                context=value['native']
                 require(context['rules']==RULES and context['keys']==[v['key'] for v in conf['validators']]
                     and context['context']['parent_height']==state['height'],'final original membership differs')
                 after=inventory(self.root/label/f'native-{n}')
