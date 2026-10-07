@@ -494,6 +494,9 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
     pub fn record_count(&self) -> u64 {
         self.manifest.count
     }
+    pub(crate) fn retained_usage_candidate(&self) -> Result<(usize, u64)> {
+        usage(&self.dir)
+    }
 }
 
 #[cfg(test)]

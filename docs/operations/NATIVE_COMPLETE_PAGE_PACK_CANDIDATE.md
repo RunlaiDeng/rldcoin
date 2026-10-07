@@ -227,3 +227,39 @@ still require its separately retained complete manifest reference, scope and
 head; Native inspection still replays from independently pinned signed genesis.
 This API constructs a fresh immutable archive. It grants no existing-store
 append, recovery, signer custody or network adoption rights.
+
+
+## Complete prefix and atomic continuation
+
+`storage::NativeContinuationCandidate` composes a locked immutable lossless
+prefix with a fresh complete-record `Stream` tail. It verifies the prefix from
+independently pinned signed genesis before creating the tail. The tail's origin
+binds the complete prefix manifest reference, prefix logical head and Native
+ending boundary in `native-lossless-prefix-continuation-origin-v1`.
+A tail inside the prefix is forbidden. Prefix bytes never change.
+
+`NativePrefixPinsCandidate` and `NativeContinuationPinsCandidate` describe
+caller-retained anchors. They have no deserialized Native state. Opening requires
+the prefix anchors, tail head, complete ordered record head and full latest
+Native boundary. Verification executes prefix then tail from genesis, checking
+both the prefix boundary and ending boundary before returning. A tail hash is
+not a Native predecessor or an independent freshness witness.
+
+`append_certified` authenticates the complete current prefix/tail and executes
+the supplied complete certificate through the existing Native kernel. It uses
+the original stream's durable pending/page/manifest transaction. Only successful
+publication returns new caller anchors. A persistence failure makes the handle
+unusable, and pending targets refuse cold open and recreation. Signature or
+caller-anchor failures do not publish a partial record or Native boundary.
+
+The two owned directories share one 4,096-file / 256-MiB ceiling, including all
+orphans, locks, pending files and complete future transaction payloads. They do
+not each receive another allowance. Every retained object remains bounded by
+8 MiB. Complete incident proofs, normal Store metadata and signer/caller custody
+are not part of this entry; nonempty incident identifiers refuse.
+
+This first continuation interface replays the complete history for each append.
+It provides a correctness baseline, not a qualified large-node service budget.
+Persistent process-local Native execution, continuation rotation, general event
+interfaces, complete incident integration and ordinary-node/signing/recovery
+adoption remain distinct work. No old private archive is converted or resumed.

@@ -357,6 +357,32 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             "complete stream native consumer scope",
         )
     }
+    pub(crate) fn retained_usage_candidate(&self) -> Result<(usize, u64)> {
+        root_inventory(&self.dir)?;
+        let (mut files, mut total) = usage(&self.dir.join(OBJECTS))?;
+        for entry in fs::read_dir(&self.dir).map_err(err)? {
+            let path = entry.map_err(err)?.path();
+            if path.file_name().and_then(|v| v.to_str()) == Some(OBJECTS) {
+                continue;
+            }
+            files = files.checked_add(1).ok_or("stream file count overflow")?;
+            total = total
+                .checked_add(keystore::private_read(&path, MAX_BYTES)?.len() as u64)
+                .ok_or("stream byte count overflow")?;
+        }
+        Ok((files, total))
+    }
+    pub(crate) fn initial_usage_candidate(scope: &Scope) -> Result<(usize, u64)> {
+        let raw = bytes(&Manifest::<T> {
+            format: FORMAT.into(),
+            scope: scope.clone(),
+            pages: vec![],
+            tail: vec![],
+            count: 0,
+            head: scope.initial()?,
+        })?;
+        Ok((2, raw.len() as u64))
+    }
     /// Unpinned integrity observation only, never independent latest authority.
     pub(crate) fn observe_head(dir: &Path, scope: &Scope) -> Result<Hash> {
         let manifest: Manifest<T> =

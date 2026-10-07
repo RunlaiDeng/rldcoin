@@ -1237,5 +1237,6 @@ pub(crate) use paged::Historical as PagedSigningHistory;
 pub(crate) use paged::Record as PagedRecord;
 pub use paged::{
     inspect_lossless_packed_native_candidate, inspect_packed_native_candidate,
+    NativeContinuationCandidate, NativeContinuationPinsCandidate, NativePrefixPinsCandidate,
     PackedNativeBoundaryCandidate,
 };

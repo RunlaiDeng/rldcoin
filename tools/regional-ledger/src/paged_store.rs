@@ -899,3 +899,13 @@ pub use packed_inspection::{
 #[cfg(test)]
 #[path = "paged_store/packed_inspection_tests.rs"]
 mod packed_inspection_tests;
+
+#[path = "paged_store/continuation.rs"]
+mod continuation;
+pub use continuation::{
+    NativeContinuationCandidate, NativeContinuationPinsCandidate, NativePrefixPinsCandidate,
+};
+
+#[cfg(test)]
+#[path = "paged_store/continuation_tests.rs"]
+mod continuation_tests;
