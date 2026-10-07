@@ -457,7 +457,8 @@ class Service:
             except (OSError,ValueError,subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
                 observe_os_error(error,'consensus')
-                consensus={'autonomous_signing_enabled':not self.bft.failed,'progress_observation_available':False,
+                # A failed observation cannot establish the current signing role.
+                consensus={'autonomous_signing_enabled':None,'progress_observation_available':False,
                            'diagnostic':str(error)[:256],'independent_bft_qualified':False}
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
         if socket_observation is None:

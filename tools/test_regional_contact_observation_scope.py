@@ -63,6 +63,28 @@ class ObservationScopeTests(unittest.TestCase):
              patch('regional_contact_node.wire.inspect_frame', return_value=({'kind':service.kind,'message_id':'message'},b'')):
             return service.tick()
 
+    def test_failed_consensus_reports_unknown_signing_role_without_stale_progress(self):
+        for failure in ('native rejected: regional candidate rejected: BFT signer is already locked',
+                        'native rejected: invalid proof',
+                        'TCP runtime is stopping; preserve evidence'):
+            with self.subTest(failure=failure):
+                service=self.service();service.bft.failed=False
+                def tick():raise ValueError(failure)
+                service.bft.tick=tick
+                report=self.tick(service);consensus=report['consensus']
+                self.assertIsNone(consensus['autonomous_signing_enabled'])
+                self.assertFalse(consensus['progress_observation_available'])
+                self.assertEqual(consensus['diagnostic'],failure)
+                self.assertNotIn('height',consensus);self.assertNotIn('round',consensus)
+                self.assertIn(failure,report['errors'])
+                self.assertEqual(service.calls,['contact-observation'])
+                # Only a later successful complete observation may show a role.
+                service.bft.tick=lambda:dict(autonomous_signing_enabled=False,height=14,round=0)
+                later=self.tick(service)
+                self.assertFalse(later['consensus']['autonomous_signing_enabled'])
+                self.assertEqual(later['consensus']['height'],14)
+                self.assertNotIn(failure,later['errors'])
+
     def test_read_only_tick_requires_one_full_native_read(self):
         service=self.service();report=self.tick(service)
         self.assertEqual(service.calls,['contact-observation'])
