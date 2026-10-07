@@ -12,6 +12,7 @@ python3 -B -m unittest discover -s tools/source-evidence -v
 python3 -B -m unittest discover -s tools/implementation-source -v
 python3 -B -m unittest discover -s tools -p test_pq_public_carriage_candidate.py -v
 python3 -B -m unittest discover -s tools -p test_pq_public_archive_candidate.py -v
+python3 -B -m unittest discover -s tools -p test_pq_public_archive_spool_candidate.py -v
 cargo metadata --locked --offline --no-deps
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked --offline -- -D warnings
@@ -80,3 +81,28 @@ read by the actual unchanged Core cold adapter. A complete byte-valid altered-PQ
 archive still failed actual Core validation. This is same-host in-memory packet
 carriage plus complete cold files, not actual network/TLS relay, independent
 custody, asynchronous physical-route qualification or adopted monetary rules.
+
+## Public packet custody candidate
+
+`tools/pq_public_archive_spool_candidate.py` supports explicit `init`, `accept`
+and `complete` commands. Every cold open requires a separately retained expected
+manifest SHA512. Only an empty owned private directory can be initialized.
+The caller's root is never learned from local packets. Full valid manifest arrives
+before entry admission. Exact duplicate receipt rechecks bytes and fsyncs the file
+and directory. Partial input cannot create a completion output directory.
+
+Owned no-follow regular inputs, an OS file lock, immutable no-replace hard-link
+publication, complete file and directory fsync before receipt, and retained failure
+residues bound this candidate. All retained files count toward256 files and the
+derived public-packet gross-byte limit; this does not change any existing Native,
+mesh, entry or aggregate protocol cap. Only a current operation's successfully
+committed temporary link is removed; older failed residue remains. Receipt means
+durable received bytes, never valid inner signatures, a ledger head, value or refund.
+
+The bounded multi-process example stops after half of193 packets, refuses incomplete
+publication in a fresh process, receives the remainder in reverse order, repeats
+exact custody, and reconstructs64 complete entries for actual Core. Injected write
+and directory-fsync failures release no receipt and retain residue. This proves
+those process/filesystem paths only; hardware power loss, concurrent independent
+custody, sustained adversarial load, real contacts and monetary adoption remain
+unqualified. No old failed signed custody is reopened or pruned.
