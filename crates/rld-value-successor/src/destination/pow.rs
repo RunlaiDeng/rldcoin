@@ -92,7 +92,7 @@ pub enum Command {
     Import(ProofBundle),
     FinalizedImport {
         bundle: ProofBundle,
-        certificate: FinalityCertificate,
+        certificate: Box<FinalityCertificate>,
     },
     Transfer(Transfer),
 }

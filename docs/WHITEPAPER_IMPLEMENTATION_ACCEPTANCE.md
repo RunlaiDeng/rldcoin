@@ -1905,3 +1905,29 @@ head-v19全新12准备原180 PASS30.759秒/668文件；实际E8/P5/A5/8完整目
 head-v16 **PASS430.830秒/原600一次/6210封存**，helper0/预算内/pin null/forced[]/primary-cleanup null，24普通及无钥服务均exit0、节点/中继正常停。实际三原owner first-sign/release各3、未替换请求；missing-leader9/原隔离当地付款/offline追赶/恢复原Native净9收款import11/mature13/spendable/无quarantine/keyless/原pending-outbox-caller-signer-commitgroup排空/原12固定头Nativecold/1645累计完整信封核验/5265累计档案cold认证/全部caller-owner/原保管/最终守恒通过；E14/P13/A13，永久export/import各3、pending/escrow0，issued=liquid=3500000000000000000000000000000。终态12私有固定头已可靠编码保留。seal9514a53f1a158c70fd8dff0e97f54538876e6603688cfdb11826311fc877bd2c。所有此前600/180/589.344/603.233及其他FAIL原样保留，未重开或补标PASS；这仅是本精确3地区4voter无价值地面profile，不是白皮书全条款、独立/长期/PQ/物理/组合/主网资格。
 
 已封存最终来源与本地Git source anchor776ceb15f，192c5ca/Native89-346c/实现fd1e/Core171-de74/actualCLIbef4/Driver276/terminalc7e及精确controller/hash绑定；无需因局部PASS重复当前长测。下一串行工程项为VALUE-STRICT-01已知large_enum_variant/bool_assert_comparison及旧120.019失败：采用此前已审阅未应用4文件Box/相同布尔谓词修复，完整原非Box命令序列化byte equality/typed decode、真实有效/伪造/缺trust finality与journal replay回归必须通过，once total300/首失败或原期限停止，无warning豁免/网络/fault长测。这会改变Core171整体来源标识（即使value crate未链接regional），所以旧已通过Native profile保留准确historical source/binary锚定，不冒称新Core/新编译Native已资格，不迁移任何旧Genesis/ledger/key/保管。冻结纸面/官网和全部S/R/I/A–G/N/P/原经济共识参数不改，长期/PQ/组合/独立/物理仍OPEN，唯一作者继续本地授权开发。
+
+## 2026-10-07 当前串行主线：旧价值入口已实现；严格工作区通过，完整价值预算失败保留
+
+原 head-v16 精确三地区/12副本无价值地面完整 fault **PASS430.830/原600**，所有旧FAIL保留。它固定 historical Core171 de74/actual Native CLI bef4，不是当前 Core 或全部白皮书资格。冻结正文2ba62421…/PDFc59f9fe8…/receipt86821d19…及 S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8继续为实施目标；长期、PQ、组合、独立运营/保管与物理路线仍OPEN。
+
+VALUE-STRICT-01 两基线告警已用Box（原命令JSON完整字节相同）和相同布尔谓词修复；finality锁显式truncate(false)，不添加warning豁免。5个缺失candidate入口现在有实际源码：unsigned preview/public signature assembly、durable isolated import ack、payer、receiver。共同输入复用实际source/adoption/preview验证、bounded loopback sync与原钱包日志/看守签名；不激活采用网络、不迁移测试余额。V2严格FAIL16.438、V3仅库/现有bins及12PoW部分PASS55.359都保留，V3不替代完整严格检查。
+
+V5静态及3入口回归PASS18.570；V6两实际import/payment流程PASS58.976；V7剩余9项为6PASS/3FAIL（68.967秒）。3失败：旧测试采用已发行链、误把2次包含确认视为原6块成熟、旧回环拒绝文本。3个失败夹具1107文件封存，未重开。仅测试修正：空签名创世/拒非空前继/新链101个区块中首块奖励按原100个追加块规则成熟、先pending后原6块spend、匹配实际loopback拒绝。V8私有字段预检FAIL4.046/零新fixture；改用现有Ledger.coin后V9严格+3实际相关PASS57.421。生产采用/成熟/共识参数未改，地区原maturity2/quorum3/60round/24height/600仍不减。
+
+最终工作区fmt及6包all-target严格 **V11 PASS9.795/原120**，告警豁免0，Core177 bc623ebe132c25c47553740c7d8a9682f32e0b3b468c8c8dcae412f48601eea8。V10格式FAIL .791为同一新wire断言的换行，已修正。V9实际9binary及compiler manifest独立锚定其4636来源，不补授当前或Native资格。
+
+必要一次最终源码完整价值套件 **V12 FAIL原300/300.034**，49库+4离线+8runtime已通过但runtime未完整。deadline自身结束ownedgroup，590新失败文件封存；不称完整PASS。只读2秒采样是当时destination cold线程的PoW/哈希/curve CPU工作，不能唯一归因先前129日志或全部耗时。没有降签名/票数/奖励/成熟/条数/期限。
+
+同一最终源码的V13于2026-10-07T04:16:03.445274+00:00启动一次原300（本文写入时RUNNING）：实际cargo test使用固定1.98.0、opt-level1、debug-assertions=true、overflow-checks=true，单独target/value-tests-rust198-opt1缓存；新配置包含构建时间，完整49库/4离线/14runtime/文档测试均需原预算内通过。首错误或原deadline停止封存，不原样重试、不新增地区180/600。这是构建profile验证，不是延长验收。
+
+显式workdir=/Users/galaxy/GitHub/rldcoin、唯一作者持续；persistent cwd/goal旧前继哈希及blocked元数据仍UI待修，不是新审批门。不改冻结白皮书/PDF/官网、不远端安装/购买、不资金/账号权限/外联/push/清理，不重开、复制、退款或重签任何失败币。
+
+证据：[最终工作区严格](operations/evidence/workspace-candidate-integration-v11-20261007-checks.json)、[3项修复回归](operations/evidence/legacy-value-candidate-entries-v9-20261007-checks.json)、[原300完整FAIL](operations/evidence/legacy-value-candidate-full-value-v12-20261007-checks.json)、[原预算分类](operations/evidence/legacy-value-full-v12-budget-classification-20261007.json)、[当前优化profile一次分配](operations/evidence/legacy-value-candidate-full-value-v13-20261007-stage.json)。
+
+### V13完整价值套件终态：PASS172.226/原300，继续时代续接判别
+
+V13一次最终源码完整价值套件 **PASS172.226秒/原300含45.96秒冷构建**：49库/4离线/14runtime全部通过，ignored=filtered=0；workspace V11格式+全目标严格同Core177 bc623ebe…通过，无告警豁免。VALUE-STRICT-01在此精确来源/实际binary/controller/test-opt1 profile完成；旧120/V2/V7/V8/V10/V12各FAIL仍原样保留，不补标PASS。实际9个CLI和compiler生成source manifest已独立绑定。未重复地区180/600，历史head-v16仍只绑定其原Core171/actualNativebinary，不因value资格授予当前Core或新Native资格。
+
+优化profile已实际采用且调试断言/溢出检查保持true，固定1.98.0/每workspace-profile一份target/value-tests-rust198-opt1缓存；不是减少测试、签名、成熟、票数、条数或stage预算。全文冻结与全部S/R/I/A–G/N/P、长期/PQ/组合/独立/物理验收仍保持。
+
+下一唯一最小可证伪目标：Core apply_era_transition是否接受有当前真实旧/新validator及notary签名、正确activation checkpoint/高度/era、但previous_certificate_hash不是本地实际前继的证书。先一次无网络/文件币/Native/Runtime的Rust真实签名反例，编译+检查原120内/首结果或期限停止；成立才在原绑定谓词增加准确前继匹配，再验证首fallback、第二era last-certificate、stale/missing/fork前继拒绝、失败原子/validQC及既有相关护栏。不得据此宣称实现PQ或完整续证；不重开失败夹具、不外联或改冻结正文。

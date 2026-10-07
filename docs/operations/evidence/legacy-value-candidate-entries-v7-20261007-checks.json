@@ -1,0 +1,52 @@
+{
+  "format": "RLD-LEGACY-VALUE-CANDIDATE-ENTRIES-V7",
+  "completed": false,
+  "duration_seconds": 68.966601,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-value-successor",
+        "--test",
+        "runtime",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1",
+        "--nocapture",
+        "--skip",
+        "transition_preview_cli_roundtrip_and_candidate_refuses_changed_acceptance",
+        "--skip",
+        "candidate_receiver_refuses_public_listener_and_remote_node_before_reading_keys",
+        "--skip",
+        "candidate_value_clients_reject_wrong_transition_preview_before_opening_stores",
+        "--skip",
+        "destination_import_process_returns_signed_ack_and_halts_on_source_reorg",
+        "--skip",
+        "signed_channel_dispute_is_durably_mined_and_synced"
+      ],
+      "exit_code": 101,
+      "duration_seconds": 68.940404,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "8b0830d95e1a4aeb22238a1fa0431dc0c46d6250156b10278c01e1f394b2a828",
+  "stage_sha256": "910b4d1d4bd23a086960d0257c58fc63b0681f90c4ba07830c423214dda17f40",
+  "controller_sha256": "ddcf1eec698aec7944f57807361f35a05563a06069fafe11ab2f6cfaa353dc9c",
+  "log_sha256": "a43bfdbf9458ad7f41b0493cecdeb5ea5a0445e734451267a19cd599d692549c",
+  "core_source": "ea8c88189f55361c63a27ed52a18377f0f01765f97c4ea2b97571a68448f5b3f",
+  "core_file_count": 177,
+  "selected_runtime_behaviors_qualified": false,
+  "full_runtime_suite_qualified": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

@@ -123,6 +123,7 @@ pub fn signed_state_hash(state: &SignedState) -> Result<Hash> {
 
 pub mod adoption;
 pub mod candidate_client;
+pub mod candidate_inputs;
 pub mod chain;
 pub mod destination;
 pub mod transition;

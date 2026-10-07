@@ -179,6 +179,7 @@ fn main() -> Result<()> {
         .read(true)
         .write(true)
         .create(true)
+        .truncate(false)
         .open(ceremony_path)?;
     ceremony.try_lock()?;
     let id = statement.id().map_err(|e| anyhow!(e))?;

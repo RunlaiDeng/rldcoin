@@ -1,0 +1,56 @@
+{
+  "format": "RLD-LEGACY-VALUE-STRICT-WIRE-CHECKS-V2",
+  "completed": false,
+  "duration_seconds": 16.438394,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "budget_exhausted": false,
+  "pin_error": null,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "rld-value-successor",
+        "--lib",
+        "--tests",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 101,
+      "duration_seconds": 16.424621,
+      "terminal": true
+    }
+  ],
+  "source_before": {
+    "crates/rld-value-successor/src/destination/pow.rs": "a4bb07011aa719d5429529dcff4a59baaf56c6ae47766dcea1e6728f5b41eb77",
+    "crates/rld-value-successor/src/destination/pow/tests.rs": "032ae054565f05e31351b0eacea75ef6f9dee8e6916782327f60b97193c25c04",
+    "crates/rld-value-successor/src/bin/rld-earth-destination-node/offline_tests.rs": "42abce818db430f73afce0fa66b6bd4edc73eb5f45fb650b0b3634788223ae4f",
+    "crates/rld-value-successor/tests/runtime.rs": "3d1669a17a2f04fc4c313685340f95db7a7ce4b482d4f89d947617c32a079f7a"
+  },
+  "source_after": {
+    "crates/rld-value-successor/src/destination/pow.rs": "fbf678adfa242126e26255f8b36384a91d85e0790ef8b1f58811ed1483838ba0",
+    "crates/rld-value-successor/src/destination/pow/tests.rs": "964f6b4aba717bc9fcced1a6957e334af8e3e827174e4ee26a86a8c0a8608dff",
+    "crates/rld-value-successor/src/bin/rld-earth-destination-node/offline_tests.rs": "dcd13d7013a8e40fbc95249a37e099593b0cba90192eac25f7cd1a5c124dee1f",
+    "crates/rld-value-successor/tests/runtime.rs": "d72ea6aeb111a15fcf2e3a3709a58d4edbdc81cb8761ffd136d061eb64aa1ffc"
+  },
+  "core_source171_before": "de74cf78a22e34f558760be0c3cd1ab39e988dfa20eb2722acc23a35fc527d5c",
+  "core_source171_after": "f210c4b78dbfc4c17295aebddb8beecc9213c85ca6ff76a439ccb74a0c1d19da",
+  "stage_sha256": "1a86a9b191b07f29b1528e6024ffd5b99c67494d06553182d07044c8d54d7b54",
+  "controller_sha256": "102c33e1e43976df9b6e473518037d79a0ac31abd56a1e167c2e4a9a61cd4f66",
+  "log_sha256": "2e3c602eb84a67b49fa6d067f4fbf6a0a26eef209cb9b21422145043fc349406",
+  "old120_019_failed_record_remains": true,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "old_qualified_Native_profile_binary_and_evidence_unmodified": true,
+  "new_Core_or_rebuilt_Native_profile_qualification": false,
+  "legacy_library_strict_and_related_pow_only": false,
+  "all_targets_or_entire_value_product_qualified": false,
+  "frozen_md_pdf_receipt_unchanged": true,
+  "whole_goal_completed": false
+}

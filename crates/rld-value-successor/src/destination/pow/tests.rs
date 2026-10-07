@@ -174,6 +174,28 @@ fn earth_import_requires_signed_source_finality_covering_export() {
             .collect(),
         statement,
     };
+    // Heap representation must preserve the complete authenticated command wire.
+    let command = Command::FinalizedImport {
+        bundle: bundle.clone(),
+        certificate: Box::new(certificate.clone()),
+    };
+    #[derive(serde::Serialize)]
+    enum OriginalCommandEncoding {
+        FinalizedImport {
+            bundle: ProofBundle,
+            certificate: FinalityCertificate,
+        },
+    }
+    let original = OriginalCommandEncoding::FinalizedImport {
+        bundle: bundle.clone(),
+        certificate: certificate.clone(),
+    };
+    let encoded = serde_json::to_vec(&command).unwrap();
+    assert_eq!(encoded, serde_json::to_vec(&original).unwrap());
+    assert_eq!(
+        serde_json::from_slice::<Command>(&encoded).unwrap(),
+        command
+    );
     let context = Context {
         chain_id: bundle.destination_chain_id,
         source_policy: policy,
@@ -200,7 +222,7 @@ fn earth_import_requires_signed_source_finality_covering_export() {
             2_000_001,
             vec![Command::FinalizedImport {
                 bundle: bundle.clone(),
-                certificate: certificate.clone()
+                certificate: Box::new(certificate.clone())
             }]
         )
         .is_err());
@@ -214,7 +236,7 @@ fn earth_import_requires_signed_source_finality_covering_export() {
             2_000_001,
             vec![Command::FinalizedImport {
                 bundle: bundle.clone(),
-                certificate: forged
+                certificate: Box::new(forged)
             }]
         )
         .is_err());
@@ -225,7 +247,7 @@ fn earth_import_requires_signed_source_finality_covering_export() {
         2_000_001,
         vec![Command::FinalizedImport {
             bundle,
-            certificate,
+            certificate: Box::new(certificate),
         }],
     );
     assert_eq!(block.header.height, 1);
@@ -699,12 +721,11 @@ fn destination_journal_replays_legacy_prefix_before_new_files() {
     .unwrap();
     let mut restored = DestinationPowStore::open(&root, context, &source, 2_000_100).unwrap();
     assert_eq!(restored.submitted_count(), 1);
-    assert_eq!(
-        restored
+    assert!(
+        !restored
             .submit_command(&source, command, &miner.public_key, 2_000_001)
             .unwrap()
-            .1,
-        false
+            .1
     );
     drop(restored);
     std::fs::remove_dir_all(root).unwrap();

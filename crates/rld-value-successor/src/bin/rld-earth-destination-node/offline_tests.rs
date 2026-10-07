@@ -352,7 +352,7 @@ async fn disconnected_http_import_mature_spend_and_restart_without_source_server
     assert_eq!(state["source_view"], "PINNED_FINALIZED_OFFLINE_SNAPSHOT");
     let import = Command::FinalizedImport {
         bundle: fixture.bundle.clone(),
-        certificate: fixture.certificate.clone(),
+        certificate: Box::new(fixture.certificate.clone()),
     };
     let uncovered = {
         let source = app.0.source.lock().await;
@@ -367,11 +367,11 @@ async fn disconnected_http_import_mature_spend_and_restart_without_source_server
         Command::Import(fixture.bundle.clone()),
         Command::FinalizedImport {
             bundle: fixture.bundle.clone(),
-            certificate: forged,
+            certificate: Box::new(forged),
         },
         Command::FinalizedImport {
             bundle: uncovered,
-            certificate: fixture.certificate.clone(),
+            certificate: Box::new(fixture.certificate.clone()),
         },
     ] {
         let response = http

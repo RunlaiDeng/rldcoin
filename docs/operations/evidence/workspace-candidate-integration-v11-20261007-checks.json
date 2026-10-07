@@ -1,0 +1,52 @@
+{
+  "format": "RLD-LEGACY-VALUE-WORKSPACE-INTEGRATION-V11",
+  "completed": true,
+  "duration_seconds": 9.795248,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.734013,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 9.034021,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "eef4d5709aaa0f4aa8f4dd332a39a709bcc97d7e8737a906f78f9c2ef0419630",
+  "stage_sha256": "659d5410a4ee505abc46f7b200aac25b6143db6f570898315e6696c0b5a43626",
+  "controller_sha256": "7c493932976b7bc6712163a150f0cdd54acf2b4c37e07b5e7d8f5fa66efc644c",
+  "log_sha256": "cc72b1e5329a899705feccb367a4d6a84ce95ece1b2f6f9453f73d10b840be31",
+  "core_source": "bc623ebe132c25c47553740c7d8a9682f32e0b3b468c8c8dcae412f48601eea8",
+  "core_file_count": 177,
+  "selected_static_workspace_behaviors_qualified": true,
+  "full_runtime_suite_qualified": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,103 @@
+{
+  "format": "RLD-LEGACY-VALUE-CANDIDATE-ENTRIES-V9",
+  "completed": true,
+  "duration_seconds": 57.421352,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "rld-value-successor",
+        "--lib",
+        "--tests",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 3.193669,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-value-successor",
+        "--test",
+        "runtime",
+        "--locked",
+        "--offline",
+        "process_rejects_wrong_v1_release_pin_and_public_listener",
+        "--",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.561696,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-value-successor",
+        "--test",
+        "runtime",
+        "--locked",
+        "--offline",
+        "destination_pow_processes_sync_import_receipt_and_halt_after_source_reorg",
+        "--",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 30.286789,
+      "terminal": true
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-value-successor",
+        "--test",
+        "runtime",
+        "--locked",
+        "--offline",
+        "adopted_earth_source_and_destination_require_exact_signed_chain_and_cut",
+        "--",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 17.351927,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "8946b2bc1c7389df8586cc98cefb2c64da211c07185c60a522713c3f2f495dfe",
+  "stage_sha256": "5b7f8e2e6ac9d40ec2cc84af04018d3f048bfb955647fe5f20657b0cbcb7c4c6",
+  "controller_sha256": "a38d955e2c76cf550b1edf026917fb92081133becbaa2b1d1acc408a9709e78a",
+  "log_sha256": "5425b5806610b17cf0203accac9679da2d58533dacbd45a5ec230cee1b1845c9",
+  "core_source": "4636aecb76d8471874e2b983416350be7ebeacbe9e307ee1b98a1d243e9e8adf",
+  "core_file_count": 177,
+  "selected_runtime_behaviors_qualified": true,
+  "full_runtime_suite_qualified": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

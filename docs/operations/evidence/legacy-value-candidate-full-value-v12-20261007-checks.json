@@ -1,0 +1,40 @@
+{
+  "format": "RLD-LEGACY-VALUE-FULL-VALUE-V12",
+  "completed": false,
+  "duration_seconds": 300.034267,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-value-successor",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": -15,
+      "duration_seconds": 300.00803,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": true,
+  "pin_error": null,
+  "source_manifest_sha256": "eef4d5709aaa0f4aa8f4dd332a39a709bcc97d7e8737a906f78f9c2ef0419630",
+  "stage_sha256": "ce69d331e69c19781b56919f257cf07e79736e1e964574f6515d98a673b7afe4",
+  "controller_sha256": "84b921d1cb4d6e426e3d84076f6393747cededaccbd339a87cb317bd5028f4ef",
+  "log_sha256": "b43f8c76e49e9036f504bf9b70bd4773e2f814361f6979063be92b5bd38243ec",
+  "core_source": "bc623ebe132c25c47553740c7d8a9682f32e0b3b468c8c8dcae412f48601eea8",
+  "core_file_count": 177,
+  "full_value_tests_qualified": false,
+  "full_runtime_suite_qualified": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

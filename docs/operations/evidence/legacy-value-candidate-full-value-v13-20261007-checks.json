@@ -1,0 +1,48 @@
+{
+  "format": "RLD-LEGACY-VALUE-FULL-VALUE-V13",
+  "completed": true,
+  "duration_seconds": 172.226276,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rld-value-successor",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/value-tests-rust198-opt1",
+        "--config",
+        "profile.test.opt-level=1",
+        "--config",
+        "profile.test.debug-assertions=true",
+        "--config",
+        "profile.test.overflow-checks=true",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 172.199205,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "eef4d5709aaa0f4aa8f4dd332a39a709bcc97d7e8737a906f78f9c2ef0419630",
+  "stage_sha256": "95a41f4303838b6b7fafba9682db6272b47901534648ca00b2983919dd9b9bff",
+  "controller_sha256": "499583719d5f727e429903ef34efefede3cfde0fc9e0ef7c652f9523c63e80aa",
+  "log_sha256": "c39d064f5badeea66a1103808be318687f3a2d08fd7022082d393b6803b7c227",
+  "core_source": "bc623ebe132c25c47553740c7d8a9682f32e0b3b468c8c8dcae412f48601eea8",
+  "core_file_count": 177,
+  "full_value_tests_qualified": true,
+  "full_runtime_suite_qualified": true,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}

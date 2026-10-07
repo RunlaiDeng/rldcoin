@@ -1117,7 +1117,7 @@ async fn destination_pow_processes_sync_import_receipt_and_halt_after_source_reo
     }
     let receipt = receipt.expect("mined destination import never reached two confirmations");
     assert!(!receipt.live_rld);
-    assert_eq!(receipt.recipient_spendable_height, receipt.block_height + 2);
+    assert_eq!(receipt.recipient_spendable_height, receipt.block_height + 6);
     let recipient_balance: serde_json::Value = client
         .get(format!(
             "{a}/v1/destination-pow-candidate/balance/{}",
@@ -1132,9 +1132,52 @@ async fn destination_pow_processes_sync_import_receipt_and_halt_after_source_reo
         .await
         .unwrap();
     assert_eq!(recipient_balance["live_rld"], false);
-    assert_eq!(recipient_balance["candidate_spendable_runlai"], "990");
-    assert_eq!(recipient_balance["candidate_pending_runlai"], "0");
-    assert_eq!(recipient_balance["minimum_import_confirmations"], "2");
+    // Two confirmations prove inclusion, not the six-block spend gate.
+    assert!(
+        recipient_balance["next_height"]
+            .as_str()
+            .unwrap()
+            .parse::<u128>()
+            .unwrap()
+            < receipt.recipient_spendable_height
+    );
+    assert_eq!(recipient_balance["candidate_spendable_runlai"], "0");
+    assert_eq!(recipient_balance["candidate_pending_runlai"], "990");
+    assert_eq!(recipient_balance["minimum_import_confirmations"], "6");
+    let mut matured = false;
+    for _ in 0..200 {
+        let value: serde_json::Value = client
+            .get(format!(
+                "{a}/v1/destination-pow-candidate/balance/{}",
+                recipient.public_key
+            ))
+            .send()
+            .await
+            .unwrap()
+            .error_for_status()
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+        let next_height = value["next_height"]
+            .as_str()
+            .unwrap()
+            .parse::<u128>()
+            .unwrap();
+        if next_height >= receipt.recipient_spendable_height {
+            assert_eq!(value["candidate_spendable_runlai"], "990");
+            assert_eq!(value["candidate_pending_runlai"], "0");
+            matured = true;
+            break;
+        }
+        assert_eq!(value["candidate_spendable_runlai"], "0");
+        assert_eq!(value["candidate_pending_runlai"], "990");
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
+    assert!(
+        matured,
+        "destination import did not meet original six-block maturity"
+    );
     let verify_request = serde_json::json!({"bundle":bundle,"policy":policy,"receipt":receipt});
     let mut verified = false;
     for _ in 0..200 {
@@ -2557,7 +2600,7 @@ fn process_rejects_wrong_v1_release_pin_and_public_listener() {
         .contains("transition does not bind the pinned release source"));
     let public = run(f.source, "0.0.0.0:0");
     assert!(!public.status.success());
-    assert!(String::from_utf8_lossy(&public.stderr).contains("loopback only"));
+    assert!(String::from_utf8_lossy(&public.stderr).contains("must listen on loopback"));
     assert!(!f.dir.join("rejected-candidate").exists());
 }
 
@@ -2956,7 +2999,24 @@ fn candidate_receiver_refuses_public_listener_and_remote_node_before_reading_key
 
 #[tokio::test]
 async fn adopted_earth_source_and_destination_require_exact_signed_chain_and_cut() {
-    let mut f = Fixture::with_v1_blocks(101);
+    let mut f = Fixture::with_v1_blocks(0);
+    assert_eq!(f.v1_chain.height(), 0);
+    assert_eq!(f.v1_chain.state().emitted, Amount::ZERO);
+    assert!(f.mature_input.is_none());
+    // The obsolete mined-predecessor fixture must remain inadmissible. Mint
+    // test rewards only on the new adopted successor after empty genesis.
+    let mut nonempty = f.v1_chain.clone();
+    let mut predecessor = nonempty
+        .template(f.owner.clone(), nonempty.context.started_at + 600, vec![])
+        .unwrap();
+    while !mine_v1(&mut predecessor, 100_000).unwrap() {}
+    nonempty.accept(predecessor, now()).unwrap();
+    let nonempty_preview = TransitionPreview::from_replayed_v1(&nonempty, f.source).unwrap();
+    assert!(EarthSuccessorAdoptionStatement::from_replayed_fresh_chain(
+        &nonempty,
+        &nonempty_preview
+    )
+    .is_err());
     f.enable_earth();
     let earth_id = f.earth_adoption.unwrap();
     let free_addr = || {
@@ -3016,6 +3076,41 @@ async fn adopted_earth_source_and_destination_require_exact_signed_chain_and_cut
     assert_eq!(source_status["chain_id"], f.chain_id.to_hex());
     assert_eq!(source_status["earth_adoption_id"], earth_id.to_hex());
     assert_eq!(source_status["live_rld"], true);
+    assert_eq!(source_status["height"], "0");
+    let mut local_source = CandidateChain::from_replayed_pow_chain(&f.v1_chain).unwrap();
+    let mut reward_input = None;
+    for sequence in 1..=101_u64 {
+        let mut block = local_source
+            .template(
+                f.owner.clone(),
+                f.v1_chain.context.started_at + sequence * 600,
+                vec![],
+            )
+            .unwrap();
+        while !mine_batch(&mut block, 100_000).unwrap() {}
+        if sequence == 1 {
+            let header = &block.header;
+            let mut bytes = b"RLD-EARTH-UNIFIED-SUCCESSOR-COINBASE\0".to_vec();
+            bytes.extend(header.chain_id.0);
+            bytes.extend(header.parent.0);
+            bytes.extend(header.height.to_be_bytes());
+            bytes.extend(hex::decode(&header.miner).unwrap());
+            bytes.extend(header.commands_root.0);
+            reward_input = Some(OutPoint {
+                transaction: hash(&bytes),
+                index: 0,
+            });
+        }
+        local_source.accept(block.clone(), now()).unwrap();
+        assert!(client
+            .post(format!("{source_url}/v1/earth/blocks"))
+            .json(&block)
+            .send()
+            .await
+            .unwrap()
+            .error_for_status()
+            .is_ok());
+    }
 
     let adopted: EarthSuccessorAdoption =
         serde_json::from_slice(&std::fs::read(f.dir.join("earth-adoption.json")).unwrap()).unwrap();
@@ -3117,7 +3212,12 @@ async fn adopted_earth_source_and_destination_require_exact_signed_chain_and_cut
     assert_eq!(destination_status["live_rld"], true);
     assert_eq!(destination_status["source_fresh"], true);
 
-    let (export_input, export_coin) = f.mature_input.clone().unwrap();
+    let export_input = reward_input.unwrap();
+    let coin = local_source.state().coin(&export_input).unwrap();
+    assert_eq!(coin.output.owner, f.owner);
+    assert_eq!(coin.spendable_height, 101);
+    assert!(coin.spendable_height <= local_source.height() + 1);
+    let export_coin = coin.output.amount;
     let recipient = generate_identity();
     let export_intent = ExportIntent {
         source_chain_id: f.chain_id,
@@ -3129,7 +3229,7 @@ async fn adopted_earth_source_and_destination_require_exact_signed_chain_and_cut
         source_fee: Amount(1),
         destination_fee: Amount(10),
         change: export_coin.checked_sub(Amount(1_001)).unwrap(),
-        valid_through_height: f.v1_height + 50,
+        valid_through_height: local_source.height() + 50,
     };
     let export_id = export_intent.id().unwrap();
     let export = CandidateCommand::Export(ExportCommand {
@@ -3137,7 +3237,6 @@ async fn adopted_earth_source_and_destination_require_exact_signed_chain_and_cut
             .unwrap(),
         intent: export_intent,
     });
-    let mut local_source = CandidateChain::from_replayed_pow_chain(&f.v1_chain).unwrap();
     let mut export_checkpoint = None;
     for index in 0..12_u64 {
         let commands = if index == 0 {
@@ -3275,7 +3374,7 @@ async fn adopted_earth_source_and_destination_require_exact_signed_chain_and_cut
     for commands in [
         vec![DestinationCommand::FinalizedImport {
             bundle: bundle.clone(),
-            certificate: certificate.clone(),
+            certificate: Box::new(certificate.clone()),
         }],
         vec![],
     ] {

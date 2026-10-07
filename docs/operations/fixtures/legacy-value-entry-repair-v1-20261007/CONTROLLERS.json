@@ -1,0 +1,50 @@
+[
+  {
+    "file": "check-value-strict-wire-v2-20261007.py",
+    "sha256": "102c33e1e43976df9b6e473518037d79a0ac31abd56a1e167c2e4a9a61cd4f66"
+  },
+  {
+    "file": "check-value-library-wire-v3-20261007.py",
+    "sha256": "62bc2511617a0a8bd937a74601b2156f98a4607618249fe929a768748f164825"
+  },
+  {
+    "file": "check-value-candidate-entries-v4-20261007.py",
+    "sha256": "194205b225c05be521e621db53f6dde4ad9056ab65538af9aee19eda86673e48"
+  },
+  {
+    "file": "check-value-candidate-entries-v5-20261007.py",
+    "sha256": "05bfdd533179411219c85d28cbc632d33d575169464bcbff96650a76c0a885e9"
+  },
+  {
+    "file": "check-value-candidate-entries-v6-20261007.py",
+    "sha256": "663f95d232ede34ede0f7d2d7dd4f90ef456f3cf0d779878c76992195ddb8a33"
+  },
+  {
+    "file": "check-value-candidate-entries-v7-20261007.py",
+    "sha256": "ddcf1eec698aec7944f57807361f35a05563a06069fafe11ab2f6cfaa353dc9c"
+  },
+  {
+    "file": "check-value-candidate-entries-v8-20261007.py",
+    "sha256": "f2b16efb0f07470d331116684e6ce86ccbad3d545ef5c976865a59c57d8b2384"
+  },
+  {
+    "file": "check-value-candidate-entries-v9-20261007.py",
+    "sha256": "a38d955e2c76cf550b1edf026917fb92081133becbaa2b1d1acc408a9709e78a"
+  },
+  {
+    "file": "check-workspace-candidate-integration-v10-20261007.py",
+    "sha256": "c2c185f0c947c6e868f2f69baf1f5d16d8a298e017c65e32a981effaf1750baa"
+  },
+  {
+    "file": "check-workspace-candidate-integration-v11-20261007.py",
+    "sha256": "7c493932976b7bc6712163a150f0cdd54acf2b4c37e07b5e7d8f5fa66efc644c"
+  },
+  {
+    "file": "check-full-value-v12-20261007.py",
+    "sha256": "84b921d1cb4d6e426e3d84076f6393747cededaccbd339a87cb317bd5028f4ef"
+  },
+  {
+    "file": "check-full-value-v13-20261007.py",
+    "sha256": "499583719d5f727e429903ef34efefede3cfde0fc9e0ef7c652f9523c63e80aa"
+  }
+]

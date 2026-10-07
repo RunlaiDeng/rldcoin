@@ -1,0 +1,101 @@
+{
+  "format": "RLD-FULL-VALUE-V12-BUDGET-CLASSIFICATION",
+  "completed": false,
+  "original300_fail_retained": true,
+  "completed_test_binaries": [
+    [
+      "49",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "4",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "runtime_complete": false,
+  "runtime_passed_before_deadline": 8,
+  "owned_group_stopped": true,
+  "failed_private_file_count": 590,
+  "private_inventory_sha256": "d6ffb3ba6f5573d310a0122c7216e60118bc79f1cd78569689e0771a7b502ecf",
+  "stack_sample_sha256": "6922b6755a9d3f9c7802b377938dcec78ff54e881615307e27697d1134a018f3",
+  "sample_scope": "Actual sampled thread was a later destination cold test, not the earlier129 journal test. Cannot uniquely attribute total duration. Sample showed PoW/hash/curve-validation CPU work.",
+  "next_discriminant": "Same source/criteria/300 budget using test-opt1, debug_assertions and overflow_checks true; new isolated profile cache; first error or original deadline stops once.",
+  "no_old_failed_fixture_reopen": true,
+  "whole_goal_completed": false
+}

@@ -1,0 +1,74 @@
+{
+  "format": "RLD-LEGACY-VALUE-V9-COMPILED-ARTIFACT-ANCHOR",
+  "core_source": "4636aecb76d8471874e2b983416350be7ebeacbe9e307ee1b98a1d243e9e8adf",
+  "runtime_controller": "a38d955e2c76cf550b1edf026917fb92081133becbaa2b1d1acc408a9709e78a",
+  "core_file_count": 177,
+  "actual_binaries": [
+    {
+      "name": "rldsuccessor-payment-payer-candidate",
+      "path": "target/debug/rldsuccessor-payment-payer-candidate",
+      "sha256": "45762c41b70428539ef3c468f3ab474bdeba41a305441edc7f07aac1f6df4ec9",
+      "bytes": 33034872
+    },
+    {
+      "name": "rldsuccessor-payment-receiver-candidate",
+      "path": "target/debug/rldsuccessor-payment-receiver-candidate",
+      "sha256": "185ec54fa22b4044bd4db8b0fbbaf89aa7846dd35dc565e52701173c04c7a17b",
+      "bytes": 35932808
+    },
+    {
+      "name": "rldsuccessor-transition-preview-candidate",
+      "path": "target/debug/rldsuccessor-transition-preview-candidate",
+      "sha256": "969a63b764cdc00c9a8e77a54e15670729ae3c1c58e3946042e80499674954df",
+      "bytes": 15001544
+    },
+    {
+      "name": "rldsuccessor-transition-authorization-candidate",
+      "path": "target/debug/rldsuccessor-transition-authorization-candidate",
+      "sha256": "877f7bd5d484777fce225fb92046e6e4059d41691893e0e85fef88178078cc3e",
+      "bytes": 5552688
+    },
+    {
+      "name": "rldsuccessor-destination-import-candidate",
+      "path": "target/debug/rldsuccessor-destination-import-candidate",
+      "sha256": "7acee771e1a366f61ae47e0942e00cc710223f2acc3d4e6e7b0ba89d60c2a6d7",
+      "bytes": 33509784
+    },
+    {
+      "name": "rld-earth-node",
+      "path": "target/debug/rld-earth-node",
+      "sha256": "0c4e513889b77405b08ceddf926e5a4e6c91cedf629fb876e385ad99d6963cd5",
+      "bytes": 37366688
+    },
+    {
+      "name": "rld-earth-destination-node",
+      "path": "target/debug/rld-earth-destination-node",
+      "sha256": "d380a37d1ff15d3d59584c94ebe5b8652ed3b33d9cff184b0b811e9e7925a623",
+      "bytes": 37783800
+    },
+    {
+      "name": "rld-earth-finality",
+      "path": "target/debug/rld-earth-finality",
+      "sha256": "4b3f7d83976fdd7c24630e3313668e747f54c36fddda17f3e5cfc3d26b809814",
+      "bytes": 6059552
+    },
+    {
+      "name": "rld-earth-watchtower",
+      "path": "target/debug/rld-earth-watchtower",
+      "sha256": "7e0556ad7b1ed0c534eeae9dc3830d728a0a6cef687cf084cebae8c597579fbc",
+      "bytes": 23635736
+    }
+  ],
+  "compiler_source_manifests": [
+    {
+      "path": "target/debug/build/rld-core-d7f3b99c787a1c7b/out/implementation-source.json",
+      "sha256": "fd594d40f442ebdc4363a375bf9a82f11e8aa8ac4479145097124d9c8c6aeb55"
+    },
+    {
+      "path": "target/debug/build/rld-core-090d7fae70be9311/out/implementation-source.json",
+      "sha256": "fd594d40f442ebdc4363a375bf9a82f11e8aa8ac4479145097124d9c8c6aeb55"
+    }
+  ],
+  "current_native_qualification": false,
+  "qualification": "Actual v9 three-test runtime and strict scope. Earlier eleven tests were executed under exact v5/v6/v7 source; not relabelled as a single full current-source runtime run."
+}

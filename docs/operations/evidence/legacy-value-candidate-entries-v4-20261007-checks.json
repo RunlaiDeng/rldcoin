@@ -1,0 +1,42 @@
+{
+  "format": "RLD-LEGACY-VALUE-CANDIDATE-ENTRIES-V4",
+  "completed": true,
+  "duration_seconds": 4.204664,
+  "budget_seconds": 300,
+  "attempts": 1,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "rld-value-successor",
+        "--lib",
+        "--tests",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.178437,
+      "terminal": true
+    }
+  ],
+  "budget_exhausted": false,
+  "pin_error": null,
+  "source_manifest_sha256": "2002532f6b46485083c0dd7b9fb11e9edd353d863a22b5930d1489f72234693f",
+  "stage_sha256": "7cae3da98fbc8679d5632caf05def7f13f6df8fdcbee47dcb558367bb6e378c3",
+  "controller_sha256": "194205b225c05be521e621db53f6dde4ad9056ab65538af9aee19eda86673e48",
+  "log_sha256": "e31635db4d879dfefacafec8296db9fafdde262fbe4f9a23bc0389fb15528263",
+  "core_source": "922332f61e4bc359a21c7275cc3ceec86a6de7290531b394eb9d607e1acc5d1f",
+  "core_file_count": 177,
+  "runtime_behavior_qualified": false,
+  "warning_exemptions": 0,
+  "long_fault_retests": 0,
+  "new_Native_profile_qualification": false,
+  "old_failures_retained": true,
+  "whole_goal_completed": false
+}
