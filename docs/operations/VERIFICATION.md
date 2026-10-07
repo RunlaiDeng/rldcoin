@@ -11,6 +11,7 @@ public dependencies; missing dependencies remain unavailable.
 python3 -B -m unittest discover -s tools/source-evidence -v
 python3 -B -m unittest discover -s tools/implementation-source -v
 python3 -B -m unittest discover -s tools -p test_pq_public_carriage_candidate.py -v
+python3 -B -m unittest discover -s tools -p test_pq_public_archive_candidate.py -v
 cargo metadata --locked --offline --no-deps
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked --offline -- -D warnings
@@ -64,3 +65,18 @@ failed scopes, locally recoverable; absence of a public log is not qualification
 S/R/I/A–G/N/P obligations. Independent clients/review/custody, long history and
 resource/funding models, arbitrary-region value composition, authenticated PQ/epoch
 adoption, physical routes and fresh zero-allocation genesis remain separate gates.
+
+## Finite multi-object archive carriage
+
+`tools/pq_public_archive_candidate.py` keeps the original12288-byte packet and
+32768-byte object bounds. A canonical ordered manifest binds at most64 distinct
+complete entry SHA512 values/sizes, at most2097152 bytes aggregate; the receiver
+retains the expected manifest SHA512 independently. Missing objects/pieces remain
+unavailable; duplicate, mixed, altered or changed-root inventories refuse. This
+pure byte layer never authenticates caller policy or installs a ledger anchor.
+
+A finite64-entry signed example was reassembled from reversed manifest/pieces and
+read by the actual unchanged Core cold adapter. A complete byte-valid altered-PQ
+archive still failed actual Core validation. This is same-host in-memory packet
+carriage plus complete cold files, not actual network/TLS relay, independent
+custody, asynchronous physical-route qualification or adopted monetary rules.
