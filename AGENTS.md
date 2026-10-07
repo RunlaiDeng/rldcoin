@@ -2055,3 +2055,13 @@ stale-v11 **FAIL366.524秒/原600/6371封存**，真正单原Native收款import1
 新Python192 `3e899e896fd54ebeefc3b949acc07b47317817c54fc669d851771a068ff01972`，driver `bb594cb23a6ad6778f809615968717e0f560fec4652f1929244425775f85625a`；其他17 Driver方法/原17测试文本准确不变。最终453+复合桥 .030972秒，Native89/Core171/actualCLI/生产Service/Mesh/TCP/BFT/terminal49f和冻结全部字节不变，旧V47组件及actual lockprobe复用不重长测。下一唯一全新shutdown-v15原180准备；通过后必要shutdown-v12一次原600，增加仅进程内stop-memory primitive及原fatal消费参数诊断，原run/Native采样/签名/600whole/60round/24height E27/P24/A24/成熟2/票3/原owner3/full12cold/heads/守恒/normalstop/5cleanup保持。首原guard/期限封存，禁止同参重跑/加deadline。VALUE-STRICT-01/长期/PQ/物理/独立/组合及全部S/R/I/A–G/N/P继续原标准，冻结纸面/官网不改，唯一作者继续。
 
 shutdown-v15全新12准备原180 PASS31.005秒/668文件，真实发行E8/P5/A5/8原生目的收据/守恒、12独立caller-voter-TLS和三原unsigned reviews通过。最终shutdown-v12入口37实际provider静态PASS .090042秒、zero Native/Runtime/Node/socket/sign，make/Tracked/guard未执行。必要一次原600于2026-10-07T02:19:45.361286+00:00启动；原5cleanup/60round/24height/成熟2/票3/owner3/full12cold/完整信封/heads/守恒/normalstop及全阶段600不减。driverbb59/current1923e89明确绑定；V47及actual lockprobe合法复用，stale-v11 FAIL不重开或改变。
+
+### shutdown-v12 FAIL：诊断字段冲突；仅修复fixture入口，不改协议
+
+shutdown-v12 **FAIL421.062秒/原600/6972封存**，原单Native收款import13/mature15/net9/spendable/finality/notquarantined已通过；原12普通进程exit0，未启动keyless/full12cold/信封/heads/守恒。新增停止内存诊断的`dict(region=label,index=n,**v)`与已有crypto-region字段冲突，primary/cleanup均TypeError；不能称整体normalstop或全验收通过。源/冻结pin未变，无forced，所有own节点/中继停。责任为唯一作者新增诊断入口错误，不是协议支付拒绝；本轮币/6972及全部旧FAIL封存，永不重新开启/复制/重签/退款。
+
+初模型错将Tracked unbound方法用于base Driver导致super拒绝，entry exit1/工具墙钟.023369留存；换准确纯模型subclass后，实际Tracked.stop_all+生产Driver.stop_all零Native反例FAIL .098303，重现完全相同duplicate-region TypeError，原related60累计45.326281。最小fixture修复仅slot_region保留label、region保留原crypto域，原字节/原guard/run/600/60round/24height/成熟2/票3/原owner3/5cleanup/full12cold/守恒不减；不改生产driver/current1923e89/Native89/Core171/actualCLI/Mesh/TCP/BFT/冻结。
+
+下一唯一全新hook-v16准备原180一次，通过后在准确最终helper上直接执行无Native停止hook模型（含真实字典输出及重复停止保留首输出），实际名称绑定预检，之后必要hook-v13原600一次。最终有限入口若失败不启动Runtime；首原guard/原deadline封存，不同参重跑或重开旧保管。V47组件/实际lockprobe与当前25 source-bound模型复用不重复；VALUE-STRICT-01、长期/PQ/物理/独立/组合及全部冻结条款保持。旧价值候选v2仅scratch未应用：改善完整enum原编码byte相等检查，未更改任何Core/value/Cargo或运行检查。唯一作者继续，不在局部终态结束用户目标。
+
+hook-v16新12Native准备原180 PASS30.858秒/668保管；actual E8/P5/A5成熟资金/8完整目的收据/守恒/独立caller-voter-TLS/三原unsigned reviews通过。准确最终helper直接stop hook模型PASS .098890秒，原related60累计45.425171；原status字节保留、crypto-region未覆写、重复stop不改首输出，zero Native/Runtime/Node/socket/sign。最终37 actual LOAD_GLOBAL providers及完整源文本反转PASS .095900秒；仅新路径与slot_region诊断key差异，driver/current192/25模型资格复用不重复。必要一次原600于2026-10-07T02:31:15.552912+00:00开始；原60round/24height/成熟2/票3/原owner3/全12固定头cold/完整信封/heads/守恒/normalstop/5cleanup及whole600不减，旧FAIL及冻结保持。

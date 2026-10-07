@@ -1,0 +1,12 @@
+{
+  "completed": false,
+  "entry_model_error": "Unbound Tracked.stop_all called on base Driver model; super requires exact subclass. No Native/Runtime or real fixture operation.",
+  "actual_check_exit_code": 1,
+  "actual_command_wall_seconds": 0.023369,
+  "duration_source": "exec_command measured wall",
+  "related60_before": 45.204609,
+  "related60_after": 45.227978,
+  "model_sha256": "b24749ecfc3202082b814c35764b078ad34d2c6c719029bb8f4c09d198db9c41",
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "full_fault_qualified": false
+}
