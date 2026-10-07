@@ -45,3 +45,20 @@ cold read took0.309571 seconds with5193728B process peakRSS on the measured host
 A retained first byte-size prediction failure is not a passing scope. This remains
 a finite same-controller observation, not independent witness/custody, long horizons
 or production adoption.
+
+`rld-hybrid-archive-manifest-core-candidate` takes a separate caller-authenticated
+policy/current observation, canonical binary manifest and detached dual-signed
+public envelope. Bounds are8192/4389/12288 bytes respectively; private owned
+regular no-follow files are required. Dedicated ARCHIVE_MANIFEST purpose binds
+all ordered sizes/roots. Exit0 verifies only the manifest authorization; it does
+not verify entry signatures, install state or consume a nonce. Core refusal is1,
+file/input unavailability is2. Its RAM-only public generator takes manifest input
+and two fresh public output paths; generated policy is test data, never trust.
+
+Core1835d1691dc full293 and strict passed. Actual offline V33 retained a wrong
+expected return code for a truncated manifest (Core refused1, fixture expected2).
+V34 corrected only that expectation, reused17 prior passing cases/strict/build
+and completed remaining guards in the original120-second cumulative27.532662.
+Epoch2 signatures accepted at independent current7/8 and refused at9; wrong
+scope, nonce, unavailable/revoked/broken authority and either bad half refused.
+These observations grant no physical horizon or authenticated ledger adoption.

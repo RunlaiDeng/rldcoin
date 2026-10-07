@@ -17,3 +17,4 @@ hex = "=0.4.3"
 libc = "=0.2.190"
 rand = "=0.8.5"
 fips203 = { version = "=0.4.3", default-features = false, features = ["ml-kem-768"] }
+sha2 = "=0.10.8"

@@ -40,9 +40,13 @@ V26四相关真实文件/注入write与dir-fsync反例通过，核心方法prefi
 
 独立ARCHIVE_MANIFEST用途和tag6绑定规范有序清单的完整SHA512；Ed25519及ML-DSA87必须同时验证同一意图。签署epoch2在独立policy1–8/current2、7、8内可验；current9、过期/未知撤销/错域/nonce/坏半签/改清单拒绝。64条/32768每条/2MiB总量与原小包上限不改，不安装账本或消费nonce。V30 strict **FAIL6.526731秒**保留；仅按Rust1.98数组分块API修复，无告警豁免。V31真实相关三项与严格PASS45.611055秒/原120累计52.137786；V32同源全293 **PASS37.864650秒/300**，实际测试binary独立封存。旧Core182 f5adb880的全290及运输资格仍按历史来源保留，不自动转给新Core。
 
+## 实际离线清单入口
+
+新增分离policy/observation、规范manifest及detached envelope的actualCore入口，8192/4389/12288边界/no-follow/owned正规文件；全新RAM-only双签、64条清单1581531B不生成持久钥、不消费nonce。V33 strict/build及17实际判据已通过后 **FAIL27.433337秒**：截短manifest正确Core拒绝exit1，控制器错误预期文件错误exit2；20项失败封存。仅修正该预期，复用17有效结果和同源实际binary/严格构建；V34 **PASS0.099325秒、原120累计27.532662秒**，余下截短/过界/非规范/重复字段/symlink/已存在output拒绝，10项封存。Core1835d169/source、reader `0c426aeeb8a9553550da7e28574658a128a1181fc5dc957ece58c0dece3de1ef`、generator `a9385708981b1931d55ba02e6ce5fcfa4f3df5e0212ec1e26144dce243b04928`及controller分别绑定；0网络/Native/Runtime/Node/状态安装。依赖锁仅新增已有sha2=0.10.8直接引用，原包版本/checksum/deps完全不变。
+
 ## 下一单一主线
 
-把已通过的Core183清单验签接入独立policy/observation冷文件入口，复用已有成功公开64条字节，仅生成全新RAM-only清单双签；一次120秒，严格编译、实际延迟/期限/用途/nonce/坏半签及文件边界，首失败或期限退出，原文件不改。单独绑定源、实际reader/generator和controller；不复活旧失败保管或重复Native长测。P1–P8采用及任何物理期限仍不授资格。
+实际有效清单双签仍不证明条目完整或内层授权。下一最小命题：完整冷读入口先验证独立policy与清单授权，再逐条核对有序size/SHA512，并用同一当前Core183验证原完整四签续证和独立latest-head；遗漏、重排、改字节、完整却坏内签均不可获得有效归档结果。一次120秒必要构建/相关回归，使用公开成功字节，不开启旧失败保管或重复193TLS/Native长测；不消费nonce/安装/退款。P1–P8采用及任何物理期限仍不授资格。
 
 ## 尚未完成
 
