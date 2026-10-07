@@ -15,6 +15,7 @@ struct CompletePage {
 #[derive(Serialize, Deserialize)]
 struct Caller {
     bootstrap: Bootstrap,
+    region: Hash,
     prefix_head: Hash,
     prefix_manifest: crate::history::Reference,
     prefix_height: u64,
@@ -32,7 +33,6 @@ struct Caller {
 }
 impl Caller {
     fn pins(&self) -> NativeContinuationPinsCandidate {
-        let h = header_from_bootstrap(&self.bootstrap);
         let currency = self.bootstrap.currency.id().unwrap();
         NativeContinuationPinsCandidate {
             prefix: NativePrefixPinsCandidate {
@@ -40,7 +40,7 @@ impl Caller {
                 manifest: self.prefix_manifest.clone(),
                 latest: PackedNativeBoundaryCandidate {
                     currency,
-                    region: h.region,
+                    region: self.region,
                     height: self.prefix_height,
                     finalized: self.prefix_finalized,
                     epoch: self.prefix_epoch,
@@ -52,7 +52,7 @@ impl Caller {
             complete_head: self.whole_head,
             latest: PackedNativeBoundaryCandidate {
                 currency,
-                region: h.region,
+                region: self.region,
                 height: self.height,
                 finalized: self.finalized,
                 epoch: self.epoch,
@@ -60,13 +60,6 @@ impl Caller {
                 record_count: self.count,
             },
         }
-    }
-}
-fn header_from_bootstrap(bootstrap: &Bootstrap) -> Header {
-    Header {
-        format: FORMAT.into(),
-        bootstrap: bootstrap.clone(),
-        region: bootstrap.admissions[0].id().unwrap(),
     }
 }
 fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)> {
@@ -179,6 +172,7 @@ fn actual16_plus16_native_tail_append_and_separate_cold_matches() {
     assert_eq!(inventory(&root.join("prefix")), original);
     let caller = Caller {
         bootstrap: h.bootstrap.clone(),
+        region: h.region,
         prefix_head: prefix.storage_head,
         prefix_manifest: prefix.manifest,
         prefix_height: 16,
@@ -454,7 +448,11 @@ fn proposal_certificate(
         .accept(block.clone(), &hot.trust, &hot.evidence)
         .unwrap();
     let value = chain.statement(&hot.trust).unwrap().id().unwrap();
-    let mut seeds = [2, 3, 4, 5];
+    let configured = context.keys(&hot.trust, &hot.evidence).unwrap();
+    let mut seeds = (2..=9)
+        .filter(|seed| configured.contains(&public(*seed)))
+        .collect::<Vec<_>>();
+    assert_eq!(seeds.len(), 4);
     seeds.sort_by_key(|seed| public(*seed));
     let quorum = |phase| Quorum {
         context: context.clone(),
@@ -708,6 +706,7 @@ fn guarded_proposal_actual_owner_payment_reward_maturity_and_independent_cold() 
     assert_eq!(inventory(&root.join("prefix")), original);
     let caller = Caller {
         bootstrap: h.bootstrap.clone(),
+        region: h.region,
         prefix_head: prefix.storage_head,
         prefix_manifest: prefix.manifest,
         prefix_height: 16,
@@ -909,6 +908,7 @@ fn authenticated_genesis_prefix_first_proposal_payment_and_separate_cold() {
     assert_eq!(inventory(&root.join("prefix")), original);
     let caller = Caller {
         bootstrap: h.bootstrap.clone(),
+        region: h.region,
         prefix_head: prefix.storage_head,
         prefix_manifest: prefix.manifest,
         prefix_height: 0,
@@ -974,4 +974,386 @@ fn genesis_cold_child() {
         assert_eq!(store.coins(&owner, &pins).unwrap(), coins);
     }
     println!("actual-native-genesis-cold height3 records3 actual_balances_maturity=true");
+}
+
+#[derive(Serialize, Deserialize)]
+struct RegionalColdComponent {
+    prefix_dir: String,
+    tail_dir: String,
+    expected: PaymentCaller,
+}
+#[derive(Serialize, Deserialize)]
+struct RegionalColdCaller {
+    components: Vec<RegionalColdComponent>,
+    liquid: Amount,
+}
+fn regional_cold_component(
+    h: &Header,
+    prefix: &NativePrefixPinsCandidate,
+    pins: &NativeContinuationPinsCandidate,
+    hot: &Replay,
+    prefix_dir: &str,
+    tail_dir: &str,
+) -> RegionalColdComponent {
+    let caller = Caller {
+        bootstrap: h.bootstrap.clone(),
+        region: h.region,
+        prefix_head: prefix.storage_head,
+        prefix_manifest: prefix.manifest.clone(),
+        prefix_height: prefix.latest.height,
+        prefix_count: prefix.latest.record_count,
+        prefix_finalized: prefix.latest.finalized,
+        prefix_epoch: prefix.latest.epoch,
+        prefix_root: prefix.latest.ledger_root,
+        tail_head: pins.tail_head,
+        whole_head: pins.complete_head,
+        height: pins.latest.height,
+        finalized: hot.chain.finalized,
+        epoch: hot.chain.epoch,
+        root: hot.chain.ledger.root().unwrap(),
+        count: pins.latest.record_count,
+    };
+    let coins = [10, 20, 21, 30, 40]
+        .iter()
+        .map(|owner| {
+            let key = public(*owner);
+            let coins = hot
+                .chain
+                .ledger
+                .coins
+                .iter()
+                .filter(|(_, coin)| coin.payment.owner == key)
+                .map(|(id, coin)| (*id, coin.clone()))
+                .collect::<Vec<_>>();
+            (key, coins)
+        })
+        .collect();
+    RegionalColdComponent {
+        prefix_dir: prefix_dir.into(),
+        tail_dir: tail_dir.into(),
+        expected: PaymentCaller { caller, coins },
+    }
+}
+#[test]
+fn complete_remote_evidence_actual_import_maturity_onward_payment_and_cold() {
+    let mut source_h = header();
+    let mut validators = [6, 7, 8, 9];
+    validators.sort_by_key(|seed| public(*seed));
+    let mut admission = Admission {
+        currency: source_h.bootstrap.currency.id().unwrap(),
+        region: "proxima".into(),
+        rules: crate::paged_bft::RULES.into(),
+        value_rules: Some(crate::paged_bft::rules_hash().unwrap()),
+        validators: validators.iter().map(|seed| public(*seed)).collect(),
+        signature: String::new(),
+    };
+    admission.signature = crate::tests::signature(1, &admission.bytes().unwrap());
+    let destination_region = admission.id().unwrap();
+    source_h.bootstrap.admissions.push(admission);
+    let destination_h = Header {
+        region: destination_region,
+        ..source_h.clone()
+    };
+    let mut source_hot = replay(&source_h);
+    let mut destination_hot = replay(&destination_h);
+    let (root, source_flat) = stream(&source_h, &source_hot);
+    let (_, destination_flat) = stream(&destination_h, &destination_hot);
+    let currency = source_hot.trust.currency().unwrap();
+    let source_prefix = NativeContinuationCandidate::create_genesis_prefix(
+        &root.join("prefix"),
+        &source_h.bootstrap,
+        &public(1),
+        currency,
+        source_h.region,
+    )
+    .unwrap();
+    let destination_prefix = NativeContinuationCandidate::create_genesis_prefix(
+        &root.join("destination-prefix"),
+        &destination_h.bootstrap,
+        &public(1),
+        currency,
+        destination_h.region,
+    )
+    .unwrap();
+    let original_source = inventory(&root.join("prefix"));
+    let original_destination = inventory(&root.join("destination-prefix"));
+    let (mut source, mut source_pins) = create(&root, &source_h, &source_prefix);
+    let (mut destination, mut destination_pins) = NativeContinuationCandidate::create(
+        &root.join("destination-prefix"),
+        &root.join("destination-tail"),
+        &destination_h.bootstrap,
+        &public(1),
+        currency,
+        &destination_prefix,
+    )
+    .unwrap();
+    for _ in 0..2 {
+        source_pins = submit_proposal(
+            &mut source,
+            &mut source_hot,
+            &source_flat,
+            vec![],
+            10,
+            &source_pins,
+        );
+    }
+    let input = source
+        .coins(&public(10), &source_pins)
+        .unwrap()
+        .into_iter()
+        .find(|(_, coin)| coin.mature == 3)
+        .unwrap();
+    let intent = Intent {
+        currency,
+        region: source_h.region,
+        inputs: vec![input.0],
+        outputs: vec![Payment {
+            owner: public(10),
+            amount: input.1.payment.amount.checked_sub(Amount(10)).unwrap(),
+        }],
+        fee: Amount(1),
+        destination: Some(destination_h.region),
+        remote: Some(Payment {
+            owner: public(20),
+            amount: Amount(9),
+        }),
+        destination_fee: Amount(2),
+        valid_through: 24,
+    };
+    let export = intent.id().unwrap();
+    let signed = SignedIntent {
+        approvals: vec![Approval {
+            key: public(10),
+            signature: crate::tests::signature(10, &intent.bytes().unwrap()),
+        }],
+        intent,
+    };
+    source_pins = submit_proposal(
+        &mut source,
+        &mut source_hot,
+        &source_flat,
+        vec![Command::Spend(Box::new(signed))],
+        30,
+        &source_pins,
+    );
+    let snapshot = source_hot.chain.finalized.unwrap();
+    let import = Command::Import { snapshot, export };
+    let before = inventory(&root);
+    assert!(destination
+        .template(vec![import.clone()], public(40), &destination_pins)
+        .is_err());
+    assert_eq!(inventory(&root), before);
+    let mut snapshots = source_hot
+        .evidence
+        .snapshots
+        .values()
+        .map(|(s, _)| s.clone())
+        .collect::<Vec<_>>();
+    snapshots.sort_by_key(|s| s.statement.height);
+    assert_eq!(snapshots.len(), 3);
+    let evidence = Evidence { snapshots };
+    for choice in 0..5 {
+        let mut bad = evidence.clone();
+        match choice {
+            0 => {
+                bad.snapshots.remove(0);
+            }
+            1 => {
+                bad.snapshots[2].bft.as_mut().unwrap().committed.votes[0]
+                    .approval
+                    .signature = "00".repeat(64)
+            }
+            2 => bad.snapshots[2].blocks.last_mut().unwrap().commands.clear(),
+            3 => bad.snapshots.reverse(),
+            _ => bad.snapshots = vec![evidence.snapshots[0].clone(); MAX_SNAPSHOTS + 1],
+        }
+        assert!(destination
+            .append_evidence(&bad, &destination_pins)
+            .is_err());
+        assert_eq!(inventory(&root), before);
+    }
+    let old = destination_pins.clone();
+    destination_pins = destination
+        .append_evidence(&evidence, &destination_pins)
+        .unwrap();
+    destination_hot
+        .apply(
+            &Record::Evidence(Box::new(evidence.clone())),
+            &destination_flat,
+        )
+        .unwrap();
+    assert_eq!(destination_pins.latest.height, 0);
+    assert_eq!(destination_pins.latest.record_count, 1);
+    assert!(destination
+        .coins(&public(20), &destination_pins)
+        .unwrap()
+        .is_empty());
+    let before = inventory(&root);
+    assert!(destination.append_evidence(&evidence, &old).is_err());
+    assert_eq!(inventory(&root), before);
+    destination_pins = submit_proposal(
+        &mut destination,
+        &mut destination_hot,
+        &destination_flat,
+        vec![import.clone()],
+        40,
+        &destination_pins,
+    );
+    let recipient = destination.coins(&public(20), &destination_pins).unwrap();
+    let fee = destination.coins(&public(40), &destination_pins).unwrap();
+    assert_eq!(recipient.len(), 1);
+    assert_eq!(recipient[0].1.payment.amount, Amount(7));
+    assert_eq!(recipient[0].1.mature, 3);
+    assert!(recipient[0].1.dependencies.contains(&snapshot));
+    assert_eq!(fee.len(), 1);
+    assert_eq!(fee[0].1.payment.amount, Amount(2));
+    assert_eq!(fee[0].1.mature, 3);
+    let onward = owner_payment(
+        &destination_h,
+        vec![recipient[0].0],
+        vec![Payment {
+            owner: public(21),
+            amount: Amount(6),
+        }],
+        20,
+        24,
+    );
+    let before = inventory(&root);
+    assert!(destination
+        .template(
+            vec![Command::Spend(Box::new(onward.clone()))],
+            public(40),
+            &destination_pins
+        )
+        .unwrap_err()
+        .contains("immature input"));
+    assert!(destination
+        .template(vec![import.clone()], public(40), &destination_pins)
+        .unwrap_err()
+        .contains("permanent import tombstone"));
+    assert_eq!(inventory(&root), before);
+    destination_pins = submit_proposal(
+        &mut destination,
+        &mut destination_hot,
+        &destination_flat,
+        vec![],
+        40,
+        &destination_pins,
+    );
+    destination_pins = submit_proposal(
+        &mut destination,
+        &mut destination_hot,
+        &destination_flat,
+        vec![Command::Spend(Box::new(onward))],
+        40,
+        &destination_pins,
+    );
+    assert_eq!(destination_pins.latest.height, 3);
+    assert_eq!(destination_pins.latest.record_count, 4);
+    assert!(destination
+        .coins(&public(20), &destination_pins)
+        .unwrap()
+        .is_empty());
+    let onward_coin = destination.coins(&public(21), &destination_pins).unwrap();
+    assert_eq!(onward_coin[0].1.payment.amount, Amount(6));
+    assert!(onward_coin[0].1.dependencies.contains(&snapshot));
+    let before = inventory(&root);
+    assert!(destination
+        .template(vec![import], public(40), &destination_pins)
+        .unwrap_err()
+        .contains("permanent import tombstone"));
+    assert_eq!(inventory(&root), before);
+    let (issued, liquid, pending) =
+        conservation(&[source_hot.chain.clone(), destination_hot.chain.clone()]).unwrap();
+    assert_eq!(issued, liquid);
+    assert_eq!(pending, Amount::ZERO);
+    assert_eq!(source.inspect(&source_pins).unwrap(), source_pins.latest);
+    assert_eq!(
+        destination.inspect(&destination_pins).unwrap(),
+        destination_pins.latest
+    );
+    let components = vec![
+        regional_cold_component(
+            &source_h,
+            &source_prefix,
+            &source_pins,
+            &source_hot,
+            "prefix",
+            "tail",
+        ),
+        regional_cold_component(
+            &destination_h,
+            &destination_prefix,
+            &destination_pins,
+            &destination_hot,
+            "destination-prefix",
+            "destination-tail",
+        ),
+    ];
+    drop(source);
+    drop(destination);
+    assert_eq!(inventory(&root.join("prefix")), original_source);
+    assert_eq!(
+        inventory(&root.join("destination-prefix")),
+        original_destination
+    );
+    crate::keystore::private_create(
+        &root.join("regional-caller.json"),
+        &serde_json::to_vec(&RegionalColdCaller { components, liquid }).unwrap(),
+    )
+    .unwrap();
+    let before = inventory(&root);
+    let output = Process::new(std::env::current_exe().unwrap())
+        .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+        .args([
+            "storage::paged::continuation_tests::regional_cold_child",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("RLD_CONTINUATION_REGIONAL_CHILD", &root)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout)
+        .contains("actual-native-regional-cold regions2 source3 destination3"));
+    assert_eq!(inventory(&root), before);
+    println!("actual-native-regional-payment source_export9=true destination_fee2=true recipient7=true mature2=true onward6_fee1=true duplicate_import_refused=true all_retained_original_cold=true global_conservation=true no_transport_or_signer_adoption=true");
+}
+#[test]
+#[ignore = "separate cold child for two actual complete Native no-value regional histories"]
+fn regional_cold_child() {
+    let root = PathBuf::from(std::env::var_os("RLD_CONTINUATION_REGIONAL_CHILD").unwrap());
+    let expected: RegionalColdCaller = serde_json::from_slice(
+        &crate::keystore::private_read(&root.join("regional-caller.json"), MAX_BYTES).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(expected.components.len(), 2);
+    let mut liquid = Amount::ZERO;
+    for component in expected.components {
+        let pins = component.expected.caller.pins();
+        let store = NativeContinuationCandidate::open(
+            &root.join(component.prefix_dir),
+            &root.join(component.tail_dir),
+            &component.expected.caller.bootstrap,
+            &public(1),
+            pins.latest.currency,
+            &pins,
+        )
+        .unwrap();
+        assert_eq!(store.inspect(&pins).unwrap(), pins.latest);
+        for (owner, coins) in component.expected.coins {
+            let got = store.coins(&owner, &pins).unwrap();
+            assert_eq!(got, coins);
+            for (_, coin) in got {
+                liquid = liquid.checked_add(coin.payment.amount).unwrap();
+            }
+        }
+    }
+    assert_eq!(liquid, expected.liquid);
+    println!("actual-native-regional-cold regions2 source3 destination3 complete_certificates_owner_coins_maturity=true");
 }

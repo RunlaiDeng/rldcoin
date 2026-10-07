@@ -325,3 +325,31 @@ serialized ledger. The caller retains the complete bootstrap and current anchors
 separately. This entry is restricted by the authenticated no-value fixture currency;
 it neither migrates prior balances nor starts a production network. Ordinary node
 lifecycle, signer custody and independent rollback protection remain separate.
+
+
+## Complete incoming evidence and Native import
+
+`append_evidence` uses the same guarded original atomic tail transaction as local
+certificates. The complete bounded incoming sequence must authenticate and execute
+on a staged clone of the actual process state before any bytes or new anchors
+are published. Missing or reversed predecessors, invalid votes, substituted block
+commands and oversized sequences refuse the whole event, including any valid
+prefix that preceded the invalid item. The committed ledger and tail remain
+unchanged on semantic refusal. Persistence failure poisons the handle and retains
+all residue under the existing non-resume rules.
+
+Evidence acceptance changes no local height, balance or maturity. A separate
+locally certified Native import must reference the actual verified source export.
+The source owner signature, export amount, destination fee, destination admission
+and complete predecessor sequence remain authoritative. Imported recipient and
+fee coins retain configured import maturity; onward spending preserves their
+source dependencies. The existing permanent import tombstone rejects another
+import both before and after recipient spending. Current native map capacities
+and retention limits remain unchanged.
+
+Cold opening authenticates and replays complete foreign evidence in its original
+record order before executing dependent local imports and payments. A destination
+receipt, an accepted evidence event or a storage hash grants no value on its own.
+This interface does not implement transport, complete incident proofs, ordinary
+node lifecycle, signer custody, independent freshness or new cryptographic
+adoption. Those interfaces require separate composition and qualification.

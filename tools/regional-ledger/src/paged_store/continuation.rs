@@ -442,9 +442,32 @@ impl NativeContinuationCandidate {
         snapshot: &Snapshot,
         independently_current: &NativeContinuationPinsCandidate,
     ) -> Result<NativeContinuationPinsCandidate> {
+        self.append_record(
+            Record::Certified(Box::new(snapshot.clone())),
+            independently_current,
+        )
+    }
+    /// Retain the complete incoming certificate dependency sequence only after
+    /// actual Native authentication on a staged process state. This event alone
+    /// cannot import, credit or mature value, authorize transport or signing.
+    pub fn append_evidence(
+        &mut self,
+        evidence: &Evidence,
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<NativeContinuationPinsCandidate> {
+        self.append_record(
+            Record::Evidence(Box::new(evidence.clone())),
+            independently_current,
+        )
+    }
+    fn append_record(
+        &mut self,
+        record: Record,
+        independently_current: &NativeContinuationPinsCandidate,
+    ) -> Result<NativeContinuationPinsCandidate> {
         self.require_current(independently_current)?;
+        record_guard(&record)?;
         let mut replay = self.warm.clone();
-        let record = Record::Certified(Box::new(snapshot.clone()));
         require(
             serde_json::to_vec(&record)
                 .map_err(|_| "continuation record encoding")?
