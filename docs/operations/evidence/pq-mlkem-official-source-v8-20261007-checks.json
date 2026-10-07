@@ -1,0 +1,31 @@
+{
+  "format": "RLD-PQ-MLKEM-OFFICIAL-SOURCE-V8",
+  "completed": true,
+  "duration_seconds": 1.555469,
+  "budget_seconds": 30,
+  "attempts": 1,
+  "commit": "a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324/gen-val/json-files/ML-KEM-encapDecap-FIPS203/prompt.json",
+      "path": "tmp/default-relay-20260930/pq-mlkem-official-source-v8-20261007-private/prompt.json",
+      "sha256": "998e22dfb12efb14ce9fdff911ca634b13612819a1806f25da69adba7e16db91",
+      "bytes": 624189
+    },
+    {
+      "url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/a7f283cdc87d2d6dd93c1bac59e5622c5f9f8324/gen-val/json-files/ML-KEM-encapDecap-FIPS203/expectedResults.json",
+      "path": "tmp/default-relay-20260930/pq-mlkem-official-source-v8-20261007-private/expectedResults.json",
+      "sha256": "9089ec6ff2424da9f2782b89b2f831a329a3e28d6e5e24b802b78ff36ac61cdf",
+      "bytes": 190940
+    }
+  ],
+  "error": null,
+  "source_only_download": true,
+  "source_contains_official_public_test_decapsulation_keys": true,
+  "local_private_key_reads": 0,
+  "signing_calls": 0,
+  "Native_Runtime_Node_calls": 0,
+  "primitive_qualification": false,
+  "whole_goal_completed": false,
+  "recorded_at_utc": "2026-10-07T07:06:14.292122+00:00"
+}

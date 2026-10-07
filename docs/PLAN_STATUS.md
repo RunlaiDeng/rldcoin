@@ -1,5 +1,15 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 连续主线：ML-KEM-768官方解封装及隐式拒绝边界通过；继续不同实现核验
+
+全quorum分片/反向6真实双签已普通推送 **main d80c2fd11069cc5c8893d5fa0b2719ffd4559961**，远端SHA/源树一致，CI无实际run；不称CI通过。继续真实原语缺口，V8仅从已固定官方NIST commit a7f283... GET两份ML-KEM/encapDecap/FIPS203 source **1.555469/30**，来源SHA留存，不代表原语通过。原始known-standard dk/expected-k保留tmp，不发本机钥/签/数据；未改Core182d728/既有TLS5234/Native/Node或冻结纸面。
+
+新增严格有界C KAT比较器，支持的default OpenSSL fromdata(priv expanded ML-KEM-768)与decapsulate；exact owned nonsymlink dk2400/c1088/expected32，返回预期byte是否匹配，不输出任何钥/secret。V9 **PASS2.295905/原120**，全部官方group5 cases86..95含5genuine/5implicit rejection实际逐字符合expected；另对一正常密文改1byte，必须符合独立PythonSHAKE256(z||c)fallback且不同于原genuineK，3错误长度/symlink拒绝，共16项。解封装API成功绝不等于peer/ciphertext认证；程序exit0仅已知标准expected匹配。36known test材料及故意symlink完整私有封存，forced[]/自有进程终态，0keygen/真实wallet-TLS-Native钥读取/socket/Native-Runtime-Node，无货币状态。
+
+[有限标准子集profile](operations/evidence/pq-mlkem-decap-reference-v1-qualified-profile-20261007.json)、[实际原语结果](operations/evidence/pq-mlkem-decap-v9-20261007-checks.json)、[源码/接口与不授资格边界](operations/fixtures/pq-mlkem-decap-v1-20261007/README.md)。sourcebe12d91f、actualbinary86419437与全部headers/compiler/library/controller绑定。不是完整FIPS203或FIPS140/CAVP/恒时/不同KEM实现/既有TLS重新认证/独立审查/采用；原FIPS204标准15/两方向签名互通与原TLS/完整quorum/Core284等各保留准确来源，旧全部失败原样不重开/改PASS。
+
+下一个具体最小命题：独立Rust ML-KEM-768公开API对同一固定10official vectors和独立坏密文fallback是否与OpenSSL/expected完全一致。先核对固定可用版本及源码/缓存，仅采用候选工具依赖，不改Core或默认TLS；一次新120包括依赖/严格构建/必要实际案例，首错误/预算或无法取得明确固定来源即不授资格并转诊，不为了发布重跑已过C/Native/value长测。正文2ba62421/PDFc59f9fe8/receipt86821d19及全部S/R/I/A–G/N/P/原经济共识参数/阈值成熟容量不变；完整transaction/archive/续证治理链、PQ采用/独立/长期/物理/P1–P8/全goal仍OPEN，唯一作者按阶段审阅ordinary push继续。
+
 ## 2026-10-07 连续主线：完整三签原包上限分片运输/冷重组/Core及反向实现互通通过
 
 实际新增pure公开分片与全quorum Core adapter/新RAM-only公钥签名夹具，未改Core182d728/完整284或现有C5234/TLS2388/Node/Native/旧网络账本规则。whole固定32768、每片保留原12288上限，独立预期SHA512，exact count/index/12000 data/最后片长度；未知版本、错误大小/次序值、缺/重/混/篡改/总root拒绝，任何到达顺序不改变原字节。暂缺是unavailable，无文件/币/保管/nonce/签名锁授权；重组/运输receipt不等于finality。
