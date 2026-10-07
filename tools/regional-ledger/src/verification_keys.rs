@@ -4,6 +4,7 @@
 use ed25519_dalek::{Signature, VerifyingKey};
 use std::{collections::VecDeque, sync::Mutex};
 
+pub(crate) mod history_inputs;
 const MAX_KEYS: usize = 64;
 struct Entry {
     canonical: String,
@@ -83,10 +84,24 @@ fn verify_using(
         .map_err(|error| error.to_string())?
         .try_into()
         .map_err(|_| "expected 64 bytes".to_string())?;
+    if history_inputs::already_verified(public, bytes, signature) {
+        #[cfg(test)]
+        cost::history_reuse();
+        return Ok(());
+    }
     #[cfg(test)]
     cost::strict();
-    key.verify_strict(bytes, &Signature::from_bytes(&raw))
-        .map_err(|error| error.to_string())
+    let result = key
+        .verify_strict(bytes, &Signature::from_bytes(&raw))
+        .map_err(|error| error.to_string());
+    if result.is_ok() {
+        history_inputs::remember(public, bytes, signature);
+    }
+    #[cfg(test)]
+    if result.is_ok() {
+        crate::bft::sign_cost::note_original_strict_proof(public, bytes, signature);
+    }
+    result
 }
 pub(crate) fn validate_ed25519_public_key(public: &str) -> Result<(), String> {
     #[cfg(test)]
@@ -107,10 +122,11 @@ pub(crate) mod cost {
         pub key_admission_requests: usize,
         pub material_validations: usize,
         pub strict_attempts: usize,
+        pub native_history_reused: usize,
     }
     thread_local! {
         static COST: RefCell<Cost> = const { RefCell::new(Cost {
-            material_hits: 0, material_requests: 0, key_admission_requests: 0, material_validations: 0, strict_attempts: 0,
+            material_hits: 0, material_requests: 0, key_admission_requests: 0, material_validations: 0, strict_attempts: 0, native_history_reused: 0,
         }) };
     }
     pub(super) fn request() {
@@ -124,6 +140,9 @@ pub(crate) mod cost {
     }
     pub(super) fn validate() {
         COST.with(|cost| cost.borrow_mut().material_validations += 1);
+    }
+    pub(super) fn history_reuse() {
+        COST.with(|cost| cost.borrow_mut().native_history_reused += 1);
     }
     pub(super) fn strict() {
         COST.with(|cost| cost.borrow_mut().strict_attempts += 1);

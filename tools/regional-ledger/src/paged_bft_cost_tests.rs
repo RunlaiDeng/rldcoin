@@ -91,12 +91,24 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
     assert!(material.key_admission_requests > 90);
     assert_eq!(
         material.material_requests,
-        material.strict_attempts + material.key_admission_requests
+        material.strict_attempts + material.native_history_reused + material.key_admission_requests
     );
     // The original Core predicate still runs on misses; this exact fresh
     // fixture already admitted every replay key before preflight begins.
     assert_eq!(cost.original_key_admission_calls, 0);
     assert_eq!(cost.original_key_admission_ns, 0);
+    assert!(material.native_history_reused > 90);
+    assert_eq!(cost.strict_proof_phase_repeats[2], 0);
+    assert!(cost.strict_proof_calls > 90);
+    assert!(cost.repeated_strict_proof_calls <= cost.strict_proof_calls);
+    assert_eq!(
+        cost.strict_proof_phase_calls.iter().sum::<usize>(),
+        cost.strict_proof_calls
+    );
+    assert_eq!(
+        cost.strict_proof_phase_repeats.iter().sum::<usize>(),
+        cost.repeated_strict_proof_calls
+    );
     let preflight_ns: u128 = cost.preflight_ns.iter().sum();
     assert!(preflight_ns > 0 && preflight_ns <= cost.phases_ns[0]);
     let publication_ns: u128 = cost.publication_ns.iter().sum();
@@ -167,6 +179,22 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
             && c.payment.amount == Amount(99)
             && c.mature <= 10));
     assert_eq!(inventory(&root), before);
+    let cryptography = serde_json::json!({
+        "material_requests":material.material_requests,
+        "key_material_admission_requests":material.key_admission_requests,
+        "preflight_Core_material_misses":cost.original_key_admission_calls,
+        "preflight_Core_material_seconds":cost.original_key_admission_ns as f64/1e9,
+        "preflight_successful_original_strict_proofs":cost.strict_proof_calls,
+        "preflight_exact_repeated_strict_proofs_lower_bound":cost.repeated_strict_proof_calls,
+        "preflight_untracked_oversize_strict_proofs":cost.untracked_strict_proof_calls,
+        "strict_phase_names":["native_history_context_observation","request_proof_lock_response","outer_approval_and_stream_head","initialization_and_complete_current_guard"],
+        "strict_phase_calls":cost.strict_proof_phase_calls,
+        "strict_phase_exact_repeats_lower_bound":cost.strict_proof_phase_repeats,
+        "probe_entries_limit":64,"probe_bytes_limit":1024*1024,
+        "native_history_exact_signature_input_reuses":material.native_history_reused,
+        "outer_request_and_quorum_strict_checks_preserved":true,
+        "native_genesis_and_all_records_execute":true
+    });
     println!(
         "paged-cost-result {}",
         serde_json::json!({
@@ -174,7 +202,7 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
             "public_key_material_full_validations":material.material_validations,
             "actual_strict_message_verification_attempts":material.strict_attempts,
             "heights":10,"actual_signatures":cost.completed_new_signatures,
-            "Core_key_material_requests_admission_first_replay_misses_seconds":(material.material_requests,material.key_admission_requests,cost.original_key_admission_calls,cost.original_key_admission_ns as f64/1e9),
+            "crypto_preflight":cryptography,
             "actual_full_nested_proposal_proofs":cost.full_proposal_proofs,
             "actual_reused_nested_proposal_proofs_this_invocation":cost.reused_proposal_proofs,
             "actual_original_proposal_checks":cost.original_proposal_checks,

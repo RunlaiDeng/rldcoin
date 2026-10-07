@@ -11,10 +11,13 @@ a hit returns the same fixed-suite material predicate result. Currency identity,
 implementation, rules, validator membership, role, epoch and purpose are still
 checked independently at every original authorization boundary.
 
-Every received or retained message independently runs the same strict Ed25519
-signature verification over its complete signing bytes. Signature bytes, message
-success, admission membership, role, epoch, proof, ledger, caller head and signer
-lock are never cached here. Fully executed Native genesis/history, complete
+Each actual strict verification uses complete signing bytes. The public material
+cache retains no signature bytes, message success, admission membership, role,
+epoch, proof, ledger, caller head or signer lock. A separate
+[invocation-scoped Native history input witness](NATIVE_HISTORY_SIGNATURE_INPUTS.md)
+may reuse an exact cryptographic result during Native record execution only;
+signer request proofs and outer responses retain independent strict checks.
+Fully executed Native genesis/history, complete
 retained signer records, original request semantics, quorum signatures and
 current incident/safety guards remain mandatory. A public material entry cannot
 authorize an identity in a new trust set or epoch.

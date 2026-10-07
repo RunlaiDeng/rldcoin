@@ -14,6 +14,11 @@ pub(crate) struct Summary {
     pub native_records: usize,
     pub original_key_admission_calls: usize,
     pub original_key_admission_ns: u128,
+    pub strict_proof_calls: usize,
+    pub strict_proof_phase_calls: [usize; 4],
+    pub strict_proof_phase_repeats: [usize; 4],
+    pub repeated_strict_proof_calls: usize,
+    pub untracked_strict_proof_calls: usize,
     pub original_proposal_checks: usize,
     pub full_proposal_proofs: usize,
     pub reused_proposal_proofs: usize,
@@ -26,9 +31,11 @@ pub(crate) struct Summary {
 thread_local! {
     static COST: RefCell<Summary> = const { RefCell::new(Summary {
         phases_ns: [0; 5], preflight_ns: [0; 3], publication_ns: [0; 3], append_ns: [0; 3],
-        native_record_ns: [0; 3], native_records: 0, original_key_admission_calls: 0, original_key_admission_ns: 0, original_proposal_checks: 0, full_proposal_proofs: 0, reused_proposal_proofs: 0, repeated_exact_proposal_checks: 0, active_evidence_serialized_bytes: 0,
+        native_record_ns: [0; 3], native_records: 0, original_key_admission_calls: 0, original_key_admission_ns: 0, strict_proof_calls: 0, strict_proof_phase_calls: [0; 4], strict_proof_phase_repeats: [0; 4], repeated_strict_proof_calls: 0, untracked_strict_proof_calls: 0, original_proposal_checks: 0, full_proposal_proofs: 0, reused_proposal_proofs: 0, repeated_exact_proposal_checks: 0, active_evidence_serialized_bytes: 0,
         replay_ns: [0; 3], completed_old_records: 0, completed_stream_appends: 0, completed_new_signatures: 0,
     }) };
+    static STRICT_PHASE: Cell<usize> = const { Cell::new(3) };
+    static STRICT_PROBES: RefCell<std::collections::VecDeque<(String, Vec<u8>, String)>> = const { RefCell::new(std::collections::VecDeque::new()) };
     static REPLAY_ACTIVE: Cell<bool> = const { Cell::new(false) };
     static APPEND_ACTIVE: Cell<bool> = const { Cell::new(false) };
 }
@@ -45,6 +52,8 @@ pub(crate) struct Clock {
 }
 impl Clock {
     pub(crate) fn new() -> Self {
+        STRICT_PROBES.with(|probe| probe.borrow_mut().clear());
+        STRICT_PHASE.with(|phase| phase.set(3));
         REPLAY_ACTIVE.with(|active| active.set(true));
         let now = Instant::now();
         Self {
@@ -103,6 +112,7 @@ impl Clock {
 impl Drop for Clock {
     fn drop(&mut self) {
         REPLAY_ACTIVE.with(|active| active.set(false));
+        STRICT_PROBES.with(|probe| probe.borrow_mut().clear());
         APPEND_ACTIVE.with(|active| active.set(false));
     }
 }
@@ -146,13 +156,18 @@ pub(crate) struct ReplayClock {
 }
 impl ReplayClock {
     pub(crate) fn new() -> Self {
+        let previous = REPLAY_ACTIVE.with(|active| active.get().then(Instant::now));
+        if previous.is_some() {
+            STRICT_PHASE.with(|phase| phase.set(0));
+        }
         Self {
-            previous: REPLAY_ACTIVE.with(|active| active.get().then(Instant::now)),
+            previous,
             phases_ns: [0; 3],
         }
     }
     pub(crate) fn mark(&mut self, phase: usize) {
         if let Some(previous) = self.previous {
+            STRICT_PHASE.with(|current| current.set((phase + 1).min(3)));
             let now = Instant::now();
             self.phases_ns[phase] = now.duration_since(previous).as_nanos();
             self.previous = Some(now);
@@ -160,6 +175,7 @@ impl ReplayClock {
     }
     pub(crate) fn finish(self) {
         if self.previous.is_some() {
+            STRICT_PHASE.with(|phase| phase.set(3));
             COST.with(|cost| {
                 let mut cost = cost.borrow_mut();
                 for (sum, part) in cost.replay_ns.iter_mut().zip(self.phases_ns) {
@@ -233,4 +249,47 @@ pub(crate) fn note_original_key_admission(ns: u128) {
             cost.original_key_admission_ns += ns;
         });
     }
+}
+
+/// Observe only already successfully verified exact triples inside one original
+/// preflight. This never suppresses a strict verification or initializes state.
+/// Retain at most 64 triples and 1 MiB, independently of protocol capacity.
+pub(crate) fn note_original_strict_proof(public: &str, bytes: &[u8], signature: &str) {
+    if !REPLAY_ACTIVE.with(Cell::get) {
+        return;
+    }
+    let size = public.len() + bytes.len() + signature.len();
+    let (duplicate, untracked) = STRICT_PROBES.with(|probe| {
+        let mut probe = probe.borrow_mut();
+        if size > 1024 * 1024 {
+            return (false, true);
+        }
+        let duplicate = probe.iter().position(|(key, message, proof)| {
+            key == public && message == bytes && proof == signature
+        });
+        if let Some(n) = duplicate {
+            let exact = probe.remove(n).expect("observed exact proof position");
+            probe.push_back(exact);
+            return (true, false);
+        }
+        let mut retained: usize = probe
+            .iter()
+            .map(|(key, message, proof)| key.len() + message.len() + proof.len())
+            .sum();
+        while probe.len() >= 64 || retained + size > 1024 * 1024 {
+            let (key, message, proof) = probe.pop_front().expect("nonempty bounded proof probe");
+            retained -= key.len() + message.len() + proof.len();
+        }
+        probe.push_back((public.into(), bytes.into(), signature.into()));
+        (false, false)
+    });
+    COST.with(|cost| {
+        let mut cost = cost.borrow_mut();
+        let phase = STRICT_PHASE.with(Cell::get);
+        cost.strict_proof_phase_calls[phase] += 1;
+        cost.strict_proof_phase_repeats[phase] += usize::from(duplicate);
+        cost.strict_proof_calls += 1;
+        cost.repeated_strict_proof_calls += usize::from(duplicate);
+        cost.untracked_strict_proof_calls += usize::from(untracked);
+    });
 }

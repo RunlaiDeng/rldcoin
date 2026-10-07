@@ -232,6 +232,7 @@ impl Replay {
         self.executed.advance(record)
     }
     fn apply(&mut self, record: &Record, stream: &dyn body_witness::History) -> Result<()> {
+        let _signature_inputs = crate::verification_keys::history_inputs::NativeRecord::enter();
         #[cfg(test)]
         let mut cost = crate::bft::sign_cost::NativeRecordClock::new();
         #[cfg(test)]

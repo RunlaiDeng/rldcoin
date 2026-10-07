@@ -185,6 +185,7 @@ pub(super) struct PagedReplay<'a> {
     head: Hash,
     count: u64,
     proposal_proof: ProposalProof,
+    _signature_inputs: crate::verification_keys::history_inputs::Invocation,
     #[cfg(test)]
     proposal_probe: Option<(Hash, Hash, Proposal)>,
 }
@@ -210,6 +211,7 @@ impl<'a> PagedReplay<'a> {
             region: journal.binding.region,
             owner: journal.binding.key.clone(),
         };
+        let signature_inputs = crate::verification_keys::history_inputs::Invocation::enter();
         let mut history = node.paged_signing_history()?;
         let (_, _, chain) = history.at(0)?;
         journal.creation.check_selected(node, &owner, chain)?;
@@ -222,6 +224,7 @@ impl<'a> PagedReplay<'a> {
             head,
             count: 0,
             proposal_proof: ProposalProof::default(),
+            _signature_inputs: signature_inputs,
             #[cfg(test)]
             proposal_probe: None,
         })
