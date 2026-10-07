@@ -8,7 +8,7 @@ import copy
 import hashlib
 import re
 import interstellar_transfer as wire
-from interstellar_frame_digest import commitment, packet_body_bytes
+from interstellar_frame_digest import commitment, packet_body_bytes, _split
 
 STORAGE = 'RLD-CONTACT-ACTIVE-SHARED-FRAME-V1'
 FRAME = 'RLD-CONTACT-ACTIVE-FRAME-V1'
@@ -17,6 +17,8 @@ B64 = re.compile(r'[A-Za-z0-9+/]*={0,2}\Z')
 
 
 BASE64_ASCII = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+# Optional encoding reuse lasts only for one image decode, never authentication.
+MAX_SHARED_ENCODING_BYTES = 8 * 1024 * 1024
 
 
 def base64_text(value):
@@ -131,7 +133,7 @@ def _unpack(image, *, image_size, network, node_id, max_state, max_messages, max
     require((n,p)==(network,node_id),'active state metadata ownership differs')
     require(isinstance(image['frames'],dict) and len(image['frames'])<=max_messages,
             'active frame pool capacity/schema invalid')
-    pool={}
+    pool={};encoded_pool={};encoded_bytes=0
     for ref,obj in image['frames'].items():
         identifier(ref)
         require(isinstance(obj,dict) and set(obj)=={'format','network','node_id','frame'}
@@ -142,6 +144,11 @@ def _unpack(image, *, image_size, network, node_id, max_state, max_messages, max
                 and base64_text(frame),'active frame encoding/bound invalid')
         require(digest(obj)==ref,'active frame bytes differ')
         pool[ref]=frame
+        # The exact pool string was bounded and checked for Base64 alphabet
+        # above; its bytes need no JSON escaping. Retain at most this optional
+        # encoding budget within this call, then use the original path.
+        if type(frame) is str and encoded_bytes+len(frame)<=MAX_SHARED_ENCODING_BYTES:
+            encoded_pool[ref]=frame.encode('ascii');encoded_bytes+=len(frame)
     records={};referenced=set()
     for ident,entry in state['messages'].items():
         identifier(ident)
@@ -156,7 +163,18 @@ def _unpack(image, *, image_size, network, node_id, max_state, max_messages, max
                 and isinstance(meta['packet'],dict) and isinstance(meta['packet'].get('body'),dict)
                 and 'frame' not in meta['packet']['body'],'active transit frame metadata differs')
         expanded=copy.deepcopy(meta);expanded['packet']['body']['frame']=pool[ref]
-        complete_digest, complete_size = commitment(expanded)
+        if (ref in encoded_pool
+                and all(type(k) is str for k in expanded['packet'])
+                and all(type(k) is str for k in expanded['packet']['body'])):
+            # Each complete packet/route/hop still gets its own exact hash.
+            # Only the immutable pool string's encoding is shared; no digest,
+            # decoded state, signature or authority is carried between calls.
+            left,right=_split(expanded,('packet','body','frame'))
+            stream=hashlib.sha256(left);stream.update(encoded_pool[ref]);stream.update(right)
+            complete_digest=stream.hexdigest()
+            complete_size=len(left)+len(encoded_pool[ref])+len(right)
+        else:
+            complete_digest, complete_size = commitment(expanded)
         require(complete_size==declared,'active transit expanded size differs')
         require(complete_digest==entry['expanded_sha256'],
                 'active transit complete bytes differ')

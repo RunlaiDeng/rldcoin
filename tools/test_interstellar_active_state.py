@@ -38,6 +38,23 @@ class ActiveStateTests(unittest.TestCase):
         with self.f.node('earth') as node:self.assertEqual(node.state,self.original)
         self.assertEqual(self.path.read_bytes(),self.raw)
 
+    def test_shared_encoding_budget_fallback_and_every_complete_record_match_wire_oracle(self):
+        for budget in (0,1,8*1024*1024):
+            with self.subTest(budget=budget),patch.object(codec,'MAX_SHARED_ENCODING_BYTES',budget):
+                decoded=self.unpack(self.image)
+                self.assertEqual(decoded,self.original)
+                for ident,transit in decoded['messages'].items():
+                    raw=wire.canonical(transit);entry=self.image['state']['messages'][ident]
+                    self.assertEqual((entry['expanded_sha256'],entry['expanded_size_bytes']),
+                                     (hashlib.sha256(raw).hexdigest(),len(raw)))
+                # Sharing an encoding does not exempt any later record from
+                # binding its own complete routing and hop bytes.
+                image=copy.deepcopy(self.image)
+                last=next(reversed(image['state']['messages']))
+                image['state']['messages'][last]['transit']['routing']['signature']='0'*128
+                with self.assertRaisesRegex(ValueError,'complete bytes'):self.unpack(image)
+        self.assertEqual(self.path.read_bytes(),self.raw)
+
     def test_distinct_frames_are_kept_exact_and_not_payload_only_deduplicated(self):
         with self.f.node('earth') as node:
             frame=wire.make_frame('source-finality','1'*64,'3'*64,'4'*64,b'{"distinct":true}')
