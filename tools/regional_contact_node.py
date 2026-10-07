@@ -340,8 +340,12 @@ class Service:
             individual_retry=self.bft_individual_retry
             self.bft_individual_retry=False
             pending_bft=[]
+            native_write_attempted=False
             def flush_bft():
+                nonlocal native_write_attempted
                 if not pending_bft:return
+                # A sync may have changed custody even if its result is lost.
+                native_write_attempted=True
                 try:
                     self.receive_bft_batch(pending_bft, errors, rejected, deferred)
                 finally:pending_bft.clear()
@@ -355,6 +359,7 @@ class Service:
                         continue
                     flush_bft()
                     if frame['message_id'] not in accepted:
+                        native_write_attempted=True
                         result = self.native.apply(raw, self.miner)
                         applied.append({'packet_id': packet_id, 'native': result})
                 except (OSError, ValueError, subprocess.TimeoutExpired) as error:
@@ -413,12 +418,17 @@ class Service:
             except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
                 observe_os_error(error,'native-outgoing')
-            try:
-                native_observation = self.native.call('contact-status')
-            except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-                native_observation = None
-                errors.append(str(error))
-                observe_os_error(error,'native-contact-status-final')
+            # The first full read belongs only to this contact stage. Outgoing
+            # queries are read-only; any receive/write attempt, including an
+            # unknown outcome, requires a new complete read. Never reuse across
+            # ticks or authorize consensus/signing from this display observation.
+            if native_write_attempted:
+                try:
+                    native_observation = self.native.call('contact-status')
+                except (OSError, ValueError, subprocess.TimeoutExpired) as error:
+                    native_observation = None
+                    errors.append(str(error))
+                    observe_os_error(error,'native-contact-status-final')
         consensus = None
         stage_seconds['native_receive_and_outgoing'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()
