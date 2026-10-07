@@ -1,0 +1,9 @@
+# Different ML-KEM-768 implementation standard-subset reference
+
+V10 PASS36.931717/120 including download, exact checksum, package-source inventory, all-target strict and opt1/assertions/overflow-checked actual build. fips203 exact0.4.3 with only ml-kem-768 enabled, default RNG disabled. Added only this locked package; no old dependency version changed. API SerDes/Decaps/SharedSecretKey equality, not OpenSSL, takes the exact immutable known public standard material from successful C/V9. No secret Debug/output, generation, socket, real wallet/TLS/Native key reads, Native/Runtime/Node or value state. Original C16 observations were reused, never rerun.
+
+All group5 cases86..95 plus six implicit-rejection/malformed-length/symlink guards match C/OpenSSL and official expected outcomes exactly. Five genuine/five implicit rejection, altered genuine ciphertext matches independent SHAKE256(z||c) fallback while old genuine secret comparison refuses. An API success is not peer/ciphertext authentication or permission to establish a key. Known public official test keys/expected secrets and binaries remain outside Git.
+
+Immutable actual binary, Cargo.lock checksum, downloaded crate checksum c8bdb6454f692ca2a2b45cd554c6828c639d7f9c968cf83a678899ec4443a280 and all source/compiler/controller inputs are bound separately. Core182d728 full284 and existing TLS5234/2388 remain exact unchanged sources. This is a finite functionality subset, not full FIPS203/FIPS140/CAVP, constant-time proof, independent security review, audited library recommendation, activation or physical qualification.
+
+Primary version API: https://docs.rs/fips203/0.4.3/fips203/ml_kem_768/index.html ; independent implementation source https://github.com/integritychain/fips203 . Source controllers refuse existing outputs; do not execute against retained failed custody.

@@ -1,0 +1,453 @@
+{
+  "format": "RLD-PQ-MLKEM-CROSS-V10",
+  "completed": true,
+  "duration_seconds": 36.931717,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "error": null,
+  "pin_error": null,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 4.28685
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.731617
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--all-targets",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 6.873573
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--bin",
+        "rld-ml-kem-768-kat-candidate"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 24.472706
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.288333
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/87-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/87-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/87-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003831
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/88-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/88-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/88-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.00353
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/89-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/89-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/89-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003304
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/90-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/90-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/90-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003293
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/91-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/91-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/91-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003516
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/92-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/92-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/92-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003446
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/93-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/93-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/93-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003649
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/94-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/94-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/94-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003485
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/95-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/95-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/95-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003429
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/changed-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/independent-implicit-rejection-expected.bin"
+      ],
+      "exit_code": 0,
+      "expected": 0,
+      "duration_seconds": 0.003557
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/changed-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-expected.bin"
+      ],
+      "exit_code": 1,
+      "expected": 1,
+      "duration_seconds": 0.003356
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/short-input0.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-expected.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.003262
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/short-input1.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-expected.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.003349
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-official-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/short-input2.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.003541
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-ml-kem-768-kat-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/symlink-dk.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-ciphertext.bin",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-mlkem-decap-v9-20261007-private/86-expected.bin"
+      ],
+      "exit_code": 2,
+      "expected": 2,
+      "duration_seconds": 0.00337
+    }
+  ],
+  "cases": [
+    {
+      "tcId": 86,
+      "official": true,
+      "expected_implicit_rejection": false,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 87,
+      "official": true,
+      "expected_implicit_rejection": false,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 88,
+      "official": true,
+      "expected_implicit_rejection": true,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 89,
+      "official": true,
+      "expected_implicit_rejection": false,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 90,
+      "official": true,
+      "expected_implicit_rejection": false,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 91,
+      "official": true,
+      "expected_implicit_rejection": true,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 92,
+      "official": true,
+      "expected_implicit_rejection": true,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 93,
+      "official": true,
+      "expected_implicit_rejection": true,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 94,
+      "official": true,
+      "expected_implicit_rejection": false,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "tcId": 95,
+      "official": true,
+      "expected_implicit_rejection": true,
+      "exact_expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "case": "changed-ciphertext-exact-independent-implicit-rejection",
+      "primitive_API_success_is_authentication": false,
+      "expected_bytes_matched": true,
+      "actual_Rust_exit": 0,
+      "original_C_expected": 0
+    },
+    {
+      "case": "changed-ciphertext-old-genuine-secret-refused",
+      "comparator_exit": 1,
+      "actual_Rust_exit": 1,
+      "original_C_expected": 1
+    },
+    {
+      "case": "short-input-0",
+      "unavailable_exit": 2,
+      "actual_Rust_exit": 2,
+      "original_C_expected": 2
+    },
+    {
+      "case": "short-input-1",
+      "unavailable_exit": 2,
+      "actual_Rust_exit": 2,
+      "original_C_expected": 2
+    },
+    {
+      "case": "short-input-2",
+      "unavailable_exit": 2,
+      "actual_Rust_exit": 2,
+      "original_C_expected": 2
+    },
+    {
+      "case": "symlink-dk-refused",
+      "unavailable_exit": 2,
+      "actual_Rust_exit": 2,
+      "original_C_expected": 2
+    }
+  ],
+  "forced_owned_processes": [],
+  "owned_processes_stopped": true,
+  "controller_sha256": "7227770822c33559bccaf864883a441ac6cb089d167e8d4b84cec86aacda7d88",
+  "stage_sha256": "c52811561072348c77a0e8726116665108b18641c9d4bc5ad71bb9ff8e24aef1",
+  "actual_binary_sha256": "3844f026b6b01de285b486252c5decdc80c3f645df608ecbd22f21dc68eb4c73",
+  "lock_sha256": "29f9d130702dbe167f1fc5f833dc00c041ef01bc0cb40d0245f71698f0f0cd27",
+  "package_source": [
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/Cargo.toml",
+      "sha256": "aa9446dd5593bd505f7e50b363411a384b16b1df8b600f41789ca28517b23464",
+      "bytes": 2641
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/byte_fns.rs",
+      "sha256": "53a2707c56e99b53529af39ad9b3d2f6176971b670d917a127e96665c7518eb7",
+      "bytes": 5642
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/helpers.rs",
+      "sha256": "d6772c411c59db8d3f53b501264a41da2fc772d4ae633d09684fd0103d60beda",
+      "bytes": 7451
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/k_pke.rs",
+      "sha256": "04109ed54491bf58b1441e7560066338ccaf69d21f7c6879639fd7d085526a01",
+      "bytes": 10864
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/lib.rs",
+      "sha256": "694a915678dc939fb21005dad62bc2fc41fdfd619461b730ac6a43fd782f8b66",
+      "bytes": 19030
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/ml_kem.rs",
+      "sha256": "161be42bca84659e4823e1b8eaa89fcb37dff3b4bdeaad4d129ee9dbe3108220",
+      "bytes": 12579
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/ntt.rs",
+      "sha256": "2603121b2fbc434c913ef52b6182c0ce86214fe24fa63fc7898ee3d01e9a6a35",
+      "bytes": 6190
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/sampling.rs",
+      "sha256": "130f8bfaeb5d80cf07a2849f3fe68824e755bf40d3d0f49b101bbe973fbc15a9",
+      "bytes": 4299
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/traits.rs",
+      "sha256": "319e7460a9d812b2b1b4bafebb6fb2265a471d39be6a6b3ce98b2a27a34267b0",
+      "bytes": 19864
+    },
+    {
+      "path": "/Users/galaxy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fips203-0.4.3/src/types.rs",
+      "sha256": "70f16b02a15738198dd842e3a6322c3c64228fd31e3a81cb4b56a319c85749ec",
+      "bytes": 4292
+    }
+  ],
+  "crate_checksum": "c8bdb6454f692ca2a2b45cd554c6828c639d7f9c968cf83a678899ec4443a280",
+  "source_implementation": "fips2030.4.3/ml-kem-768",
+  "Core_source": "d728ef48902986aa2b6e98b21c08ea23c12eab0f414a4a7ddad41c435783ba9a",
+  "real_wallet_TLS_Native_key_reads": 0,
+  "key_generation_calls": 0,
+  "socket_calls": 0,
+  "Native_Runtime_Node_calls": 0,
+  "C_primitive_retests": 0,
+  "full_FIPS203_KAT": false,
+  "different_KEM_implementation": true,
+  "constant_time_qualification": false,
+  "adopted_profile": false,
+  "independent_review": false,
+  "physical": false,
+  "whole_goal_completed": false,
+  "old_failures_retained": true
+}

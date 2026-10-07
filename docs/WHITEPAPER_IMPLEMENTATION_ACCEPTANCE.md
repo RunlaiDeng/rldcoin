@@ -1,5 +1,15 @@
 # 按最终白皮书完成项目：实施与验收映射
 
+## 2026-10-07 连续主线：两种实现ML-KEM-768解封装一致；继续封装/非规范键边界
+
+上一C官方10及6guard已ordinary main推送 **5cb68c1864f0b98971c4dece7ef6f8ede02b8cb2**，remoteSHA/tree一致，当时CI无run，不能授PASS。新增独立Rust known标准KAT工具，锁fips203 **0.4.3**、only ml-kem-768/default-RNG disabled；只增加1锁定pkg，原锁包version全保持。实际crate download checksum **c8bdb6454f692ca2a2b45cd554c6828c639d7f9c968cf83a678899ec4443a280**/全部source/Rust1.98/opt1 assertions-overflow true/actual binary/controller独立绑定，Core182d728/旧TLS5234/2388全部字节未变。
+
+V10 **PASS36.931717/原120一次**，含受限依赖下载/严格all-target/offline构建与16actualRust调用。只读成功V9官方known vector输入/原typedseal，0真实wallet-TLS-Native钥读取/新keygen/socket/Native-Runtime-Node/币/签名锁状态，0C重复原语测试。官方group5 cases86..95全部与不同OpenSSL实现/expected一致（5正常/5隐式拒绝）；独立SHAKE256坏密文fallback、旧正常K不符、3bad长度/symlink也全符合原预期。使用SharedSecretKey equality且不Debug/输出secret；解封装成功不是认证或key-establishment授权。
+
+[不同实现有限profile](operations/evidence/pq-mlkem-cross-reference-v1-qualified-profile-20261007.json)、[实际一次检查](operations/evidence/pq-mlkem-cross-v10-20261007-checks.json)、[源码/未授资格说明](operations/fixtures/pq-mlkem-cross-v1-20261007/README.md)。仍不是全FIPS203/204/FIPS140/CAVP/恒时/外部安全审查、真实key establishment接入/持久crypto suite/P1–P8/物理或全目标；库版本固定是复现候选，不是已审核部署推荐。所有Native/value旧FAIL、编译V5 FAIL及source-bound历史PASS不变、不重开/复制/退款/重签。
+
+下一具体最小命题：官方ML-KEM768 encapsulation group2的完整c/k是否由支持的deterministic-test接口正确产生，并在exact同长度但系数非规范的encapsulation key上拒绝；不能用只因key长度错而通过的官方negative冒称modulus-check覆盖。先读取固定接口/现有标准源与实际negative长度，候选测量与必要单点实现验证一次原120内，现有decap/TLS/Native/value不重测，不启用测试entropy于任何生产路径。完整keygen/封装/键检查matrix、恒时/独立review/完整transaction-archive/续证治理/PQ采用/长期/异步物理及allgoal保持OPEN，冻结正文2ba62421/PDFc59f9fe8/receipt86821d19及全部S/R/I/A–G/N/P/原经济共识参数/成熟/票数/容量不减，唯一作者持续审阅普通推送。
+
 ## 2026-10-07 连续主线：ML-KEM-768官方解封装及隐式拒绝边界通过；继续不同实现核验
 
 全quorum分片/反向6真实双签已普通推送 **main d80c2fd11069cc5c8893d5fa0b2719ffd4559961**，远端SHA/源树一致，CI无实际run；不称CI通过。继续真实原语缺口，V8仅从已固定官方NIST commit a7f283... GET两份ML-KEM/encapDecap/FIPS203 source **1.555469/30**，来源SHA留存，不代表原语通过。原始known-standard dk/expected-k保留tmp，不发本机钥/签/数据；未改Core182d728/既有TLS5234/Native/Node或冻结纸面。
