@@ -201,8 +201,8 @@ export_id 仅作载荷哈希；它不是付款出口、到账或投票授权。�
 自动调度与传播代码；持续故障、完整活性、容错时代交接、跨区自动价值
 端到端资格、独立保管/运营、外部单调恢复与真正物理路线仍未完成。
 
-修订 14 的[自主 TLS 演练](../operations/evidence/regional-native-bft-autonomous-campaign-20260930.json)
-和[验证/失败记录](../operations/evidence/regional-native-bft-autonomous-verification-20260930.json)
+修订 14 的自主 TLS 演练（历史证据保留于本地归档）
+和验证/失败记录（历史证据保留于本地归档）
 已在工作区与精确冻结源码分别通过。四个普通原生启动进程经 0—1—2—3 的
 固定 TLS 邻居联系自行投票；初始领导者离线、三方换轮推进、离线副本追赶、
 签名付款传播、带另存 head 的四节点重启及第五块实际收款/预留归零均验证。

@@ -2,7 +2,7 @@
 
 范围：S6–S7/S11/S17、I4–I6/I10及F。唯一源码/fixture负责人为原任务；
 正文/PDF/官网冻结，旧价值库 VALUE-STRICT-01 独立 OPEN。
-[准确来源与各范围](../operations/evidence/regional-native-paged-contact-outcome-20261005.json)。
+准确来源与各范围（历史证据保留于本地归档）。
 
 原180秒范围正常终止于121.522秒：四真实原生签署人到源高度66，原生owner出口
 已经纳入，活动检查点64；完整因果证明被 `contact dependency bound` 拒绝。
@@ -70,7 +70,7 @@ cold失败或180秒退出，保留exact源码和现场，不复活旧失败、�
 
 ## 2026-10-05 因果证明修复与实际三地区循环
 
-[各范围、准确来源和终态](../operations/evidence/regional-native-paged-cycle-outcome-20261005.json)。
+各范围、准确来源和终态（历史证据保留于本地归档）。
 原首范围5.212秒因测试helper误用不存在的减法函数而编译失败，未创建新fixture。
 只改为checked Amount API后22.146秒实际失败：Earth4付款99已在Proxima3成熟，
 Proxima实际消费该进口输出、owner授权继续转出98、到高度4已有原生出口；
@@ -135,8 +135,8 @@ startup/mesh/TLS；不直接启动完整fault、不原样重复源66，不保留
 
 ## 2026-10-05 普通证明及真实启动的终态
 
-[证明接口各来源与终态](../operations/evidence/regional-native-paged-network-outcome-20261005.json)、
-[真实启动反例、修复与最终绑定](../operations/evidence/regional-native-paged-runtime-retained-outcome-20261005.json)。
+证明接口各来源与终态（历史证据保留于本地归档）、
+真实启动反例、修复与最终绑定（历史证据保留于本地归档）。
 普通完整BFT信封实际23.424秒拒绝 `missing verified source checkpoint`；source4/import3/
 onward4已原生扣款，拒绝时账本/head/全私有库存不变，不退款/重签/恢复。
 Store.proof先从pinned genesis完整健康分页重放，再给每个完整checkpoint按前驱、
@@ -200,7 +200,7 @@ native authority、长历史、独立/cross-device保管、crypto与physical门�
 
 ## 2026-10-05 默认生命周期、TLS及正常接收的有限验证
 
-[准确来源、四个终态和下一范围](../operations/evidence/regional-native-paged-service-integration-outcome-20261005.json)。
+准确来源、四个终态和下一范围（历史证据保留于本地归档）。
 Native/Python未改，87-file b4bc4379 / implementation cf4a2c7e、release CLI
 2e72ac63及原47.519秒strict/legacy证据保持。四次各60秒、1次的新私有无价值
 范围均停止，不打开失败现场：9.189秒因观察器误读TLS字段失败，完整cold未到达；
@@ -256,7 +256,7 @@ Native变化后才允许另一个新长scope，不以hash/cache代替完整授�
 
 ## 2026-10-05 普通实际收款终态与核算更正
 
-[准确来源、各次失败和实际收款](../operations/evidence/regional-native-paged-ordinary-value-outcome-20261005.json)。
+准确来源、各次失败和实际收款（历史证据保留于本地归档）。
 Native87/source b4bc4379、implementation cf4a2c7e、CLI2e72ac63和节点Python未改；
 最终一次180秒预算actual65.805秒通过五个默认Native Service/Runtime。既有P出口
 98经固定localhost TLS普通中继至新A地区，四个独立A Native/voter/caller目录各自
@@ -320,7 +320,7 @@ fullfault/2016/post64/longhistory/独立/crypto/physical另验。既有600秒sta
 
 ## 2026-10-05 普通源端owner提交终态与到达反例
 
-[准确来源、原失败和最终行为](../operations/evidence/regional-native-paged-ordinary-owner-outcome-20261005.json)。
+准确来源、原失败和最终行为（历史证据保留于本地归档）。
 Native87 b4bc4379 / implementation cf4a2c7e / CLI2e72ac63及节点Python字节未改；
 准确47.519秒strict/legacy/编译证据复用，不重复。首一次120秒范围15.199秒失败：
 四实际普通节点到4、clean exit，但第一cold Native0完整history-check后，准确
@@ -374,7 +374,7 @@ head/custody失败、完整有限判别或预算退出。失败保留，不恢�
 
 ## 2026-10-05 实际导入成熟反例与普通owner完整收款
 
-[准确来源、原失败和终态](../operations/evidence/regional-native-paged-ordinary-composed-receiving-outcome-20261005.json)。
+准确来源、原失败和终态（历史证据保留于本地归档）。
 首180秒收款scope实际25.981秒失败：五默认Services原source5及四P0启动，四目的
 至4未成熟原99；五process clean exit。完整Native/envelopes/owner停止cold未到达，
 整项不通过。原33.203秒通过source0参与该失败后，源/目的私有现场共同封存，不再
@@ -465,12 +465,12 @@ owner11只签实际99 input的gross98/fee1+1/zero-change，ordinary四P finite5
 import/maturity/clean-stop/cold失败、完整有限判别或预算退出。不得提高600stage/
 60round/24新增高度/2016/成熟/票数/容量。Native未变，但新停止验证路径需要新
 普通资格，不能重用封存余额。完整fault/返程/source66/长历史/独立/PQ/物理另验。
-[完整准确来源及所有终态](../operations/evidence/regional-native-paged-submission-outcome-20261005.json)。
+完整准确来源及所有终态（历史证据保留于本地归档）。
 
 
 ## 新目录当前来源普通继续转出终态及返程契约
 
-[准确新范围](../operations/evidence/regional-native-paged-onward-fresh-outcome-20261005.json)
+准确新范围（历史证据保留于本地归档）
 在一次180秒预算内136.378秒完整通过。Native87 `4e2331b4...`、implementation
 `bb6d1e5b...`、Python153/Core字节不变；迁移驱动 `d8c2af0d...` 默认入口实际
 执行新目录companion，旧 `20d0b0fc...` 完整保留。新根Native验证零分配及当前
@@ -520,7 +520,7 @@ physical与全部S/R/I/A-G/N/P仍OPEN。
 源驱动将固定attempt3秒误改为6秒而拒绝正常观察。四Service −15/0/0/0，已无
 活动自有节点；目的阶段未启动、实际后续出口/成熟/full cold未证明。原currency及
 1783私有文件完整封存，不打开其Native/Runtime，不重签/退款/恢复/替代请求。
-[准确失败与下一行为判别](../operations/evidence/regional-native-paged-return-outcome-20261005.json)。
+准确失败与下一行为判别（历史证据保留于本地归档）。
 独立固定传输约束将2worker/3秒attempt/0.2秒lock与高度改写分离；一次20秒反例
 实际0.456秒，两项回归exit0，三真实停止观察旧断言拒绝、新合同接受；改变/缺字段/
 错误类型拒绝。私有字节不变、无Native调用/网络，不能提供返程或fault资格。
@@ -543,7 +543,7 @@ E空3仅准备；普通E100→P99在85.598秒完整成熟/cold，四P5；普通P
 停止高度、完整cold或三地区最终守恒证明。末段仍等待所有允许运输错误同时为空；
 600秒耗尽，前22Service clean exit、最后5为−9，当前自有进程0。准确wholecurrency
 5722私有文件封存，不打开Native/Runtime、不重签/退款/恢复或替代请求。
-[准确终态/源绑定/下一成本判别](../operations/evidence/regional-paged-ordinary-cycle-contract-v2-outcome-20261005.json)。
+准确终态/源绑定/下一成本判别（历史证据保留于本地归档）。
 
 0.012秒semantic AST/兼容前缀review通过；最初静态substring guard把
 `recovered_exact_retry=False`误作recover call而失败，原件保留，未启动fixture。
@@ -554,7 +554,7 @@ E空3仅准备；普通E100→P99在85.598秒完整成熟/cold，四P5；普通P
 独立候选将预算后的近零wait改为原bounded总5秒cleanup，先signal已知Service、
 超时才kill其owned group；qualification仍严格600秒。失败helper字节不改、候选
 未启动；已证明多余silent条件，但不是唯一超时原因或下一600秒可完成证明。
-[真实停止反例与严格拒绝](../operations/evidence/regional-paged-cycle-stop-counter-20261005.json)。
+真实停止反例与严格拒绝（历史证据保留于本地归档）。
 
 已测stop→fullcold段分别3.298/9.618/13.177/18.702/27.758秒，最后是四A9，
 共356信封；这些是阶段总wall，不是逐Native调用CPU分类。约553.7秒首次暖观察
@@ -582,4 +582,4 @@ VALUE-STRICT-01/完整cycle/完整fault/2016/source66/post64/独立/PQ/physical�
 incident guard。改变Native使用全新签署零分配genesis/currency/全部保管。
 一次300秒源码/focused strict、一次120秒fresh CLI等价/反例/私有字节检查；
 首失败/完整判别/预算退出，网络cycle/fault预算0，不提高原规范/容量/成熟门槛。
-[准确源绑定和成本](../operations/evidence/regional-native-causal-cold-cost-outcome-20261005.json)。
+准确源绑定和成本（历史证据保留于本地归档）。

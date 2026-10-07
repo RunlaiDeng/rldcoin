@@ -62,7 +62,7 @@ payload才能接受。其公开标签没有密码安全；摘要自洽不加入�
 
 首次另一个攻击检查失败：共享理想认证集合中，前面的检查已认证相同空block81
 的完整签名；后面把完全相同字节称为“伪造”，因此合法接受。该fixture错误
-不是证书验签漏洞，也不是“整套通过”。[原失败](../operations/evidence/regional-bft-paged-history-model-20261005-checks.json)
+不是证书验签漏洞，也不是“整套通过”。原失败（历史证据保留于本地归档）
 保持completed=false；[准确输入修正](patches/bft-paged-history-model-auth-fixture-20261005.diff)
 可还原初始来源。
 
@@ -71,7 +71,7 @@ commit原文不在认证集合，尽管页/头哈希自洽仍拒绝；明确认�
 旧归档/旧caller头仍拒绝。模型代码SHA-256始终
 `53650b7d8b36b36581f8aa92cc66e282ee475ebdc79362827a03fcfce1354d58`；
 其余七方法及setup/helpers逐字节未变，用方法来源哈希复用原通过结果，未重复
-2018轨迹或完整新suite。[针对性结果及复用绑定](../operations/evidence/regional-bft-paged-history-auth-fixture-20261005-checks.json)。
+2018轨迹或完整新suite。针对性结果及复用绑定（历史证据保留于本地归档）。
 Native69/core171、原binary和冻结正文/PDF/receipt核对不变；没有打开旧私有
 fixture、启动网络、读写钱包、重签、退款或移动旧价值。
 

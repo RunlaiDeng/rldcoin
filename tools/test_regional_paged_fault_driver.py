@@ -16,7 +16,7 @@ from regional_bft_node import private
 from regional_paged_fault_scope import REGIONS, inventory
 from regional_paged_fault_prepared import Bound
 
-PROJECT=Path('/Users/galaxy/GitHub/rldcoin')
+PROJECT=Path(__file__).resolve().parents[1]
 
 
 class Relay:
@@ -352,7 +352,7 @@ class StoppedObservationTests(unittest.TestCase):
     def restart(self,d,pid=102):
         d.phase='keyless-drain';d.processes={('earth',0):SimpleNamespace(pid=pid,poll=lambda:None)}
     def test_exact_clean_predecessor_is_unknown_until_new_publication(self):
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
             d,p,v=self.setup_model(Path(t));before=p.read_bytes();d.stop_all();self.restart(d)
             self.assertEqual(d.observations(),{('earth',0):None});self.assertEqual(d.unknowns,1)
             self.assertFalse(d.tls_observations);self.assertEqual(p.read_bytes(),before)
@@ -361,14 +361,14 @@ class StoppedObservationTests(unittest.TestCase):
             p.write_bytes(before)
             with self.assertRaisesRegex(ValueError,'another process/domain'):d.observations()
     def test_reused_pid_does_not_credit_unchanged_signing_observation(self):
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
             d,p,v=self.setup_model(Path(t));d.stop_all();self.restart(d,101)
             self.assertEqual(d.observations(),{('earth',0):None});self.assertFalse(d.tls_observations)
             v['consensus']['autonomous_signing_enabled']=False;mesh.atomic(p,v)
             self.assertEqual(d.observations(),{('earth',0):12})
     def test_changed_old_pid_other_domain_or_slot_remains_fatal(self):
         for change in ('bytes','currency','region','slot'):
-            with self.subTest(change=change),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+            with self.subTest(change=change),tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
                 d,p,v=self.setup_model(Path(t));d.stop_all();self.restart(d)
                 if change=='bytes':p.write_bytes(p.read_bytes()+b'\n')
                 elif change=='slot':d.stopped_observations[('earth',1)]=d.stopped_observations.pop(('earth',0))
@@ -376,7 +376,7 @@ class StoppedObservationTests(unittest.TestCase):
                 with self.assertRaises(ValueError):d.observations()
     def test_no_clean_own_stop_never_accepts_foreign_status(self):
         for reason in ('unowned','unclean','wrong-domain','invalid-TLS'):
-            with self.subTest(reason=reason),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+            with self.subTest(reason=reason),tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
                 d,p,v=self.setup_model(Path(t),-15 if reason=='unclean' else 0)
                 if reason=='wrong-domain':v['region']='9'*64;mesh.atomic(p,v)
                 if reason=='invalid-TLS':v['transport']['tcp']['fallback_to_plaintext']=True;mesh.atomic(p,v)
@@ -388,7 +388,7 @@ class StoppedObservationTests(unittest.TestCase):
                 with self.assertRaises(ValueError):d.observations()
     def test_new_report_keeps_pid_tls_cap_errors_and_keyless_guards(self):
         for change in ('TLS','cap','fatal','signing','currency','foreign','region'):
-            with self.subTest(change=change),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+            with self.subTest(change=change),tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
                 d,p,v=self.setup_model(Path(t));d.stop_all();self.restart(d)
                 v['process_id']=102;v['consensus']['autonomous_signing_enabled']=False
                 if change=='TLS':v['transport']['tcp']['tls_cert_sha256']='9'*64
@@ -400,7 +400,7 @@ class StoppedObservationTests(unittest.TestCase):
                 mesh.atomic(p,v)
                 with self.assertRaises(ValueError):d.observations()
     def test_dead_process_stale_and_unknown_deadline_still_fail(self):
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
             d,p,v=self.setup_model(Path(t));d.stop_all();self.restart(d)
             d.processes[('earth',0)].poll=lambda:1
             with self.assertRaisesRegex(ValueError,'exited prematurely'):d.observations()
@@ -408,7 +408,7 @@ class StoppedObservationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'budget exhausted'):d.wait('new-pid',lambda h:False)
 
     def test_exact_shutdown_marker_only_after_clean_stop_is_unknown(self):
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
             d,p,v=self.setup_model(Path(t));v['errors']=['TCP runtime is stopping; preserve evidence'];mesh.atomic(p,v)
             before=p.read_bytes();d.stop_all();self.restart(d)
             self.assertEqual(d.observations(),{('earth',0):None});self.assertFalse(d.tls_observations)
@@ -418,11 +418,11 @@ class StoppedObservationTests(unittest.TestCase):
             v['errors']=[];mesh.atomic(p,v);self.assertEqual(d.observations(),{('earth',0):12})
     def test_shutdown_marker_never_hides_other_stop_errors(self):
         for error in ('native rejected: invalid complete finality proof','[Errno 22] Invalid argument','TCP runtime is stopping; preserve evidence extra','regional candidate rejected: Permission denied (os error 13)'):
-            with self.subTest(error=error),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+            with self.subTest(error=error),tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
                 d,p,v=self.setup_model(Path(t));v['errors']=['TCP runtime is stopping; preserve evidence',error];mesh.atomic(p,v)
                 d.stop_all();self.assertFalse(d.stopped_observations);self.restart(d)
                 with self.assertRaises(ValueError):d.observations()
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
             d,p,v=self.setup_model(Path(t));v['errors']=['TCP runtime is stopping; preserve evidence'];v['rejected']=['complete envelope'];mesh.atomic(p,v)
             d.stop_all();self.assertFalse(d.stopped_observations);self.restart(d)
             with self.assertRaises(ValueError):d.observations()
@@ -442,7 +442,7 @@ class KeylessDirectoryTests(unittest.TestCase):
         d.call=status
         return d
     def test_actual_materialization_all12_private_missing_key_paths_without_any_key(self):
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='keyless-directory-model-') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='keyless-directory-model-') as t:
             d=self.model(Path(t));d.materialize();parent=d.root/'keyless-absent'
             for label,n in SLOTS:
                 key=parent/f'{label}-{n}.json';self.assertEqual(private(key,missing=True),key);self.assertFalse(key.exists())
@@ -451,7 +451,7 @@ class KeylessDirectoryTests(unittest.TestCase):
             with self.assertRaises(ValueError):d.materialize()
     def test_foreign_key_paths_and_preexisting_directory_refuse_before_fake_native_reads(self):
         for reason in ('existing','foreign','symlink'):
-            with self.subTest(reason=reason),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='keyless-directory-model-') as t:
+            with self.subTest(reason=reason),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='keyless-directory-model-') as t:
                 d=self.model(Path(t));p=d.root/'keyless-absent'
                 if reason=='existing':p.mkdir(mode=0o700)
                 elif reason=='symlink':p.symlink_to(d.root/'elsewhere',target_is_directory=True)
@@ -460,7 +460,7 @@ class KeylessDirectoryTests(unittest.TestCase):
                 with self.assertRaises((ValueError,FileExistsError)):d.prepare_keyless_directory()
                 self.assertFalse(d.fake_reads)
     def test_original_runtime_private_permissions_and_symlink_guards_still_refuse(self):
-        with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='keyless-directory-model-') as t:
+        with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='keyless-directory-model-') as t:
             d=self.model(Path(t));d.materialize();p=d.root/'keyless-absent';p.chmod(0o755)
             with self.assertRaises(ValueError):private(p/'earth-0.json',missing=True)
             p.chmod(0o700);(p/'earth-0.json').symlink_to(p/'nonexistent')
@@ -483,18 +483,18 @@ class StoppedDrainTests(unittest.TestCase):
    raise AssertionError(command)
   d.call=call;return d
  def test_actual_live_drain_restarts_prefix_under_later_read_lock(self):
-  with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='drain-model-') as t:
+  with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
    d=self.model(Path(t));success=False
    for _ in range(5):
     try:success=bool(d.drain_ready(d.heights))
     except NativeReadBusy:pass
    self.assertFalse(success);self.assertEqual(sum(q==('earth',0,'bft-retained-messages') for q in d.queries),5);self.assertFalse(any(q[0]!='earth' for q in d.queries))
  def test_same_original_drain_predicate_after_clean_stop_checks_all12(self):
-  with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='drain-model-') as t:
+  with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
    d=self.model(Path(t));d.closed=True;self.assertTrue(d.stopped_drain());self.assertEqual({(l,n) for l,n,c in d.queries if c=='bft-retained-messages'},set(SLOTS));self.assertEqual(sum(c=='status' for l,n,c in d.queries),12)
  def test_live_process_unclean_stop_or_wrong_phase_refuse_before_read(self):
   for why in ('live','unclean','phase','incomplete'):
-   with self.subTest(why=why),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='drain-model-') as t:
+   with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
     d=self.model(Path(t));d.closed=True
     if why=='live':d.processes[('earth',0)]=SimpleNamespace()
     if why=='unclean':d.terminal[-1]['exit_code']=-15
@@ -503,11 +503,11 @@ class StoppedDrainTests(unittest.TestCase):
     with self.assertRaises(ValueError):d.stopped_drain()
     self.assertFalse(d.queries)
  def test_unknown_telemetry_and_unequal_replica_observations_cannot_trigger_stop(self):
-  with tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='drain-model-') as t:
+  with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
    d=self.model(Path(t));self.assertTrue(d.keyless_observations_ready(d.heights));h=dict(d.heights);h['earth',0]=None;self.assertFalse(d.keyless_observations_ready(h));h['earth',0]=18;self.assertFalse(d.keyless_observations_ready(h));h['earth',0]=True;self.assertFalse(d.keyless_observations_ready(h))
  def test_native_domain_cap_and_divergence_do_not_receive_drain_credit(self):
   for why in ('foreign','region','cap','different'):
-   with self.subTest(why=why),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='drain-model-') as t:
+   with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
     d=self.model(Path(t));d.closed=True
     if why=='foreign':d.foreign=True
     elif why=='cap':d.native_heights['earth',0]=28
@@ -524,7 +524,7 @@ class StoppedDrainTests(unittest.TestCase):
      with self.assertRaises(ValueError):d.stopped_drain()
  def test_pending_caller_head_and_complete_commit_group_remain_refusals(self):
   for why in ('pending','outbox','head','group'):
-   with self.subTest(why=why),tempfile.TemporaryDirectory(dir='/Users/galaxy/GitHub/rldcoin/tmp',prefix='drain-model-') as t:
+   with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
     d=self.model(Path(t));d.closed=True;c=json.loads(d.configs[PHASES[-1],'earth',0].bft);p=Path(c['head_file']);v=json.loads(p.read_text())
     if why in ('pending','outbox'):v[why]={};p.write_text(json.dumps(v));self.assertFalse(d.stopped_drain())
     elif why=='head':v['head']='5'*64;p.write_text(json.dumps(v));

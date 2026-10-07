@@ -40,7 +40,7 @@ The runtime checks that identity before creating a fixture. This does not grant
 independent source freshness, key uniqueness or monetary authority. No new run is
 needed merely to relocate these byte-identical diagnostic sources.
 
-[Outcome and the next changed-method discriminator](../../../docs/operations/evidence/regional-native-bft-window-capacity-outcome-20261005.json)
+Outcome and the next changed-method discriminator（历史证据保留于本地归档）
 retains all budgets/failures. Ordinary network round60/max-height24,window2016,
 quorums and native/archive limits remain unchanged. Legacy VALUE-STRICT-01 remains
 OPEN; these fixtures do not substitute for it or qualify whole-protocol release.

@@ -34,9 +34,9 @@ stopped cold and fault scopes are pending. This scheduling change does not
 qualify sustained fault liveness, independent custody or interstellar operation.
 
 The separately frozen 368-file source subsequently passed
-[15 related actual-native cases](evidence/regional-role-tick-head-related-checks-20261004.json)
-in 34.000 seconds, its [new exact default-driver build and 438 process cases](evidence/regional-role-tick-head-frozen-checks-20261004.json)
-in 38.701/261.150 seconds, and [three actual custody cases](evidence/regional-role-tick-head-runtime-custody-20261004.json)
+15 related actual-native cases（历史证据保留于本地归档）
+in 34.000 seconds, its new exact default-driver build and 438 process cases（历史证据保留于本地归档）
+in 38.701/261.150 seconds, and three actual custody cases（历史证据保留于本地归档）
 in 3.392 seconds. The unchanged 173 native/strict checks were reused, not rerun.
 Ordinary owner-payment/cold and finite missing-leader scopes have not started;
 the full-fault controller contention candidate runs separately with the original

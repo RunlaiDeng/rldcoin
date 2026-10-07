@@ -32,3 +32,10 @@ __pycache__/
 *.tgz
 # Generated fixture credentials stay local.
 /docs/operations/evidence/fresh-testnet-20260930/bootstrap.json
+
+# Local assistant instructions and immutable experiment/recovery records
+/AGENTS.md
+/tools/regional-ledger/AGENTS.md
+/docs/operations/evidence/
+/docs/operations/fixtures/
+/docs/operations/history/

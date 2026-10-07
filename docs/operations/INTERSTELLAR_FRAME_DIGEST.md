@@ -34,7 +34,7 @@ campaign or existing admission/archive/history/wire bounds to obtain a pass.
 The component candidate and measured savings do not qualify BFT liveness,
 independent custody, power loss, physical stellar links or I1–I12 completion.
 
-The [exact 384-file build and 475 complete process checks](evidence/regional-frame-stream-frozen-checks-20261004.json)
+The exact 384-file build and 475 complete process checks（历史证据保留于本地归档）
 passed, along with three actual custody cases and a fresh four-node directed
 unanimous offline-source native payment/cold sample. Native/Core exactly match
 revision 47; its 181 Native/strict cases are reused, not rerun. The new default

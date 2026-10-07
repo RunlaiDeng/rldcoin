@@ -41,8 +41,8 @@ certified prefix and remained unimported. Across each region's highest observed
 native prefix, issued 300 equals liquid 290 plus pending export value 10.
 These prefixes do not establish agreement of all replicas. Contact restoration
 was not reached. Original sealed state was unchanged and all owned nodes stopped.
-Retain the [failed run](evidence/regional-native-bft-sustained-20261001.json) and
-[twelve cold replays](evidence/regional-native-bft-sustained-cold-20261001.json).
+Retain the failed run（历史证据保留于本地归档） and
+twelve cold replays（历史证据保留于本地归档）.
 
 The workspace reception fix now validates a repeated body's complete envelope
 and imports its newly certified prefix before body deduplication. Two native
@@ -50,7 +50,7 @@ regressions failed before the fix; after it, eleven signer/recovery checks,
 eighteen contact-node/wallet-app checks and two actual frame checks passed.
 The valid changed proof works even with the body store at capacity; a forged
 certificate leaves runtime state, external caller head and native journal intact.
-The [source/check receipt](evidence/regional-bft-duplicate-envelope-checks-20261001.json)
+The source/check receipt（历史证据保留于本地归档）
 does not claim a new frozen full cycle or public release. Next locate retained
 height-9 commit/certificate carriage, then repeat the unchanged fault profile
 against a separately frozen fixed source; keep the failed evidence.
@@ -63,7 +63,7 @@ frames for receipt/summary metadata, and retries local mesh locks for at most
 the existing bounded immutable transit witnesses; no new payload cache, pruning,
 weaker signature check or timeout refund was added.
 
-Its [fault continuation](evidence/regional-native-bft-carriage-sustained-20261001.json)
+Its fault continuation（历史证据保留于本地归档）
 crossed the formerly failed gate in 462.704 seconds: all three online Earth
 replicas reached height 9, and both isolated remote regions certified their local
 payments. The controller then incorrectly read `height` from a temporary native
@@ -74,13 +74,13 @@ compatible prefixes at Earth 7/9/9/9, Proxima 11/11/11/11 and Andromeda 9/9/9/9.
 Issued 300 = liquid 290 + pending value 10; four exports and three imports leave
 one unresolved export. Do not sign a replacement, rebase its expiry or refund it.
 
-The [controller observation fix](evidence/regional-bft-observation-fix-20261001.json)
+The controller observation fix（历史证据保留于本地归档）
 preserves unavailable height/round/message count as unknown, passes two focused
 checks and accepts all eleven retained actual process samples without inventing
 progress. Its subsequent 228-file frozen full drill crossed the offline-leader
 gate in 181.505 seconds, started Earth replica 0 and caught it up in 35.890 seconds,
 and restored contacts at 332.934 seconds. It then failed the unchanged 600-second
-recipient import/maturity gate. The [966.482-second failed run](evidence/regional-native-bft-controller-sustained-20261001.json)
+recipient import/maturity gate. The 966.482-second failed run（历史证据保留于本地归档）
 retains all twelve stopped stores: each region's replicas agree at Earth 11,
 Proxima 10 and Andromeda 9. Issued 300 = liquid 290 + pending value 10; four
 exports and three imports still leave one unresolved export. The sealed original
@@ -102,7 +102,7 @@ local lock attempt and require actual durable custody before retransmit suppress
 The socket deadline remains three seconds; this is not a three-second total tick
 or cryptographic CPU guarantee. A real-TLS regression failed on the previous
 source and passes on this change; 29 TCP and 53 other transport checks pass.
-The [cold private-copy diagnostic](evidence/regional-bft-preconnect-cold-carriage-20261001.json)
+The cold private-copy diagnostic（历史证据保留于本地归档）
 carried the retained round-2 proposal to replica 2 in 4.6753 seconds total with
 no TCP errors and no change to the failed source fixture. It explicitly selects
 one configured neighbor and the diagnostic cursor, starts no native consensus
@@ -112,7 +112,7 @@ recipient maturity or a new public release.
 
 The following 229-file frozen source (`3c0e00521a1f394a54844a3f32902e3dac6f7aec28cba4e9fd655919c540d46a`)
 rebuilt and passed 82 transport and 32 process/controller checks. Its
-[956.535-second fresh fault run](evidence/regional-native-bft-preconnect-sustained-20261001.json)
+956.535-second fresh fault run（历史证据保留于本地归档）
 crossed the offline-leader gate in 161.375 seconds, caught up the restarted
 Earth replica in 28.014 seconds, and restored contacts at 329.332 seconds.
 It still failed the 600-second recipient maturity gate. All twelve owned nodes
@@ -122,7 +122,7 @@ Andromeda 11/11/12/12, with compatible prefixes. Highest observed certified
 prefixes contain four exports and four imports: issued 300 = liquid 300 +
 pending value 0. This does not establish all-replica tip agreement or maturity.
 
-[Four fresh native recipient replays](evidence/regional-bft-preconnect-cold-recipient-20261001.json)
+Four fresh native recipient replays（历史证据保留于本地归档）
 bind the exact retained expectation: every Proxima replica accepted the import
 at height 10, retains original net output 9, and has local finality covering that
 import without quarantine. All report `IMPORT_ACCEPTED_IMMATURE`; the required
@@ -135,12 +135,12 @@ one validation operation only after the exact transit is fully authenticated.
 Cold startup, archive reads and external `receipt_matches` still authenticate
 complete input; only the existing bounded immutable transit witnesses persist.
 37 mesh checks pass, including a cold retained-state refusal for a fully signed
-receipt whose frame binding differs. The [matched stopped-state sample](evidence/regional-bft-receipt-validation-cost-sample-20261001.json)
+receipt whose frame binding differs. The matched stopped-state sample（历史证据保留于本地归档）
 measured three opens per fresh interpreter: previous 1.734341/0.694371/0.664362
 seconds versus current 1.625331/0.555796/0.548001. The exact private state was
 unchanged. These samples do not prove ordinary scheduling or sustained liveness.
 
-The [completion-only archive samples](evidence/regional-bft-early-archive-cost-sample-20261001.json)
+The completion-only archive samples（历史证据保留于本地归档）
 preserved every pending active transit, original receipt and packet summary in
 isolated copies. Full archived payload authentication passed within the unchanged
 4096-file/256-MiB limits. Moving 96 completed records at high-water 32 left
@@ -157,7 +157,7 @@ then checks actual native stores and latest signer/caller heads in an isolated c
 It uses the original expectation and starts ordinary nodes, queues no new owner
 requests and never refunds or replaces the source debit. Five controller checks
 pass, including refusal of live/missing heights, unclean shutdown or changed
-source commitments. Its [actual frozen recovery stage](evidence/regional-native-bft-retained-maturity-20261001.json)
+source commitments. Its actual frozen recovery stage（历史证据保留于本地归档）
 completed in 589.121 seconds against 229-file source
 `daf6710c8170b994990bbcf96251023fd9d72ffc968de17a51a186c6e4c9843f`.
 The checked release rebuild, 84 transport and 34 process/controller checks pass.
@@ -169,12 +169,12 @@ within each region at Earth 15, Proxima 12 and Andromeda 12; issued 300 = liquid
 archived payloads authenticate. The original failed fixture and frozen source
 are unchanged, with all twelve owned nodes stopped.
 
-[Four separate cold native recipient checks](evidence/regional-bft-retained-cold-recipient-20261001.json)
+Four separate cold native recipient checks（历史证据保留于本地归档）
 confirm the exact original net output 9 is now spendable at Proxima height 12,
 with import height 10, finality coverage and no quarantine; all private fixture
 files remain unchanged by these reads. The fresh full-profile cold verifier
 actually refuses this completed recovery mode without creating a verification
-output. The [full fresh offline-validator/contact-cut profile](evidence/regional-native-bft-early-archive-fresh-20261001.json)
+output. The full fresh offline-validator/contact-cut profile（历史证据保留于本地归档）
 now completed in 863.055 seconds against the same frozen source and original
 7/4/4 sealed cycle. The offline-leader gate took 107.403 seconds, restarted
 Earth catch-up took 34.281 seconds, and contacts returned at 248.496 seconds.
@@ -182,7 +182,7 @@ The new net output 9 imported uniquely at height 11 and matured at height 13;
 the restored-contact maturity gate took 488.991 seconds and keyless certificate
 drain 26.455 seconds. All four stopped replicas agree within each region at
 Earth 15, Proxima 13 and Andromeda 16, with issued 300 = liquid 300 + pending 0.
-A [separate frozen cold verifier](evidence/regional-native-bft-early-archive-fresh-cold-20261001.json)
+A separate frozen cold verifier（历史证据保留于本地归档）
 passed twelve complete native replays, four original-output recipient checks,
 separate signer-head checks and authentication of all 4,506 archive payloads.
 All private fixture files remained unchanged; all owned processes stopped and

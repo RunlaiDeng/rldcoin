@@ -1,8 +1,0 @@
-{
-  "completed": false,
-  "exit_code": 1,
-  "error": "KeyError routing: signed routing is transit sibling, not packet field",
-  "conservative_seconds": 0.3,
-  "original20_cumulative": 2.171249,
-  "failed_constructor_calls": 0
-}

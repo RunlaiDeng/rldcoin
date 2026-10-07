@@ -45,8 +45,8 @@ failures without migration. Native consensus/source identity and signed evidence
 formats remain unchanged. The new directional schema is explicit; old runtimes
 refuse it.
 
-The [seven component/default lifecycle checks](evidence/interstellar-oneway-spool-retry2-frozen-checks-20261004.json)
-passed in 4.737 seconds; the [actual four-node ordinary sample](evidence/interstellar-oneway-retry2-default-native-lifecycle-20261004.json)
+The seven component/default lifecycle checks（历史证据保留于本地归档）
+passed in 4.737 seconds; the actual four-node ordinary sample（历史证据保留于本地归档）
 took 3.754 seconds, with 44 exact signed mechanical transfers. The source stopped
 completely during native recipient import and a local payment of 50; source calls
 were zero and source journal bytes remained unchanged. Receipt knowledge returned

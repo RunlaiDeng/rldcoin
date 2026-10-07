@@ -1,1 +1,0 @@
-Review-only source/evidence copies; launch exact original project tmp drivers. No ledger/keys/custody/binary copied. Maximum four read-only workers; all original complete byte/cold/Native/head/conservation predicates remain. Pure models and sampled inventory timing grant no Native maturity or fullfault qualification.

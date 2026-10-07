@@ -1,7 +1,0 @@
-{
-  "hypothesis": "Relay2 exact unprepared current Prepare3to0 waits57.456 after durablecustody despite matching consumed hint. At original newestpriority pairs, check actual selected spares against original before.prepared: does a prepared current retransmission displace an unprepared current target? Preserve oldestpair preference for old failedprepared frame, other class floor/full4/bounds.",
-  "budget_seconds": 10,
-  "prior_readonly20_seconds": 2.321947,
-  "attempts": 1,
-  "exit": "first seal/schema guard or original10/remaining20; no Node/Native/Runtime/sign/key/socket/fixture"
-}

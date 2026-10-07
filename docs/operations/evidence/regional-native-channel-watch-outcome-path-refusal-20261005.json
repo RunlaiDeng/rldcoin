@@ -1,9 +1,0 @@
-{
-  "format": "RLD-NATIVE-CHANNEL-WATCH-OBSERVER-REFUSAL-V1",
-  "controller_sha256": "089491d22c60014a6abeaf33f98ba98ee3a3e58745c8be9135949f09fc66fb57",
-  "failure": "FileNotFoundError: baseline observer used repository src/destination/pow.rs instead of crates/rld-value-successor/src/destination/pow.rs",
-  "native_or_test_refusal": false,
-  "native_fixture_start_or_mutation": false,
-  "report_written": false,
-  "correction": "Qualify exact baseline file paths; retain failed observer. Read-only guards only; do not rerun native checks."
-}

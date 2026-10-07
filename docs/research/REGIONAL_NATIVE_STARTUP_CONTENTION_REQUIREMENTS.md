@@ -58,7 +58,7 @@ candidate/receive/sign/reconcile/retain/broadcast及cold/live/retention/TCP/mesh
 已有TLS通过属于其原Node来源，不能称为新Node full TLS/fault通过。
 
 完整绑定及终态：
-[启动修复结果](../operations/evidence/regional-native-startup-inspection-outcome-20261005.json)。
+启动修复结果（历史证据保留于本地归档）。
 VALUE-STRICT-01仍OPEN，地区/启动通过不替代旧价值库严格检查。
 
 ## 后续已执行的有限行为门槛

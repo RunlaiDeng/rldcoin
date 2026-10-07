@@ -65,11 +65,11 @@ failed ordinary fault state or migrate its old currency/custody.
 
 The complete checker then passed: all 454 process cases in 262.813 seconds,
 three actual Runtime custody cases in 3.209 and the actual small CLI sequence in
-0.558. [Frozen checks](evidence/regional-stream-compact-retry1-frozen-checks-20261004.json)
+0.558. Frozen checks（历史证据保留于本地归档）
 bind driver `4a2c9673394522186b1f2c7abbce2413c1553f71418a391323212dde80dc790e`
 and fresh no-value currency
 `b43f54f541b17036ff4b7b45044f42761219128478a1cd1b3e866b578ce26cde`.
-The [actual small CLI sample](evidence/regional-stream-compact-retry1-small-cli-20261004.json)
+The actual small CLI sample（历史证据保留于本地归档）
 generated 33 owner payments/41 native blocks in 0.419 seconds, a 52,095-byte
 archive, then completely cold-replayed genesis/every block in 0.018 seconds.
 Wrong head, old codec, truncated tail and existing root all refused. Private
@@ -82,7 +82,7 @@ Its final height/bytes/payment/conservation result remains pending; neither
 generation progress nor the small sample establishes beyond-era or ordinary
 long-history qualification. No generated archive/head/state is a public artifact.
 
-The [actual long sequence](evidence/regional-stream-compact-retry1-long-20261004.json)
+The actual long sequence（历史证据保留于本地归档）
 then passed: 200,001 owner payments and 200,009 Earth native blocks, construction
 261.850 seconds and separate complete genesis/every-block cold 44.249 seconds.
 The earlier Proxima new return imported at 200,006 and its mature net 59 was
@@ -94,7 +94,7 @@ unchanged and no ordinary Store was created. These are historical nonsigning
 observations, not independent freshness or recovered custody.
 
 [Revision 46](https://github.com/RunlaiDeng/rldcoin-genesis/tree/ddedf8468f81a92d03c026d473893eb6df7fc73f/research/2026-10-04/regional-native-stream-compact-v46)
-is published: [all 13 reviewed remote files match exact bytes](evidence/regional-native-stream-compact-v46-publication-verification-20261004.json),
+is published: all 13 reviewed remote files match exact bytes（历史证据保留于本地归档）,
 including all 376 exact source-archive members. Only source and sanitized ground
 reports/logs are public; the generated private archive, custody-head files,
 wallet/signer/caller/transport/TLS state, keys and backups are excluded. Public

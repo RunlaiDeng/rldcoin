@@ -147,7 +147,7 @@ T 是选中来源里未唯一导入的出口总额，包含尚未终局的扣款
 c 与截止后一高度拒绝，下一高度和截止高度成功；结算严格晚于截止。
 这些高度是组件算术上下文，并非真实运行 2016 个普通区块。
 不把早先回归推广到最终改动，不重复未受影响的长网络/历史范围。
-证据：[执行核结果](../operations/evidence/regional-native-channel-kernel-implementation-outcome-20261004.json)。
+证据：执行核结果（历史证据保留于本地归档）。
 
 下一可证伪假设：明确新准入的通道动作通过普通共享区块执行和从创世冷重放
 得到一致 U/E/谱系状态根；旧准入拒绝，无效尾部不改变链/头/价值。
@@ -189,7 +189,7 @@ profile 哈希 `6da1555427cadbd8ff9b5a06bf5468b55ea0ad50b6bd5b258b3dc30ecb3b6c42
 其余受影响的 184 项原生回归在单次 300 秒预算内 224.195 秒通过，跳过上述
 九项与已通过严格检查。同一精确来源共 193 项通过。检查包装器曾因缺逗号
 在启动原生进程前拒绝，其原件保留；修正包装器后未改变任何原生字节。
-见[最终结果记录](../operations/evidence/regional-native-channel-integration-outcome-20261004.json)。
+见最终结果记录（历史证据保留于本地归档）。
 
 下一关键缺口是同序号双签冲突的原生完整证据及通道/储备/支付后代隔离，
 再接所有者独立签署/恢复和充分储备收据。当前结果没有验证真实 2016 个
@@ -201,7 +201,7 @@ profile 哈希 `6da1555427cadbd8ff9b5a06bf5468b55ea0ad50b6bd5b258b3dc30ecb3b6c42
 后续来源 `05ac7769...` / implementation `a608bb58...` 使用新签署的
 BFT/segmented value-channel V2 准入，完整 profile 哈希 `ecc6a0fb...`，
 执行核规则 `5dae337b...`。旧来源、失败 fixture、签署头及余额保留，
-不迁移或追加资格。完整规范身份见[事故结果记录](../operations/evidence/regional-native-channel-conflict-outcome-20261004.json)。
+不迁移或追加资格。完整规范身份见事故结果记录（历史证据保留于本地归档）。
 
 原生 Coin/Export/Escrow/Reservation 保留完整 checkpoint 与 channel funding
 身份并集，合计至多 64 个引用。Open 将准确签署 intent 身份加入容量、找零、
@@ -307,7 +307,7 @@ channel owner signing/receiver/watcher custody；需要明确签署/恢复契约
 跳过已通过 19 通道行为/strict 与 CLI；同一最终来源共 203 Native 检查通过。
 核心 171 文件 `de74cf78...` 及新冻结正文/PDF/receipt 字节未变，原发行
 证据复用。完整原件、精确来源、失败与尚未获得资格的范围见
-[收据结果](../operations/evidence/regional-native-channel-receipt-outcome-20261004.json)。
+收据结果（历史证据保留于本地归档）。
 
 ## 通道所有者首次签署：V4 地面保管组件
 
@@ -379,7 +379,7 @@ inception/continuation 与 witness 的 authority、用途、scope、conflict/fai
 准确 reset 拒绝及原保管续用/恢复。变更 native 来源必须新签无价值 fixture。
 单次新 focused/strict 180 秒，单次必要实际CLI反例120秒，网络 campaign预算0；
 遇失败/完成/预算即停，保留原件，不能降低规则或原样再试。
-实际反例与所有边界见[所有者签署结果](../operations/evidence/regional-native-channel-owner-outcome-20261005.json)。
+实际反例与所有边界见所有者签署结果（历史证据保留于本地归档）。
 
 
 ## V5 有界签署见证与发布前验证
@@ -396,7 +396,7 @@ caller/响应/所属，并拒其他owner请求发布它。合成pending不是实
 proof，同机服务约束不证明独立最新、全部rollback/copied keys或S11完成。
 下条权限/最新边界、预算及未完成义务详见
 [地面见证契约](REGIONAL_CHANNEL_WITNESS_GROUND_CONTRACT.md)与
-[准确源绑定结果](../operations/evidence/regional-native-channel-witness-outcome-20261005.json)。
+准确源绑定结果（历史证据保留于本地归档）。
 
 
 ## V6 接收/结算共同认证完整见证状态
@@ -416,8 +416,8 @@ conflict/cold也检查完整proof。见证签署的起点承诺不是独立最�
 历史有效较旧状态仍可进入关闭窗口；下一主线为native最高已接受完整状态的
 自动watch/委托fee challenge/普通纳入，不能用proof本身声称已有看守。见
 [完整角色与边界](REGIONAL_CHANNEL_STATE_WITNESS_REQUIREMENTS.md)、
-[实现结果](../operations/evidence/regional-native-channel-state-witness-outcome-20261005.json)及
-[最终内容身份](../operations/evidence/regional-native-channel-state-witness-final-label-outcome-20261005.json)。
+实现结果（历史证据保留于本地归档）及
+最终内容身份（历史证据保留于本地归档）。
 
 ## V7 自动原生看守及未通过的费用覆盖
 

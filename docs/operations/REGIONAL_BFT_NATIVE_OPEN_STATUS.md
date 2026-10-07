@@ -26,12 +26,12 @@ origin/readiness/时代/incident/owner/value及容量门槛保持。完整JSON�
 本改动未提高任何历史、记录、容量、成熟、round、票数或时间限制，不具备长历史、独立保管、
 掉电/跨设备或物理星际资格。所有旧失败、源码、报告和私有状态保留；I1–I12仍未完成。
 
-后续实际检查：[386冻结报告](evidence/regional-bft-open-status-frozen-checks-20261004.json)
+后续实际检查：386冻结报告（历史证据保留于本地归档）
 精确重建39.102秒、strict13.962秒、184原生69.482秒、完整480过程293.031秒、
 3真实Runtime保管3.925秒通过；原生/strict不复用。新driver
-[四Native单向离线付款/cold](evidence/regional-bft-open-status-oneway-default-native-lifecycle-20261004.json)
+四Native单向离线付款/cold（历史证据保留于本地归档）
 4.129秒/48完整签名交换通过，显式unanimous控制者样本，不是自主BFT全故障资格。
-[两个独立新genesis的组件测量](evidence/regional-bft-open-status-fresh-component-comparison-20261004.json)
+两个独立新genesis的组件测量（历史证据保留于本地归档）
 各31真实Native timeout记录、6轮交错查询，全私有字节/权限保持，旧/新status均值
 0.023160/0.015039秒。高度0、没有块/owner支付或普通liveness，不把这个组件样本外推
 到旧故障、普通吞吐或长期历史。新的三地区ordinary/cold正在全新私有范围运行。

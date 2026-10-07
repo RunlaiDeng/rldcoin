@@ -1,9 +1,0 @@
-{
-  "completed": false,
-  "failure": "KeyError: Signed - misread Messages wrapper; record.body is the correct documented source API",
-  "reader_sha256": "9ece2a22df9533b00d8ee1ce68062f43288973c8f80139df5ffc3e18b52a451f",
-  "conservative_budget_seconds": 0.25,
-  "combined_original20_seconds": 3.069692,
-  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0,
-  "production_bytes_changed": false
-}

@@ -58,7 +58,7 @@ Native69/core171及main binary与已验证V8来源准确字节不变。Node live
 
 每个范围一次；准备180/live600/cold180秒，原round60秒/24高度/2016窗口/成熟/
 票数及capacity不变，完整fault campaign预算0。新通过不改首失败的状态。
-全部来源、预算及工件：[结果绑定](../operations/evidence/regional-native-channel-fee-budget-missing-leader-outcome-20261005.json)。
+全部来源、预算及工件：结果绑定（历史证据保留于本地归档）。
 旧价值库VALUE-STRICT-01仍OPEN，无新增告警豁免或候选发布包。
 
 ## 后续已执行判别：完整窗口的实际历史能力

@@ -1,7 +1,0 @@
-{
-  "budget_seconds": 20,
-  "prior_seconds": 1.871249,
-  "attempts": 1,
-  "hypothesis": "Same source3->destination1 Prepare full packet uses relay2: verify its complete retained route/hops and actual relay2 forwarding selection, distinguishing source refusal from relay admission/next hop. No generic scheduler repair without counterexample.",
-  "exit": "exactonepacket/firsthash-authguard/original20 cumulative deadline, failedconstructors/signing/transport0"
-}

@@ -1,8 +1,0 @@
-{
-  "format": "RLD-NATIVE-CHANNEL-INTEGRATION-WRAPPER-REFUSAL-V1",
-  "failure": "missing comma in Python stage metadata; SyntaxError before any stage write or native command",
-  "source_runner_sha256": "b04b96f54454d85fa6e6e279f4fb94acd89587f5c0074870c3516d4b2923a6b5",
-  "native_commands_started": 0,
-  "tests_started": false,
-  "fixture_state_touched": false
-}

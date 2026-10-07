@@ -39,7 +39,7 @@ retained orphan、LOCK、当前manifest及发布期间的完整pending/commit包
 regression退出101，输出`pending lacks the exact complete signed record`。
 这是已证缺口，原版不能获完整未发布响应保留资格。旧代码可由
 [准确原生修复patch](patches/native-retained-pages-complete-pending-20261005.diff)
-还原；[反例证据](../operations/evidence/regional-native-retained-pages-pending-counter-20261005-checks.json)
+还原；反例证据（历史证据保留于本地归档）
 将counter证明与regression通过分开。
 
 现版顺序：
@@ -86,7 +86,7 @@ SHA256交叉检查，再对每个文件做完整SHA256和mode/size/mtime库存�
 原始256MiB retained length加manifest实际拒绝，前后全部库存不变；native
 拒绝两次累计12.455173秒、前后完整观察合计0.359867秒（只该样本）。旧30秒
 scope具体卡在哪个阶段未知，不能从新计时断言旧唯一根因或已经优化Native。
-[字节容量结果](../operations/evidence/regional-native-retained-pages-byte-observer-20261005-checks.json)
+字节容量结果（历史证据保留于本地归档）
 保留旧失败；生产primitive字节未改，没有打开原停止目录。
 
 Native源新增该层后当前library identity改变，原69来源/主binary/历史有限scope
@@ -99,7 +99,7 @@ Native源新增该层后当前library identity改变，原69来源/主binary/历
 library implementation
 `98326b85f3b4ccc9774221a3d674b14fc7bc80d64f0c14f501ed8d93e78db8b9`；
 最新test binary、准确各scope/source/旧失败与未完成项绑定在
-[总结果](../operations/evidence/regional-native-retained-pages-outcome-20261005.json)。
+总结果（历史证据保留于本地归档）。
 Byte observer只改变测试源码与implementation身份；生产primitive未变，复用
 此前八行为组的准确primitive来源，不宣称其在最终test源码上重新完整运行。
 
@@ -151,9 +151,9 @@ hash/mode/size/mtime未变。单独受影响durable-lock/旧备份/keyless exact
 role-origin真实认证/certificate变体/完整旧日志head也通过；当前library/tests strict
 通过。没有新进程、真实SIGKILL、跨设备或独立最新状态资格，也未测>128签署。
 
-[准确范围](../operations/evidence/regional-native-bft-record-replay-20261005-stage.json)、
-[终态](../operations/evidence/regional-native-bft-record-replay-20261005-checks.json)、
-[绑定及下一门槛](../operations/evidence/regional-native-bft-record-replay-20261005-outcome.json)。
+准确范围（历史证据保留于本地归档）、
+终态（历史证据保留于本地归档）、
+绑定及下一门槛（历史证据保留于本地归档）。
 73-file library source `66ab6d204fda70dc8dae18b404f91b3de754c0f202ce4af549a619dd479547ee`，
 implementation `a2e80dcf80e6b145cbcd398de4a23e94f1b214561f703d969c2420a89f2ffae6`；
 旧main binary未重建/重新资格，旧fixture、通道费用反例和完整fault失败未打开或改称通过。
@@ -206,7 +206,7 @@ certificates使用公共fixture prepare/commit各195签名，**没有BFT Agent�
 CLI入口仅compile-check，主binary未重建，库/tests strict通过。它不资格真实
 完整Store满载、publication fault或CLI运行。
 
-[所有终态与准确来源](../operations/evidence/regional-native-paged-store-outcome-20261005.json)
+所有终态与准确来源（历史证据保留于本地归档）
 绑定最终77-file源`d3abffbce056...`、implementation`c0979d1d4a0c...`；
 长65与mixed检查各有自己的source，复用未变代码证据，不冒称最终源码完整重跑。
 core171、旧main binary、两旧价值库文件及冻结body/PDF/receipt字节未变。旧
@@ -273,7 +273,7 @@ healthy/zero guard，并重验全部保留事故证明/index/safety。一次30�
 通过marker拒绝、受影响三高度完整历史/坏签名回归、strict和入口compile；全部
 拒绝保留原件和heads。它不自动完成pending事故或恢复签署响应。
 
-[准确源/终态与下一gate](../operations/evidence/regional-native-paged-agent-outcome-20261005.json)
+准确源/终态与下一gate（历史证据保留于本地归档）
 绑定现78-file源`00feaf5ab202...`、implementation`26b13da2133c...`。
 8样本只绑定其最初来源；其后production仅replay定义换位置、Native健康/事故
 检查加入，所有改变受影响consumer单独核验；不冒称最终完整suite或重新8长测。
@@ -318,7 +318,7 @@ caller的确切request/previous head通过后才fsync原页、发布清单；不
 记录的完整阶段为height24、每人54records、active24，163.531秒；最终head/
 height未知，不打开/恢复停止现场。>128、height65及fresh-process cold均未完成。
 独立30秒范围仅编译新测试定义/CLI及lib-tests strict，4.326秒通过；不能替代
-失败集成或VALUE-STRICT-01。[精确来源、五个终态和下一判别](../operations/evidence/regional-native-paged-response-recovery-20261005-outcome.json)。
+失败集成或VALUE-STRICT-01。精确来源、五个终态和下一判别（历史证据保留于本地归档）。
 现81-file源`56f88b7f8a92...`/implementation`642609498aa4...`，core171、旧main
 binary及冻结正文/PDF/receipt未变。最终只比80-file容量修复来源多测试注册/新
 集成测试定义，production逐字节相同；不宣称最终来源完整suite重新通过。
@@ -360,7 +360,7 @@ genesis完整验证Native、四signer及钱包99成熟/分别retained heads，�
 库存hash/mode/size/mtime未变。final源85文件`f34e58af93aa...`/implementation
 `cccef5267782...`，core171/旧main/冻结paper/PDF/receipt不改。复用精确同源的
 最小判别CLI/strict；没有最终全suite重跑或主程序/Runtime资格。
-[七范围、精确来源及旧失败](../operations/evidence/regional-native-paged-cursor-capacity-20261005-outcome.json)。
+七范围、精确来源及旧失败（历史证据保留于本地归档）。
 
 下一H-paged-remote-crossing：源65活动界之后的新export能否形成完整有界native
 contact依赖闭包，在全新admitted destination真实import并成熟。先实现可审

@@ -118,7 +118,7 @@ def bind(project, root, output, checks_path, stage_path, retained_path, binary, 
     require(type(pins) is Pins, 'explicit immutable prepared provenance pins required')
     for value in vars(pins).values():require(hex32(value)!='0'*64,'nonzero prepared pin required')
     project,root,output,binary=map(safe,(project,root,output,binary))
-    require(project==Path('/Users/galaxy/GitHub/rldcoin') and root.is_relative_to(project/'tmp')
+    require(project==Path(__file__).resolve().parents[1] and root.is_relative_to(project/'tmp')
         and output.is_relative_to(project/'tmp') and not output.exists()
         and not output.is_relative_to(root) and not root.is_relative_to(output),
         'separate fresh configuration output required; no existing-root shortcut')

@@ -6,7 +6,7 @@ import threading
 import unittest
 from regional_paged_fault_terminal import execute
 
-PROJECT=Path('/Users/galaxy/GitHub/rldcoin')
+PROJECT=Path(__file__).resolve().parents[1]
 
 
 def body():

@@ -1,8 +1,0 @@
-{
-  "completed": false,
-  "budget_seconds": 10,
-  "duration_seconds_conservative": 0.1,
-  "entry_sha256": "8496e8a4fe45d3f9ee846996ffcec7aacf26b99135156ed0eb422fef15c6cc05",
-  "error": "FileNotFoundError: nonexistent mesh/0/identity.json. No identity/private key bytes read. Actual bound mesh-state.json contains public node_id.",
-  "Node_Native_Runtime_socket_key_sign_fixture_calls": 0
-}

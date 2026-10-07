@@ -1,7 +1,0 @@
-{
-  "original20_prior_seconds": 2.46549,
-  "budget_seconds": 20,
-  "attempts": 1,
-  "hypothesis": "Matrix selected source0 parent14 round0 Commit missing atdestination2: distinguish not-enqueued, no-selection or attempted transport from actual preparation/trace and final exact bytes. No unique maturity cause.",
-  "exit": "one exact source0->destination2 edge, first sealed hash guard or original20 total deadline; no old constructors/key/sign/fixture/transport"
-}

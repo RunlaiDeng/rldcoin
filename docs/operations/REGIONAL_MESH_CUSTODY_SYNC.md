@@ -27,7 +27,7 @@ A file or directory fsync error prevents publication/acknowledgment; a later
 invalid transit cannot turn earlier collected paths into custody. No digest,
 metadata, cursor or synchronized directory grants ledger/signing/value authority.
 
-[Six actual component checks](evidence/regional-custody-sync-component-checks-20261004.json)
+Six actual component checks（历史证据保留于本地归档）
 passed in 0.088 seconds with real filesystem fsync, zero Native or socket calls.
 They cover unique file/parent synchronization, no cross-call retention, directory
 failure, symlink/capacity refusal, fully authenticated shared archive occurrences,
@@ -39,7 +39,7 @@ physical links or I1–I12 completion.
 Review retained the original dependency-before-wrapper fsync order explicitly.
 The operation-local collection preserves first appearance and deduplicates only
 repeated paths; complete file fsync precedes directory fsync and state publication.
-[Seven actual ordered component checks](evidence/regional-custody-sync-ordered-component-checks-20261004.json)
+Seven actual ordered component checks（历史证据保留于本地归档）
 passed in 0.173 seconds, including the original shared-archive dependency-order
 regression adapted to the real batch boundary. The earlier six-case freeze stays
 unchanged and unexecuted as an ordinary candidate. The next freeze also includes
@@ -66,12 +66,12 @@ no unresolved exports. Initial debit remains spent. Cold authenticated twelve
 Native histories/recipient checks, four joint custody groups, 784 complete
 envelopes and 1856 transport archives under strict setup anchors; all private
 files remain unchanged. [Revision 44](https://github.com/RunlaiDeng/rldcoin-genesis/tree/33a1983c393dffe150be11abfbb132b8045cee60/research/2026-10-04/regional-custody-sync-v44)
-is published with [14 exact remote file verifications](evidence/regional-custody-sync-v44-publication-verification-20261004.json).
+is published with 14 exact remote file verifications（历史证据保留于本地归档）.
 The fresh finite complete joint fault scope has started only from this exact
 successful cycle/cold; its original 600-second phases and height 24 remain.
 No complete fault or controlled performance improvement is claimed yet.
 
-The subsequent [fresh complete joint fault scope](evidence/regional-custody-sync-retry1-joint-fault-fresh-20261004.json)
+The subsequent fresh complete joint fault scope（历史证据保留于本地归档）
 failed its original 600-second restored-contact import/maturity gate; runner
 duration was 876.011 seconds (report 874.612). Owned cleanup and the sealed
 successful source remained intact. Stopped compatible Native prefixes reached
@@ -91,6 +91,6 @@ remaining 9 and not currently spendable. Three exact owner signing-height/head
 observations passed in 1.965 runner seconds (report 1.039), each
 INCLUDED_IN_LOCAL_LEDGER with reserved amount zero. No signing, recovery,
 replacement or refund occurred. [Revision 45](https://github.com/RunlaiDeng/rldcoin-genesis/tree/718021fe5a5afd07756e10f772f6c03badc0e0a8/research/2026-10-04/regional-custody-fault-stopped-v45)
-is published and [all 11 remote files are byte-verified](evidence/regional-custody-fault-stopped-v45-publication-verification-20261004.json).
+is published and all 11 remote files are byte-verified（历史证据保留于本地归档）.
 The unchanged reviewed revision-44 archive is explicitly reused; no private
 fixture/state was published and the complete fault profile remains failed.

@@ -1,9 +1,0 @@
-{
-  "format": "RLD-ROLE-MISSING-LEADER-GROUND-V1",
-  "completed": false,
-  "fixture_only": true,
-  "live_rld": false,
-  "failure": "ValueError: bounded ground observation deadline: new-era quorum with pinned leader absent {\"1\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"2\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"3\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] Resource temporarily unavailable\", \"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}, \"4\": {\"observation_available\": true, \"native_observation_available\": true, \"errors\": [\"[Errno 35] local mesh turn pending; retain evidence\"], \"process_exit_code\": null}}",
-  "fresh_full_fault_profile_completed": false,
-  "owned_process_cleanup_verified": true
-}

@@ -132,7 +132,7 @@ controller仅经普通receive搬运16个完整当前context信封。所有owner/
 文件在Runtime阶段已不存在。setup中的旧六块及Close仍由controller认证；
 这个有限范围不资格ordinary TLS/contact scheduler、完整fault或2016窗口。
 前41.693秒配置拒绝和120.017秒预算耗尽仍未通过，不由此结果改写。
-完整来源/终态：[实际自动认证](../operations/evidence/regional-native-channel-fee-budget-runtime-certification-outcome-20261005.json)。
+完整来源/终态：实际自动认证（历史证据保留于本地归档）。
 
 ### 普通原生生命周期/固定pin TLS：有限范围已通过
 
@@ -158,7 +158,7 @@ prepare/commit保证原生BFT证明。fee各扣3，剩余+spent=original，c6/d2
 认证通过，私有字节/条目库存及所比对模式、大小、mtime未变。未启动Runtime作cold核验，
 没有cold签署、init、pending recovery、caller-head adoption或原样长测重跑。
 数量只描述核验范围，完成依据是实际最高状态纳入和fee/caller/cold行为。
-[普通Native/TLS终态](../operations/evidence/regional-native-channel-fee-budget-native-tls-outcome-20261005.json)。
+普通Native/TLS终态（历史证据保留于本地归档）。
 
 这个通过只是一地区同机有限normal ground路径；不替代完整fault、窗口2016
 真实执行、independent custody/最新见证、cross-device、长历史/PQ/实际物理
@@ -172,13 +172,13 @@ startup等待，最多共享3秒失败/延迟及128锁拒绝，mutations不重�
 未通过，helper准确绑定后仅换新fixture验证。Native/core/freeze均未变，
 没有新full TLS或fault通过。见[原生启动锁合同与下一有限缺席leader门槛](REGIONAL_NATIVE_STARTUP_CONTENTION_REQUIREMENTS.md)。
 
-[Runtime判别及预算退出](../operations/evidence/regional-native-channel-fee-budget-runtime-outcome-20261005.json)
+Runtime判别及预算退出（历史证据保留于本地归档）
 保存三个来源绑定终态和独立配置拒绝；首两次未通过不由最后小范围通过替代。
 核心171文件、冻结正文/PDF/receipt和旧价值库两文件均再次验证原字节。
 VALUE-STRICT-01仍OPEN，本轮未触及该库/发布包，未触发诊断或修复检查。
 
 最终83步实际CLI在24.334秒终止通过，完整来源绑定与复用边界见
-[实施结果](../operations/evidence/regional-native-channel-fee-budget-outcome-20261005.json)。
+实施结果（历史证据保留于本地归档）。
 核心171文件和最新冻结正文/PDF/receipt逐字节未变；没有官网/Library/远程发布动作。
 
 ## 有限缺席leader的后续行为

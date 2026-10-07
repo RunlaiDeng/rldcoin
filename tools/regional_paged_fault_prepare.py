@@ -21,7 +21,7 @@ from regional_contact_campaign import public
 from regional_fixture_native_json import decode_native_json
 from regional_paged_fault_scope import RULES, safe, require, hex32, inventory
 
-PROJECT = Path('/Users/galaxy/GitHub/rldcoin')
+PROJECT = Path(__file__).resolve().parents[1]
 VALUE_RULES = '5852ea4ac2b57594cbf089e4468895ac1f7bc920c595e0a35ebf407e3864771f'
 CAPS = {'earth': 27, 'proxima': 24, 'andromeda': 24}
 

@@ -1,9 +1,0 @@
-{
-  "completed": false,
-  "exit_code": 1,
-  "duration_seconds": 0.318599,
-  "original20_cumulative_seconds": 2.470574,
-  "error": "FileNotFoundError: packet ID is not content-addressed archive file ID; no conclusion",
-  "reader_sha256": "2f89d6c74e8555fecd89749970b5c165f14582914c67ff95fde8a4aab7260850",
-  "old_fixture_calls": 0
-}

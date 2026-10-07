@@ -45,7 +45,7 @@ Owner 每日志仍为 128 记录/8 MiB；见证为 256 有序项、完整组合�
 
 ## 已验证范围与下一判别
 
-[准确结果](../operations/evidence/regional-native-channel-witness-outcome-20261005.json)
+准确结果（历史证据保留于本地归档）
 区分首轮严格拒绝、原生正常样本、恢复顺序反例、修复及各来源的检查。合成
 `witness.next` 是发布边界样本，不能称实际 SIGKILL、掉电、跨设备或完整 fault pass。
 

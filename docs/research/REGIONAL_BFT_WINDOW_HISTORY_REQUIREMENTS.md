@@ -29,7 +29,7 @@ recover-only/重签/退款或领受更高头，保留所有原件。
 签署耗时包含Agent validation、Store replay、fixture库存hash及caller fsync；
 当前只看到组合耗时增长，**未知哪项为主要原因**。源码MAX_RECORDS128是确实
 约束，但静态预测不能冒充首个实际拒绝，更不能扩大记录数或丢弃旧票。
-[完整来源与结果](../operations/evidence/regional-native-bft-window-capacity-outcome-20261005.json)
+完整来源与结果（历史证据保留于本地归档）
 绑定三次终态。可审阅的[准确Rust夹具](../../tools/fixtures/regional-bft-capacity/README.md)
 逐字节保留通过/未通过的原代码；相对manifest只验metadata，未重复运行旧scope。
 
@@ -83,7 +83,7 @@ height增长成本。一次60秒（编译/等待均计入）、最多12连续认
 context/candidate0.226924秒。sign占这些独立计时总额81.4769%，不是全程CPU比例；
 验签/历史重放/Native response persistence内部未分开，不推为单一函数根因。
 最后h12 Prepare/Commit各0.4896..0.5402秒。完整绑定见
-[成本判别](../operations/evidence/regional-native-bft-cost-attribution-20261005.json)。
+成本判别（历史证据保留于本地归档）。
 旧120秒budget仍未通过，signer实际first-capacity门槛/旧最终heads仍未知。
 
 下一实现门槛H-paged-history：形成可执行的新profile模型，完整顺序block/certificate
@@ -113,7 +113,7 @@ context/candidate0.226924秒。sign占这些独立计时总额81.4769%，不是�
 7.844秒通过。各scope绑定各自源，不重复65长测或改称full fault；细节、
 旧失败和下一原定一次300秒Agent gate见
 [普通完整流接入](REGIONAL_NATIVE_COMPLETE_STREAM_REQUIREMENTS.md)及
-[准确总结果](../operations/evidence/regional-native-paged-store-outcome-20261005.json)。
+准确总结果（历史证据保留于本地归档）。
 
 
 后续普通Agent正常分页写入及逐条historical native lock内核已接入；四实际
@@ -123,7 +123,7 @@ Agents/8高度/72签署/owner99成熟的有限样本完成，但整个37.861秒s
 strict/入口compile通过。held-native新pending事故标记3.943秒counter成立；健康/
 guard/full事故重验修复后9.942秒affected范围通过。没有8/65长测重复、实际>128/
 真实eviction签署/新进程或完整窗口资格，准确源及下一恢复gate见
-[Agent结果](../operations/evidence/regional-native-paged-agent-outcome-20261005.json)。
+Agent结果（历史证据保留于本地归档）。
 原定300秒仍等待完整中断recover-only实现，不把正常页写入当保管恢复完成。
 
 
@@ -132,7 +132,7 @@ Native65、四journal147/146/146/146及1原timeout恢复、活动64、付款成�
 >128坏signature/缺档/旧caller拒绝和新进程完整cold通过。只适用于85文件源
 `f34e58af93aa...`，不是旧V8/legacy容量放宽或整体窗口证明。原300.033秒
 耗尽及新夹具路径118.279秒失败保留；精确成本/修复/全部来源见
-[结果](../operations/evidence/regional-native-paged-cursor-capacity-20261005-outcome.json)。
+结果（历史证据保留于本地归档）。
 完整2016窗口/settlement与receipt锚、跨地区65之后完整价值证据、ordinary
 Runtime/TLS/fault、epoch/长期/独立保管继续未完成。下一180秒native remote
 crossing判别按共用层文档执行，不能由本地分页容量通过替代。

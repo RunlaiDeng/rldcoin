@@ -49,7 +49,7 @@ outcome; no failed fixture is restarted or copied as a value source.
 The final controller-only candidate was separately frozen from the exact
 revision-38 runtime, source set
 `62a897b6f248aeddf5f2c79c7b427f7534143111336545df4ffc40942f499211`.
-[All 38 component cases](evidence/regional-fault-probe-controller-checks-20261004.json)
+All 38 component cases（历史证据保留于本地归档）
 passed in 0.279 seconds, with zero Native CLI calls. This includes the seven
 anchor and three probe cases plus 28 related scope/transport cases; signed
 synthetic transport inspection still confers no Native value authority.
@@ -57,12 +57,12 @@ The earlier two unexecuted 370-file anchor-only freezes are retained, not claime
 as tested. [Revision 41](https://github.com/RunlaiDeng/rldcoin-genesis/tree/5447b03b07fff2f2a4a01a2779e602da93088816/research/2026-10-04/regional-fault-probe-v41)
 publishes the complete reviewed candidate and scoped failed observations.
 
-The [failed source's twelve Native/1898-envelope/four joint-custody observation](evidence/regional-lock-timeout-retry1-joint-fault-failed-cold-observations-20261004.json)
-and [three original owner-head checks](evidence/regional-lock-timeout-joint-fault-owner-head-observations-20261004.json)
+The failed source's twelve Native/1898-envelope/four joint-custody observation（历史证据保留于本地归档）
+and three original owner-head checks（历史证据保留于本地归档）
 passed without changing private files. They explicitly do not qualify the old
 unanchored transport. A new full profile from the original successful stopped
 source is running with the unchanged compiled revision-38 ordinary driver.
-[Eleven actual live entry samples](evidence/regional-fault-probe-controller-actual-entry-sample-20261004.json)
+Eleven actual live entry samples（历史证据保留于本地归档）
 confirm exact driver/binary/config paths and Earth-0 absence; all twelve public
 identities and inherited anchor bytes remain intact. The original 600-second
 phase and height-24 bounds remain. Full completion and new strict cold are pending.

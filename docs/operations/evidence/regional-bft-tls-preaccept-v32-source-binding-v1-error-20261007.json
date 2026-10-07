@@ -1,8 +1,0 @@
-{
-  "completed": false,
-  "error": "FileNotFoundError baseline evidence prefix regional-bft instead of actualregional-tls",
-  "production_sources_unchanged": true,
-  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
-  "new_identity_or_allocation_created": false,
-  "next": "Source-only binder v2 fixes exact baseline path; reuse existing18 actual checks, no rerun"
-}

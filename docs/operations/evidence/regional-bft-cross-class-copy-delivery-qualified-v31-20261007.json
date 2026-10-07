@@ -1,7 +1,0 @@
-{
-  "checks_sha256": "b210b56a6cf917f7dbdb4a625c348eea99947c35da352eab81b34e1e11cddf3f",
-  "completed": true,
-  "format": "RLD-ORDINARY-SIGNED-DELIVERY-QUALIFICATION-V1",
-  "python_source_commitment": "e4f243b6e6d0e26dc77f289860b0d66f9fe6d138c6976f0b99fafcff9b542de3",
-  "stage_sha256": "64e1230e35cf9f861c5dacb0fe44d37287532dc512c7503f4d32f3ecca795fcc"
-}

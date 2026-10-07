@@ -98,4 +98,4 @@ binary `57dd7cd932f770efabdc6157ab0a2e35179e83a6dcbeff776feb07d546edefce`
 共享回归221.791秒。171 core文件及最新冻结正文/PDF/receipt逐字节未变。
 唯一汇总 observer 先用了错误的基线相对路径而拒绝，原件保留；修正为准确
 crates/rld-value-successor路径后只读核验，不复跑任何native或旧strict。
-完整依据：[源绑定结果/风险](../operations/evidence/regional-native-channel-watch-outcome-20261005.json)。
+完整依据：源绑定结果/风险（历史证据保留于本地归档）。

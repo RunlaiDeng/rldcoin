@@ -1,0 +1,29 @@
+{
+  "baseline": "aaee6edf8cc0e366b6f8f8c1b164c23cc99befe4",
+  "files": [
+    {
+      "file": "caller-trusted-public-roster.json",
+      "original_path": "docs/operations/fixtures/pq-quorum-carriage-v1-20261007/caller-trusted-public-roster.json",
+      "sha256": "96371633a1cd26c900ecbedb6111d69abd5091b8f6c000f5d612d8507cce602b",
+      "qualification": "public verification example only; caller trust independently supplied; no adoption or private key"
+    },
+    {
+      "file": "genuine-public-quorum.json",
+      "original_path": "docs/operations/fixtures/pq-quorum-carriage-v1-20261007/genuine-public-quorum.json",
+      "sha256": "222b007ca588f193ceb707813af31d5fd9ad16d6716c588afb7b68ef8c595ff5",
+      "qualification": "public verification example only; caller trust independently supplied; no adoption or private key"
+    },
+    {
+      "file": "caller-trusted-public-anchor.json",
+      "original_path": "docs/operations/fixtures/pq-renewal-carriage-v1-20261007/caller-trusted-public-anchor.json",
+      "sha256": "c330ee3dde7821b35c57eb84da6974ee71fb449ca60a92702e9a521acb730500",
+      "qualification": "public verification example only; caller trust independently supplied; no adoption or private key"
+    },
+    {
+      "file": "genuine-public-renewal.json",
+      "original_path": "docs/operations/fixtures/pq-renewal-carriage-v1-20261007/genuine-public-renewal.json",
+      "sha256": "b6c586a3628cf9c099f1a77464ff07a2183f93b2542039d9cd8f43c637f04241",
+      "qualification": "public verification example only; caller trust independently supplied; no adoption or private key"
+    }
+  ]
+}

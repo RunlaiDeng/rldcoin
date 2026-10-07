@@ -183,7 +183,7 @@ class Driver:
             and (bound.stage_seconds,bound.round_seconds,bound.new_height_limit,bound.maturity,bound.quorum)==(600,60,24,2,3)
             and bound.missing_leader_gate==9 and bound.network_authority is False
             and bound.signing_authority is False, 'complete prepared gate and original limits required')
-        self.project=safe(project);require(self.project==Path('/Users/galaxy/GitHub/rldcoin')
+        self.project=safe(project);require(self.project==Path(__file__).resolve().parents[1]
             and Path.cwd()==self.project,'explicit migrated cwd required')
         require(type(deadline) in (int,float) and math.isfinite(deadline)
             and 0<deadline-time.monotonic()<=600, 'one original600-second total deadline required')

@@ -14,7 +14,7 @@ class LabelBoundary(unittest.TestCase):
                 native_label(label)
 
     def test_native_wallet_parent_freshness_without_creation_or_merge(self):
-        with tempfile.TemporaryDirectory(dir=Path('/Users/galaxy/GitHub/rldcoin/tmp')) as directory:
+        with tempfile.TemporaryDirectory(dir=(Path(__file__).resolve().parents[1]/'tmp')) as directory:
             root = Path(directory)
             parent = fresh_private_parent(root/'owner')
             self.assertEqual(parent.stat().st_mode & 0o777, 0o700)
