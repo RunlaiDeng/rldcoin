@@ -106,3 +106,11 @@ and directory-fsync failures release no receipt and retain residue. This proves
 those process/filesystem paths only; hardware power loss, concurrent independent
 custody, sustained adversarial load, real contacts and monetary adoption remain
 unqualified. No old failed signed custody is reopened or pruned.
+
+The C TLS archive-spool mode described in the fixture README couples its explicit
+archive receipt to actual pinned spool admission. A complete finite64-entry scope
+used193 real loopback TLS sessions, process-cold partial refusal, reverse completion
+and actual Core. Foreign entry and actual256-file capacity refusal issued no
+archive receipt; retained raw transport bytes are a separate custody layer.
+This uses fresh fixture credentials only and does not qualify long-delay key
+validity, independent operators, adopted nodes or physical routes.

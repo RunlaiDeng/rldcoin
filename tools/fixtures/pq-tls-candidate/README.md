@@ -34,3 +34,23 @@ install, sign, open sockets, inspect real custody or repeat entire fault scopes.
 Its output is local and preserves failure bytes. Test entropy is publicly known
 and MUST NOT be used for production key generation. Standard subset PASS is not
 complete FIPS203/204, FIPS140/CAVP, constant-time, production RNG or adoption.
+
+## Explicit durable archive-spool receipt
+
+The TLS candidate adds a distinct archive-spool receipt marker. Client adds
+`archive-spool` after its public input path. Server adds absolute Python executable,
+absolute spool script path, existing owned spool directory and independently
+retained128hex manifest SHA512 after the fresh raw destination path. Compile
+`RLD_TLS_CANDIDATE_SOURCE` with exact C source SHA256 and
+`RLD_SPOOL_SCRIPT_SHA256` with exact `tools/pq_public_archive_spool_candidate.py`
+SHA256. An omitted/mismatched script pin refuses this mode.
+
+After complete raw-file and directory fsync, one owned child executes that exact
+script, accepting/fsyncing the packet under its manifest/capacity/OS-lock rules.
+Only successful child termination inside the original3-second deadline releases
+`RLD-PQ-PUBLIC-ARCHIVE-SPOOL-RECEIPT-V1`. Failure retains raw bytes/staging and
+releases no archive receipt. Ordinary transport receipt remains distinct.
+Neither receipt proves inner signature validity, ledger acceptance or spendability.
+The measured193-packet64-entry same-host scope and two real refusal paths passed;
+this is not independent custody, physical delays, cross-host/power-loss qualification
+or a full requalification of all historical TLS observations on the changed source.

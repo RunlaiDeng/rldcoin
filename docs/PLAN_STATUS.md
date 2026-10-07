@@ -30,9 +30,15 @@ V22 **FAIL0.896450秒**：64次续证生成成功，控制器误将两条样本�
 
 V26四相关真实文件/注入write与dir-fsync反例通过，核心方法prefix严格逐字桥接最终CLI；V27 **PASS0.801227秒、原60累计0.890992秒**：全新公开目录，193包在多个实际独立Python进程分97/96接收，首次writer已退出；cold不完整明确拒绝且不产出文件，剩余逆序接收、精确duplicate重新sync不改库存，全部64/1581531B文件和actualCore终态一致。455输入/保管/输出文件封存，0网络/TLS/Native/Runtime/Node/签署钥，不打开旧失败保管或安装状态。实际power-loss/跨设备/独立保管/恶意持续负载并未完成。
 
+## 显式归档保管收据与完整TLS接入
+
+实际原256文件容量V28 **PASS0.056582秒、保管原60累计0.947574秒**，253失败残留计入容量；新packet首次写前拒绝且原hash/inode/mode/mtime不变，已有精确duplicate仍重新sync。
+
+新C显式archive-spool模式以编译绑定的实际Python保管脚本完成接纳/fsync后才发独立的归档收据；3秒单次、12288包上限、peer pin/TLS policy和普通raw-file函数逐字桥接不改。V29 **PASS15.258978秒/原120**：严格C构建、全新TLS夹具，64完整1581531B的193个实际互认证TLS小包分批接纳；半档cold不产出目录，后半逆序续收、完整cold及actualCore65相同。陌生包和真实256满容量两个实际server/client均exit1，不发archive收据，raw传输残留及原保管全部保留；一个普通mode收据另行通过。newC source `abc2e665dd857e7138e5102f678b81b620fd4578fa430d40191735c2b621dc42`、actualbinary `4edb895c2aa04982bf8ecee371f417099d6241d95861332b213e0d6e59f1dc06`、spool bd4a8f11/Core182 f5adb880分别绑定。916项封存，forced[]/全部自有进程正常终态，0Native/Runtime/Node/value，不复活旧失败保管。仍仅同机loopback，不是跨设备掉电、独立运营或物理长延迟；旧TLS资格仅各自旧源，未补授新源完整旧六项。
+
 ## 下一单一主线
 
-下一最小判别为真实原256文件容量与失败残留积累：不用缩小MAX_FILES模拟实际限额，填至原边界后新packet必须在首次写入前拒绝且原字节/heads不变；稳定方法当前不改。若遇到实际residue或锁/损坏问题，保留FAIL并选最小修复，不抬上限、清除旧保管或由收据授ledger权。随后真实有限接触的异步交付/停止边界仍独立，需要新理由和source-bound范围，不重跑已有TLS/Native长测。
+现有短TLS联系不能代替多年异步认证。下一最小命题：在明确分离用途/有限epoch策略下，对有界完整归档清单增加可离线核验的AND双签授权，接收方依据独立已信任policy/nonce/horizon核验其完整root，无需即时挑战或学习sender信任；过期/未知撤销/角色域/坏半签拒绝，不从manifest安装账本、消费nonce或退款。先严格用途/canonical/边界反例与相关Core回归，再必要完整来源范围。P1–P8采用及任何物理期限仍不授资格。
 
 ## 尚未完成
 
