@@ -444,6 +444,30 @@ class Driver:
             and value['original_output_spendable_now'] and value['original_output_remaining']=='9'
             and value['local_finality_covers_import'] and not value['quarantined']) else False
 
+    def keyless_observations_ready(self, heights):
+        # Observation eligibility only; no drain or Native authority is granted.
+        return (all(type(heights.get(slot)) is int for slot in SLOTS)
+            and all(len({heights[label,n] for n in range(4)})==1 for label in REGIONS))
+
+    def stopped_drain(self):
+        # Same active scope, after own normal keyless stop, before full cold.
+        # Keep the original caller/signer/pending/commit-group predicate below.
+        self.remaining()
+        terminal=self.terminal[-len(SLOTS):]
+        require(self.phase==PHASES[-1] and not self.processes
+            and len(terminal)==len(SLOTS)
+            and {(v['region'],v['index']) for v in terminal}==set(SLOTS)
+            and all(v['exit_code']==0 for v in terminal),
+            'drain reads require all own keyless processes normally stopped')
+        heights={}
+        for label,n in SLOTS:
+            state=self.call(label,n,'status')
+            require(state['currency']==self.currency and state['region']==self.regions[label]
+                and type(state['height']) is int and 0<=state['height']<=CAPS[label],
+                'stopped drain Native domain or height cap differs')
+            heights[label,n]=state['height']
+        return self.drain_ready(heights)
+
     def drain_ready(self,heights):
         if not all(type(heights.get((label,n))) is int for label in REGIONS for n in range(4)):return False
         for label in REGIONS:
@@ -544,8 +568,9 @@ class Driver:
         self.wait('original export native import/maturity before unchanged caps',self.live_receipt)
         self.stop_all();self.phase=PHASES[3]
         self.start(self.phase,SLOTS)
-        self.wait('keyless all-replica certified drain and exact caller heads',self.drain_ready)
+        self.wait('all12 keyless current observations agree before fixed-head drain',self.keyless_observations_ready)
         self.stop_all()
+        require(self.stopped_drain(),'stopped keyless original drain predicate incomplete')
         states,accounting=self.stopped()
         require(self.remaining()>0 and not self.processes and self.signed_count==3 and self.tls_observations==set(SLOTS),'full fault terminal/budget differs')
         return dict(completed=True,fixture_only=True,live_rld=False,full_fault_qualified=True,

@@ -1,0 +1,226 @@
+{
+  "completed": true,
+  "duration_seconds": 0.010814,
+  "budget_seconds": 10,
+  "failed_scope_remains_FAIL": true,
+  "stopped_inventory_sha256": "3c1b0efe1c13c0fd8c36c27eba293cb4551a59acbb007d072a67f1876915c863",
+  "native_call_counts_after_last_real_mature_receipt": [
+    {
+      "command": "bft-context",
+      "region": "earth",
+      "index": 0,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 10
+    },
+    {
+      "command": "bft-context",
+      "region": "earth",
+      "index": 0,
+      "kind": "NATIVE_READ_BUSY",
+      "count": 12
+    },
+    {
+      "command": "bft-retained-messages",
+      "region": "earth",
+      "index": 0,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 9
+    },
+    {
+      "command": "bft-retained-messages",
+      "region": "earth",
+      "index": 1,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 1
+    },
+    {
+      "command": "bft-retained-messages",
+      "region": "earth",
+      "index": 2,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 1
+    },
+    {
+      "command": "bft-status",
+      "region": "earth",
+      "index": 0,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 9
+    },
+    {
+      "command": "bft-status",
+      "region": "earth",
+      "index": 0,
+      "kind": "NATIVE_READ_BUSY",
+      "count": 1
+    },
+    {
+      "command": "bft-status",
+      "region": "earth",
+      "index": 1,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 1
+    },
+    {
+      "command": "bft-status",
+      "region": "earth",
+      "index": 1,
+      "kind": "NATIVE_READ_BUSY",
+      "count": 8
+    },
+    {
+      "command": "bft-status",
+      "region": "earth",
+      "index": 2,
+      "kind": "NATIVE_EXIT_ZERO",
+      "count": 1
+    },
+    {
+      "command": "bft-status",
+      "region": "earth",
+      "index": 3,
+      "kind": "NATIVE_READ_BUSY",
+      "count": 1
+    }
+  ],
+  "sealed_terminal_statuses": [
+    {
+      "slot": "earth",
+      "index": 0,
+      "pid": 40140,
+      "reported_height": 17,
+      "autonomous_signing_enabled": false,
+      "errors": []
+    },
+    {
+      "slot": "earth",
+      "index": 1,
+      "pid": 40141,
+      "reported_height": 17,
+      "autonomous_signing_enabled": false,
+      "errors": [
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)",
+        "TCP peer refused custody; retain queued evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ]
+    },
+    {
+      "slot": "earth",
+      "index": 2,
+      "pid": 40142,
+      "reported_height": null,
+      "autonomous_signing_enabled": true,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP runtime is stopping; preserve evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ]
+    },
+    {
+      "slot": "earth",
+      "index": 3,
+      "pid": 40143,
+      "reported_height": 17,
+      "autonomous_signing_enabled": false,
+      "errors": []
+    },
+    {
+      "slot": "proxima",
+      "index": 0,
+      "pid": 40144,
+      "reported_height": null,
+      "autonomous_signing_enabled": true,
+      "errors": [
+        "TCP runtime is stopping; preserve evidence"
+      ]
+    },
+    {
+      "slot": "proxima",
+      "index": 1,
+      "pid": 40145,
+      "reported_height": null,
+      "autonomous_signing_enabled": true,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ]
+    },
+    {
+      "slot": "proxima",
+      "index": 2,
+      "pid": 40146,
+      "reported_height": null,
+      "autonomous_signing_enabled": true,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "[Errno 35] ordinary other-purpose retry pending; retain evidence"
+      ]
+    },
+    {
+      "slot": "proxima",
+      "index": 3,
+      "pid": 40147,
+      "reported_height": 15,
+      "autonomous_signing_enabled": false,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence"
+      ]
+    },
+    {
+      "slot": "andromeda",
+      "index": 0,
+      "pid": 40148,
+      "reported_height": null,
+      "autonomous_signing_enabled": true,
+      "errors": [
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ]
+    },
+    {
+      "slot": "andromeda",
+      "index": 1,
+      "pid": 40149,
+      "reported_height": 15,
+      "autonomous_signing_enabled": false,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence"
+      ]
+    },
+    {
+      "slot": "andromeda",
+      "index": 2,
+      "pid": 40150,
+      "reported_height": null,
+      "autonomous_signing_enabled": true,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence",
+        "[Errno 35] local mesh turn pending; retain evidence",
+        "TCP runtime is stopping; preserve evidence"
+      ]
+    },
+    {
+      "slot": "andromeda",
+      "index": 3,
+      "pid": 40151,
+      "reported_height": 15,
+      "autonomous_signing_enabled": false,
+      "errors": [
+        "TCP peer refused custody; retain queued evidence"
+      ]
+    }
+  ],
+  "service_terminal_count": 24,
+  "all_service_exit0": true,
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "sole_cause_proved": false,
+  "full_fault_qualified": false,
+  "entry_error_retained_in_original_command_output": "Tuple-shaped seal row initially read as dictionary, corrected to original inventory tuple SHA field; no side effects"
+}

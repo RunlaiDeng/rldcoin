@@ -1,0 +1,7 @@
+{
+  "error": "ModuleNotFoundError: keyless_drain_dummy",
+  "location": "one-off runner before model load/calls",
+  "exec_wall_seconds": 7e-06,
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "production_source_unchanged": true
+}

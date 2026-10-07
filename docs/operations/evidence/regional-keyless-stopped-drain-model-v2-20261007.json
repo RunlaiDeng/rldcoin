@@ -1,0 +1,14 @@
+{
+  "completed": true,
+  "duration_seconds": 0.241971,
+  "related60_cumulative_seconds": 46.250686,
+  "budget_seconds": 60,
+  "tests_run": 34,
+  "driver_sha256": "276f92c53368807f351e546ac41c2c3abca8f4d82cb2d42547828e8f419811e0",
+  "tests_sha256": "3be7e2f840c717e25095daf9d6d1c1a84a85411f2d932a65abb35be15196b865",
+  "Native_Runtime_Node_socket_key_sign_fixture_calls": 0,
+  "old28_assertions_retained_and_sequence_strengthened": true,
+  "old28_test_exact_reversal_with_declared_model_adapter": true,
+  "original_drain_predicate_and_full_cold_unchanged": true,
+  "full_fault_qualified": false
+}
