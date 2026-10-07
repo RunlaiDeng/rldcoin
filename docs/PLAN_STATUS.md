@@ -1,5 +1,15 @@
 # RLDCOIN 当前交付状态
 
+## 2026-10-07 连续主线：有界混合TLS/Core组合通过；继续多签资源判别
+
+冻结正文2ba62421/PDFc59f9fe8/receipt86821d19及全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8保持。新V4一次原120 **PASS41.430553**，含离线固定依赖解析、全目标strict零豁免、实际构建及全新互认证证书；Core1814070549a/既有Node-TCP/冻结字节均未变。完整9847字节规范公开双签信封通过实际混合TLS原样送达；相同长度坏PQ半份运输同样完整成功，但实际Core decode/AND exit1明确拒绝，合法原件exit0。运输SHA512 receipt不授予值/状态/Native权限。
+
+新增C可选公开payload路径，12KiB候选bound不增加任何旧network/ledger限额。4字节长度、原字节、完整读取后fresh owned0600/O_EXCL/O_NOFOLLOW文件及fsync、独立字节receipt；绝对3秒/原TLS-policy保持。已有目的文件及symlink拒绝且原字节不变；超界/截断供给不产生收据或文件，CLI exit0不算接受，实际server exit1；后两观察尚未单独定位具体拒绝分支，不补授branch覆盖。Rust候选直接链接实际Core，policy及trusted epoch/nonce另由调用者输入，拒未知/重复字段或不可用输入。无Native/Runtime/Node/value状态，forced[]，自有进程正常终态，14私有项含故意negative symlink完整封存未清理。
+
+[有限组合profile](operations/evidence/pq-hybrid-tls-Core-composition-v1-qualified-profile-20261007.json)、[实际一次检查](operations/evidence/pq-hybrid-tls-composition-v4-20261007-checks.json)、[source-only入口及边界](operations/fixtures/pq-hybrid-tls-composition-v1-20261007/README.md)。新C source5234a3a4、actualTLS2388a3d0、actualCore adaptera2888fa9与compiled407 manifest/controller分别绑定。旧V1/V2/生成preflight及所有Native/value失败保留；原六项TLS观察仅原源码关键policy段逐字桥接，不称新源码完整六项stage资格。Core277/旧value67/regional原600仍各自精确historical来源，不重跑/转授。
+
+已按用户最新阶段发布规则，107已审阅提交普通推送main596c3739，远端SHA/树一致；当前该提交Actions runs/checks/status均0，不能称CI启动/通过。新完成实现同样经审阅提交并普通推送，不更改其他分支/权限/官网。下一唯一具体目标：固定3-of-4候选多签必须是不同已配置身份，对同一完整意图逐份真实AND验签；拒重复身份/混合意图/缺半签/未知政策，并实测完整公开quorum尺寸、签名/密钥/编码开销与既有运输限额，不能把单签9847或原Core277当成完整quorum/归档资格。先最小无网络/磁盘币的真实签名反例，必要源码和相关回归包含在一次原120/首结果或期限退出；不扩大旧fixture、不降票数/成熟/容量/预算，不重跑无变更Native180/600。独立review/完整PQ采用/长期/物理/P1–P8及整个目标仍OPEN，唯一作者持续。
+
 ## 2026-10-07 连续主线：实际混合TLS政策观察；继续Core公开信封与运输组合
 
 Core277/严格有限资格见下文，不转授Native/PQ采用。现有Python3.14.7/OpenSSL3.6.3接口实际拒X25519MLKEM768，且无negotiated-group getter；只读源码与官方API定位为NID/接口缺口，不能由TLS版本/pin推断混合交换。

@@ -1,0 +1,512 @@
+{
+  "format": "RLD-PQ-HYBRID-TLS-COMPOSITION-V4",
+  "completed": true,
+  "duration_seconds": 41.430553,
+  "budget_seconds": 120,
+  "attempts": 1,
+  "error": null,
+  "pin_error": null,
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "generate-lockfile",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.167691
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.735804
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--all-targets",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 10.008867
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--manifest-path",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-hybrid-cross-implementation/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "target/pq-tests-rust198-opt1",
+        "--config",
+        "profile.dev.opt-level=1",
+        "--config",
+        "profile.dev.debug-assertions=true",
+        "--config",
+        "profile.dev.overflow-checks=true",
+        "--bin",
+        "rld-hybrid-auth-core-candidate"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 26.13588
+    },
+    {
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+        "-isysroot",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-I/opt/homebrew/Cellar/openssl@3/3.6.3/include",
+        "-L/opt/homebrew/Cellar/openssl@3/3.6.3/lib",
+        "-Wl,-rpath,/opt/homebrew/Cellar/openssl@3/3.6.3/lib",
+        "-DRLD_TLS_CANDIDATE_SOURCE=\"5234a3a42b1e3098b8099d434c476b022a9d9e5050b00cfff92c1811ace1d636\"",
+        "/Users/galaxy/GitHub/rldcoin/tools/fixtures/pq-tls-candidate/transport.c",
+        "-lssl",
+        "-lcrypto",
+        "-o",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.162781
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.009414
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "req",
+        "-new",
+        "-x509",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "-days",
+        "90",
+        "-subj",
+        "/CN=RLD-PQ-TLS-CANDIDATE-server",
+        "-addext",
+        "basicConstraints=critical,CA:FALSE",
+        "-addext",
+        "keyUsage=critical,digitalSignature",
+        "-addext",
+        "extendedKeyUsage=serverAuth,clientAuth",
+        "-addext",
+        "subjectAltName=IP:127.0.0.1",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.011059
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "x509",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "-outform",
+        "DER",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.der"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.016054
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "genpkey",
+        "-algorithm",
+        "ML-DSA-87",
+        "-provider",
+        "default",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.009411
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "req",
+        "-new",
+        "-x509",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "-days",
+        "90",
+        "-subj",
+        "/CN=RLD-PQ-TLS-CANDIDATE-client",
+        "-addext",
+        "basicConstraints=critical,CA:FALSE",
+        "-addext",
+        "keyUsage=critical,digitalSignature",
+        "-addext",
+        "extendedKeyUsage=serverAuth,clientAuth",
+        "-addext",
+        "subjectAltName=IP:127.0.0.1",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.011658
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "x509",
+        "-in",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "-outform",
+        "DER",
+        "-out",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.der"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.014447
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "59784",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "bce0b3f1b673a92f1e51804d2c4de231ba8afba3190a59a8d60eb74bb92471ad",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/genuine-public-Core-envelope-source.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.0119
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "8375e01ba139be4bc5f8ffbe2f148aeba74add26151ac6408a90d06db94b64e1",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/genuine-public-Core-envelope-received.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.836036
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-auth-core-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/caller-trusted-public-policy.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/genuine-public-Core-envelope-received.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.213753
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "59786",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "bce0b3f1b673a92f1e51804d2c4de231ba8afba3190a59a8d60eb74bb92471ad",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/forged-inner-PQ-transported-Core-refused-source.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.013705
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "8375e01ba139be4bc5f8ffbe2f148aeba74add26151ac6408a90d06db94b64e1",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/forged-inner-PQ-transported-Core-refused-received.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.126869
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/target/pq-tests-rust198-opt1/debug/rld-hybrid-auth-core-candidate",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/caller-trusted-public-policy.json",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/forged-inner-PQ-transported-Core-refused-received.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.005097
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "59788",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "bce0b3f1b673a92f1e51804d2c4de231ba8afba3190a59a8d60eb74bb92471ad",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/genuine-public-Core-envelope-source.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.012437
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "8375e01ba139be4bc5f8ffbe2f148aeba74add26151ac6408a90d06db94b64e1",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/existing-destination.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.125056
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "client",
+        "59790",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "bce0b3f1b673a92f1e51804d2c4de231ba8afba3190a59a8d60eb74bb92471ad",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/genuine-public-Core-envelope-source.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.012179
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "8375e01ba139be4bc5f8ffbe2f148aeba74add26151ac6408a90d06db94b64e1",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/symlink-destination.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.124013
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "s_client",
+        "-connect",
+        "127.0.0.1:59792",
+        "-brief",
+        "-no_ign_eof",
+        "-verify_return_error",
+        "-CAfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "-cert",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "-groups",
+        "X25519MLKEM768",
+        "-sigalgs",
+        "mldsa87",
+        "-tls1_3",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.014248
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "8375e01ba139be4bc5f8ffbe2f148aeba74add26151ac6408a90d06db94b64e1",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/oversize-frame-refused.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.126159
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "s_client",
+        "-connect",
+        "127.0.0.1:59794",
+        "-brief",
+        "-no_ign_eof",
+        "-verify_return_error",
+        "-CAfile",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "-cert",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "-key",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-key.pem",
+        "-groups",
+        "X25519MLKEM768",
+        "-sigalgs",
+        "mldsa87",
+        "-tls1_3",
+        "-provider",
+        "default"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.015611
+    },
+    {
+      "command": [
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-tls-binary",
+        "server",
+        "0",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-cert.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/server-key.pem",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/client-cert.pem",
+        "8375e01ba139be4bc5f8ffbe2f148aeba74add26151ac6408a90d06db94b64e1",
+        "/Users/galaxy/GitHub/rldcoin/tmp/default-relay-20260930/pq-hybrid-tls-composition-v4-20261007-private/truncated-frame-refused.json"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 0.129272
+    }
+  ],
+  "cases": [
+    {
+      "case": "genuine-public-Core-envelope",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 9847,
+      "payload_sha256": "bb35b13bda50268e575821a955ebe5a4b4ff06f2931b899cd61d97e11e8c638f",
+      "loopback_port": 59784,
+      "actual_Core_exit": 0
+    },
+    {
+      "case": "forged-inner-PQ-transported-Core-refused",
+      "server_exit": 0,
+      "client_exit": 0,
+      "acknowledged": true,
+      "payload_bytes": 9847,
+      "payload_sha256": "34bf842a983d6b7a8cb3c1f0264aab70c7ba38a1c43243d49da62e6878129a77",
+      "loopback_port": 59786,
+      "actual_Core_exit": 1
+    },
+    {
+      "case": "existing-destination-refused",
+      "server_exit": 1,
+      "client_exit": 1,
+      "acknowledged": false,
+      "payload_bytes": 9847,
+      "payload_sha256": "d110b7f6fb9887487c2b50facc2c0dd9815740417192e1be15580a42ce2078d7",
+      "loopback_port": 59788
+    },
+    {
+      "case": "symlink-destination-refused",
+      "server_exit": 1,
+      "client_exit": 1,
+      "acknowledged": false,
+      "payload_bytes": 9847,
+      "payload_sha256": "1cec4b4a857996c2c6fdbb420f2b321bd52d11b3ed04341115fdb80e7c646958",
+      "loopback_port": 59790
+    },
+    {
+      "case": "oversize-frame-refused",
+      "server_exit": 1,
+      "client_exit": 0,
+      "acknowledged": false,
+      "payload_bytes": null,
+      "payload_sha256": null,
+      "loopback_port": 59792
+    },
+    {
+      "case": "truncated-frame-refused",
+      "server_exit": 1,
+      "client_exit": 0,
+      "acknowledged": false,
+      "payload_bytes": null,
+      "payload_sha256": null,
+      "loopback_port": 59794
+    }
+  ],
+  "forced_owned_processes": [],
+  "owned_processes_stopped": true,
+  "controller_sha256": "83340ea7b92e2a15b30bd63ae9935a1c21dac46f150ddd4a53b291a1f41a29f0",
+  "stage_sha256": "310f10ca3a0d26a429f67cc5a26671bf9dd18cca3ab780a584ad4ae57e2e3ead",
+  "log_sha256": "c314f48ca952ebef5a074b923f00b611118f93fa024aa39991293e72d06970e5",
+  "source_sha256": "5234a3a42b1e3098b8099d434c476b022a9d9e5050b00cfff92c1811ace1d636",
+  "actual_TLS_binary_sha256": "2388a3d0987e0515a4d805b5c325426452b758f7235be11b6bdd476b36cb7f2b",
+  "actual_Core_adapter_binary_sha256": "a2888fa9bfd4e90956815a99b87b27b583b04984a4614e6f0843e4453f5f4479",
+  "core_source": "4070549af45f5a03c454da30bd15443db41a9f619ab1f0c6941f23e4f9a3d319",
+  "final_standalone_lock_sha256": "7c9ec75ac4c24e477147ca4b71d226711e620ccb68f155a2ade5c44904f9e9f8",
+  "private_inventory_sha256": "f66a4a7c7e16e5e1e5c6fd012c3fbcb598a517c387fc424d4ed8e2e203e2c3c6",
+  "private_file_count": 14,
+  "budget_exhausted": false,
+  "source_policy_bridge": {
+    "peer-policy": "f9611b7d666cfc84cd69a07f8db0a81a63d5c7af357c641df91fb8dc94607173",
+    "TLS-context-policy": "3f0bd098dbb757c5736b11a211b7a645c2a1ddf81fa6a2dff41d906c8b3684ec"
+  },
+  "all_current_source_six_TLS_policy_cases_requalified": false,
+  "native_Node_Runtime_calls": 0,
+  "loopback_only": true,
+  "transport_is_value_authorization": false,
+  "adopted_profile": false,
+  "independent_review": false,
+  "physical": false,
+  "whole_goal_completed": false,
+  "old_failures_retained": true
+}

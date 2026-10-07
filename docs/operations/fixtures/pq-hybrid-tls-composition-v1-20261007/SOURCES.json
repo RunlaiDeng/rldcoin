@@ -1,0 +1,17 @@
+{
+  "transport.c": {
+    "source": "tools/fixtures/pq-tls-candidate/transport.c",
+    "sha256": "5234a3a42b1e3098b8099d434c476b022a9d9e5050b00cfff92c1811ace1d636",
+    "bytes": 13337
+  },
+  "check-pq-hybrid-tls-composition-v4-20261007.py": {
+    "source": "tmp/default-relay-20260930/check-pq-hybrid-tls-composition-v4-20261007.py",
+    "sha256": "83340ea7b92e2a15b30bd63ae9935a1c21dac46f150ddd4a53b291a1f41a29f0",
+    "bytes": 15823
+  },
+  "rld-hybrid-auth-core-candidate.rs": {
+    "source": "tools/fixtures/pq-hybrid-cross-implementation/src/bin/rld-hybrid-auth-core-candidate.rs",
+    "sha256": "88ba9733de70902a0356fe5f889e5ea33fbc556f140ed01e6987cde04a1eb125",
+    "bytes": 4345
+  }
+}

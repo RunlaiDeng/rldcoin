@@ -10,3 +10,8 @@ license = "Apache-2.0"
 [dependencies]
 fips204 = { version = "=0.4.6", default-features = false, features = ["ml-dsa-87"] }
 ed25519-dalek = "=2.1.1"
+rld-core = { path = "../../../crates/rld-core" }
+serde = { version = "=1.0.216", features = ["derive"] }
+serde_json = "=1.0.134"
+hex = "=0.4.3"
+libc = "=0.2.190"
