@@ -1413,6 +1413,14 @@ class Node:
                            if self.state['messages'][i]['packet']['body']['node_id']!=self.id]
                 local=[i for i in commits
                        if self.state['messages'][i]['packet']['body']['node_id']==self.id]
+                # Within each origin, first offer a current frame not yet
+                # prepared for this peer. Otherwise failed prepared copies can
+                # displace a waiting current Prepare on every newest pair.
+                # Oldest pairs retain their failed-send order; preparation is
+                # still neither remote custody nor a destination receipt.
+                waiting=set(first_plan['pending'])|set(first_plan['arrivals'])
+                forwarded.sort(key=lambda ident:ident not in waiting)
+                local.sort(key=lambda ident:ident not in waiting)
                 commits=local+forwarded if current_origin is False else forwarded+local
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
