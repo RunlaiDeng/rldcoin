@@ -495,6 +495,13 @@ fn lossless_hash_consistent_bad_final_certificate_never_returns_native_boundary(
 
 #[test]
 fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() {
+    consolidated_native_history(128, 0)
+}
+#[test]
+fn actual4112_heights_evict_old_body_and_complete_late_certificate_cold_matches() {
+    consolidated_native_history(4112, 16)
+}
+fn consolidated_native_history(heights: u64, late_retries: usize) {
     use super::body_witness_tests::certified_with_commands;
     use crate::tests::signature;
     let h = header();
@@ -508,7 +515,8 @@ fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() 
     let mut payments = 0;
     let started = std::time::Instant::now();
     let mut original_bytes = 0;
-    for height in 1..=128u64 {
+    let mut first_record = None;
+    for height in 1..=heights {
         let mature = r
             .chain
             .ledger
@@ -550,6 +558,9 @@ fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() 
             vec![]
         };
         let record = Record::Certified(Box::new(certified_with_commands(&r, commands)));
+        if height == 1 {
+            first_record = Some(record.clone());
+        }
         r.apply(&record, &flat).unwrap();
         assert_eq!(r.chain.height(), height);
         assert!(r.chain.ledger.coins.len() <= 12);
@@ -571,11 +582,38 @@ fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() 
             pages.push(Ok(raw));
         }
     }
-    assert!(payments > 100);
+    if late_retries > 0 {
+        assert!(heights > MAX_COINS as u64);
+        let first = first_record.unwrap();
+        let Record::Certified(snapshot) = &first else {
+            unreachable!()
+        };
+        assert!(
+            r.bodies.get(&snapshot.statement.id().unwrap()).is_none(),
+            "actual original native body must have evicted at the unchanged4096 bound"
+        );
+        for index in 0..late_retries {
+            logical =
+                crate::retained_pages::next_head(logical, heights + index as u64, &first).unwrap();
+            pending.push(first.clone());
+        }
+        assert_eq!(pending.len(), 16);
+        let raw = serde_json::to_vec(&CompletePage {
+            format: "RLD-NATIVE-COMPLETE-STREAM-PAGES-V1".into(),
+            scope: scope.clone(),
+            first: heights,
+            previous,
+            records: std::mem::take(&mut pending),
+        })
+        .unwrap();
+        original_bytes += raw.len();
+        pages.push(Ok(raw));
+    }
+    assert!(payments > heights.saturating_sub(10));
     assert!(pending.is_empty());
     assert_eq!(
         r.chain.ledger.minted,
-        Amount(rld_pow::cumulative_emission(128))
+        Amount(rld_pow::cumulative_emission(heights.into()))
     );
     let hot_seconds = started.elapsed().as_secs_f64();
     let at = std::time::Instant::now();
@@ -590,11 +628,11 @@ fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() 
         bootstrap: h.bootstrap.clone(),
         region: h.region,
         storage_head: logical,
-        height: 128,
+        height: heights,
         finalized: r.chain.finalized,
         epoch: r.chain.epoch,
         ledger_root: r.chain.ledger.root().unwrap(),
-        count: 128,
+        count: heights + late_retries as u64,
     };
     let expected = caller.boundary();
     let separate = LosslessCaller { caller, manifest };
@@ -621,9 +659,8 @@ fn consolidated128_native_heights_keep_working_coins_bounded_and_cold_matches() 
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
-    assert!(
-        String::from_utf8_lossy(&output.stdout).contains("actual-lossless-native-cold-height128")
-    );
+    assert!(String::from_utf8_lossy(&output.stdout)
+        .contains(&format!("actual-lossless-native-cold-height{heights}")));
     assert_eq!(inventory(&root), before);
     let cold_seconds = at.elapsed().as_secs_f64();
     let archive_bytes = inventory(&dir)
