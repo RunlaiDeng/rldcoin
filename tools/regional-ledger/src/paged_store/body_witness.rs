@@ -3,6 +3,19 @@
 use super::*;
 use std::collections::VecDeque;
 
+pub(super) trait History {
+    fn require_scope(&self, scope: &Scope) -> Result<()>;
+    fn visit(&self, consumer: &mut dyn FnMut(&Record) -> Result<()>) -> Result<u64>;
+}
+impl History for Stream<Record> {
+    fn require_scope(&self, scope: &Scope) -> Result<()> {
+        self.require_scope(scope)
+    }
+    fn visit(&self, consumer: &mut dyn FnMut(&Record) -> Result<()>) -> Result<u64> {
+        self.visit(self.storage_head(), consumer)
+    }
+}
+
 #[derive(Default)]
 pub(super) struct Bodies {
     values: BTreeMap<Hash, Hash>,
@@ -61,14 +74,14 @@ impl ExecutedPrefix {
     pub(super) fn corrupt_head_for_fixture(&mut self) {
         self.head = Hash([9; 32]);
     }
-    pub(super) fn find(&self, stream: &Stream<Record>, sid: Hash) -> Result<Option<Hash>> {
+    pub(super) fn find(&self, stream: &dyn History, sid: Hash) -> Result<Option<Hash>> {
         stream.require_scope(&self.scope)?;
         let mut count = 0u64;
         let mut head = self.scope.initial()?;
         let mut found = None;
         // Validate the WHOLE held current stream, but consult only the already
         // executed ordered prefix. Future bytes cannot claim prior execution.
-        stream.visit(stream.storage_head(), |record| {
+        stream.visit(&mut |record| {
             if count < self.count {
                 head = crate::retained_pages::next_head(head, count, record)?;
                 count += 1;

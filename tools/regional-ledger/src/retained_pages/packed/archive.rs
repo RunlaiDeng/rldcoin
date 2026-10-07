@@ -364,6 +364,12 @@ impl<T: Serialize + DeserializeOwned> PackedArchiveCandidate<T> {
         )?;
         Ok(count)
     }
+    pub(crate) fn require_scope(&self, scope: &Scope) -> Result<()> {
+        require(
+            self.manifest.scope == *scope,
+            "packed archive Native scope differs",
+        )
+    }
     pub fn record_count(&self) -> u64 {
         self.manifest.count
     }

@@ -141,7 +141,7 @@ impl Replay {
     fn authenticate(
         &mut self,
         snapshot: &Snapshot,
-        stream: &Stream<Record>,
+        stream: &dyn body_witness::History,
     ) -> Result<(Hash, bool)> {
         let sid = snapshot.statement.id()?;
         let complete = body(snapshot)?;
@@ -161,7 +161,11 @@ impl Replay {
         self.bodies.remember(sid, complete)?;
         Ok((sid, true))
     }
-    fn prior_body(&mut self, sid: Hash, stream: &Stream<Record>) -> Result<Option<Hash>> {
+    fn prior_body(
+        &mut self,
+        sid: Hash,
+        stream: &dyn body_witness::History,
+    ) -> Result<Option<Hash>> {
         if let Some(complete) = self.bodies.get(&sid) {
             return Ok(Some(*complete));
         }
@@ -171,12 +175,16 @@ impl Replay {
         }
         Ok(found)
     }
-    fn apply_retained(&mut self, record: &Record, stream: &Stream<Record>) -> Result<()> {
+    fn apply_retained(
+        &mut self,
+        record: &Record,
+        stream: &dyn body_witness::History,
+    ) -> Result<()> {
         stream.require_scope(&self.executed.scope)?;
         self.apply(record, stream)?;
         self.executed.advance(record)
     }
-    fn apply(&mut self, record: &Record, stream: &Stream<Record>) -> Result<()> {
+    fn apply(&mut self, record: &Record, stream: &dyn body_witness::History) -> Result<()> {
         match record {
             Record::Certified(snapshot) => {
                 require(
@@ -880,3 +888,11 @@ impl Store {
 #[cfg(test)]
 #[path = "paged_store/body_witness_tests.rs"]
 mod body_witness_tests;
+
+#[path = "paged_store/packed_inspection.rs"]
+mod packed_inspection;
+pub use packed_inspection::{inspect_packed_native_candidate, PackedNativeBoundaryCandidate};
+
+#[cfg(test)]
+#[path = "paged_store/packed_inspection_tests.rs"]
+mod packed_inspection_tests;

@@ -82,3 +82,35 @@ custody or an adopted Native profile. It does not establish independent rollback
 protection, financial retention reserves, power-loss durability or long-history
 value execution. Those requirements remain separate from byte retention and cold
 integrity checks.
+
+## Read-only Native inspection
+
+`storage::inspect_packed_native_candidate` independently authenticates the
+complete bootstrap against the caller's authority and currency pins, derives
+the exact Native stream scope, and executes every complete typed record from
+Native genesis. The caller separately supplies both the complete latest storage
+head and `PackedNativeBoundaryCandidate`: currency, region, height, finalized
+statement, epoch, ledger root and record count. A valid older archive cannot
+satisfy a different independently retained latest boundary.
+
+The result is a description of the fully executed state, returned only after the
+whole archive and exact ending Native boundary match. It cannot initialize a
+Store, ledger, signature lock or caller head. Each certified block, complete
+certificate, owner command and evidence/receipt/contact event executes through
+the existing Native replay path. A hash-consistent archive with an invalid inner
+signature returns no boundary and does not rewrite retained bytes. Cold reads
+require the independently pinned complete inputs again.
+
+The bounded body witness resolver supports both original flat streams and this
+immutable archive. It can reread an evicted identity only from the exact prefix
+already Native-executed in the current invocation; the complete current archive
+must still verify. Neither a retained record nor a matching external body hash
+can claim that a future record already executed.
+
+This inspection has no Store-side incident proof directory or safety guard. It
+refuses nonempty incident-index records rather than treating unauthenticated IDs
+as retained proofs. A future ordinary Store integration must authenticate those
+complete proofs and account for all external Store files under the same complete
+archive ceiling. Incremental appends, signer custody, adopted profiles, permanent
+import composition, rollback protection and long-history qualification remain
+separate requirements.

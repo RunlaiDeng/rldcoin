@@ -1235,3 +1235,4 @@ mod paged;
 pub(crate) use paged::Historical as PagedSigningHistory;
 #[cfg(test)]
 pub(crate) use paged::Record as PagedRecord;
+pub use paged::{inspect_packed_native_candidate, PackedNativeBoundaryCandidate};

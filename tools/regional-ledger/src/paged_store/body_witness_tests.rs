@@ -2,7 +2,7 @@ use super::*;
 use crate::bft::{Certificate, Context, Phase, Quorum, Vote};
 use crate::tests::{public, signature};
 
-fn header() -> Header {
+pub(super) fn header() -> Header {
     let mut currency = Currency {
         format: DOMAIN.into(),
         fixture_only: true,
@@ -35,10 +35,10 @@ fn header() -> Header {
         },
     }
 }
-fn replay(h: &Header) -> Replay {
+pub(super) fn replay(h: &Header) -> Replay {
     Replay::new(h, &public(1), h.bootstrap.currency.id().unwrap()).unwrap()
 }
-fn certified(r: &Replay) -> Snapshot {
+pub(super) fn certified(r: &Replay) -> Snapshot {
     let mut chain = r.chain.clone();
     let context = Context {
         currency: r.trust.currency().unwrap(),
@@ -118,7 +118,7 @@ fn fully_occupied_identity_cache_must_not_block_new_native_certificate() {
     assert!(r.bodies.len() <= MAX_COINS);
 }
 
-fn stream(h: &Header, r: &Replay) -> (PathBuf, Stream<Record>) {
+pub(super) fn stream(h: &Header, r: &Replay) -> (PathBuf, Stream<Record>) {
     let root = fs::canonicalize(std::env::temp_dir())
         .unwrap()
         .join(format!(
@@ -129,7 +129,7 @@ fn stream(h: &Header, r: &Replay) -> (PathBuf, Stream<Record>) {
     let stream = Stream::create(&root.join("events"), h.scope(&r.trust).unwrap()).unwrap();
     (root, stream)
 }
-fn evict_real_bodies(r: &mut Replay) {
+pub(super) fn evict_real_bodies(r: &mut Replay) {
     for n in 0..MAX_COINS {
         r.bodies
             .remember(id("synthetic-cache-key", &n).unwrap(), Hash::ZERO)
