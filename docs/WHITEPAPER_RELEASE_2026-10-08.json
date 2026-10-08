@@ -1,0 +1,100 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_RESEARCH_PUBLICATION",
+  "document_date": "2026-10-08",
+  "publication_version_label": null,
+  "title": "Rldcoin: A Peer-to-Peer Payment System Across Delayed Regions",
+  "website_base_commit": "553c0c5c4d34d5167e2534ca0a3b25d1429f2698",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "ba2396f57fab39025f5267ececf6331c13d7b4cdf108b4802e14d7bdeb1c0cbf",
+    "bytes": 190715
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "3308ec9dcce577b1702886139e4847bd31bce813cba7adfe9c528d123314542a",
+    "bytes": 188630,
+    "pages": 43
+  },
+  "predecessor": {
+    "git_commit": "553c0c5c4d34d5167e2534ca0a3b25d1429f2698",
+    "original_audit_commit": "5bf11e4b3637cd99b3a6ebbb8e9e90f7e3edd402",
+    "historical_receipt_path": "public/documents/rldcoin-whitepaper-freeze.json",
+    "receipt_sha256": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965",
+    "availability": "Git history only; predecessor downloads are excluded from the current production tree."
+  },
+  "authorization_scope": "The owner explicitly authorized committing and pushing the new English whitepaper and website to main and publishing rldcoin.com, with only the current publication on the production site. Git history and local predecessor bytes are retained. No mainnet start or protocol repository change is authorized.",
+  "qualification": "Design requirements and proposed mechanisms only. No implementation, mainnet, independent-operation or physical-route qualification.",
+  "review": {
+    "model_alignment": "FINITE_MODEL_CHECKS_AND_CLAUSE_ALIGNMENT_REVIEW_COMPLETED; RESEARCH_PUBLICATION_ONLY",
+    "release_authorization": "EXPLICIT_OWNER_AUTHORIZATION_RECEIVED",
+    "preservation": {
+      "issuance_section_byte_identical": true,
+      "original_risk_paragraphs_present": 24,
+      "original_foundational_gates_present": 7,
+      "original_reference_blocks_present": 39,
+      "total_references": 53,
+      "missing_preserved_blocks": [],
+      "predecessor_hashes": {
+        "rldcoin-whitepaper.md": "2ba62421583c60d0d35d295ff859eef558f2d372ea191d2a2dc828bb3e0b477b",
+        "rldcoin-whitepaper.pdf": "c59f9fe8e09e972b25c88626a1468298d9a16fc2343387412973df1829447e14",
+        "rldcoin-whitepaper-freeze.json": "86821d193f27aefdf2ed33581a0badb56df5054dfd315bb00f91263a0e94b965"
+      }
+    },
+    "pdf_validation": {
+      "pages": 43,
+      "canonical_blocks": 323,
+      "missing_blocks": [],
+      "outside_page_spans": [],
+      "black_square_characters": 0,
+      "changed_pages_from_pre_link_correction": [
+        43
+      ],
+      "reference_44_pdf_hyperlink_verified": true
+    },
+    "visual_pdf_pages_reviewed": 43,
+    "site_build": "PASSED_PRODUCTION_BUILD_AND_TYPESCRIPT",
+    "site_link_audit": {
+      "pages": 12,
+      "local_links": 59,
+      "anchors": 34,
+      "resources_fetched": 27,
+      "failures": []
+    },
+    "new_reference_link_check": {
+      "reference_44": "CORRECTED_TO_AUTHOR_VERIFIED_ARXIV_PRIMARY_SOURCE",
+      "reference_44_url": "https://arxiv.org/abs/0803.0632",
+      "references_45_48": "ACCESS_REFUSED_HTTP_403; AUTHOR_SOURCES_RETAINED; NOT_BYPASSED",
+      "other_new_references_http": 200,
+      "all_external_links_successfully_checked": false
+    },
+    "reference_correction": {
+      "only_change": "Reference 44 URL substitution",
+      "pre_correction_markdown_sha256": "3bcca4492fbf23dbb11410ec0fe82c8d23ce2fe778e3f070a3b33602b2ddbe8a",
+      "body_semantics_and_model_mapping_unchanged": true
+    },
+    "reference_44_built_reader_link_verified": true,
+    "model_limits": [
+      "Five finite contract models under explicit ideal guards and supplemental boundary cases; some properties hold by construction.",
+      "Not implementation verification, whole-system proof, formal refinement, two independent full verifiers, authenticated protocol adoption or mainnet qualification.",
+      "Single-active fencing alone does not prevent stale restored state from consuming authority again. An equivalent fencing branch must preserve consumed authority and a complete current prefix, reconcile uncertain outbound effects, and establish failure atomicity; that equivalence is not proved by these finite models."
+    ],
+    "website_test": "PASS: exact RLD amount-formatting test; run with node --import tsx --test tests/*.test.ts",
+    "predecessor_public_downloads": "REMOVED; OLD_ARCHIVE_PDF_MARKDOWN_AND_FREEZE_RECEIPT_URLS_RETURN_404_LOCALLY",
+    "browser_validation": {
+      "desktop_width": 1440,
+      "mobile_width": 390,
+      "changed_pages_checked": 6,
+      "horizontal_overflow": false,
+      "old_publication_links": 0,
+      "whitepaper_figures": 9,
+      "navigation": "PASS: desktop keyboard dropdown, Escape and focus return; mobile menu, dropdown, whitepaper navigation, route close, Escape and focus return",
+      "runtime_exceptions": []
+    }
+  },
+  "body_revisions_require_explicit_owner_decision": true,
+  "protocol_suite_key_epoch_versions_remain_required": true,
+  "audit_binding": "The audit_commit is the Git commit containing the reviewed Markdown, PDF, website sources and removal of predecessor downloads. The receipt is committed afterward to avoid a self-referential hash.",
+  "owner_release_instruction": "确认公开上线，并且不保留旧版",
+  "audit_commit": "43959843beebcc140bc3a8c8f8d32aea61c8d08e"
+}

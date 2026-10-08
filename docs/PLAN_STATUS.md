@@ -1,9 +1,10 @@
 # Implementation and adoption boundaries
 
-The project has not completed the frozen whitepaper's full acceptance obligations.
+The project has not completed the current whitepaper's full acceptance obligations.
 All S1–S18, R1–R24, I1–I12, A–G, N1–N10 and P1–P8 remain mandatory.
-The [freeze receipt](WHITEPAPER_FREEZE_RECEIPT.json) identifies the canonical paper;
-this repository does not change the frozen body, PDF or official website.
+The [release receipt](WHITEPAPER_RELEASE_2026-10-08.json) identifies the current canonical paper;
+the [freeze receipt](WHITEPAPER_FREEZE_RECEIPT.json) retains its historical predecessor.
+This repository does not change the current body, PDF or official website.
 
 The public implementation includes candidate regional ledgers, owner authorization,
 local finality, imports, onward/return transfers, channels, authenticated ground

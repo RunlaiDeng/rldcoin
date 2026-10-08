@@ -11,7 +11,9 @@ pub struct CompleteOriginHistory {
     pub snapshots: Vec<Snapshot>,
 }
 impl CompleteOriginHistory {
-    pub(super) fn shape(&self, destination: Hash, trust: &Trust) -> Result<()> {
+    // Bounded routing admission only. A malformed later snapshot must not hide
+    // independently authentic signer equivocation in another snapshot.
+    fn admission(&self, destination: Hash, trust: &Trust) -> Result<()> {
         require(
             crate::paged_bft::is_origin_profile(&trust.region(destination)?.rules)
                 && self.destination == destination
@@ -23,6 +25,10 @@ impl CompleteOriginHistory {
             "complete origin history requires explicit receiver profile/origin/route/bound",
         )?;
         encode("complete-origin-history-v1", self)?;
+        Ok(())
+    }
+    pub(super) fn shape(&self, destination: Hash, trust: &Trust) -> Result<()> {
+        self.admission(destination, trust)?;
         for (index, snapshot) in self.snapshots.iter().enumerate() {
             require(
                 snapshot.statement.region == self.source
@@ -221,8 +227,13 @@ impl Store {
     }
     /// Complete evidence only; original local Import/finality/maturity still needed.
     pub fn accept_complete_origin_history(&mut self, proof: CompleteOriginHistory) -> Result<Hash> {
-        proof.shape(self.chain.region, &self.trust)?;
+        proof.admission(self.chain.region, &self.trust)?;
         self.current_paged_replay()?;
+        // Conflict verification authenticates both complete certificates under
+        // independent receiver trust. It never executes or installs a branch.
+        // Retain that incident before rejecting unrelated malformed value tails.
+        self.check_paged_snapshot_conflicts(&proof.snapshots)?;
+        proof.shape(self.chain.region, &self.trust)?;
         let last = proof
             .snapshots
             .last()
@@ -248,7 +259,6 @@ impl Store {
             self.safety.check_region(proof.source)?;
             return Ok(last);
         }
-        self.check_paged_snapshot_conflicts(&proof.snapshots)?;
         self.safety.check_region(proof.source)?;
         self.append_paged(&[Record::OriginHistory(Box::new(proof))])?;
         Ok(last)
@@ -417,7 +427,7 @@ impl Store {
         )?;
         self.current_paged_replay()?;
         for proof in proofs {
-            proof.shape(self.chain.region, &self.trust)?;
+            proof.admission(self.chain.region, &self.trust)?;
         }
         let mut snapshots = proofs
             .iter()

@@ -37,8 +37,13 @@ rld-regional-ledger-candidate --dir RECEIVER --authority AUTHORITY --currency CU
 ```
 
 `Store::accept_complete_origin_history` retains the complete typed event only
-after Native verification and scans retained histories for authenticated source
-conflicts. Exactly identical, already executed evidence is idempotent; tail
+after Native verification. Bounded routing/count/byte admission precedes an
+independent certificate conflict scan; whole-history shape and value execution
+follow it. A malformed later parent witness cannot hide an authentic source
+contradiction. Every incident authenticates both complete certificates under the
+receiver trust, so forged signatures do not create quarantine. Rejected histories
+never install a branch or create recipient value. Exactly identical, already
+executed evidence is idempotent; tail
 identity alone cannot suppress body verification. Conflicting certificates
 remain durable incident evidence and quarantine the source rather than replacing
 its branch. Existing liabilities and source debits remain intact.

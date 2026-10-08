@@ -784,24 +784,190 @@ fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_o
 }
 
 #[test]
+fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident() {
+    use crate::bft_network::{self, Body, WireEnvelope};
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let destination = source.trust.named("proxima").unwrap();
+    let currency = source.trust.currency().unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination,
+        export,
+        snapshots: records
+            .iter()
+            .map(|r| {
+                let Record::Certified(s) = r else {
+                    panic!("source certificate")
+                };
+                *s.clone()
+            })
+            .collect(),
+    };
+    let mut fork = replay(&h);
+    let history = super::origin_history::test_history(&h, &fork, &records);
+    for record in &records[..79] {
+        fork.apply_retained(record, &history).unwrap();
+    }
+    let (input, coin) = fork
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, c)| c.created == 2)
+        .unwrap();
+    let intent = Intent {
+        currency,
+        region: h.region,
+        inputs: vec![*input],
+        outputs: vec![Payment {
+            owner: public(12),
+            amount: Amount(coin.payment.amount.0 - 1),
+        }],
+        fee: Amount(1),
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through: 90,
+    };
+    let spend = SignedIntent {
+        approvals: vec![Approval {
+            key: public(10),
+            signature: signature(10, &intent.bytes().unwrap()),
+        }],
+        intent,
+    };
+    let mut incoming = proof.clone();
+    incoming.snapshots[79] = certified_with_commands(&fork, vec![Command::Spend(Box::new(spend))]);
+    let conflict = Conflict::from_snapshots(&proof.snapshots[79], &incoming.snapshots[79]).unwrap();
+    conflict.verify(&source.trust).unwrap();
+    // The later malformed parent witness must not erase the authentic conflict80.
+    let mut tail = incoming.snapshots[79].clone();
+    tail.statement.height = 81;
+    tail.blocks.remove(0);
+    incoming.snapshots.push(tail);
+    assert!(incoming.shape(destination, &source.trust).is_err());
+    let mut forged = incoming.clone();
+    forged.snapshots[79].bft.as_mut().unwrap().committed.votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    let make_wire = |incoming: CompleteOriginHistory| WireEnvelope {
+        format: bft_network::ORIGIN_FORMAT.into(),
+        currency,
+        region: destination,
+        evidence: crate::carriage::CarriedEvidence { snapshots: vec![] },
+        body: Body::Submission(vec![Command::Import {
+            snapshot: proof.snapshots[79].statement.id().unwrap(),
+            export,
+        }]),
+        origins: Some(vec![proof.clone(), incoming]),
+    };
+    // Exercise retained-local comparison and conflict between two arriving histories.
+    for network in [false, true] {
+        let dir = root.join(if network {
+            "bad-tail-network"
+        } else {
+            "bad-tail-local"
+        });
+        let mut receiver =
+            Store::create(&dir, h.bootstrap.clone(), destination, &public(1), currency).unwrap();
+        if !network {
+            receiver
+                .accept_complete_origin_history(proof.clone())
+                .unwrap();
+        }
+        let value = receiver.chain.ledger.clone();
+        let before = inventory(&dir);
+        let head = receiver.storage_head().unwrap();
+        let rejected = if network {
+            bft_network::sync_origin_envelope(&mut receiver, make_wire(forged.clone()))
+        } else {
+            receiver
+                .accept_complete_origin_history(forged.clone())
+                .map(|_| ())
+        };
+        assert!(rejected.is_err());
+        assert!(receiver.journal.incident_ids.is_empty());
+        assert_eq!(receiver.storage_head().unwrap(), head);
+        assert_eq!(inventory(&dir), before);
+        let rejected = if network {
+            bft_network::sync_origin_envelope(&mut receiver, make_wire(incoming.clone()))
+        } else {
+            receiver
+                .accept_complete_origin_history(incoming.clone())
+                .map(|_| ())
+        };
+        assert!(rejected.is_err());
+        assert_eq!(receiver.chain.ledger, value);
+        assert_eq!(receiver.chain.height(), 0);
+        assert_eq!(
+            receiver.journal.incident_ids.len(),
+            1,
+            "valid conflict hidden by invalid tail81; network={network}"
+        );
+        assert!(receiver.safety.check_region(h.region).is_err());
+        if network {
+            // No origin event was installed, so there is no pending work at all.
+            assert!(receiver
+                .complete_origin_pending_imports()
+                .unwrap()
+                .is_empty());
+        } else {
+            assert!(receiver.complete_origin_pending_imports().is_err());
+        }
+        assert_eq!(receiver.conflicts[0].id().unwrap(), conflict.id().unwrap());
+        let head = receiver.storage_head().unwrap();
+        drop(receiver);
+        let before = inventory(&dir);
+        let cold = Store::open_pinned(&dir, &public(1), currency, head).unwrap();
+        assert_eq!(cold.chain.ledger, value);
+        assert_eq!(cold.journal.incident_ids.len(), 1);
+        assert!(cold.safety.check_region(h.region).is_err());
+        if network {
+            assert!(cold.complete_origin_pending_imports().unwrap().is_empty());
+        } else {
+            assert!(cold.complete_origin_pending_imports().is_err());
+        }
+        drop(cold);
+        assert_eq!(inventory(&dir), before);
+    }
+}
+
+#[test]
 fn origin_contact80_authenticated_local_evidence_does_not_replace_certified_export_prefix() {
     let (h, source, root, _, records, export) =
         source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
     let mut origin = Store::create(
-        &root.join("ordinary-evidence-source80"), h.bootstrap.clone(), h.region,
-        &public(1), source.trust.currency().unwrap(),
-    ).unwrap();
+        &root.join("ordinary-evidence-source80"),
+        h.bootstrap.clone(),
+        h.region,
+        &public(1),
+        source.trust.currency().unwrap(),
+    )
+    .unwrap();
     for batch in records.chunks(crate::history::PAGE_EVENTS) {
         origin.append_paged(batch).unwrap();
     }
     let raw = origin.contact_export(export).unwrap();
-    let Record::Certified(tail) = &records[79] else { panic!("source certified tail") };
+    let Record::Certified(tail) = &records[79] else {
+        panic!("source certified tail")
+    };
     let mut forged = *tail.clone();
-    forged.bft.as_mut().unwrap().committed.votes[0].approval.signature = "00".repeat(64);
+    forged.bft.as_mut().unwrap().committed.votes[0]
+        .approval
+        .signature = "00".repeat(64);
     let before = inventory(&root);
-    assert!(origin.add_evidence(Evidence { snapshots: vec![forged] }).is_err());
+    assert!(origin
+        .add_evidence(Evidence {
+            snapshots: vec![forged]
+        })
+        .is_err());
     assert_eq!(inventory(&root), before);
-    origin.add_evidence(Evidence { snapshots: vec![*tail.clone()] }).unwrap();
+    origin
+        .add_evidence(Evidence {
+            snapshots: vec![*tail.clone()],
+        })
+        .unwrap();
     let before = inventory(&root);
     assert_eq!(origin.contact_export(export).unwrap(), raw);
     assert_eq!(inventory(&root), before);

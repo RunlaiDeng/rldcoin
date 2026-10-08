@@ -4,7 +4,7 @@
 no-value receiver contract. Its rules hash binds the normative
 `tools/regional-ledger/src/origin_network_profile.md` and the unchanged complete
 origin-history V1 contract. No old private state, keys, currency or test value
-migrates; frozen whitepaper requirements remain mandatory.
+migrates; current whitepaper requirements remain mandatory.
 
 `RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3` adds complete typed `origins` to ordinary
 consensus envelopes. Each receiving Native verifier independently executes every
@@ -19,7 +19,11 @@ opaque multipart carriage is a separate candidate, not an automatic bypass.
 `bft-origin-network-observe-conflicts` and `bft-origin-network-sync` require an
 independently retained current Native `--expected-head`. Signature-authenticated
 incidents persist even if a body's admission fails, including conflicting complete
-source histories in one envelope. Observation installs no history or money.
+source histories in one envelope. Bounded route/count/byte admission and independent
+conflict authentication precede whole-history shape/value checks: a bad later tail
+cannot erase an earlier authentic contradiction. Both certificate sides still
+authenticate; forged conflicts do not create incidents. Observation installs no
+history or money.
 Synchronization re-authenticates the original whole envelope, accepts complete
 origin events, and installs local certified heights sequentially. Exact original
 certificates already fully executed by current replay need no duplicate append;
