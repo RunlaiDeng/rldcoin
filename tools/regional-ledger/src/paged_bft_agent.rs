@@ -63,7 +63,55 @@ fn header(dir: &Path) -> Result<Header> {
     )?;
     Ok(h)
 }
+struct RetainedMessages {
+    messages: Vec<Message>,
+    bytes: usize,
+}
+impl RetainedMessages {
+    fn new() -> Self {
+        Self {
+            messages: Vec::new(),
+            bytes: 2,
+        }
+    }
+    fn push(&mut self, record: &Record) -> Result<()> {
+        let size = serde_json::to_vec(&record.message)
+            .map_err(|_| "retained BFT message encoding")?
+            .len();
+        let bytes = self
+            .bytes
+            .checked_add(size)
+            .and_then(|n| n.checked_add(usize::from(!self.messages.is_empty())))
+            .ok_or("retained BFT message byte overflow")?;
+        require(bytes <= MAX_BYTES, "retained BFT message output capacity")?;
+        self.messages.push(record.message.clone());
+        self.bytes = bytes;
+        Ok(())
+    }
+}
 impl Agent {
+    /// Read-only locked status and exact original responses from one complete
+    /// authenticated replay. Nothing escapes before both streams finish.
+    /// No recovery, signing, cached authority or caller-head adoption.
+    pub fn inspect_with_retained_status(
+        dir: &Path,
+        node: &Store,
+    ) -> Result<(Self, Status, Vec<Message>)> {
+        let mut retained = RetainedMessages::new();
+        let opened = if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
+            Self::open_paged_with_records(dir, lock(dir)?, node, |r| retained.push(r))?
+        } else {
+            let opened = Self::open_state(dir, node, false)?;
+            // These immutable in-memory records have just passed the whole
+            // legacy replay under this same still-held signer/native lock.
+            for record in &opened.0.journal.records {
+                retained.push(record)?;
+            }
+            opened
+        };
+        let (agent, status) = Self::status_from_open(opened)?;
+        Ok((agent, status, retained.messages))
+    }
     pub fn head(&self) -> Result<Hash> {
         require(
             self.healthy,
@@ -110,6 +158,13 @@ impl Agent {
         Ok(messages)
     }
     fn paged_state(&self, node: &Store) -> Result<State> {
+        self.paged_state_with_records(node, |_| Ok(()))
+    }
+    fn paged_state_with_records(
+        &self,
+        node: &Store,
+        mut observe: impl FnMut(&Record) -> Result<()>,
+    ) -> Result<State> {
         require(
             self.healthy,
             "paged signer unhealthy; retain publication residue",
@@ -123,7 +178,10 @@ impl Agent {
         let stream = self.paged.as_ref().ok_or("paged signer stream missing")?;
         stream.require_scope(&scope)?;
         let mut replay = replay::PagedReplay::new(&h.journal, node, scope.initial()?)?;
-        stream.visit(stream.storage_head(), |record| replay.push(record))?;
+        stream.visit(stream.storage_head(), |record| {
+            replay.push(record)?;
+            observe(record)
+        })?;
         replay.finish(stream.storage_head())
     }
     pub(super) fn create_paged(mut agent: Self, node: &Store) -> Result<Self> {
@@ -142,6 +200,14 @@ impl Agent {
         Ok(agent)
     }
     pub(super) fn open_paged(dir: &Path, guard: File, node: &Store) -> Result<(Self, State)> {
+        Self::open_paged_with_records(dir, guard, node, |_| Ok(()))
+    }
+    fn open_paged_with_records(
+        dir: &Path,
+        guard: File,
+        node: &Store,
+        observe: impl FnMut(&Record) -> Result<()>,
+    ) -> Result<(Self, State)> {
         let h = header(dir)?;
         let scope = h.scope(node)?;
         let observed = Stream::<Record>::observe_head(&dir.join(RECORDS), &scope)?;
@@ -153,7 +219,7 @@ impl Agent {
             healthy: true,
             paged: Some(stream),
         };
-        let state = agent.paged_state(node)?;
+        let state = agent.paged_state_with_records(node, observe)?;
         Ok((agent, state))
     }
     /// Explicit keyless recovery of exactly retained original response bytes.

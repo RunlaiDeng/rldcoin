@@ -14,6 +14,8 @@ struct Harness {
 }
 #[path = "cold_plan_tests.rs"]
 mod cold_plan_tests;
+#[path = "bft_retained_observation_tests.rs"]
+mod retained_observation;
 impl Harness {
     fn new() -> Self {
         Self::with_rules(bft::RULES)

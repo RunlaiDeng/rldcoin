@@ -86,6 +86,12 @@ errors and stopping runtimes keep their original refusal behavior.
 A base keyless tick also requests complete retained signer messages within its
 existing caller-pinned Native loop read. `native_keyless_drain` binds the current
 Native context and caller head to the own signer's current Commit observations.
+For `bft-loop-status --include-retained-messages`, Native collects the exact
+ordered responses during that invocation's complete signer replay. It returns
+status and messages only after the whole Native history and signer stream pass,
+with their locks still held. The separate caller head, complete record signatures,
+header/scope, pending-publication refusal and output byte bounds remain mandatory.
+The default status path and signing/recovery interfaces keep their original checks.
 The full fault controller requires all twelve current observations, matching
 per-region contexts and caller heads, and no three distinct current Commit votes
 before stopping. Missing observations are unknown. This stop-eligibility check

@@ -1208,7 +1208,14 @@ fn run() -> Result<()> {
             {
                 return Err("BFT loop inspection refuses interrupted ledger publication".into());
             }
-            let (agent, status) = bft::Agent::inspect_with_status(&signer_dir, &store)?;
+            let (agent, status, retained) = if include_retained_messages {
+                let (agent, status, messages) =
+                    bft::Agent::inspect_with_retained_status(&signer_dir, &store)?;
+                (agent, status, Some(messages))
+            } else {
+                let (agent, status) = bft::Agent::inspect_with_status(&signer_dir, &store)?;
+                (agent, status, None)
+            };
             if agent.head()? != Hash::from_hex(&expected_head).map_err(|e| e.to_string())? {
                 return Err(
                     "BFT loop inspection differs from separately retained caller head".into(),
@@ -1217,10 +1224,10 @@ fn run() -> Result<()> {
             let mut value = serde_json::json!({"format":"RLD-BFT-LOOP-OBSERVATION-V1",
                 "native":bft_context_observation(&store)?,"signer":status,
                 "signing_authority":false,"independent_freshness_qualified":false});
-            if include_retained_messages {
-                // This keeps the original complete message authentication. Only
-                // separate Native/Agent opens are shared by this locked read.
-                value["retained_messages"] = serde_json::to_value(agent.retained_messages(&store)?)
+            if let Some(messages) = retained {
+                // Exact complete records were collected during the mandatory
+                // locked replay; final Native and signer heads already passed.
+                value["retained_messages"] = serde_json::to_value(messages)
                     .map_err(|e| e.to_string())?;
                 value["format"] = serde_json::json!("RLD-BFT-LOOP-RETAINED-OBSERVATION-V1");
             }

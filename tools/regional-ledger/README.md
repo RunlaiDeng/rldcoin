@@ -597,6 +597,14 @@ a typed envelope without changing ledger state; `bft-sync` installs only the
 sequential certified native prefix; `bft-retained-messages` reads public signed
 responses without first-signing.
 
+`bft-loop-status --signer-dir DIR --expected-head HEAD` is a locked read-only
+observation. Optional `--include-retained-messages` collects exact ordered
+responses during the same complete signer replay and returns them only after
+both Native history and signer replay finish. It does not skip record signatures,
+request/lock semantics, archive checks or separate caller-head validation.
+Incomplete publication refuses without recovery, output remains bounded, and
+the response grants neither signing authority nor independent freshness.
+
 The `regional-bft` control frame uses the same exact source/destination region.
 Its legacy outer `export_id` field is only the SHA-256 of its payload, not a
 monetary export. Mesh currency, configured region and independently certified
