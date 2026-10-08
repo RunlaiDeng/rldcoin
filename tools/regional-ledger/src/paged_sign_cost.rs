@@ -9,6 +9,8 @@ pub(crate) struct Summary {
     pub preflight_ns: [u128; 3],
     pub publication_ns: [u128; 3],
     pub append_ns: [u128; 3],
+    pub private_create_ns: [u128; 3],
+    pub private_create_calls: usize,
     pub replay_ns: [u128; 3],
     pub native_record_ns: [u128; 3],
     pub native_records: usize,
@@ -31,6 +33,7 @@ pub(crate) struct Summary {
 thread_local! {
     static COST: RefCell<Summary> = const { RefCell::new(Summary {
         phases_ns: [0; 5], preflight_ns: [0; 3], publication_ns: [0; 3], append_ns: [0; 3],
+        private_create_ns: [0; 3], private_create_calls: 0,
         native_record_ns: [0; 3], native_records: 0, original_key_admission_calls: 0, original_key_admission_ns: 0, strict_proof_calls: 0, strict_proof_phase_calls: [0; 4], strict_proof_phase_repeats: [0; 4], repeated_strict_proof_calls: 0, untracked_strict_proof_calls: 0, original_proposal_checks: 0, full_proposal_proofs: 0, reused_proposal_proofs: 0, repeated_exact_proposal_checks: 0, active_evidence_serialized_bytes: 0,
         replay_ns: [0; 3], completed_old_records: 0, completed_stream_appends: 0, completed_new_signatures: 0,
     }) };
@@ -144,6 +147,39 @@ impl AppendClock {
                     *sum += part;
                 }
                 cost.completed_stream_appends += 1;
+            });
+        }
+    }
+}
+
+/// Separate the original successful private file creation operations while
+/// signing publishes its retained stream. No synchronization is skipped.
+pub(crate) struct PrivateCreateClock {
+    previous: Option<Instant>,
+    phases_ns: [u128; 3],
+}
+impl PrivateCreateClock {
+    pub(crate) fn new() -> Self {
+        Self {
+            previous: APPEND_ACTIVE.with(|active| active.get().then(Instant::now)),
+            phases_ns: [0; 3],
+        }
+    }
+    pub(crate) fn mark(&mut self, phase: usize) {
+        if let Some(previous) = self.previous {
+            let now = Instant::now();
+            self.phases_ns[phase] = now.duration_since(previous).as_nanos();
+            self.previous = Some(now);
+        }
+    }
+    pub(crate) fn finish(self) {
+        if self.previous.is_some() {
+            COST.with(|cost| {
+                let mut cost = cost.borrow_mut();
+                for (sum, part) in cost.private_create_ns.iter_mut().zip(self.phases_ns) {
+                    *sum += part;
+                }
+                cost.private_create_calls += 1;
             });
         }
     }

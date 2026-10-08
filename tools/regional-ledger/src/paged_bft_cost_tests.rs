@@ -114,6 +114,18 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
     let publication_ns: u128 = cost.publication_ns.iter().sum();
     assert!(publication_ns > 0 && publication_ns <= cost.phases_ns[4]);
     assert_eq!(cost.completed_stream_appends, 90);
+    // Each complete append creates pending and commit files. Completed pages
+    // also retain their original bytes and synchronizations.
+    let complete_pages: usize = h
+        .agents
+        .iter()
+        .map(|agent| agent.record_count() / crate::history::PAGE_EVENTS)
+        .sum();
+    assert_eq!(
+        cost.private_create_calls,
+        2 * cost.completed_stream_appends + complete_pages
+    );
+    assert!(cost.private_create_ns.iter().sum::<u128>() <= cost.append_ns[2]);
     assert!(cost.completed_old_records > 90);
     let replay_ns: u128 = cost.replay_ns.iter().sum();
     assert!(replay_ns > 0 && replay_ns <= cost.phases_ns[0]);
@@ -195,6 +207,12 @@ fn paged_sign_cost_ten_native_heights_and_full_pinned_cold() {
         "outer_request_and_quorum_strict_checks_preserved":true,
         "native_genesis_and_all_records_execute":true
     });
+    let private_creation = serde_json::json!({
+        "calls":cost.private_create_calls,
+        "phase_names":["directory_check_open_and_write","file_sync_all","directory_open_and_sync_all"],
+        "phase_seconds":cost.private_create_ns.map(|ns|ns as f64/1e9),
+    });
+    println!("paged-private-create-cost-result {private_creation}");
     println!(
         "paged-cost-result {}",
         serde_json::json!({

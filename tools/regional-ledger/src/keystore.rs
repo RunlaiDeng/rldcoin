@@ -154,6 +154,8 @@ pub(crate) fn private_read(path: &Path, limit: usize) -> Result<Zeroizing<Vec<u8
     Ok(bytes)
 }
 pub(crate) fn private_create(path: &Path, bytes: &[u8]) -> Result<()> {
+    #[cfg(test)]
+    let mut cost = crate::bft::sign_cost::PrivateCreateClock::new();
     private_dir(path.parent().ok_or("private parent missing")?)?;
     let mut options = OpenOptions::new();
     options.write(true).create_new(true);
@@ -164,11 +166,21 @@ pub(crate) fn private_create(path: &Path, bytes: &[u8]) -> Result<()> {
     }
     let mut file = options.open(path).map_err(io)?;
     file.write_all(bytes).map_err(io)?;
+    #[cfg(test)]
+    cost.mark(0);
     file.sync_all().map_err(io)?;
-    File::open(path.parent().unwrap())
+    #[cfg(test)]
+    cost.mark(1);
+    let result = File::open(path.parent().unwrap())
         .map_err(io)?
         .sync_all()
-        .map_err(io)
+        .map_err(io);
+    #[cfg(test)]
+    if result.is_ok() {
+        cost.mark(2);
+        cost.finish();
+    }
+    result
 }
 fn seal(binding: Binding, kind: &str, secret: &Secret, pass: &[u8]) -> Result<Vec<u8>> {
     let salt = random::<16>()?;
