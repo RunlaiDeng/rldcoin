@@ -1061,6 +1061,17 @@ pub use packed_inspection::{
     PackedNativeBoundaryCandidate,
 };
 
+#[path = "paged_store/export_archive.rs"]
+mod export_archive;
+pub use export_archive::{
+    inspect_export_archive_candidate, ExportArchiveObservationCandidate,
+    ExportArchiveQueryCandidate,
+};
+
+#[cfg(test)]
+#[path = "paged_store/export_archive_tests.rs"]
+mod export_archive_tests;
+
 #[cfg(test)]
 #[path = "paged_store/packed_inspection_tests.rs"]
 mod packed_inspection_tests;

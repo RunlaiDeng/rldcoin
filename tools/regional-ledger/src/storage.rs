@@ -1254,7 +1254,8 @@ pub(crate) use paged::Historical as PagedSigningHistory;
 #[cfg(test)]
 pub(crate) use paged::Record as PagedRecord;
 pub use paged::{
-    inspect_lossless_packed_native_candidate, inspect_packed_native_candidate,
-    NativeContinuationCandidate, NativeContinuationPinsCandidate, NativePrefixPinsCandidate,
-    PackedNativeBoundaryCandidate,
+    inspect_export_archive_candidate, inspect_lossless_packed_native_candidate,
+    inspect_packed_native_candidate, ExportArchiveObservationCandidate,
+    ExportArchiveQueryCandidate, NativeContinuationCandidate, NativeContinuationPinsCandidate,
+    NativePrefixPinsCandidate, PackedNativeBoundaryCandidate,
 };

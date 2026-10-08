@@ -262,6 +262,16 @@ enum Action {
         region: String,
     },
     Status,
+    /// Complete source archive observation only; never import, recover or sign.
+    ExportArchiveInspect {
+        #[arg(long)]
+        bootstrap: PathBuf,
+        #[arg(long)]
+        query: PathBuf,
+        /// Sender-chosen byte commitment, never an independent latest-state pin.
+        #[arg(long)]
+        carried_head: String,
+    },
     /// Replay a private bounded archive from pinned genesis; never adopt a store.
     HistoryStreamCheck {
         #[arg(long)]
@@ -685,6 +695,30 @@ fn run() -> Result<()> {
         transport_python: args.transport_python.clone(),
         interval: args.interval,
     });
+    if let Action::ExportArchiveInspect {
+        ref bootstrap,
+        ref query,
+        ref carried_head,
+    } = action
+    {
+        let bootstrap: Bootstrap = read_json(bootstrap)?;
+        let query: storage::ExportArchiveQueryCandidate = read_json(query)?;
+        let head = Hash::from_hex(carried_head).map_err(|e| e.to_string())?;
+        let observed = storage::inspect_export_archive_candidate(
+            &args.dir,
+            &bootstrap,
+            &args.authority,
+            pin,
+            head,
+            &query,
+        )?;
+        let raw = serde_json::to_string(&observed).map_err(|e| e.to_string())?;
+        if raw.len() > MAX_BYTES {
+            return Err("export archive observation exceeds original output bound".into());
+        }
+        println!("{raw}");
+        return Ok(());
+    }
     if let Action::HistoryStreamCheck {
         ref bootstrap,
         ref region,
@@ -942,7 +976,9 @@ fn run() -> Result<()> {
         _ => Store::open(&args.dir, &args.authority, pin)?,
     };
     match action {
-        Action::HistoryStreamCheck { .. } | Action::HistoryStreamCompactCheck { .. } => {
+        Action::ExportArchiveInspect { .. }
+        | Action::HistoryStreamCheck { .. }
+        | Action::HistoryStreamCompactCheck { .. } => {
             unreachable!("handled before opening a native store")
         }
         Action::BftPendingImports => {
