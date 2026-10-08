@@ -2,6 +2,10 @@
 //! retained pages. No persisted hashing/state witness initializes authority.
 use super::*;
 
+#[cfg(test)]
+#[path = "legacy_replay_cost.rs"]
+pub(crate) mod legacy_cost;
+
 /// Hashes exact legacy JSON prefixes without cloning the growing record vector.
 /// This process-local cursor begins at the fully serialized immutable header.
 /// Its digest is byte identity only; Replay authenticates every complete record.
@@ -72,9 +76,13 @@ pub(super) struct Replay<'a> {
     owner: crate::wallet_agent::Binding,
     head: LegacyHead,
     state: State,
+    #[cfg(test)]
+    depth: usize,
 }
 impl<'a> Replay<'a> {
     pub(super) fn new(journal: &'a Journal, node: &'a Store, depth: usize) -> Result<Self> {
+        #[cfg(test)]
+        let _clock = legacy_cost::Clock::header(depth);
         journal.validate_header(node, depth)?;
         Ok(Self {
             journal,
@@ -86,9 +94,13 @@ impl<'a> Replay<'a> {
             },
             head: LegacyHead::new(journal)?,
             state: State::default(),
+            #[cfg(test)]
+            depth,
         })
     }
     pub(super) fn push(&mut self, record: &Record) -> Result<()> {
+        #[cfg(test)]
+        let _clock = legacy_cost::Clock::record(self.depth);
         let b = &self.owner;
         let node = self.node;
         require(

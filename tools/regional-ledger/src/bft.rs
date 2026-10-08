@@ -1307,6 +1307,8 @@ impl Agent {
 mod replay;
 
 #[cfg(test)]
+pub(crate) use replay::legacy_cost;
+#[cfg(test)]
 pub(crate) use replay::tests::compare_all_prefixes;
 
 #[path = "paged_bft_agent.rs"]

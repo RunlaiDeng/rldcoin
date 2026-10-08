@@ -1227,8 +1227,8 @@ fn run() -> Result<()> {
             if let Some(messages) = retained {
                 // Exact complete records were collected during the mandatory
                 // locked replay; final Native and signer heads already passed.
-                value["retained_messages"] = serde_json::to_value(messages)
-                    .map_err(|e| e.to_string())?;
+                value["retained_messages"] =
+                    serde_json::to_value(messages).map_err(|e| e.to_string())?;
                 value["format"] = serde_json::json!("RLD-BFT-LOOP-RETAINED-OBSERVATION-V1");
             }
             let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;

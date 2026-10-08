@@ -424,6 +424,8 @@ fn rollover(
 
 #[test]
 fn role_scoped_zero_through_three_continuing_keys_replay_native_value_and_two_handoffs() {
+    bft::legacy_cost::take();
+    let measured = std::time::Instant::now();
     for overlap in 0..4 {
         let mut h = Harness::with_rules(bft::ROLE_RULES);
         for _ in 0..3 {
@@ -531,6 +533,21 @@ fn role_scoped_zero_through_three_continuing_keys_replay_native_value_and_two_ha
                 .is_some());
         }
     }
+    let cost = bft::legacy_cost::take();
+    assert!(cost.header_attempts_by_depth[0] > 0);
+    assert!(cost.record_attempts_by_depth[1] > 0);
+    println!(
+        "legacy-role-replay-cost {}",
+        serde_json::json!({
+            "cost": cost,
+            "seconds": measured.elapsed().as_secs_f64(),
+            "overlap_cases": 4,
+            "handoffs_per_case": 2,
+            "full_original_native_value_and_custody_checks": true,
+            "header_times_include_nested_calls_do_not_sum_them": true,
+            "replay_or_crypto_skipped": false
+        })
+    );
 }
 
 #[test]
