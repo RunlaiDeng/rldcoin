@@ -16,6 +16,7 @@ import interstellar_transfer as wire
 FORMAT = 'RLD-REGIONAL-BFT-RETENTION-V2'
 MAX_MESSAGES = 512
 MAX_REFS = 64
+ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 
 
 def digest(raw):
@@ -52,12 +53,18 @@ class Messages(Mapping):
     def envelope(self, ident):
         record = self.record(ident)
         base = dict(record['header'], body=record['body'], evidence={'snapshots': []})
+        origin_refs = record.get('origin_refs', [])
+        if record['header']['format'] == ORIGIN_NETWORK:base['origins'] = []
         size = len(wire.canonical(base)) + sum(len(self._snapshots[ref]) for ref in record['refs'])
         size += max(0, len(record['refs']) - 1)
+        size += sum(len(self._snapshots[ref]) for ref in origin_refs) + max(0, len(origin_refs)-1)
         mesh.require(size == record['size_bytes'] <= wire.MAX_PAYLOAD,
                      'BFT retained expansion capacity/size differs')
-        return dict(record['header'], body=record['body'],
+        expanded = dict(record['header'], body=record['body'],
                     evidence={'snapshots': [wire.decode_json(self._snapshots[ref]) for ref in record['refs']]})
+        if record['header']['format'] == ORIGIN_NETWORK:
+            expanded['origins'] = [wire.decode_json(self._snapshots[ref]) for ref in origin_refs]
+        return expanded
 
     def payload(self, ident):
         record = self.record(ident)
@@ -79,7 +86,11 @@ class Messages(Mapping):
     def append(self, ident, envelope, value, local):
         mesh.require(ident not in self and len(self) < MAX_MESSAGES and type(local) is bool,
                      'BFT retained message duplicate/capacity')
-        mesh.require(set(envelope) == {'format', 'currency', 'region', 'evidence', 'body'}
+        origin = envelope.get('format') == ORIGIN_NETWORK
+        fields = {'format', 'currency', 'region', 'evidence', 'body'}
+        if origin:fields.add('origins')
+        mesh.require(set(envelope) == fields
+                     and (not origin or type(envelope['origins']) is list and len(envelope['origins'])<=4)
                      and set(envelope['evidence']) == {'snapshots'}
                      and isinstance(envelope['evidence']['snapshots'], list)
                      and len(envelope['evidence']['snapshots']) <= MAX_REFS
@@ -93,9 +104,16 @@ class Messages(Mapping):
             mesh.require(ref not in pool or pool[ref] == retained, 'BFT snapshot digest collision')
             pool[ref] = retained
             refs.append(ref)
+        origin_refs = []
+        for proof in envelope.get('origins', []):
+            retained = wire.canonical(proof);ref = digest(retained)
+            mesh.require(ref not in pool or pool[ref] == retained, 'BFT origin digest collision')
+            pool[ref] = retained;origin_refs.append(ref)
+        mesh.require(len(refs)+len(origin_refs)<=MAX_REFS,'BFT combined reference capacity')
         header = {k: envelope[k] for k in ('format', 'currency', 'region')}
         record = {'header': header, 'body': envelope['body'], 'refs': refs,
                   'sha256': digest(raw), 'size_bytes': len(raw), 'value': value, 'local': local}
+        if origin:record['origin_refs'] = origin_refs
         records = dict(self._records)
         records[ident] = wire.canonical(record)
         return Messages(records, pool)
@@ -119,8 +137,13 @@ class Messages(Mapping):
         packed, referenced = {}, set()
         for ident, record in records.items():
             mesh.hex32(ident)
+            fields = {'header', 'body', 'refs', 'sha256', 'size_bytes', 'value', 'local'}
+            origin = isinstance(record,dict) and isinstance(record.get('header'),dict) and record['header'].get('format')==ORIGIN_NETWORK
+            if origin:fields.add('origin_refs')
             mesh.require(isinstance(record, dict)
-                         and set(record) == {'header', 'body', 'refs', 'sha256', 'size_bytes', 'value', 'local'}
+                         and set(record) == fields
+                         and (not origin or type(record['origin_refs']) is list and len(record['origin_refs'])<=4)
+                         and len(record.get('origin_refs', []))+len(record.get('refs', []))<=MAX_REFS
                          and isinstance(record['header'], dict)
                          and set(record['header']) == {'format', 'currency', 'region'}
                          and type(record['local']) is bool and type(record['size_bytes']) is int
@@ -130,7 +153,7 @@ class Messages(Mapping):
             mesh.hex32(record['sha256'])
             if record['value'] is not None:
                 mesh.hex32(record['value'])
-            for ref in record['refs']:
+            for ref in record['refs']+record.get('origin_refs', []):
                 mesh.hex32(ref)
                 mesh.require(ref in pool, 'BFT retained snapshot missing')
                 referenced.add(ref)

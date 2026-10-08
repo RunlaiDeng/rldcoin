@@ -26,6 +26,7 @@ fn approvals(p: &epoch::Transition) -> Vec<CarriedApproval> {
 fn envelope(h: &Harness, body: Body) -> Envelope {
     Envelope {
         format: FORMAT.into(),
+        origins: None,
         currency: h.node.trust.currency().unwrap(),
         region: h.node.chain.region,
         evidence: h.node.journal.evidence.clone(),

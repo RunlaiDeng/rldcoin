@@ -28,7 +28,9 @@ from regional_native_startup import Inspection
 from regional_bft_timeout_hint import ordered_timeout, ordered_timeout_vote
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
+ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V2'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
+ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 MAX_MESSAGES = 512
 MAX_STATE = 32*1024*1024
 MAX_BROADCAST_HINT_BYTES = 4*1024*1024
@@ -196,7 +198,7 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
             expanded_bytes+=messages.record(ident)['size_bytes']
             if expanded_bytes>MAX_BROADCAST_HINT_BYTES:return ()
             payload=messages.payload(ident);envelope=wire.decode_json(payload)
-            if (envelope['format']!=NETWORK or envelope['currency']!=currency
+            if (envelope['format'] not in (NETWORK,ORIGIN_NETWORK) or envelope['currency']!=currency
                     or envelope['region']!=region):continue
             raw=wire.make_frame('regional-bft',region,region,messages.content(ident),payload)
             frames.append(wire.inspect_frame(raw)[0]['message_id'])
@@ -216,7 +218,7 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
             expanded_bytes+=messages.record(ident)['size_bytes']
             if expanded_bytes>MAX_BROADCAST_HINT_BYTES:return ()
             payload=messages.payload(ident);envelope=wire.decode_json(payload)
-            if (envelope['format']!=NETWORK or envelope['currency']!=currency
+            if (envelope['format'] not in (NETWORK,ORIGIN_NETWORK) or envelope['currency']!=currency
                     or envelope['region']!=region):continue
             raw=wire.make_frame('regional-bft',region,region,messages.content(ident),payload)
             frames.append(wire.inspect_frame(raw)[0]['message_id'])
@@ -292,7 +294,7 @@ class Runtime:
         fields={'format','state','signer_dir','head_file','key_file','key','miner','validators','block_interval','round_timeout','stop_height'}
         role_fields={'format','state','miner','validators','block_interval','round_timeout','stop_height','initial_slot','handoffs'}
         roles = config['format']==ROLE_FORMAT
-        mesh.require((set(config) in (fields,fields|{'startup_native_history_head'}) and config['format']==FORMAT)
+        mesh.require((set(config) in (fields,fields|{'startup_native_history_head'}) and config['format'] in (FORMAT,ORIGIN_RUNTIME_FORMAT))
                      or (set(config)==fields|{'joint_epoch'} and config['format']==JOINT_FORMAT)
                      or (set(config)==role_fields and roles),
                      'BFT configuration fields/version invalid')
@@ -384,8 +386,22 @@ class Runtime:
                 for message in self.native.call('bft-retained-messages','--signer-dir',directory):
                     if retained_responses.reuse(message):continue
                     self.retain_local_body({'Signed':message})
-            proof=self.native.call('proof')
-            local=[s for s in proof['snapshots'] if s['statement']['region']==self.region and s['statement']['height']==self.state['height']]
+            if self.format==ORIGIN_RUNTIME_FORMAT:
+                finality=self.native.call('bft-origin-current-finality')
+                mesh.require(type(finality) is dict and set(finality)=={'format','currency','region','height','rules','snapshot','ledger_changed','signing_authority'}
+                    and finality['format']=='RLD-ORIGIN-CURRENT-FINALITY-V2'
+                    and finality['currency']==self.native.currency and finality['region']==self.region
+                    and finality['height']==self.state['height']
+                    and finality['rules']=='RLD-REGIONAL-BFT-COMPLETE-ORIGIN-NETWORK-FIXTURE-V2'
+                    and finality['ledger_changed'] is False and finality['signing_authority'] is False,
+                    'origin startup native finality binding differs')
+                local=[] if finality['snapshot'] is None else [finality['snapshot']]
+                mesh.require(not local or local[0]['statement']['region']==self.region
+                    and local[0]['statement']['height']==self.state['height'],
+                    'origin startup current local certificate differs')
+            else:
+                proof=self.native.call('proof')
+                local=[s for s in proof['snapshots'] if s['statement']['region']==self.region and s['statement']['height']==self.state['height']]
             if local:
                 self.retain_local_body({'Finalized':local[0]})
             self._signed_query_index = None
@@ -503,7 +519,7 @@ class Runtime:
         keep their original decorated envelope and independent verification.
         Incoming envelopes always retain their complete receive checks.
         """
-        if getattr(self,'format',None)==FORMAT and self.joint is None:
+        if getattr(self,'format',None) in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:
             from regional_bft_local_envelope import pack
             envelope,verified=pack(self,body)
             self._retain_checked(envelope,verified,sync=False,local=True)
@@ -558,6 +574,9 @@ class Runtime:
         self.entered_at=time.monotonic()
 
     def envelope(self, body):
+        if getattr(self,'format',None) in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+            from regional_bft_local_envelope import pack
+            return pack(self,body)[0]
         if self.joint is not None:body=self.joint.decorate(body)
         envelope={'format':NETWORK,'currency':self.native.currency,'region':self.region,
                   'evidence':self.native.call('proof'),'body':body}
@@ -572,7 +591,7 @@ class Runtime:
         mesh.require(self.head['pending'] is None and self.head['outbox'] is None,
                      'BFT loop observation requires reconciled caller state')
         self._keyless_drain_observation=None
-        retained=(getattr(self,'format',None)==FORMAT and self.joint is None
+        retained=(getattr(self,'format',None) in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None
                   and (self.key_file is None or not self.key_file.exists()))
         args=['bft-loop-status','--signer-dir',self.signer,'--expected-head',self.head['head']]
         if retained:args.append('--include-retained-messages')
@@ -605,7 +624,7 @@ class Runtime:
                      'BFT native ledger rolled back beneath retained runtime observation')
         if value['parent_height']!=self.state['height']:
             self.save(dict(self.state,height=value['parent_height'],tip=value['parent_block']))
-        if getattr(self,'format',None)==FORMAT:
+        if getattr(self,'format',None) in (FORMAT,ORIGIN_RUNTIME_FORMAT):
             context=wire.canonical(value)
             if context!=getattr(self,'_carriage_context',None):
                 mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
@@ -618,8 +637,20 @@ class Runtime:
         # A retained signed body does not authenticate a later envelope's proof.
         # Check every complete envelope before deduplication and let newly
         # certified dependencies reach native sync without replacing old bytes.
+        if envelope.get('format')==ORIGIN_NETWORK:self.observe_origin_conflicts(envelope)
         verified=self.with_json('bft-network-check',envelope)
         self._retain_checked(envelope,verified,sync,local)
+
+    def observe_origin_conflicts(self,envelope):
+        # Native authenticates finality incidents even when normal body checking
+        # refuses. This cannot install evidence, finalize a block or grant a vote.
+        mesh.require(len(wire.canonical(envelope))<=wire.MAX_PAYLOAD,'origin conflict wire capacity')
+        head=self.native.call('history-head')
+        mesh.require(type(head) is dict and head.get('currency')==self.native.currency
+            and head.get('region')==self.region,'origin conflict native head domain differs')
+        mesh.hex32(head['history_head'])
+        return self.with_json('bft-origin-network-observe-conflicts',envelope,
+            '--expected-head',head['history_head'])
 
     def _retain_checked(self,envelope,verified,sync=True,local=False):
         # Private operation-local result only; never a persisted validation cache.
@@ -634,7 +665,16 @@ class Runtime:
             if not any(s['statement']==final['statement'] for s in snapshots):
                 snapshots.append(final)
         fingerprints=[mesh.digest(s['statement']) for s in snapshots]
-        if sync and any(f not in self.state['snapshot_cache'] for f in fingerprints):
+        if sync and envelope['format']==ORIGIN_NETWORK:
+            # No Python proof cache authorizes this path. Native re-authenticates
+            # the original whole envelope under this separately read current head.
+            head=self.native.call('history-head')
+            mesh.require(type(head) is dict and head.get('currency')==self.native.currency
+                and head.get('region')==self.region,'origin sync native head domain differs')
+            mesh.hex32(head['history_head'])
+            self.with_json('bft-origin-network-sync',envelope,'--expected-head',head['history_head'])
+            self.observe()
+        elif sync and any(f not in self.state['snapshot_cache'] for f in fingerprints):
             self.with_json('bft-sync',{'snapshots':snapshots})
             self.observe()
             self.save(dict(self.state,snapshot_cache=sorted(set(self.state['snapshot_cache']+fingerprints))))
@@ -736,9 +776,12 @@ class Runtime:
             mesh.require(frame['kind']=='regional-bft' and frame['source_chain_id']==self.region,
                          'BFT received foreign region/carriage kind')
             envelopes.append(wire.decode_json(payload))
-        # Complete all Native authentication before any dependency sync or retain.
+        # Preserve authenticated incidents first, then complete all Native
+        # body authentication before any dependency sync or message retention.
         started=time.monotonic()
         try:
+            for envelope in envelopes:
+                if envelope.get('format')==ORIGIN_NETWORK:self.observe_origin_conflicts(envelope)
             checked=inspect_live_batch(self,envelopes)
         except (OSError,ValueError,subprocess.TimeoutExpired):
             for _ in raws:self.observation.event('receive-end',started,succeeded=False)
@@ -808,7 +851,7 @@ class Runtime:
         with (carriage_node() if carriage_node is not None else mesh.Node(self.transport)) as node:
             # Only the admitted base profile and an actual Native observation
             # can install this scheduling hint. Epoch/role profiles fall back.
-            if (self.format==FORMAT and getattr(self,'_retained_native_authenticated',False)
+            if (self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and getattr(self,'_retained_native_authenticated',False)
                     and getattr(self,'_carriage_context',None) is not None):
                 context=wire.decode_json(self._carriage_context)
                 frames=commit_carriage_frames(self.state['messages'],context,
@@ -1012,7 +1055,7 @@ class Runtime:
                 status=self.signer_status()
         active=status['state'] if status['state'] is not None and status['state']['context']==context else {'round':0,'prepared':None,'committed':None,'proposed':False}
         round_number=active['round']
-        if self.format==FORMAT and self.joint is None:self._carriage_round=round_number
+        if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:self._carriage_round=round_number
         slot=(mesh.digest(context),round_number)
         if self.slot!=slot:
             self.slot,self.entered_at=slot,time.monotonic()
@@ -1116,7 +1159,7 @@ class Runtime:
             else:
                 round_number = None
                 self.slot = None
-            if self.format==FORMAT and self.joint is None:self._carriage_round=round_number
+            if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:self._carriage_round=round_number
         self._broadcast_after_observation()
         return self.report(context,round_number,status,stopped)
 
@@ -1132,7 +1175,7 @@ class Runtime:
         self._carriage_deferred=False
         try:self.broadcast()
         except MeshTurnPending:
-            if not (self.format==FORMAT and self.joint is None
+            if not (self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None
                     and getattr(self,'_retained_native_authenticated',False) is True
                     and (self.key_file is None or not self.key_file.exists())
                     and self.head['head'] is not None and self.head['pending'] is None

@@ -829,6 +829,7 @@ fn typed_network_carriage_verifies_native_domain_parent_and_phase_without_mutati
     let proposal = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
     let envelope = Envelope {
         format: FORMAT.into(),
+        origins: None,
         currency: h.node.trust.currency().unwrap(),
         region: h.node.chain.region,
         evidence: h.node.journal.evidence.clone(),
@@ -870,6 +871,7 @@ fn cold_batch_envelope(h: &mut Harness) -> crate::bft_network::WireEnvelope {
     let proposal = h.proposal(0, None, h.node.bft_candidate(vec![], public(10)).unwrap());
     Envelope {
         format: FORMAT.into(),
+        origins: None,
         currency: h.node.trust.currency().unwrap(),
         region: h.node.chain.region,
         evidence: h.node.journal.evidence.clone(),
@@ -1049,6 +1051,7 @@ fn compact_consensus_carriage_cold_authenticates_complete_history_and_refuses_fo
         .clone();
     let logical = Envelope {
         format: FORMAT.into(),
+        origins: None,
         currency: h.node.trust.currency().unwrap(),
         region: h.node.chain.region,
         evidence: h.node.journal.evidence.clone(),
@@ -1299,6 +1302,7 @@ fn local_envelope_preserves_complete_wire_bytes_after_native_history_and_all_hea
             let heads = h.heads.clone();
             let original = Envelope {
                 format: FORMAT.into(),
+                origins: None,
                 currency: h.node.trust.currency().unwrap(),
                 region: h.node.chain.region,
                 evidence: h.node.proof().unwrap(),

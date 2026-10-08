@@ -19,6 +19,7 @@ fn native_channel_bft_submission_certified_inclusion_and_cold_head_replay() {
     let before = h.node.chain.ledger.clone();
     let envelope = Envelope {
         format: crate::bft_network::FORMAT.into(),
+        origins: None,
         currency: h.node.trust.currency().unwrap(),
         region: h.node.chain.region,
         evidence: h.node.journal.evidence.clone(),

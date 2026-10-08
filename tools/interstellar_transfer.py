@@ -152,8 +152,12 @@ def inspect_frame(data, source=None, destination=None):
         raise ValueError('message ID changed')
     if frame['kind'] == 'regional-bft':
         envelope = decode_json(payload)
-        if (not isinstance(envelope,dict) or set(envelope) != {'format','currency','region','evidence','body'}
-                or envelope['format'] != 'RLD-REGIONAL-BFT-NETWORK-V2'
+        fields={'format','currency','region','evidence','body'}
+        origin=isinstance(envelope,dict) and envelope.get('format')=='RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
+        if origin:fields.add('origins')
+        if (not isinstance(envelope,dict) or set(envelope) != fields
+                or envelope['format'] not in ('RLD-REGIONAL-BFT-NETWORK-V2','RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3')
+                or (origin and (type(envelope['origins']) is not list or len(envelope['origins'])>4))
                 or envelope['region'] != frame['source_chain_id']
                 or frame['export_id'] != hashlib.sha256(payload).hexdigest()):
             raise ValueError('regional consensus carriage binding mismatch')

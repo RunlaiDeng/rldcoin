@@ -792,22 +792,31 @@ impl Store {
         })
     }
     pub fn bft_submit(&self, commands: Vec<Command>) -> Result<Hash> {
-        let envelope = bft_network::Envelope {
-            format: bft_network::FORMAT.into(),
-            currency: self.trust.currency()?,
-            region: self.chain.region,
-            // The paged diagnostic view orders regional heights, not causal
-            // imports. Carry the complete independently authenticated closure;
-            // a submission must verify without the receiver's local history.
-            evidence: self.proof()?,
-            body: if crate::bft::is_joint(&self.trust.region(self.chain.region)?.rules) {
-                bft_network::Body::EpochSubmission {
-                    commands: commands.clone(),
-                    epochs: self.evidence.epoch_proofs(self.chain.region),
-                }
-            } else {
-                bft_network::Body::Submission(commands.clone())
-            },
+        let envelope = if self.trust.region(self.chain.region)?.rules
+            == crate::paged_bft::ORIGIN_NETWORK_RULES
+        {
+            bft_network::local_envelope(bft_network::Body::Submission(commands.clone()), self)?
+                .envelope
+                .expand()?
+        } else {
+            bft_network::Envelope {
+                format: bft_network::FORMAT.into(),
+                origins: None,
+                currency: self.trust.currency()?,
+                region: self.chain.region,
+                // The paged diagnostic view orders regional heights, not causal
+                // imports. Carry the complete independently authenticated closure;
+                // a submission must verify without the receiver's local history.
+                evidence: self.proof()?,
+                body: if crate::bft::is_joint(&self.trust.region(self.chain.region)?.rules) {
+                    bft_network::Body::EpochSubmission {
+                        commands: commands.clone(),
+                        epochs: self.evidence.epoch_proofs(self.chain.region),
+                    }
+                } else {
+                    bft_network::Body::Submission(commands.clone())
+                },
+            }
         };
         let ident = envelope.verify(self)?;
         self.bft_candidate(

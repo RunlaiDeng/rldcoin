@@ -356,6 +356,7 @@ fn paged_imported_owner_submission_carries_complete_causal_proof_without_debit()
     retain(&proxima.root, 4, signed.wallet_head);
     let old = crate::bft_network::Envelope {
         format: crate::bft_network::FORMAT.into(),
+        origins: None,
         currency: proxima.node.trust.currency().unwrap(),
         region: proxima.node.chain.region,
         evidence: proxima.node.journal.evidence.clone(),
@@ -556,6 +557,7 @@ fn paged_ordinary_network_proof_after_onward_requires_complete_native_envelope()
     let original = proxima.node.evidence.snapshot(finality).unwrap().clone();
     let envelope = crate::bft_network::Envelope {
         format: crate::bft_network::FORMAT.into(),
+        origins: None,
         currency: proxima.node.trust.currency().unwrap(),
         region: proxima.node.chain.region,
         evidence: proxima.node.proof().unwrap(),

@@ -54,7 +54,8 @@ class Native:
         with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
             result = subprocess.run([str(self.binary), '--dir', str(self.ledger),
                 '--authority', self.authority, '--currency', self.currency, *map(str, args)],
-                input=private_input, stdout=output, stderr=errors, timeout=30, check=False)
+                input=private_input, stdout=output, stderr=errors, timeout=30, check=False,
+                cwd=Path(__file__).resolve().parents[1])
             mesh.require(output.tell() <= MAX_NATIVE_OUTPUT and errors.tell() <= 64 * 1024, 'native response outside bound')
             errors.seek(0)
             if result.returncode != 0:

@@ -13,7 +13,7 @@ pub struct CompleteOriginHistory {
 impl CompleteOriginHistory {
     pub(super) fn shape(&self, destination: Hash, trust: &Trust) -> Result<()> {
         require(
-            trust.region(destination)?.rules == crate::paged_bft::ORIGIN_HISTORY_RULES
+            crate::paged_bft::is_origin_profile(&trust.region(destination)?.rules)
                 && self.destination == destination
                 && self.source != destination
                 && trust.region(self.source)?.region == trust.currency.origin
@@ -198,7 +198,7 @@ impl Replay {
 impl Store {
     /// Pending tasks derived from full Native events, with no automatic credit.
     pub fn complete_origin_pending_imports(&self) -> Result<Vec<Command>> {
-        if self.trust.region(self.chain.region)?.rules != crate::paged_bft::ORIGIN_HISTORY_RULES {
+        if !crate::paged_bft::is_origin_profile(&self.trust.region(self.chain.region)?.rules) {
             return Ok(vec![]);
         }
         let replay = self.current_paged_replay()?;
@@ -252,5 +252,181 @@ impl Store {
         self.safety.check_region(proof.source)?;
         self.append_paged(&[Record::OriginHistory(Box::new(proof))])?;
         Ok(last)
+    }
+}
+
+impl CompleteOriginHistory {
+    /// All initial state is derived in this call from complete signed genesis history.
+    pub(crate) fn verify_network_set(
+        proofs: &[Self],
+        destination: Hash,
+        trust: &Trust,
+    ) -> Result<VerifiedEvidence> {
+        require(
+            trust.region(destination)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES
+                && proofs.len() <= 4,
+            "origin network profile/history bound",
+        )?;
+        encode("origin-network-histories-v2", &proofs)?;
+        let mut verified = VerifiedEvidence {
+            trust_binding: Some(trust.binding),
+            ..VerifiedEvidence::default()
+        };
+        for (index, proof) in proofs.iter().enumerate() {
+            let executed = execute(proof, destination, trust)?;
+            for old in &proofs[..index] {
+                for (a, b) in old.snapshots.iter().zip(&proof.snapshots) {
+                    require(
+                        a.statement == b.statement && a.blocks == b.blocks && a.epochs == b.epochs,
+                        "origin network histories conflict in complete prefix",
+                    )?;
+                }
+            }
+            if let Some((snapshot, ledger)) = verified.snapshots.get(&executed.checkpoint) {
+                require(
+                    snapshot.statement == executed.snapshot.statement
+                        && snapshot.blocks == executed.snapshot.blocks
+                        && snapshot.epochs == executed.snapshot.epochs
+                        && *ledger == executed.ledger,
+                    "origin network duplicate execution differs",
+                )?;
+            } else {
+                verified
+                    .snapshots
+                    .insert(executed.checkpoint, (executed.snapshot, executed.ledger));
+            }
+        }
+        Ok(verified)
+    }
+}
+impl Store {
+    /// Complete immutable proof bytes from current fully replayed typed events.
+    pub(crate) fn origin_network_material(&self) -> Result<(Vec<CompleteOriginHistory>, Evidence)> {
+        require(
+            self.trust.region(self.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES,
+            "origin network material requires explicit signed V2 profile",
+        )?;
+        self.current_paged_replay()?;
+        let source = self.trust.named(&self.trust.currency.origin)?;
+        self.safety.check_region(source)?;
+        let required = self
+            .journal
+            .evidence
+            .snapshots
+            .iter()
+            .filter(|s| s.statement.region == source)
+            .map(|s| s.statement.id())
+            .collect::<Result<BTreeSet<_>>>()?;
+        let mut selected = BTreeMap::new();
+        let stream = self.paged.as_ref().ok_or("origin network stream absent")?;
+        stream.visit(stream.storage_head(), |record| {
+            if let Record::OriginHistory(proof) = record {
+                let tail = proof
+                    .snapshots
+                    .last()
+                    .ok_or("origin network history empty")?
+                    .statement
+                    .id()?;
+                if required.contains(&tail) {
+                    selected.entry(tail).or_insert_with(|| *proof.clone());
+                }
+            }
+            Ok(())
+        })?;
+        require(
+            selected.len() == required.len() && selected.len() <= 4,
+            "origin network complete active dependencies absent or exceed bound",
+        )?;
+        let mut local = self
+            .journal
+            .evidence
+            .snapshots
+            .iter()
+            .filter(|s| s.statement.region == self.chain.region)
+            .cloned()
+            .collect::<Vec<_>>();
+        require(
+            local.len() + required.len() == self.journal.evidence.snapshots.len(),
+            "origin network contains unsupported foreign dependency",
+        )?;
+        local.sort_by_key(|s| s.statement.height);
+        let proofs = selected.into_values().collect::<Vec<_>>();
+        let evidence = Evidence { snapshots: local };
+        let mut verified =
+            CompleteOriginHistory::verify_network_set(&proofs, self.chain.region, &self.trust)?;
+        for snapshot in &evidence.snapshots {
+            verified.add(snapshot.clone(), &self.trust)?;
+        }
+        Ok((proofs, evidence))
+    }
+}
+
+impl Store {
+    /// Exact original certificate retry after whole-envelope authentication.
+    /// No altered certificate, historical body hint or incident may skip finalize.
+    pub(crate) fn finalize_origin_network_certificate(&mut self, snapshot: Snapshot) -> Result<()> {
+        require(
+            self.trust.region(self.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES,
+            "origin certificate sync requires explicit V2 profile",
+        )?;
+        self.current_paged_replay()?;
+        self.safety.check_region(self.chain.region)?;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("origin certificate stream absent")?;
+        let mut identical = false;
+        stream.visit(stream.storage_head(), |record| {
+            if let Record::Certified(old) = record {
+                if old.as_ref() == &snapshot {
+                    identical = true;
+                }
+            }
+            Ok(())
+        })?;
+        if !identical {
+            self.finalize(snapshot)?;
+        }
+        Ok(())
+    }
+}
+
+impl Store {
+    /// Signature-authenticated incidents persist even when the envelope is refused.
+    /// This preflight never admits history, creates an Import or signs anything.
+    pub fn observe_origin_network_conflicts(
+        &mut self,
+        envelope: &crate::bft_network::Envelope,
+    ) -> Result<()> {
+        require(
+            envelope.format == crate::bft_network::ORIGIN_FORMAT
+                && self.trust.region(self.chain.region)?.rules
+                    == crate::paged_bft::ORIGIN_NETWORK_RULES
+                && envelope.currency == self.trust.currency()?
+                && envelope.region == self.chain.region,
+            "origin conflict observation domain/profile differs",
+        )?;
+        encode("origin-conflict-complete-envelope", envelope)?;
+        let proofs = envelope
+            .origins
+            .as_ref()
+            .ok_or("origin conflict histories absent")?;
+        require(
+            proofs.len() <= 4 && envelope.evidence.snapshots.len() <= MAX_SNAPSHOTS,
+            "origin conflict histories/evidence bound",
+        )?;
+        self.current_paged_replay()?;
+        for proof in proofs {
+            proof.shape(self.chain.region, &self.trust)?;
+        }
+        let mut snapshots = proofs
+            .iter()
+            .flat_map(|p| p.snapshots.iter().cloned())
+            .collect::<Vec<_>>();
+        snapshots.extend(envelope.evidence.snapshots.iter().cloned());
+        if let crate::bft_network::Body::Finalized(snapshot) = &envelope.body {
+            snapshots.push(*snapshot.clone());
+        }
+        self.check_paged_snapshot_conflicts(&snapshots)
     }
 }

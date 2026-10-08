@@ -4,6 +4,7 @@ use super::*;
 use crate::{bft, storage::Store};
 
 pub const FORMAT: &str = "RLD-REGIONAL-BFT-NETWORK-V2";
+pub const ORIGIN_FORMAT: &str = "RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3";
 pub const COLD_BATCH_FORMAT: &str = "RLD-BFT-COLD-NETWORK-CHECK-V1";
 pub const MAX_COLD_BATCH: usize = 4;
 pub const LIVE_BATCH_FORMAT: &str = "RLD-BFT-LIVE-NETWORK-INSPECTION-V1";
@@ -23,11 +24,19 @@ pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
         serde_json::to_vec(&body).map_err(|e| e.to_string())?.len() <= crate::contact::MAX_PAYLOAD,
         "local network body exceeds payload bound",
     )?;
+    let (format, origins, evidence) =
+        if node.trust.region(node.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
+            let (proofs, evidence) = node.origin_network_material()?;
+            (ORIGIN_FORMAT, Some(proofs), evidence)
+        } else {
+            (FORMAT, None, node.proof()?)
+        };
     let envelope = Envelope {
-        format: FORMAT.into(),
+        format: format.into(),
         currency: node.trust.currency()?,
         region: node.chain.region,
-        evidence: node.proof()?,
+        evidence,
+        origins,
         body,
     };
     // Preserve the original full envelope verification before packing.
@@ -152,6 +161,8 @@ pub struct Envelope {
     pub region: Hash,
     pub evidence: Evidence,
     pub body: Body,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origins: Option<Vec<crate::storage::CompleteOriginHistory>>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -161,29 +172,56 @@ pub struct WireEnvelope {
     pub region: Hash,
     pub evidence: crate::carriage::CarriedEvidence,
     pub body: Body,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origins: Option<Vec<crate::storage::CompleteOriginHistory>>,
 }
 impl WireEnvelope {
     pub fn expand(self) -> Result<Envelope> {
-        require(self.format == FORMAT, "consensus wire format mismatch")?;
+        if self.format == ORIGIN_FORMAT {
+            require(
+                serde_json::to_vec(&self).map_err(|e| e.to_string())?.len()
+                    <= crate::contact::MAX_PAYLOAD,
+                "origin wire original payload bound",
+            )?;
+        }
+        require(
+            (self.format == FORMAT && self.origins.is_none())
+                || (self.format == ORIGIN_FORMAT && self.origins.is_some()),
+            "consensus wire format/origin proof mismatch",
+        )?;
         Ok(Envelope {
             format: self.format,
             currency: self.currency,
             region: self.region,
             evidence: self.evidence.expand()?,
             body: self.body,
+            origins: self.origins,
         })
     }
 }
 impl Envelope {
     pub fn pack(&self) -> Result<WireEnvelope> {
-        require(self.format == FORMAT, "consensus wire format mismatch")?;
-        Ok(WireEnvelope {
+        require(
+            (self.format == FORMAT && self.origins.is_none())
+                || (self.format == ORIGIN_FORMAT && self.origins.is_some()),
+            "consensus wire format/origin proof mismatch",
+        )?;
+        let wire = WireEnvelope {
             format: self.format.clone(),
             currency: self.currency,
             region: self.region,
             evidence: crate::carriage::CarriedEvidence::pack(&self.evidence)?,
             body: self.body.clone(),
-        })
+            origins: self.origins.clone(),
+        };
+        if wire.format == ORIGIN_FORMAT {
+            require(
+                serde_json::to_vec(&wire).map_err(|e| e.to_string())?.len()
+                    <= crate::contact::MAX_PAYLOAD,
+                "origin wire original payload bound",
+            )?;
+        }
+        Ok(wire)
     }
     pub fn carried_epochs(&self) -> &[epoch::Transition] {
         match &self.body {
@@ -206,13 +244,46 @@ impl Envelope {
     }
     pub fn verify(&self, node: &Store) -> Result<Hash> {
         require(
-            self.format == FORMAT
+            ((self.format == FORMAT
+                && self.origins.is_none()
+                && node.trust.region(self.region)?.rules
+                    != crate::paged_bft::ORIGIN_NETWORK_RULES)
+                || (self.format == ORIGIN_FORMAT
+                    && self.origins.is_some()
+                    && node.trust.region(self.region)?.rules
+                        == crate::paged_bft::ORIGIN_NETWORK_RULES))
                 && self.currency == node.trust.currency()?
                 && self.region == node.chain.region
                 && bft::is_profile(&node.trust.region(self.region)?.rules),
             "consensus envelope domain/profile mismatch",
         )?;
-        let mut evidence = VerifiedEvidence::verify(&self.evidence, &node.trust)?;
+        let mut evidence = if let Some(origins) = &self.origins {
+            require(
+                self.evidence.snapshots.len() <= MAX_SNAPSHOTS
+                    && self
+                        .evidence
+                        .snapshots
+                        .iter()
+                        .all(|s| s.statement.region == self.region),
+                "origin envelope local evidence scope/count",
+            )?;
+            encode("origin-network-envelope-v3", self)?;
+            node.safety.check_region(self.region)?;
+            for origin in origins {
+                node.safety.check_region(origin.source)?;
+            }
+            let mut verified = crate::storage::CompleteOriginHistory::verify_network_set(
+                origins,
+                self.region,
+                &node.trust,
+            )?;
+            for snapshot in &self.evidence.snapshots {
+                verified.add(snapshot.clone(), &node.trust)?;
+            }
+            verified
+        } else {
+            VerifiedEvidence::verify(&self.evidence, &node.trust)?
+        };
         if matches!(
             self.body,
             Body::EpochSigned { .. } | Body::EpochSubmission { .. }
@@ -331,7 +402,14 @@ impl Envelope {
                 )?;
             }
         }
-        id("bft-network-envelope-v2", self)
+        id(
+            if self.format == ORIGIN_FORMAT {
+                "bft-origin-network-envelope-v3"
+            } else {
+                "bft-network-envelope-v2"
+            },
+            self,
+        )
     }
 }
 
@@ -458,4 +536,34 @@ pub fn activate_observed(
         "activation observation bytes bound",
     )?;
     Ok(observation)
+}
+
+/// Re-authenticate the complete wire at an independently pinned native head.
+/// Evidence events can commit before a later refusal; value credits only through
+/// separately authenticated sequential finality. Never seed from Python checks.
+pub fn sync_origin_envelope(node: &mut Store, wire: WireEnvelope) -> Result<()> {
+    require(
+        serde_json::to_vec(&wire).map_err(|e| e.to_string())?.len() <= crate::contact::MAX_PAYLOAD,
+        "origin sync original envelope payload bound",
+    )?;
+    let envelope = wire.expand()?;
+    require(
+        envelope.format == ORIGIN_FORMAT,
+        "origin sync explicit network format required",
+    )?;
+    node.observe_origin_network_conflicts(&envelope)?;
+    envelope.verify(node)?;
+    for proof in envelope.origins.ok_or("origin sync proofs absent")? {
+        node.accept_complete_origin_history(proof)?;
+    }
+    let mut local = envelope.evidence.snapshots;
+    if let Body::Finalized(snapshot) = envelope.body {
+        local.push(*snapshot);
+    }
+    local.sort_by_key(|s| s.statement.height);
+    for snapshot in local {
+        // Historical variants still authenticate and scan retained conflicts.
+        node.finalize_origin_network_certificate(snapshot)?;
+    }
+    Ok(())
 }

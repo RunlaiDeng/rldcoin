@@ -19,8 +19,12 @@ def pack(runtime, body):
         and result['verified'] is True and result['ledger_changed'] is False
         and result['signing_authority'] is False,'local Native response binding differs')
     envelope=result['envelope'];checked=result['checked']
-    mesh.require(type(envelope) is dict and set(envelope)=={'format','currency','region','evidence','body'}
-        and envelope['format']=='RLD-REGIONAL-BFT-NETWORK-V2'
+    fields={'format','currency','region','evidence','body'}
+    origin=type(envelope) is dict and envelope.get('format')=='RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
+    if origin:fields.add('origins')
+    mesh.require(type(envelope) is dict and set(envelope)==fields
+        and (envelope['format']=='RLD-REGIONAL-BFT-NETWORK-V2' or origin)
+        and (not origin or type(envelope['origins']) is list and len(envelope['origins'])<=4)
         and envelope['currency']==runtime.native.currency and envelope['region']==runtime.region
         and wire.canonical(envelope['body'])==raw and len(wire.canonical(envelope))<=wire.MAX_PAYLOAD,
         'local complete Native envelope differs')

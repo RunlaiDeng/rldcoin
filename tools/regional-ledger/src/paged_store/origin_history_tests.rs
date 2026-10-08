@@ -117,6 +117,55 @@ fn complete_origin416_public_input_for_bounded_ordinary_carriage() {
 }
 
 #[test]
+fn complete_origin80_local_import_candidate_cannot_emit_standalone_network_proof() {
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_HISTORY_RULES);
+    let destination_id = source.trust.named("proxima").unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination: destination_id,
+        export,
+        snapshots: records
+            .into_iter()
+            .map(|record| {
+                let Record::Certified(snapshot) = record else {
+                    panic!("complete certified source")
+                };
+                *snapshot
+            })
+            .collect(),
+    };
+    let mut destination = Store::create(
+        &root.join("network-destination"),
+        h.bootstrap.clone(),
+        destination_id,
+        &public(1),
+        source.trust.currency().unwrap(),
+    )
+    .unwrap();
+    destination.accept_complete_origin_history(proof).unwrap();
+    let commands = destination.complete_origin_pending_imports().unwrap();
+    assert_eq!(commands.len(), 1);
+    let before = inventory(&root);
+    let head = destination.storage_head().unwrap();
+    let state = destination.chain.ledger.root().unwrap();
+    destination
+        .bft_candidate(commands.clone(), public(10))
+        .unwrap();
+    let error = crate::bft_network::local_envelope(
+        crate::bft_network::Body::Submission(commands),
+        &destination,
+    )
+    .unwrap_err();
+    assert_eq!(error, "contact causal dependency absent");
+    assert_eq!(destination.storage_head().unwrap(), head);
+    assert_eq!(destination.chain.ledger.root().unwrap(), state);
+    assert_eq!(inventory(&root), before);
+    assert_eq!(destination.chain.height(), 0);
+    assert!(destination.chain.ledger.imports.is_empty());
+}
+
+#[test]
 fn complete_origin80_export66_local_import_maturity_owner_spend_cold_and_conflict_guards() {
     let (h, source, root, _scope, records, export) =
         source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_HISTORY_RULES);
@@ -402,4 +451,276 @@ fn complete_origin80_export66_local_import_maturity_owner_spend_cold_and_conflic
             public(10)
         )
         .is_err());
+}
+
+#[test]
+fn origin_network80_self_contained_submission_and_sequential_finality() {
+    use crate::bft_network::{self, Body};
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let destination_id = source.trust.named("proxima").unwrap();
+    let currency = source.trust.currency().unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination: destination_id,
+        export,
+        snapshots: records
+            .into_iter()
+            .map(|r| {
+                let Record::Certified(s) = r else {
+                    panic!("source certificate")
+                };
+                *s
+            })
+            .collect(),
+    };
+    let mut sender = Store::create(
+        &root.join("sender"),
+        h.bootstrap.clone(),
+        destination_id,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let mut receiver = Store::create(
+        &root.join("receiver"),
+        h.bootstrap.clone(),
+        destination_id,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    sender
+        .accept_complete_origin_history(proof.clone())
+        .unwrap();
+    let commands = sender.complete_origin_pending_imports().unwrap();
+    let before = inventory(&root);
+    let wire = bft_network::local_envelope(Body::Submission(commands.clone()), &sender)
+        .unwrap()
+        .envelope;
+    assert_eq!(wire.format, bft_network::ORIGIN_FORMAT);
+    assert_eq!(wire.origins.as_ref().unwrap(), &vec![proof.clone()]);
+    assert!(wire.evidence.snapshots.is_empty());
+    let envelope = wire.clone().expand().unwrap();
+    envelope.verify(&receiver).unwrap();
+    assert_eq!(inventory(&root), before);
+    for case in 0..5 {
+        let mut bad = wire.clone();
+        match case {
+            0 => bad.origins = None,
+            1 => {
+                bad.origins.as_mut().unwrap()[0].snapshots.remove(0);
+            }
+            2 => {
+                bad.origins.as_mut().unwrap()[0].snapshots[79]
+                    .bft
+                    .as_mut()
+                    .unwrap()
+                    .committed
+                    .votes[0]
+                    .approval
+                    .signature = "00".repeat(64)
+            }
+            3 => bad.format = bft_network::FORMAT.into(),
+            _ => bad.origins.as_mut().unwrap()[0].destination = h.region,
+        }
+        assert!(bft_network::sync_origin_envelope(&mut receiver, bad).is_err());
+        assert_eq!(inventory(&root), before);
+    }
+    bft_network::sync_origin_envelope(&mut receiver, wire).unwrap();
+    assert_eq!(receiver.chain.height(), 0);
+    assert!(receiver.chain.ledger.imports.is_empty());
+    assert_eq!(
+        receiver.complete_origin_pending_imports().unwrap(),
+        commands
+    );
+    let import = certified_with_commands(&sender.paged_replay.as_ref().unwrap().replay, commands);
+    let finalized = bft_network::local_envelope(Body::Finalized(Box::new(import.clone())), &sender)
+        .unwrap()
+        .envelope;
+    bft_network::sync_origin_envelope(&mut receiver, finalized).unwrap();
+    assert_eq!(receiver.chain.height(), 1);
+    assert_eq!(receiver.chain.ledger.imports.len(), 1);
+    let recipient = id("output", &(export, 0u32)).unwrap();
+    assert_eq!(
+        receiver.chain.ledger.coins[&recipient].payment.amount,
+        Amount(99)
+    );
+    assert_eq!(receiver.chain.ledger.coins[&recipient].mature, 3);
+    receiver.chain.ledger.audit().unwrap();
+    sender.finalize(import).unwrap();
+    let mature2 = certified(&sender.paged_replay.as_ref().unwrap().replay);
+    sender.finalize(mature2).unwrap();
+    let mature3 = certified(&sender.paged_replay.as_ref().unwrap().replay);
+    sender.finalize(mature3).unwrap();
+    let intent = Intent {
+        currency,
+        region: destination_id,
+        inputs: vec![recipient],
+        outputs: vec![Payment {
+            owner: public(12),
+            amount: Amount(98),
+        }],
+        fee: Amount(1),
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through: 24,
+    };
+    let spend = SignedIntent {
+        approvals: vec![Approval {
+            key: public(11),
+            signature: signature(11, &intent.bytes().unwrap()),
+        }],
+        intent,
+    };
+    let mut forged = spend.clone();
+    forged.approvals[0].signature = "00".repeat(64);
+    let before = inventory(&root);
+    assert!(bft_network::local_envelope(
+        Body::Submission(vec![Command::Spend(Box::new(forged))]),
+        &sender
+    )
+    .is_err());
+    assert_eq!(inventory(&root), before);
+    let spend = certified_with_commands(
+        &sender.paged_replay.as_ref().unwrap().replay,
+        vec![Command::Spend(Box::new(spend))],
+    );
+    let catchup = bft_network::local_envelope(Body::Finalized(Box::new(spend)), &sender)
+        .unwrap()
+        .envelope;
+    bft_network::sync_origin_envelope(&mut receiver, catchup.clone()).unwrap();
+    crate::keystore::private_create(
+        &root.join("origin-network-final4-wire.json"),
+        &serde_json::to_vec(&catchup).unwrap(),
+    )
+    .unwrap();
+    crate::keystore::private_create(
+        &root.join("origin-network-bootstrap.json"),
+        &serde_json::to_vec(&h.bootstrap).unwrap(),
+    )
+    .unwrap();
+    crate::keystore::private_create(&root.join("origin-network-query.json"),&serde_json::to_vec(&serde_json::json!({"currency":currency,"region":destination_id,"export":export,"authority":public(1)})).unwrap()).unwrap();
+    let retry_before = inventory(&root);
+    bft_network::sync_origin_envelope(&mut receiver, catchup).unwrap();
+    assert_eq!(inventory(&root), retry_before);
+    assert_eq!(receiver.chain.height(), 4);
+    assert!(!receiver.chain.ledger.coins.contains_key(&recipient));
+    assert_eq!(
+        conservation(&[source.chain.clone(), receiver.chain.clone()])
+            .unwrap()
+            .2,
+        Amount::ZERO
+    );
+    let cold_head = receiver.storage_head().unwrap();
+    let cold_root = receiver.chain.ledger.root().unwrap();
+    drop(receiver);
+    let cold = Store::open_pinned(&root.join("receiver"), &public(1), currency, cold_head).unwrap();
+    assert_eq!(cold.chain.ledger.root().unwrap(), cold_root);
+    assert_eq!(cold.chain.height(), 4);
+    cold.chain.ledger.audit().unwrap();
+}
+
+#[test]
+fn origin_network_two_valid_conflicting_histories_retain_incident_without_credit() {
+    use crate::bft_network::{self, Body, WireEnvelope};
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let destination = source.trust.named("proxima").unwrap();
+    let currency = source.trust.currency().unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination,
+        export,
+        snapshots: records
+            .iter()
+            .map(|r| {
+                let Record::Certified(s) = r else {
+                    panic!("source certificate")
+                };
+                *s.clone()
+            })
+            .collect(),
+    };
+    let mut fork = replay(&h);
+    let history = super::origin_history::test_history(&h, &fork, &records);
+    for record in &records[..79] {
+        fork.apply_retained(record, &history).unwrap();
+    }
+    let (input, coin) = fork
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, c)| c.created == 2)
+        .unwrap();
+    let intent = Intent {
+        currency,
+        region: h.region,
+        inputs: vec![*input],
+        outputs: vec![Payment {
+            owner: public(12),
+            amount: Amount(coin.payment.amount.0 - 1),
+        }],
+        fee: Amount(1),
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through: 90,
+    };
+    let spend = SignedIntent {
+        approvals: vec![Approval {
+            key: public(10),
+            signature: signature(10, &intent.bytes().unwrap()),
+        }],
+        intent,
+    };
+    let mut incompatible = proof.clone();
+    incompatible.snapshots[79] =
+        certified_with_commands(&fork, vec![Command::Spend(Box::new(spend))]);
+    let wire = WireEnvelope {
+        format: bft_network::ORIGIN_FORMAT.into(),
+        currency,
+        region: destination,
+        evidence: crate::carriage::CarriedEvidence { snapshots: vec![] },
+        body: Body::Submission(vec![Command::Import {
+            snapshot: proof.snapshots[79].statement.id().unwrap(),
+            export,
+        }]),
+        origins: Some(vec![proof, incompatible]),
+    };
+    let mut receiver = Store::create(
+        &root.join("incident-receiver"),
+        h.bootstrap.clone(),
+        destination,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    assert!(wire.clone().expand().unwrap().verify(&receiver).is_err());
+    assert!(bft_network::sync_origin_envelope(&mut receiver, wire.clone()).is_err());
+    assert_eq!(receiver.journal.incident_ids.len(), 1);
+    assert!(receiver.safety.check_region(h.region).is_err());
+    assert_eq!(receiver.chain.height(), 0);
+    assert!(receiver.chain.ledger.coins.is_empty());
+    assert!(receiver.chain.ledger.imports.is_empty());
+    crate::keystore::private_create(
+        &root.join("origin-network-conflicting-wire.json"),
+        &serde_json::to_vec(&wire).unwrap(),
+    )
+    .unwrap();
+    crate::keystore::private_create(
+        &root.join("origin-network-conflict-bootstrap.json"),
+        &serde_json::to_vec(&h.bootstrap).unwrap(),
+    )
+    .unwrap();
+    crate::keystore::private_create(
+        &root.join("origin-network-conflict-query.json"),
+        &serde_json::to_vec(
+            &serde_json::json!({"currency":currency,"region":destination,"authority":public(1)}),
+        )
+        .unwrap(),
+    )
+    .unwrap();
 }

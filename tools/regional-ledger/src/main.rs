@@ -40,6 +40,15 @@ struct Args {
 #[derive(Subcommand)]
 enum Action {
     BftPendingImports,
+    /// Native local certificate observation for explicit origin-network startup.
+    BftOriginCurrentFinality,
+    /// Preserve authenticated incidents; no history installation or value credit.
+    BftOriginNetworkObserveConflicts {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     BftRetainedMessages {
         #[arg(long)]
         signer_dir: PathBuf,
@@ -84,6 +93,13 @@ enum Action {
     BftNetworkLocalEnvelope {
         #[arg(long)]
         file: PathBuf,
+    },
+    /// Whole self-contained origin envelope sync under an exact current head.
+    BftOriginNetworkSync {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
     },
     BftSync {
         #[arg(long)]
@@ -988,9 +1004,14 @@ fn run() -> Result<()> {
         | Action::ContactObservation
         | Action::BftNetworkInspectBatch { .. }
         | Action::BftNetworkLocalEnvelope { .. }
-        | Action::BftLoopStatus { .. } => Store::open_inspection(&args.dir, &args.authority, pin)?,
+        | Action::BftLoopStatus { .. }
+        | Action::BftOriginCurrentFinality => {
+            Store::open_inspection(&args.dir, &args.authority, pin)?
+        }
         Action::HistoryCheck { expected_head }
         | Action::CompleteOriginHistoryAccept { expected_head, .. }
+        | Action::BftOriginNetworkSync { expected_head, .. }
+        | Action::BftOriginNetworkObserveConflicts { expected_head, .. }
         | Action::ChannelReceiptAccept { expected_head, .. }
         | Action::ChannelWatch { expected_head, .. }
         | Action::ChannelWitnessSeal { expected_head, .. }
@@ -1167,6 +1188,44 @@ fn run() -> Result<()> {
             println!(
                 "{}",
                 serde_json::to_string(&envelope.pack()?).map_err(|e| e.to_string())?
+            );
+        }
+        Action::BftOriginCurrentFinality => {
+            if store.trust.region(store.chain.region)?.rules != paged_bft::ORIGIN_NETWORK_RULES {
+                return Err("origin current finality requires explicit V2 signed profile".into());
+            }
+            let local = store
+                .chain
+                .finalized
+                .map(|sid| store.evidence.snapshot(sid).cloned())
+                .transpose()?;
+            println!(
+                "{}",
+                serde_json::json!({"format":"RLD-ORIGIN-CURRENT-FINALITY-V2",
+                "currency":pin,"region":store.chain.region,"height":store.chain.height(),
+                "rules":paged_bft::ORIGIN_NETWORK_RULES,"snapshot":local,"ledger_changed":false,
+                "signing_authority":false})
+            );
+        }
+        Action::BftOriginNetworkObserveConflicts { file, .. } => {
+            let wire: bft_network::WireEnvelope = read_json(&file)?;
+            let envelope = wire.expand()?;
+            store.observe_origin_network_conflicts(&envelope)?;
+            println!(
+                "{}",
+                serde_json::json!({"format":"RLD-ORIGIN-CONFLICT-OBSERVATION-V2",
+                "currency":pin,"region":store.chain.region,"history_head":store.storage_head()?,
+                "ledger_changed":false,"signing_authority":false})
+            );
+        }
+        Action::BftOriginNetworkSync { file, .. } => {
+            bft_network::sync_origin_envelope(&mut store, read_json(&file)?)?;
+            println!(
+                "{}",
+                serde_json::json!({"currency":pin,"region":store.chain.region,
+                "history_head":store.storage_head()?,"height":store.chain.height(),
+                "state":store.chain.ledger.root()?,"finality":store.chain.finalized,
+                "fixture_only":true,"signing_authority":false})
             );
         }
         Action::BftSync { file } => {
