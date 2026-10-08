@@ -27,6 +27,7 @@ from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat
 import interstellar_transfer as evidence
 import interstellar_active_state as active_state
 import interstellar_frame_digest as frame_digest
+import interstellar_spool_codec as spool_codec
 
 VERSION = 'RLD-CONTACT-MESH-V3'
 SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
@@ -157,12 +158,19 @@ def load_state_storage(path, network, node):
                                max_messages=MAX_MESSAGES, max_transit=MAX_BATCH)
 
 
-def spool_files(root):
+def spool_files(root, adapter=None):
     files, total = [], 0
     for path in root.iterdir():
         require(len(files) < MAX_SPOOL_FILES, 'contact file capacity reached; preserve spool')
         require(re.fullmatch(r'[0-9a-f]{64}\.json', path.name) and path.is_file() and not path.is_symlink(), 'unsafe contact spool file')
-        total += path.stat().st_size
+        size = path.stat().st_size
+        if adapter == spool_codec.FORMAT:
+            # Header length grants no authentication. Invalid or understated
+            # streams refuse on complete decode; retain them without receipt.
+            with path.open('rb') as handle:
+                header = handle.read(spool_codec.HEADER_SIZE)
+            size = max(size, spool_codec.expanded_size(header, encoded_size=size, limit=MAX_BATCH))
+        total += size
         require(total <= MAX_SPOOL_BYTES, 'contact byte capacity reached; preserve spool')
         files.append(path)
     return sorted(files), total
@@ -443,10 +451,14 @@ def contact_schema(contact):
     require(isinstance(contact,dict) and set(contact) in
             ({'peer','inbox','outbox'},{'peer','host','port'},
              {'peer','host','port','tls_cert_sha256'},
-             {'peer','adapter','inbox'},{'peer','adapter','outbox'}),
+             {'peer','adapter','inbox'},{'peer','adapter','outbox'},
+             {'peer','adapter','inbox','outbox'}),
             'invalid contact')
     if 'adapter' in contact:
-        require(contact['adapter']==SPOOL_ONEWAY,'unsupported one-way spool adapter')
+        require(contact['adapter'] == spool_codec.FORMAT or
+                (contact['adapter'] == SPOOL_ONEWAY and
+                 set(contact) in ({'peer','adapter','inbox'}, {'peer','adapter','outbox'})),
+                'unsupported spool adapter')
     return contact
 
 
@@ -499,6 +511,8 @@ class Node:
                         self.contacts[peer]['tls_cert_sha256'] = hex32(contact['tls_cert_sha256'])
                 else:
                     self.contacts[peer] = {k: safe_dir(contact[k]) for k in ('inbox', 'outbox') if k in contact}
+                    if contact.get('adapter') == spool_codec.FORMAT:
+                        self.contacts[peer]['adapter'] = spool_codec.FORMAT
                     if 'inbox' in contact and 'outbox' in contact:
                         require(self.contacts[peer]['inbox'] != self.contacts[peer]['outbox'], 'contact directions must differ')
             dirs = [p for contact in self.contacts.values() for name,p in contact.items() if name in ('inbox','outbox')]
@@ -1565,14 +1579,19 @@ class Node:
         bundle = self.prepare_exchange(peer)
         data = evidence.canonical(bundle)
         require(len(data) <= MAX_BATCH, 'exchange bytes exceed bound')
+        adapter = contact.get('adapter')
+        encoded = spool_codec.encode(data, limit=MAX_BATCH) if adapter == spool_codec.FORMAT else data
         target = contact['outbox'] / (digest(bundle) + '.json')
-        files, total = spool_files(contact['outbox'])
+        files, total = spool_files(contact['outbox'], adapter)
         if not target.exists():
-            require(len(files) < MAX_SPOOL_FILES and total + len(data) <= MAX_SPOOL_BYTES,
+            require(len(files) < MAX_SPOOL_FILES and total + max(len(data), len(encoded)) <= MAX_SPOOL_BYTES,
                     'contact capacity reached; retain queued evidence')
-            evidence.write_new(target, data)
+            evidence.write_new(target, encoded)
         else:
-            require(evidence.read_file(target, MAX_BATCH) == data, 'exchange file collision')
+            retained = evidence.read_file(target, MAX_BATCH)
+            if adapter == spool_codec.FORMAT:
+                retained = spool_codec.decode(retained, limit=MAX_BATCH)
+            require(retained == data, 'exchange file collision')
 
     def flush_spool_outgoing(self):
         """Send the one deferred directory batch after Native release/enqueue.
@@ -1596,14 +1615,19 @@ class Node:
             if 'host' in contact:
                 continue  # Socket I/O runs outside the mesh lock via the contact service.
             try:
-                incoming, _ = spool_files(contact['inbox']) if 'inbox' in contact else ([],0)
+                incoming, _ = spool_files(contact['inbox'], contact.get('adapter')) if 'inbox' in contact else ([],0)
             except (OSError, ValueError) as error:
                 errors.append(str(error))
                 incoming = []
             for path in incoming:
                 try:
                     require(re.fullmatch(r'[0-9a-f]{64}\.json', path.name), 'unexpected inbox file')
-                    bundle = load(path, MAX_BATCH)
+                    if contact.get('adapter') == spool_codec.FORMAT:
+                        raw = spool_codec.decode(evidence.read_file(path, MAX_BATCH), limit=MAX_BATCH)
+                        bundle = evidence.decode_json(raw)
+                        require(raw == evidence.canonical(bundle), 'noncanonical JSON')
+                    else:
+                        bundle = load(path, MAX_BATCH)
                     require(path.stem == digest(bundle), 'exchange filename mismatch')
                     self.receive(bundle, peer)
                     path.unlink()

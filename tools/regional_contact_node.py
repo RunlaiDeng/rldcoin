@@ -561,6 +561,8 @@ class Service:
             observation.event('contact-tick', tick_started, selected=len(selected), received=len(received),
                               errors=len(errors), tcp_seconds=stage_seconds['tcp'],
                               mesh_seconds=stage_seconds['mesh_selection'],
+                              native_contact_seconds=stage_seconds['native_contact_observation'],
+                              spool_outgoing_seconds=stage_seconds.get('spool_outgoing'),
                               native_seconds=stage_seconds['native_receive_and_outgoing'],
                               consensus_seconds=stage_seconds['consensus'])
             report['bft_observation'] = observation.snapshot()

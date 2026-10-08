@@ -163,6 +163,8 @@ class MeshInspection:
                     result[peer]['tls_cert_sha256'] = mesh.hex32(contact['tls_cert_sha256'])
             else:
                 result[peer] = {}
+                if contact.get('adapter') == mesh.spool_codec.FORMAT:
+                    result[peer]['adapter'] = mesh.spool_codec.FORMAT
                 for name in ('inbox', 'outbox'):
                     if name not in contact:continue
                     path = Path(contact[name])
