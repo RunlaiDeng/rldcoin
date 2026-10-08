@@ -30,7 +30,7 @@ class TransportObservationTests(unittest.TestCase):
         namespace=dict(consensus_sample=consensus_sample,transport_sample=transport_sample,time=SimpleNamespace(monotonic=lambda:10))
         exec(compile(ast.Module(body=[method],type_ignores=[]),'<exact-controller-sample>','exec'),namespace)
         q=dict(consensus=dict(height=13,round=2,retained_messages=120),transport=dict(progress_observation_available=False,diagnostic='lock'),errors=['lock'])
-        audits=[];c=SimpleNamespace(processes={('earth',1):object()},observation=lambda key:q,samples=[],started=1,audit=lambda phase:audits.append(phase))
+        audits=[];c=SimpleNamespace(processes={('earth',1):object()},observation=lambda key:q,samples=[],started=1,audit=lambda phase:audits.append(phase),contact_meters={})
         namespace['sample'](c,'phase');self.assertEqual(audits,['phase'])
         row=c.samples[0]['nodes'][0];self.assertEqual(row['height'],13);self.assertIsNone(row['active_transport_packets']);self.assertFalse(row['transport_observation_complete'])
 if __name__=='__main__':unittest.main()

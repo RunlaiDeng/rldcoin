@@ -1,6 +1,7 @@
 """Exact local construction paths; synthetic responses grant no Native authority."""
 import ast
 import copy
+from collections import Counter
 from pathlib import Path
 import unittest
 import regional_bft_node as bft
@@ -22,9 +23,16 @@ class LocalRetentionTests(unittest.TestCase):
                 if not isinstance(call.func,ast.Attribute) or not isinstance(call.func.value,ast.Name) or call.func.value.id!='self' or call.func.attr not in ('retain','retain_local_body'):continue
                 literals=[n for n in ast.walk(call) if isinstance(n,ast.Dict) and any(isinstance(k,ast.Constant) and k.value in ('Signed','Finalized') for k in n.keys)]
                 if not literals:continue
-                selected.append((method.name,statement))
-        self.assertEqual(len(selected),3)
-        for method,statement in selected:
+                kinds={k.value for literal in literals for k in literal.keys
+                       if isinstance(k,ast.Constant) and k.value in ('Signed','Finalized')}
+                self.assertEqual(len(kinds),1)
+                selected.append((method.name,next(iter(kinds)),statement))
+        # Both ordinary delayed-certificate and newly completed own-Commit
+        # finalization must use the same complete Native local-envelope path.
+        self.assertEqual(Counter((method,kind) for method,kind,_ in selected),
+                         Counter({('__init__','Signed'):1,('__init__','Finalized'):1,
+                                  ('_tick','Finalized'):2}))
+        for method,kind,statement in selected:
             with self.subTest(method=method,source=ast.unparse(statement)):
                 check,runtime=self.boundary();before=copy.deepcopy(runtime.head)
                 exec(compile(ast.Module(body=[statement],type_ignores=[]),'<exact-local-retention-call>','exec'),dict(self=runtime,message={'Vote':{'synthetic':True}},local=[{'synthetic_certificate':True}],certificate={'synthetic_certificate':True}))

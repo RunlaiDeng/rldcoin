@@ -109,6 +109,7 @@ class ContactApplyDeferredTests(unittest.TestCase):
   service=Service.__new__(Service);service.region='b'*64;network='a'*64;node_id='c'*64;pid='d'*64
   raw=wire.make_frame('finalized-import','e'*64,service.region,'f'*64,b'complete-ground-proof-model')
   service.contact_trace=None;service.bft_seen={'unchanged'};service.bft_individual_retry=False;service.receive_after={'novel':None,'background':None};service.progress={'cursor':0};service.miner=None;service.carriage=None;service.root=Path('/synthetic-not-opened');service.path=service.root/'progress.json';service.bft=None
+  service.config={'contacts':[]}
   def call(action):
    if action=='contact-observation':return dict(format='RLD-NATIVE-CONTACT-OBSERVATION-V1',currency=network,region=service.region,ledger_changed=False,signing_authority=False,status=dict(currency=network,region=service.region,contacts=[],source_http_required=False),outgoing=dict(currency=network,region=service.region,offers=[],all_offers_require_native_contact_export_validation=True))
    if action=='contact-outgoing':return dict(offers=[])
