@@ -58,6 +58,32 @@ class FrameDigestTests(unittest.TestCase):
                          lambda v:v['hops'].append({'to':'c'*64})):
             changed=copy.deepcopy(value);mutation(changed);self.assertNotEqual(streamed.commitment(changed),expected);self.assert_exact(changed)
 
+    def test_signed_packet_ids_match_complete_canonical_bytes_and_reject_mutation(self):
+        for value in ({}, [], {'body': []}, {'body': {'frame': 12}},
+                      {'body': {'frame': '中文'}}, {'body': {'frame': '\\"'}},
+                      *({'body': {'frame': 'AA'+chr(code)+'BB', 'z': '\\你好',
+                                  'frame!': [1, True, None]},
+                         'public_key': 'a'*64, 'signature': 'b'*128} for code in range(128))):
+            with self.subTest(value=value):
+                raw=wire.canonical(value)
+                self.assertEqual(streamed.packet_commitment(value),
+                                 (hashlib.sha256(raw).hexdigest(),len(raw)))
+                self.assertEqual(mesh.digest(value),hashlib.sha256(raw).hexdigest())
+        packet={'body': {'frame': base64.b64encode(b'public ground frame'*60000).decode(),
+                         'nonce': 'a'*64}, 'public_key': 'b'*64, 'signature': 'c'*128}
+        raw=wire.canonical(packet);expected=hashlib.sha256(raw).hexdigest();canonical=wire.canonical
+        def metadata_only(obj):
+            if obj is packet or obj is packet['body'] or obj is packet['body']['frame']:
+                raise AssertionError('complete packet frame serialized again')
+            return canonical(obj)
+        with patch.object(wire,'canonical',side_effect=metadata_only):
+            self.assertEqual(mesh.digest(packet),expected)
+        for field in ('signature','public_key'):
+            changed=copy.deepcopy(packet);changed[field]='d'*len(packet[field])
+            self.assertNotEqual(mesh.digest(changed),expected)
+        changed=copy.deepcopy(packet);changed['body']['frame']=changed['body']['frame'][:-4]+'AAAA'
+        self.assertNotEqual(mesh.digest(changed),expected)
+
     def test_existing_storage_bytes_and_native_signature_boundary_are_preserved(self):
         with tempfile.TemporaryDirectory() as directory:
             fixture=Fixture(directory)

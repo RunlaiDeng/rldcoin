@@ -108,7 +108,7 @@ def require(ok, message):
 
 
 def digest(value):
-    return hashlib.sha256(evidence.canonical(value)).hexdigest()
+    return frame_digest.packet_commitment(value)[0]
 
 
 def hex32(value):

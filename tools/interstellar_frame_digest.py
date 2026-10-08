@@ -49,6 +49,11 @@ def commitment(transit):
     return _commitment(transit, PATH)
 
 
+def packet_commitment(packet):
+    """Exact signed packet ID and size; signatures remain independently checked."""
+    return _commitment(packet, ('body', 'frame'))
+
+
 def archive_commitment(blob):
     """Exact complete archive bytes, with no retained witness or authority.
 
