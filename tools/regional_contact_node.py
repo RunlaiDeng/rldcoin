@@ -363,7 +363,7 @@ class Service:
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
           with self.selection_node() as node:
-            transport = node.tick()
+            transport = node.tick(defer_spool_outgoing=True) if self.bft is not None else node.tick()
             errors.extend(transport['errors'])
             summaries=node.summaries();receipts=node.receipts()
             selected = self.receive_candidates(summaries, receipts, node.id)
@@ -497,6 +497,19 @@ class Service:
                 consensus={'autonomous_signing_enabled':None,'progress_observation_available':False,
                            'diagnostic':str(error)[:256],'independent_bft_qualified':False}
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
+        if self.bft is not None and any('outbox' in contact and 'host' not in contact
+                                       for contact in self.config['contacts']):
+            # Intake preceded Native verification/signing. Send exactly the
+            # deferred directory batch now, including newly durable responses.
+            # TCP already follows this order. Do not intake a second batch or
+            # advance the global cursor twice; carriage grants no ledger rights.
+            stage_started=time.monotonic()
+            try:
+                with self.tcp.ordinary_mesh_node() as node:
+                    errors.extend(node.flush_spool_outgoing())
+            except (OSError,ValueError) as error:
+                errors.append(str(error));observe_os_error(error,'mesh-outgoing')
+            stage_seconds['spool_outgoing']=round(time.monotonic()-stage_started,6)
         if socket_observation is None:
             stage_started = time.monotonic()
             socket_observation = self.tcp.tick()

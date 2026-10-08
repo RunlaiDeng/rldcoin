@@ -51,6 +51,14 @@ incoming envelope authenticates every proof it supplies, even for a control body
 attached invalid or conflicting evidence cannot be hidden by this selection.
 Current incidents continue through the ordinary contact path.
 
+Ordinary directory contacts receive their bounded spools before Native consensus,
+then defer their single outgoing exchange per configured peer until after durable
+Native response and packet enqueue. This matches the existing TCP phase order.
+The deferred flush performs no second intake or global cursor advance and uses
+the original prepared exchange, durable write and batch/capacity checks. Failed
+outgoing writes retain queued evidence; neither preparation nor carriage grants
+ledger acceptance, voting, finality or custody acknowledgment.
+
 `bft-origin-network-receive-batch` accepts one canonical ordered request of up
 to four complete origin wires under a separately retained exact Native head.
 The existing OS lock and full cold open remain mandatory. Whole input and

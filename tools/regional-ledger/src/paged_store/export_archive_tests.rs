@@ -143,12 +143,30 @@ pub(super) fn source_fixture_with_profile(
     batch: usize,
     destination_rules: &str,
 ) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
+    source_fixture_with_named_origin(height_limit, batch, destination_rules, "earth")
+}
+
+// A distinct explicitly signed public fixture identity prevents stopped failed
+// currencies from becoming input to a new live observation. No value migrates.
+pub(super) fn source_fixture_with_named_origin(
+    height_limit: u64,
+    batch: usize,
+    destination_rules: &str,
+    origin_name: &str,
+) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
     assert!((1..=crate::history::PAGE_EVENTS).contains(&batch));
     let started = std::time::Instant::now();
     let mut append_ns = 0u128;
     let mut native_ns = 0u128;
     let mut pending = Vec::new();
     let mut h = header();
+    h.bootstrap.currency.origin = origin_name.into();
+    h.bootstrap.currency.signature = signature(1, &h.bootstrap.currency.bytes().unwrap());
+    let source_admission = &mut h.bootstrap.admissions[0];
+    source_admission.currency = h.bootstrap.currency.id().unwrap();
+    source_admission.region = origin_name.into();
+    source_admission.signature = signature(1, &source_admission.bytes().unwrap());
+    h.region = source_admission.id().unwrap();
     let mut destination = h.bootstrap.admissions[0].clone();
     destination.region = "proxima".into();
     destination.rules = destination_rules.into();

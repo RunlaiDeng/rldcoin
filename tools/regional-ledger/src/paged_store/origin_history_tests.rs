@@ -744,8 +744,22 @@ fn origin_network_two_valid_conflicting_histories_retain_incident_without_credit
 
 #[test]
 fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_only() {
+    origin_contact_named_source("earth");
+}
+
+#[test]
+fn origin_contact_fresh_live_proposal_chain_fixture() {
+    origin_contact_named_source("earth-phase-1008");
+}
+
+fn origin_contact_named_source(origin_name: &str) {
     let (h, source, root, _, records, export) =
-        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+        super::export_archive_tests::source_fixture_with_named_origin(
+            80,
+            16,
+            crate::paged_bft::ORIGIN_NETWORK_RULES,
+            origin_name,
+        );
     let currency = source.trust.currency().unwrap();
     let destination = source.trust.named("proxima").unwrap();
     let mut origin = Store::create(

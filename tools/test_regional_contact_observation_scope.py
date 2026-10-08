@@ -12,6 +12,7 @@ class ObservationScopeTests(unittest.TestCase):
     def service(self, kind=None, initial_failure=False, final_failure=False,
                 mutation_failure=False, outgoing_failure=False):
         service = Service.__new__(Service)
+        service.config = dict(contacts=[])
         calls = []
         def call(command, *args):
             calls.append(command)
@@ -37,14 +38,16 @@ class ObservationScopeTests(unittest.TestCase):
             calls.append('bft-receive')
             if mutation_failure:errors.append('Native BFT sync outcome unknown')
         node = SimpleNamespace(id='node', network='currency', state={'adverts': {}},
-            tick=lambda:dict(errors=[]), summaries=lambda:{'packet':{}},
+            tick=lambda **_:dict(errors=[]), summaries=lambda:{'packet':{}},
             receipts=lambda:{'packet':{}}, transit=lambda _: {}, route=lambda _:None)
         service.native = SimpleNamespace(call=call, apply=apply, currency='currency')
         service.region, service.miner = 'region', None
         service.carriage = None
         service.bft = SimpleNamespace(tick=lambda: {}, failed=False)
-        service.tcp = SimpleNamespace(tick=lambda:dict(errors=[]))
+        service.tcp = SimpleNamespace(tick=lambda **_:dict(errors=[]))
         service.selection_node = lambda:nullcontext(node)
+        node.flush_spool_outgoing=lambda:[]
+        service.tcp.ordinary_mesh_node=lambda:nullcontext(node)
         service.receive_candidates = lambda *_:['packet'] if kind else []
         service.receive_bft_batch = receive
         service.bft_individual_retry = False

@@ -1537,7 +1537,35 @@ class Node:
                             current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
         return bundle
 
-    def tick(self):
+    def _send_spool(self, peer, contact):
+        """One existing bounded prepared exchange; durable rotation precedes I/O."""
+        bundle = self.prepare_exchange(peer)
+        data = evidence.canonical(bundle)
+        require(len(data) <= MAX_BATCH, 'exchange bytes exceed bound')
+        target = contact['outbox'] / (digest(bundle) + '.json')
+        files, total = spool_files(contact['outbox'])
+        if not target.exists():
+            require(len(files) < MAX_SPOOL_FILES and total + len(data) <= MAX_SPOOL_BYTES,
+                    'contact capacity reached; retain queued evidence')
+            evidence.write_new(target, data)
+        else:
+            require(evidence.read_file(target, MAX_BATCH) == data, 'exchange file collision')
+
+    def flush_spool_outgoing(self):
+        """Send the one deferred directory batch after Native release/enqueue.
+
+        No intake, archive, global cursor advance, receipt or ledger authority.
+        Each peer uses the original prepare/write path and unchanged limits.
+        """
+        errors = []
+        for peer, contact in sorted(self.contacts.items()):
+            if 'host' in contact or 'outbox' not in contact:continue
+            try:self._send_spool(peer, contact)
+            except (OSError, ValueError) as error:errors.append(str(error))
+        return errors[:16]
+
+    def tick(self, *, defer_spool_outgoing=False):
+        require(type(defer_spool_outgoing) is bool, 'invalid spool scheduling mode')
         errors = []
         try:self.archive_completed()
         except (OSError,ValueError) as error:errors.append(str(error))
@@ -1564,20 +1592,9 @@ class Node:
                 except (OSError, ValueError) as error:
                     errors.append(str(error))
             if 'outbox' not in contact:continue
-            try:
-                bundle = self.prepare_exchange(peer)
-                data = evidence.canonical(bundle)
-                require(len(data) <= MAX_BATCH, 'exchange bytes exceed bound')
-                target = contact['outbox'] / (digest(bundle) + '.json')
-                files, total = spool_files(contact['outbox'])
-                if not target.exists():
-                    require(len(files) < MAX_SPOOL_FILES and total + len(data) <= MAX_SPOOL_BYTES,
-                            'contact capacity reached; retain queued evidence')
-                    evidence.write_new(target, data)
-                else:
-                    require(evidence.read_file(target, MAX_BATCH) == data, 'exchange file collision')
-            except (OSError, ValueError) as error:
-                errors.append(str(error))
+            if defer_spool_outgoing:continue
+            try:self._send_spool(peer, contact)
+            except (OSError, ValueError) as error:errors.append(str(error))
         # Socket preparation owns its durable cursors outside this spool tick.
         # Archive publication above remains mandatory; an otherwise idle socket
         # observation need not repack and rewrite all pending signed frames.

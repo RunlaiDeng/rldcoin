@@ -113,8 +113,8 @@ class ContactApplyDeferredTests(unittest.TestCase):
    if action=='contact-observation':return dict(format='RLD-NATIVE-CONTACT-OBSERVATION-V1',currency=network,region=service.region,ledger_changed=False,signing_authority=False,status=dict(currency=network,region=service.region,contacts=[],source_http_required=False),outgoing=dict(currency=network,region=service.region,offers=[],all_offers_require_native_contact_export_validation=True))
    if action=='contact-outgoing':return dict(offers=[])
    raise AssertionError(action)
-  service.native=SimpleNamespace(currency=network,call=call,apply=Mock(side_effect=error));service.tcp=SimpleNamespace(tick=lambda:dict(errors=[]))
-  node=SimpleNamespace(id=node_id,network=network,state={'adverts':{}},tick=lambda:dict(errors=[]),summaries=lambda:{pid:dict(destination=node_id,kind='finalized-import',export_id='f'*64)},receipts=lambda:{pid:{'modeled':True}},transit=lambda _:dict(modeled=True))
+  service.native=SimpleNamespace(currency=network,call=call,apply=Mock(side_effect=error));service.tcp=SimpleNamespace(tick=lambda **_:dict(errors=[]))
+  node=SimpleNamespace(id=node_id,network=network,state={'adverts':{}},tick=lambda **_:dict(errors=[]),summaries=lambda:{pid:dict(destination=node_id,kind='finalized-import',export_id='f'*64)},receipts=lambda:{pid:{'modeled':True}},transit=lambda _:dict(modeled=True))
   service.selection_node=lambda:nullcontext(node)
   return service,pid,raw
  def tick(self,service,raw):

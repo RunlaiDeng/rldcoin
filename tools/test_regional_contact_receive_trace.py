@@ -20,6 +20,7 @@ from regional_contact_trace_journal import TraceJournal, verify_journal
 class ReceiveTraceTests(unittest.TestCase):
     def service(self, mode):
         service = Service.__new__(Service)
+        service.config = dict(contacts=[])
         service.region = 'b'*64
         network, node_id = 'a'*64, 'c'*64
         payload = wire.canonical(dict(format='RLD-REGIONAL-BFT-NETWORK-V2', currency=network,
@@ -52,13 +53,15 @@ class ReceiveTraceTests(unittest.TestCase):
             raise AssertionError('unexpected Native operation')
 
         service.native = SimpleNamespace(currency=network, call=native_call)
-        service.tcp = SimpleNamespace(tick=lambda: {'errors': []})
+        service.tcp = SimpleNamespace(tick=lambda **_: {'errors': []})
         node = SimpleNamespace(id=node_id, network=network, state={'adverts': {}},
-                               tick=lambda: {'errors': []},
+                               tick=lambda **_: {'errors': []},
                                summaries=lambda: {packet_id: dict(destination=node_id, kind='regional-bft',
                                                                 export_id=wire.inspect_frame(raw)[0]['export_id'])},
                                receipts=lambda: {packet_id: {'modeled': True}}, transit=lambda _: {'modeled': True})
         service.selection_node = lambda: nullcontext(node)
+        node.flush_spool_outgoing=lambda:[]
+        service.tcp.ordinary_mesh_node=lambda:nullcontext(node)
         return service, trace, receive, packet_id, raw
 
     def test_real_tick_distinguishes_selection_status_gate_and_native_refusal(self):
