@@ -127,10 +127,20 @@ fn export_archive_cold_child() {
     println!("export-archive fresh-process complete80 Native certificate replay export66 no import/maturity/freshness rights");
 }
 
-#[test]
-fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_without_authority()
-{
+fn source_fixture(height_limit: u64) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
+    source_fixture_with_batch(height_limit, 1)
+}
+// Public fixture construction only. This is not BFT voting/signing custody.
+// Native execution still verifies every certificate before retaining its bytes.
+fn source_fixture_with_batch(
+    height_limit: u64,
+    batch: usize,
+) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
+    assert!((1..=crate::history::PAGE_EVENTS).contains(&batch));
     let started = std::time::Instant::now();
+    let mut append_ns = 0u128;
+    let mut native_ns = 0u128;
+    let mut pending = Vec::new();
     let mut h = header();
     let mut destination = h.bootstrap.admissions[0].clone();
     destination.region = "proxima".into();
@@ -142,7 +152,8 @@ fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_
     let scope = h.scope(&native.trust).unwrap();
     let mut records = Vec::new();
     let mut export_id = Hash::ZERO;
-    for height in 1..=80 {
+    for height in 1..=height_limit {
+        let native_started = std::time::Instant::now();
         let commands = if height == 66 {
             let (input, coin) = native
                 .chain
@@ -182,11 +193,40 @@ fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_
         };
         let record = Record::Certified(Box::new(certified_with_commands(&native, commands)));
         native.apply(&record, &flat).unwrap();
-        flat.append(std::slice::from_ref(&record), flat.storage_head())
-            .unwrap();
+        native_ns += native_started.elapsed().as_nanos();
         assert!(native.evidence.snapshots.len() <= MAX_SNAPSHOTS);
+        pending.push(record.clone());
         records.push(record);
+        if pending.len() == batch {
+            let append_started = std::time::Instant::now();
+            flat.append(&pending, flat.storage_head()).unwrap();
+            append_ns += append_started.elapsed().as_nanos();
+            pending.clear();
+        }
     }
+    if !pending.is_empty() {
+        let append_started = std::time::Instant::now();
+        flat.append(&pending, flat.storage_head()).unwrap();
+        append_ns += append_started.elapsed().as_nanos();
+    }
+    assert_eq!(flat.record_count(), height_limit);
+    flat.visit(flat.storage_head(), |_| Ok(())).unwrap();
+    println!("source_fixture_cost={{\"height\":{height_limit},\"batch\":{batch},\"native_ns\":{native_ns},\"append_ns\":{append_ns},\"total_ns\":{}}}",started.elapsed().as_nanos());
+    (h, native, root, scope, records, export_id)
+}
+
+#[test]
+fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_without_authority()
+{
+    let started = std::time::Instant::now();
+    let (h, native, root, scope, records, export_id) = source_fixture(80);
+    let destination_id = native
+        .chain
+        .ledger
+        .exports
+        .get(&export_id)
+        .unwrap()
+        .destination;
     native.chain.ledger.audit().unwrap();
     assert_eq!(native.chain.ledger.exports.len(), 1);
     let head = seal(&root.join("proof"), scope.clone(), &records);
@@ -496,4 +536,107 @@ fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_
     };
     assert!(VerifiedEvidence::verify(&evidence, &native.trust).is_err());
     println!("export-archive complete source80/export66, full signatures/owner execution, active64, later-bad-signature/missing-prefix/wrong-route/root refusals, separate fresh-process cold, private bytes unchanged, ordinary import/maturity unqualified; actual_cli_executed={actual_cli_executed} elapsed={:.3}", started.elapsed().as_secs_f64());
+}
+
+#[test]
+fn complete_source416_original_pack_exceeds_single_payload_without_raising_native_bounds() {
+    let (h, native, root, scope, records, export_id) =
+        source_fixture_with_batch(416, crate::history::PAGE_EVENTS);
+    assert_eq!(native.chain.height(), 416);
+    assert_eq!(records.len(), 416);
+    assert!(native.evidence.snapshots.len() <= MAX_SNAPSHOTS);
+    native.chain.ledger.audit().unwrap();
+    let head = seal(&root.join("proof416"), scope, &records);
+    let manifest: serde_json::Value =
+        serde_json::from_slice(&fs::read(root.join("proof416/packed.json")).unwrap()).unwrap();
+    let refs: Vec<crate::history::Reference> =
+        serde_json::from_value(manifest["packs"].clone()).unwrap();
+    assert!(
+        refs.iter().any(|object| object.bytes > 3 * 1024 * 1024),
+        "fixture did not discriminate original payload bound"
+    );
+    assert!(refs.iter().all(|object| object.bytes <= MAX_BYTES));
+    let destination = native
+        .chain
+        .ledger
+        .exports
+        .get(&export_id)
+        .unwrap()
+        .destination;
+    let query = ExportArchiveQueryCandidate {
+        source: h.region,
+        destination,
+        export: export_id,
+    };
+    for (leaf, raw) in [
+        (
+            "trusted-bootstrap416.json",
+            serde_json::to_vec(&h.bootstrap).unwrap(),
+        ),
+        ("exact-query416.json", serde_json::to_vec(&query).unwrap()),
+        ("byte-head416.json", serde_json::to_vec(&head).unwrap()),
+    ] {
+        crate::keystore::private_create(&root.join(leaf), &raw).unwrap();
+    }
+    println!("source416 complete original certificates and export66 generated, active64/object8MiB unchanged; receiver cold verification still required");
+}
+
+#[test]
+fn public_fixture_complete16_batch_keeps_identical_native32_records_pages_and_cold_state() {
+    let (left_header, left, left_root, left_scope, left_records, _) =
+        source_fixture_with_batch(32, 1);
+    let (right_header, right, right_root, right_scope, right_records, _) =
+        source_fixture_with_batch(32, crate::history::PAGE_EVENTS);
+    assert_eq!(
+        serde_json::to_vec(&left_header.bootstrap).unwrap(),
+        serde_json::to_vec(&right_header.bootstrap).unwrap()
+    );
+    assert_eq!(left_scope, right_scope);
+    assert_eq!(
+        serde_json::to_vec(&left_records).unwrap(),
+        serde_json::to_vec(&right_records).unwrap()
+    );
+    assert_eq!(
+        left.chain.ledger.root().unwrap(),
+        right.chain.ledger.root().unwrap()
+    );
+    assert_eq!(left.chain.finalized, right.chain.finalized);
+    let left_head = seal(&left_root.join("proof"), left_scope, &left_records);
+    let right_head = seal(&right_root.join("proof"), right_scope, &right_records);
+    assert_eq!(left_head, right_head);
+    assert_eq!(
+        fs::read(left_root.join("proof/packed.json")).unwrap(),
+        fs::read(right_root.join("proof/packed.json")).unwrap()
+    );
+    let before_left = inventory(&left_root);
+    let before_right = inventory(&right_root);
+    let boundary = PackedNativeBoundaryCandidate {
+        currency: left.trust.currency().unwrap(),
+        region: left.chain.region,
+        height: 32,
+        finalized: left.chain.finalized,
+        epoch: left.chain.epoch,
+        ledger_root: left.chain.ledger.root().unwrap(),
+        record_count: 32,
+    };
+    for (root, header, head) in [
+        (&left_root, &left_header, left_head),
+        (&right_root, &right_header, right_head),
+    ] {
+        assert_eq!(
+            inspect_packed_native_candidate(
+                &root.join("proof"),
+                &header.bootstrap,
+                &public(1),
+                boundary.currency,
+                head,
+                &boundary
+            )
+            .unwrap(),
+            boundary
+        );
+    }
+    assert_eq!(inventory(&left_root), before_left);
+    assert_eq!(inventory(&right_root), before_right);
+    println!("public fixture construction comparison only: identical complete32 certificates, packed manifest and Native cold state; no original Agent signing custody or transport qualification");
 }

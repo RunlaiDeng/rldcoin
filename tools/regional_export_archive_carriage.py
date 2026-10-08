@@ -14,6 +14,7 @@ FORMAT = 'RLD-SOURCE-ARCHIVE-CARRIAGE-CANDIDATE-V1'
 ARCHIVE = 'RLD-NATIVE-IMMUTABLE-PACKED-ARCHIVE-CANDIDATE-V1'
 LOSSLESS_ARCHIVE = 'RLD-NATIVE-IMMUTABLE-LOSSLESS-PACKED-ARCHIVE-CANDIDATE-V1'
 MAX_DECODED_OBJECT = 8 * 1024 * 1024  # Existing Native object bound, never inflated here.
+RETENTION_MARKER_BYTES = b'BYTE_RETENTION_ONLY_NO_NATIVE_AUTHORITY\n'
 
 
 def require(value, reason):
@@ -107,11 +108,19 @@ def retain_candidate(payload, target):
     complete Native archive inspector with its independently supplied trust/query.
     """
     manifest, objects, head = checked(payload)  # all byte checks before any writes
+    return _retain_complete_bytes(manifest, objects, head, target)
+
+
+def _retain_complete_bytes(manifest, objects, head, target):
+    # Callers must validate the complete inventory before entering this writer.
+    require(len(objects) + 3 <= wire.MAX_QUEUE_FILES
+            and sum(map(len, objects.values())) + len(manifest) + len(RETENTION_MARKER_BYTES)
+            <= wire.MAX_QUEUE_BYTES, 'candidate complete retention peak capacity')
     target = Path(target)
     require(not os.path.lexists(target), 'candidate target must be absent; no overwrite/resume')
     target.mkdir(mode=0o700)
     marker = target / 'CANDIDATE_RETAINING'
-    wire.write_new(marker, b'BYTE_RETENTION_ONLY_NO_NATIVE_AUTHORITY\n')
+    wire.write_new(marker, RETENTION_MARKER_BYTES)
     (target / 'packs').mkdir(mode=0o700)
     wire.write_new(target / 'LOCK', b'')
     for name, raw in objects.items():

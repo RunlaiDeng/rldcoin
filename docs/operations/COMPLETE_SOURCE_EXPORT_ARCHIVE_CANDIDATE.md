@@ -85,3 +85,32 @@ ill-shaped original references and oversized decoded-object declarations reject
 before retention. The Python codec performs no inflation and cannot validate a
 compressed Native certificate; exact whole-manifest binding and all decoded
 Native semantics remain the inspector's responsibility.
+
+## Bounded complete-object parts
+
+`tools/regional_archive_parts_candidate.py` carries a complete raw or encoded
+Native object in at most eight canonical parts. Each decoded part is at most
+1MiB; each payload still respects the existing3MiB bound and each complete object
+the existing8MiB bound. Optional explicit segmentation must be nonempty and
+canonical. Every part binds the same complete object hash, length and part count.
+Missing, duplicate, mixed, out-of-range, corrupt or noncanonical parts refuse.
+The original ordered whole manifest supplies the exact object inventory; its
+hash binds bytes only, not receiver trust or latest state. Extra objects and
+path-bearing names cannot enter receiver retention.
+
+The receiver verifies every complete object before creating a fresh archive.
+Peak retained capacity includes all objects, whole manifest, lock and retention
+sentinel under the existing4096-file/256MiB limits. Partial writes retain their
+sentinel and original residue; no overwrite, resume, refund or automatic cleanup
+is provided. Complete byte assembly still requires the separately pinned full
+Native inspector. Parts may traverse ordinary authenticated ground relay in any
+order; a part receipt cannot acknowledge a complete archive or credit value.
+Memory, sustained carriage, independent custody and target-scale recovery require
+their own qualifications.
+
+Public source-certificate fixture construction may append up to the existing
+sixteen-record page bound after each record has executed fully. The fixture
+regression compares every original record, final immutable manifest and complete
+Native cold state against one-record construction. Production Store/Agent
+append, fsync, original first-sign requests and replay are unchanged; this
+fixture batching does not qualify real voting or signing custody.
