@@ -31,7 +31,7 @@ every changed later signature or body still authenticates and takes the historic
 conflict path. A refused multi-event synchronization can retain authenticated
 prefixes or incidents; it is not a single atomic monetary transaction.
 
-Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V6` and its
+Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V7` and its
 matching separately retained caller-head format. Native current-finality observation
 replaces the old bounded proof startup entry only for this explicit configuration.
 Runtime reception preserves incidents before full body admission, rechecks each
@@ -232,6 +232,16 @@ uses the existing selection. This is carriage scheduling only: complete Native
 authentication, local signing custody and receiver execution remain mandatory.
 Previous private Origin configurations and states refuse unchanged; use fresh
 signed no-value fixtures with separate custody directories.
+
+Selected current-Origin BFT envelopes attempt their own complete Native
+authentication even when the separate optional contact projection is unavailable.
+That projection supplies no BFT authority: receipt requires the independently
+observed exact Native head, full proofs and original locks through the normal
+composed receive operation. A Native refusal leaves the original bytes pending
+without seen, receipt, ledger or signing credit; a bad complete proof still
+refuses. Other contact application, outgoing export selection and legacy/joint
+profiles keep their fresh-projection prerequisite. Unknown telemetry never
+supplies a ledger or fabricates height or phase observations.
 
 After a successful local Propose, its complete envelope and separately advanced
 caller head must already be durable before requesting its own Prepare in that

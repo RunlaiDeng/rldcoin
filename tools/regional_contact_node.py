@@ -390,8 +390,14 @@ class Service:
         stage_seconds['mesh_selection'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()
         applied = []
-        if native_observation is not None:
-            accepted = {c['message_id'] for c in native_observation['contacts']
+        # Current Origin BFT checks its own complete inputs and exact Native
+        # head independently. An unavailable optional contact projection must
+        # not discard its already selected inputs without even that attempt.
+        from regional_bft_node import ORIGIN_RUNTIME_FORMAT
+        independent_bft=(self.bft is not None and getattr(self.bft,'format',None)==ORIGIN_RUNTIME_FORMAT
+                         and getattr(self.bft,'joint',None) is None)
+        if native_observation is not None or independent_bft:
+            accepted = {c['message_id'] for c in (native_observation['contacts'] if native_observation is not None else [])
                 if c['import_accepted'] or (self.miner is None and c['evidence_verified'])}
             individual_retry=self.bft_individual_retry
             self.bft_individual_retry=False
@@ -414,6 +420,9 @@ class Service:
                             if individual_retry or len(pending_bft)==4:flush_bft()
                         continue
                     flush_bft()
+                    # Other contact application and outgoing selection keep
+                    # their original fresh-projection prerequisite unchanged.
+                    if native_observation is None:continue
                     if frame['message_id'] not in accepted:
                         native_write_attempted=True
                         result = self.native.apply(raw, self.miner)
