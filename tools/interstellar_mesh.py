@@ -1062,7 +1062,7 @@ class Node:
         value=self.state['first_carriage'][peer];active=self.state['messages'];receipted=self.state['receipts'];prepared=[i for i in value['prepared'] if i in active]
         def eligible(ident):
             if ident not in active or ident in receipted:return False
-            transit=active[ident];packet,_,visited=transit_check(transit,self.network);route=self.route(packet['destination'],visited[:-1],first_hop=peer)
+            transit=active[ident];packet,_,visited=transit_check(transit,self.network,include_frame=False);route=self.route(packet['destination'],visited[:-1],first_hop=peer)
             return bool(route and len(route)>=2 and route[1]==peer and len(transit['hops'])+len(route)-1<=packet['hop_limit'])
         pending=[i for i in value['pending'] if eligible(i)];known=set(prepared)|set(pending);initial=value['observed'] is None
         # At this peer's first preparation, existing recent traffic takes its
@@ -1298,7 +1298,7 @@ class Node:
                 if ident not in self.state['messages']:continue
                 if ident in self.state['receipts']:continue
                 transit=self.state['messages'][ident]
-                packet,_,visited=transit_check(transit,self.network)
+                packet,_,visited=transit_check(transit,self.network,include_frame=False)
                 route=self.route(packet['destination'],visited[:-1],first_hop=peer)
                 if not route or len(route)<2 or route[1]!=peer or len(transit['hops'])+len(route)-1>packet['hop_limit']:continue
                 hop=sign(self.key,'hop',{'format':VERSION,'network':self.network,'node_id':self.id,
