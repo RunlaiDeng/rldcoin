@@ -31,7 +31,7 @@ every changed later signature or body still authenticates and takes the historic
 conflict path. A refused multi-event synchronization can retain authenticated
 prefixes or incidents; it is not a single atomic monetary transaction.
 
-Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V4` and its
+Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V5` and its
 matching separately retained caller-head format. Native current-finality observation
 replaces the old bounded proof startup entry only for this explicit configuration.
 Runtime reception preserves incidents before full body admission, rechecks each
@@ -198,7 +198,7 @@ export. Previous private companion progress formats refuse unchanged; fresh
 ground directories are required. Neither fanout nor durable carriage proves
 Import, maturity, spendability, independent operations or physical connectivity.
 
-Origin companion V4 may continue a newly completed local voting phase in the
+Origin companion V5 may continue a newly completed local voting phase in the
 same ordinary unit. After independently retaining its own exact Prepare, it
 reaggregates a previously incomplete Prepare quorum through Native. Commit
 still requires the fresh signer/caller phase to match that exact context, round
@@ -219,3 +219,18 @@ history positions, total four-item budget and subsequent Mesh FIFO remain exact.
 Once the Prepare is queued it leaves pending and cannot suppress that Commit
 again. Already queued or unmatched dependencies retain original selection.
 Complete transport and receiver Native authentication remain mandatory.
+
+After a successful local Propose, its complete envelope and separately advanced
+caller head must already be durable before requesting its own Prepare in that
+same unit. Fresh operation-scoped Native signer status must match the original
+context, selected round and proposed phase, with no prepared or committed value.
+Only the retained proposal with the exact configured leader, complete candidate
+and timeout certificate may supply that Prepare request. Native then performs
+the original full replay, head checks, leadership/timeout and lock validation;
+no observation, count or candidate digest authorizes a signature. Propose or
+retention failure prevents continuation. Prepare failure preserves the original
+signed response and caller state, without retry or another broadcast. Existing
+proposals keep their ordinary path. This adds no exchange, production slots,
+queue quota or timer reset beyond the original successfully signed phases.
+Legacy/joint profiles and previous Origin companion formats do not adopt this
+continuation; fresh no-value configuration and custody directories are required.

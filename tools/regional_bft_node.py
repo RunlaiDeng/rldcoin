@@ -29,7 +29,7 @@ from regional_native_startup import Inspection
 from regional_bft_timeout_hint import ordered_timeout, ordered_timeout_vote
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
-ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V4'
+ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V5'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
 ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 MAX_MESSAGES = 512
@@ -1217,8 +1217,25 @@ class Runtime:
                         and time.monotonic()-self.entered_at>=self.block_interval):
                     highs=[v['high'] for v in tc['votes'] if v['high'] is not None] if tc else []
                     high=max(highs,key=lambda q:q['round'])['value'] if highs else None
-                    self.sign({'Propose':{'round':proposed_round,'snapshot':self.candidate(context,high),'timeout':tc}})
+                    proposed={'round':proposed_round,'snapshot':self.candidate(context,high),'timeout':tc}
+                    self.sign({'Propose':proposed})
                     phase_advanced = True
+                    if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None:
+                        # Propose already retained its independent caller head
+                        # and complete Native-checked envelope. Do not wait a
+                        # whole contact unit merely to request our own Prepare.
+                        # This observation schedules only: Prepare still fully
+                        # replays and checks both current heads under Native locks.
+                        fresh=Runtime.phase_status(self)['state']
+                        if (fresh is not None and fresh['context']==context
+                                and fresh['round']==proposed_round and fresh['proposed']
+                                and fresh['prepared'] is None and fresh['committed'] is None):
+                            for proposal,_ in self.signed(context,proposed_round,'Proposal'):
+                                if (proposal['leader']['key']==self.key
+                                        and wire.canonical(proposal['snapshot'])==wire.canonical(proposed['snapshot'])
+                                        and wire.canonical(proposal['timeout'])==wire.canonical(proposed['timeout'])):
+                                    self._try_prepare(proposal)
+                                    break
             # Release the current round phase before advancing to a future round.
             if not phase_advanced:
                 # Learn certified future rounds rather than timing out forever one
