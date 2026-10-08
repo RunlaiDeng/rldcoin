@@ -14,16 +14,18 @@ import interstellar_mesh as mesh
 import interstellar_transfer as wire
 from regional_contact_node import Service
 from regional_contact_campaign import public
-from test_regional_bft_joint_roles_lifecycle import RoleLifecycleTests, BINARY
+import test_regional_bft_joint_roles_lifecycle as lifecycle
+
+BINARY=lifecycle.BINARY
 
 
 class SecondRoleReceiveTests(unittest.TestCase):
-    setUp = RoleLifecycleTests.setUp
-    tearDown = RoleLifecycleTests.tearDown
-    open = RoleLifecycleTests.open
-    close = RoleLifecycleTests.close
-    slot = RoleLifecycleTests.slot
-    activation = RoleLifecycleTests.activation
+    setUp = lifecycle.RoleLifecycleTests.setUp
+    tearDown = lifecycle.RoleLifecycleTests.tearDown
+    open = lifecycle.RoleLifecycleTests.open
+    close = lifecycle.RoleLifecycleTests.close
+    slot = lifecycle.RoleLifecycleTests.slot
+    activation = lifecycle.RoleLifecycleTests.activation
     def checkpoint_current(self, commands=()):
         runtime = self.runtimes[2]
         context = runtime.native.call('bft-context')['context']

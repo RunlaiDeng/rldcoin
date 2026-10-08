@@ -4,18 +4,18 @@ import time
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-from test_regional_bft_second_role_receive import SecondRoleReceiveTests
+import test_regional_bft_second_role_receive as second_role
 
 class CertifiedNativeLeaderTests(unittest.TestCase):
-    setUp=SecondRoleReceiveTests.setUp
-    tearDown=SecondRoleReceiveTests.tearDown
-    open=SecondRoleReceiveTests.open
-    close=SecondRoleReceiveTests.close
-    slot=SecondRoleReceiveTests.slot
-    activation=SecondRoleReceiveTests.activation
-    checkpoint_current=SecondRoleReceiveTests.checkpoint_current
-    second_activation=SecondRoleReceiveTests.second_activation
-    caller_inventory=SecondRoleReceiveTests.caller_inventory
+    setUp=second_role.SecondRoleReceiveTests.setUp
+    tearDown=second_role.SecondRoleReceiveTests.tearDown
+    open=second_role.SecondRoleReceiveTests.open
+    close=second_role.SecondRoleReceiveTests.close
+    slot=second_role.SecondRoleReceiveTests.slot
+    activation=second_role.SecondRoleReceiveTests.activation
+    checkpoint_current=second_role.SecondRoleReceiveTests.checkpoint_current
+    second_activation=second_role.SecondRoleReceiveTests.second_activation
+    caller_inventory=second_role.SecondRoleReceiveTests.caller_inventory
 
     def future_certificate(self):
         self.second_activation()
