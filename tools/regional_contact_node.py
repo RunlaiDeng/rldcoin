@@ -71,6 +71,25 @@ class Native:
             handle.write(raw)
             handle.flush()
             os.fsync(handle.fileno())
+            frame,_=wire.inspect_frame(raw)
+            if frame['kind']=='source-finality':
+                mesh.require(miner is None,'origin contact requires ordinary certified BFT Import')
+                head=self.call('history-head')
+                mesh.require(type(head) is dict and head.get('currency')==self.currency
+                    and head.get('region')==frame['destination_chain_id'],
+                    'origin contact current Native head domain differs')
+                mesh.hex32(head['history_head'])
+                result=self.call('contact-origin-apply','--file',handle.name,'--expected-head',head['history_head'])
+                mesh.require(type(result) is dict and set(result)=={'format','currency','region','message_id',
+                    'source_checkpoint','history_head','verified','ledger_changed','import_accepted','signing_authority','fixture_only'}
+                    and result['format']=='RLD-NATIVE-ORIGIN-CONTACT-ACCEPT-V2'
+                    and result['currency']==self.currency and result['region']==frame['destination_chain_id']
+                    and result['message_id']==frame['message_id'] and result['verified'] is True
+                    and result['ledger_changed'] is False and result['import_accepted'] is False
+                    and result['signing_authority'] is False and result['fixture_only'] is True,
+                    'origin contact Native acceptance binding differs')
+                mesh.hex32(result['source_checkpoint']);mesh.hex32(result['history_head'])
+                return result
             args = ['contact-apply', '--file', handle.name]
             if miner is not None:
                 args.extend(['--miner', miner])
@@ -207,7 +226,8 @@ class Service:
             # or negative proof decision may be released from this refusal.
             if (isinstance(error, NativeRefusal)
                     and error.command in ('bft-network-inspect-batch',
-                                          'bft-network-check', 'bft-sync', 'bft-context')
+                                          'bft-network-check', 'bft-sync', 'bft-context','bft-origin-network-sync',
+                                          'bft-origin-network-observe-conflicts','history-head')
                     and type(error.exit_code) is int and error.exit_code == 1
                     and error.diagnostic.strip() in (
                         'regional candidate rejected: lock acquisition failed because the operation would block',
@@ -390,7 +410,7 @@ class Service:
                     # for full verification on a later tick; no import/seen or
                     # signing credit is released by this local refusal.
                     if (isinstance(error, NativeRefusal)
-                            and error.command == 'contact-apply'
+                            and error.command in ('contact-apply','contact-origin-apply','history-head')
                             and type(error.exit_code) is int and error.exit_code == 1
                             and error.diagnostic.strip() in (
                                 'regional candidate rejected: lock acquisition failed because the operation would block',

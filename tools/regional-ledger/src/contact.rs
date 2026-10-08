@@ -275,6 +275,16 @@ impl Store {
         Ok(evidence)
     }
     pub fn contact_export(&self, eid: Hash) -> Result<Vec<u8>> {
+        let export = self
+            .chain
+            .ledger
+            .exports
+            .get(&eid)
+            .ok_or("unknown local export")?;
+        if self.trust.region(export.destination)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
+            let proof = self.complete_origin_export(eid)?;
+            return Frame::pack_origin(&proof);
+        }
         let latest = self
             .chain
             .finalized
@@ -502,5 +512,63 @@ impl Store {
         mine(&mut block)?;
         self.accept(block)?;
         self.contact_status(ident)
+    }
+}
+
+impl Frame {
+    fn pack_origin(proof: &crate::storage::CompleteOriginHistory) -> Result<Vec<u8>> {
+        let payload = serde_json::to_vec(proof).map_err(|e| e.to_string())?;
+        require(
+            !payload.is_empty() && payload.len() <= MAX_PAYLOAD,
+            "origin contact proof exceeds original single-frame payload; retain debit",
+        )?;
+        let mut frame = Self {
+            format: FRAME_FORMAT.into(),
+            kind: "source-finality".into(),
+            source_chain_id: proof.source,
+            destination_chain_id: proof.destination,
+            export_id: proof.export,
+            payload_sha256: sha(&payload),
+            payload_b64: STANDARD.encode(&payload),
+            message_id: Hash::ZERO,
+        };
+        frame.message_id = frame.message()?;
+        let raw = canonical(&frame)?;
+        require(raw.len() <= MAX_FRAME, "origin contact frame bound")?;
+        Ok(raw)
+    }
+    pub fn unpack_origin(raw: &[u8]) -> Result<(Self, crate::storage::CompleteOriginHistory)> {
+        require(
+            !raw.is_empty() && raw.len() <= MAX_FRAME,
+            "origin contact complete frame byte bound",
+        )?;
+        let frame: Self = serde_json::from_slice(raw).map_err(|e| e.to_string())?;
+        require(
+            frame.format == FRAME_FORMAT
+                && frame.kind == "source-finality"
+                && frame.source_chain_id != frame.destination_chain_id
+                && canonical(&frame)? == raw
+                && frame.message()? == frame.message_id,
+            "origin contact canonical format/route/message differs",
+        )?;
+        let payload = STANDARD
+            .decode(&frame.payload_b64)
+            .map_err(|e| e.to_string())?;
+        require(
+            !payload.is_empty()
+                && payload.len() <= MAX_PAYLOAD
+                && STANDARD.encode(&payload) == frame.payload_b64
+                && sha(&payload) == frame.payload_sha256,
+            "origin contact payload bytes differ",
+        )?;
+        let proof: crate::storage::CompleteOriginHistory =
+            serde_json::from_slice(&payload).map_err(|e| e.to_string())?;
+        require(
+            proof.source == frame.source_chain_id
+                && proof.destination == frame.destination_chain_id
+                && proof.export == frame.export_id,
+            "origin contact proof/frame domain differs",
+        )?;
+        Ok((frame, proof))
     }
 }

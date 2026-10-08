@@ -36,6 +36,20 @@ identity behavior. Shared byte storage never authenticates a proof. Cold startup
 reconstructs the full original envelope and invokes Native verification again.
 Existing512-message,64-reference and32MiB combined-state ceilings stay unchanged.
 
+Ordinary source contact export selects the earliest complete finalized local
+certificate prefix ending at an existing debited export. Full current Native
+replay precedes selection; separately received evidence, contacts and receipts
+cannot choose branches or initialize source state. The selected proof must still
+execute completely from signed genesis and match the original debit. Missing
+foreign dependencies refuse. The existing single-frame payload limit remains3MiB;
+no history truncation or multipart substitution is permitted.
+
+`contact-origin-apply` requires the explicit signed receiver profile and an
+independently retained current Native `--expected-head`. It authenticates the
+complete original canonical frame and admits evidence only; the ordinary BFT
+queue supplies Import candidates. Relay acknowledgement is neither Import nor
+maturity. Later retries re-authenticate complete bytes without duplicate append.
+
 Import, quorum3-of4, maturity2, fees, permanent consumption, owner/caller custody,
 conflict quarantine and source liabilities remain original Native behavior. Evidence
 and relay receipts supply no monetary or voting rights. Arbitrary foreign ancestry,

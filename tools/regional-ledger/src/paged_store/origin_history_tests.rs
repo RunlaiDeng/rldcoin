@@ -724,3 +724,86 @@ fn origin_network_two_valid_conflicting_histories_retain_incident_without_credit
     )
     .unwrap();
 }
+
+#[test]
+fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_only() {
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let currency = source.trust.currency().unwrap();
+    let destination = source.trust.named("proxima").unwrap();
+    let mut origin = Store::create(
+        &root.join("ordinary-source80"),
+        h.bootstrap.clone(),
+        h.region,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    for batch in records.chunks(crate::history::PAGE_EVENTS) {
+        origin.append_paged(batch).unwrap();
+    }
+    let before = inventory(&root);
+    let raw = origin.contact_export(export).unwrap();
+    let (frame, proof) = crate::contact::Frame::unpack_origin(&raw).unwrap();
+    assert_eq!(frame.source_chain_id, h.region);
+    assert_eq!(frame.destination_chain_id, destination);
+    assert_eq!(frame.export_id, export);
+    assert_eq!(proof.snapshots.len(), 66);
+    assert!(serde_json::to_vec(&proof).unwrap().len() <= crate::contact::MAX_PAYLOAD);
+    assert_eq!(inventory(&root), before);
+    origin
+        .finalize(certified(&origin.paged_replay.as_ref().unwrap().replay))
+        .unwrap();
+    assert_eq!(origin.contact_export(export).unwrap(), raw);
+    let mut receiver = Store::create(
+        &root.join("ordinary-receiver"),
+        h.bootstrap.clone(),
+        destination,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let before = inventory(&root);
+    let mut bad = proof.clone();
+    bad.snapshots[65].bft.as_mut().unwrap().committed.votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    assert!(receiver.accept_complete_origin_history(bad).is_err());
+    assert_eq!(inventory(&root), before);
+    receiver.accept_complete_origin_history(proof).unwrap();
+    assert_eq!(receiver.chain.height(), 0);
+    assert!(receiver.chain.ledger.coins.is_empty());
+    assert_eq!(receiver.complete_origin_pending_imports().unwrap().len(), 1);
+    crate::keystore::private_create(
+        &root.join("origin-contact-bootstrap.json"),
+        &serde_json::to_vec(&h.bootstrap).unwrap(),
+    )
+    .unwrap();
+    crate::keystore::private_create(&root.join("origin-contact-frame.json"), &raw).unwrap();
+    crate::keystore::private_create(&root.join("origin-contact-query.json"),&serde_json::to_vec(&serde_json::json!({"currency":currency,"source":h.region,"destination":destination,"authority":public(1),"export":export})).unwrap()).unwrap();
+}
+
+#[test]
+fn origin_contact80_authenticated_local_evidence_does_not_replace_certified_export_prefix() {
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let mut origin = Store::create(
+        &root.join("ordinary-evidence-source80"), h.bootstrap.clone(), h.region,
+        &public(1), source.trust.currency().unwrap(),
+    ).unwrap();
+    for batch in records.chunks(crate::history::PAGE_EVENTS) {
+        origin.append_paged(batch).unwrap();
+    }
+    let raw = origin.contact_export(export).unwrap();
+    let Record::Certified(tail) = &records[79] else { panic!("source certified tail") };
+    let mut forged = *tail.clone();
+    forged.bft.as_mut().unwrap().committed.votes[0].approval.signature = "00".repeat(64);
+    let before = inventory(&root);
+    assert!(origin.add_evidence(Evidence { snapshots: vec![forged] }).is_err());
+    assert_eq!(inventory(&root), before);
+    origin.add_evidence(Evidence { snapshots: vec![*tail.clone()] }).unwrap();
+    let before = inventory(&root);
+    assert_eq!(origin.contact_export(export).unwrap(), raw);
+    assert_eq!(inventory(&root), before);
+    origin.chain.ledger.audit().unwrap();
+}

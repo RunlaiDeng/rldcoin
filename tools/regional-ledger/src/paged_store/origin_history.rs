@@ -430,3 +430,65 @@ impl Store {
         self.check_paged_snapshot_conflicts(&snapshots)
     }
 }
+
+impl Store {
+    /// Stable earliest complete certified prefix for an already debited export.
+    /// Full current source replay precedes selection; active64 cannot supply it.
+    pub(crate) fn complete_origin_export(&self, export: Hash) -> Result<CompleteOriginHistory> {
+        require(
+            self.trust.region(self.chain.region)?.rules == crate::paged_bft::RULES
+                && self.trust.region(self.chain.region)?.region == self.trust.currency.origin,
+            "origin export requires independently admitted original paged origin",
+        )?;
+        self.current_paged_replay()?;
+        self.safety.check_region(self.chain.region)?;
+        let record = self
+            .chain
+            .ledger
+            .exports
+            .get(&export)
+            .ok_or("origin export absent from Native debit")?;
+        require(
+            self.trust.region(record.destination)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES,
+            "origin export destination requires explicit signed network V2",
+        )?;
+        self.safety.check_region(record.destination)?;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("origin export complete stream absent")?;
+        let mut snapshots = BTreeMap::new();
+        stream.visit(stream.storage_head(), |event| {
+            let Record::Certified(snapshot) = event else {
+                // Full current replay authenticated every retained event above.
+                // Only formally finalized local certificates select this proof;
+                // evidence, contacts and receipts cannot supply branch anchors.
+                // Complete execution below still refuses missing foreign inputs.
+                return Ok(());
+            };
+            require(
+                snapshot.statement.region == self.chain.region,
+                "origin export foreign certificate",
+            )?;
+            if snapshot.statement.height <= record.height {
+                snapshots
+                    .entry(snapshot.statement.height)
+                    .or_insert_with(|| *snapshot.clone());
+            }
+            Ok(())
+        })?;
+        let proof = CompleteOriginHistory {
+            source: self.chain.region,
+            destination: record.destination,
+            export,
+            snapshots: snapshots.into_values().collect(),
+        };
+        let executed = execute(&proof, record.destination, &self.trust)?;
+        require(
+            executed.snapshot.statement.height == record.height
+                && executed.ledger.exports.get(&export) == Some(record),
+            "origin export complete earliest prefix differs from actual debit",
+        )?;
+        Ok(proof)
+    }
+}

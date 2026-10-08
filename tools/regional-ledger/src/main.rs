@@ -604,6 +604,13 @@ enum Action {
         file: PathBuf,
     },
     Statement,
+    /// Complete origin source-finality frame admission; no automatic credit.
+    ContactOriginApply {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     ContactExport {
         #[arg(long)]
         export: String,
@@ -1011,6 +1018,7 @@ fn run() -> Result<()> {
         Action::HistoryCheck { expected_head }
         | Action::CompleteOriginHistoryAccept { expected_head, .. }
         | Action::BftOriginNetworkSync { expected_head, .. }
+        | Action::ContactOriginApply { expected_head, .. }
         | Action::BftOriginNetworkObserveConflicts { expected_head, .. }
         | Action::ChannelReceiptAccept { expected_head, .. }
         | Action::ChannelWatch { expected_head, .. }
@@ -2121,6 +2129,22 @@ fn run() -> Result<()> {
             serde_json::to_string(&store.proof()?).map_err(|e| e.to_string())?
         ),
         Action::ContactNode { .. } => unreachable!(),
+        Action::ContactOriginApply { file, .. } => {
+            if store.trust.region(store.chain.region)?.rules != paged_bft::ORIGIN_NETWORK_RULES {
+                return Err("automatic origin contact requires explicit signed network V2".into());
+            }
+            let raw = storage::read_bytes(&file, contact::MAX_FRAME)?;
+            let (frame, proof) = contact::Frame::unpack_origin(&raw)?;
+            let checkpoint = store.accept_complete_origin_history(proof)?;
+            println!(
+                "{}",
+                serde_json::json!({"format":"RLD-NATIVE-ORIGIN-CONTACT-ACCEPT-V2",
+                "currency":pin,"region":store.chain.region,"message_id":frame.message_id,
+                "source_checkpoint":checkpoint,"history_head":store.storage_head()?,
+                "verified":true,"ledger_changed":false,"import_accepted":false,
+                "signing_authority":false,"fixture_only":true})
+            );
+        }
         Action::ContactExport { export } => println!(
             "{}",
             String::from_utf8(
