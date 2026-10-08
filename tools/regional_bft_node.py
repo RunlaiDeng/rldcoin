@@ -29,7 +29,7 @@ from regional_native_startup import Inspection
 from regional_bft_timeout_hint import ordered_timeout, ordered_timeout_vote
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
-ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V5'
+ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V6'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
 ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 MAX_MESSAGES = 512
@@ -228,7 +228,7 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
     return tuple(sorted(set(frames)))
 
 
-def carriage_batch(messages, pending, height, cursor, *, prepare_first=False):
+def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
@@ -268,8 +268,18 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False):
         # Replace a selected Commit by its still-waiting same-peer Prepare in
         # that same slot; do not move history or consume a fifth place. Once
         # queued, the dependency leaves pending and the Commit resumes service.
-        intents={};prepares={}
-        for ident,body,_,_ in messages.bodies():
+        intents={};prepares={};proposals={};proposal_intents={}
+        context_fields={'currency','region','epoch','previous','parent_height','parent_block','parent_state'}
+        proposal_scope=(type(proposal_context) is dict and set(proposal_context)==context_fields
+                        and proposal_context['parent_height']==height)
+        for ident,body,value,local in messages.bodies():
+            proposal=signed_body(body).get('Proposal')
+            if proposal_scope and local and proposal is not None and value is not None:
+                statement=proposal['snapshot']['statement']
+                if (statement['height']==height+1 and all(statement[k]==proposal_context[k]
+                        for k in ('currency','region','epoch','previous'))):
+                    proposal_intents[ident]=wire.canonical(
+                        [proposal_context,proposal['round'],value,proposal['leader']['key']])
             vote=signed_body(body).get('Vote')
             if vote is None:continue
             intent=wire.canonical([vote['context'],vote['round'],vote['value'],vote['approval']['key']])
@@ -277,11 +287,22 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False):
         for pair in active:
             phase,intent=intents.get(pair[1],(None,None))
             if phase=='Prepare':prepares.setdefault((intent,pair[2]),pair)
+            proposal_intent=proposal_intents.get(pair[1])
+            if proposal_intent is not None:proposals.setdefault((proposal_intent,pair[2]),pair)
         for index,pair in enumerate(selected):
             if pair not in active:continue
             phase,intent=intents.get(pair[1],(None,None))
-            dependency=prepares.get((intent,pair[2])) if phase=='Commit' else None
-            if dependency is not None and dependency not in selected:selected[index]=dependency
+            # A same-peer own Proposal is the earliest still-waiting ancestor.
+            # Its value comes from complete Native authentication, never a
+            # Python candidate hash. Only the identical complete fresh context,
+            # round, value and leader/own-voter key may match this scheduling hint.
+            dependencies=[]
+            if phase in ('Prepare','Commit'):dependencies.append(proposals.get((intent,pair[2])))
+            if phase=='Commit':dependencies.append(prepares.get((intent,pair[2])))
+            for dependency in dependencies:
+                if dependency is not None and dependency not in selected:
+                    selected[index]=dependency
+                    break
     return selected
 
 
@@ -921,11 +942,13 @@ class Runtime:
         pairs=[(content,ident,peer) for content,ident in rows for peer in recipients]
         carriage_node=getattr(self,'carriage_node',None)
         with (carriage_node() if carriage_node is not None else mesh.Node(self.transport)) as node:
+            proposal_context=None
             # Only the admitted base profile and an actual Native observation
             # can install this scheduling hint. Epoch/role profiles fall back.
             if (self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and getattr(self,'_retained_native_authenticated',False)
                     and getattr(self,'_carriage_context',None) is not None):
                 context=wire.decode_json(self._carriage_context)
+                if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None:proposal_context=context
                 frames=commit_carriage_frames(self.state['messages'],context,
                                              tuple(self.peers),self.native.currency,self.region,
                                              getattr(self,'_carriage_round',None))
@@ -940,7 +963,8 @@ class Runtime:
             if pending:
                 batch_pairs=carriage_batch(self.state['messages'],pending,
                                           self.state['height'],self.state['cursor'],
-                                          prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None)
+                                          prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
+                                          proposal_context=proposal_context)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)

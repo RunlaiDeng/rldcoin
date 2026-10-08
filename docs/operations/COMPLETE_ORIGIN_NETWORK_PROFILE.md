@@ -31,7 +31,7 @@ every changed later signature or body still authenticates and takes the historic
 conflict path. A refused multi-event synchronization can retain authenticated
 prefixes or incidents; it is not a single atomic monetary transaction.
 
-Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V5` and its
+Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V6` and its
 matching separately retained caller-head format. Native current-finality observation
 replaces the old bounded proof startup entry only for this explicit configuration.
 Runtime reception preserves incidents before full body admission, rechecks each
@@ -219,6 +219,19 @@ history positions, total four-item budget and subsequent Mesh FIFO remain exact.
 Once the Prepare is queued it leaves pending and cannot suppress that Commit
 again. Already queued or unmatched dependencies retain original selection.
 Complete transport and receiver Native authentication remain mandatory.
+
+With a fresh complete Native context and authenticated retained envelopes, a
+chosen own Prepare or Commit pair first carries its still-pending own Proposal
+for that same peer. The exact context, round, Native-verified proposal value and
+leader/own-voter key must match. A Commit also retains its Prepare dependency.
+The earliest missing dependency replaces only that selected active position;
+dependencies already selected or queued leave the later phase eligible. No
+duplicate or fifth position is added, and history positions, durable rotation,
+Mesh FIFO and timers remain unchanged. An absent or unmatched Native context
+uses the existing selection. This is carriage scheduling only: complete Native
+authentication, local signing custody and receiver execution remain mandatory.
+Previous private Origin configurations and states refuse unchanged; use fresh
+signed no-value fixtures with separate custody directories.
 
 After a successful local Propose, its complete envelope and separately advanced
 caller head must already be durable before requesting its own Prepare in that

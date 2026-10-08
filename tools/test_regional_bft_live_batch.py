@@ -129,7 +129,7 @@ class OriginReceiveBoundaryTests(unittest.TestCase):
         self.assertTrue(all(x[2] is False for x in retained[1:]))
     def test_old_runtime_versions_cannot_select_current_composed_receive(self):
         for version in ('RLD-REGIONAL-BFT-ORIGIN-NODE-V2','RLD-REGIONAL-BFT-ORIGIN-NODE-V3',
-                        'RLD-REGIONAL-BFT-ORIGIN-NODE-V4',
+                        'RLD-REGIONAL-BFT-ORIGIN-NODE-V4','RLD-REGIONAL-BFT-ORIGIN-NODE-V5',
                         'RLD-REGIONAL-BFT-NODE-V1'):
             self.runtime.format=version
             self.assertFalse(batch.supported(self.runtime,self.envelopes))
