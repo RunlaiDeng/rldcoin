@@ -87,6 +87,99 @@ class MeshTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.f = Fixture(self.temporary.name)
 
+    def test_waiting_direct_copy_precedes_same_frame_detours_on_ordinary_pair(self):
+        self.f.rounds()
+        peer=self.f.identities['proxima']['node_id']
+        destination=self.f.identities['andromeda']['node_id']
+        raw=evidence.make_frame('source-finality','1'*64,'3'*64,'6'*64,
+                                b'{"same_complete_frame":"carriage_only"}')
+        with self.f.node('earth') as node:
+            older=[node.enqueue(self.f.frame(),destination) for _ in range(2)]
+            detours=[node.enqueue(raw,destination) for _ in range(2)]
+            target=node.enqueue(raw,peer)
+            # Exact live counterexample: two older offers, then two copies of
+            # the current complete frame for other recipients ahead of its
+            # directly connected recipient. The nonpriority pair keeps two
+            # ordinary streams; this fixture isolates their already chosen order.
+            order=older+detours+[target]
+            node.state['first_carriage'][peer]=node.first_carriage_plan(peer)
+            node.state['transit_class_steps'][peer]=2;node.save()
+            original=copy.deepcopy(node.state['messages']);durable=node.path.read_bytes()
+            with patch.object(node,'transit_groups',return_value=[order,[]]):
+                selected=node.prepare_exchange(peer)
+            ids=[mesh.digest(t['packet']) for t in selected['body']['transits']]
+            self.assertEqual(ids[:2],older)
+            self.assertEqual(len(ids),4)
+            self.assertIn(target,ids[2:],'detour copies filled both spare slots before direct copy')
+            self.assertEqual(node.state['messages'],original)
+            self.assertFalse(node.receipts())
+            self.assertLessEqual(len(evidence.canonical(selected)),mesh.MAX_BATCH)
+            positions={k:copy.deepcopy(node.state[k]) for k in
+                ('first_carriage','recent_transit_cursors','history_transit_cursors','transit_class_steps')}
+            replay=node.prepare_exchange(peer,retry_packet_ids=tuple(ids))
+            self.assertEqual([mesh.digest(t['packet']) for t in replay['body']['transits']],ids)
+            self.assertEqual({k:node.state[k] for k in positions},positions)
+            self.assertNotEqual(node.path.read_bytes(),durable)
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['messages'],original)
+            # Prepared direct copies must not displace still waiting detours on
+            # successive calls, even with a cold primitive scheduling cache.
+            remaining=set(detours)-set(ids)
+            seen=set()
+            for _ in range(3):
+                bundle=node.prepare_exchange(peer)
+                seen.update(mesh.digest(t['packet']) for t in bundle['body']['transits'])
+            self.assertTrue(remaining<=seen)
+            self.assertFalse(node.receipts())
+
+    def test_direct_waiting_preference_revalidates_and_cannot_grant_custody(self):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id']
+        destination=self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            raw=self.f.frame();detours=[node.enqueue(raw,destination) for _ in range(4)]
+            target=node.enqueue(raw,peer);original=copy.deepcopy(node.state)
+            durable=node.path.read_bytes()
+            node.state['messages'][target]['packet']['signature']='0'*128
+            with self.assertRaises(ValueError):node.prepare_exchange(peer)
+            self.assertEqual(node.path.read_bytes(),durable);node.state=copy.deepcopy(original)
+            with patch.object(mesh,'atomic',side_effect=OSError('direct selection publication')):
+                with self.assertRaises(OSError):node.prepare_exchange(peer)
+            self.assertEqual(node.state,original);self.assertEqual(node.path.read_bytes(),durable)
+            offered=node.exchange(peer,retry_packet_ids=(target,))
+            exact=next(t for t in offered['body']['transits'] if mesh.digest(t['packet'])==target)
+            suppressed=node.prepare_exchange(peer,accepted_transits={mesh.digest(exact)})
+            self.assertNotIn(target,[mesh.digest(t['packet']) for t in suppressed['body']['transits']])
+            self.assertNotIn(target,node.state['first_carriage'][peer]['prepared'])
+            self.assertFalse(node.receipts());self.assertEqual(node.state['messages'],original['messages'])
+            bundle=node.prepare_exchange(peer)
+            self.assertIn(target,[mesh.digest(t['packet']) for t in bundle['body']['transits']])
+            self.assertLessEqual(len(bundle['body']['transits']),4)
+            self.assertLessEqual(len(evidence.canonical(bundle)),mesh.MAX_BATCH)
+            self.assertFalse(node.receipts());node.validate_state()
+        with self.f.node('earth') as node:
+            self.assertEqual(node.state['messages'],original['messages'])
+            self.assertFalse(node.receipts())
+
+    def test_new_direct_copies_cannot_starve_waiting_detour_offers(self):
+        self.f.rounds();peer=self.f.identities['proxima']['node_id']
+        destination=self.f.identities['andromeda']['node_id']
+        with self.f.node('earth') as node:
+            raw=self.f.frame();older=[node.enqueue(raw,destination) for _ in range(12)]
+            node.state['first_carriage'][peer]=node.first_carriage_plan(peer);node.save()
+            offered=set()
+            for _ in range(6):
+                node.enqueue_batch([(raw,peer)]*4)
+                pending=node.first_carriage_plan(peer)['pending']
+                bundle=node.prepare_exchange(peer)
+                ids=[mesh.digest(t['packet']) for t in bundle['body']['transits']]
+                self.assertEqual(ids[:2],pending[:2])
+                offered.update(ids[:2])
+                self.assertLessEqual(len(ids),4)
+            self.assertTrue(set(older)<=offered)
+            self.assertFalse(node.receipts())
+            for ident in older:self.assertIn(ident,node.state['messages'])
+            node.validate_state()
+
     def test_prepare_plan_is_local_to_one_operation_and_revalidates_new_arrival(self):
         self.f.rounds()
         peer = self.f.identities['proxima']['node_id']

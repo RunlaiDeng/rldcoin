@@ -166,3 +166,15 @@ and relay receipts supply no monetary or voting rights. Arbitrary foreign ancest
 long local histories, source signing custody, target-scale resource/recovery,
 post-quantum adoption, independent operators/security, physical routes and mainnet
 adoption require separate complete qualification.
+
+The contact scheduler V33 retains the two first-service offers and the existing
+recent/history streams. The first-service offers retain their original FIFO order. Within the existing
+ordinary-stream places of one exact complete frame,
+a still-unprepared copy addressed to the configured outgoing peer precedes copies
+addressed to other destinations. Distinct-frame places and class membership do
+not move. The preference ends on durable preparation, including after restart;
+preparation does not imply remote custody or a destination receipt. Every selected
+packet still undergoes the ordinary complete transit authentication, route/hop
+checks and accepted-hop suppression, within the unchanged four-transit and wire
+bounds. Full retry order remains exact. Older scheduler identities refuse without
+rewrite; use fresh transport directories rather than changing retained state.

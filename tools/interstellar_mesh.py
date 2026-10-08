@@ -33,7 +33,7 @@ SPOOL_ONEWAY = 'RLD-CONTACT-SPOOL-ONEWAY-V1'
 ARCHIVE_STORAGE = 'RLD-CONTACT-ARCHIVE-SHARED-FRAME-V1'
 ARCHIVE_FRAME = 'RLD-CONTACT-ARCHIVE-FRAME-V1'
 RECEIPT_SCHEDULER = 'RLD-CONTACT-RECEIPT-SCHEDULER-V2'
-TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V32'
+TRANSIT_SCHEDULER = 'RLD-CONTACT-TRANSIT-SCHEDULER-V33'
 ACTIVE_STORAGE = active_state.STORAGE
 MAX_NODES = 64
 MAX_CONTACTS = 16
@@ -1316,7 +1316,25 @@ class Node:
         # keeps ordinary traffic eligible, including historical retransmission.
         first_ids=();first_plan=None
         if len(transits)<MAX_PACKET_BATCH:
-            first_plan=self.first_carriage_plan(peer);first_ids=tuple(first_plan['pending'])
+            first_plan=self.first_carriage_plan(peer)
+            waiting=set(first_plan['pending'])|set(first_plan['arrivals'])
+            def direct_waiting_copies(items):
+                # Reorder only existing places of one exact complete frame.
+                # A connected recipient's still-unprepared copy precedes its
+                # detours, without moving another frame or crossing classes.
+                # Once prepared it loses this preference: unresolved detours
+                # retain service, including after cold restart or failed send.
+                result=list(items);positions={}
+                for index,ident in enumerate(result):
+                    transit=self.state['messages'][ident]
+                    positions.setdefault(transit['routing']['body']['frame_id'],[]).append(index)
+                for indices in positions.values():
+                    copies=[result[index] for index in indices]
+                    copies.sort(key=lambda ident:not (ident in waiting and ident not in self.state['receipts']
+                        and self.state['messages'][ident]['packet']['body']['destination']==peer))
+                    for index,ident in zip(indices,copies):result[index]=ident
+                return result
+            first_ids=tuple(first_plan['pending'])
             offered=0
             for candidate in eligible(i for i in first_ids if i not in retry_packet_ids):
                 if offered>=MAX_PACKET_BATCH//2 or len(transits)==MAX_PACKET_BATCH:break
@@ -1425,6 +1443,11 @@ class Node:
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]
+        # Preserve the original recent/history and distinct-frame interleaving.
+        # Only an unprepared direct copy may exchange places with a detour of
+        # the identical complete frame. Eligibility still authenticates packet,
+        # routing, visited hops and suppression before allocating any slot.
+        pending=[direct_waiting_copies(items) for items in pending]
         streams=[iter(eligible([i for i in items if i not in retry_packet_ids and i not in selected_ids])) for items in pending]
         while streams and len(transits)<MAX_PACKET_BATCH:
             remaining=[]
