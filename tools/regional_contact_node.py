@@ -23,7 +23,7 @@ import interstellar_tcp as tcp
 import interstellar_transfer as wire
 from regional_native_startup import Inspection
 
-FORMAT = 'RLD-REGIONAL-CONTACT-NODE-V1'
+FORMAT = 'RLD-REGIONAL-CONTACT-NODE-V2'
 MAX_PER_TICK = 4
 MAX_NATIVE_OUTPUT = 8 * 1024 * 1024
 
@@ -359,11 +359,13 @@ class Service:
             errors.append(str(error));observe_os_error(error,'native-contact-status')
         stage_seconds['native_contact_observation']=round(time.monotonic()-stage_started,6)
         stage_started=time.monotonic()
+        spool_outgoing=any('outbox' in contact and 'host' not in contact
+                           for contact in self.config['contacts'])
         selected=[]
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
           with self.selection_node() as node:
-            transport = node.tick(defer_spool_outgoing=True) if self.bft is not None else node.tick()
+            transport = node.tick(defer_spool_outgoing=True) if self.bft is not None or spool_outgoing else node.tick()
             errors.extend(transport['errors'])
             summaries=node.summaries();receipts=node.receipts()
             selected = self.receive_candidates(summaries, receipts, node.id)
@@ -454,29 +456,38 @@ class Service:
                 if offers:
                     offset = self.progress['cursor'] % len(offers)
                     offers = (offers[offset:] + offers[:offset])[:MAX_PER_TICK]
+                selections=[]
                 for offer in offers:
-                    candidates = sorted(i for i, region in adverts.items() if region == offer['destination'] and routes.get(i))
-                    if not candidates:
-                        continue
+                    candidates=sorted(i for i,region in adverts.items()
+                        if region==offer['destination'] and routes.get(i))
+                    if not candidates:continue
+                    # One first recipient per selected offer retains the old
+                    # offer service. Spare places use the original four-item
+                    # total budget, round-robin across further recipients.
+                    # Advertised regions select carriers, never Native rights.
+                    start=(self.progress['cursor']//MAX_PER_TICK)%len(candidates)
+                    selections.append((offer,candidates[start:]+candidates[:start],[]))
+                places=MAX_PER_TICK
+                for index in range(MAX_PER_TICK):
+                    for _,candidates,chosen in selections:
+                        if not places:break
+                        if index<len(candidates):chosen.append(candidates[index]);places-=1
+                    if not places:break
+                for offer,_,destinations in selections:
+                    if not destinations:continue
                     value = self.native.call('contact-export', '--export', offer['export'])
                     raw = wire.canonical(value)
                     frame, _ = wire.inspect_frame(raw)
                     mesh.require(frame['source_chain_id'] == self.region and frame['destination_chain_id'] == offer['destination'], 'outgoing native route changed')
                     with self.tcp.ordinary_mesh_node() as node:
-                        # Inspect retained packets to reconcile enqueue-after-
-                        # crash, without a fragile external "already sent" flag.
-                        retained = set()
-                        for summary in node.summaries().values():
-                            if summary['source'] == node.id:
-                                retained.add((summary['frame_id'],summary['destination']))
-                        # Rotate among reachable candidates; a dishonest label
-                        # can delay delivery but cannot change the ledger target.
-                        # The receive/offer cursor advances by MAX_PER_TICK.
-                        # Using it directly can pin a four-node destination to
-                        # one candidate forever. Rotate by complete tick count.
-                        destination = candidates[(self.progress['cursor'] // MAX_PER_TICK) % len(candidates)]
-                        if (frame['message_id'], destination) not in retained:
-                            node.enqueue(raw, destination)
+                        # Inspect exact retained bytes before one atomic bounded
+                        # admission. Failed writes grant no custody or ledger
+                        # acknowledgment. Cold state reconciles retained copies.
+                        retained={(summary['frame_id'],summary['destination'])
+                            for summary in node.summaries().values() if summary['source']==node.id}
+                        items=[(raw,destination) for destination in destinations
+                               if (frame['message_id'],destination) not in retained]
+                        if items:node.enqueue_batch(items)
             except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
                 observe_os_error(error,'native-outgoing')
@@ -497,10 +508,10 @@ class Service:
                 consensus={'autonomous_signing_enabled':None,'progress_observation_available':False,
                            'diagnostic':str(error)[:256],'independent_bft_qualified':False}
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
-        if self.bft is not None and any('outbox' in contact and 'host' not in contact
-                                       for contact in self.config['contacts']):
-            # Intake preceded Native verification/signing. Send exactly the
-            # deferred directory batch now, including newly durable responses.
+        if spool_outgoing:
+            # Intake preceded Native export verification and optional signing.
+            # Send exactly the deferred directory batch now, including newly
+            # durable responses.
             # TCP already follows this order. Do not intake a second batch or
             # advance the global cursor twice; carriage grants no ledger rights.
             stage_started=time.monotonic()

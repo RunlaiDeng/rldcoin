@@ -178,3 +178,18 @@ packet still undergoes the ordinary complete transit authentication, route/hop
 checks and accepted-hop suppression, within the unchanged four-transit and wire
 bounds. Full retry order remains exact. Older scheduler identities refuse without
 rewrite; use fresh transport directories rather than changing retained state.
+
+Contact companion V2 keeps one first recipient for each of the at most four
+selected Native export offers. Unused places in that same four-item total
+budget rotate across further reachable candidate recipients. Each complete
+Native export is generated and checked once per selected offer, then its exact
+frame is admitted as one bounded atomic group; retained frame/destination copies
+are reconciled before admission. Candidate labels and routes never authorize an
+import or membership. The original offer and completed-tick recipient rotations,
+receive limits, transit authentication and all Native execution remain required.
+Directory intake runs once before Native work; the single outgoing directory
+batch follows export validation and durable enqueue, including for a source
+without a local BFT signer. Empty or unavailable Native observations produce no
+export. Previous private companion progress formats refuse unchanged; fresh
+ground directories are required. Neither fanout nor durable carriage proves
+Import, maturity, spendability, independent operations or physical connectivity.
