@@ -278,3 +278,16 @@ proposals keep their ordinary path. This adds no exchange, production slots,
 queue quota or timer reset beyond the original successfully signed phases.
 Legacy/joint profiles and previous Origin companion formats do not adopt this
 continuation; fresh no-value configuration and custody directories are required.
+
+Outgoing current Vote and Timeout carriage may exclude unrelated pending origin
+histories only after full Native local material and source-incident checks, when
+the exact executed ledger equals the default empty ledger and every retained
+local parent-proof block has no commands or epochs. The complete local parent
+certificates remain carried and independently verified; the signed context must
+match the current Native context exactly. Nonempty ledgers, imported/spent value,
+foreign or command-bearing parent proofs, proposals, submissions and finality
+bodies retain their original dependencies. Every attached incoming origin proof
+still authenticates, even when it is unnecessary for the control body. This
+selection creates no Import, quorum, signer, custody, freshness or spending rights.
+Changed Native source requires fresh signed no-value genesis and custody; no
+failed store is reopened or migrated.

@@ -170,8 +170,8 @@ pub struct LocalEnvelope {
 }
 
 /// Fully check current proof material, then pack and independently verify the
-/// carried wire. Only genesis-parent ordinary control votes/timeouts need no
-/// value dependency. This read changes no ledger, caller head, signer, nonce or
+/// carried wire. Current control votes/timeouts with a fully executed empty
+/// ledger and command-free local parent proof need no pending value dependency. This read changes no ledger, caller head, signer, nonce or
 /// voting lock; no result survives the operation.
 pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
     require(
@@ -186,8 +186,10 @@ pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
             (FORMAT, None, node.proof()?)
         };
     // Current full material and source safety were checked above. A signed
-    // genesis control body binds only the independently admitted initial parent;
-    // it cannot execute an Import or supply a Proposal/finality certificate.
+    // control body binds its complete independently verified local parent. An
+    // exactly empty executed ledger and entirely command-free local proof have
+    // no dependency on unrelated pending origin imports. Keep that whole parent
+    // proof; this cannot execute an Import or supply a Proposal/certificate.
     // Every supplied incoming envelope still authenticates all attached proofs.
     let control = match &body {
         Body::Signed(message) => match message.as_ref() {
@@ -199,15 +201,16 @@ pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
     };
     if let Some(c) = control {
         if format == ORIGIN_FORMAT
-            && node.chain.height() == 0
-            && evidence.snapshots.is_empty()
-            && c.currency == node.trust.currency()?
-            && c.region == node.chain.region
-            && c.epoch == node.chain.epoch
-            && c.previous.is_none()
-            && c.parent_height == 0
-            && c.parent_block == c.region
-            && c.parent_state == Ledger::default().root()?
+            && node.chain.ledger == Ledger::default()
+            && evidence.snapshots.iter().all(|snapshot| {
+                snapshot.statement.region == node.chain.region
+                    && snapshot.epochs.is_empty()
+                    && snapshot
+                        .blocks
+                        .iter()
+                        .all(|block| block.commands.is_empty())
+            })
+            && c == &bft::Context::current(node)?
         {
             origins = Some(Vec::new());
         }

@@ -1153,6 +1153,15 @@ fn origin66_single_receiver_discriminates_conflict_scan_from_full_replay_cost() 
 
 #[test]
 fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_do() {
+    control_dependency_fixture(false);
+}
+
+#[test]
+fn origin66_empty_parent_control_retains_certificates_without_pending_value_dependency() {
+    control_dependency_fixture(true);
+}
+
+fn control_dependency_fixture(empty_parent: bool) {
     use crate::bft_network::{self, Body};
     let (h, source, root, _, records, export) =
         source_fixture_with_profile(66, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
@@ -1200,6 +1209,11 @@ fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_d
         receiver_head,
     )
     .unwrap();
+    if empty_parent {
+        let empty = certified(&sender.paged_replay.as_ref().unwrap().replay);
+        sender.finalize(empty).unwrap();
+        assert_eq!(sender.chain.ledger, Ledger::default());
+    }
     let timeout = |context| {
         let mut vote = crate::bft::TimeoutVote {
             context,
@@ -1215,7 +1229,7 @@ fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_d
     };
     let body = timeout(crate::bft::Context::current(&sender).unwrap());
     let (origins, evidence) = sender.origin_network_material().unwrap();
-    assert!(evidence.snapshots.is_empty());
+    assert_eq!(evidence.snapshots.is_empty(), !empty_parent);
     let complete = bft_network::Envelope {
         format: bft_network::ORIGIN_FORMAT.into(),
         currency,
@@ -1254,7 +1268,7 @@ fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_d
             }
             1 => {
                 let mut context = crate::bft::Context::current(&sender).unwrap();
-                context.parent_height = 1;
+                context.parent_height += 1;
                 bad.body = timeout(context);
             }
             _ => {
