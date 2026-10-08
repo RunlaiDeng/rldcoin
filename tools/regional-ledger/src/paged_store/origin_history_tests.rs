@@ -702,6 +702,23 @@ fn origin_network_two_valid_conflicting_histories_retain_incident_without_credit
     assert!(bft_network::sync_origin_envelope(&mut receiver, wire.clone()).is_err());
     assert_eq!(receiver.journal.incident_ids.len(), 1);
     assert!(receiver.safety.check_region(h.region).is_err());
+    let before_control = inventory(&root);
+    let mut timeout = crate::bft::TimeoutVote {
+        context: crate::bft::Context::current(&receiver).unwrap(),
+        round: 0,
+        high: None,
+        approval: Approval {
+            key: public(2),
+            signature: String::new(),
+        },
+    };
+    timeout.approval.signature = signature(2, &timeout.bytes().unwrap());
+    assert!(bft_network::local_envelope(
+        Body::Signed(Box::new(crate::bft::Message::Timeout(Box::new(timeout)))),
+        &receiver,
+    )
+    .is_err());
+    assert_eq!(inventory(&root), before_control);
     assert_eq!(receiver.chain.height(), 0);
     assert!(receiver.chain.ledger.coins.is_empty());
     assert!(receiver.chain.ledger.imports.is_empty());
@@ -1043,4 +1060,175 @@ fn origin66_single_receiver_discriminates_conflict_scan_from_full_replay_cost() 
     assert_eq!(inventory(&dir), before);
     println!("origin66_cost={{\"conflict_ns\":{conflict_ns},\"complete_network_ns\":{complete_network_ns},\"exact_retry_ns\":{exact_retry_ns},\"cold_replay_ns\":{cold_replay_ns}}}");
     // Timings discriminate work; they never authorize evidence or credit.
+}
+
+#[test]
+fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_do() {
+    use crate::bft_network::{self, Body};
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(66, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let destination = source.trust.named("proxima").unwrap();
+    let currency = source.trust.currency().unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination,
+        export,
+        snapshots: records
+            .into_iter()
+            .map(|r| {
+                let Record::Certified(s) = r else {
+                    panic!("certified source")
+                };
+                *s
+            })
+            .collect(),
+    };
+    let mut sender = Store::create(
+        &root.join("control-sender"),
+        h.bootstrap.clone(),
+        destination,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    sender
+        .accept_complete_origin_history(proof.clone())
+        .unwrap();
+    let receiver = Store::create(
+        &root.join("control-receiver"),
+        h.bootstrap.clone(),
+        destination,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let receiver_head = receiver.storage_head().unwrap();
+    drop(receiver);
+    let receiver = Store::open_pinned(
+        &root.join("control-receiver"),
+        &public(1),
+        currency,
+        receiver_head,
+    )
+    .unwrap();
+    let timeout = |context| {
+        let mut vote = crate::bft::TimeoutVote {
+            context,
+            round: 0,
+            high: None,
+            approval: Approval {
+                key: public(2),
+                signature: String::new(),
+            },
+        };
+        vote.approval.signature = signature(2, &vote.bytes().unwrap());
+        Body::Signed(Box::new(crate::bft::Message::Timeout(Box::new(vote))))
+    };
+    let body = timeout(crate::bft::Context::current(&sender).unwrap());
+    let (origins, evidence) = sender.origin_network_material().unwrap();
+    assert!(evidence.snapshots.is_empty());
+    let complete = bft_network::Envelope {
+        format: bft_network::ORIGIN_FORMAT.into(),
+        currency,
+        region: destination,
+        origins: Some(origins),
+        evidence,
+        body: body.clone(),
+    };
+    let before = inventory(&root);
+    let started = std::time::Instant::now();
+    complete.verify(&receiver).unwrap();
+    let complete_ns = started.elapsed().as_nanos();
+    let mut minimal = complete.clone();
+    minimal.origins = Some(vec![]);
+    let started = std::time::Instant::now();
+    minimal.verify(&receiver).unwrap();
+    let minimal_ns = started.elapsed().as_nanos();
+    let started = std::time::Instant::now();
+    let local = bft_network::local_envelope(body, &sender).unwrap();
+    let local_ns = started.elapsed().as_nanos();
+    println!("origin66_control_cost={{\"complete_ns\":{complete_ns},\"minimal_ns\":{minimal_ns},\"local_ns\":{local_ns},\"complete_bytes\":{},\"minimal_bytes\":{},\"local_bytes\":{}}}",
+        serde_json::to_vec(&complete.pack().unwrap()).unwrap().len(),
+        serde_json::to_vec(&minimal.pack().unwrap()).unwrap().len(),
+        serde_json::to_vec(&local.envelope).unwrap().len());
+    for case in 0..3 {
+        let mut bad = minimal.clone();
+        match case {
+            0 => {
+                let Body::Signed(message) = &mut bad.body else {
+                    panic!("signed")
+                };
+                let crate::bft::Message::Timeout(vote) = message.as_mut() else {
+                    panic!("timeout")
+                };
+                vote.approval.signature = "00".repeat(64);
+            }
+            1 => {
+                let mut context = crate::bft::Context::current(&sender).unwrap();
+                context.parent_height = 1;
+                bad.body = timeout(context);
+            }
+            _ => {
+                let mut forged = proof.clone();
+                forged.snapshots[65].bft.as_mut().unwrap().committed.votes[0]
+                    .approval
+                    .signature = "00".repeat(64);
+                bad.origins = Some(vec![forged]);
+            }
+        }
+        assert!(bad.verify(&receiver).is_err());
+    }
+    assert_eq!(inventory(&root), before);
+    let import = certified_with_commands(
+        &sender.paged_replay.as_ref().unwrap().replay,
+        sender.complete_origin_pending_imports().unwrap(),
+    );
+    let mut vote = crate::bft::Vote {
+        context: crate::bft::Context::current(&sender).unwrap(),
+        round: 0,
+        value: import.statement.id().unwrap(),
+        phase: crate::bft::Phase::Prepare,
+        approval: Approval {
+            key: public(2),
+            signature: String::new(),
+        },
+    };
+    vote.approval.signature = signature(2, &vote.bytes().unwrap());
+    let vote = bft_network::local_envelope(
+        Body::Signed(Box::new(crate::bft::Message::Vote(Box::new(vote)))),
+        &sender,
+    )
+    .unwrap()
+    .envelope;
+    assert!(vote.origins.as_ref().unwrap().is_empty());
+    vote.expand().unwrap().verify(&receiver).unwrap();
+    assert_eq!(inventory(&root), before);
+    let value = bft_network::local_envelope(Body::Finalized(Box::new(import.clone())), &sender)
+        .unwrap()
+        .envelope;
+    assert_eq!(value.origins.as_ref().unwrap(), &vec![proof.clone()]);
+    value.clone().expand().unwrap().verify(&receiver).unwrap();
+    let mut missing = value.expand().unwrap();
+    missing.origins = Some(vec![]);
+    assert!(missing.verify(&receiver).is_err());
+    sender.finalize(import).unwrap();
+    let later = bft_network::local_envelope(
+        timeout(crate::bft::Context::current(&sender).unwrap()),
+        &sender,
+    )
+    .unwrap()
+    .envelope;
+    assert_eq!(later.origins.as_ref().unwrap(), &vec![proof]);
+    later.clone().expand().unwrap().verify(&receiver).unwrap();
+    let mut missing = later.expand().unwrap();
+    missing.origins = Some(vec![]);
+    assert!(missing.verify(&receiver).is_err());
+    assert_eq!(receiver.storage_head().unwrap(), receiver_head);
+    assert_eq!(receiver.chain.height(), 0);
+    assert!(receiver.chain.ledger.coins.is_empty());
+    assert!(receiver.journal.incident_ids.is_empty());
+    assert_eq!(
+        serde_json::to_vec(&local.envelope).unwrap(),
+        serde_json::to_vec(&minimal.pack().unwrap()).unwrap()
+    );
 }

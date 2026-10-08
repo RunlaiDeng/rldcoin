@@ -40,6 +40,17 @@ identity behavior. Shared byte storage never authenticates a proof. Cold startup
 reconstructs the full original envelope and invokes Native verification again.
 Existing512-message,64-reference and32MiB combined-state ceilings stay unchanged.
 
+Native outgoing ordinary Vote/Timeout bodies at the exact current Genesis parent
+carry no origin dependency when no local certificate is retained. Native still
+fully replays and checks current proof material and source quarantine before
+selecting that empty closure, then authenticates the signature, admission and
+exact Genesis parent through the ordinary complete wire verifier. A vote or
+timeout grants no value execution. Proposals, submissions, finality and every
+non-Genesis parent retain their original complete dependency carriage. Each
+incoming envelope authenticates every proof it supplies, even for a control body;
+attached invalid or conflicting evidence cannot be hidden by this selection.
+Current incidents continue through the ordinary contact path.
+
 Ordinary source contact export selects the earliest complete finalized local
 certificate prefix ending at an existing debited export. Full current Native
 replay precedes selection; separately received evidence, contacts and receipts

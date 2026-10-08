@@ -16,21 +16,49 @@ pub struct LocalEnvelope {
     pub checked: LiveChecked,
 }
 
-/// Generate the original complete proof and run both original pack and wire
-/// verification under one fully replayed store. This read changes no ledger,
-/// caller head, signer, nonce or voting lock; no result survives the operation.
+/// Fully check current proof material, then pack and independently verify the
+/// carried wire. Only genesis-parent ordinary control votes/timeouts need no
+/// value dependency. This read changes no ledger, caller head, signer, nonce or
+/// voting lock; no result survives the operation.
 pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
     require(
         serde_json::to_vec(&body).map_err(|e| e.to_string())?.len() <= crate::contact::MAX_PAYLOAD,
         "local network body exceeds payload bound",
     )?;
-    let (format, origins, evidence) =
+    let (format, mut origins, evidence) =
         if node.trust.region(node.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
             let (proofs, evidence) = node.origin_network_material()?;
             (ORIGIN_FORMAT, Some(proofs), evidence)
         } else {
             (FORMAT, None, node.proof()?)
         };
+    // Current full material and source safety were checked above. A signed
+    // genesis control body binds only the independently admitted initial parent;
+    // it cannot execute an Import or supply a Proposal/finality certificate.
+    // Every supplied incoming envelope still authenticates all attached proofs.
+    let control = match &body {
+        Body::Signed(message) => match message.as_ref() {
+            bft::Message::Vote(v) => Some(&v.context),
+            bft::Message::Timeout(t) => Some(&t.context),
+            _ => None,
+        },
+        _ => None,
+    };
+    if let Some(c) = control {
+        if format == ORIGIN_FORMAT
+            && node.chain.height() == 0
+            && evidence.snapshots.is_empty()
+            && c.currency == node.trust.currency()?
+            && c.region == node.chain.region
+            && c.epoch == node.chain.epoch
+            && c.previous.is_none()
+            && c.parent_height == 0
+            && c.parent_block == c.region
+            && c.parent_state == Ledger::default().root()?
+        {
+            origins = Some(Vec::new());
+        }
+    }
     let envelope = Envelope {
         format: format.into(),
         currency: node.trust.currency()?,
