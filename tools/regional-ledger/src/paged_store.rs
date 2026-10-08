@@ -1064,8 +1064,8 @@ pub use packed_inspection::{
 #[path = "paged_store/export_archive.rs"]
 mod export_archive;
 pub use export_archive::{
-    inspect_export_archive_candidate, ExportArchiveObservationCandidate,
-    ExportArchiveQueryCandidate,
+    inspect_export_archive_candidate, inspect_lossless_export_archive_candidate,
+    ExportArchiveObservationCandidate, ExportArchiveQueryCandidate,
 };
 
 #[cfg(test)]

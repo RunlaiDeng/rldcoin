@@ -44,6 +44,49 @@ pub fn inspect_export_archive_candidate(
     carried_head: Hash,
     query: &ExportArchiveQueryCandidate,
 ) -> Result<ExportArchiveObservationCandidate> {
+    inspect(
+        dir,
+        bootstrap,
+        authority,
+        currency_pin,
+        carried_head,
+        None,
+        query,
+    )
+}
+
+/// Explicit lossless source archive format. The complete manifest reference is
+/// sender-chosen byte binding only; it is never a latest-state recovery anchor.
+/// Authenticate encoded and decoded objects before the same full Native replay.
+pub fn inspect_lossless_export_archive_candidate(
+    dir: &Path,
+    bootstrap: &Bootstrap,
+    authority: &str,
+    currency_pin: Hash,
+    carried_head: Hash,
+    carried_manifest: &crate::history::Reference,
+    query: &ExportArchiveQueryCandidate,
+) -> Result<ExportArchiveObservationCandidate> {
+    inspect(
+        dir,
+        bootstrap,
+        authority,
+        currency_pin,
+        carried_head,
+        Some(carried_manifest),
+        query,
+    )
+}
+
+fn inspect(
+    dir: &Path,
+    bootstrap: &Bootstrap,
+    authority: &str,
+    currency_pin: Hash,
+    carried_head: Hash,
+    carried_manifest: Option<&crate::history::Reference>,
+    query: &ExportArchiveQueryCandidate,
+) -> Result<ExportArchiveObservationCandidate> {
     let header = Header {
         format: FORMAT.into(),
         bootstrap: bootstrap.clone(),
@@ -56,7 +99,15 @@ pub fn inspect_export_archive_candidate(
         "export archive route is local",
     )?;
     let scope = header.scope(&replay.trust)?;
-    let archive = PackedArchiveCandidate::<Record>::open(dir, &scope, carried_head)?;
+    let archive = match carried_manifest {
+        Some(reference) => PackedArchiveCandidate::<Record>::open_lossless_candidate(
+            dir,
+            &scope,
+            carried_head,
+            reference,
+        )?,
+        None => PackedArchiveCandidate::<Record>::open(dir, &scope, carried_head)?,
+    };
     let history = PackedHistory {
         archive: &archive,
         scope,

@@ -44,6 +44,14 @@ fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime
     result
 }
 fn seal(dir: &Path, scope: Scope, records: &[Record]) -> Hash {
+    seal_format(dir, scope, records, false).0
+}
+fn seal_format(
+    dir: &Path,
+    scope: Scope,
+    records: &[Record],
+    lossless: bool,
+) -> (Hash, crate::history::Reference) {
     assert_eq!(records.len() % crate::history::PAGE_EVENTS, 0);
     let mut head = scope.initial().unwrap();
     for (index, record) in records.iter().enumerate() {
@@ -66,8 +74,14 @@ fn seal(dir: &Path, scope: Scope, records: &[Record]) -> Hash {
             Ok(raw)
         })
         .collect::<Vec<_>>();
-    drop(PackedArchiveCandidate::<Record>::seal(dir, scope, head, pages).unwrap());
-    head
+    let archive = if lossless {
+        PackedArchiveCandidate::<Record>::seal_lossless_candidate(dir, scope, head, pages).unwrap()
+    } else {
+        PackedArchiveCandidate::<Record>::seal(dir, scope, head, pages).unwrap()
+    };
+    let manifest = archive.manifest_reference_candidate().unwrap();
+    drop(archive);
+    (head, manifest)
 }
 fn observe(root: &Path, caller: &Caller) -> Result<ExportArchiveObservationCandidate> {
     inspect_export_archive_candidate(
@@ -273,6 +287,59 @@ fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_
     .unwrap_err();
     assert!(error.contains("signature"), "{error}");
     assert_eq!(inventory(&root), before);
+    let lossless_dir = root.join("lossless-proof");
+    let (lossless_head, lossless_manifest) =
+        seal_format(&lossless_dir, scope.clone(), &records, true);
+    assert_eq!(lossless_head, head);
+    let (lossless_bad_head, lossless_bad_manifest) =
+        seal_format(&root.join("lossless-bad-late"), scope.clone(), &bad, true);
+    let before_lossless = inventory(&root);
+    check(
+        &inspect_lossless_export_archive_candidate(
+            &lossless_dir,
+            &caller.bootstrap,
+            &public(1),
+            caller.bootstrap.currency.id().unwrap(),
+            lossless_head,
+            &lossless_manifest,
+            &caller.query,
+        )
+        .unwrap(),
+        &caller,
+    );
+    assert!(inspect_export_archive_candidate(
+        &lossless_dir,
+        &caller.bootstrap,
+        &public(1),
+        caller.bootstrap.currency.id().unwrap(),
+        head,
+        &caller.query,
+    )
+    .is_err());
+    let mut wrong_manifest = lossless_manifest.clone();
+    wrong_manifest.hash = Hash([9; 32]);
+    assert!(inspect_lossless_export_archive_candidate(
+        &lossless_dir,
+        &caller.bootstrap,
+        &public(1),
+        caller.bootstrap.currency.id().unwrap(),
+        head,
+        &wrong_manifest,
+        &caller.query,
+    )
+    .is_err());
+    let error = inspect_lossless_export_archive_candidate(
+        &root.join("lossless-bad-late"),
+        &caller.bootstrap,
+        &public(1),
+        caller.bootstrap.currency.id().unwrap(),
+        lossless_bad_head,
+        &lossless_bad_manifest,
+        &caller.query,
+    )
+    .unwrap_err();
+    assert!(error.contains("signature"), "{error}");
+    assert_eq!(inventory(&root), before_lossless);
     let incomplete_head = seal(&root.join("missing-genesis-prefix"), scope, &records[16..]);
     let before = inventory(&root);
     assert!(inspect_export_archive_candidate(
@@ -349,6 +416,69 @@ fn complete_source_archive_beyond64_executes_export66_and_refuses_later_forgery_
             "bad late certificate released partial success"
         );
         assert_eq!(inventory(&root), before_cli);
+        let launch_lossless =
+            |archive: &Path, byte_head: Hash, manifest: &crate::history::Reference| {
+                Process::new(&binary)
+                    .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+                    .args([
+                        "--dir",
+                        archive.to_str().unwrap(),
+                        "--authority",
+                        &public(1),
+                        "--currency",
+                        &caller.bootstrap.currency.id().unwrap().to_hex(),
+                        "export-archive-inspect",
+                        "--bootstrap",
+                        root.join("trusted-bootstrap.json").to_str().unwrap(),
+                        "--query",
+                        root.join("exact-query.json").to_str().unwrap(),
+                        "--carried-head",
+                        &byte_head.to_hex(),
+                        "--carried-manifest",
+                        &manifest.hash.to_hex(),
+                        "--carried-manifest-bytes",
+                        &manifest.bytes.to_string(),
+                    ])
+                    .output()
+                    .unwrap()
+            };
+        let result = launch_lossless(&lossless_dir, head, &lossless_manifest);
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        let value: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+        assert_eq!(value["source_height"], 80);
+        assert_eq!(value["record_count"], 80);
+        assert_eq!(
+            value["export"]["id"],
+            serde_json::to_value(export_id).unwrap()
+        );
+        for name in [
+            "import_authority",
+            "recipient_maturity_qualified",
+            "incident_safety_qualified",
+            "remote_current_state_known",
+            "owner_signing_authority",
+        ] {
+            assert_eq!(value[name], false);
+        }
+        let denied = launch_lossless(
+            &root.join("lossless-bad-late"),
+            lossless_bad_head,
+            &lossless_bad_manifest,
+        );
+        assert!(!denied.status.success());
+        assert!(
+            denied.stdout.is_empty(),
+            "lossless late forgery released partial success"
+        );
+        let denied = launch_lossless(&lossless_dir, head, &wrong_manifest);
+        assert!(!denied.status.success());
+        assert!(denied.stdout.is_empty());
+        assert_eq!(inventory(&root), before_cli);
+        println!("lossless_actual_cli_executed=true complete80/export66 compressed format no import or latest-state rights");
         actual_cli_executed = true;
     }
     // The original single-envelope proof bound is still enforced. This archive

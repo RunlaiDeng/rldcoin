@@ -61,3 +61,20 @@ a receiver must verify actual receipt binding within its unchanged budget and
 must not infer return completion from forward delivery. Ground region labels do
 not authenticate Native ledger admission. Clear process-local transit witnesses
 before a cold transport read, and use a new Native process for complete execution.
+
+## Explicit lossless source format
+
+`storage::inspect_lossless_export_archive_candidate` accepts the separate existing
+lossless packed format with a whole carried-manifest hash and byte length. The
+CLI requires both `--carried-manifest` and `--carried-manifest-bytes`; absence of
+both selects only the raw format. Neither format is inferred or downgraded.
+
+The manifest reference binds the sender-chosen object inventory. It is not an
+independently current state anchor, and this interface does not use the recovery
+contract to adopt a sender head. Encoded objects authenticate before bounded
+inflation; exact decoded lengths, original references, canonical codec and typed
+pages authenticate before the shared complete Native replay. Later invalid
+certificates still reject without partial output. Object, decoded-object, page,
+aggregate retained-byte and active-history limits remain unchanged. Compression
+alone supplies no independent copy, CPU budget, freshness, remote import or
+qualification at the required long-history scale.

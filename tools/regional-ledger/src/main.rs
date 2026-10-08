@@ -271,6 +271,11 @@ enum Action {
         /// Sender-chosen byte commitment, never an independent latest-state pin.
         #[arg(long)]
         carried_head: String,
+        /// Explicit lossless format; byte binding only, never latest state.
+        #[arg(long, requires = "carried_manifest_bytes")]
+        carried_manifest: Option<String>,
+        #[arg(long, requires = "carried_manifest")]
+        carried_manifest_bytes: Option<usize>,
     },
     /// Replay a private bounded archive from pinned genesis; never adopt a store.
     HistoryStreamCheck {
@@ -699,19 +704,40 @@ fn run() -> Result<()> {
         ref bootstrap,
         ref query,
         ref carried_head,
+        ref carried_manifest,
+        carried_manifest_bytes,
     } = action
     {
         let bootstrap: Bootstrap = read_json(bootstrap)?;
         let query: storage::ExportArchiveQueryCandidate = read_json(query)?;
         let head = Hash::from_hex(carried_head).map_err(|e| e.to_string())?;
-        let observed = storage::inspect_export_archive_candidate(
-            &args.dir,
-            &bootstrap,
-            &args.authority,
-            pin,
-            head,
-            &query,
-        )?;
+        let observed = match (carried_manifest, carried_manifest_bytes) {
+            (Some(hash), Some(bytes)) => storage::inspect_lossless_export_archive_candidate(
+                &args.dir,
+                &bootstrap,
+                &args.authority,
+                pin,
+                head,
+                &history::Reference {
+                    hash: Hash::from_hex(hash).map_err(|e| e.to_string())?,
+                    bytes,
+                },
+                &query,
+            )?,
+            (None, None) => storage::inspect_export_archive_candidate(
+                &args.dir,
+                &bootstrap,
+                &args.authority,
+                pin,
+                head,
+                &query,
+            )?,
+            _ => {
+                return Err(
+                    "lossless complete carried manifest requires both hash and bytes".into(),
+                )
+            }
+        };
         let raw = serde_json::to_string(&observed).map_err(|e| e.to_string())?;
         if raw.len() > MAX_BYTES {
             return Err("export archive observation exceeds original output bound".into());
