@@ -193,3 +193,25 @@ without a local BFT signer. Empty or unavailable Native observations produce no
 export. Previous private companion progress formats refuse unchanged; fresh
 ground directories are required. Neither fanout nor durable carriage proves
 Import, maturity, spendability, independent operations or physical connectivity.
+
+Origin companion V4 may continue a newly completed local voting phase in the
+same ordinary unit. After independently retaining its own exact Prepare, it
+reaggregates a previously incomplete Prepare quorum through Native. Commit
+still requires the fresh signer/caller phase to match that exact context, round
+and prepared value. A newly retained own Commit can then trigger both complete
+Native quorum checks, certificate verification and normal atomic installation.
+No count, phase observation or transport record authorizes finality. Refusal
+retains the signed journal/caller state; there is no retry, rollback, skipped
+lock or reduced threshold. Delayed-certificate and keyless reception remain
+unchanged, and legacy/joint profiles do not adopt this continuation. Previous
+private Origin companion configurations/states refuse unchanged; use fresh
+signed no-value fixtures and independent caller directories. Same-unit voting
+does not qualify sustained fault liveness, maturity, spend or adopted operation.
+
+Its Origin-only producer selection may replace a chosen Commit recipient pair
+with a still-pending Prepare pair for that same peer and exact native-checked
+context, round, value and signer. The replacement occupies the same active slot;
+history positions, total four-item budget and subsequent Mesh FIFO remain exact.
+Once the Prepare is queued it leaves pending and cannot suppress that Commit
+again. Already queued or unmatched dependencies retain original selection.
+Complete transport and receiver Native authentication remain mandatory.

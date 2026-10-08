@@ -29,7 +29,7 @@ from regional_native_startup import Inspection
 from regional_bft_timeout_hint import ordered_timeout, ordered_timeout_vote
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
-ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V2'
+ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V4'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
 ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 MAX_MESSAGES = 512
@@ -228,7 +228,7 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
     return tuple(sorted(set(frames)))
 
 
-def carriage_batch(messages, pending, height, cursor):
+def carriage_batch(messages, pending, height, cursor, *, prepare_first=False):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
@@ -261,8 +261,28 @@ def carriage_batch(messages, pending, height, cursor):
         if len(selected) < 4:
             selected += [pair for pair in take(active + history, 4)
                          if pair not in selected][:4 - len(selected)]
-        return selected
-    return take(active or history, 4)
+    else:
+        selected=take(active or history,4)
+    if prepare_first:
+        # Already Native-authenticated complete rows schedule carriage only.
+        # Replace a selected Commit by its still-waiting same-peer Prepare in
+        # that same slot; do not move history or consume a fifth place. Once
+        # queued, the dependency leaves pending and the Commit resumes service.
+        intents={};prepares={}
+        for ident,body,_,_ in messages.bodies():
+            vote=signed_body(body).get('Vote')
+            if vote is None:continue
+            intent=wire.canonical([vote['context'],vote['round'],vote['value'],vote['approval']['key']])
+            intents[ident]=(vote['phase'],intent)
+        for pair in active:
+            phase,intent=intents.get(pair[1],(None,None))
+            if phase=='Prepare':prepares.setdefault((intent,pair[2]),pair)
+        for index,pair in enumerate(selected):
+            if pair not in active:continue
+            phase,intent=intents.get(pair[1],(None,None))
+            dependency=prepares.get((intent,pair[2])) if phase=='Commit' else None
+            if dependency is not None and dependency not in selected:selected[index]=dependency
+    return selected
 
 
 def private(path, directory=False, missing=False):
@@ -919,7 +939,8 @@ class Runtime:
             pending=[pair for pair in pairs if (pair[0],pair[2]) not in retained]
             if pending:
                 batch_pairs=carriage_batch(self.state['messages'],pending,
-                                          self.state['height'],self.state['cursor'])
+                                          self.state['height'],self.state['cursor'],
+                                          prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
@@ -1156,6 +1177,12 @@ class Runtime:
                     if not self._try_prepare(proposal):
                         continue
                     phase_advanced = True
+                    if (prepared is None and self.format==ORIGIN_RUNTIME_FORMAT
+                            and self.joint is None):
+                        # The fully retained own Prepare may be the third exact
+                        # vote. Reaggregate through Native after its independent
+                        # caller head and complete envelope have been persisted.
+                        prepared=self.quorum(context,round_number,'Prepare',value)
                     if prepared is not None:
                         fresh = Runtime.phase_status(self)['state']
                         if (fresh is not None and fresh['context'] == context
@@ -1218,6 +1245,24 @@ class Runtime:
                 round_number = None
                 self.slot = None
             if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:self._carriage_round=round_number
+            if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                    and fresh is not None and fresh['context']==context
+                    and fresh['committed'] is not None):
+                # A newly durable own Commit can complete the quorum in this
+                # unit. Counts/phase telemetry authorize nothing: both full
+                # Native aggregates, certification and installation still run.
+                for proposal,value in self.signed(context,round_number,'Proposal'):
+                    if value!=fresh['committed']:continue
+                    committed=self.quorum(context,round_number,'Commit',value)
+                    if committed is None:continue
+                    prepared=self.quorum(context,round_number,'Prepare',value)
+                    if prepared is None:continue
+                    certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
+                    self.with_json('finalize',certificate)
+                    self.retain_local_body({'Finalized':certificate})
+                    self.observe()
+                    self.broadcast()
+                    return self.report(context,round_number,status,stopped=self.state['height']>=self.stop_height)
         self._broadcast_after_observation()
         return self.report(context,round_number,status,stopped)
 
