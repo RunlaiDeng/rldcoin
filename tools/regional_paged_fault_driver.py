@@ -173,6 +173,42 @@ class NativeReceiptNotObserved(ValueError):
     """Only exact Native no-evidence-yet observation; never verified receipt."""
 
 
+def mature_contact_stop_hint(value, expected, height):
+    """Schedule an owned clean stop only; an independent Native read must follow.
+
+    This process observation never qualifies a receipt, import, balance or
+    custody. Its caller checks the actual live process/domain/TLS/errors first.
+    """
+    native = value.get('native_observation')
+    if (type(height) is not int or type(native) is not dict
+            or value.get('native_observation_available') is not True
+            or native.get('currency') != expected['currency']
+            or native.get('region') != expected['destination']
+            or type(native.get('local_height')) is not int
+            or native['local_height'] != height
+            or type(native.get('contacts')) is not list):
+        return False
+    for contact in native['contacts']:
+        if type(contact) is not dict:
+            continue
+        imported = contact.get('import_height')
+        mature = contact.get('recipient_mature_height')
+        if (contact.get('source') == expected['source']
+                and contact.get('destination') == expected['destination']
+                and contact.get('export') == expected['export']
+                and type(contact.get('local_height')) is int
+                and contact['local_height'] == height
+                and type(imported) is int and imported >= 0
+                and type(mature) is int and mature == imported + 2 and height >= mature
+                and contact.get('evidence_verified') is True
+                and contact.get('import_accepted') is True
+                and contact.get('quarantined') is False
+                and contact.get('original_recipient_output_spendable_now') is True
+                and contact.get('original_recipient_output_remaining') == expected['net_amount']):
+            return True
+    return False
+
+
 def receipt_not_observed(command, code, diagnostic):
     return (command=='wallet-receipt' and type(code) is int and code==1
         and diagnostic.strip()=='regional candidate rejected: wallet has no independently verified evidence for this export')
@@ -414,7 +450,7 @@ class Driver:
         require(not unclean,'owned ordinary node shutdown was unclean')
 
     def observations(self):
-        heights={};self.keyless_drains={}
+        heights={};self.keyless_drains={};self.receipt_stop_candidates=[]
         for (label,n),process in self.processes.items():
             require(process.poll() is None,'owned ordinary node exited prematurely')
             path=self.root/'mesh'/f'{label}-{n}'/'regional-contact-status.json'
@@ -431,6 +467,9 @@ class Driver:
             listener=conf.argv[conf.argv.index('--mesh-listen')+1].split(':')
             heights[label,n]=observation_height(value,process.pid,self.currency,pin['tls_cert_sha256'],
                 dict(host=listener[0],port=int(listener[1])),CAPS[label])
+            if (self.phase == 'restored-maturity' and label == 'proxima'
+                    and mature_contact_stop_hint(value,self.expectation,heights[label,n])):
+                self.receipt_stop_candidates.append(n)
             if heights[label,n] is None:self.unknowns+=1
             if type(value.get('transport')) is dict and value['transport'].get('progress_observation_available',True) is True:self.tls_observations.add((label,n))
             if self.phase=='keyless-drain' and heights[label,n] is not None:
@@ -483,6 +522,9 @@ class Driver:
         if now<getattr(self,'next_receipt',0):return False
         self.next_receipt=now+2
         n=getattr(self,'receipt_slot',0);self.receipt_slot=(n+1)%4
+        return self.original_receipt(n)
+
+    def original_receipt(self, n):
         value=self.call('proxima',n,'wallet-receipt','--file',self.expectation_path)
         require(value['expected']==self.expectation,'exact original receipt binding differs')
         self.receipt_observations=getattr(self,'receipt_observations',0)+1
@@ -491,6 +533,19 @@ class Driver:
         return value if (value['evidence_verified'] and value['import_accepted'] and value['maturity_reached']
             and value['original_output_spendable_now'] and value['original_output_remaining']=='9'
             and value['local_finality_covers_import'] and not value['quarantined']) else False
+
+    def receipt_ready_for_stop(self, heights):
+        try:
+            value = self.live_receipt(heights)
+        except (NativeReadBusy, NativeReceiptNotObserved):
+            value = False
+        if value:
+            return value
+        candidates = getattr(self, 'receipt_stop_candidates', [])
+        if candidates:
+            self.receipt_stop_slot = candidates[0]
+            return dict(owned_stop_hint_only=True, receipt_authority=False)
+        return False
 
     def keyless_observations_ready(self, heights):
         # Observation eligibility only; no drain or Native authority is granted.
@@ -693,8 +748,14 @@ class Driver:
         self.phase=PHASES[2]
         for relay in self.relays:relay.enable()
         self.record('both-directed-original-contacts-restored')
-        self.wait('original export native import/maturity before unchanged caps',self.live_receipt)
-        self.stop_all();self.prepare_keyless_startup();self.phase=PHASES[3]
+        self.receipt_stop_slot=None
+        self.wait('original receipt or owned clean-stop hint before unchanged caps',self.receipt_ready_for_stop)
+        self.stop_all()
+        if self.receipt_stop_slot is not None:
+            require(not self.processes,'original receipt inspection requires clean owned stop')
+            require(self.original_receipt(self.receipt_stop_slot),
+                'owned stop hint did not establish original native import/maturity')
+        self.prepare_keyless_startup();self.phase=PHASES[3]
         self.start(self.phase,SLOTS)
         self.wait('all12 keyless current observations agree before fixed-head drain',self.keyless_observations_ready)
         self.stop_all()
