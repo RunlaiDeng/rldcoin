@@ -76,4 +76,7 @@ jobs:
         run: mkdir -p tmp
       - run: cargo fmt --manifest-path tools/regional-ledger/Cargo.toml --check
       - run: cargo clippy --manifest-path tools/regional-ledger/Cargo.toml --all-targets --locked -- -D warnings
+      - run: cargo build --manifest-path tools/regional-ledger/Cargo.toml --locked --bin rld-regional-ledger-candidate --bin contact-fixture
       - run: cargo test --manifest-path tools/regional-ledger/Cargo.toml --locked
+        env:
+          RLD_EXPORT_ARCHIVE_CANDIDATE_CLI: ${{ github.workspace }}/tools/regional-ledger/target/debug/rld-regional-ledger-candidate
