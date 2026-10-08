@@ -1088,6 +1088,9 @@ pub use origin_history::CompleteOriginHistory;
 #[cfg(test)]
 #[path = "paged_store/origin_history_tests.rs"]
 mod origin_history_tests;
+#[cfg(test)]
+#[path = "paged_store/sign_local_tests.rs"]
+mod sign_local_tests;
 
 #[cfg(test)]
 #[path = "paged_store/origin_custody_tests.rs"]

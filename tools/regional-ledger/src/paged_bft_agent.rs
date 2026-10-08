@@ -157,7 +157,7 @@ impl Agent {
         }
         Ok(messages)
     }
-    fn paged_state(&self, node: &Store) -> Result<State> {
+    pub(super) fn paged_state(&self, node: &Store) -> Result<State> {
         self.paged_state_with_records(node, |_| Ok(()))
     }
     fn paged_state_with_records(

@@ -10,6 +10,158 @@ pub const MAX_COLD_BATCH: usize = 4;
 pub const LIVE_BATCH_FORMAT: &str = "RLD-BFT-LIVE-NETWORK-INSPECTION-V1";
 pub const LOCAL_ENVELOPE_FORMAT: &str = "RLD-BFT-LOCAL-ENVELOPE-V1";
 pub const ORIGIN_RECEIVE_FORMAT: &str = "RLD-BFT-ORIGIN-RECEIVE-V1";
+pub const SIGN_LOCAL_FORMAT: &str = "RLD-BFT-SIGN-LOCAL-ENVELOPE-V1";
+
+#[derive(Serialize)]
+pub struct SignedLocalEnvelope {
+    pub format: &'static str,
+    pub currency: Hash,
+    pub region: Hash,
+    pub request_sha256: Hash,
+    pub native_history_head: Hash,
+    pub signed: bft::Signed,
+    pub status: bft::Status,
+    pub envelope: WireEnvelope,
+    pub checked: LiveChecked,
+    pub signature_retained: bool,
+    pub carriage_released: bool,
+    pub ledger_changed: bool,
+    pub independent_freshness_qualified: bool,
+    // Keep actual signing custody locked through CLI serialization/release.
+    // No journal or decoded ledger enters the response.
+    #[serde(skip)]
+    _custody: bft::Agent,
+}
+
+/// Explicit origin-only composition. Caller consent/pending must precede this
+/// call; the independent caller head must advance before outward carriage.
+/// All original native replay, signer, request and complete wire checks remain.
+/// A fallible pack/output after signing retains the native response and head;
+/// only the existing exact recover-only path may recover it, never first-sign.
+pub fn sign_local_envelope(
+    raw: &[u8],
+    node: &Store,
+    signer_dir: &std::path::Path,
+    expected_native_head: Hash,
+    expected_signer_head: Hash,
+    expected_key: &str,
+    key_file: &std::path::Path,
+) -> Result<SignedLocalEnvelope> {
+    sign_local_envelope_with(
+        raw,
+        node,
+        SignLocalPins {
+            signer_dir,
+            expected_native_head,
+            expected_signer_head,
+            expected_key,
+            key_file,
+        },
+        local_envelope,
+    )
+}
+
+struct SignLocalPins<'a> {
+    signer_dir: &'a std::path::Path,
+    expected_native_head: Hash,
+    expected_signer_head: Hash,
+    expected_key: &'a str,
+    key_file: &'a std::path::Path,
+}
+
+fn sign_local_envelope_with(
+    raw: &[u8],
+    node: &Store,
+    pins: SignLocalPins<'_>,
+    pack: impl FnOnce(Body, &Store) -> Result<LocalEnvelope>,
+) -> Result<SignedLocalEnvelope> {
+    let SignLocalPins {
+        signer_dir,
+        expected_native_head,
+        expected_signer_head,
+        expected_key,
+        key_file,
+    } = pins;
+    require(
+        !raw.is_empty() && raw.len() <= crate::contact::MAX_PAYLOAD,
+        "composed sign request exceeds payload bound",
+    )?;
+    require(
+        node.trust.region(node.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES,
+        "composed signing requires explicit origin network profile",
+    )?;
+    require(
+        node.storage_head()? == expected_native_head,
+        "composed signing differs from independent native head",
+    )?;
+    let request: bft::Request = serde_json::from_slice(raw).map_err(|e| e.to_string())?;
+    let (mut agent, _) = bft::Agent::inspect_with_status(signer_dir, node)?;
+    require(
+        agent.journal.binding
+            == (bft::Binding {
+                currency: node.trust.currency()?,
+                region: node.chain.region,
+                key: expected_key.into(),
+            })
+            && agent.head()? == expected_signer_head,
+        "composed signing differs from independent signer binding/head",
+    )?;
+    let signed = agent.sign(node, request, Some(key_file), expected_signer_head)?;
+    let local = pack(Body::Signed(Box::new(signed.message.clone())), node)?;
+    let status = agent.current_status(node)?;
+    require(
+        agent.head()? == signed.head && node.storage_head()? == expected_native_head,
+        "composed signing final heads differ",
+    )?;
+    let result = SignedLocalEnvelope {
+        format: SIGN_LOCAL_FORMAT,
+        currency: node.trust.currency()?,
+        region: node.chain.region,
+        request_sha256: Hash(Sha256::digest(raw).into()),
+        native_history_head: expected_native_head,
+        signed,
+        status,
+        envelope: local.envelope,
+        checked: local.checked,
+        signature_retained: true,
+        carriage_released: false,
+        ledger_changed: false,
+        independent_freshness_qualified: false,
+        _custody: agent,
+    };
+    require(
+        serde_json::to_vec(&result)
+            .map_err(|e| e.to_string())?
+            .len()
+            <= MAX_BYTES,
+        "composed signing response exceeds original bound",
+    )?;
+    Ok(result)
+}
+
+#[cfg(test)]
+pub(crate) fn sign_local_pack_failure_for_test(
+    raw: &[u8],
+    node: &Store,
+    signer_dir: &std::path::Path,
+    expected_native_head: Hash,
+    expected_signer_head: Hash,
+    expected_key: &str,
+    key_file: &std::path::Path,
+) -> Result<SignedLocalEnvelope> {
+    sign_local_envelope_with(
+        raw,
+        node,
+        SignLocalPins {
+            signer_dir,
+            expected_native_head,
+            expected_signer_head,
+            expected_key,
+            key_file,
+        },
+        |_, _| Err("injected post-sign pack refusal".into()),
+    )
+}
 
 #[derive(Debug, Serialize)]
 pub struct LocalEnvelope {

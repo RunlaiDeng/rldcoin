@@ -565,6 +565,29 @@ class Runtime:
     def _sign(self, request):
         private(self.key_file)
         mesh.require(self.head['pending'] is None and self.head['outbox'] is None, 'BFT signer has unreconciled request/response')
+        if getattr(self,'format',None)==ORIGIN_RUNTIME_FORMAT and self.joint is None:
+            from regional_bft_sign_envelope import sign
+            operation=getattr(self,'_tick_operation',None)
+            native_head=getattr(self,'_sign_native_head',None) if operation is not None else None
+            if native_head is None:
+                observed=self.native.call('history-head')
+                mesh.require(observed['currency']==self.native.currency and observed['region']==self.region,
+                             'composed Native head domain differs')
+                native_head=mesh.hex32(observed['history_head'])
+            self._sign_stage('pending',self.save_head,dict(self.head,pending=request))
+            result,envelope,checked,status=self._sign_stage('native',sign,self,request,native_head)
+            self._sign_stage('response',self.save_head,
+                dict(self.head,head=result['head'],pending=None,outbox=result['message']))
+            # Independent caller head is durable before any local retention or
+            # carriage release. A failed retention leaves the original outbox.
+            self._sign_stage('outbox',self._retain_checked,envelope,checked,False,True)
+            self.save_head(dict(self.head,outbox=None))
+            if operation is not None:
+                scope=wire.canonical({'binding':self.signing_binding,'head':self.head,
+                    'native':[self.native.currency,self.native.authority,str(self.native.ledger)]})
+                self._composed_phase_observation=(operation,scope,wire.canonical(status))
+            self.entered_at=time.monotonic()
+            return
         self._sign_stage('status', self.signer_status)
         self._sign_stage('pending', self.save_head, dict(self.head,pending=request))
         result=self._sign_stage('native', self.with_json, 'bft-sign',request,'--signer-dir',self.signer,'--expected-head',self.head['head'],'--key-file',self.key_file)
@@ -599,14 +622,20 @@ class Runtime:
         value=self.native.call(*args)
         fields={'format','native','signer','signing_authority','independent_freshness_qualified'}
         if retained:fields.add('retained_messages')
+        origin=getattr(self,'format',None)==ORIGIN_RUNTIME_FORMAT and self.joint is None
+        if origin:fields.add('native_history_head')
+        expected_format=(('RLD-BFT-LOOP-ORIGIN-RETAINED-OBSERVATION-V2' if retained else
+                          'RLD-BFT-LOOP-ORIGIN-OBSERVATION-V2') if origin else
+                         ('RLD-BFT-LOOP-RETAINED-OBSERVATION-V1' if retained else
+                          'RLD-BFT-LOOP-OBSERVATION-V1'))
         mesh.require(set(value)==fields
-                     and value['format']==('RLD-BFT-LOOP-RETAINED-OBSERVATION-V1' if retained
-                                          else 'RLD-BFT-LOOP-OBSERVATION-V1')
+                     and value['format']==expected_format
                      and value['signing_authority'] is False and value['independent_freshness_qualified'] is False,
                      'BFT loop observation domain differs')
         status=value['signer']
         mesh.require(status['binding']==self.signing_binding and status['head']==self.head['head'],
                      'BFT signer differs from separately retained caller head')
+        if origin:self._sign_native_head=mesh.hex32(value['native_history_head'])
         drain=None
         if retained:
             from regional_bft_keyless_drain import current_commits
@@ -615,6 +644,18 @@ class Runtime:
         context=self._observe_context(value['native']['context'])
         self._keyless_drain_observation=drain
         return context,status
+
+    def phase_status(self):
+        """Same-tick scheduling only; every next signature fully replays again."""
+        observed=getattr(self,'_composed_phase_observation',None)
+        operation=getattr(self,'_tick_operation',None)
+        if observed is not None and operation is not None and observed[0] is operation:
+            scope=wire.canonical({'binding':self.signing_binding,'head':self.head,
+                'native':[self.native.currency,self.native.authority,str(self.native.ledger)]})
+            if (observed[1]==scope and self.head['pending'] is None and self.head['outbox'] is None
+                    and len(observed[2])<=8*1024*1024):
+                return wire.decode_json(observed[2])
+        return self.signer_status()
 
     def observe(self):
         return self._observe_context(self.native.call('bft-context')['context'])
@@ -1013,11 +1054,17 @@ class Runtime:
     def tick(self):
         started = time.monotonic()
         succeeded = False
+        self._tick_operation=object()
+        self._composed_phase_observation=None
+        self._sign_native_head=None
         try:
             result = self._tick()
             succeeded = True
             return result
         finally:
+            self._tick_operation=None
+            self._composed_phase_observation=None
+            self._sign_native_head=None
             observation = getattr(self, 'observation', None)
             if observation is not None:
                 observation.operation('consensus-tick', started, succeeded)
@@ -1110,7 +1157,7 @@ class Runtime:
                         continue
                     phase_advanced = True
                     if prepared is not None:
-                        fresh = self.signer_status()['state']
+                        fresh = Runtime.phase_status(self)['state']
                         if (fresh is not None and fresh['context'] == context
                                 and fresh['round'] == round_number
                                 and fresh['prepared'] == value and fresh['committed'] is None):
@@ -1162,7 +1209,7 @@ class Runtime:
                     self.sign({'Timeout':{'context':context,'round':round_number}})
                     phase_advanced = True
         if phase_advanced:
-            status = self.signer_status()
+            status = Runtime.phase_status(self)
             fresh = status['state']
             if fresh is not None and fresh['context'] == context:
                 round_number = fresh['round']

@@ -1023,6 +1023,27 @@ impl Agent {
     pub fn inspect_with_status(dir: &Path, node: &Store) -> Result<(Self, Status)> {
         Self::status_from_open(Self::open_state(dir, node, false)?)
     }
+    /// Full current replay while the original signer lock remains held.
+    /// This observation cannot initialize custody or authorize another request.
+    pub fn current_status(&self, node: &Store) -> Result<Status> {
+        require(
+            self.healthy,
+            "BFT signer requires reopen after persistence failure",
+        )?;
+        let state = if self.paged.is_some() {
+            self.paged_state(node)?
+        } else {
+            self.journal.state(node)?
+        };
+        Ok(Status {
+            head: self.head()?,
+            binding: self.journal.binding.clone(),
+            state,
+            records: self.record_count(),
+            creation: self.journal.creation.clone(),
+            external_rollback_anchor_qualified: false,
+        })
+    }
     fn status_from_open((agent, state): (Self, State)) -> Result<(Self, Status)> {
         let status = Status {
             head: agent.head()?,

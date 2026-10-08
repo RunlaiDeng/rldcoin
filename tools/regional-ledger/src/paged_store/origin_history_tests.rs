@@ -749,7 +749,7 @@ fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_o
 
 #[test]
 fn origin_contact_fresh_live_proposal_chain_fixture() {
-    origin_contact_named_source("earth-phase-1008");
+    origin_contact_named_source("earth-release-1008");
 }
 
 fn origin_contact_named_source(origin_name: &str) {

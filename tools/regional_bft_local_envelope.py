@@ -18,7 +18,11 @@ def pack(runtime, body):
         and result['request_sha256']==hashlib.sha256(raw).hexdigest()
         and result['verified'] is True and result['ledger_changed'] is False
         and result['signing_authority'] is False,'local Native response binding differs')
-    envelope=result['envelope'];checked=result['checked']
+    return check(runtime,body,result['envelope'],result['checked'])
+
+
+def check(runtime,body,envelope,checked):
+    raw=wire.canonical(body)
     fields={'format','currency','region','evidence','body'}
     origin=type(envelope) is dict and envelope.get('format')=='RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
     if origin:fields.add('origins')

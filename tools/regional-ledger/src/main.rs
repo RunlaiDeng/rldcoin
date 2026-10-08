@@ -227,6 +227,21 @@ enum Action {
         #[arg(long)]
         recover_only: bool,
     },
+    /// Origin-only signing and full local envelope checking under both locks.
+    BftSignLocalEnvelope {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        expected_native_head: String,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        key_file: PathBuf,
+    },
     BftQuorum {
         #[arg(long)]
         file: PathBuf,
@@ -1005,6 +1020,15 @@ fn run() -> Result<()> {
         )?;
     }
     let mut store = match &action {
+        Action::BftSignLocalEnvelope {
+            expected_native_head,
+            ..
+        } => Store::open_pinned_inspection(
+            &args.dir,
+            &args.authority,
+            pin,
+            Hash::from_hex(expected_native_head).map_err(|e| e.to_string())?,
+        )?,
         Action::BftNetworkCheckPlan { expected_head, .. }
         | Action::BftNetworkCheckPlanObserved { expected_head, .. } => {
             Store::open_pinned_inspection(
@@ -1411,6 +1435,14 @@ fn run() -> Result<()> {
                     serde_json::to_value(messages).map_err(|e| e.to_string())?;
                 value["format"] = serde_json::json!("RLD-BFT-LOOP-RETAINED-OBSERVATION-V1");
             }
+            if store.trust.region(store.chain.region)?.rules == paged_bft::ORIGIN_NETWORK_RULES {
+                value["native_history_head"] = serde_json::json!(store.storage_head()?);
+                value["format"] = serde_json::json!(if include_retained_messages {
+                    "RLD-BFT-LOOP-ORIGIN-RETAINED-OBSERVATION-V2"
+                } else {
+                    "RLD-BFT-LOOP-ORIGIN-OBSERVATION-V2"
+                });
+            }
             let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
             if raw.len() > MAX_BYTES {
                 return Err("BFT loop observation bytes bound".into());
@@ -1552,6 +1584,33 @@ fn run() -> Result<()> {
                 serde_json::to_string(&store.bft_candidate(commands, miner)?)
                     .map_err(|e| e.to_string())?
             );
+        }
+        Action::BftSignLocalEnvelope {
+            file,
+            signer_dir,
+            expected_head,
+            expected_native_head,
+            expected_key,
+            key_file,
+        } => {
+            let raw =
+                storage::read_bytes(&file, rld_regional_ledger_candidate::contact::MAX_PAYLOAD)?;
+            let result = bft_network::sign_local_envelope(
+                &raw,
+                &store,
+                &signer_dir,
+                Hash::from_hex(&expected_native_head).map_err(|e| e.to_string())?,
+                Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                &expected_key,
+                &key_file,
+            )?;
+            // result owns the actual signer lock until the complete output is
+            // released. Native Store/ledger lock also remains alive here.
+            let output = serde_json::to_string(&result).map_err(|e| e.to_string())?;
+            if output.len() > MAX_BYTES {
+                return Err("composed signing output bound".into());
+            }
+            println!("{output}");
         }
         Action::BftSign {
             file,

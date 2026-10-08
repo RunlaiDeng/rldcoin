@@ -59,6 +59,29 @@ the original prepared exchange, durable write and batch/capacity checks. Failed
 outgoing writes retain queued evidence; neither preparation nor carriage grants
 ledger acceptance, voting, finality or custody acknowledgment.
 
+`bft-sign-local-envelope` is an explicit origin-profile composition under the
+Native ledger and signer OS locks. It requires exact separately retained ledger
+and signer heads and the configured signing identity. A pinned cold Native open,
+full signer replay, ordinary request execution, durable response/lock retention,
+complete local wire packing and full wire authentication remain mandatory. The
+signer lock stays held through response serialization. Requests remain within
+3MiB and the complete response within8MiB; legacy and joint profiles do not adopt
+this operation.
+
+The origin loop observation exposes its exact Native storage head in an explicit
+V2 response. It grants no independent freshness or signing rights. The Runtime
+persists the original pending request before composing and advances the separate
+caller head before retaining or enqueueing the checked local envelope. A pack,
+output, caller write or retention failure preserves the original pending/outbox
+and durable Native response for existing exact recover-only handling; it cannot
+fall back to another signing attempt or first-sign recovery. Same-tick scheduling
+may read only immutable post-sign status bytes scoped to the exact operation,
+binding, caller state and Native directory. A new tick, changed scope or pending
+state requires a fresh observation, and every signature still performs full
+Native replay and exact head checks under both locks. No status is serialized
+as ledger or voting authority. Public identical-key fixture comparisons establish
+byte equivalence only, never concurrent or copied-key custody qualification.
+
 `bft-origin-network-receive-batch` accepts one canonical ordered request of up
 to four complete origin wires under a separately retained exact Native head.
 The existing OS lock and full cold open remain mandatory. Whole input and
