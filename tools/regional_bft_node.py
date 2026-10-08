@@ -571,16 +571,30 @@ class Runtime:
         # A later sign still performs its independent fresh status/head checks.
         mesh.require(self.head['pending'] is None and self.head['outbox'] is None,
                      'BFT loop observation requires reconciled caller state')
-        value=self.native.call('bft-loop-status','--signer-dir',self.signer,
-                               '--expected-head',self.head['head'])
-        mesh.require(set(value)=={'format','native','signer','signing_authority','independent_freshness_qualified'}
-                     and value['format']=='RLD-BFT-LOOP-OBSERVATION-V1'
+        self._keyless_drain_observation=None
+        retained=(getattr(self,'format',None)==FORMAT and self.joint is None
+                  and (self.key_file is None or not self.key_file.exists()))
+        args=['bft-loop-status','--signer-dir',self.signer,'--expected-head',self.head['head']]
+        if retained:args.append('--include-retained-messages')
+        value=self.native.call(*args)
+        fields={'format','native','signer','signing_authority','independent_freshness_qualified'}
+        if retained:fields.add('retained_messages')
+        mesh.require(set(value)==fields
+                     and value['format']==('RLD-BFT-LOOP-RETAINED-OBSERVATION-V1' if retained
+                                          else 'RLD-BFT-LOOP-OBSERVATION-V1')
                      and value['signing_authority'] is False and value['independent_freshness_qualified'] is False,
                      'BFT loop observation domain differs')
         status=value['signer']
         mesh.require(status['binding']==self.signing_binding and status['head']==self.head['head'],
                      'BFT signer differs from separately retained caller head')
-        return self._observe_context(value['native']['context']),status
+        drain=None
+        if retained:
+            from regional_bft_keyless_drain import current_commits
+            drain=current_commits(value['native']['context'],value['retained_messages'],
+                                  self.key,self.head['head'])
+        context=self._observe_context(value['native']['context'])
+        self._keyless_drain_observation=drain
+        return context,status
 
     def observe(self):
         return self._observe_context(self.native.call('bft-context')['context'])
@@ -957,6 +971,7 @@ class Runtime:
 
     def _tick(self):
         mesh.require(not self.failed, 'BFT runtime requires restart after persistence failure')
+        self._keyless_drain_observation=None
         if self.head['pending'] is not None:
             self.reconcile()
         self.flush_outbox()
@@ -1135,4 +1150,6 @@ class Runtime:
                 'explicit_stop_height_reached':self.state['height']>=self.stop_height,'caller_head_pending':self.head['pending'] is not None,
                 'caller_head_rollback_qualification':False,'independent_bft_qualified':False,
                 'physical_interstellar_route_qualified':False,'local_ground_timing_only':True,
-                **({'carriage_deferred':True} if getattr(self,'_carriage_deferred',False) else {})}
+                **({'carriage_deferred':True} if getattr(self,'_carriage_deferred',False) else {}),
+                **({'native_keyless_drain':self._keyless_drain_observation}
+                   if getattr(self,'_keyless_drain_observation',None) is not None else {})}

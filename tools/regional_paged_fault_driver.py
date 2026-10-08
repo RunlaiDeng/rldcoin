@@ -414,7 +414,7 @@ class Driver:
         require(not unclean,'owned ordinary node shutdown was unclean')
 
     def observations(self):
-        heights={}
+        heights={};self.keyless_drains={}
         for (label,n),process in self.processes.items():
             require(process.poll() is None,'owned ordinary node exited prematurely')
             path=self.root/'mesh'/f'{label}-{n}'/'regional-contact-status.json'
@@ -435,6 +435,8 @@ class Driver:
             if type(value.get('transport')) is dict and value['transport'].get('progress_observation_available',True) is True:self.tls_observations.add((label,n))
             if self.phase=='keyless-drain' and heights[label,n] is not None:
                 require(value['consensus']['autonomous_signing_enabled'] is False,'keyless observer began signing')
+                drain=value['consensus'].get('native_keyless_drain')
+                if drain is not None:self.keyless_drains[label,n]=drain
             self.stopped_observations.pop((label,n),None)
         return heights
 
@@ -492,8 +494,19 @@ class Driver:
 
     def keyless_observations_ready(self, heights):
         # Observation eligibility only; no drain or Native authority is granted.
-        return (all(type(heights.get(slot)) is int for slot in SLOTS)
+        known=(all(type(heights.get(slot)) is int for slot in SLOTS)
             and all(len({heights[label,n] for n in range(4)})==1 for label in REGIONS))
+        if not known:return False
+        from regional_bft_keyless_drain import reports_drained
+        reports=getattr(self,'keyless_drains',{})
+        if set(reports)!=set(SLOTS):return False
+        bindings={}
+        for slot in SLOTS:
+            config=json.loads(self.configs[PHASES[-1],*slot].bft)
+            caller=document(config['head_file'])
+            if caller['pending'] is not None or caller['outbox'] is not None:return False
+            bindings[slot]=dict(key=config['key'],head=caller['head'])
+        return reports_drained(reports,bindings,heights,self.currency,self.regions)
 
     def stopped_reads(self, slots, read):
         """At most two independent readers after the original all12 clean stop.

@@ -102,6 +102,10 @@ class NativeKeylessCarriageTests(unittest.TestCase):
                 raise
             self.assertEqual(commands,['bft-loop-status'])
             self.assertEqual(report['height'],2);self.assertIs(report['autonomous_signing_enabled'],False)
+            self.assertEqual(report['native_keyless_drain']['context']['parent_height'],2)
+            self.assertEqual(report['native_keyless_drain']['caller_head'],runtime.head['head'])
+            self.assertEqual(report['native_keyless_drain']['commits'],[])
+            self.assertIs(report['native_keyless_drain']['signing_authority'],False)
             self.assertIs(report['carriage_deferred'],True)
             self.assertFalse(report['independent_bft_qualified'])
             self.assertEqual({str(p):inventory(p) for p in map(Path,before)},before)

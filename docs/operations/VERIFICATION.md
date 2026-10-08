@@ -83,6 +83,15 @@ refusal originates before opening the mesh Node. Active keys, joint/role profile
 pending caller/outbox work, bad signatures, persistence failures, generic OS
 errors and stopping runtimes keep their original refusal behavior.
 
+A base keyless tick also requests complete retained signer messages within its
+existing caller-pinned Native loop read. `native_keyless_drain` binds the current
+Native context and caller head to the own signer's current Commit observations.
+The full fault controller requires all twelve current observations, matching
+per-region contexts and caller heads, and no three distinct current Commit votes
+before stopping. Missing observations are unknown. This stop-eligibility check
+performs no additional controller Native query and grants no certificate or value
+authority. The original stopped drain is still repeated after all clean exits.
+
 Delayed complete certificates still require the original Native finalization
 path. Current observations do not qualify stopped drain, complete fixed-head
 cold verification or conservation; those remain mandatory separate checks.

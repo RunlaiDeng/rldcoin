@@ -559,8 +559,14 @@ class KeylessDirectoryTests(unittest.TestCase):
 class StoppedDrainTests(unittest.TestCase):
  def model(self,p):
   d=Driver.__new__(Driver);d.currency='1'*64;d.regions={label:str(i+2)*64 for i,label in enumerate(REGIONS)};d.deadline=time.monotonic()+600;d.phase=PHASES[-1];d.processes={};d.terminal=[dict(region=l,index=n,exit_code=0) for l,n in SLOTS];d.configs={};d.queries=[];d.closed=False;d.heights={slot:17 if slot[0]=='earth' else 15 for slot in SLOTS};d.native_heights=dict(d.heights);d.pending=False;d.group=False;d.foreign=False
+  from regional_bft_keyless_drain import current_commits
+  d.keyless_drains={}
   for label,n in SLOTS:
-   caller=p/f'{label}-{n}.json';caller.write_text(json.dumps(dict(pending=None,outbox=None,head='3'*64,binding='4'*64)));d.configs[PHASES[-1],label,n]=Config(PHASES[-1],label,n,True,encoded({}),encoded(dict(head_file=str(caller),signer_dir=str(p/f'never-opened-{label}-{n}'))),('never-executed',))
+   key=f'{n+1:064x}'
+   caller=p/f'{label}-{n}.json';caller.write_text(json.dumps(dict(pending=None,outbox=None,head='3'*64,binding='4'*64)));d.configs[PHASES[-1],label,n]=Config(PHASES[-1],label,n,True,encoded({}),encoded(dict(key=key,head_file=str(caller),signer_dir=str(p/f'never-opened-{label}-{n}'))),('never-executed',))
+   context=dict(currency=d.currency,region=d.regions[label],epoch='5'*64,previous=None,
+                parent_height=d.heights[label,n],parent_block='6'*64,parent_state='7'*64)
+   d.keyless_drains[label,n]=current_commits(context,[],key,'3'*64)
   def call(label,n,command,*args):
    d.queries.append((label,n,command))
    if not d.closed and (label,n,command)==('earth',1,'bft-loop-status'):raise NativeReadBusy('model exact live lock refusal')
@@ -599,6 +605,20 @@ class StoppedDrainTests(unittest.TestCase):
  def test_unknown_telemetry_and_unequal_replica_observations_cannot_trigger_stop(self):
   with tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
    d=self.model(Path(t));self.assertTrue(d.keyless_observations_ready(d.heights));h=dict(d.heights);h['earth',0]=None;self.assertFalse(d.keyless_observations_ready(h));h['earth',0]=18;self.assertFalse(d.keyless_observations_ready(h));h['earth',0]=True;self.assertFalse(d.keyless_observations_ready(h))
+ def test_same_height_complete_native_commit_group_or_missing_report_cannot_trigger_stop(self):
+  for why in ('group','missing','changed-caller','pending','context'):
+   with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp') as t:
+    d=self.model(Path(t));self.assertTrue(d.keyless_observations_ready(d.heights));d.queries.clear()
+    if why=='group':
+     for n in (0,1,2):d.keyless_drains['earth',n]['commits']=[dict(round=0,value='8'*64,key=f'{n+1:064x}')]
+    elif why=='missing':d.keyless_drains.pop(('earth',0))
+    elif why=='context':d.keyless_drains['earth',0]['context']['parent_height']+=1
+    else:
+     path=Path(json.loads(d.configs[PHASES[-1],'earth',0].bft)['head_file']);caller=json.loads(path.read_text())
+     if why=='pending':caller['pending']={}
+     else:caller['head']='9'*64
+     path.write_text(json.dumps(caller))
+    self.assertFalse(d.keyless_observations_ready(d.heights));self.assertEqual(d.queries,[])
  def test_native_domain_cap_and_divergence_do_not_receive_drain_credit(self):
   for why in ('foreign','region','cap','different'):
    with self.subTest(why=why),tempfile.TemporaryDirectory(dir=PROJECT/'tmp',prefix='drain-model-') as t:
