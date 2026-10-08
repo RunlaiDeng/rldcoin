@@ -17,6 +17,7 @@ jobs:
           python-version: "3.12"
       - run: python3 -B tools/review_publication_content.py --root . --scan-tracked-documents
       - run: python3 -B -m unittest discover -s tools -p test_review_publication_content.py -v
+      - run: python3 -B -m unittest discover -s tools -p test_bounded_process_observation.py -v
       - run: python3 -B -m unittest discover -s tools/source-evidence -v
       - run: python3 -B -m unittest discover -s tools/implementation-source -v
       - run: python3 -B -m unittest discover -s tools -p test_pq_authorization_candidate.py -v
