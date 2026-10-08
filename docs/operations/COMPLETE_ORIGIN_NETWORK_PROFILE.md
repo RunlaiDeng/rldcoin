@@ -96,6 +96,26 @@ complete original canonical frame and admits evidence only; the ordinary BFT
 queue supplies Import candidates. Relay acknowledgement is neither Import nor
 maturity. Later retries re-authenticate complete bytes without duplicate append.
 
+The current full Native contact inspection also projects ordered exact
+`origin_evidence_message_ids` from retained, fully replayed OriginHistory events.
+It reconstructs the original bounded canonical source frame, including complete
+payload bytes and signatures; a changed proof has a different frame identity.
+Quarantined regions supply no completion identity. The projection stays within
+the existing4096-entry and8MiB bounds and supplies no Import, spendability,
+transport receipt, current remote authorization or independent freshness.
+
+Each Service tick obtains this projection before selecting received packets and
+starts with an empty operation-local set. A failed or unknown Native observation
+cannot reuse the preceding set. Only exact source-finality frames already covered
+by current Native replay may leave the receive-selection ring; Native/mesh
+evidence and receipts remain retained. Changed source frames and every novel
+complete BFT envelope still take normal authentication, including later proofs
+on an already retained body. Full native replay continues on every tick/cold
+open; no serialized ledger or durable validation cache supplies the projection.
+Write attempts still invalidate the first observation before outgoing decisions.
+Changed Native source requires fresh signed zero-allocation fixtures, with no
+old-currency, custody or value migration.
+
 Import, quorum3-of4, maturity2, fees, permanent consumption, owner/caller custody,
 conflict quarantine and source liabilities remain original Native behavior. Evidence
 and relay receipts supply no monetary or voting rights. Arbitrary foreign ancestry,

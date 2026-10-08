@@ -202,6 +202,36 @@ impl Replay {
 }
 
 impl Store {
+    /// Historical exact-byte completion only, derived from the current complete
+    /// Native replay. Never an Import, spendability, signing or freshness right.
+    pub fn retained_origin_contact_messages(&self) -> Result<Vec<Hash>> {
+        if !crate::paged_bft::is_origin_profile(&self.trust.region(self.chain.region)?.rules) {
+            return Ok(vec![]);
+        }
+        self.current_paged_replay()?;
+        let mut messages = BTreeSet::new();
+        let stream = self.paged.as_ref().ok_or("origin contact stream absent")?;
+        stream.visit(stream.storage_head(), |record| {
+            if let Record::OriginHistory(proof) = record {
+                if self.safety.check_region(proof.source).is_ok()
+                    && self.safety.check_region(self.chain.region).is_ok()
+                    && serde_json::to_vec(proof).map_err(|e| e.to_string())?.len()
+                        <= crate::contact::MAX_PAYLOAD
+                {
+                    messages.insert(crate::contact::Frame::origin_frame(proof)?.message_id);
+                    require(
+                        messages.len() <= MAX_COINS,
+                        "origin contact observation count bound",
+                    )?;
+                }
+            }
+            Ok(())
+        })?;
+        let messages = messages.into_iter().collect::<Vec<_>>();
+        encode("retained-origin-contact-messages", &messages)?;
+        Ok(messages)
+    }
+
     /// Pending tasks derived from full Native events, with no automatic credit.
     pub fn complete_origin_pending_imports(&self) -> Result<Vec<Command>> {
         if !crate::paged_bft::is_origin_profile(&self.trust.region(self.chain.region)?.rules) {

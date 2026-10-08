@@ -781,16 +781,41 @@ fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_o
     )
     .unwrap();
     let before = inventory(&root);
+    assert!(receiver
+        .retained_origin_contact_messages()
+        .unwrap()
+        .is_empty());
     let mut bad = proof.clone();
     bad.snapshots[65].bft.as_mut().unwrap().committed.votes[0]
         .approval
         .signature = "00".repeat(64);
+    let altered_message = crate::contact::Frame::origin_frame(&bad)
+        .unwrap()
+        .message_id;
+    assert_ne!(altered_message, frame.message_id);
     assert!(receiver.accept_complete_origin_history(bad).is_err());
     assert_eq!(inventory(&root), before);
     receiver.accept_complete_origin_history(proof).unwrap();
+    assert_eq!(
+        receiver.retained_origin_contact_messages().unwrap(),
+        vec![frame.message_id]
+    );
     assert_eq!(receiver.chain.height(), 0);
     assert!(receiver.chain.ledger.coins.is_empty());
     assert_eq!(receiver.complete_origin_pending_imports().unwrap().len(), 1);
+    let head = receiver.storage_head().unwrap();
+    let before_cold = inventory(&root.join("ordinary-receiver"));
+    drop(receiver);
+    let cold =
+        Store::open_pinned(&root.join("ordinary-receiver"), &public(1), currency, head).unwrap();
+    assert_eq!(
+        cold.retained_origin_contact_messages().unwrap(),
+        vec![frame.message_id]
+    );
+    assert_eq!(cold.chain.height(), 0);
+    assert!(cold.chain.ledger.coins.is_empty());
+    drop(cold);
+    assert_eq!(inventory(&root.join("ordinary-receiver")), before_cold);
     crate::keystore::private_create(
         &root.join("origin-contact-bootstrap.json"),
         &serde_json::to_vec(&h.bootstrap).unwrap(),
@@ -940,6 +965,10 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
             "valid conflict hidden by invalid tail81; network={network}"
         );
         assert!(receiver.safety.check_region(h.region).is_err());
+        assert!(receiver
+            .retained_origin_contact_messages()
+            .unwrap()
+            .is_empty());
         if network {
             // No origin event was installed, so there is no pending work at all.
             assert!(receiver
@@ -957,6 +986,7 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         assert_eq!(cold.chain.ledger, value);
         assert_eq!(cold.journal.incident_ids.len(), 1);
         assert!(cold.safety.check_region(h.region).is_err());
+        assert!(cold.retained_origin_contact_messages().unwrap().is_empty());
         if network {
             assert!(cold.complete_origin_pending_imports().unwrap().is_empty());
         } else {

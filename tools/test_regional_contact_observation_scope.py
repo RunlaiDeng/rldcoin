@@ -157,5 +157,32 @@ class ObservationScopeTests(unittest.TestCase):
         self.assertIsNone(report['native_observation'])
         self.assertEqual(report['applied'],[])
 
+    def test_origin_completion_is_current_before_selection_and_unknown_read_clears_it(self):
+        service=self.service();original=service.native.call;observed=[]
+        def native(command,*args):
+            result=original(command,*args)
+            result['status']['origin_evidence_message_ids']=['9'*64]
+            return result
+        service.native.call=native
+        service.receive_candidates=lambda *_:observed.append(service._native_origin_messages) or []
+        self.tick(service)
+        self.assertEqual(observed,[frozenset({'9'*64})])
+        def refused(*args):raise ValueError('Native read unknown')
+        service.native.call=refused
+        report=self.tick(service)
+        self.assertEqual(observed[-1],frozenset())
+        self.assertIsNone(report['native_observation'])
+
+    def test_malformed_origin_completion_cannot_become_selection_authority(self):
+        for ids in ([{}],['bad'],['9'*64,'9'*64],['9'*64,'1'*64],'9'*64):
+            service=self.service();original=service.native.call
+            def changed(command,*args):
+                result=original(command,*args);result['status']['origin_evidence_message_ids']=ids
+                return result
+            service.native.call=changed
+            report=self.tick(service)
+            self.assertIsNone(report['native_observation'])
+            self.assertEqual(service._native_origin_messages,frozenset())
+
 
 if __name__ == '__main__':unittest.main()

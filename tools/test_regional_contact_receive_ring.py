@@ -93,5 +93,17 @@ class ReceiveRingTests(unittest.TestCase):
         self.assertEqual(self.select(service,rows,receipts),eligible[4:8])
         self.assertEqual(service.receive_after,before)
 
+    def test_current_native_exact_origin_frame_completion_frees_slots_without_hiding_changed_proof(self):
+        service,rows,receipts=self.setup_ring(novel=(1,2),background=(100,101))
+        rows[ident(100)].update(kind='source-finality',frame_id=ident(900))
+        rows[ident(101)].update(kind='source-finality',frame_id=ident(901))
+        service._native_origin_messages=frozenset({ident(900)})
+        selected=self.select(service,rows,receipts)
+        self.assertNotIn(ident(100),selected)
+        self.assertIn(ident(101),selected)
+        self.assertEqual(service.bft_seen,set())
+        service._native_origin_messages=frozenset()
+        self.assertIn(ident(100),self.select(service,rows,receipts))
+
 
 if __name__=='__main__':unittest.main()

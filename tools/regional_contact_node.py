@@ -266,7 +266,9 @@ class Service:
     def receive_candidates(self, summaries, receipts, destination):
         eligible = sorted(i for i, t in summaries.items()
             if t['destination'] == destination and i in receipts
-            and i not in self.bft_seen)
+            and i not in self.bft_seen
+            and not (t['kind']=='source-finality' and t.get('frame_id') in
+                     getattr(self,'_native_origin_messages',frozenset())))
         if not eligible:
             return []
         if self.bft is not None:
@@ -339,6 +341,24 @@ class Service:
         def observe_os_error(error, stage):
             origin=tcp._local_os_error_origin(error,stage)
             if origin is not None and len(local_os_errors)<16:local_os_errors.append(origin)
+        # Refresh completion from a full Native open before selection. This
+        # operation-local exact-frame observation never authenticates a changed
+        # proof, creates Import/receipts, restores a ledger or suppresses BFT.
+        self._native_origin_messages=frozenset()
+        native_observation=None;outgoing=None
+        try:
+            native_observation,outgoing=self.contact_observation()
+            origin_messages=native_observation.get('origin_evidence_message_ids',[])
+            mesh.require(type(origin_messages) is list and len(origin_messages)<=4096
+                and all(type(ident) is str for ident in origin_messages)
+                and origin_messages==sorted(set(origin_messages)), 'native origin completion shape differs')
+            for ident in origin_messages:mesh.hex32(ident)
+            self._native_origin_messages=frozenset(origin_messages)
+        except (OSError,ValueError,subprocess.TimeoutExpired) as error:
+            native_observation=None;outgoing=None
+            errors.append(str(error));observe_os_error(error,'native-contact-status')
+        stage_seconds['native_contact_observation']=round(time.monotonic()-stage_started,6)
+        stage_started=time.monotonic()
         selected=[]
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
@@ -367,13 +387,7 @@ class Service:
             transport['diagnostic']='mesh selection lock contention; retained evidence remains pending'
         stage_seconds['mesh_selection'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()
-        native_observation = None
         applied = []
-        try:
-            native_observation,outgoing = self.contact_observation()
-        except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-            errors.append(str(error))
-            observe_os_error(error,'native-contact-status')
         if native_observation is not None:
             accepted = {c['message_id'] for c in native_observation['contacts']
                 if c['import_accepted'] or (self.miner is None and c['evidence_verified'])}

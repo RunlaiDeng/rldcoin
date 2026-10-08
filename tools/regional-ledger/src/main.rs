@@ -2216,7 +2216,8 @@ fn run() -> Result<()> {
                     .keys()
                     .map(|id| store.contact_status(*id))
                     .collect::<Result<Vec<_>>>()?;
-                let status = serde_json::json!({"currency":pin,"region":store.chain.region,"local_height":store.chain.height(),"contacts":contacts,"source_http_required":false});
+                let status = serde_json::json!({"currency":pin,"region":store.chain.region,"local_height":store.chain.height(),"contacts":contacts,"source_http_required":false,
+                    "origin_evidence_message_ids":store.retained_origin_contact_messages()?});
                 println!(
                     "{}",
                     serde_json::json!({"format":"RLD-NATIVE-CONTACT-OBSERVATION-V1","currency":pin,"region":store.chain.region,"status":status,"outgoing":outgoing,"ledger_changed":false,"signing_authority":false})

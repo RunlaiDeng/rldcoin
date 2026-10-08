@@ -517,6 +517,12 @@ impl Store {
 
 impl Frame {
     fn pack_origin(proof: &crate::storage::CompleteOriginHistory) -> Result<Vec<u8>> {
+        let frame = Self::origin_frame(proof)?;
+        let raw = canonical(&frame)?;
+        require(raw.len() <= MAX_FRAME, "origin contact frame bound")?;
+        Ok(raw)
+    }
+    pub(crate) fn origin_frame(proof: &crate::storage::CompleteOriginHistory) -> Result<Self> {
         let payload = serde_json::to_vec(proof).map_err(|e| e.to_string())?;
         require(
             !payload.is_empty() && payload.len() <= MAX_PAYLOAD,
@@ -533,9 +539,7 @@ impl Frame {
             message_id: Hash::ZERO,
         };
         frame.message_id = frame.message()?;
-        let raw = canonical(&frame)?;
-        require(raw.len() <= MAX_FRAME, "origin contact frame bound")?;
-        Ok(raw)
+        Ok(frame)
     }
     pub fn unpack_origin(raw: &[u8]) -> Result<(Self, crate::storage::CompleteOriginHistory)> {
         require(
