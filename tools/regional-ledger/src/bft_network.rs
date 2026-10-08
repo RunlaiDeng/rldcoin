@@ -9,6 +9,7 @@ pub const COLD_BATCH_FORMAT: &str = "RLD-BFT-COLD-NETWORK-CHECK-V1";
 pub const MAX_COLD_BATCH: usize = 4;
 pub const LIVE_BATCH_FORMAT: &str = "RLD-BFT-LIVE-NETWORK-INSPECTION-V1";
 pub const LOCAL_ENVELOPE_FORMAT: &str = "RLD-BFT-LOCAL-ENVELOPE-V1";
+pub const ORIGIN_RECEIVE_FORMAT: &str = "RLD-BFT-ORIGIN-RECEIVE-V1";
 
 #[derive(Debug, Serialize)]
 pub struct LocalEnvelope {
@@ -594,4 +595,52 @@ pub fn sync_origin_envelope(node: &mut Store, wire: WireEnvelope) -> Result<()> 
         node.finalize_origin_network_certificate(snapshot)?;
     }
     Ok(())
+}
+
+/// One pinned OS-locked Store, never an externally supplied checked ledger.
+/// Authenticate the whole batch before any history/value synchronization; each
+/// original sync then independently authenticates under sequential Native state.
+/// On error authentic incidents or already verified sync prefixes can persist,
+/// but no success response or signing rights are released.
+pub fn receive_origin_batch(
+    node: &mut Store,
+    wires: Vec<WireEnvelope>,
+) -> Result<Vec<LiveChecked>> {
+    require(
+        !wires.is_empty() && wires.len() <= MAX_COLD_BATCH,
+        "origin receive batch count bound",
+    )?;
+    require(
+        serde_json::to_vec(&wires).map_err(|e| e.to_string())?.len() <= MAX_BYTES,
+        "origin receive batch input bound",
+    )?;
+    let mut envelopes = Vec::with_capacity(wires.len());
+    for wire in &wires {
+        require(
+            serde_json::to_vec(wire).map_err(|e| e.to_string())?.len()
+                <= crate::contact::MAX_PAYLOAD,
+            "origin receive individual payload bound",
+        )?;
+        require(
+            wire.format == ORIGIN_FORMAT,
+            "origin receive explicit network profile required",
+        )?;
+        envelopes.push(wire.clone().expand()?);
+    }
+    node.observe_origin_network_batch_conflicts(&envelopes)?;
+    drop(envelopes);
+    let checked = inspect_live_batch(wires.clone(), node)?;
+    // Reserve a fixed bounded head/context wrapper before the first sync. There
+    // is no capacity fallback after this mutating operation has been attempted.
+    require(
+        serde_json::to_vec(&checked)
+            .map_err(|e| e.to_string())?
+            .len()
+            <= MAX_BYTES - 4096,
+        "origin receive complete response capacity",
+    )?;
+    for wire in wires {
+        sync_origin_envelope(node, wire)?;
+    }
+    Ok(checked)
 }

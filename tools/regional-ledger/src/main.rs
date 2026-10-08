@@ -101,6 +101,13 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    /// Fully authenticate then sequentially sync up to four origin envelopes.
+    BftOriginNetworkReceiveBatch {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     BftSync {
         #[arg(long)]
         file: PathBuf,
@@ -1018,6 +1025,7 @@ fn run() -> Result<()> {
         Action::HistoryCheck { expected_head }
         | Action::CompleteOriginHistoryAccept { expected_head, .. }
         | Action::BftOriginNetworkSync { expected_head, .. }
+        | Action::BftOriginNetworkReceiveBatch { expected_head, .. }
         | Action::ContactOriginApply { expected_head, .. }
         | Action::BftOriginNetworkObserveConflicts { expected_head, .. }
         | Action::ChannelReceiptAccept { expected_head, .. }
@@ -1235,6 +1243,36 @@ fn run() -> Result<()> {
                 "state":store.chain.ledger.root()?,"finality":store.chain.finalized,
                 "fixture_only":true,"signing_authority":false})
             );
+        }
+        Action::BftOriginNetworkReceiveBatch { file, .. } => {
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let values: Vec<serde_json::Value> =
+                serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            if serde_json::to_vec(&values).map_err(|e| e.to_string())? != raw {
+                return Err("origin receive canonical ordered input required".into());
+            }
+            let input_sha256: Vec<Hash> = values
+                .iter()
+                .map(|v| {
+                    Ok(Hash(
+                        Sha256::digest(serde_json::to_vec(v).map_err(|e| e.to_string())?).into(),
+                    ))
+                })
+                .collect::<Result<_>>()?;
+            let wires = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let checked = bft_network::receive_origin_batch(&mut store, wires)?;
+            let results: Vec<_> = input_sha256.into_iter().zip(checked).map(|(input_sha256, checked)|
+                serde_json::json!({"input_sha256":input_sha256,"checked":checked})).collect();
+            let response = serde_json::json!({"format":bft_network::ORIGIN_RECEIVE_FORMAT,
+                "currency":pin,"region":store.chain.region,
+                "request_sha256":Hash(Sha256::digest(&raw).into()),"results":results,
+                "history_head":store.storage_head()?,"context":bft::Context::current(&store)?,
+                "verified":true,"fixture_only":true,"signing_authority":false});
+            let output = serde_json::to_vec(&response).map_err(|e| e.to_string())?;
+            if output.len() > MAX_BYTES {
+                return Err("origin receive complete response bound".into());
+            }
+            println!("{}", String::from_utf8(output).map_err(|e| e.to_string())?);
         }
         Action::BftSync { file } => {
             bft_network::sync(&mut store, read_json(&file)?)?;

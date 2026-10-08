@@ -51,6 +51,37 @@ incoming envelope authenticates every proof it supplies, even for a control body
 attached invalid or conflicting evidence cannot be hidden by this selection.
 Current incidents continue through the ordinary contact path.
 
+`bft-origin-network-receive-batch` accepts one canonical ordered request of up
+to four complete origin wires under a separately retained exact Native head.
+The existing OS lock and full cold open remain mandatory. Whole input and
+response stay within8MiB, each wire within3MiB; complete expanded object and
+history limits remain unchanged. Bounded admission precedes independent
+signature authentication of conflicts across incoming objects and retained
+history. An authentic conflict remains durable even when a later body or tail
+refuses; forged signatures cannot create an incident.
+
+Every complete envelope authenticates before the first synchronization. Each
+subsequent ordered synchronization invokes the original whole-wire verifier
+and full Native value/history execution again. Exact retries remain idempotent;
+a repeated body never authenticates a later proof. Verified prefix changes or
+incidents can survive a later I/O/refusal, as with individual sync, but no
+partial success response grants authority. Response bindings include original
+request SHA256, each ordered input SHA256 and its complete checked row, exact
+currency/region, the actual final storage head and current Native context.
+These observations grant neither independent freshness nor signing rights.
+
+The ordinary origin Runtime initially selects this operation only for batches
+with empty local carried evidence, ordinary bodies and no joint configuration,
+within original message/input capacity. All other cases retain the existing
+read-only response segmentation followed by individual synchronization.
+Selection grants no authority; Native independently verifies the full input.
+Once the mutating call is attempted, capacity refusal, response loss or any
+other failure never falls back to the old path. Message retention occurs only
+after the complete bound response is checked. Signer/caller journals remain
+separate; an ordinary later tick independently rechecks custody and context
+before any signature. Exact lock contention remains an unknown deferred
+observation rather than receipt, ledger acceptance or height zero.
+
 Ordinary source contact export selects the earliest complete finalized local
 certificate prefix ending at an existing debited export. Full current Native
 replay precedes selection; separately received evidence, contacts and receipts

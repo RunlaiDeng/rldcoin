@@ -80,4 +80,67 @@ class LiveBatchBoundaryTests(unittest.TestCase):
         self.assertEqual([len(wire.decode_json(r)) for r in self.native.requests],[1,1,1,1])
 
 
+class OriginReceiveBoundaryTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.calls=[];self.change=None
+        self.runtime=SimpleNamespace(root=Path(self.temp.name),region='2'*64,
+            format='RLD-REGIONAL-BFT-ORIGIN-NODE-V2',joint=None,native=self)
+        self.currency='1'*64
+        self.envelopes=[dict(format=batch.ORIGIN_NETWORK,evidence={'snapshots':[]},
+            body={'Submission':[n]}) for n in range(4)]
+    def call(self,action,*args):
+        self.calls.append(action)
+        if action=='history-head':return dict(currency=self.currency,region=self.runtime.region,history_head='3'*64)
+        self.assertEqual(action,'bft-origin-network-receive-batch')
+        self.assertEqual(args[0],'--file');self.assertEqual(args[2:4],('--expected-head','3'*64))
+        path=Path(args[1]);raw=path.read_bytes();self.assertFalse(path.stat().st_mode & 0o077)
+        entries=wire.decode_json(raw)
+        context=dict(currency=self.currency,region=self.runtime.region,epoch='4'*64,previous=None,
+            parent_height=0,parent_block=self.runtime.region,parent_state='5'*64)
+        result=dict(format=batch.RECEIVE_FORMAT,currency=self.currency,region=self.runtime.region,
+            request_sha256=hashlib.sha256(raw).hexdigest(),history_head='6'*64,context=context,
+            verified=True,fixture_only=True,signing_authority=False,results=[
+                dict(input_sha256=hashlib.sha256(wire.canonical(e)).hexdigest(),checked=dict(
+                    message_id='7'*64,value=None,evidence={'snapshots':[]},epochs=[])) for e in entries])
+        return self.change(result) if self.change else result
+    def test_single_head_and_pinned_receive_order_and_no_private_file_residue(self):
+        rows,context=batch.receive_origin(self.runtime,self.envelopes)
+        self.assertEqual(len(rows),4);self.assertEqual(context['parent_height'],0)
+        self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
+        self.assertEqual(list(self.runtime.root.iterdir()),[])
+    def test_wrong_response_order_domain_flags_context_and_head_never_fallback(self):
+        changes=[lambda r:{**r,'results':r['results'][::-1]},lambda r:{**r,'results':r['results'][:-1]},
+            lambda r:{**r,'request_sha256':'0'*64},lambda r:{**r,'history_head':'wrong'},
+            lambda r:{**r,'currency':'0'*64},lambda r:{**r,'verified':1},
+            lambda r:{**r,'signing_authority':True},lambda r:{**r,'fixture_only':False},
+            lambda r:{**r,'context':{**r['context'],'parent_height':True}},
+            lambda r:{**r,'context':{**r['context'],'region':'0'*64}}]
+        for change in changes:
+            self.change=change;self.calls=[]
+            with self.assertRaises(ValueError):batch.receive_origin(self.runtime,self.envelopes)
+            self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
+            self.assertEqual(list(self.runtime.root.iterdir()),[])
+    def test_mutation_refusal_response_loss_and_fsync_never_split_or_fallback(self):
+        for error in (ValueError(batch.CAPACITY_REFUSAL),ValueError('invalid later'),OSError('response lost')):
+            def reject(result):raise error
+            self.change=reject;self.calls=[]
+            with self.assertRaises(type(error)):batch.receive_origin(self.runtime,self.envelopes)
+            self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
+        self.calls=[]
+        with patch.object(batch.os,'fsync',side_effect=OSError('write failed')),self.assertRaises(OSError):
+            batch.receive_origin(self.runtime,self.envelopes)
+        self.assertEqual(self.calls,['history-head'])
+    def test_unsupported_expansion_legacy_joint_capacity_and_count_do_not_call_native(self):
+        for bad in ([],self.envelopes*2,[dict(self.envelopes[0],format='legacy')],
+                    [dict(self.envelopes[0],evidence={'snapshots':[{}]})],
+                    [dict(self.envelopes[0],body={'EpochSigned':{}})]):
+            with self.assertRaises(ValueError):batch.receive_origin(self.runtime,bad)
+        self.runtime.joint=object()
+        self.assertFalse(batch.supported(self.runtime,self.envelopes));self.runtime.joint=None
+        with patch.object(batch,'MAX_BYTES',1):self.assertFalse(batch.supported(self.runtime,self.envelopes))
+        with patch.object(wire,'MAX_PAYLOAD',1):self.assertFalse(batch.supported(self.runtime,self.envelopes))
+        self.assertEqual(self.calls,[])
+
+
 if __name__=='__main__':unittest.main()

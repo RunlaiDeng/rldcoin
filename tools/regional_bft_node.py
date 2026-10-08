@@ -22,6 +22,7 @@ from regional_bft_observation import Observation
 from regional_bft_cold_batch import check_retained as check_cold_retained
 from regional_bft_pinned_cold import check_retained_pinned
 from regional_bft_live_batch import inspect as inspect_live_batch
+from regional_bft_live_batch import supported as supports_origin_receive, receive_origin
 from regional_bft_joint_epoch import JointEpoch, JointLoopStatus, FORMAT as JOINT_FORMAT, signed_body
 from regional_bft_joint_roles import RoleJoint, FORMAT as ROLE_FORMAT, readonly_head
 from regional_native_startup import Inspection
@@ -779,17 +780,27 @@ class Runtime:
         # Preserve authenticated incidents first, then complete all Native
         # body authentication before any dependency sync or message retention.
         started=time.monotonic()
+        synchronized=False
         try:
-            for envelope in envelopes:
-                if envelope.get('format')==ORIGIN_NETWORK:self.observe_origin_conflicts(envelope)
-            checked=inspect_live_batch(self,envelopes)
+            # Capacity selection grants no rights. Unsupported cases retain the
+            # original all-authenticate-before-sync path; never fall back after
+            # a mutating Native call or refuse a new proof based on body dedup.
+            if supports_origin_receive(self,envelopes) and len(set(self.state['messages']) |
+                    {mesh.digest(e['body']) for e in envelopes})<=MAX_MESSAGES:
+                checked,context=receive_origin(self,envelopes)
+                self._observe_context(context)
+                synchronized=True
+            else:
+                for envelope in envelopes:
+                    if envelope.get('format')==ORIGIN_NETWORK:self.observe_origin_conflicts(envelope)
+                checked=inspect_live_batch(self,envelopes)
         except (OSError,ValueError,subprocess.TimeoutExpired):
             for _ in raws:self.observation.event('receive-end',started,succeeded=False)
             raise
         for envelope,verified in zip(envelopes,checked):
             succeeded=False;started=time.monotonic()
             try:
-                self._retain_checked(envelope,verified)
+                self._retain_checked(envelope,verified,sync=not synchronized)
                 succeeded=True
             finally:
                 message=signed_body(envelope['body']);kind=next(iter(message),'Other')

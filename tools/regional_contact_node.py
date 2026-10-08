@@ -226,6 +226,7 @@ class Service:
             # or negative proof decision may be released from this refusal.
             if (isinstance(error, NativeRefusal)
                     and error.command in ('bft-network-inspect-batch',
+                                          'bft-origin-network-receive-batch',
                                           'bft-network-check', 'bft-sync', 'bft-context','bft-origin-network-sync',
                                           'bft-origin-network-observe-conflicts','history-head')
                     and type(error.exit_code) is int and error.exit_code == 1

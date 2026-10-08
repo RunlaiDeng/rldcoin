@@ -28,7 +28,8 @@ class ReceiveDeferredTests(unittest.TestCase):
         return errors, rejected, deferred
 
     def test_exact_typed_lock_defers_without_seen_or_trace_credit(self):
-        for action in ('bft-network-inspect-batch', 'bft-network-check', 'bft-sync', 'bft-context'):
+        for action in ('bft-network-inspect-batch', 'bft-origin-network-receive-batch',
+                       'bft-network-check', 'bft-sync', 'bft-context'):
             with self.subTest(action=action):
                 service = self.service(NativeRefusal(action, 1, BUSY))
                 errors, rejected, deferred = self.receive(service)

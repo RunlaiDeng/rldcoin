@@ -408,34 +408,47 @@ impl Store {
         &mut self,
         envelope: &crate::bft_network::Envelope,
     ) -> Result<()> {
+        self.observe_origin_network_batch_conflicts(std::slice::from_ref(envelope))
+    }
+
+    /// Compare arriving histories across the complete bounded batch as well as
+    /// retained history. No shape/body refusal may hide an admitted conflict.
+    pub(crate) fn observe_origin_network_batch_conflicts(
+        &mut self,
+        envelopes: &[crate::bft_network::Envelope],
+    ) -> Result<()> {
         require(
-            envelope.format == crate::bft_network::ORIGIN_FORMAT
-                && self.trust.region(self.chain.region)?.rules
-                    == crate::paged_bft::ORIGIN_NETWORK_RULES
-                && envelope.currency == self.trust.currency()?
-                && envelope.region == self.chain.region,
-            "origin conflict observation domain/profile differs",
-        )?;
-        encode("origin-conflict-complete-envelope", envelope)?;
-        let proofs = envelope
-            .origins
-            .as_ref()
-            .ok_or("origin conflict histories absent")?;
-        require(
-            proofs.len() <= 4 && envelope.evidence.snapshots.len() <= MAX_SNAPSHOTS,
-            "origin conflict histories/evidence bound",
+            !envelopes.is_empty() && envelopes.len() <= 4,
+            "origin conflict batch bound",
         )?;
         self.current_paged_replay()?;
-        for proof in proofs {
-            proof.admission(self.chain.region, &self.trust)?;
-        }
-        let mut snapshots = proofs
-            .iter()
-            .flat_map(|p| p.snapshots.iter().cloned())
-            .collect::<Vec<_>>();
-        snapshots.extend(envelope.evidence.snapshots.iter().cloned());
-        if let crate::bft_network::Body::Finalized(snapshot) = &envelope.body {
-            snapshots.push(*snapshot.clone());
+        let mut snapshots = Vec::new();
+        for envelope in envelopes {
+            require(
+                envelope.format == crate::bft_network::ORIGIN_FORMAT
+                    && self.trust.region(self.chain.region)?.rules
+                        == crate::paged_bft::ORIGIN_NETWORK_RULES
+                    && envelope.currency == self.trust.currency()?
+                    && envelope.region == self.chain.region,
+                "origin conflict observation domain/profile differs",
+            )?;
+            encode("origin-conflict-complete-envelope", envelope)?;
+            let proofs = envelope
+                .origins
+                .as_ref()
+                .ok_or("origin conflict histories absent")?;
+            require(
+                proofs.len() <= 4 && envelope.evidence.snapshots.len() <= MAX_SNAPSHOTS,
+                "origin conflict histories/evidence bound",
+            )?;
+            for proof in proofs {
+                proof.admission(self.chain.region, &self.trust)?;
+            }
+            snapshots.extend(proofs.iter().flat_map(|p| p.snapshots.iter().cloned()));
+            snapshots.extend(envelope.evidence.snapshots.iter().cloned());
+            if let crate::bft_network::Body::Finalized(snapshot) = &envelope.body {
+                snapshots.push(*snapshot.clone());
+            }
         }
         self.check_paged_snapshot_conflicts(&snapshots)
     }

@@ -888,12 +888,9 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         origins: Some(vec![proof.clone(), incoming]),
     };
     // Exercise retained-local comparison and conflict between two arriving histories.
-    for network in [false, true] {
-        let dir = root.join(if network {
-            "bad-tail-network"
-        } else {
-            "bad-tail-local"
-        });
+    for mode in ["local", "network", "batch"] {
+        let network = mode != "local";
+        let dir = root.join(format!("bad-tail-{mode}"));
         let mut receiver =
             Store::create(&dir, h.bootstrap.clone(), destination, &public(1), currency).unwrap();
         if !network {
@@ -904,7 +901,17 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         let value = receiver.chain.ledger.clone();
         let before = inventory(&dir);
         let head = receiver.storage_head().unwrap();
-        let rejected = if network {
+        let receive_batch = |receiver: &mut Store, incoming: CompleteOriginHistory| {
+            let mut first = make_wire(incoming.clone());
+            first.origins = Some(vec![proof.clone()]);
+            let mut second = make_wire(incoming);
+            second.origins.as_mut().unwrap().remove(0);
+            let wires = vec![first, second];
+            bft_network::receive_origin_batch(receiver, wires).map(|_| ())
+        };
+        let rejected = if mode == "batch" {
+            receive_batch(&mut receiver, forged.clone())
+        } else if network {
             bft_network::sync_origin_envelope(&mut receiver, make_wire(forged.clone()))
         } else {
             receiver
@@ -915,7 +922,9 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         assert!(receiver.journal.incident_ids.is_empty());
         assert_eq!(receiver.storage_head().unwrap(), head);
         assert_eq!(inventory(&dir), before);
-        let rejected = if network {
+        let rejected = if mode == "batch" {
+            receive_batch(&mut receiver, incoming.clone())
+        } else if network {
             bft_network::sync_origin_envelope(&mut receiver, make_wire(incoming.clone()))
         } else {
             receiver
@@ -1231,4 +1240,131 @@ fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_d
         serde_json::to_vec(&local.envelope).unwrap(),
         serde_json::to_vec(&minimal.pack().unwrap()).unwrap()
     );
+}
+
+#[test]
+fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_value() {
+    use crate::bft_network::{self, Body};
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(66, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let destination = source.trust.named("proxima").unwrap();
+    let currency = source.trust.currency().unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination,
+        export,
+        snapshots: records
+            .into_iter()
+            .map(|r| {
+                let Record::Certified(s) = r else {
+                    panic!("source certified")
+                };
+                *s
+            })
+            .collect(),
+    };
+    let mut sender = Store::create(
+        &root.join("batch-sender"),
+        h.bootstrap.clone(),
+        destination,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    sender.accept_complete_origin_history(proof).unwrap();
+    let import = certified_with_commands(
+        &sender.paged_replay.as_ref().unwrap().replay,
+        sender.complete_origin_pending_imports().unwrap(),
+    );
+    let wire = bft_network::local_envelope(Body::Finalized(Box::new(import)), &sender)
+        .unwrap()
+        .envelope;
+    let new_receiver = |name: &str| {
+        Store::create(
+            &root.join(name),
+            h.bootstrap.clone(),
+            destination,
+            &public(1),
+            currency,
+        )
+        .unwrap()
+    };
+    let mut batch = new_receiver("batch-receiver");
+    let mut sequential = new_receiver("sequential-receiver");
+    for case in 0..5 {
+        let mut bad = wire.clone();
+        match case {
+            0 => {
+                let Body::Finalized(snapshot) = &mut bad.body else {
+                    panic!("finalized")
+                };
+                snapshot.bft.as_mut().unwrap().committed.votes[0]
+                    .approval
+                    .signature = "00".repeat(64);
+            }
+            1 => {
+                bad.origins.as_mut().unwrap()[0].snapshots[65]
+                    .bft
+                    .as_mut()
+                    .unwrap()
+                    .committed
+                    .votes[0]
+                    .approval
+                    .signature = "00".repeat(64)
+            }
+            2 => bad.currency = Hash::ZERO,
+            3 => bad.format = bft_network::FORMAT.into(),
+            _ => {
+                let mut context = crate::bft::Context::current(&sender).unwrap();
+                context.parent_height = 1;
+                let mut timeout = crate::bft::TimeoutVote {
+                    context,
+                    round: 0,
+                    high: None,
+                    approval: Approval {
+                        key: public(2),
+                        signature: String::new(),
+                    },
+                };
+                timeout.approval.signature = signature(2, &timeout.bytes().unwrap());
+                bad.body = Body::Signed(Box::new(crate::bft::Message::Timeout(Box::new(timeout))));
+            }
+        }
+        let before = inventory(&root.join("batch-receiver"));
+        let head = batch.storage_head().unwrap();
+        assert!(bft_network::receive_origin_batch(&mut batch, vec![wire.clone(), bad]).is_err());
+        assert_eq!(batch.storage_head().unwrap(), head);
+        assert_eq!(inventory(&root.join("batch-receiver")), before);
+        assert_eq!(batch.chain.height(), 0);
+        assert!(batch.chain.ledger.coins.is_empty());
+        assert!(batch.journal.incident_ids.is_empty());
+    }
+    assert!(bft_network::receive_origin_batch(&mut batch, vec![]).is_err());
+    assert!(bft_network::receive_origin_batch(&mut batch, vec![wire.clone(); 5]).is_err());
+    let rows = bft_network::receive_origin_batch(&mut batch, vec![wire.clone(); 4]).unwrap();
+    bft_network::inspect_live_batch(vec![wire.clone(); 4], &sequential).unwrap();
+    for _ in 0..4 {
+        bft_network::sync_origin_envelope(&mut sequential, wire.clone()).unwrap();
+    }
+    assert_eq!(rows.len(), 4);
+    assert!(rows.windows(2).all(|p| p[0].message_id == p[1].message_id));
+    assert_eq!(batch.chain.height(), 1);
+    assert_eq!(batch.chain.ledger, sequential.chain.ledger);
+    assert_eq!(batch.chain.finalized, sequential.chain.finalized);
+    assert_eq!(
+        batch.storage_head().unwrap(),
+        sequential.storage_head().unwrap()
+    );
+    let head = batch.storage_head().unwrap();
+    let before = inventory(&root.join("batch-receiver"));
+    bft_network::receive_origin_batch(&mut batch, vec![wire]).unwrap();
+    assert_eq!(batch.storage_head().unwrap(), head);
+    assert_eq!(inventory(&root.join("batch-receiver")), before);
+    let value = batch.chain.ledger.clone();
+    drop(batch);
+    let cold =
+        Store::open_pinned(&root.join("batch-receiver"), &public(1), currency, head).unwrap();
+    assert_eq!(cold.chain.ledger, value);
+    assert_eq!(cold.chain.height(), 1);
+    assert!(cold.chain.ledger.coins.values().all(|c| c.mature == 3));
 }
