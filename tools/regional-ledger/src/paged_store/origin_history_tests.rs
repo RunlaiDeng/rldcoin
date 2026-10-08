@@ -72,6 +72,51 @@ fn complete_origin_history_requires_new_authenticated_receiver_admission() {
 }
 
 #[test]
+fn complete_origin416_public_input_for_bounded_ordinary_carriage() {
+    let (header, source, root, _, records, export) = source_fixture_with_profile(
+        416,
+        crate::history::PAGE_EVENTS,
+        crate::paged_bft::ORIGIN_HISTORY_RULES,
+    );
+    let destination = source.trust.named("proxima").unwrap();
+    let proof = CompleteOriginHistory {
+        source: header.region,
+        destination,
+        export,
+        snapshots: records
+            .into_iter()
+            .map(|record| {
+                let Record::Certified(snapshot) = record else {
+                    panic!("complete certified source")
+                };
+                *snapshot
+            })
+            .collect(),
+    };
+    proof.shape(destination, &source.trust).unwrap();
+    let raw = serde_json::to_vec(&proof).unwrap();
+    assert!(raw.len() > 3 * 1024 * 1024 && raw.len() <= MAX_BYTES);
+    source.chain.ledger.audit().unwrap();
+    assert_eq!(source.chain.height(), 416);
+    let query = serde_json::json!({"currency":source.trust.currency().unwrap(),
+        "source":header.region,"destination":destination,"export":export,
+        "source_checkpoint":source.chain.finalized.unwrap(),"source_height":416,
+        "fixture_only":true,"source_signing_custody_qualified":false});
+    for (name, bytes) in [
+        ("complete-origin-proof416.json", raw),
+        (
+            "receiver-bootstrap416.json",
+            serde_json::to_vec(&header.bootstrap).unwrap(),
+        ),
+        ("origin-query416.json", serde_json::to_vec(&query).unwrap()),
+    ] {
+        crate::keystore::private_create(&root.join(name), &bytes).unwrap();
+    }
+    // This provider constructs public input only. The receiving entry must still
+    // authenticate all certificates from its own independently pinned genesis.
+}
+
+#[test]
 fn complete_origin80_export66_local_import_maturity_owner_spend_cold_and_conflict_guards() {
     let (h, source, root, _scope, records, export) =
         source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_HISTORY_RULES);
@@ -160,6 +205,20 @@ fn complete_origin80_export66_local_import_maturity_owner_spend_cold_and_conflic
     destination
         .accept_complete_origin_history(proof.clone())
         .unwrap();
+    assert_eq!(destination.storage_head().unwrap(), evidence_head);
+    assert_eq!(inventory(&root), evidence_bytes);
+    let mut same_tail_changed_certificate = proof.clone();
+    same_tail_changed_certificate.snapshots[79]
+        .bft
+        .as_mut()
+        .unwrap()
+        .committed
+        .votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    assert!(destination
+        .accept_complete_origin_history(same_tail_changed_certificate)
+        .is_err());
     assert_eq!(destination.storage_head().unwrap(), evidence_head);
     assert_eq!(inventory(&root), evidence_bytes);
     let import = certified_with_commands(
@@ -320,13 +379,18 @@ fn complete_origin80_export66_local_import_maturity_owner_spend_cold_and_conflic
         pin,
     )
     .unwrap();
-    receiver.accept_complete_origin_history(proof).unwrap();
+    receiver
+        .accept_complete_origin_history(proof.clone())
+        .unwrap();
     assert!(receiver
         .accept_complete_origin_history(incompatible)
         .is_err());
     assert_eq!(receiver.journal.incident_ids.len(), 1);
     assert!(receiver.safety.check_region(h.region).is_err());
     assert!(receiver.complete_origin_pending_imports().is_err());
+    let quarantine_bytes = inventory(&root);
+    assert!(receiver.accept_complete_origin_history(proof).is_err());
+    assert_eq!(inventory(&root), quarantine_bytes);
     assert_eq!(receiver.chain.height(), 0);
     assert!(receiver.chain.ledger.coins.is_empty());
     assert!(receiver

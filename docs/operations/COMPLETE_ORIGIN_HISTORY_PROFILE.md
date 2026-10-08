@@ -61,3 +61,11 @@ custody. Receipt loss, expiry, verification failure and resource refusal cannot
 refund or recreate the source debit. This profile cannot authorize real assets,
 post-quantum adoption, independent security or physical routes; the full frozen
 acceptance obligations remain applicable.
+
+`tools/regional_origin_history_carriage.py` splits the original proof bytes into
+existing bounded frames and retains only a complete, caller-bound reconstruction.
+Its route/order checks are structural; it does not authenticate certificates.
+The receiver must still invoke the fixed-head Native entry with independently
+pinned genesis. Ordinary standalone BFT/contact envelopes retain their existing
+bounded-proof contract. Local evidence admission and local durable signers do
+not establish default Service/Runtime proposal carriage for long origin history.

@@ -223,8 +223,6 @@ impl Store {
     pub fn accept_complete_origin_history(&mut self, proof: CompleteOriginHistory) -> Result<Hash> {
         proof.shape(self.chain.region, &self.trust)?;
         self.current_paged_replay()?;
-        self.check_paged_snapshot_conflicts(&proof.snapshots)?;
-        self.safety.check_region(proof.source)?;
         let last = proof
             .snapshots
             .last()
@@ -245,8 +243,13 @@ impl Store {
             Ok(())
         })?;
         if identical {
+            // The entire input is already authenticated and executed in this
+            // current replay. Known incidents still prohibit its acknowledgement.
+            self.safety.check_region(proof.source)?;
             return Ok(last);
         }
+        self.check_paged_snapshot_conflicts(&proof.snapshots)?;
+        self.safety.check_region(proof.source)?;
         self.append_paged(&[Record::OriginHistory(Box::new(proof))])?;
         Ok(last)
     }
