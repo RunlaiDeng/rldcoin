@@ -31,7 +31,7 @@ every changed later signature or body still authenticates and takes the historic
 conflict path. A refused multi-event synchronization can retain authenticated
 prefixes or incidents; it is not a single atomic monetary transaction.
 
-Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V2` and its
+Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V4` and its
 matching separately retained caller-head format. Native current-finality observation
 replaces the old bounded proof startup entry only for this explicit configuration.
 Runtime reception preserves incidents before full body admission, rechecks each
@@ -101,7 +101,11 @@ request SHA256, each ordered input SHA256 and its complete checked row, exact
 currency/region, the actual final storage head and current Native context.
 These observations grant neither independent freshness nor signing rights.
 
-The ordinary origin Runtime selects this operation for bounded carried local
+The ordinary origin Runtime binds the receive selector to its current explicit
+configuration format constant. A copied historical format string must not select
+another configuration or silently disable the composed Native path. Legacy
+Origin versions and joint configurations do not adopt that selection.
+It selects this operation for bounded carried local
 evidence (at most64 snapshots per envelope), ordinary bodies and no joint
 configuration, within original message/input capacity. Native reconstructs and
 authenticates every expanded complete proof and reserves the bounded full response

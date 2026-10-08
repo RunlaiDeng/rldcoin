@@ -24,7 +24,11 @@ def supported(runtime, envelopes):
     Other inputs keep the existing read-only segmentation/sync path. A failed
     mutating call never falls back or retries through that path.
     """
-    return (runtime.joint is None and runtime.format=='RLD-REGIONAL-BFT-ORIGIN-NODE-V2'
+    # Resolve the actual Runtime contract at invocation, after both modules
+    # finish loading. A stale copied version silently disables the Native
+    # composition path when ordinary custody/carriage versions advance.
+    from regional_bft_node import ORIGIN_RUNTIME_FORMAT
+    return (runtime.joint is None and runtime.format==ORIGIN_RUNTIME_FORMAT
         and all(type(e) is dict and e.get('format')==ORIGIN_NETWORK
             and type(e.get('evidence')) is dict and set(e['evidence'])=={'snapshots'}
             and type(e['evidence']['snapshots']) is list

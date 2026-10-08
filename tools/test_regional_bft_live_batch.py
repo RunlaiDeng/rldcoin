@@ -8,6 +8,9 @@ from unittest.mock import patch
 
 import interstellar_transfer as wire
 import regional_bft_live_batch as batch
+from regional_bft_node import ORIGIN_RUNTIME_FORMAT,Runtime
+from regional_bft_observation import Observation
+import interstellar_mesh as mesh
 
 
 class FakeNative:
@@ -85,9 +88,10 @@ class OriginReceiveBoundaryTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.calls=[];self.change=None
         self.runtime=SimpleNamespace(root=Path(self.temp.name),region='2'*64,
-            format='RLD-REGIONAL-BFT-ORIGIN-NODE-V2',joint=None,native=self)
+            format=ORIGIN_RUNTIME_FORMAT,joint=None,native=self)
         self.currency='1'*64
-        self.envelopes=[dict(format=batch.ORIGIN_NETWORK,evidence={'snapshots':[]},
+        self.envelopes=[dict(format=batch.ORIGIN_NETWORK,currency=self.currency,
+            region=self.runtime.region,origins=[],evidence={'snapshots':[]},
             body={'Submission':[n]}) for n in range(4)]
     def call(self,action,*args):
         self.calls.append(action)
@@ -109,6 +113,27 @@ class OriginReceiveBoundaryTests(unittest.TestCase):
         self.assertEqual(len(rows),4);self.assertEqual(context['parent_height'],0)
         self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
         self.assertEqual(list(self.runtime.root.iterdir()),[])
+    def test_current_runtime_selects_one_native_receive_before_retaining_any_body(self):
+        self.runtime.state={'messages':{}}
+        self.runtime.observation=Observation()
+        retained=[]
+        self.runtime.observe_origin_conflicts=lambda envelope:self.fail('current Runtime fell back to per-envelope conflict/replay')
+        self.runtime._observe_context=lambda context:retained.append(('context',context))
+        self.runtime._retain_checked=lambda envelope,verified,sync:retained.append(('retain',envelope,sync))
+        raws=[wire.make_frame('regional-bft',self.runtime.region,self.runtime.region,
+            mesh.digest(e),wire.canonical(e)) for e in self.envelopes]
+        Runtime.receive_many(self.runtime,raws)
+        self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
+        self.assertEqual([x[0] for x in retained],['context']+['retain']*4)
+        self.assertEqual([x[1] for x in retained[1:]],self.envelopes)
+        self.assertTrue(all(x[2] is False for x in retained[1:]))
+    def test_old_runtime_versions_cannot_select_current_composed_receive(self):
+        for version in ('RLD-REGIONAL-BFT-ORIGIN-NODE-V2','RLD-REGIONAL-BFT-ORIGIN-NODE-V3',
+                        'RLD-REGIONAL-BFT-NODE-V1'):
+            self.runtime.format=version
+            self.assertFalse(batch.supported(self.runtime,self.envelopes))
+            with self.assertRaises(ValueError):batch.receive_origin(self.runtime,self.envelopes)
+        self.assertEqual(self.calls,[])
     def test_wrong_response_order_domain_flags_context_and_head_never_fallback(self):
         changes=[lambda r:{**r,'results':r['results'][::-1]},lambda r:{**r,'results':r['results'][:-1]},
             lambda r:{**r,'request_sha256':'0'*64},lambda r:{**r,'history_head':'wrong'},
