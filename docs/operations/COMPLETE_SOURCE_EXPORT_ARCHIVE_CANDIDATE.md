@@ -78,3 +78,10 @@ certificates still reject without partial output. Object, decoded-object, page,
 aggregate retained-byte and active-history limits remain unchanged. Compression
 alone supplies no independent copy, CPU budget, freshness, remote import or
 qualification at the required long-history scale.
+
+The opaque carriage codec preserves the explicit lossless manifest's ordered
+original-object references as well as its encoded pack references. Missing or
+ill-shaped original references and oversized decoded-object declarations reject
+before retention. The Python codec performs no inflation and cannot validate a
+compressed Native certificate; exact whole-manifest binding and all decoded
+Native semantics remain the inspector's responsibility.

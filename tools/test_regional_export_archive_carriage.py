@@ -92,6 +92,30 @@ class ArchiveCarriageTests(unittest.TestCase):
             carriage.retain_candidate(carried,target)
             self.assertEqual(carriage.pack_candidate(target),payload)
 
+    def test_explicit_lossless_manifest_preserves_bytes_and_refuses_missing_originals(self):
+        value=wire.decode_json(self.payload())
+        manifest=wire.decode_json(base64.b64decode(value['manifest_b64']))
+        manifest['format']=carriage.LOSSLESS_ARCHIVE
+        manifest['original_packs']=[dict(hash='2'*64,bytes=4096)]
+        # Synthetic encoded bytes are not inflated or authenticated as Native.
+        # Only the actual Native inspector can verify a complete compressed pack.
+        encode=lambda m:wire.canonical(dict(value,
+            manifest_b64=base64.b64encode(wire.canonical(m)).decode()))
+        with tempfile.TemporaryDirectory() as temporary:
+            target=Path(temporary)/'candidate'
+            raw=encode(manifest)
+            carriage.retain_candidate(raw,target)
+            self.assertEqual(carriage.pack_candidate(target),raw)
+            variants=[dict(manifest,original_packs=[]),dict(manifest,original_packs=[{}]),
+                      dict(manifest,original_packs=[dict(hash='../x',bytes=4096)]),
+                      dict(manifest,original_packs=[dict(hash='2'*64,bytes=True)]),
+                      dict(manifest,original_packs=[dict(hash='2'*64,bytes=carriage.MAX_DECODED_OBJECT+1)]),
+                      dict(manifest,format=carriage.ARCHIVE)]
+            for variant in variants:
+                denied=Path(temporary)/'denied'
+                with self.assertRaises(ValueError):carriage.retain_candidate(encode(variant),denied)
+                self.assertFalse(denied.exists())
+
     def test_partial_write_retains_sentinel_and_never_resumes_or_grants_authority(self):
         with tempfile.TemporaryDirectory() as temporary:
             target=Path(temporary)/'interrupted'

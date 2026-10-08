@@ -12,6 +12,8 @@ import interstellar_transfer as wire
 
 FORMAT = 'RLD-SOURCE-ARCHIVE-CARRIAGE-CANDIDATE-V1'
 ARCHIVE = 'RLD-NATIVE-IMMUTABLE-PACKED-ARCHIVE-CANDIDATE-V1'
+LOSSLESS_ARCHIVE = 'RLD-NATIVE-IMMUTABLE-LOSSLESS-PACKED-ARCHIVE-CANDIDATE-V1'
+MAX_DECODED_OBJECT = 8 * 1024 * 1024  # Existing Native object bound, never inflated here.
 
 
 def require(value, reason):
@@ -37,11 +39,25 @@ def checked(payload):
             'candidate archive shape/canonical format')
     manifest = blob(value['manifest_b64'])
     data = wire.decode_json(manifest)
-    require(type(data) is dict and set(data) == {'format', 'scope', 'packs', 'count', 'head'}
-            and data['format'] == ARCHIVE and type(data['packs']) is list
+    require(type(data) is dict, 'candidate manifest object')
+    lossless = data.get('format') == LOSSLESS_ARCHIVE
+    fields = {'format', 'scope', 'packs', 'count', 'head'}
+    if lossless:
+        fields.add('original_packs')
+    require(set(data) == fields
+            and data['format'] in (ARCHIVE, LOSSLESS_ARCHIVE) and type(data['packs']) is list
             and 0 < len(data['packs']) <= wire.MAX_QUEUE_FILES
             and type(data['count']) is int and 0 < data['count'] < 2**63,
             'candidate complete archive manifest')
+    if lossless:
+        require(type(data['original_packs']) is list
+                and len(data['original_packs']) == len(data['packs']),
+                'candidate lossless complete original reference inventory')
+        for ref in data['original_packs']:
+            require(type(ref) is dict and set(ref) == {'hash', 'bytes'}
+                    and type(ref['bytes']) is int and 0 < ref['bytes'] <= MAX_DECODED_OBJECT,
+                    'candidate lossless original object bound')
+            wire.hex32(ref['hash'], 'candidate original object hash')
     wire.hex32(data['head'], 'candidate byte head')
     expected = {}
     for ref in data['packs']:
