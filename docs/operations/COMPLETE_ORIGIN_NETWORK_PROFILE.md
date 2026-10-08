@@ -101,9 +101,12 @@ request SHA256, each ordered input SHA256 and its complete checked row, exact
 currency/region, the actual final storage head and current Native context.
 These observations grant neither independent freshness nor signing rights.
 
-The ordinary origin Runtime initially selects this operation only for batches
-with empty local carried evidence, ordinary bodies and no joint configuration,
-within original message/input capacity. All other cases retain the existing
+The ordinary origin Runtime selects this operation for bounded carried local
+evidence (at most64 snapshots per envelope), ordinary bodies and no joint
+configuration, within original message/input capacity. Native reconstructs and
+authenticates every expanded complete proof and reserves the bounded full response
+before synchronization; Python never expands a prefix or supplies checked state.
+All other cases retain the existing
 read-only response segmentation followed by individual synchronization.
 Selection grants no authority; Native independently verifies the full input.
 Once the mutating call is attempted, capacity refusal, response loss or any
@@ -112,6 +115,16 @@ after the complete bound response is checked. Signer/caller journals remain
 separate; an ordinary later tick independently rechecks custody and context
 before any signature. Exact lock contention remains an unknown deferred
 observation rather than receipt, ledger acceptance or height zero.
+
+A refused carriage prefix still requires bounded independent conflict observation
+over complete raw certificates and source histories. Truncated raw headers must
+pass the same complete quorum, ancestry and trust checks to form an incident;
+prefix metadata supplies no missing headers or authorization. Authentic conflicts
+persist before the original expansion error is returned, including in batch,
+single sync and conflict-only observation. No raw candidate enters value replay,
+checked output or retained ledger history. A bad prefix cannot install a branch
+or credit value, and a forged certificate cannot manufacture quarantine. Normally
+expandable wires retain the original complete expanded authentication path.
 
 Ordinary source contact export selects the earliest complete finalized local
 certificate prefix ending at an existing debited export. Full current Native

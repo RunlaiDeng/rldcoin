@@ -133,7 +133,8 @@ class OriginReceiveBoundaryTests(unittest.TestCase):
         self.assertEqual(self.calls,['history-head'])
     def test_unsupported_expansion_legacy_joint_capacity_and_count_do_not_call_native(self):
         for bad in ([],self.envelopes*2,[dict(self.envelopes[0],format='legacy')],
-                    [dict(self.envelopes[0],evidence={'snapshots':[{}]})],
+                    [dict(self.envelopes[0],evidence={'snapshots':[{}]*65})],
+                    [dict(self.envelopes[0],evidence={'snapshots':[], 'extra':True})],
                     [dict(self.envelopes[0],body={'EpochSigned':{}})]):
             with self.assertRaises(ValueError):batch.receive_origin(self.runtime,bad)
         self.runtime.joint=object()
@@ -141,6 +142,36 @@ class OriginReceiveBoundaryTests(unittest.TestCase):
         with patch.object(batch,'MAX_BYTES',1):self.assertFalse(batch.supported(self.runtime,self.envelopes))
         with patch.object(wire,'MAX_PAYLOAD',1):self.assertFalse(batch.supported(self.runtime,self.envelopes))
         self.assertEqual(self.calls,[])
+
+    def test_nonempty_carried_proofs_preserve_exact_input_and_native_expanded_rows(self):
+        carried={'prefix':{'checkpoint':'8'*64,'blocks':1},'snapshot':{'model_only':True}}
+        self.envelopes[0]['evidence']['snapshots']=[carried]
+        self.assertTrue(batch.supported(self.runtime,self.envelopes))
+        expanded={'model_native_authenticated_complete_snapshot':True}
+        self.change=lambda r:{**r,'results':[{**row,'checked':{**row['checked'],
+            'evidence':{'snapshots':[expanded]}}} for row in r['results']]}
+        rows,_=batch.receive_origin(self.runtime,self.envelopes)
+        self.assertEqual(rows[0]['evidence']['snapshots'],[expanded])
+        self.assertEqual(self.envelopes[0]['evidence']['snapshots'],[carried])
+        self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
+
+    def test_nonempty_expansion_epoch_capacity_and_lost_response_never_split_or_fallback(self):
+        self.envelopes[0]['evidence']['snapshots']=[{'model_only':True}]
+        for change in [
+            lambda r:{**r,'results':[{**row,'checked':{**row['checked'],
+                'evidence':{'snapshots':[{}]*65}}} for row in r['results']]},
+            lambda r:{**r,'results':[{**row,'checked':{**row['checked'],'epochs':[{}]}}
+                                   for row in r['results']]},
+            lambda r:{**r,'padding':'x'*(batch.MAX_BYTES+1)},
+        ]:
+            self.change=change;self.calls=[]
+            with self.assertRaises(ValueError):batch.receive_origin(self.runtime,self.envelopes)
+            self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
+            self.assertEqual(list(self.runtime.root.iterdir()),[])
+        def reject(result):raise OSError('mutating complete response lost')
+        self.change=reject;self.calls=[]
+        with self.assertRaises(OSError):batch.receive_origin(self.runtime,self.envelopes)
+        self.assertEqual(self.calls,['history-head','bft-origin-network-receive-batch'])
 
 
 if __name__=='__main__':unittest.main()

@@ -432,6 +432,64 @@ impl Store {
 }
 
 impl Store {
+    /// A refused carriage prefix cannot erase a separately authentic complete
+    /// certificate. Raw snapshots are conflict candidates only; full header,
+    /// quorum and trust verification still decides incidents, never value.
+    pub(crate) fn observe_origin_wire_batch_conflicts(
+        &mut self,
+        wires: &[crate::bft_network::WireEnvelope],
+    ) -> Result<()> {
+        require(
+            !wires.is_empty() && wires.len() <= 4,
+            "origin wire conflict batch bound",
+        )?;
+        require(
+            serde_json::to_vec(wires).map_err(|e| e.to_string())?.len() <= MAX_BYTES,
+            "origin wire conflict input bound",
+        )?;
+        let mut raw = Vec::with_capacity(wires.len());
+        for wire in wires {
+            require(
+                serde_json::to_vec(wire).map_err(|e| e.to_string())?.len()
+                    <= crate::contact::MAX_PAYLOAD
+                    && wire.evidence.snapshots.len() <= MAX_SNAPSHOTS,
+                "origin wire conflict individual bound",
+            )?;
+            raw.push(crate::bft_network::Envelope {
+                format: wire.format.clone(),
+                currency: wire.currency,
+                region: wire.region,
+                evidence: Evidence {
+                    snapshots: wire
+                        .evidence
+                        .snapshots
+                        .iter()
+                        .map(|s| s.snapshot.clone())
+                        .collect(),
+                },
+                body: wire.body.clone(),
+                origins: wire.origins.clone(),
+            });
+        }
+        // This is not prefix expansion. A truncated certificate must fail its
+        // own complete ancestry authentication. No raw candidate is installed,
+        // returned as checked evidence or supplied to ledger replay.
+        self.observe_origin_network_batch_conflicts(&raw)
+    }
+
+    pub fn observe_origin_network_wire_conflicts(
+        &mut self,
+        wire: &crate::bft_network::WireEnvelope,
+    ) -> Result<()> {
+        match wire.clone().expand() {
+            Ok(envelope) => self.observe_origin_network_conflicts(&envelope),
+            Err(error) => {
+                self.observe_origin_wire_batch_conflicts(std::slice::from_ref(wire))?;
+                Err(error)
+            }
+        }
+    }
+
     /// Signature-authenticated incidents persist even when the envelope is refused.
     /// This preflight never admits history, creates an Import or signs anything.
     pub fn observe_origin_network_conflicts(

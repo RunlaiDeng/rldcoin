@@ -18,14 +18,17 @@ ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 def supported(runtime, envelopes):
     """Scheduling selection only. Native still checks every complete object.
 
-    Initially select only origin envelopes with empty local carried evidence
-    and no epoch bodies, so complete result expansion cannot require splitting.
+    Select bounded origin envelopes with complete carried local evidence and
+    no epoch bodies. Native reconstructs/authenticates every complete proof
+    and refuses expanded response capacity before any history/value sync.
     Other inputs keep the existing read-only segmentation/sync path. A failed
     mutating call never falls back or retries through that path.
     """
     return (runtime.joint is None and runtime.format=='RLD-REGIONAL-BFT-ORIGIN-NODE-V2'
         and all(type(e) is dict and e.get('format')==ORIGIN_NETWORK
-            and e.get('evidence')=={'snapshots':[]}
+            and type(e.get('evidence')) is dict and set(e['evidence'])=={'snapshots'}
+            and type(e['evidence']['snapshots']) is list
+            and len(e['evidence']['snapshots'])<=64
             and type(e.get('body')) is dict and len(e['body'])==1
             and next(iter(e['body'])) in ('Signed','Submission','Finalized') for e in envelopes)
         and len(wire.canonical(envelopes))<=MAX_BYTES
@@ -83,8 +86,9 @@ def receive_origin(runtime, envelopes):
                 and row['input_sha256']==hashlib.sha256(wire.canonical(e)).hexdigest()
                 for row,e in zip(bindings,envelopes)), 'origin receive ordered result binding differs')
         rows=checked_rows([row['checked'] for row in bindings],len(envelopes))
-        # The selected profile has neither local evidence expansion nor epochs.
-        mesh.require(all(row['evidence']=={'snapshots':[]} and row['epochs']==[] for row in rows),
+        # Full expanded local evidence comes only from this complete Native
+        # authentication, never Python prefix reconstruction or a peer cache.
+        mesh.require(all(row['epochs']==[] for row in rows),
                      'origin receive selected response shape differs')
         succeeded=True
         return rows,context

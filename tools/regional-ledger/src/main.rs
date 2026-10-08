@@ -1249,8 +1249,7 @@ fn run() -> Result<()> {
         }
         Action::BftOriginNetworkObserveConflicts { file, .. } => {
             let wire: bft_network::WireEnvelope = read_json(&file)?;
-            let envelope = wire.expand()?;
-            store.observe_origin_network_conflicts(&envelope)?;
+            store.observe_origin_network_wire_conflicts(&wire)?;
             println!(
                 "{}",
                 serde_json::json!({"format":"RLD-ORIGIN-CONFLICT-OBSERVATION-V2",

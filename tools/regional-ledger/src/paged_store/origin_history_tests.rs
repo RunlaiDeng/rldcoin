@@ -749,7 +749,9 @@ fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_o
 
 #[test]
 fn origin_contact_fresh_live_proposal_chain_fixture() {
-    origin_contact_named_source("earth-release-1008");
+    let name =
+        std::env::var("RLD_PUBLIC_CONTACT_ORIGIN").unwrap_or_else(|_| "earth-batch-1008".into());
+    origin_contact_named_source(&name);
 }
 
 fn origin_contact_named_source(origin_name: &str) {
@@ -927,7 +929,14 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         origins: Some(vec![proof.clone(), incoming]),
     };
     // Exercise retained-local comparison and conflict between two arriving histories.
-    for mode in ["local", "network", "batch"] {
+    for mode in [
+        "local",
+        "network",
+        "batch",
+        "batch-prefix",
+        "network-prefix",
+        "observe-prefix",
+    ] {
         let network = mode != "local";
         let dir = root.join(format!("bad-tail-{mode}"));
         let mut receiver =
@@ -940,18 +949,39 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         let value = receiver.chain.ledger.clone();
         let before = inventory(&dir);
         let head = receiver.storage_head().unwrap();
+        let decorate = |receiver: &Store, mut wire: WireEnvelope| {
+            if mode.ends_with("prefix") {
+                wire.evidence
+                    .snapshots
+                    .push(crate::carriage::CarriedSnapshot {
+                        prefix: Some(crate::carriage::Prefix {
+                            checkpoint: Hash::ZERO,
+                            blocks: 1,
+                        }),
+                        snapshot: certified(&receiver.paged_replay.as_ref().unwrap().replay),
+                    });
+            }
+            wire
+        };
         let receive_batch = |receiver: &mut Store, incoming: CompleteOriginHistory| {
             let mut first = make_wire(incoming.clone());
             first.origins = Some(vec![proof.clone()]);
             let mut second = make_wire(incoming);
             second.origins.as_mut().unwrap().remove(0);
+            second = decorate(receiver, second);
             let wires = vec![first, second];
             bft_network::receive_origin_batch(receiver, wires).map(|_| ())
         };
-        let rejected = if mode == "batch" {
+        let rejected = if mode.starts_with("batch") {
             receive_batch(&mut receiver, forged.clone())
+        } else if mode == "observe-prefix" {
+            receiver.observe_origin_network_wire_conflicts(&decorate(
+                &receiver,
+                make_wire(forged.clone()),
+            ))
         } else if network {
-            bft_network::sync_origin_envelope(&mut receiver, make_wire(forged.clone()))
+            let wire = decorate(&receiver, make_wire(forged.clone()));
+            bft_network::sync_origin_envelope(&mut receiver, wire)
         } else {
             receiver
                 .accept_complete_origin_history(forged.clone())
@@ -961,10 +991,16 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         assert!(receiver.journal.incident_ids.is_empty());
         assert_eq!(receiver.storage_head().unwrap(), head);
         assert_eq!(inventory(&dir), before);
-        let rejected = if mode == "batch" {
+        let rejected = if mode.starts_with("batch") {
             receive_batch(&mut receiver, incoming.clone())
+        } else if mode == "observe-prefix" {
+            receiver.observe_origin_network_wire_conflicts(&decorate(
+                &receiver,
+                make_wire(incoming.clone()),
+            ))
         } else if network {
-            bft_network::sync_origin_envelope(&mut receiver, make_wire(incoming.clone()))
+            let wire = decorate(&receiver, make_wire(incoming.clone()));
+            bft_network::sync_origin_envelope(&mut receiver, wire)
         } else {
             receiver
                 .accept_complete_origin_history(incoming.clone())
@@ -1288,9 +1324,27 @@ fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_d
 
 #[test]
 fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_value() {
+    origin_receive_batch_fixture(false);
+}
+
+#[test]
+fn origin66_nonempty_finality_batch_authenticates_before_sync_and_matches_cold_value() {
+    origin_receive_batch_fixture(true);
+}
+
+fn origin_receive_batch_fixture(nonempty: bool) {
     use crate::bft_network::{self, Body};
+    // Public no-value fixture namespace only. The signed currency validates its
+    // normal name bound; this never opens/converts old stores or grants trust.
+    let name = std::env::var("RLD_PUBLIC_FINALITY_ORIGIN")
+        .unwrap_or_else(|_| "earth-finality-batch".into());
     let (h, source, root, _, records, export) =
-        source_fixture_with_profile(66, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+        super::export_archive_tests::source_fixture_with_named_origin(
+            66,
+            16,
+            crate::paged_bft::ORIGIN_NETWORK_RULES,
+            if nonempty { &name } else { "earth" },
+        );
     let destination = source.trust.named("proxima").unwrap();
     let currency = source.trust.currency().unwrap();
     let proof = CompleteOriginHistory {
@@ -1320,6 +1374,12 @@ fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_v
         &sender.paged_replay.as_ref().unwrap().replay,
         sender.complete_origin_pending_imports().unwrap(),
     );
+    if nonempty {
+        sender
+            .finalize_origin_network_certificate(import.clone())
+            .unwrap();
+        assert_eq!(sender.chain.height(), 1);
+    }
     let wire = bft_network::local_envelope(Body::Finalized(Box::new(import)), &sender)
         .unwrap()
         .envelope;
@@ -1335,7 +1395,8 @@ fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_v
     };
     let mut batch = new_receiver("batch-receiver");
     let mut sequential = new_receiver("sequential-receiver");
-    for case in 0..5 {
+    assert_eq!(wire.evidence.snapshots.is_empty(), !nonempty);
+    for case in 0..if nonempty { 7 } else { 5 } {
         let mut bad = wire.clone();
         match case {
             0 => {
@@ -1358,9 +1419,9 @@ fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_v
             }
             2 => bad.currency = Hash::ZERO,
             3 => bad.format = bft_network::FORMAT.into(),
-            _ => {
+            4 => {
                 let mut context = crate::bft::Context::current(&sender).unwrap();
-                context.parent_height = 1;
+                context.parent_height += 1;
                 let mut timeout = crate::bft::TimeoutVote {
                     context,
                     round: 0,
@@ -1372,6 +1433,23 @@ fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_v
                 };
                 timeout.approval.signature = signature(2, &timeout.bytes().unwrap());
                 bad.body = Body::Signed(Box::new(crate::bft::Message::Timeout(Box::new(timeout))));
+            }
+            5 => {
+                bad.evidence.snapshots[0]
+                    .snapshot
+                    .bft
+                    .as_mut()
+                    .unwrap()
+                    .committed
+                    .votes[0]
+                    .approval
+                    .signature = "00".repeat(64)
+            }
+            _ => {
+                bad.evidence.snapshots[0].prefix = Some(crate::carriage::Prefix {
+                    checkpoint: Hash::ZERO,
+                    blocks: 1,
+                })
             }
         }
         let before = inventory(&root.join("batch-receiver"));
@@ -1401,7 +1479,7 @@ fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_v
     );
     let head = batch.storage_head().unwrap();
     let before = inventory(&root.join("batch-receiver"));
-    bft_network::receive_origin_batch(&mut batch, vec![wire]).unwrap();
+    bft_network::receive_origin_batch(&mut batch, vec![wire.clone()]).unwrap();
     assert_eq!(batch.storage_head().unwrap(), head);
     assert_eq!(inventory(&root.join("batch-receiver")), before);
     let value = batch.chain.ledger.clone();
@@ -1411,4 +1489,17 @@ fn origin66_receive_batch_authenticates_all_before_sync_and_matches_sequential_v
     assert_eq!(cold.chain.ledger, value);
     assert_eq!(cold.chain.height(), 1);
     assert!(cold.chain.ledger.coins.values().all(|c| c.mature == 3));
+    drop(cold);
+    if nonempty {
+        for (name, bytes) in [
+            ("finality-bootstrap.json", serde_json::to_vec(&h.bootstrap).unwrap()),
+            ("finality-wire.json", serde_json::to_vec(&wire).unwrap()),
+            ("finality-query.json", serde_json::to_vec(&serde_json::json!({
+                "currency":currency,"authority":public(1),"source":h.region,
+                "destination":destination,"export":export,"source_signing_custody_qualified":false,
+            })).unwrap()),
+        ] {
+            crate::keystore::private_create(&root.join(name), &bytes).unwrap();
+        }
+    }
 }

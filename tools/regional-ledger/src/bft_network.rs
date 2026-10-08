@@ -727,7 +727,13 @@ pub fn sync_origin_envelope(node: &mut Store, wire: WireEnvelope) -> Result<()> 
         serde_json::to_vec(&wire).map_err(|e| e.to_string())?.len() <= crate::contact::MAX_PAYLOAD,
         "origin sync original envelope payload bound",
     )?;
-    let envelope = wire.expand()?;
+    let envelope = match wire.clone().expand() {
+        Ok(envelope) => envelope,
+        Err(error) => {
+            node.observe_origin_wire_batch_conflicts(std::slice::from_ref(&wire))?;
+            return Err(error);
+        }
+    };
     require(
         envelope.format == ORIGIN_FORMAT,
         "origin sync explicit network format required",
@@ -777,7 +783,13 @@ pub fn receive_origin_batch(
             wire.format == ORIGIN_FORMAT,
             "origin receive explicit network profile required",
         )?;
-        envelopes.push(wire.clone().expand()?);
+        match wire.clone().expand() {
+            Ok(envelope) => envelopes.push(envelope),
+            Err(error) => {
+                node.observe_origin_wire_batch_conflicts(&wires)?;
+                return Err(error);
+            }
+        }
     }
     node.observe_origin_network_batch_conflicts(&envelopes)?;
     drop(envelopes);
