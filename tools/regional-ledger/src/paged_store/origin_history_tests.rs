@@ -841,6 +841,14 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
     incoming.snapshots[79] = certified_with_commands(&fork, vec![Command::Spend(Box::new(spend))]);
     let conflict = Conflict::from_snapshots(&proof.snapshots[79], &incoming.snapshots[79]).unwrap();
     conflict.verify(&source.trust).unwrap();
+    assert!(Conflict::may_conflict(
+        &proof.snapshots[79],
+        &incoming.snapshots[79]
+    ));
+    assert!(!Conflict::may_conflict(
+        &proof.snapshots[79],
+        &proof.snapshots[79]
+    ));
     // The later malformed parent witness must not erase the authentic conflict80.
     let mut tail = incoming.snapshots[79].clone();
     tail.statement.height = 81;
@@ -972,4 +980,67 @@ fn origin_contact80_authenticated_local_evidence_does_not_replace_certified_expo
     assert_eq!(origin.contact_export(export).unwrap(), raw);
     assert_eq!(inventory(&root), before);
     origin.chain.ledger.audit().unwrap();
+}
+
+#[test]
+fn origin66_single_receiver_discriminates_conflict_scan_from_full_replay_cost() {
+    let (h, source, root, _, records, export) =
+        source_fixture_with_profile(66, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
+    let destination = source.trust.named("proxima").unwrap();
+    let currency = source.trust.currency().unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination,
+        export,
+        snapshots: records
+            .into_iter()
+            .map(|r| {
+                let Record::Certified(s) = r else {
+                    panic!("certified source")
+                };
+                *s
+            })
+            .collect(),
+    };
+    let dir = root.join("cost-receiver");
+    let mut receiver =
+        Store::create(&dir, h.bootstrap.clone(), destination, &public(1), currency).unwrap();
+    receiver
+        .accept_complete_origin_history(proof.clone())
+        .unwrap();
+    let head = receiver.storage_head().unwrap();
+    let value = receiver.chain.ledger.clone();
+    let before = inventory(&dir);
+    let started = std::time::Instant::now();
+    receiver
+        .check_paged_snapshot_conflicts(&proof.snapshots)
+        .unwrap();
+    let conflict_ns = started.elapsed().as_nanos();
+    let started = std::time::Instant::now();
+    CompleteOriginHistory::verify_network_set(
+        std::slice::from_ref(&proof),
+        destination,
+        &receiver.trust,
+    )
+    .unwrap();
+    let complete_network_ns = started.elapsed().as_nanos();
+    let started = std::time::Instant::now();
+    receiver
+        .accept_complete_origin_history(proof.clone())
+        .unwrap();
+    let exact_retry_ns = started.elapsed().as_nanos();
+    assert_eq!(receiver.storage_head().unwrap(), head);
+    assert_eq!(receiver.chain.ledger, value);
+    assert_eq!(inventory(&dir), before);
+    drop(receiver);
+    let started = std::time::Instant::now();
+    let cold = Store::open_pinned(&dir, &public(1), currency, head).unwrap();
+    let cold_replay_ns = started.elapsed().as_nanos();
+    assert_eq!(cold.chain.ledger, value);
+    assert_eq!(cold.chain.height(), 0);
+    assert!(cold.journal.incident_ids.is_empty());
+    drop(cold);
+    assert_eq!(inventory(&dir), before);
+    println!("origin66_cost={{\"conflict_ns\":{conflict_ns},\"complete_network_ns\":{complete_network_ns},\"exact_retry_ns\":{exact_retry_ns},\"cold_replay_ns\":{cold_replay_ns}}}");
+    // Timings discriminate work; they never authorize evidence or credit.
 }

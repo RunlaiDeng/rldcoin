@@ -732,7 +732,7 @@ impl Store {
             let previous = record.snapshots()?;
             for new in snapshots {
                 for old in &previous {
-                    if old.statement.region == new.statement.region {
+                    if Conflict::may_conflict(old, new) {
                         let proof = Conflict::from_snapshots(old, new)?;
                         if proof.verify(&self.trust).is_ok() {
                             incident = Some(proof);
@@ -744,7 +744,7 @@ impl Store {
         })?;
         for (n, new) in snapshots.iter().enumerate() {
             for old in &snapshots[..n] {
-                if old.statement.region == new.statement.region {
+                if Conflict::may_conflict(old, new) {
                     let proof = Conflict::from_snapshots(old, new)?;
                     if proof.verify(&self.trust).is_ok() {
                         incident = Some(proof);
@@ -852,7 +852,7 @@ impl Store {
         stream.visit(stream.storage_head(), |record| {
             let snapshots = record.snapshots()?;
             for old in &snapshots {
-                if old.statement.region == snapshot.statement.region {
+                if Conflict::may_conflict(old, &snapshot) {
                     let proof = Conflict::from_snapshots(old, &snapshot)?;
                     if proof.verify(&self.trust).is_ok() {
                         incident = Some(proof);

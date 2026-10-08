@@ -47,6 +47,11 @@ executed evidence is idempotent; tail
 identity alone cannot suppress body verification. Conflicting certificates
 remain durable incident evidence and quarantine the source rather than replacing
 its branch. Existing liabilities and source debits remain intact.
+Compatible pairs without epoch transitions may bypass construction of an
+incident proof when all overlapping typed headers agree. This is a rejection
+filter only: unequal headers and every epoch history use the complete incident
+authentication path, and ordinary incoming proof authentication still precedes
+evidence storage or value execution. The filter supplies no cached authority.
 The acceptance response describes this evidence operation only; the Native
 recipient receipt remains the authority for actual import and maturity status.
 

@@ -89,6 +89,22 @@ pub struct Conflict {
     pub right: CertifiedHistory,
 }
 impl Conflict {
+    /// Rejection-only prefilter, never authentication or evidence admission.
+    /// With no epoch transitions, identical headers at every overlapping height
+    /// cannot satisfy verify's incompatibility predicate. Unequal typed headers
+    /// conservatively take the full hash/signature path, including collisions.
+    /// Any epoch history takes that original path without a shortcut.
+    pub(crate) fn may_conflict(left: &Snapshot, right: &Snapshot) -> bool {
+        left.statement.region == right.statement.region
+            && (!left.epochs.is_empty()
+                || !right.epochs.is_empty()
+                || left.blocks.iter().any(|a| {
+                    right
+                        .blocks
+                        .iter()
+                        .any(|b| a.header.height == b.header.height && a.header != b.header)
+                }))
+    }
     pub fn canonical(left: CertifiedHistory, right: CertifiedHistory) -> Result<Self> {
         let (left, right) = if left.context_id()? < right.context_id()? {
             (left, right)
