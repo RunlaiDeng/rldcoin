@@ -31,7 +31,7 @@ every changed later signature or body still authenticates and takes the historic
 conflict path. A refused multi-event synchronization can retain authenticated
 prefixes or incidents; it is not a single atomic monetary transaction.
 
-Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V7` and its
+Fresh ordinary runtime configuration uses `RLD-REGIONAL-BFT-ORIGIN-NODE-V8` and its
 matching separately retained caller-head format. Native current-finality observation
 replaces the old bounded proof startup entry only for this explicit configuration.
 Runtime reception preserves incidents before full body admission, rechecks each
@@ -242,6 +242,27 @@ without seen, receipt, ledger or signing credit; a bad complete proof still
 refuses. Other contact application, outgoing export selection and legacy/joint
 profiles keep their fresh-projection prerequisite. Unknown telemetry never
 supplies a ledger or fabricates height or phase observations.
+
+Current-Origin retained proposal carriage also accepts bounded Import commands
+in the child of the existing two-block scheduling shape. Both blocks retain
+the original sixteen-command limit and exact ordered Import encoding; command
+commitments, parent/context, complete leader signature and any ordered timeout
+certificate remain checked. Unsupported commands use ordinary carriage.
+The full envelope expansion budget and Mesh slots remain unchanged, and this
+extra filter supplies no source-proof, Import, quorum, ledger or spending rights.
+Every retained envelope and every receiver still requires complete Native
+authentication. Legacy and previous Origin configurations do not adopt this
+filter; use fresh signed no-value fixtures and custody directories.
+
+Current-Origin scheduling chooses a bounded subset when eligible complete frames
+exceed the original four-MiB hint expansion budget. Exact current proposals
+precede Commit, Prepare and Timeout frames; within each phase later eligible
+rounds precede older ones. Every selected frame still passes the extra signature
+and domain filter and its complete bytes count against that unchanged budget.
+Unselected frames, proofs, caller heads and signed records remain intact and
+continue through ordinary carriage. Original Mesh FIFO/history positions and
+four-item batches remain unchanged. This subset grants no quorum, signing,
+custody, ledger or value rights; complete Native verification remains mandatory.
 
 After a successful local Propose, its complete envelope and separately advanced
 caller head must already be durable before requesting its own Prepare in that

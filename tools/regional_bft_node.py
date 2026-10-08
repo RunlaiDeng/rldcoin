@@ -29,7 +29,7 @@ from regional_native_startup import Inspection
 from regional_bft_timeout_hint import ordered_timeout, ordered_timeout_vote
 
 FORMAT = 'RLD-REGIONAL-BFT-NODE-V1'
-ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V7'
+ORIGIN_RUNTIME_FORMAT = 'RLD-REGIONAL-BFT-ORIGIN-NODE-V8'
 NETWORK = 'RLD-REGIONAL-BFT-NETWORK-V2'
 ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 MAX_MESSAGES = 512
@@ -39,10 +39,11 @@ MAX_BROADCAST_QUIET_SECONDS = 4.0
 MAX_BROADCAST_QUIET_CALLS = 16
 
 
-def current_empty_proposal_hint(proposal, context, keys):
-    """Scheduling only for a Native-checked empty candidate and bounded parent.
+def current_empty_proposal_hint(proposal, context, keys, *, allow_import=False):
+    """Extra signature filter for a Native-checked bounded candidate and parent.
 
-    Only parent Import commands (original maximum 16) have a typed encoding.
+    Import commands (original maximum 16 per block) have a typed encoding.
+    Children retain the empty-only default unless current Origin enables Import.
     Other commands, epochs and other shapes use ordinary carriage. Later
     rounds require a complete bounded timeout certificate and its signatures.
     This extra exact signature check supplies no Native acceptance.
@@ -65,11 +66,12 @@ def current_empty_proposal_hint(proposal, context, keys):
             or leader['key']!=keys[(context['parent_height']+round_number)%4]):return False
     header_fields=('currency','region','parent','anchor','height','miner','commands','state','nonce')
     statement_fields=('currency','region','height','block','state','previous','epoch')
+    encode=lambda value:wire.json.dumps(value,separators=(',',':'),ensure_ascii=False).encode()
     headers=[];blocks=[]
     for index,block in enumerate(snapshot['blocks']):
         if (type(block) is not dict or set(block)!={'header','commands'}
                 or type(block['commands']) is not list or len(block['commands'])>16
-                or index==1 and block['commands']!=[]
+                or index==1 and block['commands']!=[] and not allow_import
                 or type(block['header']) is not dict or set(block['header'])!=set(header_fields)):return False
         commands=[]
         for command in block['commands']:
@@ -78,7 +80,8 @@ def current_empty_proposal_hint(proposal, context, keys):
             imp=command['Import'];mesh.hex32(imp['snapshot']);mesh.hex32(imp['export'])
             commands.append({'Import':{'snapshot':imp['snapshot'],'export':imp['export']}})
         h={k:block['header'][k] for k in header_fields};headers.append(h);blocks.append(dict(header=h,commands=commands))
-    encode=lambda value:wire.json.dumps(value,separators=(',',':'),ensure_ascii=False).encode()
+        if allow_import and commands and h['commands']!=hashlib.sha256(
+                b'RLD-REGIONAL-FIXTURE-V1:commands\0'+encode(commands)).hexdigest():return False
     block_hash=lambda h:hashlib.sha256(b'RLD-REGIONAL-FIXTURE-V1:block\0'+encode(h)).hexdigest()
     parent,child=headers;statement=snapshot['statement']
     if (blocks[0]['commands'] and parent['commands']!=hashlib.sha256(
@@ -156,7 +159,7 @@ def current_finalized_hint(snapshot, context, keys):
     return True
 
 
-def commit_carriage_frames(messages, context, keys, currency, region, round_number=None):
+def commit_carriage_frames(messages, context, keys, currency, region, round_number=None, *, import_proposals=False):
     """Exact current votes and bounded empty proposals from Native-checked Messages.
 
     The signature check only narrows scheduling. Native still checks every
@@ -164,6 +167,7 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
     """
     mesh.require(isinstance(messages,Messages) and len(messages)<=MAX_MESSAGES,
                  'Commit carriage requires bounded retained messages')
+    mesh.require(type(import_proposals) is bool,'invalid Origin carriage selection')
     fields=('currency','region','epoch','previous','parent_height','parent_block','parent_state')
     if (type(context) is not dict or set(context)!=set(fields)
             or context['currency']!=currency or context['region']!=region):return ()
@@ -172,7 +176,17 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
                  'Commit carriage requires configured base validators')
     for key in keys:mesh.hex32(key)
     frames=[];expanded_bytes=0;finalized_ids=[]
-    for ident,body,_,_ in messages.bodies():
+    rows=messages.bodies()
+    if import_proposals:
+        def order(row):
+            signed=signed_body(row[1]);vote=signed.get('Vote',{})
+            selected=signed.get('Proposal',signed.get('Vote',signed.get('Timeout',{})))
+            phase=(0 if 'Proposal' in signed else 1 if vote.get('phase')=='Commit'
+                   else 2 if vote.get('phase')=='Prepare' else 3 if 'Timeout' in signed else 4)
+            number=selected.get('round')
+            return phase, -number if type(number) is int else 0
+        rows=sorted(rows,key=order)
+    for ident,body,_,_ in rows:
         signed=body.get('Signed',{});vote=signed.get('Vote',{});proposal=signed.get('Proposal');finalized=body.get('Finalized');timeout=signed.get('Timeout')
         try:
             if finalized is not None:
@@ -183,7 +197,8 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
                 ordered_timeout_vote(timeout,context,keys,timeout['round'])
             elif proposal is not None:
                 if round_number is not None and proposal['round']!=round_number:continue
-                if not current_empty_proposal_hint(proposal,context,keys):continue
+                imported=import_proposals and messages.record(ident)['header']['format']==ORIGIN_NETWORK
+                if not current_empty_proposal_hint(proposal,context,keys,allow_import=imported):continue
             else:
                 if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
                 # Another signer can still complete the preceding phase after
@@ -196,8 +211,11 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
                     separators=(',',':'),ensure_ascii=False).encode()
                 mesh.Ed25519PublicKey.from_public_bytes(bytes.fromhex(key)).verify(
                     bytes.fromhex(approval['signature']),data)
-            expanded_bytes+=messages.record(ident)['size_bytes']
-            if expanded_bytes>MAX_BROADCAST_HINT_BYTES:return ()
+            size=messages.record(ident)['size_bytes']
+            if expanded_bytes+size>MAX_BROADCAST_HINT_BYTES:
+                if import_proposals:continue
+                return ()
+            expanded_bytes+=size
             payload=messages.payload(ident);envelope=wire.decode_json(payload)
             if (envelope['format'] not in (NETWORK,ORIGIN_NETWORK) or envelope['currency']!=currency
                     or envelope['region']!=region):continue
@@ -951,7 +969,8 @@ class Runtime:
                 if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None:proposal_context=context
                 frames=commit_carriage_frames(self.state['messages'],context,
                                              tuple(self.peers),self.native.currency,self.region,
-                                             getattr(self,'_carriage_round',None))
+                                             getattr(self,'_carriage_round',None),
+                                             import_proposals=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None)
                 scope=mesh.digest(dict(binding=self.binding,context=context,round=getattr(self,'_carriage_round',None),keys=sorted(self.peers),
                     native=[self.native.authority,self.native.currency,str(self.native.ledger)]))
                 self._carriage_priority_key=node.set_carriage_priority(scope,frames)

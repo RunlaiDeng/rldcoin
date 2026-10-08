@@ -131,6 +131,7 @@ class OriginReceiveBoundaryTests(unittest.TestCase):
         for version in ('RLD-REGIONAL-BFT-ORIGIN-NODE-V2','RLD-REGIONAL-BFT-ORIGIN-NODE-V3',
                         'RLD-REGIONAL-BFT-ORIGIN-NODE-V4','RLD-REGIONAL-BFT-ORIGIN-NODE-V5',
                         'RLD-REGIONAL-BFT-ORIGIN-NODE-V6',
+                        'RLD-REGIONAL-BFT-ORIGIN-NODE-V7',
                         'RLD-REGIONAL-BFT-NODE-V1'):
             self.runtime.format=version
             self.assertFalse(batch.supported(self.runtime,self.envelopes))
