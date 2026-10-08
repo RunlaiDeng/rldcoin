@@ -132,9 +132,16 @@ fn source_fixture(height_limit: u64) -> (Header, Replay, PathBuf, Scope, Vec<Rec
 }
 // Public fixture construction only. This is not BFT voting/signing custody.
 // Native execution still verifies every certificate before retaining its bytes.
-fn source_fixture_with_batch(
+pub(super) fn source_fixture_with_batch(
     height_limit: u64,
     batch: usize,
+) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
+    source_fixture_with_profile(height_limit, batch, crate::paged_bft::RULES)
+}
+pub(super) fn source_fixture_with_profile(
+    height_limit: u64,
+    batch: usize,
+    destination_rules: &str,
 ) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
     assert!((1..=crate::history::PAGE_EVENTS).contains(&batch));
     let started = std::time::Instant::now();
@@ -144,6 +151,8 @@ fn source_fixture_with_batch(
     let mut h = header();
     let mut destination = h.bootstrap.admissions[0].clone();
     destination.region = "proxima".into();
+    destination.rules = destination_rules.into();
+    destination.value_rules = Some(crate::paged_bft::rules_hash_for(destination_rules).unwrap());
     destination.signature = signature(1, &destination.bytes().unwrap());
     let destination_id = destination.id().unwrap();
     h.bootstrap.admissions.push(destination);

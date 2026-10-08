@@ -34,6 +34,7 @@ impl Header {
 #[serde(deny_unknown_fields)]
 pub(crate) enum Record {
     Certified(Box<Snapshot>),
+    OriginHistory(Box<CompleteOriginHistory>),
     Evidence(Box<Evidence>),
     Receipt(Box<crate::channel_receipt::Receipt>),
     Contact(Box<crate::contact::Frame>),
@@ -43,6 +44,7 @@ impl Record {
     fn snapshots(&self) -> Result<Vec<Snapshot>> {
         Ok(match self {
             Self::Certified(s) => vec![*s.clone()],
+            Self::OriginHistory(proof) => proof.snapshots.clone(),
             Self::Evidence(e) => e.snapshots.clone(),
             Self::Contact(frame) => {
                 crate::contact::Frame::unpack(&frame.retained_bytes()?)?
@@ -66,6 +68,8 @@ struct Replay {
     receipt_anchors: BTreeSet<Hash>,
     incidents: BTreeSet<Hash>,
     contacts: BTreeMap<Hash, crate::contact::Record>,
+    // Derived only from complete origin events; never deserialized state.
+    origin_imports: BTreeMap<Hash, (Hash, Hash)>,
 }
 /// Process-only Native execution, created only by authenticated genesis or full
 /// cold replay. Never serialized and never initialized from Store projections.
@@ -141,10 +145,16 @@ impl Replay {
             receipt_anchors: BTreeSet::new(),
             incidents: BTreeSet::new(),
             contacts: BTreeMap::new(),
+            origin_imports: BTreeMap::new(),
         })
     }
     fn retain_for_next(&mut self) -> Result<()> {
         let mut needed = self.receipt_anchors.clone();
+        needed.extend(
+            self.origin_imports
+                .values()
+                .map(|(_, checkpoint)| *checkpoint),
+        );
         needed.extend(self.contacts.values().map(|record| record.snapshot));
         if let Some(id) = self.chain.finalized {
             needed.insert(id);
@@ -291,6 +301,7 @@ impl Replay {
                     self.authenticate(s, stream)?;
                 }
             }
+            Record::OriginHistory(proof) => self.apply_origin_history(proof, stream)?,
             Record::Receipt(receipt) => {
                 receipt.verify_selected(&self.chain, &self.trust, &self.evidence)?;
                 self.receipts.record(*receipt.clone())?;
@@ -351,6 +362,12 @@ impl Replay {
         }
         #[cfg(test)]
         cost.mark(0);
+        self.origin_imports
+            .retain(|export, _| !self.chain.ledger.imports.contains_key(export));
+        require(
+            self.origin_imports.len() <= MAX_COINS,
+            "complete origin pending import bound",
+        )?;
         encode("paged-bft-native-ledger", &self.chain.ledger)?;
         #[cfg(test)]
         cost.mark(1);
@@ -706,11 +723,14 @@ impl Store {
             "paged BFT incoming evidence count",
         )?;
         encode("evidence", evidence)?;
+        self.check_paged_snapshot_conflicts(&evidence.snapshots)
+    }
+    fn check_paged_snapshot_conflicts(&mut self, snapshots: &[Snapshot]) -> Result<()> {
         let stream = self.paged.as_ref().ok_or("paged store missing")?;
         let mut incident = None;
         stream.visit(stream.storage_head(), |record| {
             let previous = record.snapshots()?;
-            for new in &evidence.snapshots {
+            for new in snapshots {
                 for old in &previous {
                     if old.statement.region == new.statement.region {
                         let proof = Conflict::from_snapshots(old, new)?;
@@ -722,8 +742,8 @@ impl Store {
             }
             Ok(())
         })?;
-        for (n, new) in evidence.snapshots.iter().enumerate() {
-            for old in &evidence.snapshots[..n] {
+        for (n, new) in snapshots.iter().enumerate() {
+            for old in &snapshots[..n] {
                 if old.statement.region == new.statement.region {
                     let proof = Conflict::from_snapshots(old, new)?;
                     if proof.verify(&self.trust).is_ok() {
@@ -1060,6 +1080,18 @@ pub use packed_inspection::{
     inspect_lossless_packed_native_candidate, inspect_packed_native_candidate,
     PackedNativeBoundaryCandidate,
 };
+
+#[path = "paged_store/origin_history.rs"]
+mod origin_history;
+pub use origin_history::CompleteOriginHistory;
+
+#[cfg(test)]
+#[path = "paged_store/origin_history_tests.rs"]
+mod origin_history_tests;
+
+#[cfg(test)]
+#[path = "paged_store/origin_custody_tests.rs"]
+mod origin_custody_tests;
 
 #[path = "paged_store/export_archive.rs"]
 mod export_archive;

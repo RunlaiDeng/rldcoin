@@ -566,6 +566,13 @@ enum Action {
         #[arg(long)]
         file: PathBuf,
     },
+    /// Full origin evidence under the separate signed receiver profile; no credit.
+    CompleteOriginHistoryAccept {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
     Finalize {
         #[arg(long)]
         file: PathBuf,
@@ -983,6 +990,7 @@ fn run() -> Result<()> {
         | Action::BftNetworkLocalEnvelope { .. }
         | Action::BftLoopStatus { .. } => Store::open_inspection(&args.dir, &args.authority, pin)?,
         Action::HistoryCheck { expected_head }
+        | Action::CompleteOriginHistoryAccept { expected_head, .. }
         | Action::ChannelReceiptAccept { expected_head, .. }
         | Action::ChannelWatch { expected_head, .. }
         | Action::ChannelWitnessSeal { expected_head, .. }
@@ -1008,7 +1016,7 @@ fn run() -> Result<()> {
             unreachable!("handled before opening a native store")
         }
         Action::BftPendingImports => {
-            let commands = store
+            let mut commands = store
                 .journal
                 .contact_records
                 .values()
@@ -1018,6 +1026,11 @@ fn run() -> Result<()> {
                     export: r.export,
                 })
                 .collect::<Vec<_>>();
+            for command in store.complete_origin_pending_imports()? {
+                if !commands.contains(&command) {
+                    commands.push(command);
+                }
+            }
             println!(
                 "{}",
                 serde_json::to_string(&commands).map_err(|e| e.to_string())?
@@ -2002,6 +2015,18 @@ fn run() -> Result<()> {
             println!(
                 "{}",
                 serde_json::to_string(&block).map_err(|e| e.to_string())?
+            );
+        }
+        Action::CompleteOriginHistoryAccept { file, .. } => {
+            let checkpoint = store.accept_complete_origin_history(read_json(&file)?)?;
+            println!(
+                "{}",
+                serde_json::json!({
+                    "source_checkpoint":checkpoint,"storage_head":store.storage_head()?,
+                    "verified":true,"ledger_changed":false,"import_accepted":false,
+                    "recipient_maturity_qualified":false,"owner_signing_authority":false,
+                    "remote_current_state_known":false,"fixture_only":true
+                })
             );
         }
         Action::Evidence { file } => {

@@ -53,6 +53,9 @@ pub(super) struct ExecutedPrefix {
     head: Hash,
 }
 impl ExecutedPrefix {
+    pub(super) fn count(&self) -> u64 {
+        self.count
+    }
     pub(super) fn new(scope: Scope) -> Result<Self> {
         Ok(Self {
             head: scope.initial()?,

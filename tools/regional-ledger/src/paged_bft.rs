@@ -2,8 +2,9 @@
 //! Complete certificates/owners remain authority, never page/index hashes.
 use crate::{storage::Store, *};
 pub const RULES: &str = "RLD-REGIONAL-BFT-PAGED-VALUE-CHANNELS-FIXTURE-V1";
+pub const ORIGIN_HISTORY_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ORIGIN-HISTORY-FIXTURE-V1";
 pub fn is_profile(rules: &str) -> bool {
-    rules == RULES
+    rules == RULES || rules == ORIGIN_HISTORY_RULES
 }
 pub fn rules_hash() -> Result<Hash> {
     id(
@@ -13,6 +14,16 @@ pub fn rules_hash() -> Result<Hash> {
             channels::profile_hash()?,
         ),
     )
+}
+pub fn rules_hash_for(rules: &str) -> Result<Hash> {
+    match rules {
+        RULES => rules_hash(),
+        ORIGIN_HISTORY_RULES => id(
+            "complete-origin-history-bft-rules-v1",
+            &(include_str!("origin_history_profile.md"), rules_hash()?),
+        ),
+        _ => Err("unknown explicit paged BFT rules".into()),
+    }
 }
 pub(crate) fn shape(snapshot: &Snapshot, trust: &Trust) -> Result<()> {
     let s = &snapshot.statement;

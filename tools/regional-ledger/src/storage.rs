@@ -1256,6 +1256,7 @@ pub(crate) use paged::Record as PagedRecord;
 pub use paged::{
     inspect_export_archive_candidate, inspect_lossless_export_archive_candidate,
     inspect_lossless_packed_native_candidate, inspect_packed_native_candidate,
-    ExportArchiveObservationCandidate, ExportArchiveQueryCandidate, NativeContinuationCandidate,
-    NativeContinuationPinsCandidate, NativePrefixPinsCandidate, PackedNativeBoundaryCandidate,
+    CompleteOriginHistory, ExportArchiveObservationCandidate, ExportArchiveQueryCandidate,
+    NativeContinuationCandidate, NativeContinuationPinsCandidate, NativePrefixPinsCandidate,
+    PackedNativeBoundaryCandidate,
 };

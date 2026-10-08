@@ -125,6 +125,18 @@ pub struct Admission {
 }
 impl Admission {
     pub fn bytes(&self) -> Result<Vec<u8>> {
+        if self.rules == crate::paged_bft::ORIGIN_HISTORY_RULES {
+            return encode(
+                "complete-origin-history-bft-admission-v1",
+                &(
+                    self.currency,
+                    &self.region,
+                    &self.rules,
+                    self.value_rules,
+                    &self.validators,
+                ),
+            );
+        }
         if crate::paged_bft::is_profile(&self.rules) {
             return encode(
                 "paged-bft-admission-v1",
@@ -167,7 +179,7 @@ impl Admission {
                 && if channels::is_profile(&self.rules) {
                     self.value_rules
                         == Some(if crate::paged_bft::is_profile(&self.rules) {
-                            crate::paged_bft::rules_hash()?
+                            crate::paged_bft::rules_hash_for(&self.rules)?
                         } else {
                             channels::profile_hash()?
                         })
