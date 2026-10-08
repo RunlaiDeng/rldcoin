@@ -39,3 +39,25 @@ authenticated profile, incident policy, resource bounds and full lifecycle tests
 Only source and tests are public. Generated archives and binding/query files stay
 local; no signer keys, owner journals, caller heads or live currency state belong
 in a published package.
+
+## Opaque carriage and receiver retention
+
+`tools/regional_export_archive_carriage.py` packages only the exact public
+`packed.json` manifest and its referenced immutable packs. Its canonical byte
+container rejects duplicate, missing, extra, path-bearing or mismatched objects
+before retention. The original transport payload/frame and retained-object limits
+apply. It never scans signing custody or supplies receiver trust from the sender.
+
+`retain_candidate` requires a fresh absent directory and refuses overwrite or
+resumption. Partial writes preserve their residue and a retention sentinel;
+the Native archive reader rejects that sentinel. Successful byte retention still
+requires the complete Native inspector with independently held bootstrap,
+authority, currency and exact route/export query. The supplied head commits only
+to bytes and grants no freshness, incident, import or maturity rights.
+
+Forward packet delivery, destination signed receipt and source receipt arrival
+are separate observations. Ordinary reverse carriage can require later ticks;
+a receiver must verify actual receipt binding within its unchanged budget and
+must not infer return completion from forward delivery. Ground region labels do
+not authenticate Native ledger admission. Clear process-local transit witnesses
+before a cold transport read, and use a new Native process for complete execution.
