@@ -142,6 +142,7 @@ class Service:
         mesh.require(type(parallel_carriage) is bool,'invalid parallel carriage selection')
         self.bft_seen = set()
         self.bft_individual_retry = False
+        self.bft_intake_pending = None
         # Scheduling only, two primitive packet IDs; never custody or replay.
         self.receive_after = {'novel': None, 'background': None}
         self.root = mesh.safe_dir(config['state'])
@@ -153,6 +154,7 @@ class Service:
             mesh.require(observation['currency'] == native.currency and config['network'] == native.currency,
                 'native/transport currency network binding mismatch')
             self.path = self.root / 'regional-contact-progress.json'
+            progress_existed = self.path.exists() or self.path.is_symlink()
             if self.path.exists():
                 self.progress = mesh.load(self.path, 8192)
                 mesh.require(set(self.progress) == {'format', 'currency', 'region', 'cursor'}
@@ -174,6 +176,14 @@ class Service:
                 mesh.require(miner is None, 'BFT validator cannot use uncertified import mining')
                 from regional_bft_node import Runtime
                 self.bft = Runtime(native,config,bft_config)
+                from regional_bft_node import ORIGIN_RUNTIME_FORMAT
+                if self.bft.format==ORIGIN_RUNTIME_FORMAT and self.bft.joint is None:
+                    from regional_bft_intake_pending import Pending
+                    binding=dict(runtime=self.bft.binding,authority=native.authority,
+                                 ledger=str(native.ledger),transport=str(self.root))
+                    self.bft_intake_pending=Pending(self.root/'regional-contact-native-pending.json',
+                                                   binding,fresh=not progress_existed)
+                    self.bft.before_sign=self.bft_intake_pending.before_sign
                 if contact_trace is not None:self.bft.contact_trace=contact_trace
                 self.bft.carriage_node = self.tcp.ordinary_mesh_node
                 if parallel_carriage:
@@ -206,11 +216,14 @@ class Service:
         """A local lock cannot establish envelope invalidity or acceptance."""
         mesh.require(type(rows) is list and 0 < len(rows) <= MAX_PER_TICK,
                      'BFT receive batch count outside bound')
+        pending=getattr(self,'bft_intake_pending',None)
+        if pending is not None:pending.begin(packet_id for packet_id,_ in rows)
         try:
             if self.contact_trace is not None:
                 for packet_id, raw in rows:
                     self.contact_trace.native_stage('native_receive_attempt', packet_id, raw)
             self.bft.receive_many([raw for _, raw in rows])
+            if pending is not None:pending.finish(packet_id for packet_id,_ in rows)
             self.bft_seen.update(packet_id for packet_id, _ in rows)
             if self.contact_trace is not None:
                 for packet_id, raw in rows:
@@ -243,6 +256,11 @@ class Service:
                                      signing_authority=False)
                                 for packet_id, _ in rows)
             else:
+                # A complete Native refusal or structural frame refusal closes
+                # this input attempt. OS/timeout outcomes remain unknown and
+                # retain the retry fence, never bft_seen or signing authority.
+                if pending is not None and isinstance(error,ValueError):
+                    pending.finish(packet_id for packet_id,_ in rows)
                 rejected.extend(dict(packet_id=packet_id, reason=str(error))
                                 for packet_id, _ in rows)
 
@@ -303,6 +321,13 @@ class Service:
         remaining=MAX_PER_TICK if quota is None else MAX_PER_TICK-len(quota['attempted'])
         if not eligible or remaining <= 0:
             return []
+        pending=getattr(self,'bft_intake_pending',None)
+        if pending is not None and pending.packets:
+            # Recheck already selected inputs before selecting another signing
+            # unit. No extra attempt, timer renewal or digest-based acceptance.
+            selected=[i for i in eligible if i in pending.packets][:remaining]
+            if quota is not None:quota['attempted'].update(selected)
+            return selected
         if self.bft is not None:
             # Cold startup authenticated the retained complete envelopes. Their
             # exact byte identities classify scheduling only: every selected
@@ -622,6 +647,7 @@ class Service:
             apply_received(late)
             return True
         if self.bft is not None:
+            from regional_bft_intake_pending import IntakePending
             previous_refresh=getattr(self.bft,'before_timeout',None)
             previous_wait=getattr(self.bft,'before_initial_proposal',None)
             previous_finalization=getattr(self.bft,'after_local_finalization',None)
@@ -631,6 +657,10 @@ class Service:
                 self.bft.after_local_finalization=self.continue_after_finalization
             try:
                 consensus=self.bft.tick()
+            except IntakePending as error:
+                consensus={'autonomous_signing_enabled':False,'progress_observation_available':False,
+                           'diagnostic':str(error),'independent_bft_qualified':False}
+                self.bft.observation.event('native-intake-signing-deferred')
             except (OSError,ValueError,subprocess.TimeoutExpired) as error:
                 errors.append(str(error))
                 observe_os_error(error,'consensus')

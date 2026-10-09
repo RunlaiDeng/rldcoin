@@ -591,6 +591,8 @@ class Runtime:
             self.retain(self.envelope(body),sync=False,local=True)
 
     def sign(self, request):
+        before_sign=getattr(self,'before_sign',None)
+        if before_sign is not None:before_sign()
         observation = getattr(self, 'observation', None)
         started = time.monotonic()
         kind, payload = next(iter(request.items()))
