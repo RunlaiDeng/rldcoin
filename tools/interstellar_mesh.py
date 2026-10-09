@@ -1552,6 +1552,7 @@ class Node:
         bundle, _ = self._exchange_plan(peer, accepted_transits, retry_packet_ids)
         return bundle
 
+    @frame_digest.hashing_operation()
     def prepare_exchange(self, peer, accepted_transits=None, advance_active=False, retry_packet_ids=()):
         """Durably rotate this peer's active start and selected receipts before I/O.
 
