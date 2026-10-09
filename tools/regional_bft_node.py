@@ -1144,6 +1144,7 @@ class Runtime:
         succeeded = False
         self._tick_operation=object()
         self._timeout_refresh_used=False
+        self._initial_proposal_wait_used=False
         self._composed_phase_observation=None
         self._sign_native_head=None
         try:
@@ -1287,9 +1288,26 @@ class Runtime:
                 # leadership, highest-QC/value, signer/head and complete execution
                 # still authorize the request. Existing future proposals take
                 # Prepare first; current complete Prepare/Commit took priority above.
-                if (not current_proposals and not future and leader==self.key and (proposed_round>round_number or not active['proposed'])
-                        and (proposed_round==0 or tc is not None)
-                        and time.monotonic()-self.entered_at>=self.block_interval):
+                can_propose=(not current_proposals and not future and leader==self.key
+                             and (proposed_round>round_number or not active['proposed'])
+                             and (proposed_round==0 or tc is not None))
+                wait=getattr(self,'before_initial_proposal',None)
+                if (can_propose and self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                        and proposed_round==round_number==0 and active['prepared'] is None
+                        and active['committed'] is None and callable(wait)
+                        and not self._initial_proposal_wait_used
+                        and time.monotonic()-self.entered_at<self.block_interval):
+                    # A bounded Service wait services the original interval in
+                    # this contact unit, before broadcast/outgoing work. A new
+                    # complete Native observation must follow the wait; no old
+                    # caller/head projection may authorize its phase request.
+                    self._initial_proposal_wait_used=True
+                    if wait(self.entered_at+self.block_interval):
+                        self._tick_operation=object()
+                        self._composed_phase_observation=None
+                        self._sign_native_head=None
+                        return self._tick()
+                if can_propose and time.monotonic()-self.entered_at>=self.block_interval:
                     highs=[v['high'] for v in tc['votes'] if v['high'] is not None] if tc else []
                     high=max(highs,key=lambda q:q['round'])['value'] if highs else None
                     proposed={'round':proposed_round,'snapshot':self.candidate(context,high),'timeout':tc}

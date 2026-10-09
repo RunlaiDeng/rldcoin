@@ -26,6 +26,7 @@ from regional_native_startup import Inspection
 FORMAT = 'RLD-REGIONAL-CONTACT-NODE-V2'
 MAX_PER_TICK = 4
 MAX_NATIVE_OUTPUT = 8 * 1024 * 1024
+MAX_INITIAL_PHASE_WAIT_SECONDS = 1.0
 
 
 class NativeRefusal(ValueError):
@@ -335,6 +336,17 @@ class Service:
             'native contact projections differ')
         return status,outgoing
 
+    def wait_initial_proposal(self, due):
+        """One bounded wait outside mesh locks; the Runtime reopens Native."""
+        if type(due) not in (int,float) or not due<=time.monotonic()+MAX_INITIAL_PHASE_WAIT_SECONDS:
+            return False
+        while True:
+            if getattr(self.tcp,'running',True) is False:
+                raise tcp.MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
+            remaining=due-time.monotonic()
+            if remaining<=0:return True
+            time.sleep(min(0.1,remaining))
+
     def tick(self):
         tick_started = time.monotonic()
         stage_started = tick_started
@@ -558,7 +570,10 @@ class Service:
             return True
         if self.bft is not None:
             previous_refresh=getattr(self.bft,'before_timeout',None)
-            if independent_bft:self.bft.before_timeout=before_timeout
+            previous_wait=getattr(self.bft,'before_initial_proposal',None)
+            if independent_bft:
+                self.bft.before_timeout=before_timeout
+                self.bft.before_initial_proposal=self.wait_initial_proposal
             try:
                 consensus=self.bft.tick()
             except (OSError,ValueError,subprocess.TimeoutExpired) as error:
@@ -568,7 +583,9 @@ class Service:
                 consensus={'autonomous_signing_enabled':None,'progress_observation_available':False,
                            'diagnostic':str(error)[:256],'independent_bft_qualified':False}
             finally:
-                if independent_bft:self.bft.before_timeout=previous_refresh
+                if independent_bft:
+                    self.bft.before_timeout=previous_refresh
+                    self.bft.before_initial_proposal=previous_wait
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
         if spool_outgoing:
             # Intake preceded Native export verification and optional signing.
