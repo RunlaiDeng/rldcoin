@@ -1,0 +1,135 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_RESEARCH_PUBLICATION",
+  "document_date": "2026-10-09",
+  "publication_version_label": null,
+  "title": "Rldcoin: A Peer-to-Peer Payment System Across Delayed Regions",
+  "website_base_commit": "f30edcf0b0241f389d4be10883c095e728562544",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "a400de0e05ae439dd665dd8f72db348ce6ccffa62e7314c4bf40874453508e1d",
+    "bytes": 199279
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "5b79df9feb3cf521e255b1244e25f51cb214920c266a90540f9f740397837bfe",
+    "bytes": 196098,
+    "pages": 46
+  },
+  "predecessor": {
+    "git_commit": "f30edcf0b0241f389d4be10883c095e728562544",
+    "content_audit_commit": "43959843beebcc140bc3a8c8f8d32aea61c8d08e",
+    "historical_receipt_path": "public/documents/rldcoin-whitepaper-release-2026-10-08.json",
+    "markdown_sha256": "ba2396f57fab39025f5267ececf6331c13d7b4cdf108b4802e14d7bdeb1c0cbf",
+    "pdf_sha256": "3308ec9dcce577b1702886139e4847bd31bce813cba7adfe9c528d123314542a",
+    "receipt_sha256": "e2e06dfda7147dff33f0f370fbca8b79fbff73c78227a9644587317af61cb075",
+    "availability": "Git history and preserved local bytes only; no predecessor download directory is published."
+  },
+  "authorization_scope": "The owner authorized the regional payment target and website/whitepaper update, using the existing permission to commit and push main and publish rldcoin.com. Only the current publication is provided in production. Git history is retained. No protocol code, genesis, safety thresholds, monetary parameters, fees or mainnet launch are changed.",
+  "owner_target_authorization": {
+    "instruction": "按你建议做",
+    "received_at_utc": "2026-10-09T10:47:53Z",
+    "message_id": "Sentinel_6c8173067fdc8191bcffd5a86a3d8f37"
+  },
+  "qualification": "Undemonstrated regional performance and design targets only. No implementation, mainnet, independent-operation or physical-route qualification.",
+  "regional_payment_target": {
+    "claim_status": "TARGET_NOT_DEMONSTRATED",
+    "conditions": "Predeclared normal regional network and offered-load envelope. Not a guarantee under every fault, partition, load or topology.",
+    "regions": [
+      "Earth, including separately measured continent-to-continent pairs and directions",
+      "Mars-region local payments",
+      "Payments aboard the same spacecraft"
+    ],
+    "p95_milliseconds": 3000,
+    "p99_milliseconds": 5000,
+    "start": "First signed valid transaction submission through the ordinary owner payment path, before admission and queuing; retries retain the same identity and clock.",
+    "end": "Recipient independently executes the ledger transition, verifies adopted finality and complete provenance, and verifies mature unquarantined onward-spend eligibility.",
+    "spendability_acceptance": "An actual second ordinary signed payment consuming the output, with independently verified finality; retain both transactions and original timestamps.",
+    "population": "All unique valid submissions, including backpressure, censored/failed and pending work, follow-up payments and late completions; never successful-only percentiles.",
+    "reporting": "Completion/failure rates, pending ages, clock uncertainty, queue/persistence/verification costs and separate region, continent pair, independent validator/controller count and load/latency cohorts.",
+    "cross_region": "Outside the local deadline: source finality, physical propagation/contact, unique import and adopted destination finality/maturity still apply.",
+    "quorum_loss": "Pause affected finalization without false final confirmation; independent control and existing S3-S4 quorum thresholds remain mandatory even for small spacecraft."
+  },
+  "reference_profile_preserved": {
+    "pow_average_interval_seconds": 600,
+    "checkpoint_blocks_including_checkpoint": 12,
+    "successors_after_checkpoint": 11,
+    "checkpoint_signatures": "4-of-4",
+    "destination_successors_after_import": 6,
+    "relation": "Historical reference, not seconds-scale BFT qualification or permission to rewrite signed genesis."
+  },
+  "protocol_snapshot_supplied_for_update": {
+    "commit": "01b7e0cd28cfd78194b2fdbf3612410594a4e265",
+    "reported_regression_checks_passing": 284,
+    "ordinary_payment_deadline_seconds": 180,
+    "ordinary_payment_result": "FAILED_TO_COMPLETE_WITHIN_DEADLINE",
+    "native_profile_adopted": false,
+    "qualification": "No new performance percentile or monetary readiness follows. The website task did not rerun or modify protocol implementation."
+  },
+  "review": {
+    "release_authorization": "EXPLICIT_OWNER_AUTHORIZATION_RECEIVED",
+    "prior_model_scope": "Previously reviewed finite mechanism models retain their stated ideal guards and limits. No finite model or existing regression result demonstrates the added real payment latency target.",
+    "preservation": {
+      "original_heading_titles_identical": true,
+      "numbered_sections": 21,
+      "figure_blocks_identical": true,
+      "figures": 9,
+      "issuance_section_byte_identical": true,
+      "original_content_blocks_retained": 323,
+      "missing_original_content_blocks": [],
+      "consensus_thresholds_unchanged": true,
+      "all_53_reference_blocks_retained": true,
+      "header_cta_unchanged": true
+    },
+    "pdf_validation": {
+      "pages": 46,
+      "canonical_blocks": 334,
+      "missing_blocks": [],
+      "outside_page_spans": [],
+      "black_square_characters": 0,
+      "bytes": 196098,
+      "sha256": "5b79df9feb3cf521e255b1244e25f51cb214920c266a90540f9f740397837bfe",
+      "reference_44_pdf_hyperlink_verified": true
+    },
+    "site_build": "PASSED_PRODUCTION_BUILD_AND_TYPESCRIPT",
+    "site_link_audit": {
+      "pages": 12,
+      "local_links": 59,
+      "anchors": 34,
+      "resources_fetched": 27,
+      "failures": []
+    },
+    "browser_validation": {
+      "desktop_width": 1440,
+      "mobile_width": 390,
+      "related_pages_checked": 7,
+      "horizontal_overflow": false,
+      "old_publication_links": 0,
+      "whitepaper_figures": 9,
+      "community_forum_cta_retained": true,
+      "navigation": [
+        "Desktop: keyboard dropdown activation, Escape and focus return passed.",
+        "Mobile: menu, Resources dropdown, whitepaper link, route close, Escape and focus return passed."
+      ],
+      "runtime_exceptions": []
+    },
+    "reference_44_url": "https://arxiv.org/abs/0803.0632",
+    "references_45_48": "Previously refused automated access with HTTP 403; retained author-verified sources; no new all-links-success claim.",
+    "visual_pdf_pages_reviewed": 46,
+    "cross_format_reader_validation": {
+      "desktop": {
+        "canonical_article_blocks": 332,
+        "missing_blocks": []
+      },
+      "mobile": {
+        "canonical_article_blocks": 332,
+        "missing_blocks": []
+      }
+    },
+    "prior_publication_urls": "Locally verified 404 for the 8 October receipt, original freeze receipt and prior PDF archive; production verification follows deployment."
+  },
+  "body_revisions_require_explicit_owner_decision": true,
+  "protocol_suite_key_epoch_versions_remain_required": true,
+  "audit_binding": "The audit_commit is the content commit containing the reviewed Markdown, PDF, website copy and removal of the prior receipt download. This receipt is committed afterward to avoid a self-referential hash.",
+  "audit_commit": "84220541c7b44ecb4546064b3bb78b83662404b7"
+}

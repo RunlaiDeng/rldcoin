@@ -6,32 +6,47 @@ p99 at most five seconds under declared normal network and load conditions.
 This target applies to an Earth region spanning continents, a Mars region or
 a ship region with an explicitly admitted validator profile. It is a pending
 acceptance requirement, not a claim that the current candidate meets it.
+It implements the measurement obligations of the
+[current research release](../WHITEPAPER_RELEASE_2026-10-09.json), Sections 1,
+5, 8 and 20. Its historical release snapshot is not a current implementation
+qualification or permission to change a signed genesis.
 
 An API acknowledgment means processed or queued. A preconfirmation is an
 intermediate observation. Finalized means that the recipient independently
 authenticates and installs the exact certified Native result. Spendable means
 that its actual output satisfies current ownership, incident, maturity and
 local value rules. The latency endpoint requires both finalized and spendable;
-the recipient must also demonstrate an actual independently signed re-spend.
+the recipient must also demonstrate an actual second ordinary independently
+signed payment consuming the output, and independently verify its finality.
 A sender's receipt, a transport receipt or a controller's observed height is
 insufficient.
 
-For every admitted ordinary payment, start timing before submission, including
-queue delay. Retain every sample and its processed, preconfirmed, finalized,
+For every unique valid signed ordinary submission, start timing at its first
+submission before admission, including queue delay and backpressure. Retain
+every sample, including follow-up payments, and its processed, preconfirmed, finalized,
 spendable and re-spend outcomes. Report p50, p95 and p99 using a declared
-percentile method and observation horizon. Unresolved samples remain in the
+percentile method, observation horizon and drain/censoring policy. A p95 claim
+requires at least 95 percent of all valid cohort submissions to complete within
+three seconds; a p99 claim requires at least 99 percent within five seconds.
+Unresolved samples remain in the
 population, with explicit lower bounds; they cannot be discarded, restarted or
 converted into successes. An observation cut off before the required tail can
 be assessed is incomplete. Recovery and retransmission retain the original
-submission time and transaction identity.
+submission time and transaction identity. Use a monotonic timebase or bounded
+cross-host clock uncertainty with a conservative timing bound; disclose invalid
+submissions separately with their validation reasons.
 
 Before a qualification run, pin the offered rate, burst limit, payment size,
 validator and recipient resources, retained-history size, complete source and
 launched binary, topology, authenticated route and RTT/load measurement method.
-The initial regional network envelope has measured validator-to-validator RTT
-at most 300 milliseconds. Characterize supported load before choosing the
+An initial benchmark envelope may require measured validator-to-validator RTT
+at most 300 milliseconds; it is a declared test condition, not an achieved
+measurement or a universal regional bound. Characterize supported load before choosing the
 benchmark rate; neither an unspecified load nor a single successful payment
-establishes this target. Run queue saturation, leader loss, equivocation,
+establishes this target. Measure Earth continent pairs in both directions and
+report Mars and same-spacecraft actual or labeled simulated conditions
+separately. Do not pool slower regions, validator/control counts or load/latency
+classes into faster cohorts. Run queue saturation, leader loss, equivocation,
 partition, reorder and restart as separately declared fault profiles. A
 partition that lacks the admitted quorum must halt finalization.
 

@@ -2,9 +2,23 @@
 
 The project has not completed the current whitepaper's full acceptance obligations.
 All S1–S18, R1–R24, I1–I12, A–G, N1–N10 and P1–P8 remain mandatory.
-The [release receipt](WHITEPAPER_RELEASE_2026-10-08.json) identifies the current canonical paper;
-the [freeze receipt](WHITEPAPER_FREEZE_RECEIPT.json) retains its historical predecessor.
+The [release receipt](WHITEPAPER_RELEASE_2026-10-09.json) identifies the current canonical paper;
+the [8 October receipt](WHITEPAPER_RELEASE_2026-10-08.json) and
+[freeze receipt](WHITEPAPER_FREEZE_RECEIPT.json) retain their exact historical bindings.
 This repository does not change the current body, PDF or official website.
+
+The regional ordinary-payment target is p95 at most three seconds and p99 at
+most five seconds under each predeclared normal network and offered-load
+cohort. It remains undemonstrated. Recipient verification includes Native
+execution, adopted finality, complete provenance, maturity and quarantine;
+an actual second ordinary spend must independently finalize. Every valid
+submission, including follow-up payments, backpressure and unresolved work,
+retains its identity and initial clock. Earth continent pairs/directions,
+Mars and same-spacecraft profiles are measured separately. Quorum loss may
+halt finalization; it cannot justify weaker admission or false confirmation.
+Cross-region source finality, physical contact, unique import and maturity
+retain their separate requirements. See the
+[regional latency acceptance](operations/REGIONAL_PAYMENT_LATENCY_ACCEPTANCE.md).
 
 The public implementation includes candidate regional ledgers, owner authorization,
 local finality, imports, onward/return transfers, channels, authenticated ground
