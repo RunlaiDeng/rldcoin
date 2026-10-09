@@ -1,5 +1,6 @@
 """Directory timing boundaries with no-value frames; no Native authority."""
 import copy
+from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -54,9 +55,14 @@ class SpoolTraceTests(unittest.TestCase):
             trace = self.attach(node)
             packet = node.enqueue(fixture.frame(), fixture.identities['proxima']['node_id'])
             before = wire.canonical(node.state['messages'][packet])
-            with patch.object(wire, 'write_new', side_effect=OSError('spool write refused')):
+            write_new=wire.write_new
+            def refused(path,data):
+                if Path(path).parent in [contact['outbox'] for contact in node.contacts.values()]:
+                    raise OSError('spool write refused')
+                return write_new(path,data)
+            with patch.object(wire, 'write_new', side_effect=refused):
                 self.assertEqual(node.flush_spool_outgoing(), ['spool write refused'])
-            self.assertEqual(self.stages(trace, packet), [])
+            self.assertEqual(self.stages(trace, packet), ['prepare_selected', 'prepare_retained'])
             self.assertEqual(wire.canonical(node.state['messages'][packet]), before)
             self.assertNotIn(packet, node.receipts())
 

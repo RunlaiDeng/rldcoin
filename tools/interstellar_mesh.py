@@ -1486,6 +1486,12 @@ class Node:
         # routing, visited hops and suppression before allocating any slot.
         pending=[direct_waiting_copies(items) for items in pending]
         streams=[iter(eligible([i for i in items if i not in retry_packet_ids and i not in selected_ids])) for items in pending]
+        def finish_plan():
+            bundle=sign(self.key,'exchange',body)
+            if current_carriage is not None:
+                self._trace_prepare_selection(peer,bundle,first_plan,retry_packet_ids,
+                    available_hint,priority_pair,current_positions,frame_positions,current_origin)
+            return bundle,first_plan
         while streams and len(transits)<MAX_PACKET_BATCH:
             remaining=[]
             for stream in streams:
@@ -1494,11 +1500,11 @@ class Node:
                 # Keep the original signed-wire ceiling and whole-packet
                 # refusal. Class preparation rotates on the following call.
                 if len(evidence.canonical({**body,'transits':transits+[candidate]}))+512>MAX_BATCH:
-                    return sign(self.key,'exchange',body),first_plan
+                    return finish_plan()
                 transits.append(candidate);remaining.append(stream)
                 if len(transits)==MAX_PACKET_BATCH:break
             streams=remaining
-        return sign(self.key, 'exchange', body),first_plan
+        return finish_plan()
 
     def exchange(self, peer, accepted_transits=None, retry_packet_ids=()):
         bundle, _ = self._exchange_plan(peer, accepted_transits, retry_packet_ids)
@@ -1510,6 +1516,7 @@ class Node:
         Preparation grants no custody. Failed/lost sends retain every receipt
         and revisit it after bounded rotation; cold open retains these cursors.
         """
+        self._trace_prepare_event('prepare_start',peer)
         current_carriage={}
         bundle, first_plan = self._exchange_plan(peer, accepted_transits, retry_packet_ids,
                                                  current_carriage=current_carriage)
@@ -1604,7 +1611,61 @@ class Node:
                             current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
         if ordered_turn_key is not None and carried_rows:
             remember_carriage_position(ordered_turn_key,current_carriage['ordered_priority_pair'])
+        self._trace_spool('prepare_retained',peer,bundle)
         return bundle
+
+    def _trace_prepare_event(self,stage,peer,**fields):
+        trace=getattr(self,'contact_trace',None)
+        if trace is not None:
+            try:trace.event(stage,peer,**fields)
+            except Exception:
+                try:trace.reject()
+                except Exception:pass
+
+    def _trace_prepare_selection(self,peer,bundle,first,retry,hint,priority,copies,frames,origin):
+        # Only this operation's scalar selections survive. This neither reads
+        # nor advances optional positions and never supplies a packet/proof or
+        # prepared state to a later call. A selection is not durable custody.
+        trace=getattr(self,'contact_trace',None)
+        if trace is None:return
+        try:
+            rows=trace.packet_rows(bundle);selected={ident for ident,_ in rows}
+            pending=set(first['pending']) if first is not None else set()
+            arrivals=set(first['arrivals']) if first is not None else set()
+            offered=0
+            for ident,_ in rows:
+                if ident in retry:continue
+                if offered==MAX_PACKET_BATCH//2 or ident not in pending:break
+                offered+=1
+            newest=(self.state['transit_class_steps'][peer]//4)%2==0
+            fields=dict(class_step=self.state['transit_class_steps'][peer],
+                first_pending=len(pending),first_arrivals=len(arrivals),offered=offered,
+                retry_count=len(retry),selected=len(rows),ordered=hint is not None and len(hint)==3,
+                priority=priority,newest=newest,
+                origin_turn=('local_first' if origin is False else 'forwarded_first') if newest else 'oldest')
+            if hint is not None:
+                fields['scope_id']=hint[0]
+                if hint[1]:
+                    frame=hint[1][0];fields['frame_id']=frame
+                    direct=[i for i,t in self.state['messages'].items()
+                            if t['routing']['body']['frame_id']==frame
+                            and t['packet']['body']['node_id']==self.id
+                            and t['packet']['body']['destination']==peer]
+                    require(len(direct)<=1,'diagnostic exact direct copy differs')
+                    if direct:
+                        ident=direct[0];recent=ident in self.state['recent_transits']
+                        fields.update(direct_id=ident,direct_waiting=ident in pending or ident in arrivals,
+                            direct_recent=recent,direct_prepared=first is not None and ident in first['prepared'],
+                            direct_selected=ident in selected)
+                        after=copies.get((recent,frame))
+                        if after is not None:fields['copy_after']=after
+                        after=frames.get(recent)
+                        if after is not None:fields['frame_after']=after
+            trace.event('prepare_selection',peer,**fields)
+            trace.packets('prepare_selected',peer,rows)
+        except Exception:
+            try:trace.reject()
+            except Exception:pass
 
     def _trace_spool(self, stage, peer, bundle):
         """Opt-in primitive timing only; failures never change carriage."""

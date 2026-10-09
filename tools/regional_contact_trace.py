@@ -22,9 +22,13 @@ MAX_BYTES=192*1024
 PUBLICATION_FORMAT='RLD-GROUND-CONTACT-TRACE-PUBLICATION-V1'
 PUBLICATION_INTERVAL=.25
 HEX=re.compile(r'[0-9a-f]{64}\Z')
-FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class'}
-HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce'}
-STAGES={'source_enqueued','outgoing_prepared','contact_start','request_sent','peer_custody_authenticated',
+COUNT_FIELDS={'class_step','first_pending','first_arrivals','offered','retry_count','selected'}
+BOOL_FIELDS={'ordered','priority','newest','direct_waiting','direct_recent','direct_prepared','direct_selected'}
+FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class',
+        'scope_id','direct_id','copy_after','frame_after','origin_turn'}|COUNT_FIELDS|BOOL_FIELDS
+HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after'}
+STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection','prepare_selected','prepare_retained',
+        'contact_start','request_sent','peer_custody_authenticated',
         'spool_outgoing_published','spool_incoming_read','spool_incoming_custody',
         'reply_local_custody','outgoing_failed','contact_failed','request_authenticated','local_transport_custody',
         'destination_receipt_retained','inbound_refused','deferred_attempt','deferred_local_custody','deferred_input_queued','deferred_input_not_queued',
@@ -38,7 +42,8 @@ def check_fields(stage,peer,fields):
                  and not set(fields)-FIELDS,'bounded trace stage and fields required')
     for key,value in fields.items():
         if key in HEX_FIELDS:mesh.require(type(value) is str and HEX.fullmatch(value) is not None,'trace digest')
-        elif key=='attempt':mesh.require(type(value) is int and 0<=value<2**63,'trace attempt')
+        elif key=='attempt' or key in COUNT_FIELDS:mesh.require(type(value) is int and 0<=value<2**63,'trace count')
+        elif key in BOOL_FIELDS:mesh.require(type(value) is bool,'trace boolean')
         else:mesh.require(type(value) is str and len(value)<=48 and value.replace('_','').isalnum(),'trace enum')
 
 
