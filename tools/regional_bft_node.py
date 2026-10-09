@@ -1145,6 +1145,7 @@ class Runtime:
         self._tick_operation=object()
         self._timeout_refresh_used=False
         self._initial_proposal_wait_used=False
+        self._finalization_phase_used=False
         self._composed_phase_observation=None
         self._sign_native_head=None
         try:
@@ -1236,11 +1237,7 @@ class Runtime:
                 prepared=self.quorum(context,certified_round,'Prepare',value)
                 if prepared is not None:
                     certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
-                    self.with_json('finalize',certificate)
-                    self.retain_local_body({'Finalized':certificate})
-                    self.observe()
-                    self.broadcast()
-                    return self.report(context,round_number,status,stopped=self.state['height']>=self.stop_height)
+                    return self._finish_local_finalization(certificate,context,round_number,status)
         if not stopped:
             current_proposals=self.signed(context,round_number,'Proposal')
             for proposal,value in current_proposals:
@@ -1380,13 +1377,36 @@ class Runtime:
                     prepared=self.quorum(context,round_number,'Prepare',value)
                     if prepared is None:continue
                     certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
-                    self.with_json('finalize',certificate)
-                    self.retain_local_body({'Finalized':certificate})
-                    self.observe()
-                    self.broadcast()
-                    return self.report(context,round_number,status,stopped=self.state['height']>=self.stop_height)
+                    return self._finish_local_finalization(certificate,context,round_number,status)
         self._broadcast_after_observation()
         return self.report(context,round_number,status,stopped)
+
+    def _finish_local_finalization(self, certificate, context, round_number, status):
+        self.with_json('finalize',certificate)
+        self.retain_local_body({'Finalized':certificate})
+        fresh=self.observe()
+        proceed=getattr(self,'after_local_finalization',None)
+        if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                and not getattr(self,'_finalization_phase_used',False)
+                and callable(proceed) and fresh['parent_height']>context['parent_height']
+                and fresh['parent_height']<self.stop_height
+                and self.key_file is not None and self.key_file.exists()
+                and self.head['head'] is not None and self.head['pending'] is None
+                and self.head.get('outbox') is None
+                and sorted(self.peers)[fresh['parent_height']%4]==self.key):
+            # Native installation, complete local envelope retention and the
+            # new-parent observation have all completed durably. Service may
+            # schedule one successor phase before its outgoing tail. This is
+            # no authorization cache: reopen both Native heads, honor the same
+            # interval/round fences and keep the unit's original intake quota.
+            self._finalization_phase_used=True
+            if proceed():
+                self._tick_operation=object()
+                self._composed_phase_observation=None
+                self._sign_native_head=None
+                return self._tick()
+        self.broadcast()
+        return self.report(context,round_number,status,stopped=self.state['height']>=self.stop_height)
 
     def _broadcast_after_observation(self):
         """A keyless Native observation is separate from an occupied mesh lease.

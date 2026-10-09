@@ -347,6 +347,11 @@ class Service:
             if remaining<=0:return True
             time.sleep(min(0.1,remaining))
 
+    def continue_after_finalization(self):
+        if getattr(self.tcp,'running',True) is False:
+            raise tcp.MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
+        return True
+
     def tick(self):
         tick_started = time.monotonic()
         stage_started = tick_started
@@ -571,9 +576,11 @@ class Service:
         if self.bft is not None:
             previous_refresh=getattr(self.bft,'before_timeout',None)
             previous_wait=getattr(self.bft,'before_initial_proposal',None)
+            previous_finalization=getattr(self.bft,'after_local_finalization',None)
             if independent_bft:
                 self.bft.before_timeout=before_timeout
                 self.bft.before_initial_proposal=self.wait_initial_proposal
+                self.bft.after_local_finalization=self.continue_after_finalization
             try:
                 consensus=self.bft.tick()
             except (OSError,ValueError,subprocess.TimeoutExpired) as error:
@@ -586,6 +593,7 @@ class Service:
                 if independent_bft:
                     self.bft.before_timeout=previous_refresh
                     self.bft.before_initial_proposal=previous_wait
+                    self.bft.after_local_finalization=previous_finalization
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
         if spool_outgoing:
             # Intake preceded Native export verification and optional signing.
