@@ -354,7 +354,10 @@ impl Store {
             .evidence
             .snapshots
             .iter()
-            .filter(|s| s.statement.region == source)
+            // An origin replica's own complete certified history is local
+            // evidence below. It cannot require an incoming OriginHistory
+            // record of itself or count the same snapshot in both sets.
+            .filter(|s| source != self.chain.region && s.statement.region == source)
             .map(|s| s.statement.id())
             .collect::<Result<BTreeSet<_>>>()?;
         let mut selected = BTreeMap::new();

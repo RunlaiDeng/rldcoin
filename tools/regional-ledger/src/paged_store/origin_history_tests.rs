@@ -1157,6 +1157,81 @@ fn origin66_genesis_timeout_requires_no_value_dependency_but_import_and_parent_d
 }
 
 #[test]
+fn origin_network_local_issuer_retains_complete_native_history_without_self_import() {
+    use crate::bft_network::{self, Body};
+    let mut h = header();
+    h.bootstrap.currency.origin = "earth-local-material".into();
+    h.bootstrap.currency.signature = signature(1, &h.bootstrap.currency.bytes().unwrap());
+    let admission = &mut h.bootstrap.admissions[0];
+    admission.currency = h.bootstrap.currency.id().unwrap();
+    admission.region = h.bootstrap.currency.origin.clone();
+    admission.rules = crate::paged_bft::ORIGIN_NETWORK_RULES.into();
+    admission.value_rules = Some(crate::paged_bft::rules_hash_for(&admission.rules).unwrap());
+    admission.signature = signature(1, &admission.bytes().unwrap());
+    h.region = admission.id().unwrap();
+    let (root, _) = super::body_witness_tests::stream(&h, &replay(&h));
+    let currency = h.bootstrap.currency.id().unwrap();
+    let mut sender = Store::create(
+        &root.join("issuer"),
+        h.bootstrap.clone(),
+        h.region,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let receiver = Store::create(
+        &root.join("cold-receiver"),
+        h.bootstrap.clone(),
+        h.region,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let receiver_before = inventory(&root.join("cold-receiver"));
+    for height in 1..=3 {
+        let snapshot = certified(&sender.paged_replay.as_ref().unwrap().replay);
+        sender.finalize(snapshot.clone()).unwrap();
+        let before = inventory(&root.join("issuer"));
+        let (origins, evidence) = sender.origin_network_material().unwrap();
+        assert!(origins.is_empty());
+        assert_eq!(evidence.snapshots.len(), height);
+        let packed =
+            bft_network::local_envelope(Body::Finalized(Box::new(snapshot)), &sender).unwrap();
+        let complete = packed.envelope.expand().unwrap();
+        assert_eq!(complete.evidence.snapshots, evidence.snapshots);
+        complete.verify(&receiver).unwrap();
+        assert_eq!(inventory(&root.join("issuer")), before);
+        assert_eq!(inventory(&root.join("cold-receiver")), receiver_before);
+        assert_eq!(receiver.chain.height(), 0);
+        assert!(receiver.chain.ledger.coins.is_empty());
+        let mut forged = complete.clone();
+        forged.evidence.snapshots[0]
+            .bft
+            .as_mut()
+            .unwrap()
+            .committed
+            .votes[0]
+            .approval
+            .signature = "00".repeat(64);
+        assert!(forged.verify(&receiver).is_err());
+        if height > 1 {
+            let mut missing = complete;
+            missing.evidence.snapshots.remove(0);
+            assert!(missing.verify(&receiver).is_err());
+        }
+        assert_eq!(inventory(&root.join("cold-receiver")), receiver_before);
+    }
+    let head = sender.storage_head().unwrap();
+    drop(sender);
+    let cold = Store::open_pinned(&root.join("issuer"), &public(1), currency, head).unwrap();
+    assert_eq!(cold.chain.height(), 3);
+    let (origins, evidence) = cold.origin_network_material().unwrap();
+    assert!(origins.is_empty());
+    assert_eq!(evidence.snapshots.len(), 3);
+    assert_eq!(evidence.snapshots.last().unwrap().statement.height, 3);
+}
+
+#[test]
 fn origin66_empty_parent_control_retains_certificates_without_pending_value_dependency() {
     control_dependency_fixture(true);
 }
