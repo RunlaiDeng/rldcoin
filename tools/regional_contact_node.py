@@ -264,7 +264,36 @@ class Service:
         finally:
             if node is not None:self.tcp.finish_selection()
 
-    def receive_candidates(self, summaries, receipts, destination, quota=None):
+    def retained_frame_classifier(self, node, summaries, receipts):
+        """Exact Native-retained bytes select turns, never reception authority."""
+        from regional_bft_node import ORIGIN_RUNTIME_FORMAT
+        runtime=self.bft
+        if (runtime is None or getattr(runtime,'format',None)!=ORIGIN_RUNTIME_FORMAT
+                or getattr(runtime,'joint',None) is not None
+                or getattr(runtime,'_retained_native_authenticated',False) is not True):
+            return None
+        messages=runtime.state['messages']
+        retained={messages.content(i):i for i in messages}
+        def classify(ident):
+            summary=summaries[ident]
+            if summary['kind']!='regional-bft':return None
+            # A peer's digest is a lookup hint only. Full transport/receipt
+            # checks and literal complete-frame equality are indispensable.
+            content=summary['export_id'];record=retained.get(content)
+            if record is None:return None
+            try:
+                transit=node.transit(ident)
+                _,raw,_=mesh.transit_check(transit,node.network)
+                mesh.receipt_matches(receipts[ident],transit)
+                expected=wire.make_frame('regional-bft',runtime.region,runtime.region,
+                                         content,messages.payload(record))
+                if raw==expected:return (record,content)
+            except (OSError,ValueError):
+                pass  # no grouping on refusal; normal reception still checks it.
+            return None
+        return classify
+
+    def receive_candidates(self, summaries, receipts, destination, quota=None, frame_classifier=None):
         eligible = sorted(i for i, t in summaries.items()
             if t['destination'] == destination and i in receipts
             and i not in self.bft_seen
@@ -285,15 +314,31 @@ class Service:
                      and summaries[i]['export_id'] not in retained]
             novel_set = set(novel)
             background = [i for i in eligible if i not in novel_set]
+            frames=(quota.setdefault('frames',set()) if quota is not None and frame_classifier is not None else set())
+            inspected=0
             def take(items, count, kind):
+                nonlocal inspected
                 if not items or not count:return []
                 # Removing a received item or inserting a new one must not
                 # shift a numeric rank past the next waiting packet. Continue
                 # after the exact last selected ID, wrapping the sorted ring.
                 after=self.receive_after[kind]
                 start=0 if after is None else bisect_right(items,after)%len(items)
-                selected=(items[start:]+items[:start])[:count]
-                self.receive_after[kind]=selected[-1]
+                selected=[]
+                for ident in items[start:]+items[:start]:
+                    if len(selected)>=count:break
+                    if frame_classifier is not None:
+                        # At most the original four complete frame inspections
+                        # per selection opportunity. Deferred copies stay in
+                        # custody and eligible next unit, never bft_seen.
+                        if inspected>=MAX_PER_TICK:break
+                        inspected+=1
+                        group=frame_classifier(ident)
+                        if group is not None:
+                            if group in frames:continue
+                            frames.add(group)
+                    selected.append(ident)
+                if selected:self.receive_after[kind]=selected[-1]
                 return selected
             # Each nonempty class retains half the original four slots. A
             # changed proof remains novel; every selected complete envelope
@@ -308,8 +353,9 @@ class Service:
             b=min(len(background),remaining-n,max(0,MAX_PER_TICK//2-quota['background']))
             n+=min(len(novel)-n,remaining-n-b)
             b+=min(len(background)-b,remaining-n-b)
-            selected=take(novel,n,'novel')+take(background,b,'background')
-            quota['novel']+=n;quota['background']+=b
+            chosen_novel=take(novel,n,'novel');chosen_background=take(background,b,'background')
+            selected=chosen_novel+chosen_background
+            quota['novel']+=len(chosen_novel);quota['background']+=len(chosen_background)
         else:
             offset = self.progress['cursor'] % len(eligible)
             selected=(eligible[offset:] + eligible[:offset])[:remaining]
@@ -402,7 +448,8 @@ class Service:
             transport = node.tick(defer_spool_outgoing=True) if self.bft is not None or spool_outgoing else node.tick()
             errors.extend(transport['errors'])
             summaries=node.summaries();receipts=node.receipts()
-            selected = self.receive_candidates(summaries, receipts, node.id, quota)
+            selected = self.receive_candidates(summaries, receipts, node.id, quota,
+                self.retained_frame_classifier(node,summaries,receipts))
             if selected:
                 for ident in selected:
                     try:
@@ -556,7 +603,8 @@ class Service:
                 node.contact_trace=getattr(self,'contact_trace',None)
                 errors.extend(node.drain_spool_incoming())
                 summaries,receipts=node.summaries(),node.receipts()
-                chosen=self.receive_candidates(summaries,receipts,node.id,quota)
+                chosen=self.receive_candidates(summaries,receipts,node.id,quota,
+                    self.retained_frame_classifier(node,summaries,receipts))
                 selected.extend(chosen)
                 for ident in chosen:
                     try:
