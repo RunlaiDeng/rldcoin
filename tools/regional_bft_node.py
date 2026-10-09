@@ -279,7 +279,7 @@ def carriage_frontier(messages,selected,height,previous=(None,None)):
 
 
 def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None,
-                   class_position=None, first_proposal=None):
+                   class_position=None, first_proposal=None, first_prepare=None):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
@@ -318,7 +318,7 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
         # Replace a selected Commit by its still-waiting same-peer Prepare in
         # that same slot; do not move history or consume a fifth place. Once
         # queued, the dependency leaves pending and the Commit resumes service.
-        intents={};prepares={};proposals={};proposal_intents={}
+        intents={};prepares={};proposals={};proposal_intents={};prepare_candidates={}
         context_fields={'currency','region','epoch','previous','parent_height','parent_block','parent_state'}
         proposal_scope=(type(proposal_context) is dict and set(proposal_context)==context_fields
                         and proposal_context['parent_height']==height)
@@ -334,6 +334,9 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
             if vote is None:continue
             intent=wire.canonical([vote['context'],vote['round'],vote['value'],vote['approval']['key']])
             intents[ident]=(vote['phase'],intent)
+            if (proposal_scope and local and value is not None and vote['phase']=='Prepare'
+                    and vote['context']==proposal_context and vote['value']==value):
+                prepare_candidates[ident]=(vote['round'],vote['approval']['key'])
         for pair in active:
             phase,intent=intents.get(pair[1],(None,None))
             if phase=='Prepare':prepares.setdefault((intent,pair[2]),pair)
@@ -343,6 +346,7 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
         # recipient set in this original four-item unit. One history place
         # remains even for three recipients. Later/recovered broadcasts keep
         # the ordinary two/two reservation and the independent history frontier.
+        closed_proposal=False
         if (proposal_scope and type(first_proposal) is tuple and len(first_proposal)==3
                 and type(first_proposal[0]) is int and 0<=first_proposal[0]<32
                 and type(first_proposal[1]) is str and type(first_proposal[2]) is tuple
@@ -355,6 +359,27 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
                 proposal=signed_body(body).get('Proposal')
                 if (ident in proposal_intents and proposal['round']==fresh_round
                         and proposal['leader']['key']==own_key):matching.append(ident)
+            if len(matching)==1:
+                copies=[pair for pair in active if pair[1]==matching[0]]
+                if (len(copies)==len(recipients)
+                        and {pair[2] for pair in copies}==set(recipients)):
+                    selected=sorted(copies,key=_carriage_pair_key)
+                    selected+=take(history,min(2,4-len(selected)),positions[1])
+                    selected+=[pair for pair in take(active+history,4)
+                               if pair not in selected][:4-len(selected)]
+                    closed_proposal=True
+        # A just-Native-signed, fully retained own Prepare gets the same bounded
+        # first recipient closure. It cannot supersede a fresh own Proposal or
+        # bypass the same-peer dependencies below. No leader/online preference.
+        if (not closed_proposal and proposal_scope and type(first_prepare) is tuple
+                and len(first_prepare)==3 and type(first_prepare[0]) is int
+                and 0<=first_prepare[0]<32 and type(first_prepare[1]) is str
+                and type(first_prepare[2]) is tuple and 0<len(first_prepare[2])<=3
+                and all(type(peer) is str for peer in first_prepare[2])
+                and len(set(first_prepare[2]))==len(first_prepare[2])):
+            fresh_round,own_key,recipients=first_prepare
+            matching=[ident for ident,binding in prepare_candidates.items()
+                      if binding==(fresh_round,own_key)]
             if len(matching)==1:
                 copies=[pair for pair in active if pair[1]==matching[0]]
                 if (len(copies)==len(recipients)
@@ -995,6 +1020,11 @@ class Runtime:
                 and getattr(self,'_tick_operation',None) is not None):
             if getattr(self,'_broadcast_unit_done',False):return
             self._broadcast_unit_done=True
+        # A unit already consumed by early Propose has made no Prepare attempt.
+        # Keep that small hint for the next unit, but discard it before every
+        # fallible attempt. Restart and failed publication retain original paths.
+        fresh_prepare=getattr(self,'_first_prepare_carriage',None)
+        self._first_prepare_carriage=None
         # Retained complete envelopes were Native authenticated on cold open or
         # receipt. This hint schedules carriage only, never Native validation,
         # dependency synchronization, caller-head checks or signing.
@@ -1083,12 +1113,16 @@ class Runtime:
                 first_proposal=(fresh_proposal+(tuple(recipients),)
                     if proposal_context is not None and type(fresh_proposal) is tuple
                     and len(fresh_proposal)==2 else None)
+                first_prepare=(fresh_prepare+(tuple(recipients),)
+                    if proposal_context is not None and type(fresh_prepare) is tuple
+                    and len(fresh_prepare)==2 else None)
                 batch_pairs=carriage_batch(self.state['messages'],pending,
                                           self.state['height'],self.state['cursor'],
                                           prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
                                           proposal_context=proposal_context,
                                           class_position=class_position,
-                                          first_proposal=first_proposal)
+                                          first_proposal=first_proposal,
+                                          first_prepare=first_prepare)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
@@ -1170,6 +1204,9 @@ class Runtime:
         request={'Prepare':proposal}
         try:
             self.sign(request)
+            if (getattr(self,'format',None)==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                    and getattr(self,'_retained_native_authenticated',False)):
+                self._first_prepare_carriage=(proposal['round'],self.key)
             return True
         except ValueError as error:
             if str(error)!='native rejected: regional candidate rejected: proposal violates durable prepared lock without a newer valid prepare QC':

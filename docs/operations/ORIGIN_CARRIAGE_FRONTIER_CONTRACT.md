@@ -27,6 +27,22 @@ configured peer ID and complete envelope ID. An empty class retains its prior
 position. These scheduling positions do not establish bounded liveness under
 unbounded arrivals or an unavailable quorum.
 
+After a successful native Prepare signature and complete durable retention, a
+small process-local round/own-key hint may likewise close the first Prepare
+carriage to at most three configured recipients. The candidate must be unique,
+local, have a Native-checked value matching the signed value, and match the exact
+Native-observed complete parent context. The complete pending recipient set
+must match configured recipients. Three copies retain one historical place;
+smaller supported sets retain up to two. A fresh own Proposal and all existing
+same-peer dependencies take precedence. Commit and Timeout retain their original
+selection; no verification, quorum or timer changes follow from this hint.
+
+If early Propose already consumed the unit, it cannot add another Prepare batch.
+That unattempted hint may await the next unit. Every actual attempt clears the
+hint before fallible reads or publication; missing/ambiguous material, changed
+context, capacity fallback, failure and cold restart use the ordinary path. The
+hint is not persisted, holds no envelope or ledger, and never authorizes signing.
+
 Only an Origin runtime with fully Native-authenticated retention and an exact
 Native-observed parent context may use the positions. Their domain binds the
 runtime format, trust binding, Native authority/currency/ledger, region, local
