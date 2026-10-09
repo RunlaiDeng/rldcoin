@@ -160,8 +160,11 @@ def verify_shards(path, snapshot, *, network, slots, expected_format=FORMAT):
     allowed_stages=None
     if expected_format!=FORMAT:
         from regional_submission_trace import SHARDS,STAGES
-        mesh.require(expected_format==SHARDS,'unknown diagnostic shard profile')
-        allowed_stages=STAGES
+        if expected_format==SHARDS:allowed_stages=STAGES
+        else:
+            from regional_submission_delivery_trace import SHARDS,STAGES
+            mesh.require(expected_format==SHARDS,'unknown diagnostic shard profile')
+            allowed_stages=STAGES
     encoded = raw(path / 'manifest.json', MAX_MANIFEST_BYTES)
     mesh.require(type(snapshot) is dict and
                  hashlib.sha256(encoded).hexdigest() == mesh.hex32(snapshot['manifest_sha256']),

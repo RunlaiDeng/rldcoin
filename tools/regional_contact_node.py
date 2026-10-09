@@ -781,7 +781,7 @@ def main():
     mesh.require(len(parts)==2 and parts[1].isdigit(), 'TCP listener must be literal IPv4:port')
     listen=mesh.tcp_endpoint(parts[0],int(parts[1]),listening=True)
     trace_mode=os.environ.get('RLD_GROUND_CONTACT_TRACE','0')
-    mesh.require(trace_mode in ('0','1','submission'),'explicit ground contact trace mode required')
+    mesh.require(trace_mode in ('0','1','submission','submission_delivery'),'explicit ground contact trace mode required')
     trace=None
     if trace_mode=='1':
         from regional_contact_trace import ContactTrace
@@ -789,6 +789,9 @@ def main():
     elif trace_mode=='submission':
         from regional_submission_trace import SubmissionTrace
         trace=SubmissionTrace()
+    elif trace_mode=='submission_delivery':
+        from regional_submission_delivery_trace import DeliveryTrace
+        trace=DeliveryTrace()
     service = Service(native, config, args.miner,listen,args.insecure_tcp,args.bft_config,contact_trace=trace)
     running = True
     def stop(*_):

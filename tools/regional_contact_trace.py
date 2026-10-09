@@ -25,8 +25,8 @@ HEX=re.compile(r'[0-9a-f]{64}\Z')
 COUNT_FIELDS={'class_step','first_pending','first_arrivals','offered','retry_count','selected'}
 BOOL_FIELDS={'ordered','priority','newest','direct_waiting','direct_recent','direct_prepared','direct_selected','native_success'}
 FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class',
-        'scope_id','direct_id','copy_after','frame_after','origin_turn','exchange_id','native_action'}|COUNT_FIELDS|BOOL_FIELDS
-HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after','exchange_id'}
+        'scope_id','direct_id','copy_after','frame_after','origin_turn','exchange_id','native_action','command_id'}|COUNT_FIELDS|BOOL_FIELDS
+HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after','exchange_id','command_id'}
 STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection','prepare_selected','prepare_retained',
         'contact_start','request_sent','peer_custody_authenticated',
         'spool_outgoing_published','spool_incoming_read','spool_incoming_custody',
@@ -43,7 +43,9 @@ STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection
         'submission_retained','submission_retention_failed','submission_duplicate_seen',
         'submission_scan_finished','consensus_tick_started','consensus_tick_finished',
         'consensus_context_observed','proposal_requested','proposal_retained','proposal_failed',
-        'native_call_started','native_call_finished'}
+        'native_call_started','native_call_finished','candidate_selection_started',
+        'candidate_submission_seen','candidate_command_attempted','candidate_command_refused',
+        'candidate_command_selected'}
 
 
 def check_fields(stage,peer,fields):
