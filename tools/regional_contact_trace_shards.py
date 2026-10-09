@@ -154,9 +154,14 @@ class TraceShards(IndependentTraceJournal):
             raise
 
 
-def verify_shards(path, snapshot, *, network, slots):
+def verify_shards(path, snapshot, *, network, slots, expected_format=FORMAT):
     """Exact external seal/owners plus scalar checks; never open a Native store."""
     path = safe(path)
+    allowed_stages=None
+    if expected_format!=FORMAT:
+        from regional_submission_trace import SHARDS,STAGES
+        mesh.require(expected_format==SHARDS,'unknown diagnostic shard profile')
+        allowed_stages=STAGES
     encoded = raw(path / 'manifest.json', MAX_MANIFEST_BYTES)
     mesh.require(type(snapshot) is dict and
                  hashlib.sha256(encoded).hexdigest() == mesh.hex32(snapshot['manifest_sha256']),
@@ -173,7 +178,7 @@ def verify_shards(path, snapshot, *, network, slots):
     mesh.require(encoded == wire.canonical(view) and
                  wire.canonical({k: v for k, v in snapshot.items() if k != 'manifest_sha256'}) == encoded,
                  'exact canonical diagnostic manifest differs')
-    mesh.require(view['format'] == FORMAT and view['network'] == mesh.hex32(network)
+    mesh.require(view['format'] == expected_format and view['network'] == mesh.hex32(network)
                  and view['directory'] == str(path) and view['closed'] is True
                  and view['failed'] is False and view['uncommitted_resident_events'] == 0
                  and view['authority'] is False and view['ledger_acceptance_known'] is False
@@ -248,6 +253,8 @@ def verify_shards(path, snapshot, *, network, slots):
                     mesh.require(type(now) in (int, float) and math.isfinite(now) and now >= 0
                                  and (times[i] is None or now >= times[i]), 'diagnostic clock differs')
                     check_fields(row['stage'], row['peer'], {k: row[k] for k in FIELDS if k in row})
+                    mesh.require(allowed_stages is None or row['stage'] in allowed_stages,
+                                 'unselected stage in narrow diagnostic archive')
                     mesh.require(len(wire.canonical({k: v for k, v in row.items() if k != 'slot'}))
                                  <= MAX_EVENT_BYTES, 'producer row bound differs')
                     sequences[i], times[i] = row['sequence'], now
@@ -263,7 +270,7 @@ def verify_shards(path, snapshot, *, network, slots):
                  and sequences == through and size + 1 == view['canonical_event_bytes']
                  and digest.hexdigest() == mesh.hex32(view['journal_sha256']),
                  'diagnostic aggregate commitment differs')
-    return dict(format=FORMAT + '-READBACK', events=count, shard_count=len(view['parts']),
+    return dict(format=expected_format + '-READBACK', events=count, shard_count=len(view['parts']),
                 canonical_event_bytes=size + 1, through_sequence=sequences,
                 missing_status_samples=unknown, complete_collected_prefix=True,
                 complete_future_or_live_schedule=False, authority=False, native_ledger_authority=False)

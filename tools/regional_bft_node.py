@@ -689,11 +689,20 @@ class Runtime:
                     try:trace.reject()
                     except Exception:pass
         timeout_event('timeout_requested')
+        from regional_bft_submission_observation import event
+        def proposal_event(stage):
+            if trace is not None and kind=='Propose':
+                try:event(self,stage,scope_id=mesh.digest(selected['snapshot']['statement']),attempt=selected['round'])
+                except Exception:
+                    try:trace.reject()
+                    except Exception:pass
+        proposal_event('proposal_requested')
         try:
             self._sign(request)
             succeeded = True
         finally:
             timeout_event('timeout_retained' if succeeded else 'timeout_failed')
+            proposal_event('proposal_retained' if succeeded else 'proposal_failed')
             if observation is not None:
                 observation.event('sign-end', started, action=kind, succeeded=succeeded)
 

@@ -48,6 +48,15 @@ class Native:
         mesh.require(self.ledger.is_absolute(), 'ledger directory must be absolute')
 
     def call(self, *args, private_input=None):
+        trace=getattr(self,'contact_trace',None)
+        if trace is not None:
+            from regional_submission_trace import SubmissionTrace
+            if isinstance(trace,SubmissionTrace):
+                return trace.measure_native(args[0] if args else 'no_command',
+                    lambda:self._call(*args,private_input=private_input))
+        return self._call(*args,private_input=private_input)
+
+    def _call(self, *args, private_input=None):
         mesh.require(private_input is None or isinstance(private_input,(bytes,bytearray)) and len(private_input)<=1024,
             'private native input outside bound')
         # Native outputs are bounded by the candidate's journal/frame limits.
@@ -189,6 +198,7 @@ class Service:
                 if parallel_carriage:
                     from regional_carriage_worker import Worker
                     self.carriage = Worker(self.tcp)
+            if contact_trace is not None:self.native.contact_trace=contact_trace
         except BaseException:
             self.close()
             raise
@@ -771,11 +781,14 @@ def main():
     mesh.require(len(parts)==2 and parts[1].isdigit(), 'TCP listener must be literal IPv4:port')
     listen=mesh.tcp_endpoint(parts[0],int(parts[1]),listening=True)
     trace_mode=os.environ.get('RLD_GROUND_CONTACT_TRACE','0')
-    mesh.require(trace_mode in ('0','1'),'explicit ground contact trace mode required')
+    mesh.require(trace_mode in ('0','1','submission'),'explicit ground contact trace mode required')
     trace=None
     if trace_mode=='1':
         from regional_contact_trace import ContactTrace
         trace=ContactTrace()
+    elif trace_mode=='submission':
+        from regional_submission_trace import SubmissionTrace
+        trace=SubmissionTrace()
     service = Service(native, config, args.miner,listen,args.insecure_tcp,args.bft_config,contact_trace=trace)
     running = True
     def stop(*_):

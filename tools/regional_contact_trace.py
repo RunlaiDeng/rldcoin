@@ -23,9 +23,9 @@ PUBLICATION_FORMAT='RLD-GROUND-CONTACT-TRACE-PUBLICATION-V1'
 PUBLICATION_INTERVAL=.25
 HEX=re.compile(r'[0-9a-f]{64}\Z')
 COUNT_FIELDS={'class_step','first_pending','first_arrivals','offered','retry_count','selected'}
-BOOL_FIELDS={'ordered','priority','newest','direct_waiting','direct_recent','direct_prepared','direct_selected'}
+BOOL_FIELDS={'ordered','priority','newest','direct_waiting','direct_recent','direct_prepared','direct_selected','native_success'}
 FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class',
-        'scope_id','direct_id','copy_after','frame_after','origin_turn','exchange_id'}|COUNT_FIELDS|BOOL_FIELDS
+        'scope_id','direct_id','copy_after','frame_after','origin_turn','exchange_id','native_action'}|COUNT_FIELDS|BOOL_FIELDS
 HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after','exchange_id'}
 STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection','prepare_selected','prepare_retained',
         'contact_start','request_sent','peer_custody_authenticated',
@@ -42,7 +42,8 @@ STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection
         'submission_scan_started','submission_input_read','submission_auth_started',
         'submission_retained','submission_retention_failed','submission_duplicate_seen',
         'submission_scan_finished','consensus_tick_started','consensus_tick_finished',
-        'consensus_context_observed'}
+        'consensus_context_observed','proposal_requested','proposal_retained','proposal_failed',
+        'native_call_started','native_call_finished'}
 
 
 def check_fields(stage,peer,fields):
