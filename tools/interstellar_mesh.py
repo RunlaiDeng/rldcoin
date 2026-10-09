@@ -1477,6 +1477,16 @@ class Node:
                 forwarded.sort(key=lambda ident:ident not in waiting)
                 local.sort(key=lambda ident:ident not in waiting)
                 commits=local+forwarded if current_origin is False else forwarded+local
+                # An explicit Native phase order must survive origin mixing.
+                # Offer its still-unprepared head before lower-ranked current
+                # frames in the existing newest spare places. Once actually
+                # prepared, that copy rejoins normal origin/frame rotation.
+                # Oldest pairs, background turns, two first offers, classes,
+                # whole-packet authentication and wire limits stay intact.
+                if hint is not None and len(hint)==3 and hint[2] is True and hint[1]:
+                    head=hint[1][0]
+                    commits.sort(key=lambda ident:not(
+                        ident in waiting and current_classes[ident][1]==head))
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]

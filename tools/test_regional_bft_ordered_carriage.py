@@ -145,6 +145,63 @@ class OrderedCarriageTests(unittest.TestCase):
                 empty_key = node.set_carriage_priority(mesh.digest(context), (), ordered_frames=True)
                 self.assertEqual(mesh.carriage_position(empty_key), (mesh.digest(context), ()))
 
+    def test_forwarded_timeouts_cannot_displace_waiting_native_phase_head(self):
+        context, _, _, raws, frames = self.signed_frames()
+        with self.retained_directory('rld-ordered-origin-') as directory:
+            configs = self.fixture(Path(directory), context['currency'])
+            source = mesh.load(Path(directory)/'0'/'identity.private.json',8192)
+            destination = mesh.load(Path(directory)/'2'/'identity.private.json',8192)
+            source_id = mesh.node_id(source['public_key'])
+            peer = mesh.node_id(destination['public_key'])
+            with mesh.Node(configs[1]) as sender:
+                forwarded_id = sender.id
+                for raw in raws[:3]:sender.enqueue(raw,peer)
+                forwarded = sender.prepare_exchange(source_id)
+            with mesh.Node(configs[0]) as node:
+                peers = sorted(node.contacts)
+                for n in range(48):
+                    node.enqueue(wire.make_frame('source-finality','1'*64,'2'*64,
+                        wire.hashlib.sha256(str(n).encode()).hexdigest(),
+                        b'{"no_value":true}'),peers[n%3])
+                for _ in range(4):
+                    for p in peers:node.prepare_exchange(p)
+                node.receive(forwarded,forwarded_id)
+                targets = {p:node.enqueue(raws[-1],p) for p in peers}
+                node.set_carriage_priority(mesh.digest(context),frames,ordered_frames=True)
+                before = {i:wire.canonical(t) for i,t in node.state['messages'].items()}
+                origin = (node.carriage_position_domain(),peer,
+                          'native-current-origin',mesh.digest(context))
+                self.assertIsNone(mesh.carriage_position(origin))
+                first = node.first_carriage_plan(peer)['pending'][:2]
+                node.exchange(peer)
+                state = copy.deepcopy(node.state)
+                with mesh._carriage_position_lock:
+                    positions = copy.deepcopy(mesh._carriage_positions)
+                with patch.object(mesh,'atomic',side_effect=OSError('prepare refused')):
+                    with self.assertRaises(OSError):node.prepare_exchange(peer)
+                self.assertEqual(node.state,state)
+                with mesh._carriage_position_lock:self.assertEqual(mesh._carriage_positions,positions)
+                bundle = node.prepare_exchange(peer)
+                ids = [mesh.digest(t['packet']) for t in bundle['body']['transits']]
+                self.assertEqual(ids[:len(first)],first)
+                self.assertIn(targets[peer],ids)
+                self.assertLessEqual(len(ids),mesh.MAX_PACKET_BATCH)
+                self.assertLessEqual(len(wire.canonical(bundle)),mesh.MAX_BATCH)
+                # Original first-service offers remain ahead of the spare.
+                self.assertEqual(ids[2],targets[peer])
+                carried = set(ids)
+                for _ in range(16):
+                    carried.update(mesh.digest(t['packet']) for t in
+                        node.prepare_exchange(peer)['body']['transits'])
+                forwarded_current = {i for i,t in node.state['messages'].items()
+                    if t['packet']['body']['node_id']==forwarded_id
+                    and t['routing']['body']['frame_id'] in frames}
+                self.assertTrue(forwarded_current)
+                self.assertTrue(forwarded_current<=carried)
+                self.assertEqual({i:wire.canonical(t) for i,t in node.state['messages'].items()},before)
+                self.assertFalse(node.receipts())
+                node.validate_state()
+
     def test_full_ordinary_batches_alternate_spares_without_advancing_background_ring(self):
         context, _, _, raws, frames = self.signed_frames()
         with self.retained_directory('rld-ordered-turn-') as directory:
