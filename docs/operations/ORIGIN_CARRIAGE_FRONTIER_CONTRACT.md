@@ -7,8 +7,20 @@ Seeking after the last emitted immutable message/peer pair preserves progress
 across those insertions and deletion of a previously emitted pair.
 
 The ordinary unit still enqueues at most four pairs. When both classes have at
-least two pending pairs, it selects two from each; a short class donates spare
-slots. Existing same-peer Proposal and Prepare dependency selection still
+least two pending pairs, it normally selects two from each; a short class donates spare
+slots. During the one callback after a fresh local Native Propose has completely
+returned and been retained, an unambiguous exact current Proposal may instead
+reach all of its at most three configured recipients in that same four-item
+unit. Three Proposal copies leave one historical place. One or two recipients
+retain up to two historical places; spare places use the ordinary selection.
+The hint binds the just-released round, own leader key and configured recipient
+set, under the complete Native-observed parent context and authenticated retention.
+Missing copies, ambiguous candidates, unsupported recipient counts and absent or
+changed context retain the ordinary selection. The hint is cleared on callback
+return or failure and is never serialized. Later broadcasts, retries and cold
+restarts use the ordinary reservation; no additional enqueue unit is created.
+Every exceptional unit with pending history retains at least one historical
+place and advances its existing frontier. Existing same-peer Proposal and Prepare dependency selection still
 applies. The first selection uses the existing durable cursor. Each successful
 selection remembers the final emitted key in each class, ordered by body ID,
 configured peer ID and complete envelope ID. An empty class retains its prior

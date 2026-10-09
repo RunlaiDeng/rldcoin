@@ -279,7 +279,7 @@ def carriage_frontier(messages,selected,height,previous=(None,None)):
 
 
 def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None,
-                   class_position=None):
+                   class_position=None, first_proposal=None):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
@@ -339,6 +339,30 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
             if phase=='Prepare':prepares.setdefault((intent,pair[2]),pair)
             proposal_intent=proposal_intents.get(pair[1])
             if proposal_intent is not None:proposals.setdefault((proposal_intent,pair[2]),pair)
+        # Only the fresh local Propose publication may close its configured
+        # recipient set in this original four-item unit. One history place
+        # remains even for three recipients. Later/recovered broadcasts keep
+        # the ordinary two/two reservation and the independent history frontier.
+        if (proposal_scope and type(first_proposal) is tuple and len(first_proposal)==3
+                and type(first_proposal[0]) is int and 0<=first_proposal[0]<32
+                and type(first_proposal[1]) is str and type(first_proposal[2]) is tuple
+                and 0<len(first_proposal[2])<=3
+                and all(type(peer) is str for peer in first_proposal[2])
+                and len(set(first_proposal[2]))==len(first_proposal[2])):
+            fresh_round,own_key,recipients=first_proposal
+            matching=[]
+            for ident,body,_,_ in messages.bodies():
+                proposal=signed_body(body).get('Proposal')
+                if (ident in proposal_intents and proposal['round']==fresh_round
+                        and proposal['leader']['key']==own_key):matching.append(ident)
+            if len(matching)==1:
+                copies=[pair for pair in active if pair[1]==matching[0]]
+                if (len(copies)==len(recipients)
+                        and {pair[2] for pair in copies}==set(recipients)):
+                    selected=sorted(copies,key=_carriage_pair_key)
+                    selected+=take(history,min(2,4-len(selected)),positions[1])
+                    selected+=[pair for pair in take(active+history,4)
+                               if pair not in selected][:4-len(selected)]
         for index,pair in enumerate(selected):
             if pair not in active:continue
             phase,intent=intents.get(pair[1],(None,None))
@@ -1055,11 +1079,16 @@ class Runtime:
                     class_position=(previous_position[1] if previous_position is not None
                         and previous_position[0]==domain else (None,None))
             if pending:
+                fresh_proposal=getattr(self,'_first_proposal_carriage',None)
+                first_proposal=(fresh_proposal+(tuple(recipients),)
+                    if proposal_context is not None and type(fresh_proposal) is tuple
+                    and len(fresh_proposal)==2 else None)
                 batch_pairs=carriage_batch(self.state['messages'],pending,
                                           self.state['height'],self.state['cursor'],
                                           prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
                                           proposal_context=proposal_context,
-                                          class_position=class_position)
+                                          class_position=class_position,
+                                          first_proposal=first_proposal)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
@@ -1375,7 +1404,9 @@ class Runtime:
                         # outbox retention already returned successfully. The
                         # following Prepare can fail without suppressing this
                         # immutable, independently authorized evidence.
-                        publish()
+                        self._first_proposal_carriage=(proposed_round,self.key)
+                        try:publish()
+                        finally:self._first_proposal_carriage=None
                     phase_advanced = True
                     if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None:
                         # Propose already retained its independent caller head
