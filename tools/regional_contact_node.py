@@ -418,6 +418,8 @@ class Service:
                     if frame['kind']=='regional-bft':
                         if self.bft is not None:
                             pending_bft.append((packet_id,raw))
+                            if self.contact_trace is not None:
+                                self.contact_trace.native_stage('native_receive_queued',packet_id,raw)
                             if individual_retry or len(pending_bft)==4:flush_bft()
                         continue
                     flush_bft()

@@ -15,6 +15,18 @@ RECEIVE_FORMAT = 'RLD-BFT-ORIGIN-RECEIVE-V1'
 ORIGIN_NETWORK = 'RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3'
 
 
+def trace_envelopes(runtime,stage,envelopes):
+    # Operation-only byte identities. A returned process is not a bound Native
+    # result, and neither event grants retention, signing or ledger authority.
+    trace=getattr(runtime,'contact_trace',None)
+    if trace is not None:
+        try:
+            for envelope in envelopes:trace.event(stage,envelope_id=mesh.digest(envelope))
+        except Exception:
+            try:trace.reject()
+            except Exception:pass
+
+
 def supported(runtime, envelopes):
     """Scheduling selection only. Native still checks every complete object.
 
@@ -58,7 +70,9 @@ def receive_origin(runtime, envelopes):
     mesh.require(type(envelopes) is list and 0<len(envelopes)<=MAX_BATCH
         and supported(runtime,envelopes),'origin receive unsupported batch')
     raw=wire.canonical(envelopes)
+    trace_envelopes(runtime,'native_head_started',envelopes)
     head=runtime.native.call('history-head')
+    trace_envelopes(runtime,'native_head_returned',envelopes)
     mesh.require(type(head) is dict and head.get('currency')==runtime.native.currency
         and head.get('region')==runtime.region,'origin receive native head domain differs')
     mesh.hex32(head['history_head'])
@@ -66,8 +80,15 @@ def receive_origin(runtime, envelopes):
     try:
         with tempfile.NamedTemporaryFile(dir=runtime.root,prefix='.native-receive-',suffix='.json') as handle:
             handle.write(raw);handle.flush();os.fsync(handle.fileno())
-            result=runtime.native.call('bft-origin-network-receive-batch','--file',handle.name,
-                                      '--expected-head',head['history_head'])
+            trace_envelopes(runtime,'native_input_durable',envelopes)
+            trace_envelopes(runtime,'native_validate_call_started',envelopes)
+            try:
+                result=runtime.native.call('bft-origin-network-receive-batch','--file',handle.name,
+                                          '--expected-head',head['history_head'])
+            except BaseException:
+                trace_envelopes(runtime,'native_validate_call_failed',envelopes)
+                raise
+            trace_envelopes(runtime,'native_validate_call_returned',envelopes)
         mesh.require(type(result) is dict and set(result)=={'format','currency','region',
             'request_sha256','results','history_head','context','verified','fixture_only','signing_authority'}
             and len(wire.canonical(result))<=MAX_BYTES and result['format']==RECEIVE_FORMAT
@@ -94,6 +115,7 @@ def receive_origin(runtime, envelopes):
         # authentication, never Python prefix reconstruction or a peer cache.
         mesh.require(all(row['epochs']==[] for row in rows),
                      'origin receive selected response shape differs')
+        trace_envelopes(runtime,'native_validation_bound',envelopes)
         succeeded=True
         return rows,context
     finally:

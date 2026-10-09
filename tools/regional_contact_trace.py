@@ -25,15 +25,20 @@ HEX=re.compile(r'[0-9a-f]{64}\Z')
 COUNT_FIELDS={'class_step','first_pending','first_arrivals','offered','retry_count','selected'}
 BOOL_FIELDS={'ordered','priority','newest','direct_waiting','direct_recent','direct_prepared','direct_selected'}
 FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class',
-        'scope_id','direct_id','copy_after','frame_after','origin_turn'}|COUNT_FIELDS|BOOL_FIELDS
-HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after'}
+        'scope_id','direct_id','copy_after','frame_after','origin_turn','exchange_id'}|COUNT_FIELDS|BOOL_FIELDS
+HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after','exchange_id'}
 STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection','prepare_selected','prepare_retained',
         'contact_start','request_sent','peer_custody_authenticated',
         'spool_outgoing_published','spool_incoming_read','spool_incoming_custody',
         'reply_local_custody','outgoing_failed','contact_failed','request_authenticated','local_transport_custody',
         'destination_receipt_retained','inbound_refused','deferred_attempt','deferred_local_custody','deferred_input_queued','deferred_input_not_queued',
         'destination_receipt_observed','native_envelope_received','native_receive_selected',
-        'native_receive_attempt','native_receive_refused'}
+        'native_receive_attempt','native_receive_refused','native_receive_queued',
+        'spool_outgoing_write_started','spool_incoming_discovered','spool_incoming_read_started',
+        'spool_incoming_bytes_read','spool_incoming_decode_started','spool_incoming_decoded',
+        'native_head_started','native_head_returned','native_input_durable',
+        'native_validate_call_started','native_validate_call_returned','native_validate_call_failed',
+        'native_validation_bound','timeout_requested','timeout_retained','timeout_failed'}
 
 
 def check_fields(stage,peer,fields):
@@ -101,7 +106,7 @@ class ContactTrace:
     def native_stage(self,stage,packet_id,raw,**fields):
         """Selection/attempt/refusal are observations, never Native acceptance."""
         try:
-            mesh.require(stage in {'native_envelope_received','native_receive_selected',
+            mesh.require(stage in {'native_envelope_received','native_receive_selected','native_receive_queued',
                                    'native_receive_attempt','native_receive_refused'},'native trace stage')
             header,_=wire.inspect_frame(raw)
             self.event(stage,packet_id=packet_id,envelope_id=header['export_id'],**fields)

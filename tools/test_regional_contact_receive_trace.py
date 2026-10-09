@@ -66,9 +66,9 @@ class ReceiveTraceTests(unittest.TestCase):
 
     def test_real_tick_distinguishes_selection_status_gate_and_native_refusal(self):
         for mode, expected in (
-                ('success', ['native_receive_selected', 'native_receive_attempt', 'native_envelope_received']),
+                ('success', ['native_receive_selected', 'native_receive_queued', 'native_receive_attempt', 'native_envelope_received']),
                 ('status-unavailable', ['native_receive_selected']),
-                ('native-refused', ['native_receive_selected', 'native_receive_attempt', 'native_receive_refused']),
+                ('native-refused', ['native_receive_selected', 'native_receive_queued', 'native_receive_attempt', 'native_receive_refused']),
                 ('bad-receipt', [])):
             with self.subTest(mode=mode):
                 service, trace, receive, ident, raw = self.service(mode)

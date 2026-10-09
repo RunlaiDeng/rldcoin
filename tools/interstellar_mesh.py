@@ -1677,14 +1677,24 @@ class Node:
             try:trace.reject()
             except Exception:pass
 
-    def _trace_spool(self, stage, peer, bundle):
+    def _trace_spool(self, stage, peer, bundle, **fields):
         """Opt-in primitive timing only; failures never change carriage."""
         trace = getattr(self, 'contact_trace', None)
         if trace is not None:
             try:
-                trace.packets(stage, peer, trace.packet_rows(bundle))
+                trace.packets(stage, peer, trace.packet_rows(bundle), **fields)
             except Exception:
                 # Observation loss cannot become a transport or custody result.
+                try:trace.reject()
+                except Exception:pass
+
+    def _trace_spool_file(self,stage,peer,path):
+        # A filename is untrusted correlation metadata, never a verified
+        # exchange. Only later complete decode/authentication binds its packets.
+        trace=getattr(self,'contact_trace',None)
+        if trace is not None:
+            try:trace.event(stage,peer,exchange_id=path.stem)
+            except Exception:
                 try:trace.reject()
                 except Exception:pass
 
@@ -1700,13 +1710,14 @@ class Node:
         if not target.exists():
             require(len(files) < MAX_SPOOL_FILES and total + max(len(data), len(encoded)) <= MAX_SPOOL_BYTES,
                     'contact capacity reached; retain queued evidence')
+            self._trace_spool_file('spool_outgoing_write_started',peer,target)
             evidence.write_new(target, encoded)
         else:
             retained = evidence.read_file(target, MAX_BATCH)
             if adapter == spool_codec.FORMAT:
                 retained = spool_codec.decode(retained, limit=MAX_BATCH)
             require(retained == data, 'exchange file collision')
-        self._trace_spool('spool_outgoing_published', peer, bundle)
+        self._trace_spool('spool_outgoing_published', peer, bundle,exchange_id=target.stem)
 
     def flush_spool_outgoing(self):
         """Send the one deferred directory batch after Native release/enqueue.
@@ -1737,14 +1748,20 @@ class Node:
             for path in incoming:
                 try:
                     require(re.fullmatch(r'[0-9a-f]{64}\.json', path.name), 'unexpected inbox file')
+                    self._trace_spool_file('spool_incoming_discovered',peer,path)
+                    self._trace_spool_file('spool_incoming_read_started',peer,path)
                     if contact.get('adapter') == spool_codec.FORMAT:
-                        raw = spool_codec.decode(evidence.read_file(path, MAX_BATCH), limit=MAX_BATCH)
+                        encoded=evidence.read_file(path,MAX_BATCH)
+                        self._trace_spool_file('spool_incoming_bytes_read',peer,path)
+                        self._trace_spool_file('spool_incoming_decode_started',peer,path)
+                        raw = spool_codec.decode(encoded, limit=MAX_BATCH)
                         bundle = evidence.decode_json(raw)
                         require(raw == evidence.canonical(bundle), 'noncanonical JSON')
                     else:
                         bundle = load(path, MAX_BATCH)
+                    self._trace_spool_file('spool_incoming_decoded',peer,path)
                     require(path.stem == digest(bundle), 'exchange filename mismatch')
-                    self._trace_spool('spool_incoming_read', peer, bundle)
+                    self._trace_spool('spool_incoming_read', peer, bundle,exchange_id=path.stem)
                     self.receive(bundle, peer)
                     self._trace_spool('spool_incoming_custody', peer, bundle)
                     path.unlink()

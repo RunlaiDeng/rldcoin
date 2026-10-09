@@ -602,10 +602,19 @@ class Runtime:
             observation.event('sign-start', action=kind, round=selected.get('round'),
                               context_id=mesh.digest(context) if context is not None else None)
         succeeded = False
+        trace=getattr(self,'contact_trace',None)
+        def timeout_event(stage):
+            if trace is not None and kind=='Timeout' and context is not None:
+                try:trace.event(stage,scope_id=mesh.digest(context),attempt=selected['round'])
+                except Exception:
+                    try:trace.reject()
+                    except Exception:pass
+        timeout_event('timeout_requested')
         try:
             self._sign(request)
             succeeded = True
         finally:
+            timeout_event('timeout_retained' if succeeded else 'timeout_failed')
             if observation is not None:
                 observation.event('sign-end', started, action=kind, succeeded=succeeded)
 
