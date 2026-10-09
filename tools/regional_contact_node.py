@@ -471,6 +471,7 @@ class Service:
         stage_started=time.monotonic()
         spool_outgoing=any('outbox' in contact and 'host' not in contact
                            for contact in self.config['contacts'])
+        spool_serviced=False
         quota={'attempted':set(),'novel':0,'background':0}
         selected=[]
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
@@ -653,15 +654,29 @@ class Service:
             # empty or rejected attempt requires a new Native phase observation.
             apply_received(late)
             return True
+        def publish_local_proposal():
+            nonlocal spool_serviced
+            self.bft.broadcast()
+            if spool_outgoing:
+                # Move the original directory batch before own Prepare CPU.
+                # One attempt only, including partial publication or refusal.
+                spool_serviced=True
+                started=time.monotonic()
+                with self.tcp.ordinary_mesh_node() as node:
+                    node.contact_trace=getattr(self,'contact_trace',None)
+                    errors.extend(node.flush_spool_outgoing())
+                stage_seconds['spool_outgoing']=round(time.monotonic()-started,6)
         if self.bft is not None:
             from regional_bft_intake_pending import IntakePending
             previous_refresh=getattr(self.bft,'before_timeout',None)
             previous_wait=getattr(self.bft,'before_initial_proposal',None)
             previous_finalization=getattr(self.bft,'after_local_finalization',None)
+            previous_proposal=getattr(self.bft,'after_local_proposal',None)
             if independent_bft:
                 self.bft.before_timeout=before_timeout
                 self.bft.before_initial_proposal=self.wait_initial_proposal
                 self.bft.after_local_finalization=self.continue_after_finalization
+                self.bft.after_local_proposal=publish_local_proposal
             try:
                 consensus=self.bft.tick()
             except IntakePending as error:
@@ -679,8 +694,9 @@ class Service:
                     self.bft.before_timeout=previous_refresh
                     self.bft.before_initial_proposal=previous_wait
                     self.bft.after_local_finalization=previous_finalization
+                    self.bft.after_local_proposal=previous_proposal
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
-        if spool_outgoing:
+        if spool_outgoing and not spool_serviced:
             # Intake preceded Native export verification and optional signing.
             # Send exactly the deferred directory batch now, including newly
             # durable responses.

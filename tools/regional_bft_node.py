@@ -936,6 +936,13 @@ class Runtime:
                     envelope_id=mesh.digest(envelope),body_id=mesh.digest(envelope['body']))
 
     def broadcast(self):
+        # A Service may publish a complete Propose before its own Prepare.
+        # That consumes this unit's original carriage selection, never an
+        # additional four-item enqueue opportunity at the ordinary tail.
+        if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                and getattr(self,'_tick_operation',None) is not None):
+            if getattr(self,'_broadcast_unit_done',False):return
+            self._broadcast_unit_done=True
         # Retained complete envelopes were Native authenticated on cold open or
         # receipt. This hint schedules carriage only, never Native validation,
         # dependency synchronization, caller-head checks or signing.
@@ -1148,6 +1155,7 @@ class Runtime:
         self._timeout_refresh_used=False
         self._initial_proposal_wait_used=False
         self._finalization_phase_used=False
+        self._broadcast_unit_done=False
         self._composed_phase_observation=None
         self._sign_native_head=None
         try:
@@ -1311,6 +1319,14 @@ class Runtime:
                     high=max(highs,key=lambda q:q['round'])['value'] if highs else None
                     proposed={'round':proposed_round,'snapshot':self.candidate(context,high),'timeout':tc}
                     self.sign({'Propose':proposed})
+                    publish=getattr(self,'after_local_proposal',None)
+                    if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                            and callable(publish)):
+                        # Complete Native authentication and independent head /
+                        # outbox retention already returned successfully. The
+                        # following Prepare can fail without suppressing this
+                        # immutable, independently authorized evidence.
+                        publish()
                     phase_advanced = True
                     if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None:
                         # Propose already retained its independent caller head
