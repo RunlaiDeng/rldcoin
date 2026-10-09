@@ -1061,14 +1061,16 @@ class Node:
                 MAX_CARRIAGE_POSITIONS,MAX_CARRIAGE_POSITION_BYTES,
                 tuple((p,tuple(sorted(c.items()))) for p,c in sorted(self.contacts.items())))
 
-    def set_carriage_priority(self, scope, frame_ids):
+    def set_carriage_priority(self, scope, frame_ids, *, ordered_frames=False):
         """Process-local spare-slot hint, never receipt or Native authority."""
         hex32(scope)
         require(type(frame_ids) is tuple and len(frame_ids)<=MAX_CARRIAGE_POSITIONS
                 and len(set(frame_ids))==len(frame_ids), 'invalid carriage priority IDs')
         for ident in frame_ids:hex32(ident)
+        require(type(ordered_frames) is bool, 'invalid carriage frame order mode')
         key=(self.carriage_position_domain(),'native-commit-spare')
-        remember_carriage_position(key,(scope,frame_ids))
+        remember_carriage_position(key,(scope,frame_ids,True)
+                                   if ordered_frames and frame_ids else (scope,frame_ids))
         return key
 
     def first_carriage_plan(self,peer):
@@ -1359,8 +1361,26 @@ class Node:
         priority_pair=(first_plan is not None and (self.state['transit_class_steps'][peer]//2)%2==0)
         # Read the primitive hint before group initialization may evict it.
         # A full retry or an already missing hint retains ordinary fallback.
-        hint=(carriage_position((self.carriage_position_domain(),'native-commit-spare'))
-              if priority_pair else None)
+        available_hint=None
+        if first_plan is not None:
+            hint_key=(self.carriage_position_domain(),'native-commit-spare')
+            # Inspect opt-in mode without changing legacy nonpriority LRU
+            # order. A full retry never reads or advances any spare position.
+            with _carriage_position_lock:
+                retained_hint=_carriage_positions.get(hint_key)
+                mode=retained_hint[0] if retained_hint is not None else None
+            if priority_pair or mode is not None and len(mode)==3 and mode[2] is True:
+                available_hint=carriage_position(hint_key)
+        ordered_turn_key=None
+        if available_hint is not None and len(available_hint)==3 and available_hint[2] is True:
+            ordered_turn_key=(self.carriage_position_domain(),peer,'native-ordered-spare-turn')
+            # Alternate completed preparations, independently of whether two
+            # or four ordinary packets advanced the original class counter.
+            priority_pair=carriage_position(ordered_turn_key) is not True
+            if current_carriage is not None:
+                current_carriage.update(ordered_turn_key=ordered_turn_key,
+                                        ordered_priority_pair=priority_pair)
+        hint=available_hint if priority_pair else None
         # Keep same-frame recipient rotation separate from the ordinary ring.
         # Capture only primitive positions before group initialization can evict
         # them. They select carriage; each original packet still authenticates.
@@ -1425,14 +1445,17 @@ class Node:
             # only current places in the same original class; changed/missing
             # hints retain the original order and all packets authenticate below.
             for kind,after in frame_positions.items():
-                if after is None:continue
+                ordered_hint=(len(hint)==3 and hint[2] is True)
+                if after is None and not ordered_hint:continue
                 positions=[j for j,i in enumerate(commits) if current_classes[i][0]==kind]
                 by_frame={}
                 for j in positions:
                     by_frame.setdefault(current_classes[commits[j]][1],[]).append(commits[j])
-                ordered=sorted(by_frame)
+                ordered=([frame for frame in hint[1] if frame in by_frame]
+                         if ordered_hint else sorted(by_frame))
                 if not ordered:continue
-                start=bisect_right(ordered,after)%len(ordered)
+                start=((ordered.index(after)+1)%len(ordered) if after in ordered else 0
+                       ) if ordered_hint else bisect_right(ordered,after)%len(ordered)
                 rotated=[i for frame in ordered[start:]+ordered[:start] for i in by_frame[frame]]
                 for j,i in zip(positions,rotated):commits[j]=i
             # Start a cold newest pair with forwarded current carriage. After
@@ -1552,11 +1575,18 @@ class Node:
         self.state = updated
         # Advance optional positions only after durable ordinary preparation.
         # Eviction/restart forgets hints and never deletes retained packets.
-        self.remember_carriage(peer,{'body':{'transits':ordinary}})
+        background_ordinary=ordinary
+        ordered_turn_key=current_carriage.get('ordered_turn_key')
+        if ordered_turn_key is not None:
+            # Current-copy positions advance separately below. A prioritized
+            # spare must not move the ordinary ring past waiting background.
+            classes=current_carriage.get('classes',{})
+            background_ordinary=[t for t in ordinary if digest(t['packet']) not in classes]
+        self.remember_carriage(peer,{'body':{'transits':background_ordinary}})
         # Publish optional current-copy positions only after original durable
         # preparation. Lost sends rotate recipients, never grant custody; a
         # full4 retry, nonpriority pair or miss does not advance these positions.
-        if current_carriage:
+        if 'classes' in current_carriage:
             domain=self.carriage_position_domain()
             for transit in carried_rows:
                 ident=digest(transit['packet'])
@@ -1572,6 +1602,8 @@ class Node:
                     if digest(transit['packet']) in current_carriage['classes']:
                         remember_carriage_position((domain,peer,'native-current-origin',
                             current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
+        if ordered_turn_key is not None and carried_rows:
+            remember_carriage_position(ordered_turn_key,current_carriage['ordered_priority_pair'])
         return bundle
 
     def _trace_spool(self, stage, peer, bundle):

@@ -224,7 +224,11 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
         except (KeyError,TypeError,ValueError,mesh.InvalidSignature):
             # A hint failure is ordinary scheduling fallback, never admission.
             continue
-    if frames:return tuple(sorted(set(frames)))
+    if frames:
+        # Origin already orders fully retained candidates by live proposal and
+        # phase. Keep that scheduling order; Native authority still comes only
+        # from complete replay, signatures, caller heads and quorum checks.
+        return tuple(dict.fromkeys(frames)) if import_proposals else tuple(sorted(set(frames)))
     # A complete current Signed envelope carries its predecessor evidence and
     # advances live consensus. A latest finalized checkpoint is fallback for
     # quiescent/lagging peers; it must not displace active current frames or
@@ -973,7 +977,9 @@ class Runtime:
                                              import_proposals=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None)
                 scope=mesh.digest(dict(binding=self.binding,context=context,round=getattr(self,'_carriage_round',None),keys=sorted(self.peers),
                     native=[self.native.authority,self.native.currency,str(self.native.ledger)]))
-                self._carriage_priority_key=node.set_carriage_priority(scope,frames)
+                self._carriage_priority_key=(node.set_carriage_priority(scope,frames,ordered_frames=True)
+                    if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                    else node.set_carriage_priority(scope,frames))
             retained=set()
             for summary in node.summaries().values():
                 if summary['source']==node.id and summary['kind']=='regional-bft':
