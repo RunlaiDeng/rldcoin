@@ -1371,8 +1371,25 @@ class Node:
                 mode=retained_hint[0] if retained_hint is not None else None
             if priority_pair or mode is not None and len(mode)==3 and mode[2] is True:
                 available_hint=carriage_position(hint_key)
-        ordered_turn_key=None
+        ordered_turn_key=None;ordered_waiting_head=None
         if available_hint is not None and len(available_hint)==3 and available_hint[2] is True:
+            # Phase order is global, but a leading already-received frame may
+            # have no outgoing copy for this peer. Select its earliest remaining
+            # direct first offer from the fully checked per-peer plan instead.
+            # This never changes the first two FIFO places or makes a received,
+            # suppressed or unroutable copy eligible.
+            waiting=set(first_plan['pending'])|set(first_plan['arrivals'])
+            selected={digest(t['packet']) for t in transits}
+            waiting_frames={t['routing']['body']['frame_id']
+                for ident,t in self.state['messages'].items()
+                if ident in waiting and ident not in selected
+                and t['packet']['body']['destination']==peer}
+            if accepted_transits is not None:
+                waiting_frames={t['routing']['body']['frame_id'] for t in eligible(
+                    ident for ident in waiting if ident not in selected
+                    and self.state['messages'][ident]['packet']['body']['destination']==peer)}
+            ordered_waiting_head=next((frame for frame in available_hint[1]
+                                      if frame in waiting_frames),None)
             ordered_turn_key=(self.carriage_position_domain(),peer,'native-ordered-spare-turn')
             # Alternate completed preparations, independently of whether two
             # or four ordinary packets advanced the original class counter.
@@ -1388,13 +1405,7 @@ class Node:
             # Original first offers and recent/history streams remain intact.
             if (not priority_pair and not repayment and available_hint[1]
                     and (self.state['transit_class_steps'][peer]//4)%2==0):
-                waiting=set(first_plan['pending'])|set(first_plan['arrivals'])
-                selected={digest(t['packet']) for t in transits}
-                head=available_hint[1][0]
-                if any(ident in waiting and ident not in selected
-                       and t['routing']['body']['frame_id']==head
-                       and t['packet']['body']['destination']==peer
-                       for ident,t in self.state['messages'].items()):
+                if ordered_waiting_head is not None:
                     priority_pair=True;next_turn=2
             if current_carriage is not None:
                 current_carriage.update(ordered_turn_key=ordered_turn_key,
@@ -1504,9 +1515,10 @@ class Node:
                 # Oldest pairs, background turns, two first offers, classes,
                 # whole-packet authentication and wire limits stay intact.
                 if hint is not None and len(hint)==3 and hint[2] is True and hint[1]:
-                    head=hint[1][0]
+                    head=ordered_waiting_head
                     commits.sort(key=lambda ident:not(
-                        ident in waiting and current_classes[ident][1]==head))
+                        ident in waiting and current_classes[ident][1]==head
+                        and self.state['messages'][ident]['packet']['body']['destination']==peer))
             arrivals=list(dict.fromkeys(commits+arrivals))
             pending=[list(dict.fromkeys([i for i in arrivals if i in set(items)]+items))
                      for items in pending]
