@@ -299,8 +299,8 @@ class Service:
         finally:
             if node is not None:self.tcp.finish_selection()
 
-    def retained_frame_classifier(self, node, summaries, receipts):
-        """Exact Native-retained bytes select turns, never reception authority."""
+    def retained_frame_classifier(self, node, summaries, receipts, quota=None):
+        """Literal complete frames select turns, never reception authority."""
         from regional_bft_node import ORIGIN_RUNTIME_FORMAT
         runtime=self.bft
         if (runtime is None or getattr(runtime,'format',None)!=ORIGIN_RUNTIME_FORMAT
@@ -315,14 +315,22 @@ class Service:
             # A peer's digest is a lookup hint only. Full transport/receipt
             # checks and literal complete-frame equality are indispensable.
             content=summary['export_id'];record=retained.get(content)
-            if record is None:return None
             try:
                 transit=node.transit(ident)
                 _,raw,_=mesh.transit_check(transit,node.network)
                 mesh.receipt_matches(receipts[ident],transit)
+                if record is None:
+                    # Transport authentication and complete canonical-frame binding
+                    # only. Immutable bytes defer their literal copy this unit;
+                    # they grant no Native reception/seen/signing right.
+                    frame,_=wire.inspect_frame(raw,runtime.region,runtime.region)
+                    if frame['kind']=='regional-bft' and frame['export_id']==content:return raw
+                    return None
                 expected=wire.make_frame('regional-bft',runtime.region,runtime.region,
                                          content,messages.payload(record))
-                if raw==expected:return (record,content)
+                if raw==expected:
+                    if quota is not None and raw in quota.get('frames',()):return raw
+                    return (record,content)
             except (OSError,ValueError):
                 pass  # no grouping on refusal; normal reception still checks it.
             return None
@@ -376,6 +384,12 @@ class Service:
                         if inspected>=MAX_PER_TICK:break
                         inspected+=1
                         group=frame_classifier(ident)
+                        if group is not None:
+                            if isinstance(group,bytes) and group not in frames and (
+                                    len(group)+sum(len(v) for v in frames if isinstance(v,bytes))>MAX_NATIVE_OUTPUT):
+                                # Retention exhausted: normal complete reception,
+                                # never digest-only grouping or increased capacity.
+                                group=None
                         if group is not None:
                             if group in frames:continue
                             frames.add(group)
@@ -496,7 +510,7 @@ class Service:
             errors.extend(transport['errors'])
             summaries=node.summaries();receipts=node.receipts()
             selected = self.receive_candidates(summaries, receipts, node.id, quota,
-                self.retained_frame_classifier(node,summaries,receipts))
+                self.retained_frame_classifier(node,summaries,receipts,quota))
             if selected:
                 for ident in selected:
                     try:
@@ -651,7 +665,7 @@ class Service:
                 errors.extend(node.drain_spool_incoming())
                 summaries,receipts=node.summaries(),node.receipts()
                 chosen=self.receive_candidates(summaries,receipts,node.id,quota,
-                    self.retained_frame_classifier(node,summaries,receipts))
+                    self.retained_frame_classifier(node,summaries,receipts,quota))
                 selected.extend(chosen)
                 for ident in chosen:
                     try:

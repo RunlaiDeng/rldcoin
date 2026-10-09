@@ -8,4 +8,19 @@ Private requests are fsynced before invocation. Each wire remains at most 3 MiB;
 
 After inspection the original native synchronization and installed-epoch authentication run in order, before body deduplication. Original retained envelope bytes and local flags remain intact. A later synchronization/persistence failure may retain earlier successfully synchronized evidence; the service leaves the batch unseen and safely reauthenticates repeated delivery. Whole-batch authentication failure causes no initial synchronization or retention. One process-local scheduling bit causes the next tick to inspect its selected BFT frames separately through the same full native batch interface. It retains four receive slots and creates no same-operation fallback, authority cache or skipped check. Thus a bad frame cannot indefinitely poison valid neighbors in a repeated batch. Fresh native membership, signer status and separately retained caller heads still govern all later signing. Transport workers do not sign.
 
+In the explicit Origin profile, one contact unit may defer an identical complete
+frame's other transport copies even on its first encounter. Full transport and
+receipt checks plus canonical frame binding precede literal immutable-byte
+comparison. At most four frame inspections occur per selection opportunity;
+the original unit still owns at most four reception attempts and preserves
+novel/background fairness and cursor rotation. First-encounter bytes remain
+only in that unit's selection quota, bounded by 8 MiB; exhaustion uses normal
+complete reception. Changed proof/signature bytes remain separate. Deferred
+copies stay in custody and eligible in later units, never become `bft_seen`, and
+grant no Native, ledger or signing rights. Selected envelopes still undergo all
+Native authentication, synchronization and durable retention. Fresh units and
+restart retain no such byte witness. Legacy/joint profiles keep their original
+selection. This scheduling rule changes no timer, threshold or maturity, and
+does not establish payment percentiles, independent custody or adoption.
+
 This source changes the native implementation identity. Use fresh signed no-value genesis/currency and fresh private directories, never migrate old balances or custody. Existing 512-message/32-MiB retention, ledger/history/index/archive, transport, quorum and deadline bounds remain. Batching reduces redundant native process/store openings; component success alone does not qualify ordinary full fault liveness, independent custody or physical interstellar links. Frozen ordinary and fault results must be reported separately.

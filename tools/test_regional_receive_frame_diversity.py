@@ -113,7 +113,7 @@ class FrameDiversityTests(unittest.TestCase):
         self.assertEqual(chosen,[ident(20),ident(21),ident(1),ident(2)])
         self.assertEqual((quota['novel'],quota['background']),(2,2))
         self.assertEqual(len(quota['frames']),2)
-        self.assertEqual(transport.call_count,2) # unknown hints retain normal receive checks.
+        self.assertEqual(transport.call_count,4) # complete transport checked even for unknown frames; Native still checks selected inputs.
         self.assertEqual(service.bft_seen,set())
 
     def test_without_native_retention_witness_or_outside_origin_profile_no_grouping(self):
