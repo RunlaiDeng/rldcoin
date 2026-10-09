@@ -1376,10 +1376,30 @@ class Node:
             ordered_turn_key=(self.carriage_position_domain(),peer,'native-ordered-spare-turn')
             # Alternate completed preparations, independently of whether two
             # or four ordinary packets advanced the original class counter.
-            priority_pair=carriage_position(ordered_turn_key) is not True
+            turn=carriage_position(ordered_turn_key)
+            repayment=type(turn) is int and turn in (1,2)
+            priority_pair=False if repayment else turn is not True
+            next_turn=(turn-1 if turn==2 else False) if repayment else priority_pair
+            # A fresh direct Native-checked head can arrive just after the
+            # preceding priority turn. Borrow this newest pair once rather
+            # than losing its only eligible round to the next background turn.
+            # Repay the displaced priority/background pair with TWO background
+            # preparations; a changed scope/head cannot reset that peer debt.
+            # Original first offers and recent/history streams remain intact.
+            if (not priority_pair and not repayment and available_hint[1]
+                    and (self.state['transit_class_steps'][peer]//4)%2==0):
+                waiting=set(first_plan['pending'])|set(first_plan['arrivals'])
+                selected={digest(t['packet']) for t in transits}
+                head=available_hint[1][0]
+                if any(ident in waiting and ident not in selected
+                       and t['routing']['body']['frame_id']==head
+                       and t['packet']['body']['destination']==peer
+                       for ident,t in self.state['messages'].items()):
+                    priority_pair=True;next_turn=2
             if current_carriage is not None:
                 current_carriage.update(ordered_turn_key=ordered_turn_key,
-                                        ordered_priority_pair=priority_pair)
+                                        ordered_priority_pair=priority_pair,
+                                        ordered_next_turn=next_turn)
         hint=available_hint if priority_pair else None
         # Keep same-frame recipient rotation separate from the ordinary ring.
         # Capture only primitive positions before group initialization can evict
@@ -1620,7 +1640,7 @@ class Node:
                         remember_carriage_position((domain,peer,'native-current-origin',
                             current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
         if ordered_turn_key is not None and carried_rows:
-            remember_carriage_position(ordered_turn_key,current_carriage['ordered_priority_pair'])
+            remember_carriage_position(ordered_turn_key,current_carriage['ordered_next_turn'])
         self._trace_spool('prepare_retained',peer,bundle)
         return bundle
 
