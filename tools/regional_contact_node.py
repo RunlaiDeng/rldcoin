@@ -256,13 +256,20 @@ class Service:
                                      signing_authority=False)
                                 for packet_id, _ in rows)
             else:
-                # A complete Native refusal or structural frame refusal closes
-                # this input attempt. OS/timeout outcomes remain unknown and
-                # retain the retry fence, never bft_seen or signing authority.
-                if pending is not None and isinstance(error,ValueError):
-                    pending.finish(packet_id for packet_id,_ in rows)
-                rejected.extend(dict(packet_id=packet_id, reason=str(error))
-                                for packet_id, _ in rows)
+                # Only the Native CLI's typed refusal exit closes this attempt.
+                # Abnormal exits and unclassified local/response errors may
+                # follow a write: retain the fence without acceptance credit.
+                definite=(isinstance(error,NativeRefusal)
+                          and type(error.exit_code) is int and error.exit_code==1)
+                if pending is not None and not definite:
+                    deferred.extend(dict(packet_id=packet_id,stage='native-validation-pending',
+                        error_class=type(error).__name__,diagnostic=str(error)[:256],
+                        ledger_acceptance_known=False,signing_authority=False)
+                                    for packet_id,_ in rows)
+                else:
+                    if pending is not None:pending.finish(packet_id for packet_id,_ in rows)
+                    rejected.extend(dict(packet_id=packet_id, reason=str(error))
+                                    for packet_id, _ in rows)
 
     @contextmanager
     def selection_node(self):

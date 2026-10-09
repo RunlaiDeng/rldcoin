@@ -16,8 +16,10 @@ still uses its separate caller head and cannot first-sign.
 Pending IDs take the existing four-attempt receive budget before new inputs.
 Transport custody must reconstruct the original complete frame, authenticate its
 transit and matching receipt, and perform full Native authentication again. An
-absent or damaged retained input leaves signing blocked. A complete Native or
-structural refusal closes that attempt without acceptance credit. Only successful
+absent or damaged retained input leaves signing blocked. A typed Native refusal
+with its exact integer refusal exit closes that attempt without acceptance credit.
+Abnormal Native exits and unclassified local or response errors remain unknown
+and retain the signing fence. Only successful
 complete reception clears the pending ID before recording reception success.
 
 Cold startup retains the pending IDs and performs the ordinary Native checks.

@@ -163,6 +163,23 @@ class PendingTests(unittest.TestCase):
         self.assertEqual(self.path.read_bytes(), raw)
         with self.assertRaises(IntakePending): self.pending.before_sign()
 
+    def test_unclassified_local_or_abnormal_native_exit_remains_unknown(self):
+        for error in (ValueError('complete response binding differs'),
+                      NativeRefusal('bft-origin-network-receive-batch', -15, 'interrupted'),
+                      NativeRefusal('bft-origin-network-receive-batch', 2, 'unexpected exit'),
+                      NativeRefusal('bft-origin-network-receive-batch', True, 'untyped exit')):
+            with self.subTest(error=repr(error)):
+                service = self.service(error)
+                _, rejected, deferred = self.receive(service)
+                self.assertEqual(rejected, [])
+                self.assertEqual(len(deferred), 1)
+                self.assertFalse(deferred[0]['ledger_acceptance_known'])
+                self.assertFalse(deferred[0]['signing_authority'])
+                self.assertEqual(service.bft_seen, set())
+                with self.assertRaises(IntakePending): self.pending.before_sign()
+                self.assertEqual(Pending(self.path, self.binding, fresh=False).packets, frozenset(IDS[:1]))
+                self.pending.finish(IDS[:1])
+
     def test_service_tick_reports_unknown_progress_when_gate_blocks(self):
         from test_regional_bft_receive_deferred import ContactApplyDeferredTests
         case = ContactApplyDeferredTests()
