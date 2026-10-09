@@ -6,6 +6,7 @@ carriage supplies bytes, not authority. Caller-head consent survives response
 loss independently of the signer/runtime directories. No stellar RTT claim.
 """
 import fcntl
+from bisect import bisect_right
 import hashlib
 import os
 from pathlib import Path
@@ -37,6 +38,7 @@ MAX_STATE = 32*1024*1024
 MAX_BROADCAST_HINT_BYTES = 4*1024*1024
 MAX_BROADCAST_QUIET_SECONDS = 4.0
 MAX_BROADCAST_QUIET_CALLS = 16
+MAX_CARRIAGE_FRONTIER_BYTES = 8192
 
 
 def current_empty_proposal_hint(proposal, context, keys, *, allow_import=False):
@@ -250,41 +252,67 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
     return tuple(sorted(set(frames)))
 
 
-def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None):
+def _carriage_current(messages,height):
+    current=set()
+    for ident,body,_,_ in messages.bodies():
+        message=signed_body(body)
+        proposal=message.get('Proposal');finalized=body.get('Finalized')
+        context=message.get('Vote',message.get('Timeout',{})).get('context',{})
+        if ((proposal is not None and proposal['snapshot']['statement']['height']==height+1)
+                or (finalized is not None and finalized['statement']['height']==height)
+                or context.get('parent_height')==height):current.add(ident)
+    return current
+
+
+def _carriage_pair_key(pair):
+    content,ident,peer=pair
+    return ident,peer,content
+
+
+def carriage_frontier(messages,selected,height,previous=(None,None)):
+    """Two process-local scheduling positions, never an authorization witness."""
+    current=_carriage_current(messages,height)
+    groups=([p for p in selected if p[1] in current],
+            [p for p in selected if p[1] not in current])
+    return tuple(_carriage_pair_key(rows[-1]) if rows else old
+                 for rows,old in zip(groups,previous))
+
+
+def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None,
+                   class_position=None):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
     validates an envelope or supplies a ledger, quorum or signing decision.
     """
-    current = set()
-    for ident, body, _, _ in messages.bodies():
-        message = signed_body(body)
-        proposal = message.get('Proposal')
-        finalized = body.get('Finalized')
-        context = message.get('Vote', message.get('Timeout', {})).get('context', {})
-        if ((proposal is not None and proposal['snapshot']['statement']['height'] == height + 1)
-                or (finalized is not None and finalized['statement']['height'] == height)
-                or context.get('parent_height') == height):
-            current.add(ident)
+    current = _carriage_current(messages,height)
     active = [pair for pair in pending if pair[1] in current]
     history = [pair for pair in pending if pair[1] not in current]
 
-    def take(rows, count):
+    def take(rows, count, after=None):
         if not rows:
             return []
+        if after is not None:
+            # New complete messages can insert before a positional cursor.
+            # Seek after the last actually queued immutable pair instead.
+            ordered=sorted(rows,key=_carriage_pair_key)
+            keys=[_carriage_pair_key(pair) for pair in ordered]
+            offset=bisect_right(keys,after)%len(ordered)
+            return (ordered[offset:]+ordered[:offset])[:count]
         # Durable cursor advances by four per published batch. Rotate each
         # class by one so a stable odd/even class cannot pin its first slots.
         offset = (cursor // 4) % len(rows)
         return (rows[offset:] + rows[:offset])[:count]
 
+    positions=class_position if class_position is not None else (None,None)
     if active and history:
-        selected = take(active, 2) + take(history, 2)
+        selected = take(active, 2,positions[0]) + take(history, 2,positions[1])
         # A short class donates its spare slot without starving either class.
         if len(selected) < 4:
             selected += [pair for pair in take(active + history, 4)
                          if pair not in selected][:4 - len(selected)]
     else:
-        selected=take(active or history,4)
+        selected=take(active or history,4,positions[0] if active else positions[1])
     if prepare_first:
         # Already Native-authenticated complete rows schedule carriage only.
         # Replace a selected Commit by its still-waiting same-peer Prepare in
@@ -988,6 +1016,9 @@ class Runtime:
         # takes the original complete Mesh path. No hint survives a failed read,
         # enqueue, close or companion publication. Restart always starts cold.
         self._broadcast_quiet=None
+        previous_position=getattr(self,'_broadcast_class_position',None)
+        self._broadcast_class_position=None
+        class_scope=None;class_position=None
         pairs=[(content,ident,peer) for content,ident in rows for peer in recipients]
         carriage_node=getattr(self,'carriage_node',None)
         with (carriage_node() if carriage_node is not None else mesh.Node(self.transport)) as node:
@@ -1012,11 +1043,23 @@ class Runtime:
                 if summary['source']==node.id and summary['kind']=='regional-bft':
                     retained.add((summary['export_id'],summary['destination']))
             pending=[pair for pair in pairs if (pair[0],pair[2]) not in retained]
+            if proposal_context is not None:
+                domain=wire.canonical(dict(format=self.format,binding=self.binding,
+                    native=[self.native.authority,self.native.currency,str(self.native.ledger)],
+                    region=self.region,node_id=self.node_id,transport=self.transport,
+                    context=proposal_context,peers=sorted(self.peers.items()),
+                    limits=[MAX_MESSAGES,MAX_STATE,wire.MAX_PAYLOAD,mesh.MAX_CONTACTS,4,
+                            MAX_CARRIAGE_FRONTIER_BYTES]))
+                if len(domain)<=MAX_CARRIAGE_FRONTIER_BYTES:
+                    class_scope=domain
+                    class_position=(previous_position[1] if previous_position is not None
+                        and previous_position[0]==domain else (None,None))
             if pending:
                 batch_pairs=carriage_batch(self.state['messages'],pending,
                                           self.state['height'],self.state['cursor'],
                                           prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
-                                          proposal_context=proposal_context)
+                                          proposal_context=proposal_context,
+                                          class_position=class_position)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
@@ -1028,8 +1071,14 @@ class Runtime:
                         trace.event('source_enqueued',peer,packet_id=ident,envelope_id=content,
                             frame_id=node.state['messages'][ident]['routing']['body']['frame_id'])
                 retained.update((content,peer) for content,_,peer in batch_pairs)
+                if class_position is not None:
+                    class_position=carriage_frontier(self.state['messages'],batch_pairs,
+                                                    self.state['height'],class_position)
             complete=all((content,peer) in retained for content,_,peer in pairs)
         if pending:self.save(dict(self.state,cursor=(self.state['cursor']+4)%(2**63)))
+        if (class_scope is not None and len(class_scope)+len(wire.canonical(class_position))
+                <=MAX_CARRIAGE_FRONTIER_BYTES):
+            self._broadcast_class_position=(class_scope,class_position)
         # Complete Native envelope metadata is immutable in Messages. Equality
         # of this bounded inventory can postpone only an empty Mesh reread,
         # after the original durable path confirmed every recipient pair.
