@@ -365,6 +365,7 @@ class Service:
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
           with self.selection_node() as node:
+            node.contact_trace = getattr(self, 'contact_trace', None)
             transport = node.tick(defer_spool_outgoing=True) if self.bft is not None or spool_outgoing else node.tick()
             errors.extend(transport['errors'])
             summaries=node.summaries();receipts=node.receipts()
@@ -526,6 +527,7 @@ class Service:
             stage_started=time.monotonic()
             try:
                 with self.tcp.ordinary_mesh_node() as node:
+                    node.contact_trace = getattr(self, 'contact_trace', None)
                     errors.extend(node.flush_spool_outgoing())
             except (OSError,ValueError) as error:
                 errors.append(str(error));observe_os_error(error,'mesh-outgoing')

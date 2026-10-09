@@ -1574,6 +1574,17 @@ class Node:
                             current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
         return bundle
 
+    def _trace_spool(self, stage, peer, bundle):
+        """Opt-in primitive timing only; failures never change carriage."""
+        trace = getattr(self, 'contact_trace', None)
+        if trace is not None:
+            try:
+                trace.packets(stage, peer, trace.packet_rows(bundle))
+            except Exception:
+                # Observation loss cannot become a transport or custody result.
+                try:trace.reject()
+                except Exception:pass
+
     def _send_spool(self, peer, contact):
         """One existing bounded prepared exchange; durable rotation precedes I/O."""
         bundle = self.prepare_exchange(peer)
@@ -1592,6 +1603,7 @@ class Node:
             if adapter == spool_codec.FORMAT:
                 retained = spool_codec.decode(retained, limit=MAX_BATCH)
             require(retained == data, 'exchange file collision')
+        self._trace_spool('spool_outgoing_published', peer, bundle)
 
     def flush_spool_outgoing(self):
         """Send the one deferred directory batch after Native release/enqueue.
@@ -1629,7 +1641,9 @@ class Node:
                     else:
                         bundle = load(path, MAX_BATCH)
                     require(path.stem == digest(bundle), 'exchange filename mismatch')
+                    self._trace_spool('spool_incoming_read', peer, bundle)
                     self.receive(bundle, peer)
+                    self._trace_spool('spool_incoming_custody', peer, bundle)
                     path.unlink()
                     fd = os.open(path.parent, os.O_RDONLY)
                     try:
