@@ -263,13 +263,15 @@ class Service:
         finally:
             if node is not None:self.tcp.finish_selection()
 
-    def receive_candidates(self, summaries, receipts, destination):
+    def receive_candidates(self, summaries, receipts, destination, quota=None):
         eligible = sorted(i for i, t in summaries.items()
             if t['destination'] == destination and i in receipts
             and i not in self.bft_seen
+            and (quota is None or i not in quota['attempted'])
             and not (t['kind']=='source-finality' and t.get('frame_id') in
                      getattr(self,'_native_origin_messages',frozenset())))
-        if not eligible:
+        remaining=MAX_PER_TICK if quota is None else MAX_PER_TICK-len(quota['attempted'])
+        if not eligible or remaining <= 0:
             return []
         if self.bft is not None:
             # Cold startup authenticated the retained complete envelopes. Their
@@ -295,10 +297,23 @@ class Service:
             # Each nonempty class retains half the original four slots. A
             # changed proof remains novel; every selected complete envelope
             # still takes normal authentication before native deduplication.
-            count=min(len(novel),max(MAX_PER_TICK//2,MAX_PER_TICK-len(background)))
-            return take(novel,count,'novel')+take(background,MAX_PER_TICK-count,'background')
-        offset = self.progress['cursor'] % len(eligible)
-        return (eligible[offset:] + eligible[:offset])[:MAX_PER_TICK]
+            if quota is None:
+                count=min(len(novel),max(MAX_PER_TICK//2,MAX_PER_TICK-len(background)))
+                return take(novel,count,'novel')+take(background,MAX_PER_TICK-count,'background')
+            # One operation owns the original four attempts, including failures.
+            # Preserve each class's half before borrowing unused places. Late
+            # traffic cannot undo borrowing or create another four-frame unit.
+            n=min(len(novel),remaining,max(0,MAX_PER_TICK//2-quota['novel']))
+            b=min(len(background),remaining-n,max(0,MAX_PER_TICK//2-quota['background']))
+            n+=min(len(novel)-n,remaining-n-b)
+            b+=min(len(background)-b,remaining-n-b)
+            selected=take(novel,n,'novel')+take(background,b,'background')
+            quota['novel']+=n;quota['background']+=b
+        else:
+            offset = self.progress['cursor'] % len(eligible)
+            selected=(eligible[offset:] + eligible[:offset])[:remaining]
+        if quota is not None:quota['attempted'].update(selected)
+        return selected
 
     def contact_observation(self):
         # Operation-local projections from the original full inspection replay.
@@ -361,6 +376,7 @@ class Service:
         stage_started=time.monotonic()
         spool_outgoing=any('outbox' in contact and 'host' not in contact
                            for contact in self.config['contacts'])
+        quota={'attempted':set(),'novel':0,'background':0}
         selected=[]
         transport={'progress_observation_available':False,'diagnostic':'mesh selection unavailable'}
         try:
@@ -369,7 +385,7 @@ class Service:
             transport = node.tick(defer_spool_outgoing=True) if self.bft is not None or spool_outgoing else node.tick()
             errors.extend(transport['errors'])
             summaries=node.summaries();receipts=node.receipts()
-            selected = self.receive_candidates(summaries, receipts, node.id)
+            selected = self.receive_candidates(summaries, receipts, node.id, quota)
             if selected:
                 for ident in selected:
                     try:
@@ -397,70 +413,74 @@ class Service:
         from regional_bft_node import ORIGIN_RUNTIME_FORMAT
         independent_bft=(self.bft is not None and getattr(self.bft,'format',None)==ORIGIN_RUNTIME_FORMAT
                          and getattr(self.bft,'joint',None) is None)
+        def apply_received(items):
+            nonlocal native_observation,outgoing
+            if native_observation is not None or independent_bft:
+                accepted = {c['message_id'] for c in (native_observation['contacts'] if native_observation is not None else [])
+                    if c['import_accepted'] or (self.miner is None and c['evidence_verified'])}
+                individual_retry=self.bft_individual_retry
+                self.bft_individual_retry=False
+                pending_bft=[]
+                native_write_attempted=False
+                def flush_bft():
+                    nonlocal native_write_attempted
+                    if not pending_bft:return
+                    # A sync may have changed custody even if its result is lost.
+                    native_write_attempted=True
+                    try:
+                        self.receive_bft_batch(pending_bft, errors, rejected, deferred)
+                    finally:pending_bft.clear()
+                for packet_id, raw in items:
+                    try:
+                        frame, _ = wire.inspect_frame(raw)
+                        if frame['kind']=='regional-bft':
+                            if self.bft is not None:
+                                pending_bft.append((packet_id,raw))
+                                if self.contact_trace is not None:
+                                    self.contact_trace.native_stage('native_receive_queued',packet_id,raw)
+                                if individual_retry or len(pending_bft)==4:flush_bft()
+                            continue
+                        flush_bft()
+                        # Other contact application and outgoing selection keep
+                        # their original fresh-projection prerequisite unchanged.
+                        if native_observation is None:continue
+                        if frame['message_id'] not in accepted:
+                            native_write_attempted=True
+                            result = self.native.apply(raw, self.miner)
+                            applied.append({'packet_id': packet_id, 'native': result})
+                    except (OSError, ValueError, subprocess.TimeoutExpired) as error:
+                        flush_bft()
+                        errors.append(str(error))
+                        observe_os_error(error,'native-contact-apply')
+                        # Only the exact complete typed contact-apply lock refusal
+                        # leaves Native validity unknown. Retain the original frame
+                        # for full verification on a later tick; no import/seen or
+                        # signing credit is released by this local refusal.
+                        if (isinstance(error, NativeRefusal)
+                                and error.command in ('contact-apply','contact-origin-apply','history-head')
+                                and type(error.exit_code) is int and error.exit_code == 1
+                                and error.diagnostic.strip() in (
+                                    'regional candidate rejected: lock acquisition failed because the operation would block',
+                                    'regional candidate rejected: complete stream already locked',
+                                )):
+                            deferred.append(dict(packet_id=packet_id,
+                                stage='native-validation-pending',command=error.command,
+                                exit_code=error.exit_code,diagnostic=error.diagnostic.strip(),
+                                ledger_acceptance_known=False,signing_authority=False))
+                        else:
+                            rejected.append({'packet_id': packet_id, 'reason': str(error)})
+                flush_bft()
+                # Any write attempt (including an unknown result) invalidates both
+                # initial projections. Never export or display the pre-write view.
+                if native_write_attempted:
+                    try:
+                        native_observation,outgoing=self.contact_observation()
+                    except (OSError, ValueError, subprocess.TimeoutExpired) as error:
+                        native_observation=None;outgoing=None
+                        errors.append(str(error))
+                        observe_os_error(error,'native-contact-status-final')
+        apply_received(received)
         if native_observation is not None or independent_bft:
-            accepted = {c['message_id'] for c in (native_observation['contacts'] if native_observation is not None else [])
-                if c['import_accepted'] or (self.miner is None and c['evidence_verified'])}
-            individual_retry=self.bft_individual_retry
-            self.bft_individual_retry=False
-            pending_bft=[]
-            native_write_attempted=False
-            def flush_bft():
-                nonlocal native_write_attempted
-                if not pending_bft:return
-                # A sync may have changed custody even if its result is lost.
-                native_write_attempted=True
-                try:
-                    self.receive_bft_batch(pending_bft, errors, rejected, deferred)
-                finally:pending_bft.clear()
-            for packet_id, raw in received:
-                try:
-                    frame, _ = wire.inspect_frame(raw)
-                    if frame['kind']=='regional-bft':
-                        if self.bft is not None:
-                            pending_bft.append((packet_id,raw))
-                            if self.contact_trace is not None:
-                                self.contact_trace.native_stage('native_receive_queued',packet_id,raw)
-                            if individual_retry or len(pending_bft)==4:flush_bft()
-                        continue
-                    flush_bft()
-                    # Other contact application and outgoing selection keep
-                    # their original fresh-projection prerequisite unchanged.
-                    if native_observation is None:continue
-                    if frame['message_id'] not in accepted:
-                        native_write_attempted=True
-                        result = self.native.apply(raw, self.miner)
-                        applied.append({'packet_id': packet_id, 'native': result})
-                except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-                    flush_bft()
-                    errors.append(str(error))
-                    observe_os_error(error,'native-contact-apply')
-                    # Only the exact complete typed contact-apply lock refusal
-                    # leaves Native validity unknown. Retain the original frame
-                    # for full verification on a later tick; no import/seen or
-                    # signing credit is released by this local refusal.
-                    if (isinstance(error, NativeRefusal)
-                            and error.command in ('contact-apply','contact-origin-apply','history-head')
-                            and type(error.exit_code) is int and error.exit_code == 1
-                            and error.diagnostic.strip() in (
-                                'regional candidate rejected: lock acquisition failed because the operation would block',
-                                'regional candidate rejected: complete stream already locked',
-                            )):
-                        deferred.append(dict(packet_id=packet_id,
-                            stage='native-validation-pending',command=error.command,
-                            exit_code=error.exit_code,diagnostic=error.diagnostic.strip(),
-                            ledger_acceptance_known=False,signing_authority=False))
-                    else:
-                        rejected.append({'packet_id': packet_id, 'reason': str(error)})
-            flush_bft()
-            # Any write attempt (including an unknown result) invalidates both
-            # initial projections. Never export or display the pre-write view.
-            if native_write_attempted:
-                try:
-                    native_observation,outgoing=self.contact_observation()
-                except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-                    native_observation=None;outgoing=None
-                    errors.append(str(error))
-                    observe_os_error(error,'native-contact-status-final')
             # Export authority is obtained from the actual native ledger. A
             # region advertised by a mesh key selects only a candidate carrier.
             try:
@@ -510,7 +530,35 @@ class Service:
         consensus = None
         stage_seconds['native_receive_and_outgoing'] = round(time.monotonic()-stage_started, 6)
         stage_started = time.monotonic()
+        def before_timeout():
+            # Exactly one late intake opportunity, only within this unit's
+            # remaining four selections. Do not tick the mesh or renew a timer.
+            if len(quota['attempted'])>=MAX_PER_TICK:return False
+            late=[]
+            with self.selection_node() as node:
+                node.contact_trace=getattr(self,'contact_trace',None)
+                errors.extend(node.drain_spool_incoming())
+                summaries,receipts=node.summaries(),node.receipts()
+                chosen=self.receive_candidates(summaries,receipts,node.id,quota)
+                selected.extend(chosen)
+                for ident in chosen:
+                    try:
+                        transit=node.transit(ident)
+                        _,raw,_=mesh.transit_check(transit,node.network)
+                        mesh.receipt_matches(receipts[ident],transit)
+                        late.append((ident,raw))
+                        if self.contact_trace is not None and summaries[ident]['kind']=='regional-bft':
+                            self.contact_trace.native_stage('native_receive_selected',ident,raw)
+                    except (OSError,ValueError) as error:
+                        errors.append(str(error))
+                        rejected.append({'packet_id':ident,'reason':str(error)})
+            # No mesh lock crosses Native authentication/persistence. Even an
+            # empty or rejected attempt requires a new Native phase observation.
+            apply_received(late)
+            return True
         if self.bft is not None:
+            previous_refresh=getattr(self.bft,'before_timeout',None)
+            if independent_bft:self.bft.before_timeout=before_timeout
             try:
                 consensus=self.bft.tick()
             except (OSError,ValueError,subprocess.TimeoutExpired) as error:
@@ -519,13 +567,15 @@ class Service:
                 # A failed observation cannot establish the current signing role.
                 consensus={'autonomous_signing_enabled':None,'progress_observation_available':False,
                            'diagnostic':str(error)[:256],'independent_bft_qualified':False}
+            finally:
+                if independent_bft:self.bft.before_timeout=previous_refresh
         stage_seconds['consensus'] = round(time.monotonic()-stage_started, 6)
         if spool_outgoing:
             # Intake preceded Native export verification and optional signing.
             # Send exactly the deferred directory batch now, including newly
             # durable responses.
-            # TCP already follows this order. Do not intake a second batch or
-            # advance the global cursor twice; carriage grants no ledger rights.
+            # TCP already follows this order. Timeout-boundary intake uses only
+            # unused selections; the global cursor still advances once.
             stage_started=time.monotonic()
             try:
                 with self.tcp.ordinary_mesh_node() as node:

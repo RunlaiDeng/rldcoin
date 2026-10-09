@@ -1732,14 +1732,17 @@ class Node:
             except (OSError, ValueError) as error:errors.append(str(error))
         return errors[:16]
 
-    def tick(self, *, defer_spool_outgoing=False):
-        require(type(defer_spool_outgoing) is bool, 'invalid spool scheduling mode')
+    def drain_spool_incoming(self, peer=None):
+        """Authenticate and durably retain directory intake only.
+
+        No archive, outgoing preparation, cursor advance or status publication.
+        The optional peer preserves the ordinary tick's interleaved ordering.
+        """
         errors = []
-        try:self.archive_completed()
-        except (OSError,ValueError) as error:errors.append(str(error))
-        for peer, contact in sorted(self.contacts.items()):
-            if 'host' in contact:
-                continue  # Socket I/O runs outside the mesh lock via the contact service.
+        contacts=sorted(self.contacts.items()) if peer is None else [(peer,self.contacts[peer])]
+        for neighbor, contact in contacts:
+            if 'host' in contact:continue
+            peer_id = neighbor
             try:
                 incoming, _ = spool_files(contact['inbox'], contact.get('adapter')) if 'inbox' in contact else ([],0)
             except (OSError, ValueError) as error:
@@ -1748,22 +1751,22 @@ class Node:
             for path in incoming:
                 try:
                     require(re.fullmatch(r'[0-9a-f]{64}\.json', path.name), 'unexpected inbox file')
-                    self._trace_spool_file('spool_incoming_discovered',peer,path)
-                    self._trace_spool_file('spool_incoming_read_started',peer,path)
+                    self._trace_spool_file('spool_incoming_discovered',peer_id,path)
+                    self._trace_spool_file('spool_incoming_read_started',peer_id,path)
                     if contact.get('adapter') == spool_codec.FORMAT:
                         encoded=evidence.read_file(path,MAX_BATCH)
-                        self._trace_spool_file('spool_incoming_bytes_read',peer,path)
-                        self._trace_spool_file('spool_incoming_decode_started',peer,path)
+                        self._trace_spool_file('spool_incoming_bytes_read',peer_id,path)
+                        self._trace_spool_file('spool_incoming_decode_started',peer_id,path)
                         raw = spool_codec.decode(encoded, limit=MAX_BATCH)
                         bundle = evidence.decode_json(raw)
                         require(raw == evidence.canonical(bundle), 'noncanonical JSON')
                     else:
                         bundle = load(path, MAX_BATCH)
-                    self._trace_spool_file('spool_incoming_decoded',peer,path)
+                    self._trace_spool_file('spool_incoming_decoded',peer_id,path)
                     require(path.stem == digest(bundle), 'exchange filename mismatch')
-                    self._trace_spool('spool_incoming_read', peer, bundle,exchange_id=path.stem)
-                    self.receive(bundle, peer)
-                    self._trace_spool('spool_incoming_custody', peer, bundle)
+                    self._trace_spool('spool_incoming_read', peer_id, bundle,exchange_id=path.stem)
+                    self.receive(bundle, peer_id)
+                    self._trace_spool('spool_incoming_custody', peer_id, bundle)
                     path.unlink()
                     fd = os.open(path.parent, os.O_RDONLY)
                     try:
@@ -1772,6 +1775,17 @@ class Node:
                         os.close(fd)
                 except (OSError, ValueError) as error:
                     errors.append(str(error))
+        return errors[:16]
+
+    def tick(self, *, defer_spool_outgoing=False):
+        require(type(defer_spool_outgoing) is bool, 'invalid spool scheduling mode')
+        errors = []
+        try:self.archive_completed()
+        except (OSError,ValueError) as error:errors.append(str(error))
+        for peer, contact in sorted(self.contacts.items()):
+            if 'host' in contact:
+                continue  # Socket I/O runs outside the mesh lock via the contact service.
+            errors.extend(self.drain_spool_incoming(peer))
             if 'outbox' not in contact:continue
             if defer_spool_outgoing:continue
             try:self._send_spool(peer, contact)

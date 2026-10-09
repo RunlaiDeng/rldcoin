@@ -1134,6 +1134,7 @@ class Runtime:
         started = time.monotonic()
         succeeded = False
         self._tick_operation=object()
+        self._timeout_refresh_used=False
         self._composed_phase_observation=None
         self._sign_native_head=None
         try:
@@ -1308,6 +1309,18 @@ class Runtime:
                             phase_advanced = True
                             break
                 if not phase_advanced and time.monotonic()-self.entered_at>=min(3600,self.round_timeout*(round_number+1)):
+                    refresh=getattr(self,'before_timeout',None)
+                    if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                            and callable(refresh) and not self._timeout_refresh_used):
+                        self._timeout_refresh_used=True
+                        if refresh():
+                            # Authentication may advance Native state or caller
+                            # heads. Discard every old operation projection and
+                            # reobserve through Native before any phase request.
+                            self._tick_operation=object()
+                            self._composed_phase_observation=None
+                            self._sign_native_head=None
+                            return self._tick()
                     self.sign({'Timeout':{'context':context,'round':round_number}})
                     phase_advanced = True
         if phase_advanced:
