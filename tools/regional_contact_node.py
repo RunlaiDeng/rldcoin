@@ -424,7 +424,7 @@ class Service:
             'native contact projections differ')
         return status,outgoing
 
-    def wait_initial_proposal(self, due):
+    def wait_initial_proposal(self, due, late_intake=None):
         """One bounded wait outside mesh locks; the Runtime reopens Native."""
         if type(due) not in (int,float) or not due<=time.monotonic()+MAX_INITIAL_PHASE_WAIT_SECONDS:
             return False
@@ -432,7 +432,11 @@ class Service:
             if getattr(self.tcp,'running',True) is False:
                 raise tcp.MeshRuntimeStopping('TCP runtime is stopping; preserve evidence')
             remaining=due-time.monotonic()
-            if remaining<=0:return True
+            if remaining<=0:
+                # Reuse only this unit's remaining intake quota. Runtime then
+                # clears operation hints and fully reobserves both Native heads.
+                if callable(late_intake):late_intake()
+                return True
             time.sleep(min(0.1,remaining))
 
     def continue_after_finalization(self):
@@ -684,7 +688,7 @@ class Service:
             previous_proposal=getattr(self.bft,'after_local_proposal',None)
             if independent_bft:
                 self.bft.before_timeout=before_timeout
-                self.bft.before_initial_proposal=self.wait_initial_proposal
+                self.bft.before_initial_proposal=lambda due:self.wait_initial_proposal(due,before_timeout)
                 self.bft.after_local_finalization=self.continue_after_finalization
                 self.bft.after_local_proposal=publish_local_proposal
             try:
