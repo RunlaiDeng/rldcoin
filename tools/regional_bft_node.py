@@ -738,6 +738,15 @@ class Runtime:
                      'BFT native ledger rolled back beneath retained runtime observation')
         if value['parent_height']!=self.state['height']:
             self.save(dict(self.state,height=value['parent_height'],tip=value['parent_block']))
+        if getattr(self,'format',None)==ORIGIN_RUNTIME_FORMAT and self.joint is None:
+            # Start a new parent's initial interval at its complete Native
+            # observation, including receive/finalize before the next tick.
+            # Reobserving identical evidence cannot renew either timer. This
+            # process-local timestamp grants no signer or ledger authority.
+            context=wire.canonical(value)
+            seen=getattr(self,'_phase_context_started',None)
+            if seen is None or seen[0]!=context:
+                self._phase_context_started=(context,time.monotonic())
         if getattr(self,'format',None) in (FORMAT,ORIGIN_RUNTIME_FORMAT):
             context=wire.canonical(value)
             if context!=getattr(self,'_carriage_context',None):
@@ -1196,7 +1205,14 @@ class Runtime:
         if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:self._carriage_round=round_number
         slot=(mesh.digest(context),round_number)
         if self.slot!=slot:
-            self.slot,self.entered_at=slot,time.monotonic()
+            entered=time.monotonic()
+            seen=getattr(self,'_phase_context_started',None)
+            if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                    and round_number==0 and seen is not None
+                    and seen[0]==wire.canonical(context)
+                    and (self.slot is None or self.slot[0]!=slot[0])):
+                entered=seen[1]
+            self.slot,self.entered_at=slot,entered
         stopped=context['parent_height']>=self.stop_height or self.key_file is None or not self.key_file.exists() or self.head['head'] is None
         observation = getattr(self, 'observation', None)
         if observation is not None:
