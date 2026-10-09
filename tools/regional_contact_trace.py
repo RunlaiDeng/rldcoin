@@ -38,7 +38,11 @@ STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection
         'spool_incoming_bytes_read','spool_incoming_decode_started','spool_incoming_decoded',
         'native_head_started','native_head_returned','native_input_durable',
         'native_validate_call_started','native_validate_call_returned','native_validate_call_failed',
-        'native_validation_bound','timeout_requested','timeout_retained','timeout_failed'}
+        'native_validation_bound','timeout_requested','timeout_retained','timeout_failed',
+        'submission_scan_started','submission_input_read','submission_auth_started',
+        'submission_retained','submission_retention_failed','submission_duplicate_seen',
+        'submission_scan_finished','consensus_tick_started','consensus_tick_finished',
+        'consensus_context_observed'}
 
 
 def check_fields(stage,peer,fields):

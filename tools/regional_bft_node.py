@@ -1264,6 +1264,8 @@ class Runtime:
         return self.with_json('bft-candidate',commands,'--miner',self.miner)
 
     def tick(self):
+        from regional_bft_submission_observation import event
+        event(self,'consensus_tick_started')
         started = time.monotonic()
         succeeded = False
         self._tick_operation=object()
@@ -1278,6 +1280,7 @@ class Runtime:
             succeeded = True
             return result
         finally:
+            event(self,'consensus_tick_finished')
             self._tick_operation=None
             self._composed_phase_observation=None
             self._sign_native_head=None
@@ -1292,18 +1295,8 @@ class Runtime:
         if self.head['pending'] is not None:
             self.reconcile()
         self.flush_outbox()
-        queue=self.native.ledger/'bft-submissions'
-        if queue.exists():
-            private(queue,True)
-            files=sorted(queue.iterdir())
-            mesh.require(len(files)<=32, 'BFT submission spool capacity')
-            for path in files[:32]:
-                # Native serde field order is not the mesh's sorted JSON wire
-                # order. Bound/read the native file, then let Rust authenticate
-                # its complete typed contents before canonical wire packing.
-                envelope=wire.decode_json(wire.read_file(private(path),wire.MAX_PAYLOAD))
-                if mesh.digest(envelope['body']) not in self.state['messages']:
-                    self.retain(envelope,local=True)
+        from regional_bft_submission_observation import read_submissions
+        read_submissions(self)
         operation = object()
         loop_status = None
         if self.format == JOINT_FORMAT and isinstance(self.joint, JointEpoch):
@@ -1329,6 +1322,9 @@ class Runtime:
                 status=self.signer_status()
         active=status['state'] if status['state'] is not None and status['state']['context']==context else {'round':0,'prepared':None,'committed':None,'proposed':False}
         round_number=active['round']
+        from regional_bft_submission_observation import event
+        event(self,'consensus_context_observed',scope_id=mesh.digest(context),attempt=round_number,
+              selected=context['parent_height'])
         if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:self._carriage_round=round_number
         slot=(mesh.digest(context),round_number)
         if self.slot!=slot:
