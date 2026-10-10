@@ -269,6 +269,46 @@ def _carriage_pair_key(pair):
     return ident,peer,content
 
 
+def parent_carriage_pair(messages,pending,context,peers,round_number):
+    """A complete Native-retained parent for this configured round's leader.
+
+    The caller has already authenticated/retained every complete envelope and
+    observed the Native context/round under the original custody locks. This
+    extra signature/byte filter schedules one existing recipient pair only;
+    it cannot authenticate evidence, install a ledger or authorize signing.
+    Unknown rounds and incompatible/ambiguous peer roles keep ordinary service.
+    """
+    fields={'currency','region','epoch','previous','parent_height','parent_block','parent_state'}
+    if (not isinstance(messages,Messages) or len(messages)>MAX_MESSAGES
+            or type(pending) is not list or len(pending)>MAX_MESSAGES*4
+            or type(context) is not dict or set(context)!=fields
+            or type(context['parent_height']) is not int or context['parent_height']<1
+            or type(round_number) is not int or not 0<=round_number<32
+            or type(peers) is not dict or len(peers)!=4
+            or any(type(k) is not str or type(p) is not str for k,p in peers.items())
+            or len(set(peers.values()))!=4):return None
+    try:
+        keys=tuple(sorted(peers))
+        for key,peer in peers.items():mesh.hex32(key);mesh.hex32(peer)
+        for name in fields-{'parent_height'}:mesh.hex32(context[name])
+    except (TypeError,ValueError):return None
+    destination=peers[keys[(context['parent_height']+round_number)%4]]
+    for pair in sorted(pending,key=_carriage_pair_key):
+        content,ident,peer=pair
+        if peer!=destination or ident not in messages:continue
+        record=messages.record(ident)
+        if (not record['local'] or record['value']!=context['previous']
+                or record['sha256']!=content or record['size_bytes']>MAX_BROADCAST_HINT_BYTES
+                or record['header']!=dict(format=ORIGIN_NETWORK,currency=context['currency'],region=context['region'])):continue
+        try:
+            snapshot=record['body'].get('Finalized')
+            if snapshot is None or not current_finalized_hint(snapshot,context,keys):continue
+            messages.payload(ident)  # unchanged complete original size/digest
+        except (KeyError,TypeError,ValueError,mesh.InvalidSignature):continue
+        return pair
+    return None
+
+
 def carriage_frontier(messages,selected,height,previous=(None,None)):
     """Two process-local scheduling positions, never an authorization witness."""
     current=_carriage_current(messages,height)
@@ -279,7 +319,7 @@ def carriage_frontier(messages,selected,height,previous=(None,None)):
 
 
 def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None,
-                   class_position=None, first_proposal=None, first_prepare=None):
+                   class_position=None, first_proposal=None, first_prepare=None,parent_pair=None):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
@@ -402,6 +442,17 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
                 if dependency is not None and dependency not in selected:
                     selected[index]=dependency
                     break
+    if (prepare_first and parent_pair in active and parent_pair not in selected):
+        # Replace only the first current place. The remaining ordinary place
+        # advances its existing frontier, including other recipient copies;
+        # the independent history reservation and total four never change.
+        # After actual enqueue the exact recipient pair leaves pending. Failed
+        # publication/restart uses the same durable inventory, with no flag,
+        # receipt shortcut, evidence pruning or process-local priority debt.
+        for index,pair in enumerate(selected):
+            if pair in active:
+                selected[index]=parent_pair
+                break
     return selected
 
 
@@ -1125,13 +1176,17 @@ class Runtime:
                 first_prepare=(fresh_prepare+(tuple(recipients),)
                     if proposal_context is not None and type(fresh_prepare) is tuple
                     and len(fresh_prepare)==2 else None)
+                parent_pair=(parent_carriage_pair(self.state['messages'],pending,proposal_context,
+                                                  self.peers,getattr(self,'_carriage_round',None))
+                             if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                             and getattr(self,'_retained_native_authenticated',False) else None)
                 batch_pairs=carriage_batch(self.state['messages'],pending,
                                           self.state['height'],self.state['cursor'],
                                           prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
                                           proposal_context=proposal_context,
                                           class_position=class_position,
                                           first_proposal=first_proposal,
-                                          first_prepare=first_prepare)
+                                          first_prepare=first_prepare,parent_pair=parent_pair)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
@@ -1531,6 +1586,14 @@ class Runtime:
         self.with_json('finalize',certificate)
         self.retain_local_body({'Finalized':certificate})
         fresh=self.observe()
+        if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                and fresh['parent_height']==context['parent_height']+1
+                and getattr(self,'_carriage_round',None) is None):
+            # This exact new parent was just installed by Native, with complete
+            # local certificate retention before observation. Its successor
+            # starts at round zero; later/cold contexts require the ordinary
+            # Native loop-status round, never a recovered certificate's round.
+            self._carriage_round=0
         proceed=getattr(self,'after_local_finalization',None)
         if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
                 and not getattr(self,'_finalization_phase_used',False)
