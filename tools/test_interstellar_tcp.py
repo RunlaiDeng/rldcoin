@@ -90,6 +90,17 @@ class TcpTests(unittest.TestCase):
             c.close()
             raise
 
+    def connect_sdk(self,target='proxima'):
+        # Independent Python peer can transmit malformed raw bytes; the ordinary
+        # native frame writer accepts only bounded canonical typed input.
+        import interstellar_tcp_reference as reference
+        deadline=time.monotonic()+tcp.ATTEMPT_SECONDS
+        c=reference.client_connect(self.f.servers[target].address,self.f.pins[target],NETWORK,self.f.ids[target],deadline)
+        try:
+            nonce=tcp.check_challenge(tcp.receive(c,deadline),NETWORK,self.f.ids[target],self.f.pins[target])
+            return c,nonce
+        except BaseException:c.close();raise
+
     def bind(self,value,nonce):
         name=next((n for n in self.f.names if self.f.ids[n]==value['body']['node_id']),None)
         if name:
@@ -102,7 +113,7 @@ class TcpTests(unittest.TestCase):
     def exchange(self,value,target='proxima',bind=True):
         c,nonce=self.connect(target)
         with c:
-            deadline=time.monotonic()+tcp.ATTEMPT_SECONDS
+            deadline=c.deadline
             if bind:
                 self.bind(value,nonce)
             tcp.send(c,value,deadline)
@@ -353,7 +364,7 @@ class TcpTests(unittest.TestCase):
         c,nonce=self.connect()
         with c:
             self.bind(sent,nonce)
-            tcp.send(c,sent,time.monotonic()+tcp.ATTEMPT_SECONDS)
+            tcp.send(c,sent,c.deadline)
             # Sender disappears before reading an acknowledgment.
         path=self.f.root/'proxima/mesh-state.json'
         self.await_condition(lambda:ident in mesh.load(path,mesh.MAX_STATE)['messages'])
@@ -417,7 +428,7 @@ class TcpTests(unittest.TestCase):
         for value in (wrong_to,wrong_net,forged,tamper,unknown):
             with self.assertRaises((OSError,ValueError)):
                 self.exchange(value)
-        c,_=self.connect()
+        c,_=self.connect_sdk()
         with c:
             c.sendall(struct.pack('!I',tcp.MAX_WIRE+1))
             self.assertEqual(c.recv(1),b'')
@@ -527,7 +538,9 @@ class TcpTests(unittest.TestCase):
         clients=[socket.create_connection(server.address,timeout=2) for _ in range(tcp.MAX_WORKERS)]
         for c in clients:
             self.addCleanup(c.close)
-            c.sendall(b'\x00')
+            # A valid incomplete TLS record waits for its retained original
+            # deadline; an invalid content-type may be refused immediately.
+            c.sendall(b'\x16')
         self.await_condition(lambda:len(server.workers)==tcp.MAX_WORKERS)
         with socket.create_connection(server.address,timeout=2) as c:
             self.assertEqual(c.recv(1),b'')
@@ -557,7 +570,7 @@ class TcpTests(unittest.TestCase):
     def test_deep_invalid_json_is_rejected_and_listener_still_accepts_valid_exchange(self):
         before=(self.f.root/'proxima/mesh-state.json').read_bytes()
         raw=b'['*2000+b'0'+b']'*2000
-        c,_=self.connect()
+        c,_=self.connect_sdk()
         with c:
             c.sendall(struct.pack('!I',len(raw))+raw)
             self.assertEqual(c.recv(1),b'')
@@ -644,12 +657,23 @@ class TcpTests(unittest.TestCase):
         with self.f.node('earth') as node:
             ident=node.enqueue(self.f.frame(),self.f.ids['proxima'])
         before=(self.f.root/'proxima/mesh-state.json').read_bytes()
-        original=tcp.certificate_check
-        def expired(cert,network,peer,now=None):
-            return original(cert,network,peer,cert.not_valid_after_utc+datetime.timedelta(seconds=1))
-        with patch.object(tcp,'certificate_check',side_effect=expired):
-            report=self.f.servers['earth'].tick()
-        self.assertTrue(any('validity' in e for e in report['errors']))
+        # Independent SDK creates genuinely expired bytes; Native opens the
+        # unchanged file and refuses under the real local UTC policy.
+        from cryptography import x509
+        from cryptography.hazmat.primitives import serialization
+        self.f.stop('proxima')
+        path=self.f.root/'proxima/tcp-tls.private.pem'
+        raw=path.read_bytes();key=serialization.load_pem_private_key(raw,None)
+        cert=x509.load_pem_x509_certificate(raw);now=datetime.datetime.now(datetime.timezone.utc)
+        expired=(x509.CertificateBuilder().subject_name(cert.subject).issuer_name(cert.issuer)
+            .public_key(key.public_key()).serial_number(x509.random_serial_number())
+            .not_valid_before(now-datetime.timedelta(days=2)).not_valid_after(now-datetime.timedelta(days=1)).sign(key,None))
+        retained=expired.public_bytes(serialization.Encoding.PEM)+key.private_bytes(serialization.Encoding.PEM,serialization.PrivateFormat.PKCS8,serialization.NoEncryption())
+        path.write_bytes(retained)
+        with self.assertRaisesRegex(ValueError,'validity'):self.f.start('proxima')
+        self.assertEqual(path.read_bytes(),retained)
+        report=self.f.servers['earth'].tick()
+        self.assertTrue(report['errors'])
         self.assertEqual(before,(self.f.root/'proxima/mesh-state.json').read_bytes())
         with self.f.node('earth') as node:
             self.assertIn(ident,node.state['messages'])

@@ -45,6 +45,7 @@ struct Signed {
 #[serde(deny_unknown_fields)]
 enum Request {
     Info,
+    Tls(crate::contact_tls::Request),
     Initialize {
         root: PathBuf,
         network: String,
@@ -68,7 +69,7 @@ enum Request {
         signed: Signed,
     },
 }
-fn hex_bytes<const N: usize>(text: &str) -> Result<[u8; N]> {
+pub(crate) fn hex_bytes<const N: usize>(text: &str) -> Result<[u8; N]> {
     require(
         text.len() == 2 * N
             && text
@@ -112,7 +113,7 @@ fn identity_check(identity: &Identity, network: &str) -> Result<()> {
     hex_bytes::<32>(&identity.public_key)?;
     Ok(())
 }
-fn private_root(root: &Path) -> Result<()> {
+pub(crate) fn private_root(root: &Path) -> Result<()> {
     files::private_path(root, true)?;
     #[cfg(unix)]
     {
@@ -269,6 +270,7 @@ fn execute(raw: &[u8]) -> Result<Value> {
     )?;
     let request: Request = serde_json::from_value(value).map_err(|e| e.to_string())?;
     match request {
+        Request::Tls(request) => crate::contact_tls::execute(request),
         Request::Info => Ok(
             serde_json::json!({"mesh":MESH,"active_storage":ACTIVE,"archive_storage":ARCHIVE,
             "receipt_scheduler":RECEIPT,"transit_scheduler":TRANSIT,"max_abi":MAX_ABI}),

@@ -1132,6 +1132,7 @@ pub mod cold_plan;
 pub mod conflict;
 pub mod contact;
 pub mod contact_crypto;
+mod contact_tls;
 pub mod epoch;
 mod execution;
 pub mod history;

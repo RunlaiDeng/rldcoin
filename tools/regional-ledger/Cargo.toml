@@ -31,6 +31,10 @@ rpassword = "=7.4.0"
 
 miniz_oxide = "=0.8.9"
 subtle = "=2.6.1"
+rustls = { version = "=0.23.45", default-features = false, features = ["std", "ring"] }
+rustls-pemfile = "=2.2.0"
+rcgen = { version = "=0.14.10", default-features = false, features = ["crypto", "ring", "zeroize"] }
+x509-parser = { version = "=0.18.1", features = ["verify"] }
 
 [build-dependencies]
 sha2 = "=0.10.8"

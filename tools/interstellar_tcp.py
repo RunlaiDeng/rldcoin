@@ -12,11 +12,8 @@ import errno
 from bisect import bisect_right
 from contextlib import contextmanager
 from math import gcd
-import datetime
-import hashlib
 import os
 import socket
-import ssl
 import struct
 import threading
 import time
@@ -33,10 +30,6 @@ class MeshTurnPending(BlockingIOError):
 class MeshRuntimeStopping(ValueError):
     """Local admission refused because this runtime has stopped accepting work."""
 
-from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
-from cryptography.hazmat.primitives import serialization
-from cryptography.exceptions import InvalidSignature
 
 ADAPTER = 'RLD-CONTACT-TCP-V4'
 MAX_WIRE = mesh.MAX_BATCH + 4096
@@ -65,85 +58,30 @@ def _local_os_error_origin(error, stage):
                 frames=frames, diagnostic_is_authority=False)
 
 
-def certificate_check(cert, network, peer, now=None):
-    now=now or datetime.datetime.now(datetime.timezone.utc)
-    mesh.require(cert.not_valid_before_utc <= now <= cert.not_valid_after_utc,
-        'ground TLS certificate outside validity; preserve evidence')
-    mesh.require(cert.subject==cert.issuer
-        and cert.subject.get_attributes_for_oid(x509.NameOID.COMMON_NAME)==[x509.NameAttribute(x509.NameOID.COMMON_NAME,peer)]
-        and cert.subject.get_attributes_for_oid(x509.NameOID.ORGANIZATIONAL_UNIT_NAME)==[x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME,network)]
-        and isinstance(cert.public_key(),Ed25519PublicKey),
-        'TLS certificate identity/network or algorithm mismatch')
-    try:
-        cert.public_key().verify(cert.signature,cert.tbs_certificate_bytes)
-    except InvalidSignature as error:
-        raise ValueError('TLS certificate self-signature invalid') from error
+# Explicit Python oracle entry points remain available to independent SDK tests.
+# Ordinary certificate files, clients and servers always use the native provider.
+import interstellar_tls as native_tls
 
+def certificate_check(*args,**kwargs):
+    from interstellar_tcp_reference import certificate_check as reference
+    return reference(*args,**kwargs)
 
-def tls_material(root, network, peer):
-    mesh.hex32(network)
-    mesh.hex32(peer)
-    root=mesh.safe_dir(root)
-    path=root/'tcp-tls.private.pem'
-    if not path.exists():
-        key=Ed25519PrivateKey.generate()
-        now=datetime.datetime.now(datetime.timezone.utc)
-        name=x509.Name([x509.NameAttribute(x509.NameOID.COMMON_NAME,peer),
-            x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME,network)])
-        cert=(x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(key.public_key())
-            .serial_number(x509.random_serial_number()).not_valid_before(now-datetime.timedelta(minutes=5))
-            .not_valid_after(now+datetime.timedelta(days=CERTIFICATE_DAYS))
-            .add_extension(x509.BasicConstraints(ca=False,path_length=None),critical=True).sign(key,None))
-        raw=cert.public_bytes(serialization.Encoding.PEM)+key.private_bytes(serialization.Encoding.PEM,
-            serialization.PrivateFormat.PKCS8,serialization.NoEncryption())
-        # One owner-only, fsynced file commits certificate and key together.
-        wire.write_new(path,raw)
-    raw=wire.read_file(path,8192)
-    mesh.require(path.stat().st_mode & 0o077 == 0,'TLS private file permissions too broad')
-    cert=x509.load_pem_x509_certificate(raw)
-    key=serialization.load_pem_private_key(raw,password=None)
-    mesh.require(isinstance(key,Ed25519PrivateKey),'TLS private key algorithm mismatch')
-    certificate_check(cert,network,peer)
-    mesh.require(key.public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw)
-        ==cert.public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw),'TLS private key/certificate mismatch')
-    canonical=cert.public_bytes(serialization.Encoding.PEM)+key.private_bytes(serialization.Encoding.PEM,
-        serialization.PrivateFormat.PKCS8,serialization.NoEncryption())
-    mesh.require(raw==canonical,'TLS private material malformed; preserve file')
-    return path,hashlib.sha256(cert.public_bytes(serialization.Encoding.DER)).hexdigest(),cert.not_valid_after_utc.isoformat()
+def client_context():
+    from interstellar_tcp_reference import client_context as reference
+    return reference()
 
+def tls_material(root,network,peer):
+    value=native_tls.material(mesh.safe_dir(root),network,peer)
+    return value['path'],value['fingerprint'],value['expires']
 
 def public_tls_identity(config):
     with mesh.Node(config) as node:
         _,fingerprint,expires=tls_material(node.root,node.network,node.id)
-        return {'node_id':node.id,'network':node.network,'tls_cert_sha256':fingerprint,
-            'certificate_valid_until_utc':expires}
+        return dict(node_id=node.id,network=node.network,tls_cert_sha256=fingerprint,
+            certificate_valid_until_utc=expires)
 
-
-def client_context():
-    mesh.require(ssl.HAS_TLSv1_3,'TLS 1.3 required; no downgrade')
-    context=ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    context.check_hostname=False
-    # Authentication uses the independent exact DER pin plus signed mesh ID,
-    # not a public CA or a hostname supplied by an advertisement.
-    context.verify_mode=ssl.CERT_NONE
-    context.minimum_version=context.maximum_version=ssl.TLSVersion.TLSv1_3
-    return context
-
-
-def client_connect(address, fingerprint, network, peer, deadline):
-    context=client_context()
-    connection=socket.create_connection(address,timeout=max(0.001,deadline-time.monotonic()))
-    try:
-        connection.settimeout(max(0.001,deadline-time.monotonic()))
-        connection=context.wrap_socket(connection,server_hostname=None)
-        mesh.require(connection.version()=='TLSv1.3','TLS downgrade refused')
-        raw=connection.getpeercert(binary_form=True)
-        mesh.require(hashlib.sha256(raw).hexdigest()==mesh.hex32(fingerprint),'TLS certificate pin mismatch; no fallback')
-        certificate_check(x509.load_der_x509_certificate(raw),network,peer)
-        return connection
-    except BaseException:
-        connection.close()
-        raise
+def client_connect(address,fingerprint,network,peer,deadline):
+    return native_tls.connect(address,fingerprint,network,peer,deadline)
 
 
 def challenge(key,network,peer,fingerprint):
@@ -175,6 +113,7 @@ def read_exact(connection, length, deadline):
 
 
 def receive(connection, deadline):
+    if isinstance(connection,native_tls.Connection):return connection.receive(deadline)
     length = struct.unpack('!I', read_exact(connection, 4, deadline))[0]
     mesh.require(0 < length <= MAX_WIRE, 'TCP wire byte bound; retain evidence')
     raw = read_exact(connection, length, deadline)
@@ -184,6 +123,7 @@ def receive(connection, deadline):
 
 
 def send(connection, value, deadline):
+    if isinstance(connection,native_tls.Connection):return connection.send(value,deadline)
     data = wire.canonical(value)
     mesh.require(0 < len(data) <= MAX_WIRE, 'TCP wire byte bound; retain evidence')
     remaining = deadline-time.monotonic()
@@ -299,12 +239,9 @@ class Server:
             self.expires=None
             self.context=None
             if not insecure:
-                mesh.require(ssl.HAS_TLSv1_3,'TLS 1.3 required; no downgrade')
-                path,self.fingerprint,self.expires=tls_material(node.root,node.network,node.id)
-                self.context=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-                self.context.minimum_version=self.context.maximum_version=ssl.TLSVersion.TLSv1_3
-                self.context.load_cert_chain(path)
-                self.context.num_tickets=0
+                self.context=native_tls.Context(node.root,node.network,node.id)
+                self.fingerprint=self.context.material['fingerprint']
+                self.expires=self.context.material['expires']
         self.running=True
         if contact_trace is not None:contact_trace.bind(self.network,self.id)
         self.guard=threading.Lock()
@@ -672,7 +609,7 @@ class Server:
                 connection.settimeout(ATTEMPT_SECONDS)
                 with self.guard:
                     mesh.require(self.running,'TLS runtime is stopping; preserve evidence')
-                    connection=self.context.wrap_socket(connection,server_side=True,do_handshake_on_connect=False)
+                    connection=self.context.wrap_socket(connection,deadline=deadline)
                     self.connections.discard(tracked)
                     self.connections.add(connection)
                 tracked=connection
@@ -1081,3 +1018,4 @@ class Server:
             # Unacknowledged in-flight input can be forgotten on shutdown; its
             # original signed carriage remains at source. Stored evidence stays.
             self.input_pending.clear();self.input_active=None
+        if self.context is not None:self.context.close()

@@ -60,9 +60,10 @@ reference supplies no ledger, custody or finality rights.
 
 ## Remaining obligations
 
-TLS certificate/private PEM handling, TLS negotiation, sockets, service
-lifecycle, mesh durable custody and their independent qualification remain
-separate. Signed replies still require actual durable custody before release;
+The [native TLS interface](NATIVE_CONTACT_TLS.md) handles ordinary ground
+certificate/private PEM files, pinned TLS negotiation and bounded socket frames.
+Listener/service lifecycle, mesh durable custody and independent qualification
+remain separate. Signed replies still require actual durable custody before release;
 peer authentication is not ledger acceptance, finality, maturity, spendability
 or refund authority. The current ledger suite is not upgraded to a hybrid or
 post-quantum suite. Changed native source requires fresh signed no-value

@@ -89,7 +89,7 @@ pub struct Observation {
 // Same OS monotonic domain as Python time.monotonic, with no wall-clock conversion.
 #[cfg(target_os = "macos")]
 #[allow(deprecated)]
-fn monotonic() -> Result<f64> {
+pub(crate) fn monotonic() -> Result<f64> {
     let mut base = libc::mach_timebase_info { numer: 0, denom: 0 };
     require(
         unsafe { libc::mach_timebase_info(&mut base) } == 0 && base.denom != 0,
@@ -100,7 +100,7 @@ fn monotonic() -> Result<f64> {
     Ok(nanos as f64 / 1_000_000_000.0)
 }
 #[cfg(not(target_os = "macos"))]
-fn monotonic() -> Result<f64> {
+pub(crate) fn monotonic() -> Result<f64> {
     let mut value = libc::timespec {
         tv_sec: 0,
         tv_nsec: 0,
