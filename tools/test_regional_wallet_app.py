@@ -1,5 +1,6 @@
 """Real loopback wallet UI APIs and native persistence/security boundaries."""
 import http.client
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -43,6 +44,24 @@ def reference_proposal_review(app, proposal):
     prepared=app.with_json('wallet-prepare',dict(req,owner=app.owner),*app.wallet_args())
     mesh.require(prepared['draft']['intent_id']==proposal['intent_id'], 'intent differs')
     return prepared
+
+
+def reference_client_reconcile(app, state):
+    """The retained Python algorithm computes recovery without caller writes."""
+    pending=state['pending']
+    mesh.require(isinstance(pending,dict) and set(pending)=={'prepared'}
+        and pending['prepared']['wallet_head']==state['head'], 'pending differs')
+    prepared=pending['prepared']
+    args=['--wallet-dir',app.wallet,'--expected-wallet-head',state['head']]
+    try:
+        result=app.with_json('wallet-sign',prepared,'--review',prepared['review_commitment'],
+            '--recover-only',*args)
+        mesh.require(result['recovered_exact_retry'],'recovery cannot first-sign')
+    except (OSError,ValueError):
+        app.native.call('wallet-view',*args)
+        return {'state':dict(state,pending=None),'recovery_notice':'上次确认未生成签名；请重新预览并确认。'}
+    return {'state':dict(state,head=result['wallet_head'],pending=None),
+        'recovery_notice':'已恢复上次保存的签名和输入预留，没有再次签名。'}
 
 
 class WalletAppFixture(unittest.TestCase):
@@ -144,7 +163,12 @@ class WalletAppTests(WalletAppFixture):
             '--wallet-dir',self.wallet,'--expected-wallet-head',self.app.saved['head'],'--recover-only','--key-file',self.key,success=False)
         self.assertIn('cannot first-sign',result['reason'])
         head=self.app.saved['head']
-        self.app.save(dict(self.app.saved,pending={'prepared':prepared}));self.app.close()
+        self.app.save(dict(self.app.saved,pending={'prepared':prepared}))
+        reference=reference_client_reconcile(self.app,self.app.saved)
+        native=self.app.with_json('wallet-client-reconcile',self.app.saved,*self.app.client_args())
+        self.assertEqual(wire.canonical(reference),wire.canonical(native))
+        self.assertEqual(self.app.path.read_bytes(),wire.canonical(self.app.saved))
+        self.app.close()
         restored=App(self.native,self.wallet,self.heads,public(10),key=self.key)
         try:
             self.assertEqual(restored.saved['head'],head);self.assertIsNone(restored.saved['pending'])
@@ -164,6 +188,10 @@ class WalletAppTests(WalletAppFixture):
             status,_=self.sign(p)
         self.assertNotEqual(status,200);self.assertTrue(self.app.failed)
         self.assertIsNotNone(mesh.load(self.app.path,8*1024*1024)['pending'])
+        reference=reference_client_reconcile(self.app,self.app.saved)
+        native=self.app.with_json('wallet-client-reconcile',self.app.saved,*self.app.client_args())
+        self.assertEqual(wire.canonical(reference),wire.canonical(native))
+        self.assertEqual(self.app.path.read_bytes(),wire.canonical(self.app.saved))
         self.app.close();self.key.unlink()
         restored=App(self.native,self.wallet,self.heads,public(10))
         try:
@@ -172,6 +200,7 @@ class WalletAppTests(WalletAppFixture):
             recovered=restored.act({'action':'recover','intent':p['draft']['intent_id']})
             self.assertTrue(recovered['recovered_exact_retry'])
             self.assertEqual(len(v['wallet']['signed']),1)
+            self.assertEqual(wire.canonical(reference['state']),restored.path.read_bytes())
         finally:restored.close()
 
     def test_surviving_caller_head_rejects_old_wallet_backup_and_preserves_bytes(self):
@@ -180,6 +209,54 @@ class WalletAppTests(WalletAppFixture):
         latest_head=self.app.path.read_bytes();self.app.close();path.write_bytes(backup)
         with self.assertRaises(ValueError):App(self.native,self.wallet,self.heads,public(10))
         self.assertEqual(path.read_bytes(),backup);self.assertEqual(self.app.path.read_bytes(),latest_head)
+
+    def test_native_caller_unicode_canonical_state_and_restart(self):
+        wallet=self.root/'钱包🚀';heads=self.root/'独立头'
+        other=App(self.native,wallet,heads,public(10))
+        try:
+            other.act({'action':'init'})
+            saved=dict(other.saved)
+            self.assertEqual(other.path.read_bytes(),wire.canonical(saved))
+            self.assertIn(b'\\ud83d\\ude80',other.path.read_bytes())
+        finally:other.close()
+        restored=App(self.native,wallet,heads,public(10))
+        try:
+            self.assertEqual(restored.saved,saved)
+            self.assertEqual(restored.path.read_bytes(),wire.canonical(saved))
+        finally:restored.close()
+
+    def test_native_caller_rejects_unbound_heads_stale_transition_and_busy_lock(self):
+        before=self.app.path.read_bytes();previous=json.loads(before)
+        bad=dict(previous,head='0'*64)
+        with self.assertRaises(ValueError):
+            self.app.with_json('wallet-client-store',{'previous':previous,'proposed':bad},*self.app.client_args())
+        p=self.prepare();prepared={k:v for k,v in p.items() if k!='review_id'}
+        pending=dict(previous,pending={'prepared':prepared})
+        self.app.save(pending)
+        retained=self.app.path.read_bytes()
+        with self.assertRaises(ValueError):
+            self.app.with_json('wallet-client-store',{'previous':previous,'proposed':pending},*self.app.client_args())
+        changed=json.loads(json.dumps(pending));changed['pending']['prepared']['draft']['intent']['fee']='99'
+        with self.assertRaises(ValueError):
+            self.app.with_json('wallet-client-store',{'previous':pending,'proposed':changed},*self.app.client_args())
+        with open(self.heads/'.state.lock','r+b') as lock:
+            fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            with self.assertRaises(ValueError):self.native.call('wallet-client-open',*self.app.client_args())
+        self.assertEqual(retained,self.app.path.read_bytes())
+        self.assertEqual(before,wire.canonical(previous))
+
+    def test_native_caller_write_failure_retains_previous_bytes_and_no_signature(self):
+        p=self.prepare();prepared={k:v for k,v in p.items() if k!='review_id'}
+        before=self.app.path.read_bytes();previous=json.loads(before)
+        path=self.root/'caller-transition.json'
+        save(path,{'previous':previous,'proposed':dict(previous,pending={'prepared':prepared})})
+        self.heads.chmod(0o500)
+        try:
+            with self.assertRaises(ValueError):
+                self.native.call('wallet-client-store','--file',path,*self.app.client_args())
+        finally:self.heads.chmod(0o700)
+        self.assertEqual(before,self.app.path.read_bytes())
+        self.assertEqual([],self.app.status()['wallet']['signed'])
 
     def test_remote_export_finality_and_recipient_states_are_separate(self):
         remote={'destination':self.c.regions['proxima'],'recipient':{'owner':public(11),'amount':'99'},'destination_fee':'1'}

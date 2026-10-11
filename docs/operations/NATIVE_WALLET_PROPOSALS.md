@@ -30,8 +30,9 @@ and compares complete canonical prepared/proposal output, including review
 commitments, across owner and height changes. Signing, combination, submission,
 recipient maturity and restart recovery retain their separate native requirements.
 
-This is an incremental runtime migration. The UI server, caller persistence,
-consensus scheduling and contact transport still have Python runtime dependencies.
+This is an incremental runtime migration. Caller persistence and keyless recovery
+calculation use the [native caller interface](NATIVE_WALLET_CLIENT.md). The UI
+server, consensus scheduling and contact transport still have Python dependencies.
 Changed Native source requires fresh signed no-value fixtures; existing fixture
 currency, private custody and failed stores are not converted. This interface
 does not establish independent custody, full protocol acceptance or mainnet readiness.

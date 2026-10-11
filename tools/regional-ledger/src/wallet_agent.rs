@@ -358,7 +358,8 @@ pub struct View {
     pub local_region_quarantined: bool,
     pub incident_ids: Vec<Hash>,
 }
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct Prepared {
     pub draft: Draft,
     pub review_commitment: Hash,
@@ -674,6 +675,44 @@ impl Agent {
             intent_id: intent,
             previous_wallet_head: record.previous_head,
             wallet_head: expected,
+            state: outcome(node, record, node.chain.height())?,
+            recovered_exact_retry: true,
+            required_owners: wallet::required_owners(&record.draft),
+            retained_approvals_complete: record.draft.request.participants.is_empty(),
+        })
+    }
+    /// Authenticate an exact existing approval without reading a key or signing.
+    pub fn recover_prepared(&self, node: &Store, prepared: &Prepared) -> Result<Signed> {
+        require(
+            self.healthy,
+            "wallet requires reopen after persistence failure",
+        )?;
+        self.journal.validate(node)?;
+        require(
+            prepared.review_commitment == id("wallet-reviewed-draft", &prepared.draft)?,
+            "wallet review commitment differs",
+        )?;
+        let (index, record) = self
+            .journal
+            .records
+            .iter()
+            .enumerate()
+            .find(|(_, r)| {
+                r.draft == prepared.draft && r.review_commitment == prepared.review_commitment
+            })
+            .ok_or("exact retained approval not found; recovery cannot first-sign")?;
+        let head = self.journal.head()?;
+        require(
+            prepared.wallet_head == head
+                || (index + 1 == self.journal.records.len()
+                    && prepared.wallet_head == record.previous_head),
+            "wallet retry uses stale head",
+        )?;
+        Ok(Signed {
+            commands: vec![record.command.clone()],
+            intent_id: record.draft.intent_id,
+            previous_wallet_head: record.previous_head,
+            wallet_head: head,
             state: outcome(node, record, node.chain.height())?,
             recovered_exact_retry: true,
             required_owners: wallet::required_owners(&record.draft),

@@ -1144,6 +1144,7 @@ pub mod stream_replay;
 mod tests;
 pub mod wallet;
 pub mod wallet_agent;
+pub mod wallet_client;
 pub mod wallet_proposal;
 
 pub mod paged_bft;

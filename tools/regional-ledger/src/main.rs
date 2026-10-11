@@ -445,6 +445,39 @@ enum Action {
         #[arg(long)]
         expected_wallet_head: String,
     },
+    /// Open separate caller custody; never infer a missing latest wallet head.
+    WalletClientOpen {
+        #[arg(long)]
+        wallet_dir: PathBuf,
+        #[arg(long)]
+        head_dir: PathBuf,
+        #[arg(long)]
+        owner: String,
+        #[arg(long)]
+        expected_wallet_head: Option<String>,
+    },
+    /// Publish only a fully native-checked exact caller-state transition.
+    WalletClientStore {
+        #[arg(long)]
+        wallet_dir: PathBuf,
+        #[arg(long)]
+        head_dir: PathBuf,
+        #[arg(long)]
+        owner: String,
+        #[arg(long)]
+        file: PathBuf,
+    },
+    /// Calculate an exact keyless recovery; caller publication remains separate.
+    WalletClientReconcile {
+        #[arg(long)]
+        wallet_dir: PathBuf,
+        #[arg(long)]
+        head_dir: PathBuf,
+        #[arg(long)]
+        owner: String,
+        #[arg(long)]
+        file: PathBuf,
+    },
     /// Build an unsigned fixed-expiry group proposal under current native locks.
     WalletProposalBuild {
         #[arg(long)]
@@ -1864,6 +1897,47 @@ fn run() -> Result<()> {
             println!(
                 "{}",
                 serde_json::to_string(&prepared).map_err(|e| e.to_string())?
+            );
+        }
+        Action::WalletClientOpen {
+            wallet_dir,
+            head_dir,
+            owner,
+            expected_wallet_head,
+        } => {
+            let client = wallet_client::Client::lock(&head_dir, &wallet_dir, owner, &store)?;
+            let expected = expected_wallet_head
+                .map(|h| Hash::from_hex(&h).map_err(|e| e.to_string()))
+                .transpose()?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.open(&store, expected)?).map_err(|e| e.to_string())?
+            );
+        }
+        Action::WalletClientStore {
+            wallet_dir,
+            head_dir,
+            owner,
+            file,
+        } => {
+            let client = wallet_client::Client::lock(&head_dir, &wallet_dir, owner, &store)?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.store(&store, read_json(&file)?)?)
+                    .map_err(|e| e.to_string())?
+            );
+        }
+        Action::WalletClientReconcile {
+            wallet_dir,
+            head_dir,
+            owner,
+            file,
+        } => {
+            let client = wallet_client::Client::lock(&head_dir, &wallet_dir, owner, &store)?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.reconcile(&store, read_json(&file)?)?)
+                    .map_err(|e| e.to_string())?
             );
         }
         Action::WalletProposalBuild {

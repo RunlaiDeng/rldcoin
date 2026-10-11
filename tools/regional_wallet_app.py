@@ -72,23 +72,8 @@ class App:
             mesh.require(self.context['currency'] == native.currency and self.context['fixture_only'] and not self.context['live_rld'], 'wallet app requires exact no-value fixture root')
             self.binding = {'currency':native.currency, 'region':self.context['region'], 'owner':self.owner, 'wallet_dir':str(self.wallet)}
             self.path = self.root / 'wallet-client.json'
-            if self.path.exists() or self.path.is_symlink():
-                private_path(self.path, exists=True)
-                self.saved = mesh.load(self.path, MAX_RESPONSE)
-                mesh.require(set(self.saved) == {'format','binding','head','pending'} and self.saved['format'] == FORMAT and self.saved['binding'] == self.binding, 'caller-head binding differs')
-                if expected is not None:
-                    mesh.require(self.saved['head'] in (None, mesh.hex32(expected)), 'explicit caller head differs from retained state')
-                if self.saved['head'] is None and expected is not None:
-                    self.native.call('wallet-view', '--wallet-dir', self.wallet, '--expected-wallet-head', expected)
-                    self.save(dict(self.saved, head=expected))
-            else:
-                if expected is not None:
-                    mesh.hex32(expected)
-                    native.call('wallet-view', '--wallet-dir', self.wallet, '--expected-wallet-head', expected)
-                else:
-                    mesh.require(not self.wallet.exists(), 'existing wallet needs separately retained latest head')
-                self.saved = {'format':FORMAT, 'binding':self.binding, 'head':expected, 'pending':None}
-                self.save(self.saved)
+            expected_args=['--expected-wallet-head',mesh.hex32(expected)] if expected is not None else []
+            self.saved=native.call('wallet-client-open',*self.client_args(),*expected_args)
             if self.saved['pending'] is not None:
                 self.reconcile()
             if self.saved['head'] is not None:
@@ -110,11 +95,14 @@ class App:
     def save(self, proposed):
         mesh.require(not self.failed and len(wire.canonical(proposed)) <= MAX_RESPONSE, 'caller-head persistence unavailable or full')
         try:
-            mesh.atomic(self.path, proposed)
+            saved=self.with_json('wallet-client-store',{'previous':self.saved,'proposed':proposed},*self.client_args())
         except BaseException:
             self.failed = True
             raise
-        self.saved = proposed
+        self.saved = saved
+
+    def client_args(self):
+        return ['--wallet-dir',self.wallet,'--head-dir',self.root,'--owner',self.owner]
 
     def with_json(self, action, value, *args, private_input=None):
         with tempfile.NamedTemporaryFile(dir=self.root, prefix='.request-', suffix='.json') as handle:
@@ -136,22 +124,9 @@ class App:
 
     def reconcile(self):
         """Recover existing native consent only; never first-sign at restart."""
-        pending = self.saved['pending']
-        mesh.require(isinstance(pending,dict) and set(pending)=={'prepared'} and pending['prepared']['wallet_head']==self.saved['head'], 'pending request differs from caller head')
-        prepared = pending['prepared']
-        try:
-            result = self.with_json('wallet-sign', prepared, '--review', prepared['review_commitment'],
-                '--recover-only', *self.wallet_args())
-            mesh.require(result['recovered_exact_retry'], 'restart must recover existing signature')
-        except (OSError, ValueError):
-            # An exact unchanged native head proves no new wallet record exists.
-            # If it cannot be proved, retain pending bytes and fail closed.
-            self.native.call('wallet-view', *self.wallet_args())
-            self.save(dict(self.saved, pending=None))
-            self.recovery_notice = '上次确认未生成签名；请重新预览并确认。'
-            return
-        self.save(dict(self.saved, head=result['wallet_head'], pending=None))
-        self.recovery_notice = '已恢复上次保存的签名和输入预留，没有再次签名。'
+        result=self.with_json('wallet-client-reconcile',self.saved,*self.client_args())
+        self.save(result['state'])
+        self.recovery_notice=result['recovery_notice']
 
     def status(self):
         mesh.require(not self.failed, '保存失败；保留目录并重启核验')

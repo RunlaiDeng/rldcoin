@@ -37,6 +37,56 @@ fn step(node: &mut Store, commands: Vec<Command>) {
     node.accept(block).unwrap();
 }
 #[test]
+fn exact_prepared_recovery_never_signs_or_releases_after_failed_publication() {
+    let f = Fixture::new();
+    let (root, node) = stored_fixture(&f, &f.earth);
+    let dir = root.join("wallet");
+    let mut agent = Agent::create(&dir, &node, public(10)).unwrap();
+    let head = agent.journal.head().unwrap();
+    let prepared = agent.prepare(&node, request(), head).unwrap();
+    assert!(agent
+        .recover_prepared(&node, &prepared)
+        .unwrap_err()
+        .contains("cannot first-sign"));
+    assert!(agent.journal.records.is_empty());
+    let signed = agent
+        .sign(
+            &node,
+            prepared.draft.clone(),
+            &key(&root),
+            prepared.review_commitment,
+            head,
+        )
+        .unwrap();
+    let retained = agent.recover_prepared(&node, &prepared).unwrap();
+    assert_eq!(retained.commands, signed.commands);
+    assert_eq!(retained.wallet_head, signed.wallet_head);
+    assert!(retained.recovered_exact_retry);
+    let another = agent.prepare(&node, request(), signed.wallet_head).unwrap();
+    let previous = fs::read(dir.join("wallet.json")).unwrap();
+    let residue = b"failed publication residue";
+    fs::write(dir.join("wallet.next"), residue).unwrap();
+    assert!(agent
+        .sign(
+            &node,
+            another.draft,
+            &key(&root),
+            another.review_commitment,
+            signed.wallet_head
+        )
+        .is_err());
+    assert!(agent
+        .recover_prepared(&node, &prepared)
+        .unwrap_err()
+        .contains("requires reopen"));
+    assert_eq!(fs::read(dir.join("wallet.json")).unwrap(), previous);
+    assert_eq!(fs::read(dir.join("wallet.next")).unwrap(), residue);
+    drop(agent);
+    drop(node);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn pending_reservations_survive_restart_and_exact_response_loss_retry() {
     let f = Fixture::new();
     let (root, node) = stored_fixture(&f, &f.earth);
