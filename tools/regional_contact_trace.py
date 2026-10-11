@@ -27,10 +27,12 @@ COUNT_FIELDS|={'watched_summary_count','watched_destination_count','watched_rece
               'watched_seen_count','watched_attempted_count','watched_eligible_count',
               'eligible_count','remaining_count','novel_count','background_count',
               'novel_watch_rank','background_watch_rank','inspected_count','watched_selected_count'}
+COUNT_FIELDS|={'duration_microseconds','cost_call','worker_id'}
 BOOL_FIELDS={'ordered','priority','newest','direct_waiting','direct_recent','direct_prepared','direct_selected','native_success'}
+BOOL_FIELDS|={'cost_success'}
 FIELDS={'packet_id','frame_id','envelope_id','nonce','attempt','failure_stage','error_class',
         'scope_id','direct_id','copy_after','frame_after','origin_turn','exchange_id','native_action','command_id',
-        'selection_mode'}|COUNT_FIELDS|BOOL_FIELDS
+        'selection_mode','cost_role','cost_stage'}|COUNT_FIELDS|BOOL_FIELDS
 HEX_FIELDS={'packet_id','frame_id','envelope_id','nonce','scope_id','direct_id','copy_after','frame_after','exchange_id','command_id'}
 STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection','prepare_selected','prepare_retained',
         'contact_start','request_sent','peer_custody_authenticated',
@@ -50,7 +52,8 @@ STAGES={'source_enqueued','outgoing_prepared','prepare_start','prepare_selection
         'consensus_context_observed','proposal_requested','proposal_retained','proposal_failed',
         'native_call_started','native_call_finished','candidate_selection_started',
         'candidate_submission_seen','candidate_command_attempted','candidate_command_refused',
-        'candidate_command_selected','native_selection_watch'}
+        'candidate_command_selected','native_selection_watch','mesh_lease_cost',
+        'outbound_peer_started','outbound_peer_finished'}
 
 
 def check_fields(stage,peer,fields):
@@ -61,6 +64,10 @@ def check_fields(stage,peer,fields):
         if key in HEX_FIELDS:mesh.require(type(value) is str and HEX.fullmatch(value) is not None,'trace digest')
         elif key=='attempt' or key in COUNT_FIELDS:mesh.require(type(value) is int and 0<=value<2**63,'trace count')
         elif key in BOOL_FIELDS:mesh.require(type(value) is bool,'trace boolean')
+        elif key=='cost_role':mesh.require(type(value) is str and value in
+            ('receive','carriage','tcp_outbound','tcp_input','tcp_handler'),'trace cost role')
+        elif key=='cost_stage':mesh.require(type(value) is str and value in
+            ('purpose','acquire','open','hold'),'trace cost stage')
         else:mesh.require(type(value) is str and len(value)<=48 and value.replace('_','').isalnum(),'trace enum')
 
 
@@ -112,6 +119,25 @@ class ContactTrace:
 
     def packets(self,stage,peer,rows,**fields):
         for packet_id,frame_id in rows:self.event(stage,peer,packet_id=packet_id,frame_id=frame_id,**fields)
+
+    def mesh_cost(self,role,stage,duration,succeeded,calls):
+        """Existing wall durations only; a worker label is no lease authority."""
+        try:
+            mesh.require(role in ('receive','carriage','tcp-outbound','tcp-input','tcp-handler')
+                and stage in ('purpose','acquire','open','hold')
+                and type(duration) in (int,float) and math.isfinite(duration)
+                and 0<=duration<=1e12,'trace mesh cost bounds')
+            self.event('mesh_lease_cost',cost_role=role.replace('-','_'),cost_stage=stage,
+                duration_microseconds=int(duration*1e6),cost_success=succeeded,cost_call=calls,
+                worker_id=threading.get_ident())
+        except Exception:self.reject()
+
+    def outbound_peer(self,stage,peer,attempt):
+        try:
+            mesh.require(stage in ('outbound_peer_started','outbound_peer_finished'),
+                         'trace outbound boundary')
+            self.event(stage,peer,attempt=attempt,worker_id=threading.get_ident())
+        except Exception:self.reject()
 
     def native_received(self,packet_id,raw):
         self.native_stage('native_envelope_received',packet_id,raw)

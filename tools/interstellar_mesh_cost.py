@@ -10,7 +10,8 @@ MAX_BYTES = 8192
 
 
 class MeshCosts:
-    def __init__(self):
+    def __init__(self, *, contact_trace=None):
+        self.contact_trace = contact_trace
         self.guard = threading.Lock()
         self.rows = {(role, stage): dict(calls=0, failures=0, total_seconds=0.0,
                     max_seconds=0.0, last_seconds=0.0, saturated=False)
@@ -31,6 +32,16 @@ class MeshCosts:
             row['total_seconds'] = min(MAX_SECONDS, row['total_seconds'] + duration)
             row['max_seconds'] = min(MAX_SECONDS, max(row['max_seconds'], duration))
             row['last_seconds'] = min(MAX_SECONDS, duration)
+            calls = row['calls']
+        # The original aggregate and ownership semantics remain independent
+        # of the opt-in observer. Never hold this guard while publishing a row.
+        trace = self.contact_trace
+        if trace is not None:
+            try:
+                trace.mesh_cost(role, stage, min(MAX_SECONDS, duration), succeeded, calls)
+            except Exception:
+                try:trace.reject()
+                except Exception:pass
 
     def snapshot(self):
         with self.guard:

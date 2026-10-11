@@ -331,7 +331,7 @@ class Server:
         self.refused_connections=0
         self.local_lock_retries=0
         self.local_lock_exhaustions=0
-        self.mesh_costs=MeshCosts()
+        self.mesh_costs=MeshCosts(contact_trace=self.contact_trace)
         # Retry ownership survives bounded refusal; idle ownership is not a
         # perpetual scheduling grant. Only an active acquisition or its brief
         # post-refusal window gives ordinary selection priority over TCP.
@@ -836,6 +836,7 @@ class Server:
                         self.peer_attempts[peer]=count
                         if count%64==0:
                             self.accepted_transits.pop(peer,None)
+                    if trace is not None:trace.outbound_peer('outbound_peer_started',peer,count)
                     # Prepare and durably rotate retained carriage before the
                     # connection starts. Cold local verification must not use
                     # up the remote socket deadline. The fresh challenge still
@@ -909,6 +910,7 @@ class Server:
                         trace.packets('outgoing_failed',peer,trace_rows,attempt=count,
                             failure_stage=failure_stage,error_class=type(error).__name__)
                         trace.event('contact_failed',peer,attempt=count,failure_stage=failure_stage,error_class=type(error).__name__)
+                if trace is not None:trace.outbound_peer('outbound_peer_finished',peer,count)
         result=self.observation(errors)
         result['local_os_errors']=local_os_errors
         return result
