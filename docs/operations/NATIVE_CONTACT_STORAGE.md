@@ -84,7 +84,8 @@ publication probes and separately compiled native test-process boundaries.
 
 ## Remaining migration and qualification
 
-Complete mesh authentication, contact-spool publication,
+Contact-spool publication and inventory use the [native spool interface](NATIVE_CONTACT_SPOOL.md).
+Complete mesh authentication, spool encoding,
 deferred intake, outgoing scheduling, service orchestration and remaining wallet
 flows still require migration. Python tests retain the syscall oracle and explicit
 reference interruption probes. Native unit tests inject failures or terminate a

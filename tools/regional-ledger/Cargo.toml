@@ -51,3 +51,15 @@ overflow-checks = true
 opt-level = 1
 debug-assertions = true
 overflow-checks = true
+
+# The bounded RFC1950 decoder still verifies the full checksum; optimize its
+# pinned checksum dependency without disabling arithmetic or debug checks.
+[profile.dev.package.adler2]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.adler2]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

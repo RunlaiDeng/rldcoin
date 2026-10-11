@@ -38,18 +38,18 @@ enum Request {
         paths: Vec<PathBuf>,
     },
 }
-fn io_error(error: std::io::Error) -> String {
+pub(super) fn io_error(error: std::io::Error) -> String {
     format!(
         "CONTACT_STORAGE_IO:{}:{}",
         error.raw_os_error().unwrap_or(libc::EIO),
         error
     )
 }
-fn cstring(path: &std::ffi::OsStr) -> Result<CString> {
+pub(super) fn cstring(path: &std::ffi::OsStr) -> Result<CString> {
     use std::os::unix::ffi::OsStrExt;
     CString::new(path.as_bytes()).map_err(|_| "contact storage NUL path".into())
 }
-fn directory(path: &Path) -> Result<File> {
+pub(super) fn directory(path: &Path) -> Result<File> {
     let name = cstring(path.as_os_str())?;
     let fd = unsafe {
         libc::open(
@@ -62,7 +62,7 @@ fn directory(path: &Path) -> Result<File> {
     }
     Ok(unsafe { File::from_raw_fd(fd) })
 }
-fn parts(path: &Path) -> Result<(&Path, &std::ffi::OsStr)> {
+pub(super) fn parts(path: &Path) -> Result<(&Path, &std::ffi::OsStr)> {
     require(path.is_absolute(), "contact storage path must be absolute")?;
     let parent = path.parent().ok_or("contact storage parent absent")?;
     let name = path.file_name().ok_or("contact storage file name absent")?;
@@ -72,7 +72,7 @@ fn parts(path: &Path) -> Result<(&Path, &std::ffi::OsStr)> {
     )?;
     Ok((parent, name))
 }
-fn open_at(dir: &File, name: &std::ffi::OsStr, flags: i32) -> Result<File> {
+pub(super) fn open_at(dir: &File, name: &std::ffi::OsStr, flags: i32) -> Result<File> {
     let name = cstring(name)?;
     let fd = unsafe {
         libc::openat(
@@ -100,7 +100,7 @@ fn sync(
     observe(stage)?;
     file.sync_all().map_err(io_error)
 }
-fn unlink_at(dir: &File, name: &CString) -> Result<()> {
+pub(super) fn unlink_at(dir: &File, name: &CString) -> Result<()> {
     if unsafe { libc::unlinkat(dir.as_raw_fd(), name.as_ptr(), 0) } != 0 {
         return Err(io_error(std::io::Error::last_os_error()));
     }

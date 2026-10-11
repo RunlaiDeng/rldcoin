@@ -989,3 +989,8 @@ The [native shared-frame state codec](../../docs/operations/NATIVE_CONTACT_STATE
 packs bounded active state and checks every complete reconstructed record under
 the configured network/node binding. The disk format is unchanged; codec outputs
 still require ordinary complete authentication and native storage publication.
+
+The [native spool interface](../../docs/operations/NATIVE_CONTACT_SPOOL.md) owns
+ordinary directory-carriage inventory and immutable publication, including full
+pending reservations and complete duplicate comparison. Spool encoding and
+ordinary complete caller authentication remain separate migration work.

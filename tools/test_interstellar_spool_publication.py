@@ -14,10 +14,16 @@ from unittest.mock import patch
 
 import interstellar_mesh as mesh
 import interstellar_spool_codec as codec
+import interstellar_spool_reference as reference
 import interstellar_transfer as wire
 
 
 class SpoolPublicationTests(unittest.TestCase):
+    def setUp(self):
+        # Explicit syscall oracle; native operations are tested separately.
+        for name in ('publish_spool', 'spool_inventory'):
+            selected=patch.object(mesh,name,getattr(reference,name));selected.start();self.addCleanup(selected.stop)
+
     def fixture(self):
         tmp = tempfile.TemporaryDirectory(prefix='rld-spool-publish-')
         self.addCleanup(tmp.cleanup)
@@ -74,14 +80,14 @@ class SpoolPublicationTests(unittest.TestCase):
                             handle.write(data[:len(data)//2]);handle.flush();create.set()
                             if not release.wait(2):raise TimeoutError('partial gate')
                             handle.write(data[len(data)//2:]);handle.flush();os.fsync(handle.fileno())
-                        mesh._sync_spool_directory(path.parent)
+                        reference._sync_spool_directory(path.parent)
                     else:
                         fd=os.open(path, os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW, 0o600)
                         create.set()
                         if not release.wait(2):raise TimeoutError('zero gate')
                         with os.fdopen(fd,'wb') as handle:
                             handle.write(data);handle.flush();os.fsync(handle.fileno())
-                        mesh._sync_spool_directory(path.parent)
+                        reference._sync_spool_directory(path.parent)
                 def writer():
                     try:mesh.publish_spool(target, encoded, raw, codec.FORMAT)
                     except BaseException as e:errors.append(repr(e))
@@ -115,14 +121,14 @@ class SpoolPublicationTests(unittest.TestCase):
         def linked(*args,**kwargs):
             original(*args,**kwargs)
             self.assertEqual(self.checked(root,raw)[0],[target])
-            target.unlink();mesh._sync_spool_directory(root)
+            target.unlink();reference._sync_spool_directory(root)
         with patch.object(os,'link',side_effect=linked):mesh.publish_spool(target,encoded,raw,codec.FORMAT)
         self.assertEqual(list(root.iterdir()),[])
 
     def test_duplicates_reaffirm_without_rewrite_and_collision_preserves(self):
         root,target,raw,encoded=self.fixture();mesh.publish_spool(target,encoded,raw,codec.FORMAT)
         before=target.stat()
-        with patch.object(mesh,'sync_retained',wraps=mesh.sync_retained) as sync:
+        with patch.object(reference,'sync_retained',wraps=reference.sync_retained) as sync:
             mesh.publish_spool(target,encoded,raw,codec.FORMAT);sync.assert_called_once_with(target)
         self.assertEqual(target.stat().st_ino,before.st_ino)
         wrong=wire.canonical({'different':'x'*30000});other=codec.encode(wrong,limit=mesh.MAX_BATCH)
@@ -159,17 +165,17 @@ class SpoolPublicationTests(unittest.TestCase):
             with self.subTest(point=point):
                 root,target,raw,encoded=self.fixture()
                 if point=='existing-sync':mesh.publish_spool(target,encoded,raw,codec.FORMAT)
-                original_sync=mesh._sync_spool_directory;calls=[]
+                original_sync=reference._sync_spool_directory;calls=[]
                 def sync(path):
                     calls.append(path)
                     if len(calls)==(1 if point=='public-dir' else 2):raise OSError('directory sync refused')
                     original_sync(path)
                 operation={'write':patch.object(wire,'write_new',side_effect=OSError('write refused')),
                            'link':patch.object(os,'link',side_effect=OSError('link refused')),
-                           'public-dir':patch.object(mesh,'_sync_spool_directory',side_effect=sync),
+                           'public-dir':patch.object(reference,'_sync_spool_directory',side_effect=sync),
                            'unlink':patch.object(Path,'unlink',side_effect=OSError('unlink refused')),
-                           'cleanup-dir':patch.object(mesh,'_sync_spool_directory',side_effect=sync),
-                           'existing-sync':patch.object(mesh,'sync_retained',side_effect=OSError('sync refused'))}[point]
+                           'cleanup-dir':patch.object(reference,'_sync_spool_directory',side_effect=sync),
+                           'existing-sync':patch.object(reference,'sync_retained',side_effect=OSError('sync refused'))}[point]
                 with operation:
                     with self.assertRaises(OSError):mesh.publish_spool(target,encoded,raw,codec.FORMAT)
                 paths,total=self.checked(root,raw)
@@ -221,6 +227,8 @@ class SpoolPublicationTests(unittest.TestCase):
 import os,sys,stat
 from pathlib import Path
 import interstellar_mesh as mesh,interstellar_spool_codec as codec,interstellar_transfer as wire
+import interstellar_spool_reference as reference
+mesh.publish_spool=reference.publish_spool;mesh.spool_inventory=reference.spool_inventory
 root=Path(sys.argv[1]);point=sys.argv[2]
 raw=wire.canonical({'exact':'immutable-message'*2000});encoded=codec.encode(raw,limit=mesh.MAX_BATCH)
 target=root/( __import__('hashlib').sha256(raw).hexdigest()+'.json')

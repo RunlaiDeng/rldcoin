@@ -69,9 +69,11 @@ publication response can still leave a complete new disk image; the caller must
 close/reopen and fully authenticate it, never infer rollback from old memory.
 
 Python still provides ABI input/output encoding, shared-string assembly, complete
-mesh authentication, spool publication, deferred intake, outgoing scheduling,
+mesh authentication, spool encoding, deferred intake, outgoing scheduling,
 service orchestration and remaining wallet flows. Independent Python tests remain
-necessary. This codec does not qualify power-loss or cross-device custody,
+necessary. [Spool publication and inventory](NATIVE_CONTACT_SPOOL.md) are native;
+complete caller authentication still follows every reconstructed record.
+This codec does not qualify power-loss or cross-device custody,
 independent operations, sustained full fault profiles, long history, PQ adoption,
 physical routes or mainnet. Changed native source requires a fresh signed no-value
 genesis; old value/custody and stopped failure stores are never migrated or
