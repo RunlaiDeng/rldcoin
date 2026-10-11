@@ -1,9 +1,11 @@
 # Native ground archive publication and synchronization
 
 The ordinary contact mesh uses `RLD-NATIVE-CONTACT-STORAGE-V1` for immutable
-archive file publication and retained-file/directory synchronization. Rust owns
-these filesystem operations; Python continues to pack and authenticate complete
-mesh state, select bounded archive admission and commit the signed index.
+archive file publication, mutable state/index file publication and retained
+file/directory synchronization. Rust owns these filesystem operations; Python
+continues to pack and authenticate complete mesh state and select bounded archive
+admission. Ordinary `Node.save` supplies the complete canonical index bytes to
+native publication; its callers retain their existing complete authentication.
 `interstellar_storage_reference.py` retains the independent Python syscall
 implementation for explicit tests. Native failures never select it as a fallback.
 
@@ -24,6 +26,13 @@ order. Each distinct file is synchronized, then every distinct parent directory;
 there is no cross-call synchronization witness. The caller still checks the
 4,096-file/256-MiB archive inventory, staging headroom and complete signed bytes.
 This interface does not raise state, transport, archive or ledger capacity.
+
+Synchronization retains Rust `File::sync_all` for files and directories. On
+Apple targets, [Rust's implementation](https://github.com/rust-lang/rust/blob/1.98.0/library/std/src/sys/fs/unix.rs#L1325)
+uses `F_FULLFSYNC`; it is not interchangeable with the Python oracle's `fsync`
+timing. Stronger platform flushing remains in the native path. Neither a syscall
+result nor a same-host interruption test establishes independent power-loss
+custody qualification.
 
 ## Publication and failure custody
 
@@ -51,9 +60,30 @@ synchronization are required again. Digest equality, file availability and nativ
 operation results grant no ledger, signing, finality, maturity, spendability,
 refund or independent freshness rights.
 
+## Mutable state and index publication
+
+`AtomicWrite` binds the independently configured absolute target, complete bytes,
+length, SHA-256 and caller byte limit. The native limit cannot exceed the existing
+64-MiB ceiling. Ordinary nodes use the full existing limit; an explicitly smaller
+caller bound can only refuse more bytes and cannot change ledger/profile rules.
+The caller's OS lock still serializes complete state validation and publication.
+Temporary `.write-` files use exclusive creation and `0600`; new parents use
+`0700`. The file and directory are synchronized before replacing the configured
+target directory entry, then the directory is synchronized before success.
+Replacement does not write through a final symlink to another file.
+
+A pre-replacement failure leaves the old target. A post-replacement failure or
+lost result reports failure and retains the installed target; it never rolls
+back the index or acknowledges custody. Cleanup touches only this call's
+disposable temporary file, never a retained target or old interrupted residue.
+An interrupted temporary file cannot authorize state; cold startup still requires
+complete authentication of the selected index and every referenced archive.
+The production ABI exposes no interruption hook. Explicit tests retain Python
+publication probes and separately compiled native test-process boundaries.
+
 ## Remaining migration and qualification
 
-Mesh state packing/replay, signed index publication, contact-spool publication,
+Mesh state packing/replay, contact-spool publication,
 deferred intake, outgoing scheduling, service orchestration and remaining wallet
 flows still require migration. Python tests retain the syscall oracle and explicit
 reference interruption probes. Native unit tests inject failures or terminate a

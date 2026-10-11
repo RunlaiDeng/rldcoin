@@ -11,7 +11,10 @@ MAX_CONTROL=3*1024*1024
 
 def _invoke(request,raw=b''):
     from interstellar_mesh import MAX_MESSAGES, MAX_PACKET_BATCH, MAX_STATE
-    if MAX_PATHS!=2*(MAX_MESSAGES+MAX_PACKET_BATCH) or MAX_FILE!=MAX_STATE:
+    state_write=(type(request) is dict and set(request)=={'AtomicWrite'}
+        and type(MAX_STATE) is int and 0<=MAX_STATE<=MAX_FILE
+        and request['AtomicWrite']['limit']==MAX_STATE)
+    if not state_write and (MAX_PATHS!=2*(MAX_MESSAGES+MAX_PACKET_BATCH) or MAX_FILE!=MAX_STATE):
         raise ValueError('native contact storage runtime bounds differ')
     engine=backend()
     operation=engine.library.rld_contact_storage
@@ -29,7 +32,7 @@ def _invoke(request,raw=b''):
             raise
     if not getattr(engine,'_contact_storage_profile',False):
         info=call('Info',(ctypes.c_ubyte*0)())
-        if info!=dict(format=FORMAT,max_file=MAX_FILE,max_paths=MAX_PATHS,max_control=MAX_CONTROL,
+        if info!=dict(format=FORMAT,max_file=MAX_FILE,max_paths=MAX_PATHS,max_control=MAX_CONTROL,atomic_write=True,
                       ledger_authority=False,custody_acknowledgment=False):
             raise ValueError('native contact storage profile differs')
         engine._contact_storage_profile=True
@@ -42,6 +45,16 @@ def archive_write(path,raw):
     if value!=dict(format=FORMAT,size_bytes=len(raw),sha256=digest,
                    ledger_authority=False,custody_acknowledgment=False):
         raise ValueError('native contact archive response differs')
+
+def atomic_write(path,raw):
+    from interstellar_mesh import MAX_STATE
+    if type(MAX_STATE) is not int or not 0<=MAX_STATE<=MAX_FILE or type(raw) is not bytes or len(raw)>MAX_STATE:
+        raise ValueError('native contact state capacity')
+    digest=hashlib.sha256(raw).hexdigest()
+    value=_invoke({'AtomicWrite':dict(path=str(Path(path).absolute()),size_bytes=len(raw),sha256=digest,limit=MAX_STATE)},raw)
+    if value!=dict(format=FORMAT,size_bytes=len(raw),sha256=digest,
+                   ledger_authority=False,custody_acknowledgment=False):
+        raise ValueError('native contact state response differs')
 
 def sync_retained_many(paths):
     paths=list(dict.fromkeys(Path(path).absolute() for path in paths))

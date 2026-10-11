@@ -28,6 +28,12 @@ enum Request {
         size_bytes: usize,
         sha256: String,
     },
+    AtomicWrite {
+        path: PathBuf,
+        size_bytes: usize,
+        sha256: String,
+        limit: usize,
+    },
     SyncMany {
         paths: Vec<PathBuf>,
     },
@@ -99,6 +105,73 @@ fn unlink_at(dir: &File, name: &CString) -> Result<()> {
         return Err(io_error(std::io::Error::last_os_error()));
     }
     Ok(())
+}
+fn atomic(
+    path: &Path,
+    raw: &[u8],
+    observe: &mut dyn FnMut(&'static str) -> Result<()>,
+) -> Result<Value> {
+    require(raw.len() <= MAX_FILE, "contact state capacity")?;
+    let (parent, name) = parts(path)?;
+    use std::os::unix::fs::DirBuilderExt;
+    fs::DirBuilder::new()
+        .recursive(true)
+        .mode(0o700)
+        .create(parent)
+        .map_err(io_error)?;
+    let dir = directory(parent)?;
+    let mut random = [0; 16];
+    getrandom::getrandom(&mut random).map_err(|e| e.to_string())?;
+    let temporary = format!(".write-{}", hex::encode(random));
+    let temporary_c = cstring(temporary.as_ref())?;
+    let target_c = cstring(name)?;
+    let mut file = open_at(
+        &dir,
+        temporary.as_ref(),
+        libc::O_WRONLY | libc::O_CREAT | libc::O_EXCL,
+    )?;
+    let mut renamed = false;
+    let operation = (|| {
+        observe("state-write")?;
+        file.write_all(raw).map_err(io_error)?;
+        sync(&file, "state-file-sync", observe)?;
+        sync(&dir, "state-staging-directory-sync", observe)?;
+        observe("state-prepared")?;
+        observe("state-replace")?;
+        if unsafe {
+            libc::renameat(
+                dir.as_raw_fd(),
+                temporary_c.as_ptr(),
+                dir.as_raw_fd(),
+                target_c.as_ptr(),
+            )
+        } != 0
+        {
+            return Err(io_error(std::io::Error::last_os_error()));
+        }
+        renamed = true;
+        observe("state-replaced")?;
+        sync(&dir, "state-publication-directory-sync", observe)?;
+        Ok(
+            json!({"format":FORMAT,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(raw)),
+            "ledger_authority":false,"custody_acknowledgment":false}),
+        )
+    })();
+    // Only this call's disposable staging name can be removed. A target already
+    // replaced is never rolled back on a lost result or failed directory sync.
+    let cleanup = if renamed {
+        Ok(())
+    } else {
+        (|| {
+            observe("state-cleanup")?;
+            unlink_at(&dir, &temporary_c)
+        })()
+    };
+    match (operation, cleanup) {
+        (Ok(value), Ok(())) => Ok(value),
+        (Err(error), Ok(())) | (Ok(_), Err(error)) => Err(error),
+        (Err(primary), Err(cleanup)) => Err(format!("{primary}; cleanup: {cleanup}")),
+    }
 }
 fn archive(
     path: &Path,
@@ -227,7 +300,7 @@ fn execute(control: &[u8], payload: &[u8]) -> Result<Value> {
         Request::Info => {
             require(payload.is_empty(), "contact storage unexpected payload")?;
             Ok(
-                json!({"format":FORMAT,"max_file":MAX_FILE,"max_paths":MAX_PATHS,"max_control":MAX_CONTROL,
+                json!({"format":FORMAT,"max_file":MAX_FILE,"max_paths":MAX_PATHS,"max_control":MAX_CONTROL,"atomic_write":true,
                 "ledger_authority":false,"custody_acknowledgment":false}),
             )
         }
@@ -241,6 +314,22 @@ fn execute(control: &[u8], payload: &[u8]) -> Result<Value> {
                 "contact storage payload binding differs",
             )?;
             archive(&path, payload, &mut observe)
+        }
+        Request::AtomicWrite {
+            path,
+            size_bytes,
+            sha256,
+            limit,
+        } => {
+            require(
+                limit <= MAX_FILE && payload.len() <= limit,
+                "contact state capacity",
+            )?;
+            require(
+                size_bytes == payload.len() && sha256 == hex::encode(Sha256::digest(payload)),
+                "contact storage payload binding differs",
+            )?;
+            atomic(&path, payload, &mut observe)
         }
         Request::SyncMany { paths } => {
             require(payload.is_empty(), "contact storage unexpected payload")?;
@@ -491,6 +580,153 @@ mod tests {
             }
             assert_eq!(target.exists(), point == "published");
             // Observe retained residue only. Do not clean or republish it as a pass.
+        }
+    }
+    #[test]
+    fn atomic_publication_order_and_old_bytes_before_replace() {
+        let root = fixture();
+        let path = root.join("state.json");
+        fs::write(&path, b"old signed bytes").unwrap();
+        let mut stages = Vec::new();
+        atomic(&path, b"new complete signed bytes", &mut |stage| {
+            stages.push(stage);
+            Ok(())
+        })
+        .unwrap();
+        assert_eq!(fs::read(&path).unwrap(), b"new complete signed bytes");
+        assert_eq!(
+            stages,
+            vec![
+                "state-write",
+                "state-file-sync",
+                "state-staging-directory-sync",
+                "state-prepared",
+                "state-replace",
+                "state-replaced",
+                "state-publication-directory-sync"
+            ]
+        );
+        assert_eq!(fs::read_dir(root).unwrap().count(), 1);
+    }
+    #[test]
+    fn atomic_write_replace_sync_failures_never_acknowledge_or_roll_back_installed_bytes() {
+        for failed in [
+            "state-write",
+            "state-file-sync",
+            "state-staging-directory-sync",
+            "state-replace",
+            "state-publication-directory-sync",
+        ] {
+            let root = fixture();
+            let path = root.join("state.json");
+            fs::write(&path, b"old").unwrap();
+            let result = atomic(&path, b"new", &mut |stage| {
+                if stage == failed {
+                    Err(io_error(std::io::Error::from_raw_os_error(libc::EIO)))
+                } else {
+                    Ok(())
+                }
+            });
+            assert!(result.unwrap_err().starts_with("CONTACT_STORAGE_IO:5:"));
+            assert_eq!(
+                fs::read(&path).unwrap(),
+                if failed == "state-publication-directory-sync" {
+                    b"new"
+                } else {
+                    b"old"
+                }
+            );
+            assert_eq!(fs::read_dir(root).unwrap().count(), 1);
+        }
+        let root = fixture();
+        let path = root.join("state.json");
+        fs::write(&path, b"old").unwrap();
+        let error = atomic(&path, b"new", &mut |stage| {
+            if stage == "state-write" || stage == "state-cleanup" {
+                Err(format!("injected {stage}"))
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert!(error.contains("injected state-write; cleanup: injected state-cleanup"));
+        assert_eq!(fs::read(&path).unwrap(), b"old");
+        assert_eq!(fs::read_dir(root).unwrap().count(), 2);
+    }
+    #[test]
+    fn atomic_limit_and_actual_payload_binding_precede_all_file_operations() {
+        let root = fixture();
+        let path = root.join("state.json");
+        for (limit, payload, declared) in [
+            (2, b"new".as_slice(), 3),
+            (MAX_FILE + 1, b"new".as_slice(), 3),
+            (3, b"bad".as_slice(), 3),
+            (3, b"new".as_slice(), 2),
+        ] {
+            let request = json!({"AtomicWrite":{"path":path,"size_bytes":declared,"sha256":hex::encode(Sha256::digest(b"new")),"limit":limit}});
+            let control = wallet_client::canonical_with_limit(&request, MAX_CONTROL).unwrap();
+            assert!(execute(&control, payload).is_err());
+            assert!(!path.exists());
+        }
+    }
+    #[test]
+    fn atomic_crash_child() {
+        let Some(path) = std::env::var_os("RLD_ATOMIC_CRASH_TARGET") else {
+            return;
+        };
+        let point = std::env::var("RLD_ATOMIC_CRASH_POINT").unwrap();
+        let payload = match std::env::var_os("RLD_ATOMIC_CRASH_PAYLOAD") {
+            Some(file) => {
+                crate::wallet_client::private_read_with_limit(Path::new(&file), MAX_FILE).unwrap()
+            }
+            None => b"new complete bytes".to_vec(),
+        };
+        atomic(Path::new(&path), &payload, &mut |stage| {
+            if stage == point {
+                unsafe { libc::kill(libc::getpid(), libc::SIGKILL) };
+                panic!("SIGKILL returned");
+            }
+            Ok(())
+        })
+        .unwrap();
+        panic!("atomic crash point not reached");
+    }
+    #[test]
+    fn atomic_process_interrupt_before_and_after_replace_preserves_exact_observed_state() {
+        use std::os::unix::process::ExitStatusExt;
+        for point in ["state-prepared", "state-replaced"] {
+            let root = fixture();
+            let path = root.join("state.json");
+            fs::write(&path, b"old complete bytes").unwrap();
+            let result = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "contact_storage::tests::atomic_crash_child",
+                    "--nocapture",
+                ])
+                .env("RLD_ATOMIC_CRASH_TARGET", &path)
+                .env("RLD_ATOMIC_CRASH_POINT", point)
+                .output()
+                .unwrap();
+            assert_eq!(result.status.signal(), Some(libc::SIGKILL));
+            assert_eq!(
+                fs::read(&path).unwrap(),
+                if point == "state-prepared" {
+                    b"old complete bytes"
+                } else {
+                    b"new complete bytes"
+                }
+            );
+            let files: Vec<_> = fs::read_dir(&root)
+                .unwrap()
+                .map(|entry| entry.unwrap().path())
+                .collect();
+            assert_eq!(files.len(), if point == "state-prepared" { 2 } else { 1 });
+            for entry in files {
+                if entry != path {
+                    assert_eq!(fs::read(entry).unwrap(), b"new complete bytes");
+                }
+            }
         }
     }
 }

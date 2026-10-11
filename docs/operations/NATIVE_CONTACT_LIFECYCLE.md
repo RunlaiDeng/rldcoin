@@ -59,9 +59,9 @@ flows. Explicit ground insecure mode retains its separate Python listener path;
 it is never a fallback from native TLS failure. Native listener completion grants
 no ledger acceptance, signing, finality, maturity, spendability or refunds.
 
-Immutable archive publication and retained-file synchronization use the
+Immutable archive publication, mutable state/index file publication and retained-file synchronization use the
 [native storage interface](NATIVE_CONTACT_STORAGE.md). Complete mesh and ledger
-authentication and signed-index publication remain separate caller obligations.
+authentication and signed-index selection remain separate caller obligations.
 
 This interface does not qualify independent operations/custody, hardware or power
 interruption, long history, full BFT fault profiles, PQ cryptography, physical

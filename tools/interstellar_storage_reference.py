@@ -57,3 +57,25 @@ def archive_write(path, raw):
         descriptor=os.open(path.parent,os.O_RDONLY)
         try:os.fsync(descriptor)
         finally:os.close(descriptor)
+
+
+def atomic(path,value):
+    import interstellar_mesh as mesh
+    if isinstance(value,dict) and "messages" in value and value.get("active_storage")==mesh.ACTIVE_STORAGE:
+        value=mesh.pack_state_storage(value)
+    raw=evidence.canonical(value)
+    mesh.require(len(raw)<=mesh.MAX_STATE,"durable state capacity reached; retain previous state")
+    atomic_bytes(path,raw)
+
+def atomic_bytes(path,raw):
+    temporary = path.parent / ('.write-' + os.urandom(16).hex())
+    try:
+        evidence.write_new(temporary, raw)
+        os.replace(temporary, path)
+        fd = os.open(path.parent, os.O_RDONLY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+    finally:
+        temporary.unlink(missing_ok=True)

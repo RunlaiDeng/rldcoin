@@ -263,17 +263,8 @@ def atomic(path, value):
         value = pack_state_storage(value)
     raw = evidence.canonical(value)
     require(len(raw) <= MAX_STATE, 'durable state capacity reached; retain previous state')
-    temporary = path.parent / ('.write-' + os.urandom(16).hex())
-    try:
-        evidence.write_new(temporary, raw)
-        os.replace(temporary, path)
-        fd = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(fd)
-        finally:
-            os.close(fd)
-    finally:
-        temporary.unlink(missing_ok=True)
+    from interstellar_storage import atomic_write
+    atomic_write(path,raw)
 
 
 def sync_retained(path):

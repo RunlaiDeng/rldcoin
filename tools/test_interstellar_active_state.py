@@ -4,6 +4,7 @@ import base64
 import hashlib
 import tempfile
 import os
+from pathlib import Path
 import signal
 import subprocess
 import sys
@@ -12,6 +13,7 @@ from unittest.mock import patch
 
 import interstellar_active_state as codec
 import interstellar_mesh as mesh
+import interstellar_storage_reference as reference
 import interstellar_transfer as wire
 from test_interstellar_mesh import Fixture
 
@@ -126,12 +128,12 @@ class ActiveStateTests(unittest.TestCase):
     def test_legacy_identity_refuses_without_conversion(self):
         path=self.path.parent/'identity.private.json';identity=mesh.load(path,8192);identity.pop('active_storage')
         mesh.atomic(path,identity);retained=path.read_bytes()
-        with self.assertRaisesRegex(ValueError,'identity'):self.f.node('earth')
+        with self.assertRaisesRegex(ValueError,'missing field.*active_storage'):self.f.node('earth')
         self.assertEqual(path.read_bytes(),retained);self.assertEqual(self.path.read_bytes(),self.raw)
 
     def test_failed_atomic_publication_retains_previous_pending_state(self):
         state=copy.deepcopy(self.original);state['cursor']+=1
-        with patch.object(mesh.os,'replace',side_effect=OSError('injected publication failure')):
+        with patch.object(mesh.os,'replace',side_effect=OSError('injected publication failure')),patch.object(mesh,'atomic',side_effect=reference.atomic):
             with self.assertRaises(OSError):mesh.atomic(self.path,state)
         self.assertEqual(self.path.read_bytes(),self.raw)
         with self.f.node('earth') as node:self.assertEqual(node.state,self.original)
@@ -150,6 +152,8 @@ class ActiveStateTests(unittest.TestCase):
 import os,signal,sys
 from pathlib import Path
 import interstellar_mesh as mesh
+from interstellar_storage_reference import atomic
+mesh.atomic=atomic
 path=Path(sys.argv[1]);state=mesh.load(path,mesh.MAX_STATE);state['cursor']+=1
 boundary=sys.argv[2]
 if boundary=='before':
@@ -166,7 +170,7 @@ mesh.atomic(path,state)
 raise AssertionError('unreachable acknowledgment')
 """
             result=subprocess.run([sys.executable,'-B','-c',code,str(self.path),boundary],
-                                  env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'))
+                                  env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',PYTHONPATH=str(Path(mesh.__file__).parent)))
             self.assertEqual(result.returncode,-signal.SIGKILL)
             with self.f.node('earth') as node:
                 expected=dict(self.original,cursor=self.original['cursor']+(boundary=='after'))
