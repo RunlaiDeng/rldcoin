@@ -32,6 +32,32 @@ class TraceTests(unittest.TestCase):
         self.assertFalse(row['authority'])
         with self.assertRaises(ValueError):trace.bind('a'*64,'c'*64)
 
+    def test_concurrent_packet_nonce_boundaries_join_only_their_executing_worker(self):
+        trace=self.trace();barrier=threading.Barrier(2);workers={}
+        def emit(label):
+            workers[label]=threading.get_ident();barrier.wait(timeout=2)
+            rows=[(label*64,'f'*64)]
+            trace.packets('request_authenticated','c'*64,rows,nonce=label*64,worker_id=0)
+            trace.mesh_cost('tcp-handler','acquire',.01,True,1)
+            trace.packets('local_transport_custody','c'*64,rows,nonce=label*64)
+            rows[0]=('0'*64,'0'*64)
+        threads=[threading.Thread(target=emit,args=(label,)) for label in ('a','b')]
+        for thread in threads:thread.start()
+        for thread in threads:thread.join(timeout=3)
+        self.assertTrue(all(not thread.is_alive() for thread in threads))
+        self.assertEqual(len(set(workers.values())),2)
+        snapshot=trace.snapshot();self.assertEqual(snapshot['rejected_events'],0)
+        self.assertEqual(snapshot['sequence'],6)
+        for label,worker in workers.items():
+            packet=[r for r in snapshot['events'] if r.get('nonce')==label*64]
+            costs=[r for r in snapshot['events'] if r['stage']=='mesh_lease_cost' and r['worker_id']==worker]
+            self.assertEqual([r['stage'] for r in packet],['request_authenticated','local_transport_custody'])
+            self.assertTrue(all(r['worker_id']==worker and r['packet_id']==label*64 for r in packet))
+            self.assertEqual(len(costs),1)
+            self.assertLess(packet[0]['sequence'],costs[0]['sequence'])
+            self.assertLess(costs[0]['sequence'],packet[1]['sequence'])
+        self.assertFalse(snapshot['authority'])
+
     def test_ring_eviction_and_rejections_are_explicit_gaps(self):
         trace=self.trace();cursor=TraceCursor('a'*64,'b'*64)
         for _ in range(MAX_EVENTS+3):trace.event('contact_start','c'*64,attempt=1)

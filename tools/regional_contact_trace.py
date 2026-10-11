@@ -118,6 +118,11 @@ class ContactTrace:
             self.reject();return ()
 
     def packets(self,stage,peer,rows,**fields):
+        # Bind each existing packet boundary to its executing worker so private
+        # collectors can join concurrent socket/nonce operations to lease costs.
+        # A label has no custody/authorization meaning and may be reused after
+        # thread exit; match the process, nonce and original bounded time span.
+        fields=dict(fields,worker_id=threading.get_ident())
         for packet_id,frame_id in rows:self.event(stage,peer,packet_id=packet_id,frame_id=frame_id,**fields)
 
     def mesh_cost(self,role,stage,duration,succeeded,calls):

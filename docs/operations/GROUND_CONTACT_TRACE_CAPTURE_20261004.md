@@ -52,3 +52,23 @@ Trace coverage is an observation property. Missing events, rejected identities a
 unpublished tails remain unknown; they cannot prove absent custody, ledger
 acceptance, spendability or the unique cause of a stalled payment. Traces and
 source/binary/controller binding records are retained locally.
+
+## Concurrent packet and lease observations
+
+Packet-boundary rows emitted by `ContactTrace.packets` include the executing
+process-local `worker_id`.
+Together with the collector's process binding, exact request nonce, peer and
+packet/frame identifiers, it can associate a concurrent authenticated request or
+custody boundary with that worker's `mesh_lease_cost` call. Preserve the original
+bounded time interval and each stage's independent `cost_call` counter; these
+counters do not identify one lease across stages. Worker identifiers may be reused after a
+thread exits or a process restarts. Timestamp proximity alone does not identify
+a handler when multiple requests overlap. Outbound preparation and its socket
+may use separate workers when adjacent carriage is prefetched; do not infer one
+continuous worker from a packet identifier.
+
+The label adds no events, threads, signed fields or authority. The existing event
+ring, byte bounds, explicit observation-loss reporting, peer pinning, scheduling,
+full authentication and durable-custody requirements still apply. Unknown or
+incomplete joins stay unknown; metadata does not establish Native acceptance,
+finality, spendability or a latency distribution.
