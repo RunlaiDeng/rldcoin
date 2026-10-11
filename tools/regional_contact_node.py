@@ -196,6 +196,7 @@ class Service:
                 if contact_trace is not None:self.bft.contact_trace=contact_trace
                 self.bft.carriage_node = self.tcp.ordinary_mesh_node
                 if parallel_carriage:
+                    self.bft.prime_local_carriage()
                     from regional_carriage_worker import Worker
                     self.carriage = Worker(self.tcp)
             if contact_trace is not None:self.native.contact_trace=contact_trace

@@ -665,6 +665,25 @@ class Runtime:
             # Live ticks retain their original lock-refusal/unknown semantics.
             self.native = native
 
+    def prime_local_carriage(self):
+        """Retain queued inputs before the first ordinary outgoing turn.
+
+        Full cold replay and caller reconciliation precede this bounded spool
+        read. Normal Native retention and durable carriage grant no signing,
+        ledger acceptance or extra reception turn.
+        """
+        if self.format != ORIGIN_RUNTIME_FORMAT or self.joint is not None:
+            return False
+        mesh.require(not self.failed and self._retained_native_authenticated is True
+                     and self._signed_query_ready is True
+                     and self.head['pending'] is None and self.head['outbox'] is None,
+                     'local startup carriage requires complete reconciled Native startup')
+        from regional_bft_submission_observation import read_submissions
+        fresh = read_submissions(self)
+        if fresh:
+            self.broadcast()
+        return bool(fresh)
+
     def close(self):
         mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
         self._carriage_priority_key = None
