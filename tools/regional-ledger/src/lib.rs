@@ -1133,6 +1133,7 @@ pub mod conflict;
 pub mod contact;
 pub mod contact_crypto;
 mod contact_listener;
+mod contact_storage;
 mod contact_tls;
 pub mod epoch;
 mod execution;

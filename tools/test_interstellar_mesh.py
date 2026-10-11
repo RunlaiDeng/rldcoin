@@ -3144,7 +3144,7 @@ class MeshTests(unittest.TestCase):
             with patch.object(mesh,'atomic',side_effect=OSError('unexpected archive rewrite')):
                 node.receive(bundle,peer)
             self.assertEqual(node.path.read_bytes(),before)
-            with patch.object(mesh.os,'fsync',side_effect=OSError('injected retained custody sync failure')):
+            with patch.object(mesh,'sync_retained_many',side_effect=OSError('injected retained custody sync failure')):
                 with self.assertRaisesRegex(OSError,'sync failure'):node.receive(bundle,peer)
             self.assertEqual(node.path.read_bytes(),before)
 

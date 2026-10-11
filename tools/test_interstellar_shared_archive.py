@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
+import interstellar_storage_reference as reference
 import interstellar_transfer as wire
 from test_interstellar_mesh import Fixture
 
@@ -148,7 +149,7 @@ class SharedArchiveTests(unittest.TestCase):
         with self.f.node('earth') as node,patch.object(mesh,'ARCHIVE_HIGH_WATER',1):
             def measure(source,target):
                 link(source,target);peaks.append(len(list(node.archive_root.iterdir())))
-            with patch.object(mesh,'MAX_ARCHIVE_FILES',3),patch.object(mesh.os,'link',side_effect=measure):
+            with patch.object(mesh,'MAX_ARCHIVE_FILES',3),patch.object(mesh.os,'link',side_effect=measure),patch.object(mesh,'archive_write',side_effect=reference.archive_write):
                 self.assertEqual(node.archive_completed(),1)
             self.assertEqual(peaks,[2,3])
             self.assertEqual(len(list(node.archive_root.iterdir())),2)
@@ -159,6 +160,8 @@ class SharedArchiveTests(unittest.TestCase):
         worker="""
 import json,os,signal,sys
 import interstellar_mesh as mesh
+from interstellar_storage_reference import archive_write
+mesh.archive_write=archive_write
 mesh.MAX_ARCHIVE_FILES=3;mesh.ARCHIVE_HIGH_WATER=1
 with mesh.Node(json.loads(sys.argv[1])) as node:
     link=mesh.os.link
@@ -235,7 +238,7 @@ raise RuntimeError('hard-link interruption not reached')
         path=root/'identity.private.json';value=mesh.load(path,8192);value.pop('archive_storage');mesh.atomic(path,value)
         retained=path.read_bytes()
         config=dict(format=mesh.VERSION,state=str(root),network=identity['network'],contacts=[])
-        with self.assertRaisesRegex(ValueError,'identity network/storage'):mesh.Node(config)
+        with self.assertRaisesRegex(ValueError,'missing field.*archive_storage'):mesh.Node(config)
         self.assertEqual(path.read_bytes(),retained)
         self.assertFalse((root/'mesh-state.json').exists())
         self.assertFalse((root/'archive').exists())

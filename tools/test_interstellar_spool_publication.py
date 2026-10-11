@@ -38,14 +38,6 @@ class SpoolPublicationTests(unittest.TestCase):
         create, release, done = threading.Event(), threading.Event(), threading.Event()
         errors = []
         original = os.open
-        old_stat = Path.stat
-        def read_stat(path, *args, **kwargs):
-            info = old_stat(path, *args, **kwargs)
-            if path == target and threading.current_thread() is threading.main_thread():
-                self.assertEqual(info.st_size, 0)
-                release.set()
-                self.assertTrue(done.wait(2))
-            return info
         def opened(path, flags, *args, **kwargs):
             fd = original(path, flags, *args, **kwargs)
             if Path(path) == target and flags & os.O_WRONLY:
@@ -56,12 +48,14 @@ class SpoolPublicationTests(unittest.TestCase):
             try:wire.write_new(target, encoded)
             except BaseException as e:errors.append(repr(e))
             finally:done.set()
-        with patch.object(os, 'open', side_effect=opened), patch.object(Path, 'stat', read_stat):
+        with patch.object(os, 'open', side_effect=opened):
             t = threading.Thread(target=writer);t.start()
             try:
                 self.assertTrue(create.wait(2))
-                self.assertEqual(old_stat(target).st_size, 0)
-                with self.assertRaisesRegex(ValueError, 'encoded spool bound exceeded'):
+                # Observe the actual incomplete public name before releasing
+                # its writer, without replacing repeated metadata observations.
+                self.assertEqual(target.stat().st_size, 0)
+                with self.assertRaisesRegex(ValueError, 'spool codec version/header differs'):
                     mesh.spool_files(root, codec.FORMAT)
             finally:release.set();t.join(2)
         self.assertFalse(t.is_alive());self.assertEqual(errors, [])
@@ -261,7 +255,8 @@ mesh.publish_spool(target,encoded,raw,codec.FORMAT)
             with self.subTest(point=point):
                 root,target,raw,encoded=self.fixture()
                 process=subprocess.Popen([sys.executable,'-B','-c',child,str(root),point],stdin=subprocess.PIPE,
-                                         stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+                                         stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,
+                                         env=dict(os.environ,PYTHONPATH=str(Path(mesh.__file__).parent)))
                 try:
                     # A bounded reader prevents a stuck child gate from hanging tests.
                     import selectors

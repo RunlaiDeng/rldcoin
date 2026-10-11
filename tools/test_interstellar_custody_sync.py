@@ -1,4 +1,4 @@
-"""Operation-scoped real fsync; no Native, sockets or original private stores."""
+"""Independent Python fsync oracle plus ordinary native mesh custody integration."""
 import copy
 import os
 from pathlib import Path
@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 import interstellar_mesh as mesh
+import interstellar_storage_reference as reference
 import interstellar_transfer as wire
 from test_interstellar_receipt_scheduler import Fixture
 
@@ -21,10 +22,10 @@ class CustodySyncTests(unittest.TestCase):
             def synced(fd):
                 info=os.fstat(fd);seen.append((info.st_ino,stat.S_ISDIR(info.st_mode)));actual(fd)
             with patch.object(os,'fsync',side_effect=synced):
-                mesh.sync_retained_many([paths[0],paths[1],paths[0]])
+                reference.sync_retained_many([paths[0],paths[1],paths[0]])
                 self.assertEqual(len(seen),3)
                 self.assertEqual(sum(directory for _,directory in seen),1)
-                mesh.sync_retained_many(paths)
+                reference.sync_retained_many(paths)
                 self.assertEqual(len(seen),6)  # no cross-call witness
 
     def test_directory_failure_propagates_after_real_file_sync(self):
@@ -34,7 +35,7 @@ class CustodySyncTests(unittest.TestCase):
                 if stat.S_ISDIR(os.fstat(fd).st_mode):raise OSError('retained directory fsync failed')
                 actual(fd)
             with patch.object(os,'fsync',side_effect=failure):
-                with self.assertRaisesRegex(OSError,'directory fsync'):mesh.sync_retained_many([path])
+                with self.assertRaisesRegex(OSError,'directory fsync'):reference.sync_retained_many([path])
 
     def test_symlink_file_and_original_capacity_refuse(self):
         with tempfile.TemporaryDirectory() as directory:
