@@ -6,6 +6,8 @@ import time
 import interstellar_mesh as mesh
 
 MIN_IDLE_INTERVAL = 0.1
+# An operation-local scheduling result; no input, Native state or authority.
+YIELD_FOR_DURABLE_INPUT = object()
 
 
 class Wait:
@@ -24,6 +26,12 @@ class Wait:
             if not self.stopped and not self.pending:
                 self.pending = True
                 self.condition.notify_all()
+
+    def has_pending(self):
+        # A proposal wait may finish its unit, but cannot consume the notice
+        # that schedules the next unit after the original minimum idle.
+        with self.condition:
+            return self.pending and not self.stopped and not self.released
 
     def wait(self, running):
         # Preserve at least the original minimum idle time after each complete

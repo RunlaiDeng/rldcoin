@@ -460,6 +460,13 @@ class Service:
                 # clears operation hints and fully reobserves both Native heads.
                 if callable(late_intake):late_intake()
                 return True
+            from regional_receive_wake import Wait,YIELD_FOR_DURABLE_INPUT
+            owner=getattr(self,'proposal_receive_wait',None)
+            if isinstance(owner,Wait) and owner.server is self.tcp and owner.has_pending():
+                # Finish this unit without another intake or phase request.
+                # The notice remains for the main loop's minimum-idle wait;
+                # the original proposal due and Native heads are not renewed.
+                return YIELD_FOR_DURABLE_INPUT
             time.sleep(min(0.1,remaining))
 
     def continue_after_finalization(self):
@@ -852,6 +859,7 @@ def main():
         if service.bft is not None and service.bft.format == ORIGIN_RUNTIME_FORMAT and service.bft.joint is None:
             from regional_receive_wake import Wait
             receive_wait = Wait(service.tcp, args.interval)
+            service.proposal_receive_wait = receive_wait
         while running:
             try:
                 result = service.tick()
@@ -875,7 +883,9 @@ def main():
                     time.sleep(min(0.1, args.interval))
     finally:
         try:
-            if receive_wait is not None:receive_wait.close()
+            if receive_wait is not None:
+                service.proposal_receive_wait = None
+                receive_wait.close()
         finally:service.close()
 
 

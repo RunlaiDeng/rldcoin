@@ -1560,7 +1560,15 @@ class Runtime:
                     # complete Native observation must follow the wait; no old
                     # caller/head projection may authorize its phase request.
                     self._initial_proposal_wait_used=True
-                    if wait(self.entered_at+self.block_interval):
+                    waited=wait(self.entered_at+self.block_interval)
+                    from regional_receive_wake import YIELD_FOR_DURABLE_INPUT
+                    if waited is YIELD_FOR_DURABLE_INPUT:
+                        # A complete ordinary unit ends without signing, even
+                        # if wall time reached due during the scheduling return.
+                        # Next unit fully reopens Native and both caller heads.
+                        self._broadcast_after_observation()
+                        return self.report(context,round_number,status,stopped)
+                    if waited:
                         self._tick_operation=object()
                         self._composed_phase_observation=None
                         self._sign_native_head=None
