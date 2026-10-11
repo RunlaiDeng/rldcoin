@@ -335,25 +335,17 @@ def archive_write(path, raw):
 
 
 def sign(key, kind, body):
-    public = key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw).hex()
-    return {'body': body, 'public_key': public,
-            'signature': key.sign((VERSION + '\0' + kind + '\0').encode() + evidence.canonical(body)).hex()}
+    from interstellar_crypto import NativeSigner
+    if isinstance(key,NativeSigner):return key.sign_object(kind,body)
+    # Explicit SDK fixture keys are an independent test path, never a native
+    # failure fallback. Ordinary Node never loads a Python private signer.
+    from interstellar_crypto_reference import sign_reference
+    return sign_reference(key,kind,body)
 
 
 def verify(value, kind, network):
-    require(isinstance(value, dict) and set(value) == {'body', 'public_key', 'signature'}, 'invalid signed object')
-    body = value['body']
-    require(isinstance(body, dict) and body.get('network') == network and body.get('format') == VERSION, 'wrong network or version')
-    public = hex32(value['public_key'])
-    require(isinstance(value['signature'], str) and re.fullmatch(r'[0-9a-f]{128}', value['signature']), 'invalid signature encoding')
-    try:
-        Ed25519PublicKey.from_public_bytes(bytes.fromhex(public)).verify(
-            bytes.fromhex(value['signature']), (VERSION + '\0' + kind + '\0').encode()
-            + (frame_digest.packet_body_bytes(body) if kind == 'packet' else evidence.canonical(body)))
-    except InvalidSignature as error:
-        raise ValueError('invalid signature') from error
-    require(body.get('node_id') == node_id(public), 'node identity mismatch')
-    return body
+    from interstellar_crypto import verify as native_verify
+    return native_verify(value,kind,network)
 
 
 def advert_check(value, network):
@@ -409,8 +401,9 @@ def transit_check(transit, network, recipient=None, sender=None, *, include_fram
     require(isinstance(transit,dict) and set(transit)=={'packet','routing','hops'}
             and isinstance(transit['packet'],dict) and isinstance(transit['routing'],dict)
             and isinstance(transit['hops'],list),'invalid transit fields')
+    from interstellar_crypto import validation_domain
     namespace=(VERSION,hex32(network),recipient,sender,MAX_HOPS,evidence.FORMAT,evidence.DOMAIN,
-               evidence.MAX_FRAME,evidence.MAX_PAYLOAD,tuple(sorted(evidence.KINDS | evidence.CONTROL_KINDS)))
+               evidence.MAX_FRAME,evidence.MAX_PAYLOAD,tuple(sorted(evidence.KINDS | evidence.CONTROL_KINDS)),validation_domain())
     key=(namespace,active_state.commitment(transit)[0])
     with _verified_transits_lock:
         while len(_verified_transits)>MAX_VERIFIED_TRANSITS:
@@ -509,15 +502,9 @@ def initialize(root, network, region, label):
     root = safe_dir(root)
     hex32(network)
     hex32(region)
-    key = Ed25519PrivateKey.generate()
-    public = key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw).hex()
-    identity = {'transit_scheduler': TRANSIT_SCHEDULER, 'active_storage': ACTIVE_STORAGE, 'format': VERSION, 'archive_storage': ARCHIVE_STORAGE, 'receipt_scheduler': RECEIPT_SCHEDULER, 'network': network, 'region': region, 'label': label,
-                'public_key': public, 'private_key': key.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption()).hex()}
-    # Validate public fields before creating the sole private identity file.
-    advert_check(sign(key, 'advert', {'format': VERSION, 'network': network, 'region': region,
-                 'label': label, 'node_id': node_id(public), 'sequence': 1, 'neighbors': []}), network)
-    evidence.write_new(root / 'identity.private.json', evidence.canonical(identity))
-    return {'node_id': node_id(public), 'public_key': public, 'network': network, 'region': region}
+    from interstellar_crypto import initialize as native_initialize
+    identity=native_initialize(root,network,region,label)
+    return {k:identity[k] for k in ('node_id','public_key','network','region')}
 
 
 def tcp_endpoint(host, port, listening=False):
@@ -567,18 +554,10 @@ class Node:
         self.lock = os.open(self.root / '.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
         try:
             fcntl.flock(self.lock, fcntl.LOCK_EX | (fcntl.LOCK_NB if nonblocking else 0))
-            identity = load(self.root / 'identity.private.json', 8192)
-            require(set(identity) == {'transit_scheduler', 'active_storage', 'format', 'archive_storage', 'receipt_scheduler', 'network', 'region', 'label', 'public_key', 'private_key'}
-                    and identity['format'] == VERSION and identity['archive_storage'] == ARCHIVE_STORAGE
-                    and identity['receipt_scheduler'] == RECEIPT_SCHEDULER
-                    and identity['active_storage'] == ACTIVE_STORAGE
-                    and identity['transit_scheduler'] == TRANSIT_SCHEDULER
-                    and identity['network'] == self.network, 'identity network/storage mismatch')
-            require((self.root / 'identity.private.json').stat().st_mode & 0o077 == 0, 'private identity permissions too broad')
-            self.key = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(hex32(identity['private_key'])))
-            public = self.key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw).hex()
-            require(public == identity['public_key'], 'private identity mismatch')
-            self.id = node_id(public)
+            from interstellar_crypto import inspect as native_inspect,NativeSigner
+            identity=native_inspect(self.root/'identity.private.json',self.network)
+            self.key=NativeSigner(self.root/'identity.private.json',identity)
+            self.id=identity['node_id']
             contacts = config['contacts']
             require(isinstance(contacts, list) and len(contacts) <= MAX_CONTACTS, 'contact capacity reached')
             self.contacts = {}
@@ -747,10 +726,11 @@ class Node:
         require(isinstance(s['archives'],dict) and len(s['archives'])<=MAX_ARCHIVE_FILES,
                 'archive index capacity/schema invalid')
         files,_=self.archive_inventory()
+        from interstellar_crypto import validation_domain
         domain=(str(self.root), self.network, self.id, VERSION, ARCHIVE_STORAGE, ARCHIVE_FRAME, HEX.pattern,
                 MAX_STATE, MAX_ARCHIVE_FILES, MAX_ARCHIVE_BYTES,
                 MAX_VERIFIED_ARCHIVE_INDEX_BYTES,
-                tuple(sorted(evidence.KINDS)), tuple(sorted(evidence.CONTROL_KINDS)))
+                tuple(sorted(evidence.KINDS)), tuple(sorted(evidence.CONTROL_KINDS)),validation_domain())
         raw=evidence.canonical(s['archives'])
         rows=None
         exact_witness=None

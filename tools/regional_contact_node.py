@@ -148,6 +148,8 @@ def startup_config(native, path=None):
 
 class Service:
     def __init__(self, native, config, miner, listen=('127.0.0.1',0), insecure_tcp=False, bft_config=None, parallel_carriage=True, contact_trace=None):
+        from interstellar_crypto import bind_binary
+        bind_binary(native.binary,native.call('contact-crypto-info'))
         self.native, self.config, self.miner = native, config, miner
         self.contact_trace=contact_trace
         self.trace_publisher=None

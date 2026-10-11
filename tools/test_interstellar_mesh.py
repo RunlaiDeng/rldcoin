@@ -3008,7 +3008,13 @@ class MeshTests(unittest.TestCase):
             bundle = sender.exchange(self.f.identities['proxima']['node_id'])
             tampered = copy.deepcopy(bundle)
             tampered['body']['adverts'][0]['body']['label'] = 'forged'
-            foreign = mesh.sign(sender.key, 'exchange', {**bundle['body'], 'network': 'f' * 64})
+            foreign_body={**bundle['body'],'network':'f'*64}
+            with self.assertRaises(ValueError):mesh.sign(sender.key,'exchange',foreign_body)
+            # Independent hostile signer from this fresh no-value fixture only.
+            from interstellar_crypto_reference import sign_reference
+            fixture=mesh.load(sender.root/'identity.private.json',8192)
+            sdk=mesh.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(fixture['private_key']))
+            foreign=sign_reference(sdk,'exchange',foreign_body)
         with self.f.node('proxima') as receiver:
             before = receiver.path.read_bytes()
             for candidate, peer in [(tampered, self.f.identities['earth']['node_id']),

@@ -373,7 +373,12 @@ class TcpTests(unittest.TestCase):
         with self.f.node('proxima') as node:
             for field,value in [('nonce','f'*64),('to',self.f.ids['andromeda']),('network','f'*64),
                     ('exchange_id','e'*64),('accepted','true')]:
-                forged=mesh.sign(node.key,'tcp-response',{**body,field:value})
+                # Independent hostile fixture signing also covers bindings the
+                # native ordinary signer refuses before constructing a message.
+                from interstellar_crypto_reference import sign_reference
+                fixture=mesh.load(node.root/'identity.private.json',8192)
+                sdk=mesh.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(fixture['private_key']))
+                forged=sign_reference(sdk,'tcp-response',{**body,field:value})
                 with self.assertRaises(ValueError):
                     tcp.check_response(forged,NETWORK,self.f.ids['earth'],node.id,sent)
         with self.f.node('andromeda') as node:
@@ -389,7 +394,12 @@ class TcpTests(unittest.TestCase):
         before=(self.f.root/'proxima/mesh-state.json').read_bytes()
         with self.f.node('earth') as node:
             wrong_to=mesh.sign(node.key,'tcp-request',{**sent['body'],'to':self.f.ids['andromeda']})
-            wrong_net=mesh.sign(node.key,'tcp-request',{**sent['body'],'network':'f'*64})
+            foreign_body={**sent['body'],'network':'f'*64}
+            with self.assertRaises(ValueError):mesh.sign(node.key,'tcp-request',foreign_body)
+            from interstellar_crypto_reference import sign_reference
+            fixture=mesh.load(node.root/'identity.private.json',8192)
+            sdk=mesh.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(fixture['private_key']))
+            wrong_net=sign_reference(sdk,'tcp-request',foreign_body)
         with self.f.node('andromeda') as node:
             forged=mesh.sign(node.key,'tcp-request',{**sent['body'],'node_id':node.id})
         # Andromeda is a configured neighbor of Proxima; Earth cannot impersonate it.
@@ -623,7 +633,10 @@ class TcpTests(unittest.TestCase):
             value=tcp.challenge(node.key,NETWORK,node.id,self.f.pins['proxima'])
             for field,changed in [('network','b'*64),('node_id',self.f.ids['earth']),
                     ('tls_cert_sha256','f'*64),('nonce',1)]:
-                wrong=mesh.sign(node.key,'tcp-challenge',{**value['body'],field:changed})
+                from interstellar_crypto_reference import sign_reference
+                fixture=mesh.load(node.root/'identity.private.json',8192)
+                sdk=mesh.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(fixture['private_key']))
+                wrong=sign_reference(sdk,'tcp-challenge',{**value['body'],field:changed})
                 with self.assertRaises(ValueError):
                     tcp.check_challenge(wrong,NETWORK,self.f.ids['proxima'],self.f.pins['proxima'])
 

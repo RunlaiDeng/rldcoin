@@ -7,6 +7,9 @@ license = "Apache-2.0"
 
 [workspace]
 
+[lib]
+crate-type = ["rlib", "cdylib"]
+
 [dependencies]
 rld-core = { path = "../../crates/rld-core" }
 rld-pow = { path = "../../crates/rld-pow" }

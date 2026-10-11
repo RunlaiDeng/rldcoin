@@ -982,3 +982,5 @@ The [native proposal opportunity interface](../../docs/operations/NATIVE_BFT_PRO
 The [native phase selection interface](../../docs/operations/NATIVE_BFT_PHASE_SELECTION.md) selects Prepare/Commit and complete certificates from fully authenticated locked inputs without signing or installing a ledger.
 
 The [ordinary tick policy](../../docs/operations/NATIVE_BFT_TICK_POLICY.md) selects proposal waits, timeouts and the exact Origin post-proposal Prepare using the original local monotonic phase entry. The companion still dispatches callbacks and handles lifecycle and transport.
+
+The [native contact crypto backend](../../docs/operations/NATIVE_CONTACT_CRYPTO.md) generates and reads private transport identities and signs/verifies ordinary mesh and TCP messages. Build with `cargo build --bins --lib`; normal startup requires the matching sibling library. TLS, sockets and durable mesh custody remain separate.

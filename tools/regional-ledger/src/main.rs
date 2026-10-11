@@ -39,6 +39,8 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Action {
+    /// Public transport library binding; opens no ledger or private identity.
+    ContactCryptoInfo,
     BftPendingImports,
     /// Native local certificate observation for explicit origin-network startup.
     BftOriginCurrentFinality,
@@ -1092,6 +1094,13 @@ fn run() -> Result<()> {
                 Err("native contact node companion stopped; inspect its explicit diagnostic".into())
             };
         }
+    }
+    if let Action::ContactCryptoInfo = action {
+        println!(
+            "{}",
+            serde_json::to_string(&contact_crypto::info()?).map_err(|e| e.to_string())?
+        );
+        return Ok(());
     }
     if let Action::WalletApp {
         ref backup_dir,
@@ -2748,7 +2757,7 @@ fn run() -> Result<()> {
             "{}",
             serde_json::to_string(&store.proof()?).map_err(|e| e.to_string())?
         ),
-        Action::ContactNode { .. } => unreachable!(),
+        Action::ContactNode { .. } | Action::ContactCryptoInfo => unreachable!(),
         Action::ContactOriginApply { file, .. } => {
             if store.trust.region(store.chain.region)?.rules != paged_bft::ORIGIN_NETWORK_RULES {
                 return Err("automatic origin contact requires explicit signed network V2".into());
