@@ -82,22 +82,26 @@ pub(crate) fn options() -> OpenOptions {
 }
 
 pub(crate) fn private_read(path: &Path) -> Result<Vec<u8>> {
+    private_read_with_limit(path, MAX_BYTES)
+}
+
+pub(crate) fn private_read_with_limit(path: &Path, limit: usize) -> Result<Vec<u8>> {
     let meta = fs::symlink_metadata(path).map_err(io)?;
     require(
-        meta.is_file() && !meta.file_type().is_symlink() && meta.len() <= MAX_BYTES as u64,
+        meta.is_file() && !meta.file_type().is_symlink() && meta.len() <= limit as u64,
         "private caller file type or byte bound invalid",
     )?;
     let file = options().read(true).open(path).map_err(io)?;
     private_metadata(&file)?;
     require(
-        file.metadata().map_err(io)?.len() <= MAX_BYTES as u64,
+        file.metadata().map_err(io)?.len() <= limit as u64,
         "caller state byte bound",
     )?;
     let mut raw = Vec::new();
-    file.take(MAX_BYTES as u64 + 1)
+    file.take(limit as u64 + 1)
         .read_to_end(&mut raw)
         .map_err(io)?;
-    require(raw.len() <= MAX_BYTES, "caller state byte bound")?;
+    require(raw.len() <= limit, "caller state byte bound")?;
     Ok(raw)
 }
 
@@ -121,6 +125,11 @@ pub(crate) fn private_path(path: &Path, must_exist: bool) -> Result<()> {
 
 /// Preserve Python's sorted ASCII JSON bytes, including non-ASCII wallet paths.
 pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
+    canonical_with_limit(value, MAX_BYTES)
+}
+
+/// Separate companion archives use their existing bound; ledger callers keep MAX_BYTES.
+pub(crate) fn canonical_with_limit<T: Serialize>(value: &T, limit: usize) -> Result<Vec<u8>> {
     fn python_float(number: &serde_json::Number) -> Result<String> {
         // Python and Ryu use shortest round-trip digits; Python additionally
         // fixes the decimal/scientific cutover and signed two-digit exponent.
@@ -165,7 +174,7 @@ pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
         }
         Ok(format!("{sign}{}.{}", &digits[..point], &digits[point..]))
     }
-    fn sorted(value: &serde_json::Value, out: &mut String) -> Result<()> {
+    fn sorted(value: &serde_json::Value, out: &mut String, limit: usize) -> Result<()> {
         match value {
             serde_json::Value::Object(map) => {
                 out.push('{');
@@ -177,7 +186,7 @@ pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
                     }
                     out.push_str(&serde_json::to_string(key).map_err(|e| e.to_string())?);
                     out.push(':');
-                    sorted(&map[key], out)?;
+                    sorted(&map[key], out, limit)?;
                 }
                 out.push('}');
             }
@@ -187,7 +196,7 @@ pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
                     if index != 0 {
                         out.push(',');
                     }
-                    sorted(item, out)?;
+                    sorted(item, out, limit)?;
                 }
                 out.push(']');
             }
@@ -196,12 +205,13 @@ pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
             }
             _ => out.push_str(&serde_json::to_string(value).map_err(|e| e.to_string())?),
         }
-        require(out.len() <= MAX_BYTES, "caller state byte bound")
+        require(out.len() <= limit, "caller state byte bound")
     }
     let mut text = String::new();
     sorted(
         &serde_json::to_value(value).map_err(|e| e.to_string())?,
         &mut text,
+        limit,
     )?;
     let mut out = String::new();
     for ch in text.chars() {
@@ -213,7 +223,7 @@ pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
         } else {
             out.push(ch);
         }
-        require(out.len() <= MAX_BYTES, "caller state byte bound")?;
+        require(out.len() <= limit, "caller state byte bound")?;
     }
     Ok(out.into_bytes())
 }

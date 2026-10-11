@@ -1118,6 +1118,7 @@ pub mod bft_candidate_selection;
 pub mod bft_client;
 mod bft_epoch;
 pub mod bft_network;
+pub mod bft_runtime_archive;
 pub mod carriage;
 pub mod channel_conflict;
 pub mod channel_owner;

@@ -85,7 +85,11 @@ impl<'de> Deserialize<'de> for Unique {
 }
 
 pub(crate) fn decode_unique(raw: &[u8]) -> Result<Value> {
-    require(raw.len() <= MAX_BYTES, "JSON byte bound")?;
+    decode_unique_with_limit(raw, MAX_BYTES)
+}
+
+pub(crate) fn decode_unique_with_limit(raw: &[u8], limit: usize) -> Result<Value> {
+    require(raw.len() <= limit, "JSON byte bound")?;
     serde_json::from_slice::<Unique>(raw)
         .map(|v| v.0)
         .map_err(|e| e.to_string())

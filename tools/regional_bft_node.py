@@ -604,9 +604,15 @@ class Runtime:
                 self.head=self.load_head(self.head_path,self.signing_binding)
                 if self.format==JOINT_FORMAT:
                     self.joint=JointEpoch(self,config['joint_epoch'],validators,current)
+            self._archive_head = None
             self.state_path = self.root/'state.json'
             if self.state_path.exists() or self.state_path.is_symlink():
-                self.state = unpack_state(mesh.load(private(self.state_path),MAX_STATE))
+                if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+                    from regional_bft_native_archive import read
+                    packed,self._archive_head = read(self)
+                    self.state = unpack_state(packed)
+                else:
+                    self.state = unpack_state(mesh.load(private(self.state_path),MAX_STATE))
                 mesh.require(set(self.state)=={'format','binding','messages','height','tip','snapshot_cache','cursor'}
                              and self.state['format']==self.format and self.state['binding']==self.binding, 'BFT runtime state binding differs')
                 mesh.integer(self.state['height'],0,64)
@@ -725,7 +731,11 @@ class Runtime:
         packed=pack_state(state)
         mesh.require(not self.failed and len(wire.canonical(packed))<=MAX_STATE, 'BFT runtime persistence unavailable/capacity')
         try:
-            mesh.atomic(self.state_path,packed)
+            if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+                from regional_bft_native_archive import store
+                self._archive_head = store(self,packed,state)
+            else:
+                mesh.atomic(self.state_path,packed)
         except BaseException:
             self.failed=True
             raise

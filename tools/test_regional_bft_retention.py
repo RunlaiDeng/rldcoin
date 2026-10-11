@@ -186,13 +186,13 @@ class NativeRetentionTests(unittest.TestCase):
 
     def recover_write_failure(self,after_replace):
         runtime=self.open();runtime.sign(self.request(0))
-        before=runtime.state_path.read_bytes();native_before=runtime.signer_status()['records'];atomic=mesh.atomic
-        def fail(path,value):
-            if path==runtime.state_path:
-                if after_replace:atomic(path,value)
-                raise OSError('injected retention persistence boundary')
-            return atomic(path,value)
-        with patch.object(mesh,'atomic',side_effect=fail),self.assertRaises(OSError):runtime.sign(self.request(1))
+        before=runtime.state_path.read_bytes();native_before=runtime.signer_status()['records'];native=runtime.native.call
+        def fail(action,*args,**kwargs):
+            if action=='bft-runtime-archive-store':
+                if after_replace:native(action,*args,**kwargs)
+                raise OSError('injected native archive publication/response boundary')
+            return native(action,*args,**kwargs)
+        with patch.object(runtime.native,'call',side_effect=fail),self.assertRaises(OSError):runtime.sign(self.request(1))
         self.assertTrue(runtime.failed);self.assertIsNotNone(runtime.head['outbox'])
         exact=runtime.head['outbox'];head=runtime.head['head']
         self.assertEqual(runtime.signer_status()['records'],native_before+1)

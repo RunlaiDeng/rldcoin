@@ -454,6 +454,28 @@ enum Action {
         #[arg(long)]
         expected_wallet_head: String,
     },
+    /// Inspect the existing bounded companion archive; full cold checks remain mandatory.
+    BftRuntimeArchiveRead {
+        #[arg(long)]
+        state_dir: PathBuf,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+    },
+    /// Publish existing V2 companion bytes after structural and new-envelope authentication.
+    BftRuntimeArchiveStore {
+        #[arg(long)]
+        state_dir: PathBuf,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_state_sha256: Option<String>,
+    },
     /// Read an existing independent BFT caller head; never initialize custody.
     BftClientRead {
         #[arg(long)]
@@ -1132,6 +1154,8 @@ fn run() -> Result<()> {
             )?
         }
         Action::BftNetworkCheckBatch { .. }
+        | Action::BftRuntimeArchiveRead { .. }
+        | Action::BftRuntimeArchiveStore { .. }
         | Action::ContactObservation
         | Action::BftNetworkInspectBatch { .. }
         | Action::BftNetworkLocalEnvelope { .. }
@@ -1942,6 +1966,44 @@ fn run() -> Result<()> {
             println!(
                 "{}",
                 serde_json::to_string(&prepared).map_err(|e| e.to_string())?
+            );
+        }
+        Action::BftRuntimeArchiveRead {
+            state_dir,
+            expected_key,
+            runtime_format,
+        } => {
+            let client = bft_runtime_archive::Client::lock(
+                &state_dir,
+                expected_key,
+                runtime_format,
+                &store,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.read(&store)?).map_err(|e| e.to_string())?
+            );
+        }
+        Action::BftRuntimeArchiveStore {
+            state_dir,
+            expected_key,
+            runtime_format,
+            file,
+            expected_state_sha256,
+        } => {
+            let client = bft_runtime_archive::Client::lock(
+                &state_dir,
+                expected_key,
+                runtime_format,
+                &store,
+            )?;
+            let expected = expected_state_sha256
+                .map(|value| Hash::from_hex(&value).map_err(|e| e.to_string()))
+                .transpose()?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.store_file(&store, &file, expected)?)
+                    .map_err(|e| e.to_string())?
             );
         }
         Action::BftClientRead {

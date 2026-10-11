@@ -974,3 +974,5 @@ this is separate from an autonomous multiregion or full fault profile.
 Current full frozen qualification and publication remain pending.
 
 The [native BFT caller custody interface](../../docs/operations/NATIVE_BFT_CALLER_CUSTODY.md) preserves separate pending/head/outbox publication and keyless recovery for the ordinary and complete-origin companions.
+
+The [native companion archive interface](../../docs/operations/NATIVE_BFT_RUNTIME_ARCHIVE.md) retains the existing bounded shared-byte format and separate cold authentication.
