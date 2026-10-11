@@ -1,5 +1,6 @@
 """Diagnostic bounds and unchanged native request sequence; no authority."""
 import unittest
+from unittest.mock import patch
 
 import bft_tick_fixture as baseline
 from regional_bft_observation import Observation, MAX_EVENTS, MAX_BYTES, MAX_OPERATIONS
@@ -7,6 +8,32 @@ import interstellar_transfer as wire
 
 
 class ObservationTests(unittest.TestCase):
+    def test_local_clock_base_aligns_events_without_reset_or_cross_restart_reuse(self):
+        with patch('regional_bft_observation.time.monotonic') as clock:
+            clock.return_value = 100.1234567
+            value = Observation()
+            clock.return_value = 100.6234567
+            value.event('tick-start')
+            clock.return_value = 100.7234567
+            first = value.snapshot()
+            self.assertEqual(first['clock_domain'], 'local-monotonic-seconds')
+            self.assertAlmostEqual(first['started_monotonic_seconds'] +
+                                   first['events'][0]['elapsed_seconds'],
+                                   100.6234567, places=6)
+            self.assertEqual(first['snapshot_monotonic_seconds'], 100.723457)
+            first['started_monotonic_seconds'] = 0
+            clock.return_value = 101
+            later = value.snapshot()
+            self.assertEqual(later['started_monotonic_seconds'], 100.123457)
+            self.assertEqual(later['snapshot_monotonic_seconds'], 101)
+            self.assertEqual(later['sequence'], 1)
+            self.assertFalse(later['timing_is_authority'])
+            clock.return_value = 200
+            restarted = Observation().snapshot()
+            self.assertEqual(restarted['started_monotonic_seconds'], 200)
+            self.assertEqual(restarted['sequence'], 0)
+            self.assertEqual(restarted['events'], [])
+
     def test_ring_evicts_explicitly_and_snapshot_never_aliases(self):
         value = Observation()
         for n in range(MAX_EVENTS+7):

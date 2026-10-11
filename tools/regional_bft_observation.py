@@ -64,6 +64,9 @@ class Observation:
         value = dict(format=FORMAT, process_id=os.getpid(), sequence=self.sequence,
                      dropped_events=self.dropped, rejected_events=self.rejected,
                      process_local_only=True, timing_is_authority=False,
+                     clock_domain='local-monotonic-seconds',
+                     started_monotonic_seconds=round(self.started, 6),
+                     snapshot_monotonic_seconds=round(time.monotonic(), 6),
                      events=[dict(row) for row in self.events],
                      operations={name: {k: round(v, 6) if type(v) is float else v
                                         for k, v in row.items()}

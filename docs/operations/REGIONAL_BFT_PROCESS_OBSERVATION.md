@@ -10,6 +10,17 @@ names accumulate call/failure counts and total/maximum elapsed time. Mutable
 objects and oversized fields are refused by the diagnostic ring. Evicted events
 and rejected diagnostic rows are counted; absence is unknown, never height zero.
 
+Snapshots expose `clock_domain: local-monotonic-seconds`,
+`started_monotonic_seconds` and `snapshot_monotonic_seconds`. Adding the retained
+start to an event's `elapsed_seconds` places that event on the same local
+monotonic clock as a same-host recorder or transport observation. Both values
+and event elapsed times are rounded to six decimal places; publication and
+sampling delay remain separate. The start remains fixed for that Observation,
+and a new process starts a new sequence and base. These unsigned diagnostics
+cannot synchronize different hosts, establish independent freshness, reset a
+submission clock or grant protocol authority. Older snapshots without a base
+cannot acquire one from a later observation.
+
 The ring records completion of ordinary full-envelope reception (public exact
 envelope/body identities only after native authentication and synchronization),
 existing distinct-vote searches, phase context/round and elapsed timer age,
