@@ -552,13 +552,19 @@ class Server:
     def mesh_node(self, deadline):
         added=False
         with self._local_mesh_node(deadline,False) as node:
-            with self.guard:enabled=self.receive_wake is not None
+            with self.guard:
+                enabled=self.receive_wake is not None or self.outbound_wake is not None
             before=set(node.state['messages']) if enabled else None
             yield node
             added=before is not None and bool(set(node.state['messages'])-before)
         # Only a successful body, Native-independent transport custody and
         # original close/lease release may request another ordinary intake.
-        if added:self.notify_received()
+        if added:
+            self.notify_received()
+            # New verified transport input may also need ordinary onward
+            # carriage. Wake only the existing owner after durable close;
+            # its merged event, minimum start interval and slots stay intact.
+            self.notify_outbound()
 
     def claim_receive_wake(self, wake):
         mesh.require(callable(wake),'TCP receive wake callback differs')
