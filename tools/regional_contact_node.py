@@ -337,6 +337,7 @@ class Service:
         return classify
 
     def receive_candidates(self, summaries, receipts, destination, quota=None, frame_classifier=None):
+        from regional_receive_selection_observation import begin,classified,finish
         eligible = sorted(i for i, t in summaries.items()
             if t['destination'] == destination and i in receipts
             and i not in self.bft_seen
@@ -344,7 +345,9 @@ class Service:
             and not (t['kind']=='source-finality' and t.get('frame_id') in
                      getattr(self,'_native_origin_messages',frozenset())))
         remaining=MAX_PER_TICK if quota is None else MAX_PER_TICK-len(quota['attempted'])
+        observation=begin(self,summaries,receipts,destination,eligible,remaining,quota)
         if not eligible or remaining <= 0:
+            finish(self,observation,[],'empty')
             return []
         pending=getattr(self,'bft_intake_pending',None)
         if pending is not None and pending.packets:
@@ -352,6 +355,7 @@ class Service:
             # unit. No extra attempt, timer renewal or digest-based acceptance.
             selected=[i for i in eligible if i in pending.packets][:remaining]
             if quota is not None:quota['attempted'].update(selected)
+            finish(self,observation,selected,'pending')
             return selected
         if self.bft is not None:
             # Cold startup authenticated the retained complete envelopes. Their
@@ -364,6 +368,7 @@ class Service:
                      and summaries[i]['export_id'] not in retained]
             novel_set = set(novel)
             background = [i for i in eligible if i not in novel_set]
+            classified(self,observation,novel,background)
             frames=(quota.setdefault('frames',set()) if quota is not None and frame_classifier is not None else set())
             inspected=0
             def take(items, count, kind):
@@ -401,7 +406,9 @@ class Service:
             # still takes normal authentication before native deduplication.
             if quota is None:
                 count=min(len(novel),max(MAX_PER_TICK//2,MAX_PER_TICK-len(background)))
-                return take(novel,count,'novel')+take(background,MAX_PER_TICK-count,'background')
+                selected=take(novel,count,'novel')+take(background,MAX_PER_TICK-count,'background')
+                finish(self,observation,selected,'classified',inspected)
+                return selected
             # One operation owns the original four attempts, including failures.
             # Preserve each class's half before borrowing unused places. Late
             # traffic cannot undo borrowing or create another four-frame unit.
@@ -416,6 +423,8 @@ class Service:
             offset = self.progress['cursor'] % len(eligible)
             selected=(eligible[offset:] + eligible[:offset])[:remaining]
         if quota is not None:quota['attempted'].update(selected)
+        finish(self,observation,selected,'classified' if self.bft is not None else 'legacy',
+               inspected if self.bft is not None else 0)
         return selected
 
     def contact_observation(self):
@@ -820,7 +829,7 @@ def main():
     trace=None
     if trace_mode=='1':
         from regional_contact_trace import ContactTrace
-        trace=ContactTrace()
+        trace=ContactTrace(watch_envelope_id=os.environ.get('RLD_GROUND_TRACE_WATCH_ENVELOPE'))
     elif trace_mode=='submission':
         from regional_submission_trace import SubmissionTrace
         trace=SubmissionTrace()
