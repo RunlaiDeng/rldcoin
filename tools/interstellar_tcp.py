@@ -837,6 +837,31 @@ class Server:
         errors=[]
         local_os_errors=[]
         peers=sorted(self.peers)
+        adjacent=None
+
+        def begin(peer):
+            with self.guard:
+                count=self.peer_attempts.get(peer,0)+1
+                self.peer_attempts[peer]=count
+                if count%64==0:self.accepted_transits.pop(peer,None)
+            if self.contact_trace is not None:
+                self.contact_trace.outbound_peer('outbound_peer_started',peer,count)
+            return count
+
+        def prepare(node,peer):
+            mesh.require(node.id==self.id,'TCP runtime identity changed')
+            retries=node.failed_carriage(peer)
+            value=outgoing(node,peer,self.suppressed(peer),retries)
+            domain=node.carriage_position_domain()
+            if retries:node.forget_failed_carriage(peer)
+            return value,retries,domain
+
+        def detached(error):
+            # Retain the refusal, never the open Node or a traceback's inputs.
+            error=copy.copy(error).with_traceback(None)
+            error.__cause__=error.__context__=None
+            return error
+
         if peers:
             offset=self.cursor%len(peers)
             chosen=(peers[offset:]+peers[:offset])[:MAX_OUTBOUND_PER_TICK]
@@ -848,29 +873,30 @@ class Server:
             while gcd(stride,len(peers))!=1:
                 stride+=1
             self.cursor=(self.cursor+stride)%len(peers)
-            for peer in chosen:
-                if not self.running:
+            for position,peer in enumerate(chosen):
+                if not self.running and adjacent is None:
                     break
                 trace=self.contact_trace;trace_rows=();failure_stage='prepare';count=0
                 prepared=None;retry_ids=();carriage_domain=None
+                prepared_ids=()
                 try:
-                    c=self.peers[peer]
-                    with self.guard:
-                        count=self.peer_attempts.get(peer,0)+1
-                        self.peer_attempts[peer]=count
-                        if count%64==0:
-                            self.accepted_transits.pop(peer,None)
-                    if trace is not None:trace.outbound_peer('outbound_peer_started',peer,count)
-                    # Prepare and durably rotate retained carriage before the
-                    # connection starts. Cold local verification must not use
-                    # up the remote socket deadline. The fresh challenge still
-                    # binds the exact prepared exchange after TLS admission.
-                    with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
-                        mesh.require(node.id==self.id,'TCP runtime identity changed')
-                        retry_ids=node.failed_carriage(peer)
-                        prepared=outgoing(node,peer,self.suppressed(peer),retry_ids)
-                        carriage_domain=node.carriage_position_domain()
-                        if retry_ids:node.forget_failed_carriage(peer)
+                    if adjacent is not None:
+                        token,adjacent=adjacent,None
+                        mesh.require(token['peer']==peer,'adjacent carriage peer differs')
+                        count=token['count'];retry_ids=token['retries'];carriage_domain=token['domain']
+                        prepared_ids=token['ids']
+                        if token['error'] is not None:raise token.pop('error')
+                        c=self.peers[peer]
+                        prepared=wire.decode_json(token.pop('raw'))
+                    else:
+                        c=self.peers[peer]
+                        count=begin(peer)
+                        # Prepare and durably rotate retained carriage before
+                        # connecting. A prefetched exchange escaped its original
+                        # authenticated lease only after successful close.
+                        with self.mesh_node(time.monotonic()+ATTEMPT_SECONDS) as node:
+                            prepared,retry_ids,carriage_domain=prepare(node,peer)
+                    prepared_ids=tuple(mesh.digest(t['packet']) for t in prepared['body']['transits'])
                     if trace is not None:
                         trace_rows=trace.packet_rows(prepared)
                         trace.packets('outgoing_prepared',peer,trace_rows,attempt=count)
@@ -888,6 +914,7 @@ class Server:
                         failure_stage='challenge'
                         nonce=check_challenge(receive(connection,deadline),self.network,peer,c.get('tls_cert_sha256'))
                         sent=bind_request(self.key,self.network,self.id,peer,nonce,prepared)
+                        sent_nonce=sent['body']['nonce']
                         failure_stage='send'
                         send(connection,sent,deadline)
                         if trace is not None:trace.packets('request_sent',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
@@ -895,6 +922,7 @@ class Server:
                         response=receive(connection,deadline)
                     failure_stage='response_authentication'
                     bundle=check_response(response,self.network,self.id,peer,sent)
+                    accepted_ids=tuple(mesh.digest(t) for t in sent['body']['bundle']['body']['transits'])
                     if trace is not None:trace.packets('peer_custody_authenticated',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
                     # The socket is closed and its authenticated reply is now
                     # local input. Use a fresh bounded lock attempt, never infer
@@ -907,25 +935,48 @@ class Server:
                         if trace is not None:
                             receipts=node.receipts()
                             receipt_rows=tuple((ident,frame) for ident,frame in trace_rows if ident in receipts)
+                        # These complete bytes have already passed receive's
+                        # durable authentication. Release the current wire
+                        # objects before retaining one next prepared exchange.
+                        prepared=sent=bundle=None
+                        if self.running and position+1<len(chosen):
+                            following=chosen[position+1]
+                            adjacent=dict(peer=following,count=begin(following),raw=None,
+                                          retries=(),domain=None,ids=(),error=None)
+                            try:
+                                value,retries,domain=prepare(node,following)
+                                adjacent.update(retries=retries,domain=domain,
+                                    ids=tuple(mesh.digest(t['packet']) for t in value['body']['transits']))
+                                raw=wire.canonical(value)
+                                mesh.require(len(raw)<=mesh.MAX_BATCH,'adjacent carriage byte bound')
+                                adjacent['raw']=raw
+                                del value,raw
+                            except (OSError,ValueError,KeyError,TypeError,RecursionError) as error:
+                                # Keep this independent attempt's refusal for
+                                # its original slot; no connection or custody.
+                                adjacent['error']=detached(error)
                     # Only after exact nonce/challenge/exchange verification and
                     # complete local reply custody. A lost/refused reply retries.
                     with self.guard:
                         retained=self.accepted_transits.setdefault(peer,set())
-                        retained.update(mesh.digest(t) for t in sent['body']['bundle']['body']['transits'])
+                        retained.update(accepted_ids)
                         if len(retained)>mesh.MAX_MESSAGES:
                             # This cache is only an optimization. Forgetting it
                             # safely resends retained evidence, never drops it.
                             self.accepted_transits.pop(peer,None)
                     self.mark(peer,'outbound',True)
-                    if trace is not None:trace.packets('reply_local_custody',peer,trace_rows,attempt=count,nonce=sent['body']['nonce'])
-                    if trace is not None:trace.packets('destination_receipt_observed',peer,receipt_rows,attempt=count,nonce=sent['body']['nonce'])
+                    if trace is not None:trace.packets('reply_local_custody',peer,trace_rows,attempt=count,nonce=sent_nonce)
+                    if trace is not None:trace.packets('destination_receipt_observed',peer,receipt_rows,attempt=count,nonce=sent_nonce)
                 except (OSError,ValueError,KeyError,TypeError,RecursionError) as error:
+                    if adjacent is not None:
+                        # A preparation cannot escape a failed lease close.
+                        # Preserve its exact retry IDs but never use its bytes.
+                        adjacent['raw']=None;adjacent['error']=detached(error)
                     # Only completed ordinary preparation arms one replay.
                     # A failed local open leaves its hint; replay failure
                     # returns to ordinary rotation. This grants no custody.
-                    if prepared is not None and carriage_domain is not None and not retry_ids:
-                        ids=tuple(mesh.digest(t['packet']) for t in prepared['body']['transits'])
-                        if ids:mesh.remember_carriage_position((carriage_domain,peer,'failed-carriage'),ids)
+                    if prepared_ids and carriage_domain is not None and not retry_ids:
+                        mesh.remember_carriage_position((carriage_domain,peer,'failed-carriage'),prepared_ids)
                     self.mark(peer,'outbound',False)
                     errors.append(str(error)[:256])
                     origin=_local_os_error_origin(error,failure_stage)
