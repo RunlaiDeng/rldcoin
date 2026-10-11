@@ -1,8 +1,9 @@
 # Native BFT proposal opportunity
 
 The ordinary and complete-origin companions delegate proposal-round, leadership
-and timeout-certificate selection to Rust. The companion still drives phase
-priority, original monotonic waits, Prepare/Commit requests, certificate
+and timeout-certificate selection to Rust. The companion dispatches the
+[native phase selection](NATIVE_BFT_PHASE_SELECTION.md), original monotonic waits,
+Prepare/Commit requests, certificate
 installation, lifecycle and transport. Joint-epoch and role-slot workflows keep
 their separate explicit paths. A Native refusal never selects a Python fallback
 for the migrated profiles. The independent Python policy is test-only.

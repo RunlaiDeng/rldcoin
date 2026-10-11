@@ -377,10 +377,35 @@ impl Client {
         expected: Hash,
         context: &bft::Context,
     ) -> Result<Vec<bft::Message>> {
+        self.scheduling_messages(node, expected, context, false, None)
+    }
+    pub(crate) fn scheduling_messages(
+        &self,
+        node: &Store,
+        expected: Hash,
+        context: &bft::Context,
+        include_votes: bool,
+        order: Option<&[Hash]>,
+    ) -> Result<Vec<bft::Message>> {
         let (archive, raw) = self.retained(node)?;
         require(hash(&raw) == expected, "BFT scheduling archive changed")?;
         let mut messages = Vec::new();
-        for record in archive.runtime.messages.values() {
+        let records = if let Some(order) = order {
+            let unique = order.iter().copied().collect::<BTreeSet<_>>();
+            require(
+                order.len() == archive.runtime.messages.len()
+                    && unique.len() == order.len()
+                    && unique.iter().eq(archive.runtime.messages.keys()),
+                "BFT scheduling order must name every exact retained record once",
+            )?;
+            order
+                .iter()
+                .map(|id| &archive.runtime.messages[id])
+                .collect::<Vec<_>>()
+        } else {
+            archive.runtime.messages.values().collect()
+        };
+        for record in records {
             let body: bft_network::Body =
                 serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())?;
             require(
@@ -402,6 +427,7 @@ impl Client {
                         && Some(s.height) == context.parent_height.checked_add(1)
                 }
                 bft::Message::Timeout(t) => t.context == *context,
+                bft::Message::Vote(v) => include_votes && v.context == *context,
                 _ => false,
             };
             if !relevant {

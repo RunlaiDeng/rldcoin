@@ -1481,6 +1481,10 @@ class Runtime:
         from regional_bft_proposal_schedule import opportunity
         return opportunity(self,context,round_number)
 
+    def phase_action(self, context, round_number, mode):
+        from regional_bft_phase_schedule import action
+        return action(self,context,round_number,mode)
+
     def _tick(self):
         mesh.require(not self.failed, 'BFT runtime requires restart after persistence failure')
         self._keyless_drain_observation=None
@@ -1539,42 +1543,61 @@ class Runtime:
         # A local timeout does not invalidate a complete certificate for this
         # parent. Install delayed certified rounds even after moving ahead, and
         # even in read-only/keyless mode; only Rust authorizes the state change.
-        for certified_round in range(32):
-            for proposal,value in self.signed(context,certified_round,'Proposal'):
-                # Incomplete Commit cannot finalize. Avoid aggregating Prepare
-                # here only to aggregate it again for the signing phase below.
-                # Complete pairs still require both original Native checks.
-                committed=self.quorum(context,certified_round,'Commit',value)
-                if committed is None:
-                    continue
-                prepared=self.quorum(context,certified_round,'Prepare',value)
-                if prepared is not None:
-                    certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
-                    return self._finish_local_finalization(certificate,context,round_number,status)
+        native_phase=self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None
+        native_action=self.phase_action(context,round_number,'finalize' if stopped else 'start') if native_phase else 'Idle'
+        if native_phase:
+            if 'Finalize' in native_action:
+                return self._finish_local_finalization(native_action['Finalize']['snapshot'],context,round_number,status)
+        else:
+            for certified_round in range(32):
+                for proposal,value in self.signed(context,certified_round,'Proposal'):
+                    # Incomplete Commit cannot finalize. Avoid aggregating Prepare
+                    # here only to aggregate it again for the signing phase below.
+                    # Complete pairs still require both original Native checks.
+                    committed=self.quorum(context,certified_round,'Commit',value)
+                    if committed is None:
+                        continue
+                    prepared=self.quorum(context,certified_round,'Prepare',value)
+                    if prepared is not None:
+                        certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
+                        return self._finish_local_finalization(certificate,context,round_number,status)
         if not stopped:
             current_proposals=self.signed(context,round_number,'Proposal')
-            for proposal,value in current_proposals:
+            phase_proposals=current_proposals
+            if native_phase:
+                kind=next(iter(native_action)) if isinstance(native_action,dict) else None
+                selected=native_action[kind] if kind in ('Prepare','Commit') else None
+                phase_proposals=[(selected['proposal'],selected['value'])] if selected is not None else []
+            for proposal,value in phase_proposals:
                 # A persisted Prepare and Commit cannot use another Prepare
                 # aggregate here. The finalization path above still requires
                 # both complete Native quorums before certifying any value.
-                prepared=(None if active['prepared'] is not None and active['committed'] is not None
+                prepared=(selected['prepared'] if native_phase else
+                          None if active['prepared'] is not None and active['committed'] is not None
                           else self.quorum(context,round_number,'Prepare',value))
                 if active['prepared'] is None:
                     if not self._try_prepare(proposal):
                         continue
                     phase_advanced = True
-                    if (prepared is None and self.format==ORIGIN_RUNTIME_FORMAT
-                            and self.joint is None):
-                        # The fully retained own Prepare may be the third exact
-                        # vote. Reaggregate through Native after its independent
-                        # caller head and complete envelope have been persisted.
-                        prepared=self.quorum(context,round_number,'Prepare',value)
-                    if prepared is not None:
-                        fresh = Runtime.phase_status(self)['state']
-                        if (fresh is not None and fresh['context'] == context
-                                and fresh['round'] == round_number
-                                and fresh['prepared'] == value and fresh['committed'] is None):
-                            self.sign({'Commit':{'proposal':proposal,'prepared':prepared}})
+                    if native_phase:
+                        if prepared is not None or self.format==ORIGIN_RUNTIME_FORMAT:
+                            next_action=self.phase_action(context,round_number,'commit')
+                            if 'Commit' in next_action:
+                                commit=next_action['Commit']
+                                self.sign({'Commit':{'proposal':commit['proposal'],'prepared':commit['prepared']}})
+                    else:
+                        if (prepared is None and self.format==ORIGIN_RUNTIME_FORMAT
+                                and self.joint is None):
+                            # The fully retained own Prepare may be the third exact
+                            # vote. Reaggregate through Native after its independent
+                            # caller head and complete envelope have been persisted.
+                            prepared=self.quorum(context,round_number,'Prepare',value)
+                        if prepared is not None:
+                            fresh = Runtime.phase_status(self)['state']
+                            if (fresh is not None and fresh['context'] == context
+                                    and fresh['round'] == round_number
+                                    and fresh['prepared'] == value and fresh['committed'] is None):
+                                self.sign({'Commit':{'proposal':proposal,'prepared':prepared}})
                     break
                 if active['prepared']==value and active['committed'] is None and prepared is not None:
                     self.sign({'Commit':{'proposal':proposal,'prepared':prepared}})
@@ -1674,11 +1697,22 @@ class Runtime:
                     future=[]
                     for later in range(round_number+1,32):
                         future.extend(self.signed(context,later,'Proposal'))
-                if future:
-                    for proposal,_ in sorted(future,key=lambda p:p[0]['round'],reverse=True):
-                        if self._try_prepare(proposal):
-                            phase_advanced = True
-                            break
+                if native_phase:
+                    future_action=self.phase_action(context,round_number,'future')
+                    if 'Finalize' in future_action:
+                        return self._finish_local_finalization(future_action['Finalize']['snapshot'],context,round_number,status)
+                    if 'Prepare' in future_action:
+                        phase_advanced=self._try_prepare(future_action['Prepare']['proposal'])
+                    elif 'Commit' in future_action:
+                        commit=future_action['Commit']
+                        self.sign({'Commit':{'proposal':commit['proposal'],'prepared':commit['prepared']}})
+                        phase_advanced=True
+                else:
+                    if future:
+                        for proposal,_ in sorted(future,key=lambda p:p[0]['round'],reverse=True):
+                            if self._try_prepare(proposal):
+                                phase_advanced = True
+                                break
                 if not phase_advanced and time.monotonic()-self.entered_at>=min(3600,self.round_timeout*(round_number+1)):
                     refresh=getattr(self,'before_timeout',None)
                     if (self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
@@ -1710,14 +1744,19 @@ class Runtime:
                 # A newly durable own Commit can complete the quorum in this
                 # unit. Counts/phase telemetry authorize nothing: both full
                 # Native aggregates, certification and installation still run.
-                for proposal,value in self.signed(context,round_number,'Proposal'):
-                    if value!=fresh['committed']:continue
-                    committed=self.quorum(context,round_number,'Commit',value)
-                    if committed is None:continue
-                    prepared=self.quorum(context,round_number,'Prepare',value)
-                    if prepared is None:continue
-                    certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
-                    return self._finish_local_finalization(certificate,context,round_number,status)
+                if native_phase:
+                    completed=self.phase_action(context,round_number,'committed')
+                    if 'Finalize' in completed:
+                        return self._finish_local_finalization(completed['Finalize']['snapshot'],context,round_number,status)
+                else:
+                    for proposal,value in self.signed(context,round_number,'Proposal'):
+                        if value!=fresh['committed']:continue
+                        committed=self.quorum(context,round_number,'Commit',value)
+                        if committed is None:continue
+                        prepared=self.quorum(context,round_number,'Prepare',value)
+                        if prepared is None:continue
+                        certificate=self.with_json('bft-certify',{'proposal':proposal,'prepared':prepared,'committed':committed})
+                        return self._finish_local_finalization(certificate,context,round_number,status)
         self._broadcast_after_observation()
         return self.report(context,round_number,status,stopped)
 

@@ -59,6 +59,10 @@ ExactRuntime, clock = methods()
 
 
 class Fixture(ExactRuntime):
+    def phase_action(self,context,round_number,mode):
+        from regional_bft_phase_reference import action_reference
+        return action_reference(self,context,round_number,mode,self.native_state)
+
     def proposal_opportunity(self,context,round_number):
         # This fake timing model uses the independent policy, never claims a
         # Native replay. Actual CLI integration is exercised by fresh fixtures.

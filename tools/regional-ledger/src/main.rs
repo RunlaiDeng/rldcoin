@@ -155,6 +155,28 @@ enum Action {
         #[arg(long)]
         file: PathBuf,
     },
+    /// Fresh phase selection; actual signing and installation remain separate.
+    #[command(name = "bft-phase-action")]
+    BftPhaseObservation {
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        state_dir: PathBuf,
+        #[arg(long)]
+        expected_state_sha256: String,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+        #[arg(long)]
+        round: u64,
+        #[arg(long)]
+        mode: String,
+        #[arg(long)]
+        file: PathBuf,
+    },
     /// Exact historical proofs actually installed by fully replayed local events.
     BftInstalledEpochs,
     JointReadyInit {
@@ -1180,6 +1202,7 @@ fn run() -> Result<()> {
         | Action::BftNetworkLocalEnvelope { .. }
         | Action::BftLoopStatus { .. }
         | Action::BftProposalOpportunity { .. }
+        | Action::BftPhaseObservation { .. }
         | Action::BftOriginCurrentFinality => {
             Store::open_inspection(&args.dir, &args.authority, pin)?
         }
@@ -1658,6 +1681,41 @@ fn run() -> Result<()> {
             let raw = serde_json::to_string(&result).map_err(|e| e.to_string())?;
             if raw.len() > MAX_BYTES {
                 return Err("BFT scheduling output bound".into());
+            }
+            println!("{raw}");
+        }
+        Action::BftPhaseObservation {
+            signer_dir,
+            expected_head,
+            state_dir,
+            expected_state_sha256,
+            expected_key,
+            runtime_format,
+            round,
+            mode,
+            file,
+        } => {
+            let input = bft_phase_schedule::Input::read(&file)?;
+            let context = input.context.clone();
+            let value = bft_phase_schedule::observe(
+                &store,
+                bft_proposal_schedule::Pins {
+                    signer: &signer_dir,
+                    archive: &state_dir,
+                    key: expected_key,
+                    runtime_format,
+                    head: Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                    archive_head: Hash::from_hex(&expected_state_sha256)
+                        .map_err(|e| e.to_string())?,
+                    context,
+                    round,
+                },
+                bft_phase_schedule::Mode::parse(&mode)?,
+                input,
+            )?;
+            let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
+            if raw.len() > MAX_BYTES {
+                return Err("BFT phase output bound".into());
             }
             println!("{raw}");
         }

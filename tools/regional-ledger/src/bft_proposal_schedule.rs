@@ -86,7 +86,15 @@ fn candidate_round(
     Ok(selected)
 }
 
-pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
+pub(crate) struct Inputs {
+    pub context: bft::Context,
+    pub keys: Vec<String>,
+    pub active: bft::State,
+    pub signer_state: bft::State,
+    pub client: bft_runtime_archive::Client,
+    pub _agent: bft::Agent,
+}
+pub(crate) fn inspect(node: &Store, pins: &Pins<'_>) -> Result<Inputs> {
     require(
         matches!(std::fs::symlink_metadata(node.directory().join("journal.next")),
             Err(error) if error.kind() == std::io::ErrorKind::NotFound),
@@ -98,7 +106,7 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
         "BFT scheduling native context changed",
     )?;
     let keys = context.keys(&node.trust, &node.evidence)?;
-    let (_agent, status) = bft::Agent::inspect_with_status(pins.signer, node)?;
+    let (agent, status) = bft::Agent::inspect_with_status(pins.signer, node)?;
     require(
         status.head == pins.head
             && status.binding.currency == context.currency
@@ -106,6 +114,7 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
             && status.binding.key == pins.key,
         "BFT scheduling differs from separately retained caller binding/head",
     )?;
+    let signer_state = status.state.clone();
     let active = if status.state.context.as_ref() == Some(&context) {
         status.state
     } else {
@@ -118,9 +127,27 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
     let client = bft_runtime_archive::Client::lock(
         pins.archive,
         pins.key.clone(),
-        pins.runtime_format,
+        pins.runtime_format.clone(),
         node,
     )?;
+    Ok(Inputs {
+        context,
+        keys,
+        active,
+        signer_state,
+        client,
+        _agent: agent,
+    })
+}
+pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
+    let Inputs {
+        context,
+        keys,
+        active,
+        client,
+        _agent,
+        ..
+    } = inspect(node, &pins)?;
     let messages = client.proposal_messages(node, pins.archive_head, &context)?;
     let count = messages.len();
     let mut proposals = BTreeSet::new();

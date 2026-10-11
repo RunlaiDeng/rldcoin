@@ -12,6 +12,34 @@ struct Harness {
     seeds: Vec<u8>,
     retain: bool,
 }
+#[test]
+fn read_only_phase_preview_keeps_an_old_context_epoch_fence() {
+    let mut h = Harness::new();
+    let old = Context::current(&h.node).unwrap();
+    let snapshot = h.node.bft_candidate(Vec::new(), public(10)).unwrap();
+    let proposal = h.proposal(0, None, snapshot);
+    let prepared = h.prepare(&proposal, &[0, 1, 2]);
+    let certificate = h.commit(&proposal, &prepared, &[0, 1, 2]);
+    h.node.finalize(certificate).unwrap();
+    let snapshot = h.node.bft_candidate(Vec::new(), public(10)).unwrap();
+    let proposal = h.proposal(0, None, snapshot);
+    let request = Request::Prepare(Box::new(proposal));
+    // This synthetic read-only state tests the unconditional fence guard. It
+    // neither creates a durable epoch approval nor qualifies epoch activation.
+    let state = bft::State {
+        context: Some(old),
+        epoch_fence: Some(Hash([1; 32])),
+        ..Default::default()
+    };
+    let key = public(h.seeds[3]);
+    assert!(bft::State::default()
+        .preview(&request, &key, &h.node)
+        .is_ok());
+    assert_eq!(
+        state.preview(&request, &key, &h.node).unwrap_err(),
+        "BFT signer epoch is durably fenced"
+    );
+}
 #[path = "cold_plan_tests.rs"]
 mod cold_plan_tests;
 #[path = "bft_retained_observation_tests.rs"]

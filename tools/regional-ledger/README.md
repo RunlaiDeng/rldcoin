@@ -978,3 +978,5 @@ The [native BFT caller custody interface](../../docs/operations/NATIVE_BFT_CALLE
 The [native companion archive interface](../../docs/operations/NATIVE_BFT_RUNTIME_ARCHIVE.md) retains the existing bounded shared-byte format and separate cold authentication.
 
 The [native proposal opportunity interface](../../docs/operations/NATIVE_BFT_PROPOSAL_OPPORTUNITY.md) selects proposal rounds, leaders and complete timeout certificates from fresh locked inputs while preserving the companion's original phase clocks and independent signing checks.
+
+The [native phase selection interface](../../docs/operations/NATIVE_BFT_PHASE_SELECTION.md) selects Prepare/Commit and complete certificates from fully authenticated locked inputs without signing or installing a ledger.

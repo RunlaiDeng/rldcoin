@@ -592,6 +592,34 @@ pub struct State {
     pub proposed: bool,
 }
 impl State {
+    /// Execute a scheduling trial against current Native input without custody,
+    /// key use or publishing the cloned transition.
+    pub(crate) fn preview(&self, request: &Request, key: &str, node: &Store) -> Result<()> {
+        require(
+            request.context()? == Context::current(node)?,
+            "BFT preview current parent differs",
+        )?;
+        node.safety.check_region(node.chain.region)?;
+        if let Request::Prepare(proposal) | Request::Commit { proposal, .. } = request {
+            require(
+                crate::paged_bft::parent_matches(&proposal.snapshot, node)?,
+                "BFT preview proposal parent differs from actual replay",
+            )?;
+            node.safety.check(
+                &node.chain,
+                &proposal
+                    .snapshot
+                    .blocks
+                    .last()
+                    .ok_or("BFT preview proposal block missing")?
+                    .commands,
+                &node.evidence,
+            )?;
+        } else {
+            return Err("BFT preview supports only Prepare/Commit".into());
+        }
+        self.clone().apply(request, key, node).map(|_| ())
+    }
     fn enter(
         &mut self,
         c: &Context,
