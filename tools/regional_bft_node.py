@@ -684,6 +684,27 @@ class Runtime:
             self.broadcast()
         return bool(fresh)
 
+    def quiesce(self, deadline):
+        """Only recover retained custody after transport owners have stopped."""
+        if self.format != ORIGIN_RUNTIME_FORMAT or self.joint is not None:
+            return False
+        if self.head['pending'] is None and self.head['outbox'] is None:
+            return False
+        mesh.require(not self.failed and self._retained_native_authenticated is True
+                     and self._signed_query_ready is True,
+                     'shutdown recovery requires complete authenticated startup')
+        from regional_native_deadline import DeadlineNative
+        native=self.native
+        try:
+            self.native=DeadlineNative(native,deadline)
+            if self.head['pending'] is not None:self.reconcile()
+            self.flush_outbox()
+            mesh.require(self.head['pending'] is None and self.head['outbox'] is None,
+                         'shutdown recovery retains unresolved caller custody')
+            self.native.check_deadline()
+            return True
+        finally:self.native=native
+
     def close(self):
         mesh.forget_carriage_position(getattr(self,'_carriage_priority_key',None))
         self._carriage_priority_key = None
@@ -1394,7 +1415,6 @@ class Runtime:
             raise ValueError('highest prepared value retained without its proposal; wait for carriage')
         from regional_submission_delivery_trace import candidate_event
         candidate_event(self,'candidate_selection_started',context)
-        commands=[]
         incoming=[]
         if self.joint is not None:
             plan=self.joint.plan_command(context)
@@ -1403,33 +1423,8 @@ class Runtime:
             if 'Submission' in body:candidate_event(self,'candidate_submission_seen',context,ident=retained_id)
             incoming.extend(body.get('Submission',body.get('EpochSubmission',{}).get('commands',[])))
         incoming.extend(self.native.call('bft-pending-imports'))
-        seen=set()
-        for command in incoming:
-            ident=mesh.digest(command)
-            if ident in seen or len(commands)>=4:
-                continue
-            seen.add(ident)
-            candidate_event(self,'candidate_command_attempted',context,command=command)
-            try:
-                self.with_json('bft-candidate',commands+[command],'--miner',self.miner)
-            except ValueError as error:
-                candidate_event(self,'candidate_command_refused',context,command=command)
-                # A contended native trial never established command invalidity.
-                # Abort this selection; the next ordinary tick retries from the
-                # native head, with no empty/partial fallback or signing here.
-                from regional_contact_node import NativeRefusal
-                if (isinstance(error, NativeRefusal)
-                        and error.command == 'bft-candidate'
-                        and type(error.exit_code) is int and error.exit_code == 1
-                        and error.diagnostic.strip() in (
-                            'regional candidate rejected: lock acquisition failed because the operation would block',
-                            'regional candidate rejected: complete stream already locked',
-                        )):
-                    raise
-                continue  # retain stale/invalid submission; never rewrite or cancel it.
-            commands.append(command)
-            candidate_event(self,'candidate_command_selected',context,command=command)
-        return self.with_json('bft-candidate',commands,'--miner',self.miner)
+        from regional_bft_candidate import select
+        return select(self,context,incoming)
 
     def tick(self):
         from regional_bft_submission_observation import event

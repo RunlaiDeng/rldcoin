@@ -1114,6 +1114,7 @@ pub fn conservation_with_escrow(chains: &[Chain]) -> Result<(Amount, Amount, Amo
     Ok((issued, liquid, escrow, pending))
 }
 pub mod bft;
+pub mod bft_candidate_selection;
 mod bft_epoch;
 pub mod bft_network;
 pub mod carriage;

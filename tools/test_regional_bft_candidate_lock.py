@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 
 from regional_bft_node import Runtime
+from regional_bft_candidate_reference import candidate_reference
 from regional_contact_node import Native
 
 BUSY = 'regional candidate rejected: lock acquisition failed because the operation would block'
@@ -54,7 +55,7 @@ class CandidateLockTests(unittest.TestCase):
             runtime.root = Path(directory)
             with patch('regional_contact_node.subprocess.run', side_effect=run):
                 try:
-                    result = runtime.candidate({'parent_height': 0})
+                    result = candidate_reference(runtime,{'parent_height': 0})
                     return result, None, calls
                 except ValueError as error:
                     return None, error, calls

@@ -227,6 +227,15 @@ enum Action {
         commands: Option<PathBuf>,
         #[arg(long)]
         miner: String,
+        /// Exact observation for a completed operation-local selection.
+        #[arg(long)]
+        context: Option<PathBuf>,
+    },
+    BftCandidateSelect {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        miner: String,
     },
     BftSign {
         #[arg(long)]
@@ -1663,7 +1672,14 @@ fn run() -> Result<()> {
                 serde_json::to_value(&status).map_err(|e| e.to_string())?
             );
         }
-        Action::BftCandidate { commands, miner } => {
+        Action::BftCandidate {
+            commands,
+            miner,
+            context,
+        } => {
+            if let Some(path) = context {
+                bft_candidate_selection::check_context(&store, &read_json(&path)?)?;
+            }
             let commands = commands
                 .map(|p| read_json(&p))
                 .transpose()?
@@ -1673,6 +1689,15 @@ fn run() -> Result<()> {
                 serde_json::to_string(&store.bft_candidate(commands, miner)?)
                     .map_err(|e| e.to_string())?
             );
+        }
+        Action::BftCandidateSelect { file, miner } => {
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let value = bft_candidate_selection::select(&store, &raw, miner)?;
+            let raw = serde_json::to_vec(&value).map_err(|e| e.to_string())?;
+            if raw.len() > MAX_BYTES {
+                return Err("candidate selection response bound".into());
+            }
+            println!("{}", std::str::from_utf8(&raw).map_err(|e| e.to_string())?);
         }
         Action::BftSignLocalEnvelope {
             file,

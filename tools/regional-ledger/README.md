@@ -595,7 +595,11 @@ not refunds, remote freshness, physical RTT or a global progress promise.
 commands without ledger debit or block inclusion. The runtime reads bounded
 native JSON, validates it natively, and packs canonical mesh bytes. Up to four
 commands can enter a native candidate; stale commands remain retained without
-rewriting signatures, intent or expiry. Incoming exports are native-validated
+rewriting signatures, intent or expiry. Ordered trials run in Rust through
+[`bft-candidate-select`](../../docs/operations/NATIVE_BFT_CANDIDATE_SELECTION.md),
+with a complete current context checked at every batch and final construction.
+Python only transports/matches bounded results; its earlier selection algorithm
+remains a test reference. Incoming exports are native-validated
 pending imports, not credits granted by carriage. `bft-network-check` validates
 a typed envelope without changing ledger state; `bft-sync` installs only the
 sequential certified native prefix; `bft-retained-messages` reads public signed

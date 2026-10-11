@@ -11,6 +11,7 @@ from contextlib import contextmanager
 import errno
 import fcntl
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -47,24 +48,30 @@ class Native:
         self.currency = mesh.hex32(currency)
         mesh.require(self.ledger.is_absolute(), 'ledger directory must be absolute')
 
-    def call(self, *args, private_input=None):
+    def call(self, *args, private_input=None, deadline=None):
         trace=getattr(self,'contact_trace',None)
         if trace is not None:
             from regional_submission_trace import SubmissionTrace
             if isinstance(trace,SubmissionTrace):
                 return trace.measure_native(args[0] if args else 'no_command',
-                    lambda:self._call(*args,private_input=private_input))
-        return self._call(*args,private_input=private_input)
+                    lambda:self._call(*args,private_input=private_input,deadline=deadline))
+        return self._call(*args,private_input=private_input,deadline=deadline)
 
-    def _call(self, *args, private_input=None):
+    def _call(self, *args, private_input=None, deadline=None):
         mesh.require(private_input is None or isinstance(private_input,(bytes,bytearray)) and len(private_input)<=1024,
             'private native input outside bound')
         # Native outputs are bounded by the candidate's journal/frame limits.
         # File-backed capture also bounds memory if a broken executable floods.
         with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
+            timeout=30
+            if deadline is not None:
+                mesh.require(type(deadline) in (int,float) and math.isfinite(deadline),
+                             'native operation deadline invalid')
+                timeout=min(timeout,deadline-time.monotonic())
+                if timeout<=0:raise subprocess.TimeoutExpired(args[0] if args else '',0)
             result = subprocess.run([str(self.binary), '--dir', str(self.ledger),
                 '--authority', self.authority, '--currency', self.currency, *map(str, args)],
-                input=private_input, stdout=output, stderr=errors, timeout=30, check=False,
+                input=private_input, stdout=output, stderr=errors, timeout=timeout, check=False,
                 cwd=Path(__file__).resolve().parents[1])
             mesh.require(output.tell() <= MAX_NATIVE_OUTPUT and errors.tell() <= 64 * 1024, 'native response outside bound')
             errors.seek(0)
@@ -204,24 +211,31 @@ class Service:
             self.close()
             raise
 
-    def close(self):
-        if self.carriage is not None:
-            self.carriage.close()
-            self.carriage = None
-        if self.bft is not None:
-            self.bft.close()
-            self.bft = None
-        if self.tcp is not None:
-            self.tcp.close()
-            self.tcp = None
+    def close(self, recover_only=False):
+        mesh.require(type(recover_only) is bool,'explicit shutdown recovery selection required')
+        from regional_native_deadline import MAX_QUIESCENCE_SECONDS
+        deadline=time.monotonic()+MAX_QUIESCENCE_SECONDS if recover_only else None
         try:
-            if self.trace_publisher is not None:
-                publisher=self.trace_publisher;self.trace_publisher=None
-                publisher.close()
+            if self.carriage is not None:
+                self.carriage.close()
+                self.carriage = None
+            if self.tcp is not None:
+                self.tcp.close()
+                self.tcp = None
+            if self.bft is not None:
+                runtime=self.bft;self.bft=None
+                try:
+                    if recover_only:runtime.quiesce(deadline)
+                finally:runtime.close()
         finally:
-            if self.lock is not None:
-                os.close(self.lock)
-                self.lock = None
+            try:
+                if self.trace_publisher is not None:
+                    publisher=self.trace_publisher;self.trace_publisher=None
+                    publisher.close()
+            finally:
+                if self.lock is not None:
+                    os.close(self.lock)
+                    self.lock = None
 
     def receive_bft_batch(self, rows, errors, rejected, deferred):
         """A local lock cannot establish envelope invalidity or acceptance."""
@@ -887,7 +901,7 @@ def main():
             if receive_wait is not None:
                 service.proposal_receive_wait = None
                 receive_wait.close()
-        finally:service.close()
+        finally:service.close(recover_only=not running)
 
 
 if __name__ == '__main__':
