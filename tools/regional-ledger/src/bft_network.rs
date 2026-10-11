@@ -811,3 +811,9 @@ pub fn receive_origin_batch(
     }
     Ok(checked)
 }
+
+#[path = "bft_receive_phase.rs"]
+mod receive_phase;
+pub use receive_phase::receive_origin_phase;
+#[cfg(test)]
+pub(crate) use receive_phase::receive_origin_phase_failure_for_test;

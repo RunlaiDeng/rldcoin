@@ -4,6 +4,59 @@ use super::continuation_tests::inventory;
 use super::*;
 use crate::tests::public;
 
+#[test]
+fn borrowed_active_evidence_matches_original_complete_bytes_and_capacity() {
+    let h = header();
+    let r = replay(&h);
+    let original_snapshot = certified(&r);
+    let mut evidence = VerifiedEvidence::default();
+    // These deliberately altered typed snapshots exercise serialization only;
+    // neither a size nor these unverified map entries authorize Native replay.
+    for count in 0..=65u8 {
+        let original = Evidence {
+            snapshots: evidence
+                .snapshots
+                .values()
+                .map(|(s, _)| s.clone())
+                .collect(),
+        };
+        assert_eq!(
+            serde_json::to_vec(&ActiveEvidence(&evidence)).unwrap(),
+            serde_json::to_vec(&original).unwrap()
+        );
+        assert_eq!(
+            crate::encoded_size::check("evidence", &ActiveEvidence(&evidence)).unwrap(),
+            encode("evidence", &original).unwrap().len()
+        );
+        let mut snapshot = original_snapshot.clone();
+        snapshot.statement.height = u64::from(count);
+        if let Some(certificate) = snapshot.bft.as_mut() {
+            certificate.prepared.votes[0].approval.signature = format!("variant-{count}:中\\\"\n");
+        }
+        evidence
+            .snapshots
+            .insert(Hash([count; 32]), (snapshot, r.chain.ledger.clone()));
+    }
+    for index in (0..=65u8).rev() {
+        evidence.snapshots.remove(&Hash([index; 32]));
+        let original = Evidence {
+            snapshots: evidence
+                .snapshots
+                .values()
+                .map(|(s, _)| s.clone())
+                .collect(),
+        };
+        assert_eq!(
+            serde_json::to_vec(&ActiveEvidence(&evidence)).unwrap(),
+            serde_json::to_vec(&original).unwrap()
+        );
+        assert_eq!(
+            crate::encoded_size::check("evidence", &ActiveEvidence(&evidence)).unwrap(),
+            encode("evidence", &original).unwrap().len()
+        );
+    }
+}
+
 fn fresh() -> (PathBuf, Store) {
     let h = header();
     let r = replay(&h);

@@ -65,7 +65,7 @@ def checked_rows(results, count):
     return results
 
 
-def receive_origin(runtime, envelopes):
+def _receive_origin(runtime, envelopes, phase=False):
     """One separately observed head, one pinned Native lock/open, no signing."""
     mesh.require(type(envelopes) is list and 0<len(envelopes)<=MAX_BATCH
         and supported(runtime,envelopes),'origin receive unsupported batch')
@@ -83,15 +83,21 @@ def receive_origin(runtime, envelopes):
             trace_envelopes(runtime,'native_input_durable',envelopes)
             trace_envelopes(runtime,'native_validate_call_started',envelopes)
             try:
-                result=runtime.native.call('bft-origin-network-receive-batch','--file',handle.name,
-                                          '--expected-head',head['history_head'])
+                action='bft-origin-network-receive-phase' if phase else 'bft-origin-network-receive-batch'
+                args=('--signer-dir',runtime.signer,'--expected-signer-head',runtime.head['head'],
+                      '--expected-key',runtime.key) if phase else ()
+                result=runtime.native.call(action,'--file',handle.name,
+                                          '--expected-head',head['history_head'],*args)
             except BaseException:
                 trace_envelopes(runtime,'native_validate_call_failed',envelopes)
                 raise
             trace_envelopes(runtime,'native_validate_call_returned',envelopes)
-        mesh.require(type(result) is dict and set(result)=={'format','currency','region',
-            'request_sha256','results','history_head','context','verified','fixture_only','signing_authority'}
-            and len(wire.canonical(result))<=MAX_BYTES and result['format']==RECEIVE_FORMAT
+        fields={'format','currency','region','request_sha256','results','history_head',
+                'context','verified','fixture_only','signing_authority'}
+        if phase:fields.update(('signer','independent_freshness_qualified'))
+        mesh.require(type(result) is dict and set(result)==fields
+            and len(wire.canonical(result))<=MAX_BYTES
+            and result['format']==('RLD-BFT-ORIGIN-RECEIVE-PHASE-V1' if phase else RECEIVE_FORMAT)
             and result['currency']==runtime.native.currency and result['region']==runtime.region
             and result['request_sha256']==hashlib.sha256(raw).hexdigest()
             and result['verified'] is True and result['fixture_only'] is True
@@ -116,11 +122,35 @@ def receive_origin(runtime, envelopes):
         mesh.require(all(row['epochs']==[] for row in rows),
                      'origin receive selected response shape differs')
         trace_envelopes(runtime,'native_validation_bound',envelopes)
+        if phase:
+            signer=result['signer']
+            mesh.require(type(signer) is dict and set(signer)=={'binding','creation','head','state','records',
+                'external_rollback_anchor_qualified'} and signer['binding']==runtime.signing_binding
+                and signer['head']==runtime.head['head'] and signer['external_rollback_anchor_qualified'] is False
+                and type(signer['records']) is int and 0<=signer['records']<=4096
+                and result['independent_freshness_qualified'] is False,
+                'origin receive phase signer observation differs')
+            observation=dict(format='RLD-BFT-LOOP-ORIGIN-OBSERVATION-V2',native=dict(context=context),
+                signer=signer,native_history_head=result['history_head'],signing_authority=False,
+                independent_freshness_qualified=False)
+            succeeded=True
+            return rows,context,observation
         succeeded=True
         return rows,context
     finally:
         observation=getattr(runtime,'observation',None)
-        if observation is not None:observation.operation('bft-origin-network-receive-batch',started,succeeded)
+        if observation is not None:
+            observation.operation('bft-origin-network-receive-phase' if phase else
+                                  'bft-origin-network-receive-batch',started,succeeded)
+
+
+def receive_origin(runtime,envelopes):
+    return _receive_origin(runtime,envelopes)
+
+def receive_observed(runtime,envelopes):
+    from regional_bft_receive_phase import enabled
+    mesh.require(enabled(runtime),'origin receive phase lacks reconciled unit')
+    return _receive_origin(runtime,envelopes,phase=True)
 
 
 def inspect(runtime, envelopes):

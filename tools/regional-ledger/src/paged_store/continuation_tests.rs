@@ -334,16 +334,14 @@ fn all_tail_publication_interruptions_refuse_reopen_and_preserve_prefix() {
 fn aggregate_prefix_orphans_cannot_hide_behind_separate_tail_capacity() {
     let (root, h, hot, _flat, prefix) = fixture();
     let (mut store, pins) = create(&root, &h, &prefix);
-    for index in 0..crate::history::MAX_FILES - 3 {
-        let hash = id("continuation-owned-orphan-capacity", &index).unwrap();
-        crate::keystore::private_create(
-            &root
-                .join("prefix/packs")
-                .join(format!("{}.pack", hash.to_hex())),
-            b"",
-        )
-        .unwrap();
-    }
+    let orphans = (0..crate::history::MAX_FILES - 3)
+        .map(|index| {
+            let hash = id("continuation-owned-orphan-capacity", &index).unwrap();
+            root.join("prefix/packs")
+                .join(format!("{}.pack", hash.to_hex()))
+        })
+        .collect();
+    crate::tests::create_durable_orphan_fixture_files(orphans, b"").unwrap();
     let before = inventory(&root);
     assert!(store
         .append_certified(&certified(&hot), &pins)

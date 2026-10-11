@@ -735,10 +735,13 @@ mod tests {
         let archive =
             PackedArchiveCandidate::<u64>::seal(&dir, s.clone(), head, pageinputs).unwrap();
         drop(archive);
-        for i in 0..history::MAX_FILES - 2 {
-            let h = crate::id("packed-file-capacity-orphan", &i).unwrap();
-            keystore::private_create(&dir.join(OBJECTS).join(name(h)), b"").unwrap();
-        }
+        let orphans = (0..history::MAX_FILES - 2)
+            .map(|i| {
+                let h = crate::id("packed-file-capacity-orphan", &i).unwrap();
+                dir.join(OBJECTS).join(name(h))
+            })
+            .collect();
+        crate::tests::create_durable_orphan_fixture_files(orphans, b"").unwrap();
         let before = inventory(&root);
         assert!(PackedArchiveCandidate::<u64>::open(&dir, &s, head)
             .err()
@@ -1047,10 +1050,13 @@ mod tests {
         let dir = root.join("capacity-writer");
         let (pages, head) = fixture_pages(&s, 1);
         let mut writer = LosslessArchiveWriterCandidate::<u64>::begin(&dir, s.clone()).unwrap();
-        for i in 0..history::MAX_FILES - 3 {
-            let hash = crate::id("streaming-retained-capacity-orphan", &i).unwrap();
-            keystore::private_create(&dir.join(OBJECTS).join(name(hash)), b"").unwrap();
-        }
+        let orphans = (0..history::MAX_FILES - 3)
+            .map(|i| {
+                let hash = crate::id("streaming-retained-capacity-orphan", &i).unwrap();
+                dir.join(OBJECTS).join(name(hash))
+            })
+            .collect();
+        crate::tests::create_durable_orphan_fixture_files(orphans, b"").unwrap();
         writer
             .retain_complete_page(pages.into_iter().next().unwrap().unwrap())
             .unwrap();

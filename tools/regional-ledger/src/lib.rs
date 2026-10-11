@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 
+mod encoded_size;
 mod verification_keys;
 use verification_keys::{validate_ed25519_public_key, verify_bytes};
 

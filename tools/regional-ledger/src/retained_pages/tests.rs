@@ -562,10 +562,13 @@ fn committed_response_recovery_at_exact_file_limit_needs_no_new_commit_file() {
     drop(stream);
     // Exactly4096 retained files:4093 private orphans + LOCK/current/pending.
     // Proposed manifest is already published and no new page/commit is needed.
-    for n in 0..history::MAX_FILES - 3 {
-        let hash = id("committed-recovery-capacity-orphan", &n).unwrap();
-        keystore::private_create(&dir.join(OBJECTS).join(page_name(hash)), b"").unwrap();
-    }
+    let orphans = (0..history::MAX_FILES - 3)
+        .map(|n| {
+            let hash = id("committed-recovery-capacity-orphan", &n).unwrap();
+            dir.join(OBJECTS).join(page_name(hash))
+        })
+        .collect();
+    crate::tests::create_durable_orphan_fixture_files(orphans, b"").unwrap();
     let before = inventory(&root);
     assert_eq!(before.len(), history::MAX_FILES);
     let (stream, ()) =

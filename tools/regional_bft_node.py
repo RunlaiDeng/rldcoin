@@ -41,6 +41,10 @@ MAX_BROADCAST_QUIET_CALLS = 16
 MAX_CARRIAGE_FRONTIER_BYTES = 8192
 
 
+def origin_receive_phase_available(runtime):
+    return getattr(runtime,'format',None)==ORIGIN_RUNTIME_FORMAT and runtime.joint is None
+
+
 def current_empty_proposal_hint(proposal, context, keys, *, allow_import=False):
     """Extra signature filter for a Native-checked bounded candidate and parent.
 
@@ -830,7 +834,9 @@ class Runtime:
                   and (self.key_file is None or not self.key_file.exists()))
         args=['bft-loop-status','--signer-dir',self.signer,'--expected-head',self.head['head']]
         if retained:args.append('--include-retained-messages')
-        value=self.native.call(*args)
+        from regional_bft_receive_phase import take
+        value=take(self) if not retained and origin_receive_phase_available(self) else None
+        if value is None:value=self.native.call(*args)
         fields={'format','native','signer','signing_authority','independent_freshness_qualified'}
         if retained:fields.add('retained_messages')
         origin=getattr(self,'format',None)==ORIGIN_RUNTIME_FORMAT and self.joint is None
@@ -896,6 +902,7 @@ class Runtime:
         return value
 
     def retain(self, envelope, sync=True, local=False):
+        self._received_phase_observation=None
         # A retained signed body does not authenticate a later envelope's proof.
         # Check every complete envelope before deduplication and let newly
         # certified dependencies reach native sync without replacing old bytes.
@@ -915,6 +922,7 @@ class Runtime:
             '--expected-head',head['history_head'])
 
     def _retain_checked(self,envelope,verified,sync=True,local=False):
+        if sync:self._received_phase_observation=None
         # Private operation-local result only; never a persisted validation cache.
         ident=mesh.digest(envelope['body'])
         mesh.require(ident in self.state['messages'] or len(self.state['messages'])<MAX_MESSAGES,
@@ -1031,6 +1039,8 @@ class Runtime:
                 observation.event('receive-end', started, succeeded=succeeded, **fields)
 
     def receive_many(self, raws):
+        self._received_phase_observation=None
+        phase_observation=None
         mesh.require(type(raws) is list and 0<len(raws)<=4,'BFT live receive count exceeds bound')
         envelopes=[]
         for raw in raws:
@@ -1048,7 +1058,12 @@ class Runtime:
             # a mutating Native call or refuse a new proof based on body dedup.
             if supports_origin_receive(self,envelopes) and len(set(self.state['messages']) |
                     {mesh.digest(e['body']) for e in envelopes})<=MAX_MESSAGES:
-                checked,context=receive_origin(self,envelopes)
+                from regional_bft_receive_phase import enabled
+                if enabled(self):
+                    from regional_bft_live_batch import receive_observed
+                    checked,context,phase_observation=receive_observed(self,envelopes)
+                else:
+                    checked,context=receive_origin(self,envelopes)
                 self._observe_context(context)
                 synchronized=True
             else:
@@ -1071,6 +1086,10 @@ class Runtime:
                     kind_received=kind,round=value.get('round'),phase=value.get('phase'),
                     context_id=mesh.digest(context) if context is not None else None,
                     envelope_id=mesh.digest(envelope),body_id=mesh.digest(envelope['body']))
+
+        if phase_observation is not None:
+            from regional_bft_receive_phase import capture
+            capture(self,phase_observation)
 
     def broadcast(self):
         # A Service may publish a complete Propose before its own Prepare.

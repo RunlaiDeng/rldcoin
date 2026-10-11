@@ -108,6 +108,19 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    /// Complete origin receive plus phase observation; never signing or recovery.
+    BftOriginNetworkReceivePhase {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_signer_head: String,
+        #[arg(long)]
+        expected_key: String,
+    },
     BftSync {
         #[arg(long)]
         file: PathBuf,
@@ -1050,6 +1063,7 @@ fn run() -> Result<()> {
         | Action::CompleteOriginHistoryAccept { expected_head, .. }
         | Action::BftOriginNetworkSync { expected_head, .. }
         | Action::BftOriginNetworkReceiveBatch { expected_head, .. }
+        | Action::BftOriginNetworkReceivePhase { expected_head, .. }
         | Action::ContactOriginApply { expected_head, .. }
         | Action::BftOriginNetworkObserveConflicts { expected_head, .. }
         | Action::ChannelReceiptAccept { expected_head, .. }
@@ -1294,6 +1308,50 @@ fn run() -> Result<()> {
             let output = serde_json::to_vec(&response).map_err(|e| e.to_string())?;
             if output.len() > MAX_BYTES {
                 return Err("origin receive complete response bound".into());
+            }
+            println!("{}", String::from_utf8(output).map_err(|e| e.to_string())?);
+        }
+        Action::BftOriginNetworkReceivePhase {
+            file,
+            signer_dir,
+            expected_signer_head,
+            expected_key,
+            ..
+        } => {
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let values: Vec<serde_json::Value> =
+                serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            if serde_json::to_vec(&values).map_err(|e| e.to_string())? != raw {
+                return Err("origin receive canonical ordered input required".into());
+            }
+            let input_sha256: Vec<Hash> = values
+                .iter()
+                .map(|v| {
+                    Ok(Hash(
+                        Sha256::digest(serde_json::to_vec(v).map_err(|e| e.to_string())?).into(),
+                    ))
+                })
+                .collect::<Result<_>>()?;
+            let wires = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let received = bft_network::receive_origin_phase(
+                &mut store,
+                wires,
+                &signer_dir,
+                Hash::from_hex(&expected_signer_head).map_err(|e| e.to_string())?,
+                &expected_key,
+            )?;
+            // Keep actual signer custody alive through complete output serialization.
+            let results: Vec<_> = input_sha256.into_iter().zip(received.checked.iter()).map(|(input_sha256, checked)|
+                serde_json::json!({"input_sha256":input_sha256,"checked":checked})).collect();
+            let response = serde_json::json!({"format":"RLD-BFT-ORIGIN-RECEIVE-PHASE-V1",
+                "currency":pin,"region":store.chain.region,
+                "request_sha256":Hash(Sha256::digest(&raw).into()),"results":results,
+                "history_head":received.history_head,"context":received.context,"signer":received.signer,
+                "verified":true,"fixture_only":true,"signing_authority":false,
+                "independent_freshness_qualified":false});
+            let output = serde_json::to_vec(&response).map_err(|e| e.to_string())?;
+            if output.len() > MAX_BYTES {
+                return Err("origin receive phase complete response bound".into());
             }
             println!("{}", String::from_utf8(output).map_err(|e| e.to_string())?);
         }

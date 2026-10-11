@@ -21,6 +21,103 @@ pub(crate) fn public(seed: u8) -> String {
 pub(crate) fn signature(seed: u8, bytes: &[u8]) -> String {
     sign_bytes(&hex::encode([seed; 32]), bytes).unwrap()
 }
+/// Prepare only unsigned capacity-test orphans. Every original private file
+/// write and file/directory synchronization completes before returning success.
+/// Two fixed workers never run Native execution or create signing custody.
+pub(crate) fn create_durable_orphan_fixture_files(paths: Vec<PathBuf>, bytes: &[u8]) -> Result<()> {
+    require(
+        paths.len() <= crate::history::MAX_FILES && (bytes.is_empty() || bytes == b"{}"),
+        "orphan fixture bound or unsigned contents",
+    )?;
+    let mut distinct = std::collections::BTreeSet::new();
+    require(
+        paths.iter().all(|path| distinct.insert(path)),
+        "duplicate orphan fixture path",
+    )?;
+    std::thread::scope(|scope| {
+        let jobs = (0..2)
+            .map(|worker| {
+                let paths = &paths;
+                scope.spawn(move || {
+                    for path in paths.iter().skip(worker).step_by(2) {
+                        crate::keystore::private_create(path, bytes)?;
+                    }
+                    Ok(())
+                })
+            })
+            .collect::<Vec<_>>();
+        let mut failure = None;
+        for job in jobs {
+            match job.join() {
+                Ok(Ok(())) => (),
+                Ok(Err(error)) => {
+                    failure.get_or_insert(error);
+                }
+                Err(_) => {
+                    failure.get_or_insert("orphan fixture worker panicked".into());
+                }
+            }
+        }
+        failure.map_or(Ok(()), Err)
+    })
+}
+
+#[test]
+fn orphan_fixture_workers_keep_exact_private_files_and_join_before_return() {
+    use std::os::unix::fs::{DirBuilderExt, MetadataExt};
+    let root =
+        std::env::temp_dir().join(format!("rld-orphan-fixture-success-{}", std::process::id()));
+    std::fs::DirBuilder::new()
+        .mode(0o700)
+        .create(&root)
+        .unwrap();
+    let paths = (0..32)
+        .map(|n| root.join(format!("{n:064x}.json")))
+        .collect::<Vec<_>>();
+    create_durable_orphan_fixture_files(paths.clone(), b"{}").unwrap();
+    assert_eq!(std::fs::read_dir(&root).unwrap().count(), paths.len());
+    for path in &paths {
+        let meta = std::fs::symlink_metadata(path).unwrap();
+        assert!(meta.is_file() && !meta.file_type().is_symlink());
+        assert_eq!(meta.mode() & 0o777, 0o600);
+        assert_eq!(meta.nlink(), 1);
+        assert_eq!(std::fs::read(path).unwrap(), b"{}");
+    }
+    assert!(create_durable_orphan_fixture_files(paths.clone(), b"").is_err());
+    for path in paths {
+        assert_eq!(std::fs::read(path).unwrap(), b"{}");
+    }
+}
+
+#[test]
+fn orphan_fixture_refusal_retains_existing_bytes_and_joins_every_writer() {
+    use std::os::unix::fs::DirBuilderExt;
+    let root =
+        std::env::temp_dir().join(format!("rld-orphan-fixture-refusal-{}", std::process::id()));
+    std::fs::DirBuilder::new()
+        .mode(0o700)
+        .create(&root)
+        .unwrap();
+    let existing = root.join("existing");
+    crate::keystore::private_create(&existing, b"retained").unwrap();
+    let mut paths = vec![existing.clone()];
+    paths.extend((1..32).map(|n| root.join(format!("{n:064x}.json"))));
+    assert!(create_durable_orphan_fixture_files(paths.clone(), b"").is_err());
+    assert_eq!(std::fs::read(&existing).unwrap(), b"retained");
+    assert_eq!(std::fs::read_dir(&root).unwrap().count(), 17);
+    for path in paths.iter().skip(1).step_by(2) {
+        assert_eq!(std::fs::read(path).unwrap(), b"");
+    }
+    let before = std::fs::read_dir(&root).unwrap().count();
+    assert!(create_durable_orphan_fixture_files(vec![root.join("new"); 2], b"").is_err());
+    assert!(create_durable_orphan_fixture_files(
+        vec![root.join("new"); crate::history::MAX_FILES + 1],
+        b""
+    )
+    .is_err());
+    assert!(create_durable_orphan_fixture_files(vec![root.join("new")], b"not an orphan").is_err());
+    assert_eq!(std::fs::read_dir(&root).unwrap().count(), before);
+}
 fn keys() -> Vec<u8> {
     let mut seeds = vec![2, 3, 4, 5];
     seeds.sort_by_key(|s| public(*s));

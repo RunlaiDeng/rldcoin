@@ -250,7 +250,7 @@ class Service:
             # or negative proof decision may be released from this refusal.
             if (isinstance(error, NativeRefusal)
                     and error.command in ('bft-network-inspect-batch',
-                                          'bft-origin-network-receive-batch',
+                                          'bft-origin-network-receive-batch','bft-origin-network-receive-phase',
                                           'bft-network-check', 'bft-sync', 'bft-context','bft-origin-network-sync',
                                           'bft-origin-network-observe-conflicts','history-head')
                     and type(error.exit_code) is int and error.exit_code == 1
@@ -459,6 +459,22 @@ class Service:
         return True
 
     def tick(self):
+        from regional_bft_node import ORIGIN_RUNTIME_FORMAT
+        from regional_bft_receive_phase import CANDIDATE_ENABLED
+        runtime=self.bft
+        composed=(CANDIDATE_ENABLED and runtime is not None and getattr(runtime,'format',None)==ORIGIN_RUNTIME_FORMAT
+                  and getattr(runtime,'joint',None) is None)
+        if not composed:return Service._tick_service(self)
+        mesh.require(getattr(runtime,'_receive_phase_operation',None) is None,
+                     'nested regional contact unit')
+        runtime._receive_phase_operation=object()
+        runtime._received_phase_observation=None
+        try:return Service._tick_service(self)
+        finally:
+            runtime._receive_phase_operation=None
+            runtime._received_phase_observation=None
+
+    def _tick_service(self):
         tick_started = time.monotonic()
         stage_started = tick_started
         stage_seconds = {}
@@ -571,6 +587,7 @@ class Service:
                         if native_observation is None:continue
                         if frame['message_id'] not in accepted:
                             native_write_attempted=True
+                            if self.bft is not None:self.bft._received_phase_observation=None
                             result = self.native.apply(raw, self.miner)
                             applied.append({'packet_id': packet_id, 'native': result})
                     except (OSError, ValueError, subprocess.TimeoutExpired) as error:

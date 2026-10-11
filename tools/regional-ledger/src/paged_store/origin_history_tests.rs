@@ -748,6 +748,95 @@ fn origin_contact80_native_export_complete66_stable_frame_and_receiver_pending_o
 }
 
 #[test]
+fn exact_capacity_full66_fixed_native_input_paired_cost_and_invalid_signature() {
+    use crate::bft_network::{Body, WireEnvelope};
+    let (h, source, root, _, records, export) =
+        super::export_archive_tests::source_fixture_with_named_origin(
+            80,
+            16,
+            crate::paged_bft::ORIGIN_NETWORK_RULES,
+            "earth-exact-capacity-1008",
+        );
+    let currency = source.trust.currency().unwrap();
+    let destination = source.trust.named("proxima").unwrap();
+    let proof = CompleteOriginHistory {
+        source: h.region,
+        destination,
+        export,
+        snapshots: records[..66]
+            .iter()
+            .map(|record| {
+                let Record::Certified(snapshot) = record else {
+                    panic!("certified source")
+                };
+                *snapshot.clone()
+            })
+            .collect(),
+    };
+    let receiver = Store::create(
+        &root.join("counter-only-receiver"),
+        h.bootstrap.clone(),
+        destination,
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let envelope = WireEnvelope {
+        format: bft_network::ORIGIN_FORMAT.into(),
+        currency,
+        region: destination,
+        evidence: crate::carriage::CarriedEvidence { snapshots: vec![] },
+        body: Body::Submission(vec![Command::Import {
+            snapshot: proof.snapshots[65].statement.id().unwrap(),
+            export,
+        }]),
+        origins: Some(vec![proof]),
+    }
+    .expand()
+    .unwrap();
+    let fixed_bytes = serde_json::to_vec(&envelope).unwrap();
+    let before = inventory(&root);
+    let expected = envelope.verify(&receiver).unwrap();
+    let mut costs = vec![];
+    for pair in 0..6 {
+        for original in if pair % 2 == 0 {
+            [true, false]
+        } else {
+            [false, true]
+        } {
+            let started = std::time::Instant::now();
+            crate::encoded_size::with_original_for_test(original, || {
+                for _ in 0..4 {
+                    assert_eq!(envelope.verify(&receiver).unwrap(), expected);
+                }
+            });
+            costs.push(serde_json::json!({"pair":pair,"original":original,"seconds":started.elapsed().as_secs_f64(),"complete_envelopes":4}));
+        }
+    }
+    let mut bad = envelope.clone();
+    bad.origins.as_mut().unwrap()[0].snapshots[65]
+        .bft
+        .as_mut()
+        .unwrap()
+        .committed
+        .votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    for original in [true, false] {
+        assert!(
+            crate::encoded_size::with_original_for_test(original, || bad.verify(&receiver))
+                .is_err()
+        );
+    }
+    assert_eq!(inventory(&root), before);
+    assert_eq!(serde_json::to_vec(&envelope).unwrap(), fixed_bytes);
+    println!(
+        "exact-capacity-paired {}",
+        serde_json::json!({"fixture_only":true,"native_complete_input_bytes":fixed_bytes.len(),"input_sha256":hex::encode(Sha256::digest(&fixed_bytes)),"pairs":costs,"unchanged_native_inventory":true,"qualification":false})
+    );
+}
+
+#[test]
 fn origin_contact_fresh_live_proposal_chain_fixture() {
     let name =
         std::env::var("RLD_PUBLIC_CONTACT_ORIGIN").unwrap_or_else(|_| "earth-batch-1008".into());

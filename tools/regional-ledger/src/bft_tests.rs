@@ -1374,3 +1374,6 @@ fn local_envelope_refuses_oversize_and_incomplete_final_quorum_without_partial_r
     assert!(refusal.contains("payload bound"));
     assert_eq!(before, retained_native_replay::inventory(&h.root));
 }
+
+#[path = "bft_receive_phase_tests.rs"]
+mod receive_phase;

@@ -277,16 +277,18 @@ fn paged_capacity_counts_all_orphans_and_refuses_without_pruning_or_head_change(
     let before = f.manifest().head().unwrap();
     let archive = f.path.join("history");
     let (mut count, _) = archive_usage(&archive).unwrap();
+    let mut orphans = vec![];
     for n in 0..MAX_FILES {
         if count == MAX_FILES {
             break;
         }
         let path = archive.join(format!("{:064x}.json", n));
         if !path.exists() {
-            private_file(&path, b"{}");
+            orphans.push(path);
             count += 1;
         }
     }
+    crate::tests::create_durable_orphan_fixture_files(orphans, b"{}").unwrap();
     assert_eq!(archive_usage(&archive).unwrap().0, MAX_FILES);
     assert!(accept_mined(f.node(), vec![])
         .unwrap_err()

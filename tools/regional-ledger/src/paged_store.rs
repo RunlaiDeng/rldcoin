@@ -71,6 +71,29 @@ struct Replay {
     // Derived only from complete origin events; never deserialized state.
     origin_imports: BTreeMap<Hash, (Hash, Hash)>,
 }
+// Borrow the identical BTreeMap order used by the original Evidence Vec.
+// Serialization/byte counting grants no authentication or replay authority.
+struct ActiveEvidence<'a>(&'a VerifiedEvidence);
+struct ActiveSnapshots<'a>(&'a VerifiedEvidence);
+impl Serialize for ActiveSnapshots<'_> {
+    fn serialize<S: serde::Serializer>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<S::Ok, S::Error> {
+        serializer.collect_seq(self.0.snapshots.values().map(|(snapshot, _)| snapshot))
+    }
+}
+impl Serialize for ActiveEvidence<'_> {
+    fn serialize<S: serde::Serializer>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<S::Ok, S::Error> {
+        use serde::ser::SerializeStruct;
+        let mut value = serializer.serialize_struct("Evidence", 1)?;
+        value.serialize_field("snapshots", &ActiveSnapshots(self.0))?;
+        value.end()
+    }
+}
 /// Process-only Native execution, created only by authenticated genesis or full
 /// cold replay. Never serialized and never initialized from Store projections.
 pub(super) struct CurrentReplay {
@@ -371,22 +394,29 @@ impl Replay {
         encode("paged-bft-native-ledger", &self.chain.ledger)?;
         #[cfg(test)]
         cost.mark(1);
-        let active = Evidence {
-            snapshots: self
-                .evidence
-                .snapshots
-                .values()
-                .map(|(s, _)| s.clone())
-                .collect(),
-        };
         #[cfg(not(test))]
-        encode("evidence", &active)?;
+        let active_bytes = crate::encoded_size::check("evidence", &ActiveEvidence(&self.evidence))?;
+        #[cfg(test)]
+        let active_bytes = if crate::encoded_size::original_for_test() {
+            let original = Evidence {
+                snapshots: self
+                    .evidence
+                    .snapshots
+                    .values()
+                    .map(|(s, _)| s.clone())
+                    .collect(),
+            };
+            encode("evidence", &original)?.len()
+        } else {
+            crate::encoded_size::check("evidence", &ActiveEvidence(&self.evidence))?
+        };
         #[cfg(test)]
         {
-            let encoded = encode("evidence", &active)?;
             cost.mark(2);
-            cost.finish(encoded.len());
+            cost.finish(active_bytes);
         }
+        #[cfg(not(test))]
+        let _ = active_bytes;
         Ok(())
     }
     fn journal(&self, header: &Header) -> Journal {
