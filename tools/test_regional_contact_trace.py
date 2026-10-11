@@ -149,6 +149,10 @@ class TraceTests(unittest.TestCase):
         stages={x['stage'] for x in traces['proxima'].snapshot()['events'] if x.get('packet_id')==ident}
         self.assertIn('destination_receipt_retained',stages)
         self.assertIn('inbound_refused',stages)
+        refusal=next(x for x in traces['proxima'].snapshot()['events']
+                     if x.get('packet_id')==ident and x['stage']=='inbound_refused')
+        self.assertEqual(refusal['failure_stage'],'reply_prepare_or_close')
+        self.assertEqual(refusal['error_class'],'ValueError')
         with fixture.node('proxima') as node:self.assertIn(ident,node.receipts())
         with fixture.node('earth') as node:self.assertNotIn(ident,node.receipts())
 
@@ -164,7 +168,29 @@ class TraceTests(unittest.TestCase):
         self.assertIn('inbound_refused',stages)
         self.assertNotIn('destination_receipt_retained',stages)
         self.assertNotIn('local_transport_custody',stages)
+        refusal=next(x for x in traces['proxima'].snapshot()['events']
+                     if x.get('packet_id')==ident and x['stage']=='inbound_refused')
+        self.assertEqual(refusal['failure_stage'],'custody_receive')
+        self.assertEqual(refusal['error_class'],'OSError')
         with fixture.node('earth') as node:self.assertNotIn(ident,node.receipts())
+
+    def test_exhausted_mesh_open_has_distinct_private_refusal_stage_without_custody(self):
+        fixture,traces=self.traced_fixture()
+        with fixture.node('earth') as node:
+            ident=node.enqueue(fixture.frame(908),fixture.ids['proxima'])
+        with fixture.node('proxima') as held:
+            before=held.path.read_bytes()
+            result=fixture.servers['earth'].tick()
+            self.assertIn('TCP peer refused custody; retain queued evidence',result['errors'])
+            refusal=next(x for x in traces['proxima'].snapshot()['events']
+                         if x.get('packet_id')==ident and x['stage']=='inbound_refused')
+            self.assertEqual(refusal['failure_stage'],'mesh_open')
+            self.assertEqual(refusal['error_class'],'BlockingIOError')
+            self.assertEqual(before,held.path.read_bytes())
+            self.assertNotIn(ident,held.state['messages'])
+            with fixture.node('earth') as source:
+                self.assertIn(ident,source.state['messages'])
+                self.assertNotIn(ident,source.receipts())
 
 
 if __name__=='__main__':unittest.main()

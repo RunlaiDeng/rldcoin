@@ -10,6 +10,17 @@
 Native 完整信封接收分别记录。Native 接收事件只在正常完整认证、依赖同步和
 保留成功之后产生。目标运输回执不代表 Native 接收或可花费。
 
+`inbound_refused.failure_stage` records the local execution boundary:
+`mesh_open`, `custody_receive`, `custody_observe` or `reply_prepare_or_close`.
+The last boundary includes context-manager close; it does not assert that reply
+construction was the unique cause. The bounded exception class is retained
+alongside it. These private observations distinguish a pre-open lock refusal,
+a receive/publication failure and refusal after durable receipt retention without
+changing the signed `CONTACT_REJECTED` reply or granting custody. A sender's
+generic refusal alone cannot identify the receiver's cause. Missing or evicted
+events remain unknown; the exact earlier failure cannot be reconstructed from
+a later run.
+
 所有 Native 验证、TLS pin、挑战/精确交换绑定、fsync、签署头、四项接收槽、
 票数、成熟高度、期限和容量保持原要求。追踪需要额外散列和状态字节，可能改变时序；
 它是明确开启的观察候选，不能替代关闭追踪的既有资格，也不提供账本授权。

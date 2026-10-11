@@ -625,16 +625,20 @@ class Server:
             if trace is not None:trace.packets('request_authenticated',peer,trace_rows,nonce=body['nonce'])
             accepted,bundle=False,None;node=None
             destination_receipts=()
+            failure_stage='mesh_open'
             try:
                 with self.mesh_node(deadline) as node:
                     mesh.require(node.id==self.id,'TCP runtime identity changed')
+                    failure_stage='custody_receive'
                     node.receive(body['bundle'],peer)
+                    failure_stage='custody_observe'
                     if trace is not None:
                         retained=node.receipts()
                         destination_receipts=tuple((ident,frame) for ident,frame in trace_rows
                             if ident in retained and retained[ident]['body']['node_id']==self.id)
                         trace.packets('local_transport_custody',peer,trace_rows,nonce=body['nonce'])
                         trace.packets('destination_receipt_retained',peer,destination_receipts,nonce=body['nonce'])
+                    failure_stage='reply_prepare_or_close'
                     accepted=True  # receive fsyncs its complete verified state first.
                     with self.guard:
                         independent=self.outbound_owner is not None and self.outbound_owner.is_alive()
@@ -659,7 +663,7 @@ class Server:
                 accepted,bundle=False,None
                 self.mark(peer,'inbound',False)
                 if trace is not None:trace.packets('inbound_refused',peer,trace_rows,
-                    nonce=body['nonce'],error_class=type(error).__name__)
+                    nonce=body['nonce'],error_class=type(error).__name__,failure_stage=failure_stage)
             response=mesh.sign(self.key,'tcp-response',{'format':mesh.VERSION,'adapter':ADAPTER,'network':self.network,
                 'node_id':self.id,'to':peer,'nonce':body['nonce'],'challenge':body['challenge'],
                 'exchange_id':mesh.digest(body['bundle']),
