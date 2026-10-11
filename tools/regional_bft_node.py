@@ -322,8 +322,47 @@ def carriage_frontier(messages,selected,height,previous=(None,None)):
                  for rows,old in zip(groups,previous))
 
 
+def submission_carriage_pair(messages,pending,context,peers,round_number):
+    """Schedule one complete local Submission to the configured current leader.
+
+    Only the caller's prior complete Native authentication/retention supplies
+    authority. This bounded filter reads immutable bytes; it cannot decide
+    command validity at the current height, install value or authorize a vote.
+    """
+    fields={'currency','region','epoch','previous','parent_height','parent_block','parent_state'}
+    if (not isinstance(messages,Messages) or len(messages)>MAX_MESSAGES
+            or type(pending) is not list or len(pending)>MAX_MESSAGES*4
+            or type(context) is not dict or set(context)!=fields
+            or type(context['parent_height']) is not int or context['parent_height']<1
+            or type(round_number) is not int or not 0<=round_number<32
+            or type(peers) is not dict or len(peers)!=4
+            or any(type(k) is not str or type(p) is not str for k,p in peers.items())
+            or len(set(peers.values()))!=4):return None
+    try:
+        for key,peer in peers.items():mesh.hex32(key);mesh.hex32(peer)
+        for name in fields-{'parent_height'}:mesh.hex32(context[name])
+    except (TypeError,ValueError):return None
+    destination=peers[sorted(peers)[(context['parent_height']+round_number)%4]]
+    for pair in sorted(pending,key=_carriage_pair_key):
+        content,ident,peer=pair
+        if peer!=destination or ident not in messages:continue
+        record=messages.record(ident)
+        body=record['body']
+        if type(body) is not dict:continue
+        commands=body.get('Submission')
+        if (not record['local'] or record['value'] is not None
+                or set(body)!={'Submission'} or type(commands) is not list
+                or not 1<=len(commands)<=4 or record['sha256']!=content
+                or record['size_bytes']>MAX_BROADCAST_HINT_BYTES
+                or record['header']!=dict(format=ORIGIN_NETWORK,currency=context['currency'],region=context['region'])):continue
+        messages.payload(ident)  # original complete bytes, references, size/digest
+        return pair
+    return None
+
+
 def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, proposal_context=None,
-                   class_position=None, first_proposal=None, first_prepare=None,parent_pair=None):
+                   class_position=None, first_proposal=None, first_prepare=None,parent_pair=None,
+                   submission_pair=None):
     """Reserve carriage for this native-observed height and retained history.
 
     Classification schedules already retained complete bytes only. It never
@@ -457,6 +496,13 @@ def carriage_batch(messages, pending, height, cursor, *, prepare_first=False, pr
             if pair in active:
                 selected[index]=parent_pair
                 break
+    if (prepare_first and submission_pair in history and submission_pair not in selected):
+        places=[index for index,pair in enumerate(selected) if pair in history]
+        # Use at most the first history place; keep its last ordinary selection
+        # and frontier. A fresh three-recipient Proposal/Prepare closure has
+        # only one history place and keeps it unchanged. Current dependencies,
+        # total four and at least one ordinary history place remain intact.
+        if len(places)>=2:selected[places[0]]=submission_pair
     return selected
 
 
@@ -1199,13 +1245,18 @@ class Runtime:
                                                   self.peers,getattr(self,'_carriage_round',None))
                              if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
                              and getattr(self,'_retained_native_authenticated',False) else None)
+                submission_pair=(submission_carriage_pair(self.state['messages'],pending,proposal_context,
+                                                          self.peers,getattr(self,'_carriage_round',None))
+                                 if self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
+                                 and getattr(self,'_retained_native_authenticated',False) else None)
                 batch_pairs=carriage_batch(self.state['messages'],pending,
                                           self.state['height'],self.state['cursor'],
                                           prepare_first=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
                                           proposal_context=proposal_context,
                                           class_position=class_position,
                                           first_proposal=first_proposal,
-                                          first_prepare=first_prepare,parent_pair=parent_pair)
+                                          first_prepare=first_prepare,parent_pair=parent_pair,
+                                          submission_pair=submission_pair)
                 batch=[]
                 for content,ident,peer in batch_pairs:
                     payload=self.state['messages'].payload(ident)
