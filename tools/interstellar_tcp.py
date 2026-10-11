@@ -334,6 +334,8 @@ class Server:
         self.mesh_costs=MeshCosts(contact_trace=self.contact_trace)
         self.outbound_wake=None
         self.outbound_wake_failures=0
+        self.receive_wake=None
+        self.receive_wake_failures=0
         # Retry ownership survives bounded refusal; idle ownership is not a
         # perpetual scheduling grant. Only an active acquisition or its brief
         # post-refusal window gives ordinary selection priority over TCP.
@@ -546,8 +548,39 @@ class Server:
                                 and current.is_alive() and self.running):
                             self.tcp_mesh_waiters.discard(current)
 
+    @contextmanager
     def mesh_node(self, deadline):
-        return self._local_mesh_node(deadline,False)
+        added=False
+        with self._local_mesh_node(deadline,False) as node:
+            with self.guard:enabled=self.receive_wake is not None
+            before=set(node.state['messages']) if enabled else None
+            yield node
+            added=before is not None and bool(set(node.state['messages'])-before)
+        # Only a successful body, Native-independent transport custody and
+        # original close/lease release may request another ordinary intake.
+        if added:self.notify_received()
+
+    def claim_receive_wake(self, wake):
+        mesh.require(callable(wake),'TCP receive wake callback differs')
+        with self.guard:
+            mesh.require(self.running and self.receive_wake is None,
+                         'TCP receive wake owner already present or stopping')
+            self.receive_wake=wake
+
+    def release_receive_wake(self, wake):
+        with self.guard:
+            mesh.require(self.receive_wake is wake,'TCP receive wake owner differs')
+            self.receive_wake=None
+
+    def notify_received(self):
+        with self.guard:wake=self.receive_wake
+        if wake is not None:
+            try:wake()
+            except Exception:
+                # The periodic main loop remains available; no custody or
+                # receipt depends on the success of this scheduling hint.
+                with self.guard:
+                    self.receive_wake_failures=min(self.receive_wake_failures+1,2**63-1)
 
     def selection_mesh_node(self, deadline):
         return self._local_mesh_node(deadline,True)
@@ -1010,6 +1043,7 @@ class Server:
                 'observations':copy.deepcopy(self.observations),'refused_connections':self.refused_connections,
                 'local_lock_retries':self.local_lock_retries,'local_lock_exhaustions':self.local_lock_exhaustions,
                 'outbound_wake_failures':self.outbound_wake_failures,
+                'receive_wake_failures':self.receive_wake_failures,
                 'mesh_lease_costs':self.mesh_costs.snapshot()}
 
     def close(self):

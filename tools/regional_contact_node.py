@@ -838,14 +838,20 @@ def main():
         trace=DeliveryTrace()
     service = Service(native, config, args.miner,listen,args.insecure_tcp,args.bft_config,contact_trace=trace)
     running = True
+    receive_wait = None
     def stop(*_):
         nonlocal running
         running = False
         service.tcp.running = False
+        if receive_wait is not None:receive_wait.stop()
     signal.signal(signal.SIGINT, stop)
     signal.signal(signal.SIGTERM, stop)
     previous = None
     try:
+        from regional_bft_node import ORIGIN_RUNTIME_FORMAT
+        if service.bft is not None and service.bft.format == ORIGIN_RUNTIME_FORMAT and service.bft.joint is None:
+            from regional_receive_wake import Wait
+            receive_wait = Wait(service.tcp, args.interval)
         while running:
             try:
                 result = service.tick()
@@ -861,11 +867,16 @@ def main():
             if comparable != previous:
                 print(json.dumps({k:v for k,v in result.items() if k not in ('bft_observation','contact_trace')}), flush=True)
                 previous = comparable
-            deadline = time.monotonic() + args.interval
-            while running and time.monotonic() < deadline:
-                time.sleep(min(0.1, args.interval))
+            if receive_wait is not None:
+                receive_wait.wait(lambda: running)
+            else:
+                deadline = time.monotonic() + args.interval
+                while running and time.monotonic() < deadline:
+                    time.sleep(min(0.1, args.interval))
     finally:
-        service.close()
+        try:
+            if receive_wait is not None:receive_wait.close()
+        finally:service.close()
 
 
 if __name__ == '__main__':
