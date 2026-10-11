@@ -3175,10 +3175,35 @@ class MeshTests(unittest.TestCase):
     def test_state_byte_limit_does_not_replace_existing_durable_state(self):
         with self.f.node('earth') as node:
             before = node.path.read_bytes()
+            before_state = copy.deepcopy(node.state)
             with patch.object(mesh, 'MAX_STATE', len(before)):
-                with self.assertRaisesRegex(ValueError, 'capacity'):
+                with self.assertRaisesRegex(ValueError, '^caller state byte bound$'):
                     node.enqueue(self.f.frame(), self.f.identities['andromeda']['node_id'])
             self.assertEqual(node.path.read_bytes(), before)
+            self.assertEqual(node.state, before_state)
+
+    def test_single_enqueue_lost_native_publication_reply_requires_authenticated_reopen(self):
+        import interstellar_storage as storage
+        invoke = storage._invoke
+        def lose(request, raw=b''):
+            result = invoke(request, raw)
+            if type(request) is dict and 'AtomicWrite' in request:
+                raise ValueError('lost native publication reply')
+            return result
+        with self.f.node('earth') as node:
+            before = node.path.read_bytes()
+            before_state = copy.deepcopy(node.state)
+            with patch.object(storage, '_invoke', side_effect=lose):
+                with self.assertRaisesRegex(ValueError, '^lost native publication reply$'):
+                    node.enqueue(self.f.frame(), self.f.identities['andromeda']['node_id'])
+            self.assertEqual(node.state, before_state)
+            retained = node.path.read_bytes()
+            self.assertNotEqual(retained, before)
+        # No acknowledgment escaped; actual complete cold authentication finds
+        # the installed packet instead of clearing it or inventing a rollback.
+        with self.f.node('earth') as node:
+            self.assertEqual(len(node.state['messages']), 1)
+            self.assertEqual(node.path.read_bytes(), retained)
 
 
     def test_evicted_current_proposal_hint_restored_before_quiet_return(self):

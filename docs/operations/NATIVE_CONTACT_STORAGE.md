@@ -3,8 +3,9 @@
 The ordinary contact mesh uses `RLD-NATIVE-CONTACT-STORAGE-V1` for immutable
 archive file publication, mutable state/index file publication and retained
 file/directory synchronization. Rust owns these filesystem operations; Python
-continues to pack and authenticate complete mesh state and select bounded archive
-admission. Ordinary `Node.save` supplies the complete canonical index bytes to
+continues to authenticate complete mesh state and select bounded archive
+admission. The [native shared-frame codec](NATIVE_CONTACT_STATE_CODEC.md) checks
+packing and reconstruction before ordinary `Node.save` supplies complete canonical index bytes to
 native publication; its callers retain their existing complete authentication.
 `interstellar_storage_reference.py` retains the independent Python syscall
 implementation for explicit tests. Native failures never select it as a fallback.
@@ -83,7 +84,7 @@ publication probes and separately compiled native test-process boundaries.
 
 ## Remaining migration and qualification
 
-Mesh state packing/replay, contact-spool publication,
+Complete mesh authentication, contact-spool publication,
 deferred intake, outgoing scheduling, service orchestration and remaining wallet
 flows still require migration. Python tests retain the syscall oracle and explicit
 reference interruption probes. Native unit tests inject failures or terminate a

@@ -62,6 +62,9 @@ no ledger acceptance, signing, finality, maturity, spendability or refunds.
 Immutable archive publication, mutable state/index file publication and retained-file synchronization use the
 [native storage interface](NATIVE_CONTACT_STORAGE.md). Complete mesh and ledger
 authentication and signed-index selection remain separate caller obligations.
+The [native shared-frame state codec](NATIVE_CONTACT_STATE_CODEC.md) owns bounded
+packing and complete-record reconstruction; its output still requires that
+authentication.
 
 This interface does not qualify independent operations/custody, hardware or power
 interruption, long history, full BFT fault profiles, PQ cryptography, physical

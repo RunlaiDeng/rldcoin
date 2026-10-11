@@ -39,3 +39,15 @@ x509-parser = { version = "=0.18.1", features = ["verify"] }
 [build-dependencies]
 sha2 = "=0.10.8"
 hex = "=0.4.3"
+
+# Keep the native byte-commitment implementation optimized in ground builds;
+# arithmetic and debug checks remain enabled, as in the default debug profile.
+[profile.dev.package.sha2]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.sha2]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

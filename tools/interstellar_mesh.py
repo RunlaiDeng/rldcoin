@@ -27,6 +27,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey,
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, PublicFormat, NoEncryption
 import interstellar_transfer as evidence
 import interstellar_active_state as active_state
+import interstellar_state_codec as state_codec
 import interstellar_frame_digest as frame_digest
 import interstellar_spool_codec as spool_codec
 
@@ -145,17 +146,17 @@ def load(path, limit):
 
 
 def pack_state_storage(state):
-    return active_state.pack(state, max_state=MAX_STATE, max_messages=MAX_MESSAGES, max_transit=MAX_BATCH)
+    return state_codec.pack(state, max_state=MAX_STATE, max_messages=MAX_MESSAGES, max_transit=MAX_BATCH)
 
 
 def unpack_state_storage(value, network, node):
-    return active_state.unpack(value, network=network, node_id=node, max_state=MAX_STATE,
+    return state_codec.unpack(value, network=network, node_id=node, max_state=MAX_STATE,
                                max_messages=MAX_MESSAGES, max_transit=MAX_BATCH)
 
 
 def load_state_storage(path, network, node):
     raw=evidence.read_file(Path(path), MAX_STATE)
-    return active_state.decode(raw, network=network, node_id=node, max_state=MAX_STATE,
+    return state_codec.decode(raw, network=network, node_id=node, max_state=MAX_STATE,
                                max_messages=MAX_MESSAGES, max_transit=MAX_BATCH)
 
 
@@ -978,22 +979,8 @@ class Node:
         return None
 
     def enqueue(self, frame, destination, hop_limit=MAX_HOPS):
-        hex32(destination)
-        evidence.inspect_frame(frame)
-        integer(hop_limit, 1, MAX_HOPS)
-        require(len(self.state['messages']) < MAX_MESSAGES, 'message capacity reached; retain existing evidence')
-        packet = sign(self.key, 'packet', {'format': VERSION, 'network': self.network, 'node_id': self.id,
-                      'destination': destination, 'nonce': os.urandom(32).hex(), 'hop_limit': hop_limit,
-                      'frame': base64.b64encode(frame).decode()})
-        ident = digest(packet)
-        header, _ = evidence.inspect_frame(frame)
-        routing = sign(self.key,'receipt-route',{'format':VERSION,'network':self.network,'node_id':self.id,
-            'packet_id':ident,'destination':destination,'frame_id':header['message_id']})
-        self.state['messages'][ident] = {'packet': packet, 'routing': routing, 'hops': []}
-        self.deliver_local(self.state)
-        self.refresh_recent(self.state,[ident])
-        self.save()
-        return ident
+        # Use the same publication-before-adoption path for a single packet.
+        return self.enqueue_batch([(frame, destination)], hop_limit)[0]
 
     def enqueue_batch(self, items, hop_limit=MAX_HOPS):
         """Publish at most one ordinary four-item carriage selection durably.

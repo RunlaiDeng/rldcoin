@@ -213,6 +213,12 @@ pub(crate) fn canonical_with_limit<T: Serialize>(value: &T, limit: usize) -> Res
         &mut text,
         limit,
     )?;
+    // The sorted encoder already checked the byte bound. Only characters at
+    // or above DEL require the Python-compatible Unicode escape pass; return
+    // the exact existing bytes directly when that pass would change nothing.
+    if text.bytes().all(|byte| byte < 0x7f) {
+        return Ok(text.into_bytes());
+    }
     let mut out = String::new();
     for ch in text.chars() {
         if ch as u32 >= 0x7f {
