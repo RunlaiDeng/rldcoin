@@ -1153,6 +1153,14 @@ class Node:
         key=(self.carriage_position_domain(),'native-commit-spare')
         remember_carriage_position(key,(scope,frame_ids,True)
                                    if ordered_frames and frame_ids else (scope,frame_ids))
+        if ordered_frames and frame_ids:
+            # This peer-local debt survives scope/head changes. A missing debt
+            # starts from ordinary service until an explicitly installed hint.
+            # The original bounded hint pool retains only this primitive bit.
+            domain=self.carriage_position_domain()
+            for peer in sorted(self.contacts):
+                debt=(domain,peer,'native-background-recent-debt')
+                if carriage_position(debt) is None:remember_carriage_position(debt,False)
         return key
 
     def first_carriage_plan(self,peer):
@@ -1609,6 +1617,30 @@ class Node:
         # the identical complete frame. Eligibility still authenticates packet,
         # routing, visited hops and suppression before allocating any slot.
         pending=[direct_waiting_copies(items) for items in pending]
+        # An ordered background turn keeps its historical stream and original
+        # two first offers. Give at most its existing recent-class place to an
+        # exact still-unprepared direct head, then owe one ordinary recent
+        # service. Priority turns and every retry keep their original selection.
+        # Scope changes cannot reset the debt; misses retain ordinary ordering.
+        if (not priority_pair and not retry_packet_ids and available_hint is not None
+                and len(available_hint)==3 and available_hint[2] is True
+                and ordered_turn_key is not None and ordered_waiting_head is not None):
+            debt_key=(self.carriage_position_domain(),peer,'native-background-recent-debt')
+            debt=carriage_position(debt_key)
+            if type(debt) is bool:
+                target=None;recent=set(self.state['recent_transits'])
+                if not debt:
+                    for index,items in enumerate(pending):
+                        target=next((ident for ident in items if ident in recent
+                            and ident in waiting and ident not in selected_ids
+                            and self.state['messages'][ident]['packet']['body']['destination']==peer
+                            and self.state['messages'][ident]['routing']['body']['frame_id']==ordered_waiting_head),None)
+                        if target is not None:
+                            pending[index]=[target]+[ident for ident in items if ident!=target]
+                            break
+                if current_carriage is not None:
+                    current_carriage.update(background_recent_key=debt_key,
+                        background_recent_debt=debt,background_recent_target=target)
         streams=[iter(eligible([i for i in items if i not in retry_packet_ids and i not in selected_ids])) for items in pending]
         def finish_plan():
             bundle=sign(self.key,'exchange',body)
@@ -1714,6 +1746,10 @@ class Node:
             # spare must not move the ordinary ring past waiting background.
             classes=current_carriage.get('classes',{})
             background_ordinary=[t for t in ordinary if digest(t['packet']) not in classes]
+        background_target=current_carriage.get('background_recent_target')
+        if background_target is not None:
+            background_ordinary=[t for t in background_ordinary
+                                 if digest(t['packet'])!=background_target]
         self.remember_carriage(peer,{'body':{'transits':background_ordinary}})
         # Publish optional current-copy positions only after original durable
         # preparation. Lost sends rotate recipients, never grant custody; a
@@ -1736,6 +1772,14 @@ class Node:
                             current_carriage['scope']),transit['packet']['body']['node_id']==self.id)
         if ordered_turn_key is not None and carried_rows:
             remember_carriage_position(ordered_turn_key,current_carriage['ordered_next_turn'])
+        debt_key=current_carriage.get('background_recent_key')
+        if debt_key is not None:
+            carried={digest(t['packet']) for t in ordinary}
+            if current_carriage['background_recent_debt']:
+                if carried & set(self.state['recent_transits']):
+                    remember_carriage_position(debt_key,False)
+            elif background_target in carried:
+                remember_carriage_position(debt_key,True)
         self._trace_spool('prepare_retained',peer,bundle)
         return bundle
 
