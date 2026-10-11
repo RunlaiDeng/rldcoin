@@ -149,6 +149,16 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
         ..
     } = inspect(node, &pins)?;
     let messages = client.proposal_messages(node, pins.archive_head, &context)?;
+    opportunity(node, &pins, &context, &keys, &active, &messages)
+}
+pub(crate) fn opportunity(
+    node: &Store,
+    pins: &Pins<'_>,
+    context: &bft::Context,
+    keys: &[String],
+    active: &bft::State,
+    messages: &[bft::Message],
+) -> Result<Opportunity> {
     let count = messages.len();
     let mut proposals = BTreeSet::new();
     let mut timeouts = Timeouts::new();
@@ -157,15 +167,16 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
             bft::Message::Proposal(p) => {
                 proposals.insert(p.round);
             }
-            bft::Message::Timeout(t) => timeout_insert(&mut timeouts, *t)?,
+            bft::Message::Timeout(t) => timeout_insert(&mut timeouts, *t.clone())?,
+            bft::Message::Vote(_) => (),
             _ => return Err("BFT scheduling unexpected authenticated message".into()),
         }
     }
     let current = proposals.contains(&active.round);
     let future = proposals.range(active.round + 1..).next().is_some();
     let proposed_round =
-        candidate_round(&context, active.round, &pins.key, &keys, future, &timeouts)?;
-    let leader = bft::leader(&context, proposed_round, &keys)?;
+        candidate_round(context, active.round, &pins.key, keys, future, &timeouts)?;
+    let leader = bft::leader(context, proposed_round, keys)?;
     let timeout = if proposed_round == 0 {
         None
     } else if let Some(votes) = timeouts.get(&(proposed_round - 1)).filter(|v| v.len() >= 3) {
@@ -181,7 +192,7 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
     };
     let high = timeout
         .as_ref()
-        .map(|tc| tc.selected(&keys))
+        .map(|tc| tc.selected(keys))
         .transpose()?
         .flatten()
         .map(|q| q.value);
@@ -192,9 +203,9 @@ pub fn observe(node: &Store, pins: Pins<'_>) -> Result<Opportunity> {
         && (proposed_round == 0 || timeout.is_some());
     Ok(Opportunity {
         format: "RLD-NATIVE-BFT-PROPOSAL-OPPORTUNITY-V1",
-        context,
+        context: context.clone(),
         round: active.round,
-        key: pins.key,
+        key: pins.key.clone(),
         caller_head: pins.head,
         archive_sha256: pins.archive_head,
         authenticated_messages: count,

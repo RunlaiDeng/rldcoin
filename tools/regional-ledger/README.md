@@ -980,3 +980,5 @@ The [native companion archive interface](../../docs/operations/NATIVE_BFT_RUNTIM
 The [native proposal opportunity interface](../../docs/operations/NATIVE_BFT_PROPOSAL_OPPORTUNITY.md) selects proposal rounds, leaders and complete timeout certificates from fresh locked inputs while preserving the companion's original phase clocks and independent signing checks.
 
 The [native phase selection interface](../../docs/operations/NATIVE_BFT_PHASE_SELECTION.md) selects Prepare/Commit and complete certificates from fully authenticated locked inputs without signing or installing a ledger.
+
+The [ordinary tick policy](../../docs/operations/NATIVE_BFT_TICK_POLICY.md) selects proposal waits, timeouts and the exact Origin post-proposal Prepare using the original local monotonic phase entry. The companion still dispatches callbacks and handles lifecycle and transport.

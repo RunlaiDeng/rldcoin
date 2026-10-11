@@ -4,8 +4,8 @@ Ordinary and complete-origin companions delegate current Prepare/Commit,
 future Prepare and complete-certificate selection to Rust. Python dispatches
 the selected requests, retains the original phase clocks and manages lifecycle
 and transport. Joint-epoch and role-slot workflows remain explicit separate
-paths. The Origin companion's immediate own Prepare shortcut after its local
-proposal remains in the companion; its actual signing still uses Native.
+paths. The [ordinary tick policy](NATIVE_BFT_TICK_POLICY.md) composes these
+choices with proposal waits, timeouts and Origin's exact immediate own Prepare.
 Native refusal never invokes a Python policy fallback for migrated
 profiles; the independent Python policy is test-only.
 

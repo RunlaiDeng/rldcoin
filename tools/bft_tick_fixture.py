@@ -39,7 +39,7 @@ class Clock:
 def methods(source=SOURCE, clock_override=None):
     tree = ast.parse(source.read_text())
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'Runtime')
-    names = {'tick', '_tick', '_finish_local_finalization', 'signed', 'quorum', 'timeout_certificate', 'report', '_try_prepare', '_broadcast_after_observation'}
+    names = {'_native_tick', 'tick', '_tick', '_finish_local_finalization', 'signed', 'quorum', 'timeout_certificate', 'report', '_try_prepare', '_broadcast_after_observation'}
     extracted = ast.Module(body=[ast.ClassDef(name='ExactRuntime', bases=[], keywords=[],
         body=[n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name in names],
         decorator_list=[])], type_ignores=[])
@@ -59,6 +59,10 @@ ExactRuntime, clock = methods()
 
 
 class Fixture(ExactRuntime):
+    def tick_plan(self,context,round_number,stage,stopped=False,proposed=None):
+        from regional_bft_tick_reference import plan_reference
+        return plan_reference(self,context,round_number,stage,clock.monotonic(),stopped,proposed,self.native_state)
+
     def phase_action(self,context,round_number,mode):
         from regional_bft_phase_reference import action_reference
         return action_reference(self,context,round_number,mode,self.native_state)

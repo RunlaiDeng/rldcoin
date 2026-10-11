@@ -84,7 +84,7 @@ pub struct Observation {
     pub signing_authority: bool,
     pub independent_freshness_qualified: bool,
 }
-type Votes = BTreeMap<(u64, u8), BTreeMap<String, bft::Vote>>;
+pub(crate) type Votes = BTreeMap<(u64, u8), BTreeMap<String, bft::Vote>>;
 fn phase(phase: bft::Phase) -> u8 {
     match phase {
         bft::Phase::Prepare => 0,
@@ -126,7 +126,12 @@ fn quorum(
         &node.evidence,
     )?))
 }
-fn prepare(state: &bft::State, proposal: &bft::Proposal, key: &str, node: &Store) -> Result<bool> {
+pub(crate) fn prepare(
+    state: &bft::State,
+    proposal: &bft::Proposal,
+    key: &str,
+    node: &Store,
+) -> Result<bool> {
     match state.preview(
         &bft::Request::Prepare(Box::new(proposal.clone())),
         key,
@@ -167,7 +172,7 @@ fn certificate(
     snapshot.bft = Some(certificate);
     Ok(snapshot)
 }
-fn select(
+pub(crate) fn select(
     mode: Mode,
     state: &bft::State,
     signer_state: &bft::State,
@@ -248,6 +253,22 @@ fn select(
     }
     Ok(Action::Idle)
 }
+pub(crate) fn retained(messages: &[bft::Message]) -> Result<(Vec<(bft::Proposal, Hash)>, Votes)> {
+    let mut proposals = Vec::new();
+    let mut votes = Votes::new();
+    for message in messages {
+        match message {
+            bft::Message::Proposal(p) => {
+                let value = p.snapshot.statement.id()?;
+                proposals.push((*p.clone(), value));
+            }
+            bft::Message::Vote(v) => insert(&mut votes, *v.clone())?,
+            bft::Message::Timeout(_) => (),
+            _ => return Err("BFT phase unexpected authenticated message".into()),
+        }
+    }
+    Ok((proposals, votes))
+}
 pub fn observe(node: &Store, pins: Pins<'_>, mode: Mode, input: Input) -> Result<Observation> {
     require(
         pins.context == input.context,
@@ -265,19 +286,7 @@ pub fn observe(node: &Store, pins: Pins<'_>, mode: Mode, input: Input) -> Result
     let messages =
         client.scheduling_messages(node, pins.archive_head, &context, true, Some(&input.order))?;
     let count = messages.len();
-    let mut proposals = Vec::new();
-    let mut votes = Votes::new();
-    for message in messages {
-        match message {
-            bft::Message::Proposal(p) => {
-                let value = p.snapshot.statement.id()?;
-                proposals.push((*p, value));
-            }
-            bft::Message::Vote(v) => insert(&mut votes, *v)?,
-            bft::Message::Timeout(_) => (),
-            _ => return Err("BFT phase unexpected authenticated message".into()),
-        }
-    }
+    let (proposals, votes) = retained(&messages)?;
     let action = select(
         mode,
         &active,

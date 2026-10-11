@@ -177,6 +177,25 @@ enum Action {
         #[arg(long)]
         file: PathBuf,
     },
+    /// Fresh ordinary tick plan; no signature or ledger installation authority.
+    BftTickObservation {
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        state_dir: PathBuf,
+        #[arg(long)]
+        expected_state_sha256: String,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+        #[arg(long)]
+        round: u64,
+        #[arg(long)]
+        file: PathBuf,
+    },
     /// Exact historical proofs actually installed by fully replayed local events.
     BftInstalledEpochs,
     JointReadyInit {
@@ -1203,6 +1222,7 @@ fn run() -> Result<()> {
         | Action::BftLoopStatus { .. }
         | Action::BftProposalOpportunity { .. }
         | Action::BftPhaseObservation { .. }
+        | Action::BftTickObservation { .. }
         | Action::BftOriginCurrentFinality => {
             Store::open_inspection(&args.dir, &args.authority, pin)?
         }
@@ -1716,6 +1736,39 @@ fn run() -> Result<()> {
             let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
             if raw.len() > MAX_BYTES {
                 return Err("BFT phase output bound".into());
+            }
+            println!("{raw}");
+        }
+        Action::BftTickObservation {
+            signer_dir,
+            expected_head,
+            state_dir,
+            expected_state_sha256,
+            expected_key,
+            runtime_format,
+            round,
+            file,
+        } => {
+            let input = bft_tick_schedule::Input::read(&file)?;
+            let context = input.context.clone();
+            let value = bft_tick_schedule::observe(
+                &store,
+                bft_proposal_schedule::Pins {
+                    signer: &signer_dir,
+                    archive: &state_dir,
+                    key: expected_key,
+                    runtime_format,
+                    head: Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                    archive_head: Hash::from_hex(&expected_state_sha256)
+                        .map_err(|e| e.to_string())?,
+                    context,
+                    round,
+                },
+                input,
+            )?;
+            let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
+            if raw.len() > MAX_BYTES {
+                return Err("BFT tick output bound".into());
             }
             println!("{raw}");
         }

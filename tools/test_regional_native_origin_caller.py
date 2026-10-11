@@ -2,6 +2,7 @@
 
 All signing seeds are public fixture numbers. No independent custody or liveness claim.
 """
+import time
 import hashlib
 import json
 from pathlib import Path
@@ -71,11 +72,16 @@ class OriginCallerTests(unittest.TestCase):
                 observed=runtime.proposal_opportunity(context,0)
                 self.assertEqual({k:observed[k] for k in expected},expected)
                 self.assertEqual(runtime.phase_action(context,0,'start'),'Idle')
-                snapshot=runtime.candidate(context)
-                runtime.sign({'Propose':dict(round=0,snapshot=snapshot,timeout=None)})
-                phase=runtime.phase_action(context,0,'start')
-                self.assertIn('Prepare',phase)
-                runtime.sign({'Prepare':phase['Prepare']['proposal']})
+                runtime.slot=(mesh.digest(context),0);runtime.entered_at=time.monotonic()-2
+                actions=[];original_call=runtime.with_json
+                def traced_call(action,*args):
+                    actions.append(action);return original_call(action,*args)
+                runtime.with_json=traced_call
+                runtime.tick() # Actual Native ordered policy, Propose, then exact own Prepare.
+                self.assertTrue(runtime.signer_status()['state']['proposed'])
+                self.assertIsNotNone(runtime.signer_status()['state']['prepared'])
+                self.assertEqual(runtime.signer_status()['records'],2)
+                self.assertGreaterEqual(actions.count('bft-tick-observation'),2)
                 self.assertEqual(runtime.phase_action(context,0,'commit'),'Idle')
                 request = dict(Timeout=dict(context=native.call('bft-context')['context'],round=0))
                 runtime.sign(request) # Actual composed Origin signing/envelope/retention path.

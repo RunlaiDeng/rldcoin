@@ -144,8 +144,9 @@ class NativeSelectionTests(unittest.TestCase):
         # timer. Wait its real interval; never fabricate or rebase its clock.
         time.sleep(config['block_interval']+.05);runtime.tick()
         self.assertIn('bft-candidate-select',actions)
-        self.assertIn('bft-proposal-opportunity',actions)
-        self.assertIn('bft-phase-action',actions)
+        self.assertIn('bft-tick-observation',actions)
+        self.assertNotIn('bft-proposal-opportunity',actions)
+        self.assertNotIn('bft-phase-action',actions)
         proposal=runtime.signed(self.context,0,'Proposal')[0][0]
         self.assertEqual(proposal['snapshot']['blocks'][-1]['commands'],self.commands[:1])
         self.c.heads['earth',index]=runtime.head['head']

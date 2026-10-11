@@ -1485,6 +1485,74 @@ class Runtime:
         from regional_bft_phase_schedule import action
         return action(self,context,round_number,mode)
 
+    def tick_plan(self, context, round_number, stage, stopped=False, proposed=None):
+        from regional_bft_tick_schedule import plan
+        return plan(self,context,round_number,stage,stopped,proposed)
+
+    def _native_tick(self, context, round_number, status, stopped):
+        decision=self.tick_plan(context,round_number,'begin',stopped)
+        while decision=='RefreshTimeout' or 'WaitInitial' in decision:
+            if decision=='RefreshTimeout':
+                self._timeout_refresh_used=True
+                changed=self.before_timeout()
+            else:
+                self._initial_proposal_wait_used=True
+                changed=self.before_initial_proposal(decision['WaitInitial']['deadline'])
+                from regional_receive_wake import YIELD_FOR_DURABLE_INPUT
+                if changed is YIELD_FOR_DURABLE_INPUT:
+                    self._broadcast_after_observation()
+                    return self.report(context,round_number,status,stopped)
+            if changed:
+                self._tick_operation=object()
+                self._composed_phase_observation=None
+                self._sign_native_head=None
+                return self._tick()
+            decision=self.tick_plan(context,round_number,'begin',stopped)
+        phase=decision.get('Phase') if isinstance(decision,dict) else None
+        if phase is not None and 'Finalize' in phase:
+            return self._finish_local_finalization(phase['Finalize']['snapshot'],context,round_number,status)
+        advanced=False
+        if phase is not None and 'Prepare' in phase:
+            prepare=phase['Prepare'];advanced=self._try_prepare(prepare['proposal'])
+            if advanced and prepare['proposal']['round']==round_number and (prepare['prepared'] is not None or self.format==ORIGIN_RUNTIME_FORMAT):
+                fresh=Runtime.phase_status(self)['state']
+                next_plan=self.tick_plan(context,fresh['round'],'commit')
+                if 'Commit' in next_plan['Phase']:
+                    commit=next_plan['Phase']['Commit']
+                    self.sign({'Commit':{'proposal':commit['proposal'],'prepared':commit['prepared']}})
+        elif phase is not None and 'Commit' in phase:
+            commit=phase['Commit']
+            self.sign({'Commit':{'proposal':commit['proposal'],'prepared':commit['prepared']}});advanced=True
+        elif 'Propose' in decision:
+            choice=decision['Propose']
+            proposed=dict(round=choice['round'],snapshot=self.candidate(context,choice['high']),timeout=choice['timeout'])
+            self.sign({'Propose':proposed});advanced=True
+            publish=getattr(self,'after_local_proposal',None)
+            if self.format==ORIGIN_RUNTIME_FORMAT:
+                if callable(publish):
+                    self._first_proposal_carriage=(choice['round'],self.key)
+                    try:publish()
+                    finally:self._first_proposal_carriage=None
+                fresh=Runtime.phase_status(self)['state']
+                next_plan=self.tick_plan(context,fresh['round'],'after-proposal',proposed=proposed)
+                if 'Prepare' in next_plan['Phase']:
+                    self._try_prepare(next_plan['Phase']['Prepare']['proposal'])
+        elif 'Timeout' in decision:
+            self.sign({'Timeout':decision['Timeout']});advanced=True
+        if advanced:
+            status=Runtime.phase_status(self);fresh=status['state']
+            if fresh is not None and fresh['context']==context:
+                round_number=fresh['round'];self.slot=(mesh.digest(context),round_number)
+            else:round_number=None;self.slot=None
+            self._carriage_round=round_number
+            if (self.format==ORIGIN_RUNTIME_FORMAT and fresh is not None
+                    and fresh['context']==context and fresh['committed'] is not None):
+                completed=self.tick_plan(context,round_number,'committed')['Phase']
+                if 'Finalize' in completed:
+                    return self._finish_local_finalization(completed['Finalize']['snapshot'],context,round_number,status)
+        self._broadcast_after_observation()
+        return self.report(context,round_number,status,stopped)
+
     def _tick(self):
         mesh.require(not self.failed, 'BFT runtime requires restart after persistence failure')
         self._keyless_drain_observation=None
@@ -1538,6 +1606,8 @@ class Runtime:
             observation.event('tick-phase', context_id=mesh.digest(context), height=context['parent_height'],
                               round=round_number, stopped=stopped, prepared=active['prepared'],
                               committed=active['committed'], phase_age_seconds=round(time.monotonic()-self.entered_at, 6))
+        if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+            return self._native_tick(context,round_number,status,stopped)
         phase_advanced = False
         future = None
         # A local timeout does not invalidate a complete certificate for this
