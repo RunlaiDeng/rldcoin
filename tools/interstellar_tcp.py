@@ -513,6 +513,9 @@ class Server:
             # Ordinary's bound covers lock attempts, not full validation CPU.
             if not ordinary and time.monotonic()>=deadline:
                 raise TimeoutError('TCP local attempt timed out; retain evidence')
+            # Share only the opt-in scalar observer with this opened operation.
+            # Mesh preparation/spool hooks retain no packet or custody authority.
+            node.contact_trace=getattr(self,'contact_trace',None)
             yield node
         finally:
             try:
