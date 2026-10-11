@@ -23,6 +23,12 @@ fn main() {
         root.join("build.rs"),
     ];
     collect(&root.join("src"), &mut files);
+    for name in ["index.html", "app.js", "app.css"] {
+        let path = root.join("../regional-wallet").join(name);
+        let metadata = fs::symlink_metadata(&path).unwrap();
+        assert!(metadata.is_file() && !metadata.file_type().is_symlink());
+        files.push(path);
+    }
     files.sort();
     let mut hash = Sha256::new();
     hash.update(b"RLD-REGIONAL-CANDIDATE-SOURCE-V1\0");

@@ -226,12 +226,13 @@ exchange may be supplied after the missing dependencies arrive.
 ## Local wallet interface
 
 `wallet-app` is a wallet-only local client; ordinary full-node startup continues
-its default relay lifecycle. It launches the supplemental Python bridge and
-static browser UI, using native Rust for every view, review, signature, receipt,
-combination and explicitly configured local block submission:
+its default relay lifecycle. The server runs in Rust and embeds the static
+browser UI, using native Rust for every view, review, signature, receipt,
+combination and explicitly configured local block submission. It has no Python
+runtime dependency; Python remains an independent application test reference:
 
 ```sh
-/absolute/rld-regional-ledger-candidate --dir /absolute/ledger --authority AUTHORITY_HEX --currency CURRENCY_HEX --transport-python /absolute/python wallet-app --wallet-dir /absolute/private-wallet --head-dir /absolute/separate-caller-head --owner OWNER_HEX --key-file /absolute/private-key.json
+/absolute/rld-regional-ledger-candidate --dir /absolute/ledger --authority AUTHORITY_HEX --currency CURRENCY_HEX wallet-app --wallet-dir /absolute/private-wallet --head-dir /absolute/separate-caller-head --owner OWNER_HEX --key-file /absolute/private-key.json
 ```
 
 For an existing wallet, supply its separately retained latest
@@ -239,8 +240,8 @@ For an existing wallet, supply its separately retained latest
 directory must be separate from the wallet directory. Optional `--miner PUBLIC_KEY`
 explicitly enables ground local block submission; signing by itself never mines.
 Without a key file the client is read-only for new signatures. Private fixture
-key provisioning is separate; encrypted key creation, backup and hardware
-custody are not implemented in this interface.
+key provisioning is separate. Native encrypted key creation, full-journal backup
+and fresh-directory restore are described below; hardware custody remains open.
 
 The startup URL contains a private, one-hour session capability in its fragment.
 Use it only on this computer; the page immediately removes the fragment. No
@@ -248,7 +249,10 @@ external assets, browser key upload or arbitrary command/file-path API exists.
 The server binds literal 127.0.0.1 only, checks the exact Host and POST Origin,
 requires the capability, rejects duplicate JSON and framing fields, and sends
 no-store/no-referrer/content-type/CSP protections. Input has a three-second
-absolute read deadline and 2 MiB body bound; responses are at most 8 MiB.
+absolute read deadline and 2 MiB body bound; responses are at most 8 MiB with
+one three-second output wait deadline. Browser waits hold no ledger operation
+lock. The [native server contract](../../docs/operations/NATIVE_WALLET_HTTP.md)
+describes the caller-custody and shutdown boundaries.
 One request is handled at a time; hostile local availability remains unqualified.
 A new startup rotates the capability. Session/review expiry never deletes a
 native signature, releases an input reservation or refunds an included export.

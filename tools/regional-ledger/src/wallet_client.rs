@@ -57,7 +57,7 @@ fn io(e: std::io::Error) -> String {
     e.to_string()
 }
 
-fn private_metadata(file: &File) -> Result<()> {
+pub(crate) fn private_metadata(file: &File) -> Result<()> {
     let meta = file.metadata().map_err(io)?;
     require(meta.is_file(), "caller state must be a regular file")?;
     #[cfg(unix)]
@@ -81,7 +81,7 @@ fn options() -> OpenOptions {
     options
 }
 
-fn private_read(path: &Path) -> Result<Vec<u8>> {
+pub(crate) fn private_read(path: &Path) -> Result<Vec<u8>> {
     let meta = fs::symlink_metadata(path).map_err(io)?;
     require(
         meta.is_file() && !meta.file_type().is_symlink() && meta.len() <= MAX_BYTES as u64,
@@ -120,7 +120,51 @@ fn private_path(path: &Path, must_exist: bool) -> Result<()> {
 }
 
 /// Preserve Python's sorted ASCII JSON bytes, including non-ASCII wallet paths.
-fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
+pub(crate) fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
+    fn python_float(number: &serde_json::Number) -> Result<String> {
+        // Python and Ryu use shortest round-trip digits; Python additionally
+        // fixes the decimal/scientific cutover and signed two-digit exponent.
+        let text = number.to_string();
+        let (sign, unsigned) = text
+            .strip_prefix('-')
+            .map(|s| ("-", s))
+            .unwrap_or(("", text.as_str()));
+        let (mantissa, exponent) = unsigned.split_once('e').unwrap_or((unsigned, "0"));
+        let exponent: i32 = exponent.parse().map_err(|_| "JSON float exponent")?;
+        let point = mantissa.find('.').unwrap_or(mantissa.len()) as i32;
+        let all = mantissa.replace('.', "");
+        let leading = all.bytes().take_while(|b| *b == b'0').count();
+        if leading == all.len() {
+            return Ok(format!("{sign}0.0"));
+        }
+        let digits = all[leading..].trim_end_matches('0');
+        let power = point + exponent - leading as i32 - 1;
+        if !(-4..16).contains(&power) {
+            let tail = if digits.len() > 1 {
+                format!(".{}", &digits[1..])
+            } else {
+                String::new()
+            };
+            return Ok(format!(
+                "{sign}{}{tail}e{}{:02}",
+                &digits[..1],
+                if power < 0 { "-" } else { "+" },
+                power.abs()
+            ));
+        }
+        let point = power + 1;
+        if point <= 0 {
+            return Ok(format!("{sign}0.{}{digits}", "0".repeat((-point) as usize)));
+        }
+        let point = point as usize;
+        if point >= digits.len() {
+            return Ok(format!(
+                "{sign}{digits}{}.0",
+                "0".repeat(point - digits.len())
+            ));
+        }
+        Ok(format!("{sign}{}.{}", &digits[..point], &digits[point..]))
+    }
     fn sorted(value: &serde_json::Value, out: &mut String) -> Result<()> {
         match value {
             serde_json::Value::Object(map) => {
@@ -146,6 +190,9 @@ fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
                     sorted(item, out)?;
                 }
                 out.push(']');
+            }
+            serde_json::Value::Number(number) if number.is_f64() => {
+                out.push_str(&python_float(number)?)
             }
             _ => out.push_str(&serde_json::to_string(value).map_err(|e| e.to_string())?),
         }
@@ -407,6 +454,14 @@ mod tests {
         assert_eq!(
             canonical(&value).unwrap(),
             br#"{"a":["\u00e9","\\\""],"z":"\u94b1\u5305\ud83d\ude80\u007f\n"}"#
+        );
+    }
+    #[test]
+    fn canonical_python_float_cutovers_preserve_historical_transport_bytes() {
+        let value = serde_json::json!([1.0, -0.0, 1e-5, 1e-4, 1e15, 1e16, 5e-324, 1.23456789]);
+        assert_eq!(
+            canonical(&value).unwrap(),
+            b"[1.0,-0.0,1e-05,0.0001,1000000000000000.0,1e+16,5e-324,1.23456789]"
         );
     }
 }

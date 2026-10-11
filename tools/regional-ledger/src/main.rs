@@ -975,56 +975,37 @@ fn run() -> Result<()> {
         ref miner,
     } = action
     {
-        rld_core::validate_ed25519_public_key(owner)?;
-        let driver =
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tools/regional_wallet_app.py");
-        let mut command = std::process::Command::new(&args.transport_python);
-        command
-            .arg(driver)
-            .arg("--binary")
-            .arg(std::env::current_exe().map_err(|e| e.to_string())?)
-            .arg("--ledger")
-            .arg(&args.dir)
-            .arg("--authority")
-            .arg(&args.authority)
-            .arg("--currency")
-            .arg(&args.currency)
-            .arg("--wallet-dir")
-            .arg(wallet_dir)
-            .arg("--head-dir")
-            .arg(head_dir)
-            .arg("--owner")
-            .arg(owner)
-            .arg("--port")
-            .arg(port.to_string());
-        if let Some(head) = expected_wallet_head {
-            command.arg("--expected-wallet-head").arg(head);
-        }
-        if let Some(key) = key_file {
-            command.arg("--key-file").arg(key);
-        }
-        if let Some(key) = encrypted_key {
-            command.arg("--encrypted-key").arg(key);
-        }
-        if let Some(dir) = backup_dir {
-            command.arg("--backup-dir").arg(dir);
-        }
-        if let Some(miner) = miner {
-            command.arg("--miner").arg(miner);
-        }
-        #[cfg(unix)]
-        {
-            use std::os::unix::process::CommandExt;
-            return Err(command.exec().to_string());
-        }
-        #[cfg(not(unix))]
-        {
-            return if command.status().map_err(|e| e.to_string())?.success() {
-                Ok(())
-            } else {
-                Err("local wallet app stopped".into())
-            };
-        }
+        let passphrase = if encrypted_key.is_some() {
+            if unsafe { libc::isatty(libc::STDIN_FILENO) } != 1 {
+                return Err(
+                    "encrypted app unlock requires a local terminal; no HTTP/argv/env passphrase"
+                        .into(),
+                );
+            }
+            Some(keystore::passphrase(false, false)?)
+        } else {
+            None
+        };
+        return wallet_http::serve(
+            wallet_app::Options {
+                ledger: args.dir.clone(),
+                authority: args.authority.clone(),
+                currency: pin,
+                wallet: wallet_dir.clone(),
+                heads: head_dir.clone(),
+                owner: owner.clone(),
+                expected: expected_wallet_head
+                    .as_ref()
+                    .map(|s| Hash::from_hex(s).map_err(|e| e.to_string()))
+                    .transpose()?,
+                key: key_file.clone(),
+                encrypted_key: encrypted_key.clone(),
+                passphrase,
+                backup_dir: backup_dir.clone(),
+                miner: miner.clone(),
+            },
+            port,
+        );
     }
     if let Action::Init { bootstrap, region } = action {
         let bootstrap: Bootstrap = read_json(&bootstrap)?;

@@ -5,7 +5,8 @@ recovery calculation to `wallet-client-open`, `wallet-client-store` and
 `wallet-client-reconcile`. Signing remains the ordinary native wallet operation.
 These interfaces require explicit `--wallet-dir`, separate `--head-dir` and
 `--owner`, with complete native currency/history and wallet-journal replay.
-The Python UI still owns the lifetime app lock and the browser session.
+The [native wallet server](NATIVE_WALLET_HTTP.md) owns the lifetime app lock and
+browser session. The Python application remains an independent test reference.
 
 Caller state retains `RLD-REGIONAL-WALLET-APP-V1` and the existing exact fields:
 `format`, `binding`, `head` and `pending`. The binding contains currency, region,
@@ -60,6 +61,6 @@ This migrates a ground runtime responsibility. It does not qualify common
 state/head rollback, copied-key concurrent custody, independent latest-state
 protection, power-loss or cross-device recovery. Changed native source requires
 fresh signed no-value fixtures; old fixture balances, custody and failed stores
-are not migrated. HTTP serving, consensus scheduling and contact transport still
-have Python dependencies; removing those dependencies and complete mainnet
+are not migrated. Consensus scheduling and contact transport still have Python
+dependencies; removing those dependencies and complete mainnet
 acceptance remain separate requirements.
