@@ -45,11 +45,13 @@ def origin_receive_phase_available(runtime):
     return getattr(runtime,'format',None)==ORIGIN_RUNTIME_FORMAT and runtime.joint is None
 
 
-def current_empty_proposal_hint(proposal, context, keys, *, allow_import=False):
+def current_empty_proposal_hint(proposal, context, keys, *, allow_import=False, allow_spend=False):
     """Extra signature filter for a Native-checked bounded candidate and parent.
 
     Import commands (original maximum 16 per block) have a typed encoding.
-    Children retain the empty-only default unless current Origin enables Import.
+    Children retain the empty-only default unless current Origin enables Import
+    or its separate exact typed Spend filter. Spend signatures and field order
+    narrow scheduling only; Native still checks every actual input and value.
     Other commands, epochs and other shapes use ordinary carriage. Later
     rounds require a complete bounded timeout certificate and its signatures.
     This extra exact signature check supplies no Native acceptance.
@@ -77,16 +79,20 @@ def current_empty_proposal_hint(proposal, context, keys, *, allow_import=False):
     for index,block in enumerate(snapshot['blocks']):
         if (type(block) is not dict or set(block)!={'header','commands'}
                 or type(block['commands']) is not list or len(block['commands'])>16
-                or index==1 and block['commands']!=[] and not allow_import
+                or index==1 and block['commands']!=[] and not (allow_import or allow_spend)
                 or type(block['header']) is not dict or set(block['header'])!=set(header_fields)):return False
         commands=[]
         for command in block['commands']:
+            if allow_spend and type(command) is dict and set(command)=={'Spend'}:
+                from regional_bft_spend_carriage import ordered_spend
+                commands.append(ordered_spend(command,context['currency'],context['region']))
+                continue
             if (type(command) is not dict or set(command)!={'Import'}
                     or type(command['Import']) is not dict or set(command['Import'])!={'snapshot','export'}):return False
             imp=command['Import'];mesh.hex32(imp['snapshot']);mesh.hex32(imp['export'])
             commands.append({'Import':{'snapshot':imp['snapshot'],'export':imp['export']}})
         h={k:block['header'][k] for k in header_fields};headers.append(h);blocks.append(dict(header=h,commands=commands))
-        if allow_import and commands and h['commands']!=hashlib.sha256(
+        if (allow_import or allow_spend) and commands and h['commands']!=hashlib.sha256(
                 b'RLD-REGIONAL-FIXTURE-V1:commands\0'+encode(commands)).hexdigest():return False
     block_hash=lambda h:hashlib.sha256(b'RLD-REGIONAL-FIXTURE-V1:block\0'+encode(h)).hexdigest()
     parent,child=headers;statement=snapshot['statement']
@@ -165,7 +171,7 @@ def current_finalized_hint(snapshot, context, keys):
     return True
 
 
-def commit_carriage_frames(messages, context, keys, currency, region, round_number=None, *, import_proposals=False):
+def commit_carriage_frames(messages, context, keys, currency, region, round_number=None, *, import_proposals=False, spend_proposals=False):
     """Exact current votes and bounded empty proposals from Native-checked Messages.
 
     The signature check only narrows scheduling. Native still checks every
@@ -173,7 +179,8 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
     """
     mesh.require(isinstance(messages,Messages) and len(messages)<=MAX_MESSAGES,
                  'Commit carriage requires bounded retained messages')
-    mesh.require(type(import_proposals) is bool,'invalid Origin carriage selection')
+    mesh.require(type(import_proposals) is bool and type(spend_proposals) is bool,
+                 'invalid Origin carriage selection')
     fields=('currency','region','epoch','previous','parent_height','parent_block','parent_state')
     if (type(context) is not dict or set(context)!=set(fields)
             or context['currency']!=currency or context['region']!=region):return ()
@@ -204,7 +211,8 @@ def commit_carriage_frames(messages, context, keys, currency, region, round_numb
             elif proposal is not None:
                 if round_number is not None and proposal['round']!=round_number:continue
                 imported=import_proposals and messages.record(ident)['header']['format']==ORIGIN_NETWORK
-                if not current_empty_proposal_hint(proposal,context,keys,allow_import=imported):continue
+                if not current_empty_proposal_hint(proposal,context,keys,allow_import=imported,
+                        allow_spend=imported and spend_proposals):continue
             else:
                 if vote.get('phase') not in ('Prepare','Commit') or vote.get('context')!=context:continue
                 # Another signer can still complete the preceding phase after
@@ -1211,7 +1219,8 @@ class Runtime:
                 frames=commit_carriage_frames(self.state['messages'],context,
                                              tuple(self.peers),self.native.currency,self.region,
                                              getattr(self,'_carriage_round',None),
-                                             import_proposals=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None)
+                                             import_proposals=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None,
+                                             spend_proposals=self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None)
                 scope=mesh.digest(dict(binding=self.binding,context=context,round=getattr(self,'_carriage_round',None),keys=sorted(self.peers),
                     native=[self.native.authority,self.native.currency,str(self.native.ledger)]))
                 self._carriage_priority_key=(node.set_carriage_priority(scope,frames,ordered_frames=True)
