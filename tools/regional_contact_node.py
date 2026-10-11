@@ -185,8 +185,9 @@ class Service:
                 mesh.require(node.state['adverts'][node.id]['body']['region'] == self.region,
                     'local mesh label differs from native ledger identity')
             mesh.atomic(self.path, self.progress)
-            self.tcp = (tcp.Server(config,listen,insecure=insecure_tcp,contact_trace=contact_trace) if contact_trace is not None
-                        else tcp.Server(config,listen,insecure=insecure_tcp))
+            self.tcp = (tcp.Server(config,listen,insecure=insecure_tcp,contact_trace=contact_trace,start=False) if contact_trace is not None
+                        else tcp.Server(config,listen,insecure=insecure_tcp,start=False))
+            self.tcp.start()
             if contact_trace is not None:
                 from regional_contact_trace import TracePublisher
                 self.trace_publisher=TracePublisher(contact_trace,self.root/'regional-contact-trace-status.json')
@@ -217,12 +218,16 @@ class Service:
         mesh.require(type(recover_only) is bool,'explicit shutdown recovery selection required')
         from regional_native_deadline import MAX_QUIESCENCE_SECONDS
         deadline=time.monotonic()+MAX_QUIESCENCE_SECONDS if recover_only else None
+        transport_error=None
         try:
             if self.carriage is not None:
                 self.carriage.close()
                 self.carriage = None
             if self.tcp is not None:
-                self.tcp.close()
+                try:self.tcp.close()
+                except BaseException as error:
+                    if not getattr(self.tcp,'shutdown_proven',True):raise
+                    transport_error=error
                 self.tcp = None
             if self.bft is not None:
                 runtime=self.bft;self.bft=None
@@ -230,14 +235,17 @@ class Service:
                     if recover_only:runtime.quiesce(deadline)
                 finally:runtime.close()
         finally:
-            try:
-                if self.trace_publisher is not None:
-                    publisher=self.trace_publisher;self.trace_publisher=None
-                    publisher.close()
-            finally:
-                if self.lock is not None:
-                    os.close(self.lock)
-                    self.lock = None
+            # Unknown native join cannot release service custody or callbacks.
+            if self.tcp is None or getattr(self.tcp,'shutdown_proven',True):
+                try:
+                    if self.trace_publisher is not None:
+                        publisher=self.trace_publisher;self.trace_publisher=None
+                        publisher.close()
+                finally:
+                    if self.lock is not None:
+                        os.close(self.lock)
+                        self.lock = None
+        if transport_error is not None:raise transport_error
 
     def receive_bft_batch(self, rows, errors, rejected, deferred):
         """A local lock cannot establish envelope invalidity or acceptance."""

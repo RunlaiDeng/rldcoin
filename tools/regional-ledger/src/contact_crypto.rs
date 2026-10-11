@@ -325,7 +325,13 @@ pub struct Buffer {
     pub len: usize,
 }
 fn output(raw: &[u8]) -> Vec<u8> {
-    let result = std::panic::catch_unwind(|| execute(raw))
+    output_with(raw, || execute(raw))
+}
+pub(crate) fn output_with(
+    raw: &[u8],
+    work: impl FnOnce() -> Result<Value> + std::panic::UnwindSafe,
+) -> Vec<u8> {
+    let result = std::panic::catch_unwind(work)
         .unwrap_or_else(|_| Err("contact operation panic refused".into()));
     let (success, value, error) = match result {
         Ok(value) => (true, Some(value), None),
@@ -350,7 +356,10 @@ pub unsafe extern "C" fn rld_contact_crypto(input: *const u8, len: usize) -> Buf
     } else {
         unsafe { std::slice::from_raw_parts(input, len) }
     };
-    let mut result = output(bytes).into_boxed_slice();
+    buffer(output(bytes))
+}
+pub(crate) fn buffer(bytes: Vec<u8>) -> Buffer {
+    let mut result = bytes.into_boxed_slice();
     let buffer = Buffer {
         data: result.as_mut_ptr(),
         len: result.len(),

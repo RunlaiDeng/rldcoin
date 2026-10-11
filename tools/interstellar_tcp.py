@@ -225,7 +225,7 @@ def check_response(value, network, requester, peer, sent):
 
 
 class Server:
-    def __init__(self,config,listen=('127.0.0.1',0),insecure=False,*,contact_trace=None):
+    def __init__(self,config,listen=('127.0.0.1',0),insecure=False,*,contact_trace=None,start=True):
         self.contact_trace=contact_trace
         self.config=copy.deepcopy(config)
         with mesh.Node(config) as node:
@@ -286,23 +286,64 @@ class Server:
         self.last_tcp_inbound_role=None
         self.tcp_mesh_waiters=set()
         self.cursor=0
-        self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+        self.native_listener=None;self._native_reserved={};self.shutdown_proven=False
+        self.socket=None;self._listen=listen;self.start_invoked=False
+        if start:self.start()
+
+    def start(self):
+        mesh.require(not self.start_invoked,'TCP startup already invoked')
+        self.start_invoked=True
+        self.input_thread=threading.Thread(target=self.consume_inputs,
+            name='rld-tcp-deferred-input',daemon=True)
         try:
-            self.socket.bind(mesh.tcp_endpoint(*listen,listening=True))
-            self.socket.listen(MAX_WORKERS)
-            self.socket.settimeout(0.1)
-            self.address=self.socket.getsockname()
-            self.thread=threading.Thread(target=self.serve,name='rld-tcp-contact-listener',daemon=True)
-            self.input_thread=threading.Thread(target=self.consume_inputs,
-                name='rld-tcp-deferred-input',daemon=True)
-            # Own the input consumer before accepting any connection. Partial
-            # startup must stop and join every thread actually started.
+            # Deferred custody is still Python; it exists before native admission.
             self.input_thread.start()
-            self.thread.start()
+            endpoint=mesh.tcp_endpoint(*self._listen,listening=True)
+            if not self.insecure:
+                provider=self.context.provider
+                def callback(event,handle,deadline):return self._native_callback(provider,event,handle,deadline)
+                self.native_listener=native_tls.Listener(self.context,endpoint,callback,start=False)
+                self.native_listener.start()
+                self.address=self.native_listener.address
+                self.thread=self.native_listener
+            else:
+                self.socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                self.socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+                self.socket.bind(endpoint);self.socket.listen(MAX_WORKERS);self.socket.settimeout(.1)
+                self.address=self.socket.getsockname()
+                self.thread=threading.Thread(target=self.serve,name='rld-tcp-contact-listener',daemon=True)
+                self.thread.start()
         except BaseException:
-            self.close()
-            raise
+            self.close();raise
+
+    def _native_callback(self,provider,event,handle,deadline):
+        if event==0:
+            with self.guard:return len(self.input_pending)+(self.input_active is not None)
+        if event==1:
+            connection=native_tls.Connection(provider,handle,deadline=deadline)
+            with self.guard:
+                occupied=len(self.workers)+len(self.input_pending)+(self.input_active is not None)
+                if not self.running or occupied>=MAX_WORKERS:
+                    self.refused_connections+=1;return 0
+                mesh.require(handle not in self._native_reserved,'native worker reservation repeated')
+                self._native_reserved[handle]=connection
+                self.workers.add(connection);self.connections.add(connection)
+            return 1
+        if event==2:
+            with self.guard:connection=self._native_reserved[handle]
+            mesh.require(connection.deadline==deadline,'native worker original clock differs')
+            self.handle(connection,native_owner=connection)
+            return 1
+        if event==3:
+            with self.guard:self.refused_connections+=1
+            return 1
+        if event==4:
+            with self.guard:
+                connection=self._native_reserved.pop(handle,None)
+                if connection is not None:
+                    self.workers.discard(connection);self.connections.discard(connection)
+            return 1
+        raise ValueError('native listener callback event differs')
 
     def mark(self,peer,direction,success):
         with self.guard:
@@ -601,11 +642,11 @@ class Server:
                 # close() must never observe a registered but unstarted worker.
                 worker.start()
 
-    def handle(self,connection):
+    def handle(self,connection,native_owner=None):
         tracked=connection;deferred=None
         try:
-            deadline=time.monotonic()+ATTEMPT_SECONDS
-            if not self.insecure:
+            deadline=connection.deadline if native_owner is not None else time.monotonic()+ATTEMPT_SECONDS
+            if not self.insecure and native_owner is None:
                 connection.settimeout(ATTEMPT_SECONDS)
                 with self.guard:
                     mesh.require(self.running,'TLS runtime is stopping; preserve evidence')
@@ -613,6 +654,9 @@ class Server:
                     self.connections.discard(tracked)
                     self.connections.add(connection)
                 tracked=connection
+                connection.do_handshake()
+                mesh.require(connection.version()=='TLSv1.3','TLS downgrade refused')
+            if native_owner is not None:
                 connection.do_handshake()
                 mesh.require(connection.version()=='TLSv1.3','TLS downgrade refused')
             hello=challenge(self.key,self.network,self.id,self.fingerprint)
@@ -675,14 +719,14 @@ class Server:
             connection.close()
             with self.guard:
                 self.connections.discard(tracked)
-            deferred_queued,reason=self._admit_deferred_input(deferred,deadline)
+            deferred_queued,reason=self._admit_deferred_input(deferred,deadline,owner=native_owner)
             # An admission result still grants no acknowledgment or custody.
             if deferred is not None and trace is not None:
                 trace.packets('deferred_input_queued' if deferred_queued else
                     'deferred_input_not_queued',peer,trace_rows,nonce=body['nonce'],
                     **({} if deferred_queued else {'failure_stage':reason}))
 
-    def _admit_deferred_input(self,deferred,deadline):
+    def _admit_deferred_input(self,deferred,deadline,owner=None):
         """A refused handler keeps its original slot during a bounded handoff.
 
         Only an already authenticated immutable input can arrive here. Wait
@@ -690,7 +734,7 @@ class Server:
         the original connection deadline. Never displace an active input or
         acknowledge custody; every admitted retry still authenticates fully.
         """
-        current=threading.current_thread()
+        current=threading.current_thread() if owner is None else owner
         until=min(deadline,time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS)
         try:
             while True:
@@ -978,6 +1022,8 @@ class Server:
             'ledger_acceptance_from_transport':False,'physical_route_qualified':False}
 
     def report(self):
+        listener=getattr(self,'native_listener',None)
+        if listener is not None:mesh.require(not listener.status()['failed'],'native listener failed; retain evidence')
         with self.guard:
             mesh.require(self.input_failure is None,'deferred input worker failed; retain source evidence')
             return {'deferred_input':{'pending':len(self.input_pending),'active':self.input_active is not None,
@@ -996,22 +1042,22 @@ class Server:
             self.selection_owner=None;self.selection_purpose=None
             self.selection_preference_until=0.0
             self.tcp_mesh_waiters.clear()
-        self.socket.close()
-        if hasattr(self,'thread') and self.thread.ident is not None:
-            self.thread.join()
-        with self.guard:
-            connections=list(self.connections)
-            workers=list(self.workers)
-        for connection in connections:
-            try:
-                connection.shutdown(socket.SHUT_RDWR)
-            except OSError:
-                pass
-            connection.close()
-        for worker in workers:
-            # Socket waits are bounded independently of local signature/file
-            # verification CPU. Keep service custody until every worker exits.
-            worker.join()
+        listener=getattr(self,'native_listener',None)
+        failure=None
+        if listener is not None:
+            try:listener.close()  # Rust interrupts and joins every callback/task first.
+            except BaseException as error:
+                if not listener.closed:raise
+                failure=error
+        else:
+            if self.socket is not None:self.socket.close()
+            if hasattr(self,'thread') and self.thread.ident is not None:self.thread.join()
+            with self.guard:connections=list(self.connections);workers=list(self.workers)
+            for connection in connections:
+                try:connection.shutdown(socket.SHUT_RDWR)
+                except OSError:pass
+                connection.close()
+            for worker in workers:worker.join()
         if hasattr(self,'input_thread') and self.input_thread.ident is not None:
             self.input_thread.join()
         with self.guard:
@@ -1019,3 +1065,5 @@ class Server:
             # original signed carriage remains at source. Stored evidence stays.
             self.input_pending.clear();self.input_active=None
         if self.context is not None:self.context.close()
+        self.shutdown_proven=True
+        if failure is not None:raise failure

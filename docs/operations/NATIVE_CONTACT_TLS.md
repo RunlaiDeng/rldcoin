@@ -54,8 +54,10 @@ custody. Close and context release are idempotent; handles cannot be recycled.
 
 ## Remaining authority and migration boundaries
 
-Python still owns the listener, worker lifecycle, ordinary contact scheduling and
-mesh durable custody. Explicit ground insecure mode remains a separate configured
+The [native lifecycle interface](NATIVE_CONTACT_LIFECYCLE.md) owns the ordinary
+pinned-TLS listener and connection tasks. Python retains contact scheduling,
+the authenticated mesh/custody callback and deferred input processing.
+Explicit ground insecure mode remains a separate configured
 path and is never selected following a TLS failure. Outgoing carriage is prepared
 durably before connect; signed challenge/reply binding and local custody remain
 mandatory. Native TLS/frame completion grants no destination receipt, ledger

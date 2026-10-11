@@ -36,6 +36,18 @@ const SEED_PREFIX: &[u8] = &[
 #[serde(deny_unknown_fields)]
 pub(crate) enum Request {
     Info,
+    ListenerInfo,
+    ListenerPrepare {
+        context: u64,
+        host: String,
+        port: u16,
+    },
+    ListenerStatus {
+        handle: u64,
+    },
+    ListenerClose {
+        handle: u64,
+    },
     Usage,
     Material {
         root: PathBuf,
@@ -424,6 +436,36 @@ fn connection(handle: u64) -> Result<Arc<Handle>> {
         .cloned()
         .ok_or("TLS connection handle absent".into())
 }
+pub(crate) fn server_context(handle: u64) -> Result<Arc<ServerConfig>> {
+    table()?
+        .contexts
+        .get(&handle)
+        .cloned()
+        .ok_or("TLS context handle absent".into())
+}
+pub(crate) fn next_handle() -> Result<u64> {
+    id(&mut *table()?)
+}
+pub(crate) fn owned_server(
+    config: Arc<ServerConfig>,
+    socket: TcpStream,
+    deadline: f64,
+) -> Result<u64> {
+    socket.set_nonblocking(false).map_err(io_error)?;
+    retain(
+        Connection::Server(ServerConnection::new(config).map_err(|e| e.to_string())?),
+        socket,
+        deadline,
+    )
+}
+pub(crate) fn interrupt(handle: u64) {
+    if let Ok(handle) = connection(handle) {
+        let _ = handle.interrupt.shutdown(Shutdown::Both);
+    }
+}
+pub(crate) fn release(handle: u64) {
+    let _ = execute(Request::Close { handle });
+}
 fn handshake(session: &mut Session) -> Result<()> {
     remaining(session.io.deadline)?;
     while session.tls.is_handshaking() {
@@ -469,6 +511,14 @@ fn server_config(material: Material) -> Result<Arc<ServerConfig>> {
 }
 pub(crate) fn execute(request: Request) -> Result<Value> {
     match request {
+        Request::ListenerInfo => Ok(crate::contact_listener::info()),
+        Request::ListenerPrepare {
+            context,
+            host,
+            port,
+        } => crate::contact_listener::prepare(context, host, port),
+        Request::ListenerStatus { handle } => crate::contact_listener::status(handle),
+        Request::ListenerClose { handle } => crate::contact_listener::close(handle),
         Request::Info => Ok(
             json!({"format":FORMAT,"max_wire":MAX_WIRE,"max_contexts":MAX_CONTEXTS,"max_connections":MAX_CONNECTIONS,"attempt_seconds":3,"certificate_days":90,"tls":"TLSv1.3"}),
         ),

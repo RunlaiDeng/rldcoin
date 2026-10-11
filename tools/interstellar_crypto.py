@@ -30,10 +30,13 @@ class Backend:
         if info!=expected:raise ValueError('native contact profile/library differs')
 
     def call(self,request):
+        return self.invoke(self.library.rld_contact_crypto,request)
+
+    def invoke(self,operation,request,*arguments):
         raw=wire.canonical(request)
         if not 0<len(raw)<=MAX_ABI:raise ValueError('native contact ABI byte bound')
         memory=(ctypes.c_ubyte*len(raw)).from_buffer_copy(raw)
-        result=self.library.rld_contact_crypto(memory,len(raw))
+        result=operation(memory,len(raw),*arguments)
         try:
             if not result.data or not 0<result.len<=MAX_ABI:raise ValueError('native contact output byte bound')
             output=ctypes.string_at(result.data,result.len)
