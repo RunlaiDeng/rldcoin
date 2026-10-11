@@ -737,7 +737,12 @@ class Runtime:
     def save_head(self, value):
         mesh.require(not self.failed and len(wire.canonical(value))<=8*1024*1024, 'BFT caller-head persistence unavailable/capacity')
         try:
-            mesh.atomic(self.head_path,value)
+            if self.format in (FORMAT, ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+                result = self.with_json('bft-client-store', value, *self.caller_args(),
+                    '--expected-state-sha256', hashlib.sha256(wire.canonical(self.head)).hexdigest())
+                mesh.require(wire.canonical(result) == wire.canonical(value), 'Native BFT caller publication differs')
+            else:
+                mesh.atomic(self.head_path,value)
         except BaseException:
             self.failed=True
             raise
@@ -759,7 +764,13 @@ class Runtime:
             if observation is not None:
                 observation.operation(action, started, succeeded)
 
+    def caller_args(self):
+        return ('--head-file', self.head_path, '--signer-dir', self.signer,
+                '--expected-key', self.key, '--runtime-format', self.format)
+
     def load_head(self,path,binding,allow_initialization=False):
+        if self.format in (FORMAT, ORIGIN_RUNTIME_FORMAT) and not allow_initialization:
+            return self.native.call('bft-client-read', *self.caller_args())
         value=mesh.load(private(path),8*1024*1024)
         fields={'format','binding','head','pending','outbox'}|({'initialization'} if allow_initialization else set())
         mesh.require(set(value)==fields and value['format']==self.format and value['binding']==binding,
@@ -785,6 +796,10 @@ class Runtime:
         return value
 
     def reconcile(self):
+        if self.format in (FORMAT, ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+            state = self.with_json('bft-client-reconcile', self.head, *self.caller_args())
+            self.save_head(state)
+            return
         request=self.head['pending']
         try:
             result=self.with_json('bft-sign',request,'--signer-dir',self.signer,'--expected-head',self.head['head'],'--recover-only')

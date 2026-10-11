@@ -454,6 +454,45 @@ enum Action {
         #[arg(long)]
         expected_wallet_head: String,
     },
+    /// Read an existing independent BFT caller head; never initialize custody.
+    BftClientRead {
+        #[arg(long)]
+        head_file: PathBuf,
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+    },
+    /// Publish an exact native-checked BFT caller transition.
+    BftClientStore {
+        #[arg(long)]
+        head_file: PathBuf,
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_state_sha256: String,
+    },
+    /// Recover a pending original response without a private key or first-sign.
+    BftClientReconcile {
+        #[arg(long)]
+        head_file: PathBuf,
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+        #[arg(long)]
+        file: PathBuf,
+    },
     /// Open separate caller custody; never infer a missing latest wallet head.
     WalletClientOpen {
         #[arg(long)]
@@ -1903,6 +1942,73 @@ fn run() -> Result<()> {
             println!(
                 "{}",
                 serde_json::to_string(&prepared).map_err(|e| e.to_string())?
+            );
+        }
+        Action::BftClientRead {
+            head_file,
+            signer_dir,
+            expected_key,
+            runtime_format,
+        } => {
+            let client = bft_client::Client::lock(
+                &head_file,
+                &signer_dir,
+                expected_key,
+                runtime_format,
+                &store,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.read()?).map_err(|e| e.to_string())?
+            );
+        }
+        Action::BftClientStore {
+            head_file,
+            signer_dir,
+            expected_key,
+            runtime_format,
+            file,
+            expected_state_sha256,
+        } => {
+            let client = bft_client::Client::lock(
+                &head_file,
+                &signer_dir,
+                expected_key,
+                runtime_format,
+                &store,
+            )?;
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let transition = bft_client::Transition {
+                previous_sha256: Hash::from_hex(&expected_state_sha256)
+                    .map_err(|e| e.to_string())?,
+                proposed: bft_client::decode(&raw)?,
+            };
+            println!(
+                "{}",
+                serde_json::to_string(&client.store(&store, transition)?)
+                    .map_err(|e| e.to_string())?
+            );
+        }
+        Action::BftClientReconcile {
+            head_file,
+            signer_dir,
+            expected_key,
+            runtime_format,
+            file,
+        } => {
+            let client = bft_client::Client::lock(
+                &head_file,
+                &signer_dir,
+                expected_key,
+                runtime_format,
+                &store,
+            )?;
+            let raw = storage::read_bytes(&file, MAX_BYTES)?;
+            let state = bft_client::decode(&raw)?;
+            println!(
+                "{}",
+                serde_json::to_string(&client.reconcile(&store, state)?)
+                    .map_err(|e| e.to_string())?
             );
         }
         Action::WalletClientOpen {

@@ -1115,6 +1115,7 @@ pub fn conservation_with_escrow(chains: &[Chain]) -> Result<(Amount, Amount, Amo
 }
 pub mod bft;
 pub mod bft_candidate_selection;
+pub mod bft_client;
 mod bft_epoch;
 pub mod bft_network;
 pub mod carriage;

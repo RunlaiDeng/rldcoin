@@ -972,3 +972,5 @@ four-replica native CLI ceremony, actual owner payments before/after activation
 and exact old response recovery. Its controller carries consensus messages;
 this is separate from an autonomous multiregion or full fault profile.
 Current full frozen qualification and publication remain pending.
+
+The [native BFT caller custody interface](../../docs/operations/NATIVE_BFT_CALLER_CUSTODY.md) preserves separate pending/head/outbox publication and keyless recovery for the ordinary and complete-origin companions.

@@ -2,7 +2,7 @@
 use super::*;
 use crate::bft_network::{self, receive_origin_phase};
 
-fn fixture() -> Harness {
+pub(super) fn fixture() -> Harness {
     let rules = crate::paged_bft::ORIGIN_NETWORK_RULES;
     let mut package = crate::tests::channel_integration::package(rules);
     for a in &mut package.admissions {

@@ -278,6 +278,9 @@ pub(crate) fn verify_paged_image_binding(
     paged::verify_pinned_image(dir, authority, pin, head)
 }
 impl Store {
+    pub(crate) fn directory(&self) -> &Path {
+        &self.dir
+    }
     pub(crate) fn require_storage_head(&self, expected: Hash) -> Result<()> {
         require(
             self.healthy && !expected.is_zero() && self.storage_head()? == expected,

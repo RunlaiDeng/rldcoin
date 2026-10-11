@@ -24,14 +24,12 @@ class ShutdownTests(unittest.TestCase):
         r.signer=Path('/model-signer');events=[]
         def call(*args,deadline=None):
             self.assertIsNotNone(deadline);events.append(args)
-            if args[0]=='bft-sign':
-                self.assertIn('--recover-only',args);self.assertNotIn('--key-file',args)
-                if kind in ('response','retention-failure'):return dict(head='b'*64,message={'Timeout':{'model_response':True}})
-                raise ValueError('model cannot first-sign')
-            self.assertEqual(args[0],'bft-status')
+            self.assertEqual(args[0],'bft-client-reconcile');self.assertNotIn('--key-file',args)
             if kind=='unknown':raise OSError('model signer head unavailable')
-            return dict(binding={},head='b'*64 if kind=='changed' else 'a'*64)
-        r.native=SimpleNamespace(call=call);r.signing_binding={}
+            if kind=='changed':raise ValueError('model different native head refuses')
+            return dict(r.head, pending=None, head='b'*64 if kind in ('response','retention-failure') else 'a'*64,
+                        outbox={'Timeout':{'model_response':True}} if kind in ('response','retention-failure') else None)
+        r.native=SimpleNamespace(call=call);r.signing_binding={};r.caller_args=lambda: ()
         def save(value):
             if kind=='write-failure':raise OSError('model caller write refused')
             r.head=copy.deepcopy(value)

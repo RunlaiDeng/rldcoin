@@ -71,7 +71,7 @@ pub(crate) fn private_metadata(file: &File) -> Result<()> {
     Ok(())
 }
 
-fn options() -> OpenOptions {
+pub(crate) fn options() -> OpenOptions {
     let mut options = OpenOptions::new();
     #[cfg(unix)]
     {
@@ -101,7 +101,7 @@ pub(crate) fn private_read(path: &Path) -> Result<Vec<u8>> {
     Ok(raw)
 }
 
-fn private_path(path: &Path, must_exist: bool) -> Result<()> {
+pub(crate) fn private_path(path: &Path, must_exist: bool) -> Result<()> {
     require(
         path.is_absolute() && !path.components().any(|p| matches!(p, Component::ParentDir)),
         "private path must be absolute without parent traversal",

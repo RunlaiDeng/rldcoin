@@ -156,11 +156,11 @@ class CallerRecoveryTests(unittest.TestCase):
 
     def test_caller_persistence_failure_prevents_native_signature_release(self):
         runtime=self.open();before=(runtime.signer/'bft.json').read_bytes()
-        atomic=mesh.atomic
-        def fail(path,value):
-            if path==runtime.head_path:raise OSError('injected caller-head persistence failure')
-            return atomic(path,value)
-        with patch.object(mesh,'atomic',side_effect=fail),self.assertRaises(OSError):
+        native=runtime.native.call
+        def fail(action,*args,**kwargs):
+            if action=='bft-client-store':raise OSError('injected native caller-head persistence failure')
+            return native(action,*args,**kwargs)
+        with patch.object(runtime.native,'call',side_effect=fail),self.assertRaises(OSError):
             runtime.sign(self.timeout())
         self.assertTrue(runtime.failed)
         self.assertEqual((runtime.signer/'bft.json').read_bytes(),before)
