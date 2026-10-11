@@ -12,8 +12,37 @@ from regional_contact_campaign import Campaign, public, save
 from regional_contact_node import Native
 from regional_wallet_app import App, Server, MAX_REQUEST
 import interstellar_mesh as mesh
+import interstellar_transfer as wire
 
 BINARY=Path(os.environ.get('RLD_CONTACT_BINARY',str(Path(__file__).resolve().parent/'regional-ledger/target/debug/rld-regional-ledger-candidate'))).resolve()
+
+
+def reference_proposal_build(app, request, selection_pin):
+    """Independent retained Python proposal algorithm; never a runtime fallback."""
+    view=app.native.call('wallet-view',*app.wallet_args())
+    mesh.require(isinstance(request,dict) and 'valid_through' not in request, 'new proposal required')
+    mesh.require(selection_pin==view['ledger']['pin'], 'stale selection')
+    mesh.integer(request.get('valid_for_blocks'),1,32)
+    req=dict(request,owner=app.owner,valid_through=selection_pin['height']+request['valid_for_blocks'])
+    mesh.require(isinstance(req.get('participants'),list) and len(req['participants'])>=2, 'group required')
+    prepared=app.with_json('wallet-prepare',req,*app.wallet_args())
+    mesh.require(prepared['draft']['pin']==selection_pin, 'stale selection')
+    return {'prepared':prepared,'proposal':{'format':'RLD-REGIONAL-GROUP-PROPOSAL-V1',
+        'currency':app.context['currency'],'region':app.context['region'],
+        'intent_id':prepared['draft']['intent_id'],'request':prepared['draft']['request']}}
+
+
+def reference_proposal_review(app, proposal):
+    mesh.require(isinstance(proposal,dict) and set(proposal)=={'format','currency','region','intent_id','request'}
+        and proposal['format']=='RLD-REGIONAL-GROUP-PROPOSAL-V1' and proposal['currency']==app.context['currency']
+        and proposal['region']==app.context['region'], 'proposal domain differs')
+    mesh.hex32(proposal['intent_id'])
+    req=proposal['request']
+    mesh.require(isinstance(req,dict) and isinstance(req.get('participants'),list) and len(req['participants'])>=2
+        and req.get('valid_through') is not None, 'absolute group expiry required')
+    prepared=app.with_json('wallet-prepare',dict(req,owner=app.owner),*app.wallet_args())
+    mesh.require(prepared['draft']['intent_id']==proposal['intent_id'], 'intent differs')
+    return prepared
 
 
 class WalletAppFixture(unittest.TestCase):
@@ -199,6 +228,9 @@ class GroupProposalTests(WalletAppFixture):
             'recipient':{'owner':public(12),'amount':'97'},'destination_fee':'2'},'fee':'1','valid_for_blocks':8}
         before_ledger=self.root.joinpath('earth/journal.json').read_bytes()
         status,built=self.request('proposal-build',{'request':req,'selection_pin':selection['pin']});self.assertEqual(status,200,built)
+        reference=reference_proposal_build(self.app,req,selection['pin'])
+        self.assertEqual(wire.canonical(reference),wire.canonical({'prepared':{k:v for k,v in built.items()
+            if k not in ('review_id','proposal')},'proposal':built['proposal']}))
         proposal=built['proposal'];self.assertEqual(proposal['request']['valid_through'],selection['pin']['height']+8)
         self.assertEqual(before_wallet,self.app.wallet.joinpath('wallet.json').read_bytes())
         self.assertEqual(before_ledger,self.root.joinpath('earth/journal.json').read_bytes())
@@ -212,6 +244,8 @@ class GroupProposalTests(WalletAppFixture):
         try:
             other.act({'action':'init'})
             reviewed=other.act({'action':'proposal-review','proposal':proposal})
+            self.assertEqual(wire.canonical(reference_proposal_review(other,proposal)),
+                wire.canonical({k:v for k,v in reviewed.items() if k!='review_id'}))
             self.assertNotEqual(reviewed['draft']['pin']['height'],built['draft']['pin']['height'])
             self.assertEqual(reviewed['draft']['intent_id'],first['intent_id'])
             second=other.act({'action':'sign','review_id':reviewed['review_id'],'review_commitment':reviewed['review_commitment']})
@@ -251,9 +285,22 @@ class GroupProposalTests(WalletAppFixture):
         for bad in [[],[public(10),public(10)],['0'*64,public(11)],owners*9]:
             status,_=self.request('proposal-inputs',{'owners':bad});self.assertNotEqual(status,200)
         before=self.app.path.read_bytes();wallet_before=self.wallet.joinpath('wallet.json').read_bytes()
+        for changed in [dict(req,valid_through=None),dict(req,valid_for_blocks=True),dict(req,valid_for_blocks=33),
+                dict(req,unexpected='field'),dict(req,participants=owners[::-1]),dict(req,inputs=inputs+inputs)]:
+            status,_=self.request('proposal-build',{'request':changed,'selection_pin':selection['pin']})
+            self.assertNotEqual(status,200)
         status,built=self.request('proposal-build',{'request':req,'selection_pin':selection['pin']});self.assertEqual(status,200,built)
+        with self.assertRaises(ValueError):
+            self.app.with_json('wallet-proposal-review',built['proposal'],'--wallet-dir',self.wallet,
+                '--expected-wallet-head','0'*64)
         for field,value in [('currency','0'*64),('region','0'*64),('intent_id','0'*64),('format','unbound')]:
             bad=dict(built['proposal'],**{field:value});status,_=self.request('proposal-review',{'proposal':bad});self.assertNotEqual(status,200)
+            with self.assertRaises(ValueError):reference_proposal_review(self.app,bad)
+        for expiry in (None,selection['pin']['height'],selection['pin']['height']+33):
+            bad=json.loads(json.dumps(built['proposal']));bad['request']['valid_through']=expiry
+            with self.assertRaises(ValueError):
+                self.app.with_json('wallet-proposal-review',bad,*self.app.wallet_args())
+            with self.assertRaises(ValueError):reference_proposal_review(self.app,bad)
         bad=json.loads(json.dumps(built['proposal']));bad['request']['outputs'][0]['owner']=public(13)
         status,_=self.request('proposal-review',{'proposal':bad});self.assertNotEqual(status,200)
         unbalanced=dict(req,outputs=[{'owner':public(14),'amount':'97'}])

@@ -445,6 +445,24 @@ enum Action {
         #[arg(long)]
         expected_wallet_head: String,
     },
+    /// Build an unsigned fixed-expiry group proposal under current native locks.
+    WalletProposalBuild {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        wallet_dir: PathBuf,
+        #[arg(long)]
+        expected_wallet_head: String,
+    },
+    /// Re-review exact proposal intent; never rebase expiry, sign or reserve.
+    WalletProposalReview {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        wallet_dir: PathBuf,
+        #[arg(long)]
+        expected_wallet_head: String,
+    },
     WalletSign {
         #[arg(long)]
         file: PathBuf,
@@ -1842,6 +1860,44 @@ fn run() -> Result<()> {
                 &store,
                 read_json(&file)?,
                 Hash::from_hex(&expected_wallet_head).map_err(|e| e.to_string())?,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&prepared).map_err(|e| e.to_string())?
+            );
+        }
+        Action::WalletProposalBuild {
+            file,
+            wallet_dir,
+            expected_wallet_head,
+        } => {
+            let raw = storage::read_bytes(&file, wallet_proposal::MAX_INPUT_BYTES)?;
+            let input = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let agent = wallet_agent::Agent::open(&wallet_dir, &store)?;
+            let built = wallet_proposal::build(
+                &store,
+                &agent,
+                Hash::from_hex(&expected_wallet_head).map_err(|e| e.to_string())?,
+                input,
+            )?;
+            println!(
+                "{}",
+                serde_json::to_string(&built).map_err(|e| e.to_string())?
+            );
+        }
+        Action::WalletProposalReview {
+            file,
+            wallet_dir,
+            expected_wallet_head,
+        } => {
+            let raw = storage::read_bytes(&file, wallet_proposal::MAX_INPUT_BYTES)?;
+            let input = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+            let agent = wallet_agent::Agent::open(&wallet_dir, &store)?;
+            let prepared = wallet_proposal::review(
+                &store,
+                &agent,
+                Hash::from_hex(&expected_wallet_head).map_err(|e| e.to_string())?,
+                input,
             )?;
             println!(
                 "{}",

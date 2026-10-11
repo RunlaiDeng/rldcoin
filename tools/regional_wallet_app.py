@@ -222,29 +222,11 @@ class App:
             result['wallet_head']=view['wallet_head']
             return result
         if action == 'proposal-build':
-            req=value['request']
-            mesh.require(isinstance(req,dict) and 'valid_through' not in req, 'builder requires a new explicit proposal')
-            mesh.require(value['selection_pin']==view['ledger']['pin'], 'wallet state changed; load proposal inputs again')
-            blocks=req.get('valid_for_blocks')
-            mesh.integer(blocks,1,32)
-            req=dict(req,owner=self.owner,valid_through=view['ledger']['pin']['height']+blocks)
-            mesh.require(isinstance(req.get('participants'),list) and len(req['participants'])>=2, 'proposal needs multiple actual owners')
-            prepared=self.with_json('wallet-prepare',req,*self.wallet_args())
-            mesh.require(prepared['draft']['pin']==value['selection_pin'], 'wallet state changed; load proposal inputs again')
-            proposal={'format':PROPOSAL_FORMAT,'currency':self.context['currency'],'region':self.context['region'],
-                'intent_id':prepared['draft']['intent_id'],'request':prepared['draft']['request']}
-            return {**self.retain_review(prepared),'proposal':proposal}
+            built=self.with_json('wallet-proposal-build',
+                {'request':value['request'],'selection_pin':value['selection_pin']},*self.wallet_args())
+            return {**self.retain_review(built['prepared']),'proposal':built['proposal']}
         if action == 'proposal-review':
-            proposal=value['proposal']
-            mesh.require(isinstance(proposal,dict) and set(proposal)=={'format','currency','region','intent_id','request'}
-                and proposal['format']==PROPOSAL_FORMAT and proposal['currency']==self.context['currency']
-                and proposal['region']==self.context['region'], '提案的格式、货币根或地区不匹配')
-            mesh.hex32(proposal['intent_id'])
-            req=proposal['request']
-            mesh.require(isinstance(req,dict) and isinstance(req.get('participants'),list) and len(req['participants'])>=2
-                and req.get('valid_through') is not None, '提案必须固定全部参与者、输入、输出和有效高度')
-            prepared=self.with_json('wallet-prepare',dict(req,owner=self.owner),*self.wallet_args())
-            mesh.require(prepared['draft']['intent_id']==proposal['intent_id'], '提案付款编号与实际内容不一致')
+            prepared=self.with_json('wallet-proposal-review',value['proposal'],*self.wallet_args())
             return self.retain_review(prepared)
         if action == 'prepare':
             mesh.require(len(self.previews)<4 and isinstance(value['request'],dict), 'review capacity reached')
