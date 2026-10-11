@@ -369,6 +369,61 @@ impl Client {
         let (archive, raw) = self.retained(node)?;
         Ok(self.receipt(&archive, &raw, 0))
     }
+    /// Authenticate complete current-parent proposal/timeout envelopes, one at
+    /// a time. Other retained records still require the ordinary full cold check.
+    pub(crate) fn proposal_messages(
+        &self,
+        node: &Store,
+        expected: Hash,
+        context: &bft::Context,
+    ) -> Result<Vec<bft::Message>> {
+        let (archive, raw) = self.retained(node)?;
+        require(hash(&raw) == expected, "BFT scheduling archive changed")?;
+        let mut messages = Vec::new();
+        for record in archive.runtime.messages.values() {
+            let body: bft_network::Body =
+                serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())?;
+            require(
+                serde_json::to_value(&body).map_err(|e| e.to_string())? == record.body,
+                "BFT scheduling body loses typed fields",
+            )?;
+            let message = match &body {
+                bft_network::Body::Signed(message)
+                | bft_network::Body::EpochSigned { message, .. } => message,
+                _ => continue,
+            };
+            let relevant = match message.as_ref() {
+                bft::Message::Proposal(p) => {
+                    let s = &p.snapshot.statement;
+                    s.currency == context.currency
+                        && s.region == context.region
+                        && s.epoch == context.epoch
+                        && s.previous == context.previous
+                        && Some(s.height) == context.parent_height.checked_add(1)
+                }
+                bft::Message::Timeout(t) => t.context == *context,
+                _ => false,
+            };
+            if !relevant {
+                continue;
+            }
+            let value = archive.envelope(record)?;
+            let wire: bft_network::WireEnvelope =
+                serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+            require(
+                serde_json::to_value(&wire).map_err(|e| e.to_string())? == value,
+                "BFT scheduling envelope loses typed fields",
+            )?;
+            let envelope = wire.expand()?;
+            envelope.verify(node)?;
+            require(
+                envelope.value()? == record.value,
+                "BFT scheduling envelope/value differs",
+            )?;
+            messages.push(message.as_ref().clone());
+        }
+        Ok(messages)
+    }
     pub fn store_file(&self, node: &Store, path: &Path, expected: Option<Hash>) -> Result<Receipt> {
         self.store(
             node,

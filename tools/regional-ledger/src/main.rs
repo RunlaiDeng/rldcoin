@@ -136,6 +136,25 @@ enum Action {
         #[arg(long)]
         include_retained_messages: bool,
     },
+    /// Fresh locked proposal-round policy; no clock, signature or installation.
+    BftProposalOpportunity {
+        #[arg(long)]
+        signer_dir: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+        #[arg(long)]
+        state_dir: PathBuf,
+        #[arg(long)]
+        expected_state_sha256: String,
+        #[arg(long)]
+        expected_key: String,
+        #[arg(long)]
+        runtime_format: String,
+        #[arg(long)]
+        round: u64,
+        #[arg(long)]
+        file: PathBuf,
+    },
     /// Exact historical proofs actually installed by fully replayed local events.
     BftInstalledEpochs,
     JointReadyInit {
@@ -1160,6 +1179,7 @@ fn run() -> Result<()> {
         | Action::BftNetworkInspectBatch { .. }
         | Action::BftNetworkLocalEnvelope { .. }
         | Action::BftLoopStatus { .. }
+        | Action::BftProposalOpportunity { .. }
         | Action::BftOriginCurrentFinality => {
             Store::open_inspection(&args.dir, &args.authority, pin)?
         }
@@ -1607,6 +1627,37 @@ fn run() -> Result<()> {
             let raw = serde_json::to_string(&value).map_err(|e| e.to_string())?;
             if raw.len() > MAX_BYTES {
                 return Err("BFT loop observation bytes bound".into());
+            }
+            println!("{raw}");
+        }
+        Action::BftProposalOpportunity {
+            signer_dir,
+            expected_head,
+            state_dir,
+            expected_state_sha256,
+            expected_key,
+            runtime_format,
+            round,
+            file,
+        } => {
+            let context = bft_proposal_schedule::context_file(&file)?;
+            let result = bft_proposal_schedule::observe(
+                &store,
+                bft_proposal_schedule::Pins {
+                    signer: &signer_dir,
+                    archive: &state_dir,
+                    key: expected_key,
+                    runtime_format,
+                    head: Hash::from_hex(&expected_head).map_err(|e| e.to_string())?,
+                    archive_head: Hash::from_hex(&expected_state_sha256)
+                        .map_err(|e| e.to_string())?,
+                    context,
+                    round,
+                },
+            )?;
+            let raw = serde_json::to_string(&result).map_err(|e| e.to_string())?;
+            if raw.len() > MAX_BYTES {
+                return Err("BFT scheduling output bound".into());
             }
             println!("{raw}");
         }

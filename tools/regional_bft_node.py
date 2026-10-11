@@ -1477,6 +1477,10 @@ class Runtime:
                 observation.operation('consensus-tick', started, succeeded)
                 observation.event('tick-end', started, succeeded=succeeded)
 
+    def proposal_opportunity(self, context, round_number):
+        from regional_bft_proposal_schedule import opportunity
+        return opportunity(self,context,round_number)
+
     def _tick(self):
         mesh.require(not self.failed, 'BFT runtime requires restart after persistence failure')
         self._keyless_drain_observation=None
@@ -1580,23 +1584,34 @@ class Runtime:
                 future=[]
                 for later in range(round_number+1,32):
                     future.extend(self.signed(context,later,'Proposal'))
-                eligible=[]
-                if not future:
-                    for later in range(round_number+1,32):
-                        if sorted(self.peers)[(context['parent_height']+later)%4]!=self.key:
-                            continue
-                        voters={v['approval']['key'] for v,_ in self.signed(context,later-1,'Timeout')}
-                        if len(voters)>=3:eligible.append(later)
-                proposed_round=max(eligible,default=round_number)
-                leader=sorted(self.peers)[(context['parent_height']+proposed_round)%4]
-                tc=None if proposed_round==0 else self.timeout_certificate(context,proposed_round-1)
+                if self.format in (FORMAT,ORIGIN_RUNTIME_FORMAT) and self.joint is None:
+                    schedule=self.proposal_opportunity(context,round_number)
+                    mesh.require(schedule['current_proposals']==bool(current_proposals)
+                        and schedule['future_proposals']==bool(future),
+                        'Native proposal observation differs from retained Runtime rows')
+                    proposed_round,leader,tc=(schedule['proposed_round'],schedule['leader'],schedule['timeout'])
+                    can_propose=schedule['can_propose']
+                    high=schedule['high']
+                else:
+                    eligible=[]
+                    if not future:
+                        for later in range(round_number+1,32):
+                            if sorted(self.peers)[(context['parent_height']+later)%4]!=self.key:
+                                continue
+                            voters={v['approval']['key'] for v,_ in self.signed(context,later-1,'Timeout')}
+                            if len(voters)>=3:eligible.append(later)
+                    proposed_round=max(eligible,default=round_number)
+                    leader=sorted(self.peers)[(context['parent_height']+proposed_round)%4]
+                    tc=None if proposed_round==0 else self.timeout_certificate(context,proposed_round-1)
+                    can_propose=(not current_proposals and not future and leader==self.key
+                                 and (proposed_round>round_number or not active['proposed'])
+                                 and (proposed_round==0 or tc is not None))
+                    highs=[v['high'] for v in tc['votes'] if v['high'] is not None] if tc else []
+                    high=max(highs,key=lambda q:q['round'])['value'] if highs else None
                 # Retained rows choose only a candidate round. Native aggregation,
                 # leadership, highest-QC/value, signer/head and complete execution
                 # still authorize the request. Existing future proposals take
                 # Prepare first; current complete Prepare/Commit took priority above.
-                can_propose=(not current_proposals and not future and leader==self.key
-                             and (proposed_round>round_number or not active['proposed'])
-                             and (proposed_round==0 or tc is not None))
                 wait=getattr(self,'before_initial_proposal',None)
                 if (can_propose and self.format==ORIGIN_RUNTIME_FORMAT and self.joint is None
                         and proposed_round==round_number==0 and active['prepared'] is None
@@ -1622,8 +1637,6 @@ class Runtime:
                         self._sign_native_head=None
                         return self._tick()
                 if can_propose and time.monotonic()-self.entered_at>=self.block_interval:
-                    highs=[v['high'] for v in tc['votes'] if v['high'] is not None] if tc else []
-                    high=max(highs,key=lambda q:q['round'])['value'] if highs else None
                     proposed={'round':proposed_round,'snapshot':self.candidate(context,high),'timeout':tc}
                     self.sign({'Propose':proposed})
                     publish=getattr(self,'after_local_proposal',None)

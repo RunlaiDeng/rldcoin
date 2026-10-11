@@ -909,12 +909,12 @@ pub struct Agent {
 /// No decoded status can initialize a journal or authorize a signature.
 #[derive(Serialize)]
 pub struct Status {
-    binding: Binding,
+    pub(crate) binding: Binding,
     creation: Observation,
     external_rollback_anchor_qualified: bool,
-    head: Hash,
+    pub(crate) head: Hash,
     records: usize,
-    state: State,
+    pub(crate) state: State,
 }
 #[derive(Debug, Serialize)]
 pub struct Signed {

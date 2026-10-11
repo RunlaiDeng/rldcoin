@@ -59,6 +59,12 @@ ExactRuntime, clock = methods()
 
 
 class Fixture(ExactRuntime):
+    def proposal_opportunity(self,context,round_number):
+        # This fake timing model uses the independent policy, never claims a
+        # Native replay. Actual CLI integration is exercised by fresh fixtures.
+        from regional_bft_proposal_reference import opportunity_reference
+        return opportunity_reference(self,context,round_number,self.native_state)
+
     def __init__(self, round_number=0, prepared=None):
         clock.now = 1
         self.failed = False

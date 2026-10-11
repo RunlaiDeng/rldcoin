@@ -65,6 +65,11 @@ class OriginCallerTests(unittest.TestCase):
                 block_interval=1,round_timeout=20,stop_height=3))
             try:
                 runtime = Runtime(native,transports[0],config)
+                context=native.call('bft-context')['context']
+                from regional_bft_proposal_reference import opportunity_reference
+                expected=opportunity_reference(runtime,context,0,dict(proposed=False))
+                observed=runtime.proposal_opportunity(context,0)
+                self.assertEqual({k:observed[k] for k in expected},expected)
                 request = dict(Timeout=dict(context=native.call('bft-context')['context'],round=0))
                 runtime.sign(request) # Actual composed Origin signing/envelope/retention path.
                 self.assertEqual(runtime.signer_status()['records'],1)
@@ -77,6 +82,9 @@ class OriginCallerTests(unittest.TestCase):
                 self.assertEqual(runtime.head['head'],signed['head'])
                 self.assertIsNone(runtime.head['pending']); self.assertIsNone(runtime.head['outbox'])
                 self.assertEqual(runtime.signer_status()['records'],2)
+                observed=runtime.proposal_opportunity(context,2)
+                self.assertEqual(observed['round'],2)
+                self.assertFalse(observed['can_propose'])
                 self.assertTrue(any(row['envelope']['body'] == {'Signed':signed['message']}
                     for row in runtime.state['messages'].values()))
                 self.assertEqual(native.call('history-check','--expected-head',native.call('history-head')['history_head'])['height'],0)
