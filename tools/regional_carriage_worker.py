@@ -13,6 +13,7 @@ import interstellar_transfer as wire
 
 FORMAT='RLD-REGIONAL-CARRIAGE-WORKER-V1'
 MAX_OBSERVATION_BYTES=64*1024
+MIN_WAKE_INTERVAL=0.1
 
 
 class Worker:
@@ -21,11 +22,12 @@ class Worker:
                      'outgoing worker interval outside ground bound')
         self.server=server;self.interval=interval
         self.guard=threading.Lock();self.stop=threading.Event()
+        self.wake=threading.Event()
         self.close_guard=threading.Lock()
         self.raw=None;self.duration=None;self.completed=None
         self.passes=0;self.in_progress=False;self.failure=None;self.closed=False
         self.thread=threading.Thread(target=self.run,name='rld-regional-outgoing',daemon=True)
-        server.claim_outbound(self.thread)
+        server.claim_outbound(self.thread,wake=self.notify)
         try:self.thread.start()
         except BaseException:
             server.release_outbound(self.thread)
@@ -34,6 +36,9 @@ class Worker:
     def run(self):
         try:
             while not self.stop.is_set() and self.server.running:
+                # Consume one merged notification before starting the sole
+                # outgoing pass. Notifications during that pass remain set.
+                self.wake.clear()
                 started=time.monotonic()
                 with self.guard:self.in_progress=True
                 result=self.server.tick()
@@ -43,11 +48,18 @@ class Worker:
                     self.raw=raw;self.duration=round(time.monotonic()-started,6)
                     self.completed=time.time();self.passes=min(self.passes+1,2**63-1)
                     self.in_progress=False
-                self.stop.wait(self.interval)
+                if self.wake.wait(self.interval):
+                    # A notification grants no extra slot or custody. Bound
+                    # starts by the original minimum ground interval, even
+                    # when repeated enqueue calls keep this event set.
+                    self.stop.wait(max(0.0,started+MIN_WAKE_INTERVAL-time.monotonic()))
         except BaseException as error:
             with self.guard:
                 self.failure=type(error).__name__+': '+str(error)[:256]
                 self.in_progress=False
+
+    def notify(self):
+        if not self.stop.is_set():self.wake.set()
 
     def snapshot(self):
         with self.guard:
@@ -68,7 +80,7 @@ class Worker:
         with self.close_guard:
             if self.closed:return
             mesh.require(threading.current_thread() is not self.thread,'outgoing worker cannot release itself')
-            self.stop.set();self.server.running=False
+            self.stop.set();self.wake.set();self.server.running=False
             # A socket deadline does not bound local verification CPU. Never free
             # the service lock/ownership while local durable custody is unfinished.
             self.thread.join()

@@ -332,6 +332,8 @@ class Server:
         self.local_lock_retries=0
         self.local_lock_exhaustions=0
         self.mesh_costs=MeshCosts(contact_trace=self.contact_trace)
+        self.outbound_wake=None
+        self.outbound_wake_failures=0
         # Retry ownership survives bounded refusal; idle ownership is not a
         # perpetual scheduling grant. Only an active acquisition or its brief
         # post-refusal window gives ordinary selection priority over TCP.
@@ -558,11 +560,16 @@ class Server:
         next attempt, as the Service receive selector already does. Native
         work/socket I/O stay outside; waiting never grants custody.
         """
-        self.request_selection('carriage');node=None
+        self.request_selection('carriage');node=None;added=False
         try:
             with self.selection_mesh_node(time.monotonic()+MAX_LOCAL_LOCK_WAIT_SECONDS) as selected:
                 node=selected
+                # Only the current outgoing owner may receive a scheduling
+                # notification. Compare bounded authenticated IDs, not bodies.
+                with self.guard:wake_enabled=self.outbound_wake is not None
+                before=set(node.state['messages']) if wake_enabled else None
                 yield node
+                added=before is not None and bool(set(node.state['messages'])-before)
         except OSError as error:
             if node is None and error.errno not in (errno.EAGAIN,errno.EWOULDBLOCK):
                 self.finish_selection()
@@ -572,6 +579,20 @@ class Server:
             raise
         finally:
             if node is not None:self.finish_selection()
+        # Both the original Mesh close and lease release completed. Failed
+        # writes/body/close paths never reach this optional wake. Periodic
+        # carriage remains the fallback; no packet/receipt is removed.
+        if added:self.notify_outbound()
+
+    def notify_outbound(self):
+        with self.guard:wake=self.outbound_wake
+        if wake is not None:
+            try:wake()
+            except Exception:
+                # Notification failure leaves ordinary periodic carriage and
+                # every durable packet intact. Report it without retry signing.
+                with self.guard:
+                    self.outbound_wake_failures=min(self.outbound_wake_failures+1,2**63-1)
 
     def serve(self):
         while self.running:
@@ -785,11 +806,13 @@ class Server:
         finally:
             with self.guard:self.tcp_mesh_waiters.discard(threading.current_thread())
 
-    def claim_outbound(self, owner):
+    def claim_outbound(self, owner, *, wake=None):
         with self.guard:
+            mesh.require(wake is None or callable(wake),'TCP outgoing wake callback differs')
             mesh.require(self.outbound_owner is None and self.outbound_guard.acquire(False),
                          'TCP outgoing scheduler already owned')
             self.outbound_owner=owner
+            self.outbound_wake=wake
             self.outbound_guard.release()
 
     def release_outbound(self, owner):
@@ -797,6 +820,7 @@ class Server:
             mesh.require(self.outbound_owner is owner and not owner.is_alive(),
                          'TCP outgoing owner still active or differs')
             self.outbound_owner=None
+            self.outbound_wake=None
             self.tcp_mesh_waiters.discard(owner)
 
     def tick(self):
@@ -934,6 +958,7 @@ class Server:
                 'shares_original_inbound_slots':True,'queue_grants_custody':False},
                 'observations':copy.deepcopy(self.observations),'refused_connections':self.refused_connections,
                 'local_lock_retries':self.local_lock_retries,'local_lock_exhaustions':self.local_lock_exhaustions,
+                'outbound_wake_failures':self.outbound_wake_failures,
                 'mesh_lease_costs':self.mesh_costs.snapshot()}
 
     def close(self):
