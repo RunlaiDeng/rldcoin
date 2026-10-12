@@ -1010,3 +1010,8 @@ The [native process lock interface](../../docs/operations/NATIVE_CONTACT_PROCESS
 owns fixed-role Mesh/Startup/Service locks and strict directory traversal. Its
 process-local handles preserve blocking/nonblocking and shutdown ownership rules
 without granting signing, ledger, freshness or custody rights.
+
+The [native signed schema interface](../../docs/operations/NATIVE_CONTACT_SCHEMA.md)
+combines existing transport signature verification with advertisement/inventory/
+receipt route/destination field and ordering rules. Its checked metadata remains
+separate from native ledger acceptance and actual durable custody.

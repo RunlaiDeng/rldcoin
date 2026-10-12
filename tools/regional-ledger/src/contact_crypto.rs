@@ -68,6 +68,12 @@ enum Request {
         kind: String,
         signed: Signed,
     },
+    Schema {
+        network: String,
+        kind: String,
+        limits: crate::contact_schema::Limits,
+        signed: Value,
+    },
 }
 pub(crate) fn hex_bytes<const N: usize>(text: &str) -> Result<[u8; N]> {
     require(
@@ -262,6 +268,19 @@ fn signature_bytes(kind: &str, body: &Value) -> Result<Vec<u8>> {
     bytes.extend(files::canonical_with_limit(body, MAX_OBJECT)?);
     Ok(bytes)
 }
+fn verify_signed(network: &str, kind: &str, signed: Signed) -> Result<Value> {
+    body_check(&signed.body, network, &signed.public_key)?;
+    let key = VerifyingKey::from_bytes(&hex_bytes::<32>(&signed.public_key)?)
+        .map_err(|e| e.to_string())?;
+    let signature = Signature::from_bytes(&hex_bytes::<64>(&signed.signature)?);
+    key.verify_strict(&signature_bytes(kind, &signed.body)?, &signature)
+        .map_err(|_| "contact signature invalid")?;
+    Ok(signed.body)
+}
+pub(crate) fn verify_value(network: &str, kind: &str, value: &Value) -> Result<Value> {
+    let signed: Signed = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+    verify_signed(network, kind, signed)
+}
 fn execute(raw: &[u8]) -> Result<Value> {
     let value = crate::wallet_http::decode_unique_with_limit(raw, MAX_ABI)?;
     require(
@@ -307,15 +326,13 @@ fn execute(raw: &[u8]) -> Result<Value> {
             network,
             kind,
             signed,
-        } => {
-            body_check(&signed.body, &network, &signed.public_key)?;
-            let key = VerifyingKey::from_bytes(&hex_bytes::<32>(&signed.public_key)?)
-                .map_err(|e| e.to_string())?;
-            let signature = Signature::from_bytes(&hex_bytes::<64>(&signed.signature)?);
-            key.verify_strict(&signature_bytes(&kind, &signed.body)?, &signature)
-                .map_err(|_| "contact signature invalid")?;
-            Ok(signed.body)
-        }
+        } => verify_signed(&network, &kind, signed),
+        Request::Schema {
+            network,
+            kind,
+            limits,
+            signed,
+        } => crate::contact_schema::verify(&network, &kind, &signed, &limits),
     }
 }
 

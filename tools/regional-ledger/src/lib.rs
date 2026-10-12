@@ -1135,6 +1135,7 @@ pub mod contact_crypto;
 mod contact_frame;
 mod contact_listener;
 mod contact_process_lock;
+mod contact_schema;
 mod contact_spool;
 mod contact_spool_codec;
 mod contact_state_codec;
