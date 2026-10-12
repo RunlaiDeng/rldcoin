@@ -142,6 +142,8 @@ impl Node {
         )?;
         let path = root.join("native-mesh-state.json");
         let state = if fs::symlink_metadata(&path).is_ok() {
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             let raw = files::private_read_with_limit(&path, STATE_LIMIT)?;
             let decoded = codec_request(
                 "Decode",
@@ -160,7 +162,10 @@ impl Node {
                     decoded["image"]["frames"][key]["frame"].clone();
                 *entry = transit;
             }
-            serde_json::from_value(expanded).map_err(|e| e.to_string())?
+            let state = serde_json::from_value(expanded).map_err(|e| e.to_string())?;
+            #[cfg(test)]
+            super::service::trace_subwork("mesh-state-decode-expand", started)?;
+            state
         } else {
             State {
                 format: FORMAT.into(),
@@ -314,16 +319,29 @@ impl Node {
             json!({"token":token,"limits":codec_limits()}),
             &raw,
         )?;
-        let operation = (|| {
+        let operation: Result<()> = (|| {
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             for (id, t) in &self.state.messages {
                 codec_request("Transit", json!({"token":token,"ident":id}), &bytes(t)?)?;
             }
+            #[cfg(test)]
+            super::service::trace_subwork("mesh-state-encode-transits", started)?;
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             let result = codec(json!({"Finish":{"token":token}}), &[])?;
+            #[cfg(test)]
+            super::service::trace_subwork("mesh-state-encode-finish", started)?;
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             atomic(
                 &self.root.join("native-mesh-state.json"),
                 &result["image"],
                 STATE_LIMIT,
-            )
+            )?;
+            #[cfg(test)]
+            super::service::trace_subwork("mesh-state-durable-write", started)?;
+            Ok(())
         })();
         let cleanup = codec(json!({"Abort":{"token":token}}), &[]);
         operation?;
@@ -354,6 +372,8 @@ impl Node {
     }
 
     fn archive(&self, id: &str, object: &str) -> Result<Value> {
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         identifier(id)?;
         identifier(object)?;
         let value = read(
@@ -368,6 +388,8 @@ impl Node {
                 && value["packet_id"] == id,
             "archive complete byte/domain binding",
         )?;
+        #[cfg(test)]
+        super::service::trace_subwork("mesh-archive-read-bind", started)?;
         let receipt = &value["receipt"];
         let checked = schema(receipt, &self.network, "receipt")?;
         require(
@@ -425,7 +447,7 @@ impl Node {
             ids.rotate_left(offset);
         }
         if !seen.is_empty() {
-            let first = self
+            let active = self
                 .state
                 .arrivals
                 .iter()
@@ -433,6 +455,28 @@ impl Node {
                     !seen.contains(id)
                         && self.state.messages[*id]["packet"]["body"]["destination"] == self.id
                 })
+                .take(2)
+                .cloned()
+                .collect::<Vec<_>>();
+            let mut archived = Vec::new();
+            for (id, object) in &self.state.archives {
+                if seen.contains(id) {
+                    continue;
+                }
+                let archive = self.archive(id, object)?;
+                if archive["transit"]["packet"]["body"]["destination"] == self.id {
+                    archived.push(id.clone());
+                    if archived.len() == 2 {
+                        break;
+                    }
+                }
+            }
+            // Completion archives transport custody, not Native processing.
+            // Share the two first-processing slots between active and archived
+            // unseen destination frames; retain two ordinary historical slots.
+            let first = (0..2)
+                .flat_map(|i| [active.get(i), archived.get(i)])
+                .flatten()
                 .take(2)
                 .cloned()
                 .collect::<Vec<_>>();
@@ -470,6 +514,7 @@ impl Node {
         Ok(result)
     }
 
+    #[cfg(test)]
     pub(crate) fn originated_frame(
         &self,
         frame: Hash,
@@ -528,8 +573,77 @@ impl Node {
         Ok(frames)
     }
 
+    pub(crate) fn prioritize_originated_packets(&mut self, ids: &[String]) -> Result<()> {
+        let requested = ids.iter().collect::<std::collections::BTreeSet<_>>();
+        require(
+            ids.len() <= MAX_MESSAGES && requested.len() == ids.len(),
+            "originated scheduling identity/count bound",
+        )?;
+        let mut first = Vec::new();
+        for id in ids {
+            if let Some(t) = self.state.messages.get(id) {
+                require(
+                    t["packet"]["body"]["node_id"] == self.id,
+                    "scheduling priority requires a locally originated packet",
+                )?;
+                first.push(id.clone());
+            } else {
+                let object = self
+                    .state
+                    .archives
+                    .get(id)
+                    .ok_or("missing originated scheduling packet")?;
+                require(
+                    self.archive(id, object)?["transit"]["packet"]["body"]["node_id"] == self.id,
+                    "archived scheduling packet was not locally originated",
+                )?;
+            }
+        }
+        first.extend(
+            self.state
+                .arrivals
+                .iter()
+                .filter(|id| !requested.contains(id))
+                .cloned(),
+        );
+        if first == self.state.arrivals {
+            return Ok(());
+        }
+        // Only reorder existing complete custody. The ordinary two-first and
+        // two-history send slots, signatures, routes and receipt checks remain.
+        // This scheduling metadata grants no Native or signing authority.
+        let old = std::mem::replace(&mut self.state.arrivals, first);
+        if let Err(error) = self.save() {
+            self.state.arrivals = old;
+            return Err(error);
+        }
+        Ok(())
+    }
+
     pub fn enqueue(&mut self, raw: &[u8], destination: &str) -> Result<String> {
-        identifier(destination)?;
+        self.enqueue_destinations(raw, &[destination.to_owned()])?
+            .into_iter()
+            .next()
+            .ok_or("missing single-destination packet".into())
+    }
+
+    pub(crate) fn enqueue_destinations(
+        &mut self,
+        raw: &[u8],
+        destinations: &[String],
+    ) -> Result<Vec<String>> {
+        let wanted = destinations
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>();
+        require(
+            !destinations.is_empty()
+                && destinations.len() <= 16
+                && wanted.len() == destinations.len(),
+            "outgoing destination batch identity/count bound",
+        )?;
+        for destination in destinations {
+            identifier(destination)?;
+        }
         let (frame, _) = crate::contact_frame::inspect_bytes(
             raw,
             None,
@@ -537,28 +651,68 @@ impl Node {
             crate::contact::MAX_PAYLOAD,
             crate::contact::MAX_FRAME,
         )?;
-        // Duplicate matching is scoped by destination and complete frame; no new packet is needed.
-        if let Some(id) = self.originated_frame(frame.message_id, destination)? {
-            return Ok(id);
+        // One call-local lookup of complete authenticated custody, with no
+        // retained proof/cache. Every later call checks its exact input again.
+        let mut found = BTreeMap::<String, String>::new();
+        let include = |id: &str, t: &Value| {
+            if t["packet"]["body"]["node_id"] == self.id
+                && t["routing"]["body"]["frame_id"] == frame.message_id.to_hex()
+            {
+                if let Some(destination) = t["packet"]["body"]["destination"].as_str() {
+                    if destinations.iter().any(|d| d == destination) {
+                        return Some((destination.to_owned(), id.to_owned()));
+                    }
+                }
+            }
+            None
+        };
+        for (id, t) in &self.state.messages {
+            if let Some((destination, id)) = include(id, t) {
+                found.entry(destination).or_insert(id);
+            }
+        }
+        for (id, object) in &self.state.archives {
+            if found.len() == destinations.len() {
+                break;
+            }
+            let archive = self.archive(id, object)?;
+            if let Some((destination, id)) = include(id, &archive["transit"]) {
+                found.entry(destination).or_insert(id);
+            }
         }
         require(
-            self.state.messages.len() < MAX_MESSAGES,
+            self.state.messages.len() + destinations.len() - found.len() <= MAX_MESSAGES,
             "active packet capacity reached; retain old evidence",
         )?;
-        let packet = self.sign("packet",json!({"format":MESH,"network":self.network,"node_id":self.id,
+        let mut ids = Vec::new();
+        let mut pending = Vec::new();
+        for destination in destinations {
+            if let Some(id) = found.get(destination) {
+                ids.push(id.clone());
+                continue;
+            }
+            let packet = self.sign("packet",json!({"format":MESH,"network":self.network,"node_id":self.id,
             "destination":destination,"nonce":random()?,"hop_limit":16,"frame":STANDARD.encode(raw)}))?;
-        let id = digest(&packet)?;
-        let routing = self.sign(
-            "receipt-route",
-            json!({"format":MESH,"network":self.network,"node_id":self.id,
+            let id = digest(&packet)?;
+            let routing = self.sign(
+                "receipt-route",
+                json!({"format":MESH,"network":self.network,"node_id":self.id,
             "packet_id":id,"destination":destination,"frame_id":frame.message_id}),
-        )?;
-        let t = json!({"packet":packet,"routing":routing,"hops":[]});
-        transit(&t, &self.network, Value::Null, Value::Null)?;
-        self.state.messages.insert(id.clone(), t);
-        self.state.arrivals.push(id.clone());
-        self.save()?;
-        Ok(id)
+            )?;
+            let t = json!({"packet":packet,"routing":routing,"hops":[]});
+            transit(&t, &self.network, Value::Null, Value::Null)?;
+            ids.push(id.clone());
+            pending.push((id, t));
+        }
+        if !pending.is_empty() {
+            for (id, t) in pending {
+                self.state.messages.insert(id.clone(), t);
+                self.state.arrivals.push(id);
+            }
+            // The whole bounded typed image is durable before any batch result.
+            self.save()?;
+        }
+        Ok(ids)
     }
 
     fn route(&self, destination: &str, excluded: Vec<String>, first: &str) -> Result<bool> {
@@ -766,18 +920,57 @@ impl Node {
                 transit(t, &self.network, json!(self.id), json!(peer))?;
                 let id = digest(&t["packet"])?;
                 if let Some(object) = self.state.archives.get(&id) {
-                    let archive = self.archive(&id, object)?;
-                    require(
-                        archive["transit"]["packet"] == t["packet"]
-                            && archive["transit"]["routing"] == t["routing"],
-                        "archived packet changed",
-                    )?;
+                    let mut archive = self.archive(&id, object)?;
+                    let object = if archive["transit"].is_null() {
+                        // An asymmetric carrier may receive and archive a
+                        // destination's authenticated receipt before its packet.
+                        // Bind the independently checked complete transit to that
+                        // exact receipt, then retain a new immutable object.
+                        receipt_matches(
+                            &archive["receipt"],
+                            &t["packet"]["body"],
+                            &t["routing"]["body"],
+                        )?;
+                        archive["transit"] = t.clone();
+                        let raw = bytes(&archive)?;
+                        let next = hex::encode(Sha256::digest(&raw));
+                        let path = self.root.join("archive").join(format!("{next}.json"));
+                        if path.exists() {
+                            require(
+                                read(&path, STATE_LIMIT)? == archive,
+                                "existing complete custody archive differs",
+                            )?;
+                        } else {
+                            let (count, size) = self.archive_inventory()?;
+                            require(
+                                count + 2 <= MAX_ARCHIVE_FILES
+                                    && size + 2 * raw.len() as u64 <= MAX_ARCHIVE_BYTES,
+                                "archive capacity including publication residue",
+                            )?;
+                            crate::contact_storage::execute(
+                                &bytes(&json!({"ArchiveWrite":{
+                                "path":path,"size_bytes":raw.len(),"sha256":next}}))?,
+                                &raw,
+                            )?;
+                        }
+                        next
+                    } else {
+                        require(
+                            archive["transit"]["packet"] == t["packet"]
+                                && archive["transit"]["routing"] == t["routing"],
+                            "archived packet changed",
+                        )?;
+                        object.clone()
+                    };
                     crate::contact_storage::execute(
                         &bytes(
                             &json!({"SyncMany":{"paths":[self.root.join("archive").join(format!("{object}.json"))]}}),
                         )?,
                         &[],
                     )?;
+                    // Only after durable complete custody may the index advance.
+                    // The old receipt-only object and every orphan stay retained.
+                    self.state.archives.insert(id.clone(), object);
                 } else if let Some(existing) = self.state.messages.get(&id) {
                     require(
                         existing["packet"] == t["packet"] && existing["routing"] == t["routing"],
@@ -967,6 +1160,13 @@ mod tests {
     }
     impl Drop for Fixture {
         fn drop(&mut self) {
+            if std::thread::panicking() {
+                eprintln!(
+                    "Failed Rust mesh fixture retained at {}",
+                    self.root.display()
+                );
+                return;
+            }
             let _ = fs::remove_dir_all(&self.root);
         }
     }
@@ -1105,5 +1305,357 @@ mod tests {
         value["state"]["format"] = json!("wrong");
         atomic(&path, &value, STATE_LIMIT).unwrap();
         assert!(Node::open(&f.configs[0]).is_err());
+    }
+
+    #[test]
+    fn directory_neighbor_turn_opens_one_authenticated_transport_image() {
+        let mut f = Fixture::new(4);
+        for n in 0..4 {
+            let peers = if n == 0 {
+                vec![1usize, 2, 3]
+            } else {
+                vec![0usize]
+            };
+            f.configs[n]["contacts"] = json!(peers.into_iter().map(|p|json!({"peer":f.ids[p],
+                "inbox":f.root.join(format!("spool-{p}-{n}")),"outbox":f.root.join(format!("spool-{n}-{p}"))})).collect::<Vec<_>>());
+        }
+        let raw = f.frame();
+        {
+            let mut node = Node::open(&f.configs[0]).unwrap();
+            node.enqueue_destinations(&raw, &f.ids[1..]).unwrap();
+        }
+        super::super::service::start_work_trace();
+        assert!(super::super::service::spool_directory_turn(&f.configs[0])
+            .unwrap()
+            .is_empty());
+        let trace = super::super::service::take_work_trace();
+        let opens = trace
+            .iter()
+            .filter(|e| e["phase"] == "mesh-state-decode-expand")
+            .map(|e| e["calls"].as_u64().unwrap_or(1))
+            .sum::<u64>();
+        assert_eq!(
+            opens, 1,
+            "one directory turn reopened the same authenticated transport image"
+        );
+        for n in 1..4 {
+            assert!(super::super::service::spool_directory_turn(&f.configs[n])
+                .unwrap()
+                .is_empty());
+            let node = Node::open(&f.configs[n]).unwrap();
+            assert_eq!(node.received_frames().unwrap().len(), 1);
+            assert_eq!(node.received_frames().unwrap()[0].1, raw);
+            assert_eq!(node.state.receipts.len(), 1);
+        }
+        assert!(super::super::service::spool_directory_turn(&f.configs[0])
+            .unwrap()
+            .is_empty());
+        let cold = Node::open(&f.configs[0]).unwrap();
+        assert_eq!(cold.state.receipts.len(), 3);
+        let contacts = cold.contacts.clone();
+        let cursor = cold.state.cursor;
+        drop(cold);
+        let first = contacts.keys().next().unwrap();
+        let contact = &contacts[first];
+        let invalid = json!({"body":{},"format":"invalid-exchange"});
+        let path = Path::new(contact["inbox"].as_str().unwrap())
+            .join(format!("{}.json", digest(&invalid).unwrap()));
+        crate::keystore::private_create(&path, &bytes(&invalid).unwrap()).unwrap();
+        let outboxes = contacts
+            .iter()
+            .filter(|(id, _)| *id != first)
+            .map(|(_, c)| PathBuf::from(c["outbox"].as_str().unwrap()))
+            .collect::<Vec<_>>();
+        let errors = super::super::service::spool_directory_turn(&f.configs[0]).unwrap();
+        assert_eq!(errors.len(), 1);
+        assert!(path.exists(), "failed incoming evidence was deleted");
+        for outbox in outboxes {
+            assert!(
+                fs::read_dir(outbox).unwrap().count() > 0,
+                "later neighbor was suppressed after a refusal"
+            );
+        }
+        assert_eq!(
+            Node::open(&f.configs[0]).unwrap().state.cursor,
+            cursor + 2,
+            "later directory neighbors did not each prepare after durable-state reopen"
+        );
+    }
+
+    #[test]
+    fn complete_frame_destination_batch_preserves_cold_ids_and_rejects_bad_input() {
+        let f = Fixture::new(3);
+        let raw = f.frame();
+        let destinations = f.ids[1..].to_vec();
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        let packets = node.enqueue_destinations(&raw, &destinations).unwrap();
+        assert_eq!(packets.len(), 2);
+        assert_ne!(packets[0], packets[1]);
+        for (destination, packet) in destinations.iter().zip(&packets) {
+            assert_eq!(
+                node.state.messages[packet]["packet"]["body"]["destination"],
+                *destination
+            );
+            assert_eq!(
+                STANDARD
+                    .decode(
+                        node.state.messages[packet]["packet"]["body"]["frame"]
+                            .as_str()
+                            .unwrap()
+                    )
+                    .unwrap(),
+                raw
+            );
+        }
+        let before = fs::read(node.root.join("native-mesh-state.json")).unwrap();
+        assert!(node
+            .enqueue_destinations(&raw, &[destinations[0].clone(), destinations[0].clone()])
+            .is_err());
+        let mut bad = raw.clone();
+        bad[0] ^= 1;
+        assert!(node.enqueue_destinations(&bad, &destinations).is_err());
+        assert!(node
+            .enqueue_destinations(&raw, &vec![destinations[0].clone(); 17])
+            .is_err());
+        assert_eq!(
+            fs::read(node.root.join("native-mesh-state.json")).unwrap(),
+            before
+        );
+        drop(node);
+        let mut cold = Node::open(&f.configs[0]).unwrap();
+        let reversed = destinations.iter().rev().cloned().collect::<Vec<_>>();
+        assert_eq!(
+            cold.enqueue_destinations(&raw, &reversed).unwrap(),
+            packets.iter().rev().cloned().collect::<Vec<_>>()
+        );
+        assert_eq!(
+            fs::read(cold.root.join("native-mesh-state.json")).unwrap(),
+            before
+        );
+    }
+
+    #[test]
+    fn unseen_archived_destination_frame_keeps_native_receive_priority() {
+        let f = Fixture::new(2);
+        for n in 0..32u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            Node::open(&f.configs[0])
+                .unwrap()
+                .enqueue(&frame.retained_bytes().unwrap(), &f.ids[1])
+                .unwrap();
+        }
+        for _ in 0..16 {
+            let exchange = Node::open(&f.configs[0])
+                .unwrap()
+                .prepare(&f.ids[1])
+                .unwrap();
+            Node::open(&f.configs[1])
+                .unwrap()
+                .receive(&exchange, &f.ids[0])
+                .unwrap();
+        }
+        Node::open(&f.configs[1])
+            .unwrap()
+            .archive_completed()
+            .unwrap();
+        let node = Node::open(&f.configs[1]).unwrap();
+        assert_eq!(node.state.archives.len(), 16);
+        let pending = node.state.archives.keys().next().unwrap().clone();
+        let seen = node
+            .state
+            .messages
+            .keys()
+            .chain(node.state.archives.keys())
+            .filter(|id| **id != pending)
+            .cloned()
+            .collect::<Vec<_>>();
+        let before = fs::read(node.root.join("native-mesh-state.json")).unwrap();
+        let page = node.frame_page_selected(Some(&pending), 4, &seen).unwrap();
+        assert!(
+            page.iter().any(|(id, _)| *id == pending),
+            "unseen archived destination frame lost first-processing priority"
+        );
+        assert_eq!(
+            fs::read(node.root.join("native-mesh-state.json")).unwrap(),
+            before
+        );
+        assert_eq!(page.len(), 4);
+        let active = node.state.messages.keys().next().unwrap().clone();
+        let mixed_seen = seen
+            .iter()
+            .filter(|id| **id != active)
+            .cloned()
+            .collect::<Vec<_>>();
+        let mixed = node
+            .frame_page_selected(Some(&pending), 4, &mixed_seen)
+            .unwrap();
+        assert!(mixed.iter().any(|(id, _)| *id == pending));
+        assert!(mixed.iter().any(|(id, _)| *id == active));
+        assert_eq!(
+            mixed
+                .iter()
+                .filter(|(id, _)| mixed_seen.contains(id))
+                .count(),
+            2
+        );
+        drop(node);
+        let cold = Node::open(&f.configs[1]).unwrap();
+        assert_eq!(
+            cold.frame_page_selected(Some(&pending), 4, &mixed_seen)
+                .unwrap(),
+            mixed
+        );
+    }
+
+    #[test]
+    fn receipt_only_archive_retains_later_authenticated_packet_without_rewriting_old_bytes() {
+        let mut f = Fixture::new(3);
+        for n in 0..3 {
+            f.configs[n]["contacts"] = json!((0..3).filter(|p|*p!=n).map(|p|json!({"peer":f.ids[p],
+                "inbox":f.root.join(format!("spool-{p}-{n}")),"outbox":f.root.join(format!("spool-{n}-{p}"))})).collect::<Vec<_>>());
+        }
+        let adverts = Node::open(&f.configs[2])
+            .unwrap()
+            .prepare(&f.ids[0])
+            .unwrap();
+        Node::open(&f.configs[0])
+            .unwrap()
+            .receive(&adverts, &f.ids[2])
+            .unwrap();
+        for n in 0..32u8 {
+            let region = hex::encode([n + 32; 32]);
+            let payload = bytes(&json!({"format":crate::bft_network::FORMAT,"currency":"11".repeat(32),"region":region,
+                "evidence":{"snapshots":[]},"body":{"Submission":[]}})).unwrap();
+            let hash = Hash(Sha256::digest(&payload).into());
+            let mut frame = Frame {
+                format: crate::contact::FRAME_FORMAT.into(),
+                kind: "regional-bft".into(),
+                source_chain_id: Hash::from_hex(&region).unwrap(),
+                destination_chain_id: Hash::from_hex(&region).unwrap(),
+                export_id: hash,
+                payload_sha256: hash,
+                payload_b64: STANDARD.encode(payload),
+                message_id: Hash::ZERO,
+            };
+            frame.message_id = frame.message().unwrap();
+            Node::open(&f.configs[0])
+                .unwrap()
+                .enqueue(&frame.retained_bytes().unwrap(), &f.ids[1])
+                .unwrap();
+        }
+        // Prepare legitimate alternate-path packets before the destination's
+        // receipts reach their future carrier. This is transport only.
+        let mut late = Vec::new();
+        for _ in 0..16 {
+            late.push(
+                Node::open(&f.configs[0])
+                    .unwrap()
+                    .prepare(&f.ids[2])
+                    .unwrap(),
+            );
+            let direct = Node::open(&f.configs[0])
+                .unwrap()
+                .prepare(&f.ids[1])
+                .unwrap();
+            Node::open(&f.configs[1])
+                .unwrap()
+                .receive(&direct, &f.ids[0])
+                .unwrap();
+        }
+        assert_eq!(Node::open(&f.configs[1]).unwrap().state.receipts.len(), 32);
+        for _ in 0..2 {
+            let receipts = Node::open(&f.configs[1])
+                .unwrap()
+                .prepare(&f.ids[2])
+                .unwrap();
+            assert!(receipts["body"]["transits"].as_array().unwrap().is_empty());
+            Node::open(&f.configs[2])
+                .unwrap()
+                .receive(&receipts, &f.ids[1])
+                .unwrap();
+        }
+        Node::open(&f.configs[2])
+            .unwrap()
+            .archive_completed()
+            .unwrap();
+        let node = Node::open(&f.configs[2]).unwrap();
+        assert_eq!(node.state.messages.len(), 0);
+        let (packet, original) = node.state.archives.iter().next().unwrap();
+        let packet = packet.clone();
+        let original = original.clone();
+        assert!(node.archive(&packet, &original).unwrap()["transit"].is_null());
+        let path = node.root.join("archive").join(format!("{original}.json"));
+        let original_bytes = fs::read(&path).unwrap();
+        drop(node);
+        let mut body = late
+            .iter()
+            .find(|bundle| {
+                bundle["body"]["transits"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|t| digest(&t["packet"]).unwrap() == packet)
+            })
+            .unwrap()["body"]
+            .clone();
+        let transit = body["transits"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|t| digest(&t["packet"]).unwrap() == packet)
+            .unwrap()
+            .clone();
+        body["transits"] = json!([transit.clone()]);
+        let exchange = Node::open(&f.configs[0])
+            .unwrap()
+            .sign("exchange", body)
+            .unwrap();
+        Node::open(&f.configs[2])
+            .unwrap()
+            .receive(&exchange, &f.ids[0])
+            .unwrap();
+        let node = Node::open(&f.configs[2]).unwrap();
+        let replacement = node.state.archives[&packet].clone();
+        assert_ne!(replacement, original);
+        let complete = node.archive(&packet, &replacement).unwrap();
+        assert_eq!(complete["transit"], transit);
+        assert_eq!(fs::read(&path).unwrap(), original_bytes);
+        assert!(node.state.messages.is_empty());
+        drop(node);
+        Node::open(&f.configs[2])
+            .unwrap()
+            .receive(&exchange, &f.ids[0])
+            .unwrap();
+        assert_eq!(
+            Node::open(&f.configs[2]).unwrap().state.archives[&packet],
+            replacement
+        );
+        let before = fs::read(f.root.join("2/native-mesh-state.json")).unwrap();
+        let mut corrupt = exchange["body"].clone();
+        corrupt["transits"][0]["hops"][0]["signature"] = json!("00".repeat(64));
+        let corrupt = Node::open(&f.configs[0])
+            .unwrap()
+            .sign("exchange", corrupt)
+            .unwrap();
+        assert!(Node::open(&f.configs[2])
+            .unwrap()
+            .receive(&corrupt, &f.ids[0])
+            .is_err());
+        assert_eq!(
+            fs::read(f.root.join("2/native-mesh-state.json")).unwrap(),
+            before
+        );
+        assert_eq!(fs::read(path).unwrap(), original_bytes);
     }
 }

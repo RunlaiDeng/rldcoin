@@ -89,6 +89,7 @@ struct Entry {
     bytes: [u8; 32],
     size: usize,
     visited: Vec<[u8; 32]>,
+    reused: bool,
 }
 struct Store {
     pid: u32,
@@ -109,8 +110,22 @@ fn current(store: &mut Store, retention: usize) {
         store.entries.clear();
         store.pid = pid;
     }
+    // A one-touch archive scan must not displace every repeatedly used path.
+    // Both probation and protected recency share the unchanged total bound.
+    let mut protected = store.entries.iter().filter(|entry| entry.reused).count();
+    while protected > retention / 2 {
+        if let Some(entry) = store.entries.iter_mut().find(|entry| entry.reused) {
+            entry.reused = false;
+        }
+        protected -= 1;
+    }
     while store.entries.len() > retention {
-        store.entries.pop_front();
+        let victim = store
+            .entries
+            .iter()
+            .position(|entry| !entry.reused)
+            .unwrap_or(0);
+        store.entries.remove(victim);
     }
 }
 fn visited(values: Vec<[u8; 32]>) -> Value {
@@ -171,9 +186,11 @@ pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
             .iter()
             .position(|v| v.scope == scope_digest && v.bytes == bytes && v.size == size)
         {
-            let entry = store.entries.remove(index).ok_or("witness entry absent")?;
+            let mut entry = store.entries.remove(index).ok_or("witness entry absent")?;
+            entry.reused = true;
             found = Some(entry.visited.clone());
             store.entries.push_back(entry);
+            current(&mut store, retention);
         }
     }
     let mut verification = Value::Null;
@@ -203,6 +220,10 @@ pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
         let mut store = store().lock().map_err(|_| "witness lock poisoned")?;
         current(&mut store, retention);
         if retention > 0 {
+            let reused = store
+                .entries
+                .iter()
+                .any(|v| v.scope == scope_digest && v.bytes == bytes && v.size == size && v.reused);
             store
                 .entries
                 .retain(|v| !(v.scope == scope_digest && v.bytes == bytes && v.size == size));
@@ -211,6 +232,7 @@ pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
                 bytes,
                 size,
                 visited: values.clone(),
+                reused,
             });
             current(&mut store, retention);
         }
@@ -282,9 +304,11 @@ fn probe_bytes(control: &[u8], raw: &[u8]) -> Result<Value> {
         .iter()
         .position(|v| v.scope == scope && v.bytes == bytes && v.size == raw.len())
     {
-        let entry = store.entries.remove(index).ok_or("witness entry absent")?;
+        let mut entry = store.entries.remove(index).ok_or("witness entry absent")?;
+        entry.reused = true;
         found = Some(entry.visited.clone());
         store.entries.push_back(entry);
+        current(&mut store, retention);
     }
     let authenticated = found.is_some();
     Ok(
@@ -360,3 +384,7 @@ pub unsafe extern "C" fn rld_contact_transit_witness(
         execute(ctrl, raw)
     }))
 }
+
+#[cfg(test)]
+#[path = "contact_witness_tests.rs"]
+mod tests;

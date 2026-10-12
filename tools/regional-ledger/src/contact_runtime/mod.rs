@@ -18,14 +18,24 @@ pub fn tick_transport(config: &serde_json::Value) -> crate::Result<serde_json::V
     drop(node);
     let _lease = Lease::acquire(&root, "Service")?;
     let mut errors = Vec::new();
-    for (peer, contact) in contacts {
-        let result = if contact.get("host").is_some() {
-            service::outgoing(config, &peer, &contact)
-        } else {
-            service::spool(config, &peer, &contact)
-        };
-        if let Err(error) = result {
-            errors.push(error);
+    if contacts
+        .values()
+        .all(|contact| contact.get("host").is_none())
+    {
+        match service::spool_directory_turn(config) {
+            Ok(refused) => errors.extend(refused),
+            Err(error) => errors.push(error),
+        }
+    } else {
+        for (peer, contact) in contacts {
+            let result = if contact.get("host").is_some() {
+                service::outgoing(config, &peer, &contact)
+            } else {
+                service::spool(config, &peer, &contact)
+            };
+            if let Err(error) = result {
+                errors.push(error);
+            }
         }
     }
     let mut node = Node::open(config)?;
@@ -126,6 +136,8 @@ pub(crate) fn transit(
     recipient: Value,
     sender: Value,
 ) -> Result<Value> {
+    #[cfg(test)]
+    let started = service::monotonic()?;
     let raw = bytes(value)?;
     let scope = json!({"mesh":MESH,"network":network,"recipient":recipient,"sender":sender,"hops":16,
         "frame":crate::contact::MAX_FRAME,"payload":crate::contact::MAX_PAYLOAD,
@@ -133,20 +145,50 @@ pub(crate) fn transit(
         "kinds":["destination-receipt","destination-sync","finalized-import","regional-bft","source-finality","source-sync"],
         "provider":{"format":"RLD-NATIVE-CONTACT-CRYPTO-V1","implementation":crate::implementation()?,"path":"rust-contact-runtime-in-process","instance":0}});
     let fields = json!({"scope":scope,"retention":512,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw))});
+    #[cfg(test)]
+    service::trace_subwork("transit-canonical-scope", started)?;
+    #[cfg(test)]
+    let started = service::monotonic()?;
     let probe = crate::contact_witness::execute(&bytes(&json!({"Probe":fields}))?, &raw)?;
+    #[cfg(test)]
+    service::trace_subwork(
+        if probe["found"] == true {
+            "transit-witness-hit"
+        } else {
+            "transit-witness-miss-probe"
+        },
+        started,
+    )?;
     if probe["found"] == true {
         return Ok(
             json!({"visited":probe["visited"],"ledger_authority":false,"custody_acknowledgment":false}),
         );
     }
+    #[cfg(test)]
+    let started = service::monotonic()?;
     let checked = crate::contact_witness::execute(&bytes(&json!({"Check":fields}))?, &raw)?;
+    #[cfg(test)]
+    service::trace_subwork("transit-full-check", started)?;
     Ok(checked["verification"].clone())
 }
 pub(crate) fn schema(value: &Value, network: &str, kind: &str) -> Result<Value> {
-    crypto(
+    #[cfg(test)]
+    let started = service::monotonic()?;
+    let checked = crypto(
         json!({"Schema":{"network":network,"kind":kind,"signed":value,
         "limits":{"contacts":16,"messages":256}}}),
-    )
+    )?;
+    #[cfg(test)]
+    service::trace_subwork(
+        match kind {
+            "receipt" => "receipt-schema",
+            "advert" => "advert-schema",
+            "inventory" => "inventory-schema",
+            _ => "other-schema",
+        },
+        started,
+    )?;
+    Ok(checked)
 }
 pub(crate) fn exchange(value: &Value, network: &str, peer: &str, recipient: &str) -> Result<Value> {
     crypto(

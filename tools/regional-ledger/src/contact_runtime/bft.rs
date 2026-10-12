@@ -43,6 +43,10 @@ pub(crate) struct Runtime {
     head: Option<Hash>,
     slot: Option<(consensus::Context, u64)>,
     entered: f64,
+    #[cfg(test)]
+    last_decision: Option<&'static str>,
+    #[cfg(test)]
+    last_broadcast: Vec<Hash>,
     _lock: File,
 }
 fn hash(value: &Value) -> Result<Hash> {
@@ -171,6 +175,10 @@ impl Runtime {
             head,
             slot: None,
             entered: super::service::monotonic()?,
+            #[cfg(test)]
+            last_decision: None,
+            #[cfg(test)]
+            last_broadcast: Vec::new(),
             _lock: lock,
         };
         if runtime.head.is_none() {
@@ -527,6 +535,19 @@ impl Runtime {
             timeout_refresh: true,
         };
         let decision = tick::observe(node, pins, input)?.action;
+        #[cfg(test)]
+        {
+            self.last_decision = Some(match &decision {
+                tick::Decision::Phase(phase::Action::Idle) => "idle",
+                tick::Decision::Phase(phase::Action::Prepare { .. }) => "prepare",
+                tick::Decision::Phase(phase::Action::Commit { .. }) => "commit",
+                tick::Decision::Phase(phase::Action::Finalize { .. }) => "finalize",
+                tick::Decision::Propose { .. } => "propose",
+                tick::Decision::Timeout { .. } => "timeout",
+                tick::Decision::RefreshTimeout => "refresh-timeout",
+                tick::Decision::WaitInitial { .. } => "initial-wait",
+            });
+        }
         match decision {
             tick::Decision::Phase(phase::Action::Finalize { snapshot }) => {
                 node.finalize(*snapshot.clone())?;
@@ -584,7 +605,13 @@ impl Runtime {
     }
 
     pub(crate) fn broadcast(&mut self, transport: &Value) -> Result<()> {
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let mut mesh = Node::open(transport)?;
+        #[cfg(test)]
+        super::service::trace_work("native-broadcast-mesh-open", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         // The mesh relays each original packet to its pinned destination.
         // Re-originating every received envelope for all validators creates a
         // quadratic backlog that can starve current votes. Incoming evidence
@@ -613,36 +640,43 @@ impl Runtime {
                     consensus::Message::Proposal(p)
                         if p.context()?.parent_height == self.archive.runtime.height =>
                     {
-                        Some(0)
+                        Some((p.round, 0))
                     }
                     consensus::Message::Vote(v)
                         if v.context.parent_height == self.archive.runtime.height =>
                     {
-                        Some(if v.phase == consensus::Phase::Commit {
-                            1
-                        } else {
-                            2
-                        })
+                        Some((
+                            v.round,
+                            if v.phase == consensus::Phase::Commit {
+                                1
+                            } else {
+                                2
+                            },
+                        ))
                     }
                     consensus::Message::Timeout(v)
                         if v.context.parent_height == self.archive.runtime.height =>
                     {
-                        Some(3)
+                        Some((v.round, 3))
                     }
                     _ => None,
                 },
                 _ => None,
             };
-            if let Some(priority) = priority {
-                current.push((priority, *id));
+            if let Some((round, priority)) = priority {
+                current.push((std::cmp::Reverse(round), priority, *id));
             }
         }
-        current.sort_by_key(|v| v.0);
+        // Newer fully authenticated controls must not compete behind an older
+        // proposal merely because both share a parent height. Preserve phase
+        // priority inside each round and the independent historical spare.
+        current.sort_by_key(|v| (v.0, v.1));
         let mut selected = current
             .into_iter()
             .take(3)
-            .map(|(_, id)| id)
+            .map(|(_, _, id)| id)
             .collect::<Vec<_>>();
+        let current_count = selected.len();
         // Preserve three current consensus slots. Give one new, Native-checked
         // local owner request its first origination before historical retries.
         // Durable exact mesh packets, including cold authenticated archives,
@@ -683,13 +717,44 @@ impl Runtime {
                 selected.push(id);
             }
         }
-        for id in &selected {
+        let mut priority = Vec::new();
+        let destinations = self
+            .config
+            .validators
+            .iter()
+            .filter(|v| v.node_id != mesh.id)
+            .map(|v| v.node_id.clone())
+            .collect::<Vec<_>>();
+        #[cfg(test)]
+        super::service::trace_work("native-broadcast-select", started)?;
+        for (position, id) in selected.iter().enumerate() {
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             let raw = self.carriage_frame(*id)?.retained_bytes()?;
-            for validator in &self.config.validators {
-                if validator.node_id != mesh.id {
-                    mesh.enqueue(&raw, &validator.node_id)?;
+            #[cfg(test)]
+            super::service::trace_work("native-broadcast-frame-pack", started)?;
+            if !destinations.is_empty() {
+                #[cfg(test)]
+                let started = super::service::monotonic()?;
+                let packets = mesh.enqueue_destinations(&raw, &destinations)?;
+                #[cfg(test)]
+                super::service::trace_work("native-broadcast-enqueue", started)?;
+                if position < current_count {
+                    priority.extend(packets);
                 }
             }
+        }
+        // Current Native-checked controls retain first-carriage eligibility
+        // across the following ordinary contact turn. Historical packets stay
+        // retained and use the independent rotating send slots.
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
+        mesh.prioritize_originated_packets(&priority)?;
+        #[cfg(test)]
+        super::service::trace_work("native-broadcast-priority", started)?;
+        #[cfg(test)]
+        {
+            self.last_broadcast = selected;
         }
         self.archive.runtime.cursor = self
             .archive
@@ -701,6 +766,99 @@ impl Runtime {
             .filter(|n| *n <= i64::MAX as u64)
             .ok_or("BFT carriage cursor exhausted")?;
         Ok(())
+    }
+
+    #[cfg(test)]
+    pub(super) fn current_controls(&self) -> Result<Value> {
+        let mut controls = Vec::new();
+        for (id, record) in &self.archive.runtime.messages {
+            let body: net::Body =
+                serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())?;
+            let (kind, height, round) = match body {
+                net::Body::Signed(message) => match *message {
+                    consensus::Message::Proposal(p) => {
+                        ("proposal", p.context()?.parent_height, p.round)
+                    }
+                    consensus::Message::Vote(v) => (
+                        if v.phase == consensus::Phase::Prepare {
+                            "prepare"
+                        } else {
+                            "commit"
+                        },
+                        v.context.parent_height,
+                        v.round,
+                    ),
+                    consensus::Message::Timeout(v) => ("timeout", v.context.parent_height, v.round),
+                    _ => continue,
+                },
+                _ => continue,
+            };
+            if height == self.archive.runtime.height {
+                controls.push(
+                    json!({"body_id":id,"frame_id":self.carriage_frame(*id)?.message_id,
+                    "kind":kind,"round":round,"value":record.value,"local":record.local}),
+                );
+            }
+        }
+        Ok(
+            json!({"height":self.archive.runtime.height,"round":self.slot.as_ref().map(|s|s.1),"controls":controls}),
+        )
+    }
+
+    #[cfg(test)]
+    pub(super) fn scheduling_observation(&self) -> Result<Value> {
+        let mut counts = BTreeMap::<String, usize>::new();
+        let mut selected = Vec::new();
+        for (id, record) in &self.archive.runtime.messages {
+            let body: net::Body =
+                serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())?;
+            let (kind, context_height, round) = match body {
+                net::Body::Signed(message) => match *message {
+                    consensus::Message::Proposal(p) => {
+                        ("proposal", Some(p.context()?.parent_height), Some(p.round))
+                    }
+                    consensus::Message::Vote(v) => (
+                        if v.phase == consensus::Phase::Prepare {
+                            "prepare"
+                        } else {
+                            "commit"
+                        },
+                        Some(v.context.parent_height),
+                        Some(v.round),
+                    ),
+                    consensus::Message::Timeout(v) => {
+                        ("timeout", Some(v.context.parent_height), Some(v.round))
+                    }
+                    _ => ("other", None, None),
+                },
+                net::Body::Submission(_) => ("submission", None, None),
+                _ => ("other", None, None),
+            };
+            if kind == "submission" || context_height == Some(self.archive.runtime.height) {
+                let class = if self.slot.as_ref().map(|slot| slot.1) == round {
+                    "current"
+                } else {
+                    "other-round"
+                };
+                *counts
+                    .entry(format!(
+                        "{kind}:{class}:{}",
+                        if record.local { "local" } else { "received" }
+                    ))
+                    .or_default() += 1;
+            }
+            if self.last_broadcast.contains(id) {
+                selected.push(
+                    json!({"body_id":id,"frame_id":self.carriage_frame(*id)?.message_id,
+                    "kind":kind,"parent_height":context_height,"round":round}),
+                );
+            }
+        }
+        Ok(
+            json!({"height":self.archive.runtime.height,"round":self.slot.as_ref().map(|slot|slot.1),
+            "decision":self.last_decision,"entered":self.entered,"counts":counts,"selected":selected,
+            "signing_authority":false,"fixture_only":true}),
+        )
     }
 }
 

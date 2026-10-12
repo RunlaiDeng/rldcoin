@@ -14,6 +14,80 @@ use std::{
 };
 
 static STOP: AtomicBool = AtomicBool::new(false);
+#[cfg(test)]
+thread_local! {
+    static CARRIAGE_TRACE: std::cell::RefCell<Option<Vec<Value>>> = const { std::cell::RefCell::new(None) };
+    static SUBWORK_TRACE: std::cell::RefCell<std::collections::BTreeMap<&'static str,(usize,f64)>> = const { std::cell::RefCell::new(std::collections::BTreeMap::new()) };
+}
+#[cfg(test)]
+fn trace_exchange(phase: &str, peer: &str, bundle: &Value) -> Result<()> {
+    CARRIAGE_TRACE.with(|trace| -> Result<()> {
+        let mut trace = trace.borrow_mut();
+        let Some(records) = trace.as_mut() else {
+            return Ok(());
+        };
+        require(records.len() < 4096, "diagnostic carriage record bound")?;
+        let packets = bundle["body"]["transits"]
+            .as_array()
+            .ok_or("diagnostic transits")?
+            .iter()
+            .map(|t| {
+                json!({"packet_id":t["routing"]["body"]["packet_id"],
+                "frame_id":t["routing"]["body"]["frame_id"],
+                "destination":t["packet"]["body"]["destination"]})
+            })
+            .collect::<Vec<_>>();
+        records.push(json!({"phase":phase,"peer":peer,"at":monotonic()?,"packets":packets}));
+        Ok(())
+    })
+}
+#[cfg(test)]
+pub(super) fn start_work_trace() {
+    SUBWORK_TRACE.with(|trace| trace.borrow_mut().clear());
+    CARRIAGE_TRACE.with(|trace| *trace.borrow_mut() = Some(Vec::new()));
+}
+#[cfg(test)]
+pub(super) fn take_work_trace() -> Vec<Value> {
+    let mut records = CARRIAGE_TRACE.with(|trace| trace.borrow_mut().take().unwrap_or_default());
+    SUBWORK_TRACE.with(|trace| {
+        for (phase, (calls, seconds)) in std::mem::take(&mut *trace.borrow_mut()) {
+            records.push(json!({"phase":phase,"calls":calls,"seconds":seconds}));
+        }
+    });
+    records
+}
+#[cfg(test)]
+pub(super) fn trace_subwork(phase: &'static str, started: f64) -> Result<()> {
+    if CARRIAGE_TRACE.with(|trace| trace.borrow().is_none()) {
+        return Ok(());
+    }
+    let seconds = monotonic()? - started;
+    SUBWORK_TRACE.with(|trace| -> Result<()> {
+        let mut trace = trace.borrow_mut();
+        require(
+            trace.contains_key(phase) || trace.len() < 64,
+            "diagnostic subwork phase bound",
+        )?;
+        let total = trace.entry(phase).or_default();
+        total.0 = total
+            .0
+            .checked_add(1)
+            .ok_or("diagnostic work count overflow")?;
+        total.1 += seconds;
+        Ok(())
+    })
+}
+#[cfg(test)]
+pub(super) fn trace_work(phase: &str, started: f64) -> Result<()> {
+    CARRIAGE_TRACE.with(|trace| -> Result<()> {
+        let mut trace = trace.borrow_mut();
+        if let Some(records) = trace.as_mut() {
+            require(records.len() < 4096, "diagnostic carriage record bound")?;
+            records.push(json!({"phase":phase,"seconds":monotonic()? - started}));
+        }
+        Ok(())
+    })
+}
 extern "C" fn stop(_: i32) {
     STOP.store(true, Ordering::Release);
 }
@@ -142,7 +216,61 @@ pub(super) fn spool(config: &Value, peer: &str, contact: &Value) -> Result<()> {
     // One fully authenticated transport state under one OS lease for this
     // bounded directory turn. Every later complete envelope still authenticates.
     // This lease is never carried across a TCP connection or socket wait.
+    #[cfg(test)]
+    let started = monotonic()?;
     let mut node = Node::open(config)?;
+    #[cfg(test)]
+    trace_work("mesh-open-spool", started)?;
+    spool_node(&mut node, peer, contact)
+}
+
+pub(super) fn spool_directory_turn(config: &Value) -> Result<Vec<String>> {
+    directory_turn(config, &|| false)
+}
+
+fn directory_turn(config: &Value, stopped: &dyn Fn() -> bool) -> Result<Vec<String>> {
+    #[cfg(test)]
+    let started = monotonic()?;
+    let first = Node::open(config)?;
+    #[cfg(test)]
+    trace_work("mesh-open-spool", started)?;
+    let contacts = first.contacts.clone();
+    require(
+        contacts
+            .values()
+            .all(|contact| contact.get("host").is_none()),
+        "directory turn cannot retain a lease across sockets",
+    )?;
+    let mut node = Some(first);
+    let mut errors = Vec::new();
+    for (peer, contact) in contacts {
+        if stopped() {
+            break;
+        }
+        if node.is_none() {
+            match Node::open(config) {
+                Ok(reopened) => node = Some(reopened),
+                Err(error) => {
+                    errors.push(error);
+                    continue;
+                }
+            }
+        }
+        if let Err(error) = spool_node(
+            node.as_mut().ok_or("missing directory turn node")?,
+            &peer,
+            &contact,
+        ) {
+            // A failed prepare/publication may leave uncertain in-memory state.
+            // Release it; the next neighbor must open/authenticate durable state.
+            node.take();
+            errors.push(error);
+        }
+    }
+    Ok(errors)
+}
+
+fn spool_node(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
     let compressed = contact["adapter"] == "RLD-CONTACT-SPOOL-ZLIB-V1";
     let limits = json!({"batch":EXCHANGE_LIMIT,"files":256,"bytes":64*1024*1024});
     let adapter = if compressed {
@@ -175,7 +303,13 @@ pub(super) fn spool(config: &Value, peer: &str, contact: &Value) -> Result<()> {
                 bytes(&value)? == raw && name == format!("{}.json", digest(&value)?),
                 "spool exact canonical exchange filename",
             )?;
+            #[cfg(test)]
+            let started = monotonic()?;
             node.receive(&value, peer)?;
+            #[cfg(test)]
+            trace_work("mesh-receive", started)?;
+            #[cfg(test)]
+            trace_exchange("durable-transport-receive", peer, &value)?;
             fs::remove_file(&target).map_err(|e| e.to_string())?;
             crate::contact_storage::directory(Path::new(path))?
                 .sync_all()
@@ -183,7 +317,11 @@ pub(super) fn spool(config: &Value, peer: &str, contact: &Value) -> Result<()> {
         }
     }
     if let Some(path) = contact["outbox"].as_str() {
+        #[cfg(test)]
+        let started = monotonic()?;
         let bundle = node.prepare(peer)?;
+        #[cfg(test)]
+        trace_work("mesh-prepare", started)?;
         let raw = bytes(&bundle)?;
         let encoded = if compressed {
             codec("Encode", &raw)?
@@ -200,6 +338,8 @@ pub(super) fn spool(config: &Value, peer: &str, contact: &Value) -> Result<()> {
             &encoded,
             &raw,
         )?;
+        #[cfg(test)]
+        trace_exchange("published-transport-exchange", peer, &bundle)?;
     }
     Ok(())
 }
@@ -228,7 +368,7 @@ fn configuration(options: &Options, region: Hash) -> Result<Value> {
     Ok(config)
 }
 
-fn tick_ledger(
+pub(super) fn tick_ledger(
     options: &Options,
     config: &Value,
     runtime: &mut Option<super::bft::Runtime>,
@@ -236,8 +376,16 @@ fn tick_ledger(
     seen: &mut Vec<String>,
 ) -> Result<Value> {
     // Capture complete received bytes under the transport lock, then release it before native ledger replay.
+    #[cfg(test)]
+    let started = monotonic()?;
     let frames = Node::open(config)?.frame_page_selected(cursor.as_deref(), 4, seen)?;
+    #[cfg(test)]
+    trace_work("mesh-native-page", started)?;
+    #[cfg(test)]
+    let started = monotonic()?;
     let mut store = Store::open(&options.ledger, &options.authority, options.currency)?;
+    #[cfg(test)]
+    trace_work("native-store-open", started)?;
     for (id, raw) in &frames {
         if !seen.contains(id) {
             seen.push(id.clone());
@@ -258,7 +406,21 @@ fn tick_ledger(
         }
         if frame.kind == "regional-bft" {
             if let Some(runtime) = runtime {
+                #[cfg(test)]
+                let started = monotonic()?;
                 runtime.receive(&mut store, raw)?;
+                #[cfg(test)]
+                trace_work("native-envelope-receive", started)?;
+                #[cfg(test)]
+                CARRIAGE_TRACE.with(|trace| -> Result<()> {
+                    let mut trace = trace.borrow_mut();
+                    if let Some(records) = trace.as_mut() {
+                        require(records.len() < 4096, "diagnostic carriage record bound")?;
+                        records.push(json!({"phase":"native-receive","at":monotonic()?,
+                            "packet_id":id,"frame_id":frame.message_id}));
+                    }
+                    Ok(())
+                })?;
             }
             *cursor = Some(id.clone());
             continue;
@@ -272,7 +434,11 @@ fn tick_ledger(
         *cursor = Some(id.clone());
     }
     if let Some(runtime) = runtime {
+        #[cfg(test)]
+        let started = monotonic()?;
         runtime.tick(&mut store)?;
+        #[cfg(test)]
+        trace_work("native-consensus-tick", started)?;
     }
     let region = store.chain.region;
     let height = store.chain.height();
@@ -286,7 +452,11 @@ fn tick_ledger(
     }
     drop(store);
     if let Some(runtime) = runtime {
+        #[cfg(test)]
+        let started = monotonic()?;
         runtime.broadcast(config)?;
+        #[cfg(test)]
+        trace_work("native-broadcast", started)?;
     }
     let mut node = Node::open(config)?;
     let adverts = node.advertised_destinations()?;
@@ -423,17 +593,33 @@ pub fn run(options: Options) -> Result<()> {
                 !inbound.is_finished(),
                 "Rust contact listener stopped unexpectedly",
             )?;
-            for (peer, contact) in &contacts {
-                if STOP.load(Ordering::Acquire) {
-                    break;
+            if contacts
+                .values()
+                .all(|contact| contact.get("host").is_none())
+            {
+                match directory_turn(&config, &|| STOP.load(Ordering::Acquire)) {
+                    Ok(errors) => {
+                        for error in errors {
+                            eprintln!("contact attempt retained without custody claim: {error}");
+                        }
+                    }
+                    Err(error) => {
+                        eprintln!("contact attempt retained without custody claim: {error}")
+                    }
                 }
-                let result = if contact.get("host").is_some() {
-                    outgoing(&config, peer, contact)
-                } else {
-                    spool(&config, peer, contact)
-                };
-                if let Err(error) = result {
-                    eprintln!("contact attempt retained without custody claim: {error}");
+            } else {
+                for (peer, contact) in &contacts {
+                    if STOP.load(Ordering::Acquire) {
+                        break;
+                    }
+                    let result = if contact.get("host").is_some() {
+                        outgoing(&config, peer, contact)
+                    } else {
+                        spool(&config, peer, contact)
+                    };
+                    if let Err(error) = result {
+                        eprintln!("contact attempt retained without custody claim: {error}");
+                    }
                 }
             }
             match tick_ledger(
@@ -563,3 +749,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "payment_tests.rs"]
+mod payment_tests;

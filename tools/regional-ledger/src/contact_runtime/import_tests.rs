@@ -3,6 +3,9 @@ use super::*;
 use crate::tests::{public, signature};
 use crate::{Amount, Approval, Intent, Payment, SignedIntent};
 
+#[path = "work_tests.rs"]
+mod work_tests;
+
 struct Fixture {
     root: PathBuf,
     source: Store,
@@ -515,3 +518,254 @@ fn ordinary_rust_candidate_imports_retained_proof_then_finalizes_recipient_spend
 
 #[path = "wallet_queue_tests.rs"]
 mod wallet_queue_tests;
+
+#[test]
+fn current_native_prepare_is_carried_ahead_of_unstarted_historical_packets() {
+    let mut f = Fixture::new().unwrap();
+    eprintln!(
+        "Fresh Native prepare carriage fixture: {}",
+        f.root.display()
+    );
+    f.node.contact_apply(&f.raw, None).unwrap();
+    for _ in 0..3 {
+        let candidate = f.candidate().unwrap();
+        f.finalize(candidate).unwrap();
+    }
+    let context = consensus::Context::current(&f.node).unwrap();
+    let keys = f.seeds.iter().copied().map(public).collect::<Vec<_>>();
+    let leader = keys
+        .iter()
+        .position(|key| *key == consensus::leader(&context, 0, &keys).unwrap())
+        .unwrap();
+    let snapshot = f.candidate().unwrap();
+    let consensus::Message::Proposal(proposal) = f
+        .sign(
+            leader,
+            consensus::Request::Propose {
+                round: 0,
+                timeout: None,
+                snapshot: Box::new(snapshot),
+            },
+        )
+        .unwrap()
+    else {
+        panic!("proposal shape")
+    };
+    let prepare = f.sign(0, consensus::Request::Prepare(proposal)).unwrap();
+    let prepare =
+        hash(&serde_json::to_value(net::Body::Signed(Box::new(prepare))).unwrap()).unwrap();
+    let actor = &mut f.actors[0];
+    actor.archive.runtime.height = f.node.chain.height();
+    let validators = actor
+        .config
+        .validators
+        .iter()
+        .map(|v| v.node_id.clone())
+        .collect::<Vec<_>>();
+    let peers = validators
+        .iter()
+        .enumerate()
+        .filter(|(n, _)| *n != 0)
+        .map(|(_, id)| id.clone())
+        .collect::<Vec<_>>();
+    let currency = f.node.trust.currency().unwrap();
+    let transport = json!({"format":MESH,"network":currency,"state":f.root.join("transport-0"),
+        "contacts":peers.iter().enumerate().map(|(n,peer)|json!({"peer":peer,"inbox":f.root.join(format!("in-{n}")),"outbox":f.root.join(format!("out-{n}"))})).collect::<Vec<_>>()});
+    let historical = actor
+        .archive
+        .runtime
+        .messages
+        .iter()
+        .filter(|(_, r)| r.local)
+        .filter_map(|(id, r)| {
+            let body: net::Body = serde_json::from_value(r.body.clone()).unwrap();
+            match body {
+                net::Body::Signed(m) => match *m {
+                    consensus::Message::Vote(v) if v.context.parent_height < 3 => Some(*id),
+                    _ => None,
+                },
+                _ => None,
+            }
+        })
+        .take(6)
+        .collect::<Vec<_>>();
+    assert_eq!(historical.len(), 6);
+    for id in &historical {
+        let raw = actor.carriage_frame(*id).unwrap().retained_bytes().unwrap();
+        Node::open(&transport)
+            .unwrap()
+            .enqueue(&raw, &peers[0])
+            .unwrap();
+    }
+    let head = f.node.storage_head().unwrap();
+    actor.broadcast(&transport).unwrap();
+    let frame = actor.carriage_frame(prepare).unwrap().message_id;
+    let exchange = Node::open(&transport).unwrap().prepare(&peers[0]).unwrap();
+    let transits = exchange["body"]["transits"].as_array().unwrap();
+    assert_eq!(transits.len(), 4);
+    assert!(
+        transits
+            .iter()
+            .any(|t| t["routing"]["body"]["frame_id"] == frame.to_hex()),
+        "current Native prepare displaced by unstarted historical packets"
+    );
+    assert!(
+        transits
+            .iter()
+            .take(2)
+            .any(|t| t["routing"]["body"]["frame_id"] == frame.to_hex()),
+        "current Native prepare relies on the rotating historical spare instead of first carriage"
+    );
+    let historical_frames = historical
+        .iter()
+        .map(|id| actor.carriage_frame(*id).unwrap().message_id.to_hex())
+        .collect::<Vec<_>>();
+    assert!(
+        transits
+            .iter()
+            .filter(|t| historical_frames.contains(
+                &t["routing"]["body"]["frame_id"]
+                    .as_str()
+                    .unwrap()
+                    .to_owned()
+            ))
+            .count()
+            >= 2
+    );
+    for t in transits {
+        let raw = STANDARD
+            .decode(t["packet"]["body"]["frame"].as_str().unwrap())
+            .unwrap();
+        let (_, payload) = crate::contact_frame::inspect_bytes(
+            &raw,
+            None,
+            None,
+            crate::contact::MAX_PAYLOAD,
+            crate::contact::MAX_FRAME,
+        )
+        .unwrap();
+        crate::bft_client::decode::<net::WireEnvelope>(&payload)
+            .unwrap()
+            .expand()
+            .unwrap()
+            .verify(&f.node)
+            .unwrap();
+    }
+    assert_eq!(f.node.storage_head().unwrap(), head);
+    let root = f.root.clone();
+    drop(f.actors);
+    drop(f.node);
+    drop(f.source);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn latest_signed_round_control_precedes_prior_round_proposal_and_votes() {
+    let mut f = Fixture::new().unwrap();
+    eprintln!("Fresh round-carriage fixture: {}", f.root.display());
+    f.node.contact_apply(&f.raw, None).unwrap();
+    for _ in 0..3 {
+        let candidate = f.candidate().unwrap();
+        f.finalize(candidate).unwrap();
+    }
+    let context = consensus::Context::current(&f.node).unwrap();
+    let keys = f.seeds.iter().copied().map(public).collect::<Vec<_>>();
+    let old_leader = keys
+        .iter()
+        .position(|key| *key == consensus::leader(&context, 0, &keys).unwrap())
+        .unwrap();
+    let candidate = f.candidate().unwrap();
+    let consensus::Message::Proposal(old) = f
+        .sign(
+            old_leader,
+            consensus::Request::Propose {
+                round: 0,
+                timeout: None,
+                snapshot: Box::new(candidate.clone()),
+            },
+        )
+        .unwrap()
+    else {
+        panic!("proposal shape")
+    };
+    f.sign(old_leader, consensus::Request::Prepare(old))
+        .unwrap();
+    let mut timeouts = Vec::new();
+    for n in 0..4 {
+        let consensus::Message::Timeout(vote) = f
+            .sign(
+                n,
+                consensus::Request::Timeout {
+                    context: context.clone(),
+                    round: 0,
+                },
+            )
+            .unwrap()
+        else {
+            panic!("timeout shape")
+        };
+        timeouts.push(*vote);
+    }
+    let certificate =
+        consensus::TimeoutCertificate::combine(timeouts, &f.node.trust, &f.node.evidence).unwrap();
+    let new_leader = keys
+        .iter()
+        .position(|key| *key == consensus::leader(&context, 1, &keys).unwrap())
+        .unwrap();
+    let consensus::Message::Proposal(new) = f
+        .sign(
+            new_leader,
+            consensus::Request::Propose {
+                round: 1,
+                timeout: Some(certificate),
+                snapshot: Box::new(candidate),
+            },
+        )
+        .unwrap()
+    else {
+        panic!("proposal shape")
+    };
+    f.sign(old_leader, consensus::Request::Prepare(new))
+        .unwrap();
+    let latest = f
+        .sign(
+            old_leader,
+            consensus::Request::Timeout {
+                context: context.clone(),
+                round: 1,
+            },
+        )
+        .unwrap();
+    let latest = hash(&serde_json::to_value(net::Body::Signed(Box::new(latest))).unwrap()).unwrap();
+    let actor = &mut f.actors[old_leader];
+    let local = actor
+        .archive
+        .runtime
+        .messages
+        .iter()
+        .filter(|(_, r)| r.local)
+        .map(|(id, _)| *id)
+        .collect::<Vec<_>>();
+    let historical = local.iter().position(|id| {
+        let body:net::Body=serde_json::from_value(actor.archive.runtime.messages[id].body.clone()).unwrap();
+        matches!(body,net::Body::Signed(message) if matches!(&*message,consensus::Message::Timeout(v) if v.round==0))
+    }).unwrap();
+    actor.archive.runtime.cursor = historical as u64;
+    actor.archive.runtime.height = f.node.chain.height();
+    actor.slot = Some((context, 2));
+    let currency = f.node.trust.currency().unwrap();
+    let transport = json!({"format":MESH,"network":currency,"state":f.root.join(format!("transport-{old_leader}")),"contacts":[]});
+    let head = f.node.storage_head().unwrap();
+    actor.broadcast(&transport).unwrap();
+    assert!(actor.last_broadcast.len() <= 4);
+    assert!(
+        actor.last_broadcast.contains(&latest),
+        "latest Native timeout was displaced by old-round controls"
+    );
+    assert_eq!(f.node.storage_head().unwrap(), head);
+    let root = f.root.clone();
+    drop(f.actors);
+    drop(f.node);
+    drop(f.source);
+    fs::remove_dir_all(root).unwrap();
+}
