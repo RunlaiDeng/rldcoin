@@ -42,10 +42,10 @@ fn checkpoint(path: &Path, boundary: WriteBoundary) -> Result<()> {
 pub fn directory(path: &Path) -> Result<()> {
     if path.exists() {
         let m = fs::symlink_metadata(path)?;
-        ensure!(m.is_dir() && !m.file_type().is_symlink(), "目录路径不安全");
+        ensure!(m.is_dir() && !m.file_type().is_symlink(), "Unsafe directory path");
         ensure!(
             m.permissions().mode() & 0o077 == 0,
-            "钱包目录必须只有本人可访问 (0700)"
+            "Wallet directory must be owner-only (0700)"
         );
     } else {
         fs::create_dir_all(path)?;
@@ -57,11 +57,11 @@ pub fn read(path: &Path, limit: u64) -> Result<Vec<u8>> {
     let m = fs::symlink_metadata(path)?;
     ensure!(
         m.is_file() && !m.file_type().is_symlink() && m.len() <= limit && m.nlink() == 1,
-        "文件类型或大小不安全"
+        "Unsafe file type or size"
     );
     let mut b = Vec::new();
     File::open(path)?.take(limit + 1).read_to_end(&mut b)?;
-    ensure!(b.len() as u64 <= limit, "文件超过大小限制");
+    ensure!(b.len() as u64 <= limit, "File exceeds the size limit");
     Ok(b)
 }
 pub fn atomic(path: &Path, bytes: &[u8]) -> Result<()> {
@@ -102,7 +102,7 @@ pub fn lock(path: &Path) -> Result<File> {
         let m = fs::symlink_metadata(path)?;
         ensure!(
             m.is_file() && !m.file_type().is_symlink() && m.nlink() == 1,
-            "钱包锁文件不安全"
+            "Unsafe wallet lock file"
         );
     }
     let f = OpenOptions::new()
@@ -113,6 +113,6 @@ pub fn lock(path: &Path) -> Result<File> {
         .mode(0o600)
         .open(path)?;
     f.try_lock()
-        .map_err(|_| anyhow::anyhow!("此钱包已在另一个进程中打开"))?;
+        .map_err(|_| anyhow::anyhow!("Wallet is already open in another process"))?;
     Ok(f)
 }

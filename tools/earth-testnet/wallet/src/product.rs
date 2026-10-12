@@ -26,11 +26,11 @@ fn hash(s: &str) -> Result<Hash> {
     Hash::from_hex(s).map_err(err)
 }
 fn field<'a>(s: &'a Option<String>, name: &str) -> Result<&'a str> {
-    s.as_deref().ok_or_else(|| anyhow!("请填写{name}"))
+    s.as_deref().ok_or_else(|| anyhow!("Enter {name}"))
 }
 fn parse<T: serde::de::DeserializeOwned>(r: &Request) -> Result<T> {
     Ok(serde_json::from_value(
-        r.packet.clone().ok_or_else(|| anyhow!("请选择交换文件"))?,
+        r.packet.clone().ok_or_else(|| anyhow!("Select an exchange file"))?,
     )?)
 }
 
@@ -147,7 +147,7 @@ pub fn command_message(command: &Command, owner: &str) -> Result<Option<Vec<u8>>
     };
     ensure!(
         public == owner && !chain.is_zero(),
-        "命令签名身份不属于当前钱包"
+        "Command signing identity does not belong to this wallet"
     );
     Ok(Some(bytes))
 }
@@ -159,7 +159,7 @@ pub fn verify_command(command: &Command, owner: &str, chain: &str) -> Result<()>
             ensure!(
                 o.initial.state
                     == ChannelState::initial(&o.intent.funding().map_err(err)?).map_err(err)?,
-                "开通初始状态不正确"
+                "Invalid initial opening state"
             );
             o.initial
                 .verify(&o.intent.funding().map_err(err)?)
@@ -180,7 +180,7 @@ pub fn verify_command(command: &Command, owner: &str, chain: &str) -> Result<()>
             ensure!(
                 *channel == fee.intent.channel
                     && signed_state_hash(state).map_err(err)? == fee.intent.signed_state,
-                "争议命令未绑定通道状态"
+                "Dispute command does not bind the channel state"
             );
             ensure!(
                 fee.intent.action
@@ -189,14 +189,14 @@ pub fn verify_command(command: &Command, owner: &str, chain: &str) -> Result<()>
                     } else {
                         DisputeAction::Challenge
                     },
-                "争议动作不匹配"
+                "Dispute action does not match"
             );
             (fee.intent.chain_id, Some(&fee.owner_signature))
         }
         Command::Export(e) => (e.intent.source_chain_id, Some(&e.owner_signature)),
         Command::Finalize { .. } => return Ok(()),
     };
-    ensure!(id == expected, "命令属于另一条链");
+    ensure!(id == expected, "Command belongs to another chain");
     verify_bytes(
         owner,
         &command_message(command, owner)?.unwrap(),
@@ -207,9 +207,9 @@ pub fn verify_command(command: &Command, owner: &str, chain: &str) -> Result<()>
 pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()> {
     ensure!(
         book.channels.len() <= 1000 && book.invitations.len() <= 1000,
-        "通道记录超过容量"
+        "Channel record capacity exceeded"
     );
-    ensure!(book.returns.len() <= 10000, "返回证明超过容量");
+    ensure!(book.returns.len() <= 10000, "Return proof capacity exceeded");
     let mut returned = std::collections::BTreeSet::new();
     for record in &book.returns {
         ensure!(
@@ -218,7 +218,7 @@ pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()
                 && record.receipt.export_id == record.bundle.export_id
                 && record.receipt.bundle_id == record.bundle.id().map_err(err)?
                 && returned.insert(record.bundle.export_id),
-            "返回证明身份或编号不一致"
+            "Return proof identity or identifier differs"
         );
     }
     let mut ids = std::collections::BTreeSet::new();
@@ -226,16 +226,16 @@ pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()
     for open in &book.invitations {
         ensure!(
             Some(open.intent.party_a.as_str()) == owner && open.intent.chain_id == hash(chain)?,
-            "邀请身份错误"
+            "Invalid invitation identity"
         );
         ensure!(
             inputs.insert(open.intent.id().map_err(err)?),
-            "通道邀请编号重复"
+            "Duplicate channel invitation identifier"
         );
         let f = open.intent.funding().map_err(err)?;
         ensure!(
             open.initial.state == ChannelState::initial(&f).map_err(err)?,
-            "邀请必须从初始状态开始"
+            "Invitation must start from the initial state"
         );
         verify_bytes(
             &f.party_a,
@@ -251,7 +251,7 @@ pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()
         .map_err(err)?;
         ensure!(
             open.initial.signature_b.is_empty(),
-            "本机邀请含有意外的对方签名"
+            "Local invitation contains an unexpected peer signature"
         );
     }
     let mut receipt_count = 0;
@@ -261,36 +261,36 @@ pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()
                 && c.funding.chain_id == hash(chain)?
                 && (Some(c.funding.party_a.as_str()) == owner
                     || Some(c.funding.party_b.as_str()) == owner),
-            "重复通道或不属于当前钱包"
+            "Duplicate channel or channel outside this wallet"
         );
         ensure!(
             c.opening.intent.funding().map_err(err)? == c.funding && c.opening.initial == c.initial,
-            "通道开通记录不匹配"
+            "Channel opening record differs"
         );
         verify_command(&Command::Open(c.opening.clone()), &c.funding.party_a, chain)?;
         c.initial.verify(&c.funding).map_err(err)?;
         ensure!(
             c.initial.state == ChannelState::initial(&c.funding).map_err(err)?,
-            "通道初始分配不正确"
+            "Invalid initial channel allocation"
         );
         let mut latest = c.initial.clone();
         let mut payments = std::collections::BTreeSet::new();
         for w in &c.receipts {
             ensure!(
                 payments.insert(w.receipt.payment_id) && w.receipt.previous == latest,
-                "通道回执顺序不连续或付款编号重复"
+                "Channel receipt sequence is discontinuous or payment identifier is duplicated"
             );
             w.verify(
                 &c.funding,
                 &w.receipt.sender,
                 c.watcher
                     .as_deref()
-                    .ok_or_else(|| anyhow!("回执没有固定守护者身份"))?,
+                    .ok_or_else(|| anyhow!("Receipt lacks a pinned watcher identity"))?,
             )
             .map_err(err)?;
             ensure!(
                 w.live_rld && w.status == EARTH_STATUS,
-                "本机钱包不能接受模拟回执"
+                "Local wallet cannot accept simulated receipts"
             );
             latest = w.receipt.updated.clone();
             receipt_count += 1;
@@ -298,19 +298,19 @@ pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()
         if let Some(p) = &c.pending_receive {
             ensure!(
                 p.previous == latest && !payments.contains(&p.payment_id),
-                "待守护回执与本机记录不一致"
+                "Pending watcher receipt differs from the local record"
             );
             p.verify(&c.funding, owner.unwrap()).map_err(err)?;
             latest = p.updated.clone();
         }
-        ensure!(c.latest == latest, "通道最新状态缺少连续签名记录");
+        ensure!(c.latest == latest, "Latest channel state lacks a continuous signed history");
         if let Some(p) = &c.pending_offer {
             ensure!(
                 c.pending_receive.is_none()
                     && p.previous == c.latest
                     && Some(p.sender.as_str()) == owner
                     && !payments.contains(&p.payment_id),
-                "待付款记录错误"
+                "Invalid pending payment record"
             );
             p.verify(&c.funding).map_err(err)?;
         }
@@ -318,29 +318,29 @@ pub fn validate_book(book: &Book, owner: Option<&str>, chain: &str) -> Result<()
             p.validate().map_err(err)?;
             ensure!(
                 p.funding == c.funding && p.state == c.latest,
-                "守护包没有绑定最新状态"
+                "Watcher package does not bind the latest state"
             );
             if let Some(a) = &c.ack {
                 a.verify(
                     p,
                     c.watcher
                         .as_deref()
-                        .ok_or_else(|| anyhow!("缺少守护者公钥"))?,
+                        .ok_or_else(|| anyhow!("Missing watcher public key"))?,
                 )
                 .map_err(err)?;
-                ensure!(a.live_rld, "模拟守护回执不能用于真实付款");
+                ensure!(a.live_rld, "Simulated watcher receipts cannot authorize payments");
             }
         } else {
-            ensure!(c.ack.is_none(), "守护确认缺少守护包");
+            ensure!(c.ack.is_none(), "Watcher confirmation lacks its package");
         }
         if let Some(u) = &c.watch_url {
             ensure!(
                 loopback_origin(u).map_err(err)? == *u,
-                "守护服务必须为固定本机地址"
+                "Watcher service must use a pinned loopback address"
             );
         }
     }
-    ensure!(receipt_count <= 10000, "通道回执超过容量");
+    ensure!(receipt_count <= 10000, "Channel receipt capacity exceeded");
     Ok(())
 }
 pub fn reserved_inputs(book: &Book, c: &CandidateChain) -> Vec<OutPoint> {
@@ -365,23 +365,23 @@ fn select(w: &Wallet, owner: &str, amount: u128) -> Result<(OutPoint, Coin)> {
                 && x.output.amount.0 >= amount
         })
         .min_by_key(|(_, x)| x.output.amount.0)
-        .ok_or_else(|| anyhow!("需要一个足额、成熟且未占用的输入；可先进行余额整理"))
+        .ok_or_else(|| anyhow!("One sufficiently funded mature unreserved input is required; consolidate balances first"))
 }
 fn get(book: &Book, id: Hash) -> Result<&Channel> {
     book.channels
         .iter()
         .find(|c| c.id().ok() == Some(id))
-        .ok_or_else(|| anyhow!("本机没有此通道记录"))
+        .ok_or_else(|| anyhow!("Channel record is absent from this device"))
 }
 fn get_mut(book: &mut Book, id: Hash) -> Result<&mut Channel> {
     book.channels
         .iter_mut()
         .find(|c| c.id().ok() == Some(id))
-        .ok_or_else(|| anyhow!("本机没有此通道记录"))
+        .ok_or_else(|| anyhow!("Channel record is absent from this device"))
 }
 fn ready(c: &CandidateChain, p: &WatchPackage, receiver: &str) -> Result<()> {
     p.validate().map_err(err)?;
-    ensure!(p.fee.intent.owner == receiver, "守护费用不属于收款方");
+    ensure!(p.fee.intent.owner == receiver, "Watcher fee does not belong to the recipient");
     let f = &p.fee.intent;
     CandidateEscrowObservation::new_finalized(c, 2)
         .map_err(err)?
@@ -399,17 +399,17 @@ fn initial_open(o: &OpenChannel, c: &CandidateChain, owner: &str, peer: bool) ->
     let f = o.intent.funding().map_err(err)?;
     ensure!(
         o.intent.chain_id == c.chain_id() && (if peer { &f.party_b } else { &f.party_a }) == owner,
-        "通道邀请不属于当前链或钱包"
+        "Channel invitation belongs to another chain or wallet"
     );
     ensure!(
         o.initial.state == ChannelState::initial(&f).map_err(err)?
             && c.height() < o.intent.valid_through_height,
-        "邀请状态错误或已经过期"
+        "Invitation state is invalid or expired"
     );
     let coin = c
         .state()
         .coin(&o.intent.input)
-        .ok_or_else(|| anyhow!("邀请输入已不存在"))?;
+        .ok_or_else(|| anyhow!("Invitation input no longer exists"))?;
     ensure!(
         coin.output.owner == f.party_a
             && coin.spendable_height <= c.height()
@@ -419,8 +419,8 @@ fn initial_open(o: &OpenChannel, c: &CandidateChain, owner: &str, peer: bool) ->
                     .0
                     .checked_add(o.intent.opening_fee.0)
                     .and_then(|x| x.checked_add(o.intent.change.0))
-                    .ok_or_else(|| anyhow!("金额溢出"))?,
-        "邀请资金不匹配或未成熟"
+                    .ok_or_else(|| anyhow!("Amount overflow"))?,
+        "Invitation funding differs or is immature"
     );
     verify_bytes(
         &f.party_a,
@@ -441,12 +441,12 @@ pub fn status(book: &Book, c: &CandidateChain, owner: Option<&str>) -> Result<Va
         let id = b.id()?;
         let escrow = c.state().escrow(id);
         let (phase, deadline) = match escrow.map(|e| &e.phase) {
-            None => ("等待链上开通", None),
-            Some(Phase::Open) => ("已开通", None),
+            None => ("Waiting for on-chain opening", None),
+            Some(Phase::Open) => ("Open", None),
             Some(Phase::Closing {
                 deadline_height, ..
-            }) => ("争议保护期", Some(deadline_height.to_string())),
-            Some(Phase::Settled) => ("已结算", None),
+            }) => ("Dispute protection period", Some(deadline_height.to_string())),
+            Some(Phase::Settled) => ("Settled", None),
         };
         channels.push(json!({"id":id,"peer":if Some(b.funding.party_a.as_str())==owner{&b.funding.party_b}else{&b.funding.party_a},"balance":chain::format(if Some(b.funding.party_a.as_str())==owner{b.latest.state.balance_a.0}else{b.latest.state.balance_b.0}),"sequence":b.latest.state.sequence,"phase":phase,"deadline":deadline,"pending":b.pending_offer.is_some()||b.pending_receive.is_some(),"watcher":b.watcher,"guard_ack":b.ack.as_ref().map(|a|a.sequence),"guard_is_point_in_time":true,"receipts":b.receipts.len()}));
     }
@@ -481,17 +481,17 @@ impl Wallet {
         self.saved
             .owner()
             .map(str::to_owned)
-            .ok_or_else(|| anyhow!("请先创建钱包"))
+            .ok_or_else(|| anyhow!("Create a wallet first"))
     }
     fn active_signer(&self) -> Result<&str> {
         ensure!(
             self.saved.backup_verified && !self.saved.retired && !self.write_failed,
-            "请先验证备份；停用或磁盘故障时禁止签名"
+            "Verify the backup first; signing is forbidden after deactivation or disk failure"
         );
         self.secret
             .as_deref()
             .map(|s| s.as_str())
-            .ok_or_else(|| anyhow!("请先解锁钱包"))
+            .ok_or_else(|| anyhow!("Unlock the wallet first"))
     }
     fn journal_command(&mut self, command: Command) -> Result<()> {
         let c = self.replay.store.chain();
@@ -510,7 +510,7 @@ impl Wallet {
                 .journal
                 .iter()
                 .any(|j| command_id(&j.command).ok() == Some(id)),
-            "该签名交易已有记录，请原样重试"
+            "This signed transaction is already retained; retry the exact original"
         );
         self.saved.journal.push(chain::Journal {
             command,
@@ -526,7 +526,7 @@ impl Wallet {
     ) -> Result<WatchAck> {
         ensure!(
             loopback_origin(url).map_err(err)? == url,
-            "守护服务必须使用本机地址"
+            "Watcher service must use a loopback address"
         );
         let mut response = self
             .replay
@@ -538,14 +538,14 @@ impl Wallet {
             .error_for_status()?;
         let mut bytes = Vec::new();
         while let Some(b) = response.chunk().await? {
-            ensure!(bytes.len() + b.len() <= 8192, "守护回执超过限制");
+            ensure!(bytes.len() + b.len() <= 8192, "Watcher receipt exceeds the limit");
             bytes.extend(b);
         }
         let ack: WatchAck = serde_json::from_slice(&bytes)?;
         ack.verify(package, public).map_err(err)?;
         ensure!(
             ack.live_rld && ack.status == EARTH_STATUS,
-            "守护服务未确认正式链模式"
+            "Watcher service has not confirmed the authenticated chain mode"
         );
         Ok(ack)
     }
@@ -553,7 +553,7 @@ impl Wallet {
         self.replay.refresh().await?;
         self.destination
             .as_mut()
-            .ok_or_else(|| anyhow!("启动时尚未配置并接受目的链原始授权"))?
+            .ok_or_else(|| anyhow!("Original destination authorization was not configured and accepted at startup"))?
             .refresh(self.replay.store.chain(), &self.replay.http)
             .await
     }
@@ -564,7 +564,7 @@ impl Wallet {
         let d = self
             .destination
             .as_ref()
-            .ok_or_else(|| anyhow!("未配置目的链"))?;
+            .ok_or_else(|| anyhow!("Destination chain is not configured"))?;
         let id = crate::destination::command_id(&command)?;
         let response = self
             .replay
@@ -590,23 +590,23 @@ impl Wallet {
             false
         };
         Ok(
-            json!({"delivery":if accepted{"accepted"}else{"unknown"},"message":if accepted{"目的链节点已接收原命令；尚未完成确认、成熟或返回证明。"}else{"已保存原始导入命令，网络结果不确定；可原样重试。"}}),
+            json!({"delivery":if accepted{"accepted"}else{"unknown"},"message":if accepted{"Destination node received the original command; confirmation, maturity and return proof remain pending."}else{"Original import command retained; network outcome is unknown. Retry the exact original."}}),
         )
     }
     pub async fn product_action(&mut self, r: Request) -> Result<Value> {
         let owner = self.product_owner()?;
         match r.action.as_str() {
             "product_packet" => {
-                let id = hash(field(&r.channel, "通道编号")?)?;
+                let id = hash(field(&r.channel, "Channel identifier")?)?;
                 let b = get(&self.saved.products, id)?;
                 if let Some(p) = &b.pending_offer {
                     return Ok(
-                        json!({"packet":p,"message":"已保存的原始付款提议；未收到完整受保护回执前不算付款完成。"}),
+                        json!({"packet":p,"message":"Retained original payment proposal; payment remains incomplete until a complete protected receipt arrives."}),
                     );
                 }
                 if let Some(p) = &b.pending_receive {
                     return Ok(
-                        json!({"packet":p,"message":"仅本机已签名待守护记录；尚未提供完整付款回执。"}),
+                        json!({"packet":p,"message":"Only the local signed watcher-pending record is available; the complete payment receipt is absent."}),
                     );
                 }
                 let packet = if let Some(w) = b.receipts.last() {
@@ -616,7 +616,7 @@ impl Wallet {
                 } else {
                     json!(b.opening)
                 };
-                Ok(json!({"packet":packet,"message":"已取出本机保存的原始交换文件。"}))
+                Ok(json!({"packet":packet,"message":"Retrieved the exact original exchange file retained locally."}))
             }
             "product_import_receipt" => {
                 let w: WatchedReceipt = parse(&r)?;
@@ -625,22 +625,22 @@ impl Wallet {
                 let watcher = b
                     .watcher
                     .as_deref()
-                    .ok_or_else(|| anyhow!("请先固定并核验守护者身份"))?;
+                    .ok_or_else(|| anyhow!("Pin and verify the watcher identity first"))?;
                 w.verify(&b.funding, &owner, watcher).map_err(err)?;
-                ensure!(w.live_rld, "不能导入模拟付款回执");
+                ensure!(w.live_rld, "Simulated payment receipts cannot be imported");
                 if b.receipts.iter().any(|x| x == &w) {
-                    return Ok(json!({"ok":true,"message":"回执已经保存，没有重复扣款。"}));
+                    return Ok(json!({"ok":true,"message":"Receipt already retained; no duplicate debit."}));
                 }
                 let p = b
                     .pending_offer
                     .as_ref()
-                    .ok_or_else(|| anyhow!("没有对应的待付款提议"))?;
+                    .ok_or_else(|| anyhow!("Matching pending payment proposal is absent"))?;
                 ensure!(
                     p.proposed == w.receipt.updated.state
                         && p.previous == w.receipt.previous
                         && p.payment_id == w.receipt.payment_id
                         && p.amount == w.receipt.amount,
-                    "回执与本机已签名付款不匹配"
+                    "Receipt differs from the locally signed payment"
                 );
                 self.replay.refresh().await?;
                 ready(
@@ -656,7 +656,7 @@ impl Wallet {
                 b.pending_offer = None;
                 self.persist()?;
                 Ok(
-                    json!({"ok":true,"message":"完整受保护回执已核验并保存；通道最终结算仍需链上保护期。"}),
+                    json!({"ok":true,"message":"Complete protected receipt verified and retained; final channel settlement still requires the on-chain protection period."}),
                 )
             }
             "product_import_protection" => {
@@ -672,13 +672,13 @@ impl Wallet {
                 let b = get(&self.saved.products, id)?;
                 ensure!(
                     b.latest == p.package.state && b.funding == p.package.funding,
-                    "守护交换文件不是此通道的最新状态"
+                    "Watcher exchange file does not contain the latest channel state"
                 );
                 if let Some(key) = &b.watcher {
-                    ensure!(key == &p.watcher, "不能替换已固定的守护者身份");
+                    ensure!(key == &p.watcher, "A pinned watcher identity cannot be replaced");
                 }
                 p.ack.verify(&p.package, &p.watcher).map_err(err)?;
-                ensure!(p.ack.live_rld, "不能导入模拟守护回执");
+                ensure!(p.ack.live_rld, "Simulated watcher receipts cannot be imported");
                 self.replay.refresh().await?;
                 ready(
                     self.replay.store.chain(),
@@ -691,18 +691,18 @@ impl Wallet {
                 b.ack = Some(p.ack);
                 self.persist()?;
                 Ok(
-                    json!({"ok":true,"message":"已固定守护者公钥并核验当前费用储备；请通过可信渠道核对这个公钥。"}),
+                    json!({"ok":true,"message":"Watcher public key pinned and current fee reserve verified; confirm this public key through a trusted channel."}),
                 )
             }
             "product_destination_retry" => {
                 self.refresh_destination().await?;
-                let id = hash(field(&r.transaction, "目的链命令编号")?)?;
+                let id = hash(field(&r.transaction, "Destination command identifier")?)?;
                 let command = self
                     .saved
                     .destination_journal
                     .iter()
                     .find(|j| crate::destination::command_id(&j.command).ok() == Some(id))
-                    .ok_or_else(|| anyhow!("找不到原始目的链命令"))?
+                    .ok_or_else(|| anyhow!("Original destination command is absent"))?
                     .command
                     .clone();
                 self.submit_destination(command).await
@@ -716,7 +716,7 @@ impl Wallet {
                 }
                 let p: Packet = parse(&r)?;
                 self.refresh_destination().await?;
-                ensure!(self.saved.journal.iter().any(|j|matches!(&j.command,Command::Export(e) if e.intent.id().ok()==Some(p.bundle.export_id))),"不是本机导出的返回证明");
+                ensure!(self.saved.journal.iter().any(|j|matches!(&j.command,Command::Export(e) if e.intent.id().ok()==Some(p.bundle.export_id))),"Return proof was not exported by this wallet");
                 let observed = self.destination.as_mut().unwrap().verify_receipt(
                     self.replay.store.chain(),
                     &p.bundle,
@@ -731,7 +731,7 @@ impl Wallet {
                 {
                     ensure!(
                         old.bundle == p.bundle && old.receipt == p.receipt,
-                        "不能用另一份返回证明替换原记录"
+                        "Another return proof cannot replace the original record"
                     );
                 } else {
                     self.saved.products.returns.push(ReturnRecord {
@@ -742,24 +742,24 @@ impl Wallet {
                     self.persist()?;
                 }
                 Ok(
-                    json!({"observation":observed,"message":"返回证明已按本机源链和目的链重放核验；目的链终局仍是概率性的，源链资产仍保持导出锁定。"}),
+                    json!({"observation":observed,"message":"Return proof verified by local source and destination replay; destination finality remains probabilistic and source assets remain export-locked."}),
                 )
             }
             "product_destination_receipt" => {
                 self.refresh_destination().await?;
-                let id = hash(field(&r.transaction, "目的链命令编号")?)?;
+                let id = hash(field(&r.transaction, "Destination command identifier")?)?;
                 let command = &self
                     .saved
                     .destination_journal
                     .iter()
                     .find(|j| crate::destination::command_id(&j.command).ok() == Some(id))
-                    .ok_or_else(|| anyhow!("找不到已保存的导入命令"))?
+                    .ok_or_else(|| anyhow!("Retained import command is absent"))?
                     .command;
                 let rld_value_successor::destination::pow::Command::FinalizedImport {
                     bundle, ..
                 } = command
                 else {
-                    return Err(anyhow!("不是导入命令"));
+                    return Err(anyhow!("Command is not an import"));
                 };
                 let d = self.destination.as_mut().unwrap();
                 let policy = d.policy();
@@ -768,24 +768,24 @@ impl Wallet {
                     .observe_import(self.replay.store.chain(), bundle, &policy)
                     .map_err(err)?;
                 Ok(
-                    json!({"packet":{"bundle":bundle,"receipt":receipt},"message":"本机完整重放核验的导入包含证明；请把文件交还源链付款方核验。目的链仍可能重组。"}),
+                    json!({"packet":{"bundle":bundle,"receipt":receipt},"message":"Import inclusion proof verified by complete local replay; return the file to the source payer for verification. Destination reorganization remains possible."}),
                 )
             }
             "product_export_bundle" => {
                 self.replay.refresh().await?;
-                let id = hash(field(&r.transaction, "导出编号")?)?;
+                let id = hash(field(&r.transaction, "Export identifier")?)?;
                 ensure!(
                     self.saved.journal.iter().any(
                         |j| matches!(&j.command,Command::Export(e) if e.intent.id().ok()==Some(id))
                     ),
-                    "不是本机保存的导出记录"
+                    "Export record is not retained by this wallet"
                 );
-                if let Some(j)=self.saved.destination_journal.iter().find(|j|matches!(&j.command,rld_value_successor::destination::pow::Command::FinalizedImport{bundle,..} if bundle.export_id==id)) {return Ok(json!({"packet":j.command,"message":"已取出原始目的链导入材料；源链资产仍保持锁定。"}));}
+                if let Some(j)=self.saved.destination_journal.iter().find(|j|matches!(&j.command,rld_value_successor::destination::pow::Command::FinalizedImport{bundle,..} if bundle.export_id==id)) {return Ok(json!({"packet":j.command,"message":"Original destination import material retrieved; source assets remain locked."}));}
                 let certificate = self
                     .replay
                     .store
                     .finality()
-                    .ok_or_else(|| anyhow!("导出还没有已签名的源链终局证明"))?
+                    .ok_or_else(|| anyhow!("Export lacks a signed source-finality proof"))?
                     .clone();
                 let bundle = self
                     .replay
@@ -805,11 +805,11 @@ impl Wallet {
                     });
                 self.persist()?;
                 Ok(
-                    json!({"packet":command,"message":"原始导入材料已落盘。源链导出仍然锁定，收到目的链有效证明前不能视为跨区完成。"}),
+                    json!({"packet":command,"message":"Original import material is durable. Source export remains locked; cross-region completion requires a valid destination proof."}),
                 )
             }
             "product_prepare" => {
-                ensure!(self.saved.backup_verified, "请先验证当前钱包备份");
+                ensure!(self.saved.backup_verified, "Verify the current wallet backup first");
                 ensure!(
                     self.secret.is_some()
                         || self.saved.external_public.is_some()
@@ -817,15 +817,15 @@ impl Wallet {
                             r.kind.as_deref(),
                             Some("challenge" | "finalize" | "destination_import")
                         ),
-                    "请先解锁钱包"
+                    "Unlock the wallet first"
                 );
                 self.replay.refresh().await?;
                 let c = self.replay.store.chain();
-                let kind = field(&r.kind, "操作类型")?;
+                let kind = field(&r.kind, "Action type")?;
                 let expires = c
                     .height()
                     .checked_add(12)
-                    .ok_or_else(|| anyhow!("高度溢出"))?;
+                    .ok_or_else(|| anyhow!("Height overflow"))?;
                 let mut signing = None;
                 let (work, review) = match kind {
                     "destination_transfer" => {
@@ -833,10 +833,10 @@ impl Wallet {
                         let d = self.destination.as_ref().unwrap();
                         let to = address::decode(
                             &d.store.chain().chain_id().to_hex(),
-                            field(&r.to, "目的链收款地址")?,
+                            field(&r.to, "Destination recipient address")?,
                         )?;
-                        let amount = chain::amount(field(&r.amount, "金额")?)?;
-                        let fee = chain::amount(field(&r.fee, "手续费")?)?;
+                        let amount = chain::amount(field(&r.amount, "Amount")?)?;
+                        let fee = chain::amount(field(&r.fee, "Fee")?)?;
                         let t = crate::destination::prepare(
                             d.store.chain(),
                             &owner,
@@ -845,7 +845,7 @@ impl Wallet {
                             fee,
                             &self.saved.destination_journal,
                         )?;
-                        let review = json!({"操作":"目的链普通转账","收款人":to,"金额":chain::format(amount),"手续费":chain::format(fee),"有效至":t.valid_through_height.to_string(),"说明":"目的链余额与源链余额分开；签名后先落盘再提交，确认仍可能重组。"});
+                        let review = json!({"Action":"Ordinary destination transfer","Recipient":to,"Amount":chain::format(amount),"Fee":chain::format(fee),"Valid until":t.valid_through_height.to_string(),"Description":"Destination and source balances are separate; signed commands become durable before submission. Confirmed history may still reorganize."});
                         (
                             Work::Destination(
                                 rld_value_successor::destination::pow::Command::Transfer(t),
@@ -860,7 +860,7 @@ impl Wallet {
                             ..
                         } = &command
                         else {
-                            return Err(anyhow!("只接受带源链终局证明的导入"));
+                            return Err(anyhow!("Imports require a source-finality proof"));
                         };
                         let export_record = self
                             .replay
@@ -868,7 +868,7 @@ impl Wallet {
                             .chain()
                             .state()
                             .export_record(bundle.export_id)
-                            .ok_or_else(|| anyhow!("本机源链没有此导出记录"))?;
+                            .ok_or_else(|| anyhow!("Export is absent from the locally replayed source chain"))?;
                         let amount = export_record.command.intent.amount;
                         let recipient = export_record.command.intent.recipient.clone();
                         let export = bundle.export_id;
@@ -883,12 +883,12 @@ impl Wallet {
                                 vec![command.clone()],
                             )
                             .map_err(err)?;
-                        let review = json!({"操作":"提交已终局源链导入","源链导出":export,"目的链":d.store.chain().chain_id(),"收款人":recipient,"金额":chain::format(amount.0),"说明":"本机重放与原始授权已核验。节点接收后还需目的链确认、导入成熟和返回证明。"});
+                        let review = json!({"Action":"Submit finalized source import","Source export":export,"Destination chain":d.store.chain().chain_id(),"Recipient":recipient,"Amount":chain::format(amount.0),"Description":"Local replay and original authorization verified. Node receipt still requires destination confirmation, import maturity and return proof."});
                         (Work::Destination(command), review)
                     }
                     "consolidate" => {
-                        let fee = chain::amount(field(&r.fee, "手续费")?)?;
-                        ensure!(fee > 0, "手续费必须大于零");
+                        let fee = chain::amount(field(&r.fee, "Fee")?)?;
+                        ensure!(fee > 0, "Fee must be positive");
                         let mut held = chain::reserved(c, &self.saved.journal)?;
                         held.extend(reserved_inputs(&self.saved.products, c));
                         let selected = chain::coins(c)?
@@ -900,12 +900,12 @@ impl Wallet {
                             })
                             .take(32)
                             .collect::<Vec<_>>();
-                        ensure!(selected.len() > 1, "至少需要两个成熟且未占用的输入才能合并");
+                        ensure!(selected.len() > 1, "Consolidation requires at least two mature unreserved inputs");
                         let total = selected.iter().try_fold(0u128, |s, (_, x)| {
                             s.checked_add(x.output.amount.0)
-                                .ok_or_else(|| anyhow!("余额溢出"))
+                                .ok_or_else(|| anyhow!("Balance overflow"))
                         })?;
-                        ensure!(total > fee, "合并金额不足以支付手续费");
+                        ensure!(total > fee, "Consolidated amount cannot cover the fee");
                         let t = rld_pow::Transfer {
                             chain_id: c.chain_id(),
                             owner: owner.clone(),
@@ -920,42 +920,42 @@ impl Wallet {
                         };
                         (
                             Work::Command(Command::Transfer(t)),
-                            json!({"操作":"合并本机余额输入","输入数量":selected.len(),"合并后金额":chain::format(total-fee),"手续费":chain::format(fee),"收款人":owner}),
+                            json!({"Action":"Consolidate local balance inputs","Input count":selected.len(),"Consolidated amount":chain::format(total-fee),"Fee":chain::format(fee),"Recipient":owner}),
                         )
                     }
                     "split" | "transfer" => {
                         let to = if kind == "split" {
                             owner.clone()
                         } else {
-                            address::decode(&self.saved.chain_id, field(&r.to, "收款地址")?)?
+                            address::decode(&self.saved.chain_id, field(&r.to, "Recipient address")?)?
                         };
                         ensure!(
                             kind == "split" || to != owner,
-                            "请使用拆分余额操作给自己的钱包分配小额输入"
+                            "Use balance splitting to allocate smaller inputs to this wallet"
                         );
-                        let value = chain::amount(field(&r.amount, "金额")?)?;
-                        let fee = chain::amount(field(&r.fee, "手续费")?)?;
+                        let value = chain::amount(field(&r.amount, "Amount")?)?;
+                        let fee = chain::amount(field(&r.fee, "Fee")?)?;
                         let t = chain::prepare(c, &owner, &to, value, fee, &self.saved.journal)?;
                         ensure!(
                             t.inputs
                                 .iter()
                                 .all(|p| !reserved_inputs(&self.saved.products, c).contains(p)),
-                            "输入已被通道邀请占用；请等待邀请失效或资金确认"
+                            "Input is reserved by a channel invitation; wait for expiry or funding confirmation"
                         );
                         (
                             Work::Command(Command::Transfer(t.clone())),
-                            json!({"操作":if kind=="split"{"拆分本机余额输入"}else{"普通转账"},"收款人":to,"金额":chain::format(value),"手续费":chain::format(fee),"找零":chain::format(t.outputs.get(1).map(|o|o.amount.0).unwrap_or(0)),"有效至":expires.to_string()}),
+                            json!({"Action":if kind=="split"{"Split local balance inputs"}else{"Ordinary transfer"},"Recipient":to,"Amount":chain::format(value),"Fee":chain::format(fee),"Change":chain::format(t.outputs.get(1).map(|o|o.amount.0).unwrap_or(0)),"Valid until":expires.to_string()}),
                         )
                     }
                     "open" => {
                         let peer =
-                            address::decode(&self.saved.chain_id, field(&r.peer, "对方地址")?)?;
-                        let capacity = chain::amount(field(&r.amount, "通道总额")?)?;
-                        let fee = chain::amount(field(&r.fee, "开通费")?)?;
-                        let close_fee = chain::amount(field(&r.close_fee, "结算费")?)?;
+                            address::decode(&self.saved.chain_id, field(&r.peer, "Peer address")?)?;
+                        let capacity = chain::amount(field(&r.amount, "Channel total")?)?;
+                        let fee = chain::amount(field(&r.fee, "Opening fee")?)?;
+                        let close_fee = chain::amount(field(&r.close_fee, "Settlement fee")?)?;
                         let total = capacity
                             .checked_add(fee)
-                            .ok_or_else(|| anyhow!("金额溢出"))?;
+                            .ok_or_else(|| anyhow!("Amount overflow"))?;
                         let (input, coin) = select(self, &owner, total)?;
                         let intent = OpenIntent {
                             chain_id: c.chain_id(),
@@ -980,16 +980,16 @@ impl Wallet {
                                 signature_a: String::new(),
                                 initial,
                             }),
-                            json!({"操作":"签署通道邀请","对方":peer,"存入":chain::format(capacity),"开通费":chain::format(fee),"结算预留费":chain::format(close_fee),"有效至":expires.to_string(),"说明":"先保存并发送邀请，对方签署初始分配后才能广播开通；邀请将占用该输入。"}),
+                            json!({"Action":"Sign channel invitation","Peer":peer,"Deposit":chain::format(capacity),"Opening fee":chain::format(fee),"Reserved settlement fee":chain::format(close_fee),"Valid until":expires.to_string(),"Description":"Retain and send the invitation first; broadcast opening after the peer signs the initial allocation. The invitation reserves this input."}),
                         )
                     }
                     "accept" => {
                         let o: OpenChannel = parse(&r)?;
                         initial_open(&o, c, &owner, true)?;
-                        ensure!(o.initial.signature_b.is_empty(), "邀请已含对方签名");
+                        ensure!(o.initial.signature_b.is_empty(), "Invitation already contains the peer signature");
                         (
                             Work::Accept(o.clone()),
-                            json!({"操作":"接受通道邀请","出资人":o.intent.party_a,"容量":chain::format(o.intent.capacity.0),"你的初始余额":"0","结算费":chain::format(o.intent.close_fee.0),"有效至":o.intent.valid_through_height.to_string()}),
+                            json!({"Action":"Accept channel invitation","Funder":o.intent.party_a,"Capacity":chain::format(o.intent.capacity.0),"Your initial balance":"0","Settlement fee":chain::format(o.intent.close_fee.0),"Valid until":o.intent.valid_through_height.to_string()}),
                         )
                     }
                     "fund" => {
@@ -1007,23 +1007,23 @@ impl Wallet {
                                     && i.signature_a == o.signature_a
                                     && i.initial.state == o.initial.state
                                     && i.initial.signature_a == o.initial.signature_a),
-                            "签署文件不对应本机保存的原始邀请"
+                            "Signed file differs from the original local invitation"
                         );
                         (
                             Work::Command(Command::Open(o.clone())),
-                            json!({"操作":"广播开通通道","对方":o.intent.party_b,"存入":chain::format(o.intent.capacity.0),"开通费":chain::format(o.intent.opening_fee.0),"说明":"双签初始分配已核验；区块开通并终局之后才能进行受保护支付。"}),
+                            json!({"Action":"Broadcast channel opening","Peer":o.intent.party_b,"Deposit":chain::format(o.intent.capacity.0),"Opening fee":chain::format(o.intent.opening_fee.0),"Description":"Initial dual-signed allocation verified; protected payments require on-chain opening and finality."}),
                         )
                     }
                     "export" => {
-                        let destination = hash(field(&r.destination, "目的链 ID")?)?;
+                        let destination = hash(field(&r.destination, "Destination chain ID")?)?;
                         let to = address::decode(
                             &destination.to_hex(),
-                            field(&r.to, "目的链收款地址")?,
+                            field(&r.to, "Destination recipient address")?,
                         )?;
-                        let amount = chain::amount(field(&r.amount, "导出金额")?)?;
-                        let fee = chain::amount(field(&r.fee, "源链手续费")?)?;
-                        let df = chain::amount(field(&r.destination_fee, "目的链手续费")?)?;
-                        let total = amount.checked_add(fee).ok_or_else(|| anyhow!("金额溢出"))?;
+                        let amount = chain::amount(field(&r.amount, "Export amount")?)?;
+                        let fee = chain::amount(field(&r.fee, "Source fee")?)?;
+                        let df = chain::amount(field(&r.destination_fee, "Destination fee")?)?;
+                        let total = amount.checked_add(fee).ok_or_else(|| anyhow!("Amount overflow"))?;
                         let (input, coin) = select(self, &owner, total)?;
                         let intent = ExportIntent {
                             source_chain_id: c.chain_id(),
@@ -1043,23 +1043,23 @@ impl Wallet {
                                 intent,
                                 owner_signature: String::new(),
                             })),
-                            json!({"操作":"锁定源链并导出","目的链":destination,"收款人":to,"导出金额":chain::format(amount),"源链费":chain::format(fee),"目的链费":chain::format(df),"目的链净额":chain::format(amount-df),"说明":"导出没有因超时或回执缺失而自动退款的规则。需要源链终局证明、目的链导入与返回证明。"}),
+                            json!({"Action":"Lock source assets and export","Destination chain":destination,"Recipient":to,"Export amount":chain::format(amount),"Source fee":chain::format(fee),"Destination fee":chain::format(df),"Destination net amount":chain::format(amount-df),"Description":"Exports do not refund automatically after timeout or missing receipts. Source finality, destination import and return proof remain required."}),
                         )
                     }
                     "reserve" | "close" | "challenge" | "finalize" | "protect" | "offer"
                     | "receive" => {
-                        let id = hash(field(&r.channel, "通道编号")?)?;
+                        let id = hash(field(&r.channel, "Channel identifier")?)?;
                         let b = get(&self.saved.products, id)?;
                         let e = c
                             .state()
                             .escrow(id)
-                            .ok_or_else(|| anyhow!("通道尚未在本机选定链上开通"))?;
-                        ensure!(e.funding == b.funding, "链上通道与本机身份不一致");
+                            .ok_or_else(|| anyhow!("Channel is not open on the locally selected chain"))?;
+                        ensure!(e.funding == b.funding, "On-chain channel differs from local identities");
                         match kind {
                             "reserve" => {
-                                ensure!(matches!(e.phase, Phase::Open), "当前通道不处于开通状态");
-                                let minimum = chain::amount(field(&r.fee, "储备金额下限")?)?;
-                                ensure!(minimum > 0, "储备金额必须大于零");
+                                ensure!(matches!(e.phase, Phase::Open), "Channel is not currently open");
+                                let minimum = chain::amount(field(&r.fee, "Minimum reserve amount")?)?;
+                                ensure!(minimum > 0, "Reserve amount must be positive");
                                 let (input, coin) = select(self, &owner, minimum)?;
                                 (
                                     Work::Command(Command::ReserveChallengeFee(
@@ -1073,7 +1073,7 @@ impl Wallet {
                                             owner_signature: String::new(),
                                         },
                                     )),
-                                    json!({"操作":"锁定挑战费用储备","通道":id,"实际锁定整个输入":chain::format(coin.output.amount.0),"说明":"整枚输入锁定至通道结算，不能作为普通余额重复花费。"}),
+                                    json!({"Action":"Lock challenge fee reserve","Channel":id,"The complete input is locked":chain::format(coin.output.amount.0),"Description":"The complete input remains locked until channel settlement and cannot be spent as ordinary balance."}),
                                 )
                             }
                             "finalize" => {
@@ -1083,30 +1083,30 @@ impl Wallet {
                                     ..
                                 } = e.phase
                                 else {
-                                    return Err(anyhow!("通道尚未开始关闭"));
+                                    return Err(anyhow!("Channel closing has not started"));
                                 };
-                                ensure!(c.height() > deadline_height, "保护期还未结束");
+                                ensure!(c.height() > deadline_height, "Protection period has not ended");
                                 ensure!(
                                     b.latest == *best
                                         && b.pending_offer.is_none()
                                         && b.pending_receive.is_none(),
-                                    "本机持有不同或待完成状态；禁止结算旧分配，请先核验和挑战"
+                                    "Local state differs or remains pending; verify and challenge before settling an older allocation"
                                 );
                                 (
                                     Work::Command(Command::Finalize { channel: id }),
-                                    json!({"操作":"结算通道","通道":id,"保护期截止":deadline_height.to_string(),"说明":"依据链上已确认的最佳状态分配；未确认新的回执应先挑战。"}),
+                                    json!({"Action":"Settle channel","Channel":id,"Protection deadline":deadline_height.to_string(),"Description":"Distribute using the best confirmed on-chain state; challenge first when a newer receipt remains unconfirmed."}),
                                 )
                             }
                             "close" | "challenge" => {
                                 ensure!(
                                     b.pending_offer.is_none()
                                         && (kind == "challenge" || b.pending_receive.is_none()),
-                                    "有未完成付款，请先原样恢复或完成守护确认"
+                                    "Payment remains incomplete; recover the exact original or complete watcher confirmation first"
                                 );
                                 if let Phase::Closing { best, .. } = &e.phase {
                                     ensure!(
                                         b.latest.state.sequence >= best.state.sequence,
-                                        "链上已存在更新状态；禁止用旧状态继续关闭"
+                                        "A newer on-chain state exists; closing with an older state is forbidden"
                                     );
                                 }
                                 let protected = if kind == "challenge" {
@@ -1120,7 +1120,7 @@ impl Wallet {
                                     p.validate().map_err(err)?;
                                     p.fee.clone()
                                 } else {
-                                    let fee = chain::amount(field(&r.fee, "动作手续费")?)?;
+                                    let fee = chain::amount(field(&r.fee, "Action fee")?)?;
                                     let (input, coin) = select(self, &owner, fee)?;
                                     ActionFee {
                                         intent: ActionFeeIntent {
@@ -1158,31 +1158,31 @@ impl Wallet {
                                 };
                                 (
                                     Work::Command(cmd),
-                                    json!({"操作":if kind=="close"{"申请关闭"}else{"提交较新状态挑战"},"通道":id,"状态序号":b.latest.state.sequence,"动作手续费":chain::format(fee),"说明":"关闭仍保留原协议完整的 2016 区块保护期。"}),
+                                    json!({"Action":if kind=="close"{"Request closing"}else{"Challenge with a newer state"},"Channel":id,"State sequence":b.latest.state.sequence,"Action fee":chain::format(fee),"Description":"Closing retains the original complete 2016-block protection period."}),
                                 )
                             }
                             "protect" => {
-                                let watcher = field(&r.watcher, "守护者公钥")?.to_owned();
+                                let watcher = field(&r.watcher, "Watcher public key")?.to_owned();
                                 rld_core::validate_ed25519_public_key(&watcher).map_err(err)?;
                                 if let Some(key) = &b.watcher {
-                                    ensure!(key == &watcher, "禁止替换已固定的守护者身份");
+                                    ensure!(key == &watcher, "Replacing a pinned watcher identity is forbidden");
                                 }
-                                let url = loopback_origin(field(&r.watch_url, "守护者本机地址")?)
+                                let url = loopback_origin(field(&r.watch_url, "Watcher loopback address")?)
                                     .map_err(err)?;
                                 let input = r
                                     .input
                                     .clone()
-                                    .ok_or_else(|| anyhow!("请选择已确认的费用储备输入"))?;
+                                    .ok_or_else(|| anyhow!("Select a confirmed fee-reserve input"))?;
                                 let reserve = c
                                     .state()
                                     .reserved_challenge_fee(&input)
-                                    .ok_or_else(|| anyhow!("输入不是链上费用储备"))?;
-                                let fee = chain::amount(field(&r.fee, "挑战手续费")?)?;
+                                    .ok_or_else(|| anyhow!("Input is not an on-chain fee reserve"))?;
+                                let fee = chain::amount(field(&r.fee, "Challenge fee")?)?;
                                 ensure!(
                                     fee > 0
                                         && reserve.coin.output.amount.0 >= fee
                                         && reserve.coin.output.owner == owner,
-                                    "费用储备金额或身份错误"
+                                    "Invalid fee-reserve amount or identity"
                                 );
                                 let intent = ActionFeeIntent {
                                     chain_id: c.chain_id(),
@@ -1213,19 +1213,19 @@ impl Wallet {
                                         url: url.clone(),
                                         intent,
                                     },
-                                    json!({"操作":"授权守护最新通道状态","通道":id,"序号":b.latest.state.sequence,"守护者":watcher,"服务":url,"挑战手续费":chain::format(fee),"说明":"授权只针对此状态的挑战，持续有效；服务保存签名确认后才可收款。"}),
+                                    json!({"Action":"Authorize watching the latest channel state","Channel":id,"Sequence":b.latest.state.sequence,"Watcher":watcher,"Service":url,"Challenge fee":chain::format(fee),"Description":"Authorization remains valid for challenges to this exact state; payment requires the service to retain its signed acknowledgment."}),
                                 )
                             }
                             "offer" => {
                                 ensure!(
                                     b.pending_offer.is_none() && b.pending_receive.is_none(),
-                                    "请先完成或原样重试上一笔付款"
+                                    "Complete or retry the exact previous payment first"
                                 );
                                 let p = b
                                     .protection
                                     .as_ref()
-                                    .ok_or_else(|| anyhow!("请先导入收款方完整守护证明"))?;
-                                let ack = b.ack.as_ref().ok_or_else(|| anyhow!("缺少守护确认"))?;
+                                    .ok_or_else(|| anyhow!("Import the recipient complete watcher proof first"))?;
+                                let ack = b.ack.as_ref().ok_or_else(|| anyhow!("Missing watcher acknowledgment"))?;
                                 ack.verify(p, b.watcher.as_deref().unwrap_or(""))
                                     .map_err(err)?;
                                 let receiver = if owner == b.funding.party_a {
@@ -1234,7 +1234,7 @@ impl Wallet {
                                     &b.funding.party_a
                                 };
                                 ready(c, p, receiver)?;
-                                let amount = Amount(chain::amount(field(&r.amount, "付款金额")?)?);
+                                let amount = Amount(chain::amount(field(&r.amount, "Payment amount")?)?);
                                 let payment = hash(&random())?;
                                 b.latest
                                     .state
@@ -1246,7 +1246,7 @@ impl Wallet {
                                         amount,
                                         payment,
                                     },
-                                    json!({"操作":"签署通道付款提议","收款人":receiver,"金额":chain::format(amount.0),"付款编号":payment,"说明":"会先保存签名决策。对方完成双签和守护确认后才形成完整回执。"}),
+                                    json!({"Action":"Sign channel payment proposal","Recipient":receiver,"Amount":chain::format(amount.0),"Payment identifier":payment,"Description":"The signing decision becomes durable first; a complete receipt requires peer dual signatures and watcher acknowledgment."}),
                                 )
                             }
                             _ => {
@@ -1254,7 +1254,7 @@ impl Wallet {
                                 offer.verify(&b.funding).map_err(err)?;
                                 ensure!(
                                     offer.sender != owner && b.pending_offer.is_none(),
-                                    "不能接受自己发送的付款，或本机已有待付款"
+                                    "Cannot accept your own payment or accept while another payment is pending"
                                 );
                                 if let Some(old) = b
                                     .receipts
@@ -1266,10 +1266,10 @@ impl Wallet {
                                             && old.receipt.updated.state == offer.proposed
                                             && old.receipt.sender == offer.sender
                                             && old.receipt.amount == offer.amount,
-                                        "付款编号重复但内容不同"
+                                        "Duplicate payment identifier with different content"
                                     );
                                     return Ok(
-                                        json!({"packet":old,"message":"原回执已保存；没有重复签名或重复入账。"}),
+                                        json!({"packet":old,"message":"Original receipt retained; no repeated signing or duplicate credit."}),
                                     );
                                 }
                                 if let Some(p) = &b.pending_receive {
@@ -1277,30 +1277,30 @@ impl Wallet {
                                         p.previous == offer.previous
                                             && p.updated.state == offer.proposed
                                             && p.payment_id == offer.payment_id,
-                                        "上一笔待守护付款尚未完成"
+                                        "Previous watcher-pending payment remains incomplete"
                                     );
                                 } else {
                                     ensure!(
                                         offer.previous == b.latest,
-                                        "付款不是本机最新状态的下一笔"
+                                        "Payment is not the successor of the latest local state"
                                     );
                                 }
                                 let p = b
                                     .protection
                                     .as_ref()
-                                    .ok_or_else(|| anyhow!("请先配置并确认自己的守护储备"))?;
+                                    .ok_or_else(|| anyhow!("Configure and confirm your watcher reserve first"))?;
                                 ready(c, p, &owner)?;
                                 (
                                     Work::Receive {
                                         channel: id,
                                         offer: offer.clone(),
                                     },
-                                    json!({"操作":"接收通道付款并提交守护","付款人":offer.sender,"金额":chain::format(offer.amount.0),"付款编号":offer.payment_id,"说明":"守护服务未确认时只保存待守护记录，禁止继续签署下一笔。"}),
+                                    json!({"Action":"Receive channel payment and request watcher custody","Payer":offer.sender,"Amount":chain::format(offer.amount.0),"Payment identifier":offer.payment_id,"Description":"Retain only a pending record before watcher acknowledgment; signing the next payment is forbidden."}),
                                 )
                             }
                         }
                     }
-                    _ => return Err(anyhow!("不支持的产品操作")),
+                    _ => return Err(anyhow!("Unsupported product action")),
                 };
                 if self.saved.external_public.is_some() {
                     if let Work::Destination(
@@ -1314,12 +1314,12 @@ impl Wallet {
                     } else if let Work::Command(cmd) = &work {
                         ensure!(
                             !matches!(cmd, Command::Open(_)),
-                            "双重开通签名请使用本机钱包流程；外部签名器适配尚待设备验收"
+                            "Use the local wallet flow for dual opening signatures; external signer integration still requires device qualification"
                         );
                         signing=if matches!(cmd,Command::Challenge{fee,..} if !fee.owner_signature.is_empty()){None}else{command_message(cmd,&owner)?}.map(|b|json!({"algorithm":"Ed25519","public_key":owner,"message_hex":hex::encode(b),"command":cmd,"chain_id":self.replay.store.chain().chain_id(),"tip":self.replay.store.chain().tip(),"review":review}));
                     } else {
                         return Err(anyhow!(
-                            "该通道交换操作需要本机密钥；外部设备仍需专用适配与验收"
+                            "This channel exchange requires a local key; external devices require a dedicated qualified adapter"
                         ));
                     }
                 }
@@ -1339,18 +1339,18 @@ impl Wallet {
                 Ok(json!({"draft":id,"review":review,"signing_request":signing}))
             }
             "product_confirm" => {
-                ensure!(self.saved.backup_verified, "请先验证备份");
+                ensure!(self.saved.backup_verified, "Verify the backup first");
                 self.replay.refresh().await?;
                 self.expire();
                 let d = self
                     .product_draft
                     .take()
-                    .ok_or_else(|| anyhow!("请重新预览操作"))?;
+                    .ok_or_else(|| anyhow!("Preview the action again"))?;
                 ensure!(
                     r.draft.as_deref() == Some(d.id.as_str())
                         && now()?.saturating_sub(d.created) <= 120
                         && self.replay.store.chain().tip() == d.tip,
-                    "链状态或预览已变化，请重新核对"
+                    "Chain state or preview changed; review again"
                 );
                 let destination_tip = d.destination_tip;
                 match d.work {
@@ -1359,14 +1359,14 @@ impl Wallet {
                         ensure!(
                             destination_tip
                                 == Some(self.destination.as_ref().unwrap().store.chain().tip()),
-                            "目的链预览已变化，请重新核对"
+                            "Destination preview changed; review again"
                         );
                         if let rld_value_successor::destination::pow::Command::Transfer(t) =
                             &mut command
                         {
                             let bytes = t.signing_bytes().map_err(err)?;
                             t.signature = if self.saved.external_public.is_some() {
-                                let sig = field(&r.signature, "外部签名")?.to_owned();
+                                let sig = field(&r.signature, "External signature")?.to_owned();
                                 verify_bytes(&owner, &bytes, &sig).map_err(err)?;
                                 sig
                             } else {
@@ -1405,7 +1405,7 @@ impl Wallet {
                             && !matches!(&command,Command::Challenge{fee,..} if !fee.owner_signature.is_empty())
                         {
                             if let Some(bytes) = command_message(&command, &owner)? {
-                                let sig = field(&r.signature, "外部签名")?.to_owned();
+                                let sig = field(&r.signature, "External signature")?.to_owned();
                                 verify_bytes(&owner, &bytes, &sig).map_err(err)?;
                                 set_signature(&mut command, sig)?;
                             }
@@ -1442,7 +1442,7 @@ impl Wallet {
                         self.saved.products.invitations.push(o.clone());
                         self.persist()?;
                         Ok(
-                            json!({"packet":o,"message":"原始邀请已保存；请发送给对方，收到初始分配双签文件后再广播开通。"}),
+                            json!({"packet":o,"message":"Original invitation retained; send it to the peer and broadcast opening after receiving the initial dual-signed allocation."}),
                         )
                     }
                     Work::Accept(mut o) => {
@@ -1457,12 +1457,12 @@ impl Wallet {
                         let id = o.intent.funding().map_err(err)?.id().map_err(err)?;
                         ensure!(
                             get(&self.saved.products, id).is_err(),
-                            "已保存此邀请；请使用原文件而不是重复签名"
+                            "Invitation already retained; use the original file without signing again"
                         );
                         self.saved.products.channels.push(Channel::new(&o)?);
                         self.persist()?;
                         Ok(
-                            json!({"packet":o,"message":"已保存双签初始状态。请将此文件交还出资方，开通后还需锁定挑战储备并接入守护。"}),
+                            json!({"packet":o,"message":"Initial dual-signed state retained; return it to the funder. After opening, lock a challenge reserve and connect a watcher."}),
                         )
                     }
                     Work::Protect {
@@ -1495,7 +1495,7 @@ impl Wallet {
                         get_mut(&mut self.saved.products, channel)?.ack = Some(ack.clone());
                         self.persist()?;
                         Ok(
-                            json!({"packet":{"package":p,"ack":ack,"watcher":watcher},"message":"守护服务已签署保存确认；请将完整交换文件交给付款人核验。"}),
+                            json!({"packet":{"package":p,"ack":ack,"watcher":watcher},"message":"Watcher signed its durable acknowledgment; return the complete exchange file to the payer for verification."}),
                         )
                     }
                     Work::Offer {
@@ -1517,7 +1517,7 @@ impl Wallet {
                             Some(offer.clone());
                         self.persist()?;
                         Ok(
-                            json!({"packet":offer,"message":"付款提议已保存。可重复发送此原文件，禁止在完整回执到达前签署下一笔。"}),
+                            json!({"packet":offer,"message":"Payment proposal retained. Resend the original file; do not sign the next payment before the complete receipt arrives."}),
                         )
                     }
                     Work::Receive { channel, offer } => {
@@ -1532,12 +1532,12 @@ impl Wallet {
                         let mut package = b
                             .protection
                             .clone()
-                            .ok_or_else(|| anyhow!("缺少自己的守护配置"))?;
+                            .ok_or_else(|| anyhow!("Missing your watcher configuration"))?;
                         let url = b
                             .watch_url
                             .clone()
-                            .ok_or_else(|| anyhow!("缺少守护服务地址"))?;
-                        let watcher = b.watcher.clone().ok_or_else(|| anyhow!("缺少守护者身份"))?;
+                            .ok_or_else(|| anyhow!("Missing watcher service address"))?;
+                        let watcher = b.watcher.clone().ok_or_else(|| anyhow!("Missing watcher identity"))?;
                         if b.pending_receive.is_none() {
                             package.state = receipt.updated.clone();
                             package.fee.intent.signed_state =
@@ -1570,20 +1570,20 @@ impl Wallet {
                         b.receipts.push(w.clone());
                         self.persist()?;
                         Ok(
-                            json!({"packet":w,"message":"双签付款与守护保存证明已经核验并落盘。请把完整回执发送给付款人。"}),
+                            json!({"packet":w,"message":"Dual-signed payment and watcher custody proof verified and durable; send the complete receipt to the payer."}),
                         )
                     }
                 }
             }
             "product_retry_watch" => {
-                let id = hash(field(&r.channel, "通道编号")?)?;
+                let id = hash(field(&r.channel, "Channel identifier")?)?;
                 let b = get(&self.saved.products, id)?;
                 let p = b
                     .protection
                     .clone()
-                    .ok_or_else(|| anyhow!("没有待守护包"))?;
-                let public = b.watcher.clone().ok_or_else(|| anyhow!("缺少守护者身份"))?;
-                let url = b.watch_url.clone().ok_or_else(|| anyhow!("缺少守护地址"))?;
+                    .ok_or_else(|| anyhow!("No pending watcher package"))?;
+                let public = b.watcher.clone().ok_or_else(|| anyhow!("Missing watcher identity"))?;
+                let url = b.watch_url.clone().ok_or_else(|| anyhow!("Missing watcher address"))?;
                 self.replay.refresh().await?;
                 ready(self.replay.store.chain(), &p, &owner)?;
                 let ack = self.watcher_ack(&p, &url, &public).await?;
@@ -1605,9 +1605,9 @@ impl Wallet {
                     json!({"package":p,"ack":ack,"watcher":public})
                 };
                 self.persist()?;
-                Ok(json!({"packet":packet,"message":"已原样重试守护包并保存确认，没有重新签名。"}))
+                Ok(json!({"packet":packet,"message":"Retried the exact original watcher package and retained acknowledgment without signing again."}))
             }
-            _ => Err(anyhow!("未知产品操作")),
+            _ => Err(anyhow!("Unknown product action")),
         }
     }
 }
@@ -1617,7 +1617,7 @@ fn set_signature(command: &mut Command, sig: String) -> Result<()> {
         Command::ReserveChallengeFee(r) => r.owner_signature = sig,
         Command::Close { fee, .. } | Command::Challenge { fee, .. } => fee.owner_signature = sig,
         Command::Export(e) => e.owner_signature = sig,
-        _ => return Err(anyhow!("此命令不能用单份外部签名完成")),
+        _ => return Err(anyhow!("This command requires more than one external signature")),
     }
     Ok(())
 }

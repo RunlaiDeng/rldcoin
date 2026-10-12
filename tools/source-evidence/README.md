@@ -1,47 +1,29 @@
-# Local source evidence
+# Native source evidence
 
-`source_snapshot.py create --root <Git-worktree> --output <new-directory>`
-retains Git-visible source files, including uncommitted work, under `tree/` and
-writes a canonical `RLD-SOURCE-SNAPSHOT-V1` inventory. It hashes exact contents,
-normalized 0644/0755 permissions and sorted relative paths. The manifest records
-Git facts without pretending an uncommitted tree is a published commit.
+Build `rld-maintenance` with `cargo build --locked -p rld-cli --bin rld-maintenance`.
+`rld-maintenance snapshot create --root ROOT --output NEW_DIRECTORY` captures
+Git-visible source, including uncommitted files, under `tree/` with a canonical
+`RLD-SOURCE-SNAPSHOT-V1` inventory. Exact contents, normalized 0644/0755 modes and
+sorted relative paths are committed. An uncommitted tree is not a published commit.
 
-`source_snapshot.py verify --snapshot <directory> --manifest-sha256 <hash>` checks
-the inventory pin, complete retained file set, permissions, sizes and hashes.
-Missing/extra/changed files, symlinks, unsafe paths, duplicate/noncanonical JSON,
-unknown fields and resource-limit violations fail closed. Limits are 10,000
-files, 256 MiB per file, 512 MiB total and 4 MiB manifest.
+`rld-maintenance snapshot verify --snapshot DIRECTORY --manifest-sha256 HASH`
+checks an independently retained manifest pin and the complete file set, modes,
+sizes and hashes. Unknown fields, extra/missing files, symlinks, unsafe paths,
+noncanonical JSON and capacity violations refuse. Limits remain 10,000 files,
+256 MiB per file, 512 MiB total and 4 MiB manifest. Interrupted capture retains
+its incomplete marker and does not grant snapshot authority.
 
-Capture excludes generated caches and Git-ignored files, refuses runtime/key
-paths and runs a heuristic credential scan without printing matching contents.
-This detects known PEM/token/literal-JSON secret patterns, not every possible
-secret. Ignored local credentials are not copied. Review the source inventory
-before any public release; a passing scan is not proof that source is public.
+`rld-maintenance implementation-source --root ROOT --manifest MANIFEST
+--expected-commitment HASH` recomputes the Core build inventory. The manifest and
+commitment must come from an independently selected actual native binary.
 
-M0 new installations use `RLD-M0-INSTALLED-ARTIFACTS-V2`, compile this retained
-tree into a separate temporary Cargo target directory, verify the snapshot
-again, and bind both source manifest/tree hashes and all five binary hashes.
-The source and manifest remain inside `artifacts/source` across backup/restore.
-Old V1 installs remain identifiable as legacy source-unbound candidates; changing
-a V2 record to V1 while retaining source evidence is rejected. No existing
-consensus/genesis format or frozen wire corpus is modified.
+`rld-maintenance cargo-sbom --metadata METADATA --lock LOCK --source-commit COMMIT
+--source-tree-sha256 HASH --output NEW_FILE` binds SPDX package metadata to the
+exact Cargo lock inventory. Generate metadata with `cargo metadata --locked`.
 
-The local toolchain, Cargo dependency cache and inherited build environment are
-not hermetic. Hash consistency does not authenticate a publisher, prevent a
-host administrator replacing the entire installation, or prove reproducible
-builds. The manifest explicitly records `hermetic:false` and
-`independently_reproduced:false`. Formal source history, independently repeated
-builds, signed releases and external anti-rollback evidence remain open gates.
-
-Checks:
-
-```sh
-python3 -m unittest discover -s tools/source-evidence -v
-RLD_M0_E2E_EVIDENCE_DIR=/new/public-evidence-directory ./deploy/verify-m0-mainnet.sh
-```
-
-The optional E2E destination retains only installed artifacts, the public
-disposable genesis/benchmark and the result report. It never copies keys,
-runtime state, signer configuration or backups. The default fixture is destroyed
-after stopping its processes. The report describes one local operator, not a
-stranger or independently controlled node.
+Capture excludes ignored credentials and generated caches, refuses runtime/key
+paths and scans known credential patterns without printing matching content.
+These heuristics do not replace explicit public-source review. Local compiler,
+dependency cache and build environment are not hermetic. Digest agreement does
+not authenticate a publisher, prevent whole-install rollback or establish
+independent reproducibility, signing authority, adoption or mainnet permission.

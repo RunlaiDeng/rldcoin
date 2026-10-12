@@ -146,7 +146,7 @@ fn decode(data: &[u8], bound: usize) -> Result<(Vec<u8>, [u8; 32])> {
     )?;
     Ok((out, digest))
 }
-fn execute(control: &[u8], raw: &[u8]) -> Result<(Value, Vec<u8>)> {
+pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<(Value, Vec<u8>)> {
     let value = crate::wallet_http::decode_unique_with_limit(control, CONTROL)?;
     require(
         wallet_client::canonical_with_limit(&value, CONTROL)? == control,

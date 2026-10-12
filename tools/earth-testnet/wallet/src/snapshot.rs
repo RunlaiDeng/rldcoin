@@ -24,7 +24,7 @@ impl Snapshot {
         crate::validate_saved(saved)?;
         let public_key = saved
             .owner()
-            .ok_or_else(|| anyhow!("请先创建钱包"))?
+            .ok_or_else(|| anyhow!("Create a wallet first"))?
             .to_owned();
         let mut salt = [0; 16];
         let mut nonce = [0; 24];
@@ -32,9 +32,9 @@ impl Snapshot {
         OsRng.fill_bytes(&mut nonce);
         let key = crate::vault::key(password, &salt)?;
         let cipher =
-            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("加密初始化失败"))?;
+            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("Encryption initialization failed"))?;
         let plaintext = Zeroizing::new(serde_json::to_vec(saved)?);
-        ensure!(plaintext.len() <= MAX, "完整备份超过容量限制");
+        ensure!(plaintext.len() <= MAX, "Complete backup exceeds capacity");
         let aad = format!("{FORMAT}:{}:{public_key}", saved.chain_id);
         let ciphertext = cipher
             .encrypt(
@@ -44,7 +44,7 @@ impl Snapshot {
                     aad: aad.as_bytes(),
                 },
             )
-            .map_err(|_| anyhow!("加密失败"))?;
+            .map_err(|_| anyhow!("Encryption failed"))?;
         Ok(Self {
             format: FORMAT.into(),
             chain_id: saved.chain_id.clone(),
@@ -57,16 +57,16 @@ impl Snapshot {
     pub fn open(&self, password: &str, expected_chain: &str) -> Result<crate::Saved> {
         ensure!(
             self.format == FORMAT && self.chain_id == expected_chain,
-            "不支持的备份格式或链身份"
+            "Unsupported backup format or chain identity"
         );
         rld_core::validate_ed25519_public_key(&self.public_key).map_err(|e| anyhow!(e))?;
-        ensure!(self.ciphertext.len() <= (MAX + 16) * 2, "备份超过容量限制");
+        ensure!(self.ciphertext.len() <= (MAX + 16) * 2, "Backup exceeds capacity");
         let salt = hex::decode(&self.salt)?;
         let nonce = hex::decode(&self.nonce)?;
-        ensure!(salt.len() == 16 && nonce.len() == 24, "备份参数长度不正确");
+        ensure!(salt.len() == 16 && nonce.len() == 24, "Invalid backup parameter length");
         let key = crate::vault::key(password, &salt)?;
         let cipher =
-            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("解密初始化失败"))?;
+            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("Decryption initialization failed"))?;
         let aad = format!("{FORMAT}:{}:{}", self.chain_id, self.public_key);
         let bytes = Zeroizing::new(
             cipher
@@ -77,13 +77,13 @@ impl Snapshot {
                         aad: aad.as_bytes(),
                     },
                 )
-                .map_err(|_| anyhow!("密码错误或备份已损坏"))?,
+                .map_err(|_| anyhow!("Incorrect password or corrupted backup"))?,
         );
         let saved: crate::Saved = serde_json::from_slice(&bytes)?;
         crate::validate_saved(&saved)?;
         ensure!(
             saved.owner() == Some(self.public_key.as_str()) && saved.chain_id == self.chain_id,
-            "备份身份与记录不一致"
+            "Backup identity differs from its records"
         );
         Ok(saved)
     }

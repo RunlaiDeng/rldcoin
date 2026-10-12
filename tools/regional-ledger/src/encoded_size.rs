@@ -87,9 +87,9 @@ mod tests {
             serde_json::json!(true),
             serde_json::json!(false),
             serde_json::json!({"empty":[],"object":{},"array":[null,true,0,-1,1.25]}),
-            serde_json::json!({"unicode":"中\u{0}\\\"\n\r\t\u{7f}","max":u64::MAX,"min":i64::MIN}),
+            serde_json::json!({"unicode":"text\u{0}\\\"\n\r\t\u{7f}","max":u64::MAX,"min":i64::MIN}),
         ];
-        for domain in ["evidence", "", "中\0"] {
+        for domain in ["evidence", "", "text\0"] {
             for value in &values {
                 compare(domain, value);
             }
@@ -111,7 +111,7 @@ mod tests {
             Enum::Newtype("signed bytes".into()),
             Enum::Tuple(1, true),
             Enum::Struct {
-                field: vec!["a".into(), "中".into()],
+                field: vec!["a".into(), "text".into()],
             },
         ] {
             compare("evidence", &value);

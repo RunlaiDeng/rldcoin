@@ -87,3 +87,15 @@ overflow-checks = true
 opt-level = 1
 debug-assertions = true
 overflow-checks = true
+
+# Preserve all JSON parsing/canonicalization checks while optimizing the pinned
+# serializer used by bounded native contact receipt interfaces.
+[profile.dev.package.serde_json]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.serde_json]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

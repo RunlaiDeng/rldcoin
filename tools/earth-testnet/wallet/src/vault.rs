@@ -22,7 +22,7 @@ pub struct Vault {
 pub(crate) fn key(password: &str, salt: &[u8]) -> Result<Zeroizing<[u8; 32]>> {
     ensure!(
         password.chars().count() >= 12 && password.len() <= 1024,
-        "密码至少 12 个字符，且不超过 1024 个 UTF-8 字节"
+        "Password must contain at least 12 characters and at most 1024 UTF-8 bytes"
     );
     let mut key = Zeroizing::new([0u8; 32]);
     let params = Params::new(65536, 3, 1, Some(32)).map_err(|e| anyhow!(e.to_string()))?;
@@ -45,7 +45,7 @@ impl Vault {
         let key = key(password, &salt)?;
         let aad = format!("{FORMAT}:{}:{public_key}", crate::CHAIN);
         let cipher =
-            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("加密初始化失败"))?;
+            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("Encryption initialization failed"))?;
         let ciphertext = cipher
             .encrypt(
                 XNonce::from_slice(&nonce),
@@ -54,7 +54,7 @@ impl Vault {
                     aad: aad.as_bytes(),
                 },
             )
-            .map_err(|_| anyhow!("加密失败"))?;
+            .map_err(|_| anyhow!("Encryption failed"))?;
         Ok(Self {
             format: FORMAT.into(),
             public_key,
@@ -64,19 +64,19 @@ impl Vault {
         })
     }
     pub fn unlock(&self, password: &str) -> Result<Zeroizing<String>> {
-        ensure!(self.format == FORMAT, "不支持的备份格式");
+        ensure!(self.format == FORMAT, "Unsupported backup format");
         rld_core::validate_ed25519_public_key(&self.public_key).map_err(|e| anyhow!(e))?;
         let salt = hex::decode(&self.salt)?;
         let nonce = hex::decode(&self.nonce)?;
         let ciphertext = hex::decode(&self.ciphertext)?;
         ensure!(
             salt.len() == 16 && nonce.len() == 24 && ciphertext.len() == 80,
-            "备份长度不正确"
+            "Invalid backup length"
         );
         let key = key(password, &salt)?;
         let aad = format!("{FORMAT}:{}:{}", crate::CHAIN, self.public_key);
         let cipher =
-            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("解密初始化失败"))?;
+            XChaCha20Poly1305::new_from_slice(&*key).map_err(|_| anyhow!("Decryption initialization failed"))?;
         let bytes = Zeroizing::new(
             cipher
                 .decrypt(
@@ -86,7 +86,7 @@ impl Vault {
                         aad: aad.as_bytes(),
                     },
                 )
-                .map_err(|_| anyhow!("密码错误或备份已经损坏"))?,
+                .map_err(|_| anyhow!("Incorrect password or corrupted backup"))?,
         );
         let secret = Zeroizing::new(String::from_utf8(bytes.to_vec())?);
         let proof = b"RLD-EARTH-WALLET-KEY-CHECK";
@@ -95,13 +95,13 @@ impl Vault {
             proof,
             &sign_bytes(&secret, proof).map_err(|e| anyhow!(e))?,
         )
-        .map_err(|_| anyhow!("备份公钥与私钥不匹配"))?;
+        .map_err(|_| anyhow!("Backup public and private keys do not match"))?;
         Ok(secret)
     }
     #[cfg(test)]
     pub fn parse(bytes: &[u8]) -> Result<Self> {
         if bytes.len() > 4096 {
-            anyhow::bail!("备份超过大小限制");
+            anyhow::bail!("Backup exceeds size limit");
         }
         Ok(serde_json::from_slice(bytes)?)
     }

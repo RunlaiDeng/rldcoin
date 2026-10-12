@@ -391,14 +391,14 @@ impl Client {
                 )?;
                 (
                     signed.wallet_head,
-                    "已恢复上次保存的签名和输入预留，没有再次签名。",
+                    "Recovered the retained signature and input reservations without signing again.",
                 )
             }
             Err(_) => {
                 // Complete native replay at the original exact head proves that
                 // no new wallet record exists. An unknown/changed head refuses.
                 agent.view(node, head)?;
-                (head, "上次确认未生成签名；请重新预览并确认。")
+                (head, "The previous confirmation did not create a signature; preview and confirm again.")
             }
         };
         let mut proposed = state;
@@ -466,10 +466,10 @@ mod tests {
     use super::*;
     #[test]
     fn canonical_python_ascii_bytes_preserve_unicode_order_and_control_escaping() {
-        let value = serde_json::json!({"z": "钱包🚀\u{7f}\n", "a": ["é", "\\\""]});
+        let value = serde_json::json!({"z": "wallet🚀\u{7f}\n", "a": ["é", "\\\""]});
         assert_eq!(
             canonical(&value).unwrap(),
-            br#"{"a":["\u00e9","\\\""],"z":"\u94b1\u5305\ud83d\ude80\u007f\n"}"#
+            br#"{"a":["\u00e9","\\\""],"z":"wallet\ud83d\ude80\u007f\n"}"#
         );
     }
     #[test]

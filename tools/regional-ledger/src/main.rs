@@ -30,8 +30,6 @@ struct Args {
     /// Explicitly opt into local import block production, separate from relaying.
     #[arg(long)]
     miner: Option<String>,
-    #[arg(long, default_value = "python3")]
-    transport_python: PathBuf,
     #[arg(long, default_value_t = 1.0)]
     interval: f64,
     #[command(subcommand)]
@@ -860,8 +858,6 @@ enum Action {
         mesh_insecure_tcp: bool,
         #[arg(long)]
         miner: Option<String>,
-        #[arg(long, default_value = "python3")]
-        transport_python: PathBuf,
         #[arg(long, default_value_t = 1.0)]
         interval: f64,
     },
@@ -945,7 +941,6 @@ fn run() -> Result<()> {
         mesh_listen: args.mesh_listen,
         mesh_insecure_tcp: args.mesh_insecure_tcp,
         miner: args.miner,
-        transport_python: args.transport_python.clone(),
         interval: args.interval,
     });
     if let Action::ExportArchiveInspect {
@@ -1031,7 +1026,6 @@ fn run() -> Result<()> {
         ref mesh_listen,
         mesh_insecure_tcp,
         ref miner,
-        ref transport_python,
         interval,
     } = action
     {
@@ -1047,53 +1041,22 @@ fn run() -> Result<()> {
         if let Some(miner) = miner {
             rld_core::validate_ed25519_public_key(miner)?;
         }
-        let driver =
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tools/regional_contact_node.py");
-        let mut command = std::process::Command::new(transport_python);
-        command.arg(driver).args([
-            "--binary",
-            std::env::current_exe()
-                .map_err(|e| e.to_string())?
-                .to_str()
-                .ok_or("binary path is not UTF-8")?,
-            "--ledger",
-            args.dir.to_str().ok_or("ledger path is not UTF-8")?,
-            "--authority",
-            &args.authority,
-            "--currency",
-            &args.currency,
-            "--interval",
-            &interval.to_string(),
-        ]);
-        if let Some(config) = mesh_config {
-            command.arg("--mesh-config").arg(config);
-        }
-        if let Some(config) = bft_config {
-            command.arg("--bft-config").arg(config);
-        }
-        if let Some(listen) = mesh_listen {
-            command.arg("--listen").arg(listen);
-        }
-        if mesh_insecure_tcp {
-            command.arg("--insecure-tcp");
-        }
-        if let Some(miner) = miner {
-            command.arg("--miner").arg(miner);
-        }
-        #[cfg(unix)]
-        {
-            use std::os::unix::process::CommandExt;
-            return Err(command.exec().to_string());
-        }
-        #[cfg(not(unix))]
-        {
-            let status = command.status().map_err(|e| e.to_string())?;
-            return if status.success() {
-                Ok(())
-            } else {
-                Err("native contact node companion stopped; inspect its explicit diagnostic".into())
-            };
-        }
+        let listen = mesh_listen
+            .as_deref()
+            .unwrap_or("127.0.0.1:0")
+            .parse::<std::net::SocketAddrV4>()
+            .map_err(|_| "literal IPv4 listener required")?;
+        return contact_runtime::run(contact_runtime::Options {
+            ledger: args.dir,
+            authority: args.authority,
+            currency: pin,
+            mesh_config: mesh_config.clone(),
+            bft_config: bft_config.clone(),
+            listen,
+            miner: miner.clone(),
+            interval,
+            insecure_tcp: mesh_insecure_tcp,
+        });
     }
     if let Action::ContactCryptoInfo = action {
         println!(

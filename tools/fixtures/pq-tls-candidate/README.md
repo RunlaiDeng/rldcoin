@@ -13,7 +13,7 @@ using the corresponding source macro (inspect the `#ifndef` declaration):
 # Set OPENSSL_PREFIX to the explicitly selected OpenSSL installation.
 # Example for mlkem768_kat.c; do not use the TLS transport as a KAT entry.
 source=tools/fixtures/pq-tls-candidate/mlkem768_kat.c
-source_sha=$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$source")
+source_sha=$(shasum -a 256 "$source" | cut -d' ' -f1)
 cc -std=c11 -O1 -Wall -Wextra -Werror -pedantic \
   -I"$OPENSSL_PREFIX/include" -L"$OPENSSL_PREFIX/lib" \
   -DRLD_MLKEM_CANDIDATE_SOURCE=\""$source_sha"\" \
@@ -27,26 +27,24 @@ Exit0 means matched known bytes/check accepted, exit1 refusal/mismatch,
 exit2 unavailable input or API. Implicit rejection can correctly match expected
 bytes; successful decapsulation is not ciphertext/peer authentication.
 
-The [minimal fixed-corpus driver](../../pq_mlkem_known_answer.py) runs one
-named case with separately selected binary SHA-256 values, two different engines,
-a mismatch negative and an absolute120-second deadline. It does not download,
-install, sign, open sockets, inspect real custody or repeat entire fault scopes.
-Its output is local and preserves failure bytes. Test entropy is publicly known
-and MUST NOT be used for production key generation. Standard subset PASS is not
-complete FIPS203/204, FIPS140/CAVP, constant-time, production RNG or adoption.
+Run each fixed public case directly against independently pinned binaries.
+Retain original negative and unavailable results locally. Public test entropy
+must never be used for production keys. A subset comparison does not qualify
+complete FIPS203/204, FIPS140/CAVP, constant time, production RNG or adoption.
 
 ## Explicit durable archive-spool receipt
 
 The TLS candidate adds a distinct archive-spool receipt marker. Client adds
-`archive-spool` after its public input path. Server adds absolute Python executable,
-absolute spool script path, existing owned spool directory and independently
+`archive-spool` after its public input path. Server adds absolute Rust `rld-maintenance` executable,
+existing owned spool directory and independently
 retained128hex manifest SHA512 after the fresh raw destination path. Compile
 `RLD_TLS_CANDIDATE_SOURCE` with exact C source SHA256 and
-`RLD_SPOOL_SCRIPT_SHA256` with exact `tools/pq_public_archive_spool_candidate.py`
-SHA256. An omitted/mismatched script pin refuses this mode.
+`RLD_SPOOL_EXECUTABLE_SHA256` with the separately retained executable
+SHA256. An omitted/mismatched executable pin refuses this mode.
 
 After complete raw-file and directory fsync, one owned child executes that exact
-script, accepting/fsyncing the packet under its manifest/capacity/OS-lock rules.
+executable with `pq-spool --root ROOT --expected-root SHA512 accept PACKET`,
+accepting/fsyncing the packet under its manifest/capacity/OS-lock rules.
 Only successful child termination inside the original3-second deadline releases
 `RLD-PQ-PUBLIC-ARCHIVE-SPOOL-RECEIPT-V1`. Failure retains raw bytes/staging and
 releases no archive receipt. Ordinary transport receipt remains distinct.

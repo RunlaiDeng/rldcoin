@@ -238,7 +238,7 @@ fn release(token: String, path: PathBuf, role: Role) -> Result<Value> {
   "ledger_authority":false,"custody_acknowledgment":false}),
     )
 }
-fn execute(raw: &[u8]) -> Result<Value> {
+pub(crate) fn execute(raw: &[u8]) -> Result<Value> {
     let value = crate::wallet_http::decode_unique_with_limit(raw, CONTROL)?;
     require(
         wallet_client::canonical_with_limit(&value, CONTROL)? == raw,

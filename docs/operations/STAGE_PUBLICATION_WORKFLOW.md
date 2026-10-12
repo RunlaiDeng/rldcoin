@@ -7,8 +7,8 @@ timings and next-experiment schedules remain outside the public tree. Renaming a
 report or embedding it in a design document does not change its classification.
 
 Before staging, supply an explicit file selection with a public content kind and
-specific purpose for each blob to `tools/review_publication_content.py`. The
-publication entry must call its `review` function before any Git mutation. The
+specific purpose for each blob to `rld-maintenance review`. The Rust
+`rld-maintenance publish` entry performs review before any Git mutation. The
 full tracked-document scan and negative/positive unit cases also run in CI.
 These detectors assist human review; they cannot decide whether an experiment
 journal is necessary engineering documentation.
@@ -29,3 +29,12 @@ Publication does not grant mainnet, monetary adoption, independent review/custod
 physical-route or complete-protocol qualification. Preserve frozen normative
 materials and all acceptance requirements. Reuse valid source-bound checks rather
 than repeating successful long tests solely for a documentation correction.
+
+Build the native entry with `cargo build --locked -p rld-cli --bin rld-maintenance`.
+Use `review --root ROOT --selection SELECTION` and then
+`publish --root ROOT --selection SELECTION --message MESSAGE --receipt-directory DIRECTORY`.
+The receipt directory must exist outside the checkout. The selection is strict
+JSON with `files` and `content_classification`; every selected path has a
+`kind` and specific `purpose`. Deletions are explicitly selected and reviewed.
+The publisher requires the existing `main`, exact configured origin and actual
+remote parent, and checks staged bytes before committing and pushing.

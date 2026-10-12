@@ -445,7 +445,7 @@ fn publish_bound(
         json!({"format":FORMAT,"encoded_size":encoded.len(),"encoded_sha256":hex::encode(payload.encoded_digest),"data_size":data.len(),"data_sha256":hex::encode(payload.data_digest),"ledger_authority":false,"custody_acknowledgment":false}),
     )
 }
-fn execute(control: &[u8], encoded: &[u8], data: &[u8]) -> Result<Value> {
+pub(crate) fn execute(control: &[u8], encoded: &[u8], data: &[u8]) -> Result<Value> {
     let value = crate::wallet_http::decode_unique_with_limit(control, MAX_CONTROL)?;
     require(
         wallet_client::canonical_with_limit(&value, MAX_CONTROL)? == control,

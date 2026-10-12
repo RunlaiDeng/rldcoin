@@ -287,7 +287,7 @@ fn handle(
         request.target == "/api"
             && request.unique("origin")? == origin
             && started.elapsed().as_secs() < SESSION_SECONDS,
-        "本机会话无效或已过期",
+        "Local session is invalid or expired",
     )?;
     let fetch = request.all("sec-fetch-site");
     require(
@@ -299,7 +299,7 @@ fn handle(
             request.unique("authorization")?.as_bytes(),
             format!("Bearer {token}").as_bytes(),
         ),
-        "本机会话无效或已过期",
+        "Local session is invalid or expired",
     )?;
     require(
         request.unique("content-type")? == "application/json",

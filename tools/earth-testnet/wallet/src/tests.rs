@@ -37,7 +37,7 @@ async fn stalled_source_and_destination_release_wallet_with_verified_state_retai
         .await
         .unwrap_err()
         .to_string()
-        .contains("时间预算"));
+        .contains("Time budget"));
     assert!(started.elapsed() < Duration::from_secs(5));
     assert!(!w.replay.fresh && w.replay.error.is_some());
     assert_eq!(w.replay.store.chain().tip(), source_tip);
@@ -74,7 +74,7 @@ async fn stalled_source_and_destination_release_wallet_with_verified_state_retai
         .await
         .unwrap_err()
         .to_string()
-        .contains("时间预算"));
+        .contains("Time budget"));
     assert!(started.elapsed() < Duration::from_secs(5));
     assert!(!destination.fresh);
     assert_eq!(destination.store.chain().tip(), destination_tip);

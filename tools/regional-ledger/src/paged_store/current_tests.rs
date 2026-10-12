@@ -31,7 +31,8 @@ fn borrowed_active_evidence_matches_original_complete_bytes_and_capacity() {
         let mut snapshot = original_snapshot.clone();
         snapshot.statement.height = u64::from(count);
         if let Some(certificate) = snapshot.bft.as_mut() {
-            certificate.prepared.votes[0].approval.signature = format!("variant-{count}:中\\\"\n");
+            certificate.prepared.votes[0].approval.signature =
+                format!("variant-{count}:text\\\"\n");
         }
         evidence
             .snapshots

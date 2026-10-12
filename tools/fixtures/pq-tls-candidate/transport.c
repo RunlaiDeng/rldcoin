@@ -158,39 +158,47 @@ static int public_destination(const char *path, const unsigned char *bytes, size
     /* Failure residue stays; never unlink, resume or acknowledge it. */
     return valid;
 }
-#ifndef RLD_SPOOL_SCRIPT_SHA256
-#define RLD_SPOOL_SCRIPT_SHA256 ""
+#ifndef RLD_SPOOL_EXECUTABLE_SHA256
+#define RLD_SPOOL_EXECUTABLE_SHA256 ""
 #endif
-struct spool_input { const char *python, *script, *root, *expected; };
-static int spool_script_pinned(const char *path) {
-    unsigned char bytes[LIMIT], digest[32]; unsigned int size = 0; size_t used = 0;
+struct spool_input { const char *executable, *root, *expected; };
+static int spool_executable_pinned(const char *path) {
+    unsigned char bytes[65536], digest[32]; unsigned int size = 0; size_t used = 0;
     int fd = open(path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK);
-    if (fd < 0 || strlen(RLD_SPOOL_SCRIPT_SHA256) != 64) { if (fd >= 0) close(fd); return 0; }
+    if (fd < 0 || strlen(RLD_SPOOL_EXECUTABLE_SHA256) != 64) { if (fd >= 0) close(fd); return 0; }
     struct stat info;
     int valid = fstat(fd, &info) == 0 && S_ISREG(info.st_mode) && info.st_uid == getuid()
-        && info.st_size > 0 && info.st_size <= LIMIT;
+        && info.st_size > 0 && info.st_size <= 128 * 1024 * 1024;
+    EVP_MD_CTX *hash = EVP_MD_CTX_new();
+    if (!hash || !EVP_DigestInit_ex(hash, EVP_sha256(), NULL)) valid = 0;
     while (valid && used < (size_t)info.st_size) {
-        ssize_t count = read(fd, bytes + used, (size_t)info.st_size - used);
-        if (count > 0) used += (size_t)count;
+        size_t remaining = (size_t)info.st_size - used;
+        ssize_t count = read(fd, bytes, remaining < sizeof(bytes) ? remaining : sizeof(bytes));
+        if (count > 0) {
+            valid = EVP_DigestUpdate(hash, bytes, (size_t)count) == 1;
+            used += (size_t)count;
+        }
         else if (count < 0 && errno == EINTR) continue;
         else valid = 0;
     }
     unsigned char extra;
     if (valid && read(fd, &extra, 1) != 0) valid = 0;
     if (close(fd) != 0) valid = 0;
-    if (!valid || !EVP_Digest(bytes, used, digest, &size, EVP_sha256(), NULL) || size != 32) return 0;
+    if (valid) valid = EVP_DigestFinal_ex(hash, digest, &size) == 1 && size == 32;
+    EVP_MD_CTX_free(hash);
+    if (!valid) return 0;
     char encoded[65];
     for (size_t i = 0; i < 32; i++) snprintf(encoded + i * 2, 3, "%02x", digest[i]);
-    return CRYPTO_memcmp(encoded, RLD_SPOOL_SCRIPT_SHA256, 64) == 0;
+    return CRYPTO_memcmp(encoded, RLD_SPOOL_EXECUTABLE_SHA256, 64) == 0;
 }
 static int spool_accept(const struct spool_input *input, const char *path, double deadline, int socket_fd) {
-    if (!spool_script_pinned(input->script) || now() >= deadline) return 0;
+    if (!spool_executable_pinned(input->executable) || now() >= deadline) return 0;
     pid_t child = fork();
     if (child < 0) return 0;
     if (child == 0) {
         close(socket_fd);
         if (dup2(STDERR_FILENO, STDOUT_FILENO) < 0) _exit(126);
-        execl(input->python, input->python, "-B", input->script, "--root", input->root,
+        execl(input->executable, input->executable, "pq-spool", "--root", input->root,
             "--expected-root", input->expected, "accept", path, (char *)NULL);
         _exit(127);
     }
@@ -246,7 +254,7 @@ int main(int argc, char **argv) {
     SSL_CTX *context = NULL; SSL *ssl = NULL; int fd = -1, listener = -1, code = 1;
     const char *failure = "arguments";
     unsigned char pin[32];
-    if ((argc != 7 && argc != 8 && argc != 9 && argc != 12) || (strcmp(argv[1], "client") && strcmp(argv[1], "server"))
+    if ((argc != 7 && argc != 8 && argc != 9 && argc != 11) || (strcmp(argv[1], "client") && strcmp(argv[1], "server"))
         || strlen(argv[6]) != 64) goto done;
     for (size_t i = 0; i < 32; i++) {
         unsigned int byte;
@@ -257,18 +265,18 @@ int main(int argc, char **argv) {
         if (sscanf(argv[6] + i * 2, "%2x", &byte) != 1) goto done;
         pin[i] = (unsigned char)byte;
     }
-    int spool_mode = argc == 9 || argc == 12;
-    struct spool_input spool = {NULL, NULL, NULL, NULL};
+    int spool_mode = argc == 9 || argc == 11;
+    struct spool_input spool = {NULL, NULL, NULL};
     if (argc == 9 && (strcmp(argv[1], "client") || strcmp(argv[8], "archive-spool"))) goto done;
-    if (argc == 12) {
+    if (argc == 11) {
         if (strcmp(argv[1], "server") || argv[8][0] != '/' || argv[9][0] != '/'
-            || argv[10][0] != '/' || strlen(argv[11]) != 128) goto done;
+            || strlen(argv[10]) != 128) goto done;
         for (size_t i = 0; i < 128; i++) {
-            char c = argv[11][i];
+            char c = argv[10][i];
             if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'))) goto done;
         }
-        spool.python = argv[8]; spool.script = argv[9]; spool.root = argv[10]; spool.expected = argv[11];
-        if (!spool_script_pinned(spool.script)) goto done;
+        spool.executable = argv[8]; spool.root = argv[9]; spool.expected = argv[10];
+        if (!spool_executable_pinned(spool.executable)) goto done;
     }
     char *end = NULL; errno = 0; long port = strtol(argv[2], &end, 10);
     int server = !strcmp(argv[1], "server");

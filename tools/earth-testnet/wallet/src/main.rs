@@ -159,30 +159,30 @@ fn same(a: &str, b: &str) -> bool {
 fn auth(origin: &str, expected: &str, headers: &HeaderMap) -> Result<()> {
     ensure!(
         headers.get(header::HOST).and_then(|v| v.to_str().ok()) == origin.strip_prefix("http://"),
-        "无效本机访问地址"
+        "Invalid local access address"
     );
     if let Some(value) = headers.get(header::ORIGIN) {
-        ensure!(value.to_str()? == origin, "拒绝跨站请求");
+        ensure!(value.to_str()? == origin, "Cross-site request refused");
     }
     let token = headers
         .get(header::AUTHORIZATION)
         .and_then(|v| v.to_str().ok())
         .and_then(|s| s.strip_prefix("Bearer "))
         .unwrap_or("");
-    ensure!(same(token, expected), "本机会话已失效；请重新打开启动链接");
+    ensure!(same(token, expected), "Local session expired; reopen the startup link");
     Ok(())
 }
 impl Wallet {
     fn persist(&mut self) -> Result<()> {
         ensure!(
             !self.write_failed,
-            "磁盘保存曾失败；请保留数据目录并重启核验，当前停止写入和发送"
+            "A disk save failed; preserve the data directory and restart verification. Writes and sending are stopped"
         );
         let result = (|| {
-            ensure!(self.saved.journal.len() <= 10000, "交易记录已达容量上限");
+            ensure!(self.saved.journal.len() <= 10000, "Transaction record capacity reached");
             ensure!(
                 self.saved.destination_journal.len() <= 10000,
-                "目的链记录达到容量上限"
+                "Destination record capacity reached"
             );
             ensure!(
                 self.saved.products.channels.len() <= 1000
@@ -196,12 +196,12 @@ impl Wallet {
                         .map(|c| { c.receipts.len() + usize::from(c.pending_receive.is_some()) })
                         .sum::<usize>()
                         <= 10000,
-                "通道或返回证明记录达到容量上限"
+                "Channel or return-proof capacity reached"
             );
             let bytes = serde_json::to_vec(&self.saved)?;
             ensure!(
                 bytes.len() <= snapshot::MAX,
-                "钱包记录达到容量上限，请保留数据目录"
+                "Wallet record capacity reached; preserve the data directory"
             );
             files::atomic(&self.path, &bytes)
         })();
@@ -213,7 +213,7 @@ impl Wallet {
             self.secret = None;
             self.draft = None;
             self.product_draft = None;
-            return Err(error.context("保存失败，付款已暂停；保留整个数据目录并重启核验"));
+            return Err(error.context("Save failed; payments paused. Preserve the complete data directory and restart verification"));
         }
         Ok(())
     }
@@ -244,7 +244,7 @@ impl Wallet {
                 };
                 *target = target
                     .checked_add(coin.output.amount.0)
-                    .ok_or_else(|| anyhow!("余额溢出"))?;
+                    .ok_or_else(|| anyhow!("Balance overflow"))?;
             }
         }
         let mut history = Vec::new();
@@ -278,7 +278,7 @@ impl Wallet {
                         if Some(tx.owner.as_str()) == owner
                             || tx.outputs.iter().any(|o| Some(o.owner.as_str()) == owner)
                         {
-                            history.push(json!({"id":tx.id().map_err(|e|anyhow!(e))?,"direction":if Some(tx.owner.as_str())==owner{"发送"}else{"接收"},"amount":chain::format(tx.outputs.iter().filter(|o|if Some(tx.owner.as_str())==owner{Some(o.owner.as_str())!=owner}else{Some(o.owner.as_str())==owner}).map(|o|o.amount.0).sum()),"status":"已纳入选定链","confirmations":(c.height()-b.header.height+1).to_string(),"height":b.header.height.to_string()}));
+                            history.push(json!({"id":tx.id().map_err(|e|anyhow!(e))?,"direction":if Some(tx.owner.as_str())==owner{"Send"}else{"Receive"},"amount":chain::format(tx.outputs.iter().filter(|o|if Some(tx.owner.as_str())==owner{Some(o.owner.as_str())!=owner}else{Some(o.owner.as_str())==owner}).map(|o|o.amount.0).sum()),"status":"Included in selected chain","confirmations":(c.height()-b.header.height+1).to_string(),"height":b.header.height.to_string()}));
                             if history.len() > 100 {
                                 history.remove(0);
                             }
@@ -292,13 +292,13 @@ impl Wallet {
                 let id = t.id().map_err(|e| anyhow!(e))?.to_hex();
                 if !included_journal.contains(&t.id().map_err(|e| anyhow!(e))?) {
                     let state = if c.height() >= t.valid_through_height {
-                        "已过期"
+                        "Expired"
                     } else if t.inputs.iter().any(|p| c.state().coin(p).is_none()) {
-                        "输入已花费或发生重组"
+                        "Input spent or history reorganized"
                     } else {
-                        "待确认，可原样重试"
+                        "Pending confirmation; retry the exact original"
                     };
-                    history.push(json!({"id":id,"direction":"发送","amount":chain::format(t.outputs[0].amount.0),"status":state,"confirmations":"0"}));
+                    history.push(json!({"id":id,"direction":"Send","amount":chain::format(t.outputs[0].amount.0),"status":state,"confirmations":"0"}));
                 }
             }
         }
@@ -309,16 +309,16 @@ impl Wallet {
             }
             let id = command_id(&j.command).map_err(|e| anyhow!(e))?;
             let (kind, expiry) = match &j.command {
-                Command::Open(o) => ("开通通道", o.intent.valid_through_height),
-                Command::ReserveChallengeFee(_) => ("锁定挑战储备", u128::MAX),
-                Command::Close { fee, .. } => ("申请关闭", fee.intent.valid_through_height),
-                Command::Challenge { fee, .. } => ("提交挑战", fee.intent.valid_through_height),
-                Command::Finalize { .. } => ("通道结算", u128::MAX),
-                Command::Export(e) => ("跨区导出", e.intent.valid_through_height),
+                Command::Open(o) => ("Open channel", o.intent.valid_through_height),
+                Command::ReserveChallengeFee(_) => ("Lock challenge reserve", u128::MAX),
+                Command::Close { fee, .. } => ("Request closing", fee.intent.valid_through_height),
+                Command::Challenge { fee, .. } => ("Submit challenge", fee.intent.valid_through_height),
+                Command::Finalize { .. } => ("Channel settlement", u128::MAX),
+                Command::Export(e) => ("Cross-region export", e.intent.valid_through_height),
                 Command::Transfer(_) => unreachable!(),
             };
             let included = selected_commands.get(&id).copied();
-            let mut record = json!({"id":id,"kind":kind,"height":included.map(|h|h.to_string()),"status":if included.is_some(){"已纳入选定链"}else if c.height()>=expiry{"已过期"}else{"未确认，可原样重试"},"confirmed":included.is_some()});
+            let mut record = json!({"id":id,"kind":kind,"height":included.map(|h|h.to_string()),"status":if included.is_some(){"Included in selected chain"}else if c.height()>=expiry{"Expired"}else{"Unconfirmed; retry the exact original"},"confirmed":included.is_some()});
             if let Command::Export(e) = &j.command {
                 let export = e.intent.id().map_err(|e| anyhow!(e))?;
                 let ready = c
@@ -352,7 +352,7 @@ impl Wallet {
         history.reverse();
         history.truncate(100);
         Ok(
-            json!({"test_only":true,"has_monetary_value":false,"mainnet_authorized":false,"test_fixture":cfg!(test),"created":owner.is_some(),"destination":self.destination.as_ref().map(|d|d.status(&self.saved.destination_journal,owner)).transpose()?,"address":owner.map(|p|address::encode(&self.saved.chain_id,p)).transpose()?,"public_key":owner,"external_signer":self.saved.external_public.is_some(),"retired":self.saved.retired,"products":product::status(&self.saved.products,c,owner)?,"unlocked":self.secret.is_some(),"backup_verified":self.saved.backup_verified,"write_failed":self.write_failed,"fresh":!self.saved.retired&&!self.write_failed&&self.replay.fresh&&now()?.saturating_sub(self.replay.checked_at)<=30,"checked_at":self.replay.checked_at,"sync_error":self.replay.error,"height":c.height().to_string(),"tip":c.tip(),"state_root":c.state().root().map_err(|e|anyhow!(e))?,"chain_id":self.saved.chain_id,"spendable":chain::format(spendable),"immature":chain::format(immature),"reserved":chain::format(reserved),"history":history,"commands":commands,"scope":"Earth 普通转账余额；通道与跨区锁定金额另列。"}),
+            json!({"test_only":true,"has_monetary_value":false,"mainnet_authorized":false,"test_fixture":cfg!(test),"created":owner.is_some(),"destination":self.destination.as_ref().map(|d|d.status(&self.saved.destination_journal,owner)).transpose()?,"address":owner.map(|p|address::encode(&self.saved.chain_id,p)).transpose()?,"public_key":owner,"external_signer":self.saved.external_public.is_some(),"retired":self.saved.retired,"products":product::status(&self.saved.products,c,owner)?,"unlocked":self.secret.is_some(),"backup_verified":self.saved.backup_verified,"write_failed":self.write_failed,"fresh":!self.saved.retired&&!self.write_failed&&self.replay.fresh&&now()?.saturating_sub(self.replay.checked_at)<=30,"checked_at":self.replay.checked_at,"sync_error":self.replay.error,"height":c.height().to_string(),"tip":c.tip(),"state_root":c.state().root().map_err(|e|anyhow!(e))?,"chain_id":self.saved.chain_id,"spendable":chain::format(spendable),"immature":chain::format(immature),"reserved":chain::format(reserved),"history":history,"commands":commands,"scope":"Earth ordinary transfer balance; channel and cross-region locked amounts are listed separately."}),
         )
     }
     async fn action(&mut self, mut r: Request) -> Result<Value> {
@@ -361,7 +361,7 @@ impl Wallet {
         if r.action.starts_with("product_") {
             ensure!(
                 !self.write_failed && !self.saved.retired,
-                "钱包已停用或磁盘写入失败"
+                "Wallet deactivated or disk write failed"
             );
             return self.product_action(r).await;
         }
@@ -371,17 +371,17 @@ impl Wallet {
                     r.action.as_str(),
                     "lock" | "backup" | "full_backup" | "refresh"
                 ),
-            "此设备已停用签名；请在新的数据目录恢复迁移备份"
+            "Signing deactivated on this device; restore the migration backup in a fresh data directory"
         );
         if !matches!(r.action.as_str(), "lock" | "backup" | "refresh") {
             ensure!(
                 !self.write_failed,
-                "磁盘保存失败后已暂停操作；请保留整个数据目录并重启核验"
+                "Operations paused after disk save failure; preserve the complete directory and restart verification"
             );
         }
         match r.action.as_str() {
             "create" => {
-                ensure!(self.saved.owner().is_none(), "已有钱包；不能覆盖");
+                ensure!(self.saved.owner().is_none(), "Wallet already exists; overwrite refused");
                 let v = vault::Vault::create(&password)?;
                 self.saved.vault = Some(v);
                 self.persist()?;
@@ -390,9 +390,9 @@ impl Wallet {
             "restore" => {
                 ensure!(
                     self.saved.owner().is_none(),
-                    "已有钱包；请使用新的数据目录恢复"
+                    "Wallet already exists; restore in a fresh data directory"
                 );
-                let v = r.backup.ok_or_else(|| anyhow!("请选择加密备份"))?;
+                let v = r.backup.ok_or_else(|| anyhow!("Select an encrypted backup"))?;
                 let _secret = v.unlock(&password)?;
                 self.saved.vault = Some(v);
                 self.saved.backup_verified = true;
@@ -400,17 +400,17 @@ impl Wallet {
                 Ok(json!({"ok":true}))
             }
             "external_wallet" => {
-                ensure!(self.saved.owner().is_none(), "已有钱包；不能覆盖");
+                ensure!(self.saved.owner().is_none(), "Wallet already exists; overwrite refused");
                 let public = address::decode(
                     &self.saved.chain_id,
-                    &r.to.ok_or_else(|| anyhow!("请输入外部签名器公钥"))?,
+                    &r.to.ok_or_else(|| anyhow!("Enter the external signer public key"))?,
                 )?;
                 self.saved.external_public = Some(public);
                 self.persist()?;
                 Ok(json!({"ok":true}))
             }
             "full_backup" | "handoff" => {
-                ensure!(self.saved.owner().is_some(), "请先创建钱包");
+                ensure!(self.saved.owner().is_some(), "Create a wallet first");
                 // Prepare a portable snapshot before retiring this instance. Deliver it
                 // only after retirement is durably saved; an uncertain write fails closed.
                 let mut portable = self.saved.clone();
@@ -419,7 +419,7 @@ impl Wallet {
                 }
                 let snapshot = snapshot::Snapshot::seal(&portable, &password)?;
                 if r.action == "handoff" {
-                    ensure!(!self.saved.retired, "此设备已经停用");
+                    ensure!(!self.saved.retired, "Device already deactivated");
                     self.saved.retired = true;
                     self.secret = None;
                     self.draft = None;
@@ -431,9 +431,9 @@ impl Wallet {
             "restore_full" => {
                 ensure!(
                     self.saved.owner().is_none(),
-                    "已有钱包；请使用新的数据目录恢复"
+                    "Wallet already exists; restore in a fresh data directory"
                 );
-                let snapshot = r.snapshot.ok_or_else(|| anyhow!("请选择完整备份"))?;
+                let snapshot = r.snapshot.ok_or_else(|| anyhow!("Select a complete backup"))?;
                 let mut restored = snapshot.open(&password, &self.saved.chain_id)?;
                 restored.backup_verified = true;
                 self.saved = restored;
@@ -443,11 +443,11 @@ impl Wallet {
             "verify_full" => {
                 let restored = r
                     .snapshot
-                    .ok_or_else(|| anyhow!("请选择完整备份"))?
+                    .ok_or_else(|| anyhow!("Select a complete backup"))?
                     .open(&password, &self.saved.chain_id)?;
                 ensure!(
                     restored.owner() == self.saved.owner(),
-                    "此备份属于另一个钱包"
+                    "Backup belongs to another wallet"
                 );
                 // A key-only or old snapshot cannot certify current signing decisions.
                 let mut current = self.saved.clone();
@@ -456,26 +456,26 @@ impl Wallet {
                 restored.backup_verified = false;
                 ensure!(
                     serde_json::to_vec(&current)? == serde_json::to_vec(&restored)?,
-                    "备份记录已过时；请重新下载当前完整备份"
+                    "Backup records are stale; download the current complete backup"
                 );
                 self.saved.backup_verified = true;
                 self.persist()?;
                 Ok(json!({"ok":true}))
             }
             "backup" => Ok(
-                json!({"backup":self.saved.vault.as_ref().ok_or_else(||anyhow!("请先创建钱包"))?}),
+                json!({"backup":self.saved.vault.as_ref().ok_or_else(||anyhow!("Create a wallet first"))?}),
             ),
             "verify_backup" => {
                 let v = r
                     .backup
-                    .ok_or_else(|| anyhow!("请重新选择刚保存的备份文件"))?;
+                    .ok_or_else(|| anyhow!("Select the backup file you just saved"))?;
                 let secret = v.unlock(&password)?;
                 let current = self
                     .saved
                     .vault
                     .as_ref()
-                    .ok_or_else(|| anyhow!("未创建钱包"))?;
-                ensure!(v.public_key == current.public_key, "此备份属于另一个钱包");
+                    .ok_or_else(|| anyhow!("Wallet not created"))?;
+                ensure!(v.public_key == current.public_key, "Backup belongs to another wallet");
                 let proof = b"RLD-EARTH-BACKUP-RESTORE-CHECK";
                 rld_core::verify_bytes(
                     &current.public_key,
@@ -488,12 +488,12 @@ impl Wallet {
                 Ok(json!({"ok":true}))
             }
             "unlock" => {
-                ensure!(!self.saved.retired, "迁移后原设备已停用签名");
+                ensure!(!self.saved.retired, "Original device signing deactivated after migration");
                 let v = self
                     .saved
                     .vault
                     .as_ref()
-                    .ok_or_else(|| anyhow!("未创建钱包"))?;
+                    .ok_or_else(|| anyhow!("Wallet not created"))?;
                 self.secret = Some(v.unlock(&password)?);
                 self.unlocked_until = now()? + 300;
                 Ok(json!({"ok":true}))
@@ -511,17 +511,17 @@ impl Wallet {
             "prepare" => {
                 ensure!(
                     self.secret.is_some() && self.saved.backup_verified,
-                    "请先验证备份并解锁"
+                    "Verify the backup and unlock first"
                 );
                 self.replay.refresh().await?;
                 let owner = &self.saved.vault.as_ref().unwrap().public_key;
                 let to = address::decode(
                     &self.saved.chain_id,
-                    &r.to.ok_or_else(|| anyhow!("请填写收款地址"))?,
+                    &r.to.ok_or_else(|| anyhow!("Enter the recipient address"))?,
                 )?;
-                ensure!(owner != &to, "收款人与当前钱包相同；请使用余额整理操作");
-                let amount = chain::amount(&r.amount.ok_or_else(|| anyhow!("请填写金额"))?)?;
-                let fee = chain::amount(&r.fee.ok_or_else(|| anyhow!("请填写手续费"))?)?;
+                ensure!(owner != &to, "Recipient is this wallet; use balance consolidation");
+                let amount = chain::amount(&r.amount.ok_or_else(|| anyhow!("Enter the amount"))?)?;
+                let fee = chain::amount(&r.fee.ok_or_else(|| anyhow!("Enter the fee"))?)?;
                 let tx = chain::prepare(
                     self.replay.store.chain(),
                     owner,
@@ -536,7 +536,7 @@ impl Wallet {
                         self.replay.store.chain()
                     )
                     .contains(p)),
-                    "交易输入已被通道邀请占用"
+                    "Transaction input reserved by a channel invitation"
                 );
                 let id = random();
                 self.product_draft = None;
@@ -552,19 +552,19 @@ impl Wallet {
             "send" => {
                 ensure!(
                     self.secret.is_some() && self.saved.backup_verified,
-                    "钱包已锁定或备份未验证"
+                    "Wallet locked or backup unverified"
                 );
                 self.replay.refresh().await?;
                 self.expire();
-                ensure!(self.secret.is_some(), "钱包已自动锁定，请重新解锁");
-                let d = self.draft.take().ok_or_else(|| anyhow!("请重新预览交易"))?;
+                ensure!(self.secret.is_some(), "Wallet automatically locked; unlock again");
+                let d = self.draft.take().ok_or_else(|| anyhow!("Preview the transaction again"))?;
                 ensure!(
                     r.draft.as_deref() == Some(&d.id) && now()?.saturating_sub(d.created) <= 120,
-                    "交易预览已过期"
+                    "Transaction preview expired"
                 );
                 ensure!(
                     self.replay.store.chain().tip().to_hex() == d.tip,
-                    "链状态已变化，请重新预览金额和输入"
+                    "Chain state changed; preview the amount and inputs again"
                 );
                 let mut tx = d.tx;
                 tx.signature = sign_bytes(
@@ -578,7 +578,7 @@ impl Wallet {
                         self.replay.store.chain()
                     )
                     .contains(p)),
-                    "交易输入已被通道邀请占用"
+                    "Transaction input reserved by a channel invitation"
                 );
                 let command = Command::Transfer(tx);
                 let c = self.replay.store.chain();
@@ -588,7 +588,7 @@ impl Wallet {
                     vec![command.clone()],
                 )
                 .map_err(|e| anyhow!(e))?;
-                ensure!(self.saved.journal.len() < 10000, "交易记录已达上限");
+                ensure!(self.saved.journal.len() < 10000, "Transaction record limit reached");
                 self.saved.journal.push(chain::Journal {
                     command: command.clone(),
                     created_at: now()?,
@@ -598,7 +598,7 @@ impl Wallet {
             }
             "retry" => {
                 self.replay.refresh().await?;
-                let id = r.transaction.ok_or_else(|| anyhow!("缺少交易编号"))?;
+                let id = r.transaction.ok_or_else(|| anyhow!("Missing transaction identifier"))?;
                 let j = self
                     .saved
                     .journal
@@ -608,10 +608,10 @@ impl Wallet {
                             .map(|h| h.to_hex() == id)
                             .unwrap_or(false)
                     })
-                    .ok_or_else(|| anyhow!("找不到已签名交易"))?;
+                    .ok_or_else(|| anyhow!("Signed transaction not found"))?;
                 self.submit(j.command.clone()).await
             }
-            _ => Err(anyhow!("未知操作")),
+            _ => Err(anyhow!("Unknown action")),
         }
     }
     async fn submit(&mut self, command: Command) -> Result<Value> {
@@ -629,7 +629,7 @@ impl Wallet {
             Ok(r) if r.status().is_success() => r,
             _ => {
                 return Ok(
-                    json!({"delivery":"unknown","message":"签名交易已保存，但节点尚未确认接收。请保留记录并原样重试；没有重复签名。"}),
+                    json!({"delivery":"unknown","message":"Signed transaction retained; node receipt remains unconfirmed. Preserve records and retry the exact original without signing again."}),
                 )
             }
         };
@@ -639,7 +639,7 @@ impl Wallet {
                 Ok(Some(c)) => {
                     if bytes.len() + c.len() > 8192 {
                         return Ok(
-                            json!({"delivery":"unknown","message":"节点回执过大；原交易已保留，可原样重试。"}),
+                            json!({"delivery":"unknown","message":"Node receipt exceeds the limit; original transaction retained for exact retry."}),
                         );
                     }
                     bytes.extend_from_slice(&c);
@@ -647,7 +647,7 @@ impl Wallet {
                 Ok(None) => break,
                 Err(_) => {
                     return Ok(
-                        json!({"delivery":"unknown","message":"节点回执中断；原交易已保留，可原样重试。"}),
+                        json!({"delivery":"unknown","message":"Node receipt interrupted; original transaction retained for exact retry."}),
                     )
                 }
             }
@@ -657,10 +657,10 @@ impl Wallet {
             || v["status"] != "ADOPTED_EARTH_SUCCESSOR_V1"
             || v["confirmed"] != false
         {
-            return Ok(json!({"delivery":"unknown","message":"节点回执不完整；原交易已保留。"}));
+            return Ok(json!({"delivery":"unknown","message":"Node receipt incomplete; original transaction retained."}));
         }
         Ok(
-            json!({"delivery":"accepted","message":"节点已接收，正在等待区块确认。这还不是最终结算。"}),
+            json!({"delivery":"accepted","message":"Node received the transaction; block confirmation remains pending. This is not final settlement."}),
         )
     }
 }
@@ -685,7 +685,7 @@ async fn capability(
     {
         return (
             StatusCode::PAYLOAD_TOO_LARGE,
-            Json(json!({"error":"请求超出大小限制"})),
+            Json(json!({"error":"Request exceeds the size limit"})),
         )
             .into_response();
     }
@@ -704,7 +704,7 @@ async fn api(State(app): State<App>, headers: HeaderMap, body: axum::body::Bytes
         Err(_) => {
             return (
                 StatusCode::BAD_REQUEST,
-                Json(json!({"error":"请求格式不正确"})),
+                Json(json!({"error":"Invalid request format"})),
             )
                 .into_response()
         }
@@ -731,7 +731,7 @@ async fn status(State(app): State<App>, headers: HeaderMap) -> Response {
         Ok(v) => Json(v).into_response(),
         Err(_) => (
             StatusCode::SERVICE_UNAVAILABLE,
-            Json(json!({"error":"余额核验失败；暂停显示与发送，请检查节点日志。"})),
+            Json(json!({"error":"Balance verification failed; display and sending paused. Inspect node logs."})),
         )
             .into_response(),
     }
@@ -747,7 +747,7 @@ fn validate_saved(saved: &Saved) -> Result<()> {
     rld_core::AdmissionHash32::from_hex(&saved.chain_id).map_err(|e| anyhow!(e))?;
     ensure!(
         saved.vault.is_none() || saved.external_public.is_none(),
-        "钱包不能同时含有本机和外部签名身份"
+        "Wallet cannot contain both local and external signing identities"
     );
     ensure!(
         saved.owner().is_some()
@@ -756,48 +756,48 @@ fn validate_saved(saved: &Saved) -> Result<()> {
                 && saved.products.is_empty()
                 && saved.destination_journal.is_empty()
                 && !saved.retired),
-        "空钱包含有异常记录"
+        "Empty wallet contains unexpected records"
     );
     if let Some(owner) = saved.owner() {
         rld_core::validate_ed25519_public_key(owner).map_err(|e| anyhow!(e))?;
     }
-    ensure!(saved.journal.len() <= 10000, "交易记录超过容量");
+    ensure!(saved.journal.len() <= 10000, "Transaction record capacity exceeded");
     let mut seen = std::collections::BTreeSet::new();
     for j in &saved.journal {
         ensure!(
             seen.insert(command_id(&j.command).map_err(|e| anyhow!(e))?),
-            "重复的签名记录"
+            "Duplicate signed record"
         );
         product::verify_command(
             &j.command,
-            saved.owner().ok_or_else(|| anyhow!("记录没有钱包身份"))?,
+            saved.owner().ok_or_else(|| anyhow!("Record lacks a wallet identity"))?,
             &saved.chain_id,
         )?;
     }
     product::validate_book(&saved.products, saved.owner(), &saved.chain_id)?;
     ensure!(
         saved.destination_journal.len() <= 10000,
-        "目的链记录超过容量"
+        "Destination record capacity exceeded"
     );
     let mut seen = std::collections::BTreeSet::new();
     for j in &saved.destination_journal {
         ensure!(
             seen.insert(destination::command_id(&j.command).map_err(|e| anyhow!(e))?),
-            "目的链命令重复"
+            "Duplicate destination command"
         );
         match &j.command {
             rld_value_successor::destination::pow::Command::FinalizedImport { bundle, .. } => {
                 bundle.id().map_err(|e| anyhow!(e))?;
                 ensure!(
                     bundle.source_chain_id.to_hex() == saved.chain_id,
-                    "导入材料来自另一条源链"
+                    "Import material belongs to another source chain"
                 );
             }
             rld_value_successor::destination::pow::Command::Transfer(t) => {
                 ensure!(
                     Some(t.owner.as_str()) == saved.owner()
                         && t.chain_id.to_hex() != saved.chain_id,
-                    "目的链转账身份错误"
+                    "Invalid destination transfer identity"
                 );
                 rld_core::verify_bytes(
                     &t.owner,
@@ -806,7 +806,7 @@ fn validate_saved(saved: &Saved) -> Result<()> {
                 )
                 .map_err(|e| anyhow!(e))?;
             }
-            _ => return Err(anyhow!("仅支持已终局导入和目的链普通转账")),
+            _ => return Err(anyhow!("Only finalized imports and ordinary destination transfers are supported")),
         }
     }
     Ok(())
@@ -814,7 +814,7 @@ fn validate_saved(saved: &Saved) -> Result<()> {
 #[tokio::main]
 async fn main() -> Result<()> {
     let a = Args::parse();
-    ensure!(a.port > 1024, "请使用非特权端口");
+    ensure!(a.port > 1024, "Use an unprivileged port");
     files::directory(&a.data)?;
     let lock = files::lock(&a.data.join("wallet.lock"))?;
     let path = a.data.join("wallet.json");
@@ -824,7 +824,7 @@ async fn main() -> Result<()> {
         Saved::default()
     };
     validate_saved(&saved)?;
-    ensure!(saved.chain_id == CHAIN, "钱包记录属于另一条链");
+    ensure!(saved.chain_id == CHAIN, "Wallet records belong to another chain");
     let replay = chain::Replay::open(
         &a.records,
         &a.data,

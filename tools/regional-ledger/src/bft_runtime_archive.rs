@@ -178,7 +178,7 @@ impl Archive {
             "BFT archive orphan shared snapshot refuses",
         )
     }
-    fn envelope(&self, record: &Record) -> Result<Value> {
+    pub(crate) fn envelope(&self, record: &Record) -> Result<Value> {
         let snapshots = record
             .refs
             .iter()

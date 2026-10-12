@@ -380,7 +380,7 @@ fn decode(raw: &[u8], network: &str, node: &str, limits: &Limits) -> Result<Valu
         json!({"format":FORMAT,"image":image,"image_sha256":sha(raw),"ledger_authority":false,"authenticated":false}),
     )
 }
-fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
+pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
     let request: Request =
         serde_json::from_value(canonical(control, MAX_CONTROL)?).map_err(|e| e.to_string())?;
     match request {

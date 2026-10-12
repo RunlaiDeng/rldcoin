@@ -7,7 +7,7 @@ pub fn encode(chain: &str, public: &str) -> Result<String> {
     rld_core::validate_ed25519_public_key(public).map_err(|e| anyhow!(e))?;
     ensure!(
         chain == chain.to_ascii_lowercase() && public == public.to_ascii_lowercase(),
-        "地址必须使用小写编码"
+        "Address must use lowercase encoding"
     );
     let body = format!("rld:{chain}:{public}");
     let checksum = hex::encode(Sha256::digest(format!("RLD-ADDRESS-V1\0{body}").as_bytes()));
@@ -19,18 +19,18 @@ pub fn decode(chain: &str, address: &str) -> Result<String> {
         rld_core::validate_ed25519_public_key(address).map_err(|e| anyhow!(e))?;
         ensure!(
             address == address.to_ascii_lowercase(),
-            "公钥必须使用小写编码"
+            "Public key must use lowercase encoding"
         );
         return Ok(address.into());
     }
     let parts: Vec<_> = address.split(':').collect();
     ensure!(
         parts.len() == 4 && parts[1] == chain,
-        "收款地址属于另一条链，或格式不完整"
+        "Recipient address belongs to another chain or is incomplete"
     );
     ensure!(
         encode(chain, parts[2])? == address,
-        "地址校验失败；请重新向收款人获取完整地址"
+        "Address verification failed; obtain the complete address from the recipient again"
     );
     Ok(parts[2].into())
 }

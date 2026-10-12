@@ -190,7 +190,9 @@ impl App {
     }
 
     fn head(&self) -> Result<Hash> {
-        self.saved.head.ok_or_else(|| "请先初始化本机钱包".into())
+        self.saved
+            .head
+            .ok_or_else(|| "Initialize the local wallet first".into())
     }
 
     fn client(&self, store: &Store) -> Result<wallet_client::Client> {
@@ -203,7 +205,10 @@ impl App {
     }
 
     fn save(&mut self, store: &Store, proposed: wallet_client::State) -> Result<()> {
-        require(!self.failed, "保存失败；保留目录并重启核验")?;
+        require(
+            !self.failed,
+            "Save failed; preserve the directory and restart verification",
+        )?;
         let result = self.client(store).and_then(|client| {
             client.store(
                 store,
@@ -298,7 +303,7 @@ impl App {
             .options
             .miner
             .clone()
-            .ok_or("未配置本地区出块；可下载签名交给本地出块者")?;
+            .ok_or("Local block production is not configured; download the signed command for a local producer")?;
         let mut block = store.template(commands, miner)?;
         mine(&mut block)?;
         store.accept(block.clone())?;
@@ -306,7 +311,10 @@ impl App {
     }
 
     pub fn act(&mut self, action: Action) -> Result<Value> {
-        require(!self.failed, "保存失败；保留目录并重启核验")?;
+        require(
+            !self.failed,
+            "Save failed; preserve the directory and restart verification",
+        )?;
         // No Store/Agent or caller operation lock is held during socket waits.
         let mut store = Store::open(
             &self.options.ledger,
@@ -424,7 +432,7 @@ impl App {
                     (2..=16).contains(&owners.len())
                         && owners.windows(2).all(|p| p[0] < p[1])
                         && owners.contains(&self.options.owner),
-                    "参与者须唯一、排序并包括本钱包",
+                    "Participants must be unique, ordered and include this wallet",
                 )?;
                 let mut views = Vec::new();
                 let reserved: BTreeSet<_> = view
@@ -470,7 +478,7 @@ impl App {
                 let prepared = self
                     .previews
                     .get(&review_id)
-                    .ok_or("审阅已过期；请重新预览")?
+                    .ok_or("Review expired; preview again")?
                     .1
                     .clone();
                 require(
@@ -546,7 +554,7 @@ impl App {
                 let commands = self
                     .combinations
                     .get(&combined_id)
-                    .ok_or("组合审阅已失效")?
+                    .ok_or("Combined review is no longer valid")?
                     .1
                     .commands
                     .clone();

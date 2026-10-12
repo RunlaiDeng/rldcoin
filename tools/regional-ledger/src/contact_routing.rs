@@ -300,7 +300,7 @@ mod tests {
         for text in ["0.0", "-0.0", "1.25", "1e-6", "1e20", "-1e100"] {
             values.push(serde_json::from_str::<Value>(text).expect("test float"));
         }
-        values.push(json!({"unicode":"中文🙂","control":"\u{7f}\n\0","array":[1,{"key":"value"}]}));
+        values.push(json!({"unicode":"text🙂","control":"\u{7f}\n\0","array":[1,{"key":"value"}]}));
         for value in values {
             let expected =
                 crate::wallet_client::canonical_with_limit(&value, 8192).expect("original encoder");

@@ -20,3 +20,6 @@ hex.workspace = true
 rld-core = { path = "../rld-core" }
 serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
+regex = "=1.13.1"
+libc = "=0.2.189"

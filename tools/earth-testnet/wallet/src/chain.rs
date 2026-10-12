@@ -51,7 +51,7 @@ impl Replay {
     ) -> Result<Self> {
         ensure!(
             rld_core::implementation_source::IMPLEMENTATION_SOURCE_COMMITMENT == SOURCE,
-            "必须使用精确的已发布共识源码构建钱包"
+            "Wallet must use the exact published consensus source"
         );
         let genesis = files::read(&records.join("genesis.json"), 65536)?;
         let history = files::read(&records.join("history.json"), 65536)?;
@@ -70,7 +70,7 @@ impl Replay {
         let v1 = V1Store::open(&root.join("genesis"), context, client::now()?).map_err(err)?;
         ensure!(
             v1.chain().height() == 0 && v1.chain().tip() == hash(CHAIN)?,
-            "钱包仅适用于当前 Earth 空创世"
+            "Wallet requires the current empty Earth genesis"
         );
         let mode = NodeMode::Adopted(hash(ADOPTION)?);
         let verified = compatibility::VerifiedClient::load(
@@ -87,7 +87,7 @@ impl Replay {
         )?;
         ensure!(
             verified.preview.id().map_err(err)? == hash(PREVIEW)?,
-            "预览身份不一致"
+            "Preview identity differs"
         );
         let store = verified.open(
             &root.join("source"),
@@ -126,12 +126,12 @@ impl Replay {
         self.fresh = false;
         let result = tokio::time::timeout(Duration::from_secs(2), self.refresh_inner())
             .await
-            .map_err(|_| anyhow!("本次源链同步达到时间预算；已验证进度保留，请继续刷新"))
+            .map_err(|_| anyhow!("Source sync reached its time budget; verified progress retained. Refresh again"))
             .and_then(|result| result);
         self.error = result
             .as_ref()
             .err()
-            .map(|_| "节点暂不可用或仍在同步。保留上次已验证余额，暂停发送。".into());
+            .map(|_| "Node unavailable or still syncing. Retain the last verified balance and pause sending.".into());
         result
     }
     async fn refresh_inner(&mut self) -> Result<()> {
@@ -158,7 +158,7 @@ impl Replay {
             .error_for_status()?;
         let mut bytes = Vec::new();
         while let Some(c) = response.chunk().await? {
-            ensure!(bytes.len() + c.len() <= 8192, "状态响应过大");
+            ensure!(bytes.len() + c.len() <= 8192, "Status response exceeds the size limit");
             bytes.extend_from_slice(&c);
         }
         let s: serde_json::Value = serde_json::from_slice(&bytes)?;
@@ -168,21 +168,21 @@ impl Replay {
                 && s["earth_adoption_id"] == ADOPTION
                 && s["storage_healthy"] == true
                 && s["live_rld"] == true,
-            "节点身份或存储不正确"
+            "Invalid node identity or storage"
         );
         ensure!(
             s["tip"] == chain.tip().to_hex()
                 && s["height"] == chain.height().to_string()
                 && s["state_root"] == chain.state().root().map_err(err)?.to_hex()
                 && s["chainwork"] == serde_json::to_value(chain.chainwork())?,
-            "本机重放与节点视图仍未一致"
+            "Local replay still differs from the node view"
         );
         let finality = chain
             .finalized()
             .map(|(block, height)| serde_json::json!({"block":block,"height":height.to_string()}));
         ensure!(
             s["finalized_source"] == serde_json::to_value(finality)?,
-            "终局观察不一致"
+            "Finality observation differs"
         );
         self.checked_at = client::now()?;
         self.fresh = true;
@@ -251,13 +251,13 @@ pub fn coins(chain: &CandidateChain) -> Result<BTreeMap<OutPoint, Coin>> {
                         add(fee.intent.id().map_err(err)?, vec![0, 1]);
                         let old = channels
                             .get_mut(channel)
-                            .ok_or_else(|| anyhow!("通道索引缺失"))?;
+                            .ok_or_else(|| anyhow!("Missing channel index"))?;
                         old.1 = state.clone();
                     }
                     Command::Finalize { channel } => {
                         let (f, s) = channels
                             .get(channel)
-                            .ok_or_else(|| anyhow!("结算通道索引缺失"))?;
+                            .ok_or_else(|| anyhow!("Missing settlement channel index"))?;
                         let mut bytes = b"RLD-EARTH-UNIFIED-CHANNEL-SETTLEMENT\0".to_vec();
                         bytes.extend(channel.0);
                         bytes.extend(s.state.signing_bytes(f).map_err(err)?);
@@ -282,13 +282,13 @@ pub fn coins(chain: &CandidateChain) -> Result<BTreeMap<OutPoint, Coin>> {
         if let Some(coin) = chain.state().coin(&point) {
             sum = sum
                 .checked_add(coin.output.amount.0)
-                .ok_or_else(|| anyhow!("余额溢出"))?;
+                .ok_or_else(|| anyhow!("Balance overflow"))?;
             found.insert(point, coin.clone());
         }
     }
     ensure!(
         sum == chain.state().totals().map_err(err)?.0 .0,
-        "余额索引不完整；拒绝显示部分余额"
+        "Balance index incomplete; partial display refused"
     );
     Ok(found)
 }
@@ -296,31 +296,31 @@ pub const UNIT: u128 = 1_000_000_000_000_000_000_000_000;
 pub fn amount(s: &str) -> Result<u128> {
     ensure!(
         !s.is_empty() && s.len() <= 80 && s.bytes().all(|b| b.is_ascii_digit() || b == b'.'),
-        "金额必须为普通十进制数字"
+        "Amount must use ordinary decimal digits"
     );
     let parts = s.split('.').collect::<Vec<_>>();
-    ensure!(parts.len() <= 2 && !parts[0].is_empty(), "金额格式不正确");
+    ensure!(parts.len() <= 2 && !parts[0].is_empty(), "Invalid amount format");
     ensure!(
         parts[0] == "0" || !parts[0].starts_with('0'),
-        "金额不能有多余前导零"
+        "Amount must not contain redundant leading zeros"
     );
     let whole = parts[0].parse::<u128>()?;
     let frac = parts.get(1).copied().unwrap_or("");
     ensure!(
         frac.len() <= 24 && (parts.len() == 1 || !frac.is_empty()),
-        "最多支持 24 位小数"
+        "At most 24 decimal places are supported"
     );
     let fraction = if frac.is_empty() {
         0
     } else {
         frac.parse::<u128>()?
             .checked_mul(10u128.pow((24 - frac.len()) as u32))
-            .ok_or_else(|| anyhow!("金额溢出"))?
+            .ok_or_else(|| anyhow!("Amount overflow"))?
     };
     whole
         .checked_mul(UNIT)
         .and_then(|v| v.checked_add(fraction))
-        .ok_or_else(|| anyhow!("金额溢出"))
+        .ok_or_else(|| anyhow!("Amount overflow"))
 }
 pub fn format(n: u128) -> String {
     let whole = n / UNIT;
@@ -370,9 +370,9 @@ pub fn prepare(
     journal: &[Journal],
 ) -> Result<Transfer> {
     rld_core::validate_ed25519_public_key(to).map_err(err)?;
-    ensure!(value > 0 && fee >= 1, "金额及手续费必须大于零");
+    ensure!(value > 0 && fee >= 1, "Amount and fee must be positive");
 
-    let total = value.checked_add(fee).ok_or_else(|| anyhow!("金额溢出"))?;
+    let total = value.checked_add(fee).ok_or_else(|| anyhow!("Amount overflow"))?;
     let held = reserved(chain, journal)?;
     let mut inputs = Vec::new();
     let mut sum = 0u128;
@@ -384,7 +384,7 @@ pub fn prepare(
             inputs.push(point);
             sum = sum
                 .checked_add(coin.output.amount.0)
-                .ok_or_else(|| anyhow!("余额溢出"))?;
+                .ok_or_else(|| anyhow!("Balance overflow"))?;
             if sum >= total || inputs.len() == 32 {
                 break;
             }
@@ -392,7 +392,7 @@ pub fn prepare(
     }
     ensure!(
         sum >= total,
-        "当前可花余额不足，或需要先合并超过 32 个小额输入"
+        "Insufficient spendable balance; consolidate if more than 32 small inputs are needed"
     );
     let mut outputs = vec![Output {
         owner: to.into(),
@@ -413,7 +413,7 @@ pub fn prepare(
         valid_through_height: chain
             .height()
             .checked_add(12)
-            .ok_or_else(|| anyhow!("高度溢出"))?,
+            .ok_or_else(|| anyhow!("Height overflow"))?,
         signature: String::new(),
     })
 }

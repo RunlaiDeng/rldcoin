@@ -46,25 +46,25 @@ impl Replay {
         let config: Config = serde_json::from_slice(&crate::files::read(path, 8192)?)?;
         ensure!(
             config.context.is_absolute() && config.authorization.is_absolute(),
-            "目的链记录必须使用绝对路径"
+            "Destination records require absolute paths"
         );
         let context: Context = serde_json::from_slice(&crate::files::read(&config.context, 8192)?)?;
         ensure!(
             context.chain_id.to_hex()
                 == "6f952ed6eff0aa16d27bd18ab6c760357a21770a954952fffeb4852537c5363a",
-            "未接受此目的链身份"
+            "Destination identity has not been accepted"
         );
         let bytes = crate::files::read(&config.authorization, 8192)?;
         let auth: DestinationGenesisAuthorization = serde_json::from_slice(&bytes)?;
         ensure!(
             auth.canonical_bytes().map_err(err)? == bytes,
-            "目的链授权不是规范编码"
+            "Destination authorization is not canonical"
         );
         let pin = Hash::from_hex(pin).map_err(err)?;
         let preview = source
             .preview
             .as_ref()
-            .ok_or_else(|| anyhow!("缺少预览身份"))?;
+            .ok_or_else(|| anyhow!("Missing preview identity"))?;
         let store = if let Some(upgrade) = source.upgrade.as_ref() {
             upgrade
                 .verify_destination_authorization(&auth, &context, preview, pin, signer)
@@ -105,7 +105,7 @@ impl Replay {
             self.refresh_inner(source, http),
         )
         .await
-        .map_err(|_| anyhow!("本次目的链同步达到时间预算；已验证进度保留，请继续刷新"))?
+        .map_err(|_| anyhow!("Destination sync reached its time budget; verified progress retained. Refresh again"))?
     }
     async fn refresh_inner(
         &mut self,
@@ -146,12 +146,12 @@ impl Replay {
                     && p.genesis == c.genesis()
                     && p.blocks.len() <= 2
                     && (p.common == c.genesis() || c.block(p.common).is_some()),
-                "目的链同步身份、数量或公共祖先不正确"
+                "Invalid destination sync identity, count or common ancestor"
             );
             let terminal = p.blocks.is_empty();
             let mut parent = p.common;
             for b in p.blocks {
-                ensure!(b.header.parent == parent, "目的链区块不连续");
+                ensure!(b.header.parent == parent, "Destination blocks are discontinuous");
                 parent = b.header.id().map_err(err)?;
                 self.store.accept(source, b, now()?).map_err(err)?;
             }
@@ -159,10 +159,10 @@ impl Replay {
                 complete = true;
                 break;
             }
-            ensure!(cursor != Some(parent), "目的链同步没有进展");
+            ensure!(cursor != Some(parent), "Destination sync made no progress");
             cursor = Some(parent);
         }
-        ensure!(complete, "目的链本次同步达到分页上限；请继续刷新");
+        ensure!(complete, "Destination sync reached the page limit; refresh again");
         self.store.audit_source(source).map_err(err)?;
         let mut response = http
             .get(format!("{}/v1/earth-destination/status", self.node))
@@ -185,7 +185,7 @@ impl Replay {
                 && s["height"] == c.height().to_string()
                 && s["state_root"] == c.state().root().map_err(err)?.to_hex()
                 && s["chainwork"] == serde_json::to_value(c.chainwork())?,
-            "本机目的链重放与节点或源链视图不一致"
+            "Local destination replay differs from the node or source view"
         );
         self.checked = now()?;
         self.fresh = true;
@@ -217,7 +217,7 @@ impl Replay {
                 };
                 *amount = amount
                     .checked_add(coin.output.amount.0)
-                    .ok_or_else(|| anyhow!("目的链余额溢出"))?;
+                    .ok_or_else(|| anyhow!("Destination balance overflow"))?;
             }
         }
         let mut entries = vec![];
@@ -229,7 +229,7 @@ impl Replay {
                     .any(|x| command_id(x).ok() == Some(id))
                     .then_some(b.header.height)
             });
-            entries.push(json!({"id":id,"kind":if matches!(j.command,Command::FinalizedImport{..}){"目的链导入"}else{"目的链转账"},"height":included.map(|x|x.to_string()),"confirmed":included.is_some()}));
+            entries.push(json!({"id":id,"kind":if matches!(j.command,Command::FinalizedImport{..}){"Destination import"}else{"Destination transfer"},"height":included.map(|x|x.to_string()),"confirmed":included.is_some()}));
         }
         Ok(
             json!({"spendable":crate::chain::format(spendable),"immature":crate::chain::format(immature),"reserved":crate::chain::format(reserved_amount),"configured":true,"fresh":fresh,"chain_id":c.chain_id(),"genesis":c.genesis(),"height":c.height().to_string(),"tip":c.tip(),"journal":entries,"probabilistic_finality":true}),
@@ -243,7 +243,7 @@ impl Replay {
     ) -> Result<Value> {
         ensure!(
             self.fresh && now()?.saturating_sub(self.checked) <= 30,
-            "目的链观察已经过时"
+            "Destination observation is stale"
         );
         let policy = self.policy();
         let o = self
@@ -264,7 +264,7 @@ pub struct Journal {
 pub async fn bounded(response: &mut reqwest::Response, limit: usize) -> Result<Vec<u8>> {
     let mut bytes = vec![];
     while let Some(b) = response.chunk().await? {
-        ensure!(bytes.len() + b.len() <= limit, "节点响应超过限制");
+        ensure!(bytes.len() + b.len() <= limit, "Node response exceeds the limit");
         bytes.extend(b);
     }
     Ok(bytes)
@@ -285,7 +285,7 @@ pub fn coins(
     for block in chain.best_blocks().map_err(err)? {
         for command in block.commands {
             match command {
-                Command::LegacyImport { .. } => anyhow::bail!("旧链迁移导入不能进入新测试链钱包"),
+                Command::LegacyImport { .. } => anyhow::bail!("Legacy migration imports cannot enter the fresh testnet wallet"),
                 Command::FinalizedImport { bundle, .. } | Command::Import(bundle) => {
                     let mut bytes = b"RLD-EARTH-DESTINATION-POW-IMPORT-OUTPUT\0".to_vec();
                     bytes.extend(chain.chain_id().0);
@@ -317,13 +317,13 @@ pub fn coins(
         if let Some(coin) = chain.state().coin(&p) {
             total = total
                 .checked_add(coin.output.amount.0)
-                .ok_or_else(|| anyhow!("目的链余额溢出"))?;
+                .ok_or_else(|| anyhow!("Destination balance overflow"))?;
             result.insert(p, coin.clone());
         }
     }
     ensure!(
         total == chain.state().imported_total().0,
-        "目的链输出索引不完整；拒绝显示部分余额"
+        "Destination output index incomplete; partial balance display refused"
     );
     Ok(result)
 }
@@ -355,8 +355,8 @@ pub fn prepare(
     journal: &[Journal],
 ) -> Result<rld_pow::Transfer> {
     rld_core::validate_ed25519_public_key(to).map_err(err)?;
-    ensure!(amount > 0 && fee > 0, "金额和手续费必须大于零");
-    let needed = amount.checked_add(fee).ok_or_else(|| anyhow!("金额溢出"))?;
+    ensure!(amount > 0 && fee > 0, "Amount and fee must be positive");
+    let needed = amount.checked_add(fee).ok_or_else(|| anyhow!("Amount overflow"))?;
     let held = reserved(chain, journal);
     let mut inputs = vec![];
     let mut total = 0u128;
@@ -368,7 +368,7 @@ pub fn prepare(
             inputs.push(point);
             total = total
                 .checked_add(coin.output.amount.0)
-                .ok_or_else(|| anyhow!("余额溢出"))?;
+                .ok_or_else(|| anyhow!("Balance overflow"))?;
             if total >= needed || inputs.len() == 32 {
                 break;
             }
@@ -376,7 +376,7 @@ pub fn prepare(
     }
     ensure!(
         total >= needed,
-        "目的链当前成熟且未占用余额不足，或需要先整理超过 32 个输入"
+        "Insufficient mature unreserved destination balance; consolidate if more than 32 inputs are needed"
     );
     let mut outputs = vec![rld_pow::Output {
         owner: to.into(),
@@ -397,7 +397,7 @@ pub fn prepare(
         valid_through_height: chain
             .height()
             .checked_add(12)
-            .ok_or_else(|| anyhow!("高度溢出"))?,
+            .ok_or_else(|| anyhow!("Height overflow"))?,
         signature: String::new(),
     })
 }

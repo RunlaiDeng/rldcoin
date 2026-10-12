@@ -123,7 +123,7 @@ fn keys() -> Vec<u8> {
     seeds.sort_by_key(|s| public(*s));
     seeds
 }
-fn bootstrap() -> Bootstrap {
+pub(crate) fn bootstrap() -> Bootstrap {
     let mut currency = Currency {
         format: DOMAIN.into(),
         fixture_only: true,

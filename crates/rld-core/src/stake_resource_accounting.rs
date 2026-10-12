@@ -4055,7 +4055,7 @@ mod tests {
             request_id: request_id.into(),
             resource_key: format!("UNBOND/{request_id}"),
             unbond_bond_record_hash: "66".repeat(32),
-            owner: "rld:zone-resource-test:owner-星际".into(),
+            owner: "rld:zone-resource-test:owner-interstellar".into(),
             prepaid_terminal_capacity_bytes: 500,
             predecessor_history_root: "55".repeat(32),
             predecessor_history_bytes: 281,
@@ -4174,18 +4174,18 @@ mod tests {
 
     #[test]
     fn unbond_identifier_utf8_bounds_are_exact() {
-        let terminal_256 = format!("{}x", "界".repeat(85));
-        let terminal_257 = format!("{}xx", "界".repeat(85));
-        let derived_128 = format!("{}xx", "界".repeat(42));
-        let derived_129 = format!("{}xxx", "界".repeat(42));
+        let terminal_256 = format!("{}xx", "é".repeat(127));
+        let terminal_257 = format!("{}xxx", "é".repeat(127));
+        let derived_128 = format!("{}xx", "é".repeat(63));
+        let derived_129 = format!("{}xxx", "é".repeat(63));
         assert_eq!(terminal_256.len(), 256);
         assert_eq!(terminal_257.len(), 257);
         assert_eq!(derived_128.len(), 128);
         assert_eq!(derived_129.len(), 129);
         let base = StakeUnbondLifecycleRecordInputV1 {
-            request_id: "request-界",
-            owner: "owner-界",
-            beneficiary: "owner-界",
+            request_id: "request-edge",
+            owner: "owner-edge",
+            beneficiary: "owner-edge",
             completion_id: &terminal_256,
             payout_coin_id: &derived_128,
             slash_id: &terminal_256,
@@ -4335,8 +4335,8 @@ mod tests {
     fn unbond_lifecycle_record_footprints_charge_utf8_and_reject_owner_mismatch() {
         let input = StakeUnbondLifecycleRecordInputV1 {
             request_id: "unbond-request-α-001",
-            owner: "rld:zone-resource-test:owner-星际",
-            beneficiary: "rld:zone-resource-test:owner-星际",
+            owner: "rld:zone-resource-test:owner-interstellar",
+            beneficiary: "rld:zone-resource-test:owner-interstellar",
             completion_id: "unbond-completion-001",
             payout_coin_id: "unbond-payout-coin-001",
             slash_id: "unbond-slash-001",

@@ -65,11 +65,11 @@ keys only; never convert an old test ledger into a monetary network.
 ```sh
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
-cargo test --workspace --locked
-mkdir -p tmp
-cargo test --manifest-path tools/regional-ledger/Cargo.toml --locked
-python3 -B -m unittest discover -s tools/implementation-source -v
-python3 -B -m unittest discover -s tools -p test_permanent_import_index_candidate.py -v
+CARGO_PROFILE_TEST_OPT_LEVEL=1 CARGO_PROFILE_TEST_DEBUG_ASSERTIONS=true \
+CARGO_PROFILE_TEST_OVERFLOW_CHECKS=true cargo test --workspace --locked -- --test-threads=1
+# Native fixture prerequisites: docs/operations/VERIFICATION.md
+cargo run --locked -p rld-cli --bin rld-maintenance -- check-rust-only --root .
+cargo test --locked -p rld-cli --bin rld-maintenance
 ```
 
 The [verification guide](docs/operations/VERIFICATION.md) covers reference tools,

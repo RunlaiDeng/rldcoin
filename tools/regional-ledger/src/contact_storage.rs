@@ -284,7 +284,7 @@ fn sync_many(
         "ledger_authority":false,"custody_acknowledgment":false}),
     )
 }
-fn execute(control: &[u8], payload: &[u8]) -> Result<Value> {
+pub(crate) fn execute(control: &[u8], payload: &[u8]) -> Result<Value> {
     require(
         !control.is_empty() && control.len() <= MAX_CONTROL && payload.len() <= MAX_FILE,
         "contact storage ABI capacity",

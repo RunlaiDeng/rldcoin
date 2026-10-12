@@ -28,8 +28,9 @@ separate states; a transport receipt cannot credit or refund money.
 
 Hybrid dual authorization, fixed quorum, Old/New renewal, complete archive and
 manifest verification are separately versioned verification-only candidates.
-Python/OpenSSL reference tools provide another implementation of specified
-verification paths. Existing Native profiles retain their classical rules and
+Rust/OpenSSL adapters provide separately selected implementations of specified
+verification paths. The active source and CI contain no Python runtime or tests;
+retired independent campaign drivers grant no qualification. Existing Native profiles retain their classical rules and
 reject unknown adoption/suite profiles. No candidate result installs ledger state,
 consumes a nonce, authorizes a new network or migrates old currency/custody.
 

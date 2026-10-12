@@ -285,7 +285,7 @@ pub(crate) fn verify_value(network: &str, kind: &str, value: &Value) -> Result<V
     let signed: Signed = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
     verify_signed(network, kind, signed)
 }
-fn execute(raw: &[u8]) -> Result<Value> {
+pub(crate) fn execute(raw: &[u8]) -> Result<Value> {
     let value = crate::wallet_http::decode_unique_with_limit(raw, MAX_ABI)?;
     let canonical = if value
         .as_object()
@@ -372,6 +372,7 @@ pub(crate) fn output_with(
         "ledger_authority":false,"durable_custody_qualified":false,"independent_security_qualified":false});
     let encoded = if crate::contact_routing::is_result(&reply["value"])
         || crate::contact_carriage::is_result(&reply["value"])
+        || crate::contact_witness::is_result(&reply["value"])
     {
         crate::contact_routing::canonical(&reply, MAX_ABI)
     } else {
