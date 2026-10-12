@@ -1019,3 +1019,8 @@ separate from native ledger acceptance and actual durable custody.
 The [native complete transit interface](../../docs/operations/NATIVE_CONTACT_TRANSIT.md)
 checks exact packet/frame/source-route/hop composition under the original limits.
 Signed carriage and visited paths grant no ledger or custody authority.
+
+The [native signed exchange/TCP interface](../../docs/operations/NATIVE_CONTACT_EXCHANGE.md)
+checks configured caller bindings, fresh challenges and exact prepared exchanges.
+Outer signature checks preserve separate complete item validation and durable
+receive before acknowledgment or suppression.

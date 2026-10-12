@@ -90,11 +90,8 @@ def challenge(key,network,peer,fingerprint):
 
 
 def check_challenge(value, network, peer, fingerprint):
-    body=mesh.verify(value,'tcp-challenge',network)
-    mesh.require(set(body)=={'format','adapter','network','node_id','nonce','tls_cert_sha256'}
-        and body['adapter']==ADAPTER and body['node_id']==peer
-        and body['tls_cert_sha256']==fingerprint,'TCP connection challenge binding mismatch')
-    return mesh.hex32(body['nonce'])
+    from interstellar_exchange_native import check_challenge as native_check
+    return native_check(value, network, peer, fingerprint)
 
 
 def read_exact(connection, length, deadline):
@@ -194,34 +191,13 @@ def bind_request(key, network, requester, peer, connection_nonce, bundle):
 
 
 def check_request(value, network, recipient, peers, connection_nonce):
-    body = mesh.verify(value,'tcp-request',network)
-    mesh.require(set(body)=={'format','adapter','network','node_id','to','nonce','challenge','bundle'}
-        and body['adapter']==ADAPTER and body['to']==recipient and body['node_id'] in peers
-        and body['challenge']==connection_nonce,
-        'TCP request identity or configured peer mismatch')
-    mesh.hex32(body['nonce'])
-    mesh.require(len(wire.canonical(body['bundle'])) <= mesh.MAX_BATCH,'TCP exchange byte bound')
-    exchange = mesh.verify(body['bundle'],'exchange',network)
-    mesh.require(exchange['node_id']==body['node_id'] and exchange['to']==recipient,'TCP request/bundle identity mismatch')
-    return body
+    from interstellar_exchange_native import check_request as native_check
+    return native_check(value, network, recipient, peers, connection_nonce)
 
 
 def check_response(value, network, requester, peer, sent):
-    body=mesh.verify(value,'tcp-response',network)
-    mesh.require(set(body)=={'format','adapter','network','node_id','to','nonce','challenge','exchange_id','accepted','bundle','error'}
-        and body['adapter']==ADAPTER and body['node_id']==peer and body['to']==requester
-        and body['nonce']==sent['body']['nonce'] and body['challenge']==sent['body']['challenge']
-        and body['exchange_id']==mesh.digest(sent['body']['bundle']),
-        'TCP response identity, nonce or exact exchange mismatch')
-    mesh.require(type(body['accepted']) is bool, 'invalid TCP acknowledgment')
-    if not body['accepted']:
-        mesh.require(body['bundle'] is None and body['error']=='CONTACT_REJECTED','invalid TCP refusal')
-        raise ValueError('TCP peer refused custody; retain queued evidence')
-    mesh.require(body['error'] is None and isinstance(body['bundle'],dict)
-        and len(wire.canonical(body['bundle']))<=mesh.MAX_BATCH,'invalid TCP success bundle')
-    exchange=mesh.verify(body['bundle'],'exchange',network)
-    mesh.require(exchange['node_id']==peer and exchange['to']==requester,'TCP response/bundle identity mismatch')
-    return body['bundle']
+    from interstellar_exchange_native import check_response as native_check
+    return native_check(value, network, requester, peer, sent)
 
 
 class Server:

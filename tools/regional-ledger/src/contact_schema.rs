@@ -10,6 +10,9 @@ pub(crate) struct Limits {
     messages: usize,
 }
 impl Limits {
+    pub(super) fn new(contacts: usize, messages: usize) -> Self {
+        Self { contacts, messages }
+    }
     fn check(&self) -> Result<()> {
         require(
             self.contacts <= 16 && self.messages <= 256,

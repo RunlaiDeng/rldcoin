@@ -1044,14 +1044,8 @@ class Node:
             self._archive_sync_paths=None
 
     def _receive(self, bundle, peer):
-        body = verify(bundle, 'exchange', self.network)
-        require(set(body) == {'format', 'network', 'node_id', 'to', 'adverts', 'transits', 'receipts', 'inventory'}
-                and body['node_id'] == peer and body['to'] == self.id, 'wrong contact peer')
-        require(peer in self.contacts and incoming_contact(self.contacts[peer]),
-                'unconfigured incoming inventory peer')
-        require(inventory_check(body['inventory'],self.network)['node_id']==peer,'exchange inventory differs from sender')
-        for name, bound in [('adverts', MAX_NODES), ('transits', MAX_PACKET_BATCH), ('receipts', MAX_MESSAGES)]:
-            require(isinstance(body[name], list) and len(body[name]) <= bound, 'exchange item limit')
+        from interstellar_exchange_native import exchange_check
+        body = exchange_check(self, bundle, peer)
         updated = copy.deepcopy(self.state)
         added=[]
         updated['peer_inventory'][peer] = body['inventory']
