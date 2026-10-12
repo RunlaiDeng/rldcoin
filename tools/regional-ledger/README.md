@@ -64,6 +64,14 @@ submissions are typed native inputs; enqueue alone never debits. Three ordered
 configured votes out of four remain mandatory where the signed Admission rules
 require BFT; legacy thresholds are never lowered.
 
+Ordinary candidates include pending imports from fully Native-authenticated
+contact records as well as owner submissions. Complete-origin profiles also
+retain their separate complete-history import selection. Proof receipt and
+candidate construction grant no credit: the destination must install its
+admitted finality certificate and reach signed maturity before onward spending.
+Permanent import tombstones suppress a second import of the same export;
+every proposed command still executes under current Native safety checks.
+
 The Rust companion currently refuses joint-epoch and role-lifecycle companion
 config formats. Their native verification/signing CLI APIs remain available;
 removal of the old campaign driver does not qualify their autonomous lifecycle.

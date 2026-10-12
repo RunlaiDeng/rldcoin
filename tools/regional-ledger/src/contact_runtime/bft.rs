@@ -420,13 +420,22 @@ impl Runtime {
         context: &consensus::Context,
         high: Option<Hash>,
     ) -> Result<Snapshot> {
-        let mut commands: Vec<Command> = if node.trust.region(node.chain.region)?.rules
-            == crate::paged_bft::ORIGIN_NETWORK_RULES
-        {
-            node.complete_origin_pending_imports()?
-        } else {
-            Vec::new()
-        };
+        // Received proof custody does not import value. Propose its exact
+        // retained Native record through the same certified execution path as
+        // owner submissions; permanent import tombstones prevent retries.
+        let mut commands = node
+            .journal
+            .contact_records
+            .values()
+            .filter(|r| !node.chain.ledger.imports.contains_key(&r.export))
+            .map(|r| Command::Import {
+                snapshot: r.snapshot,
+                export: r.export,
+            })
+            .collect::<Vec<_>>();
+        if node.trust.region(node.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
+            commands.extend(node.complete_origin_pending_imports()?);
+        }
         for record in self.archive.runtime.messages.values() {
             let wire: net::WireEnvelope = serde_json::from_value(self.archive.envelope(record)?)
                 .map_err(|e| e.to_string())?;
@@ -658,6 +667,10 @@ impl Runtime {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "import_tests.rs"]
+mod import_tests;
 
 #[cfg(test)]
 mod tests {
