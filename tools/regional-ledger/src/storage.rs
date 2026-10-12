@@ -202,7 +202,7 @@ pub struct Store {
     authority: String,
     pin: Hash,
     healthy: bool,
-    paged: Option<crate::retained_pages::Stream<paged::Record>>,
+    paged: Option<paged::EventStream>,
     paged_replay: Option<paged::CurrentReplay>,
 }
 pub fn ensure_not_restoring(dir: &Path) -> Result<()> {
@@ -588,7 +588,7 @@ impl Store {
             let count = usize::try_from(stream.record_count())
                 .map_err(|_| "native history record count")?;
             return Ok((
-                "RLD-NATIVE-PAGED-BFT-STORE-V1".into(),
+                stream.layout_format().into(),
                 count / crate::history::PAGE_EVENTS,
                 count % crate::history::PAGE_EVENTS,
             ));

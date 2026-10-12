@@ -8,6 +8,10 @@ mod body_witness;
 const HEADER: &str = "ledger-header.json";
 const EVENTS: &str = "ledger-events";
 const FORMAT: &str = "RLD-NATIVE-PAGED-BFT-STORE-V1";
+const PACKED_FORMAT: &str = "RLD-NATIVE-PACKED-BFT-STORE-FIXTURE-V1";
+#[path = "paged_store/event_stream.rs"]
+mod event_stream;
+pub(super) use event_stream::EventStream;
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Header {
@@ -18,7 +22,12 @@ struct Header {
 impl Header {
     fn scope(&self, trust: &Trust) -> Result<Scope> {
         require(
-            self.format == FORMAT
+            self.format
+                == if crate::paged_bft::is_packed_profile(&trust.region(self.region)?.rules) {
+                    PACKED_FORMAT
+                } else {
+                    FORMAT
+                }
                 && crate::paged_bft::is_profile(&trust.region(self.region)?.rules),
             "ordinary paged BFT store explicit signed profile",
         )?;
@@ -102,7 +111,7 @@ pub(super) struct CurrentReplay {
     head: Hash,
 }
 impl CurrentReplay {
-    fn stage(&self, node: &Store, header: &Header, stream: &Stream<Record>) -> Result<Replay> {
+    fn stage(&self, node: &Store, header: &Header, stream: &EventStream) -> Result<Replay> {
         require(
             self.head == stream.storage_head()
                 && serde_json::to_vec(&self.header).map_err(|e| e.to_string())?
@@ -522,7 +531,7 @@ fn outside_usage(dir: &Path) -> Result<(usize, u64)> {
 struct ColdImage {
     header: Header,
     replay: Replay,
-    stream: Stream<Record>,
+    stream: EventStream,
     conflicts: Vec<Incident>,
     safety: Safety,
 }
@@ -538,9 +547,18 @@ fn load_image(dir: &Path, authority: &str, pin: Hash, head: Option<Hash>) -> Res
     let scope = header.scope(&replay.trust)?;
     let expected = match head {
         Some(head) => head,
-        None => Stream::<Record>::observe_head(&dir.join(EVENTS), &scope)?,
+        None => EventStream::observe_head(
+            &dir.join(EVENTS),
+            &scope,
+            crate::paged_bft::is_packed_profile(&replay.trust.region(header.region)?.rules),
+        )?,
     };
-    let stream = Stream::open(&dir.join(EVENTS), &scope, expected)?;
+    let stream = EventStream::open(
+        &dir.join(EVENTS),
+        &scope,
+        expected,
+        crate::paged_bft::is_packed_profile(&replay.trust.region(header.region)?.rules),
+    )?;
     stream.visit(expected, |record| replay.apply_retained(record, &stream))?;
     let journal = replay.journal(&header);
     let (conflicts, safety) = read_incidents(dir, &journal, &replay.trust, None)?;
@@ -603,8 +621,10 @@ impl Store {
         pin: Hash,
     ) -> Result<Self> {
         safe_dir(dir.parent().ok_or("paged store parent missing")?)?;
+        let trust = Trust::verify(&bootstrap, authority, pin)?;
+        let packed = crate::paged_bft::is_packed_profile(&trust.region(region)?.rules);
         let header = Header {
-            format: FORMAT.into(),
+            format: if packed { PACKED_FORMAT } else { FORMAT }.into(),
             bootstrap,
             region,
         };
@@ -618,7 +638,7 @@ impl Store {
             &dir.join(HEADER),
             &serde_json::to_vec(&header).map_err(|_| "paged header encoding")?,
         )?;
-        let stream = Stream::create(&dir.join(EVENTS), header.scope(&replay.trust)?)?;
+        let stream = EventStream::create(&dir.join(EVENTS), header.scope(&replay.trust)?, packed)?;
         Ok(Self {
             dir: dir.into(),
             _lock: lock,
@@ -932,9 +952,7 @@ impl Store {
 pub(super) fn present(dir: &Path) -> bool {
     dir.join(HEADER).exists()
 }
-pub(super) fn events(
-    stream: &Stream<Record>,
-) -> Result<Box<dyn Iterator<Item = Result<Event>> + '_>> {
+pub(super) fn events(stream: &EventStream) -> Result<Box<dyn Iterator<Item = Result<Event>> + '_>> {
     let mut selected_height = 0;
     Ok(Box::new(stream.records(stream.storage_head())?.flat_map(
         move |record| {
@@ -969,8 +987,8 @@ pub(super) fn events(
 /// Any look-ahead remains complete and is executed before state can be released.
 pub(crate) struct Historical<'a> {
     replay: Replay,
-    stream: &'a Stream<Record>,
-    records: crate::retained_pages::Records<'a, Record>,
+    stream: &'a EventStream,
+    records: Box<dyn Iterator<Item = Result<Record>> + 'a>,
     pending: Option<Record>,
     last_requested: u64,
     scope: Scope,
@@ -1103,6 +1121,10 @@ impl Store {
 #[cfg(test)]
 #[path = "paged_store/body_witness_tests.rs"]
 mod body_witness_tests;
+
+#[cfg(test)]
+#[path = "paged_store/packed_tests.rs"]
+mod packed_tests;
 
 #[path = "paged_store/packed_inspection.rs"]
 mod packed_inspection;

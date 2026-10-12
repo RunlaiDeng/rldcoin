@@ -23,6 +23,9 @@ const PENDING: &str = "live.next";
 const COMMIT: &str = "live.commit";
 const OBJECTS: &str = "packs";
 
+mod records;
+pub(crate) use records::Records;
+
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Pack {
@@ -204,6 +207,41 @@ impl<T: Clone + Serialize + DeserializeOwned> AppendablePackedStreamCandidate<T>
     }
     pub fn record_count(&self) -> u64 {
         self.manifest.count
+    }
+    pub(crate) fn require_scope(&self, scope: &Scope) -> Result<()> {
+        require(
+            self.manifest.scope == *scope,
+            "live packed Native consumer scope",
+        )
+    }
+    pub(crate) fn retained_usage_candidate(&self) -> Result<(usize, u64)> {
+        usage(&self.dir)
+    }
+    pub(crate) fn observe_head(dir: &Path, scope: &Scope) -> Result<Hash> {
+        private_dir(dir)?;
+        usage(dir)?;
+        require(
+            !exists(&dir.join(PENDING))? && !exists(&dir.join(COMMIT))?,
+            "incomplete live packed observation; retain residue",
+        )?;
+        let manifest: Manifest<T> =
+            decode(&keystore::private_read(&dir.join(MANIFEST), MAX_BYTES)?)?;
+        require(
+            manifest.format == FORMAT && manifest.scope == *scope,
+            "live packed observed format/scope differs",
+        )?;
+        Ok(manifest.head)
+    }
+    pub(crate) fn require_unchanged(&self, expected: Hash) -> Result<()> {
+        self.visit(expected, |_| Ok(())).map(|_| ())
+    }
+    pub(crate) fn records(&self, expected: Hash) -> Result<Records<'_, T>> {
+        self.visit(expected, |_| Ok(()))?;
+        Records::new(self, expected)
+    }
+    #[cfg(test)]
+    pub(crate) fn interrupt_at(&mut self, boundary: u8) {
+        self.interruption = Some(boundary);
     }
 
     /// Stage any semantic execution until this entire call succeeds. Each cold

@@ -126,6 +126,18 @@ pub struct Admission {
 }
 impl Admission {
     pub fn bytes(&self) -> Result<Vec<u8>> {
+        if self.rules == crate::paged_bft::PACKED_RULES {
+            return encode(
+                "packed-paged-bft-admission-v1",
+                &(
+                    self.currency,
+                    &self.region,
+                    &self.rules,
+                    self.value_rules,
+                    &self.validators,
+                ),
+            );
+        }
         if self.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
             return encode(
                 "complete-origin-network-bft-admission-v2",
