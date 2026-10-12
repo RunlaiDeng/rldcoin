@@ -77,6 +77,13 @@ config formats. Their native verification/signing CLI APIs remain available;
 removal of the old campaign driver does not qualify their autonomous lifecycle.
 No old full-cycle or fault result transfers to the changed Rust runtime.
 
+During actual Native or transport OS lock contention, the contact status reports
+`progress_observation_available: false` with a diagnostic and no height, round
+or mesh progress. The node retains evidence and retries through full Native
+verification after release. Only the exact Native lock refusal and the current
+OS adapter's contention errno qualify; proof, permission and other I/O failures
+remain errors. A missing observation grants no ledger or signing authority.
+
 ## Verification
 
 Create `tmp`, then run `cargo fmt`, strict `cargo clippy --all-targets`, and

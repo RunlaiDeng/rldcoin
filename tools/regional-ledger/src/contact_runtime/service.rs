@@ -300,8 +300,24 @@ fn tick_ledger(
     node.archive_completed()?;
     Ok(
         json!({"format":FORMAT,"currency":options.currency,"region":region,"local_height":height,
-        "mesh":node.observation(),"ledger_changed_by_native_verification_only":true,"fixture_only":true}),
+        "progress_observation_available":true,"mesh":node.observation(),
+        "ledger_changed_by_native_verification_only":true,"fixture_only":true}),
     )
+}
+
+fn lock_contention(error: &str) -> bool {
+    // Match the Native lock API's exact typed refusal, and the OS errno bound
+    // by the transport file adapter. Proof/permission failures stay fatal.
+    error == std::fs::TryLockError::WouldBlock.to_string()
+        || error.starts_with(&format!("CONTACT_STORAGE_IO:{}:", libc::EWOULDBLOCK))
+        || error.starts_with(&format!("CONTACT_STORAGE_IO:{}:", libc::EAGAIN))
+}
+
+fn unknown_progress(currency: Hash, region: Hash) -> Value {
+    json!({"format":FORMAT,"currency":currency,"region":region,
+        "progress_observation_available":false,
+        "diagnostic":"Native or transport OS lock contention; progress is unknown",
+        "fixture_only":true})
 }
 
 pub fn run(options: Options) -> Result<()> {
@@ -432,9 +448,11 @@ pub fn run(options: Options) -> Result<()> {
                     &observation,
                     64 * 1024,
                 )?,
-                Err(error)
-                    if error.contains("resource busy")
-                        || error.contains("CONTACT_STORAGE_IO:35:") => {}
+                Err(error) if lock_contention(&error) => atomic(
+                    &root.join("regional-contact-status.json"),
+                    &unknown_progress(options.currency, region),
+                    64 * 1024,
+                )?,
                 Err(error) => return Err(error),
             }
             let until = monotonic()? + options.interval;
@@ -451,4 +469,97 @@ pub fn run(options: Options) -> Result<()> {
     result?;
     stopped?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn native_lock_contention_is_unknown_then_replays_after_release() {
+        let root = directory(
+            &fs::canonicalize(std::env::temp_dir())
+                .unwrap()
+                .join(format!("rld-rust-runtime-lock-{}", random().unwrap())),
+        )
+        .unwrap();
+        let genesis = crate::tests::bootstrap();
+        let authority = genesis.currency.authority.clone();
+        let currency = genesis.currency.id().unwrap();
+        let region = genesis.admissions[0].id().unwrap();
+        let held =
+            Store::create(&root.join("ledger"), genesis, region, &authority, currency).unwrap();
+        let head = held.storage_head().unwrap();
+        let transport = root.join("transport");
+        initialize(
+            &transport,
+            &currency.to_hex(),
+            &region.to_hex(),
+            "public-no-value-lock-test",
+        )
+        .unwrap();
+        let config = json!({"format":MESH,"network":currency,"state":transport,"contacts":[]});
+        let options = Options {
+            ledger: root.join("ledger"),
+            authority,
+            currency,
+            mesh_config: None,
+            bft_config: None,
+            listen: "127.0.0.1:0".parse().unwrap(),
+            miner: None,
+            interval: 1.0,
+            insecure_tcp: false,
+        };
+        let mut cursor = None;
+        let mut seen = Vec::new();
+        let mut runtime = None;
+        let failure =
+            tick_ledger(&options, &config, &mut runtime, &mut cursor, &mut seen).unwrap_err();
+        // Exercise the current production dispatch predicate against an actual
+        // Native OS refusal, without creating a synthetic success observation.
+        assert!(lock_contention(&failure));
+        let unknown = unknown_progress(currency, region);
+        assert_eq!(unknown["progress_observation_available"], false);
+        for field in ["local_height", "height", "round", "mesh", "ledger_changed"] {
+            assert!(unknown.get(field).is_none());
+        }
+        assert!(cursor.is_none() && seen.is_empty());
+        assert_eq!(held.storage_head().unwrap(), head);
+        drop(held);
+        let status = tick_ledger(&options, &config, &mut runtime, &mut cursor, &mut seen).unwrap();
+        assert_eq!(status["progress_observation_available"], true);
+        assert_eq!(status["local_height"], 0);
+        let cold = Store::open_pinned(&options.ledger, &options.authority, currency, head).unwrap();
+        assert_eq!(cold.chain.height(), 0);
+        assert_eq!(cold.chain.ledger.minted, crate::Amount::ZERO);
+        drop(cold);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn only_exact_native_lock_and_current_os_errnos_defer_progress() {
+        assert!(lock_contention(
+            &std::fs::TryLockError::WouldBlock.to_string()
+        ));
+        for code in [libc::EAGAIN, libc::EWOULDBLOCK] {
+            assert!(lock_contention(&format!(
+                "CONTACT_STORAGE_IO:{code}:OS refusal"
+            )));
+        }
+        for code in [libc::EACCES, libc::EINVAL, libc::EIO, libc::ENOENT] {
+            assert!(!lock_contention(&format!(
+                "CONTACT_STORAGE_IO:{code}:OS refusal"
+            )));
+        }
+        for error in [
+            "resource busy",
+            "bad proof: resource busy",
+            "operation would block",
+            "bad proof: lock acquisition failed because the operation would block",
+            "bad proof: CONTACT_STORAGE_IO:11:refusal",
+            "CONTACT_STORAGE_IO:110:refusal",
+        ] {
+            assert!(!lock_contention(error));
+        }
+    }
 }
