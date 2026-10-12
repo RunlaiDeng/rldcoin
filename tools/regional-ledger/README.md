@@ -995,3 +995,8 @@ ordinary directory-carriage inventory and immutable publication, including full
 pending reservations and complete duplicate comparison. Its separate native codec
 preserves the bounded lossless container and exact original signed bytes. Ordinary
 complete caller authentication remains separate migration work.
+
+The [native opaque frame interface](../../docs/operations/NATIVE_CONTACT_FRAME.md)
+constructs and inspects the unchanged bounded evidence frames using the existing
+native frame/message-ID kernel. Its checked byte buffers grant no authentication,
+ledger or custody authority; full native evidence verification still follows.

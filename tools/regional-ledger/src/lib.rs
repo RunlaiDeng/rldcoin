@@ -1132,6 +1132,7 @@ pub mod cold_plan;
 pub mod conflict;
 pub mod contact;
 pub mod contact_crypto;
+mod contact_frame;
 mod contact_listener;
 mod contact_spool;
 mod contact_spool_codec;

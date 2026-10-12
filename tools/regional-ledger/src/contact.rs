@@ -58,7 +58,7 @@ impl Frame {
     pub(crate) fn retained_bytes(&self) -> Result<Vec<u8>> {
         canonical(self)
     }
-    fn message(&self) -> Result<Hash> {
+    pub(crate) fn message(&self) -> Result<Hash> {
         let mut body = serde_json::to_value(self).map_err(|e| e.to_string())?;
         body.as_object_mut()
             .ok_or("frame is not an object")?
