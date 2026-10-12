@@ -251,6 +251,7 @@ impl App {
     }
 
     fn status(&self, store: &Store) -> Result<Value> {
+        let certified = crate::bft::is_profile(&store.trust.region(store.chain.region)?.rules);
         let view = self
             .saved
             .head
@@ -293,12 +294,23 @@ impl App {
             "transport":transport,"checked_at_unix":SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e|e.to_string())?.as_secs(),
             "signing_enabled":self.options.key.is_some() || self.options.encrypted_key.is_some() && self.options.passphrase.is_some(),
             "encrypted_key_enabled":self.options.encrypted_key.is_some(),"backup_enabled":self.options.encrypted_key.is_some() && self.options.passphrase.is_some() && self.options.backup_dir.is_some(),
-            "local_block_producer_enabled":self.options.miner.is_some(),"recovery_notice":self.recovery_notice,
+            "local_block_producer_enabled":self.options.miner.is_some() && !certified,
+            "local_submission_enabled":certified || self.options.miner.is_some(),"recovery_notice":self.recovery_notice,
             "external_rollback_anchor_qualified":false,"remote_current_state_known":false,"live_rld":false}),
         )
     }
 
     fn submit(&self, store: &mut Store, commands: Vec<Command>) -> Result<Value> {
+        if crate::bft::is_profile(&store.trust.region(store.chain.region)?.rules) {
+            // The signed admission selects the Native certified queue. Wallet
+            // consent and reserved inputs survive until actual ledger inclusion.
+            let message = store.bft_submit(commands)?;
+            return Ok(
+                json!({"state":"QUEUED_FOR_CERTIFIED_INCLUSION","message_id":message,
+                "currency":store.trust.currency()?,"region":store.chain.region,
+                "included":false,"finalized":false,"fixture_only":true,"live_rld":false}),
+            );
+        }
         let miner = self
             .options
             .miner

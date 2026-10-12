@@ -92,6 +92,17 @@ verification after release. Only the exact Native lock refusal and the current
 OS adapter's contention errno qualify; proof, permission and other I/O failures
 remain errors. A missing observation grants no ledger or signing authority.
 
+## Wallet submission
+
+The local wallet selects its submission path from the signed regional admission.
+BFT profiles queue the complete Native-checked owner command without a mining
+key. Their response contains a message identity and explicitly reports no
+inclusion or finality. Only the admitted validator runtime can subsequently
+certify inclusion; queuing retains the original signature and input reservation.
+`local_submission_enabled` is separate from `local_block_producer_enabled`.
+Legacy direct production still requires its configured miner. Wallet history
+and combined payments distinguish queued submissions from actual inclusion.
+
 ## Verification
 
 Create `tmp`, then run `cargo fmt`, strict `cargo clippy --all-targets`, and

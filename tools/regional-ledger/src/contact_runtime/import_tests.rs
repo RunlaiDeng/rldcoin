@@ -512,3 +512,6 @@ fn ordinary_rust_candidate_imports_retained_proof_then_finalizes_recipient_spend
     drop(f.source);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[path = "wallet_queue_tests.rs"]
+mod wallet_queue_tests;
