@@ -331,6 +331,17 @@ fn directory_receive_page(
         .ok_or("missing receive page node")?
         .frame_page_selected(cursor, 4, seen)?;
     #[cfg(test)]
+    CARRIAGE_TRACE.with(|trace| -> Result<()> {
+        let mut trace = trace.borrow_mut();
+        if let Some(records) = trace.as_mut() {
+            require(records.len() < 4096, "diagnostic carriage record bound")?;
+            records.push(json!({"phase":"native-page-selected","at":monotonic()?,
+                "packet_ids":frames.iter().map(|(id,_)|id).collect::<Vec<_>>(),
+                "after":cursor,"seen_count":seen.len(),"native_authority":false}));
+        }
+        Ok(())
+    })?;
+    #[cfg(test)]
     trace_work("mesh-native-page", started)?;
     // Only bounded owned bytes cross this boundary. No transport lease or
     // transport observation initializes the Native ledger or grants authority.

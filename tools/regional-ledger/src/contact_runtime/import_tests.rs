@@ -520,6 +520,84 @@ fn ordinary_rust_candidate_imports_retained_proof_then_finalizes_recipient_spend
 mod wallet_queue_tests;
 
 #[test]
+fn complete_prepare_quorum_after_timeout_cannot_first_sign_old_commit() {
+    let mut f = Fixture::new().unwrap();
+    eprintln!("Fresh sealed-round Native counter: {}", f.root.display());
+    let native_head = f.node.storage_head().unwrap();
+    let context = consensus::Context::current(&f.node).unwrap();
+    let keys = f.seeds.iter().copied().map(public).collect::<Vec<_>>();
+    let leader = consensus::leader(&context, 0, &keys).unwrap();
+    let leader = keys.iter().position(|key| key == &leader).unwrap();
+    let candidate = f.candidate().unwrap();
+    let consensus::Message::Proposal(proposal) = f
+        .sign(
+            leader,
+            consensus::Request::Propose {
+                round: 0,
+                timeout: None,
+                snapshot: Box::new(candidate),
+            },
+        )
+        .unwrap()
+    else {
+        panic!("expected original Native proposal")
+    };
+    let mut votes = Vec::new();
+    for n in 0..3 {
+        let consensus::Message::Vote(vote) = f
+            .sign(n, consensus::Request::Prepare(proposal.clone()))
+            .unwrap()
+        else {
+            panic!("expected original Native prepare")
+        };
+        votes.push(*vote);
+    }
+    let prepared = consensus::Quorum::combine(votes, &f.node.trust, &f.node.evidence).unwrap();
+    for n in 0..2 {
+        f.sign(
+            n,
+            consensus::Request::Commit {
+                proposal: proposal.clone(),
+                prepared: prepared.clone(),
+            },
+        )
+        .unwrap();
+    }
+    f.sign(2, consensus::Request::Timeout { context, round: 0 })
+        .unwrap();
+    let config = &f.actors[2].config;
+    let journal_path = config.signer_dir.join("bft.json");
+    let caller_before = fs::read(&config.head_file).unwrap();
+    let journal_before = fs::read(&journal_path).unwrap();
+    let (mut agent, status) =
+        consensus::Agent::inspect_with_status(&config.signer_dir, &f.node).unwrap();
+    assert_eq!(status.state.round, 1);
+    assert!(status.state.prepared.is_none() && status.state.committed.is_none());
+    let head = agent.head().unwrap();
+    let error = agent
+        .sign(
+            &f.node,
+            consensus::Request::Commit { proposal, prepared },
+            Some(&config.key_file),
+            head,
+        )
+        .unwrap_err();
+    assert_eq!(
+        error,
+        "BFT commit needs own current prepare and matching prepared quorum"
+    );
+    assert_eq!(agent.head().unwrap(), head);
+    drop(agent);
+    assert_eq!(fs::read(&config.head_file).unwrap(), caller_before);
+    assert_eq!(fs::read(&journal_path).unwrap(), journal_before);
+    assert_eq!(f.node.storage_head().unwrap(), native_head);
+    assert_eq!(f.node.chain.height(), 0);
+    let root = f.root.clone();
+    drop(f);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn ordinary_directory_turn_carries_new_native_owner_request_in_same_turn() {
     let mut f = Fixture::new().unwrap();
     eprintln!("Fresh same-turn Native owner fixture: {}", f.root.display());
