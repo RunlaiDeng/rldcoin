@@ -135,13 +135,14 @@ class TraceTests(unittest.TestCase):
     def test_publisher_failure_does_not_leak_service_ownership_lock(self):
         from regional_contact_node import Service
         from types import SimpleNamespace
-        with tempfile.TemporaryFile() as stream:
+        from interstellar_process_lock import Lock
+        with tempfile.TemporaryDirectory() as directory:
             service=object.__new__(Service);service.carriage=service.bft=service.tcp=None
-            service.lock=os.dup(stream.fileno());fd=service.lock
+            service.lock=Lock.acquire(Path(directory),'Service',True);lease=service.lock
             service.trace_publisher=SimpleNamespace(close=lambda:(_ for _ in ()).throw(OSError('diagnostic fsync')))
             with self.assertRaises(OSError):service.close()
-            self.assertIsNone(service.lock)
-            with self.assertRaises(OSError):os.fstat(fd)
+            self.assertIsNone(service.lock);self.assertTrue(lease.closed)
+            with Lock.acquire(Path(directory),'Service',True):pass
 
     def traced_fixture(self):
         temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)

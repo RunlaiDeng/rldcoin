@@ -9,7 +9,6 @@ from bisect import bisect_right
 import base64
 from contextlib import contextmanager
 import errno
-import fcntl
 import json
 import math
 import os
@@ -124,9 +123,9 @@ def startup_config(native, path=None):
     if path is not None:
         return mesh.load(path, 64 * 1024)
     root = mesh.safe_dir(native.ledger / 'transport')
-    descriptor = os.open(root / '.startup.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    from interstellar_process_lock import Lock
+    descriptor = Lock.acquire(root, 'Startup')
     try:
-        fcntl.flock(descriptor, fcntl.LOCK_EX)
         path = root / 'config.json'
         if path.exists() or path.is_symlink():
             return mesh.load(path, 64 * 1024)
@@ -143,7 +142,7 @@ def startup_config(native, path=None):
         mesh.atomic(path, config)
         return config
     finally:
-        os.close(descriptor)
+        descriptor.close()
 
 
 class Service:
@@ -165,8 +164,8 @@ class Service:
         self.receive_after = {'novel': None, 'background': None}
         self.root = mesh.safe_dir(config['state'])
         try:
-            self.lock = os.open(self.root / '.regional-contact-service.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-            fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            from interstellar_process_lock import Lock
+            self.lock = Lock.acquire(self.root, 'Service', True)
             observation = Inspection(native).call('contact-status')
             self.region = observation['region']
             mesh.require(observation['currency'] == native.currency and config['network'] == native.currency,
@@ -243,7 +242,7 @@ class Service:
                         publisher.close()
                 finally:
                     if self.lock is not None:
-                        os.close(self.lock)
+                        self.lock.close()
                         self.lock = None
         if transport_error is not None:raise transport_error
 

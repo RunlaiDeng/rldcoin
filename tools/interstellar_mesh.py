@@ -10,7 +10,6 @@ import base64
 from bisect import bisect_right
 from collections import OrderedDict
 import copy
-import fcntl
 import hashlib
 import ipaddress
 import json
@@ -129,11 +128,8 @@ def integer(value, low, high):
 
 
 def safe_dir(path):
-    path = Path(path)
-    require(path.is_absolute(), 'directory must be absolute')
-    require(not any(p.is_symlink() for p in [path, *path.parents]), 'symlink directory refused')
-    evidence.ensure_dir(path)
-    return path
+    from interstellar_process_lock import safe_directory
+    return safe_directory(path)
 
 
 def load(path, limit):
@@ -422,9 +418,10 @@ class Node:
         require(config['format'] == VERSION, 'unsupported config')
         self.root = safe_dir(config['state'])
         self.network = hex32(config['network'])
-        self.lock = os.open(self.root / '.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+        self.lock = None
         try:
-            fcntl.flock(self.lock, fcntl.LOCK_EX | (fcntl.LOCK_NB if nonblocking else 0))
+            from interstellar_process_lock import Lock
+            self.lock = Lock.acquire(self.root, 'Mesh', nonblocking)
             from interstellar_crypto import inspect as native_inspect,NativeSigner
             identity=native_inspect(self.root/'identity.private.json',self.network)
             self.key=NativeSigner(self.root/'identity.private.json',identity)
@@ -509,7 +506,7 @@ class Node:
 
     def close(self):
         if self.lock is not None:
-            os.close(self.lock)
+            self.lock.close()
             self.lock = None
 
     def __enter__(self):

@@ -87,22 +87,26 @@ class ShutdownTests(unittest.TestCase):
             if recovery_failure:raise OSError('quiescence refused')
         s.bft=SimpleNamespace(quiesce=recover,close=lambda:events.append('runtime-lock-released'))
         s.trace_publisher=SimpleNamespace(close=lambda:events.append('publisher-closed'))
-        fd,path=tempfile.mkstemp();os.unlink(path);s.lock=fd
-        return s,events,fd
+        from interstellar_process_lock import Lock
+        directory=tempfile.TemporaryDirectory();self.addCleanup(directory.cleanup)
+        s.lock=Lock.acquire(Path(directory.name),'Service',True)
+        return s,events,s.lock
 
     def test_original_default_close_never_recovers_and_explicit_stop_orders_owners(self):
         for selected in (False,True):
             s,events,fd=self.service();s.close(recover_only=selected)
             expected=['outgoing-stopped','all-incoming-stopped']+(['recover-only'] if selected else [])+['runtime-lock-released','publisher-closed']
             self.assertEqual(events,expected);self.assertIsNone(s.lock)
-            with self.assertRaises(OSError):os.fstat(fd)
+            self.assertTrue(fd.closed)
+            with type(fd).acquire(Path(fd.path),fd.role,True):pass
 
     def test_recovery_refusal_preserves_failure_and_releases_service_resources(self):
         s,events,fd=self.service(True)
         with self.assertRaisesRegex(OSError,'quiescence refused'):s.close(recover_only=True)
         self.assertEqual(events,['outgoing-stopped','all-incoming-stopped','recover-only','runtime-lock-released','publisher-closed'])
         self.assertIsNone(s.bft);self.assertIsNone(s.lock)
-        with self.assertRaises(OSError):os.fstat(fd)
+        self.assertTrue(fd.closed)
+        with type(fd).acquire(Path(fd.path),fd.role,True):pass
 
 
 class NativeDeadlineTests(unittest.TestCase):

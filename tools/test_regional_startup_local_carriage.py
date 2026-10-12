@@ -21,8 +21,11 @@ class StartupCarriageTests(unittest.TestCase):
         fixture=Fixture(root,names=('earth','proxima'));fixture.stop('earth')
         self.addCleanup(fixture.close)
         ledger=root/'native-model';ledger.mkdir(mode=0o700)
-        native=SimpleNamespace(currency=NETWORK,authority='b'*64,ledger=ledger,
-            call=lambda *a,**k:dict(currency=NETWORK,region='1'*64))
+        from interstellar_crypto import backend,FORMAT as CRYPTO_FORMAT
+        profile=dict(format=CRYPTO_FORMAT,implementation=backend().implementation)
+        binary=Path(os.environ['RLD_CONTACT_BINARY']).resolve()
+        native=SimpleNamespace(binary=binary,currency=NETWORK,authority='b'*64,ledger=ledger,
+            call=lambda *a,**k:profile if a[0]=='contact-crypto-info' else dict(currency=NETWORK,region='1'*64))
         return fixture,native
 
     def construct(self,failure=None,parallel=True,events=None):

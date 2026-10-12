@@ -127,7 +127,8 @@ class NativeListenerTests(unittest.TestCase):
         fixture=Fixture(self.root/'unknown-join');self.addCleanup(fixture.close)
         server=fixture.servers['proxima'];listener=server.native_listener
         service=Service.__new__(Service);service.carriage=None;service.tcp=server
-        service.trace_publisher=None;service.lock=os.open(self.root/'service-lease',os.O_CREAT|os.O_RDWR,0o600)
+        from interstellar_process_lock import Lock
+        service.trace_publisher=None;service.lock=Lock.acquire(self.root,'Service',True)
         calls=[]
         class Runtime:
             def close(self):calls.append('runtime_closed')
@@ -139,7 +140,8 @@ class NativeListenerTests(unittest.TestCase):
         with patch.object(listener.provider,'call',side_effect=lost):
             with self.assertRaisesRegex(ValueError,'MODEL_LOST_JOIN_PROOF'):service.close()
         self.assertIs(service.tcp,server);self.assertFalse(server.shutdown_proven)
-        self.assertEqual(calls,[]);os.fstat(service.lock)
+        self.assertEqual(calls,[]);self.assertFalse(service.lock.closed)
+        with self.assertRaises(BlockingIOError):Lock.acquire(self.root,'Service',True)
         self.assertIn(listener.token,native._callback_custody)
         service.close();self.assertIsNone(service.lock);self.assertEqual(calls,['runtime_closed'])
 

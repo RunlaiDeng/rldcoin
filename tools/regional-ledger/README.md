@@ -1005,3 +1005,8 @@ The [native evidence file/queue interface](../../docs/operations/NATIVE_EVIDENCE
 owns bounded regular-file reads, exclusive byte publication and queue receive/carry.
 It preserves the original lock/capacity rules, exact frame checks and retained
 failure residue; local IO never authorizes native value or destination custody.
+
+The [native process lock interface](../../docs/operations/NATIVE_CONTACT_PROCESS_LOCK.md)
+owns fixed-role Mesh/Startup/Service locks and strict directory traversal. Its
+process-local handles preserve blocking/nonblocking and shutdown ownership rules
+without granting signing, ledger, freshness or custody rights.

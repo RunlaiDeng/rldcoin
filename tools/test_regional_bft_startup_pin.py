@@ -79,7 +79,7 @@ class NativeStartupPinTests(unittest.TestCase):
             commands.clear()
             with self.assertRaises(ValueError),patch.object(bft,'check_cold_retained',side_effect=AssertionError('no fallback')):
                 bft.Runtime(native,transport,wrong)
-            self.assertEqual(commands,['bft-context','bft-network-check-plan'])
+            self.assertEqual(commands,['bft-context','bft-client-read','bft-runtime-archive-read','bft-network-check-plan'])
             self.assertEqual({str(p):inventory(p) for p in map(Path,before)},before)
             self.assertEqual(original.read_bytes(),original_bytes)
             self.assertFalse(Path(config['key_file']).exists())
