@@ -272,13 +272,52 @@ fn signature_bytes(kind: &str, body: &Value) -> Result<Vec<u8>> {
     bytes.extend(files::canonical_with_limit(body, MAX_OBJECT)?);
     Ok(bytes)
 }
+#[cfg(test)]
+std::thread_local! {
+    static SIGNATURE_WORK: std::cell::RefCell<Option<[f64; 5]>> = const { std::cell::RefCell::new(None) };
+}
+#[cfg(test)]
+fn signature_work_start() -> Option<std::time::Instant> {
+    SIGNATURE_WORK.with(|trace| trace.borrow().is_some().then(std::time::Instant::now))
+}
+#[cfg(test)]
+fn signature_work_finish(started: Option<std::time::Instant>, phase: usize) {
+    if let Some(started) = started {
+        SIGNATURE_WORK.with(|trace| {
+            if let Some(seconds) = trace.borrow_mut().as_mut() {
+                seconds[phase] += started.elapsed().as_secs_f64();
+            }
+        });
+    }
+}
 fn verify_signed(network: &str, kind: &str, signed: Signed) -> Result<Value> {
+    #[cfg(test)]
+    let started = signature_work_start();
     body_check(&signed.body, network, &signed.public_key)?;
+    #[cfg(test)]
+    signature_work_finish(started, 0);
+    #[cfg(test)]
+    let started = signature_work_start();
     let key = VerifyingKey::from_bytes(&hex_bytes::<32>(&signed.public_key)?)
         .map_err(|e| e.to_string())?;
+    #[cfg(test)]
+    signature_work_finish(started, 1);
+    #[cfg(test)]
+    let started = signature_work_start();
     let signature = Signature::from_bytes(&hex_bytes::<64>(&signed.signature)?);
-    key.verify_strict(&signature_bytes(kind, &signed.body)?, &signature)
+    #[cfg(test)]
+    signature_work_finish(started, 2);
+    #[cfg(test)]
+    let started = signature_work_start();
+    let bytes = signature_bytes(kind, &signed.body)?;
+    #[cfg(test)]
+    signature_work_finish(started, 3);
+    #[cfg(test)]
+    let started = signature_work_start();
+    key.verify_strict(&bytes, &signature)
         .map_err(|_| "contact signature invalid")?;
+    #[cfg(test)]
+    signature_work_finish(started, 4);
     Ok(signed.body)
 }
 pub(crate) fn verify_value(network: &str, kind: &str, value: &Value) -> Result<Value> {
@@ -492,6 +531,7 @@ mod tests {
         let mut encode = 0.0;
         let mut decode = 0.0;
         let mut native = 0.0;
+        SIGNATURE_WORK.with(|trace| *trace.borrow_mut() = Some([0.0; 5]));
         for _ in 0..256 {
             assert!(
                 started.elapsed().as_secs() < 10,
@@ -520,10 +560,13 @@ mod tests {
             native += phase.elapsed().as_secs_f64();
             assert_eq!(black_box(checked), expected);
         }
+        let signature_work = SIGNATURE_WORK.with(|trace| trace.borrow_mut().take().unwrap());
         eprintln!(
             "{}",
             serde_json::json!({"receipt_discriminator":{"iterations":256,
             "encode_seconds":encode,"decode_seconds":decode,"signature_schema_seconds":native,
+            "signature_work_seconds":{"body_domain":signature_work[0],"key_construct":signature_work[1],
+                "signature_decode":signature_work[2],"signed_bytes":signature_work[3],"strict_equation":signature_work[4]},
             "whole_seconds":started.elapsed().as_secs_f64(),"ledger_authority":false}})
         );
     }
