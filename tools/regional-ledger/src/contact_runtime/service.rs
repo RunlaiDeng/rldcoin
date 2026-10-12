@@ -465,7 +465,13 @@ pub(super) fn tick_ledger(
     let frames = Node::open(config)?.frame_page_selected(cursor.as_deref(), 4, seen)?;
     #[cfg(test)]
     trace_work("mesh-native-page", started)?;
-    tick_ledger_frames(options, config, runtime, cursor, seen, frames)
+    tick_ledger_frames(options, config, runtime, cursor, seen, frames, None)
+        .map(|tick| tick.observation)
+}
+
+struct LedgerTick {
+    observation: Value,
+    outgoing_errors: Vec<String>,
 }
 
 fn tick_ledger_frames(
@@ -475,7 +481,8 @@ fn tick_ledger_frames(
     cursor: &mut Option<String>,
     seen: &mut Vec<String>,
     frames: ReceivedFrames,
-) -> Result<Value> {
+    directory: Option<&dyn Fn() -> bool>,
+) -> Result<LedgerTick> {
     #[cfg(test)]
     let started = monotonic()?;
     let mut store = Store::open(&options.ledger, &options.authority, options.currency)?;
@@ -546,28 +553,51 @@ fn tick_ledger_frames(
         }
     }
     drop(store);
-    if let Some(runtime) = runtime {
-        #[cfg(test)]
-        let started = monotonic()?;
-        runtime.broadcast(config)?;
-        #[cfg(test)]
-        trace_work("native-broadcast", started)?;
-    }
-    let mut node = Node::open(config)?;
-    let adverts = node.advertised_destinations()?;
+    // Native replay and signing finish before opening this custody lease.
+    // Directory-only carriage shares it through durable preparation; socket
+    // adapters retain their original independent open/wait boundaries.
+    let first = if directory.is_some() {
+        let mut node = open_directory_node(config)?;
+        if let Some(runtime) = runtime {
+            #[cfg(test)]
+            let started = monotonic()?;
+            runtime.broadcast_node(&mut node)?;
+            #[cfg(test)]
+            trace_work("native-broadcast", started)?;
+        }
+        node
+    } else {
+        if let Some(runtime) = runtime {
+            #[cfg(test)]
+            let started = monotonic()?;
+            runtime.broadcast(config)?;
+            #[cfg(test)]
+            trace_work("native-broadcast", started)?;
+        }
+        Node::open(config)?
+    };
+    let mut node = Some(first);
+    let node_ref = node.as_mut().ok_or("missing post-ledger custody node")?;
+    let adverts = node_ref.advertised_destinations()?;
     for (region, raw) in offers {
         for (destination, label) in &adverts {
             if *label == region.to_hex() {
-                node.enqueue(&raw, destination)?;
+                node_ref.enqueue(&raw, destination)?;
             }
         }
     }
-    node.archive_completed()?;
-    Ok(
-        json!({"format":FORMAT,"currency":options.currency,"region":region,"local_height":height,
-        "progress_observation_available":true,"mesh":node.observation(),
-        "ledger_changed_by_native_verification_only":true,"fixture_only":true}),
-    )
+    node_ref.archive_completed()?;
+    let observation = json!({"format":FORMAT,"currency":options.currency,"region":region,"local_height":height,
+        "progress_observation_available":true,"mesh":node_ref.observation(),
+        "ledger_changed_by_native_verification_only":true,"fixture_only":true});
+    let outgoing_errors = match directory {
+        Some(stopped) => directory_phase_node(config, stopped, DirectoryPhase::Publish, &mut node)?,
+        None => Vec::new(),
+    };
+    Ok(LedgerTick {
+        observation,
+        outgoing_errors,
+    })
 }
 
 #[cfg(test)]
@@ -591,15 +621,25 @@ fn directory_ledger_turn_stopped(
 ) -> Result<Value> {
     let received = directory_receive_page(config, stopped, cursor.as_deref(), seen)?;
     let mut errors = received.errors;
-    let result = tick_ledger_frames(options, config, runtime, cursor, seen, received.frames);
+    let result = tick_ledger_frames(
+        options,
+        config,
+        runtime,
+        cursor,
+        seen,
+        received.frames,
+        Some(stopped),
+    );
     if result
         .as_ref()
         .err()
-        .is_none_or(|error| lock_contention(error))
+        .is_some_and(|error| lock_contention(error))
     {
         errors.extend(directory_phase(config, stopped, DirectoryPhase::Publish)?);
     }
-    let mut observation = result?;
+    let tick = result?;
+    errors.extend(tick.outgoing_errors);
+    let mut observation = tick.observation;
     observation["transport_attempt_errors"] = json!(errors);
     Ok(observation)
 }

@@ -606,8 +606,8 @@ fn ordinary_directory_turn_carries_new_native_owner_request_in_same_turn() {
         .map(|event| event["calls"].as_u64().unwrap_or(1))
         .sum::<u64>();
     assert_eq!(
-        opens, 4,
-        "ordinary receive page reopened the same transport image"
+        opens, 2,
+        "ordinary post-ledger carriage reopened the same transport image"
     );
     for n in 0..3 {
         let files = fs::read_dir(root.join(format!("same-out-{n}")))

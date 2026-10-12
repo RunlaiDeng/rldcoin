@@ -610,6 +610,10 @@ impl Runtime {
         let mut mesh = Node::open(transport)?;
         #[cfg(test)]
         super::service::trace_work("native-broadcast-mesh-open", started)?;
+        self.broadcast_node(&mut mesh)
+    }
+
+    pub(crate) fn broadcast_node(&mut self, mesh: &mut Node) -> Result<()> {
         #[cfg(test)]
         let started = super::service::monotonic()?;
         // The mesh relays each original packet to its pinned destination.
