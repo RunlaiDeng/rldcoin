@@ -788,7 +788,8 @@ mod tests {
                 atomic(&path, &config, 64 * 1024)?;
                 actors.push(Runtime::open(&path, &nodes[n], &transports[n])?);
             }
-            let deadline = super::super::service::monotonic()? + 30.0;
+            let started = super::super::service::monotonic()?;
+            let deadline = started + 30.0;
             let completed = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
             let failed = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
             let threads = actors
@@ -876,6 +877,12 @@ mod tests {
             require(
                 nodes.iter().all(|n| n.chain.height() == 2),
                 "four ordinary Rust actors did not independently finalize",
+            )?;
+            let elapsed = super::super::service::monotonic()? - started;
+            eprintln!("Native actor consensus completion seconds={elapsed:.6}");
+            require(
+                elapsed < 30.0,
+                "Rust actor consensus completion exceeded original budget",
             )?;
             let (input, coin) = nodes[3]
                 .chain
@@ -970,6 +977,12 @@ mod tests {
                     .all(|n| n.chain.height() == 2 && n.chain.ledger.coins.contains_key(&input)),
                 "submission carriage debited an input",
             )?;
+            let elapsed = super::super::service::monotonic()? - started;
+            eprintln!("Native actor submission completion seconds={elapsed:.6}");
+            require(
+                elapsed < 30.0,
+                "Rust actor submission completion exceeded original budget",
+            )?;
             let tip = nodes[0].chain.tip()?;
             for n in &nodes {
                 require(n.chain.tip()? == tip, "native finalized replicas diverged")?;
@@ -1008,6 +1021,12 @@ mod tests {
                 )?;
                 drop(agent);
             }
+            let elapsed = super::super::service::monotonic()? - started;
+            eprintln!("Native actor cold custody completion seconds={elapsed:.6}");
+            require(
+                elapsed < 30.0,
+                "Rust actor cold custody completion exceeded original budget",
+            )?;
             Ok(())
         })();
         if result.is_ok() {
