@@ -244,19 +244,36 @@ fn directory_phase(
     stopped: &dyn Fn() -> bool,
     phase: DirectoryPhase,
 ) -> Result<Vec<String>> {
+    let mut node = Some(open_directory_node(config)?);
+    directory_phase_node(config, stopped, phase, &mut node)
+}
+
+fn open_directory_node(config: &Value) -> Result<Node> {
     #[cfg(test)]
     let started = monotonic()?;
-    let first = Node::open(config)?;
+    let node = Node::open(config)?;
     #[cfg(test)]
     trace_work("mesh-open-spool", started)?;
-    let contacts = first.contacts.clone();
+    Ok(node)
+}
+
+fn directory_phase_node(
+    config: &Value,
+    stopped: &dyn Fn() -> bool,
+    phase: DirectoryPhase,
+    node: &mut Option<Node>,
+) -> Result<Vec<String>> {
+    let contacts = node
+        .as_ref()
+        .ok_or("missing initial directory turn node")?
+        .contacts
+        .clone();
     require(
         contacts
             .values()
             .all(|contact| contact.get("host").is_none()),
         "directory turn cannot retain a lease across sockets",
     )?;
-    let mut node = Some(first);
     let mut errors = Vec::new();
     for (peer, contact) in contacts {
         if stopped() {
@@ -264,7 +281,7 @@ fn directory_phase(
         }
         if node.is_none() {
             match Node::open(config) {
-                Ok(reopened) => node = Some(reopened),
+                Ok(reopened) => *node = Some(reopened),
                 Err(error) => {
                     errors.push(error);
                     continue;
@@ -285,6 +302,40 @@ fn directory_phase(
         }
     }
     Ok(errors)
+}
+
+type ReceivedFrames = Vec<(String, Vec<u8>)>;
+
+struct DirectoryReceive {
+    errors: Vec<String>,
+    frames: ReceivedFrames,
+}
+
+fn directory_receive_page(
+    config: &Value,
+    stopped: &dyn Fn() -> bool,
+    cursor: Option<&str>,
+    seen: &[String],
+) -> Result<DirectoryReceive> {
+    let mut node = Some(open_directory_node(config)?);
+    let errors = directory_phase_node(config, stopped, DirectoryPhase::Receive, &mut node)?;
+    // A failed last contact has discarded uncertain memory. Authenticate the
+    // durable image again before selecting any complete received bytes.
+    if node.is_none() {
+        node = Some(Node::open(config)?);
+    }
+    #[cfg(test)]
+    let started = monotonic()?;
+    let frames = node
+        .as_ref()
+        .ok_or("missing receive page node")?
+        .frame_page_selected(cursor, 4, seen)?;
+    #[cfg(test)]
+    trace_work("mesh-native-page", started)?;
+    // Only bounded owned bytes cross this boundary. No transport lease or
+    // transport observation initializes the Native ledger or grants authority.
+    drop(node);
+    Ok(DirectoryReceive { errors, frames })
 }
 
 fn spool_node(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
@@ -414,6 +465,17 @@ pub(super) fn tick_ledger(
     let frames = Node::open(config)?.frame_page_selected(cursor.as_deref(), 4, seen)?;
     #[cfg(test)]
     trace_work("mesh-native-page", started)?;
+    tick_ledger_frames(options, config, runtime, cursor, seen, frames)
+}
+
+fn tick_ledger_frames(
+    options: &Options,
+    config: &Value,
+    runtime: &mut Option<super::bft::Runtime>,
+    cursor: &mut Option<String>,
+    seen: &mut Vec<String>,
+    frames: ReceivedFrames,
+) -> Result<Value> {
     #[cfg(test)]
     let started = monotonic()?;
     let mut store = Store::open(&options.ledger, &options.authority, options.currency)?;
@@ -527,8 +589,9 @@ fn directory_ledger_turn_stopped(
     seen: &mut Vec<String>,
     stopped: &dyn Fn() -> bool,
 ) -> Result<Value> {
-    let mut errors = directory_phase(config, stopped, DirectoryPhase::Receive)?;
-    let result = tick_ledger(options, config, runtime, cursor, seen);
+    let received = directory_receive_page(config, stopped, cursor.as_deref(), seen)?;
+    let mut errors = received.errors;
+    let result = tick_ledger_frames(options, config, runtime, cursor, seen, received.frames);
     if result
         .as_ref()
         .err()
@@ -778,14 +841,83 @@ mod tests {
         }
         assert!(cursor.is_none() && seen.is_empty());
         assert_eq!(held.storage_head().unwrap(), head);
+        let failure =
+            directory_ledger_turn(&options, &config, &mut runtime, &mut cursor, &mut seen)
+                .unwrap_err();
+        assert!(lock_contention(&failure));
+        assert!(cursor.is_none() && seen.is_empty());
+        assert_eq!(held.storage_head().unwrap(), head);
+        // Capture and the Native refusal both release transport custody leases.
+        drop(Node::open(&config).unwrap());
         drop(held);
         let status = tick_ledger(&options, &config, &mut runtime, &mut cursor, &mut seen).unwrap();
+        assert_eq!(status["progress_observation_available"], true);
+        assert_eq!(status["local_height"], 0);
+        let status =
+            directory_ledger_turn(&options, &config, &mut runtime, &mut cursor, &mut seen).unwrap();
         assert_eq!(status["progress_observation_available"], true);
         assert_eq!(status["local_height"], 0);
         let cold = Store::open_pinned(&options.ledger, &options.authority, currency, head).unwrap();
         assert_eq!(cold.chain.height(), 0);
         assert_eq!(cold.chain.ledger.minted, crate::Amount::ZERO);
         drop(cold);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn failed_last_directory_contact_reopens_durable_receive_state() {
+        let root = directory(
+            &fs::canonicalize(std::env::temp_dir())
+                .unwrap()
+                .join(format!("rld-rust-receive-page-{}", random().unwrap())),
+        )
+        .unwrap();
+        let genesis = crate::tests::bootstrap();
+        let currency = genesis.currency.id().unwrap();
+        let region = genesis.admissions[0].id().unwrap();
+        let transport = root.join("transport");
+        initialize(
+            &transport,
+            &currency.to_hex(),
+            &region.to_hex(),
+            "public-no-value-receive-page-test",
+        )
+        .unwrap();
+        let peer = initialize(
+            &root.join("peer"),
+            &currency.to_hex(),
+            &region.to_hex(),
+            "public-no-value-receive-page-peer",
+        )
+        .unwrap();
+        let inbox = directory(&root.join("inbox")).unwrap();
+        let config = json!({"format":MESH,"network":currency,"state":transport,
+            "contacts":[{"peer":peer["node_id"],"inbox":inbox,"outbox":root.join("outbox")}]});
+        drop(Node::open(&config).unwrap());
+        let state = transport.join("native-mesh-state.json");
+        let before = fs::read(&state).unwrap();
+        let invalid = json!({"body":{},"format":"invalid-exchange"});
+        let raw = bytes(&invalid).unwrap();
+        let path = inbox.join(format!("{}.json", digest(&invalid).unwrap()));
+        crate::keystore::private_create(&path, &raw).unwrap();
+        start_work_trace();
+        let received = directory_receive_page(&config, &|| false, None, &[]).unwrap();
+        let work = take_work_trace();
+        assert_eq!(received.errors.len(), 1);
+        assert!(received.frames.is_empty());
+        assert_eq!(fs::read(&path).unwrap(), raw);
+        assert_eq!(fs::read(&state).unwrap(), before);
+        let opens = work
+            .iter()
+            .filter(|event| event["phase"] == "mesh-state-decode-expand")
+            .map(|event| event["calls"].as_u64().unwrap_or(1))
+            .sum::<u64>();
+        assert_eq!(opens, 2, "last-contact failure reused uncertain memory");
+        drop(Node::open(&config).unwrap());
+        fs::write(&state, b"{}").unwrap();
+        assert!(directory_receive_page(&config, &|| false, None, &[]).is_err());
+        assert_eq!(fs::read(&state).unwrap(), b"{}");
+        assert_eq!(fs::read(&path).unwrap(), raw);
         fs::remove_dir_all(root).unwrap();
     }
 

@@ -590,6 +590,7 @@ fn ordinary_directory_turn_carries_new_native_owner_request_in_same_turn() {
     };
     let mut cursor = None;
     let mut seen = Vec::new();
+    super::super::service::start_work_trace();
     super::super::service::directory_ledger_turn(
         &options,
         &transport,
@@ -598,6 +599,16 @@ fn ordinary_directory_turn_carries_new_native_owner_request_in_same_turn() {
         &mut seen,
     )
     .unwrap();
+    let work = super::super::service::take_work_trace();
+    let opens = work
+        .iter()
+        .filter(|event| event["phase"] == "mesh-state-decode-expand")
+        .map(|event| event["calls"].as_u64().unwrap_or(1))
+        .sum::<u64>();
+    assert_eq!(
+        opens, 4,
+        "ordinary receive page reopened the same transport image"
+    );
     for n in 0..3 {
         let files = fs::read_dir(root.join(format!("same-out-{n}")))
             .unwrap()
