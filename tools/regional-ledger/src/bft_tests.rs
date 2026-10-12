@@ -56,7 +56,7 @@ impl Harness {
         for a in &mut package.admissions {
             a.rules = rules.into();
             if crate::paged_bft::is_profile(rules) {
-                a.value_rules = Some(crate::paged_bft::rules_hash().unwrap());
+                a.value_rules = Some(crate::paged_bft::rules_hash_for(rules).unwrap());
             }
             a.signature = signature(1, &a.bytes().unwrap());
         }
@@ -1408,3 +1408,6 @@ mod receive_phase;
 
 #[path = "bft_client_tests.rs"]
 mod bft_client_tests;
+
+#[path = "packed_bft_custody_tests.rs"]
+mod packed_custody;
