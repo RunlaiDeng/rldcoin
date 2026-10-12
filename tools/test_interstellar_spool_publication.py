@@ -15,7 +15,7 @@ from unittest.mock import patch
 import interstellar_mesh as mesh
 import interstellar_spool_codec as codec
 import interstellar_spool_reference as reference
-import interstellar_transfer as wire
+import interstellar_file_reference as wire
 
 
 class SpoolPublicationTests(unittest.TestCase):
@@ -226,7 +226,7 @@ class SpoolPublicationTests(unittest.TestCase):
         child = r'''
 import os,sys,stat
 from pathlib import Path
-import interstellar_mesh as mesh,interstellar_spool_codec as codec,interstellar_transfer as wire
+import interstellar_mesh as mesh,interstellar_spool_codec as codec,interstellar_file_reference as wire
 import interstellar_spool_reference as reference
 mesh.publish_spool=reference.publish_spool;mesh.spool_inventory=reference.spool_inventory
 root=Path(sys.argv[1]);point=sys.argv[2]

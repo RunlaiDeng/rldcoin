@@ -1,6 +1,6 @@
 """Independent Python syscall oracle; never a production native-failure fallback."""
 import os
-import interstellar_transfer as evidence
+import interstellar_file_reference as evidence
 from interstellar_mesh import MAX_STATE, MAX_MESSAGES, MAX_PACKET_BATCH, require
 
 def sync_retained(path):

@@ -6,6 +6,7 @@ import ssl
 import time
 import interstellar_mesh as mesh
 import interstellar_transfer as wire
+import interstellar_file_reference as files
 from cryptography import x509
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
 from cryptography.hazmat.primitives import serialization
@@ -44,8 +45,8 @@ def tls_material(root, network, peer):
         raw=cert.public_bytes(serialization.Encoding.PEM)+key.private_bytes(serialization.Encoding.PEM,
             serialization.PrivateFormat.PKCS8,serialization.NoEncryption())
         # One owner-only, fsynced file commits certificate and key together.
-        wire.write_new(path,raw)
-    raw=wire.read_file(path,8192)
+        files.write_new(path,raw)
+    raw=files.read_file(path,8192)
     mesh.require(path.stat().st_mode & 0o077 == 0,'TLS private file permissions too broad')
     cert=x509.load_pem_x509_certificate(raw)
     key=serialization.load_pem_private_key(raw,password=None)

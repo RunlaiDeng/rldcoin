@@ -73,7 +73,7 @@ class SpoolPhaseTests(unittest.TestCase):
                 node.tick(defer_spool_outgoing=True)
                 packet=node.enqueue(fixture.frame(),peer)
                 original=wire.canonical(node.state['messages'][packet])
-                with patch.object(wire,'write_new',side_effect=OSError('spool write failed')):
+                with patch.object(mesh,'publish_spool',side_effect=OSError('spool write failed')):
                     self.assertEqual(node.flush_spool_outgoing(),['spool write failed'])
                 self.assertNotIn(packet,node.receipts())
                 self.assertEqual(wire.canonical(node.state['messages'][packet]),original)

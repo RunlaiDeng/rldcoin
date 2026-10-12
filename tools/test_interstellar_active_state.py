@@ -157,10 +157,11 @@ mesh.atomic=atomic
 path=Path(sys.argv[1]);state=mesh.load(path,mesh.MAX_STATE);state['cursor']+=1
 boundary=sys.argv[2]
 if boundary=='before':
- original=mesh.evidence.write_new
+ import interstellar_file_reference as file_reference
+ original=file_reference.write_new
  def die(path,raw):
   original(path,raw);os.kill(os.getpid(),signal.SIGKILL)
- mesh.evidence.write_new=die
+ file_reference.write_new=die
 else:
  original=mesh.os.replace
  def die(a,b):

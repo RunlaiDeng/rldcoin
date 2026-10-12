@@ -55,12 +55,12 @@ class SpoolTraceTests(unittest.TestCase):
             trace = self.attach(node)
             packet = node.enqueue(fixture.frame(), fixture.identities['proxima']['node_id'])
             before = wire.canonical(node.state['messages'][packet])
-            write_new=wire.write_new
-            def refused(path,data):
+            publish=mesh.publish_spool
+            def refused(path,encoded,data,adapter=None):
                 if Path(path).parent in [contact['outbox'] for contact in node.contacts.values()]:
                     raise OSError('spool write refused')
-                return write_new(path,data)
-            with patch.object(wire, 'write_new', side_effect=refused):
+                return publish(path,encoded,data,adapter)
+            with patch.object(mesh, 'publish_spool', side_effect=refused):
                 self.assertEqual(node.flush_spool_outgoing(), ['spool write refused'])
             self.assertEqual(self.stages(trace, packet), ['prepare_selected', 'prepare_retained'])
             self.assertEqual(wire.canonical(node.state['messages'][packet]), before)

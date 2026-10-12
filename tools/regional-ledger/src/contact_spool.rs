@@ -206,6 +206,9 @@ unsafe fn errno_ptr() -> *mut i32 {
 #[cfg(not(any(target_os = "macos", target_os = "linux")))]
 compile_error!("native spool directory observation currently requires macOS or Linux");
 fn names(dir: &File) -> Result<Vec<String>> {
+    names_bounded(dir, MAX_FILES)
+}
+pub(super) fn names_bounded(dir: &File, bound: usize) -> Result<Vec<String>> {
     let fd = unsafe { libc::fcntl(dir.as_raw_fd(), libc::F_DUPFD_CLOEXEC, 0) };
     if fd < 0 {
         return Err(io_error(std::io::Error::last_os_error()));
@@ -241,7 +244,7 @@ fn names(dir: &File) -> Result<Vec<String>> {
             continue;
         }
         require(
-            out.len() < MAX_FILES,
+            out.len() < bound,
             "contact file capacity reached; preserve spool",
         )?;
         out.push(

@@ -100,6 +100,68 @@ fn inspect_regional(frame: &Frame, payload: &[u8]) -> Result<()> {
     )?;
     Ok(())
 }
+pub(super) fn inspect_bytes(
+    raw: &[u8],
+    source: Option<String>,
+    destination: Option<String>,
+    payload_bound: usize,
+    frame_bound: usize,
+) -> Result<(Frame, Vec<u8>)> {
+    let limits = Limits {
+        payload: payload_bound,
+        frame: frame_bound,
+    };
+    limits.check()?;
+    require(
+        !raw.is_empty() && raw.len() <= limits.frame,
+        "frame exceeds bound",
+    )?;
+    let value = crate::wallet_http::decode_unique_with_limit(raw, limits.frame)?;
+    let frame: Frame = serde_json::from_value(value).map_err(|_| "invalid evidence frame")?;
+    require(
+        frame.format == FRAME_FORMAT && KINDS.contains(&frame.kind.as_str()),
+        "invalid evidence frame",
+    )?;
+    require(
+        frame.retained_bytes()? == raw,
+        "noncanonical evidence frame",
+    )?;
+    require(
+        (frame.source_chain_id == frame.destination_chain_id) == (frame.kind == "regional-bft"),
+        "same-chain evidence frame",
+    )?;
+    if let Some(source) = source {
+        require(
+            hex::encode(frame.source_chain_id.0) == source,
+            "wrong source chain",
+        )?;
+    }
+    if let Some(destination) = destination {
+        require(
+            hex::encode(frame.destination_chain_id.0) == destination,
+            "wrong destination chain",
+        )?;
+    }
+    require(
+        frame.payload_b64.len() <= limits.payload.div_ceil(3) * 4,
+        "payload changed",
+    )?;
+    let payload = STANDARD
+        .decode(&frame.payload_b64)
+        .map_err(|_| "invalid payload encoding")?;
+    require(
+        !payload.is_empty()
+            && payload.len() <= limits.payload
+            && STANDARD.encode(&payload) == frame.payload_b64
+            && sha(&payload) == frame.payload_sha256,
+        "payload changed",
+    )?;
+    require(frame.message()? == frame.message_id, "message ID changed")?;
+    if frame.kind == "regional-bft" {
+        inspect_regional(&frame, &payload)?;
+    }
+    Ok((frame, payload))
+}
 fn execute(control: &[u8], raw: &[u8]) -> Result<(Value, Vec<u8>)> {
     let value = crate::wallet_http::decode_unique_with_limit(control, CONTROL)?;
     require(
@@ -168,52 +230,8 @@ fn execute(control: &[u8], raw: &[u8]) -> Result<(Value, Vec<u8>)> {
                 "frame exceeds bound",
             )?;
             let input_hash = bound(raw, size_bytes, &sha256)?;
-            let value = crate::wallet_http::decode_unique_with_limit(raw, limits.frame)?;
-            let frame: Frame =
-                serde_json::from_value(value).map_err(|_| "invalid evidence frame")?;
-            require(
-                frame.format == FRAME_FORMAT && KINDS.contains(&frame.kind.as_str()),
-                "invalid evidence frame",
-            )?;
-            require(
-                frame.retained_bytes()? == raw,
-                "noncanonical evidence frame",
-            )?;
-            require(
-                (frame.source_chain_id == frame.destination_chain_id)
-                    == (frame.kind == "regional-bft"),
-                "same-chain evidence frame",
-            )?;
-            if let Some(source) = source {
-                require(
-                    hex::encode(frame.source_chain_id.0) == source,
-                    "wrong source chain",
-                )?;
-            }
-            if let Some(destination) = destination {
-                require(
-                    hex::encode(frame.destination_chain_id.0) == destination,
-                    "wrong destination chain",
-                )?;
-            }
-            require(
-                frame.payload_b64.len() <= limits.payload.div_ceil(3) * 4,
-                "payload changed",
-            )?;
-            let payload = STANDARD
-                .decode(&frame.payload_b64)
-                .map_err(|_| "invalid payload encoding")?;
-            require(
-                !payload.is_empty()
-                    && payload.len() <= limits.payload
-                    && STANDARD.encode(&payload) == frame.payload_b64
-                    && sha(&payload) == frame.payload_sha256,
-                "payload changed",
-            )?;
-            require(frame.message()? == frame.message_id, "message ID changed")?;
-            if frame.kind == "regional-bft" {
-                inspect_regional(&frame, &payload)?;
-            }
+            let (frame, payload) =
+                inspect_bytes(raw, source, destination, limits.payload, limits.frame)?;
             Ok((
                 metadata(&frame, raw.len(), input_hash, payload.len()),
                 payload,

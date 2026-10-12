@@ -1140,6 +1140,7 @@ mod contact_state_codec;
 mod contact_storage;
 mod contact_tls;
 pub mod epoch;
+mod evidence_files;
 mod execution;
 pub mod history;
 pub mod history_archive;

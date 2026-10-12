@@ -1000,3 +1000,8 @@ The [native opaque frame interface](../../docs/operations/NATIVE_CONTACT_FRAME.m
 constructs and inspects the unchanged bounded evidence frames using the existing
 native frame/message-ID kernel. Its checked byte buffers grant no authentication,
 ledger or custody authority; full native evidence verification still follows.
+
+The [native evidence file/queue interface](../../docs/operations/NATIVE_EVIDENCE_FILES.md)
+owns bounded regular-file reads, exclusive byte publication and queue receive/carry.
+It preserves the original lock/capacity rules, exact frame checks and retained
+failure residue; local IO never authorizes native value or destination custody.
