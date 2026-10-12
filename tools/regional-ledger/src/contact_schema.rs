@@ -17,14 +17,14 @@ impl Limits {
         )
     }
 }
-fn exact(body: &Value, fields: &[&str], error: &str) -> Result<()> {
+pub(super) fn exact(body: &Value, fields: &[&str], error: &str) -> Result<()> {
     let map = body.as_object().ok_or(error)?;
     require(
         map.len() == fields.len() && fields.iter().all(|k| map.contains_key(*k)),
         error,
     )
 }
-fn hex(value: &Value) -> Result<()> {
+pub(super) fn hex(value: &Value) -> Result<()> {
     require(
         value.as_str().is_some_and(|s| {
             s.len() == 64
@@ -101,7 +101,7 @@ fn inventory(body: &Value, limits: &Limits) -> Result<()> {
     }
     ordered(ids, "peer inventory duplicate/order invalid")
 }
-fn route(value: &Value, network: &str) -> Result<Value> {
+pub(super) fn route(value: &Value, network: &str) -> Result<Value> {
     let body = contact_crypto::verify_value(network, "receipt-route", value)?;
     exact(
         &body,

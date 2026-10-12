@@ -1141,6 +1141,7 @@ mod contact_spool_codec;
 mod contact_state_codec;
 mod contact_storage;
 mod contact_tls;
+mod contact_transit;
 pub mod epoch;
 mod evidence_files;
 mod execution;

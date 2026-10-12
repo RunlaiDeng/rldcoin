@@ -97,5 +97,16 @@ class SchemaTests(unittest.TestCase):
                 result=dict(result);result['ledger_authority']=0
             return result
         with patch.object(engine,'call',side_effect=forged),self.assertRaises(ValueError):native.check(value,'receipt-route',NETWORK)
+    def test_changed_current_native_provider_cannot_use_import_time_function(self):
+        import interstellar_crypto as crypto
+        value=self.route();self.compare(value,'receipt-route')
+        class ChangedProvider:
+            def __init__(self):self.calls=0
+            def call(self,request):self.calls+=1;raise ValueError('MODEL_CHANGED_SCHEMA_PROVIDER_REFUSES')
+        provider=ChangedProvider()
+        with patch.object(crypto,'backend',return_value=provider):
+            with self.assertRaisesRegex(ValueError,'MODEL_CHANGED_SCHEMA_PROVIDER_REFUSES'):
+                native.check(value,'receipt-route',NETWORK)
+        self.assertEqual(provider.calls,1)
 
 if __name__=='__main__':unittest.main()

@@ -1,5 +1,5 @@
 """Native exact transport schemas; all native ledger/value gates remain separate."""
-from interstellar_crypto import backend
+import interstellar_crypto as crypto
 FORMAT='RLD-NATIVE-CONTACT-SCHEMA-V1'
 KINDS=('advert','inventory','receipt-route','receipt')
 def check(value,kind,network):
@@ -7,7 +7,7 @@ def check(value,kind,network):
     if (kind not in KINDS or type(mesh.MAX_CONTACTS) is not int or not 0<=mesh.MAX_CONTACTS<=16
         or type(mesh.MAX_MESSAGES) is not int or not 0<=mesh.MAX_MESSAGES<=256):
         raise ValueError('native contact schema limits/kind differ')
-    result=backend().call({'Schema':dict(kind=kind,network=network,signed=value,
+    result=crypto.backend().call({'Schema':dict(kind=kind,network=network,signed=value,
                              limits=dict(contacts=mesh.MAX_CONTACTS,messages=mesh.MAX_MESSAGES))})
     if (type(result) is not dict or set(result)!={'format','kind','network','body','transport_authenticated','ledger_authority','custody_acknowledgment'}
         or result['format']!=FORMAT or result['kind']!=kind or result['network']!=network

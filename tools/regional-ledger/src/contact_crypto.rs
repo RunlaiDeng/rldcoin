@@ -46,6 +46,7 @@ struct Signed {
 enum Request {
     Info,
     Tls(crate::contact_tls::Request),
+    Transit(crate::contact_transit::Request),
     Initialize {
         root: PathBuf,
         network: String,
@@ -289,6 +290,7 @@ fn execute(raw: &[u8]) -> Result<Value> {
     )?;
     let request: Request = serde_json::from_value(value).map_err(|e| e.to_string())?;
     match request {
+        Request::Transit(request) => crate::contact_transit::execute(request),
         Request::Tls(request) => crate::contact_tls::execute(request),
         Request::Info => Ok(
             serde_json::json!({"mesh":MESH,"active_storage":ACTIVE,"archive_storage":ARCHIVE,

@@ -1015,3 +1015,7 @@ The [native signed schema interface](../../docs/operations/NATIVE_CONTACT_SCHEMA
 combines existing transport signature verification with advertisement/inventory/
 receipt route/destination field and ordering rules. Its checked metadata remains
 separate from native ledger acceptance and actual durable custody.
+
+The [native complete transit interface](../../docs/operations/NATIVE_CONTACT_TRANSIT.md)
+checks exact packet/frame/source-route/hop composition under the original limits.
+Signed carriage and visited paths grant no ledger or custody authority.

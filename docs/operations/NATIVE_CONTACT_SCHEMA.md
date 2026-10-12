@@ -45,7 +45,8 @@ receipts do not authorize a ledger, validator, issuance, signing, finality, impo
 maturity, spendability or refund. Actual durable custody and complete native
 ledger/BFT/owner verification remain separate and mandatory.
 
-Packet/frame/hop composition, mesh scheduling, service orchestration and remaining
+Complete packet/frame/hop checks use the separate [native transit interface](NATIVE_CONTACT_TRANSIT.md).
+Mesh scheduling, service orchestration and remaining
 wallet/runtime functions continue to require migration. Finite same-host fixtures
 do not qualify independent security/custody, full faults/load, long history,
 cryptographic adoption, physical routes or mainnet. Changed native source requires
