@@ -428,6 +428,106 @@ pub fn info() -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // These deterministic public keys are solely no-value transport inputs.
+    fn signed_input(seed: u8, kind: &str, body: Value) -> Value {
+        let key = SigningKey::from_bytes(&[seed; 32]);
+        serde_json::json!({"body":body,"public_key":hex::encode(key.verifying_key().as_bytes()),
+            "signature":hex::encode(key.sign(&signature_bytes(kind, &body).unwrap()).to_bytes())})
+    }
+
+    #[test]
+    fn complete_receipt_schema_revalidates_nested_route_and_changed_domains() {
+        use std::{hint::black_box, time::Instant};
+        let network = hex::encode([31; 32]);
+        let source = node_id(&hex::encode(
+            SigningKey::from_bytes(&[61; 32]).verifying_key().as_bytes(),
+        ))
+        .unwrap();
+        let destination = node_id(&hex::encode(
+            SigningKey::from_bytes(&[62; 32]).verifying_key().as_bytes(),
+        ))
+        .unwrap();
+        let route = signed_input(
+            61,
+            "receipt-route",
+            serde_json::json!({"format":MESH,
+            "network":network,"node_id":source,"packet_id":hex::encode([41;32]),
+            "destination":destination,"frame_id":hex::encode([43;32])}),
+        );
+        let receipt = signed_input(
+            62,
+            "receipt",
+            serde_json::json!({"format":MESH,
+            "network":network,"node_id":destination,"packet_id":hex::encode([41;32]),
+            "frame_id":hex::encode([43;32]),"routing":route,
+            "outcome":"EVIDENCE_STORED_NOT_LEDGER_ACCEPTED"}),
+        );
+        let limits = crate::contact_schema::Limits::new(16, 256);
+        let check = |value: &Value, network: &str, kind: &str| {
+            let request = serde_json::json!({"Schema":{"network":network,"kind":kind,
+                "signed":value,"limits":{"contacts":16,"messages":256}}});
+            let wire = execute(&files::canonical_with_limit(&request, MAX_ABI).unwrap());
+            let typed = crate::contact_schema::verify(network, kind, value, &limits);
+            assert_eq!(wire, typed);
+            wire
+        };
+        let expected = check(&receipt, &network, "receipt").unwrap();
+        assert_eq!(expected["ledger_authority"], false);
+        assert_eq!(expected["custody_acknowledgment"], false);
+        assert!(check(&receipt, &hex::encode([32; 32]), "receipt").is_err());
+        assert!(check(&receipt, &network, "inventory").is_err());
+        let mut bad = receipt.clone();
+        bad["body"]["packet_id"] = serde_json::json!(hex::encode([42; 32]));
+        assert!(check(&bad, &network, "receipt").is_err());
+        let mut body = receipt["body"].clone();
+        body["routing"]["signature"] = serde_json::json!("00".repeat(64));
+        // Re-sign the outer receipt: the nested source route must still refuse.
+        assert!(check(&signed_input(62, "receipt", body), &network, "receipt").is_err());
+        let mut bad = receipt.clone();
+        bad["extra"] = serde_json::json!(true);
+        assert!(check(&bad, &network, "receipt").is_err());
+
+        let started = Instant::now();
+        let mut encode = 0.0;
+        let mut decode = 0.0;
+        let mut native = 0.0;
+        for _ in 0..256 {
+            assert!(
+                started.elapsed().as_secs() < 10,
+                "receipt discriminator budget exhausted"
+            );
+            let phase = Instant::now();
+            let request = serde_json::json!({"Schema":{"network":network,"kind":"receipt",
+                "signed":receipt,"limits":{"contacts":16,"messages":256}}});
+            let raw = files::canonical_with_limit(&request, MAX_ABI).unwrap();
+            encode += phase.elapsed().as_secs_f64();
+            let phase = Instant::now();
+            let value = crate::wallet_http::decode_unique_with_limit(&raw, MAX_ABI).unwrap();
+            assert_eq!(files::canonical_with_limit(&value, MAX_ABI).unwrap(), raw);
+            let Request::Schema {
+                network,
+                kind,
+                limits,
+                signed,
+            } = serde_json::from_value(value).unwrap()
+            else {
+                panic!("receipt request kind")
+            };
+            decode += phase.elapsed().as_secs_f64();
+            let phase = Instant::now();
+            let checked = crate::contact_schema::verify(&network, &kind, &signed, &limits).unwrap();
+            native += phase.elapsed().as_secs_f64();
+            assert_eq!(black_box(checked), expected);
+        }
+        eprintln!(
+            "{}",
+            serde_json::json!({"receipt_discriminator":{"iterations":256,
+            "encode_seconds":encode,"decode_seconds":decode,"signature_schema_seconds":native,
+            "whole_seconds":started.elapsed().as_secs_f64(),"ledger_authority":false}})
+        );
+    }
+
     #[test]
     fn domains_are_closed_and_hex_is_exact() {
         assert!(domain("bft-commit").is_err());
