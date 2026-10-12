@@ -311,27 +311,13 @@ def initialize(root, network, region, label):
 
 
 def tcp_endpoint(host, port, listening=False):
-    require(isinstance(host, str) and len(host) <= 15, 'TCP host must be a literal IPv4 address')
-    address = ipaddress.IPv4Address(host)
-    integer(port, 0 if listening else 1, 65535)
-    require(not address.is_multicast and host != '255.255.255.255'
-            and (listening or not address.is_unspecified), 'invalid TCP endpoint')
-    return str(address), port
+    from interstellar_config_native import tcp_endpoint as native_check
+    return native_check(host, port, listening)
 
 
 def contact_schema(contact):
-    require(isinstance(contact,dict) and set(contact) in
-            ({'peer','inbox','outbox'},{'peer','host','port'},
-             {'peer','host','port','tls_cert_sha256'},
-             {'peer','adapter','inbox'},{'peer','adapter','outbox'},
-             {'peer','adapter','inbox','outbox'}),
-            'invalid contact')
-    if 'adapter' in contact:
-        require(contact['adapter'] == spool_codec.FORMAT or
-                (contact['adapter'] == SPOOL_ONEWAY and
-                 set(contact) in ({'peer','adapter','inbox'}, {'peer','adapter','outbox'})),
-                'unsupported spool adapter')
-    return contact
+    from interstellar_config_native import contact_schema as native_check
+    return native_check(contact)
 
 
 def outgoing_contact(contact):
@@ -350,10 +336,10 @@ def empty_first_carriage():
 
 class Node:
     def __init__(self, config, nonblocking=False):
-        require(isinstance(config, dict) and set(config) == {'format', 'state', 'network', 'contacts'}, 'invalid config fields')
-        require(config['format'] == VERSION, 'unsupported config')
+        import interstellar_config_native as native_config
+        native_config.header(config)
         self.root = safe_dir(config['state'])
-        self.network = hex32(config['network'])
+        self.network = native_config.identifier(config['network'])
         self.lock = None
         try:
             from interstellar_process_lock import Lock
@@ -362,26 +348,7 @@ class Node:
             identity=native_inspect(self.root/'identity.private.json',self.network)
             self.key=NativeSigner(self.root/'identity.private.json',identity)
             self.id=identity['node_id']
-            contacts = config['contacts']
-            require(isinstance(contacts, list) and len(contacts) <= MAX_CONTACTS, 'contact capacity reached')
-            self.contacts = {}
-            for contact in contacts:
-                contact_schema(contact)
-                peer = hex32(contact['peer'])
-                require(peer != self.id and peer not in self.contacts, 'duplicate or self contact')
-                if 'host' in contact:
-                    host, port = tcp_endpoint(contact['host'], contact['port'])
-                    self.contacts[peer] = {'host': host, 'port': port}
-                    if 'tls_cert_sha256' in contact:
-                        self.contacts[peer]['tls_cert_sha256'] = hex32(contact['tls_cert_sha256'])
-                else:
-                    self.contacts[peer] = {k: safe_dir(contact[k]) for k in ('inbox', 'outbox') if k in contact}
-                    if contact.get('adapter') == spool_codec.FORMAT:
-                        self.contacts[peer]['adapter'] = spool_codec.FORMAT
-                    if 'inbox' in contact and 'outbox' in contact:
-                        require(self.contacts[peer]['inbox'] != self.contacts[peer]['outbox'], 'contact directions must differ')
-            dirs = [p for contact in self.contacts.values() for name,p in contact.items() if name in ('inbox','outbox')]
-            require(len(set(dirs)) == len(dirs), 'contact spools must be distinct')
+            self.contacts = native_config.contacts(config, self.id)
             self.path = self.root / 'mesh-state.json'
             self.archive_root = safe_dir(self.root / 'archive')
             require(not self.path.is_symlink(), 'symlink state refused')

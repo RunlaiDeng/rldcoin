@@ -1024,3 +1024,8 @@ The [native signed exchange/TCP interface](../../docs/operations/NATIVE_CONTACT_
 checks configured caller bindings, fresh challenges and exact prepared exchanges.
 Outer signature checks preserve separate complete item validation and durable
 receive before acknowledgment or suppression.
+
+The [native configured-contact interface](../../docs/operations/NATIVE_CONTACT_CONFIG.md)
+validates exact local contact shapes, identifiers, literal endpoints and spool
+uniqueness while retaining the original native directory/lock/publication order.
+Configured peers and candidate routes remain separate from ledger authority.

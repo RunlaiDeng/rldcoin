@@ -48,6 +48,7 @@ enum Request {
     Tls(crate::contact_tls::Request),
     Transit(crate::contact_transit::Request),
     Exchange(crate::contact_exchange::Control),
+    Config(crate::contact_config::Control),
     Initialize {
         root: PathBuf,
         network: String,
@@ -291,6 +292,7 @@ fn execute(raw: &[u8]) -> Result<Value> {
     )?;
     let request: Request = serde_json::from_value(value).map_err(|e| e.to_string())?;
     match request {
+        Request::Config(request) => crate::contact_config::execute(request),
         Request::Exchange(request) => crate::contact_exchange::execute(request),
         Request::Transit(request) => crate::contact_transit::execute(request),
         Request::Tls(request) => crate::contact_tls::execute(request),
