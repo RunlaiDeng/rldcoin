@@ -1034,3 +1034,8 @@ The [native candidate routing interface](../../docs/operations/NATIVE_CONTACT_RO
 performs the original ordered breadth-first search on the bounded graph projection.
 Full signed-state authentication and configured endpoints stay separate; a path
 does not grant contact, custody, ledger or value authority.
+
+The [native first-carriage interface](../../docs/operations/NATIVE_FIRST_CARRIAGE.md)
+plans original ordered admission and rotating background IDs. Its scoped callback
+keeps complete native eligibility checks in their original order; construction
+never publishes custody or alters the existing complete preparation boundary.

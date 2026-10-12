@@ -1131,6 +1131,7 @@ pub mod channels;
 pub mod cold_plan;
 pub mod conflict;
 pub mod contact;
+mod contact_carriage;
 mod contact_config;
 pub mod contact_crypto;
 mod contact_exchange;

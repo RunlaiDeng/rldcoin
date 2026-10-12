@@ -370,7 +370,9 @@ pub(crate) fn output_with(
     let reply = serde_json::json!({"format":FORMAT,"implementation":crate::implementation().ok(),
         "request_sha256":Hash(Sha256::digest(raw).into()),"success":success,"value":value,"error":error,
         "ledger_authority":false,"durable_custody_qualified":false,"independent_security_qualified":false});
-    let encoded = if crate::contact_routing::is_result(&reply["value"]) {
+    let encoded = if crate::contact_routing::is_result(&reply["value"])
+        || crate::contact_carriage::is_result(&reply["value"])
+    {
         crate::contact_routing::canonical(&reply, MAX_ABI)
     } else {
         files::canonical_with_limit(&reply, MAX_ABI)
