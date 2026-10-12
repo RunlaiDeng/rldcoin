@@ -563,6 +563,26 @@ impl Runtime {
         self.persist(node)
     }
 
+    fn carriage_frame(&self, id: Hash) -> Result<Frame> {
+        let record = &self.archive.runtime.messages[&id];
+        let envelope: net::WireEnvelope =
+            serde_json::from_value(self.archive.envelope(record)?).map_err(|e| e.to_string())?;
+        let raw = files::canonical_with_limit(&envelope, crate::contact::MAX_PAYLOAD)?;
+        let payload = Hash(Sha256::digest(&raw).into());
+        let mut frame = Frame {
+            format: crate::contact::FRAME_FORMAT.into(),
+            kind: "regional-bft".into(),
+            source_chain_id: envelope.region,
+            destination_chain_id: envelope.region,
+            export_id: payload,
+            payload_sha256: payload,
+            payload_b64: STANDARD.encode(raw),
+            message_id: Hash::ZERO,
+        };
+        frame.message_id = frame.message()?;
+        Ok(frame)
+    }
+
     pub(crate) fn broadcast(&mut self, transport: &Value) -> Result<()> {
         let mut mesh = Node::open(transport)?;
         // The mesh relays each original packet to its pinned destination.
@@ -583,6 +603,7 @@ impl Runtime {
         let start = (self.archive.runtime.cursor as usize) % records.len();
         records.rotate_left(start);
         let mut current = Vec::new();
+        let mut originated = None;
         for id in &records {
             let body: net::Body =
                 serde_json::from_value(self.archive.runtime.messages[id].body.clone())
@@ -622,6 +643,38 @@ impl Runtime {
             .take(3)
             .map(|(_, id)| id)
             .collect::<Vec<_>>();
+        // Preserve three current consensus slots. Give one new, Native-checked
+        // local owner request its first origination before historical retries.
+        // Durable exact mesh packets, including cold authenticated archives,
+        // decide only whether first origination occurred for every destination.
+        for id in &records {
+            let body: net::Body =
+                serde_json::from_value(self.archive.runtime.messages[id].body.clone())
+                    .map_err(|e| e.to_string())?;
+            if !matches!(body, net::Body::Submission(_)) {
+                continue;
+            }
+            if originated.is_none() {
+                originated = Some(mesh.originated_frames()?);
+            }
+            let frame = self.carriage_frame(*id)?;
+            let mut pending = false;
+            for validator in &self.config.validators {
+                if validator.node_id != mesh.id
+                    && !originated
+                        .as_ref()
+                        .ok_or("first-origination observation missing")?
+                        .contains(&(frame.message_id, validator.node_id.clone()))
+                {
+                    pending = true;
+                    break;
+                }
+            }
+            if pending {
+                selected.push(*id);
+                break;
+            }
+        }
         for id in records {
             if selected.len() == 4 {
                 break;
@@ -631,24 +684,7 @@ impl Runtime {
             }
         }
         for id in &selected {
-            let record = &self.archive.runtime.messages[id];
-            let envelope: net::WireEnvelope =
-                serde_json::from_value(self.archive.envelope(record)?)
-                    .map_err(|e| e.to_string())?;
-            let raw = files::canonical_with_limit(&envelope, crate::contact::MAX_PAYLOAD)?;
-            let payload = Hash(Sha256::digest(&raw).into());
-            let mut frame = Frame {
-                format: crate::contact::FRAME_FORMAT.into(),
-                kind: "regional-bft".into(),
-                source_chain_id: envelope.region,
-                destination_chain_id: envelope.region,
-                export_id: payload,
-                payload_sha256: payload,
-                payload_b64: STANDARD.encode(raw),
-                message_id: Hash::ZERO,
-            };
-            frame.message_id = frame.message()?;
-            let raw = frame.retained_bytes()?;
+            let raw = self.carriage_frame(*id)?.retained_bytes()?;
             for validator in &self.config.validators {
                 if validator.node_id != mesh.id {
                     mesh.enqueue(&raw, &validator.node_id)?;

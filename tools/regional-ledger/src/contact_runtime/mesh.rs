@@ -1,8 +1,9 @@
 use super::*;
+use crate::Hash;
 use base64::{engine::general_purpose::STANDARD, Engine};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 
 const ACTIVE: &str = "RLD-CONTACT-ACTIVE-SHARED-FRAME-V1";
@@ -469,6 +470,64 @@ impl Node {
         Ok(result)
     }
 
+    pub(crate) fn originated_frame(
+        &self,
+        frame: Hash,
+        destination: &str,
+    ) -> Result<Option<String>> {
+        identifier(destination)?;
+        // A fully authenticated local packet proves first origination only.
+        // It grants no peer custody, receipt, Native acceptance or finality.
+        for (id, t) in &self.state.messages {
+            if t["packet"]["body"]["node_id"] == self.id
+                && t["packet"]["body"]["destination"] == destination
+                && t["routing"]["body"]["frame_id"] == frame.to_hex()
+            {
+                return Ok(Some(id.clone()));
+            }
+        }
+        for (id, object) in &self.state.archives {
+            let a = self.archive(id, object)?;
+            let t = &a["transit"];
+            if t["packet"]["body"]["node_id"] == self.id
+                && t["packet"]["body"]["destination"] == destination
+                && t["routing"]["body"]["frame_id"] == frame.to_hex()
+            {
+                return Ok(Some(id.clone()));
+            }
+        }
+        Ok(None)
+    }
+
+    pub(crate) fn originated_frames(&self) -> Result<BTreeSet<(Hash, String)>> {
+        let mut frames = BTreeSet::new();
+        let mut include = |transit: &Value| -> Result<()> {
+            if transit["packet"]["body"]["node_id"] == self.id {
+                let destination = transit["packet"]["body"]["destination"]
+                    .as_str()
+                    .ok_or("originated packet destination")?;
+                identifier(destination)?;
+                let frame = Hash::from_hex(
+                    transit["routing"]["body"]["frame_id"]
+                        .as_str()
+                        .ok_or("originated packet frame identity")?,
+                )
+                .map_err(|e| format!("{e:?}"))?;
+                frames.insert((frame, destination.to_owned()));
+            }
+            Ok(())
+        };
+        for transit in self.state.messages.values() {
+            include(transit)?;
+        }
+        for (id, object) in &self.state.archives {
+            include(&self.archive(id, object)?["transit"])?;
+        }
+        // One bounded, call-local scheduling observation avoids re-reading
+        // every complete archive for each historical owner submission.
+        Ok(frames)
+    }
+
     pub fn enqueue(&mut self, raw: &[u8], destination: &str) -> Result<String> {
         identifier(destination)?;
         let (frame, _) = crate::contact_frame::inspect_bytes(
@@ -479,23 +538,8 @@ impl Node {
             crate::contact::MAX_FRAME,
         )?;
         // Duplicate matching is scoped by destination and complete frame; no new packet is needed.
-        for (id, t) in &self.state.messages {
-            if t["packet"]["body"]["node_id"] == self.id
-                && t["packet"]["body"]["destination"] == destination
-                && t["routing"]["body"]["frame_id"] == frame.message_id.to_hex()
-            {
-                return Ok(id.clone());
-            }
-        }
-        for (id, object) in &self.state.archives {
-            let a = self.archive(id, object)?;
-            let t = &a["transit"];
-            if t["packet"]["body"]["node_id"] == self.id
-                && t["packet"]["body"]["destination"] == destination
-                && t["routing"]["body"]["frame_id"] == frame.message_id.to_hex()
-            {
-                return Ok(id.clone());
-            }
+        if let Some(id) = self.originated_frame(frame.message_id, destination)? {
+            return Ok(id);
         }
         require(
             self.state.messages.len() < MAX_MESSAGES,

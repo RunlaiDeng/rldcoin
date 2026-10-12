@@ -64,6 +64,14 @@ submissions are typed native inputs; enqueue alone never debits. Three ordered
 configured votes out of four remain mandatory where the signed Admission rules
 require BFT; legacy thresholds are never lowered.
 
+Each broadcast retains up to three current consensus messages and a maximum
+of four envelopes overall. One local owner submission that lacks an exact
+durable originated packet for any configured validator precedes historical
+retries. After first origination for all destinations, it returns to ordinary
+rotation. Cold authenticated mesh records preserve this distinction; missing
+peer receipts still retain normal retransmission. Local origination grants
+no peer custody, ledger acceptance, debit, maturity or finality.
+
 Ordinary candidates include pending imports from fully Native-authenticated
 contact records as well as owner submissions. Complete-origin profiles also
 retain their separate complete-history import selection. Proof receipt and

@@ -240,6 +240,142 @@ fn source_checkpoint(source: &mut Store, seeds: &[u8]) -> Result<()> {
 }
 
 #[test]
+fn new_owner_submission_first_carriage_precedes_retained_historical_votes() {
+    let mut f = Fixture::new().unwrap();
+    eprintln!("Fresh first-carriage fixture: {}", f.root.display());
+    f.node.contact_apply(&f.raw, None).unwrap();
+    for _ in 0..3 {
+        let candidate = f.candidate().unwrap();
+        f.finalize(candidate).unwrap();
+    }
+    let input = *f
+        .node
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, c)| c.payment.owner == public(11) && c.mature <= 3)
+        .unwrap()
+        .0;
+    let intent = Intent {
+        currency: f.node.trust.currency().unwrap(),
+        region: f.node.chain.region,
+        inputs: vec![input],
+        outputs: vec![Payment {
+            owner: public(13),
+            amount: Amount(98),
+        }],
+        fee: Amount::ZERO,
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through: 4,
+    };
+    let commands = vec![Command::Spend(Box::new(SignedIntent {
+        approvals: vec![Approval {
+            key: public(11),
+            signature: signature(11, &intent.bytes().unwrap()),
+        }],
+        intent,
+    }))];
+    let body = serde_json::to_value(net::Body::Submission(commands.clone())).unwrap();
+    f.node.bft_submit(commands).unwrap();
+    // This stopped component observes submission carriage without proposing a
+    // fourth block. All three predecessors used real Native certificates.
+    f.actors[0].config.stop_height = 3;
+    f.actors[0].tick(&mut f.node).unwrap();
+    let local = f.actors[0]
+        .archive
+        .runtime
+        .messages
+        .iter()
+        .filter(|(_, r)| r.local)
+        .map(|(id, _)| *id)
+        .collect::<Vec<_>>();
+    let submission = hash(&body).unwrap();
+    assert!(local.len() > 4);
+    let position = local.iter().position(|id| *id == submission).unwrap();
+    // A permitted cursor starts at historical bodies, with the new request
+    // immediately behind the ordinary four-item page.
+    f.actors[0].archive.runtime.cursor = ((position + 1) % local.len()) as u64;
+    let validators = f.actors[0]
+        .config
+        .validators
+        .iter()
+        .map(|v| v.node_id.clone())
+        .collect::<Vec<_>>();
+    let currency = f.node.trust.currency().unwrap();
+    let transport = json!({"format":MESH,"network":currency,"state":f.root.join("transport-0"),
+        "contacts":validators.iter().skip(1).enumerate().map(|(n, peer)|json!({"peer":peer,
+            "inbox":f.root.join(format!("inbox-{n}")),"outbox":f.root.join(format!("outbox-{n}"))})).collect::<Vec<_>>()});
+    let head = f.node.storage_head().unwrap();
+    let deferred = local[(position + 4) % local.len()];
+    let deferred_frame = f.actors[0].carriage_frame(deferred).unwrap().message_id;
+    let request_frame = f.actors[0].carriage_frame(submission).unwrap().message_id;
+    f.actors[0].broadcast(&transport).unwrap();
+    let mut packets = Vec::new();
+    for peer in validators.iter().skip(1) {
+        let bundle = Node::open(&transport).unwrap().prepare(peer).unwrap();
+        let transits = bundle["body"]["transits"].as_array().unwrap();
+        assert!(transits.len() <= 4);
+        let mut found = false;
+        for transit in transits {
+            let raw = STANDARD
+                .decode(transit["packet"]["body"]["frame"].as_str().unwrap())
+                .unwrap();
+            let (_, payload) = crate::contact_frame::inspect_bytes(
+                &raw,
+                None,
+                None,
+                crate::contact::MAX_PAYLOAD,
+                crate::contact::MAX_FRAME,
+            )
+            .unwrap();
+            let envelope = crate::bft_client::decode::<net::WireEnvelope>(&payload)
+                .unwrap()
+                .expand()
+                .unwrap();
+            envelope.verify(&f.node).unwrap();
+            found |= serde_json::to_value(envelope.body).unwrap() == body;
+        }
+        assert!(found, "first carriage omitted the new Native owner request");
+        let mesh = Node::open(&transport).unwrap();
+        packets.push(mesh.originated_frame(request_frame, peer).unwrap().unwrap());
+        assert!(mesh
+            .originated_frame(deferred_frame, peer)
+            .unwrap()
+            .is_none());
+    }
+    // A cold authenticated mesh observation retires first-origination priority,
+    // even without any peer receipt. The normal historical page is eligible.
+    f.actors[0].archive.runtime.cursor = ((position + 1) % local.len()) as u64;
+    f.actors[0].broadcast(&transport).unwrap();
+    for (peer, packet) in validators.iter().skip(1).zip(packets) {
+        let mesh = Node::open(&transport).unwrap();
+        assert_eq!(
+            mesh.originated_frame(request_frame, peer).unwrap(),
+            Some(packet)
+        );
+        assert!(mesh
+            .originated_frame(deferred_frame, peer)
+            .unwrap()
+            .is_some());
+    }
+    assert_eq!(f.node.storage_head().unwrap(), head);
+    assert!(f.node.chain.ledger.coins.contains_key(&input));
+    assert_eq!(f.node.chain.height(), 3);
+    let root = f.root.clone();
+    drop(f.actors);
+    drop(f.node);
+    let cold = Store::open_pinned(&root.join("recipient"), &public(1), currency, head).unwrap();
+    assert!(cold.chain.ledger.coins.contains_key(&input));
+    assert_eq!(cold.chain.height(), 3);
+    drop(cold);
+    drop(f.source);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn ordinary_rust_candidate_imports_retained_proof_then_finalizes_recipient_spend() {
     let mut f = Fixture::new().unwrap();
     let initial_head = f.node.storage_head().unwrap();
