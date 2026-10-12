@@ -1029,3 +1029,8 @@ The [native configured-contact interface](../../docs/operations/NATIVE_CONTACT_C
 validates exact local contact shapes, identifiers, literal endpoints and spool
 uniqueness while retaining the original native directory/lock/publication order.
 Configured peers and candidate routes remain separate from ledger authority.
+
+The [native candidate routing interface](../../docs/operations/NATIVE_CONTACT_ROUTING.md)
+performs the original ordered breadth-first search on the bounded graph projection.
+Full signed-state authentication and configured endpoints stay separate; a path
+does not grant contact, custody, ledger or value authority.

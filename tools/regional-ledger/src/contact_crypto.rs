@@ -49,6 +49,7 @@ enum Request {
     Transit(crate::contact_transit::Request),
     Exchange(crate::contact_exchange::Control),
     Config(crate::contact_config::Control),
+    Routing(crate::contact_routing::Search),
     Initialize {
         root: PathBuf,
         network: String,
@@ -286,12 +287,18 @@ pub(crate) fn verify_value(network: &str, kind: &str, value: &Value) -> Result<V
 }
 fn execute(raw: &[u8]) -> Result<Value> {
     let value = crate::wallet_http::decode_unique_with_limit(raw, MAX_ABI)?;
-    require(
-        files::canonical_with_limit(&value, MAX_ABI)? == raw,
-        "contact ABI noncanonical input",
-    )?;
+    let canonical = if value
+        .as_object()
+        .is_some_and(|map| map.len() == 1 && map.contains_key("Routing"))
+    {
+        crate::contact_routing::canonical(&value, MAX_ABI)?
+    } else {
+        files::canonical_with_limit(&value, MAX_ABI)?
+    };
+    require(canonical == raw, "contact ABI noncanonical input")?;
     let request: Request = serde_json::from_value(value).map_err(|e| e.to_string())?;
     match request {
+        Request::Routing(request) => crate::contact_routing::execute(request),
         Request::Config(request) => crate::contact_config::execute(request),
         Request::Exchange(request) => crate::contact_exchange::execute(request),
         Request::Transit(request) => crate::contact_transit::execute(request),
@@ -363,7 +370,12 @@ pub(crate) fn output_with(
     let reply = serde_json::json!({"format":FORMAT,"implementation":crate::implementation().ok(),
         "request_sha256":Hash(Sha256::digest(raw).into()),"success":success,"value":value,"error":error,
         "ledger_authority":false,"durable_custody_qualified":false,"independent_security_qualified":false});
-    files::canonical_with_limit(&reply, MAX_ABI).unwrap_or_else(|_| b"{}".to_vec())
+    let encoded = if crate::contact_routing::is_result(&reply["value"]) {
+        crate::contact_routing::canonical(&reply, MAX_ABI)
+    } else {
+        files::canonical_with_limit(&reply, MAX_ABI)
+    };
+    encoded.unwrap_or_else(|_| b"{}".to_vec())
 }
 /// Run one bounded transport operation; no private bytes cross the output ABI.
 ///

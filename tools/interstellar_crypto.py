@@ -33,8 +33,10 @@ class Backend:
         return self.invoke(self.library.rld_contact_crypto,request)
 
     def invoke(self,operation,request,*arguments):
-        raw=wire.canonical(request)
-        if not 0<len(raw)<=MAX_ABI:raise ValueError('native contact ABI byte bound')
+        return self.invoke_raw(operation,wire.canonical(request),*arguments)
+
+    def invoke_raw(self,operation,raw,*arguments):
+        if type(raw) is not bytes or not 0<len(raw)<=MAX_ABI:raise ValueError('native contact ABI byte bound')
         memory=(ctypes.c_ubyte*len(raw)).from_buffer_copy(raw)
         result=operation(memory,len(raw),*arguments)
         try:

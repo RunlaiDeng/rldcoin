@@ -781,24 +781,8 @@ class Node:
         return count
 
     def route(self, destination, excluded=(), first_hop=None):
-        if destination == self.id:
-            return [self.id]
-        frontier, seen = [[self.id]], set(excluded) | {self.id}
-        while frontier:
-            path = frontier.pop(0)
-            advert = self.state['adverts'].get(path[-1])
-            if not advert:
-                continue
-            for peer in advert['body']['neighbors']:
-                if peer in seen or (len(path) == 1 and
-                        (peer not in self.contacts or not outgoing_contact(self.contacts[peer])
-                         or (first_hop is not None and peer != first_hop))):
-                    continue
-                if peer == destination:
-                    return path + [peer]
-                seen.add(peer)
-                frontier.append(path + [peer])
-        return None
+        from interstellar_routing_native import route as native_route
+        return native_route(self, destination, excluded, first_hop)
 
     def enqueue(self, frame, destination, hop_limit=MAX_HOPS):
         # Use the same publication-before-adoption path for a single packet.
