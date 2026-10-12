@@ -63,3 +63,27 @@ overflow-checks = true
 opt-level = 1
 debug-assertions = true
 overflow-checks = true
+
+# Keep all codec/debug arithmetic checks while optimizing the pinned bounded
+# RFC1950 implementation used by the ordinary ground carriage candidate.
+[profile.dev.package.miniz_oxide]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.miniz_oxide]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+# Ground SHA-256 code shares integer helpers instantiated by this pinned crate.
+# Keep debug/arithmetic checks; no RNG, signature or entropy policy changes.
+[profile.dev.package."rand_core:0.6.4"]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package."rand_core:0.6.4"]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

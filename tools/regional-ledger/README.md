@@ -992,5 +992,6 @@ still require ordinary complete authentication and native storage publication.
 
 The [native spool interface](../../docs/operations/NATIVE_CONTACT_SPOOL.md) owns
 ordinary directory-carriage inventory and immutable publication, including full
-pending reservations and complete duplicate comparison. Spool encoding and
-ordinary complete caller authentication remain separate migration work.
+pending reservations and complete duplicate comparison. Its separate native codec
+preserves the bounded lossless container and exact original signed bytes. Ordinary
+complete caller authentication remains separate migration work.

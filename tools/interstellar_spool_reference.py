@@ -5,7 +5,7 @@ import stat
 from pathlib import Path
 import interstellar_mesh as mesh
 import interstellar_transfer as evidence
-import interstellar_spool_codec as spool_codec
+import interstellar_spool_codec_reference as spool_codec
 from interstellar_storage_reference import sync_retained
 require=mesh.require
 SPOOL_PENDING=mesh.SPOOL_PENDING

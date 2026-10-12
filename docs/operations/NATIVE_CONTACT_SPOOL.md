@@ -37,11 +37,44 @@ reusing its digest for header checks. Responses reuse these already computed
 digests; no witness survives the call, crosses the ABI or supplies unchecked
 state, signatures, custody or ledger authority.
 
-Ground dev/test builds compile the pinned RFC1950 checksum dependency at
+Ground dev/test builds compile the pinned RFC1950 implementation and checksum dependency at
 optimization level one with debug assertions and overflow checks enabled.
+The pinned shared arithmetic-helper dependency also uses level one with those
+checks retained; random generation, entropy sources and signatures are unchanged.
 This changes the executable profile, not the checksum, stream checks, format,
 original bytes or resource/durability limits. Actual source and executable
 bindings remain necessary; a faster checksum never grants authenticity.
+
+## Native carriage codec
+
+Ordinary encoding, decoding and header inspection use the separate
+`RLD-NATIVE-CONTACT-SPOOL-CODEC-V1` interface. Its `rld_contact_spool_codec`
+ABI accepts canonical controls up to 8,192 bytes and one separate input pointer
+up to 20 MiB. Controls bind the complete input length and SHA-256. Encode uses
+fixed level one and a 32-KiB RFC1950 window. Encoded and expanded bounds remain
+independent; an incompressible result exceeding the original ceiling refuses.
+
+One private call-local witness derives the complete actual input digest before
+checking caller metadata. Encoding reuses that same derived digest only for its
+unchanged input. Decoding checks the complete actual output digest against the
+container, then reuses that derived digest in its output receipt. No witness or
+unchecked caller digest crosses calls, initializes state or grants authority.
+
+The unchanged container retains its original length and whole-byte SHA-256.
+Python and native encoders may produce different valid compressed streams;
+each decoder must reconstruct the exact original bytes. Exchange signatures,
+canonical file identifiers, challenges and replies remain bound to those original
+bytes. Header inspection supplies capacity metadata only. The explicit Python
+codec oracle is separate and never selected on native failure.
+
+The native result contains a small implementation/control-bound receipt and a
+separate bounded output buffer. Release both unchanged buffers exactly once with
+`rld_contact_crypto_free`, including empty failure payloads. The bridge checks
+complete output length/SHA-256 before releasing bytes to its caller. Refusal
+returns no partial output. Decode uses the declared size plus one refusal byte,
+requires exact stream consumption and digest agreement, and performs no JSON,
+signature, custody or ledger acceptance. Codec results explicitly carry
+`authenticated: false` and `ledger_authority: false`.
 
 ## Publication and failures
 
@@ -71,7 +104,7 @@ Opaque IO does not verify exchange signatures, routes, native dependencies,
 finality, maturity, ownership, spendability or refunds. The ordinary caller retains
 all those checks before receipt/value release.
 
-Python still performs spool encoding, complete mesh authentication, deferred intake,
+Python still performs complete mesh authentication, deferred intake,
 outgoing scheduling, service orchestration and remaining wallet flows. Native tests
 use separately compiled failure/interruption seams; production exposes none.
 Same-host process interruption does not qualify power-loss, cross-device or

@@ -69,7 +69,7 @@ publication response can still leave a complete new disk image; the caller must
 close/reopen and fully authenticate it, never infer rollback from old memory.
 
 Python still provides ABI input/output encoding, shared-string assembly, complete
-mesh authentication, spool encoding, deferred intake, outgoing scheduling,
+mesh authentication, deferred intake, outgoing scheduling,
 service orchestration and remaining wallet flows. Independent Python tests remain
 necessary. [Spool publication and inventory](NATIVE_CONTACT_SPOOL.md) are native;
 complete caller authentication still follows every reconstructed record.

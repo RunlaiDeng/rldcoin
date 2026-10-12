@@ -1134,6 +1134,7 @@ pub mod contact;
 pub mod contact_crypto;
 mod contact_listener;
 mod contact_spool;
+mod contact_spool_codec;
 mod contact_state_codec;
 mod contact_storage;
 mod contact_tls;
