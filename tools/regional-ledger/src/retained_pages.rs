@@ -67,7 +67,7 @@ struct Manifest<T> {
     count: u64,
     head: Hash,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Page<T> {
     format: String,

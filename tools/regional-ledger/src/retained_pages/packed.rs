@@ -350,5 +350,9 @@ mod tests {
 /// Fresh immutable archive candidate; existing Native stores do not adopt it.
 pub mod archive;
 
+/// Separate live byte-retention candidate. Ordinary Store/Agent formats do not
+/// adopt it; callers must still execute every complete record from genesis.
+pub mod live;
+
 /// Separate bounded lossless byte representation; existing archives do not adopt it.
 pub mod lossless;

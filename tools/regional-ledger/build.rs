@@ -17,6 +17,8 @@ fn collect(path: &Path, files: &mut Vec<PathBuf>) {
 }
 fn main() {
     let root = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    // Watch additions/removals too, not only files seen by the previous build.
+    println!("cargo:rerun-if-changed={}", root.join("src").display());
     let mut files = vec![
         root.join("Cargo.toml"),
         root.join("Cargo.lock"),
