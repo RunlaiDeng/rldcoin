@@ -223,15 +223,7 @@ impl Actor {
                     )?;
                 }
                 let started = monotonic()?;
-                let errors = spool_directory_turn(&self.transport)?;
-                require(
-                    errors.is_empty(),
-                    &format!("ordinary directory contact refused: {errors:?}"),
-                )?;
-                require(timing.len() < 1024, "actor timing record bound")?;
-                timing.push(json!({"phase":"directory_contacts","seconds":monotonic()? - started}));
-                let started = monotonic()?;
-                let tick = tick_ledger(
+                let tick = directory_ledger_turn(
                     &self.options,
                     &self.transport,
                     &mut self.runtime,
@@ -239,9 +231,15 @@ impl Actor {
                     &mut seen,
                 );
                 require(timing.len() < 1024, "actor timing record bound")?;
-                timing.push(json!({"phase":"native_tick","seconds":monotonic()? - started,
+                timing.push(json!({"phase":"ordinary_directory_ledger_turn","seconds":monotonic()? - started,
                     "height":tick.as_ref().ok().and_then(|v|v.get("local_height")),"error":tick.as_ref().err()}));
-                tick?;
+                let observation = tick?;
+                require(
+                    observation["transport_attempt_errors"]
+                        .as_array()
+                        .is_some_and(Vec::is_empty),
+                    "ordinary directory contact refused",
+                )?;
                 if let Some(runtime) = &self.runtime {
                     let controls = runtime.current_controls()?;
                     CARRIAGE_TRACE.with(|trace| -> Result<()> {

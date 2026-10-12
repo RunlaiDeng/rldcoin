@@ -835,14 +835,37 @@ impl Node {
         if let Some(last) = last {
             self.state.transit_cursors.insert(peer.into(), last);
         }
-        let mut receipts = self.all_receipts()?;
-        let mut keys: Vec<_> = receipts.keys().cloned().collect();
+        let mut keys: Vec<_> = self
+            .state
+            .receipts
+            .keys()
+            .chain(self.state.archives.keys())
+            .cloned()
+            .collect::<std::collections::BTreeSet<_>>()
+            .into_iter()
+            .collect();
         if let Some(cursor) = self.state.receipt_cursors.get(peer) {
             let offset = keys.partition_point(|i| i <= cursor);
             keys.rotate_left(offset);
         }
         keys.truncate(16);
-        let selected: Vec<_> = keys.iter().filter_map(|id| receipts.remove(id)).collect();
+        // Selection grants no authority. Open and authenticate every selected
+        // complete archive now; cold Node-open still reviews the full inventory.
+        let mut selected = Vec::new();
+        for id in &keys {
+            let receipt = if let Some(object) = self.state.archives.get(id) {
+                self.archive(id, object)?["receipt"].clone()
+            } else {
+                let receipt = self
+                    .state
+                    .receipts
+                    .get(id)
+                    .ok_or("selected receipt disappeared")?;
+                schema(receipt, &self.network, "receipt")?;
+                receipt.clone()
+            };
+            selected.push(receipt);
+        }
         if let Some(last) = keys.last() {
             self.state.receipt_cursors.insert(peer.into(), last.clone());
         }
@@ -869,14 +892,6 @@ impl Node {
         // Durable scheduling precedes opening a socket or publishing to a spool.
         self.save()?;
         Ok(bundle)
-    }
-
-    fn all_receipts(&self) -> Result<BTreeMap<String, Value>> {
-        let mut values = self.state.receipts.clone();
-        for (id, object) in &self.state.archives {
-            values.insert(id.clone(), self.archive(id, object)?["receipt"].clone());
-        }
-        Ok(values)
     }
 
     pub(crate) fn receive(&mut self, bundle: &Value, peer: &str) -> Result<Vec<String>> {
@@ -1305,6 +1320,124 @@ mod tests {
         value["state"]["format"] = json!("wrong");
         atomic(&path, &value, STATE_LIMIT).unwrap();
         assert!(Node::open(&f.configs[0]).is_err());
+    }
+
+    #[test]
+    fn receipt_page_authenticates_selected_archives_before_bounded_carriage() {
+        let f = Fixture::new(2);
+        for n in 0..48u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            Node::open(&f.configs[0])
+                .unwrap()
+                .enqueue(&frame.retained_bytes().unwrap(), &f.ids[1])
+                .unwrap();
+        }
+        for _ in 0..24 {
+            let bundle = Node::open(&f.configs[0])
+                .unwrap()
+                .prepare(&f.ids[1])
+                .unwrap();
+            Node::open(&f.configs[1])
+                .unwrap()
+                .receive(&bundle, &f.ids[0])
+                .unwrap();
+        }
+        assert_eq!(Node::open(&f.configs[1]).unwrap().state.receipts.len(), 48);
+        for _ in 0..3 {
+            let bundle = Node::open(&f.configs[1])
+                .unwrap()
+                .prepare(&f.ids[0])
+                .unwrap();
+            Node::open(&f.configs[0])
+                .unwrap()
+                .receive(&bundle, &f.ids[1])
+                .unwrap();
+        }
+        for _ in 0..2 {
+            Node::open(&f.configs[0])
+                .unwrap()
+                .archive_completed()
+                .unwrap();
+        }
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        assert_eq!(node.state.archives.len(), 32);
+        super::super::service::start_work_trace();
+        let bundle = node.prepare(&f.ids[1]).unwrap();
+        let trace = super::super::service::take_work_trace();
+        let checked = trace
+            .iter()
+            .filter(|e| e["phase"] == "receipt-schema")
+            .map(|e| e["calls"].as_u64().unwrap_or(1))
+            .sum::<u64>();
+        assert_eq!(bundle["body"]["receipts"].as_array().unwrap().len(), 16);
+        for receipt in bundle["body"]["receipts"].as_array().unwrap() {
+            schema(receipt, &node.network, "receipt").unwrap();
+        }
+        assert!(
+            checked <= 16,
+            "one bounded page revalidated {checked} historical archive receipts"
+        );
+        let cursor = node.state.receipt_cursors[&f.ids[1]].clone();
+        let (id, object) = node
+            .state
+            .archives
+            .iter()
+            .find(|(id, _)| *id > &cursor)
+            .unwrap();
+        let id = id.clone();
+        let object = object.clone();
+        let path = node.root.join("archive").join(format!("{object}.json"));
+        let original = fs::read(&path).unwrap();
+        let state_before = fs::read(node.root.join("native-mesh-state.json")).unwrap();
+        let missing = path.with_extension("retained-missing");
+        fs::rename(&path, &missing).unwrap();
+        assert!(
+            node.prepare(&f.ids[1]).is_err(),
+            "selected missing archive was cached as custody"
+        );
+        assert_eq!(
+            fs::read(node.root.join("native-mesh-state.json")).unwrap(),
+            state_before
+        );
+        fs::rename(&missing, &path).unwrap();
+        let mut bad: Value = serde_json::from_slice(&original).unwrap();
+        bad["receipt"]["signature"] = json!("00".repeat(64));
+        let bad_object = digest(&bad).unwrap();
+        let bad_path = node.root.join("archive").join(format!("{bad_object}.json"));
+        crate::keystore::private_create(&bad_path, &bytes(&bad).unwrap()).unwrap();
+        node.state.archives.insert(id, bad_object);
+        assert!(
+            node.prepare(&f.ids[1]).is_err(),
+            "hash-consistent selected bad receipt signature was accepted"
+        );
+        assert_eq!(
+            fs::read(node.root.join("native-mesh-state.json")).unwrap(),
+            state_before
+        );
+        assert_eq!(fs::read(&path).unwrap(), original);
+        node.save().unwrap();
+        let poisoned_state = fs::read(node.root.join("native-mesh-state.json")).unwrap();
+        drop(node);
+        assert!(
+            Node::open(&f.configs[0]).is_err(),
+            "cold open accepted hash-consistent bad archived receipt"
+        );
+        assert_eq!(
+            fs::read(f.root.join("0/native-mesh-state.json")).unwrap(),
+            poisoned_state
+        );
+        assert!(bad_path.exists(), "bad original evidence was removed");
     }
 
     #[test]

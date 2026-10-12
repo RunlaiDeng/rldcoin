@@ -229,6 +229,21 @@ pub(super) fn spool_directory_turn(config: &Value) -> Result<Vec<String>> {
 }
 
 fn directory_turn(config: &Value, stopped: &dyn Fn() -> bool) -> Result<Vec<String>> {
+    directory_phase(config, stopped, DirectoryPhase::Duplex)
+}
+
+#[derive(Clone, Copy)]
+enum DirectoryPhase {
+    Duplex,
+    Receive,
+    Publish,
+}
+
+fn directory_phase(
+    config: &Value,
+    stopped: &dyn Fn() -> bool,
+    phase: DirectoryPhase,
+) -> Result<Vec<String>> {
     #[cfg(test)]
     let started = monotonic()?;
     let first = Node::open(config)?;
@@ -256,11 +271,13 @@ fn directory_turn(config: &Value, stopped: &dyn Fn() -> bool) -> Result<Vec<Stri
                 }
             }
         }
-        if let Err(error) = spool_node(
-            node.as_mut().ok_or("missing directory turn node")?,
-            &peer,
-            &contact,
-        ) {
+        let node_ref = node.as_mut().ok_or("missing directory turn node")?;
+        let result = match phase {
+            DirectoryPhase::Duplex => spool_node(node_ref, &peer, &contact),
+            DirectoryPhase::Receive => spool_receive(node_ref, &peer, &contact),
+            DirectoryPhase::Publish => spool_publish(node_ref, &peer, &contact),
+        };
+        if let Err(error) = result {
             // A failed prepare/publication may leave uncertain in-memory state.
             // Release it; the next neighbor must open/authenticate durable state.
             node.take();
@@ -271,6 +288,11 @@ fn directory_turn(config: &Value, stopped: &dyn Fn() -> bool) -> Result<Vec<Stri
 }
 
 fn spool_node(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
+    spool_receive(node, peer, contact)?;
+    spool_publish(node, peer, contact)
+}
+
+fn spool_receive(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
     let compressed = contact["adapter"] == "RLD-CONTACT-SPOOL-ZLIB-V1";
     let limits = json!({"batch":EXCHANGE_LIMIT,"files":256,"bytes":64*1024*1024});
     let adapter = if compressed {
@@ -316,6 +338,17 @@ fn spool_node(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
                 .map_err(|e| e.to_string())?;
         }
     }
+    Ok(())
+}
+
+fn spool_publish(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
+    let compressed = contact["adapter"] == "RLD-CONTACT-SPOOL-ZLIB-V1";
+    let limits = json!({"batch":EXCHANGE_LIMIT,"files":256,"bytes":64*1024*1024});
+    let adapter = if compressed {
+        json!("RLD-CONTACT-SPOOL-ZLIB-V1")
+    } else {
+        Value::Null
+    };
     if let Some(path) = contact["outbox"].as_str() {
         #[cfg(test)]
         let started = monotonic()?;
@@ -475,6 +508,39 @@ pub(super) fn tick_ledger(
     )
 }
 
+#[cfg(test)]
+pub(super) fn directory_ledger_turn(
+    options: &Options,
+    config: &Value,
+    runtime: &mut Option<super::bft::Runtime>,
+    cursor: &mut Option<String>,
+    seen: &mut Vec<String>,
+) -> Result<Value> {
+    directory_ledger_turn_stopped(options, config, runtime, cursor, seen, &|| false)
+}
+
+fn directory_ledger_turn_stopped(
+    options: &Options,
+    config: &Value,
+    runtime: &mut Option<super::bft::Runtime>,
+    cursor: &mut Option<String>,
+    seen: &mut Vec<String>,
+    stopped: &dyn Fn() -> bool,
+) -> Result<Value> {
+    let mut errors = directory_phase(config, stopped, DirectoryPhase::Receive)?;
+    let result = tick_ledger(options, config, runtime, cursor, seen);
+    if result
+        .as_ref()
+        .err()
+        .is_none_or(|error| lock_contention(error))
+    {
+        errors.extend(directory_phase(config, stopped, DirectoryPhase::Publish)?);
+    }
+    let mut observation = result?;
+    observation["transport_attempt_errors"] = json!(errors);
+    Ok(observation)
+}
+
 fn lock_contention(error: &str) -> bool {
     // Match the Native lock API's exact typed refusal, and the OS errno bound
     // by the transport file adapter. Proof/permission failures stay fatal.
@@ -593,21 +659,10 @@ pub fn run(options: Options) -> Result<()> {
                 !inbound.is_finished(),
                 "Rust contact listener stopped unexpectedly",
             )?;
-            if contacts
+            let directory_only = contacts
                 .values()
-                .all(|contact| contact.get("host").is_none())
-            {
-                match directory_turn(&config, &|| STOP.load(Ordering::Acquire)) {
-                    Ok(errors) => {
-                        for error in errors {
-                            eprintln!("contact attempt retained without custody claim: {error}");
-                        }
-                    }
-                    Err(error) => {
-                        eprintln!("contact attempt retained without custody claim: {error}")
-                    }
-                }
-            } else {
+                .all(|contact| contact.get("host").is_none());
+            if !directory_only {
                 for (peer, contact) in &contacts {
                     if STOP.load(Ordering::Acquire) {
                         break;
@@ -622,13 +677,25 @@ pub fn run(options: Options) -> Result<()> {
                     }
                 }
             }
-            match tick_ledger(
-                &options,
-                &config,
-                &mut bft,
-                &mut receive_cursor,
-                &mut receive_seen,
-            ) {
+            let result = if directory_only {
+                directory_ledger_turn_stopped(
+                    &options,
+                    &config,
+                    &mut bft,
+                    &mut receive_cursor,
+                    &mut receive_seen,
+                    &|| STOP.load(Ordering::Acquire),
+                )
+            } else {
+                tick_ledger(
+                    &options,
+                    &config,
+                    &mut bft,
+                    &mut receive_cursor,
+                    &mut receive_seen,
+                )
+            };
+            match result {
                 Ok(observation) => atomic(
                     &root.join("regional-contact-status.json"),
                     &observation,

@@ -520,6 +520,126 @@ fn ordinary_rust_candidate_imports_retained_proof_then_finalizes_recipient_spend
 mod wallet_queue_tests;
 
 #[test]
+fn ordinary_directory_turn_carries_new_native_owner_request_in_same_turn() {
+    let mut f = Fixture::new().unwrap();
+    eprintln!("Fresh same-turn Native owner fixture: {}", f.root.display());
+    f.node.contact_apply(&f.raw, None).unwrap();
+    for _ in 0..3 {
+        let candidate = f.candidate().unwrap();
+        f.finalize(candidate).unwrap();
+    }
+    let input = *f
+        .node
+        .chain
+        .ledger
+        .coins
+        .iter()
+        .find(|(_, c)| c.payment.owner == public(11) && c.mature <= 3)
+        .unwrap()
+        .0;
+    let intent = Intent {
+        currency: f.node.trust.currency().unwrap(),
+        region: f.node.chain.region,
+        inputs: vec![input],
+        outputs: vec![Payment {
+            owner: public(13),
+            amount: Amount(98),
+        }],
+        fee: Amount::ZERO,
+        destination: None,
+        remote: None,
+        destination_fee: Amount::ZERO,
+        valid_through: 4,
+    };
+    let commands = vec![Command::Spend(Box::new(SignedIntent {
+        approvals: vec![Approval {
+            key: public(11),
+            signature: signature(11, &intent.bytes().unwrap()),
+        }],
+        intent,
+    }))];
+    let body = serde_json::to_value(net::Body::Submission(commands.clone())).unwrap();
+    f.node.bft_submit(commands).unwrap();
+    let currency = f.node.trust.currency().unwrap();
+    let root = f.root.clone();
+    let head = f.node.storage_head().unwrap();
+    drop(f.node);
+    let mut runtime = Some(f.actors.remove(0));
+    runtime.as_mut().unwrap().config.stop_height = 3;
+    let peers = runtime
+        .as_ref()
+        .unwrap()
+        .config
+        .validators
+        .iter()
+        .skip(1)
+        .map(|v| v.node_id.clone())
+        .collect::<Vec<_>>();
+    let transport = json!({"format":MESH,"network":currency,"state":root.join("transport-0"),
+        "contacts":peers.iter().enumerate().map(|(n,peer)|json!({"peer":peer,"inbox":root.join(format!("same-in-{n}")),"outbox":root.join(format!("same-out-{n}"))})).collect::<Vec<_>>()});
+    let options = super::super::service::Options {
+        ledger: root.join("recipient"),
+        authority: public(1),
+        currency,
+        mesh_config: None,
+        bft_config: None,
+        listen: "127.0.0.1:0".parse().unwrap(),
+        miner: None,
+        interval: 0.5,
+        insecure_tcp: false,
+    };
+    let mut cursor = None;
+    let mut seen = Vec::new();
+    super::super::service::directory_ledger_turn(
+        &options,
+        &transport,
+        &mut runtime,
+        &mut cursor,
+        &mut seen,
+    )
+    .unwrap();
+    for n in 0..3 {
+        let files = fs::read_dir(root.join(format!("same-out-{n}")))
+            .unwrap()
+            .collect::<std::io::Result<Vec<_>>>()
+            .unwrap();
+        assert_eq!(files.len(), 1);
+        let exchange = read(&files[0].path(), EXCHANGE_LIMIT).unwrap();
+        let mut found = false;
+        for t in exchange["body"]["transits"].as_array().unwrap() {
+            let raw = STANDARD
+                .decode(t["packet"]["body"]["frame"].as_str().unwrap())
+                .unwrap();
+            let (_, payload) = crate::contact_frame::inspect_bytes(
+                &raw,
+                None,
+                None,
+                crate::contact::MAX_PAYLOAD,
+                crate::contact::MAX_FRAME,
+            )
+            .unwrap();
+            let envelope = crate::bft_client::decode::<net::WireEnvelope>(&payload)
+                .unwrap()
+                .expand()
+                .unwrap();
+            found |= serde_json::to_value(envelope.body).unwrap() == body;
+        }
+        assert!(
+            found,
+            "ordinary same-turn carriage deferred the new Native owner request"
+        );
+    }
+    let node = Store::open_inspection(&options.ledger, &public(1), currency).unwrap();
+    assert_eq!(node.storage_head().unwrap(), head);
+    assert!(node.chain.ledger.coins.contains_key(&input));
+    drop(node);
+    drop(runtime);
+    drop(f.actors);
+    drop(f.source);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn current_native_prepare_is_carried_ahead_of_unstarted_historical_packets() {
     let mut f = Fixture::new().unwrap();
     eprintln!(
