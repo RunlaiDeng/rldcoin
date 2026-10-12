@@ -520,6 +520,125 @@ fn ordinary_rust_candidate_imports_retained_proof_then_finalizes_recipient_spend
 mod wallet_queue_tests;
 
 #[test]
+fn intended_native_prepare_waits_one_page_behind_two_earlier_unseen_frames() {
+    let mut f = Fixture::new().unwrap();
+    eprintln!("Fresh intended-page Native counter: {}", f.root.display());
+    for _ in 0..3 {
+        let candidate = f.candidate().unwrap();
+        f.finalize(candidate).unwrap();
+    }
+    let context = consensus::Context::current(&f.node).unwrap();
+    let keys = f.seeds.iter().copied().map(public).collect::<Vec<_>>();
+    let leader = consensus::leader(&context, 0, &keys).unwrap();
+    let leader = keys.iter().position(|key| key == &leader).unwrap();
+    let candidate = f.candidate().unwrap();
+    let consensus::Message::Proposal(proposal) = f
+        .sign(
+            leader,
+            consensus::Request::Propose {
+                round: 0,
+                timeout: None,
+                snapshot: Box::new(candidate),
+            },
+        )
+        .unwrap()
+    else {
+        panic!("expected current Native proposal")
+    };
+    let prepare = f.sign(0, consensus::Request::Prepare(proposal)).unwrap();
+    let wanted =
+        hash(&serde_json::to_value(net::Body::Signed(Box::new(prepare))).unwrap()).unwrap();
+    let old = f.actors[0]
+        .archive
+        .runtime
+        .messages
+        .iter()
+        .filter_map(|(id, record)| {
+            let body: net::Body = serde_json::from_value(record.body.clone()).unwrap();
+            match body {
+                net::Body::Signed(message) => match *message {
+                    consensus::Message::Vote(v) if v.context.parent_height < 3 => Some(*id),
+                    _ => None,
+                },
+                _ => None,
+            }
+        })
+        .take(4)
+        .collect::<Vec<_>>();
+    assert_eq!(old.len(), 4);
+    let ids = f.actors[0]
+        .config
+        .validators
+        .iter()
+        .map(|v| v.node_id.clone())
+        .collect::<Vec<_>>();
+    let currency = f.node.trust.currency().unwrap();
+    let source = json!({"format":MESH,"network":currency,"state":f.root.join("transport-0"),
+        "contacts":[{"peer":ids[1],"inbox":f.root.join("page-in-0"),"outbox":f.root.join("page-out-0")}]});
+    let target = json!({"format":MESH,"network":currency,"state":f.root.join("transport-1"),
+        "contacts":[{"peer":ids[0],"inbox":f.root.join("page-in-1"),"outbox":f.root.join("page-out-1")}]});
+    let mut sender = Node::open(&source).unwrap();
+    let mut receiver = Node::open(&target).unwrap();
+    let mut packets = Vec::new();
+    for id in old.iter().chain(std::iter::once(&wanted)) {
+        let raw = f.actors[0]
+            .carriage_frame(*id)
+            .unwrap()
+            .retained_bytes()
+            .unwrap();
+        let packet = sender.enqueue(&raw, &ids[1]).unwrap();
+        let mut retained = false;
+        for _ in 0..8 {
+            let bundle = sender.prepare(&ids[1]).unwrap();
+            if receiver
+                .receive(&bundle, &ids[0])
+                .unwrap()
+                .contains(&packet)
+            {
+                retained = true;
+                break;
+            }
+        }
+        assert!(
+            retained,
+            "intended destination did not retain packet within eight exchanges"
+        );
+        packets.push(packet);
+    }
+    let head = f.node.storage_head().unwrap();
+    let mut seen = packets[..2].to_vec();
+    let wanted_packet = packets[4].clone();
+    let first = receiver
+        .frame_page_selected(Some(&wanted_packet), 4, &seen)
+        .unwrap();
+    assert_eq!(first.len(), 4);
+    assert_eq!(
+        first[..2]
+            .iter()
+            .map(|(id, _)| id.clone())
+            .collect::<Vec<_>>(),
+        packets[2..4]
+    );
+    assert!(!first.iter().any(|(id, _)| id == &wanted_packet));
+    for (id, raw) in &first {
+        f.actors[1].receive(&mut f.node, raw).unwrap();
+        seen.push(id.clone());
+    }
+    let second = receiver
+        .frame_page_selected(Some(&wanted_packet), 4, &seen)
+        .unwrap();
+    assert_eq!(second[0].0, wanted_packet);
+    f.actors[1].receive(&mut f.node, &second[0].1).unwrap();
+    assert_eq!(f.node.storage_head().unwrap(), head);
+    assert_eq!(f.node.chain.height(), 3);
+    drop(sender);
+    drop(receiver);
+    let root = f.root.clone();
+    drop(f);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn complete_prepare_quorum_after_timeout_cannot_first_sign_old_commit() {
     let mut f = Fixture::new().unwrap();
     eprintln!("Fresh sealed-round Native counter: {}", f.root.display());
