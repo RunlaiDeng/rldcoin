@@ -588,6 +588,76 @@ fn wrong_highest_qc_changed_value_unbound_round_and_invalid_native_state_never_v
         .is_err());
     assert_eq!(h.agents[1].journal.head().unwrap(), old);
 }
+
+#[test]
+fn finalized_payment_trace_keeps_old_native_certificate_round_and_distinct_quorums() {
+    let mut h = Harness::new();
+    h.retain = true;
+    let unsigned = h.node.bft_candidate(vec![], public(10)).unwrap();
+    let before = h.node.storage_head().unwrap();
+    let absent =
+        crate::contact_runtime::test_finalized_payment_observation(unsigned.clone()).unwrap();
+    assert_eq!(absent.get("certificate"), Some(&serde_json::Value::Null));
+    assert!(h.node.finalize(unsigned.clone()).is_err());
+    assert_eq!(h.node.storage_head().unwrap(), before);
+    assert_eq!(h.node.chain.height(), 0);
+
+    let proposal = h.proposal(0, None, unsigned.clone());
+    let prepared = h.prepare(&proposal, &[0, 1, 2, 3]);
+    let certified = h.commit(&proposal, &prepared, &[0, 1, 2]);
+    let context = Context::current(&h.node).unwrap();
+    let timeouts = (0..3)
+        .map(|n| {
+            let Message::Timeout(vote) = h
+                .sign(
+                    n,
+                    Request::Timeout {
+                        context: context.clone(),
+                        round: 0,
+                    },
+                )
+                .message
+            else {
+                panic!("actual timeout vote");
+            };
+            *vote
+        })
+        .collect();
+    let timeout = TimeoutCertificate::combine(timeouts, &h.node.trust, &h.node.evidence).unwrap();
+    let later = h.proposal(1, Some(timeout), unsigned);
+    assert_eq!(later.round, 1);
+    assert_eq!(later.snapshot.statement, certified.statement);
+    h.node.finalize(certified.clone()).unwrap();
+    assert_ne!(Context::current(&h.node).unwrap(), context);
+
+    let observed =
+        crate::contact_runtime::test_finalized_payment_observation(certified.clone()).unwrap();
+    let certificate = &observed["certificate"];
+    for name in ["prepared", "committed"] {
+        assert_eq!(certificate[name]["round"], 0);
+        assert_eq!(certificate[name]["context"], serde_json::json!(context));
+        assert_eq!(
+            certificate[name]["value"],
+            serde_json::json!(certified.statement.id().unwrap())
+        );
+    }
+    assert_eq!(
+        certificate["prepared"]["voters"],
+        serde_json::json!(h.seeds.iter().map(|seed| public(*seed)).collect::<Vec<_>>())
+    );
+    assert_eq!(
+        certificate["committed"]["voters"],
+        serde_json::json!(h.seeds[..3]
+            .iter()
+            .map(|seed| public(*seed))
+            .collect::<Vec<_>>())
+    );
+    assert_eq!(h.node.chain.height(), 1);
+    eprintln!(
+        "Fresh no-value old-certificate observation guard: {}",
+        h.root.display()
+    );
+}
 #[test]
 fn uncertified_blocks_legacy_signature_substitution_and_certificate_variants() {
     let mut h = Harness::new();

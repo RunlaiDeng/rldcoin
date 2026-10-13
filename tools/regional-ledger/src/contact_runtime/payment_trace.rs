@@ -41,7 +41,19 @@ pub(super) fn body(body: &net::Body) -> Result<Value> {
                 "context":vote.context,"round":vote.round,"value":vote.value,"signer":vote.approval.key})),
             _ => Ok(json!({"kind":"other-signed-control"})),
         },
-        net::Body::Finalized(value) => Ok(json!({"kind":"finalized","snapshot":snapshot(value)?})),
+        net::Body::Finalized(value) => Ok(json!({"kind":"finalized","snapshot":snapshot(value)?,
+            "certificate":value.bft.as_ref().map(certificate)})),
         _ => Ok(json!({"kind":"other"})),
     }
+}
+
+// Project the already verified retained certificate itself. A later local
+// scheduling round is not the selected certificate's round. Keep each quorum's
+// original voter order and membership, which need not be identical.
+fn certificate(value: &consensus::Certificate) -> Value {
+    fn quorum(value: &consensus::Quorum) -> Value {
+        json!({"context":value.context,"round":value.round,"value":value.value,
+            "phase":value.phase,"voters":value.votes.iter().map(|vote|&vote.approval.key).collect::<Vec<_>>()})
+    }
+    json!({"prepared":quorum(&value.prepared),"committed":quorum(&value.committed)})
 }

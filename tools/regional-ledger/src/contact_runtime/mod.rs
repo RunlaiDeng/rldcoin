@@ -8,6 +8,8 @@ mod page_observation;
 mod page_watch;
 mod service;
 #[cfg(test)]
+pub(crate) use bft::test_finalized_payment_observation;
+#[cfg(test)]
 pub(crate) use bft::Runtime as TestRuntime;
 pub use mesh::{initialize, Node};
 pub use service::{run, Options};

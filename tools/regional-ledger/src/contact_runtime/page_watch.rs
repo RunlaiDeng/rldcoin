@@ -1,5 +1,6 @@
 //! Test-only metadata observer. No clock, I/O, verification or scheduling authority.
-//! `complete` covers known registrations only; it never predicts future votes.
+//! `complete` covers known registrations across observed windows, never all rounds.
+//! Only the current window retains packet mappings. Exited summaries cannot backfill pages.
 use crate::{bft::Context, Hash};
 use serde_json::{json, Value};
 use std::{
@@ -22,6 +23,7 @@ const VOTE_CONFLICT: u32 = 64;
 const CAPACITY: u32 = 128;
 const MAPPING: u32 = 256;
 const GENERATION: u32 = 512;
+const MAX_WINDOWS: usize = 32;
 #[derive(Clone, PartialEq)]
 struct Arm {
     intent: Hash,
@@ -48,12 +50,37 @@ struct Vote {
     at: f64,
     mapping: Mapping,
 }
+struct WindowSummary {
+    binding: Binding,
+    window_generation: u64,
+    entered_from_event_at: f64,
+    exited_by_event_at: f64,
+    known_votes: usize,
+    mapped_targets: usize,
+    not_destined: usize,
+    unmapped: usize,
+    integrity_gap_bits: u32,
+}
+#[derive(Default)]
+struct Coverage {
+    before_binding_votes: u64,
+    late_proposals: u64,
+    late_votes: u64,
+    future_votes: u64,
+    other_value_votes: u64,
+    other_context_proposals: u64,
+    skipped_rounds: u64,
+}
 #[derive(Default)]
 struct State {
     arm: Option<Arm>,
     binding: Option<Binding>,
     votes: Vec<Vote>,
     generation: u64,
+    window_generation: u64,
+    entered_from_event_at: Option<f64>,
+    exited: Vec<WindowSummary>,
+    coverage: Coverage,
 }
 pub(super) struct Watch {
     destination: Hash,
@@ -182,6 +209,73 @@ pub(super) fn arm_second(intent: Hash, input: Option<Hash>, submitted: f64) {
 fn enabled() -> bool {
     active().is_some_and(|scope| scope.armed.load(Ordering::Acquire))
 }
+fn count(scope: &Shared, value: &mut u64, amount: u64) -> bool {
+    if let Some(next) = value.checked_add(amount) {
+        *value = next;
+        amount != 0
+    } else {
+        mark(scope, GENERATION);
+        false
+    }
+}
+fn open_window(scope: &Shared, state: &mut State, next: Binding, at: f64) -> bool {
+    // Includes the current window. No old body, frame or packet registry is retained.
+    if state.exited.len() + usize::from(state.binding.is_some()) >= MAX_WINDOWS {
+        mark(scope, CAPACITY);
+        return false;
+    }
+    let Some(generation) = state.window_generation.checked_add(1) else {
+        mark(scope, GENERATION);
+        return false;
+    };
+    let skipped = match state.binding.as_ref() {
+        Some(old) => {
+            let Some(skipped) = next
+                .round
+                .checked_sub(old.round)
+                .and_then(|n| n.checked_sub(1))
+            else {
+                mark(scope, MALFORMED);
+                return false;
+            };
+            skipped
+        }
+        None => 0,
+    };
+    if let Some(old) = state.binding.take() {
+        let known_votes = state.votes.len();
+        let mapped_targets = state
+            .votes
+            .iter()
+            .filter(|v| matches!(v.mapping, Mapping::Target { .. }))
+            .count();
+        let not_destined = state
+            .votes
+            .iter()
+            .filter(|v| matches!(v.mapping, Mapping::NotDestined(_)))
+            .count();
+        let unmapped = known_votes - mapped_targets - not_destined;
+        count(scope, &mut state.coverage.skipped_rounds, skipped);
+        state.exited.push(WindowSummary {
+            binding: old,
+            window_generation: state.window_generation,
+            entered_from_event_at: state
+                .entered_from_event_at
+                .expect("bound window has provenance"),
+            exited_by_event_at: at,
+            known_votes,
+            mapped_targets,
+            not_destined,
+            unmapped,
+            integrity_gap_bits: scope.gaps.load(Ordering::Acquire),
+        });
+    }
+    state.votes.clear();
+    state.binding = Some(next);
+    state.window_generation = generation;
+    state.entered_from_event_at = Some(at);
+    true
+}
 /// Called on the existing event after its original `at` was assigned, after durable retention.
 pub(super) fn observe_retained(event: &Value) {
     if !enabled() || event["phase"] != "payment-body-retained" || event["local"] != true {
@@ -206,8 +300,6 @@ pub(super) fn observe_retained(event: &Value) {
             if !intents.iter().any(|value| hash(value) == Some(arm.intent)) {
                 return false;
             }
-        } else if state.binding.is_none() {
-            return false;
         }
         let fields = (
             hash(&event["body_id"]),
@@ -239,30 +331,48 @@ pub(super) fn observe_retained(event: &Value) {
                 proposal: id,
             };
             return match &state.binding {
-                None => {
-                    state.binding = Some(next);
-                    true
+                None => open_window(scope, state, next, at),
+                Some(old) if old.context != next.context => {
+                    count(scope, &mut state.coverage.other_context_proposals, 1)
                 }
-                Some(old) => {
+                Some(old) if next.round < old.round => {
+                    count(scope, &mut state.coverage.late_proposals, 1)
+                }
+                Some(old) if next.round == old.round => {
                     if old != &next {
                         mark(scope, PROPOSAL_CONFLICT);
                     }
                     false
                 }
+                Some(_) => open_window(scope, state, next, at),
             };
-        }
-        let binding = state.binding.as_ref().expect("binding checked above");
-        if context != binding.context || value != binding.value {
-            return false;
-        }
-        if round != binding.round {
-            mark(scope, VOTE_CONFLICT);
-            return false;
         }
         let Some(signer) = hash(&body["signer"]) else {
             mark(scope, MALFORMED);
             return false;
         };
+        let Some(binding) = state.binding.as_ref() else {
+            return count(scope, &mut state.coverage.before_binding_votes, 1);
+        };
+        if context != binding.context {
+            return false; // A vote alone cannot bind another context to the armed intent.
+        }
+        if round < binding.round {
+            return count(scope, &mut state.coverage.late_votes, 1);
+        }
+        if round > binding.round {
+            return count(scope, &mut state.coverage.future_votes, 1);
+        }
+        if value != binding.value {
+            if state
+                .votes
+                .iter()
+                .any(|v| v.kind == kind && v.signer == signer)
+            {
+                mark(scope, VOTE_CONFLICT);
+            }
+            return count(scope, &mut state.coverage.other_value_votes, 1);
+        }
         if let Some(old) = state
             .votes
             .iter()
@@ -391,7 +501,48 @@ fn gap_names(bits: u32) -> Vec<&'static str> {
     .filter_map(|(flag, name)| (bits & flag != 0).then_some(name))
     .collect()
 }
-fn view(scope: &Shared) -> Value {
+fn binding_value(binding: &Binding) -> Value {
+    json!({"context":binding.context,"value":binding.value,"round":binding.round,"proposal_body_id":binding.proposal})
+}
+fn coverage_value(state: &State, include_exited: bool) -> (Value, bool) {
+    let c = &state.coverage;
+    let exited_unmapped: usize = state.exited.iter().map(|w| w.unmapped).sum();
+    let mut gaps = Vec::new();
+    for (present, name) in [
+        (exited_unmapped != 0, "exited-unmapped"),
+        (c.before_binding_votes != 0, "before-binding-votes"),
+        (c.late_proposals != 0, "late-proposals"),
+        (c.late_votes != 0, "late-votes"),
+        (c.future_votes != 0, "future-votes"),
+        (c.other_value_votes != 0, "other-value-votes"),
+        (c.other_context_proposals != 0, "other-context-proposals"),
+        (c.skipped_rounds != 0, "skipped-rounds"),
+    ] {
+        if present {
+            gaps.push(name);
+        }
+    }
+    let complete = gaps.is_empty();
+    let exited = include_exited.then(|| state.exited.iter().map(|w| json!({
+            "binding":binding_value(&w.binding),"window_generation":w.window_generation,
+            "entered_from_event_at":w.entered_from_event_at,"exited_by_event_at":w.exited_by_event_at,
+            "known_votes":w.known_votes,"mapped_targets":w.mapped_targets,
+            "not_destined":w.not_destined,"unmapped":w.unmapped,
+            "integrity_gaps_at_exit":gap_names(w.integrity_gap_bits),
+            "packet_registry_retained":false,"historical_pages_backfilled":false
+        })).collect::<Vec<_>>());
+    (
+        json!({"gaps":gaps,"exited_windows":exited,"exited_window_count":state.exited.len(),
+        "exited_summaries_included":include_exited,"exited_unmapped":exited_unmapped,
+        "before_binding_votes":c.before_binding_votes,"late_proposals":c.late_proposals,
+        "late_votes":c.late_votes,"future_votes":c.future_votes,
+        "other_value_votes":c.other_value_votes,"other_context_proposals":c.other_context_proposals,
+        "skipped_rounds":c.skipped_rounds,"max_windows_including_current":MAX_WINDOWS,
+        "older_final_certificate_coverage":"unknown; inspect only original matching-window pages"}),
+        complete,
+    )
+}
+fn view(scope: &Shared, include_exited: bool) -> Value {
     match scope.state.try_lock() {
         Ok(state) => {
             let mut targets = Vec::new();
@@ -418,13 +569,21 @@ fn view(scope: &Shared) -> Value {
                 }
             }
             let bits = scope.gaps.load(Ordering::Acquire);
-            json!({"format":"RLD-PAGE-WATCH-OBSERVATION-V1","destination":scope.destination,
-                "complete":bits==0 && state.arm.is_some() && state.binding.is_some()
-                    && state.votes.iter().all(|v| v.mapping != Mapping::Pending),
+            let current_complete = bits == 0
+                && state.arm.is_some()
+                && state.binding.is_some()
+                && state.votes.iter().all(|v| v.mapping != Mapping::Pending);
+            let (coverage, coverage_complete) = coverage_value(&state, include_exited);
+            json!({"format":"RLD-PAGE-WATCH-OBSERVATION-V2","destination":scope.destination,
+                "complete":current_complete && coverage_complete,
+                "complete_scope":"known registrations across observed windows only; never future votes or all rounds",
+                "current_window_complete":current_complete,"integrity_complete":bits==0,"all_rounds_complete":false,
+                "window_generation":state.window_generation,"entered_from_event_at":state.entered_from_event_at,
+                "coverage":coverage,
                 "generation":state.generation,"gaps":gap_names(bits),"targets":targets,"pending":pending,"snapshot_available":true,
                 "armed":state.arm.as_ref().map(|a|json!({"intent":a.intent,"input":a.input,"submitted":a.submitted})),
-                "binding":state.binding.as_ref().map(|b|json!({"context":b.context,"value":b.value,"round":b.round,"proposal_body_id":b.proposal})),
-                "registration_clock":null,"clock_semantics":"body_observed_at is original event provenance; generation binds the copied observer state, not a wall-clock instant",
+                "binding":state.binding.as_ref().map(binding_value),
+                "registration_clock":null,"clock_semantics":"event times are original provenance; generations order observer mutations, not a wall-clock interval",
                 "native_authority":false,"qc_membership":false})
         }
         Err(error) => {
@@ -435,19 +594,23 @@ fn view(scope: &Shared) -> Value {
                     TryLockError::Poisoned(_) => POISONED,
                 },
             );
-            json!({"format":"RLD-PAGE-WATCH-OBSERVATION-V1","destination":scope.destination,"complete":false,
-                "generation":null,"gaps":gap_names(scope.gaps.load(Ordering::Acquire)),"targets":[],"pending":null,"snapshot_available":false,"native_authority":false})
+            json!({"format":"RLD-PAGE-WATCH-OBSERVATION-V2","destination":scope.destination,"complete":false,
+                "complete_scope":"known registrations across observed windows only; never future votes or all rounds",
+                "current_window_complete":false,"integrity_complete":false,"all_rounds_complete":false,
+                "generation":null,"window_generation":null,"coverage":null,
+                "gaps":gap_names(scope.gaps.load(Ordering::Acquire)),"targets":[],"pending":null,
+                "snapshot_available":false,"native_authority":false,"qc_membership":false})
         }
     }
 }
 pub(super) fn snapshot_before_page(node_id: &str) -> Option<Value> {
     let scope = active()?;
     (scope.armed.load(Ordering::Acquire) && node_id == scope.destination.to_hex())
-        .then(|| view(&scope))
+        .then(|| view(&scope, false))
 }
 /// Caller must first stop and join every actor. Sticky gaps never reset during a scope.
 pub(super) fn final_after_join(scope: &Shared) -> Value {
-    view(scope)
+    view(scope, true)
 }
 
 #[cfg(test)]
@@ -470,6 +633,195 @@ mod tests {
         arm_second(h(20), Some(h(22)), 1.0);
         observe_retained(&proposal(h(21)));
         guard
+    }
+    fn proposal_round(round: u64, value: Hash) -> Value {
+        let mut event = proposal(value);
+        event["body"]["round"] = json!(round);
+        event["body_id"] = json!(h(100 + round as u8));
+        event["at"] = json!(2.0 + round as f64);
+        event
+    }
+    fn vote_round(kind: &str, signer: Hash, body: Hash, round: u64, value: Hash) -> Value {
+        let mut event = vote(kind, signer, body);
+        event["body"]["round"] = json!(round);
+        event["body"]["value"] = json!(value);
+        event["at"] = json!(3.0 + round as f64);
+        event
+    }
+    fn bind(body: Hash, frame: Hash, packet: Hash) {
+        observe_enqueued(
+            &[body],
+            &[frame],
+            &[h(9).to_hex()],
+            &[vec![packet.to_hex()]],
+        );
+    }
+    #[test]
+    fn higher_round_new_value_has_fresh_slots_and_late_votes_cannot_backfill() {
+        let scope = shared(h(9));
+        let _guard = ready(scope.clone());
+        observe_retained(&vote("commit", h(30), h(31)));
+        bind(h(31), h(32), h(33));
+        let old = snapshot_before_page(&h(9).to_hex()).unwrap();
+        observe_retained(&proposal_round(1, h(23)));
+        let fresh = snapshot_before_page(&h(9).to_hex()).unwrap();
+        assert_eq!(fresh["window_generation"], 2);
+        assert_eq!(fresh["binding"]["round"], 1);
+        assert_eq!(fresh["binding"]["value"], json!(h(23)));
+        assert_eq!(fresh["targets"], json!([]));
+        assert_eq!(fresh["pending"], json!([]));
+        assert_eq!(fresh["complete"], true);
+        observe_retained(&vote("commit", h(30), h(31)));
+        bind(h(31), h(32), h(33));
+        let late = snapshot_before_page(&h(9).to_hex()).unwrap();
+        assert_eq!(late["binding"], fresh["binding"]);
+        assert_eq!(late["targets"], json!([]));
+        assert_eq!(late["coverage"]["late_votes"], 1);
+        assert_eq!(late["gaps"], json!([]));
+        assert_eq!(late["current_window_complete"], true);
+        assert_eq!(late["complete"], false);
+        observe_retained(&vote_round("commit", h(30), h(34), 1, h(23)));
+        bind(h(34), h(35), h(36));
+        let current = snapshot_before_page(&h(9).to_hex()).unwrap();
+        assert_eq!(current["targets"].as_array().unwrap().len(), 1);
+        assert_eq!(current["targets"][0]["packet_id"], json!(h(36)));
+        assert_eq!(old["targets"][0]["packet_id"], json!(h(33)));
+        assert_eq!(old["window_generation"], 1);
+        assert_eq!(current["coverage"]["exited_window_count"], 1);
+        assert!(current["coverage"]["exited_windows"].is_null());
+        assert_eq!(
+            final_after_join(&scope)["coverage"]["exited_windows"][0]["mapped_targets"],
+            1
+        );
+        assert_eq!(current["all_rounds_complete"], false);
+    }
+    #[test]
+    fn exited_unmapped_votes_remain_coverage_gaps_without_old_registries() {
+        let scope = shared(h(9));
+        let _guard = ready(scope.clone());
+        observe_retained(&vote("prepare", h(30), h(31)));
+        observe_retained(&proposal_round(1, h(21)));
+        let before = final_after_join(&scope);
+        assert_eq!(before["coverage"]["exited_unmapped"], 1);
+        assert_eq!(before["coverage"]["exited_windows"][0]["unmapped"], 1);
+        assert_eq!(before["current_window_complete"], true);
+        assert_eq!(before["complete"], false);
+        bind(h(31), h(32), h(33));
+        let after = final_after_join(&scope);
+        assert_eq!(before, after);
+        assert!(!serde_json::to_string(&after["coverage"])
+            .unwrap()
+            .contains(&h(31).to_hex()));
+        observe_retained(&proposal_round(2, h(21)));
+        assert_eq!(final_after_join(&scope)["coverage"]["exited_unmapped"], 1);
+    }
+    #[test]
+    fn same_window_vote_conflict_is_sticky_across_valid_transitions() {
+        let scope = shared(h(9));
+        let _guard = ready(scope.clone());
+        observe_retained(&vote("prepare", h(30), h(31)));
+        observe_retained(&vote("prepare", h(30), h(34)));
+        assert_eq!(
+            final_after_join(&scope)["pending"][0]["body_id"],
+            json!(h(31))
+        );
+        observe_retained(&vote_round("prepare", h(30), h(35), 0, h(23)));
+        assert_eq!(final_after_join(&scope)["coverage"]["other_value_votes"], 1);
+        observe_retained(&proposal_round(1, h(23)));
+        let image = final_after_join(&scope);
+        assert!(image["gaps"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("vote-conflict")));
+        assert_eq!(image["current_window_complete"], false);
+        assert_eq!(image["binding"]["round"], 1);
+        assert_eq!(image["targets"], json!([]));
+    }
+    #[test]
+    fn future_votes_context_changes_and_round_jumps_are_coverage_not_rollbacks() {
+        let scope = shared(h(9));
+        let _guard = ready(scope.clone());
+        observe_retained(&vote_round("prepare", h(30), h(31), 1, h(21)));
+        let mut foreign = proposal_round(1, h(21));
+        foreign["body"]["context"]["parent_state"] = json!(h(99));
+        observe_retained(&foreign);
+        observe_retained(&proposal_round(2, h(21)));
+        observe_retained(&proposal(h(21)));
+        let image = final_after_join(&scope);
+        assert_eq!(image["binding"]["round"], 2);
+        assert_eq!(image["window_generation"], 2);
+        assert_eq!(image["coverage"]["future_votes"], 1);
+        assert_eq!(image["coverage"]["other_context_proposals"], 1);
+        assert_eq!(image["coverage"]["skipped_rounds"], 1);
+        assert_eq!(image["coverage"]["late_proposals"], 1);
+        assert_eq!(image["gaps"], json!([]));
+        assert_eq!(image["current_window_complete"], true);
+        assert_eq!(image["complete"], false);
+        assert_eq!(image["targets"], json!([]));
+    }
+    #[test]
+    fn every_window_has_at_most_eight_targets() {
+        let scope = shared(h(9));
+        let _guard = ready(scope.clone());
+        for n in 0..8 {
+            let kind = if n < 4 { "prepare" } else { "commit" };
+            observe_retained(&vote(kind, h(40 + n % 4), h(60 + n)));
+            bind(h(60 + n), h(80 + n), h(90 + n));
+        }
+        let before = snapshot_before_page(&h(9).to_hex()).unwrap();
+        assert_eq!(before["targets"].as_array().unwrap().len(), 8);
+        assert_eq!(before["current_window_complete"], true);
+        observe_retained(&vote("prepare", h(50), h(70)));
+        bind(h(70), h(88), h(98));
+        let capped = snapshot_before_page(&h(9).to_hex()).unwrap();
+        assert_eq!(capped["targets"], before["targets"]);
+        assert!(capped["gaps"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("capacity")));
+        observe_retained(&proposal_round(1, h(23)));
+        assert_eq!(
+            snapshot_before_page(&h(9).to_hex()).unwrap()["targets"],
+            json!([])
+        );
+    }
+    #[test]
+    fn thirty_two_windows_include_current_and_never_grow_on_invalid_round() {
+        let scope = shared(h(9));
+        let _guard = ready(scope.clone());
+        assert_eq!(crate::bft::MAX_ROUNDS, MAX_WINDOWS as u64);
+        for round in 1..crate::bft::MAX_ROUNDS {
+            observe_retained(&proposal_round(round, h(21)));
+        }
+        let before = final_after_join(&scope);
+        assert_eq!(before["window_generation"], 32);
+        assert_eq!(
+            before["coverage"]["exited_windows"]
+                .as_array()
+                .unwrap()
+                .len(),
+            31
+        );
+        observe_retained(&proposal_round(crate::bft::MAX_ROUNDS, h(21)));
+        let after = final_after_join(&scope);
+        assert_eq!(after["window_generation"], 32);
+        assert_eq!(after["binding"], before["binding"]);
+        assert_eq!(after["coverage"], before["coverage"]);
+        assert!(after["gaps"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("malformed")));
+        // Exercise the independent storage cap, not a valid Native proposal.
+        let mut state = scope.state.try_lock().unwrap();
+        let next = state.binding.as_ref().unwrap().clone();
+        assert!(!open_window(&scope, &mut state, next, 40.0));
+        assert_eq!(state.exited.len(), 31);
+        assert_eq!(state.window_generation, 32);
+        drop(state);
+        assert!(final_after_join(&scope)["gaps"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("capacity")));
     }
     #[test]
     fn disabled_and_first_payment_do_not_register() {
@@ -506,6 +858,9 @@ mod tests {
         let image = snapshot_before_page(&h(9).to_hex()).unwrap();
         assert_eq!(image["complete"], false);
         drop(lock);
+        observe_retained(&proposal_round(1, h(23)));
+        assert_eq!(final_after_join(&scope)["window_generation"], 2);
+        assert_eq!(final_after_join(&scope)["current_window_complete"], false);
         drop(guard);
         assert!(final_after_join(&scope)["gaps"]
             .as_array()

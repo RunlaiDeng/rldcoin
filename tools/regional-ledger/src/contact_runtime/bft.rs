@@ -1392,6 +1392,11 @@ mod import_tests;
 mod payment_trace;
 
 #[cfg(test)]
+pub(crate) fn test_finalized_payment_observation(snapshot: Snapshot) -> Result<Value> {
+    payment_trace::body(&net::Body::Finalized(Box::new(snapshot)))
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::tests::{public, signature};
