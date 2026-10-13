@@ -578,7 +578,7 @@ impl Runtime {
 
     fn prepare_owned_proposal(
         &mut self,
-        node: &Store,
+        node: &mut Store,
         context: &consensus::Context,
         round: u64,
         snapshot: &Snapshot,
@@ -632,7 +632,7 @@ impl Runtime {
 
     fn commit_prepared_proposal(
         &mut self,
-        node: &Store,
+        node: &mut Store,
         original: &consensus::Proposal,
     ) -> Result<()> {
         let context = original.context()?;
@@ -698,7 +698,87 @@ impl Runtime {
                 proposal.as_ref() == original,
                 "post-Prepare Commit differs from exact original proposal",
             )?;
-            self.sign(node, consensus::Request::Commit { proposal, prepared })?;
+            self.sign(
+                node,
+                consensus::Request::Commit {
+                    proposal: proposal.clone(),
+                    prepared,
+                },
+            )?;
+            self.finalize_committed_proposal(node, &proposal)?;
+        }
+        Ok(())
+    }
+
+    fn finalize_committed_proposal(
+        &mut self,
+        node: &mut Store,
+        original: &consensus::Proposal,
+    ) -> Result<()> {
+        let context = original.context()?;
+        require(
+            consensus::Context::current(node)? == context,
+            "post-Commit Native context changed",
+        )?;
+        let value = original.snapshot.statement.id()?;
+        let mut possible = BTreeSet::new();
+        for record in self.archive.runtime.messages.values() {
+            let body: net::Body =
+                serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())?;
+            if let net::Body::Signed(message) = body {
+                if let consensus::Message::Vote(vote) = *message {
+                    if vote.phase == consensus::Phase::Commit
+                        && vote.context == context
+                        && vote.round == original.round
+                        && vote.value == value
+                    {
+                        possible.insert(vote.approval.key);
+                    }
+                }
+            }
+        }
+        // This count only declines work. Complete certificate authentication and
+        // value execution still belong to the original Native policy/Store.
+        if possible.len() < 3 {
+            return Ok(());
+        }
+        let caller = bft_client::Client::lock(
+            &self.config.head_file,
+            &self.config.signer_dir,
+            self.config.key.clone(),
+            self.config.format.clone(),
+            node,
+        )?;
+        let head = caller.read()?.head;
+        drop(caller);
+        let pins = proposal::Pins {
+            signer: &self.config.signer_dir,
+            archive: &self.config.state,
+            key: self.config.key.clone(),
+            runtime_format: self.config.format.clone(),
+            head,
+            archive_head: self.head.ok_or("post-Commit archive head missing")?,
+            context: context.clone(),
+            round: original.round,
+        };
+        let observed = phase::observe(
+            node,
+            pins,
+            phase::Mode::Committed,
+            phase::Input {
+                context,
+                order: self.archive.runtime.messages.keys().copied().collect(),
+            },
+        )?;
+        if let phase::Action::Finalize { snapshot } = observed.action {
+            let mut unsigned = *snapshot.clone();
+            unsigned.bft = None;
+            require(
+                &unsigned == original.snapshot.as_ref(),
+                "post-Commit finality differs from exact original proposal",
+            )?;
+            node.finalize(*snapshot.clone())?;
+            self.retain_local(node, net::Body::Finalized(snapshot))?;
         }
         Ok(())
     }
@@ -794,7 +874,16 @@ impl Runtime {
             }
             tick::Decision::Phase(phase::Action::Commit {
                 proposal, prepared, ..
-            }) => self.sign(node, consensus::Request::Commit { proposal, prepared })?,
+            }) => {
+                self.sign(
+                    node,
+                    consensus::Request::Commit {
+                        proposal: proposal.clone(),
+                        prepared,
+                    },
+                )?;
+                self.finalize_committed_proposal(node, &proposal)?;
+            }
             tick::Decision::Propose {
                 round,
                 timeout,

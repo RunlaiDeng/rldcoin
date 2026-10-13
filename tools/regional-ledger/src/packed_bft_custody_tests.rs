@@ -222,37 +222,42 @@ fn packed_ledger_four_original_signer_journals_two_owner_payments_and_fresh_cold
 
 #[test]
 fn packed_height_four_runtime_tick_measures_complete_authentication_without_new_signature() {
-    packed_runtime_work(false, false, false, false, false, false);
+    packed_runtime_work(false, false, false, false, false, false, false);
 }
 
 #[test]
 fn packed_current_prepare_measures_original_runtime_sign_and_caller_publication() {
-    packed_runtime_work(true, false, false, false, false, false);
+    packed_runtime_work(true, false, false, false, false, false, false);
 }
 
 #[test]
 fn ordinary_proposer_retains_own_prepare_without_another_contact_turn() {
-    packed_runtime_work(false, true, false, false, false, false);
+    packed_runtime_work(false, true, false, false, false, false, false);
 }
 
 #[test]
 fn packed_receive_retains_exact_evidence_event_and_measures_post_sync_retention() {
-    packed_runtime_work(false, false, true, false, false, false);
+    packed_runtime_work(false, false, true, false, false, false, false);
 }
 
 #[test]
 fn packed_ordinary_proposal_separates_historical_candidate_scan_and_original_signing() {
-    packed_runtime_work(false, false, false, true, false, false);
+    packed_runtime_work(false, false, false, true, false, false, false);
 }
 
 #[test]
 fn exact_duplicate_receive_reauthenticates_without_a_second_evidence_event() {
-    packed_runtime_work(false, false, true, false, true, false);
+    packed_runtime_work(false, false, true, false, true, false, false);
 }
 
 #[test]
 fn ordinary_prepare_completes_exact_current_quorum_and_retains_commit_in_same_tick() {
-    packed_runtime_work(false, false, false, false, false, true);
+    packed_runtime_work(false, false, false, false, false, true, false);
+}
+
+#[test]
+fn ordinary_commit_completes_exact_certificate_and_native_finality_in_same_tick() {
+    packed_runtime_work(false, false, false, false, false, false, true);
 }
 
 fn packed_runtime_work(
@@ -262,6 +267,7 @@ fn packed_runtime_work(
     measure_proposal: bool,
     exact_duplicate: bool,
     complete_prepare: bool,
+    complete_commit: bool,
 ) {
     let started = std::time::Instant::now();
     let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
@@ -319,7 +325,7 @@ fn packed_runtime_work(
             "key":public(h.seeds[n]),"miner":public(10),
             "validators":h.seeds.iter().enumerate().map(|(n,seed)|
                 serde_json::json!({"key":public(*seed),"node_id":ids[n]})).collect::<Vec<_>>(),
-            "block_interval":0.5,"round_timeout":5.0,"stop_height":if measure_proposal || complete_prepare {5}else{4}
+            "block_interval":0.5,"round_timeout":5.0,"stop_height":if measure_proposal || complete_prepare || complete_commit {5}else{4}
         });
         let path = h.root.join(format!("runtime-config-{n}.json"));
         crate::keystore::private_create(&path, &crate::wallet_client::canonical(&config).unwrap())
@@ -418,12 +424,154 @@ fn packed_runtime_work(
         else {
             panic!("original proposal response")
         };
-        if complete_prepare && height == 5 {
+        if (complete_prepare || complete_commit) && height == 5 {
             let receiver = (n + 1) % 4;
             for actor in (0..4).filter(|actor| *actor != receiver).take(2) {
                 actors[actor]
                     .sign_fixture_control(&h.node, Request::Prepare(proposal.clone()))
                     .unwrap();
+            }
+            if complete_commit {
+                actors[receiver]
+                    .sign_fixture_control(&h.node, Request::Prepare(proposal.clone()))
+                    .unwrap();
+                let prepares = actors
+                    .iter()
+                    .flat_map(|actor| actor.fixture_controls().unwrap())
+                    .filter_map(|message| match message {
+                        Message::Vote(vote)
+                            if vote.phase == Phase::Prepare && vote.context == context =>
+                        {
+                            Some(*vote)
+                        }
+                        _ => None,
+                    })
+                    .collect::<Vec<_>>();
+                assert_eq!(prepares.len(), 3);
+                let prepared = Quorum::combine(prepares, &h.node.trust, &h.node.evidence).unwrap();
+                for actor in (0..4).filter(|actor| *actor != receiver).take(2) {
+                    actors[actor]
+                        .sign_fixture_control(
+                            &h.node,
+                            Request::Commit {
+                                proposal: proposal.clone(),
+                                prepared: prepared.clone(),
+                            },
+                        )
+                        .unwrap();
+                }
+                let controls = actors
+                    .iter()
+                    .flat_map(|actor| actor.fixture_controls().unwrap())
+                    .collect::<Vec<_>>();
+                assert_eq!(controls.len(), 42);
+                actors[receiver]
+                    .retain_fixture_controls(&h.node, &controls)
+                    .unwrap();
+                let old_head = h.node.storage_head().unwrap();
+                let old_blocks = h
+                    .node
+                    .blocks()
+                    .unwrap()
+                    .collect::<Result<Vec<_>>>()
+                    .unwrap();
+                let expected_statement = proposal.snapshot.statement.clone();
+                let report = actors[receiver].probe_tick(&mut h.node).unwrap();
+                assert!(
+                    report["error"].is_null(),
+                    "actual current Commit failed: {report}"
+                );
+                assert_eq!(report["decision"], "commit");
+                let height = h.node.chain.height();
+                let head = h.node.storage_head().unwrap();
+                let statement = h.node.chain.statement(&h.node.trust).unwrap();
+                let ledger = h.node.chain.ledger.clone();
+                let finality = h.node.chain.finalized;
+                let expected_id = expected_statement.id().unwrap();
+                let installed = h
+                    .node
+                    .evidence
+                    .snapshot(expected_id)
+                    .ok()
+                    .map(|snapshot| snapshot.statement.clone());
+                assert!(h
+                    .node
+                    .blocks()
+                    .unwrap()
+                    .collect::<Result<Vec<_>>>()
+                    .unwrap()
+                    .starts_with(&old_blocks));
+                eprintln!(
+                    "Original current Commit closure: {}",
+                    serde_json::json!({
+                    "report":report,"native_height":height,"storage_head_changed":head!=old_head,
+                    "exact_installed_statement":installed.as_ref()==Some(&expected_statement),"whole_payment_qualification":false})
+                );
+                drop(actors);
+                let root = h.root.clone();
+                let seeds = h.seeds.clone();
+                drop(h);
+                let before = inventory(&root);
+                let cold =
+                    Store::open_pinned(&root.join("node"), &public(1), currency, head).unwrap();
+                assert_eq!(cold.chain.height(), height);
+                assert_eq!(cold.chain.ledger, ledger);
+                assert_eq!(cold.chain.statement(&cold.trust).unwrap(), statement);
+                assert_eq!(
+                    cold.evidence
+                        .snapshot(expected_id)
+                        .ok()
+                        .map(|snapshot| snapshot.statement.clone()),
+                    installed
+                );
+                for (actor, seed) in seeds.iter().enumerate() {
+                    let caller = crate::bft_client::Client::lock(
+                        &root.join(format!("runtime-caller-{actor}/head.json")),
+                        &root.join(format!("signer-{seed}")),
+                        public(*seed),
+                        crate::bft_client::FORMAT.into(),
+                        &cold,
+                    )
+                    .unwrap();
+                    let state = caller.read().unwrap();
+                    assert!(state.pending.is_none() && state.outbox.is_none());
+                    let agent = Agent::open(&root.join(format!("signer-{seed}")), &cold).unwrap();
+                    assert_eq!(agent.head().unwrap(), state.head);
+                }
+                let path = root.join(format!("runtime-work-{receiver}/state.json"));
+                let archive =
+                    crate::bft_runtime_archive::Archive::decode(&fs::read(path).unwrap()).unwrap();
+                let entries = archive.runtime.messages.values().collect::<Vec<_>>();
+                let mut count = 0;
+                for records in entries.chunks(crate::bft_network::MAX_COLD_BATCH) {
+                    let wires = records
+                        .iter()
+                        .map(|record| {
+                            serde_json::from_value(archive.envelope(record).unwrap()).unwrap()
+                        })
+                        .collect::<Vec<_>>();
+                    let checked = crate::bft_network::check_cold_batch(wires, &cold).unwrap();
+                    assert_eq!(checked.len(), records.len());
+                    for (record, checked) in records.iter().zip(checked) {
+                        assert_eq!(record.value, checked.value);
+                        count += 1;
+                    }
+                }
+                assert_eq!(count, archive.runtime.messages.len());
+                assert_eq!(inventory(&root), before);
+                assert!(
+                    started.elapsed().as_secs_f64() < 60.0,
+                    "original current Commit closure budget"
+                );
+                assert_eq!(height,5,"own Commit completed exact native certificate but finality waited for another contact turn");
+                assert_ne!(head, old_head);
+                assert_eq!(installed, Some(expected_statement.clone()));
+                assert_eq!(statement.height, expected_statement.height);
+                assert_eq!(statement.block, expected_statement.block);
+                assert_eq!(statement.state, expected_statement.state);
+                assert_eq!(finality, Some(expected_statement.id().unwrap()));
+                assert_eq!(archive.runtime.messages.len(), 44);
+                return;
             }
             let controls = actors
                 .iter()
