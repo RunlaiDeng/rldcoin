@@ -1300,6 +1300,50 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_authenticated_receive_preserves_exact_state_inode_and_cold_custody() {
+        use std::os::unix::fs::MetadataExt;
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        let raw = f.frame();
+        let packet = source.enqueue(&raw, &f.ids[1]).unwrap();
+        let bundle = source.prepare(&f.ids[1]).unwrap();
+        drop(source);
+        let mut recipient = Node::open(&f.configs[1]).unwrap();
+        recipient.receive(&bundle, &f.ids[0]).unwrap();
+        let path = recipient.root.join("native-mesh-state.json");
+        let before = fs::read(&path).unwrap();
+        let inode = fs::metadata(&path).unwrap().ino();
+        let messages = recipient.state.messages.clone();
+        let accepted = recipient.receive(&bundle, &f.ids[0]).unwrap();
+        let after_inode = fs::metadata(&path).unwrap().ino();
+        assert_eq!(accepted, vec![packet.clone()]);
+        assert_eq!(fs::read(&path).unwrap(), before);
+        assert_eq!(recipient.state.messages, messages);
+        let mut altered = bundle["body"].clone();
+        altered["transits"][0]["hops"][0]["signature"] = json!("00".repeat(64));
+        let bad = Node::open(&f.configs[0])
+            .unwrap()
+            .sign("exchange", altered)
+            .unwrap();
+        assert!(recipient.receive(&bad, &f.ids[0]).is_err());
+        assert_eq!(fs::read(&path).unwrap(), before);
+        drop(recipient);
+        let cold = Node::open(&f.configs[1]).unwrap();
+        assert_eq!(cold.state.messages, messages);
+        assert_eq!(cold.received_frames().unwrap(), vec![(packet, raw)]);
+        assert_eq!(fs::read(&path).unwrap(), before);
+        eprintln!(
+            "Exact duplicate receive: {}",
+            json!({"state_inode_preserved":inode==after_inode,"complete_cold_custody":true,"ledger_authority":false})
+        );
+        assert_eq!(
+            after_inode, inode,
+            "fully authenticated unchanged receive rewrote the complete transport state"
+        );
+    }
+
+    #[test]
     fn altered_later_envelope_refuses_without_replacing_original_or_advancing_cursor() {
         let f = Fixture::new(2);
         let raw = f.frame();

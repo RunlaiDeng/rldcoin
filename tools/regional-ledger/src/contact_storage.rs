@@ -73,6 +73,10 @@ pub(super) fn parts(path: &Path) -> Result<(&Path, &std::ffi::OsStr)> {
     Ok((parent, name))
 }
 pub(super) fn open_at(dir: &File, name: &std::ffi::OsStr, flags: i32) -> Result<File> {
+    open_at_optional(dir, name, flags)?
+        .ok_or_else(|| io_error(std::io::Error::from_raw_os_error(libc::ENOENT)))
+}
+fn open_at_optional(dir: &File, name: &std::ffi::OsStr, flags: i32) -> Result<Option<File>> {
     let name = cstring(name)?;
     let fd = unsafe {
         libc::openat(
@@ -83,14 +87,18 @@ pub(super) fn open_at(dir: &File, name: &std::ffi::OsStr, flags: i32) -> Result<
         )
     };
     if fd < 0 {
-        return Err(io_error(std::io::Error::last_os_error()));
+        let error = std::io::Error::last_os_error();
+        if error.raw_os_error() == Some(libc::ENOENT) {
+            return Ok(None);
+        }
+        return Err(io_error(error));
     }
     let file = unsafe { File::from_raw_fd(fd) };
     require(
         file.metadata().map_err(io_error)?.is_file(),
         "contact storage regular file required",
     )?;
-    Ok(file)
+    Ok(Some(file))
 }
 fn sync(
     file: &File,
@@ -120,6 +128,35 @@ fn atomic(
         .create(parent)
         .map_err(io_error)?;
     let dir = directory(parent)?;
+    if let Some(retained) = open_at_optional(&dir, name, libc::O_RDONLY)? {
+        let meta = retained.metadata().map_err(io_error)?;
+        if meta.len() == raw.len() as u64 {
+            observe("state-retained-read")?;
+            let mut complete = Vec::new();
+            (&retained)
+                .take((raw.len() + 1) as u64)
+                .read_to_end(&mut complete)
+                .map_err(io_error)?;
+            if complete == raw {
+                // Exact complete bytes grant storage reuse only. The caller
+                // still authenticates every envelope and this call repeats
+                // file and directory synchronization before returning.
+                sync(&retained, "state-retained-file-sync", observe)?;
+                use std::os::unix::fs::MetadataExt;
+                let current = open_at(&dir, name, libc::O_RDONLY)?;
+                let current = current.metadata().map_err(io_error)?;
+                require(
+                    current.dev() == meta.dev() && current.ino() == meta.ino(),
+                    "contact state retained path changed",
+                )?;
+                sync(&dir, "state-retained-directory-sync", observe)?;
+                return Ok(
+                    json!({"format":FORMAT,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(raw)),
+                    "ledger_authority":false,"custody_acknowledgment":false}),
+                );
+            }
+        }
+    }
     let mut random = [0; 16];
     getrandom::getrandom(&mut random).map_err(|e| e.to_string())?;
     let temporary = format!(".write-{}", hex::encode(random));
@@ -582,6 +619,83 @@ mod tests {
             // Observe retained residue only. Do not clean or republish it as a pass.
         }
     }
+    #[test]
+    fn exact_atomic_bytes_repeat_sync_without_replacement_and_fail_closed() {
+        use std::os::unix::fs::MetadataExt;
+        let root = fixture();
+        let path = root.join("state.json");
+        let raw = b"complete";
+        atomic(&path, raw, &mut |_| Ok(())).unwrap();
+        let inode = fs::metadata(&path).unwrap().ino();
+        for _ in 0..2 {
+            let mut stages = Vec::new();
+            let receipt = atomic(&path, raw, &mut |stage| {
+                stages.push(stage);
+                Ok(())
+            })
+            .unwrap();
+            assert_eq!(
+                stages,
+                vec![
+                    "state-retained-read",
+                    "state-retained-file-sync",
+                    "state-retained-directory-sync"
+                ]
+            );
+            assert_eq!(receipt["ledger_authority"], false);
+            assert_eq!(receipt["custody_acknowledgment"], false);
+            assert_eq!(fs::read(&path).unwrap(), raw);
+            assert_eq!(fs::metadata(&path).unwrap().ino(), inode);
+            assert_eq!(fs::read_dir(&root).unwrap().count(), 1);
+        }
+        for failed in [
+            "state-retained-read",
+            "state-retained-file-sync",
+            "state-retained-directory-sync",
+        ] {
+            assert!(atomic(&path, raw, &mut |stage| if stage == failed {
+                Err("injected retained failure".into())
+            } else {
+                Ok(())
+            })
+            .is_err());
+            assert_eq!(fs::read(&path).unwrap(), raw);
+            assert_eq!(fs::metadata(&path).unwrap().ino(), inode);
+            assert_eq!(fs::read_dir(&root).unwrap().count(), 1);
+        }
+        // Same length and an old matching prefix cannot stand in for all bytes.
+        atomic(&path, b"changed!", &mut |_| Ok(())).unwrap();
+        assert_eq!(fs::read(&path).unwrap(), b"changed!");
+        assert_ne!(fs::metadata(&path).unwrap().ino(), inode);
+        atomic(&path, b"changed!plus", &mut |_| Ok(())).unwrap();
+        assert_eq!(fs::read(&path).unwrap(), b"changed!plus");
+    }
+
+    #[test]
+    fn retained_atomic_path_substitution_and_symlink_refuse() {
+        use std::os::unix::fs::symlink;
+        let root = fixture();
+        let path = root.join("state.json");
+        let moved = root.join("retained-original");
+        atomic(&path, b"complete", &mut |_| Ok(())).unwrap();
+        let error = atomic(&path, b"complete", &mut |stage| {
+            if stage == "state-retained-file-sync" {
+                fs::rename(&path, &moved).map_err(io_error)?;
+                fs::write(&path, b"other bytes").map_err(io_error)?;
+            }
+            Ok(())
+        })
+        .unwrap_err();
+        assert_eq!(error, "contact state retained path changed");
+        assert_eq!(fs::read(&path).unwrap(), b"other bytes");
+        assert_eq!(fs::read(&moved).unwrap(), b"complete");
+        let link = root.join("link");
+        symlink(&moved, &link).unwrap();
+        assert!(atomic(&link, b"complete", &mut |_| Ok(())).is_err());
+        assert_eq!(fs::read(&moved).unwrap(), b"complete");
+        assert!(fs::symlink_metadata(link).unwrap().file_type().is_symlink());
+    }
+
     #[test]
     fn atomic_publication_order_and_old_bytes_before_replace() {
         let root = fixture();
