@@ -112,7 +112,7 @@ fn sync(
     observe(stage)?;
     #[cfg(test)]
     {
-        let started = sync_measurement::sync_start();
+        let started = sync_measurement::sync_start(stage);
         let result = file.sync_all();
         sync_measurement::sync_finish(started, result.is_ok());
         result.map_err(io_error)

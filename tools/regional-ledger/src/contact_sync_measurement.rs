@@ -5,6 +5,13 @@ use std::{cell::RefCell, marker::PhantomData, rc::Rc, time::Instant};
 
 const MAX_CALLS: u64 = 256;
 const MAX_SYNCS: u64 = 2048;
+const ARCHIVE_STAGES: [&str; 5] = [
+    "staging-file-sync",
+    "staging-directory-sync",
+    "retained-file-sync",
+    "retained-directory-sync",
+    "cleanup-directory-sync",
+];
 #[derive(Clone, Copy)]
 pub(crate) enum Kind {
     ArchiveWrite = 0,
@@ -24,8 +31,16 @@ struct Row {
 }
 struct State {
     rows: [Row; 3],
+    archive_stages: [SyncRow; 5],
     current: Option<usize>,
     complete: bool,
+}
+#[derive(Clone, Copy, Default)]
+struct SyncRow {
+    calls: u64,
+    succeeded: u64,
+    failed: u64,
+    seconds: f64,
 }
 thread_local! { static STATE: RefCell<Option<State>> = const { RefCell::new(None) }; }
 pub(crate) struct Capture(PhantomData<Rc<()>>);
@@ -38,6 +53,7 @@ pub(crate) fn start() -> Result<Capture> {
         require(slot.is_none(), "storage measurement already active")?;
         *slot = Some(State {
             rows: [Row::default(); 3],
+            archive_stages: [SyncRow::default(); 5],
             current: None,
             complete: true,
         });
@@ -60,7 +76,17 @@ impl Capture {
                     "actual_sync_seconds":r.sync_seconds})
             })
             .collect::<Vec<_>>();
+        let archive_stages = ARCHIVE_STAGES
+            .into_iter()
+            .enumerate()
+            .map(|(index, name)| {
+                let row = state.archive_stages[index];
+                json!({"stage":name,"calls":row.calls,"succeeded":row.succeeded,
+                "failed":row.failed,"actual_sync_seconds":row.seconds})
+            })
+            .collect::<Vec<_>>();
         json!({"complete":state.complete && state.current.is_none(),"rows":rows,
+            "archive_stages":archive_stages,"archive_stage_times_partition_archive_sync":true,
             "scope":"storage kernels after bounded ABI validation",
             "operation_times_disjoint":true,"sync_times_disjoint":true,
             "sync_times_nested_in_kernel":true,"ledger_authority":false})
@@ -108,10 +134,11 @@ pub(crate) fn operation(kind: Kind, work: impl FnOnce() -> Result<Value>) -> Res
 }
 pub(crate) struct SyncStart {
     index: usize,
+    archive_stage: Option<usize>,
     started: Instant,
 }
-pub(crate) fn sync_start() -> Option<SyncStart> {
-    let index = STATE.with(|slot| {
+pub(crate) fn sync_start(stage: &str) -> Option<SyncStart> {
+    let (index, archive_stage) = STATE.with(|slot| {
         let mut slot = slot.borrow_mut();
         let state = slot.as_mut()?;
         let index = state.current?;
@@ -120,11 +147,23 @@ pub(crate) fn sync_start() -> Option<SyncStart> {
             return None;
         }
         state.rows[index].sync_calls += 1;
-        Some(index)
+        let archive_stage = if index == Kind::ArchiveWrite as usize {
+            let stage_index = ARCHIVE_STAGES.iter().position(|name| *name == stage);
+            if let Some(stage_index) = stage_index {
+                state.archive_stages[stage_index].calls += 1;
+            } else {
+                state.complete = false;
+            }
+            stage_index
+        } else {
+            None
+        };
+        Some((index, archive_stage))
     })?;
     // Start after observer bookkeeping, immediately before the real sync_all.
     Some(SyncStart {
         index,
+        archive_stage,
         started: Instant::now(),
     })
 }
@@ -141,6 +180,15 @@ pub(crate) fn sync_finish(started: Option<SyncStart>, succeeded: bool) {
             } else {
                 row.sync_failed += 1;
             }
+            if let Some(index) = started.archive_stage {
+                let row = &mut state.archive_stages[index];
+                row.seconds += seconds;
+                if succeeded {
+                    row.succeeded += 1;
+                } else {
+                    row.failed += 1;
+                }
+            }
         }
     });
 }
@@ -148,7 +196,7 @@ pub(crate) fn sync_finish(started: Option<SyncStart>, succeeded: bool) {
 #[test]
 fn disabled_errors_and_scope_drop_do_not_report_success_or_stale_work() {
     operation(Kind::ArchiveWrite, || Err("disabled".into())).unwrap_err();
-    assert!(sync_start().is_none());
+    assert!(sync_start("retained-file-sync").is_none());
     let capture = start().unwrap();
     assert!(start().is_err());
     assert_eq!(
@@ -162,7 +210,7 @@ fn disabled_errors_and_scope_drop_do_not_report_success_or_stale_work() {
     assert_eq!(value["rows"][0]["succeeded"], 0);
     assert_eq!(value["rows"][0]["sync_calls"], 0);
     drop(start().unwrap());
-    assert!(sync_start().is_none());
+    assert!(sync_start("retained-file-sync").is_none());
     assert_eq!(start().unwrap().finish()["rows"][0]["calls"], 0);
 }
 
@@ -184,7 +232,7 @@ fn nested_and_exhausted_measurements_are_incomplete_without_changing_results() {
     let capture = start().unwrap();
     let error = operation(Kind::SyncMany, || {
         for _ in 0..=MAX_SYNCS {
-            sync_finish(sync_start(), false);
+            sync_finish(sync_start("retained-file-sync"), false);
         }
         Err("sync failure retained".into())
     })
@@ -196,4 +244,57 @@ fn nested_and_exhausted_measurements_are_incomplete_without_changing_results() {
     assert_eq!(value["rows"][1]["sync_calls"], MAX_SYNCS);
     assert_eq!(value["rows"][1]["sync_succeeded"], 0);
     assert_eq!(value["rows"][1]["sync_failed"], MAX_SYNCS);
+}
+
+#[test]
+fn archive_stage_partition_is_scoped_and_preserves_failures() {
+    let capture = start().unwrap();
+    operation(Kind::ArchiveWrite, || {
+        for (index, stage) in ARCHIVE_STAGES.into_iter().enumerate() {
+            sync_finish(sync_start(stage), index != 2);
+        }
+        Err("original failure".into())
+    })
+    .unwrap_err();
+    for kind in [Kind::SyncMany, Kind::AtomicWrite] {
+        operation(kind, || {
+            sync_finish(sync_start("retained-file-sync"), true);
+            Ok(json!(null))
+        })
+        .unwrap();
+    }
+    let value = capture.finish();
+    assert_eq!(value["complete"], true);
+    assert_eq!(value["rows"][0]["sync_calls"], 5);
+    assert_eq!(value["rows"][0]["sync_failed"], 1);
+    let mut seconds = 0.0;
+    for (index, row) in value["archive_stages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        assert_eq!(row["stage"], ARCHIVE_STAGES[index]);
+        assert_eq!(row["calls"], 1);
+        assert_eq!(row["succeeded"], u64::from(index != 2));
+        assert_eq!(row["failed"], u64::from(index == 2));
+        let elapsed = row["actual_sync_seconds"].as_f64().unwrap();
+        assert!(elapsed.is_finite() && elapsed >= 0.0);
+        seconds += elapsed;
+    }
+    assert!((seconds - value["rows"][0]["actual_sync_seconds"].as_f64().unwrap()).abs() < 1e-9);
+    let capture = start().unwrap();
+    operation(Kind::ArchiveWrite, || {
+        sync_finish(sync_start("unknown-stage"), false);
+        Err("unknown stage retains error".into())
+    })
+    .unwrap_err();
+    let value = capture.finish();
+    assert_eq!(value["complete"], false);
+    assert_eq!(value["rows"][0]["sync_failed"], 1);
+    assert!(value["archive_stages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .all(|r| r["calls"] == 0));
 }

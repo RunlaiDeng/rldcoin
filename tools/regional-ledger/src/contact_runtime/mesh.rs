@@ -4577,6 +4577,21 @@ mod tests {
                 assert_eq!(row["sync_succeeded"], expected_syncs);
                 assert_eq!(row["sync_failed"], 0);
             }
+            let archive_stages = storage["archive_stages"].as_array().unwrap();
+            assert_eq!(archive_stages.len(), 5);
+            let mut stage_seconds = 0.0;
+            for stage in archive_stages {
+                assert_eq!(stage["calls"], if existing { 0 } else { 4 });
+                assert_eq!(stage["succeeded"], if existing { 0 } else { 4 });
+                assert_eq!(stage["failed"], 0);
+                let seconds = stage["actual_sync_seconds"].as_f64().unwrap();
+                assert!(seconds.is_finite() && seconds >= 0.0);
+                stage_seconds += seconds;
+            }
+            assert!(
+                (stage_seconds - storage["rows"][0]["actual_sync_seconds"].as_f64().unwrap()).abs()
+                    < 1e-9
+            );
             assert_eq!(calls(&work, "transit-full-check"), 4);
             assert_eq!(calls(&work, "transit-witness-hit"), 0);
             for (phase, count) in [
