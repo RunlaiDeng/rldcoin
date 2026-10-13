@@ -1208,6 +1208,10 @@ pub use archive_cut::{
 mod archive_cut_tests;
 
 #[cfg(test)]
+#[path = "paged_store/channel_window_tests.rs"]
+mod channel_window_tests;
+
+#[cfg(test)]
 #[path = "paged_store/packed_inspection_tests.rs"]
 mod packed_inspection_tests;
 
