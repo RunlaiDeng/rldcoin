@@ -166,6 +166,7 @@ struct Worker {
     sender: Sender<Job>,
     thread: JoinHandle<Result<Stopped>>,
     transport_identity: Hash,
+    page_watch: Option<super::super::page_watch::Shared>,
 }
 struct Actor {
     options: Options,
@@ -174,6 +175,7 @@ struct Actor {
     wallet: Option<wallet_app::Options>,
     receiver: Receiver<Job>,
     payment_timing: bool,
+    page_watch: Option<super::super::page_watch::Shared>,
 }
 fn observe(options: &Options) -> Result<Observation> {
     let node = Store::open_inspection(&options.ledger, &options.authority, options.currency)?;
@@ -248,6 +250,7 @@ fn pay(
         .storage_head()?;
     // The first signed submission clock precedes admission and its queue write.
     let submitted = monotonic()?;
+    super::super::page_watch::arm_second(intent, input.map(|_| selected), submitted);
     let local_sample = options
         .ledger
         .parent()
@@ -296,6 +299,10 @@ impl Actor {
         failed: Arc<AtomicBool>,
         deadline: f64,
     ) -> Result<Stopped> {
+        let _page_watch = self
+            .page_watch
+            .take()
+            .map(super::super::page_watch::install);
         let mut timing = Vec::new();
         let mut scheduling = Vec::new();
         CARRIAGE_TRACE.with(|trace| *trace.borrow_mut() = Some(Vec::new()));
@@ -628,6 +635,13 @@ fn setup_with_timing(
         );
     }
     let mut prepared = Vec::new();
+    let page_watch = if payment_timing {
+        Some(super::super::page_watch::shared(
+            Hash::from_hex(&ids[SECOND_RECIPIENT]).map_err(|e| e.to_string())?,
+        ))
+    } else {
+        None
+    };
     for n in 0..4 {
         let transport = json!({"format":MESH,"network":currency,"state":root.join(format!("transport-{n}")),
             "contacts":(0..4).filter(|p|*p!=n).map(|p|json!({"peer":ids[p],
@@ -705,6 +719,7 @@ fn setup_with_timing(
                 wallet,
                 receiver,
                 payment_timing,
+                page_watch: page_watch.clone(),
             },
         ));
     }
@@ -723,6 +738,7 @@ fn setup_with_timing(
                 sender,
                 thread: thread::spawn(move || actor.run(stop, failed, deadline)),
                 transport_identity: transport_identities[n],
+                page_watch: page_watch.clone(),
             }
         })
         .collect();
@@ -868,6 +884,7 @@ fn cycle_with_timing(
         .iter()
         .map(|worker| worker.transport_identity)
         .collect::<Vec<_>>();
+    let page_watch = workers.first().and_then(|worker| worker.page_watch.clone());
     cycle_phase(started, "setup-complete", None);
     let mut samples = Vec::new();
     let mut fault = Value::Null;
@@ -1084,6 +1101,9 @@ fn cycle_with_timing(
         }
         cycle_phase(started, "actor-joined", Some(n));
     }
+    let page_watch_final = page_watch
+        .as_ref()
+        .map(super::super::page_watch::final_after_join);
     let result = result.and_then(|_| {
         require(
             worker_errors.is_empty() && stopped.len() == 4,
@@ -1264,6 +1284,7 @@ fn cycle_with_timing(
         "recipient_actors":[FIRST_RECIPIENT,SECOND_RECIPIENT],"reported_at":completed_at,
         "fault":fault,"fault_cold_envelope_counts":cold_envelope_counts,
         "payment_timing":payment_timing,"transport_identities":transport_identities,"second_payment_native":second_payment_native,
+        "page_watch_final":page_watch_final,
         "independent_operations":false,"latency_percentiles_qualified":false,"fixture_only":true}), 64*1024).unwrap();
     // Retain the complete private sample scope on both success and failure.
     result.unwrap_or_else(|primary| {

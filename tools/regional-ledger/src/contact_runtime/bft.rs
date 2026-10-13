@@ -1225,11 +1225,15 @@ impl Runtime {
         #[cfg(test)]
         super::service::trace_work("native-broadcast-select", started)?;
         let mut frames = Vec::new();
+        #[cfg(test)]
+        let mut frame_ids = Vec::new();
         for id in &selected {
             #[cfg(test)]
             let started = super::service::monotonic()?;
             let frame = self.carriage_frame(*id)?;
             let raw = frame.retained_bytes()?;
+            #[cfg(test)]
+            frame_ids.push(frame.message_id);
             #[cfg(test)]
             super::service::trace_work("native-broadcast-frame-pack", started)?;
             #[cfg(test)]
@@ -1245,6 +1249,8 @@ impl Runtime {
             let started = super::service::monotonic()?;
             let raws = frames.iter().map(Vec::as_slice).collect::<Vec<_>>();
             let packets = mesh.enqueue_frame_batch(&raws, &destinations)?;
+            #[cfg(test)]
+            super::page_watch::observe_enqueued(&selected, &frame_ids, &destinations, &packets);
             #[cfg(test)]
             super::service::trace_work("native-broadcast-enqueue", started)?;
             for batch in packets.into_iter().take(current_count) {

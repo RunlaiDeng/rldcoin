@@ -2,6 +2,10 @@
 //! A fresh private runtime is required; legacy stores are never rewritten.
 mod bft;
 mod mesh;
+#[cfg(test)]
+mod page_observation;
+#[cfg(test)]
+mod page_watch;
 mod service;
 #[cfg(test)]
 pub(crate) use bft::Runtime as TestRuntime;

@@ -544,6 +544,8 @@ impl Node {
         limit: usize,
         seen: &[String],
     ) -> Result<Vec<(String, Vec<u8>)>> {
+        #[cfg(test)]
+        let _ = super::page_observation::take();
         require(
             limit <= 4 && seen.len() <= 512,
             "native receive selection bound",
@@ -561,6 +563,17 @@ impl Node {
             let offset = ids.partition_point(|id| id.as_str() <= after);
             ids.rotate_left(offset);
         }
+        #[cfg(test)]
+        let mut observation = super::page_observation::begin(super::page_observation::Inputs {
+            node: &self.id,
+            limit,
+            after,
+            seen,
+            arrivals: &self.state.arrivals,
+            messages: &self.state.messages,
+            archives: &self.state.archives,
+            rotated_ids: &ids,
+        })?;
         let mut excluded = BTreeSet::new();
         if !seen.is_empty() {
             let active = self
@@ -580,9 +593,17 @@ impl Node {
                     continue;
                 }
                 let archive = self.archive(id, object)?;
+                #[cfg(test)]
+                if let Some(observation) = &mut observation {
+                    observation.archive(id, &archive["transit"], true);
+                }
                 if archive["transit"]["packet"]["body"]["destination"] == self.id {
                     archived.push(id.clone());
                     if archived.len() == 2 {
+                        #[cfg(test)]
+                        if let Some(observation) = &mut observation {
+                            observation.archive_priority_full();
+                        }
                         break;
                     }
                 } else if !self.state.messages.contains_key(id) {
@@ -603,18 +624,38 @@ impl Node {
                 .cloned()
                 .collect::<Vec<_>>();
             let mut selected = first.clone();
+            #[cfg(test)]
+            if let Some(observation) = &mut observation {
+                observation.priority(&active, &archived, &first);
+            }
             selected.extend(ids.into_iter().filter(|id| !first.contains(id)));
             ids = selected;
+        }
+        #[cfg(test)]
+        if let Some(observation) = &mut observation {
+            observation.order(&ids);
         }
         let mut result = Vec::new();
         for id in ids {
             if result.len() == limit {
+                #[cfg(test)]
+                if let Some(observation) = &mut observation {
+                    observation.limit_reached();
+                }
                 break;
+            }
+            #[cfg(test)]
+            if let Some(observation) = &mut observation {
+                observation.visit(&id);
             }
             // This operation already authenticated these complete archives
             // and found no local frame. Only their immutable identities live
             // until this call ends; later calls and cold opens check again.
             if excluded.contains(&id) {
+                #[cfg(test)]
+                if let Some(observation) = &mut observation {
+                    observation.skip(&id, true);
+                }
                 continue;
             }
             let archived;
@@ -623,6 +664,10 @@ impl Node {
             } else {
                 archived =
                     self.archive(&id, self.state.archives.get(&id).ok_or("archive index")?)?;
+                #[cfg(test)]
+                if let Some(observation) = &mut observation {
+                    observation.archive(&id, &archived["transit"], false);
+                }
                 &archived["transit"]
             };
             if t["packet"]["body"]["destination"] == self.id {
@@ -637,7 +682,25 @@ impl Node {
                         )
                         .map_err(|e| e.to_string())?,
                 ));
+                #[cfg(test)]
+                if let Some(observation) = &mut observation {
+                    let id = &result.last().ok_or("missing selected frame")?.0;
+                    observation.returned(
+                        id,
+                        self.state.messages.contains_key(id),
+                        seen.contains(id),
+                    );
+                }
+            } else {
+                #[cfg(test)]
+                if let Some(observation) = &mut observation {
+                    observation.skip(&id, false);
+                }
             }
+        }
+        #[cfg(test)]
+        if let Some(observation) = observation {
+            observation.finish();
         }
         Ok(result)
     }
@@ -3959,5 +4022,344 @@ mod tests {
         )
         .unwrap();
         println!("\nspool-receive-refusal-guards {report}");
+    }
+
+    // Execute once in an isolated test child with an external <=60s hard deadline:
+    // the explicit witness clear below must never share a process with other fixtures.
+    #[test]
+    #[ignore = "fresh signed receive-page observer guard; isolated 60-second controller"]
+    fn page_observer_preserves_actual_selection_and_cold_state() {
+        use super::super::{page_observation as observation, page_watch as watch, service};
+        type Page = Vec<(String, Vec<u8>)>;
+        fn calls(work: &[Value], phase: &str) -> u64 {
+            work.iter()
+                .filter(|row| row["phase"] == phase)
+                .map(|row| row["calls"].as_u64().unwrap_or(1))
+                .sum()
+        }
+        fn run_page(
+            node: &Node,
+            scope: &watch::Shared,
+            enabled: bool,
+            after: Option<&str>,
+            limit: usize,
+            seen: &[String],
+        ) -> (Page, Option<Value>, u64) {
+            let guard = enabled.then(|| watch::install(scope.clone()));
+            service::start_work_trace();
+            let result = node.frame_page_selected(after, limit, seen);
+            let observed = observation::take();
+            let work = service::take_work_trace();
+            drop(guard);
+            (
+                result.unwrap(),
+                observed,
+                calls(&work, "mesh-archive-read-bind"),
+            )
+        }
+        fn rows<'a>(image: &'a Value, name: &str) -> &'a [Value] {
+            image[name].as_array().unwrap().as_slice()
+        }
+        fn target<'a>(image: &'a Value, id: &str) -> &'a Value {
+            let matches = rows(image, "watched")
+                .iter()
+                .filter(|row| row["target"]["packet_id"] == id)
+                .collect::<Vec<_>>();
+            assert_eq!(matches.len(), 1);
+            matches[0]
+        }
+        let started = std::time::Instant::now();
+        let within_budget = || {
+            assert!(
+                started.elapsed().as_secs_f64() < 60.0,
+                "signed page observer component budget exhausted; retain fixture"
+            )
+        };
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        eprintln!(
+            "Fresh signed receive-page observer guard: {}",
+            f.root.display()
+        );
+        let mut original = BTreeMap::<String, (Hash, Vec<u8>)>::new();
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        for n in 0..32u8 {
+            within_budget();
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            let raw = frame.retained_bytes().unwrap();
+            let id = source.enqueue(&raw, &f.ids[1]).unwrap();
+            assert!(original.insert(id, (frame.message_id, raw)).is_none());
+        }
+        let mut node = Node::open(&f.configs[1]).unwrap();
+        for _ in 0..16 {
+            within_budget();
+            node.receive(&source.prepare(&f.ids[1]).unwrap(), &f.ids[0])
+                .unwrap();
+        }
+        assert_eq!(node.state.messages.len(), 32);
+        assert_eq!(node.state.receipts.len(), 32);
+        node.archive_completed().unwrap();
+        assert_eq!(node.state.archives.len(), 16);
+        assert_eq!(node.state.messages.len(), 16);
+        drop(source);
+        let active = node.state.arrivals.first().unwrap().clone();
+        let archived = node.state.archives.keys().next().unwrap().clone();
+        assert_ne!(active, archived);
+        let all = node
+            .state
+            .messages
+            .keys()
+            .chain(node.state.archives.keys())
+            .cloned()
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect::<Vec<_>>();
+        assert_eq!(all.len(), 32);
+        let seen = all
+            .iter()
+            .filter(|id| **id != active && **id != archived)
+            .cloned()
+            .collect::<Vec<_>>();
+        let wrap = all.last().unwrap().clone();
+        let state_before = node.state.clone();
+        let state_path = node.root.join("native-mesh-state.json");
+        let image_before = fs::read(&state_path).unwrap();
+        let inventory_before = node.archive_inventory().unwrap();
+        let archive_bytes = node
+            .state
+            .archives
+            .values()
+            .map(|object| {
+                let path = node.root.join("archive").join(format!("{object}.json"));
+                (path.clone(), fs::read(path).unwrap())
+            })
+            .collect::<Vec<_>>();
+
+        // Synthetic observer labels only: no Native BFT body/signature is asserted.
+        // Actual target IDs and frame IDs come from the signed, durably received mesh packets.
+        let h = |n| Hash([n; 32]);
+        let scope = watch::shared(Hash::from_hex(&f.ids[1]).unwrap());
+        {
+            let _guard = watch::install(scope.clone());
+            watch::arm_second(h(210), Some(h(211)), 1.0);
+            let context = json!({"currency":h(212),"region":h(213),"epoch":h(214),
+            "previous":null,"parent_height":6,"parent_block":h(215),"parent_state":h(216)});
+            watch::observe_retained(&json!({"phase":"payment-body-retained","local":true,
+            "at":2.0,"body_id":h(217),"body":{"kind":"proposal","context":context,
+            "round":0,"snapshot":{"value":h(218),"intents":[h(210)]}}}));
+            for (kind, signer, body) in [("prepare", h(219), h(221)), ("commit", h(220), h(222))] {
+                watch::observe_retained(&json!({"phase":"payment-body-retained","local":true,
+                "at":3.0,"body_id":body,"body":{"kind":kind,"context":context,
+                "round":0,"value":h(218),"signer":signer}}));
+            }
+            watch::observe_enqueued(
+                &[h(221), h(222)],
+                &[original[&active].0, original[&archived].0],
+                std::slice::from_ref(&f.ids[1]),
+                &[vec![active.clone()], vec![archived.clone()]],
+            );
+            assert_eq!(
+                watch::snapshot_before_page(&f.ids[1]).unwrap()["complete"],
+                true
+            );
+        }
+        let cases = [
+            ("mixed-priority", None, 4, seen.clone()),
+            ("empty-seen-wrap", Some(wrap.as_str()), 4, vec![]),
+            ("mixed-wrap", Some(wrap.as_str()), 4, seen.clone()),
+            ("zero-limit", None, 0, seen.clone()),
+        ];
+        let mut recorded = Vec::new();
+        let mut original_mixed = None;
+        for (name, after, limit, seen) in cases {
+            within_budget();
+            let (plain, absent, plain_reads) = run_page(&node, &scope, false, after, limit, &seen);
+            assert!(
+                absent.is_none(),
+                "disabled observer retained a LAST observation"
+            );
+            let (observed, detail, observed_reads) =
+                run_page(&node, &scope, true, after, limit, &seen);
+            assert_eq!(
+                observed, plain,
+                "observer changed actual packet order/bytes: {name}"
+            );
+            assert_eq!(
+                observed_reads, plain_reads,
+                "observer added archive reads: {name}"
+            );
+            let detail = detail.expect("enabled actual selection observation absent");
+            assert_eq!(detail["watch"]["complete"], true);
+            assert_eq!(detail["watch"]["targets"].as_array().unwrap().len(), 2);
+            assert_eq!(detail["active_count"], 16);
+            assert_eq!(detail["archive_count"], 16);
+            assert_eq!(detail["union_count"], 32);
+            assert_eq!(detail["limit"], limit);
+            assert_eq!(detail["after"], json!(after));
+            assert_eq!(detail["priority_enabled"], !seen.is_empty());
+            assert_eq!(detail["seen_is_native_acceptance"], false);
+            assert_eq!(detail["ledger_authority"], false);
+            assert_eq!(
+                rows(&detail, "returned")
+                    .iter()
+                    .map(|r| r["packet_id"].as_str().unwrap())
+                    .collect::<Vec<_>>(),
+                observed
+                    .iter()
+                    .map(|(id, _)| id.as_str())
+                    .collect::<Vec<_>>()
+            );
+            for (index, (id, raw)) in observed.iter().enumerate() {
+                assert_eq!(raw, &original[id].1);
+                let record = &detail["returned"][index];
+                assert_eq!(
+                    record["source"],
+                    if node.state.messages.contains_key(id) {
+                        "active"
+                    } else {
+                        "archive"
+                    }
+                );
+                assert_eq!(record["seen"], seen.contains(id));
+                let priority = record["merged_position"].as_u64().unwrap()
+                    < rows(&detail, "first").len() as u64;
+                assert_eq!(
+                    record["role"],
+                    if priority { "priority" } else { "fallback" }
+                );
+            }
+            for id in [&active, &archived] {
+                let row = target(&detail, id);
+                let returned = observed
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(i, (found, _))| (found == id).then_some(i))
+                    .collect::<Vec<_>>();
+                assert_eq!(row["result_indices"], json!(returned));
+                assert_eq!(row["seen"], false);
+                assert_eq!(row["active_present"], node.state.messages.contains_key(id));
+                assert_eq!(row["archive_present"], node.state.archives.contains_key(id));
+                assert_eq!(
+                    row["arrivals_index"],
+                    json!(node.state.arrivals.iter().position(|found| found == id))
+                );
+                // None and after=max both preserve sorted-union rank; no selector is reimplemented.
+                assert_eq!(
+                    row["rotated_union_position"],
+                    json!(all.iter().position(|found| found == id))
+                );
+                let processed = detail["processed_candidates"].as_u64().unwrap();
+                let visited = rows(row, "merged_positions")
+                    .iter()
+                    .filter(|p| p.as_u64().unwrap() < processed)
+                    .cloned()
+                    .collect::<Vec<_>>();
+                assert_eq!(row["visited_positions"], json!(visited));
+            }
+            assert_eq!(target(&detail, &active)["active_frame_matches"], true);
+            if seen.is_empty() {
+                assert_eq!(detail["first"], json!([]));
+                assert_eq!(detail["archive_priority_end"], "disabled");
+            } else {
+                // Only these two real destination packets are unseen; no random-key ranking assumption.
+                assert_eq!(target(&detail, &active)["active_unseen_local_rank"], 0);
+                assert_eq!(
+                    target(&detail, &archived)["active_unseen_local_rank"],
+                    Value::Null
+                );
+                assert_eq!(detail["active_priority"], json!([active]));
+                assert_eq!(detail["archive_priority"], json!([archived]));
+                assert_eq!(detail["first"], json!([active, archived]));
+                assert_eq!(target(&detail, &active)["merged_positions"], json!([0]));
+                assert_eq!(target(&detail, &archived)["merged_positions"], json!([1]));
+                assert_eq!(
+                    target(&detail, &archived)["archive_priority_inspected"],
+                    true
+                );
+                assert_eq!(target(&detail, &archived)["archive_frame_matches"], true);
+                assert!(plain_reads > 0, "comparison did not exercise archive reads");
+            }
+            assert_eq!(detail["processed_candidates"], limit);
+            assert_eq!(detail["next_stop_index"], limit);
+            assert_eq!(detail["stop"], "result-limit");
+            if name == "mixed-priority" {
+                original_mixed = Some(observed.clone());
+            }
+            assert!(node.state.exact(&state_before));
+            assert_eq!(fs::read(&state_path).unwrap(), image_before);
+            recorded.push(json!({"case":name,"archive_reads_disabled":plain_reads,
+            "archive_reads_enabled":observed_reads,"observation":detail}));
+        }
+        within_budget();
+        {
+            let _guard = watch::install(scope.clone());
+            node.frame_page_selected(None, 4, &seen).unwrap(); // Leave successful LAST deliberately untaken.
+            assert!(node.frame_page_selected(None, 5, &seen).is_err());
+            assert!(
+                observation::take().is_none(),
+                "entry failure exposed stale successful LAST"
+            );
+            node.frame_page_selected(None, 4, &seen).unwrap();
+            let object = &node.state.archives[&archived];
+            let path = node.root.join("archive").join(format!("{object}.json"));
+            let retained = path.with_extension("page-guard-retained");
+            assert!(!retained.exists());
+            fs::rename(&path, &retained).unwrap();
+            let failure = node.frame_page_selected(None, 4, &seen);
+            let stale = observation::take();
+            fs::rename(&retained, &path).unwrap(); // Preserve original bytes before evaluating the refusal.
+            assert!(
+                failure.is_err(),
+                "missing archive bypassed ordinary authentication"
+            );
+            assert!(
+                stale.is_none(),
+                "mid-selection failure exposed stale or partial LAST"
+            );
+        }
+        assert!(node.state.exact(&state_before));
+        assert_eq!(fs::read(&state_path).unwrap(), image_before);
+        drop(node);
+        let cleared =
+            crate::contact_witness::execute(&bytes(&json!("Clear")).unwrap(), &[]).unwrap();
+        assert_eq!(cleared["entries"], 0);
+        within_budget();
+        let cold = Node::open(&f.configs[1]).unwrap();
+        assert!(cold.state.exact(&state_before));
+        let (cold_page, cold_detail, _) = run_page(&cold, &scope, true, None, 4, &seen);
+        assert_eq!(cold_page, original_mixed.unwrap());
+        assert_eq!(cold_detail.unwrap(), recorded[0]["observation"]);
+        assert_eq!(fs::read(&state_path).unwrap(), image_before);
+        assert_eq!(cold.archive_inventory().unwrap(), inventory_before);
+        for (path, expected) in archive_bytes {
+            assert_eq!(fs::read(path).unwrap(), expected);
+        }
+        drop(cold);
+        let final_watch = watch::final_after_join(&scope); // No worker threads in this isolated component.
+        assert_eq!(final_watch["complete"], true);
+        within_budget();
+        let report = json!({"cases":recorded,"final_watch":final_watch,
+        "elapsed_seconds":started.elapsed().as_secs_f64(),"scope_limit_seconds":60,
+        "fixture_only":true,"native_authority":false,"ordinary_payment_run":false,
+        "watch_metadata":"synthetic labels bound to actual signed mesh packet/frame IDs only",
+        "cold_scope":"same-process Node reopen after isolated explicit transit-witness clear"});
+        fs::write(
+            f.root.join("receive-page-observer-guard.json"),
+            bytes(&report).unwrap(),
+        )
+        .unwrap();
+        eprintln!("Signed receive-page observer guard: {report}");
+        within_budget();
     }
 }

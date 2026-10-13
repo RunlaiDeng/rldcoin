@@ -46,6 +46,7 @@ pub(super) fn trace_payment_event(build: impl FnOnce() -> Result<Value>) -> Resu
     }
     let mut event = build()?;
     event["at"] = json!(monotonic()?);
+    super::page_watch::observe_retained(&event);
     CARRIAGE_TRACE.with(|trace| -> Result<()> {
         let mut trace = trace.borrow_mut();
         let records = trace
@@ -394,13 +395,19 @@ fn directory_receive_page(
         .ok_or("missing receive page node")?
         .frame_page_selected(cursor, 4, seen)?;
     #[cfg(test)]
+    let selection = super::page_observation::take();
+    #[cfg(test)]
     CARRIAGE_TRACE.with(|trace| -> Result<()> {
         let mut trace = trace.borrow_mut();
         if let Some(records) = trace.as_mut() {
             require(records.len() < 4096, "diagnostic carriage record bound")?;
-            records.push(json!({"phase":"native-page-selected","at":monotonic()?,
+            let mut event = json!({"phase":"native-page-selected","at":monotonic()?,
                 "packet_ids":frames.iter().map(|(id,_)|id).collect::<Vec<_>>(),
-                "after":cursor,"seen_count":seen.len(),"native_authority":false}));
+                "after":cursor,"seen_count":seen.len(),"native_authority":false});
+            if let Some(selection) = selection {
+                event["selection"] = selection;
+            }
+            records.push(event);
         }
         Ok(())
     })?;
