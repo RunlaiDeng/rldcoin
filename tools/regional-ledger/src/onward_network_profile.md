@@ -54,14 +54,60 @@ refusal does not create incident custody. Incoming reception retains genuine
 incidents before later refusal and installs authenticated dependencies before
 body deduplication. Receipt still requires a new certified Import to create value.
 
+Within one synchronous receive, an optional private witness may retain the first
+fully authenticated exact whole A+B wrapper and its Native-derived foreign anchors.
+Match every typed proof/signature, complete currency/admissions/trust binding,
+destination, profile and bounds before reuse; extend a fresh foreign-only copy for
+every envelope. Retain at most8MiB of combined proof, trust and derived material;
+overflow falls back to full verification. Any verification failure disables reuse.
+Every C certificate/body and current Native/A/B/C safety check remains mandatory,
+including after synchronization. Native installation and retained-branch checks
+execute independently. The witness expires on return and never supplies a Store,
+installed-custody fact or serialized state. Public standalone, cold archive and
+received-message scheduling verification remain independent; a new receive fully
+executes the proof again.
+
+A separate witness exists only within one local envelope construction. It may
+retain the first fully executed foreign proof before C/body authentication, under
+the same exact whole-proof/trust/domain/bounds matching and combined8MiB limit.
+Both complete material visits still authenticate every required proof, collect
+all dependencies and select the first whole covering proof. Changed signatures
+miss without replacing the first entry; capacity falls back to full execution.
+The constructed envelope and its actual packed/expanded form still verify every
+C certificate, body, identity and current safety condition. Any failure disables
+the witness; return destroys it. Independent pre-dedup retention and cold archive
+authentication never receive this object, and each new construction starts empty.
+
+One authenticated cold archive read may use its own separate foreign-only witness.
+It retains at most the first exact complete A+B proof and its Native-derived base,
+matching all proof signatures, complete currency/admissions/trust binding,
+destination, format, profile and limits under a combined8MiB logical bound before
+retention clones. A provisional result becomes reusable only after that record's
+full C/body/identity checks, exact prior Native material check and expected value
+comparison succeed. Every later record still performs its original decode,
+expansion, current safety, complete local-prefix/body and installed-material
+checks. Changed proofs miss without replacing the first entry; a capacity refusal
+falls back to full execution. Any record error clears the witness and aborts the
+read. The witness expires on return; each next cold read starts empty. Standalone
+verification, incoming custody, local construction, scheduling and Native
+installation remain independent, with no cached C, value, custody or safety verdict.
+
 The explicit Runtime uses the original ordinary tick policy and quorum without
 converting old profiles, archives or custody. Outgoing material contains C1 through
 the current height and one complete retained A+B wrapper covering every required
 foreign anchor; unsupported multiple closures refuse without dropping evidence.
 Missing original response, stale caller head or failed archive publication cannot
-authorize another signature or clear pending custody. Generic envelopes, ordinary
-Service startup, owner submission and value-contact routes still refuse the new
-profile. Recognizing its strict regional frame shape grants no Native authority.
+authorize another signature or clear pending custody. The exact new profile's
+local owner queue admits one to four complete local Spend commands only, after
+full envelope authentication and current Native execution. It binds filenames to
+the complete expanded envelope identity and preserves the original 32-file queue,
+private durable writes and every retained input. Queue reads reauthenticate the
+complete wrapper and C prefix, require their exact prior Native custody, and
+retain the original owner approvals without signing or debiting. Mature inputs,
+separate owner/caller heads, reservations and certified inclusion remain distinct.
+The explicit incoming Submission API retains its original authenticated body rules.
+Generic envelopes, ordinary Service startup and value-contact routes still refuse
+the new profile. Recognizing its strict regional frame shape grants no Native authority.
 The separate inspection API does not itself synchronize or credit value,
 first-sign, recover caller custody or establish remote current-state freshness.
 General ancestry, returns, carried channels, epoch handoff, long history, ordinary

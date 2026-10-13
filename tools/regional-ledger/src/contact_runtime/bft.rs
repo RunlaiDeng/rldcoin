@@ -64,12 +64,57 @@ fn state_hash(value: &bft_client::State) -> Result<Hash> {
 thread_local! {
     static STOP_AFTER_SIGNATURE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
+#[cfg(test)]
+#[path = "bft_open_probe.rs"]
+mod open_probe;
+
 impl Runtime {
     #[cfg(test)]
     pub(crate) fn fixture_stop_after_next_signature() {
         STOP_AFTER_SIGNATURE.with(|stop| assert!(!stop.replace(true)));
     }
     pub(crate) fn open(path: &Path, node: &Store, transport: &Value) -> Result<Self> {
+        Self::open_inner(
+            path,
+            node,
+            transport,
+            #[cfg(test)]
+            None,
+        )
+    }
+
+    /// One actual open; errors retain partial scalar observations without retry.
+    #[cfg(test)]
+    pub(crate) fn probe_open(
+        path: &Path,
+        node: &Store,
+        transport: &Value,
+    ) -> (Result<Self>, Value) {
+        let mut observation = open_probe::Observation::new();
+        let result = Self::open_inner(path, node, transport, Some(&mut observation));
+        let report = observation.finish(result.is_ok());
+        (result, report)
+    }
+
+    /// Same actual open with at most two measured local re-retention calls.
+    #[cfg(test)]
+    pub(crate) fn probe_open_local(
+        path: &Path,
+        node: &Store,
+        transport: &Value,
+    ) -> (Result<Self>, Value) {
+        let mut observation = open_probe::Observation::with_local_calls();
+        let result = Self::open_inner(path, node, transport, Some(&mut observation));
+        let report = observation.finish(result.is_ok());
+        (result, report)
+    }
+
+    fn open_inner(
+        path: &Path,
+        node: &Store,
+        transport: &Value,
+        #[cfg(test)] mut observation: Option<&mut open_probe::Observation>,
+    ) -> Result<Self> {
         let config: Config =
             serde_json::from_value(read(path, 64 * 1024)?).map_err(|e| e.to_string())?;
         crate::bft_runtime_envelope::require_profile(&config.format, node)?;
@@ -142,7 +187,12 @@ impl Runtime {
         let path = config.state.join("state.json");
         let (archive, head) = if fs::symlink_metadata(&path).is_ok() {
             if config.format == bft_client::ONWARD_FORMAT {
+                #[cfg(test)]
+                let archive_phase =
+                    open_probe::start(observation.as_deref_mut(), open_probe::Phase::ArchiveAuth);
                 let (archive, head) = client.read_authenticated(node)?;
+                #[cfg(test)]
+                open_probe::finish(archive_phase);
                 (archive, Some(head))
             } else {
                 let receipt = client.read(node)?;
@@ -186,6 +236,11 @@ impl Runtime {
                 None,
             )
         };
+        #[cfg(test)]
+        let mut caller_phase = open_probe::start(
+            observation.as_deref_mut(),
+            open_probe::Phase::CallerReconcile,
+        );
         let caller = bft_client::Client::lock(
             &config.head_file,
             &config.signer_dir,
@@ -194,11 +249,19 @@ impl Runtime {
             node,
         )?;
         let state = caller.read()?;
+        #[cfg(test)]
+        open_probe::caller_state(
+            &mut caller_phase,
+            state.pending.is_some(),
+            state.outbox.is_some(),
+        );
         if state.pending.is_some() {
             let recovered = caller.reconcile(node, state.clone())?;
             Self::publish_head(&caller, node, &state, recovered)?;
         }
         drop(caller);
+        #[cfg(test)]
+        open_probe::finish(caller_phase);
         drop(client);
         let mut runtime = Self {
             config,
@@ -219,12 +282,39 @@ impl Runtime {
         if runtime.head.is_none() {
             runtime.persist(node)?;
         }
+        #[cfg(test)]
+        let flush_phase =
+            open_probe::start(observation.as_deref_mut(), open_probe::Phase::StartupFlush);
         runtime.flush(node)?;
+        #[cfg(test)]
+        open_probe::finish(flush_phase);
+        #[cfg(test)]
+        let agent_phase =
+            open_probe::start(observation.as_deref_mut(), open_probe::Phase::AgentOpen);
         let (agent, _) = consensus::Agent::inspect_with_status(&runtime.config.signer_dir, node)?;
+        #[cfg(test)]
+        open_probe::finish(agent_phase);
+        #[cfg(test)]
+        let messages_phase = open_probe::start(
+            observation.as_deref_mut(),
+            open_probe::Phase::RetainedMessages,
+        );
         let messages = agent.retained_messages(node)?;
+        #[cfg(test)]
+        open_probe::finish(messages_phase);
         drop(agent);
+        #[cfg(test)]
+        let mut local_phase = open_probe::start(observation, open_probe::Phase::LocalRetention);
         for message in messages {
-            runtime.retain_local(node, net::Body::Signed(Box::new(message)))?;
+            let body = net::Body::Signed(Box::new(message));
+            #[cfg(test)]
+            let call = open_probe::local_slot(&mut local_phase, &body);
+            runtime.retain_local_inner(
+                node,
+                body,
+                #[cfg(test)]
+                call,
+            )?;
         }
         if let Some(checkpoint) = node.chain.finalized {
             if let Some(snapshot) = node
@@ -235,13 +325,30 @@ impl Runtime {
                 .find(|s| s.statement.id().ok() == Some(checkpoint))
                 .cloned()
             {
-                runtime.retain_local(node, net::Body::Finalized(Box::new(snapshot)))?;
+                let body = net::Body::Finalized(Box::new(snapshot));
+                #[cfg(test)]
+                let call = open_probe::local_slot(&mut local_phase, &body);
+                runtime.retain_local_inner(
+                    node,
+                    body,
+                    #[cfg(test)]
+                    call,
+                )?;
             }
         }
+        #[cfg(test)]
+        open_probe::finish(local_phase);
         Ok(runtime)
     }
 
     fn persist(&mut self, node: &Store) -> Result<()> {
+        self.persist_inner(node, None)
+    }
+    fn persist_inner(
+        &mut self,
+        node: &Store,
+        witness: Option<&mut crate::bft_onward_network::ReceiveWitness>,
+    ) -> Result<()> {
         let raw = files::canonical_with_limit(&self.archive, retention::MAX_STATE)?;
         let client = retention::Client::lock(
             &self.config.state,
@@ -249,20 +356,60 @@ impl Runtime {
             self.config.format.clone(),
             node,
         )?;
-        let receipt = client.store(node, &raw, self.head)?;
+        let receipt = match witness {
+            Some(witness) => client.store_with_receive(node, &raw, self.head, witness)?,
+            None => client.store(node, &raw, self.head)?,
+        };
         self.head = Some(receipt.state_sha256);
         Ok(())
     }
 
     fn retain_local(&mut self, node: &Store, body: net::Body) -> Result<()> {
-        let packed = Wire::local(body, node, &self.config.format)?;
-        self.retain(node, packed, true)
+        self.retain_local_inner(
+            node,
+            body,
+            #[cfg(test)]
+            None,
+        )
+    }
+
+    fn retain_local_inner(
+        &mut self,
+        node: &Store,
+        body: net::Body,
+        #[cfg(test)] mut observation: Option<&mut open_probe::LocalCall>,
+    ) -> Result<()> {
+        #[cfg(test)]
+        let construct =
+            open_probe::local_start(observation.as_deref_mut(), open_probe::LocalPart::Construct);
+        let packed = Wire::local(body, node, &self.config.format);
+        #[cfg(test)]
+        open_probe::local_finish(construct, packed.is_ok());
+        let packed = packed?;
+        #[cfg(test)]
+        let retain = open_probe::local_start(observation, open_probe::LocalPart::Retain);
+        let result = self.retain(node, packed, true);
+        #[cfg(test)]
+        open_probe::local_finish(retain, result.is_ok());
+        result
     }
 
     fn retain(&mut self, node: &Store, wire: Wire, local: bool) -> Result<()> {
+        self.retain_inner(node, wire, local, None)
+    }
+    fn retain_inner(
+        &mut self,
+        node: &Store,
+        wire: Wire,
+        local: bool,
+        mut witness: Option<&mut crate::bft_onward_network::ReceiveWitness>,
+    ) -> Result<()> {
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        let value = wire.verify(node)?;
+        let value = match witness.as_deref_mut() {
+            Some(witness) => wire.verify_with_receive(node, witness)?,
+            None => wire.verify(node)?,
+        };
         let body = wire.body().clone();
         #[cfg(test)]
         super::service::trace_subwork("retain-complete-envelope", started)?;
@@ -332,7 +479,7 @@ impl Runtime {
         let previous = std::mem::replace(&mut self.archive, proposed);
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        if let Err(e) = self.persist(node) {
+        if let Err(e) = self.persist_inner(node, witness) {
             self.archive = previous;
             return Err(e);
         }
@@ -480,6 +627,9 @@ impl Runtime {
         super::service::trace_subwork("receive-decode", started)?;
         #[cfg(test)]
         let started = super::service::monotonic()?;
+        // This object belongs only to this complete synchronous receive. It
+        // never survives a return/error or enters Native append/replay.
+        let mut receive_witness = None;
         // Preserve ordinary verification and phase observations. The new
         // Onward path retains genuine conflicts before expansion/value refusal.
         if let Wire::Existing(old) = &wire {
@@ -497,13 +647,14 @@ impl Runtime {
             #[cfg(test)]
             super::service::trace_subwork("receive-dependency-sync", started)?;
         } else {
-            wire.sync(node)?;
+            let witness = receive_witness.insert(crate::bft_onward_network::ReceiveWitness::new());
+            wire.sync_with_receive(node, witness)?;
             #[cfg(test)]
             super::service::trace_subwork("receive-onward-inspect-and-sync", started)?;
         }
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        let result = self.retain(node, wire, false);
+        let result = self.retain_inner(node, wire, false, receive_witness.as_mut());
         #[cfg(test)]
         super::service::trace_subwork("receive-retention", started)?;
         #[cfg(test)]
@@ -546,9 +697,11 @@ impl Runtime {
         crate::verification_keys::cost::take();
         retention::cost::take_phases();
         retention::cost::take();
+        let execution_scope = crate::bft_onward_network::execution_cost::Scope::begin();
         let started = super::service::monotonic()?;
         let result = self.receive(node, raw);
         let completed_at = super::service::monotonic()?;
+        let complete_onward_execution = execution_scope.finish();
         let seconds = completed_at - started;
         let success = result.is_ok();
         let signatures = crate::verification_keys::cost::take();
@@ -557,6 +710,7 @@ impl Runtime {
         Ok(
             json!({"seconds":seconds,"trace":super::service::take_work_trace(),
             "archive_phase_ns":archive_phases,
+            "complete_onward_execution":complete_onward_execution,
             "complete_archive_byte_checks":archive_checks,
             "complete_envelope_byte_checks":envelope_checks,
             "archive_phase_order":["parse-binding","retained-read","proposed-byte-checks",
@@ -584,18 +738,35 @@ impl Runtime {
         for path in paths {
             let raw = files::private_read_with_limit(&path, crate::contact::MAX_PAYLOAD)?;
             // Queue files use the native typed serializer; full typed checking precedes canonical packing.
-            require(
-                self.config.format != bft_client::ONWARD_FORMAT,
-                "onward local owner submission queue is not adopted",
-            )?;
-            let old: net::WireEnvelope = crate::bft_client::decode(&raw)?;
-            let envelope = old.clone().expand()?;
-            let ident = envelope.verify(node)?;
-            let wire = Wire::Existing(Box::new(old));
-            require(
-                matches!(envelope.body, net::Body::Submission(_)),
-                "owner queue requires a typed submission",
-            )?;
+            let (wire, ident) = if self.config.format == bft_client::ONWARD_FORMAT {
+                let wire = Wire::bytes(&raw, &self.config.format)?;
+                let Wire::Onward(onward) = &wire else {
+                    return Err("onward owner queue envelope variant differs".into());
+                };
+                let envelope = onward.as_ref().clone().expand()?;
+                let ident = envelope.verify(node)?;
+                let net::Body::Submission(commands) = &envelope.body else {
+                    return Err("owner queue requires a typed submission".into());
+                };
+                crate::bft_onward_network::require_local_owner_commands(commands)?;
+                // This is a local queue, not an incoming synchronization API.
+                // Authentic uninstalled material cannot poison cold custody.
+                node.require_retained_onward_material(
+                    envelope.history.as_ref(),
+                    &envelope.evidence.snapshots,
+                )?;
+                (wire, ident)
+            } else {
+                let old: net::WireEnvelope = crate::bft_client::decode(&raw)?;
+                let envelope = old.clone().expand()?;
+                let ident = envelope.verify(node)?;
+                let wire = Wire::Existing(Box::new(old));
+                require(
+                    matches!(envelope.body, net::Body::Submission(_)),
+                    "owner queue requires a typed submission",
+                )?;
+                (wire, ident)
+            };
             require(
                 path.file_name().and_then(|n| n.to_str())
                     == Some(&format!("{}.json", ident.to_hex())),

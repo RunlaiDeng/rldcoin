@@ -103,6 +103,37 @@ impl Wire {
         }
         self.body().checkpoint_value()
     }
+    pub(crate) fn verify_with_receive(
+        &self,
+        node: &Store,
+        witness: &mut onward::ReceiveWitness,
+    ) -> Result<Option<Hash>> {
+        let result = match self {
+            Self::Onward(w) => w
+                .as_ref()
+                .clone()
+                .expand()
+                .and_then(|envelope| envelope.verify_with_receive(node, witness))
+                .and_then(|_| self.body().checkpoint_value()),
+            Self::Existing(_) => self.verify(node),
+        };
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+    pub(crate) fn sync_with_receive(
+        &self,
+        node: &mut Store,
+        witness: &mut onward::ReceiveWitness,
+    ) -> Result<()> {
+        match self {
+            Self::Onward(w) => {
+                onward::sync_envelope_with_receive(node, w.as_ref().clone(), witness)
+            }
+            Self::Existing(_) => self.sync(node),
+        }
+    }
     pub(crate) fn sync(&self, node: &mut Store) -> Result<()> {
         match self {
             Self::Onward(w) => onward::sync_envelope(node, w.as_ref().clone()),
@@ -118,7 +149,34 @@ impl Wire {
         }
     }
     pub(crate) fn verify_cold(&self, node: &Store) -> Result<Option<Hash>> {
-        let value = self.verify(node)?;
+        self.verify_cold_inner(node, None)
+    }
+    pub(crate) fn verify_cold_with_archive(
+        &self,
+        node: &Store,
+        witness: &mut onward::ArchiveReadWitness,
+    ) -> Result<Option<Hash>> {
+        let result = self.verify_cold_inner(node, Some(&mut *witness));
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+    fn verify_cold_inner(
+        &self,
+        node: &Store,
+        witness: Option<&mut onward::ArchiveReadWitness>,
+    ) -> Result<Option<Hash>> {
+        let value = match (self, witness) {
+            (Self::Onward(w), Some(witness)) => {
+                w.as_ref()
+                    .clone()
+                    .expand()?
+                    .verify_for_archive(node, witness)?;
+                self.body().checkpoint_value()?
+            }
+            _ => self.verify(node)?,
+        };
         if let Self::Onward(w) = self {
             let envelope = w.as_ref().clone().expand()?;
             let mut snapshots = envelope.evidence.snapshots;

@@ -536,16 +536,62 @@ impl Client {
     /// The same fully byte-checked graph is authenticated before startup may
     /// reconcile custody. This does not change the public byte-only read API.
     pub(crate) fn read_authenticated(&self, node: &Store) -> Result<(Archive, Hash)> {
+        self.read_authenticated_inner(
+            node,
+            #[cfg(test)]
+            None,
+        )
+    }
+    #[cfg(test)]
+    pub(crate) fn read_authenticated_with_limit_for_test(
+        &self,
+        node: &Store,
+        limit: usize,
+    ) -> Result<(Archive, Hash)> {
+        self.read_authenticated_inner(node, Some(limit))
+    }
+    fn read_authenticated_inner(
+        &self,
+        node: &Store,
+        #[cfg(test)] limit: Option<usize>,
+    ) -> Result<(Archive, Hash)> {
         let (archive, raw) = self.retained(node)?;
-        for record in archive.runtime.messages.values() {
-            let wire =
-                crate::bft_runtime_envelope::Wire::decode(archive.envelope(record)?, &self.format)?;
-            require(
-                wire.verify_cold(node)? == record.value,
-                "BFT cold archive value differs from complete Native envelope",
-            )?;
+        let mut witness = (self.format == bft_client::ONWARD_FORMAT).then(|| {
+            #[cfg(test)]
+            if let Some(limit) = limit {
+                return crate::bft_onward_network::ArchiveReadWitness::with_limit_for_test(limit);
+            }
+            crate::bft_onward_network::ArchiveReadWitness::new()
+        });
+        let result = (|| {
+            for record in archive.runtime.messages.values() {
+                if let Some(witness) = witness.as_mut() {
+                    witness.begin_record();
+                }
+                let wire = crate::bft_runtime_envelope::Wire::decode(
+                    archive.envelope(record)?,
+                    &self.format,
+                )?;
+                let value = match witness.as_mut() {
+                    Some(witness) => wire.verify_cold_with_archive(node, witness)?,
+                    None => wire.verify_cold(node)?,
+                };
+                require(
+                    value == record.value,
+                    "BFT cold archive value differs from complete Native envelope",
+                )?;
+                if let Some(witness) = witness.as_mut() {
+                    witness.commit_record();
+                }
+            }
+            Ok((archive, hash(&raw)))
+        })();
+        if result.is_err() {
+            if let Some(witness) = witness.as_mut() {
+                witness.disable();
+            }
         }
-        Ok((archive, hash(&raw)))
+        result
     }
     /// Authenticate complete current-parent proposal/timeout envelopes, one at
     /// a time. Other retained records still require the ordinary full cold check.
@@ -629,6 +675,28 @@ impl Client {
         )
     }
     pub fn store(&self, node: &Store, raw: &[u8], expected: Option<Hash>) -> Result<Receipt> {
+        self.store_inner(node, raw, expected, None)
+    }
+    pub(crate) fn store_with_receive(
+        &self,
+        node: &Store,
+        raw: &[u8],
+        expected: Option<Hash>,
+        witness: &mut crate::bft_onward_network::ReceiveWitness,
+    ) -> Result<Receipt> {
+        let result = self.store_inner(node, raw, expected, Some(&mut *witness));
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+    fn store_inner(
+        &self,
+        node: &Store,
+        raw: &[u8],
+        expected: Option<Hash>,
+        mut witness: Option<&mut crate::bft_onward_network::ReceiveWitness>,
+    ) -> Result<Receipt> {
         #[cfg(test)]
         let started = std::time::Instant::now();
         let proposed = Archive::decode_canonical(raw)?;
@@ -717,8 +785,12 @@ impl Client {
             }
             let value = proposed.envelope(record)?;
             let wire = crate::bft_runtime_envelope::Wire::decode(value, &self.format)?;
+            let value = match witness.as_deref_mut() {
+                Some(witness) => wire.verify_with_receive(node, witness)?,
+                None => wire.verify(node)?,
+            };
             require(
-                wire.verify(node)? == record.value,
+                value == record.value,
                 "BFT archive value metadata differs from complete native envelope",
             )?;
             verified += 1;

@@ -8,8 +8,64 @@ use crate::{
 
 pub const FORMAT: &str = "RLD-REGIONAL-BFT-COMPLETE-ONWARD-NETWORK-V1";
 
+#[cfg(test)]
+#[path = "onward_execution_cost.rs"]
+pub(crate) mod execution_cost;
+
+#[path = "onward_receive_witness.rs"]
+mod receive_witness;
+pub(crate) use receive_witness::ReceiveWitness;
+
+#[path = "onward_local_construction_witness.rs"]
+mod local_construction_witness;
+pub(crate) use local_construction_witness::LocalConstructionWitness;
+
+#[path = "onward_archive_read_witness.rs"]
+mod archive_read_witness;
+pub(crate) use archive_read_witness::ArchiveReadWitness;
+
+enum ForeignVerification<'a> {
+    Independent,
+    Receive(&'a mut ReceiveWitness),
+    Construction(&'a mut LocalConstructionWitness),
+    Archive(&'a mut ArchiveReadWitness),
+}
+
 pub(crate) fn local_envelope(body: Body, node: &Store) -> Result<WireEnvelope> {
-    let (history, evidence) = node.onward_network_material()?;
+    local_envelope_inner(body, node, &mut LocalConstructionWitness::new())
+}
+
+#[cfg(test)]
+pub(crate) fn local_envelope_with_limit_for_test(
+    body: Body,
+    node: &Store,
+    limit: usize,
+) -> Result<WireEnvelope> {
+    local_envelope_inner(
+        body,
+        node,
+        &mut LocalConstructionWitness::with_limit_for_test(limit),
+    )
+}
+
+fn local_envelope_inner(
+    body: Body,
+    node: &Store,
+    witness: &mut LocalConstructionWitness,
+) -> Result<WireEnvelope> {
+    let result = construct_local_envelope(body, node, witness);
+    if result.is_err() {
+        witness.disable();
+    }
+    result
+}
+
+fn construct_local_envelope(
+    body: Body,
+    node: &Store,
+    witness: &mut LocalConstructionWitness,
+) -> Result<WireEnvelope> {
+    let (history, evidence) = node.onward_network_material_for_construction(witness)?;
     let envelope = Envelope {
         format: FORMAT.into(),
         currency: node.trust.currency()?,
@@ -18,16 +74,53 @@ pub(crate) fn local_envelope(body: Body, node: &Store) -> Result<WireEnvelope> {
         evidence,
         body,
     };
-    envelope.verify(node)?;
+    envelope.verify_for_construction(node, witness)?;
     let wire = envelope.pack()?;
-    wire.clone().expand()?.verify(node)?;
+    wire.clone()
+        .expand()?
+        .verify_for_construction(node, witness)?;
     Ok(wire)
+}
+
+/// Local owner queue admission only. Complete envelope and current Native
+/// execution still authenticate owners, maturity, value and dependencies.
+/// The separate explicit incoming Submission API keeps its original body rules.
+pub(crate) fn require_local_owner_commands(commands: &[Command]) -> Result<()> {
+    require(
+        !commands.is_empty()
+            && commands.len() <= 4
+            && commands.iter().all(|command| {
+                matches!(command, Command::Spend(signed)
+                    if signed.intent.destination.is_none()
+                        && signed.intent.remote.is_none()
+                        && signed.intent.destination_fee.is_zero())
+            }),
+        "onward owner queue requires one to four local Spend commands",
+    )
 }
 
 /// Incoming conflict custody and full authentication precede any dependency
 /// installation or body deduplication. Partial durable failure never acknowledges.
 pub(crate) fn sync_envelope(node: &mut Store, wire: WireEnvelope) -> Result<()> {
     inspect(node, wire.clone())?;
+    install_envelope(node, wire)
+}
+
+pub(crate) fn sync_envelope_with_receive(
+    node: &mut Store,
+    wire: WireEnvelope,
+    witness: &mut ReceiveWitness,
+) -> Result<()> {
+    let result = inspect_with_receive(node, wire.clone(), witness)
+        .and_then(|_| install_envelope(node, wire));
+    if result.is_err() {
+        witness.disable();
+    }
+    result
+}
+
+// The Native append/replay kernel remains independent of the pure witness.
+fn install_envelope(node: &mut Store, wire: WireEnvelope) -> Result<()> {
     let envelope = wire.expand()?;
     if let Some(proof) = envelope.history {
         node.accept_complete_onward_network_history(proof)?;
@@ -119,6 +212,42 @@ impl Envelope {
     /// Pure authentication. Inbound processing uses inspect so a later refusal
     /// cannot hide an independently authentic conflicting certificate.
     pub fn verify(&self, node: &Store) -> Result<Hash> {
+        self.verify_inner(node, ForeignVerification::Independent)
+    }
+    pub(crate) fn verify_with_receive(
+        &self,
+        node: &Store,
+        witness: &mut ReceiveWitness,
+    ) -> Result<Hash> {
+        let result = self.verify_inner(node, ForeignVerification::Receive(&mut *witness));
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+    pub(crate) fn verify_for_construction(
+        &self,
+        node: &Store,
+        witness: &mut LocalConstructionWitness,
+    ) -> Result<Hash> {
+        let result = self.verify_inner(node, ForeignVerification::Construction(&mut *witness));
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+    pub(crate) fn verify_for_archive(
+        &self,
+        node: &Store,
+        witness: &mut ArchiveReadWitness,
+    ) -> Result<Hash> {
+        let result = self.verify_inner(node, ForeignVerification::Archive(&mut *witness));
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+    fn verify_inner(&self, node: &Store, mut mode: ForeignVerification<'_>) -> Result<Hash> {
         crate::encoded_size::check("complete-onward-network-envelope-v1", self)?;
         domain(&self.format, self.currency, self.region, node)?;
         require(
@@ -126,8 +255,33 @@ impl Envelope {
             "complete onward network local evidence count",
         )?;
         node.check_onward_network_safety()?;
+        let mut pending = None;
         let mut verified = if let Some(proof) = &self.history {
-            proof.verify_anchors(self.region, &node.trust)?
+            match &mut mode {
+                ForeignVerification::Receive(witness) => {
+                    // Preserve receive's route checks and delayed whole-envelope
+                    // commit; construction never shares this entry or policy.
+                    proof.require_route(self.region, &node.trust)?;
+                    if let Some(foreign) = witness.lookup(proof, self.region, &node.trust) {
+                        foreign
+                    } else {
+                        let foreign = proof.verify_anchors(self.region, &node.trust)?;
+                        pending = witness.prepare(proof, self.region, &node.trust, &foreign);
+                        foreign
+                    }
+                }
+                ForeignVerification::Construction(witness) => {
+                    witness.verify_anchors(proof, self.region, &node.trust)?
+                }
+                ForeignVerification::Archive(witness) => {
+                    // Only a prior fully checked cold record may supply this
+                    // foreign base; this record cannot commit its own candidate.
+                    witness.verify_anchors(proof, self.region, &node.trust)?
+                }
+                ForeignVerification::Independent => {
+                    proof.verify_anchors(self.region, &node.trust)?
+                }
+            }
         } else {
             VerifiedEvidence {
                 trust_binding: Some(node.trust.binding),
@@ -174,13 +328,35 @@ impl Envelope {
             origins: None,
         };
         bft_network::verify_authenticated_body(&body, node, verified)?;
-        id("complete-onward-network-envelope-v1", self)
+        let identity = id("complete-onward-network-envelope-v1", self)?;
+        if let (ForeignVerification::Receive(witness), Some(entry)) = (mode, pending) {
+            witness.commit(entry);
+        }
+        Ok(identity)
     }
 }
 
 /// Bounded inbound inspection, with actual Native incident custody before any
 /// fallible expansion/value check. Success does not synchronize or credit value.
 pub fn inspect(node: &mut Store, wire: WireEnvelope) -> Result<Hash> {
+    inspect_inner(node, wire, None)
+}
+pub(crate) fn inspect_with_receive(
+    node: &mut Store,
+    wire: WireEnvelope,
+    witness: &mut ReceiveWitness,
+) -> Result<Hash> {
+    let result = inspect_inner(node, wire, Some(&mut *witness));
+    if result.is_err() {
+        witness.disable();
+    }
+    result
+}
+fn inspect_inner(
+    node: &mut Store,
+    wire: WireEnvelope,
+    witness: Option<&mut ReceiveWitness>,
+) -> Result<Hash> {
     wire_bound(&wire)?;
     domain(&wire.format, wire.currency, wire.region, node)?;
     require(
@@ -221,5 +397,8 @@ pub fn inspect(node: &mut Store, wire: WireEnvelope) -> Result<Hash> {
         _ => {}
     }
     node.observe_onward_network_conflicts(&expanded)?;
-    envelope.verify(node)
+    match witness {
+        Some(witness) => envelope.verify_with_receive(node, witness),
+        None => envelope.verify(node),
+    }
 }

@@ -171,6 +171,8 @@ fn execute_for(
     trust: &Trust,
     profile: Profile,
 ) -> Result<Executed> {
+    #[cfg(test)]
+    let mut execution_cost = crate::bft_onward_network::execution_cost::Span::start();
     proof.shape_for(destination, trust, profile)?;
     let header = Header {
         format: FORMAT.into(),
@@ -275,6 +277,8 @@ fn execute_for(
         );
     }
     crate::encoded_size::check("complete-onward-derived-closure-v1", &anchors)?;
+    #[cfg(test)]
+    execution_cost.succeeded();
     Ok(Executed {
         checkpoint,
         anchors,
@@ -536,7 +540,11 @@ impl CompleteOnwardNetworkHistory {
         trust: &Trust,
     ) -> Result<VerifiedEvidence> {
         self.require_route(destination, trust)?;
+        #[cfg(test)]
+        let verification = crate::bft_onward_network::execution_cost::Verification::enter();
         let executed = execute_for(&self.history, destination, trust, Profile::Network)?;
+        #[cfg(test)]
+        drop(verification);
         Ok(VerifiedEvidence {
             snapshots: executed.anchors,
             trust_binding: Some(trust.binding),
@@ -571,8 +579,29 @@ impl Store {
     /// Complete local certificates and one whole retained two-hop closure. All
     /// records have just executed natively; no archive or projected cache is an
     /// authority source. More than one independent closure explicitly refuses.
+    // The sole production caller now owns a construction witness. Keep this
+    // crate-private independent full path as the test comparison control.
+    #[cfg(test)]
     pub(crate) fn onward_network_material(
         &self,
+    ) -> Result<(Option<CompleteOnwardNetworkHistory>, Evidence)> {
+        self.onward_network_material_inner(None)
+    }
+
+    pub(crate) fn onward_network_material_for_construction(
+        &self,
+        witness: &mut crate::bft_onward_network::LocalConstructionWitness,
+    ) -> Result<(Option<CompleteOnwardNetworkHistory>, Evidence)> {
+        let result = self.onward_network_material_inner(Some(&mut *witness));
+        if result.is_err() {
+            witness.disable();
+        }
+        result
+    }
+
+    fn onward_network_material_inner(
+        &self,
+        mut witness: Option<&mut crate::bft_onward_network::LocalConstructionWitness>,
     ) -> Result<(Option<CompleteOnwardNetworkHistory>, Evidence)> {
         self.require_onward_network_state()?;
         self.check_onward_network_safety()?;
@@ -607,7 +636,12 @@ impl Store {
                         .or_insert_with(|| *snapshot.clone());
                 }
                 Record::OnwardNetworkHistory(proof) => {
-                    let anchors = proof.verify_anchors(self.chain.region, &self.trust)?;
+                    let anchors = match witness.as_deref_mut() {
+                        Some(witness) => {
+                            witness.verify_anchors(proof, self.chain.region, &self.trust)?
+                        }
+                        None => proof.verify_anchors(self.chain.region, &self.trust)?,
+                    };
                     required.extend(anchors.snapshots.keys().copied());
                     require(
                         required.len() <= MAX_SNAPSHOTS,
@@ -622,7 +656,12 @@ impl Store {
         stream.visit(stream.storage_head(), |record| {
             if let Record::OnwardNetworkHistory(proof) = record {
                 if selected.is_none() {
-                    let anchors = proof.verify_anchors(self.chain.region, &self.trust)?;
+                    let anchors = match witness.as_deref_mut() {
+                        Some(witness) => {
+                            witness.verify_anchors(proof, self.chain.region, &self.trust)?
+                        }
+                        None => proof.verify_anchors(self.chain.region, &self.trust)?,
+                    };
                     if required.iter().all(|id| anchors.snapshots.contains_key(id)) {
                         selected = Some(*proof.clone());
                     }

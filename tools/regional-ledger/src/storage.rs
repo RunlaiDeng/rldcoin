@@ -795,6 +795,21 @@ impl Store {
         })
     }
     pub fn bft_submit(&self, commands: Vec<Command>) -> Result<Hash> {
+        if self.trust.region(self.chain.region)?.rules == crate::paged_bft::ONWARD_NETWORK_RULES {
+            crate::bft_onward_network::require_local_owner_commands(&commands)?;
+            let wire = crate::bft_onward_network::local_envelope(
+                bft_network::Body::Submission(commands.clone()),
+                self,
+            )?;
+            let ident = wire.clone().expand()?.verify(self)?;
+            self.bft_candidate(
+                commands,
+                self.trust.region(self.chain.region)?.validators[0].clone(),
+            )?;
+            return self.write_bft_submission(ident, || {
+                serde_json::to_vec(&wire).map_err(|e| e.to_string())
+            });
+        }
         crate::paged_bft::require_runtime_adoption(&self.trust.region(self.chain.region)?.rules)?;
         let envelope = if self.trust.region(self.chain.region)?.rules
             == crate::paged_bft::ORIGIN_NETWORK_RULES
@@ -827,6 +842,15 @@ impl Store {
             commands,
             self.trust.region(self.chain.region)?.validators[0].clone(),
         )?;
+        self.write_bft_submission(ident, || {
+            serde_json::to_vec(&envelope.pack()?).map_err(|e| e.to_string())
+        })
+    }
+    fn write_bft_submission(
+        &self,
+        ident: Hash,
+        encode: impl FnOnce() -> Result<Vec<u8>>,
+    ) -> Result<Hash> {
         let queue = self.dir.join("bft-submissions");
         if !queue.exists() {
             let mut builder = fs::DirBuilder::new();
@@ -840,7 +864,7 @@ impl Store {
         }
         safe_dir(&queue)?;
         let path = queue.join(format!("{}.json", ident.to_hex()));
-        let raw = serde_json::to_vec(&envelope.pack()?).map_err(|e| e.to_string())?;
+        let raw = encode()?;
         if path.exists() {
             if read_bytes(&path, MAX_BYTES)? != raw {
                 return Err("BFT submission filename collision".into());

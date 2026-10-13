@@ -21,6 +21,27 @@ use std::time::Duration;
 const TEST: &str =
     "storage::paged::onward_runtime_tests::four_original_onward_runtimes_import_and_cold_replay";
 const CHILD: &str = "RLD_ONWARD_RUNTIME_COLD_CHILD";
+#[path = "onward_owner_tests.rs"]
+mod owner_spend;
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+enum Mode {
+    Import,
+    OwnerSpend,
+}
+impl Mode {
+    fn selector(self) -> &'static str {
+        match self {
+            Self::Import => TEST,
+            Self::OwnerSpend => owner_spend::TEST,
+        }
+    }
+    fn height(self) -> u64 {
+        match self {
+            Self::Import => 2,
+            Self::OwnerSpend => 5,
+        }
+    }
+}
 fn now() -> f64 {
     crate::bft_tick_schedule::monotonic().unwrap()
 }
@@ -50,6 +71,127 @@ fn phase(start: f64, name: &str) {
         json!({"phase":name,"elapsed_seconds":now()-start})
     );
 }
+
+// Scalar-only observations for the original owner target4 barrier. Logging and
+// clock failures disable observations, never the underlying fixture operation.
+struct OwnerOpenObservation {
+    component_started_at: f64,
+    deadline: f64,
+    rows: usize,
+    bytes: usize,
+    enabled: bool,
+    last_at: f64,
+}
+struct OwnerOpenSpan {
+    operation: &'static str,
+    actor: Option<usize>,
+    started_at: f64,
+}
+impl OwnerOpenObservation {
+    const PREFIX: &'static [u8] = b"onward_owner_open_observation=";
+    const ROW_LIMIT: usize = 36;
+    const BYTE_LIMIT: usize = 128 * 1024;
+
+    fn new(component_started_at: f64, deadline: f64) -> Self {
+        Self {
+            component_started_at,
+            deadline,
+            rows: 0,
+            bytes: 0,
+            enabled: component_started_at.is_finite() && deadline.is_finite(),
+            last_at: component_started_at,
+        }
+    }
+    fn clock(&mut self) -> Option<f64> {
+        if !self.enabled {
+            return None;
+        }
+        match crate::bft_tick_schedule::monotonic() {
+            Ok(at) if at.is_finite() && at >= self.last_at => {
+                self.last_at = at;
+                Some(at)
+            }
+            _ => {
+                self.enabled = false;
+                None
+            }
+        }
+    }
+    fn emit(
+        &mut self,
+        kind: &str,
+        operation: &str,
+        actor: Option<usize>,
+        at: f64,
+        completion: Option<Value>,
+    ) {
+        if !self.enabled {
+            return;
+        }
+        let mut row = json!({
+            "format":"RLD-ONWARD-OWNER-TARGET4-OPEN-V1",
+            "row":self.rows + 1,"row_limit":Self::ROW_LIMIT,"byte_limit":Self::BYTE_LIMIT,
+            "kind":kind,"operation":operation,"actor":actor,"target_height":4,
+            "component_started_at":self.component_started_at,"deadline":self.deadline,
+            "at":at,"within_original_deadline":at < self.deadline,
+            "started_at":null,"completed_at":null,"seconds":null,
+            "returned":null,"successful":null,"probe":null,"all_four_opened":null,
+        });
+        if let Some(Value::Object(fields)) = completion {
+            row.as_object_mut().unwrap().extend(fields);
+        }
+        let Ok(encoded) = serde_json::to_vec(&row) else {
+            self.enabled = false;
+            return;
+        };
+        let length = Self::PREFIX.len() + encoded.len() + 1;
+        if self.rows >= Self::ROW_LIMIT || length > Self::BYTE_LIMIT - self.bytes {
+            self.enabled = false;
+            return;
+        }
+        let mut line = Vec::with_capacity(length);
+        line.extend_from_slice(Self::PREFIX);
+        line.extend_from_slice(&encoded);
+        line.push(b'\n');
+        use std::io::Write;
+        if std::io::stderr().lock().write_all(&line).is_err() {
+            self.enabled = false;
+            return;
+        }
+        self.rows += 1;
+        self.bytes += length;
+    }
+    fn start(&mut self, operation: &'static str, actor: Option<usize>) -> Option<OwnerOpenSpan> {
+        let dispatched_at = self.clock()?;
+        self.emit("start", operation, actor, dispatched_at, None);
+        // Start-row output is outside the measured operation. A start row alone
+        // is only a dispatch lower bound; it never proves a call returned.
+        Some(OwnerOpenSpan {
+            operation,
+            actor,
+            started_at: self.clock()?,
+        })
+    }
+    fn finish(&mut self, span: Option<OwnerOpenSpan>, successful: bool, probe: Option<Value>) {
+        let Some(span) = span else { return };
+        let Some(completed_at) = self.clock() else {
+            return;
+        };
+        self.emit(
+            "completion",
+            span.operation,
+            span.actor,
+            completed_at,
+            Some(json!({
+                "started_at":span.started_at,"completed_at":completed_at,
+                "seconds":completed_at-span.started_at,"returned":true,
+                "successful":successful,"probe":probe,
+                "all_four_opened":if span.operation == "barrier" { Some(true) } else { None },
+            })),
+        );
+    }
+}
+
 // This helper is called ONLY for B. C must never call it.
 fn install_b(node: &mut Store, commands: Vec<Command>) -> Snapshot {
     let snapshot = certified_with_commands(&node.paged_replay.as_ref().unwrap().replay, commands);
@@ -202,6 +344,21 @@ struct LiveLog {
 }
 impl LiveLog {
     fn new(root: &Path, started: f64, deadline: f64) -> Self {
+        Self::with_coverage(
+            root,
+            started,
+            deadline,
+            "every tick and receive in the two original direct-drive loops only",
+            "setup, keyless-recovery loop, explicit wrapper receipts/retries and cold child",
+        )
+    }
+    fn with_coverage(
+        root: &Path,
+        started: f64,
+        deadline: f64,
+        coverage: &str,
+        excluded: &str,
+    ) -> Self {
         let path = root.join("onward-runtime-live.jsonl");
         crate::keystore::private_create(&path, b"").unwrap();
         let file = fs::OpenOptions::new().append(true).open(&path).unwrap();
@@ -214,12 +371,13 @@ impl LiveLog {
             pending: None,
             deadline,
         };
-        log.row(json!({"kind":"header","format":"RLD-ONWARD-RUNTIME-LIVE-OBSERVATION-V1",
+        log.row(
+            json!({"kind":"header","format":"RLD-ONWARD-RUNTIME-LIVE-OBSERVATION-V1",
             "started_at":started,"deadline":deadline,"row_limit":LIVE_ROWS,"byte_limit":LIVE_BYTES,
-            "coverage":"every tick and receive in the two original direct-drive loops only",
-            "excluded":"setup, keyless-recovery loop, explicit wrapper receipts/retries and cold child",
+            "coverage":coverage,"excluded":excluded,
             "clock":"existing OS monotonic probes","phase_times_overlap":true,
-            "observer_io_between_calls":true,"signing_authority":false}));
+            "observer_io_between_calls":true,"signing_authority":false}),
+        );
         log
     }
     fn row(&mut self, value: Value) {
@@ -438,6 +596,9 @@ struct NodePins {
 }
 #[derive(Serialize, Deserialize)]
 struct Pins {
+    mode: Mode,
+    checkpoints: Vec<Hash>,
+    owner: Option<owner_spend::Pins>,
     parent_pid: u32,
     started: f64,
     deadline: f64,
@@ -450,10 +611,16 @@ struct Pins {
     seeds: Vec<u8>,
     nodes: Vec<NodePins>,
 }
-fn cold_child(root: &Path) {
+fn cold_child(root: &Path, mode: Mode) {
     assert!(root.is_absolute());
     let pins: Pins =
         serde_json::from_slice(&fs::read(root.join("runtime-cold-pins.json")).unwrap()).unwrap();
+    assert_eq!(
+        pins.mode, mode,
+        "cold selector differs from separately retained pins"
+    );
+    assert_eq!(pins.owner.is_some(), mode == Mode::OwnerSpend);
+    assert_eq!(pins.checkpoints.len(), mode.height() as usize);
     assert_ne!(pins.parent_pid, std::process::id());
     assert_eq!(pins.deadline - pins.started, 120.0);
     budget(pins.deadline);
@@ -475,7 +642,27 @@ fn cold_child(root: &Path) {
             node.evidence.snapshot(expected.finality).unwrap(),
             &expected.final_snapshot
         );
-        verify_import(&node, pins.a80, pins.b4, pins.export);
+        assert_eq!(node.chain.height(), mode.height());
+        assert_eq!(node.chain.finalized, pins.checkpoints.last().copied());
+        for (index, checkpoint) in pins.checkpoints.iter().enumerate() {
+            assert_eq!(
+                node.evidence
+                    .snapshot(*checkpoint)
+                    .unwrap()
+                    .statement
+                    .height,
+                index as u64 + 1
+            );
+        }
+        match &pins.owner {
+            Some(owner) => {
+                owner_spend::verify_spend(&node, owner, pins.a80, pins.b4, pins.export);
+                if i == 0 {
+                    owner_spend::cold_owner(root, &node, owner);
+                }
+            }
+            None => verify_import(&node, pins.a80, pins.b4, pins.export),
+        }
         let transport: Value = serde_json::from_slice(
             &fs::read(root.join(format!("transport-config-{i}.json"))).unwrap(),
         )
@@ -550,8 +737,11 @@ fn cold_child(root: &Path) {
 #[test]
 #[ignore = "one fresh full A/B plus four original C Runtime custody and direct-carriage component, original 120 seconds"]
 fn four_original_onward_runtimes_import_and_cold_replay() {
+    run(Mode::Import);
+}
+fn run(mode: Mode) {
     if let Some(root) = std::env::var_os(CHILD) {
-        cold_child(&PathBuf::from(root));
+        cold_child(&PathBuf::from(root), mode);
         return;
     }
     let started = now();
@@ -591,6 +781,8 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
         new_json(&root.join(format!("transport-config-{i}.json")), &transport);
         transports.push(transport);
     }
+    let mut owner =
+        (mode == Mode::OwnerSpend).then(|| owner_spend::Owner::create(&root, &nodes[0]));
     let mut actors = Vec::new();
     let mut initial_heads = Vec::new();
     for i in 0..4 {
@@ -731,7 +923,16 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
     let mut seen = BTreeSet::new();
     let mut relayed = BTreeSet::new();
     let mut finalized_deliveries = BTreeSet::new();
-    let mut live = LiveLog::new(&root, started, deadline);
+    let mut live = match mode {
+        Mode::Import => LiveLog::new(&root, started, deadline),
+        Mode::OwnerSpend => LiveLog::with_coverage(
+            &root,
+            started,
+            deadline,
+            owner_spend::COVERAGE,
+            owner_spend::EXCLUDED,
+        ),
+    };
     drive(
         &mut actors,
         &mut nodes,
@@ -811,6 +1012,102 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
     for node in &nodes {
         verify_import(node, a80, b4, export);
     }
+    let mut checkpoints = vec![
+        c1.statement.id().unwrap(),
+        nodes[0].chain.finalized.unwrap(),
+    ];
+    let mut owner_pins = None;
+    if let Some(mut original_owner) = owner.take() {
+        original_owner.immature(&nodes[0], b4, export);
+        for target in 3..=5 {
+            budget(deadline);
+            if target == 5 {
+                original_owner.queue(&nodes[0], a80, b4, export, deadline);
+                phase(started, "C4-original-owner-pending-sign-head-exact-queue");
+            }
+            // Same original four actors' durable custody; only the explicit
+            // stop-height barrier changes. No C certificate is constructed here.
+            if mode == Mode::OwnerSpend && target == 4 {
+                let mut observation = OwnerOpenObservation::new(started, deadline);
+                let barrier = observation.start("barrier", None);
+                let clearing = observation.start("actors-clear", None);
+                actors.clear();
+                observation.finish(clearing, true, None);
+                for i in 0..4 {
+                    budget(deadline);
+                    let path = root.join(format!("phase{target}-config-{i}.json"));
+                    let reading_head = observation.start("head", Some(i));
+                    let head = nodes[i].storage_head();
+                    observation.finish(reading_head, head.is_ok(), None);
+                    let head = head.unwrap();
+                    let constructing_config = observation.start("config", Some(i));
+                    let configuration = config(&root, i, &seeds, &ids, target, head);
+                    observation.finish(constructing_config, true, None);
+                    let writing_config = observation.start("config-write", Some(i));
+                    new_json(&path, &configuration);
+                    observation.finish(writing_config, true, None);
+                    let opening = observation.start("runtime-open", Some(i));
+                    let (opened, probe) = TestRuntime::probe_open(&path, &nodes[i], &transports[i]);
+                    observation.finish(opening, opened.is_ok(), Some(probe));
+                    actors.push(opened.unwrap());
+                }
+                observation.finish(barrier, true, None);
+            } else {
+                actors.clear();
+                for i in 0..4 {
+                    budget(deadline);
+                    let path = root.join(format!("phase{target}-config-{i}.json"));
+                    new_json(
+                        &path,
+                        &config(
+                            &root,
+                            i,
+                            &seeds,
+                            &ids,
+                            target,
+                            nodes[i].storage_head().unwrap(),
+                        ),
+                    );
+                    actors.push(TestRuntime::open(&path, &nodes[i], &transports[i]).unwrap());
+                }
+            }
+            drive(
+                &mut actors,
+                &mut nodes,
+                target,
+                &mut seen,
+                &mut relayed,
+                &mut finalized_deliveries,
+                &mut live,
+            );
+            checkpoints.push(nodes[0].chain.finalized.unwrap());
+            if target < 5 {
+                for node in &nodes {
+                    assert!(node
+                        .evidence
+                        .snapshot(node.chain.finalized.unwrap())
+                        .unwrap()
+                        .blocks
+                        .last()
+                        .unwrap()
+                        .commands
+                        .is_empty());
+                    assert_eq!(node.chain.ledger.imports, BTreeMap::from([(export, b4)]));
+                    assert_eq!(
+                        node.chain.ledger.coins[&id("output", &(export, 0u32)).unwrap()]
+                            .payment
+                            .amount,
+                        Amount(89)
+                    );
+                }
+            }
+            if target == 3 {
+                original_owner.immature(&nodes[0], b4, export);
+            }
+            phase(started, &format!("actual-C{target}-all-four"));
+        }
+        owner_pins = Some(original_owner.complete(&nodes, a80, b4, export));
+    }
     // Bind every actual certificate vote to the corresponding original Agent's
     // authenticated retained response, not merely to its public signature.
     let mut original_messages = Vec::new();
@@ -825,11 +1122,10 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
         records.push(agent.record_count());
     }
     for node in &nodes {
-        let c2 = node
-            .evidence
-            .snapshot(node.chain.finalized.unwrap())
-            .unwrap();
-        for snapshot in [&c1, c2] {
+        assert_eq!(node.chain.height(), mode.height());
+        for (index, checkpoint) in checkpoints.iter().enumerate() {
+            let snapshot = node.evidence.snapshot(*checkpoint).unwrap();
+            assert_eq!(snapshot.statement.height, index as u64 + 1);
             let certificate = snapshot.bft.as_ref().unwrap();
             for (quorum, phase) in [
                 (&certificate.prepared, Phase::Prepare),
@@ -869,7 +1165,13 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
         );
         assert_eq!(inventory(&root), before);
     }
-    phase(started, "actual-C2-import-original-3prepare-3commit");
+    phase(
+        started,
+        match mode {
+            Mode::Import => "actual-C2-import-original-3prepare-3commit",
+            Mode::OwnerSpend => "actual-C1-through-C5-original-3prepare-3commit",
+        },
+    );
     let live_observation = live.finish();
     let mut node_pins = Vec::new();
     for i in 0..4 {
@@ -890,7 +1192,7 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
         let native_head = nodes[i].storage_head().unwrap();
         new_json(
             &root.join(format!("cold-config-{i}.json")),
-            &config(&root, i, &seeds, &ids, 2, native_head),
+            &config(&root, i, &seeds, &ids, mode.height(), native_head),
         );
         node_pins.push(NodePins {
             native_head,
@@ -911,6 +1213,9 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
         });
     }
     let pins = Pins {
+        mode,
+        checkpoints,
+        owner: owner_pins,
         parent_pid: std::process::id(),
         started,
         deadline,
@@ -942,7 +1247,7 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
     let mut child = Process::new(std::env::current_exe().unwrap())
         .args([
             "--exact",
-            TEST,
+            mode.selector(),
             "--ignored",
             "--nocapture",
             "--test-threads=1",
@@ -970,12 +1275,26 @@ fn four_original_onward_runtimes_import_and_cold_replay() {
     );
     budget(deadline);
     phase(started, "component-complete");
-    eprintln!(
-        "onward_runtime_result={}",
-        json!({"elapsed_seconds":now()-started,"root":root,"live_observation":live_observation,
-        "c1_actual_runtime":true,"c2_actual_runtime":true,"native_import":true,"original_custody":true,
-        "fresh_process_cold":true,"post_sign_keyless_recovery":true,"ordinary_service":false,"maturity_or_onward_spend":false,"independent_qualification":false})
-    );
+    match mode {
+        Mode::Import => eprintln!(
+            "onward_runtime_result={}",
+            json!({"elapsed_seconds":now()-started,"root":root,"live_observation":live_observation,
+            "c1_actual_runtime":true,"c2_actual_runtime":true,"native_import":true,"original_custody":true,
+            "fresh_process_cold":true,"post_sign_keyless_recovery":true,"ordinary_service":false,"maturity_or_onward_spend":false,"independent_qualification":false})
+        ),
+        Mode::OwnerSpend => eprintln!(
+            "onward_owner_runtime_result={}",
+            json!({
+            "elapsed_seconds":now()-started,"root":root,"live_observation":live_observation,
+            "c1_actual_runtime":true,"c2_actual_runtime":true,"c3_actual_runtime":true,
+            "c4_actual_runtime":true,"c5_actual_runtime":true,"native_import":true,"original_custody":true,
+            "fresh_process_cold":true,"post_sign_keyless_recovery":true,"owner_creation_height":0,
+            "immature_refusal_heights":[2,3],"exact_queue_retry":true,"owner_pending_before_sign":true,
+            "owner_head_before_queue":true,"original_owner_spend":true,"all_five_certificates_original_custody":true,
+            "owner_submission":pins.owner.as_ref().unwrap().report(),
+            "ordinary_service":false,"independent_qualification":false})
+        ),
+    }
     // Success and failure both preserve this fresh scope; no cleanup/reopen of historical fixtures.
 }
 
@@ -999,16 +1318,16 @@ mod negative_seams {
             json!({"phase":name,"elapsed_seconds":now()-started})
         );
     }
-    struct Target {
-        root: PathBuf,
-        node: Store,
-        actor: Option<TestRuntime>,
+    pub(super) struct Target {
+        pub(super) root: PathBuf,
+        pub(super) node: Store,
+        pub(super) actor: Option<TestRuntime>,
         transport: Value,
         seeds: Vec<u8>,
         ids: Vec<String>,
     }
     impl Target {
-        fn new(root: &Path, name: &str, bootstrap: &Bootstrap, region: Hash) -> Self {
+        pub(super) fn new(root: &Path, name: &str, bootstrap: &Bootstrap, region: Hash) -> Self {
             let root = dir(&root.join(name));
             let currency = bootstrap.currency.id().unwrap();
             let node = Store::create(
@@ -1148,7 +1467,7 @@ mod negative_seams {
             drop(agent);
             assert_eq!(self.caller().read().unwrap(), pending);
         }
-        fn stop(&mut self) {
+        pub(super) fn stop(&mut self) {
             drop(self.actor.take());
         }
         fn open_refuses_unchanged(&self, expected: &str) {
@@ -1276,7 +1595,7 @@ mod negative_seams {
         assert!(archive.runtime.messages.insert(ident, record).is_none());
         ident
     }
-    fn authentic_alternate_a80(
+    pub(super) fn authentic_alternate_a80(
         bootstrap: &Bootstrap,
         proof: &CompleteOnwardNetworkHistory,
     ) -> Snapshot {
@@ -1578,3 +1897,21 @@ mod negative_seams {
         );
     }
 }
+
+#[path = "onward_owner_queue_tests.rs"]
+mod queue_negative;
+
+#[path = "onward_receive_observation_tests.rs"]
+mod receive_observation;
+
+#[path = "onward_receive_witness_negative_tests.rs"]
+mod receive_witness_negative;
+
+#[path = "onward_cold_observation_tests.rs"]
+mod cold_observation;
+
+#[path = "onward_local_builder_negative_tests.rs"]
+mod local_builder_negative;
+
+#[path = "onward_archive_witness_negative_tests.rs"]
+mod archive_witness_negative;
