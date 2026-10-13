@@ -222,32 +222,37 @@ fn packed_ledger_four_original_signer_journals_two_owner_payments_and_fresh_cold
 
 #[test]
 fn packed_height_four_runtime_tick_measures_complete_authentication_without_new_signature() {
-    packed_runtime_work(false, false, false, false, false);
+    packed_runtime_work(false, false, false, false, false, false);
 }
 
 #[test]
 fn packed_current_prepare_measures_original_runtime_sign_and_caller_publication() {
-    packed_runtime_work(true, false, false, false, false);
+    packed_runtime_work(true, false, false, false, false, false);
 }
 
 #[test]
 fn ordinary_proposer_retains_own_prepare_without_another_contact_turn() {
-    packed_runtime_work(false, true, false, false, false);
+    packed_runtime_work(false, true, false, false, false, false);
 }
 
 #[test]
 fn packed_receive_retains_exact_evidence_event_and_measures_post_sync_retention() {
-    packed_runtime_work(false, false, true, false, false);
+    packed_runtime_work(false, false, true, false, false, false);
 }
 
 #[test]
 fn packed_ordinary_proposal_separates_historical_candidate_scan_and_original_signing() {
-    packed_runtime_work(false, false, false, true, false);
+    packed_runtime_work(false, false, false, true, false, false);
 }
 
 #[test]
 fn exact_duplicate_receive_reauthenticates_without_a_second_evidence_event() {
-    packed_runtime_work(false, false, true, false, true);
+    packed_runtime_work(false, false, true, false, true, false);
+}
+
+#[test]
+fn ordinary_prepare_completes_exact_current_quorum_and_retains_commit_in_same_tick() {
+    packed_runtime_work(false, false, false, false, false, true);
 }
 
 fn packed_runtime_work(
@@ -256,6 +261,7 @@ fn packed_runtime_work(
     measure_receive: bool,
     measure_proposal: bool,
     exact_duplicate: bool,
+    complete_prepare: bool,
 ) {
     let started = std::time::Instant::now();
     let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
@@ -313,7 +319,7 @@ fn packed_runtime_work(
             "key":public(h.seeds[n]),"miner":public(10),
             "validators":h.seeds.iter().enumerate().map(|(n,seed)|
                 serde_json::json!({"key":public(*seed),"node_id":ids[n]})).collect::<Vec<_>>(),
-            "block_interval":0.5,"round_timeout":5.0,"stop_height":if measure_proposal {5}else{4}
+            "block_interval":0.5,"round_timeout":5.0,"stop_height":if measure_proposal || complete_prepare {5}else{4}
         });
         let path = h.root.join(format!("runtime-config-{n}.json"));
         crate::keystore::private_create(&path, &crate::wallet_client::canonical(&config).unwrap())
@@ -412,6 +418,111 @@ fn packed_runtime_work(
         else {
             panic!("original proposal response")
         };
+        if complete_prepare && height == 5 {
+            let receiver = (n + 1) % 4;
+            for actor in (0..4).filter(|actor| *actor != receiver).take(2) {
+                actors[actor]
+                    .sign_fixture_control(&h.node, Request::Prepare(proposal.clone()))
+                    .unwrap();
+            }
+            let controls = actors
+                .iter()
+                .flat_map(|actor| actor.fixture_controls().unwrap())
+                .collect::<Vec<_>>();
+            assert_eq!(controls.len(), 39);
+            actors[receiver]
+                .retain_fixture_controls(&h.node, &controls)
+                .unwrap();
+            let before_controls = actors[receiver].fixture_controls().unwrap().len();
+            let head = h.node.storage_head().unwrap();
+            let ledger = h.node.chain.ledger.clone();
+            let signer = h.root.join(format!("signer-{}", h.seeds[receiver]));
+            let caller = h.root.join(format!("runtime-caller-{receiver}/head.json"));
+            let archive_path = h.root.join(format!("runtime-work-{receiver}/state.json"));
+            let mut before = inventory(&h.root);
+            before.retain(|path, _| {
+                !path.starts_with(&signer) && *path != caller && *path != archive_path
+            });
+            let report = actors[receiver].probe_tick(&mut h.node).unwrap();
+            assert!(
+                report["error"].is_null(),
+                "actual Prepare tick failed: {report}"
+            );
+            assert_eq!(report["decision"], "prepare");
+            let after_controls = actors[receiver].fixture_controls().unwrap();
+            let own = public(h.seeds[receiver]);
+            let commits = after_controls
+                .iter()
+                .filter(|message| {
+                    matches!(message,Message::Vote(vote)
+                if vote.phase==Phase::Commit && vote.context==context && vote.round==0
+                && vote.value==proposal.snapshot.statement.id().unwrap() && vote.approval.key==own)
+                })
+                .count();
+            assert_eq!(h.node.storage_head().unwrap(), head);
+            assert_eq!(h.node.chain.ledger, ledger);
+            let mut after = inventory(&h.root);
+            after.retain(|path, _| {
+                !path.starts_with(&signer) && *path != caller && *path != archive_path
+            });
+            assert_eq!(after, before);
+            eprintln!(
+                "Original current Prepare closure: {}",
+                serde_json::json!({
+                "report":report,"own_commit_count":commits,"new_original_controls":after_controls.len()-before_controls,
+                "ledger_unchanged":true,"whole_payment_qualification":false})
+            );
+            drop(actors);
+            let root = h.root.clone();
+            let seeds = h.seeds.clone();
+            drop(h);
+            let before = inventory(&root);
+            let cold = Store::open_pinned(&root.join("node"), &public(1), currency, head).unwrap();
+            assert_eq!(cold.chain.height(), 4);
+            assert_eq!(cold.chain.ledger, ledger);
+            for (actor, seed) in seeds.iter().enumerate() {
+                let caller = crate::bft_client::Client::lock(
+                    &root.join(format!("runtime-caller-{actor}/head.json")),
+                    &root.join(format!("signer-{seed}")),
+                    public(*seed),
+                    crate::bft_client::FORMAT.into(),
+                    &cold,
+                )
+                .unwrap();
+                let state = caller.read().unwrap();
+                assert!(state.pending.is_none() && state.outbox.is_none());
+                let agent = Agent::open(&root.join(format!("signer-{seed}")), &cold).unwrap();
+                assert_eq!(agent.head().unwrap(), state.head);
+            }
+            let archive =
+                crate::bft_runtime_archive::Archive::decode(&fs::read(&archive_path).unwrap())
+                    .unwrap();
+            let entries = archive.runtime.messages.values().collect::<Vec<_>>();
+            let mut count = 0;
+            for records in entries.chunks(crate::bft_network::MAX_COLD_BATCH) {
+                let wires = records
+                    .iter()
+                    .map(|record| {
+                        serde_json::from_value(archive.envelope(record).unwrap()).unwrap()
+                    })
+                    .collect::<Vec<_>>();
+                let checked = crate::bft_network::check_cold_batch(wires, &cold).unwrap();
+                assert_eq!(checked.len(), records.len());
+                for (record, checked) in records.iter().zip(checked) {
+                    assert_eq!(record.value, checked.value);
+                    count += 1;
+                }
+            }
+            assert_eq!(count, after_controls.len());
+            assert_eq!(inventory(&root), before);
+            assert!(
+                started.elapsed().as_secs_f64() < 60.0,
+                "original current Prepare closure budget"
+            );
+            assert_eq!(commits,1,"own Prepare completed exact current quorum but Commit waited for another ordinary contact turn");
+            assert_eq!(after_controls.len(), before_controls + 2);
+            return;
+        }
         let mut votes = Vec::new();
         for (n, actor) in actors.iter_mut().enumerate() {
             let request = Request::Prepare(proposal.clone());

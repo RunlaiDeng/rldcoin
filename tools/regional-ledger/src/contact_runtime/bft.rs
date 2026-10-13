@@ -624,7 +624,81 @@ impl Runtime {
                     && proposal.timeout == *timeout,
                 "post-Propose Prepare differs from exact retained own proposal",
             )?;
-            self.sign(node, consensus::Request::Prepare(proposal))?;
+            self.sign(node, consensus::Request::Prepare(proposal.clone()))?;
+            self.commit_prepared_proposal(node, &proposal)?;
+        }
+        Ok(())
+    }
+
+    fn commit_prepared_proposal(
+        &mut self,
+        node: &Store,
+        original: &consensus::Proposal,
+    ) -> Result<()> {
+        let context = original.context()?;
+        require(
+            consensus::Context::current(node)? == context,
+            "post-Prepare Native context changed",
+        )?;
+        let value = original.snapshot.statement.id()?;
+        let mut possible = BTreeSet::new();
+        for record in self.archive.runtime.messages.values() {
+            let body: net::Body =
+                serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())?;
+            if let net::Body::Signed(message) = body {
+                if let consensus::Message::Vote(vote) = *message {
+                    if vote.phase == consensus::Phase::Prepare
+                        && vote.context == context
+                        && vote.round == original.round
+                        && vote.value == value
+                    {
+                        possible.insert(vote.approval.key);
+                    }
+                }
+            }
+        }
+        // This count can only decline work; it grants no authentication or
+        // signing rights. A possible quorum always takes full Native policy.
+        if possible.len() < 3 {
+            return Ok(());
+        }
+        let caller = bft_client::Client::lock(
+            &self.config.head_file,
+            &self.config.signer_dir,
+            self.config.key.clone(),
+            self.config.format.clone(),
+            node,
+        )?;
+        let head = caller.read()?.head;
+        drop(caller);
+        let pins = proposal::Pins {
+            signer: &self.config.signer_dir,
+            archive: &self.config.state,
+            key: self.config.key.clone(),
+            runtime_format: self.config.format.clone(),
+            head,
+            archive_head: self.head.ok_or("post-Prepare archive head missing")?,
+            context: context.clone(),
+            round: original.round,
+        };
+        let observed = phase::observe(
+            node,
+            pins,
+            phase::Mode::Commit,
+            phase::Input {
+                context,
+                order: self.archive.runtime.messages.keys().copied().collect(),
+            },
+        )?;
+        if let phase::Action::Commit {
+            proposal, prepared, ..
+        } = observed.action
+        {
+            require(
+                proposal.as_ref() == original,
+                "post-Prepare Commit differs from exact original proposal",
+            )?;
+            self.sign(node, consensus::Request::Commit { proposal, prepared })?;
         }
         Ok(())
     }
@@ -715,7 +789,8 @@ impl Runtime {
                 self.retain_local(node, net::Body::Finalized(snapshot))?;
             }
             tick::Decision::Phase(phase::Action::Prepare { proposal, .. }) => {
-                self.sign(node, consensus::Request::Prepare(proposal))?
+                self.sign(node, consensus::Request::Prepare(proposal.clone()))?;
+                self.commit_prepared_proposal(node, &proposal)?;
             }
             tick::Decision::Phase(phase::Action::Commit {
                 proposal, prepared, ..
