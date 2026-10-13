@@ -14,6 +14,7 @@ const SECOND_RECIPIENT: usize = 2;
 
 struct Observation {
     height: u64,
+    head: Hash,
     coins: Vec<(Hash, String, crate::Amount, bool)>,
     finalized: bool,
     native_verified_at: f64,
@@ -30,6 +31,10 @@ struct Stopped {
 }
 enum Job {
     Observe(Sender<Result<Observation>>),
+    Availability {
+        paused: bool,
+        reply: Sender<Result<Observation>>,
+    },
     Pay {
         recipient: String,
         input: Option<Hash>,
@@ -62,6 +67,7 @@ fn observe(options: &Options) -> Result<Observation> {
     }
     Ok(Observation {
         height: node.chain.height(),
+        head: node.storage_head()?,
         coins,
         finalized: node.chain.finalized.is_some(),
         native_verified_at: monotonic()?,
@@ -173,7 +179,9 @@ impl Actor {
             }
             let mut cursor = None;
             let mut seen = Vec::new();
-            for _ in 0..192 {
+            let mut paused = false;
+            let mut turns = 0;
+            loop {
                 require(
                     !failed.load(Ordering::Acquire),
                     "another wallet actor failed; retain fixture",
@@ -198,6 +206,22 @@ impl Actor {
                 }
                 while let Ok(job) = self.receiver.try_recv() {
                     match job {
+                        Job::Availability {
+                            paused: next,
+                            reply,
+                        } => {
+                            require(
+                                app.is_none(),
+                                "fault pause must not control an owner wallet",
+                            )?;
+                            paused = next;
+                            let result = observe(&self.options);
+                            let error = result.as_ref().err().cloned();
+                            reply.send(result).map_err(|e| e.to_string())?;
+                            if let Some(error) = error {
+                                return Err(error);
+                            }
+                        }
                         Job::Observe(reply) => {
                             let started = monotonic()?;
                             let result = observe(&self.options);
@@ -239,6 +263,15 @@ impl Actor {
                         "wallet operation exceeded original cycle deadline",
                     )?;
                 }
+                if paused {
+                    thread::sleep(Duration::from_millis(55));
+                    continue;
+                }
+                require(
+                    turns < 192,
+                    "ordinary wallet actor iteration budget exhausted",
+                )?;
+                turns += 1;
                 let started = monotonic()?;
                 let tick = directory_ledger_turn(
                     &self.options,
@@ -277,7 +310,6 @@ impl Actor {
                 )?;
                 thread::sleep(Duration::from_millis(55));
             }
-            Err("ordinary wallet actor iteration budget exhausted".into())
         })();
         if result.is_err() {
             failed.store(true, Ordering::Release);
@@ -365,6 +397,45 @@ fn payment(
         })
         .map_err(|e| e.to_string())?;
     wait(receiver, deadline)
+}
+fn availability(worker: &Worker, paused: bool, deadline: f64) -> Result<Observation> {
+    let (sender, receiver) = mpsc::channel();
+    worker
+        .sender
+        .send(Job::Availability {
+            paused,
+            reply: sender,
+        })
+        .map_err(|e| e.to_string())?;
+    wait(receiver, deadline)
+}
+
+fn custody_inventory(
+    root: &Path,
+    actor: usize,
+) -> Result<std::collections::BTreeMap<PathBuf, String>> {
+    let mut pending = ["ledger", "signer", "caller", "runtime", "transport"]
+        .into_iter()
+        .map(|kind| root.join(format!("{kind}-{actor}")))
+        .collect::<Vec<_>>();
+    let mut result = std::collections::BTreeMap::new();
+    while let Some(path) = pending.pop() {
+        let meta = fs::symlink_metadata(&path).map_err(|e| e.to_string())?;
+        require(
+            !meta.file_type().is_symlink(),
+            "fault inventory symlink refused",
+        )?;
+        if meta.is_dir() {
+            for entry in fs::read_dir(&path).map_err(|e| e.to_string())? {
+                pending.push(entry.map_err(|e| e.to_string())?.path());
+            }
+        } else {
+            require(meta.is_file(), "fault inventory regular file required")?;
+            let raw = files::private_read_with_limit(&path, 32 * 1024 * 1024)?;
+            result.insert(path, hex::encode(Sha256::digest(&raw)));
+        }
+    }
+    Ok(result)
 }
 fn setup(
     root: &Path,
@@ -581,6 +652,19 @@ fn four_packed_native_replicas_finalize_first_payment_and_actual_recipient_next_
 }
 
 fn ordinary_cycle(rules: &str) {
+    cycle_with_unavailable_validator(rules, None);
+}
+
+#[test]
+fn three_packed_validators_pay_twice_while_fourth_paused_then_catch_up_and_cold_verify() {
+    cycle_with_unavailable_validator(crate::paged_bft::PACKED_RULES, Some(1));
+}
+
+fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>) {
+    assert!(
+        unavailable.is_none_or(|actor| actor == 1),
+        "predeclared fault actor differs"
+    );
     let started = monotonic().unwrap();
     let deadline = started + 120.0;
     let root = directory(
@@ -595,6 +679,8 @@ fn ordinary_cycle(rules: &str) {
     let (workers, seeds, currency) =
         setup(&root, deadline, stop.clone(), failed.clone(), rules).unwrap();
     let mut samples = Vec::new();
+    let mut fault = Value::Null;
+    let mut cold_envelope_counts = Vec::new();
     let result = (|| -> Result<()> {
         loop {
             let observed = observations(&workers, deadline)?;
@@ -606,6 +692,20 @@ fn ordinary_cycle(rules: &str) {
             }
             thread::sleep(Duration::from_millis(55));
         }
+        let frozen = if let Some(actor) = unavailable {
+            require(
+                actor == 1,
+                "fault actor must be fixed before fixture creation",
+            )?;
+            let observed = availability(&workers[actor], true, deadline)?;
+            fault = json!({"kind":"one-logical-validator-consensus-and-transport-paused","actor":actor,
+                "paused_at":monotonic()?,"height":observed.height,"head":observed.head,"resumed_at":null,
+                "custody_unchanged_before_resume":false,"three_live_replicas_second_payment_ready":false,
+                "process_crash_qualification":false,"independent_operations":false});
+            Some((observed, custody_inventory(&root, actor)?))
+        } else {
+            None
+        };
         let first = payment(&workers[3], public(11), None, deadline)?;
         samples.push(
             json!({"intent":first.intent,"input":first.input,"submitted":first.submitted,
@@ -644,6 +744,7 @@ fn ordinary_cycle(rules: &str) {
             "recipient_native_latency_seconds":null,"replica_native_verified_at":[null,null,null,null],
             "all_replicas_finalized_spendable":null,"latency_seconds":null}),
         );
+        let mut resumed = unavailable.is_none();
         loop {
             let observed = observations(&workers, deadline)?;
             for (n, node) in observed.iter().enumerate() {
@@ -658,6 +759,32 @@ fn ordinary_cycle(rules: &str) {
                     }
                 }
             }
+            if let Some(actor) = unavailable {
+                if !resumed
+                    && observed
+                        .iter()
+                        .enumerate()
+                        .filter(|(n, _)| *n != actor)
+                        .all(|(_, node)| second_payment_ready(node, input))
+                {
+                    let (prior, inventory) =
+                        frozen.as_ref().ok_or("missing frozen fault custody")?;
+                    require(
+                        observed[actor].height == prior.height
+                            && observed[actor].head == prior.head,
+                        "paused validator advanced Native state",
+                    )?;
+                    require(
+                        custody_inventory(&root, actor)? == *inventory,
+                        "paused validator custody bytes changed",
+                    )?;
+                    fault["three_live_replicas_second_payment_ready"] = json!(true);
+                    fault["custody_unchanged_before_resume"] = json!(true);
+                    availability(&workers[actor], false, deadline)?;
+                    fault["resumed_at"] = json!(monotonic()?);
+                    resumed = true;
+                }
+            }
             if observed
                 .iter()
                 .all(|node| second_payment_ready(node, input))
@@ -669,6 +796,15 @@ fn ordinary_cycle(rules: &str) {
         let ready = monotonic()?;
         samples[1]["all_replicas_finalized_spendable"] = json!(ready);
         samples[1]["latency_seconds"] = json!(ready - second.submitted);
+        if unavailable.is_some() {
+            require(
+                resumed
+                    && fault["three_live_replicas_second_payment_ready"] == true
+                    && fault["custody_unchanged_before_resume"] == true
+                    && !fault["resumed_at"].is_null(),
+                "fault lifecycle did not complete three-live payment before restoration",
+            )?;
+        }
         require(
             monotonic()? < deadline,
             "payment completion exceeded whole original deadline",
@@ -691,6 +827,9 @@ fn ordinary_cycle(rules: &str) {
         )?;
         let mut prefixes = Vec::new();
         for n in 0..4 {
+            let before = unavailable
+                .map(|_| custody_inventory(&root, n))
+                .transpose()?;
             let node = Store::open_pinned(
                 &root.join(format!("ledger-{n}")),
                 &public(1),
@@ -715,6 +854,41 @@ fn ordinary_cycle(rules: &str) {
                 status.head == state.head,
                 "cold BFT signer and caller heads differ",
             )?;
+            if unavailable.is_some() {
+                let raw = files::private_read_with_limit(
+                    &root.join(format!("runtime-{n}/state.json")),
+                    crate::bft_runtime_archive::MAX_STATE,
+                )?;
+                let archive = crate::bft_runtime_archive::Archive::decode(&raw)?;
+                let records = archive.runtime.messages.values().collect::<Vec<_>>();
+                let mut count = 0;
+                for batch in records.chunks(crate::bft_network::MAX_COLD_BATCH) {
+                    let wires = batch
+                        .iter()
+                        .map(|record| {
+                            serde_json::from_value(archive.envelope(record)?)
+                                .map_err(|e| e.to_string())
+                        })
+                        .collect::<Result<Vec<_>>>()?;
+                    let checked = crate::bft_network::check_cold_batch(wires, &node)?;
+                    require(
+                        checked.len() == batch.len(),
+                        "cold fault archive omitted an envelope",
+                    )?;
+                    for (record, checked) in batch.iter().zip(checked) {
+                        require(
+                            record.value == checked.value,
+                            "cold fault archive value differs",
+                        )?;
+                        count += 1;
+                    }
+                }
+                require(
+                    count == archive.runtime.messages.len(),
+                    "cold fault archive incomplete",
+                )?;
+                cold_envelope_counts.push(count);
+            }
             if let Some(saved) = &stopped[n].wallet {
                 let owner = if n == 3 { public(10) } else { public(11) };
                 let client = wallet_client::Client::lock(
@@ -753,6 +927,12 @@ fn ordinary_cycle(rules: &str) {
                     .map(|block| block.and_then(|block| block.header.id()))
                     .collect::<Result<Vec<_>>>()?,
             );
+            if let Some(before) = before {
+                require(
+                    custody_inventory(&root, n)? == before,
+                    "fault cold verification changed private custody",
+                )?;
+            }
         }
         let common = prefixes
             .iter()
@@ -783,6 +963,7 @@ fn ordinary_cycle(rules: &str) {
     atomic(&root.join("payment-observations.json"), &json!({"samples":samples,"passed":result.is_ok(),
         "error":result.as_ref().err(),"worker_errors":worker_errors,"whole_seconds":monotonic().unwrap()-started,
         "recipient_actors":[FIRST_RECIPIENT,SECOND_RECIPIENT],"reported_at":completed_at,
+        "fault":fault,"fault_cold_envelope_counts":cold_envelope_counts,
         "independent_operations":false,"latency_percentiles_qualified":false,"fixture_only":true}), 64*1024).unwrap();
     // Retain the complete private sample scope on both success and failure.
     result.unwrap();
