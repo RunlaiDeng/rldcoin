@@ -17,6 +17,118 @@ mod timing;
 const FIRST_RECIPIENT: usize = 0;
 const SECOND_RECIPIENT: usize = 2;
 
+fn retain_directory_tick(
+    timing: &mut Vec<Value>,
+    tick: Result<Value>,
+    started: f64,
+) -> Result<Value> {
+    require(timing.len() < 1024, "actor timing record bound")?;
+    let mut record = json!({"phase":"ordinary_directory_ledger_turn",
+        "seconds":monotonic()? - started,
+        "height":tick.as_ref().ok().and_then(|value|value.get("local_height")),
+        "error":tick.as_ref().err()});
+    // Preserve the exact returned field, including malformed shapes. Its
+    // absence must remain distinct from a returned null or an empty array.
+    if let Some(errors) = tick
+        .as_ref()
+        .ok()
+        .and_then(|value| value.get("transport_attempt_errors"))
+    {
+        record["transport_attempt_errors"] = errors.clone();
+    }
+    timing.push(record);
+    let observation = tick?;
+    let errors = observation.get("transport_attempt_errors");
+    if !errors.and_then(Value::as_array).is_some_and(Vec::is_empty) {
+        // JSON formatting retains order, duplicates and escaped control bytes;
+        // never dump complete observations, private configuration or payloads.
+        let detail = errors
+            .map(Value::to_string)
+            .unwrap_or_else(|| "<missing>".into());
+        return Err(format!(
+            "ordinary directory contact refused: transport_attempt_errors={detail}"
+        ));
+    }
+    Ok(observation)
+}
+
+#[test]
+fn directory_tick_diagnostics_preserve_exact_failure_shapes() {
+    let fields = [
+        None,
+        Some(Value::Null),
+        Some(json!(false)),
+        Some(json!(7)),
+        Some(json!("bad")),
+        Some(json!({"unexpected":"shape"})),
+        Some(json!([null])),
+        Some(json!(["first", 7])),
+        Some(json!([
+            "CONTACT_STORAGE_IO:2:read",
+            "contact signature invalid",
+            "CONTACT_STORAGE_IO:2:read",
+            "line\nquote\"slash\\"
+        ])),
+    ];
+    for field in fields {
+        let mut observation = json!({"local_height":3});
+        if let Some(errors) = &field {
+            observation["transport_attempt_errors"] = errors.clone();
+        }
+        let original = observation.clone();
+        let mut timing = Vec::new();
+        let error =
+            retain_directory_tick(&mut timing, Ok(observation), monotonic().unwrap()).unwrap_err();
+        assert_eq!(timing.len(), 1);
+        assert_eq!(timing[0].get("transport_attempt_errors"), field.as_ref());
+        assert_eq!(timing[0]["height"], original["local_height"]);
+        assert_eq!(timing[0]["error"], Value::Null);
+        let detail = error
+            .strip_prefix("ordinary directory contact refused: transport_attempt_errors=")
+            .unwrap();
+        if let Some(errors) = field {
+            assert_eq!(serde_json::from_str::<Value>(detail).unwrap(), errors);
+            assert!(!detail.contains('\n'));
+        } else {
+            assert_eq!(detail, "<missing>");
+        }
+    }
+}
+
+#[test]
+fn directory_tick_diagnostics_keep_success_and_original_native_error() {
+    let observation = json!({"local_height":3,"transport_attempt_errors":[],"other":"retained"});
+    let mut timing = Vec::new();
+    assert_eq!(
+        retain_directory_tick(&mut timing, Ok(observation.clone()), monotonic().unwrap()).unwrap(),
+        observation
+    );
+    assert_eq!(timing[0]["transport_attempt_errors"], json!([]));
+    let error = "original Native refusal".to_string();
+    assert_eq!(
+        retain_directory_tick(&mut timing, Err(error.clone()), monotonic().unwrap()).unwrap_err(),
+        error
+    );
+    assert_eq!(timing[1]["error"], error);
+    assert!(timing[1].get("transport_attempt_errors").is_none());
+}
+
+#[test]
+fn directory_tick_diagnostics_preserve_original_record_bound() {
+    let mut timing = vec![json!({"retained":"original"}); 1024];
+    let before = timing.clone();
+    assert_eq!(
+        retain_directory_tick(
+            &mut timing,
+            Ok(json!({"transport_attempt_errors":[]})),
+            monotonic().unwrap()
+        )
+        .unwrap_err(),
+        "actor timing record bound"
+    );
+    assert_eq!(timing, before);
+}
+
 struct Observation {
     height: u64,
     head: Hash,
@@ -308,16 +420,7 @@ impl Actor {
                     &mut cursor,
                     &mut seen,
                 );
-                require(timing.len() < 1024, "actor timing record bound")?;
-                timing.push(json!({"phase":"ordinary_directory_ledger_turn","seconds":monotonic()? - started,
-                    "height":tick.as_ref().ok().and_then(|v|v.get("local_height")),"error":tick.as_ref().err()}));
-                let observation = tick?;
-                require(
-                    observation["transport_attempt_errors"]
-                        .as_array()
-                        .is_some_and(Vec::is_empty),
-                    "ordinary directory contact refused",
-                )?;
+                retain_directory_tick(&mut timing, tick, started)?;
                 if let Some(runtime) = &self.runtime {
                     let controls = runtime.current_controls()?;
                     CARRIAGE_TRACE.with(|trace| -> Result<()> {
