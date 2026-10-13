@@ -201,24 +201,27 @@ pub(crate) fn transit(
     service::trace_subwork("transit-canonical-scope", started)?;
     #[cfg(test)]
     let started = service::monotonic()?;
-    let probe = crate::contact_witness::execute(&bytes(&json!({"Probe":fields}))?, &raw)?;
+    let probe = crate::contact_witness::prepare_probe(&bytes(&json!({"Probe":fields}))?, &raw)?;
     #[cfg(test)]
     service::trace_subwork(
-        if probe["found"] == true {
+        if matches!(probe, crate::contact_witness::PreparedProbe::Hit(_)) {
             "transit-witness-hit"
         } else {
             "transit-witness-miss-probe"
         },
         started,
     )?;
-    if probe["found"] == true {
-        return Ok(
-            json!({"visited":probe["visited"],"ledger_authority":false,"custody_acknowledgment":false}),
-        );
-    }
+    let pending = match probe {
+        crate::contact_witness::PreparedProbe::Hit(probe) => {
+            return Ok(
+                json!({"visited":probe["visited"],"ledger_authority":false,"custody_acknowledgment":false}),
+            );
+        }
+        crate::contact_witness::PreparedProbe::Miss(pending) => pending,
+    };
     #[cfg(test)]
     let started = service::monotonic()?;
-    let checked = crate::contact_witness::execute(&bytes(&json!({"Check":fields}))?, &raw)?;
+    let checked = pending.check()?;
     #[cfg(test)]
     service::trace_subwork("transit-full-check", started)?;
     Ok(checked["verification"].clone())

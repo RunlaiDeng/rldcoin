@@ -131,13 +131,158 @@ fn current(store: &mut Store, retention: usize) {
 fn visited(values: Vec<[u8; 32]>) -> Value {
     json!(values.into_iter().map(hex::encode).collect::<Vec<_>>())
 }
-pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
+// A miss carries only this call's validated scope and borrowed immutable bytes.
+// It never carries authentication, freshness, custody or a decoded ledger.
+pub(crate) struct PreparedTransit<'a> {
+    scope: Scope,
+    retention: usize,
+    raw: &'a [u8],
+    bytes: [u8; 32],
+    scope_digest: [u8; 32],
+}
+pub(crate) enum PreparedProbe<'a> {
+    Hit(Value),
+    Miss(Box<PreparedTransit<'a>>),
+}
+#[cfg(test)]
+thread_local! {
+    static INPUT_PREFLIGHTS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static FULL_CHECKS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+fn control(control: &[u8]) -> Result<Control> {
     let decoded = crate::wallet_http::decode_unique_with_limit(control, MAX_CONTROL)?;
     require(
         wallet_client::canonical_with_limit(&decoded, MAX_CONTROL)? == control,
         "witness noncanonical control",
     )?;
-    let request: Control = serde_json::from_value(decoded).map_err(|e| e.to_string())?;
+    serde_json::from_value(decoded).map_err(|e| e.to_string())
+}
+impl<'a> PreparedTransit<'a> {
+    fn new(
+        scope: Scope,
+        retention: usize,
+        size: usize,
+        expected: String,
+        raw: &'a [u8],
+    ) -> Result<Self> {
+        #[cfg(test)]
+        INPUT_PREFLIGHTS.with(|count| count.set(count.get() + 1));
+        scope.check()?;
+        require(retention <= MAX_ENTRIES, "witness retention bound")?;
+        require(
+            !raw.is_empty() && raw.len() <= MAX_RAW && raw.len() == size,
+            "witness complete byte bound",
+        )?;
+        let bytes: [u8; 32] = Sha256::digest(raw).into();
+        require(
+            hex::encode(bytes) == expected,
+            "witness complete bytes differ",
+        )?;
+        let scope_digest = scope.digest()?;
+        Ok(Self {
+            scope,
+            retention,
+            raw,
+            bytes,
+            scope_digest,
+        })
+    }
+    fn probe(&self) -> Result<Option<Vec<[u8; 32]>>> {
+        let mut store = store().lock().map_err(|_| "witness lock poisoned")?;
+        current(&mut store, self.retention);
+        let mut found = None;
+        if let Some(index) = store.entries.iter().position(|v| {
+            v.scope == self.scope_digest && v.bytes == self.bytes && v.size == self.raw.len()
+        }) {
+            let mut entry = store.entries.remove(index).ok_or("witness entry absent")?;
+            entry.reused = true;
+            found = Some(entry.visited.clone());
+            store.entries.push_back(entry);
+            current(&mut store, self.retention);
+        }
+        Ok(found)
+    }
+    fn response(&self, check: bool, found: Option<Vec<[u8; 32]>>, verification: Value) -> Value {
+        let authenticated = found.is_some();
+        json!({"format":FORMAT,"mode":if check{"check"}else{"probe"},"network":self.scope.network,"scope_sha256":hex::encode(self.scope_digest),
+            "transit_sha256":hex::encode(self.bytes),"size_bytes":self.raw.len(),"found":authenticated,"visited":found.map(visited),"verification":verification,
+            "transport_authenticated":check||authenticated,"ledger_authority":false,"custody_acknowledgment":false})
+    }
+    pub(crate) fn check(self) -> Result<Value> {
+        #[cfg(test)]
+        FULL_CHECKS.with(|count| count.set(count.get() + 1));
+        // No witness lock during complete original signature/frame/hop checks.
+        // The borrowed raw cannot change between preflight and this consuming call.
+        let transit = crate::wallet_http::decode_unique_with_limit(self.raw, MAX_RAW)?;
+        require(
+            wallet_client::canonical_with_limit(&transit, MAX_RAW)? == self.raw,
+            "witness noncanonical transit",
+        )?;
+        let request=serde_json::from_value::<contact_transit::Request>(json!({"Check":{"network":self.scope.network,
+            "limits":{"hops":self.scope.hops,"frame":self.scope.frame,"payload":self.scope.payload},"transit":transit,
+            "recipient":self.scope.recipient,"sender":self.scope.sender}})).map_err(|e|e.to_string())?;
+        let verification = contact_transit::execute(request)?;
+        let values = verification["visited"]
+            .as_array()
+            .ok_or("witness verified path absent")?;
+        require(values.len() <= 17, "witness verified path bound")?;
+        let values = values
+            .iter()
+            .map(|v| -> Result<_> {
+                crate::Hash::from_hex(v.as_str().ok_or("witness path identity")?)
+                    .map(|h| h.0)
+                    .map_err(|e| format!("{e:?}"))
+            })
+            .collect::<Result<Vec<_>>>()?;
+        let mut store = store().lock().map_err(|_| "witness lock poisoned")?;
+        current(&mut store, self.retention);
+        if self.retention > 0 {
+            let reused = store.entries.iter().any(|v| {
+                v.scope == self.scope_digest
+                    && v.bytes == self.bytes
+                    && v.size == self.raw.len()
+                    && v.reused
+            });
+            store.entries.retain(|v| {
+                !(v.scope == self.scope_digest && v.bytes == self.bytes && v.size == self.raw.len())
+            });
+            store.entries.push_back(Entry {
+                scope: self.scope_digest,
+                bytes: self.bytes,
+                size: self.raw.len(),
+                visited: values.clone(),
+                reused,
+            });
+            current(&mut store, self.retention);
+        }
+        drop(store);
+        Ok(self.response(true, Some(values), verification))
+    }
+}
+/// Internal same-call optimization. A miss is not an authenticated result.
+/// Explicit public Check retains its unconditional full-verification semantics.
+pub(crate) fn prepare_probe<'a>(control_bytes: &[u8], raw: &'a [u8]) -> Result<PreparedProbe<'a>> {
+    let Control::Probe {
+        scope,
+        retention,
+        size_bytes,
+        sha256,
+    } = control(control_bytes)?
+    else {
+        return Err("prepared witness requires Probe".into());
+    };
+    let prepared = PreparedTransit::new(scope, retention, size_bytes, sha256, raw)?;
+    match prepared.probe()? {
+        Some(found) => Ok(PreparedProbe::Hit(prepared.response(
+            false,
+            Some(found),
+            Value::Null,
+        ))),
+        None => Ok(PreparedProbe::Miss(Box::new(prepared))),
+    }
+}
+pub(crate) fn execute(control_bytes: &[u8], raw: &[u8]) -> Result<Value> {
+    let request = control(control_bytes)?;
     let (scope, retention, size, expected, check) = match request {
         Control::Probe {
             scope,
@@ -165,86 +310,15 @@ pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
             );
         }
     };
-    scope.check()?;
-    require(retention <= MAX_ENTRIES, "witness retention bound")?;
-    require(
-        !raw.is_empty() && raw.len() <= MAX_RAW && raw.len() == size,
-        "witness complete byte bound",
-    )?;
-    let bytes: [u8; 32] = Sha256::digest(raw).into();
-    require(
-        hex::encode(bytes) == expected,
-        "witness complete bytes differ",
-    )?;
-    let scope_digest = scope.digest()?;
-    let mut found = None;
-    if !check {
-        let mut store = store().lock().map_err(|_| "witness lock poisoned")?;
-        current(&mut store, retention);
-        if let Some(index) = store
-            .entries
-            .iter()
-            .position(|v| v.scope == scope_digest && v.bytes == bytes && v.size == size)
-        {
-            let mut entry = store.entries.remove(index).ok_or("witness entry absent")?;
-            entry.reused = true;
-            found = Some(entry.visited.clone());
-            store.entries.push_back(entry);
-            current(&mut store, retention);
-        }
-    }
-    let mut verification = Value::Null;
+    let prepared = PreparedTransit::new(scope, retention, size, expected, raw)?;
     if check {
-        // No lock while performing complete signature/frame/hop verification.
-        let transit = crate::wallet_http::decode_unique_with_limit(raw, MAX_RAW)?;
-        require(
-            wallet_client::canonical_with_limit(&transit, MAX_RAW)? == raw,
-            "witness noncanonical transit",
-        )?;
-        let request=serde_json::from_value::<contact_transit::Request>(json!({"Check":{"network":scope.network,
-            "limits":{"hops":scope.hops,"frame":scope.frame,"payload":scope.payload},"transit":transit,
-            "recipient":scope.recipient,"sender":scope.sender}})).map_err(|e|e.to_string())?;
-        verification = contact_transit::execute(request)?;
-        let values = verification["visited"]
-            .as_array()
-            .ok_or("witness verified path absent")?;
-        require(values.len() <= 17, "witness verified path bound")?;
-        let values = values
-            .iter()
-            .map(|v| -> Result<_> {
-                crate::Hash::from_hex(v.as_str().ok_or("witness path identity")?)
-                    .map(|h| h.0)
-                    .map_err(|e| format!("{e:?}"))
-            })
-            .collect::<Result<Vec<_>>>()?;
-        let mut store = store().lock().map_err(|_| "witness lock poisoned")?;
-        current(&mut store, retention);
-        if retention > 0 {
-            let reused = store
-                .entries
-                .iter()
-                .any(|v| v.scope == scope_digest && v.bytes == bytes && v.size == size && v.reused);
-            store
-                .entries
-                .retain(|v| !(v.scope == scope_digest && v.bytes == bytes && v.size == size));
-            store.entries.push_back(Entry {
-                scope: scope_digest,
-                bytes,
-                size,
-                visited: values.clone(),
-                reused,
-            });
-            current(&mut store, retention);
-        }
-        found = Some(values);
+        prepared.check()
+    } else {
+        let found = prepared.probe()?;
+        Ok(prepared.response(false, found, Value::Null))
     }
-    let authenticated = found.is_some();
-    Ok(
-        json!({"format":FORMAT,"mode":if check{"check"}else{"probe"},"network":scope.network,"scope_sha256":hex::encode(scope_digest),
-        "transit_sha256":hex::encode(bytes),"size_bytes":size,"found":found.is_some(),"visited":found.map(visited),"verification":verification,
-        "transport_authenticated":check||authenticated,"ledger_authority":false,"custody_acknowledgment":false}),
-    )
 }
+
 const PROBE_FORMAT: &str = "RLD-NATIVE-TRANSIT-WITNESS-PROBE-V1";
 const PROBE_CODEC: &[u8] = b"RLD-TRANSIT-WITNESS-PROBE-BYTES-V1\0";
 fn probe_bytes(control: &[u8], raw: &[u8]) -> Result<Value> {
