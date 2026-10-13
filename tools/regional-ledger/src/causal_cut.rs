@@ -1,4 +1,4 @@
-//! Authenticated historical accounting for the bounded unanimous fixture.
+//! Authenticated historical accounting for bounded original full-prefix fixtures.
 //!
 //! The caller supplies the independently approved bootstrap, authority and
 //! currency pin. Complete evidence, including later tails, follows Native
@@ -52,9 +52,9 @@ fn covered(
 }
 
 /// Authenticate complete evidence before releasing any selected-history totals.
-/// Only the original full-prefix unanimous profile is supported. Newer profiles
-/// need their own complete dependency and incident integration; none is coerced
-/// into this profile. Input Chain/Ledger values are never accepted as authority.
+/// Only homogeneous original full-prefix unanimous or BFT admissions are supported.
+/// Newer profiles need their own complete dependency and incident integration; none
+/// is coerced into these profiles. Input Chain/Ledger values are never authority.
 pub fn inspect(
     bootstrap: &Bootstrap,
     authority: &str,
@@ -83,14 +83,16 @@ pub fn inspect(
         ),
     )?;
     let trust = Trust::verify(bootstrap, authority, currency_pin)?;
+    let unanimous = bootstrap.admissions.iter().all(|a| a.rules == DOMAIN);
+    let original_bft = bootstrap.admissions.iter().all(|a| a.rules == bft::RULES);
     require(
-        bootstrap.admissions.iter().all(|a| a.rules == DOMAIN),
-        "causal cut supports only original unanimous admissions",
+        unanimous || original_bft,
+        "causal cut supports only homogeneous original unanimous or BFT admissions",
     )?;
     for snapshot in &evidence.snapshots {
         require(
             snapshot.base.is_none()
-                && snapshot.bft.is_none()
+                && (snapshot.bft.is_some() == original_bft)
                 && snapshot.epochs.is_empty()
                 && snapshot.statement.epoch
                     == epoch::Registry::initial(&trust, snapshot.statement.region)?

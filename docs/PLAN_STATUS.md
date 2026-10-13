@@ -40,6 +40,15 @@ roots and latest heads; missing, reordered or invalid tails cannot produce parti
 updated anchors. These interfaces do not replace Native permanent import maps,
 value replay, rollback witnesses or archived-history limits.
 
+The separate historical causal-cut entry accepts homogeneous original full-prefix
+unanimous or original BFT admissions. It authenticates complete supplied evidence,
+including later certificates and certificate variants, before checking the exact
+selected dependency closure, permanent imports and full export records. Amount
+equality cannot replace that closure. It retains the original bounds and excludes
+mixed admissions, segmented or paged histories, channels and reconfiguration.
+Historical totals grant no current spendability, incident safety, independent
+freshness, signing or Store recovery authority.
+
 Full long-history recovery, permanent deduplication at target scale, arbitrary
 multi-source value composition, independent operators and custody, security and
 supply-chain review, authenticated suite/epoch adoption, funding/resource models,
