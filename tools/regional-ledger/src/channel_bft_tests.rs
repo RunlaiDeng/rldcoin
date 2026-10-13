@@ -277,7 +277,6 @@ fn channel_watch_cycle(rules: &str) {
                 "--nocapture",
             ])
             .env("RLD_PAGED_CHANNEL_COLD_ROOT", &root)
-            .current_dir("/Users/galaxy/GitHub/rldcoin")
             .output()
             .unwrap();
         println!("{}", String::from_utf8_lossy(&result.stdout));

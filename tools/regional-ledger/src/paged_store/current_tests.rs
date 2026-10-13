@@ -633,7 +633,6 @@ fn ordinary_paged_archive_full_native_payment_original_bytes_and_fresh_cold_rest
             "--nocapture",
         ])
         .env("RLD_PAGED_ARCHIVE_COLD_ROOT", &f.root)
-        .current_dir("/Users/galaxy/GitHub/rldcoin")
         .output()
         .unwrap();
     println!("{}", String::from_utf8_lossy(&result.stdout));
@@ -832,7 +831,6 @@ fn two_actual_native_ledgers_alternating_workers_measure_shared_hash_witness_evi
             "--nocapture",
         ])
         .env("RLD_WORKER_WITNESS_ROOT", &a_root)
-        .current_dir("/Users/galaxy/GitHub/rldcoin")
         .output()
         .unwrap();
     println!("{}", String::from_utf8_lossy(&result.stdout));
