@@ -239,6 +239,8 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             _type: PhantomData,
             #[cfg(test)]
             interruption: None,
+            #[cfg(test)]
+            kill_on_interruption: false,
         };
         stream.visit(stream.storage_head(), |_| Ok(()))?;
         Ok((stream, authenticated))

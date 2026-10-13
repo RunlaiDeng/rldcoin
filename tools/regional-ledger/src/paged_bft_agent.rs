@@ -522,6 +522,12 @@ impl Agent {
 
 #[cfg(test)]
 impl Agent {
+    pub(crate) fn kill_publication_for_fixture(&mut self, boundary: u8) {
+        self.paged
+            .as_mut()
+            .expect("fresh paged fixture")
+            .kill_at_for_fixture(boundary);
+    }
     pub(crate) fn interrupt_publication(&mut self, boundary: u8) {
         self.paged
             .as_mut()

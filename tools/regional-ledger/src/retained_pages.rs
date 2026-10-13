@@ -212,6 +212,8 @@ pub struct Stream<T> {
     _type: PhantomData<T>,
     #[cfg(test)]
     interruption: Option<Boundary>,
+    #[cfg(test)]
+    kill_on_interruption: bool,
 }
 #[cfg(test)]
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -245,6 +247,8 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             _type: PhantomData,
             #[cfg(test)]
             interruption: None,
+            #[cfg(test)]
+            kill_on_interruption: false,
         })
     }
     pub fn open(dir: &Path, scope: &Scope, expected_head: Hash) -> Result<Self> {
@@ -268,6 +272,8 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             _type: PhantomData,
             #[cfg(test)]
             interruption: None,
+            #[cfg(test)]
+            kill_on_interruption: false,
         };
         stream.visit(expected_head, |_| Ok(()))?;
         Ok(stream)
@@ -545,6 +551,7 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             keystore::private_create(&self.dir.join(PENDING), &pending_raw)?;
             #[cfg(test)]
             if self.interruption == Some(Boundary::Pending) {
+                self.kill_for_fixture_if_requested();
                 return Err("injected after retained pending publication".into());
             }
             for (hash, content) in &objects {
@@ -562,6 +569,7 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
             }
             #[cfg(test)]
             if self.interruption == Some(Boundary::Pages) {
+                self.kill_for_fixture_if_requested();
                 return Err("injected after retained page publication".into());
             }
             keystore::private_create(&self.dir.join(COMMIT), &raw)?;
@@ -572,6 +580,7 @@ impl<T: Clone + Serialize + DeserializeOwned> Stream<T> {
                 .map_err(err)?;
             #[cfg(test)]
             if self.interruption == Some(Boundary::Committed) {
+                self.kill_for_fixture_if_requested();
                 return Err("injected after retained manifest publication".into());
             }
             // Every unique original byte is now durable in the exact page/tail.
@@ -662,6 +671,20 @@ mod recovery;
 
 #[cfg(test)]
 impl<T> Stream<T> {
+    pub(crate) fn kill_at_for_fixture(&mut self, boundary: u8) {
+        self.interrupt_at(boundary);
+        self.kill_on_interruption = true;
+    }
+    fn kill_for_fixture_if_requested(&self) {
+        if self.kill_on_interruption {
+            // Test-only self-termination. No caller-supplied PID or production
+            // hook exists, and destructors cannot release or clean custody.
+            unsafe {
+                libc::kill(libc::getpid(), libc::SIGKILL);
+            }
+            panic!("fixture SIGKILL returned");
+        }
+    }
     pub(crate) fn interrupt_at(&mut self, boundary: u8) {
         self.interruption = Some(match boundary {
             0 => Boundary::Pending,
