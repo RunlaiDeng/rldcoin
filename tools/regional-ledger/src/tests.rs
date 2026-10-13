@@ -243,6 +243,8 @@ struct Fixture {
 }
 #[path = "carriage_tests.rs"]
 mod carriage;
+#[path = "causal_cut_tests.rs"]
+mod causal_cut;
 #[path = "stream_archive_tests.rs"]
 mod compact_stream_archives;
 #[path = "segmented_tests.rs"]

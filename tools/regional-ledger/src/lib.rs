@@ -1135,6 +1135,7 @@ pub mod bft_proposal_schedule;
 pub mod bft_runtime_archive;
 pub mod bft_tick_schedule;
 pub mod carriage;
+pub mod causal_cut;
 pub mod channel_conflict;
 pub mod channel_owner;
 pub mod channel_receipt;
