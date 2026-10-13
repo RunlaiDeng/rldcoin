@@ -21,8 +21,17 @@ thread_local! {
     static PAYMENT_TRACE_ACTIVE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
 #[cfg(test)]
+pub(super) fn payment_trace_enabled() -> bool {
+    PAYMENT_TRACE_ACTIVE.with(|active| active.get())
+}
+#[cfg(test)]
+pub(super) fn start_payment_trace() {
+    start_work_trace();
+    PAYMENT_TRACE_ACTIVE.with(|active| active.set(true));
+}
+#[cfg(test)]
 pub(super) fn trace_payment_event(build: impl FnOnce() -> Result<Value>) -> Result<()> {
-    if !PAYMENT_TRACE_ACTIVE.with(|active| active.get()) {
+    if !payment_trace_enabled() {
         return Ok(());
     }
     let mut event = build()?;
@@ -430,6 +439,23 @@ fn spool_publish(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
         #[cfg(test)]
         let started = monotonic()?;
         let bundle = node.prepare(peer)?;
+        #[cfg(test)]
+        trace_payment_event(|| {
+            let packets = bundle["body"]["transits"]
+                .as_array()
+                .ok_or("diagnostic prepared transits")?
+                .iter()
+                .map(|transit| {
+                    json!({"packet_id":transit["routing"]["body"]["packet_id"],
+                    "frame_id":transit["routing"]["body"]["frame_id"],
+                    "destination":transit["packet"]["body"]["destination"]})
+                })
+                .collect::<Vec<_>>();
+            Ok(
+                json!({"phase":"payment-transport-prepared","node_id":node.id,
+                "peer":peer,"started":started,"packets":packets}),
+            )
+        })?;
         #[cfg(test)]
         trace_work("mesh-prepare", started)?;
         let raw = bytes(&bundle)?;

@@ -51,6 +51,7 @@ enum Job {
 struct Worker {
     sender: Sender<Job>,
     thread: JoinHandle<Result<Stopped>>,
+    transport_identity: Hash,
 }
 struct Actor {
     options: Options,
@@ -603,14 +604,20 @@ fn setup_with_timing(
         ));
     }
     drop(nodes);
+    let transport_identities = ids
+        .iter()
+        .map(|id| Hash::from_hex(id).map_err(|e| e.to_string()))
+        .collect::<Result<Vec<_>>>()?;
     let workers = prepared
         .into_iter()
-        .map(|(sender, actor)| {
+        .enumerate()
+        .map(|(n, (sender, actor))| {
             let stop = stop.clone();
             let failed = failed.clone();
             Worker {
                 sender,
                 thread: thread::spawn(move || actor.run(stop, failed, deadline)),
+                transport_identity: transport_identities[n],
             }
         })
         .collect();

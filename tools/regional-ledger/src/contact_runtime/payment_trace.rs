@@ -36,6 +36,9 @@ pub(super) fn body(body: &net::Body) -> Result<Value> {
             consensus::Message::Proposal(proposal) => Ok(json!({"kind":"proposal",
                 "context":proposal.context()?,"round":proposal.round,
                 "leader":proposal.leader.key,"snapshot":snapshot(&proposal.snapshot)?})),
+            consensus::Message::Vote(vote) => Ok(json!({"kind":match vote.phase {
+                consensus::Phase::Prepare => "prepare", consensus::Phase::Commit => "commit"},
+                "context":vote.context,"round":vote.round,"value":vote.value,"signer":vote.approval.key})),
             _ => Ok(json!({"kind":"other-signed-control"})),
         },
         net::Body::Finalized(value) => Ok(json!({"kind":"finalized","snapshot":snapshot(value)?})),

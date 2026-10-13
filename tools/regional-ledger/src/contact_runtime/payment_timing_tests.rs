@@ -1,6 +1,9 @@
 //! Explicit single-payment timing observation; never a replacement acceptance cycle.
 use super::*;
 
+#[path = "prepare_transport_tests.rs"]
+mod prepare_transport;
+
 #[derive(serde::Serialize)]
 pub(super) struct PaymentObservation {
     intent: Hash,
@@ -104,6 +107,36 @@ fn validate_event(event: &Value) -> Result<()> {
     trace_time(&event["at"])?;
     if matches!(
         phase,
+        "payment-packets-queued" | "payment-transport-prepared"
+    ) {
+        trace_hash(&event["node_id"])?;
+        let packets = event["packets"]
+            .as_array()
+            .ok_or("payment packet observations missing")?;
+        let limit = if phase == "payment-packets-queued" {
+            require(!packets.is_empty(), "empty new packet queue observation")?;
+            64
+        } else {
+            trace_hash(&event["peer"])?;
+            require(
+                trace_time(&event["started"])? <= trace_time(&event["at"])?,
+                "prepared exchange starts after completion",
+            )?;
+            4
+        };
+        require(packets.len() <= limit, "payment packet observation bound")?;
+        let mut ids = std::collections::BTreeSet::new();
+        for packet in packets {
+            require(
+                ids.insert(trace_hash(&packet["packet_id"])?),
+                "duplicate payment packet observation",
+            )?;
+            trace_hash(&packet["frame_id"])?;
+            trace_hash(&packet["destination"])?;
+        }
+    }
+    if matches!(
+        phase,
         "payment-body-retained" | "payment-envelope-received" | "payment-frame-prepared"
     ) {
         trace_hash(&event["body_id"])?;
@@ -113,6 +146,16 @@ fn validate_event(event: &Value) -> Result<()> {
         "payment-envelope-received" | "payment-frame-prepared"
     ) {
         trace_hash(&event["frame_id"])?;
+    }
+    if matches!(event["body"]["kind"].as_str(), Some("prepare" | "commit")) {
+        let _: bft::Context =
+            serde_json::from_value(event["body"]["context"].clone()).map_err(|e| e.to_string())?;
+        require(
+            event["body"]["round"].as_u64().is_some(),
+            "payment vote round missing",
+        )?;
+        trace_hash(&event["body"]["value"])?;
+        trace_hash(&event["body"]["signer"])?;
     }
     if matches!(phase, "payment-candidate-start" | "payment-candidate-ready") {
         let _: bft::Context =
@@ -417,6 +460,44 @@ fn diagnostic_binding_rejects_missing_clocks_native_input_and_wrong_selected_blo
 }
 
 #[test]
+fn diagnostic_packet_events_reject_missing_identity_bad_clocks_and_duplicate_packets() {
+    let good = json!({"phase":"payment-transport-prepared","node_id":Hash([1;32]),
+        "peer":Hash([2;32]),"started":2.0,"at":3.0,"packets":[{
+            "packet_id":Hash([3;32]),"frame_id":Hash([4;32]),"destination":Hash([2;32])}]});
+    validate_event(&good).unwrap();
+    for field in ["node_id", "peer", "started", "at", "packets"] {
+        let mut missing = good.clone();
+        missing.as_object_mut().unwrap().remove(field);
+        assert!(
+            validate_event(&missing).is_err(),
+            "missing {field} accepted"
+        );
+    }
+    for field in ["packet_id", "frame_id", "destination"] {
+        let mut missing = good.clone();
+        missing["packets"][0].as_object_mut().unwrap().remove(field);
+        assert!(
+            validate_event(&missing).is_err(),
+            "missing {field} accepted"
+        );
+    }
+    let mut late = good.clone();
+    late["started"] = json!(4.0);
+    assert!(validate_event(&late).is_err());
+    let mut duplicate = good.clone();
+    duplicate["packets"]
+        .as_array_mut()
+        .unwrap()
+        .push(good["packets"][0].clone());
+    assert!(validate_event(&duplicate).is_err());
+    let mut queue = good;
+    queue["phase"] = json!("payment-packets-queued");
+    validate_event(&queue).unwrap();
+    queue["packets"] = json!([]);
+    assert!(validate_event(&queue).is_err());
+}
+
+#[test]
 fn diagnostic_failed_reply_keeps_the_saved_original_submission_and_pending_age() {
     let root = directory(
         &fs::canonicalize(std::env::temp_dir())
@@ -458,7 +539,7 @@ fn single_payment_keeps_original_clock_and_binds_actual_signed_proposal() {
     eprintln!("Fresh single-payment timing diagnostic: {}", root.display());
     let stop = Arc::new(AtomicBool::new(false));
     let failed = Arc::new(AtomicBool::new(false));
-    let (workers, _, _) = setup_with_timing(
+    let (workers, seeds, _) = setup_with_timing(
         &root,
         deadline,
         stop.clone(),
@@ -467,6 +548,18 @@ fn single_payment_keeps_original_clock_and_binds_actual_signed_proposal() {
         true,
     )
     .unwrap();
+    let actor_bindings = workers
+        .iter()
+        .zip(&seeds)
+        .map(|(worker, seed)| {
+            Ok((
+                Hash::from_hex(&public(*seed)).map_err(|e| e.to_string())?,
+                worker.transport_identity,
+            ))
+        })
+        .collect::<Result<Vec<_>>>()
+        .unwrap();
+    let actor_bindings: [(Hash, Hash); 4] = actor_bindings.try_into().unwrap();
     let mut sample = None;
     let mut observations_log = Vec::new();
     let result = (|| -> Result<()> {
@@ -522,6 +615,7 @@ fn single_payment_keeps_original_clock_and_binds_actual_signed_proposal() {
         }
     }
     let mut binding = Value::Null;
+    let mut prepare_transport = Value::Null;
     let result = result.and_then(|_| {
         require(
             worker_errors.is_empty() && stopped_heads.len() == 4,
@@ -531,6 +625,13 @@ fn single_payment_keeps_original_clock_and_binds_actual_signed_proposal() {
             &root,
             sample.as_ref().ok_or("no submission")?,
             observations_log.last().ok_or("no recipient observation")?,
+        )?;
+        prepare_transport = prepare_transport::bind_prepare_transport(
+            &root,
+            sample.as_ref().ok_or("no submission")?,
+            observations_log.last().ok_or("no recipient observation")?,
+            &binding,
+            &actor_bindings,
         )?;
         Ok(())
     });
@@ -557,7 +658,8 @@ fn single_payment_keeps_original_clock_and_binds_actual_signed_proposal() {
         &json!({"diagnostic_complete":result.is_ok(),
         "error":result.as_ref().err(),"sample":sample,"observations":observations_log,
         "submission_record_error":submission_error,
-        "binding":binding,"worker_errors":worker_errors,"stopped_heads":stopped_heads,
+        "binding":binding,"prepare_transport":prepare_transport,"actor_bindings":actor_bindings,
+        "worker_errors":worker_errors,"stopped_heads":stopped_heads,
         "whole_seconds":ended-started,"recipient_actor":FIRST_RECIPIENT,
         "full_payment_acceptance":false,"second_payment":false,"full_cold_custody":false,
         "latency_percentiles_qualified":false,"independent_operations":false,"fixture_only":true}),

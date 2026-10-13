@@ -866,6 +866,17 @@ impl Node {
             batches.push(ids);
         }
         if !pending.is_empty() {
+            #[cfg(test)]
+            let queued = super::service::payment_trace_enabled().then(|| {
+                pending
+                    .iter()
+                    .map(|(id, transit)| {
+                        json!({"packet_id":id,
+                    "frame_id":transit["routing"]["body"]["frame_id"],
+                    "destination":transit["packet"]["body"]["destination"]})
+                    })
+                    .collect::<Vec<_>>()
+            });
             for (id, t) in pending {
                 self.retained_image = None;
                 self.state.messages.insert(id.clone(), t);
@@ -873,6 +884,14 @@ impl Node {
             }
             // The whole bounded typed image is durable before any batch result.
             self.save()?;
+            #[cfg(test)]
+            if let Some(packets) = queued {
+                super::service::trace_payment_event(|| {
+                    Ok(json!({
+                        "phase":"payment-packets-queued","node_id":self.id,"packets":packets
+                    }))
+                })?;
+            }
         }
         Ok(batches)
     }
@@ -2408,10 +2427,28 @@ mod tests {
             frames.push(frame.retained_bytes().unwrap());
         }
         let mut source = Node::open(&f.configs[0]).unwrap();
-        super::super::service::start_work_trace();
+        super::super::service::start_payment_trace();
         let raws = frames.iter().map(Vec::as_slice).collect::<Vec<_>>();
         let packets = source.enqueue_frame_batch(&raws, &f.ids[1..]).unwrap();
         let trace = super::super::service::take_work_trace();
+        let queued = trace
+            .iter()
+            .filter(|event| event["phase"] == "payment-packets-queued")
+            .collect::<Vec<_>>();
+        assert_eq!(queued.len(), 1);
+        assert_eq!(queued[0]["node_id"], source.id);
+        let queued_packets = queued[0]["packets"].as_array().unwrap();
+        assert_eq!(queued_packets.len(), 12);
+        assert_eq!(packets.iter().map(Vec::len).sum::<usize>(), 12);
+        for (entry, packet) in queued_packets.iter().zip(packets.iter().flatten()) {
+            let transit = &source.state.messages[packet];
+            assert_eq!(entry["packet_id"], *packet);
+            assert_eq!(entry["frame_id"], transit["routing"]["body"]["frame_id"]);
+            assert_eq!(
+                entry["destination"],
+                transit["packet"]["body"]["destination"]
+            );
+        }
         let publications = trace
             .iter()
             .filter(|entry| entry["phase"] == "mesh-state-encode-finish")
@@ -2434,10 +2471,14 @@ mod tests {
             .is_err());
         assert_eq!(source.state.messages, retained);
         assert_eq!(fs::read(&state_path).unwrap(), original);
+        super::super::service::start_payment_trace();
         assert_eq!(
             source.enqueue_frame_batch(&raws, &f.ids[1..]).unwrap(),
             packets
         );
+        assert!(!super::super::service::take_work_trace()
+            .iter()
+            .any(|event| event["phase"] == "payment-packets-queued"));
         assert_eq!(fs::read(&state_path).unwrap(), original);
         drop(source);
         let mut source = Node::open(&f.configs[0]).unwrap();
@@ -2660,11 +2701,32 @@ mod tests {
             let mut node = Node::open(&f.configs[0]).unwrap();
             node.enqueue_destinations(&raw, &f.ids[1..]).unwrap();
         }
-        super::super::service::start_work_trace();
+        super::super::service::start_payment_trace();
         assert!(super::super::service::spool_directory_turn(&f.configs[0])
             .unwrap()
             .is_empty());
         let trace = super::super::service::take_work_trace();
+        let prepared = trace
+            .iter()
+            .filter(|event| event["phase"] == "payment-transport-prepared")
+            .collect::<Vec<_>>();
+        let published = trace
+            .iter()
+            .filter(|event| event["phase"] == "published-transport-exchange")
+            .collect::<Vec<_>>();
+        assert_eq!(prepared.len(), 3);
+        assert_eq!(published.len(), 3);
+        for event in prepared {
+            let matched = published
+                .iter()
+                .filter(|sent| sent["peer"] == event["peer"])
+                .collect::<Vec<_>>();
+            assert_eq!(matched.len(), 1);
+            assert_eq!(event["node_id"], f.ids[0]);
+            assert_eq!(event["packets"], matched[0]["packets"]);
+            assert!(event["started"].as_f64().unwrap() <= event["at"].as_f64().unwrap());
+            assert!(event["at"].as_f64().unwrap() <= matched[0]["at"].as_f64().unwrap());
+        }
         let save = trace
             .iter()
             .find(|e| e["phase"] == "mesh-state-save-complete")
