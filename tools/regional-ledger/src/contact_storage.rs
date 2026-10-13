@@ -114,21 +114,13 @@ pub(super) fn unlink_at(dir: &File, name: &CString) -> Result<()> {
     }
     Ok(())
 }
-fn atomic(
-    path: &Path,
+fn sync_exact_if_present(
+    dir: &File,
+    name: &std::ffi::OsStr,
     raw: &[u8],
     observe: &mut dyn FnMut(&'static str) -> Result<()>,
-) -> Result<Value> {
-    require(raw.len() <= MAX_FILE, "contact state capacity")?;
-    let (parent, name) = parts(path)?;
-    use std::os::unix::fs::DirBuilderExt;
-    fs::DirBuilder::new()
-        .recursive(true)
-        .mode(0o700)
-        .create(parent)
-        .map_err(io_error)?;
-    let dir = directory(parent)?;
-    if let Some(retained) = open_at_optional(&dir, name, libc::O_RDONLY)? {
+) -> Result<Option<Value>> {
+    if let Some(retained) = open_at_optional(dir, name, libc::O_RDONLY)? {
         let meta = retained.metadata().map_err(io_error)?;
         if meta.len() == raw.len() as u64 {
             observe("state-retained-read")?;
@@ -143,19 +135,54 @@ fn atomic(
                 // file and directory synchronization before returning.
                 sync(&retained, "state-retained-file-sync", observe)?;
                 use std::os::unix::fs::MetadataExt;
-                let current = open_at(&dir, name, libc::O_RDONLY)?;
+                let current = open_at(dir, name, libc::O_RDONLY)?;
                 let current = current.metadata().map_err(io_error)?;
                 require(
                     current.dev() == meta.dev() && current.ino() == meta.ino(),
                     "contact state retained path changed",
                 )?;
-                sync(&dir, "state-retained-directory-sync", observe)?;
-                return Ok(
+                sync(dir, "state-retained-directory-sync", observe)?;
+                return Ok(Some(
                     json!({"format":FORMAT,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(raw)),
                     "ledger_authority":false,"custody_acknowledgment":false}),
-                );
+                ));
             }
         }
+    }
+    Ok(None)
+}
+
+pub(crate) fn repeat_exact(path: &Path, raw: &[u8]) -> Result<Value> {
+    repeat_exact_observed(path, raw, &mut |_| Ok(()))
+}
+fn repeat_exact_observed(
+    path: &Path,
+    raw: &[u8],
+    observe: &mut dyn FnMut(&'static str) -> Result<()>,
+) -> Result<Value> {
+    require(raw.len() <= MAX_FILE, "contact state capacity")?;
+    let (parent, name) = parts(path)?;
+    let dir = directory(parent)?;
+    sync_exact_if_present(&dir, name, raw, observe)?
+        .ok_or_else(|| "retained contact state missing or changed; preserve directory".into())
+}
+
+fn atomic(
+    path: &Path,
+    raw: &[u8],
+    observe: &mut dyn FnMut(&'static str) -> Result<()>,
+) -> Result<Value> {
+    require(raw.len() <= MAX_FILE, "contact state capacity")?;
+    let (parent, name) = parts(path)?;
+    use std::os::unix::fs::DirBuilderExt;
+    fs::DirBuilder::new()
+        .recursive(true)
+        .mode(0o700)
+        .create(parent)
+        .map_err(io_error)?;
+    let dir = directory(parent)?;
+    if let Some(receipt) = sync_exact_if_present(&dir, name, raw, observe)? {
+        return Ok(receipt);
     }
     let mut random = [0; 16];
     getrandom::getrandom(&mut random).map_err(|e| e.to_string())?;
@@ -669,6 +696,57 @@ mod tests {
         assert_ne!(fs::metadata(&path).unwrap().ino(), inode);
         atomic(&path, b"changed!plus", &mut |_| Ok(())).unwrap();
         assert_eq!(fs::read(&path).unwrap(), b"changed!plus");
+    }
+
+    #[test]
+    fn repeat_exact_image_never_creates_replaces_or_acknowledges_failed_sync() {
+        use std::os::unix::fs::MetadataExt;
+        let root = fixture();
+        let path = root.join("state.json");
+        let raw = b"complete";
+        assert!(repeat_exact(&path, raw).is_err());
+        assert_eq!(fs::read_dir(&root).unwrap().count(), 0);
+        atomic(&path, raw, &mut |_| Ok(())).unwrap();
+        let inode = fs::metadata(&path).unwrap().ino();
+        let mut stages = Vec::new();
+        let receipt = repeat_exact_observed(&path, raw, &mut |stage| {
+            stages.push(stage);
+            Ok(())
+        })
+        .unwrap();
+        assert_eq!(
+            stages,
+            [
+                "state-retained-read",
+                "state-retained-file-sync",
+                "state-retained-directory-sync"
+            ]
+        );
+        assert_eq!(receipt["ledger_authority"], false);
+        assert_eq!(receipt["custody_acknowledgment"], false);
+        for bad in [b"changed!".as_slice(), b"complete-extra", b"short"] {
+            assert!(repeat_exact(&path, bad).is_err());
+            assert_eq!(fs::read(&path).unwrap(), raw);
+            assert_eq!(fs::metadata(&path).unwrap().ino(), inode);
+            assert_eq!(fs::read_dir(&root).unwrap().count(), 1);
+        }
+        for failed in [
+            "state-retained-read",
+            "state-retained-file-sync",
+            "state-retained-directory-sync",
+        ] {
+            assert!(repeat_exact_observed(&path, raw, &mut |stage| {
+                if stage == failed {
+                    Err("injected repeat failure".into())
+                } else {
+                    Ok(())
+                }
+            })
+            .is_err());
+            assert_eq!(fs::read(&path).unwrap(), raw);
+            assert_eq!(fs::metadata(&path).unwrap().ino(), inode);
+            assert_eq!(fs::read_dir(&root).unwrap().count(), 1);
+        }
     }
 
     #[test]

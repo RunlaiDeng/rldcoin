@@ -11,7 +11,7 @@ const MAX_MESSAGES: usize = 256;
 const MAX_ARCHIVE_FILES: usize = 4096;
 const MAX_ARCHIVE_BYTES: u64 = 256 * 1024 * 1024;
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 struct State {
     format: String,
@@ -31,6 +31,47 @@ struct State {
     peer_inventory: BTreeMap<String, Value>,
 }
 
+impl State {
+    fn exact(&self, other: &Self) -> bool {
+        fn value(left: &Value, right: &Value) -> bool {
+            match (left, right) {
+                (Value::Number(a), Value::Number(b)) => a.to_string() == b.to_string(),
+                (Value::Array(a), Value::Array(b)) => {
+                    a.len() == b.len() && a.iter().zip(b).all(|(a, b)| value(a, b))
+                }
+                (Value::Object(a), Value::Object(b)) => {
+                    a.len() == b.len()
+                        && a.iter()
+                            .zip(b)
+                            .all(|((ak, av), (bk, bv))| ak == bk && value(av, bv))
+                }
+                _ => left == right,
+            }
+        }
+        // Typed equality covers every metadata field. Compare every complete
+        // Value too: JSON numeric equality must not erase signed zero/type bytes.
+        self == other
+            && [
+                &self.adverts,
+                &self.messages,
+                &self.receipts,
+                &self.peer_inventory,
+            ]
+            .into_iter()
+            .zip([
+                &other.adverts,
+                &other.messages,
+                &other.receipts,
+                &other.peer_inventory,
+            ])
+            .all(|(a, b)| {
+                a.iter()
+                    .zip(b)
+                    .all(|((ak, av), (bk, bv))| ak == bk && value(av, bv))
+            })
+    }
+}
+
 pub struct Node {
     pub root: PathBuf,
     pub network: String,
@@ -39,6 +80,9 @@ pub struct Node {
     pub contacts: BTreeMap<String, Value>,
     identity: Value,
     state: State,
+    // One complete image under this mesh lease. Install only after complete
+    // cold validation or successful durable publication; never serialize it.
+    retained_image: Option<Vec<u8>>,
     _lock: Lease,
 }
 
@@ -141,7 +185,7 @@ impl Node {
             "legacy contact state requires a fresh Rust fixture directory; no conversion",
         )?;
         let path = root.join("native-mesh-state.json");
-        let state = if fs::symlink_metadata(&path).is_ok() {
+        let (state, retained_image) = if fs::symlink_metadata(&path).is_ok() {
             #[cfg(test)]
             let started = super::service::monotonic()?;
             let raw = files::private_read_with_limit(&path, STATE_LIMIT)?;
@@ -165,24 +209,27 @@ impl Node {
             let state = serde_json::from_value(expanded).map_err(|e| e.to_string())?;
             #[cfg(test)]
             super::service::trace_subwork("mesh-state-decode-expand", started)?;
-            state
+            (state, Some(raw))
         } else {
-            State {
-                format: FORMAT.into(),
-                active_storage: ACTIVE.into(),
-                network: network.clone(),
-                node_id: id.clone(),
-                adverts: BTreeMap::new(),
-                messages: BTreeMap::new(),
-                receipts: BTreeMap::new(),
-                archives: BTreeMap::new(),
-                cursor: 0,
-                arrivals: Vec::new(),
-                first_carried: BTreeMap::new(),
-                transit_cursors: BTreeMap::new(),
-                receipt_cursors: BTreeMap::new(),
-                peer_inventory: BTreeMap::new(),
-            }
+            (
+                State {
+                    format: FORMAT.into(),
+                    active_storage: ACTIVE.into(),
+                    network: network.clone(),
+                    node_id: id.clone(),
+                    adverts: BTreeMap::new(),
+                    messages: BTreeMap::new(),
+                    receipts: BTreeMap::new(),
+                    archives: BTreeMap::new(),
+                    cursor: 0,
+                    arrivals: Vec::new(),
+                    first_carried: BTreeMap::new(),
+                    transit_cursors: BTreeMap::new(),
+                    receipt_cursors: BTreeMap::new(),
+                    peer_inventory: BTreeMap::new(),
+                },
+                None,
+            )
         };
         let mut node = Self {
             root,
@@ -192,9 +239,11 @@ impl Node {
             contacts,
             identity,
             state,
+            retained_image: None,
             _lock: lock,
         };
         node.validate()?;
+        node.retained_image = retained_image;
         let neighbors: Vec<_> = node
             .contacts
             .iter()
@@ -309,7 +358,10 @@ impl Node {
         Ok(())
     }
 
-    fn save(&self) -> Result<()> {
+    fn save(&mut self) -> Result<()> {
+        // A failed publication cannot leave a reusable image paired with
+        // uncertain live metadata, even if its caller continues using this Node.
+        self.retained_image = None;
         #[cfg(test)]
         let save_started = super::service::monotonic()?;
         #[cfg(test)]
@@ -329,7 +381,7 @@ impl Node {
         )?;
         #[cfg(test)]
         super::service::trace_subwork("mesh-state-codec-begin", started)?;
-        let operation: Result<()> = (|| {
+        let operation: Result<Vec<u8>> = (|| {
             #[cfg(test)]
             let started = super::service::monotonic()?;
             for (id, t) in &self.state.messages {
@@ -344,22 +396,20 @@ impl Node {
             super::service::trace_subwork("mesh-state-encode-finish", started)?;
             #[cfg(test)]
             let started = super::service::monotonic()?;
-            atomic(
-                &self.root.join("native-mesh-state.json"),
-                &result["image"],
-                STATE_LIMIT,
-            )?;
+            let raw = bytes(&result["image"])?;
+            atomic_bytes(&self.root.join("native-mesh-state.json"), &raw, STATE_LIMIT)?;
             #[cfg(test)]
             super::service::trace_subwork("mesh-state-durable-write", started)?;
-            Ok(())
+            Ok(raw)
         })();
         #[cfg(test)]
         let started = super::service::monotonic()?;
         let cleanup = codec(json!({"Abort":{"token":token}}), &[]);
         #[cfg(test)]
         super::service::trace_subwork("mesh-state-codec-cleanup", started)?;
-        operation?;
+        let raw = operation?;
         cleanup?;
+        self.retained_image = Some(raw);
         #[cfg(test)]
         super::service::trace_subwork("mesh-state-save-complete", save_started)?;
         Ok(())
@@ -772,6 +822,7 @@ impl Node {
         }
         if !pending.is_empty() {
             for (id, t) in pending {
+                self.retained_image = None;
                 self.state.messages.insert(id.clone(), t);
                 self.state.arrivals.push(id);
             }
@@ -902,6 +953,7 @@ impl Node {
             }
         }
         require(carried.len() <= 256, "first carriage primitive capacity")?;
+        self.retained_image = None;
         self.state.first_carried.insert(peer.into(), carried);
         if let Some(last) = last {
             self.state.transit_cursors.insert(peer.into(), last);
@@ -977,6 +1029,7 @@ impl Node {
         let verified = exchange(bundle, &self.network, peer, &self.id)?;
         let body = &verified["body"];
         let old = self.state.clone();
+        let retained_image = self.retained_image.take();
         let result = (|| {
             for advert in body["adverts"].as_array().ok_or("advert list")? {
                 let checked = schema(advert, &self.network, "advert")?;
@@ -1108,7 +1161,23 @@ impl Node {
             self.state
                 .peer_inventory
                 .insert(peer.into(), body["inventory"].clone());
-            self.save()?;
+            if self.state.exact(&old) {
+                if let Some(raw) = &retained_image {
+                    #[cfg(test)]
+                    let started = super::service::monotonic()?;
+                    crate::contact_storage::repeat_exact(
+                        &self.root.join("native-mesh-state.json"),
+                        raw,
+                    )?;
+                    #[cfg(test)]
+                    super::service::trace_subwork("mesh-state-repeat-sync", started)?;
+                    self.retained_image = retained_image;
+                } else {
+                    self.save()?;
+                }
+            } else {
+                self.save()?;
+            }
             Ok(accepted)
         })();
         if result.is_err() {
@@ -1155,6 +1224,7 @@ impl Node {
                 )?;
             }
             crate::contact_storage::execute(&bytes(&json!({"SyncMany":{"paths":[path]}}))?, &[])?;
+            self.retained_image = None;
             self.state.archives.insert(id.clone(), object);
             self.state.messages.remove(&id);
             self.state.receipts.remove(&id);
@@ -1344,7 +1414,9 @@ mod tests {
         let before = fs::read(&path).unwrap();
         let inode = fs::metadata(&path).unwrap().ino();
         let messages = recipient.state.messages.clone();
+        super::super::service::start_work_trace();
         let accepted = recipient.receive(&bundle, &f.ids[0]).unwrap();
+        let duplicate_work = super::super::service::take_work_trace();
         let after_inode = fs::metadata(&path).unwrap().ino();
         assert_eq!(accepted, vec![packet.clone()]);
         assert_eq!(fs::read(&path).unwrap(), before);
@@ -1358,9 +1430,18 @@ mod tests {
         assert!(recipient.receive(&bad, &f.ids[0]).is_err());
         assert_eq!(fs::read(&path).unwrap(), before);
         drop(recipient);
-        let cold = Node::open(&f.configs[1]).unwrap();
+        let mut cold = Node::open(&f.configs[1]).unwrap();
         assert_eq!(cold.state.messages, messages);
-        assert_eq!(cold.received_frames().unwrap(), vec![(packet, raw)]);
+        assert_eq!(cold.received_frames().unwrap(), vec![(packet.clone(), raw)]);
+        super::super::service::start_work_trace();
+        assert_eq!(cold.receive(&bundle, &f.ids[0]).unwrap(), vec![packet]);
+        let cold_duplicate = super::super::service::take_work_trace();
+        assert!(!cold_duplicate
+            .iter()
+            .any(|e| e["phase"] == "mesh-state-encode-transits"));
+        assert!(cold_duplicate
+            .iter()
+            .any(|e| e["phase"] == "mesh-state-repeat-sync"));
         assert_eq!(fs::read(&path).unwrap(), before);
         eprintln!(
             "Exact duplicate receive: {}",
@@ -1370,6 +1451,97 @@ mod tests {
             after_inode, inode,
             "fully authenticated unchanged receive rewrote the complete transport state"
         );
+        let encodes = duplicate_work
+            .iter()
+            .filter(|e| e["phase"] == "mesh-state-encode-transits")
+            .map(|e| e["calls"].as_u64().unwrap())
+            .sum::<u64>();
+        assert_eq!(
+            encodes, 0,
+            "exact unchanged duplicate receive re-encoded its complete shared state"
+        );
+        assert_eq!(
+            duplicate_work
+                .iter()
+                .find(|e| e["phase"] == "mesh-state-repeat-sync")
+                .expect("unchanged duplicate must repeat actual durable publication")["calls"],
+            1
+        );
+    }
+
+    #[test]
+    fn retained_image_comparison_preserves_every_metadata_field_and_number_bytes() {
+        let f = Fixture::new(2);
+        let node = Node::open(&f.configs[0]).unwrap();
+        let original = node.state.clone();
+        let value = serde_json::to_value(&original).unwrap();
+        for field in value.as_object().unwrap().keys() {
+            let mut changed = value.clone();
+            let entry = &mut changed[field];
+            *entry = match entry {
+                Value::String(_) => json!("changed"),
+                Value::Number(_) => json!(1),
+                Value::Array(_) => json!(["changed"]),
+                Value::Object(_) => match field.as_str() {
+                    "archives" | "transit_cursors" | "receipt_cursors" => {
+                        json!({"changed":"changed"})
+                    }
+                    _ => json!({"changed":[]}),
+                },
+                _ => panic!("unexpected typed state metadata"),
+            };
+            let changed: State = serde_json::from_value(changed).unwrap();
+            assert!(!original.exact(&changed), "metadata field omitted: {field}");
+        }
+        let mut a = original.clone();
+        let mut b = original;
+        a.peer_inventory.insert(
+            "number-test".into(),
+            serde_json::from_str(r#"{"nested":[-0.0]}"#).unwrap(),
+        );
+        b.peer_inventory.insert(
+            "number-test".into(),
+            serde_json::from_str(r#"{"nested":[0.0]}"#).unwrap(),
+        );
+        assert!(a == b);
+        assert!(!a.exact(&b));
+        assert_ne!(
+            bytes(&serde_json::to_value(a).unwrap()).unwrap(),
+            bytes(&serde_json::to_value(b).unwrap()).unwrap()
+        );
+    }
+
+    #[test]
+    fn duplicate_receive_refuses_changed_or_missing_retained_image_without_repair() {
+        for missing in [false, true] {
+            let mut f = Fixture::new(2);
+            f.retain = true;
+            let mut source = Node::open(&f.configs[0]).unwrap();
+            source.enqueue(&f.frame(), &f.ids[1]).unwrap();
+            let bundle = source.prepare(&f.ids[1]).unwrap();
+            drop(source);
+            let mut recipient = Node::open(&f.configs[1]).unwrap();
+            recipient.receive(&bundle, &f.ids[0]).unwrap();
+            let state = serde_json::to_value(&recipient.state).unwrap();
+            let path = recipient.root.join("native-mesh-state.json");
+            let raw = fs::read(&path).unwrap();
+            let backup = recipient.root.join("original-image-before-fault");
+            if missing {
+                fs::rename(&path, &backup).unwrap();
+            } else {
+                crate::keystore::private_create(&backup, &raw).unwrap();
+                fs::write(&path, vec![b'x'; raw.len()]).unwrap();
+            }
+            assert!(recipient.receive(&bundle, &f.ids[0]).is_err());
+            assert_eq!(serde_json::to_value(&recipient.state).unwrap(), state);
+            assert!(recipient.retained_image.is_none());
+            assert_eq!(fs::read(backup).unwrap(), raw);
+            if missing {
+                assert!(!path.exists());
+            } else {
+                assert_eq!(fs::read(path).unwrap(), vec![b'x'; raw.len()]);
+            }
+        }
     }
 
     #[test]

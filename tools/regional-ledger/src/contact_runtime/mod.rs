@@ -95,11 +95,14 @@ pub(crate) fn read(path: &Path, limit: usize) -> Result<Value> {
 }
 pub(crate) fn atomic(path: &Path, value: &Value, limit: usize) -> Result<()> {
     let raw = files::canonical_with_limit(value, limit)?;
+    atomic_bytes(path, &raw, limit)
+}
+pub(crate) fn atomic_bytes(path: &Path, raw: &[u8], limit: usize) -> Result<()> {
     crate::contact_storage::execute(
         &bytes(&json!({"AtomicWrite":{
-            "path":path,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw)),"limit":limit
+            "path":path,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(raw)),"limit":limit
         }}))?,
-        &raw,
+        raw,
     )?;
     Ok(())
 }
