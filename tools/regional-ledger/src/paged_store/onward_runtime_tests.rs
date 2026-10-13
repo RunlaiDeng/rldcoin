@@ -205,7 +205,15 @@ impl LiveLog {
         let path = root.join("onward-runtime-live.jsonl");
         crate::keystore::private_create(&path, b"").unwrap();
         let file = fs::OpenOptions::new().append(true).open(&path).unwrap();
-        let mut log = Self { file, path, rows: 0, bytes: 0, calls: 0, pending: None, deadline };
+        let mut log = Self {
+            file,
+            path,
+            rows: 0,
+            bytes: 0,
+            calls: 0,
+            pending: None,
+            deadline,
+        };
         log.row(json!({"kind":"header","format":"RLD-ONWARD-RUNTIME-LIVE-OBSERVATION-V1",
             "started_at":started,"deadline":deadline,"row_limit":LIVE_ROWS,"byte_limit":LIVE_BYTES,
             "coverage":"every tick and receive in the two original direct-drive loops only",
@@ -218,8 +226,10 @@ impl LiveLog {
         use std::io::Write;
         let mut raw = files::canonical_with_limit(&value, LIVE_BYTES).unwrap();
         raw.push(b'\n');
-        assert!(self.rows < LIVE_ROWS && raw.len() <= LIVE_BYTES.saturating_sub(self.bytes),
-            "live observation capacity exhausted; partial log is incomplete");
+        assert!(
+            self.rows < LIVE_ROWS && raw.len() <= LIVE_BYTES.saturating_sub(self.bytes),
+            "live observation capacity exhausted; partial log is incomplete"
+        );
         self.file.write_all(&raw).unwrap();
         self.rows += 1;
         self.bytes += raw.len();
@@ -238,7 +248,10 @@ impl LiveLog {
             Err(error) => {
                 self.row(json!({"kind":"probe-refusal","call":call,"error":error,
                     "complete":false,"actual_call_completion_unknown":true}));
-                panic!("live probe refused; retained incomplete log at {}", self.path.display());
+                panic!(
+                    "live probe refused; retained incomplete log at {}",
+                    self.path.display()
+                );
             }
         };
         self.row(json!({"kind":"completion","call":call,"probe":value}));
@@ -247,7 +260,11 @@ impl LiveLog {
         let completed = value["completed_at"].as_f64().unwrap();
         assert!(started.is_finite() && completed.is_finite() && completed >= started);
         assert_eq!(value["success"].as_bool(), Some(value["error"].is_null()));
-        assert!(value["error"].is_null(), "actual Runtime call refused: {}", value["error"]);
+        assert!(
+            value["error"].is_null(),
+            "actual Runtime call refused: {}",
+            value["error"]
+        );
     }
     fn finish(mut self) -> Value {
         assert!(self.pending.is_none());
@@ -270,8 +287,10 @@ fn live_body(body: &Body) -> Value {
         Body::Signed(message) => match message.as_ref() {
             Message::Proposal(p) => json!({"kind":"proposal","context":p.context().unwrap(),
                 "round":p.round,"signer":p.leader.key,"value":p.snapshot.statement.id().unwrap()}),
-            Message::Vote(v) => json!({"kind":match v.phase { Phase::Prepare=>"prepare", Phase::Commit=>"commit" },
-                "context":v.context,"round":v.round,"signer":v.approval.key,"value":v.value}),
+            Message::Vote(v) => {
+                json!({"kind":match v.phase { Phase::Prepare=>"prepare", Phase::Commit=>"commit" },
+                "context":v.context,"round":v.round,"signer":v.approval.key,"value":v.value})
+            }
             Message::Timeout(t) => json!({"kind":"timeout","context":t.context,
                 "round":t.round,"signer":t.approval.key,"high_value":t.high.as_ref().map(|q|q.value)}),
             _ => json!({"kind":"other-signed-control"}),
@@ -333,7 +352,8 @@ fn drive(
                             continue;
                         }
                         budget(deadline);
-                        let call = log.begin(json!({"operation":"receive","sender":sender,"actor":i,
+                        let call =
+                            log.begin(json!({"operation":"receive","sender":sender,"actor":i,
                             "target_height":target,"native_height_before":nodes[i].chain.height(),
                             "frame_id":frame.message_id,"payload_sha256":frame.payload_sha256,
                             "body_id":body_id,"body":body}));

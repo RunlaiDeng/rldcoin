@@ -974,7 +974,11 @@ impl Runtime {
         }
         let observation = tick::observe(node, pins, input)?;
         #[cfg(test)]
-        if let Some(value) = self.last_probe_predecision.as_mut().filter(|_| self.probe_tick_active) {
+        if let Some(value) = self
+            .last_probe_predecision
+            .as_mut()
+            .filter(|_| self.probe_tick_active)
+        {
             value["scheduler"] = json!({"monotonic_now":observation.monotonic_now,
                 "context":observation.context,"round":observation.round,"key":observation.key,
                 "caller_head":observation.caller_head,"archive_sha256":observation.archive_sha256,
