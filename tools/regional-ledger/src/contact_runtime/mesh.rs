@@ -442,12 +442,16 @@ impl Node {
         let started = super::service::monotonic()?;
         identifier(id)?;
         identifier(object)?;
-        let value = read(
+        let (value, raw) = read_with_bytes(
             &self.root.join("archive").join(format!("{object}.json")),
             STATE_LIMIT,
         )?;
+        // This exact read already uniquely decoded and canonically checked all
+        // bytes. Hash the same complete bytes once; no hash grants authority.
+        let whole_digest = hex::encode(Sha256::digest(&raw));
+        drop(raw);
         require(
-            digest(&value)? == object
+            whole_digest == object
                 && value["format"] == FORMAT
                 && value["network"] == self.network
                 && value["node_id"] == self.id
@@ -1684,9 +1688,17 @@ mod tests {
             .map(|e| e["calls"].as_u64().unwrap_or(1))
             .sum::<u64>();
         assert_eq!(selected, vec![(packet.clone(), raw.clone())]);
-        let object = archives.values().next().unwrap();
+        let (archive_id, object) = archives.iter().next().unwrap();
         let path = relay.root.join("archive").join(format!("{object}.json"));
         let bytes = fs::read(&path).unwrap();
+        super::super::encoding_cost::start();
+        let checked = relay.archive(archive_id, object).unwrap();
+        let encodings = super::super::encoding_cost::take();
+        assert_eq!(checked["packet_id"], *archive_id);
+        let complete_encodes = encodings
+            .get(&(bytes.len(), Sha256::digest(&bytes).into()))
+            .copied()
+            .unwrap_or(0);
         let missing = path.with_extension("retained-missing");
         fs::rename(&path, &missing).unwrap();
         assert!(
@@ -1719,6 +1731,10 @@ mod tests {
         assert_eq!(
             reads, 32,
             "one page repeated complete reads of already authenticated foreign archives"
+        );
+        assert_eq!(
+            complete_encodes, 1,
+            "archive digest re-encoded complete bytes already canonically checked during this read"
         );
     }
 

@@ -56,8 +56,46 @@ pub const FORMAT: &str = "RLD-RUST-CONTACT-RUNTIME-V1";
 pub const MESH: &str = "RLD-CONTACT-MESH-V3";
 pub(crate) const STATE_LIMIT: usize = 64 * 1024 * 1024;
 pub(crate) const EXCHANGE_LIMIT: usize = 20 * 1024 * 1024;
+#[cfg(test)]
+pub(super) mod encoding_cost {
+    use super::*;
+    type Counts = std::collections::BTreeMap<(usize, [u8; 32]), usize>;
+    thread_local! {
+        static COUNTS: std::cell::RefCell<Option<Counts>> = const { std::cell::RefCell::new(None) };
+    }
+    pub(super) fn start() {
+        COUNTS.with(|counts| *counts.borrow_mut() = Some(Counts::new()));
+    }
+    pub(super) fn take() -> Counts {
+        COUNTS.with(|counts| counts.borrow_mut().take().unwrap_or_default())
+    }
+    pub(super) fn record(raw: &[u8]) -> Result<()> {
+        COUNTS.with(|counts| {
+            let mut counts = counts.borrow_mut();
+            let Some(counts) = counts.as_mut() else {
+                return Ok(());
+            };
+            let key = (raw.len(), Sha256::digest(raw).into());
+            require(
+                counts.contains_key(&key) || counts.len() < 256,
+                "encoding observation bound",
+            )?;
+            let count = counts.entry(key).or_default();
+            *count = count
+                .checked_add(1)
+                .ok_or("encoding observation count overflow")?;
+            Ok(())
+        })
+    }
+}
+fn encode(value: &Value, limit: usize) -> Result<Vec<u8>> {
+    let raw = files::canonical_with_limit(value, limit)?;
+    #[cfg(test)]
+    encoding_cost::record(&raw)?;
+    Ok(raw)
+}
 pub(crate) fn bytes(value: &Value) -> Result<Vec<u8>> {
-    files::canonical_with_limit(value, STATE_LIMIT)
+    encode(value, STATE_LIMIT)
 }
 pub(crate) fn digest(value: &Value) -> Result<String> {
     Ok(hex::encode(Sha256::digest(bytes(value)?)))
@@ -85,13 +123,16 @@ pub(crate) fn directory(path: &Path) -> Result<PathBuf> {
     Ok(absolute)
 }
 pub(crate) fn read(path: &Path, limit: usize) -> Result<Value> {
+    read_with_bytes(path, limit).map(|(value, _)| value)
+}
+pub(crate) fn read_with_bytes(path: &Path, limit: usize) -> Result<(Value, Vec<u8>)> {
     let raw = files::private_read_with_limit(path, limit)?;
     let value = crate::wallet_http::decode_unique_with_limit(&raw, limit)?;
     require(
-        files::canonical_with_limit(&value, limit)? == raw,
+        encode(&value, limit)? == raw,
         "contact runtime requires complete canonical JSON",
     )?;
-    Ok(value)
+    Ok((value, raw))
 }
 pub(crate) fn atomic(path: &Path, value: &Value, limit: usize) -> Result<()> {
     let raw = files::canonical_with_limit(value, limit)?;
@@ -202,4 +243,54 @@ pub(crate) fn exchange(value: &Value, network: &str, peer: &str, recipient: &str
             "contacts":16,"nodes":64,"transits":4,"messages":256,"exchange":EXCHANGE_LIMIT
         }}}}),
     )
+}
+
+#[cfg(test)]
+mod read_tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn complete_read_returns_exact_bytes_and_refuses_bounds_duplicates_and_symlinks() {
+        let root =
+            directory(&std::env::temp_dir().join(format!("rld-read-bytes-{}", random().unwrap())))
+                .unwrap();
+        let values = [
+            json!({"a":[true,null,"quoted\\\""],"z":{"value":u64::MAX}}),
+            json!({"unicode":"text🙂","control":"\n\0\u{7f}"}),
+            serde_json::from_str::<Value>(r#"{"float":[-0.0,1e-6,1e20]}"#).unwrap(),
+        ];
+        for (n, value) in values.iter().enumerate() {
+            let path = root.join(format!("{n}.json"));
+            let raw = files::canonical_with_limit(value, 8192).unwrap();
+            crate::keystore::private_create(&path, &raw).unwrap();
+            let (decoded, retained) = read_with_bytes(&path, raw.len()).unwrap();
+            assert_eq!(&decoded, value);
+            assert_eq!(retained, raw);
+            assert_eq!(read(&path, raw.len()).unwrap(), decoded);
+            assert!(read_with_bytes(&path, raw.len() - 1).is_err());
+            assert_eq!(fs::read(&path).unwrap(), raw);
+        }
+        for (n, raw) in [
+            br#"{"x":1,"x":2}"#.as_slice(),
+            br#"{ "x":1}"#,
+            br#"{"x":1}trailing"#,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let path = root.join(format!("bad-{n}.json"));
+            crate::keystore::private_create(&path, raw).unwrap();
+            assert!(read_with_bytes(&path, 8192).is_err());
+            assert_eq!(fs::read(&path).unwrap(), raw);
+        }
+        let link = root.join("link.json");
+        std::os::unix::fs::symlink(root.join("0.json"), &link).unwrap();
+        assert!(read_with_bytes(&link, 8192).is_err());
+        assert!(fs::symlink_metadata(&link)
+            .unwrap()
+            .file_type()
+            .is_symlink());
+        fs::remove_dir_all(root).unwrap();
+    }
 }
