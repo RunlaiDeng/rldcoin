@@ -11,6 +11,7 @@ struct ChildConfig {
     native_head: Hash,
     prepared: wallet_agent::Prepared,
     boundary: u8,
+    caller_publication: bool,
 }
 
 #[test]
@@ -48,26 +49,55 @@ fn wallet_sigkill_child() {
             &node,
             wallet_client::Transition {
                 previous: prior,
-                proposed: pending,
+                proposed: pending.clone(),
             },
         )
         .unwrap();
     let mut owner = wallet_agent::Agent::open(&dir, &node).unwrap();
-    owner.kill_publication_for_fixture(config.boundary);
-    owner
+    if !config.caller_publication {
+        owner.kill_publication_for_fixture(config.boundary);
+    }
+    let signed = owner
         .sign(
             &node,
-            config.prepared.draft,
+            config.prepared.draft.clone(),
             &config.root.join("public-owner-key.json"),
             config.prepared.review_commitment,
             config.prepared.wallet_head,
         )
         .unwrap();
+    if config.caller_publication {
+        drop(owner);
+        let published = wallet_client::State {
+            head: Some(signed.wallet_head),
+            pending: None,
+            ..pending.clone()
+        };
+        client.kill_publication_for_fixture(config.boundary);
+        client
+            .store(
+                &node,
+                wallet_client::Transition {
+                    previous: pending,
+                    proposed: published,
+                },
+            )
+            .unwrap();
+    }
     panic!("wallet SIGKILL boundary was not reached");
 }
 
 #[test]
 fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_debit() {
+    wallet_custody_boundaries(false);
+}
+
+#[test]
+fn real_caller_sigkill_preserves_retained_approval_and_single_native_debit() {
+    wallet_custody_boundaries(true);
+}
+
+fn wallet_custody_boundaries(caller_publication: bool) {
     let started = std::time::Instant::now();
     for boundary in 0..3 {
         let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
@@ -118,6 +148,7 @@ fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_d
             native_head: h.node.storage_head().unwrap(),
             prepared: prepared.clone(),
             boundary,
+            caller_publication,
         };
         let seeds = h.seeds.clone();
         let heads = h.heads.clone();
@@ -161,11 +192,7 @@ fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_d
             }),
             ..prior.clone()
         };
-        assert_eq!(
-            fs::read(caller_dir.join("wallet-client.json")).unwrap(),
-            wallet_client::canonical(&pending).unwrap()
-        );
-        let retained_path = if boundary == 0 {
+        let retained_path = if !caller_publication && boundary == 0 {
             dir.join("wallet.next")
         } else {
             dir.join("wallet.json")
@@ -175,6 +202,37 @@ fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_d
         assert_eq!(observed.records.len(), 1);
         assert_eq!(observed.records[0].draft, prepared.draft);
         let original_command = observed.records[0].command.clone();
+        let expected_caller = if caller_publication && boundary > 0 {
+            wallet_client::State {
+                head: Some(observed.head().unwrap()),
+                pending: None,
+                ..prior.clone()
+            }
+        } else {
+            pending.clone()
+        };
+        let caller_before = fs::read(caller_dir.join("wallet-client.json")).unwrap();
+        assert_eq!(
+            caller_before,
+            wallet_client::canonical(&expected_caller).unwrap()
+        );
+        let residues = fs::read_dir(&caller_dir)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .filter(|path| {
+                path.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with(".write-")
+            })
+            .map(|path| {
+                let raw = fs::read(&path).unwrap();
+                (path, raw)
+            })
+            .collect::<Vec<_>>();
+        if caller_publication {
+            assert_eq!(residues.len(), usize::from(boundary == 0));
+        }
         let node = Store::open_pinned(
             &root.join("node"),
             &public(1),
@@ -184,16 +242,16 @@ fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_d
         .unwrap();
         let client = wallet_client::Client::lock(&caller_dir, &dir, public(10), &node).unwrap();
         let before = super::retained_native_replay::inventory(&root);
-        let mut wrong_caller = pending.clone();
+        let mut wrong_caller = expected_caller.clone();
         wrong_caller.head = Some(Hash::ZERO);
         assert!(client.reconcile(&node, wrong_caller).is_err());
         assert_eq!(super::retained_native_replay::inventory(&root), before);
-        let recovery = client.reconcile(&node, pending.clone()).unwrap();
+        let recovery = client.reconcile(&node, expected_caller.clone()).unwrap();
         assert!(recovery.state.pending.is_none());
         assert_ne!(recovery.state.head, Some(old));
         assert_eq!(
             fs::read(caller_dir.join("wallet-client.json")).unwrap(),
-            wallet_client::canonical(&pending).unwrap()
+            caller_before
         );
         let mut owner = wallet_agent::Agent::open(&dir, &node).unwrap();
         let signed = owner.recover_prepared(&node, &prepared).unwrap();
@@ -231,7 +289,7 @@ fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_d
             .store(
                 &node,
                 wallet_client::Transition {
-                    previous: pending,
+                    previous: expected_caller,
                     proposed: recovery.state.clone(),
                 },
             )
@@ -302,7 +360,14 @@ fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_d
         let client = wallet_client::Client::lock(&caller_dir, &dir, public(10), &cold).unwrap();
         assert_eq!(client.read().unwrap(), recovery.state);
         assert_eq!(super::retained_native_replay::inventory(&root), stable);
-        eprintln!("Wallet SIGKILL: boundary={boundary} original_reservation=true original_command=true native_debit_once=true caller_and_four_signers_cold=true power_loss=false independent_custody=false");
+        for (path, raw) in residues {
+            assert_eq!(
+                fs::read(path).unwrap(),
+                raw,
+                "interrupted caller residue was pruned"
+            );
+        }
+        eprintln!("Wallet SIGKILL: boundary={boundary} caller_publication={caller_publication} original_reservation=true original_command=true native_debit_once=true caller_and_four_signers_cold=true power_loss=false independent_custody=false");
     }
     assert!(
         started.elapsed().as_secs_f64() < 60.0,

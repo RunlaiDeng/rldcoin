@@ -51,6 +51,8 @@ pub struct Client {
     root: PathBuf,
     binding: Binding,
     _lock: File,
+    #[cfg(test)]
+    kill_publication: std::cell::Cell<Option<u8>>,
 }
 
 fn io(e: std::io::Error) -> String {
@@ -264,6 +266,8 @@ impl Client {
                 wallet_dir: wallet.to_str().ok_or("wallet path is not UTF-8")?.into(),
             },
             _lock: lock,
+            #[cfg(test)]
+            kill_publication: std::cell::Cell::new(None),
         })
     }
 
@@ -306,9 +310,16 @@ impl Client {
         private_metadata(&file)?;
         file.write_all(&raw).map_err(io)?;
         file.sync_all().map_err(io)?;
+        #[cfg(test)]
+        self.kill_for_fixture(0);
         // A failed publication retains the residue. It is never promoted as head.
         fs::rename(&temporary, self.root.join("wallet-client.json")).map_err(io)?;
-        File::open(&self.root).map_err(io)?.sync_all().map_err(io)
+        #[cfg(test)]
+        self.kill_for_fixture(1);
+        File::open(&self.root).map_err(io)?.sync_all().map_err(io)?;
+        #[cfg(test)]
+        self.kill_for_fixture(2);
+        Ok(())
     }
 
     fn wallet(&self, node: &Store) -> Result<wallet_agent::Agent> {
@@ -458,6 +469,22 @@ impl Client {
         }
         self.persist(&proposed)?;
         Ok(proposed)
+    }
+}
+
+#[cfg(test)]
+impl Client {
+    pub(crate) fn kill_publication_for_fixture(&self, boundary: u8) {
+        assert!(boundary < 3);
+        self.kill_publication.set(Some(boundary));
+    }
+    fn kill_for_fixture(&self, boundary: u8) {
+        if self.kill_publication.get() == Some(boundary) {
+            unsafe {
+                libc::kill(libc::getpid(), libc::SIGKILL);
+            }
+            panic!("wallet caller fixture SIGKILL returned");
+        }
     }
 }
 
