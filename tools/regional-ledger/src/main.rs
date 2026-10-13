@@ -824,6 +824,25 @@ enum Action {
         #[arg(long)]
         expected_head: String,
     },
+    /// Complete two-hop evidence from an exact retained native source head.
+    CompleteOnwardHistoryExport {
+        #[arg(long)]
+        export: String,
+        #[arg(long)]
+        expected_head: String,
+    },
+    /// Full two-hop evidence under its separate signed receiver profile; no credit.
+    CompleteOnwardHistoryAccept {
+        #[arg(long)]
+        file: PathBuf,
+        #[arg(long)]
+        expected_head: String,
+    },
+    /// Exact safe pending imports from a pinned native head; does not submit them.
+    CompleteOnwardHistoryPending {
+        #[arg(long)]
+        expected_head: String,
+    },
     Finalize {
         #[arg(long)]
         file: PathBuf,
@@ -1242,14 +1261,14 @@ fn run() -> Result<()> {
             Hash::from_hex(expected_native_head).map_err(|e| e.to_string())?,
         )?,
         Action::BftNetworkCheckPlan { expected_head, .. }
-        | Action::BftNetworkCheckPlanObserved { expected_head, .. } => {
-            Store::open_pinned_inspection(
-                &args.dir,
-                &args.authority,
-                pin,
-                Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
-            )?
-        }
+        | Action::BftNetworkCheckPlanObserved { expected_head, .. }
+        | Action::CompleteOnwardHistoryExport { expected_head, .. }
+        | Action::CompleteOnwardHistoryPending { expected_head } => Store::open_pinned_inspection(
+            &args.dir,
+            &args.authority,
+            pin,
+            Hash::from_hex(expected_head).map_err(|e| e.to_string())?,
+        )?,
         Action::BftNetworkCheckBatch { .. }
         | Action::BftRuntimeArchiveRead { .. }
         | Action::BftRuntimeArchiveStore { .. }
@@ -1265,6 +1284,7 @@ fn run() -> Result<()> {
         }
         Action::HistoryCheck { expected_head }
         | Action::CompleteOriginHistoryAccept { expected_head, .. }
+        | Action::CompleteOnwardHistoryAccept { expected_head, .. }
         | Action::BftOriginNetworkSync { expected_head, .. }
         | Action::BftOriginNetworkReceiveBatch { expected_head, .. }
         | Action::BftOriginNetworkReceivePhase { expected_head, .. }
@@ -2755,6 +2775,31 @@ fn run() -> Result<()> {
                 })
             );
         }
+        Action::CompleteOnwardHistoryExport { export, .. } => {
+            let proof = store
+                .complete_onward_export(Hash::from_hex(&export).map_err(|e| e.to_string())?)?;
+            println!(
+                "{}",
+                serde_json::to_string(&proof).map_err(|e| e.to_string())?
+            );
+        }
+        Action::CompleteOnwardHistoryAccept { file, .. } => {
+            let checkpoint = store.accept_complete_onward_history(read_json(&file)?)?;
+            println!(
+                "{}",
+                serde_json::json!({
+                    "source_checkpoint":checkpoint,"storage_head":store.storage_head()?,
+                    "verified":true,"ledger_changed":false,"import_accepted":false,
+                    "recipient_maturity_qualified":false,"owner_signing_authority":false,
+                    "remote_current_state_known":false,"fixture_only":true
+                })
+            );
+        }
+        Action::CompleteOnwardHistoryPending { .. } => println!(
+            "{}",
+            serde_json::to_string(&store.complete_onward_pending_imports()?)
+                .map_err(|e| e.to_string())?
+        ),
         Action::Evidence { file } => {
             store.add_evidence(read_json(&file)?)?;
             println!(

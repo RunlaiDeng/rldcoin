@@ -1197,6 +1197,10 @@ pub use onward_history::CompleteOnwardHistory;
 mod onward_history_tests;
 
 #[cfg(test)]
+#[path = "paged_store/onward_cli_tests.rs"]
+mod onward_cli_tests;
+
+#[cfg(test)]
 #[path = "paged_store/origin_history_tests.rs"]
 mod origin_history_tests;
 #[cfg(test)]
