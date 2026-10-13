@@ -7,6 +7,8 @@ use crate::{
 };
 use std::sync::mpsc::{self, Receiver, Sender};
 
+#[path = "payment_cycle_binding.rs"]
+mod cycle_binding;
 #[path = "payment_timing_tests.rs"]
 mod timing;
 
@@ -719,6 +721,21 @@ fn cycle_phase(started: f64, phase: &str, actor: Option<usize>) {
 }
 
 fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, lose_quorum: bool) {
+    cycle_with_timing(rules, unavailable, lose_quorum, false);
+}
+
+#[test]
+#[ignore = "bounded complete two-payment diagnostic; preserves the original deadline"]
+fn two_payment_post_native_prefix_diagnostic() {
+    cycle_with_timing(crate::paged_bft::PACKED_RULES, None, false, true);
+}
+
+fn cycle_with_timing(
+    rules: &str,
+    unavailable: Option<usize>,
+    lose_quorum: bool,
+    payment_timing: bool,
+) {
     assert!(
         unavailable.is_none_or(|actor| actor == 1),
         "predeclared fault actor differs"
@@ -738,12 +755,21 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
     eprintln!("Fresh ordinary wallet cycle: {}", root.display());
     let stop = Arc::new(AtomicBool::new(false));
     let failed = Arc::new(AtomicBool::new(false));
-    let (workers, seeds, currency) =
-        setup(&root, deadline, stop.clone(), failed.clone(), rules).unwrap();
+    let (workers, seeds, currency) = if payment_timing {
+        setup_with_timing(&root, deadline, stop.clone(), failed.clone(), rules, true)
+    } else {
+        setup(&root, deadline, stop.clone(), failed.clone(), rules)
+    }
+    .unwrap();
+    let transport_identities = workers
+        .iter()
+        .map(|worker| worker.transport_identity)
+        .collect::<Vec<_>>();
     cycle_phase(started, "setup-complete", None);
     let mut samples = Vec::new();
     let mut fault = Value::Null;
     let mut cold_envelope_counts = Vec::new();
+    let mut second_payment_native = Vec::new();
     let result = (|| -> Result<()> {
         loop {
             let observed = observations(&workers, deadline)?;
@@ -1057,6 +1083,34 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
                 }),
                 "cold second payment output absent",
             )?;
+            if payment_timing {
+                let first_intent = serde_json::from_value(samples[0]["intent"].clone())
+                    .map_err(|e| e.to_string())?;
+                let second_intent = serde_json::from_value(samples[1]["intent"].clone())
+                    .map_err(|e| e.to_string())?;
+                let input = serde_json::from_value(samples[1]["input"].clone())
+                    .map_err(|e| e.to_string())?;
+                let head = node.storage_head()?;
+                let mut bound =
+                    cycle_binding::second_output(&node, first_intent, second_intent, input)?;
+                require(
+                    cycle_binding::second_output(&node, Hash::ZERO, second_intent, input).is_err()
+                        && cycle_binding::second_output(&node, first_intent, Hash::ZERO, input)
+                            .is_err()
+                        && cycle_binding::second_output(
+                            &node,
+                            first_intent,
+                            second_intent,
+                            Hash::ZERO,
+                        )
+                        .is_err()
+                        && node.storage_head()? == head,
+                    "cold second payment mismatched lineage accepted or changed head",
+                )?;
+                bound["actor"] = json!(n);
+                bound["mismatched_lineage_refused"] = json!(true);
+                second_payment_native.push(bound);
+            }
             let empty = ["proxima", "andromeda"]
                 .into_iter()
                 .map(|name| crate::Chain::new(node.trust.named(name)?, &node.trust))
@@ -1106,6 +1160,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
         "error":result.as_ref().err(),"worker_errors":worker_errors,"whole_seconds":monotonic().unwrap()-started,
         "recipient_actors":[FIRST_RECIPIENT,SECOND_RECIPIENT],"reported_at":completed_at,
         "fault":fault,"fault_cold_envelope_counts":cold_envelope_counts,
+        "payment_timing":payment_timing,"transport_identities":transport_identities,"second_payment_native":second_payment_native,
         "independent_operations":false,"latency_percentiles_qualified":false,"fixture_only":true}), 64*1024).unwrap();
     // Retain the complete private sample scope on both success and failure.
     result.unwrap_or_else(|primary| {

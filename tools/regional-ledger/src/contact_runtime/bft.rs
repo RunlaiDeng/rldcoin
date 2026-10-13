@@ -1313,6 +1313,14 @@ impl Runtime {
     }
 
     #[cfg(test)]
+    pub(super) fn diagnostic_clock(&self) -> Value {
+        json!({"context":self.slot.as_ref().map(|slot|&slot.0),
+            "round":self.slot.as_ref().map(|slot|slot.1),"entered":self.entered,
+            "height":self.archive.runtime.height,"signer":self.config.key,
+            "decision":self.last_decision})
+    }
+
+    #[cfg(test)]
     pub(super) fn scheduling_observation(&self) -> Result<Value> {
         let mut counts = BTreeMap::<String, usize>::new();
         let mut selected = Vec::new();

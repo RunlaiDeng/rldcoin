@@ -15,6 +15,9 @@ use std::{
 
 static STOP: AtomicBool = AtomicBool::new(false);
 #[cfg(test)]
+#[path = "post_native_trace.rs"]
+mod post_native_trace;
+#[cfg(test)]
 thread_local! {
     static CARRIAGE_TRACE: std::cell::RefCell<Option<Vec<Value>>> = const { std::cell::RefCell::new(None) };
     static SUBWORK_TRACE: std::cell::RefCell<std::collections::BTreeMap<&'static str,(usize,f64)>> = const { std::cell::RefCell::new(std::collections::BTreeMap::new()) };
@@ -64,7 +67,15 @@ fn trace_exchange(phase: &str, peer: &str, bundle: &Value) -> Result<()> {
                 "destination":t["packet"]["body"]["destination"]})
             })
             .collect::<Vec<_>>();
-        records.push(json!({"phase":phase,"peer":peer,"at":monotonic()?,"packets":packets}));
+        let at = monotonic()?;
+        let mut event = json!({"phase":phase,"peer":peer,"at":at,"packets":packets});
+        if phase == "published-transport-exchange" {
+            if let Some(prefix) = post_native_trace::observation(at)? {
+                event["post_native_work"] = prefix;
+                event["node_id"] = bundle["body"]["node_id"].clone();
+            }
+        }
+        records.push(event);
         Ok(())
     })
 }
@@ -611,6 +622,18 @@ fn tick_ledger_frames(
         }
     }
     drop(store);
+    #[cfg(test)]
+    let _post_native = if directory.is_some() && runtime.is_some() {
+        post_native_trace::begin(|| {
+            Ok(
+                json!({"currency":options.currency,"region":region,"native_height":height,
+                "scheduling":runtime.as_ref().ok_or("post-Native runtime absent")?.diagnostic_clock(),
+                "signing_authority":false}),
+            )
+        })?
+    } else {
+        None
+    };
     // Native replay and signing finish before opening this custody lease.
     // Directory-only carriage shares it through durable preparation; socket
     // adapters retain their original independent open/wait boundaries.
@@ -644,7 +667,13 @@ fn tick_ledger_frames(
             }
         }
     }
+    #[cfg(test)]
+    let archive_started = payment_trace_enabled().then(monotonic).transpose()?;
     node_ref.archive_completed()?;
+    #[cfg(test)]
+    if let Some(started) = archive_started {
+        trace_subwork("mesh-archive-completed", started)?;
+    }
     let observation = json!({"format":FORMAT,"currency":options.currency,"region":region,"local_height":height,
         "progress_observation_available":true,"mesh":node_ref.observation(),
         "ledger_changed_by_native_verification_only":true,"fixture_only":true});
