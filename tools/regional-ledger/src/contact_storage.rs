@@ -15,6 +15,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
+#[cfg(test)]
+#[path = "contact_sync_measurement.rs"]
+pub(crate) mod sync_measurement;
+
 const FORMAT: &str = "RLD-NATIVE-CONTACT-STORAGE-V1";
 const MAX_FILE: usize = 64 * 1024 * 1024;
 const MAX_PATHS: usize = 2 * (256 + 4);
@@ -106,6 +110,14 @@ fn sync(
     observe: &mut dyn FnMut(&'static str) -> Result<()>,
 ) -> Result<()> {
     observe(stage)?;
+    #[cfg(test)]
+    {
+        let started = sync_measurement::sync_start();
+        let result = file.sync_all();
+        sync_measurement::sync_finish(started, result.is_ok());
+        result.map_err(io_error)
+    }
+    #[cfg(not(test))]
     file.sync_all().map_err(io_error)
 }
 pub(super) fn unlink_at(dir: &File, name: &CString) -> Result<()> {
@@ -377,7 +389,16 @@ pub(crate) fn execute(control: &[u8], payload: &[u8]) -> Result<Value> {
                 size_bytes == payload.len() && sha256 == hex::encode(Sha256::digest(payload)),
                 "contact storage payload binding differs",
             )?;
-            archive(&path, payload, &mut observe)
+            #[cfg(test)]
+            {
+                sync_measurement::operation(sync_measurement::Kind::ArchiveWrite, || {
+                    archive(&path, payload, &mut observe)
+                })
+            }
+            #[cfg(not(test))]
+            {
+                archive(&path, payload, &mut observe)
+            }
         }
         Request::AtomicWrite {
             path,
@@ -393,11 +414,29 @@ pub(crate) fn execute(control: &[u8], payload: &[u8]) -> Result<Value> {
                 size_bytes == payload.len() && sha256 == hex::encode(Sha256::digest(payload)),
                 "contact storage payload binding differs",
             )?;
-            atomic(&path, payload, &mut observe)
+            #[cfg(test)]
+            {
+                sync_measurement::operation(sync_measurement::Kind::AtomicWrite, || {
+                    atomic(&path, payload, &mut observe)
+                })
+            }
+            #[cfg(not(test))]
+            {
+                atomic(&path, payload, &mut observe)
+            }
         }
         Request::SyncMany { paths } => {
             require(payload.is_empty(), "contact storage unexpected payload")?;
-            sync_many(&paths, &mut observe)
+            #[cfg(test)]
+            {
+                sync_measurement::operation(sync_measurement::Kind::SyncMany, || {
+                    sync_many(&paths, &mut observe)
+                })
+            }
+            #[cfg(not(test))]
+            {
+                sync_many(&paths, &mut observe)
+            }
         }
     }
 }

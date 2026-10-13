@@ -6,6 +6,22 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 
+#[cfg(test)]
+fn archive_phase_start() -> Result<Option<f64>> {
+    if crate::contact_storage::sync_measurement::enabled() {
+        Ok(Some(super::service::monotonic()?))
+    } else {
+        Ok(None)
+    }
+}
+#[cfg(test)]
+fn archive_phase_finish(phase: &'static str, started: Option<f64>) -> Result<()> {
+    if let Some(started) = started {
+        super::service::trace_subwork(phase, started)?;
+    }
+    Ok(())
+}
+
 const ACTIVE: &str = "RLD-CONTACT-ACTIVE-SHARED-FRAME-V1";
 const MAX_MESSAGES: usize = 256;
 const MAX_ARCHIVE_FILES: usize = 4096;
@@ -1343,13 +1359,21 @@ impl Node {
         for id in ids {
             let receipt = self.state.receipts.get(&id).ok_or("receipt disappeared")?;
             let t = self.state.messages.get(&id);
+            #[cfg(test)]
+            let started = archive_phase_start()?;
             if let Some(t) = t {
                 transit(t, &self.network, Value::Null, Value::Null)?;
                 receipt_matches(receipt, &t["packet"]["body"], &t["routing"]["body"])?;
             }
+            #[cfg(test)]
+            archive_phase_finish("mesh-archive-auth", started)?;
+            #[cfg(test)]
+            let started = archive_phase_start()?;
             let value = json!({"format":FORMAT,"network":self.network,"node_id":self.id,"packet_id":id,"receipt":receipt,"transit":t});
             let raw = bytes(&value)?;
             let object = hex::encode(Sha256::digest(&raw));
+            #[cfg(test)]
+            archive_phase_finish("mesh-archive-encode", started)?;
             let path = self.root.join("archive").join(format!("{object}.json"));
             if !path.exists() {
                 require(
@@ -1357,21 +1381,33 @@ impl Node {
                         && total + 2 * raw.len() as u64 <= MAX_ARCHIVE_BYTES,
                     "archive capacity including publication residue",
                 )?;
+                #[cfg(test)]
+                let started = archive_phase_start()?;
                 crate::contact_storage::execute(
                     &bytes(
                         &json!({"ArchiveWrite":{"path":path,"size_bytes":raw.len(),"sha256":object}}),
                     )?,
                     &raw,
                 )?;
+                #[cfg(test)]
+                archive_phase_finish("mesh-archive-write", started)?;
                 count += 1;
                 total += raw.len() as u64;
             } else {
+                #[cfg(test)]
+                let started = archive_phase_start()?;
                 require(
                     read(&path, STATE_LIMIT)? == value,
                     "existing custody archive differs",
                 )?;
+                #[cfg(test)]
+                archive_phase_finish("mesh-archive-existing-check", started)?;
             }
+            #[cfg(test)]
+            let started = archive_phase_start()?;
             crate::contact_storage::execute(&bytes(&json!({"SyncMany":{"paths":[path]}}))?, &[])?;
+            #[cfg(test)]
+            archive_phase_finish("mesh-archive-repeat-sync", started)?;
             self.retained_image = None;
             self.state.archives.insert(id.clone(), object);
             self.state.messages.remove(&id);
@@ -1381,7 +1417,14 @@ impl Node {
                 ids.retain(|i| i != &id);
             }
         }
-        self.save()
+        #[cfg(test)]
+        let started = archive_phase_start()?;
+        let result = self.save();
+        #[cfg(test)]
+        if result.is_ok() {
+            archive_phase_finish("mesh-archive-state-save", started)?;
+        }
+        result
     }
 
     pub fn observation(&self) -> Value {
@@ -4361,5 +4404,256 @@ mod tests {
         .unwrap();
         eprintln!("Signed receive-page observer guard: {report}");
         within_budget();
+    }
+    // Run only this exact ignored test in an isolated child under an external30s
+    // hard deadline. The process-global witness clear must not share other fixtures.
+    #[test]
+    #[ignore = "fresh transport-only archive measurement; isolated30-second controller"]
+    fn archive_completed_new_and_existing_four_sync_component() {
+        use super::super::service;
+        use crate::contact_storage::sync_measurement;
+        use std::os::unix::fs::MetadataExt;
+        fn calls(work: &[Value], phase: &str) -> u64 {
+            work.iter()
+                .filter(|v| v["phase"] == phase)
+                .map(|v| v["calls"].as_u64().unwrap_or(1))
+                .sum()
+        }
+        fn clear() {
+            crate::contact_witness::execute(b"\"Clear\"", &[]).unwrap();
+        }
+        fn bytes_on_disk(node: &Node) -> BTreeMap<String, Vec<u8>> {
+            let mut result = BTreeMap::new();
+            result.insert(
+                "native-mesh-state.json".into(),
+                fs::read(node.root.join("native-mesh-state.json")).unwrap(),
+            );
+            for entry in fs::read_dir(node.root.join("archive")).unwrap() {
+                let entry = entry.unwrap();
+                result.insert(
+                    format!("archive/{}", entry.file_name().to_str().unwrap()),
+                    fs::read(entry.path()).unwrap(),
+                );
+            }
+            result
+        }
+        let started = std::time::Instant::now();
+        let budget = || {
+            assert!(
+                started.elapsed().as_secs_f64() < 30.0,
+                "archive component30-second total budget exhausted; retain fixture"
+            )
+        };
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        eprintln!(
+            "Fresh archive sync component retained at {}",
+            f.root.display()
+        );
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        let mut destination = Node::open(&f.configs[1]).unwrap();
+        let frames = (0..36u8)
+            .map(|n| {
+                let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+                let mut payload: Value =
+                    serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+                let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+                payload["region"] = json!(region);
+                let raw = bytes(&payload).unwrap();
+                frame.source_chain_id = region;
+                frame.destination_chain_id = region;
+                frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+                frame.export_id = frame.payload_sha256;
+                frame.payload_b64 = STANDARD.encode(raw);
+                frame.message_id = frame.message().unwrap();
+                frame.retained_bytes().unwrap()
+            })
+            .collect::<Vec<_>>();
+        for batch in frames[..32].chunks(4) {
+            budget();
+            source
+                .enqueue_frame_batch(
+                    &batch.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                    std::slice::from_ref(&f.ids[1]),
+                )
+                .unwrap();
+        }
+        let mut cases = Vec::new();
+        for existing in [false, true] {
+            budget();
+            if existing {
+                assert_eq!(source.state.messages.len(), 28);
+                assert_eq!(source.state.archives.len(), 4);
+                source
+                    .enqueue_frame_batch(
+                        &frames[32..].iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                        std::slice::from_ref(&f.ids[1]),
+                    )
+                    .unwrap();
+            }
+            assert_eq!(source.state.messages.len(), 32);
+            assert!(source.state.receipts.is_empty());
+            let outgoing = source.prepare(&f.ids[1]).unwrap();
+            assert_eq!(outgoing["body"]["transits"].as_array().unwrap().len(), 4);
+            destination.receive(&outgoing, &f.ids[0]).unwrap();
+            assert_eq!(
+                destination.state.receipts.len(),
+                if existing { 8 } else { 4 }
+            );
+            assert!(destination.state.archives.is_empty());
+            let reply = destination.prepare(&f.ids[0]).unwrap();
+            // prepare has four transit slots but sixteen independent receipt slots.
+            assert_eq!(
+                reply["body"]["receipts"].as_array().unwrap().len(),
+                if existing { 8 } else { 4 }
+            );
+            source.receive(&reply, &f.ids[1]).unwrap();
+            assert_eq!(source.state.messages.len(), 32);
+            assert_eq!(source.state.receipts.len(), 4);
+            let before = source.state.clone();
+            let before_image = fs::read(source.root.join("native-mesh-state.json")).unwrap();
+            let mut complete = BTreeMap::new();
+            for (id, receipt) in &before.receipts {
+                assert_eq!(receipt["body"]["node_id"], f.ids[1]);
+                schema(receipt, &source.network, "receipt").unwrap();
+                let t = &before.messages[id];
+                transit(t, &source.network, Value::Null, Value::Null).unwrap();
+                receipt_matches(receipt, &t["packet"]["body"], &t["routing"]["body"]).unwrap();
+                let value = json!({"format":FORMAT,"network":source.network,"node_id":source.id,
+                "packet_id":id,"receipt":receipt,"transit":t});
+                let raw = bytes(&value).unwrap();
+                let object = hex::encode(Sha256::digest(&raw));
+                let path = source.root.join("archive").join(format!("{object}.json"));
+                assert!(!path.exists());
+                if existing {
+                    // Complete real signed custody object, durably prepublished as
+                    // an unindexed residue. No active/index state is restored/edited.
+                    crate::contact_storage::execute(
+                        &bytes(&json!({"ArchiveWrite":{
+                    "path":path,"size_bytes":raw.len(),"sha256":object}}))
+                        .unwrap(),
+                        &raw,
+                    )
+                    .unwrap();
+                }
+                let inode = existing.then(|| fs::metadata(&path).unwrap().ino());
+                complete.insert(id.clone(), (object, raw, inode));
+            }
+            assert!(source.state.exact(&before));
+            assert_eq!(
+                fs::read(source.root.join("native-mesh-state.json")).unwrap(),
+                before_image
+            );
+            let prior_objects = bytes_on_disk(&source);
+            clear();
+            service::start_work_trace();
+            let capture = sync_measurement::start().unwrap();
+            let wall = std::time::Instant::now();
+            let result = source.archive_completed();
+            let wall_seconds = wall.elapsed().as_secs_f64();
+            let storage = capture.finish();
+            let work = service::take_work_trace();
+            eprintln!(
+                "archive sync window {}",
+                json!({"existing":existing,"ok":result.is_ok(),
+            "error":result.as_ref().err(),"wall_seconds":wall_seconds,"storage":storage,"work":work})
+            );
+            result.unwrap();
+            assert_eq!(storage["complete"], true);
+            for (i, expected_calls, expected_syncs) in [
+                (
+                    0,
+                    if existing { 0 } else { 4 },
+                    if existing { 0 } else { 20 },
+                ),
+                (1, 4, 8),
+                (2, 1, 3),
+            ] {
+                let row = &storage["rows"][i];
+                assert_eq!(row["calls"], expected_calls);
+                assert_eq!(row["succeeded"], expected_calls);
+                assert_eq!(row["failed"], 0);
+                assert_eq!(row["sync_calls"], expected_syncs);
+                assert_eq!(row["sync_succeeded"], expected_syncs);
+                assert_eq!(row["sync_failed"], 0);
+            }
+            assert_eq!(calls(&work, "transit-full-check"), 4);
+            assert_eq!(calls(&work, "transit-witness-hit"), 0);
+            for (phase, count) in [
+                ("mesh-archive-auth", 4),
+                ("mesh-archive-encode", 4),
+                ("mesh-archive-write", if existing { 0 } else { 4 }),
+                ("mesh-archive-existing-check", if existing { 4 } else { 0 }),
+                ("mesh-archive-repeat-sync", 4),
+                ("mesh-archive-state-save", 1),
+            ] {
+                assert_eq!(calls(&work, phase), count);
+            }
+            let mut expected = before.clone();
+            for (id, (object, raw, inode)) in &complete {
+                expected.archives.insert(id.clone(), object.clone());
+                expected.messages.remove(id);
+                expected.receipts.remove(id);
+                expected.arrivals.retain(|i| i != id);
+                for carried in expected.first_carried.values_mut() {
+                    carried.retain(|i| i != id);
+                }
+                let path = source.root.join("archive").join(format!("{object}.json"));
+                assert_eq!(fs::read(&path).unwrap(), *raw);
+                if let Some(inode) = inode {
+                    assert_eq!(fs::metadata(&path).unwrap().ino(), *inode);
+                }
+            }
+            assert!(source.state.exact(&expected));
+            assert_eq!(source.state.messages.len(), 28);
+            assert!(source.state.receipts.is_empty());
+            assert_eq!(source.state.archives.len(), if existing { 8 } else { 4 });
+            for (name, raw) in &prior_objects {
+                if name != "native-mesh-state.json" {
+                    assert_eq!(fs::read(source.root.join(name)).unwrap(), *raw);
+                }
+            }
+            let disk = bytes_on_disk(&source);
+            let archive_count = source.archive_inventory().unwrap().0;
+            assert_eq!(archive_count, source.state.archives.len());
+            drop(source);
+            clear();
+            service::start_work_trace();
+            source = Node::open(&f.configs[0]).unwrap();
+            let cold_work = service::take_work_trace();
+            let cold_transits = if existing { 36 } else { 32 };
+            assert_eq!(calls(&cold_work, "transit-full-check"), cold_transits);
+            assert_eq!(calls(&cold_work, "transit-witness-hit"), 0);
+            assert!(source.state.exact(&expected));
+            assert_eq!(bytes_on_disk(&source), disk);
+            let commitments = disk
+                .iter()
+                .map(|(name, raw)| {
+                    json!({"object":name,
+            "size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(raw))})
+                })
+                .collect::<Vec<_>>();
+            cases.push(
+                json!({"existing":existing,"wall_seconds":wall_seconds,"storage":storage,
+            "work":work,"cold_full_transits":cold_transits,"cold_witness_hits":0,
+            "before_state_sha256":hex::encode(Sha256::digest(&before_image)),
+            "after_commitments":commitments,"exact_cold_state_and_bytes":true}),
+            );
+            budget();
+        }
+        drop(source);
+        drop(destination);
+        budget();
+        let report = json!({"cases":cases,"elapsed_seconds":started.elapsed().as_secs_f64(),
+        "transport_only":true,"native_ledger":false,"production_optimization":false,
+        "post_write_path_replacement_guard_executed":false,"sync_elision_qualified":false,
+        "ordinary_high_water":32,"archive_batch_bound":16,"fixture_only":true});
+        crate::keystore::private_create(
+            &f.root.join("archive-sync-component.json"),
+            &bytes(&report).unwrap(),
+        )
+        .unwrap();
+        budget();
+        println!("\narchive-sync-component {report}");
     }
 }
