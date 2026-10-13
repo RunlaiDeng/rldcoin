@@ -1408,6 +1408,8 @@ mod receive_phase;
 
 #[path = "bft_client_tests.rs"]
 mod bft_client_tests;
+#[path = "wallet_process_tests.rs"]
+mod wallet_process;
 
 #[path = "packed_bft_custody_tests.rs"]
 mod packed_custody;

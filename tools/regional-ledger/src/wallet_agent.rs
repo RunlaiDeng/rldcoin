@@ -381,6 +381,8 @@ pub struct Agent {
     _lock: File,
     pub journal: Journal,
     healthy: bool,
+    #[cfg(test)]
+    kill_publication: Option<u8>,
 }
 fn io(e: std::io::Error) -> String {
     e.to_string()
@@ -425,6 +427,8 @@ impl Agent {
             _lock: lock,
             journal,
             healthy: true,
+            #[cfg(test)]
+            kill_publication: None,
         };
         crate::keystore::private_create(&dir.join("key.enc.json"), encrypted_key)?;
         agent.persist(&agent.journal)?;
@@ -468,6 +472,8 @@ impl Agent {
             _lock: lock,
             journal,
             healthy: true,
+            #[cfg(test)]
+            kill_publication: None,
         };
         agent.persist(&agent.journal)?;
         Ok(agent)
@@ -497,6 +503,8 @@ impl Agent {
             _lock: lock,
             journal,
             healthy: true,
+            #[cfg(test)]
+            kill_publication: None,
         };
         let next = dir.join("wallet.next");
         if present(&next)? {
@@ -538,8 +546,15 @@ impl Agent {
         let mut file = options.open(&temp).map_err(io)?;
         file.write_all(&bytes).map_err(io)?;
         file.sync_all().map_err(io)?;
+        #[cfg(test)]
+        self.kill_for_fixture(0);
         fs::rename(temp, dest).map_err(io)?;
-        File::open(&self.dir).map_err(io)?.sync_all().map_err(io)
+        #[cfg(test)]
+        self.kill_for_fixture(1);
+        File::open(&self.dir).map_err(io)?.sync_all().map_err(io)?;
+        #[cfg(test)]
+        self.kill_for_fixture(2);
+        Ok(())
     }
     fn require_head(&self, expected: Hash) -> Result<()> {
         require(
@@ -824,5 +839,21 @@ impl Agent {
             state: "SIGNED_PENDING_INCLUSION",
             recovered_exact_retry: false,
         })
+    }
+}
+
+#[cfg(test)]
+impl Agent {
+    pub(crate) fn kill_publication_for_fixture(&mut self, boundary: u8) {
+        assert!(boundary < 3);
+        self.kill_publication = Some(boundary);
+    }
+    fn kill_for_fixture(&self, boundary: u8) {
+        if self.kill_publication == Some(boundary) {
+            unsafe {
+                libc::kill(libc::getpid(), libc::SIGKILL);
+            }
+            panic!("wallet fixture SIGKILL returned");
+        }
     }
 }
