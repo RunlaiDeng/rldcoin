@@ -483,6 +483,31 @@ fn packed_runtime_work(
                 );
                 assert_eq!(report["decision"], "commit");
                 let height = h.node.chain.height();
+                let completed_context =
+                    serde_json::to_value(Context::current(&h.node).unwrap()).unwrap();
+                let before_repeat = inventory(&h.root);
+                let repeated_archive_path =
+                    h.root.join(format!("runtime-work-{receiver}/state.json"));
+                let repeated_archive_bytes = fs::read(&repeated_archive_path).unwrap();
+                let repeated = actors[receiver].probe_tick(&mut h.node).unwrap();
+                assert!(repeated["error"].is_null());
+                assert_eq!(repeated["decision"], "idle");
+                assert_eq!(repeated["clock_context"], report["clock_context"]);
+                assert_eq!(repeated["clock_round"], report["clock_round"]);
+                assert_eq!(
+                    repeated["clock_entered_at"], report["clock_entered_at"],
+                    "unchanged successor context rebased its original local clock"
+                );
+                assert_eq!(
+                    fs::read(&repeated_archive_path).unwrap(),
+                    repeated_archive_bytes
+                );
+                let mut after_repeat = inventory(&h.root);
+                // Ordinary successful persistence repeats the same archive
+                // bytes and may update only that file's publication mtime.
+                after_repeat.get_mut(&repeated_archive_path).unwrap().3 =
+                    before_repeat[&repeated_archive_path].3;
+                assert_eq!(after_repeat, before_repeat);
                 let head = h.node.storage_head().unwrap();
                 let statement = h.node.chain.statement(&h.node.trust).unwrap();
                 let ledger = h.node.chain.ledger.clone();
@@ -571,6 +596,17 @@ fn packed_runtime_work(
                 assert_eq!(statement.state, expected_statement.state);
                 assert_eq!(finality, Some(expected_statement.id().unwrap()));
                 assert_eq!(archive.runtime.messages.len(), 44);
+                assert_eq!(report["clock_context"], completed_context,
+                    "successful Native finality left the local clock bound to the old parent until another tick");
+                assert_eq!(report["clock_round"], 0);
+                assert!(
+                    report["clock_entered_at"].as_f64().unwrap()
+                        >= report["started_at"].as_f64().unwrap()
+                );
+                assert!(
+                    report["clock_entered_at"].as_f64().unwrap()
+                        <= report["completed_at"].as_f64().unwrap()
+                );
                 return;
             }
             let controls = actors

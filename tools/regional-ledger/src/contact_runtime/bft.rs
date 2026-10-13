@@ -778,7 +778,20 @@ impl Runtime {
                 "post-Commit finality differs from exact original proposal",
             )?;
             node.finalize(*snapshot.clone())?;
+            self.observe_installed_parent(node)?;
             self.retain_local(node, net::Body::Finalized(snapshot))?;
+        }
+        Ok(())
+    }
+
+    fn observe_installed_parent(&mut self, node: &Store) -> Result<()> {
+        let context = consensus::Context::current(node)?;
+        if self.slot.as_ref().map(|slot| &slot.0) != Some(&context) {
+            // A successfully installed Native successor begins its local
+            // round-zero clock now, even if no subsequent tick runs promptly.
+            // This observation grants no signature or finality authority.
+            self.slot = Some((context, 0));
+            self.entered = super::service::monotonic()?;
         }
         Ok(())
     }
@@ -866,6 +879,7 @@ impl Runtime {
         match decision {
             tick::Decision::Phase(phase::Action::Finalize { snapshot }) => {
                 node.finalize(*snapshot.clone())?;
+                self.observe_installed_parent(node)?;
                 self.retain_local(node, net::Body::Finalized(snapshot))?;
             }
             tick::Decision::Phase(phase::Action::Prepare { proposal, .. }) => {
@@ -1013,7 +1027,8 @@ impl Runtime {
         retention::cost::take();
         let started = super::service::monotonic()?;
         let result = self.tick(node);
-        let seconds = super::service::monotonic()? - started;
+        let completed_at = super::service::monotonic()?;
+        let seconds = completed_at - started;
         let (archive_checks, envelope_checks) = retention::cost::take();
         Ok(
             json!({"seconds":seconds,"trace":super::service::take_work_trace(),
@@ -1021,6 +1036,9 @@ impl Runtime {
             "retained_messages":self.archive.runtime.messages.len(),
             "complete_archive_byte_checks":archive_checks,
             "complete_envelope_byte_checks":envelope_checks,
+            "started_at":started,"completed_at":completed_at,
+            "clock_context":self.slot.as_ref().map(|slot|&slot.0),
+            "clock_round":self.slot.as_ref().map(|slot|slot.1),"clock_entered_at":self.entered,
             "fixture_only":true,"signing_authority":false}),
         )
     }
