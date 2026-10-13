@@ -1219,6 +1219,10 @@ pub use origin_archive_cut::{
 mod origin_archive_cut_tests;
 
 #[cfg(test)]
+#[path = "paged_store/nonorigin_export_tests.rs"]
+mod nonorigin_export_tests;
+
+#[cfg(test)]
 #[path = "paged_store/channel_window_tests.rs"]
 mod channel_window_tests;
 

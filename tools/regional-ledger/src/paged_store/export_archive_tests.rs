@@ -154,6 +154,17 @@ pub(super) fn source_fixture_with_named_origin(
     destination_rules: &str,
     origin_name: &str,
 ) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
+    source_fixture_with_regions(height_limit, batch, destination_rules, origin_name, &[])
+}
+
+// Extra fixture regions enter the signed bootstrap before any Native execution.
+pub(super) fn source_fixture_with_regions(
+    height_limit: u64,
+    batch: usize,
+    destination_rules: &str,
+    origin_name: &str,
+    additional_regions: &[(&str, &str)],
+) -> (Header, Replay, PathBuf, Scope, Vec<Record>, Hash) {
     assert!((1..=crate::history::PAGE_EVENTS).contains(&batch));
     let started = std::time::Instant::now();
     let mut append_ns = 0u128;
@@ -174,6 +185,14 @@ pub(super) fn source_fixture_with_named_origin(
     destination.signature = signature(1, &destination.bytes().unwrap());
     let destination_id = destination.id().unwrap();
     h.bootstrap.admissions.push(destination);
+    for (region, rules) in additional_regions {
+        let mut admission = h.bootstrap.admissions[0].clone();
+        admission.region = (*region).into();
+        admission.rules = (*rules).into();
+        admission.value_rules = Some(crate::paged_bft::rules_hash_for(rules).unwrap());
+        admission.signature = signature(1, &admission.bytes().unwrap());
+        h.bootstrap.admissions.push(admission);
+    }
     let mut native = replay(&h);
     let (root, mut flat) = stream(&h, &native);
     let scope = h.scope(&native.trust).unwrap();
