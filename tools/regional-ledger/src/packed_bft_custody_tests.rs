@@ -253,6 +253,7 @@ fn packed_runtime_work(
 ) {
     let started = std::time::Instant::now();
     let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
+    let mut measured_opens = None;
     h.retain = true;
     eprintln!("Fresh packed Runtime work fixture: {}", h.root.display());
     h.agents.clear();
@@ -415,6 +416,7 @@ fn packed_runtime_work(
                 assert!(report["error"].is_null());
                 assert_eq!(report["new_signatures"], 1);
                 assert!(report["strict_signature_checks"].as_u64().unwrap() > 0);
+                measured_opens = Some(report["complete_signer_opens"].as_u64().unwrap());
                 assert_eq!(h.node.storage_head().unwrap(), head);
                 assert_eq!(h.node.chain.ledger, ledger);
                 eprintln!("Packed original Runtime signature work: {report}");
@@ -993,4 +995,7 @@ fn packed_runtime_work(
         started.elapsed().as_secs_f64() < 60.0,
         "Runtime work component deadline"
     );
+    if let Some(opens) = measured_opens {
+        assert_eq!(opens,3,"the locked pending inspection must supply the actual signer object; signing still fully replays, and response/outbox inspections remain separate");
+    }
 }

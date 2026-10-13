@@ -268,6 +268,8 @@ impl Agent {
             paged: Some(stream),
         };
         let state = agent.paged_state_with_records(node, observe)?;
+        #[cfg(test)]
+        custody_cost::completed_open();
         Ok((agent, state))
     }
     /// Explicit keyless recovery of exactly retained original response bytes.

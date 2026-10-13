@@ -28,6 +28,18 @@ pub fn is_profile(rules: &str) -> bool {
 pub const MAX_ROUNDS: u64 = 32;
 pub const MAX_RECORDS: usize = 128;
 
+#[cfg(test)]
+pub(crate) mod custody_cost {
+    use std::cell::Cell;
+    thread_local! { static COMPLETE_OPENS: Cell<usize> = const { Cell::new(0) }; }
+    pub(crate) fn take() -> usize {
+        COMPLETE_OPENS.with(|count| count.replace(0))
+    }
+    pub(super) fn completed_open() {
+        COMPLETE_OPENS.with(|count| count.set(count.get() + 1));
+    }
+}
+
 pub fn creation_observation(node: &Store) -> Result<Observation> {
     Context::current(node)?;
     Observation::current(node)
@@ -1129,6 +1141,8 @@ impl Agent {
             agent.journal = proposed;
             state = proposed_state;
         }
+        #[cfg(test)]
+        custody_cost::completed_open();
         Ok((agent, state))
     }
     fn persist(&self, journal: &Journal) -> Result<()> {

@@ -355,7 +355,18 @@ impl Runtime {
         pending.pending = Some(request.clone());
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        let pending = Self::publish_head(&caller, node, &old, pending)?;
+        let (pending, mut agent) = if self.config.format == bft_client::ORIGIN_FORMAT {
+            (Self::publish_head(&caller, node, &old, pending)?, None)
+        } else {
+            let (pending, agent) = caller.store_pending_for_sign(
+                node,
+                bft_client::Transition {
+                    previous_sha256: state_hash(&old)?,
+                    proposed: pending,
+                },
+            )?;
+            (pending, Some(agent))
+        };
         #[cfg(test)]
         super::service::trace_subwork("sign-pending-publication", started)?;
         #[cfg(test)]
@@ -372,13 +383,14 @@ impl Runtime {
             )?
             .signed
         } else {
-            consensus::Agent::open(&self.config.signer_dir, node)?.sign(
-                node,
-                request,
-                Some(&self.config.key_file),
-                old.head,
-            )?
+            agent
+                .as_mut()
+                .ok_or("ordinary pending signer absent")?
+                .sign(node, request, Some(&self.config.key_file), old.head)?
         };
+        // Response publication independently inspects the exact original signed
+        // result after this original signer lease is released, as before.
+        drop(agent);
         #[cfg(test)]
         super::service::trace_subwork("sign-native-response", started)?;
         let mut response = pending.clone();
@@ -784,12 +796,15 @@ impl Runtime {
         super::service::start_work_trace();
         consensus::sign_cost::take();
         crate::verification_keys::cost::take();
+        consensus::custody_cost::take();
         let started = super::service::monotonic()?;
         let result = self.sign_fixture_control(node, request);
         let seconds = super::service::monotonic()? - started;
         let native = consensus::sign_cost::take();
         let signatures = crate::verification_keys::cost::take();
+        let complete_opens = consensus::custody_cost::take();
         let report = json!({"seconds":seconds,"trace":super::service::take_work_trace(),
+            "complete_signer_opens":complete_opens,
             "error":result.as_ref().err(),"native_sign_phases_ns":native.phases_ns,
             "native_replay_ns":native.replay_ns,"native_replayed_records":native.completed_old_records,
             "native_records":native.native_records,"new_signatures":native.completed_new_signatures,

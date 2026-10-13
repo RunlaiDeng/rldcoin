@@ -10,7 +10,7 @@ fn transition(previous: State, proposed: State) -> Transition {
     }
 }
 
-fn custody(mut h: Harness, format: &str, interrupted: bool) {
+fn custody(mut h: Harness, format: &str, interrupted: bool, handoff: bool) {
     h.retain = true;
     let parent = h.root.join("caller");
     fs::create_dir(&parent).unwrap();
@@ -41,9 +41,33 @@ fn custody(mut h: Harness, format: &str, interrupted: bool) {
         pending: Some(request.clone()),
         ..state.clone()
     };
-    client
-        .store(&h.node, transition(state.clone(), pending.clone()))
-        .unwrap();
+    if handoff {
+        let before = super::retained_native_replay::inventory(&h.root);
+        let mut stale = transition(state.clone(), pending.clone());
+        stale.previous_sha256 = Hash::ZERO;
+        assert!(client.store_pending_for_sign(&h.node, stale).is_err());
+        let mut wrong = pending.clone();
+        wrong.head = Hash::ZERO;
+        assert!(client
+            .store_pending_for_sign(&h.node, transition(state.clone(), wrong))
+            .is_err());
+        assert_eq!(super::retained_native_replay::inventory(&h.root), before);
+        let (saved, mut agent) = client
+            .store_pending_for_sign(&h.node, transition(state.clone(), pending.clone()))
+            .unwrap();
+        assert_eq!(saved, pending);
+        assert_eq!(fs::read(&file).unwrap(), canonical(&pending).unwrap());
+        assert!(Agent::open(&signer, &h.node).is_err());
+        assert!(agent
+            .sign(&h.node, request.clone(), None, state.head)
+            .is_err());
+        assert_eq!(agent.record_count(), 0);
+        drop(agent);
+    } else {
+        client
+            .store(&h.node, transition(state.clone(), pending.clone()))
+            .unwrap();
+    }
     let before = fs::read(&file).unwrap();
     let cleared = client.reconcile(&h.node, pending.clone()).unwrap();
     assert_eq!(cleared, state); // Keyless recovery cannot first-sign.
@@ -52,10 +76,19 @@ fn custody(mut h: Harness, format: &str, interrupted: bool) {
     client
         .store(&h.node, transition(pending.clone(), state.clone()))
         .unwrap();
-    client
-        .store(&h.node, transition(state.clone(), pending.clone()))
-        .unwrap();
-    let mut agent = Agent::open(&signer, &h.node).unwrap();
+    let mut agent = if handoff {
+        let (saved, agent) = client
+            .store_pending_for_sign(&h.node, transition(state.clone(), pending.clone()))
+            .unwrap();
+        assert_eq!(saved, pending);
+        assert!(Agent::open(&signer, &h.node).is_err());
+        agent
+    } else {
+        client
+            .store(&h.node, transition(state.clone(), pending.clone()))
+            .unwrap();
+        Agent::open(&signer, &h.node).unwrap()
+    };
     if interrupted {
         agent.interrupt_publication(0);
     }
@@ -120,12 +153,28 @@ fn custody(mut h: Harness, format: &str, interrupted: bool) {
 }
 #[test]
 fn native_bft_caller_preserves_legacy_and_paged_exact_custody() {
-    custody(Harness::new(), FORMAT, false);
-    custody(Harness::with_rules(crate::paged_bft::RULES), FORMAT, false);
+    custody(Harness::new(), FORMAT, false, false);
+    custody(
+        Harness::with_rules(crate::paged_bft::RULES),
+        FORMAT,
+        false,
+        false,
+    );
 }
 #[test]
 fn native_bft_caller_origin_recovers_exact_pending_publication_and_cold_state() {
-    custody(super::receive_phase::fixture(), ORIGIN_FORMAT, true);
+    custody(super::receive_phase::fixture(), ORIGIN_FORMAT, true, false);
+}
+
+#[test]
+fn pending_signer_handoff_preserves_durable_consent_lock_and_keyless_refusal() {
+    custody(Harness::new(), FORMAT, false, true);
+    custody(
+        Harness::with_rules(crate::paged_bft::PACKED_RULES),
+        FORMAT,
+        false,
+        true,
+    );
 }
 
 #[test]

@@ -184,6 +184,45 @@ impl Client {
             .sync_all()
             .map_err(|e| e.to_string())
     }
+    fn pending_agent(&self, node: &Store, old: &State, next: &State) -> Result<bft::Agent> {
+        require(
+            old.pending.is_none()
+                && old.outbox.is_none()
+                && next.pending.is_some()
+                && next.outbox.is_none()
+                && old.head == next.head,
+            "BFT caller transition lacks exact native authorization",
+        )?;
+        let agent = self.inspect(node)?;
+        require(
+            agent.head()? == old.head,
+            "BFT signer differs from separately retained caller head",
+        )?;
+        Ok(agent)
+    }
+    /// Keep the actual OS-locked, fully inspected ordinary signer after durable
+    /// consent. Its sign operation still independently replays every record and
+    /// current Native history. No status, cache, recovery or first-sign authority.
+    pub(crate) fn store_pending_for_sign(
+        &self,
+        node: &Store,
+        transition: Transition,
+    ) -> Result<(State, bft::Agent)> {
+        require(
+            self.format == FORMAT,
+            "pending signer handoff requires ordinary caller profile",
+        )?;
+        let old = self.read()?;
+        require(
+            Hash(Sha256::digest(files::canonical(&old)?).into()) == transition.previous_sha256,
+            "BFT caller state changed before publication",
+        )?;
+        let next = transition.proposed;
+        self.validate(&next)?;
+        let agent = self.pending_agent(node, &old, &next)?;
+        self.persist(&next)?;
+        Ok((next, agent))
+    }
     pub fn store(&self, node: &Store, transition: Transition) -> Result<State> {
         let old = self.read()?;
         require(
@@ -245,18 +284,10 @@ impl Client {
             drop(agent);
             return Ok(next);
         }
-        let agent = self.inspect(node)?;
-        match (&old.pending, &old.outbox, &next.pending, &next.outbox) {
-            (None, None, Some(_), None) if old.head == next.head => {
-                require(
-                    agent.head()? == old.head,
-                    "BFT signer differs from separately retained caller head",
-                )?;
-                // Retain consent before signing; actual sign rechecks current context.
-            }
-            _ => return Err("BFT caller transition lacks exact native authorization".into()),
-        }
+        let agent = self.pending_agent(node, &old, &next)?;
+        // Retain consent before signing; actual sign rechecks current context.
         self.persist(&next)?;
+        drop(agent);
         Ok(next)
     }
     /// Calculate recovery only. Exact caller publication is a separate transition.
