@@ -1196,6 +1196,17 @@ pub use export_archive::{
 #[path = "paged_store/export_archive_tests.rs"]
 mod export_archive_tests;
 
+#[path = "paged_store/archive_cut.rs"]
+mod archive_cut;
+pub use archive_cut::{
+    inspect_historical_archive_candidate, HistoricalArchiveObservationCandidate,
+    HistoricalArchiveQueryCandidate, HISTORICAL_ARCHIVE_QUERY_FORMAT,
+};
+
+#[cfg(test)]
+#[path = "paged_store/archive_cut_tests.rs"]
+mod archive_cut_tests;
+
 #[cfg(test)]
 #[path = "paged_store/packed_inspection_tests.rs"]
 mod packed_inspection_tests;

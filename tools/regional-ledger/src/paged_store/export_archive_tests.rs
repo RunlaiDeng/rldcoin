@@ -20,7 +20,7 @@ struct Caller {
     byte_head: Hash,
     checkpoint: Hash,
 }
-fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)> {
+pub(super) fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)> {
     let mut result = BTreeMap::new();
     fn visit(path: &Path, result: &mut BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime)>) {
         for entry in fs::read_dir(path).unwrap() {
@@ -46,7 +46,7 @@ fn inventory(root: &Path) -> BTreeMap<PathBuf, (Hash, u64, std::time::SystemTime
 fn seal(dir: &Path, scope: Scope, records: &[Record]) -> Hash {
     seal_format(dir, scope, records, false).0
 }
-fn seal_format(
+pub(super) fn seal_format(
     dir: &Path,
     scope: Scope,
     records: &[Record],

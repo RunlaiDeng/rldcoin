@@ -382,6 +382,16 @@ enum Action {
         region: String,
     },
     Status,
+    /// Select a historical local certificate after full archive replay; no recovery.
+    HistoricalArchiveInspect {
+        #[arg(long)]
+        bootstrap: PathBuf,
+        #[arg(long)]
+        query: PathBuf,
+        /// Sender-chosen byte commitment, never an independent latest-state pin.
+        #[arg(long)]
+        carried_head: String,
+    },
     /// Complete source archive observation only; never import, recover or sign.
     ExportArchiveInspect {
         #[arg(long)]
@@ -943,6 +953,29 @@ fn run() -> Result<()> {
         miner: args.miner,
         interval: args.interval,
     });
+    if let Action::HistoricalArchiveInspect {
+        ref bootstrap,
+        ref query,
+        ref carried_head,
+    } = action
+    {
+        let bootstrap: Bootstrap = read_json(bootstrap)?;
+        let query: storage::HistoricalArchiveQueryCandidate = read_json(query)?;
+        let observed = storage::inspect_historical_archive_candidate(
+            &args.dir,
+            &bootstrap,
+            &args.authority,
+            pin,
+            Hash::from_hex(carried_head).map_err(|e| e.to_string())?,
+            &query,
+        )?;
+        let raw = serde_json::to_string(&observed).map_err(|e| e.to_string())?;
+        if raw.len() > MAX_BYTES {
+            return Err("historical archive observation exceeds original output bound".into());
+        }
+        println!("{raw}");
+        return Ok(());
+    }
     if let Action::ExportArchiveInspect {
         ref bootstrap,
         ref query,
@@ -1225,6 +1258,7 @@ fn run() -> Result<()> {
     };
     match action {
         Action::ExportArchiveInspect { .. }
+        | Action::HistoricalArchiveInspect { .. }
         | Action::HistoryStreamCheck { .. }
         | Action::HistoryStreamCompactCheck { .. } => {
             unreachable!("handled before opening a native store")

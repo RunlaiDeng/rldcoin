@@ -52,6 +52,15 @@ settlement commands and reconfiguration.
 Historical totals grant no current spendability, incident safety, independent
 freshness, signing or Store recovery authority.
 
+A separate historical archive query replays every local certificate under the
+original paged BFT profile and selects one exact certified checkpoint. It retains
+only that executed statement, state commitment and accounting totals while
+authenticating the complete remaining archive, including repeated certificates.
+Foreign imports or nonlocal evidence refuse; outgoing exports remain pending
+relative to the local selection. Archive byte heads do not establish latest
+state. This entry does not change recovery anchors, active/history bounds or
+ordinary consensus, and does not qualify a full channel window or long history.
+
 Full long-history recovery, permanent deduplication at target scale, arbitrary
 multi-source value composition, independent operators and custody, security and
 supply-chain review, authenticated suite/epoch adoption, funding/resource models,
