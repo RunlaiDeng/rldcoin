@@ -126,6 +126,18 @@ pub struct Admission {
 }
 impl Admission {
     pub fn bytes(&self) -> Result<Vec<u8>> {
+        if self.rules == crate::paged_bft::ONWARD_NETWORK_RULES {
+            return encode(
+                "complete-onward-network-bft-admission-v1",
+                &(
+                    self.currency,
+                    &self.region,
+                    &self.rules,
+                    self.value_rules,
+                    &self.validators,
+                ),
+            );
+        }
         if self.rules == crate::paged_bft::ONWARD_HISTORY_RULES {
             return encode(
                 "complete-onward-history-bft-admission-v1",
@@ -1142,6 +1154,7 @@ pub mod bft_candidate_selection;
 pub mod bft_client;
 mod bft_epoch;
 pub mod bft_network;
+pub mod bft_onward_network;
 pub mod bft_phase_schedule;
 pub mod bft_proposal_schedule;
 pub mod bft_runtime_archive;

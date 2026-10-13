@@ -12,6 +12,32 @@ pub struct CompleteOnwardHistory {
     pub snapshots: Vec<Snapshot>,
 }
 
+#[derive(Clone, Copy)]
+enum Profile {
+    History,
+    Network,
+}
+impl Profile {
+    fn regions(self) -> (&'static str, &'static str) {
+        match self {
+            Self::History => (
+                crate::paged_bft::ORIGIN_HISTORY_RULES,
+                crate::paged_bft::ONWARD_HISTORY_RULES,
+            ),
+            Self::Network => (
+                crate::paged_bft::ORIGIN_NETWORK_RULES,
+                crate::paged_bft::ONWARD_NETWORK_RULES,
+            ),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CompleteOnwardNetworkHistory {
+    pub history: CompleteOnwardHistory,
+}
+
 impl CompleteOnwardHistory {
     fn bound(&self) -> Result<()> {
         require(
@@ -31,7 +57,11 @@ impl CompleteOnwardHistory {
     // Routing and resource checks only: later malformed bodies must not conceal
     // a separately authenticated incident in another complete certificate.
     fn admission(&self, destination: Hash, trust: &Trust) -> Result<()> {
+        self.admission_for(destination, trust, Profile::History)
+    }
+    fn admission_for(&self, destination: Hash, trust: &Trust, profile: Profile) -> Result<()> {
         self.bound()?;
+        let (intermediate_rules, destination_rules) = profile.regions();
         require(
             trust.regions.len() == 3
                 && self.source != destination
@@ -41,15 +71,18 @@ impl CompleteOnwardHistory {
                 && self.origin.destination == self.source
                 && !self.export.is_zero()
                 && !self.origin.export.is_zero()
-                && trust.region(destination)?.rules == crate::paged_bft::ONWARD_HISTORY_RULES
-                && trust.region(self.source)?.rules == crate::paged_bft::ORIGIN_HISTORY_RULES
+                && trust.region(destination)?.rules == destination_rules
+                && trust.region(self.source)?.rules == intermediate_rules
                 && trust.region(self.origin.source)?.rules == crate::paged_bft::RULES
                 && trust.region(self.origin.source)?.region == trust.currency.origin,
             "complete onward requires exact two-hop route and three signed profiles",
         )
     }
     fn shape(&self, destination: Hash, trust: &Trust) -> Result<()> {
-        self.admission(destination, trust)?;
+        self.shape_for(destination, trust, Profile::History)
+    }
+    fn shape_for(&self, destination: Hash, trust: &Trust, profile: Profile) -> Result<()> {
+        self.admission_for(destination, trust, profile)?;
         self.origin.shape(self.source, trust)?;
         for s in &self.origin.snapshots {
             for command in s.blocks.iter().flat_map(|b| &b.commands) {
@@ -130,7 +163,15 @@ pub(super) struct Pending {
 }
 
 fn execute(proof: &CompleteOnwardHistory, destination: Hash, trust: &Trust) -> Result<Executed> {
-    proof.shape(destination, trust)?;
+    execute_for(proof, destination, trust, Profile::History)
+}
+fn execute_for(
+    proof: &CompleteOnwardHistory,
+    destination: Hash,
+    trust: &Trust,
+    profile: Profile,
+) -> Result<Executed> {
+    proof.shape_for(destination, trust, profile)?;
     let header = Header {
         format: FORMAT.into(),
         bootstrap: Bootstrap {
@@ -246,7 +287,22 @@ impl Replay {
         proof: &CompleteOnwardHistory,
         stream: &dyn body_witness::History,
     ) -> Result<()> {
-        let executed = execute(proof, self.chain.region, &self.trust)?;
+        self.apply_onward_history_for(proof, stream, Profile::History)
+    }
+    pub(super) fn apply_onward_network_history(
+        &mut self,
+        proof: &CompleteOnwardNetworkHistory,
+        stream: &dyn body_witness::History,
+    ) -> Result<()> {
+        self.apply_onward_history_for(&proof.history, stream, Profile::Network)
+    }
+    fn apply_onward_history_for(
+        &mut self,
+        proof: &CompleteOnwardHistory,
+        stream: &dyn body_witness::History,
+        profile: Profile,
+    ) -> Result<()> {
+        let executed = execute_for(proof, self.chain.region, &self.trust, profile)?;
         // Complete incoming execution precedes any body comparison. Only this
         // invocation's already-executed prefix may constrain the incoming branch.
         let prior_count = self.executed.count();
@@ -358,6 +414,17 @@ impl Store {
         if self.trust.region(self.chain.region)?.rules != crate::paged_bft::ONWARD_HISTORY_RULES {
             return Ok(vec![]);
         }
+        self.onward_pending_imports()
+    }
+    pub fn complete_onward_network_pending_imports(&self) -> Result<Vec<Command>> {
+        require(
+            self.trust.region(self.chain.region)?.rules == crate::paged_bft::ONWARD_NETWORK_RULES,
+            "complete onward network pending requires explicit profile",
+        )?;
+        self.check_onward_network_safety()?;
+        self.onward_pending_imports()
+    }
+    fn onward_pending_imports(&self) -> Result<Vec<Command>> {
         let replay = self.current_paged_replay()?;
         let mut commands = Vec::new();
         self.safety.check_region(self.chain.region)?;
@@ -448,6 +515,231 @@ impl Store {
             snapshot.statement.height == native.height
                 && ledger.exports.get(&export) == Some(native),
             "onward export earliest complete prefix differs from Native debit",
+        )?;
+        Ok(proof)
+    }
+}
+
+impl CompleteOnwardNetworkHistory {
+    pub(crate) fn require_route(&self, destination: Hash, trust: &Trust) -> Result<()> {
+        crate::encoded_size::check("complete-onward-network-history-v1", self)?;
+        self.history
+            .admission_for(destination, trust, Profile::Network)
+    }
+    pub(crate) fn complete_snapshots(&self) -> Result<Vec<Snapshot>> {
+        crate::encoded_size::check("complete-onward-network-history-v1", self)?;
+        self.history.complete_snapshots()
+    }
+    pub(crate) fn verify_anchors(
+        &self,
+        destination: Hash,
+        trust: &Trust,
+    ) -> Result<VerifiedEvidence> {
+        self.require_route(destination, trust)?;
+        let executed = execute_for(&self.history, destination, trust, Profile::Network)?;
+        Ok(VerifiedEvidence {
+            snapshots: executed.anchors,
+            trust_binding: Some(trust.binding),
+            ..VerifiedEvidence::default()
+        })
+    }
+}
+
+fn network_regions(destination: Hash, trust: &Trust) -> Result<[Hash; 3]> {
+    let origin = trust.named(&trust.currency.origin)?;
+    require(
+        trust.regions.len() == 3
+            && origin != destination
+            && trust.region(origin)?.rules == crate::paged_bft::RULES
+            && trust.region(destination)?.rules == crate::paged_bft::ONWARD_NETWORK_RULES,
+        "complete onward network requires three exact admitted regions",
+    )?;
+    let intermediate = trust
+        .regions
+        .keys()
+        .copied()
+        .find(|r| *r != origin && *r != destination)
+        .ok_or("complete onward network intermediate absent")?;
+    require(
+        trust.region(intermediate)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES,
+        "complete onward network intermediate profile differs",
+    )?;
+    Ok([origin, intermediate, destination])
+}
+
+impl Store {
+    pub(crate) fn require_onward_network_state(&self) -> Result<()> {
+        network_regions(self.chain.region, &self.trust)?;
+        self.current_paged_replay()?;
+        Ok(())
+    }
+    pub(crate) fn check_onward_network_safety(&self) -> Result<()> {
+        for region in network_regions(self.chain.region, &self.trust)? {
+            self.safety.check_region(region)?;
+        }
+        Ok(())
+    }
+    pub(crate) fn observe_onward_network_conflicts(
+        &mut self,
+        snapshots: &[Snapshot],
+    ) -> Result<()> {
+        self.require_onward_network_state()?;
+        require(
+            snapshots.len() <= MAX_COINS + MAX_SNAPSHOTS + 1,
+            "complete onward network conflict certificate bound",
+        )?;
+        crate::encoded_size::check("complete-onward-network-conflicts-v1", &snapshots)?;
+        self.check_paged_snapshot_conflicts(snapshots)
+    }
+    pub fn accept_complete_onward_network_history(
+        &mut self,
+        proof: CompleteOnwardNetworkHistory,
+    ) -> Result<Hash> {
+        proof.require_route(self.chain.region, &self.trust)?;
+        self.require_onward_network_state()?;
+        self.check_paged_snapshot_conflicts(&proof.complete_snapshots()?)?;
+        proof
+            .history
+            .shape_for(self.chain.region, &self.trust, Profile::Network)?;
+        self.check_onward_network_safety()?;
+        let checkpoint = proof
+            .history
+            .snapshots
+            .last()
+            .ok_or("complete onward network tail absent")?
+            .statement
+            .id()?;
+        let mut identical = false;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("complete onward network stream absent")?;
+        stream.visit(stream.storage_head(), |record| {
+            if let Record::OnwardNetworkHistory(old) = record {
+                identical |= old.as_ref() == &proof;
+            }
+            Ok(())
+        })?;
+        if !identical {
+            self.append_paged(&[Record::OnwardNetworkHistory(Box::new(proof))])?;
+        }
+        Ok(checkpoint)
+    }
+    /// Interleaved ordinary B history remains intact; selected proof follows its
+    /// actual permanent Import, never event position or a sender-provided balance.
+    pub fn complete_onward_network_export(
+        &self,
+        export: Hash,
+    ) -> Result<CompleteOnwardNetworkHistory> {
+        require(
+            self.trust.region(self.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES,
+            "onward network export requires exact intermediate network profile",
+        )?;
+        self.current_paged_replay()?;
+        let native = self
+            .chain
+            .ledger
+            .exports
+            .get(&export)
+            .ok_or("onward network export absent from Native debit")?;
+        let regions = network_regions(native.destination, &self.trust)?;
+        require(
+            regions[1] == self.chain.region
+                && native.dependencies.len() == 1
+                && native.channel_dependencies.is_empty(),
+            "onward network export ancestry differs",
+        )?;
+        for region in regions {
+            self.safety.check_region(region)?;
+        }
+        let anchor = *native
+            .dependencies
+            .iter()
+            .next()
+            .ok_or("onward network anchor absent")?;
+        let imports = self
+            .chain
+            .ledger
+            .imports
+            .iter()
+            .filter(|(_, checkpoint)| **checkpoint == anchor)
+            .collect::<Vec<_>>();
+        require(
+            imports.len() == 1,
+            "onward network requires exact permanent origin Import",
+        )?;
+        let origin_export = *imports[0].0;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("onward network source stream absent")?;
+        let mut origin = None;
+        let mut snapshots = BTreeMap::new();
+        stream.visit(stream.storage_head(), |record| {
+            match record {
+                Record::OriginHistory(proof) => {
+                    require(
+                        proof.source == regions[0]
+                            && proof.destination == self.chain.region
+                            && proof.export == origin_export,
+                        "onward network retained foreign route unsupported",
+                    )?;
+                    if proof
+                        .snapshots
+                        .last()
+                        .ok_or("onward network retained proof empty")?
+                        .statement
+                        .id()?
+                        == anchor
+                        && origin.is_none()
+                    {
+                        origin = Some(*proof.clone());
+                    }
+                }
+                Record::Certified(snapshot) => {
+                    require(
+                        snapshot.statement.region == self.chain.region,
+                        "onward network export local certificate required",
+                    )?;
+                    if snapshot.statement.height <= native.height {
+                        require(
+                            snapshots.len() < MAX_COINS
+                                || snapshots.contains_key(&snapshot.statement.height),
+                            "onward network export source certificate bound",
+                        )?;
+                        snapshots
+                            .entry(snapshot.statement.height)
+                            .or_insert_with(|| *snapshot.clone());
+                    }
+                }
+                _ => return Err("onward network export retained event unsupported".into()),
+            }
+            Ok(())
+        })?;
+        let proof = CompleteOnwardNetworkHistory {
+            history: CompleteOnwardHistory {
+                source: self.chain.region,
+                destination: native.destination,
+                export,
+                origin: origin.ok_or("onward network actual imported origin proof absent")?,
+                snapshots: snapshots.into_values().collect(),
+            },
+        };
+        proof.require_route(native.destination, &self.trust)?;
+        let executed = execute_for(
+            &proof.history,
+            native.destination,
+            &self.trust,
+            Profile::Network,
+        )?;
+        let (snapshot, ledger) = executed
+            .anchors
+            .get(&executed.checkpoint)
+            .ok_or("onward network executed tail absent")?;
+        require(
+            snapshot.statement.height == native.height
+                && ledger.exports.get(&export) == Some(native),
+            "onward network earliest complete prefix differs from Native debit",
         )?;
         Ok(proof)
     }

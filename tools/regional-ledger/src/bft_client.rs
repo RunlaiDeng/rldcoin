@@ -53,6 +53,7 @@ impl Client {
         format: String,
         node: &Store,
     ) -> Result<Self> {
+        crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
         require(
             cfg!(unix),
             "BFT caller custody requires Unix private file operations",

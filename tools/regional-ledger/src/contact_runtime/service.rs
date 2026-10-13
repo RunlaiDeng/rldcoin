@@ -822,6 +822,7 @@ pub fn run(options: Options) -> Result<()> {
     )?;
     let store = Store::open_inspection(&options.ledger, &options.authority, options.currency)?;
     let region = store.chain.region;
+    crate::paged_bft::require_runtime_adoption(&store.trust.region(region)?.rules)?;
     drop(store);
     let config = configuration(&options, region)?;
     let node = Node::open(&config)?;

@@ -174,6 +174,7 @@ pub struct LocalEnvelope {
 /// ledger and command-free local parent proof need no pending value dependency. This read changes no ledger, caller head, signer, nonce or
 /// voting lock; no result survives the operation.
 pub fn local_envelope(body: Body, node: &Store) -> Result<LocalEnvelope> {
+    crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
     require(
         serde_json::to_vec(&body).map_err(|e| e.to_string())?.len() <= crate::contact::MAX_PAYLOAD,
         "local network body exceeds payload bound",
@@ -431,7 +432,9 @@ impl Envelope {
             ((self.format == FORMAT
                 && self.origins.is_none()
                 && node.trust.region(self.region)?.rules
-                    != crate::paged_bft::ORIGIN_NETWORK_RULES)
+                    != crate::paged_bft::ORIGIN_NETWORK_RULES
+                && node.trust.region(self.region)?.rules
+                    != crate::paged_bft::ONWARD_NETWORK_RULES)
                 || (self.format == ORIGIN_FORMAT
                     && self.origins.is_some()
                     && node.trust.region(self.region)?.rules
@@ -441,7 +444,8 @@ impl Envelope {
                 && bft::is_profile(&node.trust.region(self.region)?.rules),
             "consensus envelope domain/profile mismatch",
         )?;
-        let mut evidence = if let Some(origins) = &self.origins {
+        crate::paged_bft::require_runtime_evidence(&self.evidence, &node.trust)?;
+        let evidence = if let Some(origins) = &self.origins {
             require(
                 self.evidence.snapshots.len() <= MAX_SNAPSHOTS
                     && self
@@ -468,124 +472,7 @@ impl Envelope {
         } else {
             VerifiedEvidence::verify(&self.evidence, &node.trust)?
         };
-        if matches!(
-            self.body,
-            Body::EpochSigned { .. } | Body::EpochSubmission { .. }
-        ) {
-            require(
-                crate::bft::is_joint(&node.trust.region(self.region)?.rules),
-                "scoped epoch body requires joint profile",
-            )?;
-        }
-        require(
-            self.carried_epochs().len() <= epoch::MAX_EPOCHS,
-            "consensus carried epoch bound",
-        )?;
-        for proof in self.carried_epochs() {
-            require(
-                proof.statement.region == self.region,
-                "carried epoch foreign region",
-            )?;
-            evidence.install_epoch(proof.clone(), &node.trust)?;
-        }
-        match &self.body {
-            Body::EpochApproval(vote) => {
-                require(
-                    vote.proposal.statement.region == self.region
-                        && vote.proposal.statement.currency == self.currency,
-                    "joint approval envelope domain",
-                )?;
-                vote.verify(&node.trust, &evidence)?;
-            }
-            Body::EpochActivation(proof) => {
-                require(
-                    crate::bft::is_joint(&node.trust.region(self.region)?.rules)
-                        && proof.statement.region == self.region
-                        && proof.statement.currency == self.currency,
-                    "joint activation envelope profile/domain",
-                )?;
-                let mut verified = evidence.clone();
-                verified.install_epoch((**proof).clone(), &node.trust)?;
-            }
-            Body::Signed(message) | Body::EpochSigned { message, .. } => {
-                let c = match message.as_ref() {
-                    bft::Message::Proposal(p) => {
-                        p.verify(&node.trust, &evidence)?;
-                        p.context()?
-                    }
-                    bft::Message::Vote(v) => {
-                        v.verify(&v.context.keys(&node.trust, &evidence)?)?;
-                        v.context.clone()
-                    }
-                    bft::Message::Timeout(t) => {
-                        t.verify(&t.context.keys(&node.trust, &evidence)?)?;
-                        t.context.clone()
-                    }
-                    bft::Message::EpochApproval { .. } => {
-                        return Err("epoch approvals require an explicit complete activation certificate, not ordinary consensus carriage".into());
-                    }
-                };
-                require(
-                    c.currency == self.currency && c.region == self.region,
-                    "consensus message differs from envelope domain",
-                )?;
-                // Even votes bind an independently certified native parent.
-                if let Some(previous) = c.previous {
-                    let parent = evidence.snapshot(previous)?;
-                    require(
-                        parent.statement.region == c.region
-                            && parent.statement.height == c.parent_height
-                            && parent.statement.block == c.parent_block
-                            && parent.statement.state == c.parent_state,
-                        "consensus message omits or changes certified parent",
-                    )?;
-                } else {
-                    require(
-                        c.parent_height == 0
-                            && c.parent_block == c.region
-                            && c.parent_state == Ledger::default().root()?,
-                        "consensus message changes native genesis parent",
-                    )?;
-                }
-            }
-            Body::Finalized(snapshot) => {
-                require(
-                    snapshot.statement.region == self.region,
-                    "foreign finality message",
-                )?;
-                let mut verified = evidence.clone();
-                verified.add((**snapshot).clone(), &node.trust)?;
-            }
-            Body::Submission(commands) | Body::EpochSubmission { commands, .. } => {
-                require(
-                    !commands.is_empty() && commands.len() <= 4,
-                    "submission command bound",
-                )?;
-                let local = self
-                    .evidence
-                    .snapshots
-                    .iter()
-                    .filter(|s| s.statement.region == self.region)
-                    .max_by_key(|s| s.statement.height);
-                let mut chain = Chain::new(self.region, &node.trust)?;
-                if let Some(s) = local {
-                    chain = evidence.replay_extension(s, &node.trust)?;
-                    chain.install(s.statement.id()?, &evidence)?;
-                    if crate::bft::is_joint(&node.trust.region(self.region)?.rules) {
-                        chain.epoch =
-                            crate::joint_epoch::next_epoch(&chain, &node.trust, &evidence)?;
-                    }
-                }
-                // Validate real signed commands against the supplied certified
-                // parent. Receiving a submission neither signs nor debits.
-                chain.template(
-                    commands.clone(),
-                    node.trust.region(self.region)?.validators[0].clone(),
-                    &node.trust,
-                    &evidence,
-                )?;
-            }
-        }
+        verify_authenticated_body(self, node, evidence)?;
         id(
             if self.format == ORIGIN_FORMAT {
                 "bft-origin-network-envelope-v3"
@@ -597,7 +484,137 @@ impl Envelope {
     }
 }
 
+/// Shared body kernel only. The caller must first authenticate its complete
+/// profile/domain and independently derive every carried evidence anchor.
+/// No serialized ledger or sender cache may supply this argument.
+pub(crate) fn verify_authenticated_body(
+    envelope: &Envelope,
+    node: &Store,
+    mut evidence: VerifiedEvidence,
+) -> Result<()> {
+    if matches!(
+        envelope.body,
+        Body::EpochSigned { .. } | Body::EpochSubmission { .. }
+    ) {
+        require(
+            crate::bft::is_joint(&node.trust.region(envelope.region)?.rules),
+            "scoped epoch body requires joint profile",
+        )?;
+    }
+    require(
+        envelope.carried_epochs().len() <= epoch::MAX_EPOCHS,
+        "consensus carried epoch bound",
+    )?;
+    for proof in envelope.carried_epochs() {
+        require(
+            proof.statement.region == envelope.region,
+            "carried epoch foreign region",
+        )?;
+        evidence.install_epoch(proof.clone(), &node.trust)?;
+    }
+    match &envelope.body {
+        Body::EpochApproval(vote) => {
+            require(
+                vote.proposal.statement.region == envelope.region
+                    && vote.proposal.statement.currency == envelope.currency,
+                "joint approval envelope domain",
+            )?;
+            vote.verify(&node.trust, &evidence)?;
+        }
+        Body::EpochActivation(proof) => {
+            require(
+                crate::bft::is_joint(&node.trust.region(envelope.region)?.rules)
+                    && proof.statement.region == envelope.region
+                    && proof.statement.currency == envelope.currency,
+                "joint activation envelope profile/domain",
+            )?;
+            let mut verified = evidence.clone();
+            verified.install_epoch((**proof).clone(), &node.trust)?;
+        }
+        Body::Signed(message) | Body::EpochSigned { message, .. } => {
+            let c = match message.as_ref() {
+                bft::Message::Proposal(p) => {
+                    p.verify(&node.trust, &evidence)?;
+                    p.context()?
+                }
+                bft::Message::Vote(v) => {
+                    v.verify(&v.context.keys(&node.trust, &evidence)?)?;
+                    v.context.clone()
+                }
+                bft::Message::Timeout(t) => {
+                    t.verify(&t.context.keys(&node.trust, &evidence)?)?;
+                    t.context.clone()
+                }
+                bft::Message::EpochApproval { .. } => {
+                    return Err("epoch approvals require an explicit complete activation certificate, not ordinary consensus carriage".into());
+                }
+            };
+            require(
+                c.currency == envelope.currency && c.region == envelope.region,
+                "consensus message differs from envelope domain",
+            )?;
+            // Even votes bind an independently certified native parent.
+            if let Some(previous) = c.previous {
+                let parent = evidence.snapshot(previous)?;
+                require(
+                    parent.statement.region == c.region
+                        && parent.statement.height == c.parent_height
+                        && parent.statement.block == c.parent_block
+                        && parent.statement.state == c.parent_state,
+                    "consensus message omits or changes certified parent",
+                )?;
+            } else {
+                require(
+                    c.parent_height == 0
+                        && c.parent_block == c.region
+                        && c.parent_state == Ledger::default().root()?,
+                    "consensus message changes native genesis parent",
+                )?;
+            }
+        }
+        Body::Finalized(snapshot) => {
+            require(
+                snapshot.statement.region == envelope.region,
+                "foreign finality message",
+            )?;
+            let mut verified = evidence.clone();
+            verified.add((**snapshot).clone(), &node.trust)?;
+        }
+        Body::Submission(commands) | Body::EpochSubmission { commands, .. } => {
+            require(
+                !commands.is_empty() && commands.len() <= 4,
+                "submission command bound",
+            )?;
+            let local = envelope
+                .evidence
+                .snapshots
+                .iter()
+                .filter(|s| s.statement.region == envelope.region)
+                .max_by_key(|s| s.statement.height);
+            let mut chain = Chain::new(envelope.region, &node.trust)?;
+            if let Some(s) = local {
+                chain = evidence.replay_extension(s, &node.trust)?;
+                chain.install(s.statement.id()?, &evidence)?;
+                if crate::bft::is_joint(&node.trust.region(envelope.region)?.rules) {
+                    chain.epoch = crate::joint_epoch::next_epoch(&chain, &node.trust, &evidence)?;
+                }
+            }
+            // Validate real signed commands against the supplied certified
+            // parent. Receiving a submission neither signs nor debits.
+            chain.template(
+                commands.clone(),
+                node.trust.region(envelope.region)?.validators[0].clone(),
+                &node.trust,
+                &evidence,
+            )?;
+        }
+    }
+    Ok(())
+}
+
 pub fn sync(node: &mut Store, evidence: Evidence) -> Result<()> {
+    crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
+    crate::paged_bft::require_runtime_evidence(&evidence, &node.trust)?;
     bft::Context::current(node)?;
     VerifiedEvidence::verify(&evidence, &node.trust)?;
     node.add_evidence(evidence)?;

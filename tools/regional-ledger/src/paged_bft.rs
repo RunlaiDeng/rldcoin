@@ -9,6 +9,19 @@ pub fn is_packed_profile(rules: &str) -> bool {
 pub const ORIGIN_HISTORY_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ORIGIN-HISTORY-FIXTURE-V1";
 pub const ORIGIN_NETWORK_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ORIGIN-NETWORK-FIXTURE-V2";
 pub const ONWARD_HISTORY_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ONWARD-HISTORY-FIXTURE-V1";
+pub const ONWARD_NETWORK_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ONWARD-NETWORK-FIXTURE-V1";
+pub(crate) fn require_runtime_adoption(rules: &str) -> Result<()> {
+    require(
+        rules != ONWARD_NETWORK_RULES,
+        "complete onward network requires separately integrated ordinary runtime",
+    )
+}
+pub(crate) fn require_runtime_evidence(evidence: &Evidence, trust: &Trust) -> Result<()> {
+    for snapshot in &evidence.snapshots {
+        require_runtime_adoption(&trust.region(snapshot.statement.region)?.rules)?;
+    }
+    Ok(())
+}
 pub fn is_origin_profile(rules: &str) -> bool {
     rules == ORIGIN_HISTORY_RULES || rules == ORIGIN_NETWORK_RULES
 }
@@ -17,6 +30,7 @@ pub fn is_profile(rules: &str) -> bool {
         || is_packed_profile(rules)
         || is_origin_profile(rules)
         || rules == ONWARD_HISTORY_RULES
+        || rules == ONWARD_NETWORK_RULES
 }
 pub fn rules_hash() -> Result<Hash> {
     id(
@@ -50,6 +64,13 @@ pub fn rules_hash_for(rules: &str) -> Result<Hash> {
             &(
                 include_str!("onward_history_profile.md"),
                 rules_hash_for(ORIGIN_HISTORY_RULES)?,
+            ),
+        ),
+        ONWARD_NETWORK_RULES => id(
+            "complete-onward-network-bft-rules-v1",
+            &(
+                include_str!("onward_network_profile.md"),
+                rules_hash_for(ORIGIN_NETWORK_RULES)?,
             ),
         ),
         _ => Err("unknown explicit paged BFT rules".into()),

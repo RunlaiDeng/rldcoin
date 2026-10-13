@@ -57,6 +57,7 @@ fn state_hash(value: &bft_client::State) -> Result<Hash> {
 }
 impl Runtime {
     pub(crate) fn open(path: &Path, node: &Store, transport: &Value) -> Result<Self> {
+        crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
         let config: Config =
             serde_json::from_value(read(path, 64 * 1024)?).map_err(|e| e.to_string())?;
         require(

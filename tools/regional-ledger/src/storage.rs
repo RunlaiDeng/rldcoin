@@ -795,6 +795,7 @@ impl Store {
         })
     }
     pub fn bft_submit(&self, commands: Vec<Command>) -> Result<Hash> {
+        crate::paged_bft::require_runtime_adoption(&self.trust.region(self.chain.region)?.rules)?;
         let envelope = if self.trust.region(self.chain.region)?.rules
             == crate::paged_bft::ORIGIN_NETWORK_RULES
         {
@@ -1269,10 +1270,10 @@ pub use paged::{
     inspect_export_archive_candidate, inspect_historical_archive_candidate,
     inspect_lossless_export_archive_candidate, inspect_lossless_packed_native_candidate,
     inspect_origin_archive_cut_candidate, inspect_packed_native_candidate, CompleteOnwardHistory,
-    CompleteOriginHistory, ExportArchiveObservationCandidate, ExportArchiveQueryCandidate,
-    HistoricalArchiveObservationCandidate, HistoricalArchiveQueryCandidate,
-    NativeContinuationCandidate, NativeContinuationPinsCandidate, NativePrefixPinsCandidate,
-    OriginArchiveCutObservationCandidate, OriginArchiveCutQueryCandidate,
-    OriginArchiveSelectionCandidate, PackedNativeBoundaryCandidate,
+    CompleteOnwardNetworkHistory, CompleteOriginHistory, ExportArchiveObservationCandidate,
+    ExportArchiveQueryCandidate, HistoricalArchiveObservationCandidate,
+    HistoricalArchiveQueryCandidate, NativeContinuationCandidate, NativeContinuationPinsCandidate,
+    NativePrefixPinsCandidate, OriginArchiveCutObservationCandidate,
+    OriginArchiveCutQueryCandidate, OriginArchiveSelectionCandidate, PackedNativeBoundaryCandidate,
     HISTORICAL_ARCHIVE_QUERY_FORMAT, ORIGIN_ARCHIVE_CUT_FORMAT,
 };

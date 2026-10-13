@@ -42,6 +42,13 @@ pub(super) fn check<T: Serialize>(domain: &str, value: &T) -> crate::Result<usiz
     Ok(counter.bytes)
 }
 
+/// Count a plain JSON wire value without allocating beyond its transport bound.
+pub(crate) fn check_json<T: Serialize>(value: &T, limit: usize) -> crate::Result<usize> {
+    let mut counter = Counter { bytes: 0, limit };
+    serde_json::to_writer(&mut counter, value).map_err(|e| e.to_string())?;
+    Ok(counter.bytes)
+}
+
 // Only the test executable can select the old independent Vec encoder.
 #[cfg(test)]
 thread_local! {
@@ -139,6 +146,16 @@ mod tests {
         assert_eq!(counter.bytes, usize::MAX);
         assert!(counter.write(b"x").is_err());
         assert_eq!(counter.bytes, usize::MAX);
+        let limit = crate::contact::MAX_PAYLOAD;
+        for length in [limit - 3, limit - 2, limit - 1] {
+            let value = "x".repeat(length);
+            let expected = serde_json::to_vec(&value).unwrap().len();
+            if expected <= limit {
+                assert_eq!(check_json(&value, limit).unwrap(), expected);
+            } else {
+                assert!(check_json(&value, limit).is_err());
+            }
+        }
         let mut counter = Counter { bytes: 0, limit: 1 };
         assert!(counter.write(b"xx").is_err());
         assert_eq!(counter.bytes, 0);

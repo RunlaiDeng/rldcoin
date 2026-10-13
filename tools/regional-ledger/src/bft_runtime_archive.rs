@@ -367,6 +367,7 @@ pub struct Client {
 }
 impl Client {
     pub fn lock(root: &Path, key: String, format: String, node: &Store) -> Result<Self> {
+        crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
         require(
             cfg!(unix),
             "native companion custody requires Unix private file operations",

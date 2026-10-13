@@ -275,12 +275,14 @@ impl Store {
         Ok(evidence)
     }
     pub fn contact_export(&self, eid: Hash) -> Result<Vec<u8>> {
+        crate::paged_bft::require_runtime_adoption(&self.trust.region(self.chain.region)?.rules)?;
         let export = self
             .chain
             .ledger
             .exports
             .get(&eid)
             .ok_or("unknown local export")?;
+        crate::paged_bft::require_runtime_adoption(&self.trust.region(export.destination)?.rules)?;
         if self.trust.region(export.destination)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
             let proof = self.complete_origin_export(eid)?;
             return Frame::pack_origin(&proof);
@@ -318,6 +320,8 @@ impl Store {
             record.source == self.chain.region,
             "cannot originate a frame for another region's export",
         )?;
+        let evidence = self.contact_dependency_evidence(sid)?;
+        crate::paged_bft::require_runtime_evidence(&evidence, &self.trust)?;
         Frame::pack(&Bundle {
             format: FORMAT.into(),
             currency: self.trust.currency()?,
@@ -325,7 +329,7 @@ impl Store {
             destination: record.destination,
             snapshot: sid,
             export: eid,
-            evidence: self.contact_dependency_evidence(sid)?,
+            evidence,
             incidents: self.conflicts.clone(),
         })
     }
@@ -426,17 +430,19 @@ impl Store {
         })
     }
     pub fn contact_apply(&mut self, raw: &[u8], miner: Option<String>) -> Result<Status> {
+        crate::paged_bft::require_runtime_adoption(&self.trust.region(self.chain.region)?.rules)?;
         let (frame, bundle) = Frame::unpack(raw)?;
         require(
             bundle.currency == self.trust.currency()? && bundle.destination == self.chain.region,
             "contact uses wrong currency or destination",
         )?;
-        self.trust.region(bundle.source)?;
+        crate::paged_bft::require_runtime_adoption(&self.trust.region(bundle.source)?.rules)?;
         require(
             bundle.evidence.snapshots.len() <= MAX_SNAPSHOTS
                 && bundle.incidents.len() <= crate::conflict::MAX_INCIDENTS,
             "contact proof count bound",
         )?;
+        crate::paged_bft::require_runtime_evidence(&bundle.evidence, &self.trust)?;
         let source = bundle
             .evidence
             .snapshots

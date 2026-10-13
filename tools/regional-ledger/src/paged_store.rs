@@ -45,6 +45,7 @@ pub(crate) enum Record {
     Certified(Box<Snapshot>),
     OriginHistory(Box<CompleteOriginHistory>),
     OnwardHistory(Box<CompleteOnwardHistory>),
+    OnwardNetworkHistory(Box<CompleteOnwardNetworkHistory>),
     Evidence(Box<Evidence>),
     Receipt(Box<crate::channel_receipt::Receipt>),
     Contact(Box<crate::contact::Frame>),
@@ -56,6 +57,7 @@ impl Record {
             Self::Certified(s) => vec![*s.clone()],
             Self::OriginHistory(proof) => proof.snapshots.clone(),
             Self::OnwardHistory(proof) => proof.complete_snapshots()?,
+            Self::OnwardNetworkHistory(proof) => proof.complete_snapshots()?,
             Self::Evidence(e) => e.snapshots.clone(),
             Self::Contact(frame) => {
                 crate::contact::Frame::unpack(&frame.retained_bytes()?)?
@@ -346,6 +348,9 @@ impl Replay {
             }
             Record::OriginHistory(proof) => self.apply_origin_history(proof, stream)?,
             Record::OnwardHistory(proof) => self.apply_onward_history(proof, stream)?,
+            Record::OnwardNetworkHistory(proof) => {
+                self.apply_onward_network_history(proof, stream)?
+            }
             Record::Receipt(receipt) => {
                 receipt.verify_selected(&self.chain, &self.trust, &self.evidence)?;
                 self.receipts.record(*receipt.clone())?;
@@ -1190,7 +1195,7 @@ pub use origin_history::CompleteOriginHistory;
 
 #[path = "paged_store/onward_history.rs"]
 mod onward_history;
-pub use onward_history::CompleteOnwardHistory;
+pub use onward_history::{CompleteOnwardHistory, CompleteOnwardNetworkHistory};
 
 #[cfg(test)]
 #[path = "paged_store/onward_history_tests.rs"]
@@ -1269,3 +1274,7 @@ mod continuation_tests;
 #[cfg(test)]
 #[path = "paged_store/current_tests.rs"]
 mod current_tests;
+
+#[cfg(test)]
+#[path = "paged_store/onward_network_tests.rs"]
+mod onward_network_tests;
