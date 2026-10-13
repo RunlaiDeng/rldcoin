@@ -10,6 +10,10 @@ const ACTIVE: &str = "RLD-CONTACT-ACTIVE-SHARED-FRAME-V1";
 const MAX_MESSAGES: usize = 256;
 const MAX_ARCHIVE_FILES: usize = 4096;
 const MAX_ARCHIVE_BYTES: u64 = 256 * 1024 * 1024;
+#[cfg(test)]
+thread_local! {
+    static PARALLEL_COLD_FIXTURE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
 
 #[derive(Clone, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -124,6 +128,40 @@ fn receipt_matches(receipt: &Value, packet: &Value, route: &Value) -> Result<()>
 }
 
 impl Node {
+    #[cfg(test)]
+    fn open_parallel_fixture(config: &Value) -> Result<Self> {
+        struct Reset(bool);
+        impl Drop for Reset {
+            fn drop(&mut self) {
+                PARALLEL_COLD_FIXTURE.with(|flag| flag.set(self.0));
+            }
+        }
+        let previous = PARALLEL_COLD_FIXTURE.with(|flag| flag.replace(true));
+        let _reset = Reset(previous);
+        Self::open(config)
+    }
+
+    #[cfg(test)]
+    fn validate_archives_parallel_fixture(&self) -> Result<()> {
+        let entries = self.state.archives.iter().collect::<Vec<_>>();
+        let (left, right) = entries.split_at(entries.len().div_ceil(2));
+        let check = |entries: &[(&String, &String)]| -> Result<()> {
+            for (id, object) in entries {
+                self.archive(id, object)?;
+            }
+            Ok(())
+        };
+        // One additional scoped worker; both halves finish before release.
+        // Every archive still executes the exact original complete kernel.
+        std::thread::scope(|scope| {
+            let worker = scope.spawn(|| check(left));
+            let right_result = check(right);
+            let left_result = worker.join().map_err(|_| "cold archive worker panicked")?;
+            left_result?;
+            right_result
+        })
+    }
+
     pub fn open(config: &Value) -> Result<Self> {
         crypto(
             json!({"Config":{"Header":{"keys":config.as_object().ok_or("contact config object")?.keys().collect::<Vec<_>>(),"version":config["format"]}}}),
@@ -352,6 +390,10 @@ impl Node {
             }
         }
         self.archive_inventory()?;
+        #[cfg(test)]
+        if PARALLEL_COLD_FIXTURE.with(std::cell::Cell::get) {
+            return self.validate_archives_parallel_fixture();
+        }
         for (id, object) in &s.archives {
             self.archive(id, object)?;
         }
@@ -1709,7 +1751,6 @@ mod tests {
         fs::rename(&missing, &path).unwrap();
         assert_eq!(fs::read(&path).unwrap(), bytes);
         drop(source);
-        drop(destination);
         drop(relay);
         let cold = Node::open(&f.configs[1]).unwrap();
         assert_eq!(cold.state.messages, messages);
@@ -1719,10 +1760,64 @@ mod tests {
             vec![(packet, raw)]
         );
         assert_eq!(fs::read(&state_path).unwrap(), original);
+        let expected = cold.state.clone();
+        drop(cold);
+        let clear = || {
+            crate::contact_witness::execute(&super::super::bytes(&json!("Clear")).unwrap(), &[])
+                .unwrap();
+        };
+        let mut serial_seconds = 0.0;
+        let mut parallel_seconds = 0.0;
+        // Empty process-local transit witnesses before every complete open.
+        // Filesystem page caches are neither cleared nor claimed independent.
+        for _ in 0..8 {
+            clear();
+            let at = std::time::Instant::now();
+            let node = Node::open(&f.configs[1]).unwrap();
+            assert!(node.state.exact(&expected));
+            drop(node);
+            serial_seconds += at.elapsed().as_secs_f64();
+            clear();
+            let at = std::time::Instant::now();
+            let node = Node::open_parallel_fixture(&f.configs[1]).unwrap();
+            assert!(node.state.exact(&expected));
+            drop(node);
+            parallel_seconds += at.elapsed().as_secs_f64();
+        }
+        assert_eq!(fs::read(&state_path).unwrap(), original);
+        let (last_id, old_object) = archives.iter().next_back().unwrap();
+        let old_path = f.root.join("1/archive").join(format!("{old_object}.json"));
+        let mut bad = read(&old_path, STATE_LIMIT).unwrap();
+        let mut body = bad["receipt"]["body"].clone();
+        body["routing"]["signature"] = json!("00".repeat(64));
+        bad["receipt"] = destination.sign("receipt", body).unwrap();
+        let bad_raw = super::super::bytes(&bad).unwrap();
+        let bad_object = hex::encode(Sha256::digest(&bad_raw));
+        let bad_path = f.root.join("1/archive").join(format!("{bad_object}.json"));
+        crate::keystore::private_create(&bad_path, &bad_raw).unwrap();
+        let mut image = read(&state_path, STATE_LIMIT).unwrap();
+        image["state"]["archives"][last_id] = json!(bad_object);
+        crate::keystore::private_create(&state_path.with_extension("original-retained"), &original)
+            .unwrap();
+        atomic(&state_path, &image, STATE_LIMIT).unwrap();
+        let failed_image = fs::read(&state_path).unwrap();
+        clear();
+        let serial_error = Node::open(&f.configs[1]).err().unwrap();
+        clear();
+        let parallel_error = Node::open_parallel_fixture(&f.configs[1]).err().unwrap();
+        assert_eq!(serial_error, parallel_error);
+        assert_eq!(serial_error, "contact signature invalid");
+        assert_eq!(fs::read(&state_path).unwrap(), failed_image);
+        assert_eq!(fs::read(&bad_path).unwrap(), bad_raw);
+        assert!(old_path.exists(), "old complete archive was removed");
+        assert!(!PARALLEL_COLD_FIXTURE.with(std::cell::Cell::get));
+        drop(destination);
         eprintln!(
             "Foreign archive page: {}",
             json!({"archive_count":32,"actual_reads":reads,
-            "seconds":started.elapsed().as_secs_f64(),"ledger_authority":false})
+            "seconds":started.elapsed().as_secs_f64(),"ledger_authority":false,
+            "cold_opens_per_schedule":8,"serial_cold_seconds":serial_seconds,
+            "two_worker_cold_seconds":parallel_seconds,"late_bad_nested_route_refused":true})
         );
         assert!(
             started.elapsed().as_secs_f64() < 60.0,
