@@ -3,6 +3,8 @@
 mod bft;
 mod mesh;
 mod service;
+#[cfg(test)]
+pub(crate) use bft::Runtime as TestRuntime;
 pub use mesh::{initialize, Node};
 pub use service::{run, Options};
 

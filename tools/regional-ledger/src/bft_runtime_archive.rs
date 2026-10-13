@@ -18,6 +18,29 @@ pub const MAX_STATE: usize = 32 * 1024 * 1024;
 const MAX_MESSAGES: usize = 512;
 const MAX_REFS: usize = 64;
 
+#[cfg(test)]
+pub(crate) mod cost {
+    use std::cell::Cell;
+    thread_local! {
+        static COUNTS: Cell<(usize, usize)> = const { Cell::new((0, 0)) };
+    }
+    pub(crate) fn take() -> (usize, usize) {
+        COUNTS.with(|counts| counts.replace((0, 0)))
+    }
+    pub(super) fn archive() {
+        COUNTS.with(|counts| {
+            let (a, e) = counts.get();
+            counts.set((a + 1, e));
+        });
+    }
+    pub(super) fn envelope() {
+        COUNTS.with(|counts| {
+            let (a, e) = counts.get();
+            counts.set((a, e + 1));
+        });
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Header {
@@ -80,6 +103,14 @@ fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
 
 impl Archive {
     pub fn decode(raw: &[u8]) -> Result<Self> {
+        let archive = Self::decode_canonical(raw)?;
+        archive.check_bytes()?;
+        Ok(archive)
+    }
+    // Parsing alone grants no byte-integrity or Native authority. A store call
+    // must fully check this graph or inherit only its exact immutable byte facts
+    // from that call's fully checked retained graph below.
+    fn decode_canonical(raw: &[u8]) -> Result<Self> {
         let value = crate::wallet_http::decode_unique_with_limit(raw, MAX_STATE)?;
         require(
             value.as_object().is_some_and(|object| {
@@ -99,10 +130,9 @@ impl Archive {
             canonical(&archive)? == raw,
             "BFT archive canonical bytes differ",
         )?;
-        archive.check_bytes()?;
         Ok(archive)
     }
-    fn check_bytes(&self) -> Result<()> {
+    fn check_limits(&self) -> Result<()> {
         require(
             self.format == FORMAT
                 && self.runtime.messages.len() <= MAX_MESSAGES
@@ -111,7 +141,21 @@ impl Archive {
                 && self.runtime.height <= 64
                 && self.runtime.cursor <= i64::MAX as u64,
             "BFT archive format/count/observation bound",
-        )?;
+        )
+    }
+    fn same_complete_graph(&self, other: &Self) -> Result<bool> {
+        if self.runtime.messages != other.runtime.messages || self.snapshots != other.snapshots {
+            return Ok(false);
+        }
+        // Generic JSON numeric equality can equate distinct encodings such as
+        // positive and negative zero. Inherit only exact canonical graph bytes.
+        Ok(canonical(&(&self.runtime.messages, &self.snapshots))?
+            == canonical(&(&other.runtime.messages, &other.snapshots))?)
+    }
+    fn check_bytes(&self) -> Result<()> {
+        #[cfg(test)]
+        cost::archive();
+        self.check_limits()?;
         let mut sizes = BTreeMap::new();
         for (reference, value) in &self.snapshots {
             let raw = files::canonical(value)?;
@@ -125,6 +169,8 @@ impl Archive {
         }
         let mut referenced = BTreeSet::new();
         for (ident, record) in &self.runtime.messages {
+            #[cfg(test)]
+            cost::envelope();
             let origin = record.header.format == bft_network::ORIGIN_FORMAT;
             require(
                 (origin && record.origin_refs.is_some())
@@ -458,7 +504,8 @@ impl Client {
         )
     }
     pub fn store(&self, node: &Store, raw: &[u8], expected: Option<Hash>) -> Result<Receipt> {
-        let proposed = Archive::decode(raw)?;
+        let proposed = Archive::decode_canonical(raw)?;
+        proposed.check_limits()?;
         self.validate(&proposed, node)?;
         let previous = match fs::symlink_metadata(self.root.join("state.json")) {
             Ok(_) => {
@@ -505,6 +552,18 @@ impl Client {
             }
             Err(e) => return Err(e.to_string()),
         };
+        // The retained archive was fully decoded, byte checked and bound to the
+        // current Native prefix in this call. Identical complete record and
+        // snapshot maps inherit only those byte facts. All metadata is checked
+        // independently above; every changed graph still receives full checks.
+        // This witness is never stored and never initializes Native execution.
+        let exact_graph = match &previous {
+            Some(old) => old.same_complete_graph(&proposed)?,
+            None => false,
+        };
+        if !exact_graph {
+            proposed.check_bytes()?;
+        }
         let mut verified = 0;
         for (ident, record) in &proposed.runtime.messages {
             if previous
@@ -604,6 +663,29 @@ mod tests {
             .messages
             .insert(hash(&files::canonical(&record.body).unwrap()), record);
         archive
+    }
+    #[test]
+    fn exact_graph_witness_refuses_equal_json_numbers_with_different_canonical_bytes() {
+        let mut original = archive(false);
+        let (_, mut record) = original.runtime.messages.pop_first().unwrap();
+        record.body["number"] = serde_json::json!(-0.0);
+        let raw = files::canonical(&original.envelope(&record).unwrap()).unwrap();
+        record.size_bytes = raw.len();
+        record.sha256 = hash(&raw);
+        original
+            .runtime
+            .messages
+            .insert(hash(&files::canonical(&record.body).unwrap()), record);
+        let original = Archive::decode(&canonical(&original).unwrap()).unwrap();
+        let mut changed = original.clone();
+        changed.runtime.messages.values_mut().next().unwrap().body["number"] =
+            serde_json::json!(0.0);
+        assert_eq!(original.runtime.messages, changed.runtime.messages);
+        assert!(!original.same_complete_graph(&changed).unwrap());
+        assert!(changed.check_bytes().is_err());
+        let mut metadata = original.clone();
+        metadata.runtime.cursor = 1;
+        assert!(original.same_complete_graph(&metadata).unwrap());
     }
     #[test]
     fn native_archive_exact_order_multiple_references_and_corruption_boundaries() {

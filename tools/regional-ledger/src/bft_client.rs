@@ -195,7 +195,57 @@ impl Client {
         if old == next {
             return Ok(next);
         }
-        let mut agent = self.inspect(node)?;
+        if let (Some(request), None, None, _) =
+            (&old.pending, &old.outbox, &next.pending, &next.outbox)
+        {
+            // One complete ordinary replay observes the exact original response.
+            // It retains the signer lock and refuses incomplete publication;
+            // this is neither recover-only publication nor a first-sign path.
+            let (agent, status, response) =
+                bft::Agent::inspect_with_response_status(&self.signer, node, request, old.head)?;
+            require(
+                status.binding == self.binding,
+                "BFT native response binding differs from caller",
+            )?;
+            match response {
+                Some(signed) => require(
+                    signed.recovered_exact_retry
+                        && signed.head == next.head
+                        && next.outbox.as_ref() == Some(&signed.message),
+                    "BFT caller transition differs from exact retained response",
+                )?,
+                None => require(
+                    status.head == old.head && next.head == old.head && next.outbox.is_none(),
+                    "BFT unsigned pending clear requires unchanged native/caller head",
+                )?,
+            }
+            self.persist(&next)?;
+            drop(agent);
+            return Ok(next);
+        }
+        if let (None, Some(message), None, None) =
+            (&old.pending, &old.outbox, &next.pending, &next.outbox)
+        {
+            require(
+                old.head == next.head,
+                "BFT outbox clear cannot change the caller head",
+            )?;
+            let (agent, status, messages) =
+                bft::Agent::inspect_with_retained_status(&self.signer, node)?;
+            require(
+                status.binding == self.binding
+                    && status.head == old.head
+                    && messages.contains(message),
+                "BFT outbox clear requires exact retained signed response/head",
+            )?;
+            // Complete native envelope validation and durable runtime retention
+            // precede this call. Clearing caller outbox acknowledges neither
+            // transport custody nor destination acceptance.
+            self.persist(&next)?;
+            drop(agent);
+            return Ok(next);
+        }
+        let agent = self.inspect(node)?;
         match (&old.pending, &old.outbox, &next.pending, &next.outbox) {
             (None, None, Some(_), None) if old.head == next.head => {
                 require(
@@ -203,30 +253,6 @@ impl Client {
                     "BFT signer differs from separately retained caller head",
                 )?;
                 // Retain consent before signing; actual sign rechecks current context.
-            }
-            (Some(request), None, None, _) => {
-                if agent.contains_request(node, request)? {
-                    let signed = agent.sign(node, request.clone(), None, old.head)?;
-                    require(
-                        signed.recovered_exact_retry
-                            && signed.head == next.head
-                            && next.outbox.as_ref() == Some(&signed.message),
-                        "BFT caller transition differs from exact retained response",
-                    )?;
-                } else {
-                    require(
-                        agent.head()? == old.head && next.head == old.head && next.outbox.is_none(),
-                        "BFT unsigned pending clear requires unchanged native/caller head",
-                    )?;
-                }
-            }
-            (None, Some(message), None, None) if old.head == next.head => {
-                require(
-                    agent.head()? == old.head && agent.retained_messages(node)?.contains(message),
-                    "BFT outbox clear requires exact retained signed response/head",
-                )?;
-                // Caller invokes this only after complete native envelope validation
-                // and durable runtime retention. This operation does not acknowledge carriage.
             }
             _ => return Err("BFT caller transition lacks exact native authorization".into()),
         }

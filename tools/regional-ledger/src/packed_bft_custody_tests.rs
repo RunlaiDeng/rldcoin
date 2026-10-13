@@ -219,3 +219,421 @@ fn packed_ledger_four_original_signer_journals_two_owner_payments_and_fresh_cold
     );
     eprintln!("Complete Native custody cold replay, original heads and byte inventory verified");
 }
+
+#[test]
+fn packed_height_four_runtime_tick_measures_complete_authentication_without_new_signature() {
+    packed_runtime_work(false, false);
+}
+
+#[test]
+fn packed_current_prepare_measures_original_runtime_sign_and_caller_publication() {
+    packed_runtime_work(true, false);
+}
+
+#[test]
+fn ordinary_proposer_retains_own_prepare_without_another_contact_turn() {
+    packed_runtime_work(false, true);
+}
+
+fn packed_runtime_work(measure_sign: bool, compose_proposal: bool) {
+    let started = std::time::Instant::now();
+    let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
+    h.retain = true;
+    eprintln!("Fresh packed Runtime work fixture: {}", h.root.display());
+    h.agents.clear();
+    let currency = h.node.trust.currency().unwrap();
+    let region = h.node.chain.region;
+    let mut ids = Vec::new();
+    for n in 0..4 {
+        let identity = crate::contact_runtime::initialize(
+            &h.root.join(format!("transport-{n}")),
+            &currency.to_hex(),
+            &region.to_hex(),
+            "public-no-value-packed-work",
+        )
+        .unwrap();
+        ids.push(identity["node_id"].as_str().unwrap().to_owned());
+    }
+    let mut actors = Vec::new();
+    for n in 0..4 {
+        let caller_dir = h.root.join(format!("runtime-caller-{n}"));
+        fs::create_dir(&caller_dir).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&caller_dir, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+        let caller = caller_dir.join("head.json");
+        let signer = h.root.join(format!("signer-{}", h.seeds[n]));
+        let state = crate::bft_client::State {
+            format: crate::bft_client::FORMAT.into(),
+            binding: Agent::open(&signer, &h.node)
+                .unwrap()
+                .journal
+                .binding
+                .clone(),
+            head: h.heads[n],
+            pending: None,
+            outbox: None,
+        };
+        crate::keystore::private_create(&caller, &crate::wallet_client::canonical(&state).unwrap())
+            .unwrap();
+        let archive = h.root.join(format!("runtime-work-{n}"));
+        fs::create_dir(&archive).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&archive, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+        let config = serde_json::json!({
+            "format":crate::bft_client::FORMAT,"state":archive,"signer_dir":signer,
+            "head_file":caller,"key_file":h.root.join(format!("key-{}.json",h.seeds[n])),
+            "key":public(h.seeds[n]),"miner":public(10),
+            "validators":h.seeds.iter().enumerate().map(|(n,seed)|
+                serde_json::json!({"key":public(*seed),"node_id":ids[n]})).collect::<Vec<_>>(),
+            "block_interval":0.5,"round_timeout":5.0,"stop_height":4
+        });
+        let path = h.root.join(format!("runtime-config-{n}.json"));
+        crate::keystore::private_create(&path, &crate::wallet_client::canonical(&config).unwrap())
+            .unwrap();
+        let transport = serde_json::json!({"format":crate::contact_runtime::MESH,
+            "network":currency,"state":h.root.join(format!("transport-{n}")),"contacts":[]});
+        actors.push(crate::contact_runtime::TestRuntime::open(&path, &h.node, &transport).unwrap());
+    }
+    if compose_proposal {
+        let context = Context::current(&h.node).unwrap();
+        let keys = h.seeds.iter().copied().map(public).collect::<Vec<_>>();
+        let leader = bft::leader(&context, 0, &keys).unwrap();
+        let n = keys.iter().position(|key| key == &leader).unwrap();
+        let head = h.node.storage_head().unwrap();
+        let ledger = h.node.chain.ledger.clone();
+        assert_eq!(
+            actors[n].probe_tick(&mut h.node).unwrap()["decision"],
+            "idle"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(550));
+        let result = actors[n].probe_tick(&mut h.node).unwrap();
+        assert!(
+            result["error"].is_null(),
+            "ordinary proposal refused: {result}"
+        );
+        let controls = actors[n].fixture_controls().unwrap();
+        assert_eq!(
+            controls
+                .iter()
+                .filter(|message| matches!(message, Message::Proposal(_)))
+                .count(),
+            1
+        );
+        assert_eq!(
+            controls
+                .iter()
+                .filter(
+                    |message| matches!(message,Message::Vote(vote) if vote.phase == Phase::Prepare)
+                )
+                .count(),
+            1,
+            "ordinary proposer deferred its own native-verified Prepare to another contact turn"
+        );
+        assert_eq!(h.node.storage_head().unwrap(), head);
+        assert_eq!(h.node.chain.ledger, ledger);
+        drop(actors);
+        let root = h.root.clone();
+        let seeds = h.seeds.clone();
+        drop(h);
+        let before = inventory(&root);
+        let cold = Store::open_pinned(&root.join("node"), &public(1), currency, head).unwrap();
+        assert_eq!(cold.chain.height(), 0);
+        assert_eq!(cold.chain.ledger, ledger);
+        let caller = crate::bft_client::Client::lock(
+            &root.join(format!("runtime-caller-{n}/head.json")),
+            &root.join(format!("signer-{}", seeds[n])),
+            public(seeds[n]),
+            crate::bft_client::FORMAT.into(),
+            &cold,
+        )
+        .unwrap();
+        let state = caller.read().unwrap();
+        assert!(state.pending.is_none() && state.outbox.is_none());
+        let agent = Agent::open(&root.join(format!("signer-{}", seeds[n])), &cold).unwrap();
+        assert_eq!(agent.head().unwrap(), state.head);
+        assert_eq!(agent.record_count(), 2);
+        assert_eq!(inventory(&root), before);
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "ordinary proposal component deadline"
+        );
+        return;
+    }
+    for height in 1..=5 {
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "Runtime fixture deadline"
+        );
+        let context = Context::current(&h.node).unwrap();
+        let keys = h.seeds.iter().copied().map(public).collect::<Vec<_>>();
+        let leader = bft::leader(&context, 0, &keys).unwrap();
+        let n = keys.iter().position(|key| key == &leader).unwrap();
+        let Message::Proposal(proposal) = actors[n]
+            .sign_fixture_control(
+                &h.node,
+                Request::Propose {
+                    round: 0,
+                    timeout: None,
+                    snapshot: Box::new(h.node.bft_candidate(vec![], public(10)).unwrap()),
+                },
+            )
+            .unwrap()
+        else {
+            panic!("original proposal response")
+        };
+        let mut votes = Vec::new();
+        for (n, actor) in actors.iter_mut().enumerate() {
+            let request = Request::Prepare(proposal.clone());
+            let message = if measure_sign && height == 5 && n == 0 {
+                let head = h.node.storage_head().unwrap();
+                let ledger = h.node.chain.ledger.clone();
+                let (message, report) = actor.probe_fixture_sign_control(&h.node, request).unwrap();
+                assert!(report["error"].is_null());
+                assert_eq!(report["new_signatures"], 1);
+                assert!(report["strict_signature_checks"].as_u64().unwrap() > 0);
+                assert_eq!(h.node.storage_head().unwrap(), head);
+                assert_eq!(h.node.chain.ledger, ledger);
+                eprintln!("Packed original Runtime signature work: {report}");
+                message
+            } else {
+                actor.sign_fixture_control(&h.node, request).unwrap()
+            };
+            let Message::Vote(vote) = message else {
+                panic!("original prepare response")
+            };
+            votes.push(*vote);
+        }
+        let prepared = Quorum::combine(votes, &h.node.trust, &h.node.evidence).unwrap();
+        if height == 5 {
+            break;
+        }
+        let mut votes = Vec::new();
+        for actor in &mut actors {
+            let Message::Vote(vote) = actor
+                .sign_fixture_control(
+                    &h.node,
+                    Request::Commit {
+                        proposal: proposal.clone(),
+                        prepared: prepared.clone(),
+                    },
+                )
+                .unwrap()
+            else {
+                panic!("original commit response")
+            };
+            votes.push(*vote);
+        }
+        let committed = Quorum::combine(votes, &h.node.trust, &h.node.evidence).unwrap();
+        let mut snapshot = *proposal.snapshot;
+        snapshot.bft = Some(Certificate {
+            prepared,
+            committed,
+        });
+        h.node.finalize(snapshot).unwrap();
+        assert_eq!(h.node.chain.height(), height);
+    }
+    let messages = actors
+        .iter()
+        .flat_map(|actor| actor.fixture_controls().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(messages.len(), 41);
+    actors[0]
+        .retain_fixture_controls(&h.node, &messages)
+        .unwrap();
+    let head = h.node.storage_head().unwrap();
+    let ledger = h.node.chain.ledger.clone();
+    let archive_path = h.root.join("runtime-work-0/state.json");
+    let old_archive =
+        crate::bft_runtime_archive::Archive::decode(&fs::read(&archive_path).unwrap()).unwrap();
+    let mut before = inventory(&h.root);
+    before.remove(&archive_path);
+    let report = actors[0].probe_tick(&mut h.node).unwrap();
+    assert!(report["error"].is_null(), "Runtime tick refused: {report}");
+    assert_eq!(report["decision"], "idle");
+    assert_eq!(report["retained_messages"], 41);
+    assert_eq!(h.node.storage_head().unwrap(), head);
+    assert_eq!(h.node.chain.ledger, ledger);
+    let mut after = inventory(&h.root);
+    after.remove(&archive_path);
+    assert_eq!(after, before);
+    let mut observed_archive =
+        crate::bft_runtime_archive::Archive::decode(&fs::read(&archive_path).unwrap()).unwrap();
+    assert_eq!(observed_archive.runtime.height, h.node.chain.height());
+    assert_eq!(observed_archive.runtime.tip, h.node.chain.tip().unwrap());
+    // Only a native-checked current observation may advance. Every original
+    // retained body, envelope reference, local flag and remaining byte is exact.
+    observed_archive.runtime.height = old_archive.runtime.height;
+    observed_archive.runtime.tip = old_archive.runtime.tip;
+    assert_eq!(observed_archive, old_archive);
+    let mut measured = 0.0;
+    let mut observed = 0.0;
+    for row in report["trace"].as_array().unwrap() {
+        let seconds = row["seconds"].as_f64().unwrap();
+        measured += seconds;
+        if row["phase"] == "consensus-complete-observe" {
+            observed += seconds;
+        }
+    }
+    let total = report["seconds"].as_f64().unwrap();
+    assert!(observed > 0.0 && measured <= total);
+    eprintln!(
+        "Packed Native Runtime work: {}",
+        serde_json::json!({
+            "report":report,"complete_observe_fraction":observed/total,
+            "dominates_half_tick":observed/total>=0.5,
+            "unchanged_native_and_caller_inventory":true,
+            "network_or_ordinary_payment_qualification":false
+        })
+    );
+    assert_eq!(report["complete_archive_byte_checks"], 2,
+        "metadata-only publication must inherit exact graph checks from its retained input in this call");
+    assert_eq!(report["complete_envelope_byte_checks"], 82);
+    drop(actors);
+    let client = crate::bft_runtime_archive::Client::lock(
+        &h.root.join("runtime-work-0"),
+        public(h.seeds[0]),
+        crate::bft_client::FORMAT.into(),
+        &h.node,
+    )
+    .unwrap();
+    let current =
+        crate::bft_runtime_archive::Archive::decode(&fs::read(&archive_path).unwrap()).unwrap();
+    let receipt = client.read(&h.node).unwrap();
+    let before_guards = inventory(&h.root);
+    for attack in 0..7 {
+        let mut changed = current.clone();
+        match attack {
+            0 => changed.runtime.cursor = u64::MAX,
+            1 => changed.runtime.snapshot_cache = vec![Hash::ZERO; 65],
+            2 => {
+                changed.runtime.height = 3;
+                changed.runtime.tip = h.node.block_at(3).unwrap().header.id().unwrap();
+            }
+            3 => changed.runtime.tip = Hash::ZERO,
+            4 => changed.runtime.binding.key = public(127),
+            5 => {
+                changed.runtime.messages.pop_first();
+            }
+            _ => {
+                changed
+                    .runtime
+                    .messages
+                    .values_mut()
+                    .next()
+                    .unwrap()
+                    .refs
+                    .push(Hash::ZERO);
+            }
+        }
+        let raw = crate::wallet_client::canonical_with_limit(
+            &changed,
+            crate::bft_runtime_archive::MAX_STATE,
+        )
+        .unwrap();
+        assert!(
+            client
+                .store(&h.node, &raw, Some(receipt.state_sha256))
+                .is_err(),
+            "archive guard attack {attack} passed"
+        );
+        assert_eq!(inventory(&h.root), before_guards);
+    }
+    let raw = fs::read(&archive_path).unwrap();
+    assert!(client.store(&h.node, &raw, Some(Hash::ZERO)).is_err());
+    assert_eq!(inventory(&h.root), before_guards);
+    let mut changed = current.clone();
+    let mut record = current
+        .runtime
+        .messages
+        .values()
+        .find(|record| {
+            let body: crate::bft_network::Body =
+                serde_json::from_value(record.body.clone()).unwrap();
+            matches!(body, crate::bft_network::Body::Signed(message)
+            if matches!(*message, Message::Vote(ref vote) if vote.context.parent_height == 4))
+        })
+        .unwrap()
+        .clone();
+    let crate::bft_network::Body::Signed(mut message) =
+        serde_json::from_value(record.body.clone()).unwrap()
+    else {
+        panic!("original signed vote")
+    };
+    let Message::Vote(ref mut vote) = *message else {
+        panic!("original vote")
+    };
+    vote.approval.signature = "00".repeat(64);
+    record.body = serde_json::to_value(crate::bft_network::Body::Signed(message)).unwrap();
+    let envelope = crate::wallet_client::canonical(&changed.envelope(&record).unwrap()).unwrap();
+    record.sha256 = Hash(Sha256::digest(&envelope).into());
+    record.size_bytes = envelope.len();
+    let ident = Hash(Sha256::digest(crate::wallet_client::canonical(&record.body).unwrap()).into());
+    changed.runtime.messages.insert(ident, record);
+    let raw =
+        crate::wallet_client::canonical_with_limit(&changed, crate::bft_runtime_archive::MAX_STATE)
+            .unwrap();
+    assert!(crate::bft_runtime_archive::Archive::decode(&raw).is_ok());
+    let error = client
+        .store(&h.node, &raw, Some(receipt.state_sha256))
+        .err()
+        .expect("hash-consistent bad envelope must refuse");
+    assert!(
+        error.contains("signature"),
+        "changed envelope was not natively authenticated: {error}"
+    );
+    assert_eq!(inventory(&h.root), before_guards);
+    let mut local = current.clone();
+    local
+        .runtime
+        .messages
+        .values_mut()
+        .find(|record| !record.local)
+        .unwrap()
+        .local = true;
+    let raw =
+        crate::wallet_client::canonical_with_limit(&local, crate::bft_runtime_archive::MAX_STATE)
+            .unwrap();
+    let accepted = client
+        .store(&h.node, &raw, Some(receipt.state_sha256))
+        .unwrap();
+    assert_eq!(accepted.new_envelopes_authenticated, 1);
+    assert!(
+        accepted.full_cold_authentication_required
+            && !accepted.ledger_changed
+            && !accepted.signing_authority
+    );
+    assert_eq!(h.node.storage_head().unwrap(), head);
+    assert_eq!(h.node.chain.ledger, ledger);
+    drop(client);
+    let root = h.root.clone();
+    let seeds = h.seeds.clone();
+    drop(h);
+    let before = inventory(&root);
+    let cold = Store::open_pinned(&root.join("node"), &public(1), currency, head).unwrap();
+    assert_eq!(cold.chain.ledger, ledger);
+    for (n, seed) in seeds.iter().enumerate() {
+        let caller = crate::bft_client::Client::lock(
+            &root.join(format!("runtime-caller-{n}/head.json")),
+            &root.join(format!("signer-{seed}")),
+            public(*seed),
+            crate::bft_client::FORMAT.into(),
+            &cold,
+        )
+        .unwrap();
+        let state = caller.read().unwrap();
+        assert!(state.pending.is_none() && state.outbox.is_none());
+        let agent = Agent::open(&root.join(format!("signer-{seed}")), &cold).unwrap();
+        assert_eq!(agent.head().unwrap(), state.head);
+    }
+    assert_eq!(inventory(&root), before);
+    assert!(
+        started.elapsed().as_secs_f64() < 60.0,
+        "Runtime work component deadline"
+    );
+}

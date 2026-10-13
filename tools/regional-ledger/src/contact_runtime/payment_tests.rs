@@ -354,10 +354,20 @@ fn setup(
     deadline: f64,
     stop: Arc<AtomicBool>,
     failed: Arc<AtomicBool>,
+    rules: &str,
 ) -> Result<(Vec<Worker>, Vec<u8>, Hash)> {
     let mut genesis = crate::tests::bootstrap();
+    if crate::paged_bft::is_profile(rules) {
+        genesis.currency.cap = crate::Amount::TOTAL_SUPPLY;
+        genesis.currency.block_reward = rld_pow::subsidy(1)?;
+        genesis.currency.signature = signature(1, &genesis.currency.bytes()?);
+    }
     for admission in &mut genesis.admissions {
-        admission.rules = bft::RULES.into();
+        admission.currency = genesis.currency.id()?;
+        admission.rules = rules.into();
+        if crate::paged_bft::is_profile(rules) {
+            admission.value_rules = Some(crate::paged_bft::rules_hash_for(rules)?);
+        }
         admission.signature = signature(1, &admission.bytes()?);
     }
     let currency = genesis.currency.id()?;
@@ -484,6 +494,15 @@ fn setup(
 
 #[test]
 fn four_native_replicas_finalize_first_payment_and_actual_recipient_next_spend() {
+    ordinary_cycle(bft::RULES);
+}
+
+#[test]
+fn four_packed_native_replicas_finalize_first_payment_and_actual_recipient_next_spend() {
+    ordinary_cycle(crate::paged_bft::PACKED_RULES);
+}
+
+fn ordinary_cycle(rules: &str) {
     let started = monotonic().unwrap();
     let deadline = started + 120.0;
     let root = directory(
@@ -495,7 +514,8 @@ fn four_native_replicas_finalize_first_payment_and_actual_recipient_next_spend()
     eprintln!("Fresh ordinary wallet cycle: {}", root.display());
     let stop = Arc::new(AtomicBool::new(false));
     let failed = Arc::new(AtomicBool::new(false));
-    let (workers, seeds, currency) = setup(&root, deadline, stop.clone(), failed.clone()).unwrap();
+    let (workers, seeds, currency) =
+        setup(&root, deadline, stop.clone(), failed.clone(), rules).unwrap();
     let mut samples = Vec::new();
     let result = (|| -> Result<()> {
         loop {
@@ -631,10 +651,8 @@ fn four_native_replicas_finalize_first_payment_and_actual_recipient_next_spend()
                 .collect::<Result<Vec<_>>>()?;
             crate::conservation(&[node.chain.clone(), empty[0].clone(), empty[1].clone()])?;
             prefixes.push(
-                node.chain
-                    .blocks
-                    .iter()
-                    .map(|block| block.header.id())
+                node.blocks()?
+                    .map(|block| block.and_then(|block| block.header.id()))
                     .collect::<Result<Vec<_>>>()?,
             );
         }

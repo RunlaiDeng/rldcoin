@@ -315,10 +315,18 @@ impl Runtime {
         )?;
         let old = caller.read()?;
         if let Some(message) = old.outbox.clone() {
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             self.retain_local(node, net::Body::Signed(Box::new(message)))?;
+            #[cfg(test)]
+            super::service::trace_subwork("sign-envelope-retention", started)?;
             let mut next = old.clone();
             next.outbox = None;
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
             Self::publish_head(&caller, node, &old, next)?;
+            #[cfg(test)]
+            super::service::trace_subwork("sign-outbox-clear", started)?;
         }
         Ok(())
     }
@@ -337,7 +345,13 @@ impl Runtime {
         )?;
         let mut pending = old.clone();
         pending.pending = Some(request.clone());
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let pending = Self::publish_head(&caller, node, &old, pending)?;
+        #[cfg(test)]
+        super::service::trace_subwork("sign-pending-publication", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let signed = if self.config.format == bft_client::ORIGIN_FORMAT {
             crate::bft_network::sign_local_envelope(
                 &serde_json::to_vec(&request).map_err(|e| e.to_string())?,
@@ -357,11 +371,17 @@ impl Runtime {
                 old.head,
             )?
         };
+        #[cfg(test)]
+        super::service::trace_subwork("sign-native-response", started)?;
         let mut response = pending.clone();
         response.pending = None;
         response.head = signed.head;
         response.outbox = Some(signed.message);
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         Self::publish_head(&caller, node, &pending, response)?;
+        #[cfg(test)]
+        super::service::trace_subwork("sign-response-publication", started)?;
         drop(caller);
         self.flush(node)?;
         self.entered = super::service::monotonic()?;
@@ -486,12 +506,75 @@ impl Runtime {
         node.bft_candidate(selected, self.config.miner.clone())
     }
 
+    fn prepare_owned_proposal(
+        &mut self,
+        node: &Store,
+        context: &consensus::Context,
+        round: u64,
+        snapshot: &Snapshot,
+        timeout: &Option<consensus::TimeoutCertificate>,
+    ) -> Result<()> {
+        require(
+            consensus::Context::current(node)? == *context,
+            "post-Propose Native context changed",
+        )?;
+        let caller = bft_client::Client::lock(
+            &self.config.head_file,
+            &self.config.signer_dir,
+            self.config.key.clone(),
+            self.config.format.clone(),
+            node,
+        )?;
+        let head = caller.read()?.head;
+        drop(caller);
+        let pins = proposal::Pins {
+            signer: &self.config.signer_dir,
+            archive: &self.config.state,
+            key: self.config.key.clone(),
+            runtime_format: self.config.format.clone(),
+            head,
+            archive_head: self.head.ok_or("post-Propose archive head missing")?,
+            context: context.clone(),
+            round,
+        };
+        let observed = phase::observe(
+            node,
+            pins,
+            phase::Mode::Start,
+            phase::Input {
+                context: context.clone(),
+                order: self.archive.runtime.messages.keys().copied().collect(),
+            },
+        )?;
+        if let phase::Action::Prepare { proposal, .. } = observed.action {
+            require(
+                proposal.leader.key == self.config.key
+                    && proposal.round == round
+                    && proposal.snapshot.as_ref() == snapshot
+                    && proposal.timeout == *timeout,
+                "post-Propose Prepare differs from exact retained own proposal",
+            )?;
+            self.sign(node, consensus::Request::Prepare(proposal))?;
+        }
+        Ok(())
+    }
+
     pub(crate) fn tick(&mut self, node: &mut Store) -> Result<()> {
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         self.flush(node)?;
         self.submissions(node)?;
+        #[cfg(test)]
+        super::service::trace_subwork("consensus-flush-submissions", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let context = consensus::Context::current(node)?;
         let (agent, status) = consensus::Agent::inspect_with_status(&self.config.signer_dir, node)?;
         drop(agent);
+        #[cfg(test)]
+        super::service::trace_subwork("consensus-signer-inspection", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let round = if status.state.context.as_ref() == Some(&context) {
             status.state.round
         } else {
@@ -510,6 +593,8 @@ impl Runtime {
         )?;
         let head = caller.read()?.head;
         drop(caller);
+        #[cfg(test)]
+        super::service::trace_subwork("consensus-caller-inspection", started)?;
         let pins = proposal::Pins {
             signer: &self.config.signer_dir,
             archive: &self.config.state,
@@ -534,7 +619,11 @@ impl Runtime {
             initial_wait: false,
             timeout_refresh: true,
         };
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let decision = tick::observe(node, pins, input)?.action;
+        #[cfg(test)]
+        super::service::trace_subwork("consensus-complete-observe", started)?;
         #[cfg(test)]
         {
             self.last_decision = Some(match &decision {
@@ -548,6 +637,8 @@ impl Runtime {
                 tick::Decision::WaitInitial { .. } => "initial-wait",
             });
         }
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         match decision {
             tick::Decision::Phase(phase::Action::Finalize { snapshot }) => {
                 node.finalize(*snapshot.clone())?;
@@ -569,19 +660,128 @@ impl Runtime {
                     node,
                     consensus::Request::Propose {
                         round,
-                        timeout,
-                        snapshot: Box::new(snapshot),
+                        timeout: timeout.clone(),
+                        snapshot: Box::new(snapshot.clone()),
                     },
                 )?;
+                self.prepare_owned_proposal(node, &context, round, &snapshot, &timeout)?;
             }
             tick::Decision::Timeout { context, round } => {
                 self.sign(node, consensus::Request::Timeout { context, round })?
             }
             _ => {}
         }
+        #[cfg(test)]
+        super::service::trace_subwork("consensus-action", started)?;
         self.archive.runtime.height = node.chain.height();
         self.archive.runtime.tip = node.chain.tip()?;
-        self.persist(node)
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
+        let result = self.persist(node);
+        #[cfg(test)]
+        super::service::trace_subwork("consensus-durable-archive", started)?;
+        result
+    }
+
+    #[cfg(test)]
+    pub(crate) fn sign_fixture_control(
+        &mut self,
+        node: &Store,
+        request: consensus::Request,
+    ) -> Result<consensus::Message> {
+        let previous = self
+            .archive
+            .runtime
+            .messages
+            .keys()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        self.sign(node, request)?;
+        let mut added = self
+            .archive
+            .runtime
+            .messages
+            .iter()
+            .filter(|(id, _)| !previous.contains(id));
+        let (_, record) = added
+            .next()
+            .ok_or("fixture requires a fresh original response")?;
+        require(added.next().is_none(), "fixture response is ambiguous")?;
+        match serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())? {
+            net::Body::Signed(message) => Ok(*message),
+            _ => Err("fixture original response is not a signed control".into()),
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn probe_fixture_sign_control(
+        &mut self,
+        node: &Store,
+        request: consensus::Request,
+    ) -> Result<(consensus::Message, Value)> {
+        super::service::start_work_trace();
+        consensus::sign_cost::take();
+        crate::verification_keys::cost::take();
+        let started = super::service::monotonic()?;
+        let result = self.sign_fixture_control(node, request);
+        let seconds = super::service::monotonic()? - started;
+        let native = consensus::sign_cost::take();
+        let signatures = crate::verification_keys::cost::take();
+        let report = json!({"seconds":seconds,"trace":super::service::take_work_trace(),
+            "error":result.as_ref().err(),"native_sign_phases_ns":native.phases_ns,
+            "native_replay_ns":native.replay_ns,"native_replayed_records":native.completed_old_records,
+            "native_records":native.native_records,"new_signatures":native.completed_new_signatures,
+            "strict_signature_checks":signatures.strict_attempts,
+            "native_history_reused":signatures.native_history_reused,
+            "fixture_only":true,"independent_operations":false});
+        Ok((result?, report))
+    }
+
+    #[cfg(test)]
+    pub(crate) fn fixture_controls(&self) -> Result<Vec<consensus::Message>> {
+        self.archive
+            .runtime
+            .messages
+            .values()
+            .map(|record| {
+                match serde_json::from_value(record.body.clone()).map_err(|e| e.to_string())? {
+                    net::Body::Signed(message) => Ok(*message),
+                    _ => Err("fixture archive contains a non-control body".into()),
+                }
+            })
+            .collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn retain_fixture_controls(
+        &mut self,
+        node: &Store,
+        messages: &[consensus::Message],
+    ) -> Result<()> {
+        for message in messages {
+            let wire =
+                net::local_envelope(net::Body::Signed(Box::new(message.clone())), node)?.envelope;
+            self.retain(node, wire, false)?;
+        }
+        Ok(())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn probe_tick(&mut self, node: &mut Store) -> Result<Value> {
+        super::service::start_work_trace();
+        retention::cost::take();
+        let started = super::service::monotonic()?;
+        let result = self.tick(node);
+        let seconds = super::service::monotonic()? - started;
+        let (archive_checks, envelope_checks) = retention::cost::take();
+        Ok(
+            json!({"seconds":seconds,"trace":super::service::take_work_trace(),
+            "error":result.err(),"decision":self.last_decision,
+            "retained_messages":self.archive.runtime.messages.len(),
+            "complete_archive_byte_checks":archive_checks,
+            "complete_envelope_byte_checks":envelope_checks,
+            "fixture_only":true,"signing_authority":false}),
+        )
     }
 
     fn carriage_frame(&self, id: Hash) -> Result<Frame> {

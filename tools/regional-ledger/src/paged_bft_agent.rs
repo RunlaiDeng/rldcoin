@@ -90,6 +90,54 @@ impl RetainedMessages {
     }
 }
 impl Agent {
+    /// Inspect one exact retained response during the complete ordinary open.
+    /// All original records and Native history finish before a response escapes.
+    /// Incomplete publication refuses; this cannot recover, sign or adopt a head.
+    pub(crate) fn inspect_with_response_status(
+        dir: &Path,
+        node: &Store,
+        request: &Request,
+        expected: Hash,
+    ) -> Result<(Self, Status, Option<Signed>)> {
+        let mut position = 0u64;
+        let mut retained = None;
+        let mut observe = |record: &Record| -> Result<()> {
+            if record.request == *request {
+                retained = Some((position, record.previous_head, record.message.clone()));
+            }
+            position = position
+                .checked_add(1)
+                .ok_or("response inspection count overflow")?;
+            Ok(())
+        };
+        let opened = if crate::paged_bft::is_profile(&node.trust.region(node.chain.region)?.rules) {
+            Self::open_paged_with_records(dir, lock(dir)?, node, &mut observe)?
+        } else {
+            let opened = Self::open_state(dir, node, false)?;
+            for record in &opened.0.journal.records {
+                observe(record)?;
+            }
+            opened
+        };
+        let (agent, status) = Self::status_from_open(opened)?;
+        let response = match retained {
+            Some((index, previous_head, message)) => {
+                require(
+                    expected == status.head || (index + 1 == position && expected == previous_head),
+                    "retained response inspection has stale separate caller head",
+                )?;
+                Some(Signed {
+                    message,
+                    previous_head,
+                    head: status.head,
+                    recovered_exact_retry: true,
+                })
+            }
+            None => None,
+        };
+        Ok((agent, status, response))
+    }
+
     /// Read-only locked status and exact original responses from one complete
     /// authenticated replay. Nothing escapes before both streams finish.
     /// No recovery, signing, cached authority or caller-head adoption.

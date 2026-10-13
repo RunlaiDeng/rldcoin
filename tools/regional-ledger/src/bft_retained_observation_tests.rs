@@ -139,7 +139,19 @@ fn retained_observation_refuses_bad_signature_header_and_pending_without_output_
         let combined = Agent::inspect_with_retained_status(&dir, &h.node)
             .err()
             .expect("combined strict refusal");
+        let response = Agent::inspect_with_response_status(
+            &dir,
+            &h.node,
+            &Request::Timeout {
+                context: context.clone(),
+                round: 0,
+            },
+            h.heads[0],
+        )
+        .err()
+        .expect("response inspection must finish every later record and publication guard");
         assert_eq!(combined, original);
+        assert_eq!(response, original);
         if attack == "signature" {
             assert!(
                 combined.contains("signature"),

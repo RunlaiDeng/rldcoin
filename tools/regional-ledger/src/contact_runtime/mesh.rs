@@ -755,13 +755,18 @@ impl Node {
             .get(peer)
             .cloned()
             .unwrap_or_default();
-        let first = self
+        let mut first = self
             .state
             .arrivals
             .iter()
             .filter(|id| !prior.contains(id))
             .cloned()
             .collect::<Vec<_>>();
+        // Within the same two first-carriage slots, prefer a packet whose exact
+        // configured destination is this contact. A copy for another neighbor
+        // must not postpone the direct copy merely because it arrived earlier.
+        // Keep relative relay order and both independent historical slots.
+        first.sort_by_key(|id| self.state.messages[id]["packet"]["body"]["destination"] != peer);
         let mut ordered = first.into_iter().map(|id| (true, id)).collect::<Vec<_>>();
         ordered.extend(ids.into_iter().map(|id| (false, id)));
         let mut transits = Vec::new();
@@ -1128,6 +1133,7 @@ mod tests {
         root: PathBuf,
         configs: Vec<Value>,
         ids: Vec<String>,
+        retain: bool,
     }
     impl Fixture {
         fn new(count: usize) -> Self {
@@ -1153,7 +1159,12 @@ mod tests {
                     json!({"peer":ids[p],"inbox":root.join(format!("spool-{p}-{n}")),"outbox":root.join(format!("spool-{n}-{p}"))})).collect::<Vec<_>>();
                 json!({"format":MESH,"network":network,"state":root.join(n.to_string()),"contacts":contacts})
             }).collect();
-            Self { root, configs, ids }
+            Self {
+                root,
+                configs,
+                ids,
+                retain: false,
+            }
         }
         fn frame(&self) -> Vec<u8> {
             let payload=bytes(&json!({"format":crate::bft_network::FORMAT,"currency":"11".repeat(32),"region":"22".repeat(32),
@@ -1175,7 +1186,7 @@ mod tests {
     }
     impl Drop for Fixture {
         fn drop(&mut self) {
-            if std::thread::panicking() {
+            if self.retain || std::thread::panicking() {
                 eprintln!(
                     "Failed Rust mesh fixture retained at {}",
                     self.root.display()
@@ -1438,6 +1449,59 @@ mod tests {
             poisoned_state
         );
         assert!(bad_path.exists(), "bad original evidence was removed");
+    }
+
+    #[test]
+    fn configured_destination_copy_uses_first_carriage_before_alternate_relay_copies() {
+        let mut f = Fixture::new(4);
+        f.retain = true;
+        for n in 0..4 {
+            f.configs[n]["contacts"] = json!((0..4)
+                .filter(|p| *p != n)
+                .map(
+                    |p| json!({"peer":f.ids[p],"inbox":f.root.join(format!("spool-{p}-{n}")),
+                    "outbox":f.root.join(format!("spool-{n}-{p}"))})
+                )
+                .collect::<Vec<_>>());
+        }
+        eprintln!(
+            "Fresh direct-destination carriage fixture: {}",
+            f.root.display()
+        );
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        for n in 1..4 {
+            let bundle = Node::open(&f.configs[n])
+                .unwrap()
+                .prepare(&f.ids[0])
+                .unwrap();
+            source.receive(&bundle, &f.ids[n]).unwrap();
+        }
+        let packets = source
+            .enqueue_destinations(&f.frame(), &f.ids[1..])
+            .unwrap();
+        source.prioritize_originated_packets(&packets).unwrap();
+        let bundle = source.prepare(&f.ids[3]).unwrap();
+        let transits = bundle["body"]["transits"].as_array().unwrap();
+        assert!(transits.len() <= 4);
+        assert!(
+            transits
+                .iter()
+                .take(2)
+                .any(|transit| transit["routing"]["body"]["packet_id"] == packets[2]),
+            "direct configured destination lost its first-carriage slot to alternate relay copies"
+        );
+        let preserved = source.state.messages.clone();
+        drop(source);
+        let mut recipient = Node::open(&f.configs[3]).unwrap();
+        recipient.receive(&bundle, &f.ids[0]).unwrap();
+        assert!(recipient
+            .received_frames()
+            .unwrap()
+            .iter()
+            .any(|(id, raw)| id == &packets[2] && raw == &f.frame()));
+        drop(recipient);
+        let cold = Node::open(&f.configs[0]).unwrap();
+        assert_eq!(cold.state.messages, preserved);
     }
 
     #[test]

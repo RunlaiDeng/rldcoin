@@ -127,3 +127,51 @@ fn native_bft_caller_preserves_legacy_and_paged_exact_custody() {
 fn native_bft_caller_origin_recovers_exact_pending_publication_and_cold_state() {
     custody(super::receive_phase::fixture(), ORIGIN_FORMAT, true);
 }
+
+#[test]
+fn complete_response_inspection_matches_original_retry_and_refuses_stale_heads() {
+    for rules in [bft::RULES, crate::paged_bft::PACKED_RULES] {
+        let mut h = Harness::with_rules(rules);
+        h.retain = true;
+        let request = Request::Timeout {
+            context: Context::current(&h.node).unwrap(),
+            round: 0,
+        };
+        let previous = h.heads[0];
+        let signed = h.sign(0, request.clone());
+        h.agents.clear();
+        let dir = h.root.join(format!("signer-{}", h.seeds[0]));
+        let before = super::retained_native_replay::inventory(&h.root);
+        let (agent, status, response) =
+            Agent::inspect_with_response_status(&dir, &h.node, &request, previous).unwrap();
+        let observed = response.unwrap();
+        assert_eq!(status.head, signed.head);
+        assert_eq!(observed.head, signed.head);
+        assert_eq!(observed.previous_head, previous);
+        assert_eq!(observed.message, signed.message);
+        assert!(observed.recovered_exact_retry);
+        assert!(Agent::open(&dir, &h.node).is_err());
+        drop(agent);
+        let mut reference = Agent::open(&dir, &h.node).unwrap();
+        assert!(reference.contains_request(&h.node, &request).unwrap());
+        let original = reference
+            .sign(&h.node, request.clone(), None, previous)
+            .unwrap();
+        assert_eq!(
+            serde_json::to_value(&observed).unwrap(),
+            serde_json::to_value(&original).unwrap()
+        );
+        drop(reference);
+        assert!(Agent::inspect_with_response_status(&dir, &h.node, &request, Hash::ZERO).is_err());
+        let absent = Request::Timeout {
+            context: Context::current(&h.node).unwrap(),
+            round: 1,
+        };
+        let (agent, status, response) =
+            Agent::inspect_with_response_status(&dir, &h.node, &absent, signed.head).unwrap();
+        assert_eq!(status.head, signed.head);
+        assert!(response.is_none());
+        drop(agent);
+        assert_eq!(super::retained_native_replay::inventory(&h.root), before);
+    }
+}
