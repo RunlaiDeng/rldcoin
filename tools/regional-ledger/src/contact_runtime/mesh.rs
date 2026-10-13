@@ -359,8 +359,10 @@ impl Node {
         }
         for (id, t) in &s.messages {
             let verified = transit(t, &self.network, Value::Null, Value::Null)?;
+            // The complete check already binds this same immutable transit's
+            // authenticated route to the canonical signed packet hash.
             require(
-                digest(&t["packet"])? == *id
+                t["routing"]["body"]["packet_id"] == *id
                     && verified["visited"].as_array().and_then(|v| v.last())
                         == Some(&json!(self.id)),
                 "retained transit identity/custodian",
@@ -510,8 +512,10 @@ impl Node {
         if !value["transit"].is_null() {
             let t = &value["transit"];
             let checked = transit(t, &self.network, Value::Null, Value::Null)?;
+            // Reuse only the packet identity just authenticated above. Archive
+            // bytes, receipt binding and local custody still check separately.
             require(
-                digest(&t["packet"])? == id
+                t["routing"]["body"]["packet_id"] == id
                     && checked["visited"].as_array().and_then(|v| v.last())
                         == Some(&json!(self.id)),
                 "archive transit custodian",
@@ -2868,6 +2872,222 @@ mod tests {
         drop(recipient);
         let cold = Node::open(&f.configs[0]).unwrap();
         assert_eq!(cold.state.messages, preserved);
+    }
+
+    #[test]
+    #[ignore = "one fresh transport-only observation; exact test with a 30-second outer deadline"]
+    fn authenticated_packet_index_avoids_reencoding_complete_packet() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        let packet = source.enqueue(&f.frame(), &f.ids[1]).unwrap();
+        let exchange = source.prepare(&f.ids[1]).unwrap();
+        let mut destination = Node::open(&f.configs[1]).unwrap();
+        destination.receive(&exchange, &f.ids[0]).unwrap();
+        let transit = destination.state.messages[&packet].clone();
+        let exact_packet = bytes(&transit["packet"]).unwrap();
+        let key = (exact_packet.len(), Sha256::digest(&exact_packet).into());
+        let state_path = destination.root.join("native-mesh-state.json");
+        let retained = fs::read(&state_path).unwrap();
+        // A component-prepared archive uses the original real signed receipt
+        // and transit. This does not change ordinary archive admission limits.
+        let archive = json!({"format":FORMAT,"network":destination.network,
+            "node_id":destination.id,"packet_id":packet,
+            "receipt":destination.state.receipts[&packet],"transit":transit});
+        let archive_raw = bytes(&archive).unwrap();
+        let object = hex::encode(Sha256::digest(&archive_raw));
+        let archive_path = destination
+            .root
+            .join("archive")
+            .join(format!("{object}.json"));
+        crate::keystore::private_create(&archive_path, &archive_raw).unwrap();
+        let clear = || {
+            crate::contact_witness::execute(b"\"Clear\"", &[]).unwrap();
+        };
+        let observe = |operation: &dyn Fn()| {
+            clear();
+            super::super::service::start_work_trace();
+            super::super::encoding_cost::start();
+            operation();
+            let counts = super::super::encoding_cost::take();
+            let work = super::super::service::take_work_trace();
+            let full = work
+                .iter()
+                .filter(|row| row["phase"] == "transit-full-check")
+                .map(|row| row["calls"].as_u64().unwrap_or(1))
+                .sum::<u64>();
+            let hits = work
+                .iter()
+                .filter(|row| row["phase"] == "transit-witness-hit")
+                .map(|row| row["calls"].as_u64().unwrap_or(1))
+                .sum::<u64>();
+            assert_eq!((full, hits), (1, 0));
+            counts.get(&key).copied().unwrap_or_default()
+        };
+        let active_encodings = observe(&|| destination.validate().unwrap());
+        let archive_encodings = observe(&|| {
+            assert_eq!(destination.archive(&packet, &object).unwrap(), archive);
+        });
+        assert_eq!(destination.state.messages[&packet], transit);
+        assert_eq!(fs::read(&state_path).unwrap(), retained);
+        assert_eq!(fs::read(&archive_path).unwrap(), archive_raw);
+        drop(destination);
+        clear();
+        let cold = Node::open(&f.configs[1]).unwrap();
+        assert_eq!(cold.state.messages[&packet], transit);
+        clear();
+        assert_eq!(cold.archive(&packet, &object).unwrap(), archive);
+        assert_eq!(fs::read(&state_path).unwrap(), retained);
+        assert_eq!(fs::read(&archive_path).unwrap(), archive_raw);
+        println!(
+            "\nauthenticated-packet-index-observation {}",
+            json!({
+            "active_extra_encodings":active_encodings,"archive_extra_encodings":archive_encodings,
+            "full_checks_each":1,"witness_hits_each":0,"complete_cold_verified":true,
+            "elapsed_seconds":started.elapsed().as_secs_f64(),"fixture":f.root,
+            "ledger_authority":false,"ordinary_archive_admission_changed":false,
+            "ordinary_archive_admission_verified":false,"component_prepared_archive":true})
+        );
+        assert!(started.elapsed().as_secs_f64() < 30.0);
+        assert_eq!(
+            (active_encodings, archive_encodings),
+            (0, 0),
+            "authenticated packet index repeated complete packet encoding"
+        );
+    }
+
+    // The child isolates witness observations from parallel library tests.
+    #[test]
+    fn authenticated_packet_index_refuses_wrong_active_and_archive_ids() {
+        let output = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "contact_runtime::mesh::tests::authenticated_packet_index_guards_child",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1",
+            ])
+            .env("RLD_PACKET_INDEX_GUARD_CHILD", "1")
+            .output()
+            .unwrap();
+        print!("{}", String::from_utf8_lossy(&output.stdout));
+        eprint!("{}", String::from_utf8_lossy(&output.stderr));
+        assert!(
+            output.status.success(),
+            "isolated packet-index guards failed"
+        );
+    }
+
+    #[test]
+    fn authenticated_packet_index_guards_child() {
+        if std::env::var("RLD_PACKET_INDEX_GUARD_CHILD").as_deref() != Ok("1") {
+            return;
+        }
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        let mut destination = Node::open(&f.configs[1]).unwrap();
+        source
+            .receive(&destination.prepare(&f.ids[0]).unwrap(), &f.ids[1])
+            .unwrap();
+        let first = source.enqueue(&f.frame(), &f.ids[1]).unwrap();
+        let mut other: Frame = serde_json::from_slice(&f.frame()).unwrap();
+        let mut payload: Value =
+            serde_json::from_slice(&STANDARD.decode(&other.payload_b64).unwrap()).unwrap();
+        let region = Hash::from_hex(&"44".repeat(32)).unwrap();
+        payload["region"] = json!(region);
+        let raw = bytes(&payload).unwrap();
+        other.source_chain_id = region;
+        other.destination_chain_id = region;
+        other.payload_sha256 = Hash(Sha256::digest(&raw).into());
+        other.export_id = other.payload_sha256;
+        other.payload_b64 = STANDARD.encode(raw);
+        other.message_id = other.message().unwrap();
+        let second = source
+            .enqueue(&other.retained_bytes().unwrap(), &f.ids[1])
+            .unwrap();
+        assert_ne!(first, second);
+        destination
+            .receive(&source.prepare(&f.ids[1]).unwrap(), &f.ids[0])
+            .unwrap();
+        assert_eq!(destination.state.messages.len(), 2);
+        assert_eq!(destination.state.receipts.len(), 2);
+        let transit = destination.state.messages[&first].clone();
+        let receipt = destination.state.receipts[&second].clone();
+        let original = destination.state.clone();
+        let state_path = destination.root.join("native-mesh-state.json");
+        let state_bytes = fs::read(&state_path).unwrap();
+        let complete_transit = bytes(&transit).unwrap();
+        // Warm the exact Null/Null local-validation scope, not incoming contact scope.
+        super::super::transit(&transit, &destination.network, Value::Null, Value::Null).unwrap();
+        let wrong = "00".repeat(32);
+        assert_ne!(wrong, first);
+        assert_ne!(wrong, second);
+        let moved = destination.state.messages.remove(&first).unwrap();
+        destination.state.messages.insert(wrong.clone(), moved);
+        for id in &mut destination.state.arrivals {
+            if *id == first {
+                *id = wrong.clone();
+            }
+        }
+        let refused_state = bytes(&serde_json::to_value(&destination.state).unwrap()).unwrap();
+        super::super::service::start_work_trace();
+        let active_error = destination.validate().unwrap_err();
+        let active_work = super::super::service::take_work_trace();
+        assert_eq!(active_error, "retained transit identity/custodian");
+        let calls = |work: &[Value], phase: &str| {
+            work.iter()
+                .filter(|row| row["phase"] == phase)
+                .map(|row| row["calls"].as_u64().unwrap())
+                .sum::<u64>()
+        };
+        assert_eq!(calls(&active_work, "transit-witness-hit"), 1);
+        assert_eq!(calls(&active_work, "transit-full-check"), 0);
+        assert_eq!(
+            bytes(&serde_json::to_value(&destination.state).unwrap()).unwrap(),
+            refused_state
+        );
+        assert_eq!(fs::read(&state_path).unwrap(), state_bytes);
+        destination.state = original.clone();
+        // Both components are genuine ordinary authenticated custody records.
+        // Only their combination is wrong. The header, index and receipt use T2;
+        // transit T1 still fully authenticates and ends at this same destination.
+        let crossed = json!({"format":FORMAT,"network":destination.network,
+            "node_id":destination.id,"packet_id":second,"receipt":receipt,"transit":transit});
+        let crossed_bytes = bytes(&crossed).unwrap();
+        let object = hex::encode(Sha256::digest(&crossed_bytes));
+        let archive_path = destination
+            .root
+            .join("archive")
+            .join(format!("{object}.json"));
+        crate::keystore::private_create(&archive_path, &crossed_bytes).unwrap();
+        super::super::service::start_work_trace();
+        let archive_error = destination.archive(&second, &object).unwrap_err();
+        let archive_work = super::super::service::take_work_trace();
+        assert_eq!(archive_error, "archive transit custodian");
+        assert_eq!(calls(&archive_work, "mesh-archive-read-bind"), 1);
+        assert_eq!(calls(&archive_work, "transit-witness-hit"), 1);
+        assert_eq!(calls(&archive_work, "transit-full-check"), 0);
+        assert!(destination.state.exact(&original));
+        assert_eq!(fs::read(&state_path).unwrap(), state_bytes);
+        assert_eq!(fs::read(&archive_path).unwrap(), crossed_bytes);
+        assert_eq!(
+            bytes(&destination.state.messages[&first]).unwrap(),
+            complete_transit
+        );
+        assert!(
+            started.elapsed().as_secs_f64() < 30.0,
+            "packet-index guard deadline exhausted"
+        );
+        println!(
+            "\nauthenticated-packet-index-guards {}",
+            json!({
+            "active_error":active_error,"archive_error":archive_error,
+            "warm_hits_per_guard":1,"cold_checks_per_guard":0,
+            "exact_inputs_and_files_preserved":true,"seconds":started.elapsed().as_secs_f64(),
+            "fixture_only":true,"ledger_authority":false,"independent_operations":false})
+        );
     }
 
     #[test]
