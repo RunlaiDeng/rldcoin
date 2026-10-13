@@ -561,10 +561,36 @@ mod tests {
             assert_eq!(black_box(checked), expected);
         }
         let signature_work = SIGNATURE_WORK.with(|trace| trace.borrow_mut().take().unwrap());
+        let verify = || {
+            for _ in 0..128 {
+                assert!(
+                    started.elapsed().as_secs() < 10,
+                    "receipt discriminator budget exhausted"
+                );
+                let checked =
+                    crate::contact_schema::verify(&network, "receipt", &receipt, &limits).unwrap();
+                assert_eq!(black_box(checked), expected);
+            }
+        };
+        // Both work schedules use the same complete kernel, output checks and
+        // disabled signature timing. Include scoped-thread startup and join.
+        let serial_started = Instant::now();
+        verify();
+        verify();
+        let serial_seconds = serial_started.elapsed().as_secs_f64();
+        let parallel_started = Instant::now();
+        std::thread::scope(|scope| {
+            let other = scope.spawn(verify);
+            verify();
+            other.join().unwrap();
+        });
+        let parallel_seconds = parallel_started.elapsed().as_secs_f64();
         eprintln!(
             "{}",
             serde_json::json!({"receipt_discriminator":{"iterations":256,
             "encode_seconds":encode,"decode_seconds":decode,"signature_schema_seconds":native,
+            "serial_worker_signature_schema_seconds":serial_seconds,
+            "two_worker_signature_schema_seconds":parallel_seconds,
             "signature_work_seconds":{"body_domain":signature_work[0],"key_construct":signature_work[1],
                 "signature_decode":signature_work[2],"signed_bytes":signature_work[3],"strict_equation":signature_work[4]},
             "whole_seconds":started.elapsed().as_secs_f64(),"ledger_authority":false}})
