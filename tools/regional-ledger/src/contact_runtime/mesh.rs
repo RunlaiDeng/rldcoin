@@ -1237,6 +1237,23 @@ impl Node {
         }
         let (mut count, mut total) = self.archive_inventory()?;
         let ids: Vec<_> = self.state.receipts.keys().take(16).cloned().collect();
+        if ids.is_empty() {
+            if let Some(raw) = self.retained_image.take() {
+                // No receipt means no archive or scheduling mutation. Retain
+                // custody only after checking and synchronizing the exact image
+                // authenticated or durably published during this lock lease.
+                #[cfg(test)]
+                let started = super::service::monotonic()?;
+                crate::contact_storage::repeat_exact(
+                    &self.root.join("native-mesh-state.json"),
+                    &raw,
+                )?;
+                #[cfg(test)]
+                super::service::trace_subwork("mesh-state-repeat-sync", started)?;
+                self.retained_image = Some(raw);
+                return Ok(());
+            }
+        }
         for id in ids {
             let receipt = self.state.receipts.get(&id).ok_or("receipt disappeared")?;
             let t = self.state.messages.get(&id);
@@ -1441,6 +1458,412 @@ mod tests {
             .state
             .receipts
             .contains_key(&packet));
+    }
+
+    #[test]
+    #[ignore = "one fresh transport-only diagnostic; run exact with a 60-second outer deadline"]
+    fn unchanged_pending_archive_reuses_exact_durable_image() {
+        use std::os::unix::fs::MetadataExt;
+        let started = std::time::Instant::now();
+        let within_budget = || {
+            assert!(
+                started.elapsed().as_secs_f64() < 60.0,
+                "pending archive diagnostic exhausted its original 60-second budget"
+            );
+        };
+        let calls = |work: &[Value], phase: &str| -> u64 {
+            work.iter()
+                .filter(|row| row["phase"] == phase)
+                .map(|row| row["calls"].as_u64().expect("typed aggregate call count"))
+                .sum()
+        };
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        eprintln!("Fresh pending archive diagnostic: {}", f.root.display());
+        within_budget();
+        let mut frames = Vec::new();
+        for n in 0..32u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            frames.push(frame.retained_bytes().unwrap());
+        }
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        for batch in frames.chunks(4) {
+            within_budget();
+            node.enqueue_frame_batch(
+                &batch.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                &[f.ids[1].clone()],
+            )
+            .unwrap();
+        }
+        // Exercise durable scheduling metadata without delivery or a receipt.
+        let priority = node
+            .state
+            .arrivals
+            .iter()
+            .rev()
+            .cloned()
+            .collect::<Vec<_>>();
+        node.prioritize_originated_packets(&priority).unwrap();
+        node.prepare(&f.ids[1]).unwrap();
+        assert_eq!(node.state.messages.len(), 32);
+        assert!(node.state.receipts.is_empty());
+        assert!(node.state.archives.is_empty());
+        let state_before = node.state.clone();
+        let canonical_before = bytes(&serde_json::to_value(&state_before).unwrap()).unwrap();
+        let path = node.root.join("native-mesh-state.json");
+        let image_before = fs::read(&path).unwrap();
+        let inode_before = fs::metadata(&path).unwrap().ino();
+        assert_eq!(node.retained_image.as_ref(), Some(&image_before));
+        fs::write(
+            f.root.join("pending-before-expanded.json"),
+            &canonical_before,
+        )
+        .unwrap();
+        fs::write(f.root.join("pending-before-image.json"), &image_before).unwrap();
+
+        within_budget();
+        super::super::service::start_work_trace();
+        crate::contact_state_codec::start_encoding_trace();
+        let archive_started = std::time::Instant::now();
+        let archived = node.archive_completed();
+        let archive_seconds = archive_started.elapsed().as_secs_f64();
+        let encodings = crate::contact_state_codec::take_encoding_trace();
+        let archive_work = super::super::service::take_work_trace();
+        fs::write(
+            f.root.join("pending-archive-operation.json"),
+            bytes(&json!({
+                "operation_ok":archived.is_ok(), "error":archived.as_ref().err(),
+                "archive_seconds":archive_seconds, "encodings":encodings, "work":archive_work,
+                "ledger_authority":false
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        archived.unwrap();
+        within_budget();
+        let canonical_after = bytes(&serde_json::to_value(&node.state).unwrap()).unwrap();
+        let image_after = fs::read(&path).unwrap();
+        let inode_after = fs::metadata(&path).unwrap().ino();
+        fs::write(f.root.join("pending-after-expanded.json"), &canonical_after).unwrap();
+        fs::write(f.root.join("pending-after-image.json"), &image_after).unwrap();
+        assert!(node.state.exact(&state_before));
+        assert_eq!(canonical_before, canonical_after);
+        assert_eq!(image_before, image_after);
+        assert_eq!(node.retained_image.as_ref(), Some(&image_after));
+        assert_eq!(node.archive_inventory().unwrap(), (0, 0));
+        drop(node);
+
+        // Clear only this serial diagnostic process's byte witnesses, then
+        // authenticate all retained ground signatures through ordinary open.
+        // This is not a new-process, independent or Native-ledger qualification.
+        let cleared =
+            crate::contact_witness::execute(&bytes(&json!("Clear")).unwrap(), &[]).unwrap();
+        assert_eq!(cleared["entries"], 0);
+        within_budget();
+        super::super::service::start_work_trace();
+        let cold_started = std::time::Instant::now();
+        let cold = Node::open(&f.configs[0]).unwrap();
+        let cold_seconds = cold_started.elapsed().as_secs_f64();
+        let cold_work = super::super::service::take_work_trace();
+        assert!(cold.state.exact(&state_before));
+        assert_eq!(
+            bytes(&serde_json::to_value(&cold.state).unwrap()).unwrap(),
+            canonical_before
+        );
+        assert_eq!(fs::read(&path).unwrap(), image_before);
+        assert_eq!(cold.retained_image.as_ref(), Some(&image_before));
+        assert_eq!(calls(&cold_work, "transit-full-check"), 32);
+        assert_eq!(calls(&cold_work, "transit-witness-hit"), 0);
+        drop(cold);
+        let elapsed = started.elapsed().as_secs_f64();
+        let report = json!({
+            "fixture_only":true, "ledger_authority":false,
+            "pending_messages":32, "receipts":0, "archive_entries":0,
+            "canonical_state_equal":true, "retained_image_equal":true,
+            "state_inode_equal":inode_before==inode_after,
+            "archive_seconds":archive_seconds, "encodings":encodings,
+            "archive_work":archive_work, "cold_seconds":cold_seconds,
+            "cold_work":cold_work, "elapsed_seconds":elapsed,
+            "cold_scope":"same-process ordinary Node open after explicit witness clear",
+            "scope_limit_seconds":60, "original_payment_delay_attribution":false
+        });
+        fs::write(
+            f.root.join("pending-archive-counter.json"),
+            bytes(&report).unwrap(),
+        )
+        .unwrap();
+        eprintln!("Pending archive diagnostic: {report}");
+        within_budget();
+        // Run this assertion last: the old implementation must preserve all
+        // evidence and complete the authentication check before the expected RED.
+        assert_eq!(
+            encodings.len(),
+            0,
+            "unchanged pending-only archive maintenance re-encoded the whole state"
+        );
+        assert_eq!(calls(&archive_work, "mesh-state-encode-transits"), 0);
+        assert_eq!(calls(&archive_work, "mesh-state-save-complete"), 0);
+        assert_eq!(
+            calls(&archive_work, "mesh-state-repeat-sync"),
+            1,
+            "unchanged archive maintenance must repeat actual file and directory sync"
+        );
+        assert_eq!(inode_before, inode_after);
+    }
+
+    #[test]
+    fn pending_archive_fallback_receipts_cold_and_changed_image_fail_closed() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        eprintln!(
+            "Fresh pending archive fallback/receipt/refusal guard: {}",
+            f.root.display()
+        );
+        let mut frames = Vec::new();
+        // The last sixteen frames are reserved for restoring the original
+        // pending count after actual receipt migration, through normal enqueue.
+        for n in 0..48u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut body: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            body["region"] = json!(region);
+            let raw = bytes(&body).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            frames.push(frame.retained_bytes().unwrap());
+        }
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        for batch in frames[..32].chunks(4) {
+            node.enqueue_frame_batch(
+                &batch.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                &[f.ids[1].clone()],
+            )
+            .unwrap();
+        }
+        let priority = node
+            .state
+            .arrivals
+            .iter()
+            .rev()
+            .cloned()
+            .collect::<Vec<_>>();
+        node.prioritize_originated_packets(&priority).unwrap();
+        assert_eq!(node.state.messages.len(), 32);
+        assert!(node.state.receipts.is_empty());
+        let path = node.root.join("native-mesh-state.json");
+        let before = fs::read(&path).unwrap();
+        let expected = node.state.clone();
+        assert_eq!(node.retained_image.as_ref(), Some(&before));
+        crate::contact_state_codec::start_encoding_trace();
+        super::super::service::start_work_trace();
+        node.archive_completed().unwrap();
+        let repeat_encodings = crate::contact_state_codec::take_encoding_trace();
+        let repeat_work = super::super::service::take_work_trace();
+        assert!(repeat_encodings.is_empty());
+        assert_eq!(
+            repeat_work
+                .iter()
+                .filter(|row| row["phase"] == "mesh-state-repeat-sync")
+                .map(|row| row["calls"].as_u64().unwrap())
+                .sum::<u64>(),
+            1
+        );
+        assert!(!repeat_work
+            .iter()
+            .any(|row| row["phase"] == "mesh-state-save-complete"));
+        assert!(node.state.exact(&expected));
+        assert_eq!(fs::read(&path).unwrap(), before);
+        assert_eq!(node.retained_image.as_ref(), Some(&before));
+        assert_eq!(node.retained_image.take(), Some(before.clone()));
+        crate::contact_state_codec::start_encoding_trace();
+        super::super::service::start_work_trace();
+        node.archive_completed().unwrap();
+        let encoded = crate::contact_state_codec::take_encoding_trace();
+        let fallback_work = super::super::service::take_work_trace();
+        assert_eq!(
+            encoded.len(),
+            1,
+            "absence of an exact image must perform the full save"
+        );
+        assert!(fallback_work
+            .iter()
+            .any(|row| row["phase"] == "mesh-state-save-complete" && row["calls"] == 1));
+        assert!(!fallback_work
+            .iter()
+            .any(|row| row["phase"] == "mesh-state-repeat-sync"));
+        assert!(node.state.exact(&expected));
+        assert_eq!(fs::read(&path).unwrap(), before);
+        assert_eq!(node.retained_image.as_ref(), Some(&before));
+
+        // Real destination receipt signatures enter through ordinary receive.
+        // The nonempty receipt branch must still migrate complete custody.
+        let mut destination = Node::open(&f.configs[1]).unwrap();
+        let exchange = node.prepare(&f.ids[1]).unwrap();
+        destination.receive(&exchange, &f.ids[0]).unwrap();
+        let reply = destination.prepare(&f.ids[0]).unwrap();
+        node.receive(&reply, &f.ids[1]).unwrap();
+        let completed = node.state.receipts.clone();
+        assert!(!completed.is_empty() && completed.len() <= 16);
+        let messages_before = node.state.messages.clone();
+        let pending = messages_before
+            .iter()
+            .filter(|(id, _)| !completed.contains_key(*id))
+            .map(|(id, transit)| (id.clone(), transit.clone()))
+            .collect::<BTreeMap<_, _>>();
+        let arrivals = node
+            .state
+            .arrivals
+            .iter()
+            .filter(|id| !completed.contains_key(*id))
+            .cloned()
+            .collect::<Vec<_>>();
+        let mut first_carried = node.state.first_carried.clone();
+        for ids in first_carried.values_mut() {
+            ids.retain(|id| !completed.contains_key(id));
+        }
+        super::super::service::start_work_trace();
+        node.archive_completed().unwrap();
+        let receipt_work = super::super::service::take_work_trace();
+        assert!(!receipt_work
+            .iter()
+            .any(|row| row["phase"] == "mesh-state-repeat-sync"));
+        assert!(receipt_work
+            .iter()
+            .any(|row| row["phase"] == "mesh-state-save-complete" && row["calls"] == 1));
+        assert_eq!(node.state.messages, pending);
+        assert!(node.state.receipts.is_empty());
+        assert_eq!(node.state.arrivals, arrivals);
+        assert_eq!(node.state.first_carried, first_carried);
+        assert_eq!(node.state.archives.len(), completed.len());
+        for (id, receipt) in &completed {
+            let archived = node.archive(id, &node.state.archives[id]).unwrap();
+            assert_eq!(&archived["receipt"], receipt);
+            assert_eq!(&archived["transit"], &messages_before[id]);
+        }
+        let expected = node.state.clone();
+        let image = fs::read(&path).unwrap();
+        drop(destination);
+        drop(node);
+        let cleared =
+            crate::contact_witness::execute(&bytes(&json!("Clear")).unwrap(), &[]).unwrap();
+        assert_eq!(cleared["entries"], 0);
+        // Same-process ordinary cold authentication, not independent custody.
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        assert!(node.state.exact(&expected));
+        assert_eq!(fs::read(&path).unwrap(), image);
+        assert_eq!(node.retained_image.as_ref(), Some(&image));
+
+        // Restore exactly 32 pending packets using new signed packets. Otherwise
+        // the unchanged below-watermark early return would bypass this refusal.
+        for batch in frames[32..32 + completed.len()].chunks(4) {
+            node.enqueue_frame_batch(
+                &batch.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                &[f.ids[1].clone()],
+            )
+            .unwrap();
+        }
+        assert_eq!(node.state.messages.len(), 32);
+        assert!(node.state.receipts.is_empty());
+        let expected = node.state.clone();
+        let original = fs::read(&path).unwrap();
+        assert_eq!(node.retained_image.as_ref(), Some(&original));
+        let original_backup = f.root.join("original-image-before-fault.json");
+        crate::keystore::private_create(&original_backup, &original).unwrap();
+        assert_eq!(fs::read(&original_backup).unwrap(), original);
+        let mut altered = original;
+        *altered.last_mut().unwrap() ^= 1;
+        fs::write(&path, &altered).unwrap();
+        crate::contact_state_codec::start_encoding_trace();
+        let error = node.archive_completed().unwrap_err();
+        assert!(
+            error.contains("retained contact state missing or changed"),
+            "{error}"
+        );
+        assert!(crate::contact_state_codec::take_encoding_trace().is_empty());
+        assert!(node.retained_image.is_none());
+        assert!(node.state.exact(&expected));
+        assert_eq!(
+            fs::read(&path).unwrap(),
+            altered,
+            "failure silently repaired changed bytes"
+        );
+        assert!(started.elapsed().as_secs_f64() < 60.0);
+        // Stop here: retain the changed image and the whole failed fixture.
+    }
+
+    #[test]
+    fn pending_archive_empty_receipts_still_refuse_unsafe_inventory() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        eprintln!(
+            "Fresh pending archive inventory refusal guard: {}",
+            f.root.display()
+        );
+        let mut frames = Vec::new();
+        for n in 0..32u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut body: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            body["region"] = json!(region);
+            let raw = bytes(&body).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            frames.push(frame.retained_bytes().unwrap());
+        }
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        for batch in frames.chunks(4) {
+            node.enqueue_frame_batch(
+                &batch.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                &[f.ids[1].clone()],
+            )
+            .unwrap();
+        }
+        assert_eq!(node.state.messages.len(), 32);
+        assert!(node.state.receipts.is_empty());
+        let expected = node.state.clone();
+        let path = node.root.join("native-mesh-state.json");
+        let image = fs::read(&path).unwrap();
+        assert_eq!(node.retained_image.as_ref(), Some(&image));
+        let unsafe_entry = node.root.join("archive").join("retained-unsafe-directory");
+        fs::create_dir(&unsafe_entry).unwrap();
+        crate::contact_state_codec::start_encoding_trace();
+        super::super::service::start_work_trace();
+        let error = node.archive_completed().unwrap_err();
+        let work = super::super::service::take_work_trace();
+        assert!(error.contains("archive contains unsafe object"), "{error}");
+        assert!(crate::contact_state_codec::take_encoding_trace().is_empty());
+        assert!(!work
+            .iter()
+            .any(|row| row["phase"] == "mesh-state-repeat-sync"
+                || row["phase"] == "mesh-state-save-complete"));
+        assert!(node.state.exact(&expected));
+        assert_eq!(fs::read(&path).unwrap(), image);
+        assert!(unsafe_entry.is_dir());
+        assert!(started.elapsed().as_secs_f64() < 60.0);
+        // Stop here: no removal, repair or cold reopen of the refused fixture.
     }
 
     #[test]
