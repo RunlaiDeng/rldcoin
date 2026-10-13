@@ -74,15 +74,14 @@ fn packet(value: &Value, network: &str, limits: &Limits) -> Result<(Value, Value
         STANDARD.encode(&raw) == encoded,
         "noncanonical frame encoding",
     )?;
-    let (frame, payload) =
-        contact_frame::inspect_bytes(&raw, None, None, limits.payload, limits.frame)?;
-    if frame.kind == "regional-bft" {
-        let carriage = crate::wallet_http::decode_unique_with_limit(&payload, limits.payload)?;
-        require(
-            carriage["currency"] == network,
-            "consensus carriage differs from mesh currency",
-        )?;
-    }
+    let (frame, _) = contact_frame::inspect_bytes_with_network(
+        &raw,
+        None,
+        None,
+        limits.payload,
+        limits.frame,
+        Some(network),
+    )?;
     Ok((
         body,
         serde_json::to_value(frame).map_err(|e| e.to_string())?,

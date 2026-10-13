@@ -88,7 +88,44 @@ pub(crate) fn decode_unique(raw: &[u8]) -> Result<Value> {
     decode_unique_with_limit(raw, MAX_BYTES)
 }
 
+#[cfg(test)]
+pub(crate) mod decode_cost {
+    use super::*;
+    thread_local! {
+        static EXACT: std::cell::RefCell<Option<(Vec<u8>, usize)>> = const { std::cell::RefCell::new(None) };
+    }
+    pub(crate) fn begin(raw: &[u8]) -> Result<()> {
+        require(
+            !raw.is_empty() && raw.len() <= crate::contact::MAX_PAYLOAD,
+            "decode observation payload bound",
+        )?;
+        EXACT.with(|slot| {
+            let mut slot = slot.borrow_mut();
+            require(slot.is_none(), "decode observation already active")?;
+            *slot = Some((raw.to_vec(), 0));
+            Ok(())
+        })
+    }
+    pub(crate) fn take() -> usize {
+        EXACT.with(|slot| slot.borrow_mut().take().map_or(0, |(_, calls)| calls))
+    }
+    pub(super) fn record(raw: &[u8]) -> Result<()> {
+        EXACT.with(|slot| {
+            if let Some((expected, calls)) = slot.borrow_mut().as_mut() {
+                if expected.as_slice() == raw {
+                    *calls = calls
+                        .checked_add(1)
+                        .ok_or("decode observation count overflow")?;
+                }
+            }
+            Ok(())
+        })
+    }
+}
+
 pub(crate) fn decode_unique_with_limit(raw: &[u8], limit: usize) -> Result<Value> {
+    #[cfg(test)]
+    decode_cost::record(raw)?;
     require(raw.len() <= limit, "JSON byte bound")?;
     serde_json::from_slice::<Unique>(raw)
         .map(|v| v.0)

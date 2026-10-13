@@ -73,7 +73,7 @@ fn metadata(frame: &Frame, frame_size: usize, frame_hash: Hash, payload_size: us
         "payload_size":payload_size,"payload_sha256":frame.payload_sha256,
         "message_id":frame.message_id,"ledger_authority":false,"authenticated":false})
 }
-fn inspect_regional(frame: &Frame, payload: &[u8]) -> Result<()> {
+fn inspect_regional(frame: &Frame, payload: &[u8], network: Option<&str>) -> Result<()> {
     let value = crate::wallet_http::decode_unique_with_limit(payload, MAX_PAYLOAD)?;
     let object = value
         .as_object()
@@ -98,6 +98,12 @@ fn inspect_regional(frame: &Frame, payload: &[u8]) -> Result<()> {
             .ok_or("invalid consensus currency")?,
         "consensus currency",
     )?;
+    if let Some(network) = network {
+        require(
+            value["currency"] == network,
+            "consensus carriage differs from mesh currency",
+        )?;
+    }
     Ok(())
 }
 pub(super) fn inspect_bytes(
@@ -106,6 +112,16 @@ pub(super) fn inspect_bytes(
     destination: Option<String>,
     payload_bound: usize,
     frame_bound: usize,
+) -> Result<(Frame, Vec<u8>)> {
+    inspect_bytes_with_network(raw, source, destination, payload_bound, frame_bound, None)
+}
+pub(super) fn inspect_bytes_with_network(
+    raw: &[u8],
+    source: Option<String>,
+    destination: Option<String>,
+    payload_bound: usize,
+    frame_bound: usize,
+    network: Option<&str>,
 ) -> Result<(Frame, Vec<u8>)> {
     let limits = Limits {
         payload: payload_bound,
@@ -158,7 +174,7 @@ pub(super) fn inspect_bytes(
     )?;
     require(frame.message()? == frame.message_id, "message ID changed")?;
     if frame.kind == "regional-bft" {
-        inspect_regional(&frame, &payload)?;
+        inspect_regional(&frame, &payload, network)?;
     }
     Ok((frame, payload))
 }

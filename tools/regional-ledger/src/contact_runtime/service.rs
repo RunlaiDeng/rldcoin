@@ -1,4 +1,8 @@
 use super::*;
+#[cfg(test)]
+#[path = "regional_payload_decode_tests.rs"]
+mod regional_payload_decode_tests;
+
 use crate::{storage::Store, Hash};
 use serde_json::{json, Value};
 use std::{
