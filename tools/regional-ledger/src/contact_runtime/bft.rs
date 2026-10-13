@@ -713,7 +713,11 @@ impl Runtime {
                 timeout,
                 high,
             } => {
+                #[cfg(test)]
+                let started = super::service::monotonic()?;
                 let snapshot = self.candidate(node, &context, high)?;
+                #[cfg(test)]
+                super::service::trace_subwork("consensus-proposal-construction", started)?;
                 self.sign(
                     node,
                     consensus::Request::Propose {

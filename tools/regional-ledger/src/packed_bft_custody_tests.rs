@@ -222,25 +222,35 @@ fn packed_ledger_four_original_signer_journals_two_owner_payments_and_fresh_cold
 
 #[test]
 fn packed_height_four_runtime_tick_measures_complete_authentication_without_new_signature() {
-    packed_runtime_work(false, false, false);
+    packed_runtime_work(false, false, false, false);
 }
 
 #[test]
 fn packed_current_prepare_measures_original_runtime_sign_and_caller_publication() {
-    packed_runtime_work(true, false, false);
+    packed_runtime_work(true, false, false, false);
 }
 
 #[test]
 fn ordinary_proposer_retains_own_prepare_without_another_contact_turn() {
-    packed_runtime_work(false, true, false);
+    packed_runtime_work(false, true, false, false);
 }
 
 #[test]
 fn packed_receive_retains_exact_evidence_event_and_measures_post_sync_retention() {
-    packed_runtime_work(false, false, true);
+    packed_runtime_work(false, false, true, false);
 }
 
-fn packed_runtime_work(measure_sign: bool, compose_proposal: bool, measure_receive: bool) {
+#[test]
+fn packed_ordinary_proposal_separates_historical_candidate_scan_and_original_signing() {
+    packed_runtime_work(false, false, false, true);
+}
+
+fn packed_runtime_work(
+    measure_sign: bool,
+    compose_proposal: bool,
+    measure_receive: bool,
+    measure_proposal: bool,
+) {
     let started = std::time::Instant::now();
     let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
     h.retain = true;
@@ -296,7 +306,7 @@ fn packed_runtime_work(measure_sign: bool, compose_proposal: bool, measure_recei
             "key":public(h.seeds[n]),"miner":public(10),
             "validators":h.seeds.iter().enumerate().map(|(n,seed)|
                 serde_json::json!({"key":public(*seed),"node_id":ids[n]})).collect::<Vec<_>>(),
-            "block_interval":0.5,"round_timeout":5.0,"stop_height":4
+            "block_interval":0.5,"round_timeout":5.0,"stop_height":if measure_proposal {5}else{4}
         });
         let path = h.root.join(format!("runtime-config-{n}.json"));
         crate::keystore::private_create(&path, &crate::wallet_client::canonical(&config).unwrap())
@@ -371,6 +381,9 @@ fn packed_runtime_work(measure_sign: bool, compose_proposal: bool, measure_recei
         return;
     }
     for height in 1..=5 {
+        if measure_proposal && height == 5 {
+            break;
+        }
         assert!(
             started.elapsed().as_secs_f64() < 60.0,
             "Runtime fixture deadline"
@@ -447,7 +460,107 @@ fn packed_runtime_work(measure_sign: bool, compose_proposal: bool, measure_recei
         .iter()
         .flat_map(|actor| actor.fixture_controls().unwrap())
         .collect::<Vec<_>>();
-    assert_eq!(messages.len(), 41);
+    assert_eq!(messages.len(), if measure_proposal { 36 } else { 41 });
+    if measure_proposal {
+        let context = Context::current(&h.node).unwrap();
+        let keys = h.seeds.iter().copied().map(public).collect::<Vec<_>>();
+        let leader = bft::leader(&context, 0, &keys).unwrap();
+        let n = keys.iter().position(|key| key == &leader).unwrap();
+        actors[n]
+            .retain_fixture_controls(&h.node, &messages)
+            .unwrap();
+        assert_eq!(
+            actors[n].probe_tick(&mut h.node).unwrap()["decision"],
+            "idle"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(550));
+        let head = h.node.storage_head().unwrap();
+        let ledger = h.node.chain.ledger.clone();
+        let old_count = actors[n].fixture_controls().unwrap().len();
+        let mut before = inventory(&h.root);
+        let signer = h.root.join(format!("signer-{}", h.seeds[n]));
+        let caller = h.root.join(format!("runtime-caller-{n}/head.json"));
+        let archive_path = h.root.join(format!("runtime-work-{n}/state.json"));
+        before.retain(|path, _| {
+            !path.starts_with(&signer) && *path != caller && *path != archive_path
+        });
+        let report = actors[n].probe_tick(&mut h.node).unwrap();
+        assert!(
+            report["error"].is_null(),
+            "ordinary proposal failed: {report}"
+        );
+        assert_eq!(report["decision"], "propose");
+        assert_eq!(actors[n].fixture_controls().unwrap().len(), old_count + 2);
+        assert_eq!(h.node.storage_head().unwrap(), head);
+        assert_eq!(h.node.chain.ledger, ledger);
+        let mut after = inventory(&h.root);
+        after.retain(|path, _| {
+            !path.starts_with(&signer) && *path != caller && *path != archive_path
+        });
+        assert_eq!(after, before);
+        let trace = report["trace"].as_array().unwrap();
+        let seconds = |phase| {
+            trace.iter().find(|row| row["phase"] == phase).unwrap()["seconds"]
+                .as_f64()
+                .unwrap()
+        };
+        let construction = seconds("consensus-proposal-construction");
+        let action = seconds("consensus-action");
+        assert!(construction > 0.0 && action >= construction);
+        eprintln!(
+            "Packed ordinary proposal work: {}",
+            serde_json::json!({
+            "report":report,"candidate_fraction_of_action":construction/action,
+            "candidate_dominates_half_action":construction/action>=0.5,
+            "original_proposal_and_prepare_only":true,"ledger_and_other_custody_unchanged":true,
+            "network_or_payment_qualification":false})
+        );
+        drop(actors);
+        let root = h.root.clone();
+        let seeds = h.seeds.clone();
+        drop(h);
+        let before = inventory(&root);
+        let cold = Store::open_pinned(&root.join("node"), &public(1), currency, head).unwrap();
+        assert_eq!(cold.chain.ledger, ledger);
+        for (actor, seed) in seeds.iter().enumerate() {
+            let caller = crate::bft_client::Client::lock(
+                &root.join(format!("runtime-caller-{actor}/head.json")),
+                &root.join(format!("signer-{seed}")),
+                public(*seed),
+                crate::bft_client::FORMAT.into(),
+                &cold,
+            )
+            .unwrap();
+            let state = caller.read().unwrap();
+            assert!(state.pending.is_none() && state.outbox.is_none());
+            let agent = Agent::open(&root.join(format!("signer-{seed}")), &cold).unwrap();
+            assert_eq!(agent.head().unwrap(), state.head);
+        }
+        let archive =
+            crate::bft_runtime_archive::Archive::decode(&fs::read(&archive_path).unwrap()).unwrap();
+        assert_eq!(archive.runtime.messages.len(), 38);
+        let entries = archive.runtime.messages.values().collect::<Vec<_>>();
+        let mut checked_count = 0;
+        for records in entries.chunks(crate::bft_network::MAX_COLD_BATCH) {
+            let wires = records
+                .iter()
+                .map(|record| serde_json::from_value(archive.envelope(record).unwrap()).unwrap())
+                .collect::<Vec<_>>();
+            let checked = crate::bft_network::check_cold_batch(wires, &cold).unwrap();
+            assert_eq!(checked.len(), records.len());
+            for (record, checked) in records.iter().zip(checked) {
+                assert_eq!(record.value, checked.value);
+                checked_count += 1;
+            }
+        }
+        assert_eq!(checked_count, 38);
+        assert_eq!(inventory(&root), before);
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "ordinary proposal work budget"
+        );
+        return;
+    }
     if measure_receive {
         let target = messages
             .iter()
