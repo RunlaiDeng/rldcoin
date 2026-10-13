@@ -310,15 +310,25 @@ impl Node {
     }
 
     fn save(&self) -> Result<()> {
+        #[cfg(test)]
+        let save_started = super::service::monotonic()?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let token = random()?[..32].to_owned();
         let mut meta = serde_json::to_value(&self.state).map_err(|e| e.to_string())?;
         meta["messages"] = json!({});
         let raw = bytes(&meta)?;
+        #[cfg(test)]
+        super::service::trace_subwork("mesh-state-metadata", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         codec_request(
             "Begin",
             json!({"token":token,"limits":codec_limits()}),
             &raw,
         )?;
+        #[cfg(test)]
+        super::service::trace_subwork("mesh-state-codec-begin", started)?;
         let operation: Result<()> = (|| {
             #[cfg(test)]
             let started = super::service::monotonic()?;
@@ -343,9 +353,15 @@ impl Node {
             super::service::trace_subwork("mesh-state-durable-write", started)?;
             Ok(())
         })();
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let cleanup = codec(json!({"Abort":{"token":token}}), &[]);
+        #[cfg(test)]
+        super::service::trace_subwork("mesh-state-codec-cleanup", started)?;
         operation?;
         cleanup?;
+        #[cfg(test)]
+        super::service::trace_subwork("mesh-state-save-complete", save_started)?;
         Ok(())
     }
 
@@ -1897,6 +1913,25 @@ mod tests {
             .unwrap()
             .is_empty());
         let trace = super::super::service::take_work_trace();
+        let save = trace
+            .iter()
+            .find(|e| e["phase"] == "mesh-state-save-complete")
+            .expect("complete durable-save observation");
+        let mut phases = 0.0;
+        for phase in [
+            "mesh-state-metadata",
+            "mesh-state-codec-begin",
+            "mesh-state-encode-transits",
+            "mesh-state-encode-finish",
+            "mesh-state-durable-write",
+            "mesh-state-codec-cleanup",
+        ] {
+            let entry = trace.iter().find(|e| e["phase"] == phase).unwrap();
+            assert_eq!(entry["calls"], save["calls"]);
+            phases += entry["seconds"].as_f64().unwrap();
+        }
+        assert!(save["calls"].as_u64().unwrap() > 0);
+        assert!(phases <= save["seconds"].as_f64().unwrap());
         let opens = trace
             .iter()
             .filter(|e| e["phase"] == "mesh-state-decode-expand")
