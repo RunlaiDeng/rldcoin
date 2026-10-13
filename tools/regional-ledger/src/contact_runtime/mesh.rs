@@ -3639,4 +3639,325 @@ mod tests {
         );
         assert_eq!(fs::read(path).unwrap(), original_bytes);
     }
+    #[test]
+    #[ignore = "one fresh plain/compressed receive observation; exact test with a 30-second outer deadline"]
+    fn directory_receive_canonicalizes_exact_exchange_once() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(4);
+        f.retain = true;
+        for n in 0..4 {
+            let peer = n ^ 1;
+            let mut contact = json!({"peer":f.ids[peer],
+            "inbox":f.root.join(format!("spool-{peer}-{n}")),
+            "outbox":f.root.join(format!("spool-{n}-{peer}"))});
+            if n >= 2 {
+                contact["adapter"] = json!("RLD-CONTACT-SPOOL-ZLIB-V1");
+            }
+            f.configs[n]["contacts"] = json!([contact]);
+        }
+        let calls = |work: &[Value], phase: &str| {
+            work.iter()
+                .filter(|row| row["phase"] == phase)
+                .map(|row| row["calls"].as_u64().unwrap())
+                .sum::<u64>()
+        };
+        let clear = || {
+            crate::contact_witness::execute(b"\"Clear\"", &[]).unwrap();
+        };
+        let frame = f.frame();
+        let mut cases = Vec::new();
+        for (source, destination, compressed) in [(0, 1, false), (2, 3, true)] {
+            let packet = Node::open(&f.configs[source])
+                .unwrap()
+                .enqueue(&frame, &f.ids[destination])
+                .unwrap();
+            super::super::service::start_work_trace();
+            assert!(
+                super::super::service::directory_publish_fixture(&f.configs[source])
+                    .unwrap()
+                    .is_empty()
+            );
+            let published_work = super::super::service::take_work_trace();
+            let published = published_work
+                .iter()
+                .filter(|row| row["phase"] == "published-transport-exchange")
+                .collect::<Vec<_>>();
+            assert_eq!(published.len(), 1);
+            let outbox = Path::new(f.configs[source]["contacts"][0]["outbox"].as_str().unwrap());
+            let entries = fs::read_dir(outbox)
+                .unwrap()
+                .map(|entry| entry.unwrap().path())
+                .collect::<Vec<_>>();
+            assert_eq!(entries.len(), 1);
+            let encoded = files::private_read_with_limit(&entries[0], EXCHANGE_LIMIT).unwrap();
+            let raw = if compressed {
+                assert!(encoded.starts_with(b"RLD-CONTACT-SPOOL-ZLIB-V1\0"));
+                crate::contact_spool_codec::execute(
+                    &bytes(
+                        &json!({"Decode":{"limit":EXCHANGE_LIMIT,"size_bytes":encoded.len(),
+                    "sha256":hex::encode(Sha256::digest(&encoded))}}),
+                    )
+                    .unwrap(),
+                    &encoded,
+                )
+                .unwrap()
+                .1
+            } else {
+                encoded.clone()
+            };
+            let digest: [u8; 32] = Sha256::digest(&raw).into();
+            let exchange_sha256 = hex::encode(digest);
+            assert_eq!(
+                entries[0].file_name().unwrap().to_str().unwrap(),
+                format!("{exchange_sha256}.json")
+            );
+            assert_eq!(published[0]["exchange_sha256"], exchange_sha256);
+            assert_eq!(published[0]["peer"], f.ids[destination]);
+            assert!(published[0].get("directory_receive").is_none());
+            let bundle =
+                crate::wallet_http::decode_unique_with_limit(&raw, EXCHANGE_LIMIT).unwrap();
+            assert_eq!(bytes(&bundle).unwrap(), raw);
+            let transits = bundle["body"]["transits"].as_array().unwrap();
+            assert_eq!(transits.len(), 1);
+            assert_eq!(transits[0]["routing"]["body"]["packet_id"], packet);
+            clear();
+            super::super::service::start_work_trace();
+            super::super::encoding_cost::start();
+            let result = super::super::service::directory_receive_fixture(&f.configs[destination]);
+            let counts = super::super::encoding_cost::take();
+            let work = super::super::service::take_work_trace();
+            assert!(result.unwrap().is_empty());
+            let encodings = counts
+                .get(&(raw.len(), digest))
+                .copied()
+                .unwrap_or_default();
+            let full_checks = calls(&work, "transit-full-check");
+            let witness_hits = calls(&work, "transit-witness-hit");
+            assert_eq!((full_checks, witness_hits), (1, 0));
+            let events = work
+                .iter()
+                .filter(|row| row["phase"] == "durable-transport-receive")
+                .collect::<Vec<_>>();
+            assert_eq!(events.len(), 1);
+            let event = events[0];
+            assert_eq!(event["peer"], f.ids[source]);
+            assert_eq!(event["exchange_sha256"], exchange_sha256);
+            assert_eq!(
+                event["packets"],
+                json!([{"packet_id":packet,
+            "frame_id":transits[0]["routing"]["body"]["frame_id"],"destination":f.ids[destination]}])
+            );
+            let clocks = [
+                "file_started",
+                "read_completed",
+                "codec_completed",
+                "parse_completed",
+                "canonical_checked",
+                "receive_auth_and_custody_completed",
+            ]
+            .iter()
+            .map(|field| event["directory_receive"][*field].as_f64().unwrap())
+            .chain(std::iter::once(event["at"].as_f64().unwrap()))
+            .collect::<Vec<_>>();
+            assert!(clocks.iter().all(|at| at.is_finite() && *at >= 0.0));
+            assert!(clocks.windows(2).all(|pair| pair[0] <= pair[1]));
+            assert!(!entries[0].exists());
+            let state_path = f
+                .root
+                .join(destination.to_string())
+                .join("native-mesh-state.json");
+            let retained = fs::read(&state_path).unwrap();
+            clear();
+            super::super::service::start_work_trace();
+            let cold = Node::open(&f.configs[destination]).unwrap();
+            let cold_work = super::super::service::take_work_trace();
+            assert_eq!(
+                (
+                    calls(&cold_work, "transit-full-check"),
+                    calls(&cold_work, "transit-witness-hit")
+                ),
+                (1, 0)
+            );
+            assert_eq!(
+                cold.received_frames().unwrap(),
+                vec![(packet.clone(), frame.clone())]
+            );
+            assert_eq!(cold.state.messages.len(), 1);
+            assert_eq!(cold.state.receipts.len(), 1);
+            assert!(cold.state.archives.is_empty());
+            assert_eq!(cold.state.messages[&packet], transits[0]);
+            let receipt = &cold.state.receipts[&packet];
+            assert_eq!(receipt["body"]["node_id"], f.ids[destination]);
+            assert_eq!(receipt["body"]["packet_id"], packet);
+            assert_eq!(
+                receipt["body"]["frame_id"],
+                transits[0]["routing"]["body"]["frame_id"]
+            );
+            assert_eq!(
+                receipt["body"]["outcome"],
+                "EVIDENCE_STORED_NOT_LEDGER_ACCEPTED"
+            );
+            assert_eq!(fs::read(&state_path).unwrap(), retained);
+            cases.push(json!({"compressed":compressed,"encodings":encodings,
+            "full_checks":full_checks,"witness_hits":witness_hits,"cold_verified":true,
+            "cold_full_checks":1,"cold_witness_hits":0,"exchange_sha256":exchange_sha256,
+            "raw_size":raw.len(),"encoded_size":encoded.len(),"packet_id":packet,
+            "frame_id":receipt["body"]["frame_id"],"directory_receive":event["directory_receive"]}));
+        }
+        let report = json!({"cases":cases,"cold_verified":true,"fixture":f.root,
+        "elapsed_seconds":started.elapsed().as_secs_f64(),"fixture_only":true,
+        "ledger_authority":false,"cold_scope":"same-process ordinary open after witness clear"});
+        crate::keystore::private_create(
+            &f.root.join("receive-encoding-observation.json"),
+            &bytes(&report).unwrap(),
+        )
+        .unwrap();
+        println!("\nspool-receive-encoding-observation {report}");
+        assert!(
+            started.elapsed().as_secs_f64() < 30.0,
+            "directory receive observation deadline exhausted"
+        );
+        assert!(
+            cases.iter().all(|case| case["encodings"] == 1),
+            "directory receive repeated complete exchange encoding"
+        );
+    }
+    #[test]
+    fn directory_receive_refuses_inexact_exchange_without_custody() {
+        let output = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "contact_runtime::mesh::tests::directory_receive_inexact_guards_child",
+                "--exact",
+                "--nocapture",
+                "--test-threads=1",
+            ])
+            .env("RLD_DIRECTORY_RECEIVE_GUARD_CHILD", "1")
+            .output()
+            .unwrap();
+        print!("{}", String::from_utf8_lossy(&output.stdout));
+        eprint!("{}", String::from_utf8_lossy(&output.stderr));
+        assert!(
+            output.status.success(),
+            "isolated directory receive guards failed"
+        );
+    }
+
+    #[test]
+    fn directory_receive_inexact_guards_child() {
+        if std::env::var("RLD_DIRECTORY_RECEIVE_GUARD_CHILD").as_deref() != Ok("1") {
+            return;
+        }
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        source.enqueue(&f.frame(), &f.ids[1]).unwrap();
+        let bundle = source.prepare(&f.ids[1]).unwrap();
+        exchange(&bundle, &source.network, &f.ids[0], &f.ids[1]).unwrap();
+        drop(source);
+        let original = Node::open(&f.configs[1]).unwrap().state.clone();
+        let state_path = f.root.join("1/native-mesh-state.json");
+        let state_bytes = fs::read(&state_path).unwrap();
+        let canonical = bytes(&bundle).unwrap();
+        let mut corrupt = bundle.clone();
+        corrupt["signature"] = json!("00".repeat(64));
+        let corrupt = bytes(&corrupt).unwrap();
+        let noncanonical = serde_json::to_vec_pretty(&bundle).unwrap();
+        assert_ne!(canonical, noncanonical);
+        let duplicate = format!(
+            "{{\"signature\":\"{}\",{}",
+            bundle["signature"].as_str().unwrap(),
+            std::str::from_utf8(&canonical)
+                .unwrap()
+                .strip_prefix('{')
+                .unwrap()
+        )
+        .into_bytes();
+        let malformed = b"{".to_vec();
+        let mut cases = Vec::new();
+        for compressed in [false, true] {
+            for (name, raw) in [
+                ("filename", &canonical),
+                ("noncanonical", &noncanonical),
+                ("signature", &corrupt),
+                ("duplicate", &duplicate),
+                ("malformed", &malformed),
+            ] {
+                let inbox =
+                    directory(&f.root.join(format!("refusal-{compressed}-{name}"))).unwrap();
+                let encoded = if compressed {
+                    crate::contact_spool_codec::execute(
+                        &bytes(
+                            &json!({"Encode":{"limit":EXCHANGE_LIMIT,"size_bytes":raw.len(),
+                        "sha256":hex::encode(Sha256::digest(raw))}}),
+                        )
+                        .unwrap(),
+                        raw,
+                    )
+                    .unwrap()
+                    .1
+                } else {
+                    raw.clone()
+                };
+                let actual_digest = hex::encode(Sha256::digest(raw));
+                let filename_digest = if name == "filename" {
+                    let wrong = "00".repeat(32);
+                    assert_ne!(actual_digest, wrong);
+                    wrong
+                } else {
+                    actual_digest
+                };
+                let path = inbox.join(format!("{filename_digest}.json"));
+                crate::keystore::private_create(&path, &encoded).unwrap();
+                let mut config = f.configs[1].clone();
+                config["contacts"][0]["inbox"] = json!(inbox);
+                if compressed {
+                    config["contacts"][0]["adapter"] = json!("RLD-CONTACT-SPOOL-ZLIB-V1");
+                }
+                super::super::service::start_work_trace();
+                let errors = super::super::service::directory_receive_fixture(&config).unwrap();
+                let work = super::super::service::take_work_trace();
+                assert_eq!(errors.len(), 1);
+                let expected = if name == "signature" {
+                    "contact signature invalid"
+                } else {
+                    "spool exact canonical exchange filename"
+                };
+                if name == "duplicate" {
+                    assert!(errors[0].contains("duplicate JSON field"));
+                } else if name == "malformed" {
+                    assert!(errors[0].contains("EOF while parsing an object"));
+                } else {
+                    assert_eq!(errors[0], expected);
+                }
+                assert!(!work
+                    .iter()
+                    .any(|row| row["phase"] == "durable-transport-receive"));
+                assert_eq!(fs::read(&path).unwrap(), encoded);
+                assert_eq!(fs::read(&state_path).unwrap(), state_bytes);
+                let cold = Node::open(&config).unwrap();
+                assert!(cold.state.exact(&original));
+                assert!(cold.state.messages.is_empty() && cold.state.receipts.is_empty());
+                assert_eq!(fs::read(&state_path).unwrap(), state_bytes);
+                cases.push(
+                    json!({"compressed":compressed,"case":name,"error":errors[0],
+                "durable_event":false,"retained_file_unchanged":true,"state_unchanged":true}),
+                );
+            }
+        }
+        assert_eq!(bytes(&bundle).unwrap(), canonical);
+        assert!(
+            started.elapsed().as_secs_f64() < 30.0,
+            "directory refusal guard deadline exhausted"
+        );
+        let report = json!({"cases":cases,"fixture":f.root,"fixture_only":true,
+        "component_prepared_spool_files":true,"ledger_authority":false,
+        "elapsed_seconds":started.elapsed().as_secs_f64()});
+        crate::keystore::private_create(
+            &f.root.join("receive-refusal-guards.json"),
+            &bytes(&report).unwrap(),
+        )
+        .unwrap();
+        println!("\nspool-receive-refusal-guards {report}");
+    }
 }

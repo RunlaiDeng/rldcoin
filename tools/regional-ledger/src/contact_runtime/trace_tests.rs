@@ -8,12 +8,54 @@ fn diagnostic_bundle() -> Value {
 }
 
 #[test]
+fn invalid_receive_observation_cannot_replace_retained_trace() {
+    start_work_trace();
+    let bundle = diagnostic_bundle();
+    let digest = "11".repeat(32);
+    trace_exchange(
+        "published-transport-exchange",
+        "peer",
+        &bundle,
+        &digest,
+        None,
+    )
+    .unwrap();
+    let before = CARRIAGE_TRACE.with(|trace| trace.borrow().clone().unwrap());
+    let invalid = super::receive_trace::Observation {
+        file_started: 2.0,
+        read_completed: 1.0,
+        codec_completed: 3.0,
+        parse_completed: 4.0,
+        canonical_checked: 5.0,
+        receive_completed: 6.0,
+    };
+    assert!(trace_exchange(
+        "durable-transport-receive",
+        "peer",
+        &bundle,
+        &digest,
+        Some(invalid)
+    )
+    .is_err());
+    let retained = take_work_trace();
+    assert_eq!(retained, before);
+    assert_eq!(retained[0]["exchange_sha256"], digest);
+    assert!(retained[0].get("directory_receive").is_none());
+}
+
+#[test]
 fn duration_aggregation_preserves_exact_carriage_capacity_and_counts() {
     start_work_trace();
     for _ in 0..4096 {
         trace_work("mesh-prepare", monotonic().unwrap()).unwrap();
     }
-    let exchange = trace_exchange("published-transport-exchange", "peer", &diagnostic_bundle());
+    let exchange = trace_exchange(
+        "published-transport-exchange",
+        "peer",
+        &diagnostic_bundle(),
+        &"11".repeat(32),
+        None,
+    );
     let records = take_work_trace();
     let work = records
         .iter()
@@ -59,11 +101,24 @@ fn duration_aggregation_preserves_exact_carriage_capacity_and_counts() {
 fn exact_carriage_bound_refuses_without_dropping_retained_events() {
     start_work_trace();
     for _ in 0..4096 {
-        trace_exchange("published-transport-exchange", "peer", &diagnostic_bundle()).unwrap();
+        trace_exchange(
+            "published-transport-exchange",
+            "peer",
+            &diagnostic_bundle(),
+            &"11".repeat(32),
+            None,
+        )
+        .unwrap();
     }
     let before = CARRIAGE_TRACE.with(|trace| trace.borrow().clone().unwrap());
-    let error =
-        trace_exchange("published-transport-exchange", "peer", &diagnostic_bundle()).unwrap_err();
+    let error = trace_exchange(
+        "published-transport-exchange",
+        "peer",
+        &diagnostic_bundle(),
+        &"11".repeat(32),
+        None,
+    )
+    .unwrap_err();
     assert_eq!(error, "diagnostic carriage record bound");
     PAYMENT_TRACE_ACTIVE.with(|active| active.set(true));
     assert_eq!(

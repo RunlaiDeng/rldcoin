@@ -22,6 +22,9 @@ static STOP: AtomicBool = AtomicBool::new(false);
 #[path = "post_native_trace.rs"]
 mod post_native_trace;
 #[cfg(test)]
+#[path = "receive_trace.rs"]
+mod receive_trace;
+#[cfg(test)]
 thread_local! {
     static CARRIAGE_TRACE: std::cell::RefCell<Option<Vec<Value>>> = const { std::cell::RefCell::new(None) };
     static SUBWORK_TRACE: std::cell::RefCell<std::collections::BTreeMap<&'static str,(usize,f64)>> = const { std::cell::RefCell::new(std::collections::BTreeMap::new()) };
@@ -54,7 +57,13 @@ pub(super) fn trace_payment_event(build: impl FnOnce() -> Result<Value>) -> Resu
     })
 }
 #[cfg(test)]
-fn trace_exchange(phase: &str, peer: &str, bundle: &Value) -> Result<()> {
+fn trace_exchange(
+    phase: &str,
+    peer: &str,
+    bundle: &Value,
+    exchange_sha256: &str,
+    receive: Option<receive_trace::Observation>,
+) -> Result<()> {
     CARRIAGE_TRACE.with(|trace| -> Result<()> {
         let mut trace = trace.borrow_mut();
         let Some(records) = trace.as_mut() else {
@@ -72,7 +81,12 @@ fn trace_exchange(phase: &str, peer: &str, bundle: &Value) -> Result<()> {
             })
             .collect::<Vec<_>>();
         let at = monotonic()?;
-        let mut event = json!({"phase":phase,"peer":peer,"at":at,"packets":packets});
+        let mut event = json!({"phase":phase,"peer":peer,"at":at,"packets":packets,
+            "exchange_sha256":exchange_sha256});
+        if let Some(receive) = receive {
+            require(phase == "durable-transport-receive", "receive clock phase")?;
+            event["directory_receive"] = receive.value(at)?;
+        }
         if phase == "published-transport-exchange" {
             if let Some(prefix) = post_native_trace::observation(at)? {
                 event["post_native_work"] = prefix;
@@ -272,6 +286,11 @@ pub(super) fn directory_publish_fixture(config: &Value) -> Result<Vec<String>> {
     directory_phase(config, &|| false, DirectoryPhase::Publish)
 }
 
+#[cfg(test)]
+pub(super) fn directory_receive_fixture(config: &Value) -> Result<Vec<String>> {
+    directory_phase(config, &|| false, DirectoryPhase::Receive)
+}
+
 fn directory_turn(config: &Value, stopped: &dyn Fn() -> bool) -> Result<Vec<String>> {
     directory_phase(config, stopped, DirectoryPhase::Duplex)
 }
@@ -420,24 +439,49 @@ fn spool_receive(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
         {
             let name = name.as_str().ok_or("spool filename")?;
             let target = Path::new(path).join(name);
+            #[cfg(test)]
+            let file_started = monotonic()?;
             let encoded = files::private_read_with_limit(&target, EXCHANGE_LIMIT)?;
+            #[cfg(test)]
+            let read_completed = monotonic()?;
             let raw = if compressed {
                 codec("Decode", &encoded)?
             } else {
                 encoded
             };
+            #[cfg(test)]
+            let codec_completed = monotonic()?;
             let value = crate::wallet_http::decode_unique_with_limit(&raw, EXCHANGE_LIMIT)?;
+            #[cfg(test)]
+            let parse_completed = monotonic()?;
             require(
-                bytes(&value)? == raw && name == format!("{}.json", digest(&value)?),
+                bytes(&value)? == raw
+                    && name == format!("{}.json", hex::encode(Sha256::digest(&raw))),
                 "spool exact canonical exchange filename",
             )?;
             #[cfg(test)]
             let started = monotonic()?;
             node.receive(&value, peer)?;
             #[cfg(test)]
+            let receive_completed = monotonic()?;
+            #[cfg(test)]
             trace_work("mesh-receive", started)?;
             #[cfg(test)]
-            trace_exchange("durable-transport-receive", peer, &value)?;
+            trace_exchange(
+                "durable-transport-receive",
+                peer,
+                &value,
+                name.strip_suffix(".json")
+                    .ok_or("diagnostic exchange filename")?,
+                Some(receive_trace::Observation {
+                    file_started,
+                    read_completed,
+                    codec_completed,
+                    parse_completed,
+                    canonical_checked: started,
+                    receive_completed,
+                }),
+            )?;
             fs::remove_file(&target).map_err(|e| e.to_string())?;
             crate::contact_storage::directory(Path::new(path))?
                 .sync_all()
@@ -496,7 +540,13 @@ fn spool_publish(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
             &raw,
         )?;
         #[cfg(test)]
-        trace_exchange("published-transport-exchange", peer, &bundle)?;
+        trace_exchange(
+            "published-transport-exchange",
+            peer,
+            &bundle,
+            &data_sha256,
+            None,
+        )?;
     }
     Ok(())
 }
