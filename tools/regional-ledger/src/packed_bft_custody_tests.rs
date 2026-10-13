@@ -683,6 +683,8 @@ fn packed_runtime_work(measure_sign: bool, compose_proposal: bool, measure_recei
             started.elapsed().as_secs_f64() < 60.0,
             "original receive component deadline"
         );
+        assert_eq!(report["complete_envelope_byte_checks"], 41,
+            "forty exact old envelopes must inherit only this call's retained byte checks; the new envelope still needs complete checking");
         return;
     }
     actors[0]

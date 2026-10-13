@@ -167,73 +167,135 @@ impl Archive {
         #[cfg(test)]
         cost::archive();
         self.check_limits()?;
+        let sizes = self.snapshot_sizes(None)?;
+        let mut referenced = BTreeSet::new();
+        for (ident, record) in &self.runtime.messages {
+            self.check_record_bytes(ident, record, &sizes, &mut referenced)?;
+        }
+        self.check_referenced(&referenced)
+    }
+    // The previous archive must have completed full retained validation in this
+    // exact store call. Inherit only immutable canonical byte facts, never Native
+    // authentication, a ledger or a persistent witness. Cold decode stays full.
+    fn check_delta_bytes(&self, previous: &Self) -> Result<()> {
+        #[cfg(test)]
+        cost::archive();
+        self.check_limits()?;
+        require(
+            previous
+                .runtime
+                .messages
+                .keys()
+                .all(|id| self.runtime.messages.contains_key(id))
+                && previous
+                    .snapshots
+                    .keys()
+                    .all(|id| self.snapshots.contains_key(id)),
+            "BFT archive cannot discard retained graph bytes",
+        )?;
+        let sizes = self.snapshot_sizes(Some(previous))?;
+        let mut referenced = BTreeSet::new();
+        for (ident, record) in &self.runtime.messages {
+            if let Some(old) = previous.runtime.messages.get(ident) {
+                let mut exact = old.clone();
+                exact.local |= record.local;
+                require(
+                    canonical(&exact)? == canonical(record)?,
+                    "BFT archive immutable canonical record bytes differ",
+                )?;
+                referenced.extend(record.refs.iter().copied());
+                if let Some(origins) = &record.origin_refs {
+                    referenced.extend(origins.iter().copied());
+                }
+            } else {
+                self.check_record_bytes(ident, record, &sizes, &mut referenced)?;
+            }
+        }
+        self.check_referenced(&referenced)
+    }
+    fn snapshot_sizes(&self, previous: Option<&Self>) -> Result<BTreeMap<Hash, usize>> {
         let mut sizes = BTreeMap::new();
         for (reference, value) in &self.snapshots {
             let raw = files::canonical(value)?;
-            require(
-                !raw.is_empty()
-                    && raw.len() <= crate::contact::MAX_PAYLOAD
-                    && hash(&raw) == *reference,
-                "BFT archive snapshot complete bytes differ",
-            )?;
+            if let Some(old) = previous.and_then(|archive| archive.snapshots.get(reference)) {
+                require(
+                    raw == files::canonical(old)?,
+                    "BFT archive immutable canonical snapshot bytes differ",
+                )?;
+            } else {
+                require(
+                    !raw.is_empty()
+                        && raw.len() <= crate::contact::MAX_PAYLOAD
+                        && hash(&raw) == *reference,
+                    "BFT archive snapshot complete bytes differ",
+                )?;
+            }
             sizes.insert(*reference, raw.len());
         }
-        let mut referenced = BTreeSet::new();
-        for (ident, record) in &self.runtime.messages {
-            #[cfg(test)]
-            cost::envelope();
-            let origin = record.header.format == bft_network::ORIGIN_FORMAT;
-            require(
-                (origin && record.origin_refs.is_some())
-                    || (record.header.format == bft_network::FORMAT
-                        && record.origin_refs.is_none()),
-                "BFT archive envelope format/reference fields differ",
-            )?;
-            let origins = record.origin_refs.as_deref().unwrap_or_default();
-            require(
-                record.refs.len() + origins.len() <= MAX_REFS
-                    && origins.len() <= 4
-                    && record.size_bytes > 0
-                    && record.size_bytes <= crate::contact::MAX_PAYLOAD
-                    && hash(&files::canonical(&record.body)?) == *ident,
-                "BFT archive record identity/reference/size bound",
-            )?;
-            // Calculate expansion before cloning or decoding any shared proof.
-            let mut base = serde_json::json!({"format":record.header.format,"currency":record.header.currency,
-                "region":record.header.region,"body":record.body,"evidence":{"snapshots":[]}});
-            if origin {
-                base["origins"] = serde_json::json!([]);
-            }
-            let mut size = files::canonical(&base)?.len();
-            for refs in [&record.refs[..], origins] {
-                size = size
-                    .checked_add(refs.len().saturating_sub(1))
-                    .ok_or("BFT archive expansion overflow")?;
-                for reference in refs {
-                    size = size
-                        .checked_add(
-                            *sizes
-                                .get(reference)
-                                .ok_or("BFT archive shared snapshot missing")?,
-                        )
-                        .ok_or("BFT archive expansion overflow")?;
-                    referenced.insert(*reference);
-                }
-            }
-            require(
-                size == record.size_bytes && size <= crate::contact::MAX_PAYLOAD,
-                "BFT archive expansion size/capacity differs",
-            )?;
-            let raw = files::canonical(&self.envelope(record)?)?;
-            require(
-                raw.len() == size && hash(&raw) == record.sha256,
-                "BFT archive whole envelope bytes differ",
-            )?;
-        }
+        Ok(sizes)
+    }
+    fn check_referenced(&self, referenced: &BTreeSet<Hash>) -> Result<()> {
         require(
             referenced.len() == self.snapshots.len(),
             "BFT archive orphan shared snapshot refuses",
         )
+    }
+    fn check_record_bytes(
+        &self,
+        ident: &Hash,
+        record: &Record,
+        sizes: &BTreeMap<Hash, usize>,
+        referenced: &mut BTreeSet<Hash>,
+    ) -> Result<()> {
+        #[cfg(test)]
+        cost::envelope();
+        let origin = record.header.format == bft_network::ORIGIN_FORMAT;
+        require(
+            (origin && record.origin_refs.is_some())
+                || (record.header.format == bft_network::FORMAT && record.origin_refs.is_none()),
+            "BFT archive envelope format/reference fields differ",
+        )?;
+        let origins = record.origin_refs.as_deref().unwrap_or_default();
+        require(
+            record.refs.len() + origins.len() <= MAX_REFS
+                && origins.len() <= 4
+                && record.size_bytes > 0
+                && record.size_bytes <= crate::contact::MAX_PAYLOAD
+                && hash(&files::canonical(&record.body)?) == *ident,
+            "BFT archive record identity/reference/size bound",
+        )?;
+        // Calculate expansion before cloning or decoding any shared proof.
+        let mut base = serde_json::json!({"format":record.header.format,"currency":record.header.currency,
+        "region":record.header.region,"body":record.body,"evidence":{"snapshots":[]}});
+        if origin {
+            base["origins"] = serde_json::json!([]);
+        }
+        let mut size = files::canonical(&base)?.len();
+        for refs in [&record.refs[..], origins] {
+            size = size
+                .checked_add(refs.len().saturating_sub(1))
+                .ok_or("BFT archive expansion overflow")?;
+            for reference in refs {
+                size = size
+                    .checked_add(
+                        *sizes
+                            .get(reference)
+                            .ok_or("BFT archive shared snapshot missing")?,
+                    )
+                    .ok_or("BFT archive expansion overflow")?;
+                referenced.insert(*reference);
+            }
+        }
+        require(
+            size == record.size_bytes && size <= crate::contact::MAX_PAYLOAD,
+            "BFT archive expansion size/capacity differs",
+        )?;
+        let raw = files::canonical(&self.envelope(record)?)?;
+        require(
+            raw.len() == size && hash(&raw) == record.sha256,
+            "BFT archive whole envelope bytes differ",
+        )?;
+        Ok(())
     }
     pub(crate) fn envelope(&self, record: &Record) -> Result<Value> {
         let snapshots = record
@@ -576,14 +638,17 @@ impl Client {
         // The retained archive was fully decoded, byte checked and bound to the
         // current Native prefix in this call. Identical complete record and
         // snapshot maps inherit only those byte facts. All metadata is checked
-        // independently above; every changed graph still receives full checks.
+        // independently above; every new graph member still receives full checks.
         // This witness is never stored and never initializes Native execution.
         let exact_graph = match &previous {
             Some(old) => old.same_complete_graph(&proposed)?,
             None => false,
         };
         if !exact_graph {
-            proposed.check_bytes()?;
+            match &previous {
+                Some(old) => proposed.check_delta_bytes(old)?,
+                None => proposed.check_bytes()?,
+            }
         }
         #[cfg(test)]
         cost::phase(2, started);
@@ -714,9 +779,102 @@ mod tests {
         assert_eq!(original.runtime.messages, changed.runtime.messages);
         assert!(!original.same_complete_graph(&changed).unwrap());
         assert!(changed.check_bytes().is_err());
+        assert!(changed.check_delta_bytes(&original).is_err());
         let mut metadata = original.clone();
         metadata.runtime.cursor = 1;
         assert!(original.same_complete_graph(&metadata).unwrap());
+    }
+    #[test]
+    fn delta_byte_checks_preserve_complete_prefix_and_reject_every_changed_old_byte() {
+        for origin in [false, true] {
+            let previous = Archive::decode(&canonical(&archive(origin)).unwrap()).unwrap();
+            let mut proposed = previous.clone();
+            let mut record = previous.runtime.messages.values().next().unwrap().clone();
+            record.body["new_record"] = serde_json::json!(true);
+            let raw = files::canonical(&proposed.envelope(&record).unwrap()).unwrap();
+            record.size_bytes = raw.len();
+            record.sha256 = hash(&raw);
+            let ident = hash(&files::canonical(&record.body).unwrap());
+            proposed.runtime.messages.insert(ident, record);
+            proposed.check_delta_bytes(&previous).unwrap();
+            proposed.check_bytes().unwrap();
+            for case in 0..8 {
+                let mut bad = proposed.clone();
+                let old_id = *previous.runtime.messages.keys().next().unwrap();
+                match case {
+                    0 => {
+                        bad.runtime.messages.remove(&old_id);
+                    }
+                    1 => bad
+                        .runtime
+                        .messages
+                        .get_mut(&old_id)
+                        .unwrap()
+                        .refs
+                        .push(Hash::ZERO),
+                    2 => bad.runtime.messages.get_mut(&old_id).unwrap().sha256 = Hash::ZERO,
+                    3 => {
+                        bad.snapshots.pop_first();
+                    }
+                    4 => bad.runtime.messages.get_mut(&ident).unwrap().size_bytes += 1,
+                    5 => bad.runtime.messages.get_mut(&ident).unwrap().sha256 = Hash::ZERO,
+                    6 => {
+                        bad.snapshots.insert(hash(b"{}"), serde_json::json!({}));
+                    }
+                    _ => bad.runtime.snapshot_cache = vec![Hash::ZERO; 65],
+                }
+                assert!(
+                    bad.check_delta_bytes(&previous).is_err(),
+                    "delta attack {case}"
+                );
+            }
+            let mut local = proposed.clone();
+            local
+                .runtime
+                .messages
+                .values_mut()
+                .for_each(|record| record.local = true);
+            local.check_delta_bytes(&previous).unwrap();
+            local.check_bytes().unwrap();
+            let mut cleared = local.clone();
+            cleared.runtime.messages.values_mut().next().unwrap().local = false;
+            assert!(cleared.check_delta_bytes(&local).is_err());
+        }
+    }
+    #[test]
+    fn delta_snapshot_inheritance_refuses_equal_numbers_with_different_bytes() {
+        let mut previous = archive(false);
+        let reference = *previous.snapshots.keys().next().unwrap();
+        previous.snapshots.get_mut(&reference).unwrap()["zero"] = serde_json::json!(-0.0);
+        let replacement = hash(&files::canonical(&previous.snapshots[&reference]).unwrap());
+        let value = previous.snapshots.remove(&reference).unwrap();
+        previous.snapshots.insert(replacement, value);
+        for record in previous.runtime.messages.values_mut() {
+            for refs in [
+                &mut record.refs,
+                record.origin_refs.get_or_insert_with(Vec::new),
+            ] {
+                for id in refs {
+                    if *id == reference {
+                        *id = replacement;
+                    }
+                }
+            }
+            if record.header.format != bft_network::ORIGIN_FORMAT {
+                record.origin_refs = None;
+            }
+        }
+        let mut updated = previous.clone();
+        for record in previous.runtime.messages.values_mut() {
+            let raw = files::canonical(&updated.envelope(record).unwrap()).unwrap();
+            record.sha256 = hash(&raw);
+            record.size_bytes = raw.len();
+        }
+        previous.check_bytes().unwrap();
+        updated = previous.clone();
+        updated.snapshots.get_mut(&replacement).unwrap()["zero"] = serde_json::json!(0.0);
+        assert_eq!(updated.snapshots, previous.snapshots);
+        assert!(updated.check_delta_bytes(&previous).is_err());
     }
     #[test]
     fn native_archive_exact_order_multiple_references_and_corruption_boundaries() {

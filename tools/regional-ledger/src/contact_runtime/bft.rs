@@ -445,14 +445,18 @@ impl Runtime {
         super::service::start_work_trace();
         crate::verification_keys::cost::take();
         retention::cost::take_phases();
+        retention::cost::take();
         let started = super::service::monotonic()?;
         let result = self.receive(node, raw);
         let seconds = super::service::monotonic()? - started;
         let signatures = crate::verification_keys::cost::take();
         let archive_phases = retention::cost::take_phases();
+        let (archive_checks, envelope_checks) = retention::cost::take();
         Ok(
             json!({"seconds":seconds,"trace":super::service::take_work_trace(),
             "archive_phase_ns":archive_phases,
+            "complete_archive_byte_checks":archive_checks,
+            "complete_envelope_byte_checks":envelope_checks,
             "archive_phase_order":["parse-binding","retained-read","proposed-byte-checks",
                 "new-envelope-native-authentication","durable-publication"],
             "error":result.err(),"strict_signature_checks":signatures.strict_attempts,
