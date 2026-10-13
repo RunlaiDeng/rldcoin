@@ -1207,6 +1207,17 @@ pub use archive_cut::{
 #[path = "paged_store/archive_cut_tests.rs"]
 mod archive_cut_tests;
 
+#[path = "paged_store/origin_archive_cut.rs"]
+mod origin_archive_cut;
+pub use origin_archive_cut::{
+    inspect_origin_archive_cut_candidate, OriginArchiveCutObservationCandidate,
+    OriginArchiveCutQueryCandidate, OriginArchiveSelectionCandidate, ORIGIN_ARCHIVE_CUT_FORMAT,
+};
+
+#[cfg(test)]
+#[path = "paged_store/origin_archive_cut_tests.rs"]
+mod origin_archive_cut_tests;
+
 #[cfg(test)]
 #[path = "paged_store/channel_window_tests.rs"]
 mod channel_window_tests;

@@ -1268,8 +1268,11 @@ pub(crate) use paged::Record as PagedRecord;
 pub use paged::{
     inspect_export_archive_candidate, inspect_historical_archive_candidate,
     inspect_lossless_export_archive_candidate, inspect_lossless_packed_native_candidate,
-    inspect_packed_native_candidate, CompleteOriginHistory, ExportArchiveObservationCandidate,
-    ExportArchiveQueryCandidate, HistoricalArchiveObservationCandidate,
-    HistoricalArchiveQueryCandidate, NativeContinuationCandidate, NativeContinuationPinsCandidate,
-    NativePrefixPinsCandidate, PackedNativeBoundaryCandidate, HISTORICAL_ARCHIVE_QUERY_FORMAT,
+    inspect_origin_archive_cut_candidate, inspect_packed_native_candidate, CompleteOriginHistory,
+    ExportArchiveObservationCandidate, ExportArchiveQueryCandidate,
+    HistoricalArchiveObservationCandidate, HistoricalArchiveQueryCandidate,
+    NativeContinuationCandidate, NativeContinuationPinsCandidate, NativePrefixPinsCandidate,
+    OriginArchiveCutObservationCandidate, OriginArchiveCutQueryCandidate,
+    OriginArchiveSelectionCandidate, PackedNativeBoundaryCandidate,
+    HISTORICAL_ARCHIVE_QUERY_FORMAT, ORIGIN_ARCHIVE_CUT_FORMAT,
 };

@@ -61,6 +61,17 @@ relative to the local selection. Archive byte heads do not establish latest
 state. This entry does not change recovery anchors, active/history bounds or
 ordinary consensus, and does not qualify a full channel window or long history.
 
+A separate two-region origin archive cut authenticates complete source and
+destination histories under the original paged BFT and complete-origin-history
+admissions. It matches every embedded source checkpoint body against the fully
+replayed source branch, then checks the selected permanent import and complete
+Export even after the imported coin has been spent. A pre-import selection keeps
+its original pending transfer despite a later authenticated import. Only one
+origin export and local destination spending are supported; channels, reverse
+exports, further sources and reconfiguration refuse. Both selected native states
+share the original 8-MiB retention ceiling. Complete later tails still verify,
+and the resulting historical accounting grants no live or recovery authority.
+
 Full long-history recovery, permanent deduplication at target scale, arbitrary
 multi-source value composition, independent operators and custody, security and
 supply-chain review, authenticated suite/epoch adoption, funding/resource models,

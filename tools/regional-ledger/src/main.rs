@@ -382,6 +382,15 @@ enum Action {
         region: String,
     },
     Status,
+    /// Inspect an exact two-region historical cut; no adoption or recovery.
+    OriginArchiveCutInspect {
+        #[arg(long)]
+        bootstrap: PathBuf,
+        #[arg(long)]
+        query: PathBuf,
+        #[arg(long)]
+        destination_dir: PathBuf,
+    },
     /// Select a historical local certificate after full archive replay; no recovery.
     HistoricalArchiveInspect {
         #[arg(long)]
@@ -953,6 +962,29 @@ fn run() -> Result<()> {
         miner: args.miner,
         interval: args.interval,
     });
+    if let Action::OriginArchiveCutInspect {
+        ref bootstrap,
+        ref query,
+        ref destination_dir,
+    } = action
+    {
+        let bootstrap: Bootstrap = read_json(bootstrap)?;
+        let query: storage::OriginArchiveCutQueryCandidate = read_json(query)?;
+        let observed = storage::inspect_origin_archive_cut_candidate(
+            &args.dir,
+            destination_dir,
+            &bootstrap,
+            &args.authority,
+            pin,
+            &query,
+        )?;
+        let raw = serde_json::to_string(&observed).map_err(|e| e.to_string())?;
+        if raw.len() > MAX_BYTES {
+            return Err("origin archive cut observation exceeds original output bound".into());
+        }
+        println!("{raw}");
+        return Ok(());
+    }
     if let Action::HistoricalArchiveInspect {
         ref bootstrap,
         ref query,
@@ -1259,6 +1291,7 @@ fn run() -> Result<()> {
     match action {
         Action::ExportArchiveInspect { .. }
         | Action::HistoricalArchiveInspect { .. }
+        | Action::OriginArchiveCutInspect { .. }
         | Action::HistoryStreamCheck { .. }
         | Action::HistoryStreamCompactCheck { .. } => {
             unreachable!("handled before opening a native store")
