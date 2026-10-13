@@ -222,27 +222,32 @@ fn packed_ledger_four_original_signer_journals_two_owner_payments_and_fresh_cold
 
 #[test]
 fn packed_height_four_runtime_tick_measures_complete_authentication_without_new_signature() {
-    packed_runtime_work(false, false, false, false);
+    packed_runtime_work(false, false, false, false, false);
 }
 
 #[test]
 fn packed_current_prepare_measures_original_runtime_sign_and_caller_publication() {
-    packed_runtime_work(true, false, false, false);
+    packed_runtime_work(true, false, false, false, false);
 }
 
 #[test]
 fn ordinary_proposer_retains_own_prepare_without_another_contact_turn() {
-    packed_runtime_work(false, true, false, false);
+    packed_runtime_work(false, true, false, false, false);
 }
 
 #[test]
 fn packed_receive_retains_exact_evidence_event_and_measures_post_sync_retention() {
-    packed_runtime_work(false, false, true, false);
+    packed_runtime_work(false, false, true, false, false);
 }
 
 #[test]
 fn packed_ordinary_proposal_separates_historical_candidate_scan_and_original_signing() {
-    packed_runtime_work(false, false, false, true);
+    packed_runtime_work(false, false, false, true, false);
+}
+
+#[test]
+fn exact_duplicate_receive_reauthenticates_without_a_second_evidence_event() {
+    packed_runtime_work(false, false, true, false, true);
 }
 
 fn packed_runtime_work(
@@ -250,6 +255,7 @@ fn packed_runtime_work(
     compose_proposal: bool,
     measure_receive: bool,
     measure_proposal: bool,
+    exact_duplicate: bool,
 ) {
     let started = std::time::Instant::now();
     let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
@@ -600,7 +606,7 @@ fn packed_runtime_work(
         let wire: crate::bft_network::WireEnvelope = crate::bft_client::decode(&payload).unwrap();
         // This is the expected original byte image, not an authorization witness.
         // The ordinary receive path below still authenticates the entire input.
-        let incoming = wire.expand().unwrap().evidence;
+        let incoming = wire.clone().expand().unwrap().evidence;
         let head = h.node.storage_head().unwrap();
         let ledger = h.node.chain.ledger.clone();
         let prefix = h
@@ -625,7 +631,7 @@ fn packed_runtime_work(
         );
         assert_eq!(report["retained_messages"], 41);
         assert!(report["strict_signature_checks"].as_u64().unwrap() > 0);
-        let post_sync_head = h.node.storage_head().unwrap();
+        let mut post_sync_head = h.node.storage_head().unwrap();
         assert_ne!(
             post_sync_head, head,
             "ordinary sync must durably append the complete Evidence event"
@@ -640,7 +646,7 @@ fn packed_runtime_work(
                 .unwrap(),
             prefix
         );
-        let retained = h.node.fixture_paged_records().unwrap();
+        let mut retained = h.node.fixture_paged_records().unwrap();
         assert_eq!(retained.len(), records.len() + 1);
         assert_eq!(
             serde_json::to_vec(&retained[..records.len()]).unwrap(),
@@ -665,6 +671,115 @@ fn packed_runtime_work(
                 "receive changed unrelated private custody bytes"
             );
         }
+        let duplicate_invariant = if exact_duplicate {
+            let original_head = post_sync_head;
+            let original_records = serde_json::to_vec(&retained).unwrap();
+            let before = inventory(&h.root);
+            let duplicate = actors[recipient]
+                .probe_fixture_receive(&mut h.node, &raw)
+                .unwrap();
+            assert!(
+                duplicate["error"].is_null(),
+                "duplicate receive refused: {duplicate}"
+            );
+            assert!(duplicate["strict_signature_checks"].as_u64().unwrap() > 0);
+            assert_eq!(duplicate["retained_messages"], 41);
+            assert_eq!(h.node.chain.ledger, ledger);
+            retained = h.node.fixture_paged_records().unwrap();
+            post_sync_head = h.node.storage_head().unwrap();
+            let preserved = original_head == post_sync_head
+                && original_records == serde_json::to_vec(&retained).unwrap()
+                && before == inventory(&h.root);
+            eprintln!(
+                "Exact duplicate Native receive: {}",
+                serde_json::json!({
+                "report":duplicate,"exact_evidence_head_records_and_private_bytes_unchanged":preserved,
+                "existing_evidence_retained":true,"payment_or_network_qualification":false})
+            );
+            use base64::Engine as _;
+            let frame = |envelope: &crate::bft_network::Envelope| {
+                let wire = envelope.pack().unwrap();
+                let raw = crate::wallet_client::canonical(&wire).unwrap();
+                let payload = Hash(Sha256::digest(&raw).into());
+                let mut frame = crate::contact::Frame {
+                    format: crate::contact::FRAME_FORMAT.into(),
+                    kind: "regional-bft".into(),
+                    source_chain_id: wire.region,
+                    destination_chain_id: wire.region,
+                    export_id: payload,
+                    payload_sha256: payload,
+                    payload_b64: base64::engine::general_purpose::STANDARD.encode(raw),
+                    message_id: Hash::ZERO,
+                };
+                frame.message_id = frame.message().unwrap();
+                frame.retained_bytes().unwrap()
+            };
+            let mut changed = wire.clone().expand().unwrap();
+            let bad = changed
+                .evidence
+                .snapshots
+                .last_mut()
+                .unwrap()
+                .bft
+                .as_mut()
+                .unwrap();
+            bad.prepared.votes[0].approval.signature = "00".repeat(64);
+            let before = inventory(&h.root);
+            let refused = actors[recipient]
+                .probe_fixture_receive(&mut h.node, &frame(&changed))
+                .unwrap();
+            assert!(
+                !refused["error"].is_null(),
+                "same-body altered signature accepted: {refused}"
+            );
+            assert_eq!(inventory(&h.root), before);
+            let mut variant = wire.clone().expand().unwrap();
+            let certificate = variant
+                .evidence
+                .snapshots
+                .last_mut()
+                .unwrap()
+                .bft
+                .as_mut()
+                .unwrap();
+            assert_eq!(certificate.prepared.votes.len(), 4);
+            certificate.prepared.votes.truncate(3);
+            certificate.committed.votes.truncate(3);
+            let prior = serde_json::to_vec(&retained).unwrap();
+            let prior_count = retained.len();
+            let accepted = actors[recipient]
+                .probe_fixture_receive(&mut h.node, &frame(&variant))
+                .unwrap();
+            assert!(
+                accepted["error"].is_null(),
+                "new valid complete proof variant refused: {accepted}"
+            );
+            assert_eq!(accepted["retained_messages"], 41);
+            let after_variant = h.node.fixture_paged_records().unwrap();
+            assert_eq!(after_variant.len(), prior_count + 1);
+            assert_eq!(
+                serde_json::to_vec(&after_variant[..prior_count]).unwrap(),
+                prior
+            );
+            let crate::storage::PagedRecord::Evidence(stored) = after_variant.last().unwrap()
+            else {
+                panic!("missing original new complete proof event")
+            };
+            assert_eq!(
+                serde_json::to_vec(stored).unwrap(),
+                serde_json::to_vec(&variant.evidence).unwrap()
+            );
+            assert_eq!(
+                inventory(&h.root).get(&archive_path),
+                before.get(&archive_path)
+            );
+            assert_eq!(h.node.chain.ledger, ledger);
+            retained = after_variant;
+            post_sync_head = h.node.storage_head().unwrap();
+            Some(preserved)
+        } else {
+            None
+        };
         let mut retention = None;
         let mut measured = 0.0;
         for row in report["trace"].as_array().unwrap() {
@@ -703,7 +818,7 @@ fn packed_runtime_work(
         let seeds = h.seeds.clone();
         drop(h);
         let before = inventory(&root);
-        let cold =
+        let mut cold =
             Store::open_pinned(&root.join("node"), &public(1), currency, post_sync_head).unwrap();
         assert_eq!(cold.chain.ledger, ledger);
         assert_eq!(cold.chain.finalized, finality);
@@ -800,6 +915,19 @@ fn packed_runtime_work(
         );
         assert_eq!(report["complete_envelope_byte_checks"], 41,
             "forty exact old envelopes must inherit only this call's retained byte checks; the new envelope still needs complete checking");
+        if let Some(preserved) = duplicate_invariant {
+            assert!(preserved,"exact already retained evidence must not append a second identical history event after full authentication");
+            // The exact retained input must not bypass a newly durable Native
+            // incident marker, even on this already fully opened actual Store.
+            fs::write(root.join("node/INCIDENT_GUARD"), Hash([7; 32]).0).unwrap();
+            let before = inventory(&root);
+            let error = cold.add_evidence(incoming).unwrap_err();
+            assert!(
+                error.contains("pending native incident"),
+                "duplicate bypassed current Native safety: {error}"
+            );
+            assert_eq!(inventory(&root), before);
+        }
         return;
     }
     actors[0]

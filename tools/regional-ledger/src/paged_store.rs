@@ -780,6 +780,28 @@ impl Store {
     }
     pub(super) fn add_paged_evidence(&mut self, evidence: Evidence) -> Result<()> {
         self.check_paged_evidence_conflicts(&evidence)?;
+        let raw = encode("evidence", &evidence)?;
+        let stream = self.paged.as_ref().ok_or("paged store missing")?;
+        let head = stream.storage_head();
+        let mut exact = false;
+        // Complete immutable records are already executed by this actual Store.
+        // Compare the entire canonical input, never statement IDs or a projection.
+        // The visit still checks every original retained byte through the pinned head.
+        stream.visit(head, |record| {
+            if let Record::Evidence(previous) = record {
+                exact |= encode("evidence", previous.as_ref())? == raw;
+            }
+            Ok(())
+        })?;
+        if exact {
+            // No pre-sync or disk-decoded ledger supplies authority. Recheck the
+            // actual private execution/head, complete incidents and all incoming
+            // signatures under its independently pinned native trust binding.
+            let current = self.current_paged_replay()?;
+            VerifiedEvidence::verify(&evidence, &current.trust)?;
+            self.require_paged_inspection_head(head)?;
+            return Ok(());
+        }
         self.append_paged(&[Record::Evidence(Box::new(evidence))])
     }
     fn check_paged_evidence_conflicts(&mut self, evidence: &Evidence) -> Result<()> {
