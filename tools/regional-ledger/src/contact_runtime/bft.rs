@@ -225,8 +225,12 @@ impl Runtime {
     }
 
     fn retain(&mut self, node: &Store, wire: net::WireEnvelope, local: bool) -> Result<()> {
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let envelope = wire.clone().expand()?;
         envelope.verify(node)?;
+        #[cfg(test)]
+        super::service::trace_subwork("retain-complete-envelope", started)?;
         let ident = hash(&serde_json::to_value(&envelope.body).map_err(|e| e.to_string())?)?;
         if self.archive.runtime.messages.contains_key(&ident) {
             // Every complete envelope authenticated first. Preserve both
@@ -284,10 +288,14 @@ impl Runtime {
             },
         );
         let previous = std::mem::replace(&mut self.archive, proposed);
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         if let Err(e) = self.persist(node) {
             self.archive = previous;
             return Err(e);
         }
+        #[cfg(test)]
+        super::service::trace_subwork("retain-durable-archive", started)?;
         Ok(())
     }
 
@@ -389,6 +397,8 @@ impl Runtime {
     }
 
     pub(crate) fn receive(&mut self, node: &mut Store, raw: &[u8]) -> Result<()> {
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         let (_, payload) = crate::contact_frame::inspect_bytes(
             raw,
             None,
@@ -398,14 +408,58 @@ impl Runtime {
         )?;
         let wire: net::WireEnvelope = crate::bft_client::decode(&payload)?;
         let envelope = wire.clone().expand()?;
+        #[cfg(test)]
+        super::service::trace_subwork("receive-decode", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         envelope.verify(node)?;
+        #[cfg(test)]
+        super::service::trace_subwork("receive-initial-verification", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
         // Certified dependencies synchronize before deduplicating an already retained body.
         if wire.format == net::ORIGIN_FORMAT {
             net::sync_origin_envelope(node, wire.clone())?;
         } else {
             net::sync(node, envelope.evidence.clone())?;
         }
-        self.retain(node, wire, false)
+        #[cfg(test)]
+        super::service::trace_subwork("receive-dependency-sync", started)?;
+        #[cfg(test)]
+        let started = super::service::monotonic()?;
+        let result = self.retain(node, wire, false);
+        #[cfg(test)]
+        super::service::trace_subwork("receive-retention", started)?;
+        result
+    }
+
+    #[cfg(test)]
+    pub(crate) fn fixture_control_frame(&self, message: &consensus::Message) -> Result<Vec<u8>> {
+        let body = serde_json::to_value(net::Body::Signed(Box::new(message.clone())))
+            .map_err(|e| e.to_string())?;
+        self.carriage_frame(hash(&body)?)?.retained_bytes()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn probe_fixture_receive(&mut self, node: &mut Store, raw: &[u8]) -> Result<Value> {
+        super::service::start_work_trace();
+        crate::verification_keys::cost::take();
+        retention::cost::take_phases();
+        let started = super::service::monotonic()?;
+        let result = self.receive(node, raw);
+        let seconds = super::service::monotonic()? - started;
+        let signatures = crate::verification_keys::cost::take();
+        let archive_phases = retention::cost::take_phases();
+        Ok(
+            json!({"seconds":seconds,"trace":super::service::take_work_trace(),
+            "archive_phase_ns":archive_phases,
+            "archive_phase_order":["parse-binding","retained-read","proposed-byte-checks",
+                "new-envelope-native-authentication","durable-publication"],
+            "error":result.err(),"strict_signature_checks":signatures.strict_attempts,
+            "native_history_reused":signatures.native_history_reused,
+            "retained_messages":self.archive.runtime.messages.len(),
+            "fixture_only":true,"signing_authority":false}),
+        )
     }
 
     fn submissions(&mut self, node: &Store) -> Result<()> {

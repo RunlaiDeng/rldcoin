@@ -700,6 +700,21 @@ impl Store {
         stream.require_scope(&header.scope(&self.trust)?)?;
         stream.require_unchanged(head)
     }
+    /// Fixture observation only: exact complete records of this already executed
+    /// OS-locked Store. Returned bytes never initialize a ledger or authorize value.
+    #[cfg(test)]
+    pub(crate) fn fixture_paged_records(&self) -> Result<Vec<Record>> {
+        self.current_paged_replay()?;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("fixture requires actual paged Store")?;
+        require(
+            stream.record_count() <= 64,
+            "fixture complete record observation bound",
+        )?;
+        stream.records(stream.storage_head())?.collect()
+    }
     pub(super) fn append_paged(&mut self, records: &[Record]) -> Result<()> {
         require(
             self.healthy,

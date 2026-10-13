@@ -23,9 +23,20 @@ pub(crate) mod cost {
     use std::cell::Cell;
     thread_local! {
         static COUNTS: Cell<(usize, usize)> = const { Cell::new((0, 0)) };
+        static PHASES: Cell<[u128; 5]> = const { Cell::new([0; 5]) };
     }
     pub(crate) fn take() -> (usize, usize) {
         COUNTS.with(|counts| counts.replace((0, 0)))
+    }
+    pub(crate) fn take_phases() -> [u128; 5] {
+        PHASES.with(|phases| phases.replace([0; 5]))
+    }
+    pub(super) fn phase(index: usize, started: std::time::Instant) {
+        PHASES.with(|phases| {
+            let mut values = phases.get();
+            values[index] += started.elapsed().as_nanos();
+            phases.set(values);
+        });
     }
     pub(super) fn archive() {
         COUNTS.with(|counts| {
@@ -504,9 +515,15 @@ impl Client {
         )
     }
     pub fn store(&self, node: &Store, raw: &[u8], expected: Option<Hash>) -> Result<Receipt> {
+        #[cfg(test)]
+        let started = std::time::Instant::now();
         let proposed = Archive::decode_canonical(raw)?;
         proposed.check_limits()?;
         self.validate(&proposed, node)?;
+        #[cfg(test)]
+        cost::phase(0, started);
+        #[cfg(test)]
+        let started = std::time::Instant::now();
         let previous = match fs::symlink_metadata(self.root.join("state.json")) {
             Ok(_) => {
                 let (old, old_raw) = self.retained(node)?;
@@ -552,6 +569,10 @@ impl Client {
             }
             Err(e) => return Err(e.to_string()),
         };
+        #[cfg(test)]
+        cost::phase(1, started);
+        #[cfg(test)]
+        let started = std::time::Instant::now();
         // The retained archive was fully decoded, byte checked and bound to the
         // current Native prefix in this call. Identical complete record and
         // snapshot maps inherit only those byte facts. All metadata is checked
@@ -564,6 +585,10 @@ impl Client {
         if !exact_graph {
             proposed.check_bytes()?;
         }
+        #[cfg(test)]
+        cost::phase(2, started);
+        #[cfg(test)]
+        let started = std::time::Instant::now();
         let mut verified = 0;
         for (ident, record) in &proposed.runtime.messages {
             if previous
@@ -588,6 +613,10 @@ impl Client {
             )?;
             verified += 1;
         }
+        #[cfg(test)]
+        cost::phase(3, started);
+        #[cfg(test)]
+        let started = std::time::Instant::now();
         // Count every retained object, including interrupted publications and
         // active input files. Reserve the complete new temporary before writing.
         capacity(&self.root, 1, raw.len() as u64)?;
@@ -607,6 +636,8 @@ impl Client {
             .map_err(|e| e.to_string())?
             .sync_all()
             .map_err(|e| e.to_string())?;
+        #[cfg(test)]
+        cost::phase(4, started);
         Ok(self.receipt(&proposed, raw, verified))
     }
 }

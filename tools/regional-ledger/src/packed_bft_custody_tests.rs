@@ -222,20 +222,25 @@ fn packed_ledger_four_original_signer_journals_two_owner_payments_and_fresh_cold
 
 #[test]
 fn packed_height_four_runtime_tick_measures_complete_authentication_without_new_signature() {
-    packed_runtime_work(false, false);
+    packed_runtime_work(false, false, false);
 }
 
 #[test]
 fn packed_current_prepare_measures_original_runtime_sign_and_caller_publication() {
-    packed_runtime_work(true, false);
+    packed_runtime_work(true, false, false);
 }
 
 #[test]
 fn ordinary_proposer_retains_own_prepare_without_another_contact_turn() {
-    packed_runtime_work(false, true);
+    packed_runtime_work(false, true, false);
 }
 
-fn packed_runtime_work(measure_sign: bool, compose_proposal: bool) {
+#[test]
+fn packed_receive_retains_exact_evidence_event_and_measures_post_sync_retention() {
+    packed_runtime_work(false, false, true);
+}
+
+fn packed_runtime_work(measure_sign: bool, compose_proposal: bool, measure_receive: bool) {
     let started = std::time::Instant::now();
     let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
     h.retain = true;
@@ -443,6 +448,243 @@ fn packed_runtime_work(measure_sign: bool, compose_proposal: bool) {
         .flat_map(|actor| actor.fixture_controls().unwrap())
         .collect::<Vec<_>>();
     assert_eq!(messages.len(), 41);
+    if measure_receive {
+        let target = messages
+            .iter()
+            .find(|message| {
+                matches!(message, Message::Proposal(proposal)
+                if proposal.context().unwrap().parent_height == 4)
+            })
+            .unwrap();
+        let Message::Proposal(proposal) = target else {
+            unreachable!()
+        };
+        let source = h
+            .seeds
+            .iter()
+            .position(|seed| public(*seed) == proposal.leader.key)
+            .unwrap();
+        let recipient = if source == 0 { 1 } else { 0 };
+        let others = messages
+            .iter()
+            .filter(|message| *message != target)
+            .cloned()
+            .collect::<Vec<_>>();
+        actors[recipient]
+            .retain_fixture_controls(&h.node, &others)
+            .unwrap();
+        let raw = actors[source].fixture_control_frame(target).unwrap();
+        let (_, payload) = crate::contact_frame::inspect_bytes(
+            &raw,
+            None,
+            None,
+            crate::contact::MAX_PAYLOAD,
+            crate::contact::MAX_FRAME,
+        )
+        .unwrap();
+        let wire: crate::bft_network::WireEnvelope = crate::bft_client::decode(&payload).unwrap();
+        // This is the expected original byte image, not an authorization witness.
+        // The ordinary receive path below still authenticates the entire input.
+        let incoming = wire.expand().unwrap().evidence;
+        let head = h.node.storage_head().unwrap();
+        let ledger = h.node.chain.ledger.clone();
+        let prefix = h
+            .node
+            .blocks()
+            .unwrap()
+            .collect::<Result<Vec<_>>>()
+            .unwrap();
+        let finality = h.node.chain.finalized;
+        let records = h.node.fixture_paged_records().unwrap();
+        let archive_path = h.root.join(format!("runtime-work-{recipient}/state.json"));
+        let manifest_path = h.root.join("node/ledger-events/live.json");
+        let mut before = inventory(&h.root);
+        before.remove(&archive_path);
+        before.remove(&manifest_path);
+        let report = actors[recipient]
+            .probe_fixture_receive(&mut h.node, &raw)
+            .unwrap();
+        assert!(
+            report["error"].is_null(),
+            "ordinary Native receive refused: {report}"
+        );
+        assert_eq!(report["retained_messages"], 41);
+        assert!(report["strict_signature_checks"].as_u64().unwrap() > 0);
+        let post_sync_head = h.node.storage_head().unwrap();
+        assert_ne!(
+            post_sync_head, head,
+            "ordinary sync must durably append the complete Evidence event"
+        );
+        assert_eq!(h.node.chain.ledger, ledger);
+        assert_eq!(h.node.chain.finalized, finality);
+        assert_eq!(
+            h.node
+                .blocks()
+                .unwrap()
+                .collect::<Result<Vec<_>>>()
+                .unwrap(),
+            prefix
+        );
+        let retained = h.node.fixture_paged_records().unwrap();
+        assert_eq!(retained.len(), records.len() + 1);
+        assert_eq!(
+            serde_json::to_vec(&retained[..records.len()]).unwrap(),
+            serde_json::to_vec(&records).unwrap()
+        );
+        let crate::storage::PagedRecord::Evidence(evidence) = retained.last().unwrap() else {
+            panic!("receive appended a record other than complete authenticated Evidence")
+        };
+        assert_eq!(
+            serde_json::to_vec(evidence).unwrap(),
+            serde_json::to_vec(&incoming).unwrap()
+        );
+        let mut after = inventory(&h.root);
+        after.remove(&archive_path);
+        after.remove(&manifest_path);
+        for (path, bytes) in &before {
+            assert_eq!(after.get(path), Some(bytes));
+        }
+        for path in after.keys().filter(|path| !before.contains_key(*path)) {
+            assert!(
+                path.starts_with(h.root.join("node/ledger-events")),
+                "receive changed unrelated private custody bytes"
+            );
+        }
+        let mut retention = None;
+        let mut measured = 0.0;
+        for row in report["trace"].as_array().unwrap() {
+            let phase = row["phase"].as_str().unwrap();
+            let seconds = row["seconds"].as_f64().unwrap();
+            if phase.starts_with("receive-") {
+                measured += seconds;
+            }
+            if phase == "receive-retention" {
+                retention = Some(seconds);
+            }
+        }
+        let total = report["seconds"].as_f64().unwrap();
+        let retention = retention.unwrap();
+        assert!(retention > 0.0 && measured <= total);
+        let archive_ns = report["archive_phase_ns"].as_array().unwrap();
+        let archive_total = archive_ns
+            .iter()
+            .map(|ns| ns.as_u64().unwrap() as f64)
+            .sum::<f64>();
+        let graph_ns = (archive_ns[1].as_u64().unwrap() + archive_ns[2].as_u64().unwrap()) as f64;
+        assert!(archive_total > 0.0 && archive_total / 1e9 <= retention);
+        eprintln!(
+            "Packed original Native receive work: {}",
+            serde_json::json!({
+            "report":report,"retention_fraction":retention/total,
+            "retention_dominates_half_receive":retention/total>=0.5,
+            "archive_retained_and_proposed_checks_fraction":graph_ns/archive_total,
+            "archive_retained_and_proposed_checks_dominate_half":graph_ns/archive_total>=0.5,
+            "ledger_prefix_caller_and_signer_bytes_unchanged":true,
+            "exact_original_evidence_event_appended":true,"pre_sync_witness_invalidated":true,
+            "network_or_payment_qualification":false})
+        );
+        drop(actors);
+        let root = h.root.clone();
+        let seeds = h.seeds.clone();
+        drop(h);
+        let before = inventory(&root);
+        let cold =
+            Store::open_pinned(&root.join("node"), &public(1), currency, post_sync_head).unwrap();
+        assert_eq!(cold.chain.ledger, ledger);
+        assert_eq!(cold.chain.finalized, finality);
+        assert_eq!(
+            cold.blocks().unwrap().collect::<Result<Vec<_>>>().unwrap(),
+            prefix
+        );
+        assert_eq!(
+            serde_json::to_vec(&cold.fixture_paged_records().unwrap()).unwrap(),
+            serde_json::to_vec(&retained).unwrap()
+        );
+        let archive = crate::bft_runtime_archive::Client::lock(
+            &root.join(format!("runtime-work-{recipient}")),
+            public(seeds[recipient]),
+            crate::bft_client::FORMAT.into(),
+            &cold,
+        )
+        .unwrap();
+        let archive_receipt = archive.read(&cold).unwrap();
+        assert_eq!(archive_receipt.message_count, 41);
+        drop(archive);
+        let complete_archive = crate::bft_runtime_archive::Archive::decode(
+            &fs::read(root.join(format!("runtime-work-{recipient}/state.json"))).unwrap(),
+        )
+        .unwrap();
+        let entries = complete_archive
+            .runtime
+            .messages
+            .values()
+            .collect::<Vec<_>>();
+        let mut authenticated = 0;
+        for records in entries.chunks(crate::bft_network::MAX_COLD_BATCH) {
+            let wires = records
+                .iter()
+                .map(|record| {
+                    let value = complete_archive.envelope(record).unwrap();
+                    let wire: crate::bft_network::WireEnvelope =
+                        serde_json::from_value(value.clone()).unwrap();
+                    assert_eq!(serde_json::to_value(&wire).unwrap(), value);
+                    wire
+                })
+                .collect::<Vec<_>>();
+            let checked = crate::bft_network::check_cold_batch(wires, &cold).unwrap();
+            assert_eq!(checked.len(), records.len());
+            for (record, checked) in records.iter().zip(checked) {
+                assert_eq!(checked.value, record.value);
+                authenticated += 1;
+            }
+        }
+        assert_eq!(authenticated, 41);
+        for (n, seed) in seeds.iter().enumerate() {
+            let caller = crate::bft_client::Client::lock(
+                &root.join(format!("runtime-caller-{n}/head.json")),
+                &root.join(format!("signer-{seed}")),
+                public(*seed),
+                crate::bft_client::FORMAT.into(),
+                &cold,
+            )
+            .unwrap();
+            let state = caller.read().unwrap();
+            assert!(state.pending.is_none() && state.outbox.is_none());
+            if n == recipient {
+                let context = Context::current(&cold).unwrap();
+                let observation = crate::bft_phase_schedule::observe(
+                    &cold,
+                    crate::bft_proposal_schedule::Pins {
+                        signer: &root.join(format!("signer-{seed}")),
+                        archive: &root.join(format!("runtime-work-{recipient}")),
+                        key: public(*seed),
+                        runtime_format: crate::bft_client::FORMAT.into(),
+                        head: state.head,
+                        archive_head: archive_receipt.state_sha256,
+                        context: context.clone(),
+                        round: 0,
+                    },
+                    crate::bft_phase_schedule::Mode::Start,
+                    crate::bft_phase_schedule::Input {
+                        context,
+                        order: complete_archive.runtime.messages.keys().copied().collect(),
+                    },
+                )
+                .unwrap();
+                // This separate scheduler count names only current-context
+                // controls. Whole-archive authentication is checked above.
+                assert_eq!(observation.authenticated_messages, 5);
+            }
+            let agent = Agent::open(&root.join(format!("signer-{seed}")), &cold).unwrap();
+            assert_eq!(agent.head().unwrap(), state.head);
+        }
+        assert_eq!(inventory(&root), before);
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "original receive component deadline"
+        );
+        return;
+    }
     actors[0]
         .retain_fixture_controls(&h.node, &messages)
         .unwrap();
