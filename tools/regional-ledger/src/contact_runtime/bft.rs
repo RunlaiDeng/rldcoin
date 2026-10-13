@@ -296,6 +296,13 @@ impl Runtime {
         }
         #[cfg(test)]
         super::service::trace_subwork("retain-durable-archive", started)?;
+        #[cfg(test)]
+        super::service::trace_payment_event(|| {
+            Ok(
+                json!({"phase":"payment-body-retained","body_id":ident,"local":local,
+                "body":payment_trace::body(&envelope.body)?}),
+            )
+        })?;
         Ok(())
     }
 
@@ -411,7 +418,7 @@ impl Runtime {
     pub(crate) fn receive(&mut self, node: &mut Store, raw: &[u8]) -> Result<()> {
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        let (_, payload) = crate::contact_frame::inspect_bytes(
+        let (_received_frame, payload) = crate::contact_frame::inspect_bytes(
             raw,
             None,
             None,
@@ -442,6 +449,16 @@ impl Runtime {
         let result = self.retain(node, wire, false);
         #[cfg(test)]
         super::service::trace_subwork("receive-retention", started)?;
+        #[cfg(test)]
+        if result.is_ok() {
+            super::service::trace_payment_event(|| {
+                Ok(
+                    json!({"phase":"payment-envelope-received","frame_id":_received_frame.message_id,
+                    "body_id":hash(&serde_json::to_value(&envelope.body).map_err(|e|e.to_string())?)?,
+                    "body":payment_trace::body(&envelope.body)?}),
+                )
+            })?;
+        }
         result
     }
 
@@ -565,10 +582,16 @@ impl Runtime {
             if seen.insert(id) {
                 let mut proposed = selected.clone();
                 proposed.push(command);
-                if node
-                    .bft_candidate(proposed.clone(), self.config.miner.clone())
-                    .is_ok()
-                {
+                let candidate = node.bft_candidate(proposed.clone(), self.config.miner.clone());
+                #[cfg(test)]
+                super::service::trace_payment_event(|| {
+                    Ok(
+                        json!({"phase":"payment-command-selection","context":context,
+                        "intents":payment_trace::intents(&proposed)?,"accepted":candidate.is_ok(),
+                        "error":candidate.as_ref().err()}),
+                    )
+                })?;
+                if candidate.is_ok() {
                     selected = proposed;
                 }
             }
@@ -905,9 +928,20 @@ impl Runtime {
             } => {
                 #[cfg(test)]
                 let started = super::service::monotonic()?;
+                #[cfg(test)]
+                super::service::trace_payment_event(|| {
+                    Ok(json!({"phase":"payment-candidate-start","context":context,
+                        "round":round,"high":high,"leader":self.config.key}))
+                })?;
                 let snapshot = self.candidate(node, &context, high)?;
                 #[cfg(test)]
                 super::service::trace_subwork("consensus-proposal-construction", started)?;
+                #[cfg(test)]
+                super::service::trace_payment_event(|| {
+                    Ok(json!({"phase":"payment-candidate-ready","context":context,
+                        "round":round,"high":high,"leader":self.config.key,
+                        "snapshot":payment_trace::snapshot(&snapshot)?}))
+                })?;
                 self.sign(
                     node,
                     consensus::Request::Propose {
@@ -1194,9 +1228,16 @@ impl Runtime {
         for id in &selected {
             #[cfg(test)]
             let started = super::service::monotonic()?;
-            let raw = self.carriage_frame(*id)?.retained_bytes()?;
+            let frame = self.carriage_frame(*id)?;
+            let raw = frame.retained_bytes()?;
             #[cfg(test)]
             super::service::trace_work("native-broadcast-frame-pack", started)?;
+            #[cfg(test)]
+            super::service::trace_payment_event(|| {
+                Ok(
+                    json!({"phase":"payment-frame-prepared","body_id":id,"frame_id":frame.message_id}),
+                )
+            })?;
             frames.push(raw);
         }
         if !destinations.is_empty() && !frames.is_empty() {
@@ -1331,6 +1372,10 @@ impl Runtime {
 #[cfg(test)]
 #[path = "import_tests.rs"]
 mod import_tests;
+
+#[cfg(test)]
+#[path = "payment_trace.rs"]
+mod payment_trace;
 
 #[cfg(test)]
 mod tests {

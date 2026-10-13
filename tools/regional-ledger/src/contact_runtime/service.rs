@@ -18,6 +18,24 @@ static STOP: AtomicBool = AtomicBool::new(false);
 thread_local! {
     static CARRIAGE_TRACE: std::cell::RefCell<Option<Vec<Value>>> = const { std::cell::RefCell::new(None) };
     static SUBWORK_TRACE: std::cell::RefCell<std::collections::BTreeMap<&'static str,(usize,f64)>> = const { std::cell::RefCell::new(std::collections::BTreeMap::new()) };
+    static PAYMENT_TRACE_ACTIVE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+#[cfg(test)]
+pub(super) fn trace_payment_event(build: impl FnOnce() -> Result<Value>) -> Result<()> {
+    if !PAYMENT_TRACE_ACTIVE.with(|active| active.get()) {
+        return Ok(());
+    }
+    let mut event = build()?;
+    event["at"] = json!(monotonic()?);
+    CARRIAGE_TRACE.with(|trace| -> Result<()> {
+        let mut trace = trace.borrow_mut();
+        let records = trace
+            .as_mut()
+            .ok_or("payment diagnostic trace unavailable")?;
+        require(records.len() < 4096, "diagnostic carriage record bound")?;
+        records.push(event);
+        Ok(())
+    })
 }
 #[cfg(test)]
 fn trace_exchange(phase: &str, peer: &str, bundle: &Value) -> Result<()> {
@@ -48,6 +66,7 @@ pub(super) fn start_work_trace() {
 }
 #[cfg(test)]
 pub(super) fn take_work_trace() -> Vec<Value> {
+    PAYMENT_TRACE_ACTIVE.with(|active| active.set(false));
     let mut records = CARRIAGE_TRACE.with(|trace| trace.borrow_mut().take().unwrap_or_default());
     SUBWORK_TRACE.with(|trace| {
         for (phase, (calls, seconds)) in std::mem::take(&mut *trace.borrow_mut()) {

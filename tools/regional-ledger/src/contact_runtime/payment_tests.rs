@@ -7,6 +7,9 @@ use crate::{
 };
 use std::sync::mpsc::{self, Receiver, Sender};
 
+#[path = "payment_timing_tests.rs"]
+mod timing;
+
 // Fix recipient replicas before creating the fixture; never select the fastest
 // replica after observing results. All four replicas still must finish and replay.
 const FIRST_RECIPIENT: usize = 0;
@@ -31,6 +34,10 @@ struct Stopped {
 }
 enum Job {
     Observe(Sender<Result<Observation>>),
+    ObservePayment {
+        intent: Hash,
+        reply: Sender<Result<timing::PaymentObservation>>,
+    },
     Availability {
         paused: bool,
         reply: Sender<Result<Observation>>,
@@ -51,6 +58,7 @@ struct Actor {
     runtime: Option<super::super::bft::Runtime>,
     wallet: Option<wallet_app::Options>,
     receiver: Receiver<Job>,
+    payment_timing: bool,
 }
 fn observe(options: &Options) -> Result<Observation> {
     let node = Store::open_inspection(&options.ledger, &options.authority, options.currency)?;
@@ -107,6 +115,14 @@ fn pay(
     require(
         command.intent.inputs.len() == 1,
         "ordinary payment must consume one exact input",
+    )?;
+    require(
+        command
+            .intent
+            .outputs
+            .first()
+            .is_some_and(|output| output.owner == recipient && output.amount == crate::Amount(100)),
+        "ordinary payment output zero differs from the reviewed recipient",
     )?;
     let selected = command.intent.inputs[0];
     require(
@@ -168,6 +184,7 @@ impl Actor {
         let mut timing = Vec::new();
         let mut scheduling = Vec::new();
         CARRIAGE_TRACE.with(|trace| *trace.borrow_mut() = Some(Vec::new()));
+        PAYMENT_TRACE_ACTIVE.with(|active| active.set(self.payment_timing));
         let result = (|| {
             let _lease = Lease::acquire(
                 Path::new(self.transport["state"].as_str().ok_or("transport state")?),
@@ -206,6 +223,14 @@ impl Actor {
                 }
                 while let Ok(job) = self.receiver.try_recv() {
                     match job {
+                        Job::ObservePayment { intent, reply } => {
+                            let result = timing::observe(&self.options, intent);
+                            let error = result.as_ref().err().cloned();
+                            reply.send(result).map_err(|e| e.to_string())?;
+                            if let Some(error) = error {
+                                return Err(error);
+                            }
+                        }
                         Job::Availability {
                             paused: next,
                             reply,
@@ -444,6 +469,17 @@ fn setup(
     failed: Arc<AtomicBool>,
     rules: &str,
 ) -> Result<(Vec<Worker>, Vec<u8>, Hash)> {
+    setup_with_timing(root, deadline, stop, failed, rules, false)
+}
+
+fn setup_with_timing(
+    root: &Path,
+    deadline: f64,
+    stop: Arc<AtomicBool>,
+    failed: Arc<AtomicBool>,
+    rules: &str,
+    payment_timing: bool,
+) -> Result<(Vec<Worker>, Vec<u8>, Hash)> {
     let mut genesis = crate::tests::bootstrap();
     if crate::paged_bft::is_profile(rules) {
         genesis.currency.cap = crate::Amount::TOTAL_SUPPLY;
@@ -562,6 +598,7 @@ fn setup(
                 runtime: Some(runtime),
                 wallet,
                 receiver,
+                payment_timing,
             },
         ));
     }
