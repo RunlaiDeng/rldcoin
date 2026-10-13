@@ -664,13 +664,12 @@ fn original_bft_full_prefix_causal_cut_component_counter() {
         Trust::verify(&other, &public(1), pin).unwrap();
         assert_eq!(
             inspect(&other, &public(1), pin, &f.evidence, &choices).unwrap_err(),
-            "causal cut supports only homogeneous original unanimous or BFT admissions"
+            "causal cut supports only homogeneous original unanimous, original BFT or open-channel BFT admissions"
         );
     }
-    // Valid current channel/paged bootstraps also reach the exact refusal gate;
+    // Unsupported segmented/paged bootstraps reach the exact refusal gate;
     // their separate issuance/rule signatures are not replaced with legacy ones.
     for rule in [
-        channels::BFT_RULES,
         channels::SEGMENTED_RULES,
         crate::paged_bft::RULES,
         crate::paged_bft::PACKED_RULES,
@@ -688,7 +687,7 @@ fn original_bft_full_prefix_causal_cut_component_counter() {
         Trust::verify(&other, &public(1), pin).unwrap();
         assert_eq!(
             inspect(&other, &public(1), pin, &f.evidence, &choices).unwrap_err(),
-            "causal cut supports only homogeneous original unanimous or BFT admissions"
+            "causal cut supports only homogeneous original unanimous, original BFT or open-channel BFT admissions"
         );
     }
     assert_eq!(
@@ -696,4 +695,449 @@ fn original_bft_full_prefix_causal_cut_component_counter() {
         complete
     );
     eprintln!("original BFT historical cut: closed S4+D1 I=300 U=300 E=0 T=0; amount-valid S3+D1 refused; complete later/duplicate certificates and prefix/profile guards exercised; no custody, current spendability, incident or adoption qualification");
+}
+
+// Fresh public no-value fixture keys and complete
+// Native evidence only; no Store, Agent, custody, transport or adoption claim.
+#[test]
+fn channel_open_reserve_full_prefix_causal_cut_component_counter() {
+    use super::channel_integration as ci;
+    use crate::channels as c;
+
+    let bootstrap = ci::package(c::BFT_RULES);
+    let pin = bootstrap.currency.id().unwrap();
+    let trust = Trust::verify(&bootstrap, &public(1), pin).unwrap();
+    let mut source = Chain::new(trust.named("earth").unwrap(), &trust).unwrap();
+    let mut destination = Chain::new(trust.named("proxima").unwrap(), &trust).unwrap();
+    let source_region = source.region;
+    let destination_region = destination.region;
+    let mut verified = VerifiedEvidence::default();
+    let mut evidence = Evidence::default();
+    for _ in 0..2 {
+        bft_cut_advance(&mut source, &trust, &mut verified, &mut evidence, vec![]);
+    }
+    let inputs = source
+        .ledger
+        .coins
+        .iter()
+        .filter(|(_, coin)| coin.created == 1 && coin.payment.owner == public(10))
+        .map(|(ident, coin)| {
+            assert_eq!(coin.payment.amount, rld_pow::subsidy(1).unwrap());
+            assert_eq!(coin.mature, 3);
+            *ident
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(inputs.len(), 1);
+    let amount = source.ledger.coins[&inputs[0]].payment.amount;
+    let outgoing = intent(
+        &source,
+        &trust,
+        inputs,
+        vec![Payment {
+            owner: public(10),
+            amount: amount.checked_sub(Amount(81)).unwrap(),
+        }],
+        Some(destination_region),
+        Some(Payment {
+            owner: public(11),
+            amount: Amount(80),
+        }),
+        1,
+        2,
+        &[10],
+    );
+    let export = outgoing.intent.id().unwrap();
+    let s3 = bft_cut_advance(
+        &mut source,
+        &trust,
+        &mut verified,
+        &mut evidence,
+        vec![Command::Spend(Box::new(outgoing))],
+    );
+    let s4 = bft_cut_advance(&mut source, &trust, &mut verified, &mut evidence, vec![]);
+    assert_eq!(
+        verified.export(s3, export).unwrap(),
+        verified.export(s4, export).unwrap()
+    );
+    let d1 = bft_cut_advance(
+        &mut destination,
+        &trust,
+        &mut verified,
+        &mut evidence,
+        vec![Command::Import {
+            snapshot: s4,
+            export,
+        }],
+    );
+    let imported = id("output", &(export, 0u32)).unwrap();
+    assert_eq!(
+        destination.ledger.coins[&imported].payment.amount,
+        Amount(78)
+    );
+    assert_eq!(destination.ledger.coins[&imported].mature, 3);
+    assert_eq!(destination.ledger.imports[&export], s4);
+    bft_cut_advance(
+        &mut destination,
+        &trust,
+        &mut verified,
+        &mut evidence,
+        vec![],
+    );
+
+    let open = ci::command(
+        &destination,
+        &trust,
+        c::Action::Open {
+            witness: Some(public(12)),
+            inputs: vec![imported],
+            parties: ci::parties(),
+            capacity: Amount(60),
+            initial: [Amount(60), Amount::ZERO],
+            change: vec![Payment {
+                owner: public(11),
+                amount: Amount(17),
+            }],
+            fee: Amount(1),
+        },
+        Some(11),
+        &[10, 11],
+    );
+    let Command::Channel(native_open) = &open else {
+        panic!("channel open")
+    };
+    let channel = native_open.action.intent.id().unwrap();
+    let change = id("output", &(channel, 0u32)).unwrap();
+    let mut bad_owner = open.clone();
+    let Command::Channel(command) = &mut bad_owner else {
+        panic!("channel open")
+    };
+    command
+        .action
+        .approvals
+        .iter_mut()
+        .find(|a| a.key == public(11))
+        .unwrap()
+        .signature = "00".repeat(64);
+    let before = (
+        destination.ledger.clone(),
+        destination.tip().unwrap(),
+        destination.finalized,
+    );
+    assert!(destination
+        .template(vec![bad_owner], public(10), &trust, &verified)
+        .is_err());
+    assert_eq!(
+        (
+            destination.ledger.clone(),
+            destination.tip().unwrap(),
+            destination.finalized
+        ),
+        before
+    );
+    let d3 = bft_cut_advance(
+        &mut destination,
+        &trust,
+        &mut verified,
+        &mut evidence,
+        vec![open],
+    );
+    assert!(!destination.ledger.coins.contains_key(&imported));
+    assert_eq!(destination.ledger.imports[&export], s4);
+    assert_eq!(destination.ledger.coins[&change].payment.amount, Amount(17));
+    let book = &destination.ledger.channel_state.as_ref().unwrap().book;
+    assert_eq!(book.locked().unwrap(), Amount(60));
+    assert!(book.channels[&channel].dependencies.contains(&s4));
+    let reserve = ci::command(
+        &destination,
+        &trust,
+        c::Action::Reserve {
+            channel,
+            input: change,
+            fee_limit: Amount(3),
+        },
+        Some(11),
+        &[11],
+    );
+    let d4 = bft_cut_advance(
+        &mut destination,
+        &trust,
+        &mut verified,
+        &mut evidence,
+        vec![reserve],
+    );
+    assert_eq!(evidence.snapshots.len(), 8);
+    assert_eq!((source.height(), destination.height()), (4, 4));
+    assert!(!destination.ledger.coins.contains_key(&imported));
+    assert!(!destination.ledger.coins.contains_key(&change));
+    assert_eq!(destination.ledger.imports[&export], s4);
+    let book = &destination.ledger.channel_state.as_ref().unwrap().book;
+    assert_eq!(book.reserves[&change].coin.payment.amount, Amount(17));
+    assert_eq!(book.reserves[&change].fee_limit, Amount(3));
+    assert!(book.reserves[&change].coin.dependencies.contains(&s4));
+    assert_eq!(book.locked().unwrap(), Amount(77));
+    // This is a new fully signed request under the current channel head. It
+    // cannot reserve the already consumed input again; no certificate is forged.
+    let repeated = ci::command(
+        &destination,
+        &trust,
+        c::Action::Reserve {
+            channel,
+            input: change,
+            fee_limit: Amount(3),
+        },
+        Some(11),
+        &[11],
+    );
+    let before = (
+        destination.ledger.clone(),
+        destination.tip().unwrap(),
+        destination.finalized,
+    );
+    assert!(destination
+        .template(vec![repeated], public(10), &trust, &verified)
+        .is_err());
+    assert_eq!(
+        (
+            destination.ledger.clone(),
+            destination.tip().unwrap(),
+            destination.finalized
+        ),
+        before
+    );
+
+    assert_eq!(
+        destination
+            .template(
+                vec![Command::Import {
+                    snapshot: s4,
+                    export
+                }],
+                public(10),
+                &trust,
+                &verified
+            )
+            .unwrap_err(),
+        "permanent import tombstone rejects replay"
+    );
+    assert_eq!(
+        (
+            destination.ledger.clone(),
+            destination.tip().unwrap(),
+            destination.finalized
+        ),
+        before
+    );
+
+    // Reconstruct every complete checkpoint from the independently pinned
+    // genesis. Neither the builders' Chain nor a serialized Ledger is authority.
+    let cold = VerifiedEvidence::verify(&evidence, &trust).unwrap();
+    let replay = |checkpoint| {
+        cold.replay_extension(cold.snapshot(checkpoint).unwrap(), &trust)
+            .unwrap()
+    };
+    assert_eq!(replay(d4).ledger, destination.ledger);
+    assert_eq!(replay(s4).ledger, source.ledger);
+    let issued3 = Amount(rld_pow::cumulative_emission(3));
+    let issued4 = Amount(rld_pow::cumulative_emission(4));
+    assert_eq!(source.ledger.minted, issued4);
+    assert_eq!(destination.ledger.minted, Amount::ZERO);
+    let totals = |issued: Amount, escrow: Amount| {
+        (
+            issued,
+            issued.checked_sub(escrow).unwrap(),
+            escrow,
+            Amount::ZERO,
+        )
+    };
+    assert_eq!(
+        conservation_with_escrow(&[replay(s4), replay(d3)]).unwrap(),
+        totals(issued4, Amount(60))
+    );
+    assert_eq!(
+        conservation_with_escrow(&[replay(s4), replay(d4)]).unwrap(),
+        totals(issued4, Amount(77))
+    );
+    assert_eq!(
+        conservation_with_escrow(&[replay(s3), replay(d4)]).unwrap(),
+        totals(issued3, Amount(77))
+    );
+    assert!(conservation(&[replay(s4), replay(d4)]).is_err());
+    let original = serde_json::to_vec(&(&bootstrap, &evidence)).unwrap();
+    let selection = |source_checkpoint, destination_checkpoint| {
+        vec![
+            Selection {
+                region: source_region,
+                checkpoint: source_checkpoint,
+            },
+            Selection {
+                region: destination_region,
+                checkpoint: destination_checkpoint,
+            },
+        ]
+    };
+    let check =
+        |archive: &Evidence, s, d| inspect(&bootstrap, &public(1), pin, archive, &selection(s, d));
+    eprintln!("channel Open/Reserve Native construction complete: 8 complete signed certificates S1/S2/S3/S4/D1/D2/D3/D4; full pinned replay; export80/import78+fee2; Open60+fee1+change17; Reserve17 limit3; E60/E77 amount checks; S3+D4 amount-valid but requires S4; no Store/custody/transport qualification");
+    // The unchanged baseline must fail here at its original channel profile gate.
+    let opened = check(&evidence, s4, d3).unwrap();
+    assert_eq!(
+        (
+            opened.issued,
+            opened.liquid,
+            opened.escrow,
+            opened.pending_transfer
+        ),
+        totals(issued4, Amount(60))
+    );
+    let good = check(&evidence, s4, d4).unwrap();
+    assert_eq!(
+        (good.issued, good.liquid, good.escrow, good.pending_transfer),
+        totals(issued4, Amount(77))
+    );
+    assert_eq!(good.selected[0].id().unwrap(), s4);
+    assert_eq!(good.selected[1].id().unwrap(), d4);
+    assert!(
+        !good.ledger_changed && !good.signing_authority && !good.current_spendability_authority
+    );
+    assert!(!good.independent_freshness_verified && !good.incident_safety_verified);
+    assert_eq!(
+        check(&evidence, s3, d4).unwrap_err(),
+        "selected history precedes required checkpoint"
+    );
+    let source_only = inspect(
+        &bootstrap,
+        &public(1),
+        pin,
+        &evidence,
+        &[Selection {
+            region: source_region,
+            checkpoint: s4,
+        }],
+    )
+    .unwrap();
+    assert_eq!(
+        (
+            source_only.issued,
+            source_only.liquid,
+            source_only.escrow,
+            source_only.pending_transfer
+        ),
+        (
+            issued4,
+            issued4.checked_sub(Amount(80)).unwrap(),
+            Amount::ZERO,
+            Amount(80)
+        ),
+    );
+    assert_eq!(
+        serde_json::to_vec(&(&bootstrap, &evidence)).unwrap(),
+        original
+    );
+
+    let s5 = bft_cut_advance(&mut source, &trust, &mut verified, &mut evidence, vec![]);
+    assert_eq!(
+        source.ledger.minted,
+        Amount(rld_pow::cumulative_emission(5))
+    );
+    assert_ne!(s5, s4);
+    let complete = serde_json::to_vec(&(&bootstrap, &evidence)).unwrap();
+    let later = check(&evidence, s4, d4).unwrap();
+    assert_eq!(later.selected, good.selected);
+    assert_eq!(
+        (
+            later.issued,
+            later.liquid,
+            later.escrow,
+            later.pending_transfer
+        ),
+        totals(issued4, Amount(77))
+    );
+    assert_ne!(later.request_commitment, good.request_commitment);
+    let mut bad = evidence.clone();
+    bad.snapshots
+        .last_mut()
+        .unwrap()
+        .bft
+        .as_mut()
+        .unwrap()
+        .committed
+        .votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    let native_error = VerifiedEvidence::verify(&bad, &trust).err().unwrap();
+    assert_eq!(check(&bad, s4, d4).unwrap_err(), native_error);
+    assert_eq!(check(&bad, s3, d4).unwrap_err(), native_error);
+    let source_selection = [Selection {
+        region: source_region,
+        checkpoint: s4,
+    }];
+    assert_eq!(
+        inspect(&bootstrap, &public(1), pin, &bad, &source_selection).unwrap_err(),
+        native_error
+    );
+    let mut duplicate = evidence.clone();
+    duplicate.snapshots.push(cold.snapshot(d4).unwrap().clone());
+    check(&duplicate, s4, d4).unwrap();
+    duplicate
+        .snapshots
+        .last_mut()
+        .unwrap()
+        .bft
+        .as_mut()
+        .unwrap()
+        .prepared
+        .votes[0]
+        .approval
+        .signature = "00".repeat(64);
+    assert!(
+        check(&duplicate, s4, d4).is_err(),
+        "duplicate body hid a bad certificate"
+    );
+    for missing in [evidence.snapshots[1].statement.id().unwrap(), s4, d1] {
+        let mut bad = evidence.clone();
+        bad.snapshots
+            .retain(|s| s.statement.id().unwrap() != missing);
+        assert!(
+            check(&bad, s4, d4).is_err(),
+            "missing complete predecessor accepted"
+        );
+    }
+    let mut mixed = bootstrap.clone();
+    mixed.admissions[1].rules = bft::RULES.into();
+    mixed.admissions[1].value_rules = None;
+    mixed.admissions[1].signature = signature(1, &mixed.admissions[1].bytes().unwrap());
+    Trust::verify(&mixed, &public(1), pin).unwrap();
+    assert_eq!(inspect(&mixed, &public(1), pin, &evidence, &selection(s4, d4)).unwrap_err(),
+        "causal cut supports only homogeneous original unanimous, original BFT or open-channel BFT admissions");
+    // These deliberately inconsistent copies only test the early command-scope
+    // gate. They are not valid signed histories or lifecycle authentication tests.
+    for unsupported in [
+        c::Action::ReserveBudget {
+            channel,
+            input: change,
+            fee_limit: Amount(3),
+            max_fee: Amount(17),
+        },
+        c::Action::Settle { channel },
+    ] {
+        let mut bad = evidence.clone();
+        let snapshot = bad
+            .snapshots
+            .iter_mut()
+            .find(|s| s.statement.id().unwrap() == d4)
+            .unwrap();
+        let Command::Channel(command) = &mut snapshot.blocks.last_mut().unwrap().commands[0] else {
+            panic!("retained reserve")
+        };
+        command.action.intent.action = unsupported;
+        assert_eq!(
+            check(&bad, s4, d4).unwrap_err(),
+            "causal cut unsupported history profile"
+        );
+    }
+    assert_eq!(
+        serde_json::to_vec(&(&bootstrap, &evidence)).unwrap(),
+        complete
+    );
+    eprintln!("channel Open/Reserve historical cut complete: E60 then E77; full source issuance and T80; spent-import closure; amount-valid nonclosed cut, later/duplicate certificate, missing-prefix and scoped-command refusals; no closing/settlement, 2016-height, incident, current-state, custody or adoption qualification");
 }

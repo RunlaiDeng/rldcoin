@@ -41,11 +41,14 @@ updated anchors. These interfaces do not replace Native permanent import maps,
 value replay, rollback witnesses or archived-history limits.
 
 The separate historical causal-cut entry accepts homogeneous original full-prefix
-unanimous or original BFT admissions. It authenticates complete supplied evidence,
+unanimous, original BFT or full-prefix channel BFT admissions. Channel history is
+limited to Open and ordinary Reserve, counting the complete reserved input with
+the channel principal. It authenticates complete supplied evidence,
 including later certificates and certificate variants, before checking the exact
 selected dependency closure, permanent imports and full export records. Amount
 equality cannot replace that closure. It retains the original bounds and excludes
-mixed admissions, segmented or paged histories, channels and reconfiguration.
+mixed admissions, segmented or paged histories, channel budget/closing/challenge/
+settlement commands and reconfiguration.
 Historical totals grant no current spendability, incident safety, independent
 freshness, signing or Store recovery authority.
 

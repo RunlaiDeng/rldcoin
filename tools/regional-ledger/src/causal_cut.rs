@@ -52,7 +52,8 @@ fn covered(
 }
 
 /// Authenticate complete evidence before releasing any selected-history totals.
-/// Only homogeneous original full-prefix unanimous or BFT admissions are supported.
+/// Only homogeneous original full-prefix unanimous, original BFT or open-channel
+/// BFT admissions are supported. Channel history is limited to Open and Reserve.
 /// Newer profiles need their own complete dependency and incident integration; none
 /// is coerced into these profiles. Input Chain/Ledger values are never authority.
 pub fn inspect(
@@ -85,21 +86,30 @@ pub fn inspect(
     let trust = Trust::verify(bootstrap, authority, currency_pin)?;
     let unanimous = bootstrap.admissions.iter().all(|a| a.rules == DOMAIN);
     let original_bft = bootstrap.admissions.iter().all(|a| a.rules == bft::RULES);
+    let open_channel_bft = bootstrap
+        .admissions
+        .iter()
+        .all(|a| a.rules == channels::BFT_RULES);
     require(
-        unanimous || original_bft,
-        "causal cut supports only homogeneous original unanimous or BFT admissions",
+        unanimous || original_bft || open_channel_bft,
+        "causal cut supports only homogeneous original unanimous, original BFT or open-channel BFT admissions",
     )?;
     for snapshot in &evidence.snapshots {
         require(
             snapshot.base.is_none()
-                && (snapshot.bft.is_some() == original_bft)
+                && (snapshot.bft.is_some() == (original_bft || open_channel_bft))
                 && snapshot.epochs.is_empty()
                 && snapshot.statement.epoch
                     == epoch::Registry::initial(&trust, snapshot.statement.region)?
                 && snapshot.blocks.len() <= MAX_BLOCKS
                 && snapshot.blocks.iter().all(|block| {
-                    block.commands.iter().all(|command| {
-                        matches!(command, Command::Spend(_) | Command::Import { .. })
+                    block.commands.iter().all(|command| match command {
+                        Command::Spend(_) | Command::Import { .. } => true,
+                        Command::Channel(command) if open_channel_bft => matches!(
+                            command.action.intent.action,
+                            channels::Action::Open { .. } | channels::Action::Reserve { .. }
+                        ),
+                        _ => false,
                     })
                 }),
             "causal cut unsupported history profile",
@@ -125,6 +135,8 @@ pub fn inspect(
     }
 
     // Full prefixes include spent ancestors, not just surviving coin lineage.
+    // Open/Reserve consume local replayed inputs and channel records; their
+    // imported provenance remains in these prefixes and permanent import maps.
     // Extra valid later evidence is authenticated but does not advance this cut.
     let mut pending = selected.values().copied().collect::<BTreeSet<_>>();
     let mut visited = BTreeSet::new();
