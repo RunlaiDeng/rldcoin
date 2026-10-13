@@ -652,18 +652,27 @@ fn four_packed_native_replicas_finalize_first_payment_and_actual_recipient_next_
 }
 
 fn ordinary_cycle(rules: &str) {
-    cycle_with_unavailable_validator(rules, None);
+    cycle_with_unavailable_validator(rules, None, false);
 }
 
 #[test]
 fn three_packed_validators_pay_twice_while_fourth_paused_then_catch_up_and_cold_verify() {
-    cycle_with_unavailable_validator(crate::paged_bft::PACKED_RULES, Some(1));
+    cycle_with_unavailable_validator(crate::paged_bft::PACKED_RULES, Some(1), false);
 }
 
-fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>) {
+#[test]
+fn two_packed_validators_cannot_debit_then_original_payment_survives_quorum_restoration() {
+    cycle_with_unavailable_validator(crate::paged_bft::PACKED_RULES, Some(1), true);
+}
+
+fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, lose_quorum: bool) {
     assert!(
         unavailable.is_none_or(|actor| actor == 1),
         "predeclared fault actor differs"
+    );
+    assert!(
+        !lose_quorum || unavailable == Some(1),
+        "predeclared quorum-loss actors differ"
     );
     let started = monotonic().unwrap();
     let deadline = started + 120.0;
@@ -706,6 +715,17 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>) {
         } else {
             None
         };
+        let quorum_frozen = if lose_quorum {
+            let observed = availability(&workers[2], true, deadline)?;
+            fault["quorum_loss"] = json!({"actors":[1,2],"minimum_observation_seconds":10,
+                "paused_at":monotonic()?,"restored_at":null,"observations":0,
+                "no_native_debit_or_recipient_credit":false,"original_submission":null,
+                "original_intent":null,"original_input":null,"pending_age_seconds":null,
+                "second_validator_custody_unchanged":false});
+            Some((observed, custody_inventory(&root, 2)?))
+        } else {
+            None
+        };
         let first = payment(&workers[3], public(11), None, deadline)?;
         samples.push(
             json!({"intent":first.intent,"input":first.input,"submitted":first.submitted,
@@ -713,6 +733,52 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>) {
             "recipient_actor":FIRST_RECIPIENT,"recipient_native_verified_at":null,
             "recipient_native_latency_seconds":null,"recipient_finalized_spendable":null,"latency_seconds":null}),
         );
+        if let Some((prior, inventory)) = quorum_frozen {
+            fault["quorum_loss"]["original_submission"] = json!(first.submitted);
+            fault["quorum_loss"]["original_intent"] = json!(first.intent);
+            fault["quorum_loss"]["original_input"] = json!(first.input);
+            let mut count = 0;
+            loop {
+                let observed = observations(&workers, deadline)?;
+                require(
+                    observed[3]
+                        .coins
+                        .iter()
+                        .any(|(id, owner, _, _)| *id == first.input && *owner == public(10)),
+                    "quorum-loss submission debited its original Native input",
+                )?;
+                require(
+                    observed.iter().all(|node| {
+                        !node.coins.iter().any(|(_, owner, amount, _)| {
+                            *owner == public(11) && *amount == crate::Amount(100)
+                        })
+                    }),
+                    "quorum-loss submission created recipient value",
+                )?;
+                require(
+                    observed[2].height == prior.height && observed[2].head == prior.head,
+                    "second paused validator advanced Native state",
+                )?;
+                count += 1;
+                fault["quorum_loss"]["observations"] = json!(count);
+                let age = monotonic()? - first.submitted;
+                fault["quorum_loss"]["pending_age_seconds"] = json!(age);
+                if age >= 10.0 && count >= 2 {
+                    break;
+                }
+                thread::sleep(Duration::from_millis(55));
+            }
+            require(
+                custody_inventory(&root, 2)? == inventory,
+                "second paused validator custody changed",
+            )?;
+            fault["quorum_loss"]["second_validator_custody_unchanged"] = json!(true);
+            fault["quorum_loss"]["no_native_debit_or_recipient_credit"] = json!(true);
+            // Restore only the third original validator. Keep the original
+            // submitted intent, input, caller reservation and first clock.
+            availability(&workers[2], false, deadline)?;
+            fault["quorum_loss"]["restored_at"] = json!(monotonic()?);
+        }
         let input = loop {
             let observed = observations(&workers, deadline)?;
             if let Some((id, _, _, _)) =
@@ -803,6 +869,14 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>) {
                     && fault["custody_unchanged_before_resume"] == true
                     && !fault["resumed_at"].is_null(),
                 "fault lifecycle did not complete three-live payment before restoration",
+            )?;
+        }
+        if lose_quorum {
+            require(
+                fault["quorum_loss"]["no_native_debit_or_recipient_credit"] == true
+                    && fault["quorum_loss"]["second_validator_custody_unchanged"] == true
+                    && !fault["quorum_loss"]["restored_at"].is_null(),
+                "quorum-loss lifecycle incomplete",
             )?;
         }
         require(
