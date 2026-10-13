@@ -1040,5 +1040,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
         "fault":fault,"fault_cold_envelope_counts":cold_envelope_counts,
         "independent_operations":false,"latency_percentiles_qualified":false,"fixture_only":true}), 64*1024).unwrap();
     // Retain the complete private sample scope on both success and failure.
-    result.unwrap();
+    result.unwrap_or_else(|primary| {
+        panic!("ordinary wallet cycle failed: {primary}; worker errors: {worker_errors:?}")
+    });
 }
