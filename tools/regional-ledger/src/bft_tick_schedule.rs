@@ -139,7 +139,9 @@ pub fn observe(node: &Store, pins: proposal::Pins<'_>, input: Input) -> Result<O
     require(
         matches!(
             pins.runtime_format.as_str(),
-            "RLD-REGIONAL-BFT-NODE-V1" | "RLD-REGIONAL-BFT-ORIGIN-NODE-V8"
+            "RLD-REGIONAL-BFT-NODE-V1"
+                | "RLD-REGIONAL-BFT-ORIGIN-NODE-V8"
+                | "RLD-REGIONAL-BFT-ONWARD-NODE-V1"
         ),
         "BFT tick ordinary runtime profile differs",
     )?;

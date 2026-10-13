@@ -11,6 +11,7 @@ use std::{
 
 pub const FORMAT: &str = "RLD-REGIONAL-BFT-NODE-V1";
 pub const ORIGIN_FORMAT: &str = "RLD-REGIONAL-BFT-ORIGIN-NODE-V8";
+pub const ONWARD_FORMAT: &str = "RLD-REGIONAL-BFT-ONWARD-NODE-V1";
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -53,7 +54,7 @@ impl Client {
         format: String,
         node: &Store,
     ) -> Result<Self> {
-        crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
+        crate::bft_runtime_envelope::require_profile(&format, node)?;
         require(
             cfg!(unix),
             "BFT caller custody requires Unix private file operations",
@@ -91,7 +92,8 @@ impl Client {
         let rules = &node.trust.region(node.chain.region)?.rules;
         require(
             (format == FORMAT && rules != bft::JOINT_RULES && rules != bft::ROLE_RULES)
-                || (format == ORIGIN_FORMAT && rules == crate::paged_bft::ORIGIN_NETWORK_RULES),
+                || (format == ORIGIN_FORMAT && rules == crate::paged_bft::ORIGIN_NETWORK_RULES)
+                || (format == ONWARD_FORMAT && rules == crate::paged_bft::ONWARD_NETWORK_RULES),
             "BFT caller runtime/admission profile differs",
         )?;
         let lock = files::options()
@@ -210,8 +212,8 @@ impl Client {
         transition: Transition,
     ) -> Result<(State, bft::Agent)> {
         require(
-            self.format == FORMAT,
-            "pending signer handoff requires ordinary caller profile",
+            self.format == FORMAT || self.format == ONWARD_FORMAT,
+            "pending signer handoff requires ordinary or onward caller profile",
         )?;
         let old = self.read()?;
         require(

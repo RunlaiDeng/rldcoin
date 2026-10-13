@@ -1158,6 +1158,7 @@ pub mod bft_onward_network;
 pub mod bft_phase_schedule;
 pub mod bft_proposal_schedule;
 pub mod bft_runtime_archive;
+mod bft_runtime_envelope;
 pub mod bft_tick_schedule;
 pub mod carriage;
 pub mod causal_cut;

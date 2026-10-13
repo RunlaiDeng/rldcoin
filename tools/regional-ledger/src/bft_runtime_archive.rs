@@ -14,6 +14,7 @@ use std::{
 };
 
 pub const FORMAT: &str = "RLD-REGIONAL-BFT-RETENTION-V2";
+pub const ONWARD_FORMAT: &str = "RLD-REGIONAL-BFT-ONWARD-RETENTION-V1";
 pub const MAX_STATE: usize = 32 * 1024 * 1024;
 const MAX_MESSAGES: usize = 512;
 const MAX_REFS: usize = 64;
@@ -71,6 +72,8 @@ pub struct Record {
     pub local: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub origin_refs: Option<Vec<Hash>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub onward_history_ref: Option<Hash>,
 }
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -128,7 +131,10 @@ impl Archive {
                 object.len() == 3
                     && object.contains_key("runtime")
                     && object.contains_key("snapshots")
-                    && object.get("format").and_then(Value::as_str) == Some(FORMAT)
+                    && matches!(
+                        object.get("format").and_then(Value::as_str),
+                        Some(FORMAT | ONWARD_FORMAT)
+                    )
             }),
             "BFT retention version differs; preserve old fixture and use fresh state",
         )?;
@@ -145,7 +151,7 @@ impl Archive {
     }
     fn check_limits(&self) -> Result<()> {
         require(
-            self.format == FORMAT
+            (self.format == FORMAT || self.format == ONWARD_FORMAT)
                 && self.runtime.messages.len() <= MAX_MESSAGES
                 && self.snapshots.len() <= MAX_MESSAGES * MAX_REFS
                 && self.runtime.snapshot_cache.len() <= MAX_REFS
@@ -207,6 +213,7 @@ impl Archive {
                 if let Some(origins) = &record.origin_refs {
                     referenced.extend(origins.iter().copied());
                 }
+                referenced.extend(record.onward_history_ref);
             } else {
                 self.check_record_bytes(ident, record, &sizes, &mut referenced)?;
             }
@@ -250,14 +257,22 @@ impl Archive {
         #[cfg(test)]
         cost::envelope();
         let origin = record.header.format == bft_network::ORIGIN_FORMAT;
+        let onward = record.header.format == crate::bft_onward_network::FORMAT;
         require(
-            (origin && record.origin_refs.is_some())
-                || (record.header.format == bft_network::FORMAT && record.origin_refs.is_none()),
+            if self.format == ONWARD_FORMAT {
+                onward && record.origin_refs.is_none()
+            } else {
+                record.onward_history_ref.is_none()
+                    && ((origin && record.origin_refs.is_some())
+                        || (record.header.format == bft_network::FORMAT
+                            && record.origin_refs.is_none()))
+            },
             "BFT archive envelope format/reference fields differ",
         )?;
         let origins = record.origin_refs.as_deref().unwrap_or_default();
         require(
-            record.refs.len() + origins.len() <= MAX_REFS
+            record.refs.len() + origins.len() + usize::from(record.onward_history_ref.is_some())
+                <= MAX_REFS
                 && origins.len() <= 4
                 && record.size_bytes > 0
                 && record.size_bytes <= crate::contact::MAX_PAYLOAD
@@ -270,7 +285,17 @@ impl Archive {
         if origin {
             base["origins"] = serde_json::json!([]);
         }
+        if onward {
+            base["history"] = Value::Null;
+        }
         let mut size = files::canonical(&base)?.len();
+        if let Some(reference) = record.onward_history_ref {
+            size = size
+                .checked_sub(4)
+                .and_then(|n| n.checked_add(*sizes.get(&reference)?))
+                .ok_or("BFT onward wrapper missing or expansion overflow")?;
+            referenced.insert(reference);
+        }
         for refs in [&record.refs[..], origins] {
             size = size
                 .checked_add(refs.len().saturating_sub(1))
@@ -322,6 +347,16 @@ impl Archive {
                 .collect::<Result<Vec<_>>>()?;
             value["origins"] = serde_json::to_value(origins).map_err(|e| e.to_string())?;
         }
+        if record.header.format == crate::bft_onward_network::FORMAT {
+            value["history"] = match record.onward_history_ref {
+                Some(reference) => self
+                    .snapshots
+                    .get(&reference)
+                    .cloned()
+                    .ok_or("BFT archive complete onward wrapper missing")?,
+                None => Value::Null,
+            };
+        }
         Ok(value)
     }
 }
@@ -367,7 +402,7 @@ pub struct Client {
 }
 impl Client {
     pub fn lock(root: &Path, key: String, format: String, node: &Store) -> Result<Self> {
-        crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
+        crate::bft_runtime_envelope::require_profile(&format, node)?;
         require(
             cfg!(unix),
             "native companion custody requires Unix private file operations",
@@ -382,7 +417,9 @@ impl Client {
         require(
             (format == bft_client::FORMAT && bft::is_profile(rules) && !bft::is_joint(rules))
                 || (format == bft_client::ORIGIN_FORMAT
-                    && rules == crate::paged_bft::ORIGIN_NETWORK_RULES),
+                    && rules == crate::paged_bft::ORIGIN_NETWORK_RULES)
+                || (format == bft_client::ONWARD_FORMAT
+                    && rules == crate::paged_bft::ONWARD_NETWORK_RULES),
             "BFT archive runtime/admission profile differs",
         )?;
         let context = bft::Context::current(node)?;
@@ -429,7 +466,14 @@ impl Client {
     fn validate(&self, archive: &Archive, node: &Store) -> Result<()> {
         let runtime = &archive.runtime;
         require(
-            runtime.format == self.format && runtime.binding == self.binding,
+            runtime.format == self.format
+                && runtime.binding == self.binding
+                && archive.format
+                    == if self.format == bft_client::ONWARD_FORMAT {
+                        ONWARD_FORMAT
+                    } else {
+                        FORMAT
+                    },
             "BFT archive currency/region/key/runtime binding differs",
         )?;
         let tip = if runtime.height == 0 {
@@ -488,6 +532,20 @@ impl Client {
     pub fn read(&self, node: &Store) -> Result<Receipt> {
         let (archive, raw) = self.retained(node)?;
         Ok(self.receipt(&archive, &raw, 0))
+    }
+    /// The same fully byte-checked graph is authenticated before startup may
+    /// reconcile custody. This does not change the public byte-only read API.
+    pub(crate) fn read_authenticated(&self, node: &Store) -> Result<(Archive, Hash)> {
+        let (archive, raw) = self.retained(node)?;
+        for record in archive.runtime.messages.values() {
+            let wire =
+                crate::bft_runtime_envelope::Wire::decode(archive.envelope(record)?, &self.format)?;
+            require(
+                wire.verify_cold(node)? == record.value,
+                "BFT cold archive value differs from complete Native envelope",
+            )?;
+        }
+        Ok((archive, hash(&raw)))
     }
     /// Authenticate complete current-parent proposal/timeout envelopes, one at
     /// a time. Other retained records still require the ordinary full cold check.
@@ -554,16 +612,9 @@ impl Client {
                 continue;
             }
             let value = archive.envelope(record)?;
-            let wire: bft_network::WireEnvelope =
-                serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+            let wire = crate::bft_runtime_envelope::Wire::decode(value, &self.format)?;
             require(
-                serde_json::to_value(&wire).map_err(|e| e.to_string())? == value,
-                "BFT scheduling envelope loses typed fields",
-            )?;
-            let envelope = wire.expand()?;
-            envelope.verify(node)?;
-            require(
-                envelope.value()? == record.value,
+                wire.verify(node)? == record.value,
                 "BFT scheduling envelope/value differs",
             )?;
             messages.push(message.as_ref().clone());
@@ -665,16 +716,9 @@ impl Client {
                 continue;
             }
             let value = proposed.envelope(record)?;
-            let wire: bft_network::WireEnvelope =
-                serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+            let wire = crate::bft_runtime_envelope::Wire::decode(value, &self.format)?;
             require(
-                serde_json::to_value(&wire).map_err(|e| e.to_string())? == value,
-                "BFT archive envelope loses native typed fields",
-            )?;
-            let envelope = wire.expand()?;
-            envelope.verify(node)?;
-            require(
-                envelope.value()? == record.value,
+                wire.verify(node)? == record.value,
                 "BFT archive value metadata differs from complete native envelope",
             )?;
             verified += 1;
@@ -751,6 +795,7 @@ mod tests {
             value: None,
             local: false,
             origin_refs: origin.then_some(vec![b, b]),
+            onward_history_ref: None,
         };
         let raw = files::canonical(&archive.envelope(&record).unwrap()).unwrap();
         record.size_bytes = raw.len();
@@ -927,6 +972,7 @@ mod tests {
                 value: None,
                 local: false,
                 origin_refs: None,
+                onward_history_ref: None,
             };
             let raw = files::canonical(&archive.envelope(&record).unwrap()).unwrap();
             record.size_bytes = raw.len();
@@ -941,5 +987,296 @@ mod tests {
         let record = archive.runtime.messages.values_mut().next().unwrap();
         record.refs = vec![record.refs[0]; 4];
         assert!(Archive::decode(&canonical(&archive).unwrap()).is_err());
+    }
+    mod onward_codec_guards {
+        use super::*;
+
+        fn wrapper() -> Value {
+            serde_json::json!({
+                "codec_only": "whole unauthenticated wrapper",
+                "history": {
+                    "origin": {"snapshots": [{"retained": "first"}, {"retained": "later"}]},
+                    "snapshots": [{"retained": "complete"}, {"retained": "duplicate"}],
+                    "metadata": {"unicode": "café", "zero": -0.0}
+                }
+            })
+        }
+
+        // Commit an independently assembled expected wire, not Archive::envelope.
+        // Repeated references keep their multiplicity/order in the expected array.
+        fn onward(history: Option<Value>, snapshots: Vec<Value>) -> (Archive, Value) {
+            let mut archive = archive(false);
+            let (_, mut record) = archive.runtime.messages.pop_first().unwrap();
+            archive.format = ONWARD_FORMAT.into();
+            archive.runtime.format = bft_client::ONWARD_FORMAT.into();
+            archive.snapshots.clear();
+            record.header.format = crate::bft_onward_network::FORMAT.into();
+            record.origin_refs = None;
+            record.refs = snapshots
+                .iter()
+                .map(|value| {
+                    let reference = hash(&files::canonical(value).unwrap());
+                    archive.snapshots.insert(reference, value.clone());
+                    reference
+                })
+                .collect();
+            record.onward_history_ref = history.as_ref().map(|value| {
+                let reference = hash(&files::canonical(value).unwrap());
+                archive.snapshots.insert(reference, value.clone());
+                reference
+            });
+            let expected = serde_json::json!({
+                "format": crate::bft_onward_network::FORMAT,
+                "currency": record.header.currency,
+                "region": record.header.region,
+                "body": record.body,
+                "evidence": {"snapshots": snapshots},
+                "history": history
+            });
+            let raw = files::canonical(&expected).unwrap();
+            record.size_bytes = raw.len();
+            record.sha256 = hash(&raw);
+            archive
+                .runtime
+                .messages
+                .insert(hash(&files::canonical(&record.body).unwrap()), record);
+            (archive, expected)
+        }
+
+        fn round_trip(archive: &Archive, expected: &Value) -> Archive {
+            let raw = canonical(archive).unwrap();
+            let decoded = Archive::decode(&raw).unwrap();
+            assert_eq!(canonical(&decoded).unwrap(), raw);
+            let record = decoded.runtime.messages.values().next().unwrap();
+            assert_eq!(
+                files::canonical(&decoded.envelope(record).unwrap()).unwrap(),
+                files::canonical(expected).unwrap(),
+            );
+            decoded
+        }
+
+        #[test]
+        fn onward_archive_preserves_null_whole_wrapper_and_ordered_duplicate_refs() {
+            let a = serde_json::json!({"codec_only": "first", "number": 1e-7});
+            let b = serde_json::json!({"codec_only": "second", "unicode": "café"});
+            for history in [None, Some(wrapper())] {
+                let (archive, expected) =
+                    onward(history.clone(), vec![a.clone(), b.clone(), a.clone()]);
+                let decoded = round_trip(&archive, &expected);
+                let record = decoded.runtime.messages.values().next().unwrap();
+                assert_eq!(record.refs.len(), 3);
+                assert_eq!(record.refs[0], record.refs[2]);
+                assert_ne!(record.refs[0], record.refs[1]);
+                let actual = decoded.envelope(record).unwrap();
+                assert_eq!(
+                    actual["evidence"]["snapshots"],
+                    serde_json::json!([a, b, a])
+                );
+                assert!(actual.as_object().unwrap().contains_key("history"));
+                match history {
+                    None => {
+                        assert!(actual["history"].is_null());
+                        assert!(record.onward_history_ref.is_none());
+                        assert_eq!(decoded.snapshots.len(), 2);
+                    }
+                    Some(whole) => {
+                        assert_eq!(
+                            files::canonical(&actual["history"]).unwrap(),
+                            files::canonical(&whole).unwrap()
+                        );
+                        assert_eq!(decoded.snapshots.len(), 3);
+                        assert_eq!(
+                            decoded.snapshots[&record.onward_history_ref.unwrap()],
+                            whole
+                        );
+                    }
+                }
+                // The unchanged-graph fast path must retain the history reference.
+                let mut metadata = decoded.clone();
+                metadata.runtime.cursor += 1;
+                metadata.runtime.messages.values_mut().next().unwrap().local = true;
+                metadata.check_delta_bytes(&decoded).unwrap();
+                round_trip(&metadata, &expected);
+                let mut reordered = decoded.clone();
+                // a,b,a is a palindrome: an actual swap changes complete wire bytes.
+                reordered
+                    .runtime
+                    .messages
+                    .values_mut()
+                    .next()
+                    .unwrap()
+                    .refs
+                    .swap(0, 1);
+                assert!(Archive::decode(&canonical(&reordered).unwrap()).is_err());
+                assert!(reordered.check_delta_bytes(&decoded).is_err());
+            }
+        }
+
+        #[test]
+        fn onward_archive_refuses_missing_altered_or_orphan_history_and_mixed_profiles() {
+            let (archive, expected) = onward(
+                Some(wrapper()),
+                vec![serde_json::json!({"codec_only": "local"})],
+            );
+            let archive = round_trip(&archive, &expected);
+            let reference = archive
+                .runtime
+                .messages
+                .values()
+                .next()
+                .unwrap()
+                .onward_history_ref
+                .unwrap();
+            for case in 0..7 {
+                let mut bad = archive.clone();
+                match case {
+                    0 => {
+                        bad.snapshots.remove(&reference);
+                    }
+                    1 => {
+                        bad.snapshots.get_mut(&reference).unwrap()["history"]["snapshots"][1]
+                            ["retained"] = serde_json::json!("altered later member");
+                    }
+                    2 => {
+                        let orphan = serde_json::json!({"codec_only": "orphan whole wrapper"});
+                        bad.snapshots
+                            .insert(hash(&files::canonical(&orphan).unwrap()), orphan);
+                    }
+                    3 => {
+                        bad.runtime
+                            .messages
+                            .values_mut()
+                            .next()
+                            .unwrap()
+                            .onward_history_ref = None;
+                    }
+                    4 => {
+                        bad.format = FORMAT.into();
+                    }
+                    5 => {
+                        bad.runtime
+                            .messages
+                            .values_mut()
+                            .next()
+                            .unwrap()
+                            .origin_refs = Some(vec![]);
+                    }
+                    _ => {
+                        bad.runtime
+                            .messages
+                            .values_mut()
+                            .next()
+                            .unwrap()
+                            .onward_history_ref = Some(Hash::ZERO);
+                    }
+                }
+                assert!(
+                    Archive::decode(&canonical(&bad).unwrap()).is_err(),
+                    "onward codec attack {case}"
+                );
+            }
+            for origin in [false, true] {
+                let mut old_record = super::archive(origin);
+                old_record.format = ONWARD_FORMAT.into();
+                let error = Archive::decode(&canonical(&old_record).unwrap()).unwrap_err();
+                assert!(error.contains("envelope format/reference fields differ"));
+            }
+            // Generic JSON equality must not authorize altered complete wrapper bytes.
+            let mut equal_json = archive.clone();
+            equal_json.snapshots.get_mut(&reference).unwrap()["history"]["metadata"]["zero"] =
+                serde_json::json!(0.0);
+            assert_eq!(equal_json.snapshots, archive.snapshots);
+            assert!(Archive::decode(&canonical(&equal_json).unwrap()).is_err());
+            assert!(equal_json.check_delta_bytes(&archive).is_err());
+        }
+
+        #[test]
+        fn onward_archive_counts_wrapper_ref_and_checks_full_expansion_at_original_cap() {
+            let local = serde_json::json!({"codec_only": "repeated reference"});
+            let (without, expected) = onward(None, vec![local.clone(); MAX_REFS]);
+            round_trip(&without, &expected);
+            let (with, expected) = onward(Some(wrapper()), vec![local.clone(); MAX_REFS - 1]);
+            round_trip(&with, &expected);
+            let (too_many, _) = onward(Some(wrapper()), vec![local.clone(); MAX_REFS]);
+            let error = Archive::decode(&canonical(&too_many).unwrap()).unwrap_err();
+            assert!(error.contains("record identity/reference/size bound"));
+
+            let mut whole = wrapper();
+            whole["padding"] = serde_json::json!("");
+            let (_, empty_wire) = onward(Some(whole.clone()), vec![local.clone(); 3]);
+            let base = files::canonical(&empty_wire).unwrap().len();
+            let padding = crate::contact::MAX_PAYLOAD.checked_sub(base).unwrap();
+            whole["padding"] = serde_json::json!("x".repeat(padding));
+            let (at_cap, expected) = onward(Some(whole.clone()), vec![local.clone(); 3]);
+            assert_eq!(
+                files::canonical(&expected).unwrap().len(),
+                crate::contact::MAX_PAYLOAD
+            );
+            // The complete stored object is smaller than the expanded whole wire.
+            assert!(files::canonical(&whole).unwrap().len() < crate::contact::MAX_PAYLOAD);
+            round_trip(&at_cap, &expected);
+
+            whole["padding"] = serde_json::json!("x".repeat(padding + 1));
+            let (mut over, expected) = onward(Some(whole.clone()), vec![local; 3]);
+            assert_eq!(
+                files::canonical(&expected).unwrap().len(),
+                crate::contact::MAX_PAYLOAD + 1
+            );
+            assert!(files::canonical(&whole).unwrap().len() < crate::contact::MAX_PAYLOAD);
+            assert!(Archive::decode(&canonical(&over).unwrap()).is_err());
+            // A lying in-range size cannot hide the expansion from small shared refs.
+            over.runtime
+                .messages
+                .values_mut()
+                .next()
+                .unwrap()
+                .size_bytes = crate::contact::MAX_PAYLOAD;
+            let error = Archive::decode(&canonical(&over).unwrap()).unwrap_err();
+            assert!(error.contains("expansion size/capacity differs"));
+        }
+
+        #[test]
+        fn onward_archive_extension_keeps_old_v2_bytes_and_omits_absent_fields() {
+            for origin in [false, true] {
+                let old = super::archive(origin);
+                let (ident, record) = old.runtime.messages.iter().next().unwrap();
+                let mut old_record = serde_json::json!({
+                    "header": record.header, "body": record.body, "refs": record.refs,
+                    "sha256": record.sha256, "size_bytes": record.size_bytes,
+                    "value": record.value, "local": record.local
+                });
+                if origin {
+                    old_record["origin_refs"] = serde_json::json!(record.origin_refs);
+                }
+                let mut messages = serde_json::Map::new();
+                messages.insert(ident.to_hex(), old_record);
+                let expected_old = serde_json::json!({
+                    "format": FORMAT,
+                    "runtime": {
+                        "format": old.runtime.format, "binding": old.runtime.binding,
+                        "messages": messages, "height": old.runtime.height,
+                        "tip": old.runtime.tip, "snapshot_cache": old.runtime.snapshot_cache,
+                        "cursor": old.runtime.cursor
+                    },
+                    "snapshots": old.snapshots
+                });
+                assert_eq!(canonical(&old).unwrap(), canonical(&expected_old).unwrap());
+                let decoded = Archive::decode(&canonical(&expected_old).unwrap()).unwrap();
+                let stored =
+                    serde_json::to_value(decoded.runtime.messages.values().next().unwrap())
+                        .unwrap();
+                assert!(stored.get("onward_history_ref").is_none());
+                assert_eq!(stored.get("origin_refs").is_some(), origin);
+                let wire = decoded
+                    .envelope(decoded.runtime.messages.values().next().unwrap())
+                    .unwrap();
+                assert!(wire.get("history").is_none());
+                // Explicit null is not an accepted alternate old serialization.
+                let mut added_null = expected_old;
+                added_null["runtime"]["messages"][ident.to_hex()]["onward_history_ref"] =
+                    Value::Null;
+                assert!(Archive::decode(&canonical(&added_null).unwrap()).is_err());
+            }
+        }
     }
 }

@@ -8,6 +8,39 @@ use crate::{
 
 pub const FORMAT: &str = "RLD-REGIONAL-BFT-COMPLETE-ONWARD-NETWORK-V1";
 
+pub(crate) fn local_envelope(body: Body, node: &Store) -> Result<WireEnvelope> {
+    let (history, evidence) = node.onward_network_material()?;
+    let envelope = Envelope {
+        format: FORMAT.into(),
+        currency: node.trust.currency()?,
+        region: node.chain.region,
+        history,
+        evidence,
+        body,
+    };
+    envelope.verify(node)?;
+    let wire = envelope.pack()?;
+    wire.clone().expand()?.verify(node)?;
+    Ok(wire)
+}
+
+/// Incoming conflict custody and full authentication precede any dependency
+/// installation or body deduplication. Partial durable failure never acknowledges.
+pub(crate) fn sync_envelope(node: &mut Store, wire: WireEnvelope) -> Result<()> {
+    inspect(node, wire.clone())?;
+    let envelope = wire.expand()?;
+    if let Some(proof) = envelope.history {
+        node.accept_complete_onward_network_history(proof)?;
+    }
+    for snapshot in envelope.evidence.snapshots {
+        node.finalize_onward_network_certificate(snapshot)?;
+    }
+    if let Body::Finalized(snapshot) = envelope.body {
+        node.finalize_onward_network_certificate(*snapshot)?;
+    }
+    Ok(())
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Envelope {

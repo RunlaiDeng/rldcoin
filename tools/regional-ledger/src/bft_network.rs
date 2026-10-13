@@ -415,7 +415,12 @@ impl Envelope {
         }
     }
     pub fn value(&self) -> Result<Option<Hash>> {
-        match &self.body {
+        self.body.checkpoint_value()
+    }
+}
+impl Body {
+    pub(crate) fn checkpoint_value(&self) -> Result<Option<Hash>> {
+        match self {
             Body::Signed(message) | Body::EpochSigned { message, .. } => match message.as_ref() {
                 bft::Message::Proposal(p) => Ok(Some(p.snapshot.statement.id()?)),
                 bft::Message::Vote(v) => Ok(Some(v.value)),
@@ -427,6 +432,8 @@ impl Envelope {
             Body::EpochActivation(proof) => Ok(Some(proof.statement.id()?)),
         }
     }
+}
+impl Envelope {
     pub fn verify(&self, node: &Store) -> Result<Hash> {
         require(
             ((self.format == FORMAT

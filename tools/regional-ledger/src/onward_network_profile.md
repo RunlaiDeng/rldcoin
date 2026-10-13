@@ -45,10 +45,24 @@ events and both pending anchors remain retained through cold replay. Receipt
 alone does not credit: a separately certified local Import, original maturity,
 permanent deduplication and actual owner authorization still control value.
 
-This profile exposes an explicit complete-envelope verification and Native event
-boundary. Ordinary startup, contact carriage, runtime configuration, caller-head
-client and companion archives refuse it until their separate complete integration.
-No new contact kind is silently admitted. Network inspection does not sync value,
+The separate RLD-REGIONAL-BFT-ONWARD-NODE-V1 Runtime candidate uses original
+Native Agent journals and independently retained caller heads. Its exact archive
+format retains each complete wrapper and local certificate. Cold startup fully
+authenticates every envelope and requires exact prior Native custody of all
+certified material before caller recovery or outbox publication. A read-only cold
+refusal does not create incident custody. Incoming reception retains genuine
+incidents before later refusal and installs authenticated dependencies before
+body deduplication. Receipt still requires a new certified Import to create value.
+
+The explicit Runtime uses the original ordinary tick policy and quorum without
+converting old profiles, archives or custody. Outgoing material contains C1 through
+the current height and one complete retained A+B wrapper covering every required
+foreign anchor; unsupported multiple closures refuse without dropping evidence.
+Missing original response, stale caller head or failed archive publication cannot
+authorize another signature or clear pending custody. Generic envelopes, ordinary
+Service startup, owner submission and value-contact routes still refuse the new
+profile. Recognizing its strict regional frame shape grants no Native authority.
+The separate inspection API does not itself synchronize or credit value,
 first-sign, recover caller custody or establish remote current-state freshness.
 General ancestry, returns, carried channels, epoch handoff, long history, ordinary
 scheduling, independent custody/security, latency and physical qualification remain

@@ -568,6 +568,146 @@ fn network_regions(destination: Hash, trust: &Trust) -> Result<[Hash; 3]> {
 }
 
 impl Store {
+    /// Complete local certificates and one whole retained two-hop closure. All
+    /// records have just executed natively; no archive or projected cache is an
+    /// authority source. More than one independent closure explicitly refuses.
+    pub(crate) fn onward_network_material(
+        &self,
+    ) -> Result<(Option<CompleteOnwardNetworkHistory>, Evidence)> {
+        self.require_onward_network_state()?;
+        self.check_onward_network_safety()?;
+        let replay = self.current_paged_replay()?;
+        let mut required = replay
+            .evidence
+            .snapshots
+            .iter()
+            .filter(|(_, (s, _))| s.statement.region != self.chain.region)
+            .map(|(id, _)| *id)
+            .collect::<BTreeSet<_>>();
+        for pending in replay.onward_imports.values() {
+            required.extend(&pending.anchors);
+        }
+        required.extend(replay.chain.ledger.imports.values().copied());
+        let stream = self.paged.as_ref().ok_or("onward network stream absent")?;
+        let mut local = BTreeMap::new();
+        stream.visit(stream.storage_head(), |record| {
+            match record {
+                Record::Certified(snapshot) => {
+                    require(
+                        snapshot.statement.region == self.chain.region,
+                        "onward network local certificate region differs",
+                    )?;
+                    require(
+                        local.len() < MAX_SNAPSHOTS
+                            || local.contains_key(&snapshot.statement.height),
+                        "onward network complete local prefix bound",
+                    )?;
+                    local
+                        .entry(snapshot.statement.height)
+                        .or_insert_with(|| *snapshot.clone());
+                }
+                Record::OnwardNetworkHistory(proof) => {
+                    let anchors = proof.verify_anchors(self.chain.region, &self.trust)?;
+                    required.extend(anchors.snapshots.keys().copied());
+                    require(
+                        required.len() <= MAX_SNAPSHOTS,
+                        "onward network complete dependency count bound",
+                    )?;
+                }
+                _ => return Err("onward network local material event unsupported".into()),
+            }
+            Ok(())
+        })?;
+        let mut selected = None;
+        stream.visit(stream.storage_head(), |record| {
+            if let Record::OnwardNetworkHistory(proof) = record {
+                if selected.is_none() {
+                    let anchors = proof.verify_anchors(self.chain.region, &self.trust)?;
+                    if required.iter().all(|id| anchors.snapshots.contains_key(id)) {
+                        selected = Some(*proof.clone());
+                    }
+                }
+            }
+            Ok(())
+        })?;
+        require(
+            required.is_empty() || selected.is_some(),
+            "onward network needs one complete retained closure for every dependency",
+        )?;
+        let evidence = Evidence {
+            snapshots: local.into_values().collect(),
+        };
+        require(
+            evidence.snapshots.len() as u64 == self.chain.height()
+                && evidence
+                    .snapshots
+                    .iter()
+                    .enumerate()
+                    .all(|(i, s)| s.statement.height == i as u64 + 1),
+            "onward network complete C genesis prefix absent",
+        )?;
+        crate::encoded_size::check("onward-network-local-material-v1", &(&selected, &evidence))?;
+        Ok((selected, evidence))
+    }
+
+    /// Cold Runtime may authenticate only material already installed through
+    /// Native receipt/finality. Exact immutable bytes, not statement IDs, bind
+    /// this check; a valid but uninstalled proof is not startup authority.
+    pub(crate) fn require_retained_onward_material(
+        &self,
+        proof: Option<&CompleteOnwardNetworkHistory>,
+        snapshots: &[Snapshot],
+    ) -> Result<()> {
+        self.require_onward_network_state()?;
+        self.check_onward_network_safety()?;
+        require(
+            snapshots.len() <= MAX_SNAPSHOTS + 1,
+            "onward cold certificate bound",
+        )?;
+        crate::encoded_size::check("onward-cold-material-v1", &(proof, snapshots))?;
+        let mut proof_found = proof.is_none();
+        let mut found = vec![false; snapshots.len()];
+        let stream = self.paged.as_ref().ok_or("onward cold stream absent")?;
+        stream.visit(stream.storage_head(), |record| {
+            match record {
+                Record::OnwardNetworkHistory(old) => {
+                    proof_found |= proof.is_some_and(|p| p == old.as_ref());
+                }
+                Record::Certified(old) => {
+                    for (i, snapshot) in snapshots.iter().enumerate() {
+                        found[i] |= old.as_ref() == snapshot;
+                    }
+                }
+                _ => (),
+            }
+            Ok(())
+        })?;
+        require(
+            proof_found && found.iter().all(|v| *v),
+            "onward cold complete material absent from Native history",
+        )
+    }
+
+    pub(crate) fn finalize_onward_network_certificate(&mut self, snapshot: Snapshot) -> Result<()> {
+        self.require_onward_network_state()?;
+        self.check_onward_network_safety()?;
+        let stream = self
+            .paged
+            .as_ref()
+            .ok_or("onward certificate stream absent")?;
+        let mut identical = false;
+        stream.visit(stream.storage_head(), |record| {
+            if let Record::Certified(old) = record {
+                identical |= old.as_ref() == &snapshot;
+            }
+            Ok(())
+        })?;
+        if !identical {
+            self.finalize(snapshot)?;
+        }
+        Ok(())
+    }
+
     pub(crate) fn require_onward_network_state(&self) -> Result<()> {
         network_regions(self.chain.region, &self.trust)?;
         self.current_paged_replay()?;

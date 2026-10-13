@@ -1278,3 +1278,7 @@ mod current_tests;
 #[cfg(test)]
 #[path = "paged_store/onward_network_tests.rs"]
 mod onward_network_tests;
+
+#[cfg(test)]
+#[path = "paged_store/onward_runtime_tests.rs"]
+mod onward_runtime_tests;

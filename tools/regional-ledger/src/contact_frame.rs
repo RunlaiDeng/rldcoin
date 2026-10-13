@@ -79,15 +79,20 @@ fn inspect_regional(frame: &Frame, payload: &[u8], network: Option<&str>) -> Res
         .as_object()
         .ok_or("regional consensus carriage binding mismatch")?;
     let origin = value["format"] == "RLD-REGIONAL-BFT-ORIGIN-NETWORK-V3";
+    let onward = value["format"] == crate::bft_onward_network::FORMAT;
     let mut fields = vec!["format", "currency", "region", "evidence", "body"];
     if origin {
         fields.push("origins");
     }
+    if onward {
+        fields.push("history");
+    }
     require(
         object.len() == fields.len()
             && fields.iter().all(|k| object.contains_key(*k))
-            && (origin || value["format"] == "RLD-REGIONAL-BFT-NETWORK-V2")
+            && (origin || onward || value["format"] == "RLD-REGIONAL-BFT-NETWORK-V2")
             && (!origin || value["origins"].as_array().is_some_and(|v| v.len() <= 4))
+            && (!onward || value["history"].is_null() || value["history"].is_object())
             && value["region"] == hex::encode(frame.source_chain_id.0)
             && frame.export_id == frame.payload_sha256,
         "regional consensus carriage binding mismatch",

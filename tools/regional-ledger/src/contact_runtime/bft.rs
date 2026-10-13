@@ -2,8 +2,9 @@
 use super::*;
 use crate::{
     bft as consensus, bft_client, bft_network as net, bft_phase_schedule as phase,
-    bft_proposal_schedule as proposal, bft_runtime_archive as retention, bft_tick_schedule as tick,
-    contact::Frame, storage::Store, Command, Hash, Snapshot,
+    bft_proposal_schedule as proposal, bft_runtime_archive as retention,
+    bft_runtime_envelope::Wire, bft_tick_schedule as tick, contact::Frame, storage::Store, Command,
+    Hash, Snapshot,
 };
 use base64::{engine::general_purpose::STANDARD, Engine};
 use serde::Deserialize;
@@ -46,6 +47,10 @@ pub(crate) struct Runtime {
     #[cfg(test)]
     last_decision: Option<&'static str>,
     #[cfg(test)]
+    probe_tick_active: bool,
+    #[cfg(test)]
+    last_probe_predecision: Option<Value>,
+    #[cfg(test)]
     last_broadcast: Vec<Hash>,
     _lock: File,
 }
@@ -55,13 +60,23 @@ fn hash(value: &Value) -> Result<Hash> {
 fn state_hash(value: &bft_client::State) -> Result<Hash> {
     hash(&serde_json::to_value(value).map_err(|e| e.to_string())?)
 }
+#[cfg(test)]
+thread_local! {
+    static STOP_AFTER_SIGNATURE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
 impl Runtime {
+    #[cfg(test)]
+    pub(crate) fn fixture_stop_after_next_signature() {
+        STOP_AFTER_SIGNATURE.with(|stop| assert!(!stop.replace(true)));
+    }
     pub(crate) fn open(path: &Path, node: &Store, transport: &Value) -> Result<Self> {
-        crate::paged_bft::require_runtime_adoption(&node.trust.region(node.chain.region)?.rules)?;
         let config: Config =
             serde_json::from_value(read(path, 64 * 1024)?).map_err(|e| e.to_string())?;
+        crate::bft_runtime_envelope::require_profile(&config.format, node)?;
         require(
-            (config.format == bft_client::FORMAT || config.format == bft_client::ORIGIN_FORMAT)
+            (config.format == bft_client::FORMAT
+                || config.format == bft_client::ORIGIN_FORMAT
+                || config.format == bft_client::ONWARD_FORMAT)
                 && config.block_interval.is_finite()
                 && (0.5..=60.0).contains(&config.block_interval)
                 && config.round_timeout.is_finite()
@@ -118,19 +133,6 @@ impl Runtime {
             "BFT carrier differs from independently configured signer",
         )?;
         drop(mesh);
-        let caller = bft_client::Client::lock(
-            &config.head_file,
-            &config.signer_dir,
-            config.key.clone(),
-            config.format.clone(),
-            node,
-        )?;
-        let state = caller.read()?;
-        if state.pending.is_some() {
-            let recovered = caller.reconcile(node, state.clone())?;
-            Self::publish_head(&caller, node, &state, recovered)?;
-        }
-        drop(caller);
         let client = retention::Client::lock(
             &config.state,
             config.key.clone(),
@@ -139,18 +141,33 @@ impl Runtime {
         )?;
         let path = config.state.join("state.json");
         let (archive, head) = if fs::symlink_metadata(&path).is_ok() {
-            let receipt = client.read(node)?;
-            (
-                retention::Archive::decode(&files::private_read_with_limit(
-                    &path,
-                    retention::MAX_STATE,
-                )?)?,
-                Some(receipt.state_sha256),
-            )
+            if config.format == bft_client::ONWARD_FORMAT {
+                let (archive, head) = client.read_authenticated(node)?;
+                (archive, Some(head))
+            } else {
+                let receipt = client.read(node)?;
+                (
+                    retention::Archive::decode(&files::private_read_with_limit(
+                        &path,
+                        retention::MAX_STATE,
+                    )?)?,
+                    Some(receipt.state_sha256),
+                )
+            }
         } else {
+            if config.format == bft_client::ONWARD_FORMAT {
+                require(
+                    node.chain.height() == 0,
+                    "fresh onward Runtime archive requires Native genesis before custody recovery",
+                )?;
+            }
             (
                 retention::Archive {
-                    format: retention::FORMAT.into(),
+                    format: if config.format == bft_client::ONWARD_FORMAT {
+                        retention::ONWARD_FORMAT.into()
+                    } else {
+                        retention::FORMAT.into()
+                    },
                     snapshots: BTreeMap::new(),
                     runtime: retention::Runtime {
                         format: config.format.clone(),
@@ -169,6 +186,19 @@ impl Runtime {
                 None,
             )
         };
+        let caller = bft_client::Client::lock(
+            &config.head_file,
+            &config.signer_dir,
+            config.key.clone(),
+            config.format.clone(),
+            node,
+        )?;
+        let state = caller.read()?;
+        if state.pending.is_some() {
+            let recovered = caller.reconcile(node, state.clone())?;
+            Self::publish_head(&caller, node, &state, recovered)?;
+        }
+        drop(caller);
         drop(client);
         let mut runtime = Self {
             config,
@@ -178,6 +208,10 @@ impl Runtime {
             entered: super::service::monotonic()?,
             #[cfg(test)]
             last_decision: None,
+            #[cfg(test)]
+            probe_tick_active: false,
+            #[cfg(test)]
+            last_probe_predecision: None,
             #[cfg(test)]
             last_broadcast: Vec::new(),
             _lock: lock,
@@ -221,18 +255,18 @@ impl Runtime {
     }
 
     fn retain_local(&mut self, node: &Store, body: net::Body) -> Result<()> {
-        let packed = net::local_envelope(body, node)?.envelope;
+        let packed = Wire::local(body, node, &self.config.format)?;
         self.retain(node, packed, true)
     }
 
-    fn retain(&mut self, node: &Store, wire: net::WireEnvelope, local: bool) -> Result<()> {
+    fn retain(&mut self, node: &Store, wire: Wire, local: bool) -> Result<()> {
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        let envelope = wire.clone().expand()?;
-        envelope.verify(node)?;
+        let value = wire.verify(node)?;
+        let body = wire.body().clone();
         #[cfg(test)]
         super::service::trace_subwork("retain-complete-envelope", started)?;
-        let ident = hash(&serde_json::to_value(&envelope.body).map_err(|e| e.to_string())?)?;
+        let ident = hash(&serde_json::to_value(&body).map_err(|e| e.to_string())?)?;
         if self.archive.runtime.messages.contains_key(&ident) {
             // Every complete envelope authenticated first. Preserve both
             // original proof bytes and the original local-carriage flag.
@@ -242,8 +276,7 @@ impl Runtime {
             self.archive.runtime.messages.len() < 512,
             "BFT retained message capacity; preserve all original evidence",
         )?;
-        let value = envelope.value()?;
-        let complete = serde_json::to_value(&wire).map_err(|e| e.to_string())?;
+        let complete = wire.wire_value()?;
         let raw = files::canonical_with_limit(&complete, crate::contact::MAX_PAYLOAD)?;
         let mut proposed = self.archive.clone();
         let mut refs = Vec::new();
@@ -271,17 +304,25 @@ impl Runtime {
             }
             origins = Some(keys);
         }
+        let onward_history_ref = if complete.get("history").is_some_and(|v| !v.is_null()) {
+            let history = &complete["history"];
+            let key = hash(history)?;
+            if let Some(old) = proposed.snapshots.get(&key) {
+                require(old == history, "BFT shared onward wrapper collision")?;
+            }
+            proposed.snapshots.insert(key, history.clone());
+            Some(key)
+        } else {
+            None
+        };
         proposed.runtime.messages.insert(
             ident,
             retention::Record {
-                header: retention::Header {
-                    format: envelope.format,
-                    currency: envelope.currency,
-                    region: envelope.region,
-                },
+                header: wire.header(),
                 body: complete["body"].clone(),
                 refs,
                 origin_refs: origins,
+                onward_history_ref,
                 sha256: Hash(Sha256::digest(&raw).into()),
                 size_bytes: raw.len(),
                 value,
@@ -301,7 +342,7 @@ impl Runtime {
         super::service::trace_payment_event(|| {
             Ok(
                 json!({"phase":"payment-body-retained","body_id":ident,"local":local,
-                "body":payment_trace::body(&envelope.body)?}),
+                "body":payment_trace::body(&body)?}),
             )
         })?;
         Ok(())
@@ -400,6 +441,12 @@ impl Runtime {
         // result after this original signer lease is released, as before.
         drop(agent);
         #[cfg(test)]
+        if STOP_AFTER_SIGNATURE.with(|stop| stop.replace(false)) {
+            return Err(
+                "fixture stopped after durable Native signature before caller response".into(),
+            );
+        }
+        #[cfg(test)]
         super::service::trace_subwork("sign-native-response", started)?;
         let mut response = pending.clone();
         response.pending = None;
@@ -426,25 +473,34 @@ impl Runtime {
             crate::contact::MAX_PAYLOAD,
             crate::contact::MAX_FRAME,
         )?;
-        let wire: net::WireEnvelope = crate::bft_client::decode(&payload)?;
-        let envelope = wire.clone().expand()?;
+        let wire = Wire::bytes(&payload, &self.config.format)?;
+        #[cfg(test)]
+        let body = wire.body().clone();
         #[cfg(test)]
         super::service::trace_subwork("receive-decode", started)?;
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        envelope.verify(node)?;
-        #[cfg(test)]
-        super::service::trace_subwork("receive-initial-verification", started)?;
-        #[cfg(test)]
-        let started = super::service::monotonic()?;
-        // Certified dependencies synchronize before deduplicating an already retained body.
-        if wire.format == net::ORIGIN_FORMAT {
-            net::sync_origin_envelope(node, wire.clone())?;
+        // Preserve ordinary verification and phase observations. The new
+        // Onward path retains genuine conflicts before expansion/value refusal.
+        if let Wire::Existing(old) = &wire {
+            let envelope = old.as_ref().clone().expand()?;
+            envelope.verify(node)?;
+            #[cfg(test)]
+            super::service::trace_subwork("receive-initial-verification", started)?;
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
+            if old.format == net::ORIGIN_FORMAT {
+                net::sync_origin_envelope(node, old.as_ref().clone())?;
+            } else {
+                net::sync(node, envelope.evidence)?;
+            }
+            #[cfg(test)]
+            super::service::trace_subwork("receive-dependency-sync", started)?;
         } else {
-            net::sync(node, envelope.evidence.clone())?;
+            wire.sync(node)?;
+            #[cfg(test)]
+            super::service::trace_subwork("receive-onward-inspect-and-sync", started)?;
         }
-        #[cfg(test)]
-        super::service::trace_subwork("receive-dependency-sync", started)?;
         #[cfg(test)]
         let started = super::service::monotonic()?;
         let result = self.retain(node, wire, false);
@@ -455,12 +511,26 @@ impl Runtime {
             super::service::trace_payment_event(|| {
                 Ok(
                     json!({"phase":"payment-envelope-received","frame_id":_received_frame.message_id,
-                    "body_id":hash(&serde_json::to_value(&envelope.body).map_err(|e|e.to_string())?)?,
-                    "body":payment_trace::body(&envelope.body)?}),
+                    "body_id":hash(&serde_json::to_value(&body).map_err(|e|e.to_string())?)?,
+                    "body":payment_trace::body(&body)?}),
                 )
             })?;
         }
         result
+    }
+
+    #[cfg(test)]
+    pub(crate) fn fixture_retained_ids(&self) -> Vec<Hash> {
+        self.archive.runtime.messages.keys().copied().collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn fixture_retained_frame(&self, id: Hash) -> Result<Vec<u8>> {
+        require(
+            self.archive.runtime.messages.contains_key(&id),
+            "fixture retained body absent",
+        )?;
+        self.carriage_frame(id)?.retained_bytes()
     }
 
     #[cfg(test)]
@@ -478,7 +548,9 @@ impl Runtime {
         retention::cost::take();
         let started = super::service::monotonic()?;
         let result = self.receive(node, raw);
-        let seconds = super::service::monotonic()? - started;
+        let completed_at = super::service::monotonic()?;
+        let seconds = completed_at - started;
+        let success = result.is_ok();
         let signatures = crate::verification_keys::cost::take();
         let archive_phases = retention::cost::take_phases();
         let (archive_checks, envelope_checks) = retention::cost::take();
@@ -489,6 +561,7 @@ impl Runtime {
             "complete_envelope_byte_checks":envelope_checks,
             "archive_phase_order":["parse-binding","retained-read","proposed-byte-checks",
                 "new-envelope-native-authentication","durable-publication"],
+            "started_at":started,"completed_at":completed_at,"success":success,
             "error":result.err(),"strict_signature_checks":signatures.strict_attempts,
             "native_history_reused":signatures.native_history_reused,
             "retained_messages":self.archive.runtime.messages.len(),
@@ -511,9 +584,14 @@ impl Runtime {
         for path in paths {
             let raw = files::private_read_with_limit(&path, crate::contact::MAX_PAYLOAD)?;
             // Queue files use the native typed serializer; full typed checking precedes canonical packing.
-            let wire: net::WireEnvelope = crate::bft_client::decode(&raw)?;
-            let envelope = wire.clone().expand()?;
+            require(
+                self.config.format != bft_client::ONWARD_FORMAT,
+                "onward local owner submission queue is not adopted",
+            )?;
+            let old: net::WireEnvelope = crate::bft_client::decode(&raw)?;
+            let envelope = old.clone().expand()?;
             let ident = envelope.verify(node)?;
+            let wire = Wire::Existing(Box::new(old));
             require(
                 matches!(envelope.body, net::Body::Submission(_)),
                 "owner queue requires a typed submission",
@@ -552,12 +630,13 @@ impl Runtime {
         if node.trust.region(node.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
             commands.extend(node.complete_origin_pending_imports()?);
         }
+        if self.config.format == bft_client::ONWARD_FORMAT {
+            commands.extend(node.complete_onward_network_pending_imports()?);
+        }
         for record in self.archive.runtime.messages.values() {
-            let wire: net::WireEnvelope = serde_json::from_value(self.archive.envelope(record)?)
-                .map_err(|e| e.to_string())?;
-            let envelope = wire.expand()?;
-            envelope.verify(node)?;
-            match envelope.body {
+            let wire = Wire::decode(self.archive.envelope(record)?, &self.config.format)?;
+            wire.verify(node)?;
+            match wire.body().clone() {
                 net::Body::Signed(message) => {
                     if let consensus::Message::Proposal(p) = *message {
                         if high == Some(p.snapshot.statement.id()?) && p.context()? == *context {
@@ -882,7 +961,27 @@ impl Runtime {
         };
         #[cfg(test)]
         let started = super::service::monotonic()?;
-        let decision = tick::observe(node, pins, input)?.action;
+        #[cfg(test)]
+        if self.probe_tick_active {
+            self.last_probe_predecision = Some(json!({
+                "signer_state":status.state,
+                "input":{"context":input.context,"stage":input.stage,
+                    "round":round,"entered_at":input.entered_at,"interval":input.interval,
+                    "timeout":input.timeout,"stopped":input.stopped,
+                    "initial_wait":input.initial_wait,"timeout_refresh":input.timeout_refresh,
+                    "ordered_messages":input.order.len()},
+                "scheduler":null}));
+        }
+        let observation = tick::observe(node, pins, input)?;
+        #[cfg(test)]
+        if let Some(value) = self.last_probe_predecision.as_mut().filter(|_| self.probe_tick_active) {
+            value["scheduler"] = json!({"monotonic_now":observation.monotonic_now,
+                "context":observation.context,"round":observation.round,"key":observation.key,
+                "caller_head":observation.caller_head,"archive_sha256":observation.archive_sha256,
+                "request_sha256":observation.request_sha256,
+                "authenticated_messages":observation.authenticated_messages});
+        }
+        let decision = observation.action;
         #[cfg(test)]
         super::service::trace_subwork("consensus-complete-observe", started)?;
         #[cfg(test)]
@@ -1049,8 +1148,11 @@ impl Runtime {
         messages: &[consensus::Message],
     ) -> Result<()> {
         for message in messages {
-            let wire =
-                net::local_envelope(net::Body::Signed(Box::new(message.clone())), node)?.envelope;
+            let wire = Wire::local(
+                net::Body::Signed(Box::new(message.clone())),
+                node,
+                &self.config.format,
+            )?;
             self.retain(node, wire, false)?;
         }
         Ok(())
@@ -1061,13 +1163,20 @@ impl Runtime {
         super::service::start_work_trace();
         retention::cost::take();
         let started = super::service::monotonic()?;
+        self.last_decision = None;
+        self.last_probe_predecision = None;
+        self.probe_tick_active = true;
         let result = self.tick(node);
+        self.probe_tick_active = false;
+        let success = result.is_ok();
+        let predecision = self.last_probe_predecision.take();
         let completed_at = super::service::monotonic()?;
         let seconds = completed_at - started;
         let (archive_checks, envelope_checks) = retention::cost::take();
         Ok(
             json!({"seconds":seconds,"trace":super::service::take_work_trace(),
-            "error":result.err(),"decision":self.last_decision,
+            "error":result.err(),"success":success,"decision":self.last_decision,
+            "predecision":predecision,
             "retained_messages":self.archive.runtime.messages.len(),
             "complete_archive_byte_checks":archive_checks,
             "complete_envelope_byte_checks":envelope_checks,
@@ -1080,15 +1189,15 @@ impl Runtime {
 
     fn carriage_frame(&self, id: Hash) -> Result<Frame> {
         let record = &self.archive.runtime.messages[&id];
-        let envelope: net::WireEnvelope =
-            serde_json::from_value(self.archive.envelope(record)?).map_err(|e| e.to_string())?;
-        let raw = files::canonical_with_limit(&envelope, crate::contact::MAX_PAYLOAD)?;
+        let envelope = Wire::decode(self.archive.envelope(record)?, &self.config.format)?;
+        let raw =
+            files::canonical_with_limit(&envelope.wire_value()?, crate::contact::MAX_PAYLOAD)?;
         let payload = Hash(Sha256::digest(&raw).into());
         let mut frame = Frame {
             format: crate::contact::FRAME_FORMAT.into(),
             kind: "regional-bft".into(),
-            source_chain_id: envelope.region,
-            destination_chain_id: envelope.region,
+            source_chain_id: envelope.header().region,
+            destination_chain_id: envelope.header().region,
             export_id: payload,
             payload_sha256: payload,
             payload_b64: STANDARD.encode(raw),
