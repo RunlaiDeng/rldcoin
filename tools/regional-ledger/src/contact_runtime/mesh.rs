@@ -2448,9 +2448,11 @@ mod tests {
         // Setup/signing/enqueue and the later cold checks are outside this window.
         // This calls every configured neighbor in the existing Publish phase.
         super::super::service::start_work_trace();
+        super::super::encoding_cost::start();
         let publish_started = super::super::service::monotonic().unwrap();
         let result = super::super::service::directory_publish_fixture(&f.configs[0]);
         let publish_completed = super::super::service::monotonic().unwrap();
+        let encodings = super::super::encoding_cost::take();
         let work = super::super::service::take_work_trace();
         crate::keystore::private_create(
             &f.root.join("publish-operation.json"),
@@ -2499,6 +2501,7 @@ mod tests {
         assert_eq!(published.len(), 3);
         assert_eq!(contacts.len(), 3);
         let mut carried = BTreeMap::new();
+        let mut exchange_encodings = Vec::new();
         for ((peer, contact), event) in contacts.iter().zip(&published) {
             assert_eq!(event["peer"], *peer);
             let at = event["at"].as_f64().unwrap();
@@ -2513,6 +2516,12 @@ mod tests {
                 "one actual durable exchange per configured peer"
             );
             let raw = files::private_read_with_limit(&entries[0], EXCHANGE_LIMIT).unwrap();
+            let hash: [u8; 32] = Sha256::digest(&raw).into();
+            let count = *encodings
+                .get(&(raw.len(), hash))
+                .expect("published exchange encoding absent");
+            exchange_encodings.push(json!({"peer":peer,"size_bytes":raw.len(),
+                "sha256":hex::encode(hash),"canonical_encodings":count}));
             let bundle =
                 crate::wallet_http::decode_unique_with_limit(&raw, EXCHANGE_LIMIT).unwrap();
             assert_eq!(bytes(&bundle).unwrap(), raw);
@@ -2591,6 +2600,7 @@ mod tests {
             "native_ledger_executed":false,"recipient_custody_claimed":false,
             "configured_neighbors":3,"frames":4,"retained_signed_transits":12,
             "published_exchanges":published.len(),"prepare_calls":prepare_calls,"save_calls":save_calls,
+            "exchange_encodings":exchange_encodings,
             "publish_started_at":publish_started,"publish_completed_at":publish_completed,
             "publish_seconds":publish_completed-publish_started,
             "prepare_seconds":prepare_seconds,"save_seconds":save_seconds,
@@ -2605,6 +2615,14 @@ mod tests {
         )
         .unwrap();
         eprintln!("Three-neighbor publish observation: {report}");
+        // Preserve the complete operation and cold observations before the
+        // baseline refusal. This count is not a wall-time performance claim.
+        for observation in &exchange_encodings {
+            assert_eq!(
+                observation["canonical_encodings"], 2,
+                "unchanged signed exchange was encoded again for its filename"
+            );
+        }
     }
 
     #[test]
@@ -2897,6 +2915,117 @@ mod tests {
         assert_eq!(fs::read(preserved).unwrap(), after);
         assert!(path.is_dir());
         assert!(started.elapsed().as_secs_f64() < 30.0);
+    }
+
+    #[test]
+    fn compressed_directory_carriage_keeps_original_filename_and_cold_custody() {
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        eprintln!(
+            "Fresh compressed directory carriage guard: {}",
+            f.root.display()
+        );
+        for config in &mut f.configs {
+            for contact in config["contacts"].as_array_mut().unwrap() {
+                contact["adapter"] = json!("RLD-CONTACT-SPOOL-ZLIB-V1");
+            }
+        }
+        let frame = f.frame();
+        let packet = Node::open(&f.configs[0])
+            .unwrap()
+            .enqueue(&frame, &f.ids[1])
+            .unwrap();
+        assert!(super::super::service::spool_directory_turn(&f.configs[0])
+            .unwrap()
+            .is_empty());
+        let outbox = Path::new(f.configs[0]["contacts"][0]["outbox"].as_str().unwrap());
+        let entries = fs::read_dir(outbox)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .collect::<Vec<_>>();
+        assert_eq!(entries.len(), 1);
+        let encoded = files::private_read_with_limit(&entries[0], EXCHANGE_LIMIT).unwrap();
+        assert!(encoded.starts_with(b"RLD-CONTACT-SPOOL-ZLIB-V1\0"));
+        let encoded_sha256 = hex::encode(Sha256::digest(&encoded));
+        let (_, raw) = crate::contact_spool_codec::execute(
+            &bytes(&json!({"Decode":{"limit":EXCHANGE_LIMIT,
+                "size_bytes":encoded.len(),"sha256":encoded_sha256}}))
+            .unwrap(),
+            &encoded,
+        )
+        .unwrap();
+        assert_ne!(encoded, raw);
+        let data_sha256 = hex::encode(Sha256::digest(&raw));
+        assert_ne!(encoded_sha256, data_sha256);
+        assert_eq!(
+            entries[0].file_name().unwrap().to_str().unwrap(),
+            format!("{data_sha256}.json")
+        );
+        let bundle = crate::wallet_http::decode_unique_with_limit(&raw, EXCHANGE_LIMIT).unwrap();
+        assert_eq!(bytes(&bundle).unwrap(), raw);
+        exchange(
+            &bundle,
+            f.configs[0]["network"].as_str().unwrap(),
+            &f.ids[0],
+            &f.ids[1],
+        )
+        .unwrap();
+        let transits = bundle["body"]["transits"].as_array().unwrap();
+        assert_eq!(transits.len(), 1);
+        assert_eq!(transits[0]["routing"]["body"]["packet_id"], packet);
+        crate::keystore::private_create(
+            &f.root.join("compressed-published-exchange.bin"),
+            &encoded,
+        )
+        .unwrap();
+        crate::keystore::private_create(&f.root.join("compressed-published-original.json"), &raw)
+            .unwrap();
+        assert!(super::super::service::spool_directory_turn(&f.configs[1])
+            .unwrap()
+            .is_empty());
+        assert!(
+            !entries[0].exists(),
+            "ordinary receive did not consume its original spool file"
+        );
+        let cleared =
+            crate::contact_witness::execute(&bytes(&json!("Clear")).unwrap(), &[]).unwrap();
+        assert_eq!(cleared["entries"], 0);
+        let cold = Node::open(&f.configs[1]).unwrap();
+        assert_eq!(cold.id, f.ids[1]);
+        assert_eq!(
+            cold.received_frames().unwrap(),
+            vec![(packet.clone(), frame.clone())]
+        );
+        assert_eq!(cold.state.messages.len(), 1);
+        assert_eq!(cold.state.receipts.len(), 1);
+        assert!(cold.state.archives.is_empty());
+        let received = &cold.state.messages[&packet];
+        assert_eq!(received["packet"], transits[0]["packet"]);
+        assert_eq!(received["routing"], transits[0]["routing"]);
+        let receipt = &cold.state.receipts[&packet];
+        assert_eq!(receipt["body"]["node_id"], f.ids[1]);
+        assert_eq!(receipt["body"]["packet_id"], packet);
+        assert_eq!(
+            receipt["body"]["frame_id"],
+            transits[0]["routing"]["body"]["frame_id"]
+        );
+        assert_eq!(
+            receipt["body"]["outcome"],
+            "EVIDENCE_STORED_NOT_LEDGER_ACCEPTED"
+        );
+        let report = json!({"fixture_only":true,"ledger_authority":false,
+            "native_ledger_executed":false,"adapter":"RLD-CONTACT-SPOOL-ZLIB-V1",
+            "encoded_size":encoded.len(),"encoded_sha256":encoded_sha256,
+            "data_size":raw.len(),"data_sha256":data_sha256,"packet_id":packet,
+            "frame_id":receipt["body"]["frame_id"],"receipt":receipt,
+            "exact_original_frame":true,"ordinary_receive":true,
+            "cold_scope":"same-process ordinary open after witness clear"});
+        crate::keystore::private_create(
+            &f.root.join("compressed-carriage-guard.json"),
+            &bytes(&report).unwrap(),
+        )
+        .unwrap();
+        eprintln!("Compressed directory carriage guard: {report}");
     }
 
     #[test]

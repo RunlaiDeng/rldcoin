@@ -464,17 +464,18 @@ fn spool_publish(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
         #[cfg(test)]
         trace_work("mesh-prepare", started)?;
         let raw = bytes(&bundle)?;
+        let data_sha256 = hex::encode(Sha256::digest(&raw));
         let encoded = if compressed {
             codec("Encode", &raw)?
         } else {
             raw.clone()
         };
-        let target = Path::new(path).join(format!("{}.json", digest(&bundle)?));
+        let target = Path::new(path).join(format!("{data_sha256}.json"));
         crate::contact_spool::execute(
             &bytes(
                 &json!({"Publish":{"path":target,"adapter":adapter,"limits":limits,
             "encoded_size":encoded.len(),"encoded_sha256":hex::encode(Sha256::digest(&encoded)),
-            "data_size":raw.len(),"data_sha256":hex::encode(Sha256::digest(&raw))}}),
+            "data_size":raw.len(),"data_sha256":data_sha256}}),
             )?,
             &encoded,
             &raw,
