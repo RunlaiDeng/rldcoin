@@ -1172,21 +1172,24 @@ impl Runtime {
             .collect::<Vec<_>>();
         #[cfg(test)]
         super::service::trace_work("native-broadcast-select", started)?;
-        for (position, id) in selected.iter().enumerate() {
+        let mut frames = Vec::new();
+        for id in &selected {
             #[cfg(test)]
             let started = super::service::monotonic()?;
             let raw = self.carriage_frame(*id)?.retained_bytes()?;
             #[cfg(test)]
             super::service::trace_work("native-broadcast-frame-pack", started)?;
-            if !destinations.is_empty() {
-                #[cfg(test)]
-                let started = super::service::monotonic()?;
-                let packets = mesh.enqueue_destinations(&raw, &destinations)?;
-                #[cfg(test)]
-                super::service::trace_work("native-broadcast-enqueue", started)?;
-                if position < current_count {
-                    priority.extend(packets);
-                }
+            frames.push(raw);
+        }
+        if !destinations.is_empty() && !frames.is_empty() {
+            #[cfg(test)]
+            let started = super::service::monotonic()?;
+            let raws = frames.iter().map(Vec::as_slice).collect::<Vec<_>>();
+            let packets = mesh.enqueue_frame_batch(&raws, &destinations)?;
+            #[cfg(test)]
+            super::service::trace_work("native-broadcast-enqueue", started)?;
+            for batch in packets.into_iter().take(current_count) {
+                priority.extend(batch);
             }
         }
         // Current Native-checked controls retain first-carriage eligibility

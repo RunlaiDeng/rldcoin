@@ -632,6 +632,21 @@ impl Node {
         raw: &[u8],
         destinations: &[String],
     ) -> Result<Vec<String>> {
+        self.enqueue_frame_batch(&[raw], destinations)?
+            .into_iter()
+            .next()
+            .ok_or("missing single-frame destination batch".into())
+    }
+
+    pub(crate) fn enqueue_frame_batch(
+        &mut self,
+        raws: &[&[u8]],
+        destinations: &[String],
+    ) -> Result<Vec<Vec<String>>> {
+        require(
+            !raws.is_empty() && raws.len() <= 4,
+            "outgoing frame batch bound",
+        )?;
         let wanted = destinations
             .iter()
             .collect::<std::collections::BTreeSet<_>>();
@@ -644,23 +659,40 @@ impl Node {
         for destination in destinations {
             identifier(destination)?;
         }
-        let (frame, _) = crate::contact_frame::inspect_bytes(
-            raw,
-            None,
-            None,
-            crate::contact::MAX_PAYLOAD,
-            crate::contact::MAX_FRAME,
-        )?;
+        let mut frames = Vec::new();
+        let mut unique = BTreeSet::new();
+        for raw in raws {
+            let (frame, _) = crate::contact_frame::inspect_bytes(
+                raw,
+                None,
+                None,
+                crate::contact::MAX_PAYLOAD,
+                crate::contact::MAX_FRAME,
+            )?;
+            require(
+                unique.insert(frame.message_id.to_hex()),
+                "duplicate outgoing frame batch identity",
+            )?;
+            frames.push(frame);
+        }
         // One call-local lookup of complete authenticated custody, with no
         // retained proof/cache. Every later call checks its exact input again.
-        let mut found = BTreeMap::<String, String>::new();
+        let mut found = BTreeMap::<(String, String), String>::new();
         let include = |id: &str, t: &Value| {
             if t["packet"]["body"]["node_id"] == self.id
-                && t["routing"]["body"]["frame_id"] == frame.message_id.to_hex()
+                && t["routing"]["body"]["frame_id"]
+                    .as_str()
+                    .is_some_and(|id| unique.contains(id))
             {
                 if let Some(destination) = t["packet"]["body"]["destination"].as_str() {
                     if destinations.iter().any(|d| d == destination) {
-                        return Some((destination.to_owned(), id.to_owned()));
+                        return Some((
+                            (
+                                t["routing"]["body"]["frame_id"].as_str()?.to_owned(),
+                                destination.to_owned(),
+                            ),
+                            id.to_owned(),
+                        ));
                     }
                 }
             }
@@ -672,7 +704,7 @@ impl Node {
             }
         }
         for (id, object) in &self.state.archives {
-            if found.len() == destinations.len() {
+            if found.len() == frames.len() * destinations.len() {
                 break;
             }
             let archive = self.archive(id, object)?;
@@ -681,28 +713,33 @@ impl Node {
             }
         }
         require(
-            self.state.messages.len() + destinations.len() - found.len() <= MAX_MESSAGES,
+            self.state.messages.len() + frames.len() * destinations.len() - found.len()
+                <= MAX_MESSAGES,
             "active packet capacity reached; retain old evidence",
         )?;
-        let mut ids = Vec::new();
+        let mut batches = Vec::new();
         let mut pending = Vec::new();
-        for destination in destinations {
-            if let Some(id) = found.get(destination) {
-                ids.push(id.clone());
-                continue;
-            }
-            let packet = self.sign("packet",json!({"format":MESH,"network":self.network,"node_id":self.id,
+        for (frame, raw) in frames.iter().zip(raws) {
+            let mut ids = Vec::new();
+            for destination in destinations {
+                if let Some(id) = found.get(&(frame.message_id.to_hex(), destination.clone())) {
+                    ids.push(id.clone());
+                    continue;
+                }
+                let packet = self.sign("packet",json!({"format":MESH,"network":self.network,"node_id":self.id,
             "destination":destination,"nonce":random()?,"hop_limit":16,"frame":STANDARD.encode(raw)}))?;
-            let id = digest(&packet)?;
-            let routing = self.sign(
-                "receipt-route",
-                json!({"format":MESH,"network":self.network,"node_id":self.id,
+                let id = digest(&packet)?;
+                let routing = self.sign(
+                    "receipt-route",
+                    json!({"format":MESH,"network":self.network,"node_id":self.id,
             "packet_id":id,"destination":destination,"frame_id":frame.message_id}),
-            )?;
-            let t = json!({"packet":packet,"routing":routing,"hops":[]});
-            transit(&t, &self.network, Value::Null, Value::Null)?;
-            ids.push(id.clone());
-            pending.push((id, t));
+                )?;
+                let t = json!({"packet":packet,"routing":routing,"hops":[]});
+                transit(&t, &self.network, Value::Null, Value::Null)?;
+                ids.push(id.clone());
+                pending.push((id, t));
+            }
+            batches.push(ids);
         }
         if !pending.is_empty() {
             for (id, t) in pending {
@@ -712,7 +749,7 @@ impl Node {
             // The whole bounded typed image is durable before any batch result.
             self.save()?;
         }
-        Ok(ids)
+        Ok(batches)
     }
 
     fn route(&self, destination: &str, excluded: Vec<String>, first: &str) -> Result<bool> {
@@ -1449,6 +1486,176 @@ mod tests {
             poisoned_state
         );
         assert!(bad_path.exists(), "bad original evidence was removed");
+    }
+
+    #[test]
+    fn four_frame_broadcast_retains_complete_destination_batch_with_one_image_publication() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(4);
+        f.retain = true;
+        for n in 0..4 {
+            f.configs[n]["contacts"] = json!((0..4)
+                .filter(|p| *p != n)
+                .map(
+                    |p| json!({"peer":f.ids[p],"inbox":f.root.join(format!("spool-{p}-{n}")),
+                    "outbox":f.root.join(format!("spool-{n}-{p}"))})
+                )
+                .collect::<Vec<_>>());
+        }
+        eprintln!(
+            "Fresh four-frame transport batch fixture: {}",
+            f.root.display()
+        );
+        let mut frames = Vec::new();
+        for n in 0..4u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            frames.push(frame.retained_bytes().unwrap());
+        }
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        super::super::service::start_work_trace();
+        let raws = frames.iter().map(Vec::as_slice).collect::<Vec<_>>();
+        let packets = source.enqueue_frame_batch(&raws, &f.ids[1..]).unwrap();
+        let trace = super::super::service::take_work_trace();
+        let publications = trace
+            .iter()
+            .filter(|entry| entry["phase"] == "mesh-state-encode-finish")
+            .map(|entry| entry["calls"].as_u64().unwrap_or(1))
+            .sum::<u64>();
+        assert_eq!(source.state.messages.len(), 12);
+        let retained = source.state.messages.clone();
+        let state_path = source.root.join("native-mesh-state.json");
+        let original = fs::read(&state_path).unwrap();
+        let mut bad = frames[3].clone();
+        bad[0] ^= 1;
+        assert!(source
+            .enqueue_frame_batch(&[&f.frame(), &bad], &f.ids[1..])
+            .is_err());
+        assert!(source
+            .enqueue_frame_batch(&[&frames[0], &frames[0]], &f.ids[1..])
+            .is_err());
+        assert!(source
+            .enqueue_frame_batch(&[frames[0].as_slice(); 5], &f.ids[1..])
+            .is_err());
+        assert_eq!(source.state.messages, retained);
+        assert_eq!(fs::read(&state_path).unwrap(), original);
+        assert_eq!(
+            source.enqueue_frame_batch(&raws, &f.ids[1..]).unwrap(),
+            packets
+        );
+        assert_eq!(fs::read(&state_path).unwrap(), original);
+        drop(source);
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        assert_eq!(source.state.messages, retained);
+        assert_eq!(fs::read(&state_path).unwrap(), original);
+        for destination in 1..4 {
+            let mut recipient = Node::open(&f.configs[destination]).unwrap();
+            for _ in 0..4 {
+                let bundle = source.prepare(&f.ids[destination]).unwrap();
+                recipient.receive(&bundle, &f.ids[0]).unwrap();
+            }
+            let received = recipient.state.messages.clone();
+            for (frame, ids) in frames.iter().zip(&packets) {
+                let packet = &ids[destination - 1];
+                assert_eq!(
+                    STANDARD
+                        .decode(
+                            received[packet]["packet"]["body"]["frame"]
+                                .as_str()
+                                .unwrap()
+                        )
+                        .unwrap(),
+                    *frame
+                );
+                assert_eq!(
+                    recipient.state.receipts[packet]["body"]["outcome"],
+                    "EVIDENCE_STORED_NOT_LEDGER_ACCEPTED"
+                );
+            }
+            drop(recipient);
+            assert_eq!(
+                Node::open(&f.configs[destination]).unwrap().state.messages,
+                received
+            );
+        }
+        eprintln!(
+            "Four-frame transport batch: {}",
+            json!({"publications":publications,"frames":4,"destinations":3,
+            "packets":12,"seconds":started.elapsed().as_secs_f64(),"ledger_authority":false})
+        );
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "four-frame transport batch budget"
+        );
+        assert_eq!(
+            publications, 1,
+            "one ordinary broadcast repeatedly published the complete transport image"
+        );
+    }
+
+    #[test]
+    fn complete_frame_batch_capacity_refuses_before_partial_publication() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(4);
+        f.retain = true;
+        let mut frames = Vec::new();
+        for n in 0..88u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            frames.push(frame.retained_bytes().unwrap());
+        }
+        eprintln!("Fresh frame-batch capacity fixture: {}", f.root.display());
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        for batch in frames[..84].chunks(4) {
+            node.enqueue_frame_batch(
+                &batch.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                &f.ids[1..],
+            )
+            .unwrap();
+        }
+        assert_eq!(node.state.messages.len(), 252);
+        let before = fs::read(node.root.join("native-mesh-state.json")).unwrap();
+        let retained = node.state.messages.clone();
+        let error = node
+            .enqueue_frame_batch(&[&frames[0], &frames[84], &frames[85]], &f.ids[1..])
+            .unwrap_err();
+        assert_eq!(error, "active packet capacity reached; retain old evidence");
+        assert_eq!(node.state.messages, retained);
+        assert_eq!(
+            fs::read(node.root.join("native-mesh-state.json")).unwrap(),
+            before
+        );
+        drop(node);
+        let cold = Node::open(&f.configs[0]).unwrap();
+        assert_eq!(cold.state.messages, retained);
+        assert_eq!(
+            fs::read(cold.root.join("native-mesh-state.json")).unwrap(),
+            before
+        );
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "complete frame-batch capacity budget"
+        );
     }
 
     #[test]
