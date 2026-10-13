@@ -45,7 +45,9 @@ impl Pin {
 #[serde(deny_unknown_fields)]
 pub struct Remote {
     pub destination: Hash,
+    #[serde(deserialize_with = "crate::monetary_amount::deserialize_payment")]
     pub recipient: Payment,
+    #[serde(deserialize_with = "crate::monetary_amount::deserialize_amount")]
     pub destination_fee: Amount,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -57,8 +59,10 @@ pub struct Request {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub participants: Vec<String>,
     pub inputs: Option<Vec<Hash>>,
+    #[serde(deserialize_with = "crate::monetary_amount::deserialize_payments")]
     pub outputs: Vec<Payment>,
     pub remote: Option<Remote>,
+    #[serde(deserialize_with = "crate::monetary_amount::deserialize_amount")]
     pub fee: Amount,
     pub valid_for_blocks: u64,
     /// Shared group proposals keep one absolute expiry across later reviews.
@@ -198,6 +202,7 @@ pub(crate) fn prepare_with_reserved(
     request: Request,
     reserved: &BTreeSet<Hash>,
 ) -> Result<Draft> {
+    crate::monetary_amount::wallet(&request)?;
     if !request.participants.is_empty() {
         return prepare_group(store, request, reserved);
     }

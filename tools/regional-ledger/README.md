@@ -103,6 +103,14 @@ certify inclusion; queuing retains the original signature and input reservation.
 Legacy direct production still requires its configured miner. Wallet history
 and combined payments distinguish queued submissions from actual inclusion.
 
+Unsigned wallet and group-proposal inputs reject monetary fields above the
+currency's global supply cap and zero-valued payment outputs. Native owner,
+channel and invoice execution repeats the applicable checks before monetary
+arithmetic, including for directly constructed typed requests. Normal ownership,
+signed regional rules and exact conservation checks remain mandatory. Historical
+signed evidence and cumulative accounting retain the full canonical `u128`
+encoding: an invalid later amount must not hide an earlier authentic conflict.
+
 ## Verification
 
 Create `tmp`, then run `cargo fmt`, strict `cargo clippy --all-targets`, and

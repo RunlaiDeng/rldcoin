@@ -665,6 +665,15 @@ fn two_packed_validators_cannot_debit_then_original_payment_survives_quorum_rest
     cycle_with_unavailable_validator(crate::paged_bft::PACKED_RULES, Some(1), true);
 }
 
+// Keep bounded phase observations outside private custody so a stopped process
+// cannot erase the last observed acceptance boundary. This never extends time.
+fn cycle_phase(started: f64, phase: &str, actor: Option<usize>) {
+    eprintln!(
+        "ordinary-wallet-phase {}",
+        json!({"phase":phase,"actor":actor,"elapsed_seconds":monotonic().ok().map(|now|now-started)})
+    );
+}
+
 fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, lose_quorum: bool) {
     assert!(
         unavailable.is_none_or(|actor| actor == 1),
@@ -687,6 +696,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
     let failed = Arc::new(AtomicBool::new(false));
     let (workers, seeds, currency) =
         setup(&root, deadline, stop.clone(), failed.clone(), rules).unwrap();
+    cycle_phase(started, "setup-complete", None);
     let mut samples = Vec::new();
     let mut fault = Value::Null;
     let mut cold_envelope_counts = Vec::new();
@@ -727,6 +737,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
             None
         };
         let first = payment(&workers[3], public(11), None, deadline)?;
+        cycle_phase(started, "first-payment-queued", Some(3));
         samples.push(
             json!({"intent":first.intent,"input":first.input,"submitted":first.submitted,
             "queued":first.queued,"queue_age_seconds":first.queued-first.submitted,
@@ -802,7 +813,9 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
         let ready = monotonic()?;
         samples[0]["recipient_finalized_spendable"] = json!(ready);
         samples[0]["latency_seconds"] = json!(ready - first.submitted);
+        cycle_phase(started, "first-recipient-ready", Some(FIRST_RECIPIENT));
         let second = payment(&workers[0], public(14), Some(input), deadline)?;
+        cycle_phase(started, "second-payment-queued", Some(0));
         samples.push(
             json!({"intent":second.intent,"input":second.input,"submitted":second.submitted,
             "queued":second.queued,"queue_age_seconds":second.queued-second.submitted,
@@ -818,6 +831,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
                     && samples[1]["replica_native_verified_at"][n].is_null()
                 {
                     samples[1]["replica_native_verified_at"][n] = json!(node.native_verified_at);
+                    cycle_phase(started, "second-payment-replica-ready", Some(n));
                     if n == SECOND_RECIPIENT {
                         samples[1]["recipient_native_verified_at"] = json!(node.native_verified_at);
                         samples[1]["recipient_native_latency_seconds"] =
@@ -862,6 +876,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
         let ready = monotonic()?;
         samples[1]["all_replicas_finalized_spendable"] = json!(ready);
         samples[1]["latency_seconds"] = json!(ready - second.submitted);
+        cycle_phase(started, "all-replicas-ready", None);
         if unavailable.is_some() {
             require(
                 resumed
@@ -884,6 +899,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
             "payment completion exceeded whole original deadline",
         )
     })();
+    cycle_phase(started, "stopping-actors", None);
     stop.store(true, Ordering::Release);
     let mut stopped = Vec::new();
     let mut worker_errors = Vec::new();
@@ -893,6 +909,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
             Ok(Err(error)) => worker_errors.push(json!({"actor":n,"error":error})),
             Err(_) => worker_errors.push(json!({"actor":n,"error":"wallet actor panicked"})),
         }
+        cycle_phase(started, "actor-joined", Some(n));
     }
     let result = result.and_then(|_| {
         require(
@@ -901,6 +918,11 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
         )?;
         let mut prefixes = Vec::new();
         for n in 0..4 {
+            require(
+                monotonic()? < deadline,
+                "cold wallet actor start exceeded original deadline",
+            )?;
+            cycle_phase(started, "cold-verification-start", Some(n));
             let before = unavailable
                 .map(|_| custody_inventory(&root, n))
                 .transpose()?;
@@ -1007,6 +1029,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
                     "fault cold verification changed private custody",
                 )?;
             }
+            cycle_phase(started, "cold-verification-complete", Some(n));
         }
         let common = prefixes
             .iter()
@@ -1025,6 +1048,7 @@ fn cycle_with_unavailable_validator(rules: &str, unavailable: Option<usize>, los
         )
     });
     let completed_at = monotonic().unwrap();
+    cycle_phase(started, "terminal-result", None);
     for sample in &mut samples {
         sample["report_age_seconds"] = json!(completed_at - sample["submitted"].as_f64().unwrap());
         sample["recipient_pending_age_seconds"] =

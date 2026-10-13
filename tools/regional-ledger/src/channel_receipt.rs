@@ -97,6 +97,8 @@ impl Receipt {
         evidence.check_trust(trust)?;
         let s = &self.statement;
         let e = &s.expected;
+        crate::monetary_amount::positive(e.amount)?;
+        crate::monetary_amount::check(e.challenge_fee)?;
         require(
             s.format == FORMAT
                 && s.profile == c::profile_hash()?

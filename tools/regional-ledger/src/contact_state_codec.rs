@@ -20,6 +20,28 @@ const MAX_TRANSIT: usize = 20 * 1024 * 1024;
 const MAX_FRAME_TEXT: usize = 2 * (4 * 1024 * 1024 + 4096);
 const MAX_CONTROL: usize = 8192;
 const MAX_CONTEXTS: usize = 8;
+#[cfg(test)]
+thread_local! {
+    static ENCODING_TRACE: std::cell::RefCell<Option<Vec<Value>>> = const { std::cell::RefCell::new(None) };
+}
+#[cfg(test)]
+pub(crate) fn start_encoding_trace() {
+    ENCODING_TRACE.with(|trace| *trace.borrow_mut() = Some(Vec::new()));
+}
+#[cfg(test)]
+pub(crate) fn take_encoding_trace() -> Vec<Value> {
+    ENCODING_TRACE.with(|trace| trace.borrow_mut().take().unwrap_or_default())
+}
+#[cfg(test)]
+pub(crate) fn trace_encoding(phase: &'static str, raw: &[u8]) -> Result<()> {
+    ENCODING_TRACE.with(|trace| -> Result<()> {
+        if let Some(records) = trace.borrow_mut().as_mut() {
+            require(records.len() < 8, "state encoding observation capacity")?;
+            records.push(json!({"phase":phase,"size_bytes":raw.len(),"sha256":sha(raw)}));
+        }
+        Ok(())
+    })
+}
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Limits {
@@ -380,6 +402,39 @@ fn decode(raw: &[u8], network: &str, node: &str, limits: &Limits) -> Result<Valu
         json!({"format":FORMAT,"image":image,"image_sha256":sha(raw),"ledger_authority":false,"authenticated":false}),
     )
 }
+fn finish(token: &str) -> Result<(Value, Vec<u8>)> {
+    let ctx = context(token)?;
+    let mut pack = ctx.lock().map_err(|_| "active codec context poisoned")?;
+    require(
+        !pack.failed && !pack.closed,
+        "active codec context failed or closed",
+    )?;
+    let bytes = wire::canonical_with_limit(&pack.image, pack.limits.max_state)?;
+    #[cfg(test)]
+    trace_encoding("codec-finish", &bytes)?;
+    require(bytes.len() == pack.size, "active state accounting differs")?;
+    pack.closed = true;
+    let image = std::mem::take(&mut pack.image);
+    // Do not hold a registry lock while another operation's codec mutex is held.
+    drop(pack);
+    let mut registry = contexts()
+        .lock()
+        .map_err(|_| "active codec registry poisoned")?;
+    if registry
+        .get(token)
+        .is_some_and(|current| Arc::ptr_eq(current, &ctx))
+    {
+        registry.remove(token);
+    }
+    Ok((image, bytes))
+}
+
+/// This invocation's complete canonical image after the original size checks.
+/// The codec does not authenticate transport or grant ledger/custody authority.
+pub(crate) fn finish_bytes(token: &str) -> Result<Vec<u8>> {
+    finish(token).map(|(_, bytes)| bytes)
+}
+
 pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
     let request: Request =
         serde_json::from_value(canonical(control, MAX_CONTROL)?).map_err(|e| e.to_string())?;
@@ -435,27 +490,7 @@ pub(crate) fn execute(control: &[u8], raw: &[u8]) -> Result<Value> {
         }
         Request::Finish { token } => {
             require(raw.is_empty(), "active codec unexpected payload")?;
-            let ctx = context(&token)?;
-            let mut pack = ctx.lock().map_err(|_| "active codec context poisoned")?;
-            require(
-                !pack.failed && !pack.closed,
-                "active codec context failed or closed",
-            )?;
-            let bytes = wire::canonical_with_limit(&pack.image, pack.limits.max_state)?;
-            require(bytes.len() == pack.size, "active state accounting differs")?;
-            pack.closed = true;
-            let image = std::mem::take(&mut pack.image);
-            // Do not hold a registry lock while another operation's codec mutex is held.
-            drop(pack);
-            let mut registry = contexts()
-                .lock()
-                .map_err(|_| "active codec registry poisoned")?;
-            if registry
-                .get(&token)
-                .is_some_and(|current| Arc::ptr_eq(current, &ctx))
-            {
-                registry.remove(&token);
-            }
+            let (image, bytes) = finish(&token)?;
             Ok(
                 json!({"format":FORMAT,"image":image,"image_sha256":sha(&bytes),"ledger_authority":false,"authenticated":false}),
             )
@@ -525,4 +560,154 @@ pub unsafe extern "C" fn rld_contact_state_codec(
         require(valid, "active state codec ABI input invalid")?;
         execute(control, raw)
     }))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // These minimal codec shapes are unauthenticated and grant no authority.
+    fn transit() -> Vec<u8> {
+        wire::canonical(&json!({"packet":{"body":{"frame":"YQ=="}},"routing":{},"hops":[]}))
+            .unwrap()
+    }
+    fn call(control: Value, raw: &[u8]) -> Result<Value> {
+        execute(&wire::canonical(&control)?, raw)
+    }
+    struct Session(String);
+    impl Session {
+        fn new(seed: usize) -> Self {
+            let token = format!("c0dec0de{seed:024x}");
+            let raw = wire::canonical(&json!({"active_storage":STORAGE,"network":"aa".repeat(32),
+                "node_id":"bb".repeat(32),"messages":{}}))
+            .unwrap();
+            call(
+                json!({"Begin":{"token":token,"limits":{"max_state":MAX_STATE,
+                "max_messages":MAX_MESSAGES,"max_transit":MAX_TRANSIT},
+                "size_bytes":raw.len(),"sha256":sha(&raw)}}),
+                &raw,
+            )
+            .unwrap();
+            Self(token)
+        }
+        fn append(&self, ident: &str, raw: &[u8]) -> Result<Value> {
+            call(
+                json!({"Transit":{"token":self.0,"ident":ident,
+                "size_bytes":raw.len(),"sha256":sha(raw)}}),
+                raw,
+            )
+        }
+        fn abort(&self) {
+            assert_eq!(
+                call(json!({"Abort":{"token":self.0}}), &[]).unwrap()["closed"],
+                true
+            );
+            assert!(context(&self.0).is_err());
+        }
+    }
+    impl Drop for Session {
+        fn drop(&mut self) {
+            let _ = call(json!({"Abort":{"token":self.0}}), &[]);
+        }
+    }
+    fn abi_finish(token: &str) -> Value {
+        let control = wire::canonical(&json!({"Finish":{"token":token}})).unwrap();
+        let result = unsafe {
+            rld_contact_state_codec(control.as_ptr(), control.len(), std::ptr::null(), 0)
+        };
+        let raw = unsafe { std::slice::from_raw_parts(result.data, result.len) }.to_vec();
+        unsafe { crate::contact_crypto::rld_contact_crypto_free(result) };
+        serde_json::from_slice(&raw).unwrap()
+    }
+    fn refused_by_both(token: &str, message: &str) {
+        assert!(finish_bytes(token).unwrap_err().contains(message));
+        let reply = abi_finish(token);
+        assert_eq!(reply["success"], false);
+        assert!(reply["value"].is_null());
+        assert!(reply["error"].as_str().unwrap().contains(message));
+    }
+
+    #[test]
+    fn raw_and_abi_finish_keep_the_same_complete_shared_frame_image() {
+        let raw_context = Session::new(1);
+        let abi_context = Session::new(2);
+        let transit = transit();
+        for session in [&raw_context, &abi_context] {
+            session.append(&"11".repeat(32), &transit).unwrap();
+            session.append(&"22".repeat(32), &transit).unwrap();
+        }
+        let raw = finish_bytes(&raw_context.0).unwrap();
+        let reply = abi_finish(&abi_context.0);
+        assert_eq!(reply["success"], true);
+        assert_eq!(reply["ledger_authority"], false);
+        let external = &reply["value"];
+        let image = &external["image"];
+        assert_eq!(raw, wire::canonical_with_limit(image, MAX_STATE).unwrap());
+        assert_eq!(object(&image["frames"]).unwrap().len(), 1);
+        assert_eq!(object(&image["state"]["messages"]).unwrap().len(), 2);
+        assert_eq!(
+            external,
+            &json!({"format":FORMAT,"image":image,
+            "image_sha256":sha(&raw),"ledger_authority":false,"authenticated":false})
+        );
+        refused_by_both(&raw_context.0, "context absent");
+        refused_by_both(&abi_context.0, "context absent");
+    }
+
+    #[test]
+    fn failed_transit_and_duplicate_ident_refuse_both_finish_paths_until_abort() {
+        let good = transit();
+        let invalid =
+            wire::canonical(&json!({"packet":{"body":{}},"routing":{},"hops":[]})).unwrap();
+        for (seed, duplicate) in [(3, false), (4, true)] {
+            let session = Session::new(seed);
+            let ident = "33".repeat(32);
+            if duplicate {
+                session.append(&ident, &good).unwrap();
+            }
+            let ctx = context(&session.0).unwrap();
+            let (image, size) = {
+                let pack = ctx.lock().unwrap();
+                (pack.image.clone(), pack.size)
+            };
+            assert!(session
+                .append(&ident, if duplicate { &good } else { &invalid })
+                .is_err());
+            refused_by_both(&session.0, "context failed or closed");
+            assert!(Arc::ptr_eq(&context(&session.0).unwrap(), &ctx));
+            {
+                let pack = ctx.lock().unwrap();
+                assert!(pack.failed && !pack.closed);
+                assert_eq!(pack.image, image);
+                assert_eq!(pack.size, size);
+            }
+            session.abort();
+        }
+    }
+
+    #[test]
+    fn accounting_refusal_keeps_the_original_context_open_and_complete() {
+        let session = Session::new(5);
+        session.append(&"44".repeat(32), &transit()).unwrap();
+        let ctx = context(&session.0).unwrap();
+        let (image, size) = {
+            let mut pack = ctx.lock().unwrap();
+            let saved = (pack.image.clone(), pack.size);
+            pack.size += 1; // Only this test's accounting witness is made inconsistent.
+            saved
+        };
+        refused_by_both(&session.0, "active state accounting differs");
+        assert!(Arc::ptr_eq(&context(&session.0).unwrap(), &ctx));
+        {
+            let mut pack = ctx.lock().unwrap();
+            assert!(!pack.failed && !pack.closed);
+            assert_eq!(pack.image, image);
+            assert_eq!(pack.size, size + 1);
+            pack.size = size;
+        }
+        let raw = finish_bytes(&session.0).unwrap();
+        assert_eq!(raw.len(), size);
+        assert_eq!(raw, wire::canonical_with_limit(&image, MAX_STATE).unwrap());
+        refused_by_both(&session.0, "context absent");
+    }
 }

@@ -69,6 +69,7 @@ impl Execution<'_> {
                 }
                 Command::Spend(signed) => {
                     let intent = &signed.intent;
+                    crate::monetary_amount::owner(intent)?;
                     require(
                         intent.currency == trust.currency()?
                             && intent.region == self.region

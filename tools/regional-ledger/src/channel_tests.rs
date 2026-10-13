@@ -99,6 +99,78 @@ fn inputs(value: &Ledger) -> Vec<Hash> {
     value.coins.keys().copied().collect()
 }
 #[test]
+fn monetary_channel_actions_refuse_before_dependencies_or_arithmetic() {
+    let f = Fixture::new();
+    let d = declaration(&f);
+    let book = c::Book::default();
+    let value = f.earth.ledger.clone();
+    let safe = conflict::Safety::default();
+    let head = book.head(&value, &d).unwrap();
+    let missing = Hash([9; 32]);
+    for field in 0..8 {
+        let mut step = c::Action::Open {
+            witness: Some(public(12)),
+            inputs: vec![missing],
+            parties: parties(),
+            capacity: Amount(10),
+            initial: [Amount(10), Amount::ZERO],
+            change: vec![],
+            fee: Amount::ZERO,
+        };
+        if let c::Action::Open {
+            capacity,
+            initial,
+            change,
+            fee,
+            ..
+        } = &mut step
+        {
+            match field {
+                0 => *capacity = Amount::ZERO,
+                1 => *capacity = Amount(Amount::TOTAL_SUPPLY.0 + 1),
+                2 => initial[0] = Amount(u128::MAX),
+                3 => change.push(Payment {
+                    owner: public(10),
+                    amount: Amount::ZERO,
+                }),
+                4 => *fee = Amount(u128::MAX),
+                _ => (),
+            }
+        }
+        if field == 5 {
+            step = c::Action::Reserve {
+                channel: missing,
+                input: missing,
+                fee_limit: Amount(u128::MAX),
+            };
+        } else if field == 6 {
+            step = c::Action::ReserveBudget {
+                channel: missing,
+                input: missing,
+                fee_limit: Amount(1),
+                max_fee: Amount(u128::MAX),
+            };
+        } else if field == 7 {
+            step = c::Action::Challenge {
+                channel: missing,
+                state: Box::new(state(&d, missing, 1, u128::MAX, 0)),
+                reserve: missing,
+                fee: Amount(1),
+            };
+        }
+        let command = action(&d, step, None, &[10]);
+        let error = run(&f, &d, &safe, &book, &value, &command, 4, head).unwrap_err();
+        assert!(error.starts_with("monetary "), "{error}");
+        assert_eq!(book.head(&value, &d).unwrap(), head);
+        assert_eq!(f.earth.ledger, value);
+    }
+    assert_eq!(
+        c::receipt_fee_coverage(Amount(u128::MAX)).unwrap_err(),
+        "monetary amount exceeds supply cap"
+    );
+}
+
+#[test]
 fn native_channel_funding_reserve_close_challenge_settle_conserve_and_keep_head() {
     let f = Fixture::new();
     let d = declaration(&f);

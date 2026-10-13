@@ -1168,6 +1168,9 @@ pub mod history_archive;
 pub mod joint_epoch;
 pub mod joint_roles;
 pub mod keystore;
+mod monetary_amount;
+#[cfg(test)]
+mod monetary_input_tests;
 pub mod retained_pages;
 pub mod segmented;
 pub mod signer;

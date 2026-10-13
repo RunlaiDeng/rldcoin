@@ -754,6 +754,73 @@ fn duplicate_inputs_bad_amounts_wrong_currency_and_expiry_reject() {
     }
 }
 #[test]
+fn monetary_typed_owner_refuses_cap_before_inputs_or_arithmetic_without_mutation() {
+    let f = Fixture::new();
+    let original = serde_json::to_vec(&(
+        &f.earth.blocks,
+        &f.earth.ledger,
+        f.earth.finalized,
+        f.earth.epoch,
+    ))
+    .unwrap();
+    let signed = intent(
+        &f.earth,
+        &f.trust,
+        vec![coins(&f.earth, 10)[0]],
+        vec![Payment {
+            owner: public(11),
+            amount: Amount(99),
+        }],
+        None,
+        None,
+        1,
+        0,
+        &[10],
+    );
+    for case in 0..5 {
+        let mut bad = signed.clone();
+        bad.intent.inputs = vec![Hash([9; 32])];
+        match case {
+            0 => bad.intent.outputs[0].amount = Amount::ZERO,
+            1 => bad.intent.outputs[0].amount = Amount(Amount::TOTAL_SUPPLY.0 + 1),
+            2 => bad.intent.fee = Amount(u128::MAX),
+            3 => bad.intent.destination_fee = Amount(u128::MAX),
+            _ => {
+                bad.intent.remote = Some(Payment {
+                    owner: public(12),
+                    amount: Amount::ZERO,
+                })
+            }
+        }
+        bad.approvals[0].signature = signature(10, &bad.intent.bytes().unwrap());
+        let error = f
+            .earth
+            .template(
+                vec![Command::Spend(Box::new(bad))],
+                public(10),
+                &f.trust,
+                &f.evidence,
+            )
+            .unwrap_err();
+        assert!(
+            error.starts_with("monetary "),
+            "cap check must precede absent-input lookup: {error}"
+        );
+        assert_eq!(
+            serde_json::to_vec(&(
+                &f.earth.blocks,
+                &f.earth.ledger,
+                f.earth.finalized,
+                f.earth.epoch
+            ))
+            .unwrap(),
+            original
+        );
+    }
+    f.audit();
+}
+
+#[test]
 fn a_later_invalid_command_rolls_back_the_entire_block() {
     let f = Fixture::new();
     let signed = intent(

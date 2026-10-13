@@ -14,8 +14,10 @@ pub struct BuildRequest {
     #[serde(default)]
     pub participants: Vec<String>,
     pub inputs: Option<Vec<Hash>>,
+    #[serde(deserialize_with = "crate::monetary_amount::deserialize_payments")]
     pub outputs: Vec<Payment>,
     pub remote: Option<wallet::Remote>,
+    #[serde(deserialize_with = "crate::monetary_amount::deserialize_amount")]
     pub fee: Amount,
     pub valid_for_blocks: u64,
 }

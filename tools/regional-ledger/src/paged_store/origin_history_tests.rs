@@ -932,6 +932,15 @@ fn origin_contact_named_source(origin_name: &str) {
 
 #[test]
 fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident() {
+    origin_conflict_tail_guard(false)
+}
+
+#[test]
+fn origin_conflict80_actual_wire_decode_keeps_incident_before_over_cap_tail_refusal() {
+    origin_conflict_tail_guard(true)
+}
+
+fn origin_conflict_tail_guard(raw_money: bool) {
     use crate::bft_network::{self, Body, WireEnvelope};
     let (h, source, root, _, records, export) =
         source_fixture_with_profile(80, 16, crate::paged_bft::ORIGIN_NETWORK_RULES);
@@ -1000,6 +1009,20 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
     let mut tail = incoming.snapshots[79].clone();
     tail.statement.height = 81;
     tail.blocks.remove(0);
+    if raw_money {
+        let mut command = incoming.snapshots[79]
+            .blocks
+            .iter()
+            .flat_map(|b| &b.commands)
+            .find(|c| matches!(c, Command::Spend(_)))
+            .unwrap()
+            .clone();
+        let Command::Spend(signed) = &mut command else {
+            unreachable!()
+        };
+        signed.intent.outputs[0].amount = Amount(Amount::TOTAL_SUPPLY.0 + 1);
+        tail.blocks.last_mut().unwrap().commands = vec![command];
+    }
     incoming.snapshots.push(tail);
     assert!(incoming.shape(destination, &source.trust).is_err());
     let mut forged = incoming.clone();
@@ -1018,14 +1041,19 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
         origins: Some(vec![proof.clone(), incoming]),
     };
     // Exercise retained-local comparison and conflict between two arriving histories.
-    for mode in [
-        "local",
-        "network",
-        "batch",
-        "batch-prefix",
-        "network-prefix",
-        "observe-prefix",
-    ] {
+    let modes = if raw_money {
+        vec!["network-money"]
+    } else {
+        vec![
+            "local",
+            "network",
+            "batch",
+            "batch-prefix",
+            "network-prefix",
+            "observe-prefix",
+        ]
+    };
+    for mode in modes {
         let network = mode != "local";
         let dir = root.join(format!("bad-tail-{mode}"));
         let mut receiver =
@@ -1068,6 +1096,11 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
                 &receiver,
                 make_wire(forged.clone()),
             ))
+        } else if mode == "network-money" {
+            let raw = serde_json::to_vec(&make_wire(forged.clone())).unwrap();
+            serde_json::from_slice::<WireEnvelope>(&raw)
+                .map_err(|e| e.to_string())
+                .and_then(|wire| bft_network::sync_origin_envelope(&mut receiver, wire))
         } else if network {
             let wire = decorate(&receiver, make_wire(forged.clone()));
             bft_network::sync_origin_envelope(&mut receiver, wire)
@@ -1087,6 +1120,11 @@ fn origin_conflict80_survives_invalid_tail81_without_credit_or_forged_incident()
                 &receiver,
                 make_wire(incoming.clone()),
             ))
+        } else if mode == "network-money" {
+            let raw = serde_json::to_vec(&make_wire(incoming.clone())).unwrap();
+            serde_json::from_slice::<WireEnvelope>(&raw)
+                .map_err(|e| e.to_string())
+                .and_then(|wire| bft_network::sync_origin_envelope(&mut receiver, wire))
         } else if network {
             let wire = decorate(&receiver, make_wire(incoming.clone()));
             bft_network::sync_origin_envelope(&mut receiver, wire)

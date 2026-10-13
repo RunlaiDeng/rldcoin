@@ -433,12 +433,11 @@ impl Node {
             super::service::trace_subwork("mesh-state-encode-transits", started)?;
             #[cfg(test)]
             let started = super::service::monotonic()?;
-            let result = codec(json!({"Finish":{"token":token}}), &[])?;
+            let raw = crate::contact_state_codec::finish_bytes(&token)?;
             #[cfg(test)]
             super::service::trace_subwork("mesh-state-encode-finish", started)?;
             #[cfg(test)]
             let started = super::service::monotonic()?;
-            let raw = bytes(&result["image"])?;
             atomic_bytes(&self.root.join("native-mesh-state.json"), &raw, STATE_LIMIT)?;
             #[cfg(test)]
             super::service::trace_subwork("mesh-state-durable-write", started)?;
@@ -2172,6 +2171,53 @@ mod tests {
         drop(recipient);
         let cold = Node::open(&f.configs[0]).unwrap();
         assert_eq!(cold.state.messages, preserved);
+    }
+
+    #[test]
+    fn durable_save_encodes_its_exact_complete_image_once() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(2);
+        f.retain = true;
+        let mut node = Node::open(&f.configs[0]).unwrap();
+        node.enqueue(&f.frame(), &f.ids[1]).unwrap();
+        let path = node.root.join("native-mesh-state.json");
+        let before = fs::read(&path).unwrap();
+        crate::contact_state_codec::start_encoding_trace();
+        node.save().unwrap();
+        let encodings = crate::contact_state_codec::take_encoding_trace();
+        let after = fs::read(&path).unwrap();
+        assert_eq!(before, after);
+        assert_eq!(node.retained_image.as_ref(), Some(&after));
+        for entry in &encodings {
+            assert_eq!(entry["size_bytes"], after.len());
+            assert_eq!(entry["sha256"], hex::encode(Sha256::digest(&after)));
+        }
+        drop(node);
+        let mut cold = Node::open(&f.configs[0]).unwrap();
+        assert_eq!(cold.retained_image.as_ref(), Some(&after));
+        println!(
+            "complete-state-encodings {}",
+            json!({"encodings":encodings,
+            "elapsed_seconds":started.elapsed().as_secs_f64(),"fixture":f.root})
+        );
+        assert!(started.elapsed().as_secs_f64() < 30.0);
+        assert_eq!(
+            encodings.len(),
+            1,
+            "same durable image encoded more than once"
+        );
+        let preserved = path.with_file_name("state-before-write-refusal.json");
+        assert!(!preserved.exists());
+        fs::rename(&path, &preserved).unwrap();
+        fs::create_dir(&path).unwrap();
+        assert!(
+            cold.save().is_err(),
+            "non-file target accepted a state image"
+        );
+        assert!(cold.retained_image.is_none());
+        assert_eq!(fs::read(preserved).unwrap(), after);
+        assert!(path.is_dir());
+        assert!(started.elapsed().as_secs_f64() < 30.0);
     }
 
     #[test]

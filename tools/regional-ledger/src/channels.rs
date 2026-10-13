@@ -314,6 +314,9 @@ impl Escrow {
         declaration: &Declaration,
     ) -> Result<()> {
         let (_, capacity, initial) = self.terms()?;
+        for value in statement.payouts {
+            crate::monetary_amount::check(value)?;
+        }
         require(
             statement.currency == declaration.currency
                 && statement.region == declaration.region
@@ -346,6 +349,7 @@ pub struct FeeBudget {
 /// Conditional worst-window fee exposure, not an inclusion guarantee. Counts
 /// the unchanged native command bound, not the four companion proposal slots.
 pub fn receipt_fee_coverage(fee_limit: Amount) -> Result<Amount> {
+    crate::monetary_amount::check(fee_limit)?;
     require(!fee_limit.is_zero(), "positive fee limit required")?;
     let amount = fee_limit
         .0
@@ -753,6 +757,7 @@ impl Book {
             "separately retained latest channel head differs",
         )?;
         let intent = &command.intent;
+        crate::monetary_amount::channel(&intent.action)?;
         require(
             intent.rules == context.declaration.rules
                 && intent.currency == context.declaration.currency

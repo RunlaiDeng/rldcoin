@@ -367,6 +367,47 @@ fn native_channel_receipt_missing_insufficient_immature_and_topup_follow_actual_
 }
 
 #[test]
+fn monetary_invoice_and_state_bounds_keep_historical_bytes_and_native_heads() {
+    let (root, mut node, channel, reserve) = setup(Some(3));
+    let first = receipt(
+        &node,
+        reserve.unwrap(),
+        1,
+        initial(&node, channel),
+        10,
+        None,
+    );
+    let old = head(&root);
+    let ledger = node.chain.ledger.clone();
+    for field in 0..3 {
+        let mut invalid = first.clone();
+        match field {
+            0 => invalid.statement.expected.amount = Amount::ZERO,
+            1 => invalid.statement.expected.amount = Amount(Amount::TOTAL_SUPPLY.0 + 1),
+            _ => invalid.statement.expected.challenge_fee = Amount(u128::MAX),
+        }
+        sign_invoice(&mut invalid);
+        let raw = serde_json::to_vec(&invalid).unwrap();
+        let decoded = serde_json::from_slice::<r::Receipt>(&raw).unwrap();
+        assert_eq!(serde_json::to_vec(&decoded).unwrap(), raw);
+        let error = accept(&mut node, &root, decoded).unwrap_err();
+        assert!(error.starts_with("monetary "), "{error}");
+        assert_eq!(old, head(&root));
+        assert_eq!(ledger, node.chain.ledger);
+        assert!(node.conflicts.is_empty());
+    }
+    let native = node.chain.ledger.channel_state.as_ref().unwrap();
+    let mut statement = first.next.statement.clone();
+    statement.payouts = [Amount(u128::MAX), Amount(1)];
+    let error = native.book.channels[&channel]
+        .verify_statement(&statement, channel, &native.declaration)
+        .unwrap_err();
+    assert_eq!(error, "monetary amount exceeds supply cap");
+    assert_eq!(old, head(&root));
+    assert_eq!(ledger, node.chain.ledger);
+}
+
+#[test]
 fn native_channel_receipt_invoice_amount_highest_state_and_complete_signatures_refuse_reuse() {
     let (root, mut node, channel, reserve) = setup(Some(3));
     let reserve = reserve.unwrap();
