@@ -252,6 +252,11 @@ pub(super) fn spool_directory_turn(config: &Value) -> Result<Vec<String>> {
     directory_turn(config, &|| false)
 }
 
+#[cfg(test)]
+pub(super) fn directory_publish_fixture(config: &Value) -> Result<Vec<String>> {
+    directory_phase(config, &|| false, DirectoryPhase::Publish)
+}
+
 fn directory_turn(config: &Value, stopped: &dyn Fn() -> bool) -> Result<Vec<String>> {
     directory_phase(config, stopped, DirectoryPhase::Duplex)
 }

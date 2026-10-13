@@ -2393,6 +2393,221 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "one fresh transport-only observation; exact test with a 30-second outer deadline"]
+    fn three_neighbor_publish_measures_complete_state_save_cost() {
+        let total_started = std::time::Instant::now();
+        let mut f = Fixture::new(4);
+        f.retain = true;
+        for n in 0..4 {
+            f.configs[n]["contacts"] = json!((0..4)
+                .filter(|p| *p != n)
+                .map(|p| json!({"peer":f.ids[p],
+                    "inbox":f.root.join(format!("spool-{p}-{n}")),
+                    "outbox":f.root.join(format!("spool-{n}-{p}"))}))
+                .collect::<Vec<_>>());
+        }
+        eprintln!(
+            "Fresh three-neighbor publish observation: {}",
+            f.root.display()
+        );
+        let mut frames = Vec::new();
+        for n in 0..4u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            frames.push(frame.retained_bytes().unwrap());
+        }
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        let packets = source
+            .enqueue_frame_batch(
+                &frames.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+                &f.ids[1..],
+            )
+            .unwrap();
+        assert_eq!(packets.len(), 4);
+        assert!(packets.iter().all(|row| row.len() == 3));
+        let before = source.state.clone();
+        let contacts = source.contacts.clone();
+        let state_path = source.root.join("native-mesh-state.json");
+        crate::keystore::private_create(
+            &f.root.join("publish-before-state-image.json"),
+            &fs::read(&state_path).unwrap(),
+        )
+        .unwrap();
+        drop(source);
+
+        // Setup/signing/enqueue and the later cold checks are outside this window.
+        // This calls every configured neighbor in the existing Publish phase.
+        super::super::service::start_work_trace();
+        let publish_started = super::super::service::monotonic().unwrap();
+        let result = super::super::service::directory_publish_fixture(&f.configs[0]);
+        let publish_completed = super::super::service::monotonic().unwrap();
+        let work = super::super::service::take_work_trace();
+        crate::keystore::private_create(
+            &f.root.join("publish-operation.json"),
+            &bytes(
+                &json!({"started_at":publish_started,"completed_at":publish_completed,
+                "result":result,"work":work,"fixture_only":true,"ledger_authority":false}),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert!(result.unwrap().is_empty());
+        let aggregate = |phase: &str| -> (u64, f64) {
+            let rows = work
+                .iter()
+                .filter(|row| row["phase"] == phase)
+                .collect::<Vec<_>>();
+            assert_eq!(
+                rows.len(),
+                1,
+                "missing or ambiguous aggregate phase: {phase}"
+            );
+            let calls = rows[0]["calls"].as_u64().unwrap();
+            let seconds = rows[0]["seconds"].as_f64().unwrap();
+            assert!(seconds.is_finite() && seconds >= 0.0);
+            (calls, seconds)
+        };
+        let (prepare_calls, prepare_seconds) = aggregate("mesh-prepare");
+        let (save_calls, save_seconds) = aggregate("mesh-state-save-complete");
+        assert_eq!(prepare_calls, 3);
+        assert_eq!(save_calls, 3);
+        for phase in [
+            "mesh-state-metadata",
+            "mesh-state-codec-begin",
+            "mesh-state-encode-transits",
+            "mesh-state-encode-finish",
+            "mesh-state-durable-write",
+            "mesh-state-codec-cleanup",
+        ] {
+            assert_eq!(aggregate(phase).0, 3, "unexpected per-neighbor save count");
+        }
+        assert_eq!(aggregate("mesh-open-spool").0, 1);
+        let published = work
+            .iter()
+            .filter(|row| row["phase"] == "published-transport-exchange")
+            .collect::<Vec<_>>();
+        assert_eq!(published.len(), 3);
+        assert_eq!(contacts.len(), 3);
+        let mut carried = BTreeMap::new();
+        for ((peer, contact), event) in contacts.iter().zip(&published) {
+            assert_eq!(event["peer"], *peer);
+            let at = event["at"].as_f64().unwrap();
+            assert!(at.is_finite() && publish_started <= at && at <= publish_completed);
+            let entries = fs::read_dir(contact["outbox"].as_str().unwrap())
+                .unwrap()
+                .map(|entry| entry.unwrap().path())
+                .collect::<Vec<_>>();
+            assert_eq!(
+                entries.len(),
+                1,
+                "one actual durable exchange per configured peer"
+            );
+            let raw = files::private_read_with_limit(&entries[0], EXCHANGE_LIMIT).unwrap();
+            let bundle =
+                crate::wallet_http::decode_unique_with_limit(&raw, EXCHANGE_LIMIT).unwrap();
+            assert_eq!(bytes(&bundle).unwrap(), raw);
+            let filename = format!("{}.json", hex::encode(Sha256::digest(&raw)));
+            assert_eq!(entries[0].file_name().unwrap().to_str().unwrap(), filename);
+            exchange(&bundle, &before.network, &f.ids[0], peer).unwrap();
+            let transits = bundle["body"]["transits"].as_array().unwrap();
+            assert_eq!(transits.len(), 4);
+            let actual = transits
+                .iter()
+                .map(|transit| {
+                    json!({
+                        "packet_id":transit["routing"]["body"]["packet_id"],
+                        "frame_id":transit["routing"]["body"]["frame_id"],
+                        "destination":transit["packet"]["body"]["destination"]
+                    })
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(event["packets"], json!(actual));
+            let mut ids = Vec::new();
+            for value in transits {
+                transit(value, &before.network, json!(peer), json!(f.ids[0])).unwrap();
+                let id = value["routing"]["body"]["packet_id"].as_str().unwrap();
+                assert_eq!(value["packet"], before.messages[id]["packet"]);
+                assert_eq!(value["routing"], before.messages[id]["routing"]);
+                ids.push(id.to_owned());
+            }
+            carried.insert(peer.clone(), ids);
+        }
+        let image_after = fs::read(&state_path).unwrap();
+        crate::keystore::private_create(
+            &f.root.join("publish-after-state-image.json"),
+            &image_after,
+        )
+        .unwrap();
+        // A separate same-process cold open after clearing byte witnesses still
+        // authenticates every complete original transit. No recipient receives.
+        let cleared =
+            crate::contact_witness::execute(&bytes(&json!("Clear")).unwrap(), &[]).unwrap();
+        assert_eq!(cleared["entries"], 0);
+        super::super::service::start_work_trace();
+        let cold = Node::open(&f.configs[0]).unwrap();
+        let cold_work = super::super::service::take_work_trace();
+        assert_eq!(cold.state.network, before.network);
+        assert_eq!(cold.state.node_id, before.node_id);
+        assert_eq!(cold.state.messages, before.messages);
+        assert_eq!(cold.state.arrivals, before.arrivals);
+        assert_eq!(cold.state.receipts, before.receipts);
+        assert_eq!(cold.state.archives, before.archives);
+        assert_eq!(cold.state.cursor, before.cursor + 3);
+        assert_eq!(cold.state.first_carried, carried);
+        let mut expected = before.clone();
+        expected.cursor += 3;
+        expected.first_carried = carried.clone();
+        expected.transit_cursors = carried
+            .iter()
+            .map(|(peer, ids)| (peer.clone(), ids.last().unwrap().clone()))
+            .collect();
+        assert!(
+            cold.state.exact(&expected),
+            "cold scheduling metadata differs"
+        );
+        assert_eq!(cold.retained_image.as_ref(), Some(&image_after));
+        assert_eq!(fs::read(&state_path).unwrap(), image_after);
+        let cold_calls = |phase: &str| {
+            cold_work
+                .iter()
+                .filter(|row| row["phase"] == phase)
+                .map(|row| row["calls"].as_u64().unwrap())
+                .sum::<u64>()
+        };
+        assert_eq!(cold_calls("transit-full-check"), 12);
+        assert_eq!(cold_calls("transit-witness-hit"), 0);
+        drop(cold);
+        let report = json!({"fixture_only":true,"ledger_authority":false,
+            "native_ledger_executed":false,"recipient_custody_claimed":false,
+            "configured_neighbors":3,"frames":4,"retained_signed_transits":12,
+            "published_exchanges":published.len(),"prepare_calls":prepare_calls,"save_calls":save_calls,
+            "publish_started_at":publish_started,"publish_completed_at":publish_completed,
+            "publish_seconds":publish_completed-publish_started,
+            "prepare_seconds":prepare_seconds,"save_seconds":save_seconds,
+            "save_fraction_of_prepare":if prepare_seconds > 0.0 {Some(save_seconds/prepare_seconds)} else {None},
+            "work":work,"cold_work":cold_work,"elapsed_seconds":total_started.elapsed().as_secs_f64(),
+            "outer_budget_seconds":30,"cold_scope":"same-process ordinary open after witness clear",
+            "original_payment_delay_attribution":false,"batch_save_equivalence_claimed":false,
+            "scope":"one ordinary all-neighbor Publish phase; timing is observation, not a performance assertion"});
+        crate::keystore::private_create(
+            &f.root.join("three-neighbor-publish-counter.json"),
+            &bytes(&report).unwrap(),
+        )
+        .unwrap();
+        eprintln!("Three-neighbor publish observation: {report}");
+    }
+
+    #[test]
     fn four_frame_broadcast_retains_complete_destination_batch_with_one_image_publication() {
         let started = std::time::Instant::now();
         let mut f = Fixture::new(4);
