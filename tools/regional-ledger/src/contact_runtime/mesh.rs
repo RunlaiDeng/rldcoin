@@ -446,6 +446,7 @@ impl Node {
             let offset = ids.partition_point(|id| id.as_str() <= after);
             ids.rotate_left(offset);
         }
+        let mut excluded = BTreeSet::new();
         if !seen.is_empty() {
             let active = self
                 .state
@@ -469,6 +470,12 @@ impl Node {
                     if archived.len() == 2 {
                         break;
                     }
+                } else if !self.state.messages.contains_key(id) {
+                    require(
+                        excluded.len() < MAX_ARCHIVE_FILES,
+                        "receive page exclusion bound",
+                    )?;
+                    excluded.insert(id.clone());
                 }
             }
             // Completion archives transport custody, not Native processing.
@@ -488,6 +495,12 @@ impl Node {
         for id in ids {
             if result.len() == limit {
                 break;
+            }
+            // This operation already authenticated these complete archives
+            // and found no local frame. Only their immutable identities live
+            // until this call ends; later calls and cold opens check again.
+            if excluded.contains(&id) {
+                continue;
             }
             let archived;
             let t = if let Some(t) = self.state.messages.get(&id) {
@@ -1412,6 +1425,113 @@ mod tests {
         value["state"]["format"] = json!("wrong");
         atomic(&path, &value, STATE_LIMIT).unwrap();
         assert!(Node::open(&f.configs[0]).is_err());
+    }
+
+    #[test]
+    fn receive_page_checks_each_foreign_archive_once_and_next_call_reads_again() {
+        let started = std::time::Instant::now();
+        let mut f = Fixture::new(3);
+        f.retain = true;
+        for (sender, receiver) in [(1, 0), (2, 1), (1, 0)] {
+            let bundle = Node::open(&f.configs[sender])
+                .unwrap()
+                .prepare(&f.ids[receiver])
+                .unwrap();
+            Node::open(&f.configs[receiver])
+                .unwrap()
+                .receive(&bundle, &f.ids[sender])
+                .unwrap();
+        }
+        let mut source = Node::open(&f.configs[0]).unwrap();
+        let mut relay = Node::open(&f.configs[1]).unwrap();
+        let mut destination = Node::open(&f.configs[2]).unwrap();
+        for n in 0..48u8 {
+            let mut frame: Frame = serde_json::from_slice(&f.frame()).unwrap();
+            let mut payload: Value =
+                serde_json::from_slice(&STANDARD.decode(&frame.payload_b64).unwrap()).unwrap();
+            let region = Hash::from_hex(&hex::encode([n + 32; 32])).unwrap();
+            payload["region"] = json!(region);
+            let raw = bytes(&payload).unwrap();
+            frame.source_chain_id = region;
+            frame.destination_chain_id = region;
+            frame.payload_sha256 = Hash(Sha256::digest(&raw).into());
+            frame.export_id = frame.payload_sha256;
+            frame.payload_b64 = STANDARD.encode(raw);
+            frame.message_id = frame.message().unwrap();
+            source
+                .enqueue(&frame.retained_bytes().unwrap(), &f.ids[2])
+                .unwrap();
+        }
+        for _ in 0..24 {
+            relay
+                .receive(&source.prepare(&f.ids[1]).unwrap(), &f.ids[0])
+                .unwrap();
+            destination
+                .receive(&relay.prepare(&f.ids[2]).unwrap(), &f.ids[1])
+                .unwrap();
+            relay
+                .receive(&destination.prepare(&f.ids[1]).unwrap(), &f.ids[2])
+                .unwrap();
+        }
+        assert_eq!(relay.state.receipts.len(), 48);
+        relay.archive_completed().unwrap();
+        relay.archive_completed().unwrap();
+        assert_eq!(relay.state.archives.len(), 32);
+        let raw = f.frame();
+        let packet = source.enqueue(&raw, &f.ids[1]).unwrap();
+        relay
+            .receive(&source.prepare(&f.ids[1]).unwrap(), &f.ids[0])
+            .unwrap();
+        let state_path = relay.root.join("native-mesh-state.json");
+        let original = fs::read(&state_path).unwrap();
+        let messages = relay.state.messages.clone();
+        let archives = relay.state.archives.clone();
+        let seen = vec!["ff".repeat(32)];
+        super::super::service::start_work_trace();
+        let selected = relay.frame_page_selected(None, 4, &seen).unwrap();
+        let trace = super::super::service::take_work_trace();
+        let reads = trace
+            .iter()
+            .filter(|e| e["phase"] == "mesh-archive-read-bind")
+            .map(|e| e["calls"].as_u64().unwrap_or(1))
+            .sum::<u64>();
+        assert_eq!(selected, vec![(packet.clone(), raw.clone())]);
+        let object = archives.values().next().unwrap();
+        let path = relay.root.join("archive").join(format!("{object}.json"));
+        let bytes = fs::read(&path).unwrap();
+        let missing = path.with_extension("retained-missing");
+        fs::rename(&path, &missing).unwrap();
+        assert!(
+            relay.frame_page_selected(None, 4, &seen).is_err(),
+            "later page reused stale archive authentication"
+        );
+        assert_eq!(fs::read(&state_path).unwrap(), original);
+        fs::rename(&missing, &path).unwrap();
+        assert_eq!(fs::read(&path).unwrap(), bytes);
+        drop(source);
+        drop(destination);
+        drop(relay);
+        let cold = Node::open(&f.configs[1]).unwrap();
+        assert_eq!(cold.state.messages, messages);
+        assert_eq!(cold.state.archives, archives);
+        assert_eq!(
+            cold.frame_page_selected(None, 4, &seen).unwrap(),
+            vec![(packet, raw)]
+        );
+        assert_eq!(fs::read(&state_path).unwrap(), original);
+        eprintln!(
+            "Foreign archive page: {}",
+            json!({"archive_count":32,"actual_reads":reads,
+            "seconds":started.elapsed().as_secs_f64(),"ledger_authority":false})
+        );
+        assert!(
+            started.elapsed().as_secs_f64() < 60.0,
+            "foreign archive page budget"
+        );
+        assert_eq!(
+            reads, 32,
+            "one page repeated complete reads of already authenticated foreign archives"
+        );
     }
 
     #[test]
