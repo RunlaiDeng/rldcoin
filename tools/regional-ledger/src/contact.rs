@@ -282,6 +282,13 @@ impl Store {
             .exports
             .get(&eid)
             .ok_or("unknown local export")?;
+        if self.trust.region(self.chain.region)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES
+            && self.trust.region(export.destination)?.rules
+                == crate::paged_bft::ONWARD_NETWORK_RULES
+        {
+            let proof = self.complete_onward_network_export(eid)?;
+            return Frame::pack_onward(&proof);
+        }
         crate::paged_bft::require_runtime_adoption(&self.trust.region(export.destination)?.rules)?;
         if self.trust.region(export.destination)?.rules == crate::paged_bft::ORIGIN_NETWORK_RULES {
             let proof = self.complete_origin_export(eid)?;
@@ -578,6 +585,82 @@ impl Frame {
                 && proof.destination == frame.destination_chain_id
                 && proof.export == frame.export_id,
             "origin contact proof/frame domain differs",
+        )?;
+        Ok((frame, proof))
+    }
+}
+
+impl Frame {
+    /// Exact complete two-hop bytes only. Native export/receipt APIs independently
+    /// authenticate the full history; packing or custody never credits value.
+    pub(crate) fn pack_onward(
+        proof: &crate::storage::CompleteOnwardNetworkHistory,
+    ) -> Result<Vec<u8>> {
+        require(
+            proof.history.source != proof.history.destination,
+            "same-region onward contact frame",
+        )?;
+        let payload = canonical(proof)?;
+        require(
+            !payload.is_empty() && payload.len() <= MAX_PAYLOAD,
+            "onward contact proof exceeds original single-frame payload; retain debit",
+        )?;
+        let mut frame = Self {
+            format: FRAME_FORMAT.into(),
+            kind: "onward-source-finality".into(),
+            source_chain_id: proof.history.source,
+            destination_chain_id: proof.history.destination,
+            export_id: proof.history.export,
+            payload_sha256: sha(&payload),
+            payload_b64: STANDARD.encode(&payload),
+            message_id: Hash::ZERO,
+        };
+        frame.message_id = frame.message()?;
+        let raw = canonical(&frame)?;
+        require(raw.len() <= MAX_FRAME, "onward contact frame bound")?;
+        Ok(raw)
+    }
+
+    /// Typed carriage decoding, not Native authentication. Do not inspect an A/B
+    /// prefix here: Native receipt retains genuine conflicts before bad-tail refusal.
+    pub fn unpack_onward(
+        raw: &[u8],
+    ) -> Result<(Self, crate::storage::CompleteOnwardNetworkHistory)> {
+        require(
+            !raw.is_empty() && raw.len() <= MAX_FRAME,
+            "onward contact complete frame byte bound",
+        )?;
+        let frame: Self = serde_json::from_slice(raw).map_err(|e| e.to_string())?;
+        require(
+            frame.format == FRAME_FORMAT
+                && frame.kind == "onward-source-finality"
+                && frame.source_chain_id != frame.destination_chain_id
+                && canonical(&frame)? == raw
+                && frame.message()? == frame.message_id,
+            "onward contact canonical format/route/message differs",
+        )?;
+        require(
+            frame.payload_b64.len() <= MAX_PAYLOAD.div_ceil(3) * 4,
+            "onward contact encoded payload bound",
+        )?;
+        let payload = STANDARD
+            .decode(&frame.payload_b64)
+            .map_err(|e| e.to_string())?;
+        require(
+            !payload.is_empty()
+                && payload.len() <= MAX_PAYLOAD
+                && STANDARD.encode(&payload) == frame.payload_b64
+                && sha(&payload) == frame.payload_sha256,
+            "onward contact payload bytes differ",
+        )?;
+        let proof: crate::storage::CompleteOnwardNetworkHistory =
+            serde_json::from_slice(&payload).map_err(|e| e.to_string())?;
+        require(
+            canonical(&proof)? == payload
+                && proof.history.source == frame.source_chain_id
+                && proof.history.destination == frame.destination_chain_id
+                && proof.history.export == frame.export_id,
+            "onward contact canonical proof/frame domain differs",
         )?;
         Ok((frame, proof))
     }

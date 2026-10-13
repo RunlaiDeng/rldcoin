@@ -51,7 +51,7 @@ fn scope() -> Value {
     json!({"mesh":"RLD-CONTACT-MESH-V3","network":"11".repeat(32),"recipient":null,"sender":null,"hops":16,
         "frame":crate::contact::MAX_FRAME,"payload":crate::contact::MAX_PAYLOAD,
         "frame_format":crate::contact::FRAME_FORMAT,"frame_domain":hex::encode(format!("{}\0",crate::contact::FRAME_FORMAT)),
-        "kinds":["destination-receipt","destination-sync","finalized-import","regional-bft","source-finality","source-sync"],
+        "kinds":["destination-receipt","destination-sync","finalized-import","onward-source-finality","regional-bft","source-finality","source-sync"],
         "provider":{"format":"RLD-NATIVE-CONTACT-CRYPTO-V1","implementation":crate::implementation().unwrap(),
             "path":"rust-contact-runtime-in-process","instance":0}})
 }

@@ -109,12 +109,13 @@ impl Runtime {
         (result, report)
     }
 
-    fn open_inner(
-        path: &Path,
-        node: &Store,
-        transport: &Value,
-        #[cfg(test)] mut observation: Option<&mut open_probe::Observation>,
-    ) -> Result<Self> {
+    // Service checks the exact signed profile and nonmutating configuration
+    // before creating transport identity, TLS material or caller state.
+    pub(crate) fn preflight_service(path: &Path, node: &Store) -> Result<()> {
+        Self::checked_config(path, node).map(|_| ())
+    }
+
+    fn checked_config(path: &Path, node: &Store) -> Result<(Config, consensus::Context)> {
         let config: Config =
             serde_json::from_value(read(path, 64 * 1024)?).map_err(|e| e.to_string())?;
         crate::bft_runtime_envelope::require_profile(&config.format, node)?;
@@ -137,18 +138,6 @@ impl Runtime {
                 "Rust BFT pinned startup Native head differs",
             )?;
         }
-        files::private_path(&config.state, true)?;
-        let lock = files::options()
-            .read(true)
-            .write(true)
-            .create(true)
-            .open(config.state.join(".bft-runtime.lock"))
-            .map_err(|e| e.to_string())?;
-        files::private_metadata(&lock)?;
-        require(
-            unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } == 0,
-            "another BFT runtime owns this archive",
-        )?;
         let context = consensus::Context::current(node)?;
         let keys = context.keys(&node.trust, &node.evidence)?;
         require(
@@ -164,8 +153,31 @@ impl Runtime {
                     .map(|v| &v.node_id)
                     .collect::<BTreeSet<_>>()
                     .len()
-                    == 4,
+                    == 4
+                && config.validators.iter().any(|v| v.key == config.key),
             "BFT validators differ from signed Native membership",
+        )?;
+        Ok((config, context))
+    }
+
+    fn open_inner(
+        path: &Path,
+        node: &Store,
+        transport: &Value,
+        #[cfg(test)] mut observation: Option<&mut open_probe::Observation>,
+    ) -> Result<Self> {
+        let (config, context) = Self::checked_config(path, node)?;
+        files::private_path(&config.state, true)?;
+        let lock = files::options()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(config.state.join(".bft-runtime.lock"))
+            .map_err(|e| e.to_string())?;
+        files::private_metadata(&lock)?;
+        require(
+            unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } == 0,
+            "another BFT runtime owns this archive",
         )?;
         let mesh = Node::open(transport)?;
         require(

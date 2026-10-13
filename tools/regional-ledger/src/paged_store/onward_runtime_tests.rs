@@ -1915,3 +1915,9 @@ mod local_builder_negative;
 
 #[path = "onward_archive_witness_negative_tests.rs"]
 mod archive_witness_negative;
+
+#[path = "onward_service_frame_tests.rs"]
+mod service_frame;
+
+#[path = "onward_service_routing_tests.rs"]
+mod service_routing;

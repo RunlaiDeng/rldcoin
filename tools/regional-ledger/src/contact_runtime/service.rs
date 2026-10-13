@@ -709,6 +709,11 @@ fn tick_ledger_frames(
         if frame.kind == "source-finality" {
             let (_, history) = crate::contact::Frame::unpack_origin(raw)?;
             store.accept_complete_origin_history(history)?;
+        } else if frame.kind == "onward-source-finality" {
+            let (_, history) = crate::contact::Frame::unpack_onward(raw)?;
+            // Native keeps authentic ancestor conflicts before any later
+            // proof refusal. Transport custody alone never credits a coin.
+            store.accept_complete_onward_network_history(history)?;
         } else {
             store.contact_apply(raw, options.miner.clone())?;
         }
@@ -882,7 +887,13 @@ pub fn run(options: Options) -> Result<()> {
     )?;
     let store = Store::open_inspection(&options.ledger, &options.authority, options.currency)?;
     let region = store.chain.region;
-    crate::paged_bft::require_runtime_adoption(&store.trust.region(region)?.rules)?;
+    if let Some(path) = &options.bft_config {
+        super::bft::Runtime::preflight_service(path, &store)?;
+    } else {
+        // The new receiver requires its explicit, matching BFT Runtime.
+        // Generic startup and uncertified mining retain their old refusal.
+        crate::paged_bft::require_runtime_adoption(&store.trust.region(region)?.rules)?;
+    }
     drop(store);
     let config = configuration(&options, region)?;
     let node = Node::open(&config)?;

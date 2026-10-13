@@ -11,10 +11,11 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 const FORMAT: &str = "RLD-NATIVE-CONTACT-FRAME-V1";
 const CONTROL: usize = 8192;
-const KINDS: [&str; 6] = [
+const KINDS: [&str; 7] = [
     "destination-receipt",
     "destination-sync",
     "finalized-import",
+    "onward-source-finality",
     "regional-bft",
     "source-finality",
     "source-sync",

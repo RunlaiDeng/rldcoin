@@ -564,7 +564,11 @@ fn complete_onward_network_authenticates_parent_body_and_conflicts() {
     .is_err());
     assert!(crate::bft_network::sync(&mut receiver, Evidence::default()).is_err());
     assert!(destination.bft_submit(pending.clone()).is_err());
-    assert!(intermediate.contact_export(export).is_err());
+    let onward_frame = intermediate.contact_export(export).unwrap();
+    let (frame, carried) = crate::contact::Frame::unpack_onward(&onward_frame).unwrap();
+    assert_eq!(frame.kind, "onward-source-finality");
+    assert_eq!(carried, proof);
+    assert!(crate::contact::Frame::unpack_origin(&onward_frame).is_err());
     assert!(receiver.contact_apply(b"{}", None).is_err());
     // A complete authentic empty C checkpoint independently passes ordinary
     // evidence validation. The old contact route must reject its new source

@@ -106,10 +106,26 @@ complete wrapper and C prefix, require their exact prior Native custody, and
 retain the original owner approvals without signing or debiting. Mature inputs,
 separate owner/caller heads, reservations and certified inclusion remain distinct.
 The explicit incoming Submission API retains its original authenticated body rules.
-Generic envelopes, ordinary Service startup and value-contact routes still refuse
-the new profile. Recognizing its strict regional frame shape grants no Native authority.
+Generic envelopes and generic value-contact routes still refuse the new profile.
+Ordinary Service requires the exact Onward BFT configuration and signed receiver
+admission. Check its profile, timing, supplied startup head and admitted validators
+before creating transport state; complete cold archive/caller authentication and
+the independently configured carrier binding still precede normal operation.
+Without this explicit BFT configuration, Service startup refuses the receiver.
+
+The intermediate origin-network Service can export its actual certified debit
+through a separate onward-source-finality frame carrying the complete A+B wrapper.
+Frame encoding binds the exact source, destination, export and complete payload
+bytes under the unchanged bounds. Ordinary neighbor carriage remains opaque:
+transport signatures and receipts establish only byte custody. The destination
+dispatches this distinct frame to Native complete-onward admission, preserving
+genuine ancestor incidents before later proof refusal. Only the existing local
+BFT Import and original maturity/owner rules can create spendable value. The old
+source-finality format and generic contact APIs do not adopt this wrapper.
+Recognizing its strict regional frame shape grants no Native authority.
 The separate inspection API does not itself synchronize or credit value,
 first-sign, recover caller custody or establish remote current-state freshness.
-General ancestry, returns, carried channels, epoch handoff, long history, ordinary
-scheduling, independent custody/security, latency and physical qualification remain
-mandatory separate work; this finite boundary does not shrink their requirements.
+General ancestry, returns, carried channels, epoch handoff, long history, sustained
+ordinary scheduling, independent custody/security, latency and physical
+qualification remain mandatory separate work; this finite boundary does not
+shrink their requirements.

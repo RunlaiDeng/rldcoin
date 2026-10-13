@@ -194,7 +194,7 @@ pub(crate) fn transit(
     let scope = json!({"mesh":MESH,"network":network,"recipient":recipient,"sender":sender,"hops":16,
         "frame":crate::contact::MAX_FRAME,"payload":crate::contact::MAX_PAYLOAD,
         "frame_format":crate::contact::FRAME_FORMAT,"frame_domain":hex::encode(format!("{}\0",crate::contact::FRAME_FORMAT)),
-        "kinds":["destination-receipt","destination-sync","finalized-import","regional-bft","source-finality","source-sync"],
+        "kinds":["destination-receipt","destination-sync","finalized-import","onward-source-finality","regional-bft","source-finality","source-sync"],
         "provider":{"format":"RLD-NATIVE-CONTACT-CRYPTO-V1","implementation":crate::implementation()?,"path":"rust-contact-runtime-in-process","instance":0}});
     let fields = json!({"scope":scope,"retention":512,"size_bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw))});
     #[cfg(test)]
