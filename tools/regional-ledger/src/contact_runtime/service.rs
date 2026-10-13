@@ -25,6 +25,9 @@ mod post_native_trace;
 #[path = "receive_trace.rs"]
 mod receive_trace;
 #[cfg(test)]
+#[path = "receive_turn_trace.rs"]
+mod receive_turn_trace;
+#[cfg(test)]
 thread_local! {
     static CARRIAGE_TRACE: std::cell::RefCell<Option<Vec<Value>>> = const { std::cell::RefCell::new(None) };
     static SUBWORK_TRACE: std::cell::RefCell<std::collections::BTreeMap<&'static str,(usize,f64)>> = const { std::cell::RefCell::new(std::collections::BTreeMap::new()) };
@@ -87,6 +90,9 @@ fn trace_exchange(
         if let Some(receive) = receive {
             require(phase == "durable-transport-receive", "receive clock phase")?;
             event["directory_receive"] = receive.value(at)?;
+            if let Some(turn) = receive_turn_trace::observation(receive.file_started)? {
+                event["directory_turn"] = turn;
+            }
         }
         if phase == "published-transport-exchange" {
             if let Some(prefix) = post_native_trace::observation(at)? {
@@ -100,11 +106,13 @@ fn trace_exchange(
 }
 #[cfg(test)]
 pub(super) fn start_work_trace() {
+    receive_turn_trace::reset();
     SUBWORK_TRACE.with(|trace| trace.borrow_mut().clear());
     CARRIAGE_TRACE.with(|trace| *trace.borrow_mut() = Some(Vec::new()));
 }
 #[cfg(test)]
 pub(super) fn take_work_trace() -> Vec<Value> {
+    receive_turn_trace::reset();
     PAYMENT_TRACE_ACTIVE.with(|active| active.set(false));
     let mut records = CARRIAGE_TRACE.with(|trace| trace.borrow_mut().take().unwrap_or_default());
     SUBWORK_TRACE.with(|trace| {
@@ -315,7 +323,11 @@ fn directory_phase(
 fn open_directory_node(config: &Value) -> Result<Node> {
     #[cfg(test)]
     let started = monotonic()?;
+    #[cfg(test)]
+    receive_turn_trace::open_started(monotonic)?;
     let node = Node::open(config)?;
+    #[cfg(test)]
+    receive_turn_trace::open_completed(monotonic)?;
     #[cfg(test)]
     trace_work("mesh-open-spool", started)?;
     Ok(node)
@@ -339,14 +351,33 @@ fn directory_phase_node(
         "directory turn cannot retain a lease across sockets",
     )?;
     let mut errors = Vec::new();
-    for (peer, contact) in contacts {
+    let contacts = contacts.into_iter();
+    #[cfg(test)]
+    let contacts = contacts.enumerate();
+    for entry in contacts {
+        #[cfg(test)]
+        let (peer_index, (peer, contact)) = entry;
+        #[cfg(not(test))]
+        let (peer, contact) = entry;
+        #[cfg(test)]
+        receive_turn_trace::peer(peer_index)?;
         if stopped() {
+            #[cfg(test)]
+            receive_turn_trace::unsuccessful();
             break;
         }
         if node.is_none() {
+            #[cfg(test)]
+            receive_turn_trace::open_started(monotonic)?;
             match Node::open(config) {
-                Ok(reopened) => *node = Some(reopened),
+                Ok(reopened) => {
+                    #[cfg(test)]
+                    receive_turn_trace::open_completed(monotonic)?;
+                    *node = Some(reopened);
+                }
                 Err(error) => {
+                    #[cfg(test)]
+                    receive_turn_trace::unsuccessful();
                     errors.push(error);
                     continue;
                 }
@@ -362,6 +393,8 @@ fn directory_phase_node(
             // A failed prepare/publication may leave uncertain in-memory state.
             // Release it; the next neighbor must open/authenticate durable state.
             node.take();
+            #[cfg(test)]
+            receive_turn_trace::unsuccessful();
             errors.push(error);
         }
     }
@@ -386,7 +419,11 @@ fn directory_receive_page(
     // A failed last contact has discarded uncertain memory. Authenticate the
     // durable image again before selecting any complete received bytes.
     if node.is_none() {
+        #[cfg(test)]
+        receive_turn_trace::open_started(monotonic)?;
         node = Some(Node::open(config)?);
+        #[cfg(test)]
+        receive_turn_trace::open_completed(monotonic)?;
     }
     #[cfg(test)]
     let started = monotonic()?;
@@ -433,17 +470,29 @@ fn spool_receive(node: &mut Node, peer: &str, contact: &Value) -> Result<()> {
         Value::Null
     };
     if let Some(path) = contact["inbox"].as_str() {
+        #[cfg(test)]
+        receive_turn_trace::inventory_started(monotonic)?;
         let inventory = crate::contact_spool::execute(
             &bytes(&json!({"Inventory":{"path":path,"adapter":adapter,"limits":limits}}))?,
             &[],
             &[],
         )?;
-        for name in inventory["files"]
+        #[cfg(test)]
+        receive_turn_trace::inventory_completed(monotonic)?;
+        let names = inventory["files"]
             .as_array()
             .ok_or("spool files")?
             .iter()
-            .take(4)
-        {
+            .take(4);
+        #[cfg(test)]
+        let names = names.enumerate();
+        for entry in names {
+            #[cfg(test)]
+            let (file_index, name) = entry;
+            #[cfg(not(test))]
+            let name = entry;
+            #[cfg(test)]
+            receive_turn_trace::file(file_index)?;
             let name = name.as_str().ok_or("spool filename")?;
             let target = Path::new(path).join(name);
             #[cfg(test)]
@@ -767,7 +816,14 @@ fn directory_ledger_turn_stopped(
     seen: &mut Vec<String>,
     stopped: &dyn Fn() -> bool,
 ) -> Result<Value> {
+    #[cfg(test)]
+    let receive_turn = receive_turn_trace::begin(
+        CARRIAGE_TRACE.with(|trace| trace.borrow().is_some()),
+        monotonic,
+    )?;
     let received = directory_receive_page(config, stopped, cursor.as_deref(), seen)?;
+    #[cfg(test)]
+    receive_turn_trace::end_receive();
     let mut errors = received.errors;
     let result = tick_ledger_frames(
         options,
@@ -789,6 +845,10 @@ fn directory_ledger_turn_stopped(
     errors.extend(tick.outgoing_errors);
     let mut observation = tick.observation;
     observation["transport_attempt_errors"] = json!(errors);
+    #[cfg(test)]
+    if let Some(receive_turn) = receive_turn {
+        receive_turn.finish(errors.is_empty(), monotonic)?;
+    }
     Ok(observation)
 }
 
@@ -1090,7 +1150,12 @@ mod tests {
         let path = inbox.join(format!("{}.json", digest(&invalid).unwrap()));
         crate::keystore::private_create(&path, &raw).unwrap();
         start_work_trace();
+        let turn = receive_turn_trace::begin(true, monotonic).unwrap().unwrap();
         let received = directory_receive_page(&config, &|| false, None, &[]).unwrap();
+        receive_turn_trace::end_receive();
+        turn.finish(true, || panic!("failed receive turn cannot complete"))
+            .unwrap();
+        drop(turn);
         let work = take_work_trace();
         assert_eq!(received.errors.len(), 1);
         assert!(received.frames.is_empty());
