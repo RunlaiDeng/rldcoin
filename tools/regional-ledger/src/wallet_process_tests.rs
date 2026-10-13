@@ -1,6 +1,6 @@
 //! Fresh signed no-value wallet process boundaries; no independent custody claim.
 use super::*;
-use crate::{wallet, wallet_agent, wallet_client};
+use crate::{wallet, wallet_agent, wallet_app, wallet_client};
 use std::os::unix::{fs::OpenOptionsExt, process::ExitStatusExt};
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -89,15 +89,38 @@ fn wallet_sigkill_child() {
 
 #[test]
 fn real_wallet_sigkill_preserves_original_reservation_caller_and_single_native_debit() {
-    wallet_custody_boundaries(false);
+    wallet_custody_boundaries(false, false);
 }
 
 #[test]
 fn real_caller_sigkill_preserves_retained_approval_and_single_native_debit() {
-    wallet_custody_boundaries(true);
+    wallet_custody_boundaries(true, false);
 }
 
-fn wallet_custody_boundaries(caller_publication: bool) {
+#[test]
+fn keyless_app_restart_after_caller_sigkill_keeps_pending_then_reports_real_inclusion() {
+    wallet_custody_boundaries(true, true);
+}
+
+fn app_options(root: &Path, currency: Hash) -> wallet_app::Options {
+    wallet_app::Options {
+        ledger: root.join("node"),
+        authority: public(1),
+        currency,
+        wallet: root.join("owner-wallet"),
+        heads: root.join("owner-caller"),
+        owner: public(10),
+        expected: None,
+        key: None,
+        encrypted_key: None,
+        passphrase: None,
+        backup_dir: None,
+        miner: None,
+    }
+}
+
+fn wallet_custody_boundaries(caller_publication: bool, application_restart: bool) {
+    assert!(!application_restart || caller_publication);
     let started = std::time::Instant::now();
     for boundary in 0..3 {
         let mut h = Harness::with_rules(crate::paged_bft::PACKED_RULES);
@@ -202,7 +225,7 @@ fn wallet_custody_boundaries(caller_publication: bool) {
         assert_eq!(observed.records.len(), 1);
         assert_eq!(observed.records[0].draft, prepared.draft);
         let original_command = observed.records[0].command.clone();
-        let expected_caller = if caller_publication && boundary > 0 {
+        let mut expected_caller = if caller_publication && boundary > 0 {
             wallet_client::State {
                 head: Some(observed.head().unwrap()),
                 pending: None,
@@ -211,7 +234,7 @@ fn wallet_custody_boundaries(caller_publication: bool) {
         } else {
             pending.clone()
         };
-        let caller_before = fs::read(caller_dir.join("wallet-client.json")).unwrap();
+        let mut caller_before = fs::read(caller_dir.join("wallet-client.json")).unwrap();
         assert_eq!(
             caller_before,
             wallet_client::canonical(&expected_caller).unwrap()
@@ -232,6 +255,76 @@ fn wallet_custody_boundaries(caller_publication: bool) {
             .collect::<Vec<_>>();
         if caller_publication {
             assert_eq!(residues.len(), usize::from(boundary == 0));
+        }
+        if application_restart {
+            let mut app = wallet_app::App::open(app_options(&root, config.currency)).unwrap();
+            let status = app.act(wallet_app::Action::Status {}).unwrap();
+            assert_eq!(status["signing_enabled"], false);
+            assert_eq!(status["live_rld"], false);
+            assert_eq!(
+                status["wallet"]["reserved_owned_outputs"],
+                serde_json::to_value(amount).unwrap()
+            );
+            assert_eq!(status["wallet"]["signed"].as_array().unwrap().len(), 1);
+            assert_eq!(
+                status["wallet"]["signed"][0]["intent_id"],
+                serde_json::to_value(prepared.draft.intent_id).unwrap()
+            );
+            assert_eq!(
+                status["wallet"]["signed"][0]["state"],
+                "SIGNED_PENDING_INCLUSION"
+            );
+            assert!(app.saved.pending.is_none());
+            assert_eq!(app.saved.head, Some(observed.head().unwrap()));
+            assert_eq!(
+                app.act(wallet_app::Action::Sign {
+                    review_id: Hash::ZERO,
+                    review_commitment: prepared.review_commitment
+                })
+                .unwrap_err(),
+                "read-only wallet"
+            );
+            let mut duplicate = prepared.draft.request.clone();
+            duplicate.inputs = Some(vec![input]);
+            assert!(app
+                .act(wallet_app::Action::Prepare {
+                    request: serde_json::to_value(duplicate).unwrap()
+                })
+                .is_err());
+            let recovered = app
+                .act(wallet_app::Action::Recover {
+                    intent: prepared.draft.intent_id,
+                })
+                .unwrap();
+            assert_eq!(recovered["recovered_exact_retry"], true);
+            assert_eq!(
+                recovered["commands"],
+                serde_json::to_value(vec![original_command.clone()]).unwrap()
+            );
+            let ack = app
+                .act(wallet_app::Action::Submit {
+                    intent: prepared.draft.intent_id,
+                })
+                .unwrap();
+            assert_eq!(ack["state"], "QUEUED_FOR_CERTIFIED_INCLUSION");
+            assert_eq!(ack["included"], false);
+            assert_eq!(ack["finalized"], false);
+            let again = app.act(wallet_app::Action::Status {}).unwrap();
+            assert_eq!(
+                again["wallet"]["signed"][0]["state"],
+                "SIGNED_PENDING_INCLUSION"
+            );
+            assert_eq!(
+                again["wallet"]["reserved_owned_outputs"],
+                serde_json::to_value(amount).unwrap()
+            );
+            expected_caller = app.saved.clone();
+            drop(app);
+            caller_before = fs::read(caller_dir.join("wallet-client.json")).unwrap();
+            assert_eq!(
+                caller_before,
+                wallet_client::canonical(&expected_caller).unwrap()
+            );
         }
         let node = Store::open_pinned(
             &root.join("node"),
@@ -360,6 +453,29 @@ fn wallet_custody_boundaries(caller_publication: bool) {
         let client = wallet_client::Client::lock(&caller_dir, &dir, public(10), &cold).unwrap();
         assert_eq!(client.read().unwrap(), recovery.state);
         assert_eq!(super::retained_native_replay::inventory(&root), stable);
+        drop(client);
+        drop(cold);
+        if application_restart {
+            let mut app = wallet_app::App::open(app_options(&root, config.currency)).unwrap();
+            let status = app.act(wallet_app::Action::Status {}).unwrap();
+            assert_eq!(status["signing_enabled"], false);
+            assert_eq!(status["wallet"]["signed"].as_array().unwrap().len(), 1);
+            assert_eq!(
+                status["wallet"]["signed"][0]["intent_id"],
+                serde_json::to_value(prepared.draft.intent_id).unwrap()
+            );
+            assert_eq!(
+                status["wallet"]["signed"][0]["state"],
+                "INCLUDED_IN_LOCAL_LEDGER"
+            );
+            assert_eq!(
+                status["wallet"]["reserved_owned_outputs"],
+                serde_json::to_value(Amount::ZERO).unwrap()
+            );
+            assert_eq!(app.saved.head, Some(signed.wallet_head));
+            drop(app);
+            assert_eq!(super::retained_native_replay::inventory(&root), stable);
+        }
         for (path, raw) in residues {
             assert_eq!(
                 fs::read(path).unwrap(),
@@ -367,7 +483,7 @@ fn wallet_custody_boundaries(caller_publication: bool) {
                 "interrupted caller residue was pruned"
             );
         }
-        eprintln!("Wallet SIGKILL: boundary={boundary} caller_publication={caller_publication} original_reservation=true original_command=true native_debit_once=true caller_and_four_signers_cold=true power_loss=false independent_custody=false");
+        eprintln!("Wallet SIGKILL: boundary={boundary} caller_publication={caller_publication} application_restart={application_restart} original_reservation=true original_command=true native_debit_once=true caller_and_four_signers_cold=true power_loss=false independent_custody=false");
     }
     assert!(
         started.elapsed().as_secs_f64() < 60.0,
