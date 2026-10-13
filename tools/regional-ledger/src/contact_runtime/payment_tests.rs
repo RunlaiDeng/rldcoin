@@ -7,10 +7,16 @@ use crate::{
 };
 use std::sync::mpsc::{self, Receiver, Sender};
 
+// Fix recipient replicas before creating the fixture; never select the fastest
+// replica after observing results. All four replicas still must finish and replay.
+const FIRST_RECIPIENT: usize = 0;
+const SECOND_RECIPIENT: usize = 2;
+
 struct Observation {
     height: u64,
     coins: Vec<(Hash, String, crate::Amount, bool)>,
     finalized: bool,
+    native_verified_at: f64,
 }
 struct Sample {
     intent: Hash,
@@ -58,7 +64,16 @@ fn observe(options: &Options) -> Result<Observation> {
         height: node.chain.height(),
         coins,
         finalized: node.chain.finalized.is_some(),
+        native_verified_at: monotonic()?,
     })
+}
+
+fn second_payment_ready(node: &Observation, input: Hash) -> bool {
+    node.finalized
+        && !node.coins.iter().any(|(id, _, _, _)| *id == input)
+        && node.coins.iter().any(|(_, owner, amount, ready)| {
+            *owner == public(14) && *amount == crate::Amount(100) && *ready
+        })
 }
 fn pay(
     app: &mut wallet_app::App,
@@ -187,7 +202,9 @@ impl Actor {
                             let started = monotonic()?;
                             let result = observe(&self.options);
                             require(timing.len() < 1024, "actor timing record bound")?;
-                            timing.push(json!({"phase":"controller_observe","seconds":monotonic()? - started}));
+                            timing.push(json!({"phase":"controller_observe","seconds":monotonic()? - started,
+                                "native_verified_at":result.as_ref().ok().map(|node|node.native_verified_at),
+                                "observation_error":result.as_ref().err()}));
                             let error = result.as_ref().err().cloned();
                             reply.send(result).map_err(|e| e.to_string())?;
                             if let Some(error) = error {
@@ -493,6 +510,67 @@ fn setup(
 }
 
 #[test]
+fn native_observation_clock_precedes_delayed_reply_and_wrong_root_has_no_observation() {
+    let started = monotonic().unwrap();
+    let root = directory(
+        &fs::canonicalize(std::env::temp_dir())
+            .unwrap()
+            .join(format!("rld-native-payment-clock-{}", random().unwrap())),
+    )
+    .unwrap();
+    eprintln!("Fresh Native observation clock fixture: {}", root.display());
+    let genesis = crate::tests::bootstrap();
+    let currency = genesis.currency.id().unwrap();
+    let node = Store::create(
+        &root.join("ledger"),
+        genesis.clone(),
+        genesis.admissions[0].id().unwrap(),
+        &public(1),
+        currency,
+    )
+    .unwrap();
+    let head = node.storage_head().unwrap();
+    drop(node);
+    let mut options = Options {
+        ledger: root.join("ledger"),
+        authority: public(1),
+        currency,
+        mesh_config: None,
+        bft_config: None,
+        listen: "127.0.0.1:0".parse().unwrap(),
+        miner: None,
+        interval: 0.5,
+        insecure_tcp: false,
+    };
+    let requested_at = monotonic().unwrap();
+    let observed = observe(&options).unwrap();
+    let response_ready = monotonic().unwrap();
+    assert!(observed.native_verified_at >= requested_at);
+    assert!(observed.native_verified_at <= response_ready);
+    assert_eq!(observed.height, 0);
+    assert!(!observed.finalized && observed.coins.is_empty());
+    assert!(!second_payment_ready(&observed, Hash::ZERO));
+    // Delay only release of an already fully Native-checked observation. Its
+    // clock must not be rebased to a later controller/other-replica response.
+    thread::sleep(Duration::from_millis(80));
+    let (sender, receiver) = mpsc::channel();
+    sender.send(Ok(observed)).unwrap();
+    let received = wait(receiver, started + 60.0).unwrap();
+    assert!(received.native_verified_at <= response_ready);
+    assert!(monotonic().unwrap() - received.native_verified_at >= 0.08);
+    let cold = Store::open_pinned(&options.ledger, &public(1), currency, head).unwrap();
+    assert_eq!(cold.storage_head().unwrap(), head);
+    assert!(cold.chain.ledger.coins.is_empty());
+    drop(cold);
+    options.authority = public(99);
+    assert!(
+        observe(&options).is_err(),
+        "wrong root released an observation"
+    );
+    assert!(monotonic().unwrap() - started < 60.0);
+}
+
+#[test]
 fn four_native_replicas_finalize_first_payment_and_actual_recipient_next_spend() {
     ordinary_cycle(bft::RULES);
 }
@@ -531,18 +609,26 @@ fn ordinary_cycle(rules: &str) {
         let first = payment(&workers[3], public(11), None, deadline)?;
         samples.push(
             json!({"intent":first.intent,"input":first.input,"submitted":first.submitted,
-            "queued":first.queued,"recipient_finalized_spendable":null,"latency_seconds":null}),
+            "queued":first.queued,"queue_age_seconds":first.queued-first.submitted,
+            "recipient_actor":FIRST_RECIPIENT,"recipient_native_verified_at":null,
+            "recipient_native_latency_seconds":null,"recipient_finalized_spendable":null,"latency_seconds":null}),
         );
         let input = loop {
             let observed = observations(&workers, deadline)?;
             if let Some((id, _, _, _)) =
-                observed[0].coins.iter().find(|(_, owner, amount, ready)| {
-                    *owner == public(11)
-                        && *amount == crate::Amount(100)
-                        && *ready
-                        && observed[0].finalized
-                })
+                observed[FIRST_RECIPIENT]
+                    .coins
+                    .iter()
+                    .find(|(_, owner, amount, ready)| {
+                        *owner == public(11)
+                            && *amount == crate::Amount(100)
+                            && *ready
+                            && observed[FIRST_RECIPIENT].finalized
+                    })
             {
+                let verified = observed[FIRST_RECIPIENT].native_verified_at;
+                samples[0]["recipient_native_verified_at"] = json!(verified);
+                samples[0]["recipient_native_latency_seconds"] = json!(verified - first.submitted);
                 break *id;
             }
             thread::sleep(Duration::from_millis(55));
@@ -553,17 +639,29 @@ fn ordinary_cycle(rules: &str) {
         let second = payment(&workers[0], public(14), Some(input), deadline)?;
         samples.push(
             json!({"intent":second.intent,"input":second.input,"submitted":second.submitted,
-            "queued":second.queued,"all_replicas_finalized_spendable":null,"latency_seconds":null}),
+            "queued":second.queued,"queue_age_seconds":second.queued-second.submitted,
+            "recipient_actor":SECOND_RECIPIENT,"recipient_native_verified_at":null,
+            "recipient_native_latency_seconds":null,"replica_native_verified_at":[null,null,null,null],
+            "all_replicas_finalized_spendable":null,"latency_seconds":null}),
         );
         loop {
             let observed = observations(&workers, deadline)?;
-            if observed.iter().all(|node| {
-                node.finalized
-                    && !node.coins.iter().any(|(id, _, _, _)| *id == input)
-                    && node.coins.iter().any(|(_, owner, amount, ready)| {
-                        *owner == public(14) && *amount == crate::Amount(100) && *ready
-                    })
-            }) {
+            for (n, node) in observed.iter().enumerate() {
+                if second_payment_ready(node, input)
+                    && samples[1]["replica_native_verified_at"][n].is_null()
+                {
+                    samples[1]["replica_native_verified_at"][n] = json!(node.native_verified_at);
+                    if n == SECOND_RECIPIENT {
+                        samples[1]["recipient_native_verified_at"] = json!(node.native_verified_at);
+                        samples[1]["recipient_native_latency_seconds"] =
+                            json!(node.native_verified_at - second.submitted);
+                    }
+                }
+            }
+            if observed
+                .iter()
+                .all(|node| second_payment_ready(node, input))
+            {
                 break;
             }
             thread::sleep(Duration::from_millis(55));
@@ -672,8 +770,19 @@ fn ordinary_cycle(rules: &str) {
             "whole wallet cold closure exceeded original deadline",
         )
     });
+    let completed_at = monotonic().unwrap();
+    for sample in &mut samples {
+        sample["report_age_seconds"] = json!(completed_at - sample["submitted"].as_f64().unwrap());
+        sample["recipient_pending_age_seconds"] =
+            if sample["recipient_native_verified_at"].is_null() {
+                sample["report_age_seconds"].clone()
+            } else {
+                Value::Null
+            };
+    }
     atomic(&root.join("payment-observations.json"), &json!({"samples":samples,"passed":result.is_ok(),
         "error":result.as_ref().err(),"worker_errors":worker_errors,"whole_seconds":monotonic().unwrap()-started,
+        "recipient_actors":[FIRST_RECIPIENT,SECOND_RECIPIENT],"reported_at":completed_at,
         "independent_operations":false,"latency_percentiles_qualified":false,"fixture_only":true}), 64*1024).unwrap();
     // Retain the complete private sample scope on both success and failure.
     result.unwrap();
