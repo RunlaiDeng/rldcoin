@@ -44,6 +44,7 @@ impl Header {
 pub(crate) enum Record {
     Certified(Box<Snapshot>),
     OriginHistory(Box<CompleteOriginHistory>),
+    OnwardHistory(Box<CompleteOnwardHistory>),
     Evidence(Box<Evidence>),
     Receipt(Box<crate::channel_receipt::Receipt>),
     Contact(Box<crate::contact::Frame>),
@@ -54,6 +55,7 @@ impl Record {
         Ok(match self {
             Self::Certified(s) => vec![*s.clone()],
             Self::OriginHistory(proof) => proof.snapshots.clone(),
+            Self::OnwardHistory(proof) => proof.complete_snapshots()?,
             Self::Evidence(e) => e.snapshots.clone(),
             Self::Contact(frame) => {
                 crate::contact::Frame::unpack(&frame.retained_bytes()?)?
@@ -79,6 +81,7 @@ struct Replay {
     contacts: BTreeMap<Hash, crate::contact::Record>,
     // Derived only from complete origin events; never deserialized state.
     origin_imports: BTreeMap<Hash, (Hash, Hash)>,
+    onward_imports: BTreeMap<Hash, onward_history::Pending>,
 }
 // Borrow the identical BTreeMap order used by the original Evidence Vec.
 // Serialization/byte counting grants no authentication or replay authority.
@@ -178,16 +181,24 @@ impl Replay {
             incidents: BTreeSet::new(),
             contacts: BTreeMap::new(),
             origin_imports: BTreeMap::new(),
+            onward_imports: BTreeMap::new(),
         })
     }
     fn retain_for_next(&mut self) -> Result<()> {
+        self.retain_for_next_with(&BTreeSet::new())
+    }
+    fn retain_for_next_with(&mut self, protected: &BTreeSet<Hash>) -> Result<()> {
         let mut needed = self.receipt_anchors.clone();
+        needed.extend(protected);
         needed.extend(
             self.origin_imports
                 .values()
                 .map(|(_, checkpoint)| *checkpoint),
         );
         needed.extend(self.contacts.values().map(|record| record.snapshot));
+        for pending in self.onward_imports.values() {
+            needed.extend(&pending.anchors);
+        }
         if let Some(id) = self.chain.finalized {
             needed.insert(id);
         }
@@ -334,6 +345,7 @@ impl Replay {
                 }
             }
             Record::OriginHistory(proof) => self.apply_origin_history(proof, stream)?,
+            Record::OnwardHistory(proof) => self.apply_onward_history(proof, stream)?,
             Record::Receipt(receipt) => {
                 receipt.verify_selected(&self.chain, &self.trust, &self.evidence)?;
                 self.receipts.record(*receipt.clone())?;
@@ -396,8 +408,10 @@ impl Replay {
         cost.mark(0);
         self.origin_imports
             .retain(|export, _| !self.chain.ledger.imports.contains_key(export));
+        self.onward_imports
+            .retain(|export, _| !self.chain.ledger.imports.contains_key(export));
         require(
-            self.origin_imports.len() <= MAX_COINS,
+            self.origin_imports.len() <= MAX_COINS && self.onward_imports.len() <= MAX_COINS,
             "complete origin pending import bound",
         )?;
         encode("paged-bft-native-ledger", &self.chain.ledger)?;
@@ -1173,6 +1187,14 @@ pub use packed_inspection::{
 #[path = "paged_store/origin_history.rs"]
 mod origin_history;
 pub use origin_history::CompleteOriginHistory;
+
+#[path = "paged_store/onward_history.rs"]
+mod onward_history;
+pub use onward_history::CompleteOnwardHistory;
+
+#[cfg(test)]
+#[path = "paged_store/onward_history_tests.rs"]
+mod onward_history_tests;
 
 #[cfg(test)]
 #[path = "paged_store/origin_history_tests.rs"]

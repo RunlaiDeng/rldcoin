@@ -72,6 +72,16 @@ exports, further sources and reconfiguration refuse. Both selected native states
 share the original 8-MiB retention ceiling. Complete later tails still verify,
 and the resulting historical accounting grants no live or recovery authority.
 
+A separately signed complete-onward-history admission supports a fixed A-to-B-to-C
+route. It executes the complete origin and intermediate histories from genesis,
+retains the whole pending export dependency closure, and persists original typed
+evidence for cold replay. Evidence acceptance itself creates no credit; normal
+certified local import, maturity, permanent deduplication and owner spending remain
+required. Full retained A/B conflict scans and known ancestor quarantine precede
+acknowledgement or pending import output. Original origin-only entrypoints and
+network formats do not adopt this new event. This bounded Store/library entry is
+separate from ordinary network scheduling, general ancestry and independent custody.
+
 Full long-history recovery, permanent deduplication at target scale, arbitrary
 multi-source value composition, independent operators and custody, security and
 supply-chain review, authenticated suite/epoch adoption, funding/resource models,

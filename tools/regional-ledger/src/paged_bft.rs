@@ -8,11 +8,15 @@ pub fn is_packed_profile(rules: &str) -> bool {
 }
 pub const ORIGIN_HISTORY_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ORIGIN-HISTORY-FIXTURE-V1";
 pub const ORIGIN_NETWORK_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ORIGIN-NETWORK-FIXTURE-V2";
+pub const ONWARD_HISTORY_RULES: &str = "RLD-REGIONAL-BFT-COMPLETE-ONWARD-HISTORY-FIXTURE-V1";
 pub fn is_origin_profile(rules: &str) -> bool {
     rules == ORIGIN_HISTORY_RULES || rules == ORIGIN_NETWORK_RULES
 }
 pub fn is_profile(rules: &str) -> bool {
-    rules == RULES || is_packed_profile(rules) || is_origin_profile(rules)
+    rules == RULES
+        || is_packed_profile(rules)
+        || is_origin_profile(rules)
+        || rules == ONWARD_HISTORY_RULES
 }
 pub fn rules_hash() -> Result<Hash> {
     id(
@@ -38,6 +42,13 @@ pub fn rules_hash_for(rules: &str) -> Result<Hash> {
             "complete-origin-network-bft-rules-v2",
             &(
                 include_str!("origin_network_profile.md"),
+                rules_hash_for(ORIGIN_HISTORY_RULES)?,
+            ),
+        ),
+        ONWARD_HISTORY_RULES => id(
+            "complete-onward-history-bft-rules-v1",
+            &(
+                include_str!("onward_history_profile.md"),
                 rules_hash_for(ORIGIN_HISTORY_RULES)?,
             ),
         ),
