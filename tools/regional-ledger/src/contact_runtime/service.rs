@@ -97,15 +97,11 @@ pub(super) fn trace_subwork(phase: &'static str, started: f64) -> Result<()> {
     })
 }
 #[cfg(test)]
-pub(super) fn trace_work(phase: &str, started: f64) -> Result<()> {
-    CARRIAGE_TRACE.with(|trace| -> Result<()> {
-        let mut trace = trace.borrow_mut();
-        if let Some(records) = trace.as_mut() {
-            require(records.len() < 4096, "diagnostic carriage record bound")?;
-            records.push(json!({"phase":phase,"seconds":monotonic()? - started}));
-        }
-        Ok(())
-    })
+pub(super) fn trace_work(phase: &'static str, started: f64) -> Result<()> {
+    // Phase-only durations carry no event identity or original payment clock.
+    // Preserve their complete count and total in the existing bounded map;
+    // identified carriage events keep their separate unchanged strict bound.
+    trace_subwork(phase, started)
 }
 extern "C" fn stop(_: i32) {
     STOP.store(true, Ordering::Release);
@@ -1022,3 +1018,7 @@ mod tests {
 #[cfg(test)]
 #[path = "payment_tests.rs"]
 mod payment_tests;
+
+#[cfg(test)]
+#[path = "trace_tests.rs"]
+mod trace_tests;
