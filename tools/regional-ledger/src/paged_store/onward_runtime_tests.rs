@@ -1921,3 +1921,6 @@ mod service_frame;
 
 #[path = "onward_service_routing_tests.rs"]
 mod service_routing;
+
+#[path = "onward_service_payment_tests.rs"]
+mod service_payment;

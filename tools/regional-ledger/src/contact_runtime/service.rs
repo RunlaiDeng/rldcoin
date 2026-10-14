@@ -1,21 +1,25 @@
 use super::*;
 #[cfg(test)]
+#[path = "service_independent_transport_tests.rs"]
+mod independent_transport_tests;
+#[cfg(test)]
 #[path = "regional_payload_decode_tests.rs"]
 mod regional_payload_decode_tests;
+#[path = "service_workers.rs"]
+mod service_workers;
 
 use crate::{storage::Store, Hash};
 use serde_json::{json, Value};
 use std::{
     fs,
     net::{SocketAddrV4, TcpListener, TcpStream},
-    os::fd::IntoRawFd,
-    sync::{
-        atomic::{AtomicBool, Ordering},
-        Arc,
-    },
-    thread::{self, JoinHandle},
+    os::fd::AsRawFd,
+    sync::atomic::{AtomicBool, Ordering},
+    thread::{self, ScopedJoinHandle},
     time::Duration,
 };
+#[cfg(test)]
+use std::{sync::Arc, thread::JoinHandle};
 
 static STOP: AtomicBool = AtomicBool::new(false);
 #[cfg(test)]
@@ -195,12 +199,14 @@ fn send(handle: u64, deadline: f64, value: Value) -> Result<()> {
 
 fn accept(config: &Value, context: u64, material: &Value, stream: TcpStream) -> Result<()> {
     let deadline = monotonic()? + 3.0;
-    let fd = stream.into_raw_fd();
-    // The native Accept operation owns the descriptor on both success and refusal.
+    // Native Accept borrows this descriptor and retains its own duplicate.
+    // Keep the original owned until that call returns, including on refusal.
+    let fd = stream.as_raw_fd();
     let handle = tls(json!({"Accept":{"context":context,"fd":fd,"deadline":deadline}}))?
         .as_u64()
         .ok_or("TLS accepted handle")?;
     let connection = Connection(handle);
+    drop(stream);
     let (challenge, id, network, peers) = {
         let node = Node::open(config)?;
         let value=node.sign("tcp-challenge",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
@@ -935,71 +941,101 @@ pub fn run(options: Options) -> Result<()> {
         libc::signal(libc::SIGTERM, stop as *const () as libc::sighandler_t);
         libc::signal(libc::SIGINT, stop as *const () as libc::sighandler_t);
     }
-    let running = Arc::new(AtomicBool::new(true));
-    let inbound_running = running.clone();
-    let inbound_config = config.clone();
-    let material = context["material"].clone();
-    let handle = context_handle.0;
-    let inbound = thread::spawn(move || -> Result<()> {
-        let mut workers: Vec<JoinHandle<Result<()>>> = Vec::new();
-        while inbound_running.load(Ordering::Acquire) {
-            let mut i = 0;
-            while i < workers.len() {
-                if workers[i].is_finished() {
-                    let w = workers.remove(i);
-                    if let Err(error) = w.join().map_err(|_| "inbound worker panicked")? {
-                        eprintln!("inbound contact refused: {error}");
-                    }
-                } else {
-                    i += 1;
-                }
-            }
-            match listener.accept() {
-                Ok((stream, _)) if workers.len() < 2 => {
-                    let config = inbound_config.clone();
-                    let material = material.clone();
-                    workers.push(thread::spawn(move || {
-                        accept(&config, handle, &material, stream)
-                    }));
-                }
-                Ok((stream, _)) => drop(stream),
-                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                    thread::sleep(Duration::from_millis(10))
-                }
-                Err(e) => return Err(e.to_string()),
-            }
-        }
-        for worker in workers {
-            if let Err(error) = worker.join().map_err(|_| "inbound worker panicked")? {
-                eprintln!("inbound contact refused: {error}");
-            }
-        }
-        Ok(())
-    });
-    let result = (|| {
-        while !STOP.load(Ordering::Acquire) {
-            require(
-                !inbound.is_finished(),
-                "Rust contact listener stopped unexpectedly",
-            )?;
-            let directory_only = contacts
-                .values()
-                .all(|contact| contact.get("host").is_none());
-            if !directory_only {
+    let directory_only = contacts
+        .values()
+        .all(|contact| contact.get("host").is_none());
+    let mut workers = service_workers::Workers::new();
+    if !directory_only {
+        let outgoing_config = config.clone();
+        let interval = options.interval;
+        workers.spawn("Rust contact outgoing", move |running| {
+            // One ordered sweep at a time, with no queued catch-up sweeps.
+            // Network waits never prevent the caller's sole Native Runtime
+            // from attempting its next turn. Every contact still prepares,
+            // authenticates and durably retains through the ordinary path.
+            while running.load(Ordering::Acquire) && !STOP.load(Ordering::Acquire) {
                 for (peer, contact) in &contacts {
-                    if STOP.load(Ordering::Acquire) {
+                    if !running.load(Ordering::Acquire) || STOP.load(Ordering::Acquire) {
                         break;
                     }
                     let result = if contact.get("host").is_some() {
-                        outgoing(&config, peer, contact)
+                        outgoing(&outgoing_config, peer, contact)
                     } else {
-                        spool(&config, peer, contact)
+                        spool(&outgoing_config, peer, contact)
                     };
                     if let Err(error) = result {
                         eprintln!("contact attempt retained without custody claim: {error}");
                     }
                 }
+                let until = monotonic()? + interval;
+                while running.load(Ordering::Acquire)
+                    && !STOP.load(Ordering::Acquire)
+                    && monotonic()? < until
+                {
+                    thread::sleep(Duration::from_millis(10));
+                }
             }
+            Ok(())
+        })?;
+    }
+    let inbound_config = config.clone();
+    let material = context["material"].clone();
+    let handle = context_handle.0;
+    workers.spawn("Rust contact listener", move |inbound_running| {
+        thread::scope(|scope| {
+            let mut workers: Vec<ScopedJoinHandle<'_, Result<()>>> = Vec::new();
+            let result = (|| {
+                while inbound_running.load(Ordering::Acquire) {
+                    let mut i = 0;
+                    while i < workers.len() {
+                        if workers[i].is_finished() {
+                            let w = workers.remove(i);
+                            if let Err(error) = w.join().map_err(|_| "inbound worker panicked")? {
+                                eprintln!("inbound contact refused: {error}");
+                            }
+                        } else {
+                            i += 1;
+                        }
+                    }
+                    match listener.accept() {
+                        Ok((stream, _)) if workers.len() < 2 => {
+                            let config = inbound_config.clone();
+                            let material = material.clone();
+                            workers.push(
+                                thread::Builder::new()
+                                    .name("Rust contact receive".into())
+                                    .spawn_scoped(scope, move || {
+                                        accept(&config, handle, &material, stream)
+                                    })
+                                    .map_err(|e| e.to_string())?,
+                            );
+                        }
+                        Ok((stream, _)) => drop(stream),
+                        Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                            thread::sleep(Duration::from_millis(10))
+                        }
+                        Err(e) => return Err(e.to_string()),
+                    }
+                }
+                Ok(())
+            })();
+            let mut stopped = Ok(());
+            for worker in workers {
+                match worker.join() {
+                    Ok(Ok(())) => {}
+                    Ok(Err(error)) => eprintln!("inbound contact refused: {error}"),
+                    Err(_) => stopped = Err("inbound worker panicked".to_string()),
+                }
+            }
+            preserve_cleanup_error(result, stopped)
+        })
+    })?;
+    let service_instance = random()?;
+    let mut completed_turns = 0u64;
+    let result = (|| {
+        while !STOP.load(Ordering::Acquire) {
+            workers.require_running()?;
+            let turn_started = monotonic()?;
             let result = if directory_only {
                 directory_ledger_turn_stopped(
                     &options,
@@ -1019,11 +1055,33 @@ pub fn run(options: Options) -> Result<()> {
                 )
             };
             match result {
-                Ok(observation) => atomic(
-                    &root.join("regional-contact-status.json"),
-                    &observation,
-                    64 * 1024,
-                )?,
+                Ok(mut observation) => {
+                    if observation["progress_observation_available"] == true {
+                        let completed = monotonic()?;
+                        require(
+                            completed >= turn_started,
+                            "service turn clock moved backwards",
+                        )?;
+                        completed_turns = completed_turns
+                            .checked_add(1)
+                            .ok_or("service turn observation counter exhausted")?;
+                        // Local diagnostics only, never authorization or a
+                        // scheduling clock. Each successful turn now publishes
+                        // a changed status even when ledger/mesh state is equal;
+                        // immutable evidence retains its exact-byte reuse.
+                        observation["service_turn"] = json!({
+                            "instance":service_instance,"pid":std::process::id(),
+                            "sequence":completed_turns,"started_at":turn_started,
+                            "completed_at":completed,"clock":"local-monotonic-seconds",
+                            "diagnostic_only":true
+                        });
+                    }
+                    atomic(
+                        &root.join("regional-contact-status.json"),
+                        &observation,
+                        64 * 1024,
+                    )?;
+                }
                 Err(error) if lock_contention(&error) => atomic(
                     &root.join("regional-contact-status.json"),
                     &unknown_progress(options.currency, region),
@@ -1038,18 +1096,37 @@ pub fn run(options: Options) -> Result<()> {
         }
         Ok(())
     })();
-    running.store(false, Ordering::Release);
-    let stopped = inbound
-        .join()
-        .map_err(|_| "Rust contact listener panicked")?;
-    result?;
-    stopped?;
-    Ok(())
+    let stopped = workers.finish();
+    preserve_cleanup_error(result, stopped)
+}
+
+fn preserve_cleanup_error(result: Result<()>, stopped: Result<()>) -> Result<()> {
+    match (result, stopped) {
+        (Err(error), Err(cleanup)) => Err(format!("{error}; contact worker cleanup: {cleanup}")),
+        (Err(error), Ok(())) | (Ok(()), Err(error)) => Err(error),
+        (Ok(()), Ok(())) => Ok(()),
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn accepted_socket_owned_by_service_closes_on_tls_refusal() {
+        use std::io::Read;
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        client
+            .set_read_timeout(Some(Duration::from_secs(1)))
+            .unwrap();
+        let (accepted, _) = listener.accept().unwrap();
+        let result = accept(&Value::Null, u64::MAX, &Value::Null, accepted);
+        assert_eq!(result.unwrap_err(), "TLS context handle absent");
+        // Peer EOF proves the owned accepted stream is closed without
+        // probing or closing a descriptor number another test could reuse.
+        assert_eq!(client.read(&mut [0u8; 1]).unwrap(), 0);
+    }
 
     #[test]
     fn native_lock_contention_is_unknown_then_replays_after_release() {
