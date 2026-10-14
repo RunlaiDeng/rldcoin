@@ -2,6 +2,8 @@ use super::*;
 #[cfg(test)]
 #[path = "service_independent_transport_tests.rs"]
 mod independent_transport_tests;
+#[path = "service_native_observation.rs"]
+pub(super) mod native_observation;
 #[cfg(test)]
 #[path = "service_receipt_status_tests.rs"]
 mod receipt_status_tests;
@@ -650,6 +652,7 @@ pub(super) fn tick_ledger(
     // Capture complete received bytes under the transport lock, then release it before native ledger replay.
     #[cfg(test)]
     let started = monotonic()?;
+    native_observation::event("mesh-receive-started", || Ok(json!({})))?;
     let node = if runtime.is_some() {
         Node::open_or_defer_mesh(config)?
     } else {
@@ -663,6 +666,9 @@ pub(super) fn tick_ledger(
         // to the original Runtime. All later errors retain their meaning.
         None => Vec::new(),
     };
+    native_observation::event("mesh-receive-completed", || {
+        Ok(json!({"deferred":receive_deferred,"frame_count":frames.len()}))
+    })?;
     #[cfg(test)]
     trace_work("mesh-native-page", started)?;
     let mut tick = tick_ledger_frames(options, config, runtime, cursor, seen, frames, None)?;
@@ -684,9 +690,13 @@ fn tick_ledger_frames(
     frames: ReceivedFrames,
     directory: Option<&dyn Fn() -> bool>,
 ) -> Result<LedgerTick> {
+    native_observation::event("native-store-open-started", || Ok(json!({})))?;
     #[cfg(test)]
     let started = monotonic()?;
     let mut store = Store::open(&options.ledger, &options.authority, options.currency)?;
+    native_observation::event("native-store-open-completed", || {
+        Ok(json!({"height":store.chain.height(),"region":store.chain.region}))
+    })?;
     #[cfg(test)]
     trace_work("native-store-open", started)?;
     for (id, raw) in &frames {
@@ -707,6 +717,9 @@ fn tick_ledger_frames(
             *cursor = Some(id.clone());
             continue;
         }
+        native_observation::event("native-frame-started", || {
+            Ok(json!({"packet_id":id,"frame_id":frame.message_id,"kind":frame.kind}))
+        })?;
         if frame.kind == "regional-bft" {
             if let Some(runtime) = runtime {
                 #[cfg(test)]
@@ -725,6 +738,12 @@ fn tick_ledger_frames(
                     Ok(())
                 })?;
             }
+            native_observation::event("native-frame-completed", || {
+                Ok(
+                    json!({"packet_id":id,"frame_id":frame.message_id,"height":store.chain.height(),
+                    "handler":"regional-bft","runtime_present":runtime.is_some()}),
+                )
+            })?;
             *cursor = Some(id.clone());
             continue;
         }
@@ -739,12 +758,22 @@ fn tick_ledger_frames(
         } else {
             store.contact_apply(raw, options.miner.clone())?;
         }
+        native_observation::event("native-frame-completed", || {
+            Ok(
+                json!({"packet_id":id,"frame_id":frame.message_id,"height":store.chain.height(),
+                "handler":frame.kind}),
+            )
+        })?;
         *cursor = Some(id.clone());
     }
     if let Some(runtime) = runtime {
+        native_observation::event("native-runtime-started", || Ok(json!({})))?;
         #[cfg(test)]
         let started = monotonic()?;
         runtime.tick(&mut store)?;
+        native_observation::event("native-runtime-completed", || {
+            Ok(json!({"height":store.chain.height()}))
+        })?;
         #[cfg(test)]
         trace_work("native-consensus-tick", started)?;
     }
@@ -759,6 +788,9 @@ fn tick_ledger_frames(
         }
     }
     drop(store);
+    native_observation::event("native-store-released", || {
+        Ok(json!({"height":height,"region":region}))
+    })?;
     #[cfg(test)]
     let _post_native = if directory.is_some() && runtime.is_some() {
         post_native_trace::begin(|| {
@@ -775,6 +807,7 @@ fn tick_ledger_frames(
     // Directory-only carriage shares it through durable preparation; socket
     // adapters retain their original independent open/wait boundaries.
     let first = if directory.is_some() {
+        native_observation::event("post-native-mesh-started", || Ok(json!({})))?;
         let mut node = open_directory_node(config)?;
         if let Some(runtime) = runtime {
             #[cfg(test)]
@@ -785,6 +818,7 @@ fn tick_ledger_frames(
         }
         node
     } else {
+        native_observation::event("post-native-mesh-started", || Ok(json!({})))?;
         if let Some(runtime) = runtime {
             #[cfg(test)]
             let started = monotonic()?;
@@ -795,6 +829,7 @@ fn tick_ledger_frames(
         Node::open(config)?
     };
     let mut node = Some(first);
+    native_observation::event("post-native-mesh-open-completed", || Ok(json!({})))?;
     let node_ref = node.as_mut().ok_or("missing post-ledger custody node")?;
     let adverts = node_ref.advertised_destinations()?;
     for (region, raw) in offers {
@@ -806,7 +841,9 @@ fn tick_ledger_frames(
     }
     #[cfg(test)]
     let archive_started = payment_trace_enabled().then(monotonic).transpose()?;
+    native_observation::event("mesh-archive-started", || Ok(json!({})))?;
     node_ref.archive_completed()?;
+    native_observation::event("mesh-archive-completed", || Ok(json!({})))?;
     #[cfg(test)]
     if let Some(started) = archive_started {
         trace_subwork("mesh-archive-completed", started)?;
@@ -895,6 +932,7 @@ fn unknown_progress(currency: Hash, region: Hash) -> Value {
 }
 
 pub fn run(options: Options) -> Result<()> {
+    let native_observation_enabled = native_observation::enabled_from_env()?;
     require(
         options.interval.is_finite() && (0.05..=3600.0).contains(&options.interval),
         "contact interval outside bound",
@@ -1047,11 +1085,20 @@ pub fn run(options: Options) -> Result<()> {
         })
     })?;
     let service_instance = random()?;
+    let native_observer = native_observation::start(
+        native_observation_enabled,
+        &root,
+        &service_instance,
+        options.currency,
+        region,
+        &id,
+    )?;
     let mut completed_turns = 0u64;
     let result = (|| {
         while !STOP.load(Ordering::Acquire) {
             workers.require_running()?;
             let turn_started = monotonic()?;
+            native_observation::begin_turn(turn_started)?;
             let result = if directory_only {
                 directory_ledger_turn_stopped(
                     &options,
@@ -1069,6 +1116,17 @@ pub fn run(options: Options) -> Result<()> {
                     &mut receive_cursor,
                     &mut receive_seen,
                 )
+            };
+            // Preserve the original Native/transport error if the observer also
+            // fails. A diagnostic failure never turns that refusal into success.
+            let observation_end = native_observation::end_turn(&result);
+            let result = match (result, observation_end) {
+                (Err(error), Err(observer)) => {
+                    Err(format!("{error}; Native observation: {observer}"))
+                }
+                (Err(error), Ok(())) => Err(error),
+                (Ok(_), Err(observer)) => Err(observer),
+                (Ok(value), Ok(())) => Ok(value),
             };
             match result {
                 Ok(mut observation) => {
@@ -1112,6 +1170,11 @@ pub fn run(options: Options) -> Result<()> {
         }
         Ok(())
     })();
+    let observation_ended = match native_observer {
+        Some(observer) => observer.finish(result.is_ok()),
+        None => Ok(()),
+    };
+    let result = preserve_cleanup_error(result, observation_ended);
     let stopped = workers.finish();
     preserve_cleanup_error(result, stopped)
 }

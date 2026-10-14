@@ -1083,6 +1083,13 @@ impl Runtime {
     }
 
     pub(crate) fn tick(&mut self, node: &mut Store) -> Result<()> {
+        super::service::native_observation::event("bft-tick-started", || {
+            Ok(
+                json!({"native_height":node.chain.height(),"runtime_height":self.archive.runtime.height,
+                "clock_context":self.slot.as_ref().map(|slot|&slot.0),
+                "clock_round":self.slot.as_ref().map(|slot|slot.1),"entered_at":self.entered}),
+            )
+        })?;
         #[cfg(test)]
         let started = super::service::monotonic()?;
         self.flush(node)?;
@@ -1155,7 +1162,47 @@ impl Runtime {
                     "ordered_messages":input.order.len()},
                 "scheduler":null}));
         }
+        super::service::native_observation::event("bft-scheduler-started", || {
+            Ok(
+                json!({"context":input.context,"round":round,"entered_at":input.entered_at,
+                "interval":input.interval,"timeout":input.timeout,"stopped":input.stopped,
+                "stage":input.stage,"ordered_messages":input.order.len(),
+                "caller_head":head,"archive_head":self.head}),
+            )
+        })?;
         let observation = tick::observe(node, pins, input)?;
+        super::service::native_observation::event("bft-decision-observed", || {
+            let label = match &observation.action {
+                tick::Decision::Phase(phase::Action::Idle) => "idle",
+                tick::Decision::Phase(phase::Action::Prepare { .. }) => "prepare",
+                tick::Decision::Phase(phase::Action::Commit { .. }) => "commit",
+                tick::Decision::Phase(phase::Action::Finalize { .. }) => "finalize",
+                tick::Decision::Propose { .. } => "propose",
+                tick::Decision::Timeout { .. } => "timeout",
+                tick::Decision::RefreshTimeout => "refresh-timeout",
+                tick::Decision::WaitInitial { .. } => "initial-wait",
+            };
+            let (selected_round, selected_value, high_value) = match &observation.action {
+                tick::Decision::Phase(phase::Action::Prepare {
+                    proposal, value, ..
+                })
+                | tick::Decision::Phase(phase::Action::Commit {
+                    proposal, value, ..
+                }) => (Some(proposal.round), Some(*value), None),
+                tick::Decision::Propose { round, high, .. } => (Some(*round), None, *high),
+                tick::Decision::Timeout { round, .. } => (Some(*round), None, None),
+                _ => (None, None, None),
+            };
+            Ok(
+                json!({"context":observation.context,"round":observation.round,
+                "selected_round":selected_round,"selected_value":selected_value,"high_value":high_value,
+                "validator_index":self.config.validators.iter().position(|v|v.key==observation.key),
+                "decision":label,"entered_at":self.entered,
+                "monotonic_now":observation.monotonic_now,
+                "authenticated_messages":observation.authenticated_messages,
+                "controls":self.native_control_metadata(observation.context.parent_height, None)?}),
+            )
+        })?;
         #[cfg(test)]
         if let Some(value) = self
             .last_probe_predecision
@@ -1251,6 +1298,15 @@ impl Runtime {
         #[cfg(test)]
         let started = super::service::monotonic()?;
         let result = self.persist(node);
+        if result.is_ok() {
+            super::service::native_observation::event("bft-tick-completed", || {
+                Ok(
+                    json!({"native_height":node.chain.height(),"runtime_height":self.archive.runtime.height,
+                    "tip":self.archive.runtime.tip,"clock_context":self.slot.as_ref().map(|slot|&slot.0),
+                    "clock_round":self.slot.as_ref().map(|slot|slot.1),"entered_at":self.entered}),
+                )
+            })?;
+        }
         #[cfg(test)]
         super::service::trace_subwork("consensus-durable-archive", started)?;
         result
@@ -1511,6 +1567,13 @@ impl Runtime {
                 selected.push(id);
             }
         }
+        super::service::native_observation::event("broadcast-selection-completed", || {
+            Ok(
+                json!({"runtime_height":self.archive.runtime.height,"current_count":current_count,
+                "selected":selected,
+                "controls":self.native_control_metadata(self.archive.runtime.height, Some(&selected))?}),
+            )
+        })?;
         let mut priority = Vec::new();
         let destinations = self
             .config
@@ -1545,7 +1608,13 @@ impl Runtime {
             #[cfg(test)]
             let started = super::service::monotonic()?;
             let raws = frames.iter().map(Vec::as_slice).collect::<Vec<_>>();
+            super::service::native_observation::event("broadcast-enqueue-started", || {
+                Ok(json!({"selected":selected,"destinations":destinations}))
+            })?;
             let packets = mesh.enqueue_frame_batch(&raws, &destinations)?;
+            super::service::native_observation::event("broadcast-enqueue-completed", || {
+                Ok(json!({"selected":selected,"destinations":destinations,"packet_ids":packets}))
+            })?;
             #[cfg(test)]
             super::page_watch::observe_enqueued(&selected, &frame_ids, &destinations, &packets);
             #[cfg(test)]
@@ -1576,6 +1645,82 @@ impl Runtime {
             .filter(|n| *n <= i64::MAX as u64)
             .ok_or("BFT carriage cursor exhausted")?;
         Ok(())
+    }
+
+    // Borrow only scalar metadata of records already used by the ordinary
+    // Native verifier. This diagnostic never rebuilds an envelope or a ledger.
+    fn native_control_metadata(&self, height: u64, selected: Option<&[Hash]>) -> Result<Value> {
+        let mut controls = Vec::new();
+        for (id, record) in &self.archive.runtime.messages {
+            if selected.is_some_and(|ids| !ids.contains(id)) {
+                continue;
+            }
+            let signed = &record.body["Signed"];
+            let (kind, parent_height, round, voter, context) = if let Some(p) =
+                signed.get("Proposal")
+            {
+                let blocks = p["snapshot"]["blocks"]
+                    .as_array()
+                    .ok_or("diagnostic proposal blocks unavailable")?;
+                let height = if blocks.len() == 1 {
+                    Some(0)
+                } else {
+                    blocks
+                        .get(blocks.len().saturating_sub(2))
+                        .and_then(|b| b["header"]["height"].as_u64())
+                };
+                let statement = &p["snapshot"]["statement"];
+                let previous = blocks.get(blocks.len().saturating_sub(2));
+                let context = json!({"currency":statement["currency"],"region":statement["region"],
+                    "epoch":statement["epoch"],"previous":statement["previous"],
+                    "parent_height":height,
+                    "parent_block":blocks.last().map(|b|&b["header"]["parent"]),
+                    "parent_state":if blocks.len()>1 {previous.map(|b|&b["header"]["state"])} else {None}});
+                (
+                    "proposal",
+                    height,
+                    p["round"].as_u64(),
+                    p["leader"]["key"].as_str(),
+                    context,
+                )
+            } else if let Some(v) = signed.get("Vote") {
+                let kind = match v["phase"].as_str() {
+                    Some("Prepare") => "prepare",
+                    Some("Commit") => "commit",
+                    _ => "other-vote",
+                };
+                (
+                    kind,
+                    v["context"]["parent_height"].as_u64(),
+                    v["round"].as_u64(),
+                    v["approval"]["key"].as_str(),
+                    v["context"].clone(),
+                )
+            } else if let Some(v) = signed.get("Timeout") {
+                (
+                    "timeout",
+                    v["context"]["parent_height"].as_u64(),
+                    v["round"].as_u64(),
+                    v["approval"]["key"].as_str(),
+                    v["context"].clone(),
+                )
+            } else if record.body.get("Submission").is_some() {
+                ("submission", None, None, None, Value::Null)
+            } else {
+                ("other", None, None, None, Value::Null)
+            };
+            if selected.is_none() && parent_height != Some(height) && kind != "submission" {
+                continue;
+            }
+            controls.push(json!({"body_id":id,"kind":kind,"parent_height":parent_height,
+                "round":round,"local":record.local,"value":record.value,"context":context,
+                "validator_index":voter.and_then(|key|self.config.validators.iter().position(|v|v.key==key))}));
+        }
+        Ok(
+            json!({"records":controls,"all_retained_records":self.archive.runtime.messages.len(),
+            "reported_context_height":height,"selected_only":selected.is_some(),
+            "diagnostic_only":true,"signing_authority":false}),
+        )
     }
 
     #[cfg(test)]
