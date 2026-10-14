@@ -1,4 +1,6 @@
 use super::*;
+#[path = "service_carriage_observation.rs"]
+mod carriage_observation;
 #[cfg(test)]
 #[path = "service_independent_transport_tests.rs"]
 mod independent_transport_tests;
@@ -202,79 +204,223 @@ fn send(handle: u64, deadline: f64, value: Value) -> Result<()> {
     Ok(())
 }
 
-fn accept(config: &Value, context: u64, material: &Value, stream: TcpStream) -> Result<()> {
-    let deadline = monotonic()? + 3.0;
-    // Native Accept borrows this descriptor and retains its own duplicate.
-    // Keep the original owned until that call returns, including on refusal.
-    let fd = stream.as_raw_fd();
-    let handle = tls(json!({"Accept":{"context":context,"fd":fd,"deadline":deadline}}))?
-        .as_u64()
-        .ok_or("TLS accepted handle")?;
-    let connection = Connection(handle);
-    drop(stream);
-    let (challenge, id, network, peers) = {
-        let node = Node::open(config)?;
-        let value=node.sign("tcp-challenge",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
+fn carriage_event(
+    observation: &mut Option<carriage_observation::Attempt>,
+    phase: &str,
+    detail: impl FnOnce() -> Result<Value>,
+) {
+    if let Some(observation) = observation {
+        observation.event(phase, detail);
+    }
+}
+
+fn carriage_packets(bundle: &Value) -> Result<Value> {
+    let transits = bundle["body"]["transits"]
+        .as_array()
+        .ok_or("carriage diagnostic transits absent")?;
+    require(transits.len() <= 4, "carriage diagnostic transit bound")?;
+    Ok(json!({
+        "packet_ids":transits.iter().map(|transit|&transit["routing"]["body"]["packet_id"]).collect::<Vec<_>>(),
+        "frame_ids":transits.iter().map(|transit|&transit["routing"]["body"]["frame_id"]).collect::<Vec<_>>(),
+        "destination_ids":transits.iter().map(|transit|&transit["packet"]["body"]["destination"]).collect::<Vec<_>>(),
+        "receipt_count":bundle["body"]["receipts"].as_array().ok_or("carriage diagnostic receipts absent")?.len()}))
+}
+
+fn accept(
+    config: &Value,
+    context: u64,
+    material: &Value,
+    stream: TcpStream,
+    sink: Option<&carriage_observation::Sink>,
+) -> Result<()> {
+    let mut observation = sink.and_then(|sink| sink.begin_attempt("incoming", || Ok(json!({}))));
+    let result = (|| {
+        let deadline = monotonic()? + 3.0;
+        // Native Accept borrows this descriptor and retains its own duplicate.
+        // Keep the original owned until that call returns, including on refusal.
+        let fd = stream.as_raw_fd();
+        carriage_event(&mut observation, "tls-accept-started", || Ok(json!({})));
+        let handle = tls(json!({"Accept":{"context":context,"fd":fd,"deadline":deadline}}))?
+            .as_u64()
+            .ok_or("TLS accepted handle")?;
+        carriage_event(&mut observation, "tls-accept-completed", || Ok(json!({})));
+        let connection = Connection(handle);
+        drop(stream);
+        let (challenge, id, network, peers) = {
+            carriage_event(&mut observation, "challenge-open-started", || Ok(json!({})));
+            let node = Node::open(config)?;
+            carriage_event(&mut observation, "challenge-open-completed", || {
+                Ok(json!({}))
+            });
+            let value=node.sign("tcp-challenge",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
             "network":node.network,"node_id":node.id,"nonce":random()?,"tls_cert_sha256":material["fingerprint"]}))?;
-        (
-            value,
-            node.id.clone(),
-            node.network.clone(),
-            node.contacts.keys().cloned().collect::<Vec<_>>(),
-        )
-    };
-    send(handle, deadline, challenge.clone())?;
-    let request = recv(handle, deadline)?;
-    let checked = crypto(
-        json!({"Exchange":{"TcpRequest":{"network":network,"signed":request,"recipient":id,
+            (
+                value,
+                node.id.clone(),
+                node.network.clone(),
+                node.contacts.keys().cloned().collect::<Vec<_>>(),
+            )
+        };
+        carriage_event(&mut observation, "challenge-send-started", || {
+            Ok(json!({"challenge_id":challenge["body"]["nonce"]}))
+        });
+        send(handle, deadline, challenge.clone())?;
+        carriage_event(&mut observation, "challenge-send-completed", || {
+            Ok(json!({}))
+        });
+        carriage_event(&mut observation, "request-receive-started", || {
+            Ok(json!({}))
+        });
+        let request = recv(handle, deadline)?;
+        carriage_event(&mut observation, "request-receive-completed", || {
+            Ok(json!({}))
+        });
+        let checked = crypto(
+            json!({"Exchange":{"TcpRequest":{"network":network,"signed":request,"recipient":id,
         "peers":peers,"nonce":challenge["body"]["nonce"],"limits":limits()}}}),
-    )?;
-    let peer = checked["body"]["node_id"].as_str().ok_or("request peer")?;
-    let response = {
-        let mut node = Node::open(config)?;
-        // All incoming bytes are durable before producing a positive acknowledgment.
-        node.receive(&checked["body"]["bundle"], peer)?;
-        let bundle = node.prepare(peer)?;
-        node.sign("tcp-response",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4","network":network,
+        )?;
+        let peer = checked["body"]["node_id"].as_str().ok_or("request peer")?;
+        carriage_event(&mut observation, "request-verified", || {
+            let mut detail = carriage_packets(&checked["body"]["bundle"])?;
+            detail["peer"] = json!(peer);
+            detail["challenge_id"] = checked["body"]["challenge"].clone();
+            Ok(detail)
+        });
+        let response = {
+            carriage_event(&mut observation, "custody-open-started", || Ok(json!({})));
+            let mut node = Node::open(config)?;
+            carriage_event(&mut observation, "custody-open-completed", || Ok(json!({})));
+            // All incoming bytes are durable before producing a positive acknowledgment.
+            carriage_event(&mut observation, "custody-receive-started", || {
+                Ok(json!({"peer":peer}))
+            });
+            let retained = node.receive(&checked["body"]["bundle"], peer)?;
+            carriage_event(&mut observation, "custody-receive-completed", || {
+                Ok(json!({"peer":peer,"retained_packet_ids":retained}))
+            });
+            carriage_event(&mut observation, "reply-prepare-started", || Ok(json!({})));
+            let bundle = node.prepare(peer)?;
+            carriage_event(&mut observation, "reply-prepare-completed", || {
+                let mut detail = carriage_packets(&bundle)?;
+                detail["peer"] = json!(peer);
+                Ok(detail)
+            });
+            node.sign("tcp-response",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4","network":network,
             "node_id":id,"to":peer,"nonce":checked["body"]["nonce"],"challenge":checked["body"]["challenge"],
             "exchange_id":digest(&checked["body"]["bundle"])? ,"accepted":true,"bundle":bundle,"error":null}))?
-    };
-    send(connection.0, deadline, response)
+        };
+        carriage_event(&mut observation, "reply-send-started", || Ok(json!({})));
+        send(connection.0, deadline, response)?;
+        carriage_event(&mut observation, "reply-send-completed", || Ok(json!({})));
+        Ok(())
+    })();
+    if let Some(observation) = observation {
+        observation.finish(&result);
+    }
+    result
 }
 
 pub(super) fn outgoing(config: &Value, peer: &str, contact: &Value) -> Result<()> {
-    // The preparation and cursor commit completes before opening a socket.
-    let (bundle, id, network) = {
-        let mut node = Node::open(config)?;
-        (node.prepare(peer)?, node.id.clone(), node.network.clone())
-    };
-    let deadline = monotonic()? + 3.0;
-    let handle=tls(json!({"Connect":{"host":contact["host"],"port":contact["port"],
+    outgoing_observed(config, peer, contact, None)
+}
+
+fn outgoing_observed(
+    config: &Value,
+    peer: &str,
+    contact: &Value,
+    sink: Option<&carriage_observation::Sink>,
+) -> Result<()> {
+    let mut observation =
+        sink.and_then(|sink| sink.begin_attempt("outgoing", || Ok(json!({"peer":peer}))));
+    let result = (|| {
+        // The preparation and cursor commit completes before opening a socket.
+        let (bundle, id, network) = {
+            carriage_event(&mut observation, "prepare-open-started", || Ok(json!({})));
+            let mut node = Node::open(config)?;
+            carriage_event(&mut observation, "prepare-open-completed", || Ok(json!({})));
+            carriage_event(&mut observation, "prepare-started", || Ok(json!({})));
+            let bundle = node.prepare(peer)?;
+            carriage_event(&mut observation, "prepare-completed", || {
+                carriage_packets(&bundle)
+            });
+            (bundle, node.id.clone(), node.network.clone())
+        };
+        let deadline = monotonic()? + 3.0;
+        carriage_event(&mut observation, "connect-started", || {
+            Ok(json!({"peer":peer}))
+        });
+        let handle=tls(json!({"Connect":{"host":contact["host"],"port":contact["port"],
         "fingerprint":contact["tls_cert_sha256"],"network":network,"peer":peer,"deadline":deadline}}))?.as_u64().ok_or("TLS connected handle")?;
-    let connection = Connection(handle);
-    let challenge = recv(handle, deadline)?;
-    let verified = crypto(
-        json!({"Exchange":{"Challenge":{"network":network,"signed":challenge,"peer":peer,"fingerprint":contact["tls_cert_sha256"]}}}),
-    )?;
-    let request = {
-        let node = Node::open(config)?;
-        node.sign("tcp-request",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
+        carriage_event(&mut observation, "connect-completed", || Ok(json!({})));
+        let connection = Connection(handle);
+        carriage_event(&mut observation, "challenge-receive-started", || {
+            Ok(json!({}))
+        });
+        let challenge = recv(handle, deadline)?;
+        carriage_event(&mut observation, "challenge-receive-completed", || {
+            Ok(json!({}))
+        });
+        let verified = crypto(
+            json!({"Exchange":{"Challenge":{"network":network,"signed":challenge,"peer":peer,"fingerprint":contact["tls_cert_sha256"]}}}),
+        )?;
+        carriage_event(&mut observation, "challenge-verified", || {
+            Ok(json!({"challenge_id":verified["body"]["nonce"]}))
+        });
+        let request = {
+            carriage_event(&mut observation, "request-open-started", || Ok(json!({})));
+            let node = Node::open(config)?;
+            carriage_event(&mut observation, "request-open-completed", || Ok(json!({})));
+            node.sign("tcp-request",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
         "network":network,"node_id":id,"to":peer,"nonce":random()?,"challenge":verified["body"]["nonce"],"bundle":bundle}))?
-    };
-    send(handle, deadline, request.clone())?;
-    let response = recv(handle, deadline)?;
-    let checked = crypto(
-        json!({"Exchange":{"TcpResponse":{"network":network,"signed":response,"requester":id,
+        };
+        carriage_event(&mut observation, "request-send-started", || {
+            Ok(json!({"challenge_id":request["body"]["challenge"]}))
+        });
+        send(handle, deadline, request.clone())?;
+        carriage_event(&mut observation, "request-send-completed", || Ok(json!({})));
+        carriage_event(&mut observation, "reply-receive-started", || Ok(json!({})));
+        let response = recv(handle, deadline)?;
+        carriage_event(&mut observation, "reply-receive-completed", || {
+            Ok(json!({}))
+        });
+        let checked = crypto(
+            json!({"Exchange":{"TcpResponse":{"network":network,"signed":response,"requester":id,
         "peer":peer,"sent":request,"limits":limits()}}}),
-    )?;
-    require(
-        checked["body"]["accepted"] == true,
-        "peer did not acknowledge custody; retain complete evidence",
-    )?;
-    // A verified socket reply alone does not suppress carriage. Retain its complete bundle locally.
-    Node::open(config)?.receive(&checked["body"]["bundle"], peer)?;
-    drop(connection);
-    Ok(())
+        )?;
+        require(
+            checked["body"]["accepted"] == true,
+            "peer did not acknowledge custody; retain complete evidence",
+        )?;
+        carriage_event(&mut observation, "reply-verified", || {
+            let mut detail = carriage_packets(&checked["body"]["bundle"])?;
+            detail["peer"] = json!(peer);
+            detail["exchange_id"] = checked["body"]["exchange_id"].clone();
+            detail["challenge_id"] = checked["body"]["challenge"].clone();
+            Ok(detail)
+        });
+        // A verified socket reply alone does not suppress carriage. Retain its complete bundle locally.
+        carriage_event(&mut observation, "reply-custody-open-started", || {
+            Ok(json!({}))
+        });
+        let mut node = Node::open(config)?;
+        carriage_event(&mut observation, "reply-custody-open-completed", || {
+            Ok(json!({}))
+        });
+        carriage_event(&mut observation, "reply-custody-receive-started", || {
+            Ok(json!({}))
+        });
+        let retained = node.receive(&checked["body"]["bundle"], peer)?;
+        carriage_event(&mut observation, "reply-custody-receive-completed", || {
+            Ok(json!({"peer":peer,"retained_packet_ids":retained}))
+        });
+        drop(node);
+        drop(connection);
+        Ok(())
+    })();
+    if let Some(observation) = observation {
+        observation.finish(&result);
+    }
+    result
 }
 
 fn codec(mode: &str, raw: &[u8]) -> Result<Vec<u8>> {
@@ -667,7 +813,11 @@ pub(super) fn tick_ledger(
         None => Vec::new(),
     };
     native_observation::event("mesh-receive-completed", || {
-        Ok(json!({"deferred":receive_deferred,"frame_count":frames.len()}))
+        Ok(
+            json!({"deferred":receive_deferred,"frame_count":frames.len(),
+            "frame_packet_ids":frames.iter().map(|frame|&frame.0).collect::<Vec<_>>(),
+            "cursor_before":cursor,"seen_count_before":seen.len()}),
+        )
     })?;
     #[cfg(test)]
     trace_work("mesh-native-page", started)?;
@@ -933,6 +1083,7 @@ fn unknown_progress(currency: Hash, region: Hash) -> Value {
 
 pub fn run(options: Options) -> Result<()> {
     let native_observation_enabled = native_observation::enabled_from_env()?;
+    let carriage_observation_enabled = carriage_observation::enabled_from_env()?;
     require(
         options.interval.is_finite() && (0.05..=3600.0).contains(&options.interval),
         "contact interval outside bound",
@@ -998,9 +1149,29 @@ pub fn run(options: Options) -> Result<()> {
     let directory_only = contacts
         .values()
         .all(|contact| contact.get("host").is_none());
+    let service_instance = random()?;
+    let carriage_started = carriage_observation::start(
+        carriage_observation_enabled,
+        &root,
+        &service_instance,
+        options.currency,
+        region,
+        &id,
+    );
+    let (carriage_observer, carriage_start_error) = match carriage_started {
+        Ok(observer) => (observer, None),
+        Err(error) => {
+            eprintln!("carriage diagnostic unavailable; ordinary transport continues");
+            (None, Some(error))
+        }
+    };
+    let carriage_sink = carriage_observer
+        .as_ref()
+        .and_then(|observer| observer.sink());
     let mut workers = service_workers::Workers::new();
     if !directory_only {
         let outgoing_config = config.clone();
+        let outgoing_sink = carriage_sink.clone();
         let interval = options.interval;
         workers.spawn("Rust contact outgoing", move |running| {
             // One ordered sweep at a time, with no queued catch-up sweeps.
@@ -1013,7 +1184,7 @@ pub fn run(options: Options) -> Result<()> {
                         break;
                     }
                     let result = if contact.get("host").is_some() {
-                        outgoing(&outgoing_config, peer, contact)
+                        outgoing_observed(&outgoing_config, peer, contact, outgoing_sink.as_ref())
                     } else {
                         spool(&outgoing_config, peer, contact)
                     };
@@ -1035,6 +1206,7 @@ pub fn run(options: Options) -> Result<()> {
     let inbound_config = config.clone();
     let material = context["material"].clone();
     let handle = context_handle.0;
+    let inbound_sink = carriage_sink.clone();
     workers.spawn("Rust contact listener", move |inbound_running| {
         thread::scope(|scope| {
             let mut workers: Vec<ScopedJoinHandle<'_, Result<()>>> = Vec::new();
@@ -1055,11 +1227,12 @@ pub fn run(options: Options) -> Result<()> {
                         Ok((stream, _)) if workers.len() < 2 => {
                             let config = inbound_config.clone();
                             let material = material.clone();
+                            let sink = inbound_sink.clone();
                             workers.push(
                                 thread::Builder::new()
                                     .name("Rust contact receive".into())
                                     .spawn_scoped(scope, move || {
-                                        accept(&config, handle, &material, stream)
+                                        accept(&config, handle, &material, stream, sink.as_ref())
                                     })
                                     .map_err(|e| e.to_string())?,
                             );
@@ -1084,7 +1257,6 @@ pub fn run(options: Options) -> Result<()> {
             preserve_cleanup_error(result, stopped)
         })
     })?;
-    let service_instance = random()?;
     let native_observer = native_observation::start(
         native_observation_enabled,
         &root,
@@ -1176,7 +1348,16 @@ pub fn run(options: Options) -> Result<()> {
     };
     let result = preserve_cleanup_error(result, observation_ended);
     let stopped = workers.finish();
-    preserve_cleanup_error(result, stopped)
+    let result = preserve_cleanup_error(result, stopped);
+    // All ordinary workers and their incoming tasks have actually joined.
+    // Close every producer before sealing only the diagnostic collector.
+    drop(carriage_sink);
+    let observation_ended = match carriage_observer {
+        Some(observer) => observer.finish(result.is_ok()),
+        None => Ok(()),
+    };
+    let result = preserve_cleanup_error(result, observation_ended);
+    preserve_cleanup_error(result, carriage_start_error.map_or(Ok(()), Err))
 }
 
 fn preserve_cleanup_error(result: Result<()>, stopped: Result<()>) -> Result<()> {
@@ -1200,7 +1381,7 @@ mod tests {
             .set_read_timeout(Some(Duration::from_secs(1)))
             .unwrap();
         let (accepted, _) = listener.accept().unwrap();
-        let result = accept(&Value::Null, u64::MAX, &Value::Null, accepted);
+        let result = accept(&Value::Null, u64::MAX, &Value::Null, accepted, None);
         assert_eq!(result.unwrap_err(), "TLS context handle absent");
         // Peer EOF proves the owned accepted stream is closed without
         // probing or closing a descriptor number another test could reuse.

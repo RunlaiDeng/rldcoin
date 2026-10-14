@@ -5,6 +5,8 @@ use crate::contact_runtime::{tls_identity, Node};
 use crate::{wallet, wallet_agent};
 use std::net::TcpListener;
 
+#[path = "onward_service_carriage_tests.rs"]
+mod carriage_boundary;
 #[path = "onward_service_payment_checks.rs"]
 mod checks;
 #[path = "onward_service_payment_process.rs"]
