@@ -3,6 +3,9 @@ use super::*;
 #[path = "service_independent_transport_tests.rs"]
 mod independent_transport_tests;
 #[cfg(test)]
+#[path = "service_receipt_status_tests.rs"]
+mod receipt_status_tests;
+#[cfg(test)]
 #[path = "regional_payload_decode_tests.rs"]
 mod regional_payload_decode_tests;
 #[path = "service_workers.rs"]
@@ -647,11 +650,24 @@ pub(super) fn tick_ledger(
     // Capture complete received bytes under the transport lock, then release it before native ledger replay.
     #[cfg(test)]
     let started = monotonic()?;
-    let frames = Node::open(config)?.frame_page_selected(cursor.as_deref(), 4, seen)?;
+    let node = if runtime.is_some() {
+        Node::open_or_defer_mesh(config)?
+    } else {
+        Some(Node::open(config)?)
+    };
+    let receive_deferred = node.is_none();
+    let frames = match node {
+        Some(node) => node.frame_page_selected(cursor.as_deref(), 4, seen)?,
+        // No transport input was inspected. The cursor and seen set stay
+        // unchanged; only already authenticated Native material is available
+        // to the original Runtime. All later errors retain their meaning.
+        None => Vec::new(),
+    };
     #[cfg(test)]
     trace_work("mesh-native-page", started)?;
-    tick_ledger_frames(options, config, runtime, cursor, seen, frames, None)
-        .map(|tick| tick.observation)
+    let mut tick = tick_ledger_frames(options, config, runtime, cursor, seen, frames, None)?;
+    tick.observation["transport_receive_deferred"] = json!(receive_deferred);
+    Ok(tick.observation)
 }
 
 struct LedgerTick {

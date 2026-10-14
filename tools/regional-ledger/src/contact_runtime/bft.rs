@@ -1694,6 +1694,10 @@ pub(crate) fn test_finalized_payment_observation(snapshot: Snapshot) -> Result<V
 }
 
 #[cfg(test)]
+#[path = "bft_mesh_gate_tests.rs"]
+mod mesh_gate_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::tests::{public, signature};

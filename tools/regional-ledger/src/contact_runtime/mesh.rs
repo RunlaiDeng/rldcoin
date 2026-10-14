@@ -179,6 +179,17 @@ impl Node {
     }
 
     pub fn open(config: &Value) -> Result<Self> {
+        Self::open_with_mesh_deferral(config, false)?
+            .ok_or_else(|| "ordinary Mesh open unexpectedly deferred".into())
+    }
+
+    // Only an unavailable Mesh lease may defer a BFT caller's transport
+    // input. Authentication, filesystem and capacity failures remain errors.
+    pub(super) fn open_or_defer_mesh(config: &Value) -> Result<Option<Self>> {
+        Self::open_with_mesh_deferral(config, true)
+    }
+
+    fn open_with_mesh_deferral(config: &Value, defer_mesh: bool) -> Result<Option<Self>> {
         crypto(
             json!({"Config":{"Header":{"keys":config.as_object().ok_or("contact config object")?.keys().collect::<Vec<_>>(),"version":config["format"]}}}),
         )?;
@@ -190,7 +201,18 @@ impl Node {
         let root = directory(Path::new(
             config["state"].as_str().ok_or("contact root path")?,
         ))?;
-        let lock = Lease::acquire(&root, "Mesh")?;
+        let lock = match Lease::acquire(&root, "Mesh") {
+            Ok(lock) => lock,
+            Err(error)
+                if defer_mesh
+                    && [libc::EWOULDBLOCK, libc::EAGAIN]
+                        .iter()
+                        .any(|code| error.starts_with(&format!("CONTACT_STORAGE_IO:{code}:"))) =>
+            {
+                return Ok(None);
+            }
+            Err(error) => return Err(error),
+        };
         let identity = crypto(
             json!({"Inspect":{"identity":root.join("identity.private.json"),"network":network}}),
         )?;
@@ -321,7 +343,7 @@ impl Node {
         if changed {
             node.save()?;
         }
-        Ok(node)
+        Ok(Some(node))
     }
 
     pub(crate) fn sign(&self, kind: &str, body: Value) -> Result<Value> {

@@ -2,6 +2,7 @@
 //! Nested under onward_runtime_tests to reuse its fresh A80/B4(+B5 tail) helper.
 use super::*;
 use crate::contact_runtime::{tls_identity, Node};
+use std::io::Write;
 use std::net::TcpListener;
 use std::process::{Child, ExitStatus};
 
@@ -48,6 +49,92 @@ fn routing_phase(started: f64, name: &str) {
 fn output_file(path: &Path) -> fs::File {
     crate::keystore::private_create(path, b"").unwrap();
     fs::OpenOptions::new().write(true).open(path).unwrap()
+}
+// Test-only wait observations. Unbuffered rows survive process exit; only the
+// terminal is fsynced. This does not qualify power-loss or Native custody.
+struct WaitTrace {
+    root: PathBuf,
+    file: fs::File,
+    started: f64,
+    deadline: f64,
+    rows: usize,
+    bytes: usize,
+    last: Option<Value>,
+    terminal_written: bool,
+}
+impl WaitTrace {
+    const MAX_ROWS: usize = 16_384;
+    const MAX_BYTES: usize = 8 * 1024 * 1024;
+    fn new(
+        root: &Path,
+        started: f64,
+        deadline: f64,
+        source_node_id: &str,
+        currency: Hash,
+        source_region: Hash,
+    ) -> Self {
+        let scope = json!({"format":"RLD-ONWARD-ROUTING-WAIT-V2","root":root,
+            "started":started,"deadline":deadline,"pid":std::process::id(),
+            "source_node_id":source_node_id,"currency":currency,"source_region":source_region,
+            "max_rows":Self::MAX_ROWS,"max_bytes":Self::MAX_BYTES,
+            "diagnostic_only":true,"fixture_only":true});
+        new_json(&root.join("routing-wait-scope.json"), &scope);
+        eprintln!("\nonward_service_routing_wait_scope={scope}");
+        Self {
+            root: root.into(),
+            file: output_file(&root.join("routing-wait.jsonl")),
+            started,
+            deadline,
+            rows: 0,
+            bytes: 0,
+            last: None,
+            terminal_written: false,
+        }
+    }
+    fn event(&mut self, phase: &str, detail: Value) -> crate::Result<()> {
+        let row = json!({"sequence":self.rows+1,"at":now(),"phase":phase,"detail":detail});
+        let mut raw = serde_json::to_vec(&row).map_err(|e| e.to_string())?;
+        raw.push(b'\n');
+        require(
+            self.rows < Self::MAX_ROWS && self.bytes + raw.len() <= Self::MAX_BYTES,
+            "routing wait diagnostic bound exhausted",
+        )?;
+        self.file.write_all(&raw).map_err(|e| e.to_string())?;
+        self.rows += 1;
+        self.bytes += raw.len();
+        self.last = Some(row);
+        Ok(())
+    }
+    fn finish(&mut self, wait_complete: bool) -> crate::Result<()> {
+        self.file.sync_all().map_err(|e| e.to_string())?;
+        let raw = fs::read(self.root.join("routing-wait.jsonl")).map_err(|e| e.to_string())?;
+        require(
+            raw.len() == self.bytes,
+            "routing wait observation size differs",
+        )?;
+        let terminal = json!({"format":"RLD-ONWARD-ROUTING-WAIT-V2","root":self.root,
+            "started":self.started,"deadline":self.deadline,"ended":now(),
+            "pid":std::process::id(),"rows":self.rows,"bytes":self.bytes,"sha256":sha(&raw),
+            "last":self.last,"wait_complete":wait_complete,"diagnostic_only":true,
+            "routing_qualified":false});
+        crate::keystore::private_create(
+            &self.root.join("routing-wait-terminal.json"),
+            &serde_json::to_vec(&terminal).map_err(|e| e.to_string())?,
+        )?;
+        self.terminal_written = true;
+        eprintln!("\nonward_service_routing_wait_terminal={terminal}");
+        Ok(())
+    }
+}
+impl Drop for WaitTrace {
+    fn drop(&mut self) {
+        if self.terminal_written {
+            return;
+        }
+        if let Err(error) = self.finish(false) {
+            eprintln!("routing wait diagnostic terminal unavailable: {error}");
+        }
+    }
 }
 struct ServiceChild {
     process: Child,
@@ -554,42 +641,170 @@ fn ordinary_onward_service_tls_retains_complete_proof_without_credit() {
         &pins.tls[0]["fingerprint"],
     );
     routing_phase(started, "both-ordinary-cli-services-ready");
+    // Declared after both children: an unwinding wait records its last actual
+    // operation before either ServiceChild starts cleanup. No original clock resets.
+    let mut trace = WaitTrace::new(
+        &root,
+        started,
+        deadline,
+        &b_id,
+        pins.currency,
+        pins.proof.history.source,
+    );
     let mut accepted_at = None;
     loop {
         routing_budget(deadline);
         source.running();
         receiver.running();
-        match Store::open_inspection(&root.join("routing-c"), &public(1), currency) {
+        trace.event("native-open-started", json!({})).unwrap();
+        let mut acquired = false;
+        let candidate = match Store::open_inspection(&root.join("routing-c"), &public(1), currency)
+        {
             Ok(node) => {
+                acquired = true;
+                trace
+                    .event("native-open-completed", json!({"result":"ok"}))
+                    .unwrap();
+                trace.event("pending-query-started", json!({})).unwrap();
                 let pending = node.complete_onward_network_pending_imports().unwrap();
+                trace
+                    .event("pending-query-completed", json!({"count":pending.len()}))
+                    .unwrap();
+                let mut candidate = None;
                 if !pending.is_empty() {
+                    trace.event("zero-credit-check-started", json!({})).unwrap();
                     check_zero_credit(&node, &pins);
+                    trace
+                        .event("zero-credit-check-completed", json!({}))
+                        .unwrap();
+                    trace.event("native-head-check-started", json!({})).unwrap();
+                    let first_at = accepted_at.is_none().then(now);
+                    let observed_head = node.storage_head().unwrap();
+                    trace
+                        .event("native-head-check-completed", json!({"head":observed_head}))
+                        .unwrap();
                     if let Some((first_at, head)) = accepted_at {
-                        assert_eq!(node.storage_head().unwrap(), head);
-                        // Allow ordinary retry/receipt circulation without controller delivery.
-                        let receipt_seen =
-                            fs::read(root.join("routing-b-transport/regional-contact-status.json"))
-                                .ok()
-                                .and_then(|raw| serde_json::from_slice::<Value>(&raw).ok())
-                                .is_some_and(|status| {
-                                    status["mesh"]["retained_receipts"]
-                                        .as_u64()
-                                        .is_some_and(|n| n >= 1)
-                                });
-                        if now() - first_at >= 0.5 && receipt_seen {
-                            pins.c_head = head;
-                            break;
-                        }
+                        assert_eq!(observed_head, head);
+                        candidate = Some((first_at, head));
+                        trace
+                            .event(
+                                "native-candidate",
+                                json!({"first_pending_at":first_at,"head":head}),
+                            )
+                            .unwrap();
                     } else {
-                        accepted_at = Some((now(), node.storage_head().unwrap()));
+                        let first_at = first_at.expect("first pending observation clock");
+                        accepted_at = Some((first_at, observed_head));
+                        trace
+                            .event(
+                                "first-pending-observed",
+                                json!({"at":first_at,"head":observed_head}),
+                            )
+                            .unwrap();
                     }
                 }
+                candidate
             }
-            Err(error) if error == std::fs::TryLockError::WouldBlock.to_string() => (),
-            Err(error) => panic!("actual Service custody observation refused: {error}"),
+            Err(error) if error == std::fs::TryLockError::WouldBlock.to_string() => {
+                trace
+                    .event("native-open-completed", json!({"result":"busy"}))
+                    .unwrap();
+                None
+            }
+            Err(error) => {
+                trace
+                    .event(
+                        "native-open-completed",
+                        json!({"result":"error","error":error}),
+                    )
+                    .unwrap();
+                panic!("actual Service custody observation refused: {error}")
+            }
+        };
+        // The successful Store has left its original match scope before this observation.
+        trace
+            .event(
+                "inspection-ended",
+                json!({"native_acquired":acquired,"native_candidate":candidate.is_some()}),
+            )
+            .unwrap();
+        if let Some((first_at, head)) = candidate {
+            // Optional status is diagnostic only. Unknown never supplies receipt custody.
+            trace
+                .event("receipt-status-read-started", json!({}))
+                .unwrap();
+            let detail = match fs::read(
+                root.join("routing-b-transport/regional-contact-status.json"),
+            ) {
+                Err(error) => {
+                    json!({"result":"read-error","kind":format!("{:?}",error.kind()),"error":error.to_string()})
+                }
+                Ok(raw) => match serde_json::from_slice::<Value>(&raw) {
+                    Err(error) => json!({"result":"parse-error","error":error.to_string()}),
+                    Ok(status) => json!({"result":"parsed",
+                        "retained_receipts":status["mesh"]["retained_receipts"].as_u64(),
+                        "progress_observation_available":status["progress_observation_available"],
+                        "service_turn":status["service_turn"]}),
+                },
+            };
+            trace
+                .event("receipt-status-read-completed", detail)
+                .unwrap();
+            // Configured advertisements were established before launch. Full Node open
+            // authenticates actual custody; it is not a general read-only inspection API.
+            // The C Native lease is already released, and this Mesh lease ends below.
+            trace
+                .event("source-custody-open-started", json!({}))
+                .unwrap();
+            let (receipt_seen, detail, refusal) = match Node::open(&pins.transports[0]) {
+                Ok(node) => {
+                    let observation = node.observation();
+                    assert_eq!(observation["network"], json!(pins.currency));
+                    assert_eq!(observation["region"], json!(pins.proof.history.source));
+                    assert_eq!(observation["node_id"], b_id);
+                    assert_eq!(observation["ledger_authority"], false);
+                    let count = observation["retained_receipts"]
+                        .as_u64()
+                        .expect("authenticated retained receipt count");
+                    (
+                        count >= 1,
+                        json!({"result":"ok","retained_receipts":count,"observation":observation}),
+                        None,
+                    )
+                }
+                Err(error)
+                    if [libc::EWOULDBLOCK, libc::EAGAIN]
+                        .iter()
+                        .any(|code| error.starts_with(&format!("CONTACT_STORAGE_IO:{code}:"))) =>
+                {
+                    (false, json!({"result":"busy","error":error}), None)
+                }
+                Err(error) => (false, json!({"result":"error","error":error}), Some(error)),
+            };
+            trace
+                .event("source-custody-open-completed", detail)
+                .unwrap();
+            if let Some(error) = refusal {
+                panic!("authenticated source custody observation refused: {error}");
+            }
+            let age = now() - first_at;
+            let ready = age >= 0.5 && receipt_seen;
+            trace
+                .event(
+                    "wait-condition",
+                    json!({"first_pending_at":first_at,
+                    "age_seconds":age,"receipt_seen":receipt_seen,"ready":ready}),
+                )
+                .unwrap();
+            if ready {
+                pins.c_head = head;
+                break;
+            }
         }
         std::thread::sleep(Duration::from_millis(50));
     }
+    trace.finish(true).unwrap();
+    drop(trace);
     assert_ne!(pins.c_head, c_initial_head);
     routing_phase(started, "native-pending-without-credit-observed");
     // Request both stops first; join under the original acceptance deadline.
@@ -657,6 +872,7 @@ fn ordinary_onward_service_tls_retains_complete_proof_without_credit() {
         "complete_A80_B4":true,"later_B5_preserved":true,"c_height":0,"pending_import":true,"credit":false,
         "source_debit_retained":true,"permanent_origin_import":true,"original_caller_unchanged":true,"key_absent":true,
         "normal_join":true,"fresh_process_cold":true,"cold_inventory_unchanged":true,"preflight_refusals":5,
+        "source_receipt_authenticated":true,"optional_status_not_receipt_authority":true,
         "two_payments_verified":false,"ordinary_consensus_qualified":false,"independent_custody":false,"mainnet":false})
     );
 }
