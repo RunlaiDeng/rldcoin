@@ -505,6 +505,104 @@ fn request_node_before_deadline(config: &Value, deadline: f64) -> Result<Node> {
     }
 }
 
+fn reply_mesh_remaining(deadline: f64) -> Result<f64> {
+    require(
+        deadline.is_finite(),
+        "TLS_TIMEOUT: invalid original reply custody deadline",
+    )?;
+    require(
+        !STOP.load(Ordering::Acquire),
+        "outgoing reply custody cancelled; retain complete evidence",
+    )?;
+    let remaining = deadline - monotonic()?;
+    require(
+        remaining > 0.0,
+        "TLS_TIMEOUT: original reply custody deadline exhausted; retain complete evidence",
+    )?;
+    Ok(remaining)
+}
+
+#[cfg(test)]
+type ReplyMeshDeferObservation = (&'static str, f64, f64);
+#[cfg(test)]
+thread_local! {
+    static REPLY_MESH_DEFER_OBSERVER:
+        std::cell::RefCell<Option<std::sync::mpsc::SyncSender<ReplyMeshDeferObservation>>> =
+        const { std::cell::RefCell::new(None) };
+}
+#[cfg(test)]
+struct ReplyMeshDeferReset;
+#[cfg(test)]
+impl Drop for ReplyMeshDeferReset {
+    fn drop(&mut self) {
+        REPLY_MESH_DEFER_OBSERVER.with(|slot| {
+            slot.borrow_mut().take();
+        });
+    }
+}
+#[cfg(test)]
+fn install_reply_mesh_defer_observer() -> Result<(
+    ReplyMeshDeferReset,
+    std::sync::mpsc::Receiver<ReplyMeshDeferObservation>,
+)> {
+    let (sender, receiver) = std::sync::mpsc::sync_channel(1);
+    REPLY_MESH_DEFER_OBSERVER.with(|slot| -> Result<()> {
+        let mut slot = slot
+            .try_borrow_mut()
+            .map_err(|_| "reply Mesh defer observer is borrowed")?;
+        require(
+            slot.is_none(),
+            "reply Mesh defer observer already installed",
+        )?;
+        *slot = Some(sender);
+        Ok(())
+    })?;
+    Ok((ReplyMeshDeferReset, receiver))
+}
+#[cfg(test)]
+fn observe_actual_reply_mesh_defer(deadline: f64) {
+    if let Ok(observed_at) = monotonic() {
+        REPLY_MESH_DEFER_OBSERVER.with(|slot| {
+            if let Ok(observer) = slot.try_borrow() {
+                if let Some(sender) = observer.as_ref() {
+                    let _ = sender.try_send(("reply-custody", deadline, observed_at));
+                }
+            }
+        });
+    }
+}
+
+fn reply_node_before_deadline(
+    config: &Value,
+    deadline: f64,
+    prepared_id: &str,
+    prepared_network: &str,
+) -> Result<Node> {
+    loop {
+        reply_mesh_remaining(deadline)?;
+        // Only actual Mesh acquisition WouldBlock returns None. A complete
+        // open may update an advert and cannot be hard-preempted; all errors
+        // remain original errors, and no unchecked Node is retained or reused.
+        match Node::open_or_defer_mesh(config)? {
+            Some(node) => {
+                require(
+                    node.id == prepared_id && node.network == prepared_network,
+                    "reply custody identity changed after original preparation",
+                )?;
+                reply_mesh_remaining(deadline)?;
+                return Ok(node);
+            }
+            None => {
+                #[cfg(test)]
+                observe_actual_reply_mesh_defer(deadline);
+                let remaining = reply_mesh_remaining(deadline)?;
+                // No Node, Native lease or TLS session mutex crosses this wait.
+                thread::sleep(Duration::from_secs_f64(remaining.min(0.005)));
+            }
+        }
+    }
+}
+
 fn outgoing_observed(
     config: &Value,
     peer: &str,
@@ -602,18 +700,27 @@ fn outgoing_observed(
         carriage_event(&mut observation, "reply-custody-open-started", || {
             Ok(json!({}))
         });
-        let mut node = Node::open(config)?;
+        let mut node = reply_node_before_deadline(config, deadline, &id, &network)?;
         carriage_event(&mut observation, "reply-custody-open-completed", || {
             Ok(json!({}))
         });
         carriage_event(&mut observation, "reply-custody-receive-started", || {
             Ok(json!({}))
         });
+        reply_mesh_remaining(deadline)?;
         let retained = node.receive(&checked["body"]["bundle"], peer)?;
+        // Complete receive may finish late. Report and retain genuine durable
+        // custody before refusing expiry/STOP; never roll back real evidence.
         carriage_event(&mut observation, "reply-custody-receive-completed", || {
             Ok(json!({"peer":peer,"retained_packet_ids":retained}))
         });
+        let original_identity = node.id == id && node.network == network;
         drop(node);
+        require(
+            original_identity,
+            "reply custody identity changed during receive",
+        )?;
+        reply_mesh_remaining(deadline)?;
         drop(connection);
         Ok(())
     })();

@@ -1,12 +1,31 @@
-//! Current production reply-custody refusal under a real source Mesh lease.
+//! Reply custody retries only after a real source Mesh acquisition deferral.
 //! Transport envelope/custody evidence only; no Native consensus/value authority.
 //! One original three-second socket attempt; normal whole30, external35 stop only.
 use super::*;
 use std::sync::mpsc;
 
-const REPLY_FORMAT: &str = "RLD-REPLY-MESH-BASELINE-V1";
-const OPT_IN: &str = "RLD_REPLY_MESH_BASELINE";
-const RESULT_KEYS: &str = "format case root pid passed started deadline stop_deadline ended elapsed_seconds currency region source_id recipient_id native_head native_value_root source_packet_id source_frame_id reply_packet_id reply_frame_id test_binary_sha256 regional_build_source_sha256 prepared_bundle_sha256 request_sha256 response_sha256 reply_bundle_sha256 challenge_id exchange_id events_sha256 checked_metadata_sha256 dispatch_at outgoing_returned_at peer_accepted_at peer_deadline challenge_sent_at request_received_at request_verified_at peer_custody_completed_at reply_prepared_at source_mesh_held_at reply_sent_at source_mesh_release_started_at source_mesh_released_at prepared_at connect_started_at socket_deadline_lower_bound socket_deadline_upper_bound original_socket_deadline operation_error_tag exact_mesh_acquisition_refusal held_probe_typed_none peer_actual_custody_received reply_verified local_reply_receive_absent source_cursor_advanced_once original_frame_retained source_receipt_absent peer_suppression_unchanged reply_frame_absent native_zero_cold_unchanged peer_joined collector_joined normal_test_socket_shutdown all_original_clock_bounds_met transport_payload_native_authority native_value_authority whole_payment_pass payment_qualified mainnet request_mesh_defer_seen source_cursor_before source_cursor_after";
+const REPLY_FORMAT: &str = "RLD-REPLY-MESH-RETRY-CANDIDATE-V1";
+const OPT_IN: &str = "RLD_REPLY_MESH_RETRY_CANDIDATE";
+const REPLY_EXPIRY: &str =
+    "TLS_TIMEOUT: original reply custody deadline exhausted; retain complete evidence";
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ReplyCase {
+    ReleaseAfterDefer,
+    HoldUntilExpiry,
+}
+impl ReplyCase {
+    fn release(self) -> bool {
+        self == Self::ReleaseAfterDefer
+    }
+    fn label(self) -> &'static str {
+        match self {
+            Self::ReleaseAfterDefer => "release-after-real-reply-defer",
+            Self::HoldUntilExpiry => "held-reply-to-original-expiry",
+        }
+    }
+}
+const RESULT_KEYS: &str = "format case root pid passed started deadline stop_deadline ended elapsed_seconds currency region source_id recipient_id native_head native_value_root source_packet_id source_frame_id reply_packet_id reply_frame_id test_binary_sha256 regional_build_source_sha256 prepared_bundle_sha256 request_sha256 response_sha256 reply_bundle_sha256 challenge_id exchange_id events_sha256 checked_metadata_sha256 dispatch_at outgoing_returned_at peer_accepted_at peer_deadline challenge_sent_at request_received_at request_verified_at peer_custody_completed_at reply_prepared_at source_mesh_held_at reply_sent_at source_mesh_release_started_at source_mesh_released_at prepared_at connect_started_at socket_deadline_lower_bound socket_deadline_upper_bound original_socket_deadline operation_error_tag held_probe_exact_mesh_acquisition_refusal held_probe_typed_none peer_actual_custody_received reply_verified local_reply_receive_absent source_cursor_advanced_once original_frame_retained source_receipt_absent peer_suppression_unchanged reply_frame_absent native_zero_cold_unchanged peer_joined collector_joined normal_test_socket_shutdown all_original_clock_bounds_met transport_payload_native_authority native_value_authority whole_payment_pass payment_qualified mainnet request_mesh_defer_seen source_cursor_before source_cursor_after reply_mesh_defer_seen reply_defer_phase actual_reply_defer_at reply_defer_seen_at reply_mesh_release_after_defer local_reply_receive_completed source_return_was_timeout production_reply_retry_implemented outgoing_phase_count";
 
 fn reply_patch(record: &mut Value, values: Value) -> Result<()> {
     let record = record.as_object_mut().ok_or("reply result object")?;
@@ -162,7 +181,7 @@ fn reply_fixture(root: &Path, deadline: f64) -> Result<ReplyFixture> {
             &root.join(label),
             &currency.to_hex(),
             &region.to_hex(),
-            "public-no-value-reply-mesh-baseline",
+            "public-no-value-reply-mesh-retry",
         )?;
         ids.push(
             identity["node_id"]
@@ -246,6 +265,8 @@ struct ReplyPins {
     reply_frame: Hash,
     scope_deadline: f64,
     returned: mpsc::Receiver<ReturnNotice>,
+    scenario: ReplyCase,
+    reply_deferred: mpsc::Receiver<(&'static str, f64, f64)>,
 }
 fn reply_peer(
     listener: TcpListener,
@@ -361,14 +382,14 @@ fn reply_peer(
         }; // No peer Node/Native lease crosses socket IO or control wait.
         let response_sha = sha(&bytes(&response)?);
         new_json(&pins.root.join("private-response.json"), &response)?;
-        let held = Lease::acquire(
+        let mut held = Some(Lease::acquire(
             Path::new(
                 pins.source_config["state"]
                     .as_str()
                     .ok_or("reply source root")?,
             ),
             "Mesh",
-        )?;
+        )?);
         let held_at = monotonic()?;
         let expected = match Node::open(&pins.source_config) {
             Err(error) => error,
@@ -387,10 +408,39 @@ fn reply_peer(
         within(deadline)?;
         send(handle, deadline, response.clone())?;
         let reply_sent_at = monotonic()?;
-        let remaining = deadline - monotonic()?;
+        // The response is complete. Further waits are test control only, use
+        // the original whole scope and perform no further TLS reads or writes.
+        let remaining = pins.scope_deadline - monotonic()?;
         require(
             remaining > 0.0,
-            "reply notice original peer deadline exhausted",
+            "reply actual defer control scope exhausted",
+        )?;
+        let (phase, original_deadline, actual_defer_at) = pins
+            .reply_deferred
+            .recv_timeout(Duration::from_secs_f64(remaining))
+            .map_err(|e| format!("reply actual None observation absent: {e}"))?;
+        let defer_seen_at = monotonic()?;
+        require(
+            phase == "reply-custody"
+                && original_deadline.is_finite()
+                && held_at <= actual_defer_at
+                && actual_defer_at <= defer_seen_at
+                && defer_seen_at < original_deadline
+                && original_deadline <= deadline,
+            "reply actual None/original deadline binding",
+        )?;
+        let released_early = if pins.scenario.release() {
+            let started = monotonic()?;
+            within(original_deadline)?;
+            drop(held.take());
+            Some((started, monotonic()?))
+        } else {
+            None
+        };
+        let remaining = pins.scope_deadline - monotonic()?;
+        require(
+            remaining > 0.0,
+            "reply return control whole scope exhausted",
         )?;
         let notice = pins
             .returned
@@ -399,20 +449,40 @@ fn reply_peer(
         let notice_at = monotonic()?;
         // Source's real operation error is retained before any missing clock
         // assertion, so instrumentation cannot mask an earlier protocol error.
-        if notice.error.as_deref() != Some(expected.as_str()) {
+        let expected_operation = if pins.scenario.release() {
+            None
+        } else {
+            Some(REPLY_EXPIRY)
+        };
+        if notice.error.as_deref() != expected_operation {
             return Err(format!(
-                "reply primary source result={:?}; exact_probe={expected}",
+                "reply primary source result={:?}; expected={expected_operation:?}",
                 notice.error
             ));
         }
         let returned_at = notice.at?;
-        let release_started_at = monotonic()?;
         require(
-            returned_at <= notice_at && notice_at <= release_started_at,
-            "reply source lease released before actual outgoing return",
+            returned_at <= notice_at,
+            "reply notice predates actual return",
         )?;
-        drop(held);
-        let released_at = monotonic()?;
+        let (release_started_at, released_at) = match released_early {
+            Some((started, released)) => {
+                require(
+                    started <= returned_at && returned_at < original_deadline,
+                    "reply release did not complete before original deadline",
+                )?;
+                (started, released)
+            }
+            None => {
+                require(
+                    returned_at >= original_deadline,
+                    "reply expiry returned before original deadline",
+                )?;
+                let started = monotonic()?;
+                drop(held.take());
+                (started, monotonic()?)
+            }
+        };
         let mut report = json!({"accepted_at":accepted_at,"peer_deadline":deadline,
             "challenge_sent_at":challenge_sent_at,"challenge_id":challenge_id,
             "request_received_at":request_received_at,"request_verified_at":request_verified_at,
@@ -422,10 +492,18 @@ fn reply_peer(
             "prepared_bundle_sha256":prepared_sha,"request_sha256":request_sha,
             "response_sha256":response_sha,"reply_bundle_sha256":reply_bundle_sha,
             "exchange_id":response["body"]["exchange_id"],"mesh_error_sha256":sha(expected.as_bytes()),
-            "exact_mesh_acquisition_refusal":true,"held_probe_typed_none":true,
+            "held_probe_exact_mesh_acquisition_refusal":true,"held_probe_typed_none":true,
             "actual_custody_received":true,"normal_test_socket_shutdown":false});
+        report["case"] = json!(pins.scenario.label());
+        report["original_socket_deadline"] = json!(original_deadline);
+        report["actual_reply_defer_at"] = json!(actual_defer_at);
+        report["reply_defer_seen_at"] = json!(defer_seen_at);
+        report["reply_defer_phase"] = json!(phase);
+        report["release_after_defer"] = json!(pins.scenario.release());
+        report["source_return_was_timeout"] = json!(!pins.scenario.release());
+        report["operation_error_sha256"] = json!(notice.error.as_ref().map(|e| sha(e.as_bytes())));
         // No duplicate socket is retained and no test shutdown runs normally.
-        // This connection closes only after the actual outgoing Mesh error.
+        // This connection closes only after the actual outgoing return.
         retained_handle.store(0, Ordering::Release);
         drop(connection);
         report["peer_operation_completed_at"] = json!(monotonic()?);
@@ -466,13 +544,18 @@ fn reply_native_zero(root: &Path, f: &ReplyFixture, deadline: f64) -> Result<()>
     )?;
     within(deadline)
 }
-fn reply_cold(root: &Path, f: &ReplyFixture) -> Result<()> {
+fn reply_cold(root: &Path, f: &ReplyFixture, scenario: ReplyCase) -> Result<()> {
     let source_path = root.join("source-mesh/native-mesh-state.json");
     let source_raw = files::private_read_with_limit(&source_path, 32 * 1024 * 1024)?;
     let source = Node::open(&f.configs[0])?;
+    let expected_frames = if scenario.release() {
+        vec![(f.reply_packet.clone(), f.reply_frame.clone())]
+    } else {
+        Vec::new()
+    };
     require(
-        source.received_frames()?.is_empty(),
-        "reply source received reverse frame despite refusal",
+        source.received_frames()? == expected_frames,
+        "reply cold source reverse frame differs from actual receive outcome",
     )?;
     drop(source);
     require(
@@ -482,19 +565,55 @@ fn reply_cold(root: &Path, f: &ReplyFixture) -> Result<()> {
     let source = state_image(&source_raw, f.currency, &f.ids[0])?;
     require(
         source["state"]["cursor"] == f.source_cursor + 1
-            && source["state"]["messages"]
-                .as_object()
-                .is_some_and(|m| m.len() == 1 && m.contains_key(&f.source_packet))
-            && source["state"]["receipts"] == f.source_before["state"]["receipts"]
             && source["state"]["archives"] == f.source_before["state"]["archives"]
-            && source["state"]["peer_inventory"] == f.source_before["state"]["peer_inventory"]
+            && source["state"]["messages"].as_object().is_some_and(|m| {
+                m.len() == (if scenario.release() { 2 } else { 1 })
+                    && m.contains_key(&f.source_packet)
+                    && (!scenario.release() || m.contains_key(&f.reply_packet))
+            })
             && source["frames"].as_object().is_some_and(|m| {
-                m.len() == 1
+                m.len() == (if scenario.release() { 2 } else { 1 })
                     && m.values()
                         .any(|v| v["frame"] == STANDARD.encode(&f.source_frame))
             }),
-        "reply refusal lost original/cursor or stored reply receipt/suppression/frame",
+        "reply lost original evidence or repeated the original preparation",
     )?;
+    if scenario.release() {
+        let response = read(&root.join("private-response.json"), 8 * 1024 * 1024)?;
+        let receipts = source["state"]["receipts"]
+            .as_object()
+            .ok_or("reply cold source receipts")?;
+        require(
+            receipts.len() == 2
+                && receipts.get(&f.source_packet).is_some_and(|v| {
+                    v["body"]["node_id"] == f.ids[1]
+                        && v["body"]["outcome"] == "EVIDENCE_STORED_NOT_LEDGER_ACCEPTED"
+                })
+                && receipts.get(&f.reply_packet).is_some_and(|v| {
+                    v["body"]["node_id"] == f.ids[0]
+                        && v["body"]["outcome"] == "EVIDENCE_STORED_NOT_LEDGER_ACCEPTED"
+                })
+                && source["state"]["peer_inventory"]
+                    .as_object()
+                    .is_some_and(|m| {
+                        m.len() == 1
+                            && m.get(&f.ids[1]).is_some_and(|v| {
+                                v == &response["body"]["bundle"]["body"]["inventory"]
+                            })
+                    })
+                && source["frames"].as_object().is_some_and(|m| {
+                    m.values()
+                        .any(|v| v["frame"] == STANDARD.encode(&f.reply_frame))
+                }),
+            "reply release lacks exact durable receipts/frame/peer inventory",
+        )?;
+    } else {
+        require(
+            source["state"]["receipts"] == f.source_before["state"]["receipts"]
+                && source["state"]["peer_inventory"] == f.source_before["state"]["peer_inventory"],
+            "reply expiry created false custody or peer suppression",
+        )?;
+    }
     let peer_path = root.join("recipient-mesh/native-mesh-state.json");
     let peer_raw = files::private_read_with_limit(&peer_path, 32 * 1024 * 1024)?;
     let peer = Node::open(&f.configs[1])?;
@@ -519,7 +638,7 @@ fn reply_cold(root: &Path, f: &ReplyFixture) -> Result<()> {
     )
 }
 
-fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
+fn reply_run(root: &Path, deadline: f64, record: &mut Value, scenario: ReplyCase) -> Result<()> {
     require(
         !STOP.load(Ordering::Acquire),
         "reply fixture process already stopped",
@@ -533,6 +652,7 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
         "reply_packet_id":f.reply_packet,"reply_frame_id":f.reply_frame_id,"source_cursor_before":f.source_cursor}),
     )?;
     let (_reset, request_deferred) = install_defer_observer()?;
+    let (_reply_reset, reply_deferred) = install_reply_mesh_defer_observer()?;
     let mut collector =
         ReplyCollector::start(&root.join("source-mesh"), f.currency, f.region, &f.ids[0])?;
     let (notice_sender, returned) = mpsc::sync_channel(1);
@@ -554,10 +674,12 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
         reply_frame: f.reply_frame_id,
         scope_deadline: deadline,
         returned,
+        scenario,
+        reply_deferred,
     };
     let listener = f.listener.take().ok_or("reply listener already taken")?;
     let worker = thread::Builder::new()
-        .name("reply custody baseline peer".into())
+        .name("reply custody retry peer".into())
         .spawn(move || reply_peer(listener, pins, peer_stop, peer_handle))
         .map_err(|e| format!("reply peer spawn refused: {e}"))?;
     let mut peer = Peer {
@@ -583,17 +705,19 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
     });
     let peer_result = peer.join();
     let collector_result = collector.finish(true);
-    // Both owned joins complete before propagating the primary operation error.
-    let operation_error = operation_error.unwrap_or_else(|| "UNEXPECTED_OUTGOING_SUCCESS".into());
-    if ![libc::EWOULDBLOCK, libc::EAGAIN]
-        .iter()
-        .any(|code| operation_error.starts_with(&format!("CONTACT_STORAGE_IO:{code}:")))
-    {
-        return Err(format!("reply primary outgoing result={operation_error}; peer={peer_result:?}; collector={collector_result:?}; notice={notice_result:?}"));
+    // Both joins finish before the primary result is checked. Failure does not
+    // erase a reply which may already have become durably retained.
+    let expected_operation = if scenario.release() {
+        None
+    } else {
+        Some(REPLY_EXPIRY)
+    };
+    if operation_error.as_deref() != expected_operation {
+        return Err(format!("reply primary outgoing={operation_error:?}; expected={expected_operation:?}; peer={peer_result:?}; collector={collector_result:?}; notice={notice_result:?}"));
     }
     let peer_report = peer_result.map_err(|e| {
         format!(
-            "reply primary outgoing={operation_error}; peer={e}; collector={collector_result:?}"
+            "reply primary outgoing={operation_error:?}; peer={e}; collector={collector_result:?}"
         )
     })?;
     collector_result?;
@@ -601,8 +725,9 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
     let returned_at = returned_clock?;
     let dispatch_at = dispatch_clock?;
     require(
-        peer_report["mesh_error_sha256"] == sha(operation_error.as_bytes()),
-        "reply exact Mesh error mismatch",
+        peer_report["operation_error_sha256"]
+            == json!(operation_error.as_ref().map(|e| sha(e.as_bytes()))),
+        "reply exact operation result differs from peer notice",
     )?;
     require(
         matches!(request_deferred.try_recv(), Err(mpsc::TryRecvError::Empty)),
@@ -624,7 +749,7 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
         .filter(|r| !r.is_empty())
         .map(|r| crate::wallet_http::decode_unique_with_limit(r, 16 * 1024))
         .collect::<Result<Vec<_>>>()?;
-    let phases = [
+    let mut phases = vec![
         "attempt-started",
         "prepare-open-started",
         "prepare-open-completed",
@@ -643,9 +768,17 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
         "reply-receive-completed",
         "reply-verified",
         "reply-custody-open-started",
-        "attempt-completed",
     ];
-    require(rows.len() == phases.len(), "reply exact phase count")?;
+    if scenario.release() {
+        phases.extend([
+            "reply-custody-open-completed",
+            "reply-custody-receive-started",
+            "reply-custody-receive-completed",
+        ]);
+    }
+    phases.push("attempt-completed");
+    let phase_count = phases.len();
+    require(rows.len() == phase_count, "reply exact phase count")?;
     let mut previous = dispatch_at;
     for (index, (row, phase)) in rows.iter().zip(phases).enumerate() {
         let at = reply_clock(row, "observed_at")?;
@@ -668,44 +801,79 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
             && rows[16]["detail"]["frame_ids"] == json!([f.reply_frame_id.to_hex()])
             && rows[16]["detail"]["destination_ids"] == json!([f.ids[0]])
             && rows[16]["detail"]["challenge_id"] == peer_report["challenge_id"]
-            && rows[16]["detail"]["exchange_id"] == peer_report["exchange_id"]
-            && rows[18]["detail"]["result"] == "error"
-            && rows[18]["detail"]["error_tag"] == "CONTACT_STORAGE_IO"
-            && rows[18]["detail"]["lock_contention"] == true,
-        "reply exact authenticated response and Mesh terminal binding",
+            && rows[16]["detail"]["exchange_id"] == peer_report["exchange_id"],
+        "reply exact authenticated response binding",
     )?;
+    let final_detail = &rows.last().ok_or("reply terminal row absent")?["detail"];
+    if scenario.release() {
+        require(
+            final_detail["result"] == "ok"
+                && rows[20]["detail"]["retained_packet_ids"] == json!([f.reply_packet]),
+            "reply release did not complete exactly one durable receive",
+        )?;
+    } else {
+        require(
+            final_detail["result"] == "error"
+                && final_detail["error_tag"] == "TLS_TIMEOUT"
+                && final_detail["lock_contention"] == false,
+            "reply expiry did not terminate at original deadline",
+        )?;
+    }
     let prepared_at = reply_clock(&rows[4], "observed_at")?;
     let connect_at = reply_clock(&rows[5], "observed_at")?;
     let lower = prepared_at + 3.0;
     let upper = connect_at + 3.0;
-    // The production clock assignment lies strictly between these two events.
-    // Its exact value is not exposed and remains null; this lower-bound test
-    // proves the error precedes the real original deadline without extending it.
+    let original_deadline = reply_clock(&peer_report, "original_socket_deadline")?;
+    let actual_defer_at = reply_clock(&peer_report, "actual_reply_defer_at")?;
+    let defer_seen_at = reply_clock(&peer_report, "reply_defer_seen_at")?;
     require(
-        dispatch_at <= prepared_at
-            && prepared_at <= connect_at
-            && connect_at <= reply_clock(&peer_report, "accepted_at")?
-            && reply_clock(&peer_report, "accepted_at")?
-                <= reply_clock(&peer_report, "challenge_sent_at")?
-            && reply_clock(&peer_report, "request_received_at")?
-                <= reply_clock(&peer_report, "request_verified_at")?
-            && reply_clock(&peer_report, "request_verified_at")?
-                <= reply_clock(&peer_report, "custody_completed_at")?
-            && reply_clock(&peer_report, "custody_completed_at")?
-                <= reply_clock(&peer_report, "reply_prepared_at")?
-            && reply_clock(&peer_report, "reply_prepared_at")?
-                <= reply_clock(&peer_report, "mesh_held_at")?
-            && reply_clock(&peer_report, "mesh_held_at")? <= reply_clock(&rows[16], "observed_at")?
-            && reply_clock(&rows[16], "observed_at")? <= reply_clock(&rows[17], "observed_at")?
-            && reply_clock(&peer_report, "reply_sent_at")? < lower
-            && returned_at < lower
-            && returned_at <= reply_clock(&peer_report, "mesh_release_started_at")?
-            && reply_clock(&peer_report, "mesh_release_started_at")?
-                <= reply_clock(&peer_report, "mesh_released_at")?
-            && reply_clock(&peer_report, "mesh_released_at")?
-                < reply_clock(&peer_report, "peer_deadline")?,
-        "reply original clock/real held Mesh collision binding",
+        lower <= original_deadline
+            && original_deadline <= upper
+            && peer_report["reply_defer_phase"] == "reply-custody",
+        "reply actual None deadline differs from original prepare/connect bracket",
     )?;
+    let ordered = [
+        dispatch_at,
+        prepared_at,
+        connect_at,
+        reply_clock(&peer_report, "accepted_at")?,
+        reply_clock(&peer_report, "challenge_sent_at")?,
+        reply_clock(&peer_report, "request_received_at")?,
+        reply_clock(&peer_report, "request_verified_at")?,
+        reply_clock(&peer_report, "custody_completed_at")?,
+        reply_clock(&peer_report, "reply_prepared_at")?,
+        reply_clock(&peer_report, "mesh_held_at")?,
+        reply_clock(&rows[16], "observed_at")?,
+        reply_clock(&rows[17], "observed_at")?,
+        actual_defer_at,
+        defer_seen_at,
+    ];
+    require(
+        ordered.windows(2).all(|pair| pair[0] <= pair[1])
+            && defer_seen_at < original_deadline
+            && reply_clock(&peer_report, "reply_sent_at")? < original_deadline,
+        "reply real custody/actual None clock order differs",
+    )?;
+    let release_started_at = reply_clock(&peer_report, "mesh_release_started_at")?;
+    let released_at = reply_clock(&peer_report, "mesh_released_at")?;
+    require(
+        release_started_at <= released_at,
+        "reply release clock order",
+    )?;
+    if scenario.release() {
+        require(
+            defer_seen_at <= release_started_at
+                && release_started_at <= returned_at
+                && release_started_at <= reply_clock(&rows[18], "observed_at")?
+                && returned_at < original_deadline,
+            "reply release reset original clock or skipped held None",
+        )?;
+    } else {
+        require(
+            returned_at >= original_deadline && returned_at <= release_started_at,
+            "reply expiry released source Mesh before real return",
+        )?;
+    }
     let terminal = read(
         &root.join("source-mesh/carriage-boundary-terminal.json"),
         64 * 1024,
@@ -721,7 +889,7 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
             && terminal["events_sha256"] == sha(&events_raw),
         "reply observer incomplete",
     )?;
-    reply_cold(root, &f)?;
+    reply_cold(root, &f, scenario)?;
     reply_native_zero(root, &f, deadline)?;
     let checked_raw =
         files::private_read_with_limit(&root.join("checked-metadata.json"), 64 * 1024)?;
@@ -735,7 +903,7 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
         "events_sha256":sha(&events_raw),"checked_metadata_sha256":sha(&checked_raw),"dispatch_at":dispatch_at,
         "outgoing_returned_at":returned_at,"prepared_at":prepared_at,"connect_started_at":connect_at,
         "socket_deadline_lower_bound":lower,"socket_deadline_upper_bound":upper,"test_binary_sha256":artifact_sha,
-        "operation_error_tag":"CONTACT_STORAGE_IO"}),
+        "operation_error_tag":if scenario.release() { Value::Null } else { json!("TLS_TIMEOUT") }}),
     )?;
     for (target, source) in [
         ("peer_accepted_at", "accepted_at"),
@@ -754,39 +922,47 @@ fn reply_run(root: &Path, deadline: f64, record: &mut Value) -> Result<()> {
     }
     reply_patch(
         record,
-        json!({"exact_mesh_acquisition_refusal":true,"held_probe_typed_none":true,
-        "peer_actual_custody_received":true,"reply_verified":true,"local_reply_receive_absent":true,
-        "source_cursor_advanced_once":true,"original_frame_retained":true,"source_receipt_absent":true,
-        "peer_suppression_unchanged":true,"reply_frame_absent":true,"native_zero_cold_unchanged":true,
+        json!({"held_probe_exact_mesh_acquisition_refusal":true,"held_probe_typed_none":true,
+        "peer_actual_custody_received":true,"reply_verified":true,"local_reply_receive_absent":!scenario.release(),
+        "source_cursor_advanced_once":true,"original_frame_retained":true,"source_receipt_absent":!scenario.release(),
+        "peer_suppression_unchanged":!scenario.release(),"reply_frame_absent":!scenario.release(),"native_zero_cold_unchanged":true,
         "peer_joined":true,"collector_joined":true,"normal_test_socket_shutdown":false,
         "all_original_clock_bounds_met":true,"request_mesh_defer_seen":false,"source_cursor_after":f.source_cursor+1}),
+    )?;
+    reply_patch(
+        record,
+        json!({"reply_mesh_defer_seen":true,"reply_defer_phase":"reply-custody",
+        "actual_reply_defer_at":actual_defer_at,"reply_defer_seen_at":defer_seen_at,
+        "reply_mesh_release_after_defer":scenario.release(),"local_reply_receive_completed":scenario.release(),
+        "source_return_was_timeout":!scenario.release(),"production_reply_retry_implemented":true,
+        "outgoing_phase_count":phase_count,"original_socket_deadline":original_deadline}),
     )?;
     drop(f.source_reserved);
     within(deadline)
 }
 
-fn reply_candidate() -> Result<()> {
+fn reply_candidate(scenario: ReplyCase) -> Result<()> {
     require(
         std::env::var(OPT_IN).as_deref() == Ok("1"),
-        "reply Mesh baseline opt-in required",
+        "reply Mesh retry candidate opt-in required",
     )?;
     let started = monotonic()?;
     let deadline = started + 30.0;
     let root = io(fs::canonicalize(std::env::temp_dir()))?
-        .join(format!("rld-reply-mesh-baseline-{}", random()?));
+        .join(format!("rld-reply-mesh-retry-{}", random()?));
     match fs::symlink_metadata(&root) {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
         _ => return Err("reply fixture root not fresh or inspection refused".into()),
     }
     let root = directory(&root)?;
-    let scope = json!({"format":REPLY_FORMAT,"case":"held-source-mesh-after-verified-response",
+    let scope = json!({"format":REPLY_FORMAT,"case":scenario.label(),
         "root":root,"pid":std::process::id(),"started":started,"deadline":deadline,"stop_deadline":started+35.0,
         "regional_build_source_sha256":env!("RLD_REGIONAL_SOURCE"),"fixture_only":true,
-        "production_outgoing_observed":true,"production_reply_retry_implemented":false,
+        "production_outgoing_observed":true,"production_reply_retry_implemented":true,
         "transport_payload_native_authority":false,"native_value_authority":false,
         "whole_payment_pass":false,"payment_qualified":false,"mainnet":false});
     reply_metadata(&root.join("scope.json"), &scope)?;
-    eprintln!("reply_mesh_baseline_scope={scope}");
+    eprintln!("reply_mesh_retry_scope={scope}");
     let mut record = Value::Object(
         RESULT_KEYS
             .split_whitespace()
@@ -795,13 +971,13 @@ fn reply_candidate() -> Result<()> {
     );
     reply_patch(
         &mut record,
-        json!({"format":REPLY_FORMAT,"case":"held-source-mesh-after-verified-response",
+        json!({"format":REPLY_FORMAT,"case":scenario.label(),
         "root":root,"pid":std::process::id(),"passed":false,"started":started,"deadline":deadline,
         "stop_deadline":started+35.0,"regional_build_source_sha256":env!("RLD_REGIONAL_SOURCE"),
         "transport_payload_native_authority":false,"native_value_authority":false,
         "whole_payment_pass":false,"payment_qualified":false,"mainnet":false}),
     )?;
-    let result = reply_run(&root, deadline, &mut record);
+    let result = reply_run(&root, deadline, &mut record, scenario);
     let ended = monotonic();
     let result = result.and_then(|()| {
         let ended = ended.as_ref().map_err(Clone::clone)?;
@@ -819,15 +995,24 @@ fn reply_candidate() -> Result<()> {
         Ok(()) => Ok(()),
     };
     let outcome_write = reply_metadata(&root.join("outcome.json"), &record);
-    eprintln!("reply_mesh_baseline_result={record}");
-    // Preserve expected-refusal evidence and all unexpected residue. External
+    eprintln!("reply_mesh_retry_result={record}");
+    // Preserve all actual retry/expiry evidence and unexpected residue. External
     // stopped-seal/controller owns this fresh root; this test deletes nothing.
     result?;
     failure_write?;
     outcome_write
 }
 #[test]
-#[ignore = "actual reply Mesh fatal after authenticated durable peer reply; original30 normal,35 stop only"]
-fn outgoing_reply_custody_refuses_real_mesh_after_verified_response() -> Result<()> {
-    reply_candidate()
+#[ignore = "actual reply custody after real None/release; original30 normal,35 stop only"]
+fn outgoing_reply_custody_retries_real_mesh_then_releases_to_durable_reply() -> Result<()> {
+    reply_candidate(ReplyCase::ReleaseAfterDefer)
 }
+#[test]
+#[ignore = "actual reply Mesh held through original expiry; original30 normal,35 stop only"]
+fn outgoing_reply_custody_waits_real_mesh_until_original_expiry() -> Result<()> {
+    reply_candidate(ReplyCase::HoldUntilExpiry)
+}
+
+#[cfg(test)]
+#[path = "service_reply_mesh_guard_tests.rs"]
+mod guard_tests;
