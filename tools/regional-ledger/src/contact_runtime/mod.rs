@@ -157,27 +157,69 @@ pub(crate) struct Lease {
     path: PathBuf,
     role: String,
     token: String,
+    observation: Option<service::MeshLeaseObservation>,
 }
 impl Lease {
     pub(crate) fn acquire(path: &Path, role: &str) -> Result<Self> {
         let token = random()?[..32].to_owned();
-        crate::contact_process_lock::execute(&bytes(&json!({"Acquire":{
+        let mut observation = if role == "Mesh" {
+            service::observe_mesh_lease(path)
+        } else {
+            None
+        };
+        let result = crate::contact_process_lock::execute(&bytes(&json!({"Acquire":{
             "token":token,"path":path,"role":role,"nonblocking":true
-        }}))?)?;
+        }}))?);
+        if let Some(observer) = observation.as_mut() {
+            if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                observer.acquire_result(&result)
+            }))
+            .is_err()
+            {
+                service::mesh_observation_fault();
+            }
+        }
+        result?;
         Ok(Self {
             path: path.to_owned(),
             role: role.into(),
             token,
+            observation,
         })
     }
 }
 impl Drop for Lease {
     fn drop(&mut self) {
-        if let Ok(raw) = bytes(&json!({"Release":{
+        let observation = self.observation.take();
+        let before = observation.as_ref().and_then(|observer| {
+            match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                observer.release_started()
+            })) {
+                Ok(before) => before,
+                Err(_) => {
+                    service::mesh_observation_fault();
+                    None
+                }
+            }
+        });
+        let result = if let Ok(raw) = bytes(&json!({"Release":{
             "token":self.token,"path":self.path,"role":self.role
         }})) {
-            if let Err(error) = crate::contact_process_lock::execute(&raw) {
+            let result = crate::contact_process_lock::execute(&raw);
+            if let Err(error) = &result {
                 eprintln!("contact runtime lock release refused: {error}");
+            }
+            result
+        } else {
+            Err("diagnostic release serialization unknown".into())
+        };
+        if let Some(observer) = observation {
+            if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                observer.release_result(before, &result)
+            }))
+            .is_err()
+            {
+                service::mesh_observation_fault();
             }
         }
     }

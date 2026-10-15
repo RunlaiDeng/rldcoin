@@ -160,6 +160,9 @@ impl Drop for Sink {
     }
 }
 impl Sink {
+    pub(super) fn diagnostic_error(&self) {
+        bump(&self.shared.errors);
+    }
     /// Integration must check Option<Sink> before this call in disabled mode.
     pub(super) fn begin_attempt(
         &self,
@@ -215,6 +218,12 @@ pub(super) struct Attempt {
     finished: bool,
 }
 impl Attempt {
+    pub(super) fn diagnostic_id(&self) -> u64 {
+        self.id
+    }
+    pub(super) fn diagnostic_error(&self) {
+        bump(&self.sink.shared.errors);
+    }
     fn emit(&mut self, phase: &str, build: impl FnOnce() -> Result<Value>) {
         if self.sink.shared.closed.load(Ordering::Acquire) {
             return;
@@ -916,3 +925,7 @@ mod metadata_boundary_tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "service_mesh_lease_tests.rs"]
+mod mesh_lease_tests;

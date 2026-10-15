@@ -33,6 +33,272 @@ use std::{sync::Arc, thread::JoinHandle};
 
 static STOP: AtomicBool = AtomicBool::new(false);
 
+// Passive optional wrapper diagnostics. No acquisition policy or protocol authority.
+#[derive(Clone)]
+struct MeshRoleContext {
+    sink: carriage_observation::Sink,
+    root: std::path::PathBuf,
+    role: &'static str,
+    operation: &'static str,
+    parent_attempt: Option<u64>,
+    main_turn: Option<u64>,
+}
+struct MeshObservationTls {
+    context: std::cell::RefCell<Option<MeshRoleContext>>,
+    enabled: std::cell::Cell<bool>,
+    fault: std::cell::Cell<bool>,
+}
+thread_local! {
+    static MESH_ROLE_CONTEXT: MeshObservationTls = const { MeshObservationTls {
+        context: std::cell::RefCell::new(None),enabled:std::cell::Cell::new(false),
+        fault:std::cell::Cell::new(false),
+    }};
+}
+pub(super) fn mesh_observation_fault() {
+    let _ = MESH_ROLE_CONTEXT.try_with(|slot| {
+        if slot.enabled.get() {
+            slot.fault.set(true);
+        }
+    });
+}
+struct MeshRoleReset {
+    previous: Option<MeshRoleContext>,
+    previous_enabled: bool,
+    previous_fault: bool,
+    installed: bool,
+    fallback: Option<carriage_observation::Sink>,
+    _thread_affine: std::marker::PhantomData<std::rc::Rc<()>>,
+}
+impl Drop for MeshRoleReset {
+    fn drop(&mut self) {
+        if !self.installed {
+            return;
+        }
+        let previous = self.previous.take();
+        let reset = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            MESH_ROLE_CONTEXT
+                .try_with(|slot| {
+                    let fault = slot.fault.get();
+                    if let Ok(mut context) = slot.context.try_borrow_mut() {
+                        *context = previous;
+                        slot.enabled.set(self.previous_enabled);
+                        slot.fault.set(self.previous_fault || fault);
+                        !fault
+                    } else {
+                        slot.fault.set(true);
+                        false
+                    }
+                })
+                .unwrap_or(false)
+        }));
+        if !matches!(reset, Ok(true)) {
+            if let Some(sink) = &self.fallback {
+                sink.diagnostic_error();
+            }
+        }
+    }
+}
+fn install_mesh_context(context: Option<MeshRoleContext>) -> MeshRoleReset {
+    let mut reset = MeshRoleReset {
+        previous: None,
+        previous_enabled: false,
+        previous_fault: false,
+        installed: false,
+        fallback: context.as_ref().map(|v| v.sink.clone()),
+        _thread_affine: std::marker::PhantomData,
+    };
+    if context.is_none() {
+        return reset;
+    }
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        MESH_ROLE_CONTEXT
+            .try_with(|slot| {
+                if let Ok(mut current) = slot.context.try_borrow_mut() {
+                    reset.previous_enabled = slot.enabled.get();
+                    reset.previous_fault = slot.fault.get();
+                    reset.previous = current.replace(context.unwrap());
+                    slot.enabled.set(true);
+                    slot.fault.set(false);
+                    reset.installed = true;
+                } else if slot.enabled.get() {
+                    slot.fault.set(true);
+                }
+            })
+            .is_ok()
+    }));
+    if !matches!(result, Ok(true)) || !reset.installed {
+        mesh_observation_fault();
+        if let Some(sink) = &reset.fallback {
+            sink.diagnostic_error();
+        }
+    }
+    reset
+}
+fn mesh_role(
+    sink: Option<&carriage_observation::Sink>,
+    config: &Value,
+    role: &'static str,
+    parent_attempt: Option<u64>,
+) -> MeshRoleReset {
+    let Some(sink) = sink else {
+        return install_mesh_context(None);
+    };
+    let context = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let root = std::path::PathBuf::from(config["state"].as_str()?);
+        let root = if root.is_absolute() {
+            root
+        } else {
+            std::env::current_dir().ok()?.join(root)
+        };
+        Some(MeshRoleContext {
+            sink: sink.clone(),
+            root,
+            role,
+            operation: "unclassified",
+            parent_attempt,
+            main_turn: None,
+        })
+    }))
+    .ok()
+    .flatten();
+    if context.is_none() {
+        sink.diagnostic_error();
+        mesh_observation_fault();
+    }
+    install_mesh_context(context)
+}
+fn mesh_operation(operation: &'static str) -> MeshRoleReset {
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        MESH_ROLE_CONTEXT
+            .try_with(|slot| {
+                if !slot.enabled.get() {
+                    return None;
+                }
+                let context = match slot.context.try_borrow() {
+                    Ok(current) => current.as_ref().cloned(),
+                    Err(_) => {
+                        slot.fault.set(true);
+                        return None;
+                    }
+                };
+                if context.is_none() {
+                    slot.fault.set(true);
+                }
+                context.map(|mut context| {
+                    context.operation = operation;
+                    context.main_turn = if context.role == "main" {
+                        native_observation::active_turn()
+                    } else {
+                        None
+                    };
+                    context
+                })
+            })
+            .ok()
+            .flatten()
+    }));
+    let context = match result {
+        Ok(context) => context,
+        Err(_) => {
+            mesh_observation_fault();
+            None
+        }
+    };
+    install_mesh_context(context)
+}
+fn mesh_clock_sample(attempt: &carriage_observation::Attempt, sampled: Option<f64>) -> Option<f64> {
+    let sampled = sampled.filter(|at| at.is_finite());
+    if sampled.is_none() {
+        attempt.diagnostic_error();
+        mesh_observation_fault();
+    }
+    sampled
+}
+pub(super) struct MeshLeaseObservation {
+    attempt: Option<carriage_observation::Attempt>,
+    started_at: Option<f64>,
+}
+impl MeshLeaseObservation {
+    pub(super) fn acquire_result(&mut self, result: &Result<Value>) {
+        if let Some(attempt) = self.attempt.as_mut() {
+            let captured = mesh_clock_sample(attempt, monotonic().ok());
+            let began = self.started_at;
+            attempt.event("mesh-acquire-result", || Ok(json!({"call_before":began,
+                "returned_after":captured,"result":if result.is_ok() {"acquired"}
+                    else if result.as_ref().err().is_some_and(|e|[libc::EWOULDBLOCK,libc::EAGAIN]
+                        .iter().any(|code|e.starts_with(&format!("CONTACT_STORAGE_IO:{code}:")))) {"would-block"}
+                    else {"error"}})));
+        }
+        if result.is_err() {
+            if let Some(attempt) = self.attempt.take() {
+                attempt.finish(&result.as_ref().map(|_| ()).map_err(Clone::clone));
+            }
+        }
+    }
+    pub(super) fn release_started(&self) -> Option<f64> {
+        self.attempt
+            .as_ref()
+            .and_then(|attempt| mesh_clock_sample(attempt, monotonic().ok()))
+    }
+    pub(super) fn release_result(mut self, before: Option<f64>, result: &Result<Value>) {
+        if let Some(mut attempt) = self.attempt.take() {
+            let after = mesh_clock_sample(&attempt, monotonic().ok());
+            attempt.event("mesh-release-result", || Ok(json!({"call_before":before,
+                "returned_after":after,"result":if result.is_ok() {"release-ok"} else {"release-error"}})));
+            attempt.finish(&result.as_ref().map(|_| ()).map_err(Clone::clone));
+        }
+    }
+}
+pub(super) fn observe_mesh_lease(path: &std::path::Path) -> Option<MeshLeaseObservation> {
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        MESH_ROLE_CONTEXT
+            .try_with(|slot| {
+                // Defaultdisabled: no borrow, clock, allocation, counter or producer.
+                if !slot.enabled.get() {
+                    return None;
+                }
+                let current = match slot.context.try_borrow() {
+                    Ok(current) => current,
+                    Err(_) => {
+                        slot.fault.set(true);
+                        return None;
+                    }
+                };
+                let Some(context) = current.as_ref() else {
+                    slot.fault.set(true);
+                    return None;
+                };
+                if context.root != path || context.operation == "unclassified" {
+                    context.sink.diagnostic_error();
+                    slot.fault.set(true);
+                    return None;
+                }
+                let mut attempt = context.sink.begin_attempt("mesh-lease", || {
+                    Ok(json!({
+                "role":context.role,"operation":context.operation,
+                "parent_attempt_id":context.parent_attempt,"main_turn":context.main_turn}))
+                })?;
+                let started_at = mesh_clock_sample(&attempt, monotonic().ok());
+                attempt.event("mesh-acquire-call", || {
+                    Ok(json!({"call_before":started_at}))
+                });
+                Some(MeshLeaseObservation {
+                    attempt: Some(attempt),
+                    started_at,
+                })
+            })
+            .ok()
+            .flatten()
+    }));
+    match result {
+        Ok(observation) => observation,
+        Err(_) => {
+            mesh_observation_fault();
+            None
+        }
+    }
+}
+
 // Sample the process signal flag only when diagnostics are active. This is
 // separate from the scheduler's height/key stop condition and changes no action.
 pub(super) fn observe_timeout_step(phase: &str) -> Result<()> {
@@ -345,6 +611,12 @@ fn accept(
     sink: Option<&carriage_observation::Sink>,
 ) -> Result<()> {
     let mut observation = sink.and_then(|sink| sink.begin_attempt("incoming", || Ok(json!({}))));
+    let _mesh_role = mesh_role(
+        sink,
+        config,
+        "incoming",
+        observation.as_ref().map(|o| o.diagnostic_id()),
+    );
     let result = (|| {
         let deadline = monotonic()? + 3.0;
         // Native Accept borrows this descriptor and retains its own duplicate.
@@ -359,6 +631,7 @@ fn accept(
         drop(stream);
         let (challenge, id, network, peers) = {
             carriage_event(&mut observation, "challenge-open-started", || Ok(json!({})));
+            let _mesh_operation = mesh_operation("challenge");
             let node = incoming_node_before_deadline(config, deadline, "challenge")?;
             carriage_event(&mut observation, "challenge-open-completed", || {
                 Ok(json!({}))
@@ -402,6 +675,7 @@ fn accept(
         });
         let response = {
             carriage_event(&mut observation, "custody-open-started", || Ok(json!({})));
+            let _mesh_operation = mesh_operation("custody");
             let mut node = incoming_node_before_deadline(config, deadline, "custody")?;
             require(
                 node.id == id && node.network == network,
@@ -619,10 +893,17 @@ fn outgoing_observed(
 ) -> Result<()> {
     let mut observation =
         sink.and_then(|sink| sink.begin_attempt("outgoing", || Ok(json!({"peer":peer}))));
+    let _mesh_role = mesh_role(
+        sink,
+        config,
+        "outgoing",
+        observation.as_ref().map(|o| o.diagnostic_id()),
+    );
     let result = (|| {
         // The preparation and cursor commit completes before opening a socket.
         let (bundle, id, network) = {
             carriage_event(&mut observation, "prepare-open-started", || Ok(json!({})));
+            let _mesh_operation = mesh_operation("prepare");
             let mut node = Node::open(config)?;
             carriage_event(&mut observation, "prepare-open-completed", || Ok(json!({})));
             carriage_event(&mut observation, "prepare-started", || Ok(json!({})));
@@ -665,6 +946,7 @@ fn outgoing_observed(
         });
         let request = {
             carriage_event(&mut observation, "request-open-started", || Ok(json!({})));
+            let _mesh_operation = mesh_operation("request");
             let node = request_node_before_deadline(config, deadline)?;
             carriage_event(&mut observation, "request-open-completed", || Ok(json!({})));
             require(
@@ -708,6 +990,7 @@ fn outgoing_observed(
         carriage_event(&mut observation, "reply-custody-open-started", || {
             Ok(json!({}))
         });
+        let mesh_reply_operation = mesh_operation("reply");
         let mut node = reply_node_before_deadline(config, deadline, &id, &network)?;
         carriage_event(&mut observation, "reply-custody-open-completed", || {
             Ok(json!({}))
@@ -724,6 +1007,7 @@ fn outgoing_observed(
         });
         let original_identity = node.id == id && node.network == network;
         drop(node);
+        drop(mesh_reply_operation);
         require(
             original_identity,
             "reply custody identity changed during receive",
@@ -1114,6 +1398,7 @@ pub(super) fn tick_ledger(
     #[cfg(test)]
     let started = monotonic()?;
     native_observation::event("mesh-receive-started", || Ok(json!({})))?;
+    let mesh_capture_operation = mesh_operation("capture");
     let node = if runtime.is_some() {
         Node::open_or_defer_mesh(config)?
     } else {
@@ -1127,6 +1412,7 @@ pub(super) fn tick_ledger(
         // to the original Runtime. All later errors retain their meaning.
         None => Vec::new(),
     };
+    drop(mesh_capture_operation);
     native_observation::event("mesh-receive-completed", || {
         Ok(
             json!({"deferred":receive_deferred,"frame_count":frames.len(),
@@ -1271,6 +1557,7 @@ fn tick_ledger_frames(
     // Native replay and signing finish before opening this custody lease.
     // Directory-only carriage shares it through durable preparation; socket
     // adapters retain their original independent open/wait boundaries.
+    let _mesh_postnative_operation = mesh_operation("postnative");
     let first = if directory.is_some() {
         native_observation::event("post-native-mesh-started", || Ok(json!({})))?;
         let mut node = open_directory_node(config)?;
@@ -1483,6 +1770,7 @@ pub fn run(options: Options) -> Result<()> {
     let carriage_sink = carriage_observer
         .as_ref()
         .and_then(|observer| observer.sink());
+    let mesh_main_role = mesh_role(carriage_sink.as_ref(), &config, "main", None);
     let mut workers = service_workers::Workers::new();
     if !directory_only {
         let outgoing_config = config.clone();
@@ -1666,6 +1954,7 @@ pub fn run(options: Options) -> Result<()> {
     let result = preserve_cleanup_error(result, stopped);
     // All ordinary workers and their incoming tasks have actually joined.
     // Close every producer before sealing only the diagnostic collector.
+    drop(mesh_main_role);
     drop(carriage_sink);
     let observation_ended = match carriage_observer {
         Some(observer) => observer.finish(result.is_ok()),

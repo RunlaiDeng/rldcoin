@@ -463,6 +463,14 @@ pub(in crate::contact_runtime) fn fixture_end_turn(result: &Result<Value>) -> Re
     end_turn(result)
 }
 
+// Diagnostic visibility only; absence/borrow failure never affects a Service turn.
+pub(super) fn active_turn() -> Option<u64> {
+    WRITER
+        .try_with(|slot| slot.try_borrow().ok()?.as_ref()?.active_turn)
+        .ok()
+        .flatten()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
