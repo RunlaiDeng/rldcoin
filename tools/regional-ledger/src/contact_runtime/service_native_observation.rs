@@ -436,6 +436,34 @@ pub(super) fn end_turn(result: &Result<Value>) -> Result<()> {
 }
 
 #[cfg(test)]
+pub(in crate::contact_runtime) struct FixtureGuard(Guard);
+#[cfg(test)]
+impl FixtureGuard {
+    pub(in crate::contact_runtime) fn finish(self, success: bool) -> Result<()> {
+        self.0.finish(success)
+    }
+}
+#[cfg(test)]
+pub(in crate::contact_runtime) fn fixture_start(
+    enabled: bool,
+    root: &Path,
+    instance: &str,
+    currency: Hash,
+    region: Hash,
+    node_id: &str,
+) -> Result<Option<FixtureGuard>> {
+    start(enabled, root, instance, currency, region, node_id).map(|guard| guard.map(FixtureGuard))
+}
+#[cfg(test)]
+pub(in crate::contact_runtime) fn fixture_begin_turn(started: f64) -> Result<()> {
+    begin_turn(started)
+}
+#[cfg(test)]
+pub(in crate::contact_runtime) fn fixture_end_turn(result: &Result<Value>) -> Result<()> {
+    end_turn(result)
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

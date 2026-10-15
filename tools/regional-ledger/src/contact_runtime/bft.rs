@@ -60,6 +60,12 @@ fn hash(value: &Value) -> Result<Hash> {
 fn state_hash(value: &bft_client::State) -> Result<Hash> {
     hash(&serde_json::to_value(value).map_err(|e| e.to_string())?)
 }
+fn observe_timeout_step(timeout: bool, phase: &str) -> Result<()> {
+    if timeout {
+        super::service::observe_timeout_step(phase)?;
+    }
+    Ok(())
+}
 #[cfg(test)]
 thread_local! {
     static STOP_AFTER_SIGNATURE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
@@ -547,6 +553,8 @@ impl Runtime {
         Ok(())
     }
     fn sign(&mut self, node: &Store, request: consensus::Request) -> Result<()> {
+        let timeout = matches!(&request, consensus::Request::Timeout { .. });
+        observe_timeout_step(timeout, "bft-timeout-caller-started")?;
         let caller = bft_client::Client::lock(
             &self.config.head_file,
             &self.config.signer_dir,
@@ -559,10 +567,12 @@ impl Runtime {
             old.pending.is_none() && old.outbox.is_none(),
             "BFT pending/outbox requires recover-only",
         )?;
+        observe_timeout_step(timeout, "bft-timeout-caller-completed")?;
         let mut pending = old.clone();
         pending.pending = Some(request.clone());
         #[cfg(test)]
         let started = super::service::monotonic()?;
+        observe_timeout_step(timeout, "bft-timeout-pending-started")?;
         let (pending, mut agent) = if self.config.format == bft_client::ORIGIN_FORMAT {
             (Self::publish_head(&caller, node, &old, pending)?, None)
         } else {
@@ -575,10 +585,12 @@ impl Runtime {
             )?;
             (pending, Some(agent))
         };
+        observe_timeout_step(timeout, "bft-timeout-pending-completed")?;
         #[cfg(test)]
         super::service::trace_subwork("sign-pending-publication", started)?;
         #[cfg(test)]
         let started = super::service::monotonic()?;
+        observe_timeout_step(timeout, "bft-timeout-native-sign-started")?;
         let signed = if self.config.format == bft_client::ORIGIN_FORMAT {
             crate::bft_network::sign_local_envelope(
                 &serde_json::to_vec(&request).map_err(|e| e.to_string())?,
@@ -605,6 +617,7 @@ impl Runtime {
                 "fixture stopped after durable Native signature before caller response".into(),
             );
         }
+        observe_timeout_step(timeout, "bft-timeout-native-sign-completed")?;
         #[cfg(test)]
         super::service::trace_subwork("sign-native-response", started)?;
         let mut response = pending.clone();
@@ -613,12 +626,16 @@ impl Runtime {
         response.outbox = Some(signed.message);
         #[cfg(test)]
         let started = super::service::monotonic()?;
+        observe_timeout_step(timeout, "bft-timeout-response-started")?;
         Self::publish_head(&caller, node, &pending, response)?;
+        observe_timeout_step(timeout, "bft-timeout-response-completed")?;
         #[cfg(test)]
         super::service::trace_subwork("sign-response-publication", started)?;
         drop(caller);
+        observe_timeout_step(timeout, "bft-timeout-flush-started")?;
         self.flush(node)?;
         self.entered = super::service::monotonic()?;
+        observe_timeout_step(timeout, "bft-timeout-flush-completed")?;
         Ok(())
     }
 
@@ -1216,6 +1233,7 @@ impl Runtime {
                 "authenticated_messages":observation.authenticated_messages});
         }
         let decision = observation.action;
+        let timeout_action = matches!(&decision, tick::Decision::Timeout { .. });
         #[cfg(test)]
         super::service::trace_subwork("consensus-complete-observe", started)?;
         #[cfg(test)]
@@ -1233,6 +1251,7 @@ impl Runtime {
         }
         #[cfg(test)]
         let started = super::service::monotonic()?;
+        observe_timeout_step(timeout_action, "bft-timeout-action-started")?;
         match decision {
             tick::Decision::Phase(phase::Action::Finalize { snapshot }) => {
                 node.finalize(*snapshot.clone())?;
@@ -1291,14 +1310,17 @@ impl Runtime {
             }
             _ => {}
         }
+        observe_timeout_step(timeout_action, "bft-timeout-action-completed")?;
         #[cfg(test)]
         super::service::trace_subwork("consensus-action", started)?;
         self.archive.runtime.height = node.chain.height();
         self.archive.runtime.tip = node.chain.tip()?;
         #[cfg(test)]
         let started = super::service::monotonic()?;
+        observe_timeout_step(timeout_action, "bft-timeout-persist-started")?;
         let result = self.persist(node);
         if result.is_ok() {
+            observe_timeout_step(timeout_action, "bft-timeout-persist-completed")?;
             super::service::native_observation::event("bft-tick-completed", || {
                 Ok(
                     json!({"native_height":node.chain.height(),"runtime_height":self.archive.runtime.height,

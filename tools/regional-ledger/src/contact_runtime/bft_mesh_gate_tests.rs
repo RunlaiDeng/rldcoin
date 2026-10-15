@@ -412,3 +412,6 @@ fn mesh_lease_preserves_ready_onward_work_and_native_refusals() {
         "old_payment_cause_established":false,"mainnet":false})
     );
 }
+
+#[path = "bft_timeout_observation_tests.rs"]
+mod timeout_observation_tests;

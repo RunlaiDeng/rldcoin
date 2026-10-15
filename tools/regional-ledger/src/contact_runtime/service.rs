@@ -32,6 +32,14 @@ use std::{
 use std::{sync::Arc, thread::JoinHandle};
 
 static STOP: AtomicBool = AtomicBool::new(false);
+
+// Sample the process signal flag only when diagnostics are active. This is
+// separate from the scheduler's height/key stop condition and changes no action.
+pub(super) fn observe_timeout_step(phase: &str) -> Result<()> {
+    native_observation::event(phase, || {
+        Ok(json!({"process_stop_requested":STOP.load(Ordering::Acquire)}))
+    })
+}
 #[cfg(test)]
 #[path = "post_native_trace.rs"]
 mod post_native_trace;
