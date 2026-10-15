@@ -12,6 +12,9 @@ mod receipt_status_tests;
 #[cfg(test)]
 #[path = "regional_payload_decode_tests.rs"]
 mod regional_payload_decode_tests;
+#[cfg(test)]
+#[path = "service_request_mesh_tests.rs"]
+mod request_mesh_tests;
 #[path = "service_workers.rs"]
 mod service_workers;
 
