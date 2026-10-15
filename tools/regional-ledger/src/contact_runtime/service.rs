@@ -327,6 +327,68 @@ pub(super) fn outgoing(config: &Value, peer: &str, contact: &Value) -> Result<()
     outgoing_observed(config, peer, contact, None)
 }
 
+fn request_mesh_remaining(deadline: f64) -> Result<f64> {
+    require(
+        deadline.is_finite(),
+        "TLS_TIMEOUT: invalid original request deadline",
+    )?;
+    require(
+        !STOP.load(Ordering::Acquire),
+        "outgoing request binding cancelled; retain complete evidence",
+    )?;
+    let remaining = deadline - monotonic()?;
+    require(
+        remaining > 0.0,
+        "TLS_TIMEOUT: original request deadline exhausted; retain complete evidence",
+    )?;
+    Ok(remaining)
+}
+
+#[cfg(test)]
+thread_local! {
+    // A bounded observation of an actual acquisition deferral; it cannot release
+    // a lease or authorize a request in the service thread.
+    static REQUEST_MESH_DEFER_OBSERVER:
+        std::cell::RefCell<Option<std::sync::mpsc::SyncSender<(f64, f64)>>> =
+        const { std::cell::RefCell::new(None) };
+    static REQUEST_MESH_PREPARED_SHA: std::cell::RefCell<Option<String>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+#[cfg(test)]
+fn observe_actual_request_mesh_defer(deadline: f64) {
+    if let Ok(observed_at) = monotonic() {
+        REQUEST_MESH_DEFER_OBSERVER.with(|observer| {
+            if let Some(sender) = observer.borrow().as_ref() {
+                let _ = sender.try_send((deadline, observed_at));
+            }
+        });
+    }
+}
+
+fn request_node_before_deadline(config: &Value, deadline: f64) -> Result<Node> {
+    loop {
+        request_mesh_remaining(deadline)?;
+        // Only Mesh acquisition WouldBlock returns None. Full authentication,
+        // filesystem and capacity errors still refuse immediately.
+        match Node::open_or_defer_mesh(config)? {
+            Some(node) => {
+                // Complete open cannot be preempted and may update an advert.
+                // A late result must be dropped before request signing.
+                request_mesh_remaining(deadline)?;
+                return Ok(node);
+            }
+            None => {
+                #[cfg(test)]
+                observe_actual_request_mesh_defer(deadline);
+                let remaining = request_mesh_remaining(deadline)?;
+                // No Node, Native lease or TLS mutex is held while waiting.
+                thread::sleep(Duration::from_secs_f64(remaining.min(0.005)));
+            }
+        }
+    }
+}
+
 fn outgoing_observed(
     config: &Value,
     peer: &str,
@@ -348,6 +410,16 @@ fn outgoing_observed(
             });
             (bundle, node.id.clone(), node.network.clone())
         };
+        #[cfg(test)]
+        REQUEST_MESH_DEFER_OBSERVER.with(|observer| {
+            if observer.borrow().is_some() {
+                if let Ok(raw) = bytes(&bundle) {
+                    REQUEST_MESH_PREPARED_SHA.with(|slot| {
+                        *slot.borrow_mut() = Some(hex::encode(Sha256::digest(raw)));
+                    });
+                }
+            }
+        });
         let deadline = monotonic()? + 3.0;
         carriage_event(&mut observation, "connect-started", || {
             Ok(json!({"peer":peer}))
@@ -371,14 +443,23 @@ fn outgoing_observed(
         });
         let request = {
             carriage_event(&mut observation, "request-open-started", || Ok(json!({})));
-            let node = Node::open(config)?;
+            let node = request_node_before_deadline(config, deadline)?;
             carriage_event(&mut observation, "request-open-completed", || Ok(json!({})));
-            node.sign("tcp-request",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
-        "network":network,"node_id":id,"to":peer,"nonce":random()?,"challenge":verified["body"]["nonce"],"bundle":bundle}))?
+            require(
+                node.id == id && node.network == network,
+                "request identity changed after original preparation",
+            )?;
+            let body = json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
+        "network":network,"node_id":id,"to":peer,"nonce":random()?,"challenge":verified["body"]["nonce"],"bundle":bundle});
+            request_mesh_remaining(deadline)?;
+            node.sign("tcp-request", body)?
         };
+        // Signing can finish after expiry; never emit that late result.
+        request_mesh_remaining(deadline)?;
         carriage_event(&mut observation, "request-send-started", || {
             Ok(json!({"challenge_id":request["body"]["challenge"]}))
         });
+        request_mesh_remaining(deadline)?;
         send(handle, deadline, request.clone())?;
         carriage_event(&mut observation, "request-send-completed", || Ok(json!({})));
         carriage_event(&mut observation, "reply-receive-started", || Ok(json!({})));
