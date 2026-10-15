@@ -229,6 +229,106 @@ fn carriage_packets(bundle: &Value) -> Result<Value> {
         "receipt_count":bundle["body"]["receipts"].as_array().ok_or("carriage diagnostic receipts absent")?.len()}))
 }
 
+fn incoming_mesh_remaining(deadline: f64) -> Result<f64> {
+    require(
+        deadline.is_finite(),
+        "TLS_TIMEOUT: invalid original incoming deadline",
+    )?;
+    require(
+        !STOP.load(Ordering::Acquire),
+        "incoming Mesh acquisition cancelled; retain complete evidence",
+    )?;
+    let remaining = deadline - monotonic()?;
+    require(
+        remaining > 0.0,
+        "TLS_TIMEOUT: original incoming deadline exhausted; retain complete evidence",
+    )?;
+    Ok(remaining)
+}
+
+#[cfg(test)]
+type IncomingMeshDeferObservation = (&'static str, f64, f64);
+#[cfg(test)]
+thread_local! {
+    // Only actual Ok(None) observations enter this test-owned capacity-one
+    // channel. The observer never releases a lease or authorizes a request.
+    static INCOMING_MESH_DEFER_OBSERVER:
+        std::cell::RefCell<Option<std::sync::mpsc::SyncSender<IncomingMeshDeferObservation>>> =
+        const { std::cell::RefCell::new(None) };
+}
+#[cfg(test)]
+struct IncomingMeshDeferReset;
+#[cfg(test)]
+impl Drop for IncomingMeshDeferReset {
+    fn drop(&mut self) {
+        INCOMING_MESH_DEFER_OBSERVER.with(|slot| {
+            slot.borrow_mut().take();
+        });
+    }
+}
+#[cfg(test)]
+fn install_incoming_mesh_defer_observer() -> Result<(
+    IncomingMeshDeferReset,
+    std::sync::mpsc::Receiver<IncomingMeshDeferObservation>,
+)> {
+    let (sender, receiver) = std::sync::mpsc::sync_channel(1);
+    INCOMING_MESH_DEFER_OBSERVER.with(|slot| -> Result<()> {
+        let mut slot = slot
+            .try_borrow_mut()
+            .map_err(|_| "incoming Mesh defer observer is borrowed")?;
+        require(
+            slot.is_none(),
+            "incoming Mesh defer observer already installed",
+        )?;
+        *slot = Some(sender);
+        Ok(())
+    })?;
+    Ok((IncomingMeshDeferReset, receiver))
+}
+#[cfg(test)]
+fn observe_actual_incoming_mesh_defer(phase: &'static str, deadline: f64) {
+    if let Ok(observed_at) = monotonic() {
+        INCOMING_MESH_DEFER_OBSERVER.with(|observer| {
+            if let Ok(observer) = observer.try_borrow() {
+                if let Some(sender) = observer.as_ref() {
+                    let _ = sender.try_send((phase, deadline, observed_at));
+                }
+            }
+        });
+    }
+}
+
+fn incoming_node_before_deadline(
+    config: &Value,
+    deadline: f64,
+    phase: &'static str,
+) -> Result<Node> {
+    require(
+        matches!(phase, "challenge" | "custody"),
+        "incoming Mesh acquisition phase differs",
+    )?;
+    loop {
+        incoming_mesh_remaining(deadline)?;
+        // Only the actual Mesh acquisition WouldBlock may return None. Full
+        // identity/state authentication, filesystem and capacity errors refuse.
+        match Node::open_or_defer_mesh(config)? {
+            Some(node) => {
+                // Complete open is not preemptible and may update an advert.
+                // Drop a late Node before challenge signing or custody receive.
+                incoming_mesh_remaining(deadline)?;
+                return Ok(node);
+            }
+            None => {
+                #[cfg(test)]
+                observe_actual_incoming_mesh_defer(phase, deadline);
+                let remaining = incoming_mesh_remaining(deadline)?;
+                // No Node, Native lease or TLS session mutex crosses this wait.
+                thread::sleep(Duration::from_secs_f64(remaining.min(0.005)));
+            }
+        }
+    }
+}
+
 fn accept(
     config: &Value,
     context: u64,
@@ -251,12 +351,14 @@ fn accept(
         drop(stream);
         let (challenge, id, network, peers) = {
             carriage_event(&mut observation, "challenge-open-started", || Ok(json!({})));
-            let node = Node::open(config)?;
+            let node = incoming_node_before_deadline(config, deadline, "challenge")?;
             carriage_event(&mut observation, "challenge-open-completed", || {
                 Ok(json!({}))
             });
+            incoming_mesh_remaining(deadline)?;
             let value=node.sign("tcp-challenge",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4",
             "network":node.network,"node_id":node.id,"nonce":random()?,"tls_cert_sha256":material["fingerprint"]}))?;
+            incoming_mesh_remaining(deadline)?;
             (
                 value,
                 node.id.clone(),
@@ -267,6 +369,7 @@ fn accept(
         carriage_event(&mut observation, "challenge-send-started", || {
             Ok(json!({"challenge_id":challenge["body"]["nonce"]}))
         });
+        incoming_mesh_remaining(deadline)?;
         send(handle, deadline, challenge.clone())?;
         carriage_event(&mut observation, "challenge-send-completed", || {
             Ok(json!({}))
@@ -291,28 +394,41 @@ fn accept(
         });
         let response = {
             carriage_event(&mut observation, "custody-open-started", || Ok(json!({})));
-            let mut node = Node::open(config)?;
+            let mut node = incoming_node_before_deadline(config, deadline, "custody")?;
+            require(
+                node.id == id && node.network == network,
+                "incoming custody identity changed after original challenge",
+            )?;
             carriage_event(&mut observation, "custody-open-completed", || Ok(json!({})));
             // All incoming bytes are durable before producing a positive acknowledgment.
             carriage_event(&mut observation, "custody-receive-started", || {
                 Ok(json!({"peer":peer}))
             });
+            incoming_mesh_remaining(deadline)?;
             let retained = node.receive(&checked["body"]["bundle"], peer)?;
             carriage_event(&mut observation, "custody-receive-completed", || {
                 Ok(json!({"peer":peer,"retained_packet_ids":retained}))
             });
+            // Complete receive may finish after expiry. Keep any real durable
+            // custody and report it above, but never turn a late result into ack.
+            incoming_mesh_remaining(deadline)?;
             carriage_event(&mut observation, "reply-prepare-started", || Ok(json!({})));
+            incoming_mesh_remaining(deadline)?;
             let bundle = node.prepare(peer)?;
             carriage_event(&mut observation, "reply-prepare-completed", || {
                 let mut detail = carriage_packets(&bundle)?;
                 detail["peer"] = json!(peer);
                 Ok(detail)
             });
-            node.sign("tcp-response",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4","network":network,
+            incoming_mesh_remaining(deadline)?;
+            let response = node.sign("tcp-response",json!({"format":MESH,"adapter":"RLD-CONTACT-TCP-V4","network":network,
             "node_id":id,"to":peer,"nonce":checked["body"]["nonce"],"challenge":checked["body"]["challenge"],
-            "exchange_id":digest(&checked["body"]["bundle"])? ,"accepted":true,"bundle":bundle,"error":null}))?
+            "exchange_id":digest(&checked["body"]["bundle"])? ,"accepted":true,"bundle":bundle,"error":null}))?;
+            incoming_mesh_remaining(deadline)?;
+            response
         };
         carriage_event(&mut observation, "reply-send-started", || Ok(json!({})));
+        incoming_mesh_remaining(deadline)?;
         send(connection.0, deadline, response)?;
         carriage_event(&mut observation, "reply-send-completed", || Ok(json!({})));
         Ok(())
