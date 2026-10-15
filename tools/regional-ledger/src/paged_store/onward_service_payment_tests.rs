@@ -628,10 +628,16 @@ fn run_parent() {
     let mut s2 = None;
     let mut last_heads = [Hash::ZERO; 4];
     let mut unknown = [0u64; 4];
+    let mut last_successful_initial_import_gate = Value::Null;
     let before_stop = loop {
         within(deadline);
         services.running();
         let mut covered = vec![];
+        let mut initial_import_query = if payments.is_empty() {
+            "not-observed"
+        } else {
+            "not-applicable-after-first-owner"
+        };
         for actor in 0..4 {
             within(deadline);
             services.running();
@@ -644,12 +650,16 @@ fn run_parent() {
                 Ok(node) => node,
                 Err(e) if e == std::fs::TryLockError::WouldBlock.to_string() => {
                     unknown[actor] += 1;
+                    if actor == 0 && payments.is_empty() {
+                        initial_import_query = "would-block-unknown";
+                    }
                     continue;
                 }
                 Err(e) => panic!("ordinary Native observation refused for actor {actor}: {e}"),
             };
             let open_returned_at = now();
             let requests_before = payments.len();
+            let mut initial_import_gate = None;
             node.require_onward_network_state().unwrap();
             assert!(node.chain.height() <= STOP_HEIGHT);
             let current_head = node.storage_head().unwrap();
@@ -659,12 +669,21 @@ fn run_parent() {
                     "unknown_lock_observations":unknown[actor]}));
                 last_heads[actor] = current_head;
             }
-            if actor == 0
-                && payments.is_empty()
-                && node.chain.ledger.imports.contains_key(&setup.export)
-            {
-                let receipt = checks::import_receipt(&node, &setup);
-                if receipt.maturity_reached && receipt.original_output_spendable_now {
+            if actor == 0 && payments.is_empty() {
+                let import_present = node.chain.ledger.imports.contains_key(&setup.export);
+                let receipt = import_present.then(|| checks::import_receipt(&node, &setup));
+                let ready = receipt.as_ref().is_some_and(|receipt| {
+                    receipt.maturity_reached && receipt.original_output_spendable_now
+                });
+                initial_import_gate = Some((
+                    now(),
+                    node.chain.height(),
+                    node.chain.finalized,
+                    import_present,
+                    receipt,
+                ));
+                initial_import_query = "observed-before-first-owner";
+                if ready {
                     let p = submit_owner(
                         &root,
                         &setup,
@@ -759,6 +778,15 @@ fn run_parent() {
                 );
                 payment.native_lease = Some(lease);
             }
+            // Serialize only after the actual Native drop and any original
+            // signing-lease observation. A later unknown read keeps this clock.
+            if let Some((checked_at, height, finality, import_present, receipt)) =
+                initial_import_gate
+            {
+                last_successful_initial_import_gate = json!({"actor":actor,"checked_at":checked_at,
+                    "head":current_head,"height":height,"finality":finality,"export":setup.export,
+                    "import_present":import_present,"receipt":receipt});
+            }
         }
         if covered.len() == 4 {
             checks::compatible(&covered);
@@ -766,6 +794,8 @@ fn run_parent() {
         }
         progress.row(json!({"kind":"waiting","at":now(),"owner_requests":payments.len(),
             "s2":s2,"all_four_covered_this_round":covered.len(),"unknown_lock_observations":unknown,
+            "initial_import_query_this_round":initial_import_query,
+            "last_successful_initial_import_gate":last_successful_initial_import_gate,
             "submission_ages_seconds":payments.iter().map(|p|now()-p.submitted_at).collect::<Vec<_>>(),
             "fixed_recipient_verifications":recipient_observations }));
         std::thread::sleep(Duration::from_millis(50));
