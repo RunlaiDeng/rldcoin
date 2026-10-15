@@ -406,3 +406,6 @@ fn timeout_substeps_follow_actual_native_sign_and_durable_runtime() {
 fn timeout_substeps_preserve_signed_pending_failure_without_completed_native_phase() {
     run(true);
 }
+
+#[path = "bft_capture_defer_tests.rs"]
+mod capture_defer_tests;
