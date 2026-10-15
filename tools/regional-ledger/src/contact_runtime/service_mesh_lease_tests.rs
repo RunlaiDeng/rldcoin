@@ -76,6 +76,10 @@ fn passive_mesh_lease_cycle_and_disabled_mode_preserve_real_lock() {
     guard.finish(true).unwrap();
     inside(deadline);
     let scope_bytes = fs::read(observation.join(SCOPE)).unwrap();
+    let event_scope: Value = serde_json::from_slice(&scope_bytes).unwrap();
+    assert_eq!(event_scope["format"], "RLD-SERVICE-CARRIAGE-OBSERVATION-V2");
+    assert_eq!(event_scope["diagnostic_only"], true);
+    assert_eq!(event_scope["native_authority"], false);
     let events = fs::read(observation.join(EVENTS)).unwrap();
     let terminal: Value =
         serde_json::from_slice(&fs::read(observation.join(TERMINAL)).unwrap()).unwrap();
@@ -111,8 +115,8 @@ fn passive_mesh_lease_cycle_and_disabled_mode_preserve_real_lock() {
     for (index, row) in rows.iter().enumerate() {
         assert_eq!(row["written_sequence"], index + 1);
         assert_eq!(row["lane"], "mesh-lease");
-        assert_eq!(row["diagnostic_only"], true);
-        assert_eq!(row["native_authority"], false);
+        assert_eq!(row.as_object().unwrap().len(), 8);
+        assert_eq!(row["scope_sha256"], terminal["scope_sha256"]);
         let detail = row["detail"].as_object().unwrap();
         for forbidden in ["token", "path", "root", "config", "key", "seed", "fd"] {
             assert!(!detail.contains_key(forbidden));

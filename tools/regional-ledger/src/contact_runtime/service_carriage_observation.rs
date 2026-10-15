@@ -18,7 +18,7 @@ use std::{
     time::Duration,
 };
 
-const FORMAT: &str = "RLD-SERVICE-CARRIAGE-OBSERVATION-V1";
+const FORMAT: &str = "RLD-SERVICE-CARRIAGE-OBSERVATION-V2";
 const ENV: &str = "RLD_SERVICE_CARRIAGE_OBSERVATION";
 const MAX_ROWS: usize = 16_384;
 const MAX_BYTES: usize = 8 * 1024 * 1024;
@@ -142,6 +142,36 @@ struct Event {
     phase: String,
     observed_at: f64,
     detail: Value,
+}
+fn encoded_event(scope_sha256: &str, written_sequence: usize, event: &Event) -> Result<Vec<u8>> {
+    // The exact immutable scope supplies identity and diagnostic-only flags once.
+    // Every row still carries every dynamic field and binds those exact scope bytes.
+    #[derive(serde::Serialize)]
+    struct Row<'a> {
+        scope_sha256: &'a str,
+        written_sequence: usize,
+        attempt_id: u64,
+        attempt_sequence: u64,
+        lane: &'a str,
+        phase: &'a str,
+        observed_at: f64,
+        detail: &'a Value,
+    }
+    let mut raw = files::canonical_with_limit(
+        &Row {
+            scope_sha256,
+            written_sequence,
+            attempt_id: event.attempt,
+            attempt_sequence: event.sequence,
+            lane: event.lane,
+            phase: &event.phase,
+            observed_at: event.observed_at,
+            detail: &event.detail,
+        },
+        MAX_ROW - 1,
+    )?;
+    raw.push(b'\n');
+    Ok(raw)
 }
 pub(super) struct Sink {
     shared: Arc<Shared>,
@@ -384,6 +414,7 @@ struct Writer {
     binding: Value,
     scope: File,
     scope_raw: Vec<u8>,
+    scope_sha256: String,
     events: File,
     digest: Sha256,
     rows: usize,
@@ -395,18 +426,7 @@ impl Writer {
     fn append(&mut self, event: Event) -> Result<()> {
         require(!self.poisoned, "Carriage collector previously failed")?;
         let observed_at = event.observed_at;
-        let mut row = self.binding.clone();
-        let fields = row.as_object_mut().ok_or("Carriage binding invalid")?;
-        fields.extend(
-            serde_json::from_value::<serde_json::Map<String, Value>>(json!({
-                "written_sequence":self.rows + 1,"attempt_id":event.attempt,
-                "attempt_sequence":event.sequence,"lane":event.lane,"phase":event.phase,
-                "observed_at":event.observed_at,"detail":event.detail
-            }))
-            .map_err(|e| e.to_string())?,
-        );
-        let mut raw = files::canonical_with_limit(&row, MAX_ROW - 1)?;
-        raw.push(b'\n');
+        let raw = encoded_event(&self.scope_sha256, self.rows + 1, &event)?;
         let rows = self
             .rows
             .checked_add(1)
@@ -587,6 +607,7 @@ pub(super) fn start(
             .map_err(|e| e.to_string())?,
         );
     let (scope, scope_raw) = meta(root, SCOPE, &scope_value)?;
+    let scope_sha256 = hex::encode(Sha256::digest(&scope_raw));
     let events = create(&root.join(EVENTS))?;
     events.sync_all().map_err(|e| e.to_string())?;
     sync_root(root)?;
@@ -609,6 +630,7 @@ pub(super) fn start(
         binding,
         scope,
         scope_raw,
+        scope_sha256,
         events,
         digest: Sha256::new(),
         rows: 0,
@@ -818,6 +840,7 @@ mod tests {
             root: root.clone(),
             binding,
             scope,
+            scope_sha256: hex::encode(Sha256::digest(&scope_raw)),
             scope_raw,
             events,
             digest: Sha256::new(),
@@ -929,3 +952,7 @@ mod metadata_boundary_tests {
 #[cfg(test)]
 #[path = "service_mesh_lease_tests.rs"]
 mod mesh_lease_tests;
+
+#[cfg(test)]
+#[path = "service_carriage_v2_unit_tests.rs"]
+mod scoped_row_tests;
