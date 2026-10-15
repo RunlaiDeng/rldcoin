@@ -866,3 +866,7 @@ fn request_binding_preserves_preopen_deadline_stop_and_fatal_errors() -> Result<
     );
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "service_incoming_mesh_tests.rs"]
+mod incoming_mesh_tests;
