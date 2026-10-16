@@ -1,0 +1,41 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_RESEARCH_PUBLICATION",
+  "document_date": "2026-10-16",
+  "publication_version_label": null,
+  "title": "Rldcoin: Open Mining and Payments Across Delayed Networks",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "777d22f2d7229f4860473702066bd083d2777f2b18de5e9ce0ffa3256a9b5129",
+    "bytes": 23286
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "024fe5fce9b0c87ad93da63cf7b2b63063a82e03eb0aed6e258b2436da6fa1df",
+    "bytes": 23644,
+    "pages": 6
+  },
+  "specification": {
+    "profile": "RLD-SURVIVOR-1",
+    "commit": "cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab",
+    "manifest_sha256": "a770c35b52e70c7d8a97ac9c0c04d14417ca322e01249445d3cbfe2fa0686806",
+    "url": "https://github.com/RunlaiDeng/rldcoin/tree/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/protocol/survivor-v1"
+  },
+  "predecessor": {
+    "receipt": "rldcoin-whitepaper-release-2026-10-09.json",
+    "markdown": {
+      "path": "public/documents/archive/rldcoin-whitepaper-2026-10-09.md",
+      "sha256": "a400de0e05ae439dd665dd8f72db348ce6ccffa62e7314c4bf40874453508e1d",
+      "bytes": 199279
+    },
+    "pdf": {
+      "path": "public/documents/archive/rldcoin-whitepaper-2026-10-09.pdf",
+      "sha256": "5b79df9feb3cf521e255b1244e25f51cb214920c266a90540f9f740397837bfe",
+      "bytes": 196098
+    }
+  },
+  "authorization_scope": "Owner authorized reconciliation to the completed survivor-first specification: reversible payments, continued mining by any capable surviving full node and authenticated delayed carriage. This replaces mandatory regional quorum finality, irreversible exports/imports and the former seconds-scale final-spendability target. Historical networks and source-qualified failures are not changed.",
+  "qualification": "Design publication only. No mainnet, automatic adoption, test-value migration, independent implementation/security/custody qualification or operational interstellar route is established.",
+  "acceptance": "G1-G6 map to T01-T22 in the content-bound specification. Supply cap, zero initial allocation, exact issuance, owner authorization, full replay and independent qualification remain mandatory.",
+  "body_revisions_require_explicit_owner_decision": true
+}

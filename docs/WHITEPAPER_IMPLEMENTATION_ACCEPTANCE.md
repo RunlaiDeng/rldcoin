@@ -1,48 +1,55 @@
-# 当前白皮书实施验收
+# Survivor-first whitepaper implementation acceptance
 
-采用[当前发布记录](WHITEPAPER_RELEASE_2026-10-09.json)的正文/PDF准确哈希；[10月8日发布记录](WHITEPAPER_RELEASE_2026-10-08.json)及旧[冻结记录](WHITEPAPER_FREEZE_RECEIPT.json)保留历史来源与失败绑定，全部S1–S18/R1–R24/I1–I12/A–G/N1–N10/P1–P8必须完成。表中“有限证据”只指准确来源/故障/资源/期限内的行为；实现、模型、独立复核、采用和物理运行分别验收。未知或失败保持未知或失败，所有历史原件保留；记录精简不改变门槛。
+This is the current acceptance contract for [RLD-SURVIVOR-1](protocol/survivor-v1/README.md).
+The [specification manifest](protocol/survivor-v1/SPECIFICATION.json) binds exact rules
+and vectors. The [historical mapping](https://github.com/RunlaiDeng/rldcoin/blob/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md)
+and prior publication receipts retain their original failed/unresolved scopes.
+Their BFT results do not qualify this incompatible PoW profile.
 
-| 条款 | 已实现/有限证据 | 实现缺口与待证明假设 | 必须验收 |
-| --- | --- | --- | --- |
-| I1 / S1–S2 / R3 | 已有无价值signed-genesis/admission身份检查及精确fixture根。 | 完整CurrencyRoot/RegionAdmission治理配置、独立批准权/控制披露；发现不授予权威。 | A、N1/N8；错根/自签地区/缺权限拒绝，独立采用复核。 |
-| I2 / S3 / R1–R2 | 精确同机三地区循环及有界隔离当地付款有样本。 | 长断联独立地域启动/恢复/本地进度；quorum/suite条件与远程新证据边界。 | C/E/F，移除所有Earth端点后实际付款，不以cache UI通过。 |
-| I3 / S5/S8 / R14 | 候选整数量账、重复进口拒绝和当地守恒检查。 | §6精确递推/向量与checked arithmetic实施；互斥U/E/T跨任意拓扑证明。 | A/B/F，每transition及恢复守恒，跨平台整数向量和overflow拒绝。 |
-| I4 / S6 / R4 | 同机Native普通三地区付款返程完成。 | 完整公开canonical语义、并发/重启原子唯一进口；独立多源通用互通。 | F，错目的/错域/篡改/duplicate均不credit，来源扣除先终局。 |
-| I5 / S7–S9 / R4–R5 | Native onward与return在有限普通scope通过。 | 根化良基DAG资源上限、混合/拆分/合并谱系、复合终局证明。 | F，拒自证环，任意多源重放与故障、污染descendant隔离。 |
-| I6 / S6–S8 / R1/R4 | Earth→Proxima→Andromeda→Earth在精确同机scope净返程。 | 独立保管返程、永久ID去重/升级连续；不能释放初始扣款。 | F，掉回执/重启/退休epoch/返程并发，原debit不退款。 |
-| I7 / S3–S4/S9–S10 / R2/R6/R23 | 三取四prepare/commit及durable lock有无价值候选。 | 共识/view-change/reconfiguration完整profile与独立fault/custody；全descendant冲突隔离、预定事故权限。 | A/D/F/G，故障界内无冲突final，缺quorum停止；独立与更广故障资格必须分别完成。 |
-| I8 / S13–S14 / R12/R16 | 固定TLS ordinary startup、多跳、持久收件、默认中继地面样本。 | N1–N10完整native与实际长延迟adapter、合法custody删除、独立资源/替代物理接触。 | C/F/G及全部N1–N10；receipt不是ledger credit。 |
-| I9 / S18 / R20 | Native/wallet区分queued/verified/import/maturity/owner heads有候选。 | 完整状态、污染余额、独立验证、过期显示与真实consumer flow。 | E/F，每stage端到端，stale/伪receipt/credit claim不当native money。 |
-| I10 / S11/S16 / R10/R11/R22 | 已有严格停止重放，私有字节不变及外部caller-head样本。 | 总本地回滚独立见证、跨设备、>200000历史/实际scale、灾难全恢复与费用。 | D/G，旧全文件backup/clone/见证丢失拒签/拒支出，不恢复已消费ID。 |
-| I11 / §11–12 / R7/R8/R21 | 现有ledger仍Ed25519/SHA256/TLS1.3；新增Core候选AND双签、四签续证及有界公开入口，15个NIST external SigVer子集和两不同实现互通通过。无实际PQ交易/共识/运输或独立审查资格。 | 认证suite/parameter/era，reviewed PQ授权/KEM、反降级、迁移/退休、可信原始证据续证。 | D/F/G，标准向量/全proof成本、迟到撤销、broken旧钥伪migration、休眠余额/旧视图、反回滚。 |
-| I12 / S12/S14–S17 / R9/R13/R17–R19/R24 | 有限同控制者普通scope/组件证据，现无mainnet。 | 独立运营/控制/保管/两独立验证实现，费用/储存/负载/钱包/供应链/隐私审查与维护。 | 全A–G与I1–I12/N1–N10；P1–P8明确采用；真实route另证。 |
+## Whitepaper-to-implementation matrix
 
-## 实现与采用边界
+| Paper gate | Exact contract | Required completion evidence |
+|---|---|---|
+| G1 Open participation and survivor operation | C03/C06-C08, O01/O06; T06-T07 | Independent ordinary installation; remove founder and all others; preserve history/target; mine, mature, pay and perform actual onward payment; repeat survivors and hard-target collapse |
+| G2 Partition and convergence | C05-C10, O02-O05; T05/T08-T10 | Conflicting spends/rewards, actual-work selection and deterministic ties; deep reorg removes losing effects; missing history waits; claimed work cannot halt capable local mining |
+| G3 Money and wallets | C01-C05/C08-C09, O03-O06/O11/O13; T01-T04/T11-T13/T17/T22 | Cap, zero allocation, issuance boundaries, strict signatures, parent-only inputs, reward h+100, intent-before-release, exact retry, encrypted keys and atomic conditional balances |
+| G4 Delayed transport | O07-O10; T14-T16/T21 | Ordinary authenticated multi-hop/offline carriage, complete-history verification, receipt return, durable queues, restart/fault/capacity behavior, no credit or refund from receipts |
+| G5 Independent security and durability | C06, O02-O03/O12; T18-T20 | Independent review and validators, sustained history beyond an issuance era, replay/resources, cross-device/power-loss custody and finite crypto/archive horizons |
+| G6 Authenticated release | C03/O12 and conformance release gates | Reproducible artifacts, operating limits, explicit adoption and fresh signed zero-allocation genesis; independently supported route/consumer claims |
 
-[实现边界](PLAN_STATUS.md)区分候选能力与采用条件。Core混合双签、quorum、
-四签续证和有限归档是verification-only接口；已有Native账本继续使用其签署采用的
-经典规则。候选验证、编译、另一个参考实现或运输收据均不能替代完整价值、独立
-安全/保管、历史恢复和采用验收。内部阶段结果、源码/二进制绑定、预算与失败记录
-在本地保留，不按运行轮次更新公开条款映射。
+## Mandatory distinctions
 
-S1–S18按实现集成、R1–R24按反例/模型和独立复核逐项验收；原算法块、9幅图及原39条参考文献保持，当前正文共53条参考文献。A–G全部基础验收、全部I1–I12、N1–N10和独立采用P1–P8共同构成完成条件，表的组合映射不省略未显式列出的编号。
+- Specification/vector consistency is design evidence, not a complete runtime.
+- Native execution, durable node behavior, wallet custody and contact delivery
+  require separate checks and composition through ordinary product flows.
+- Same-host processes are not independent operators, cross-device custody or physical
+  links. Process interruption is not automatically power-loss testing.
+- Selected history does not prove absence of stronger unseen work. Every payment is
+  conditional; no fixed confirmation count or local maturity means global finality.
+- Risk acknowledgment after uncertain restore is O03 policy, not independently
+  proved freshness or exclusive custody.
+- Unknown, failed, unsupported and unmeasured scopes remain visible. Preserve
+  original clocks, submitted operations, pending ages and failure evidence.
+  Performance cannot be calculated only from successful submissions.
 
-P1共识/时代与独立验证者准入；P2治理/继任/事故/分叉权限；P3密码suite及有限旅程重叠/退役/续证；P4直接钥/监护恢复、watcher与独立单调见证；P5资源保留、档案资金及赤字；P6规范交易/谱系/永久消费根与任意地区组合证明；P7独立发布/保管/安全审查和排除测试资产的新零初始分配签名采用；P8具体物理路线/隐私/服务期限。每项需要认证profile和相应证据，缺决定或失败禁止受影响的真实资产操作。
+## Historical obligation disposition
 
-每条验收记录必须保留owner、source/profile/artifact、假设、故障/规模/期限、可证伪检查、实际结果、失败原件、风险、停止及续资格点。[主计划](RLDCOIN_MASTER_PLAN.md)保留完整目标矩阵；[验证入口](operations/VERIFICATION.md)不授予独立审查或部署资格。新缺陷进入动态风险记录，当前正文/PDF不得自行修改。
+The normative [complete mapping](protocol/survivor-v1/CONFORMANCE.md#disposition-of-historical-obligations)
+covers I1-I12, S1-S18, R1-R24, A-G, N1-N10 and P1-P8. It explicitly replaces
+quorum finality, regional export/import, permanent conflict quarantine, path-history
+claims and mandatory external-witness-dependent availability where incompatible
+with the owner's accepted rollback direction. These are contract changes, not
+passes under old rules.
 
-## 当前规范的细化验收义务
+Authorization, conservation, complete evidence, durable intent, bounded resources,
+honest states, independent review and finite-horizon physical/cryptographic
+qualification remain mandatory. Channels, guardians, regional issuers, PQ monetary
+adoption and instant/final stellar settlement are not baseline capabilities.
+Unsupported extensions refuse.
 
-以下义务来自当前英文正文，不是新的通过声明。原条款及所有历史失败保持；有限抽象模型不能代替Rust实现、组成证明或独立验收。
+## Completion rule
 
-| 当前正文 / 原条款 | 具体义务与可证伪验收 | 实现/资格边界 |
-| --- | --- | --- |
-| §1/5/8/20，I2/I7/I9，S3–S4，E/P1/P8 | 在每个预先声明的正常地区网络/负载cohort，首次有效签名提交至收款人独立执行、认证终局及完整谱系、成熟未隔离可继续支付，p95≤3秒、p99≤5秒；实际第二笔普通消费须独立验证终局。保留所有有效提交（含后续付款）、排队/背压、失败、待定、迟到、原时钟和有界时钟误差。地球洲对/双方向、火星、同飞船、节点数及负载分开，不以成功样本、slot cadence或receipt代替。 | 目标未证明；同机候选/回归套件不建立百分位资格。缺quorum安全暂停，独立控制及阈值不降低。跨地区物理联系、源终局、唯一导入与签明成熟另验；历史参考参数与已签创世不修改。 |
-| §2/8/17，S5–S8，I3–I6 | I=U+E+T只在兼容且因果下闭的已选历史上核对；目的已导入配源扣款前缀必须拒绝。费用、未成熟/隔离、待转移与通道互斥核算，每次转换及恢复保留负债。 | 当前有限守恒样本不证明任意地区/多来源组成；完整因果切面及规范refinement仍须实现/证明。 |
-| §12，S6/S8/S11，I3/I5/I6 | 可选取消须预先由双方及出口意图采用，目的IMPORTED/REJECTED终局互斥；拒绝后仍计T，实际唯一源退款才减少T；退款及后代继承取消授权与目的终局依赖。枚举race、重组、丢回执、重复退款及前置快照恢复。 | 基线取消关闭；没有完整实装/采用资格不得启用，超时或运输结果不退款。 |
-| §10/12/13/18，S7–S9，I5/I7/I10 | 历史证据认证与当前签名/花费/进口权分开；全部依赖闭包与事故反向遍历必须完整。有效冲突伴坏尾仍须保留隔离；伪签名不得制造事故；预算不足或未知依赖不得放行。 | 有界Native全重放及局部隔离不证明完整长期/并发组成；需冷恢复、资源耗尽及后代隔离反例。 |
-| §11/12，S10/S11/S15，I7/I10，P4 | 外发前独立持久见证；恢复严格绑定最新完整头、消费ID、锁、事故、策略下限及未决外发。单活保管须保留消费状态和完整前缀，并调和不确定外发、证明失败原子性。 | 独立见证、跨设备、复制钥并发/全态回滚和等价fencing分支未资格；本机caller头不是独立见证。 |
-| §11/12，S11/S16，I10/I11，P3 | RenewalManifest在原保护仍可信时绑定历史ID、精确原始字节及新承诺，原子继承永久消费/拒绝ID、锁、事故、策略与负债。缺原字节/可信anchor、同旧名不同对象或部分安装拒绝。 | Core验证候选不采用Native密码套件或迁移值；完整续证/角色/时代实现与独立资格仍缺。 |
-| §10/12/15/20，S12–S17，I10/I12，P5/P7/P8 | 分开测量当前状态、验证、证明生成、全档案、事故索引及冷恢复；独立修复/介质刷新、资金赤字停止、永久ID留存、两独立完整验证实现及真实航路有限期限资格。 | 活动页/小样本/同控制者测试不能完成20万块时代、独立保管、真实时间/物理运行或一亿年维护。 |
-
-1000亿RLD上限、零初始分配和原第6节发行规则保持。全部新增反例、未知敞口与历史失败独立保留，当前规范采用不自动重授旧来源或新二进制资格。
+All applicable T01-T22 obligations require scoped evidence before a complete-product
+claim. Implemented functions alone do not satisfy independent or physical gates.
+New money is prohibited until G6 is explicitly met; old test balances, abandoned
+archives and fixture keys cannot supply that authority.

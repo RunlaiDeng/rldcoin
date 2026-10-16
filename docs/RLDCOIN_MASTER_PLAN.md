@@ -1,131 +1,85 @@
-# Rldcoin实施主计划
+# Rldcoin implementation plan
 
-本文采用 owner 授权的[当前白皮书](https://rldcoin.com/whitepaper)及[2026-10-09 发布记录](WHITEPAPER_RELEASE_2026-10-09.json)。正文SHA-256 `a400de0e05ae439dd665dd8f72db348ce6ccffa62e7314c4bf40874453508e1d`；PDF `5b79df9feb3cf521e255b1244e25f51cb214920c266a90540f9f740397837bfe`；发布记录 `8cde3575a4e7c6f3908008cc6ef919bc82aad6ee6ef84868e80b9d82104123a2`。全部S1–S18、R1–R24、I1–I12、A–G、N1–N10、P1–P8仍为必需验收目标。[10月8日发布记录](WHITEPAPER_RELEASE_2026-10-08.json)及旧[冻结记录](WHITEPAPER_FREEZE_RECEIPT.json)保留历史规范及其准确来源/失败绑定，不替代当前规范，也不改写历史资格。当前正文/PDF的进一步修改仍须明确 owner 决定；技术profile、密码suite及时代续证仍须演进。
+## Authority and outcome
 
-[实施验收映射](WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md)、[有限状态](PLAN_STATUS.md)与[稳定验证入口](operations/VERIFICATION.md)分别说明目标、证据范围和可重复检查。实验原件/失败/控制器/私有保管继续本地保留，公共树不累积逐次运行记录。当前候选不具备真实资产、独立长期或物理航路资格。
+The implementation target is [RLD-SURVIVOR-1](protocol/survivor-v1/README.md),
+bound by its [specification manifest](protocol/survivor-v1/SPECIFICATION.json).
+The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-16.json) binds the
+reconciled Markdown/PDF to this exact specification; it is not a deployment receipt.
+The owner selected reversible payment acceptance and continued operation by any
+capable surviving full node. This replaces mandatory regional quorum finality,
+irreversible regional export/import and the former seconds-scale final-spendability
+target. It does not alter signed historical networks or qualify old experiments.
+The [historical plan](https://github.com/RunlaiDeng/rldcoin/blob/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/RLDCOIN_MASTER_PLAN.md)
+and original release receipts retain their meaning.
 
-## 1. 范围与实施状态
+The ordinary product must provide a validating node with optional mining, native
+owner-controlled wallet, restart-safe storage and authenticated delayed relay.
+It operates without the founder or another online participant, provided it retains
+authentic history, keys when spending, a working clock, computation and sufficient
+storage. Remote receipt requires physical communication. Payments, rewards and
+descendants can be removed by a valid winning history.
 
-本文定义目标协议、实施顺序和强制验收。实现进度与部署资格单独维护在[当前状态](PLAN_STATUS.md)，不以计划或白皮书代替实际验收。
+## Implementation boundaries
 
-## 2. 支付含义与不可消除的约束
+Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
+genesis or test balance is converted. Unrelated source changes and running services
+remain untouched. Reuse utilities only when exact semantics match this profile;
+old passing tests do not qualify changed rules or new binaries.
 
-**区域内普通付款目标尚未达标。** 每个独立采用的地区，在预先声明的正常网络和提供负载内，从有效签名交易首次提交（含排队）至收款人独立执行、验证终局及完整谱系、确认成熟且未隔离的可继续付款余额，目标为p95≤3秒、p99≤5秒。地球跨洲付款按地区内两方向/洲对分别测量；火星本地与同飞船付款分开测量实际或明确标注的模拟条件。必须实际签署第二笔普通付款、消费该输出并独立验证第二笔终局。全部有效提交、背压、失败、未完成及后续付款保留原ID/时钟；不得只统计成功样本或合并快慢cohort。时钟误差须有保守界。详见[区域支付验收](operations/REGIONAL_PAYMENT_LATENCY_ACCEPTANCE.md)及正文§20。
+| Component | Required implementation | Acceptance |
+|---|---|---|
+| Consensus kernel | C01-C11: strict bytes/crypto, genesis, transfers, issuance, recovery, work, roots, branch selection | T01-T05, T08-T10 |
+| Durable node | O01-O04: ordinary lifecycle, pinned genesis, exclusive writer, atomic intent/commit/replay, deep reorganization and revisions | T06-T12, T18 |
+| Wallet | O05-O06/O11/O13: bounded pool, exact review, durable intent/reservation, recover-only retries, encrypted keys, conditional balances | T03-T04, T11-T13, T17, T22 |
+| Contact protocol | O07-O09: canonical packets/frames, origin/link authentication, offline carriage, receipt return, quotas and fair retry | T14-T16 |
+| Node integration | O01/O10: default neighbor synchronization and forwarding, independent recipient verification, actual onward payment | T06-T10, T14-T17, T22 |
+| Maintenance/release | O12: unsupported behavior, authentic artifacts, finite horizons and independent qualification | T18-T21 and adoption gates |
 
-这个区域内目标不继承到跨地区的物理传播、出口/导入和成熟链路，也不允许缺quorum时虚报终局。地球多个独立结算地区之间仍是跨地区转移；少量飞船节点不得静默降低独立控制或S3–S4阈值。参考PoW平均600秒、包含checkpoint的12块/4签及导入后6个后继块保持历史参考义务，不能冒充秒级BFT资格或授权修改已签创世。
+## Ordered behavior milestones
 
-“点对点”表示所有者自己授权、收款人可独立验证，中继与目录不能代签、发币或裁定余额；它不排除当地矿工、验证者和异步中继。新地区先发现物理可接触邻居，再逐步了解远端网络；发现身份与货币准入分开。地球—比邻星—仙女座是三地区拓扑示例，绝非已建成路线或不受距离影响的连接。
+1. Synchronize whitepaper Markdown/PDF, public reader and acceptance plan with the
+   exact candidate. Preserve historical published artifacts and receipts.
+2. Implement the reusable native kernel against frozen public vectors. Exercise
+   malformed bytes, arithmetic and unchanged-state refusal.
+3. Implement durable standalone execution and wallet intent. Exercise actual reward
+   maturity, payment/onward payment, crash recovery and conflicting histories.
+4. Integrate exact contact formats and authenticated adapters into ordinary startup.
+   Exercise independent stores, directed/offline multi-hop carriage, receipt return,
+   restart and capacity refusal without granting money from receipts.
+5. Package ordinary commands and consumer flows. Independently test full history,
+   resource limits, custody and sustained use. Publish only scoped claims.
 
-“断联自治”是当地仍有满足其共识假设的通信、验证和安全资源，而远方地区完全不可达。它不表示同一区域内互不联系的两个收款人可以无条件接受同一可复制凭证。当地故障、签名者失联或安全预算不足必须如实阻止相关操作，不能制造终局。
+A milestone completes only when its behavior and discriminating checks are
+implemented. The vector oracle is not a node. A disk hash is not ledger validation.
+Transport delivery is not inclusion. Software does not establish independent
+security or a qualified physical interstellar route.
 
-当地分区与远方断联不同。缺少采用规则要求的终局 quorum 时，节点必须停止新终局以及依赖它的新导入和再出口，保留已有余额、请求与证据；未终局付款只能按披露的分叉风险呈现。恢复取决于实际当地通信、诚实参与和保管假设，不承诺所有分区中均可继续支付。白皮书第 5–9 节的 PoW、四签一致及六后继块成熟属于参考 profile；当前三取四 BFT 候选和未来地区采用各自精确签署规则，不自动转换阈值或继承该参数。
+## Verification method
 
-新价值证据不会超越因果光时到达；接触、容量与当地进度决定交付。安全不依赖一个有限远程延迟上界，活性则有条件：证据最终到达、授权仍可验证、当地账本能推进。永久隔离的出口可永久待处理。收款人验证来源后按当地规则取得可花余额，不等待返程回执或地球在线确认。任何贷款、垫付均为独立信用风险。
+Use the [acceptance matrix](WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md) and complete
+[T01-T22 campaign contract](protocol/survivor-v1/CONFORMANCE.md). Each engineering
+experiment names a falsifiable hypothesis, the smallest distinguishing observation,
+a finite budget and an outcome-dependent action. Preserve failures and original
+timing/resource bounds locally. Reuse applicable bound evidence; rerun expensive
+scopes only when a relevant change justifies it.
 
-现有短握手、短 socket 等待及本地证书有效期的 pinned-TLS IPv4 实现仅是地面适配器。年级星际运输需要异步认证、真实接触及持久保管的独立实现和实测，不依赖即时应答、持续会话或全宇宙同步时钟；密钥/证书超出资格期限只阻止依赖它的新接受，不退款或删去已扣除价值证据。BPv7 名称和运输摘要不提供货币终局。
+For the consensus milestone the hypothesis is that a fresh reusable validator can
+replay every published branch to the exact roots/work and refuse altered evidence
+without oracle-produced state. Exact vector agreement and negative state-atomicity
+cases discriminate this claim. A mismatch stops storage integration until narrowed;
+agreement permits durable integration, not an independent security claim.
 
-密码、硬件和档案只能在公开、可测试的资格期限内作保证。仙女座标签不能证明百万年密码安全或媒体寿命；超出验证期限的资产必须保留并显示“无法按现有策略验证”，不可假装成功或自动退款。
+## Publication and external gates
 
-## 3. 同一货币、地区准入与守恒
+Use the ordinary stage workflow for reviewed code, interfaces and public no-value
+vectors. Keep keys, wallet/node state, generated backups and internal run evidence
+out of public commits. Document limitations rather than converting a revision into
+completed acceptance.
 
-货币身份由未来新签名起源创世及采用规则绑定，地区创世、地区节点身份和运输消息 ID 各有独立用途。默认目标保持 1 RLD = 10^24 runlai、总量上限 1000 亿 RLD、创世初始分配为零；起源发行参数须在新采用中精确签署，不能以软件安装或节点标签替代发行授权。
-
-无常在线地球目录仍需要明确的离线信任。地区准入、验证者时代和规则变更必须从当地已采用货币根、准入权与终局策略携带有序认证授权链，绑定关闭历史及 Old/New 角色，保留历史终局、永久导入记录和独立签署/调用者锁。缺票、旧头、不完整过渡或未知策略时停止依赖操作；不得重置锁、降低阈值或另造创世处置已有价值。撤销和冲突只能随证据传播到达；未来独立治理及事故恢复授权仍需审查规格和对抗资格。
-
-发行只发生在获授权的起源账本。所有新地区原生发行额度为零；导入不是挖出第二份 RLD。另行分配发行权必须先有版本化、互不重叠且全局守恒的额度协议，本计划不依赖该扩展。地区加入不要求联系地球在线服务器，但必须携带可离线验证的货币根、地区创世、规则、准入授权及终局信任链。自签名字和发现通告不能获得这些权力。
-
-对同一货币的兼容已选历史，逐步核对 **I = U + E + T，I ≤ 总量上限**：I 是唯一发行量，U 是未花费输出（含未成熟/隔离输出，但排除已计入 E 或 T 的金额），E 是通道及明确费用储备，T 是选定源历史中所有已扣除、尚未在指定目的历史唯一入账的出口（包含未终局 pending debit）。三桶互斥，费用一次归属；只有终局覆盖的扣款可导入，未终局扣款孤立时由原子重放撤销该转换并恢复源输入，普通重组不能撤销已终局扣款。不可用或证据丢失不抹掉负债。已完成导入的历史出口、收据、祖先证明和永久去重记录不得重复计入余额。这是验证者对证据集合的守恒检验，不要求实时查询全宇宙余额。
-
-## 4. 强制目标条件 I1–I12
-
-新版细化义务以[验收映射](WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md#当前规范的细化验收义务)为准：守恒只核对完整因果下闭包；历史认证与当前放行权分开；冲突与未知依赖保守隔离；独立见证须在外发前持久化并保护完整消费/锁/事故/策略前缀。原始ID与原始字节的续证绑定、档案修复及长期资源预算均需具体实现与独立资格。可选取消默认关闭，只有双方明确采用完整互斥、退款和谱系规则才可启用；拒绝证书本身不减少T。1000亿上限、零初始分配及第6节发行规则不变。
-
-下列编号与英文白皮书逐项对应。每项必须有版本化规则、适用故障模型、实际节点证据和独立复核；当前状态见第五节。没有实现、没有证据或超出证据范围，均不得标为完成。
-
-| 编号 | 必须具备的能力 | 必须保留的验收证据 |
-| --- | --- | --- |
-| I1 货币与地区身份 | 同一货币根；地区创世、规则、授权及验证者时代可离线核验；无必需地球目录或在线逐笔批准；发现不授予账本、终局或发行权限。 | 未授权地区、自签标签、错货币根、错创世、旧规则和伪造准入全部拒绝；新地区从公开授权包启动。 |
-| I2 当地断联自治 | 远方离线时已验证当地余额仍能收付、推进及重启；已持有且被有效终局覆盖的出口可按规则导入；缺失新证据只阻止依赖它的操作。 | 撤去所有远程源服务后，原生节点完整启动、实际签名付款、挖矿、重放恢复及新增证据安全安装；不用“最近 5 秒访问源端点”代替此条件。 |
-| I3 发行守恒 | 任意地区、任意转移路径保持唯一发行上限与精确整数账；新地区零原生发行；金额拆分、合并、费用、找零、通道与待转移金额守恒。 | 每个状态转换及恢复点核对 I=U+E+T；拒绝复制储备、历史记录双计和多区重复发行。 |
-| I4 任意已授权地区转移 | 每个地区均能作为源和目的；所有者授权、当地扣除、源出口终局、目标唯一导入依次执行；出口绑定准确目的创世、金额、收款人与规则版本。 | 至少三个实际原生地区账本、多个所有者、双向/多跳及多来源导入；错区、改金额/收款人、重复、乱序和不完整证明拒绝。 |
-| I5 再出口与终局组合 | 导入可当地支付，亦可再次出口；出口必须终局覆盖其输入来源、导入及本地扣除；概率成熟不能冒充不可冲突的出口终局。 | 导入后重组、成熟前再出口、尚未终局出口、来源冲突及分叉恢复；资产谱系/依赖图可验证而不重复发行。 |
-| I6 真正价值返程 | 返回起点是从当前持有地区发起的新出口与起点新导入；每一段 ID 和永久导入去重独立。源最初扣除不因收据或资产返程重新释放。 | 地球→比邻星→仙女座→地球的真实资产轨迹和循环重复攻击；收件回执对余额无效；丢失回执/到期绝不退款。 |
-| I7 地区终局与信任演进 | 地区在当地完成终局，无跨恒星统一实时投票；明确容错、锁、视图、验证者时代、重配置和接触恢复规则；独立保管、冲突传播及依赖冻结。 | 独立参与者的少数故障/缺签、矛盾签名、分区、密钥轮换及恢复；保留已支付敞口。四把同控制者密钥不是独立 BFT，改阈值不是协议证明。 |
-| I8 原生默认中继与因果运输 | 每个完整网络节点在正常启动的同一生命周期内默认启用认证发现、有界持久转交他人支付证据和重启续传，无需另起进程或中央登记；逐步加入有用节点扩展可达地区与替代路径；保管、删除、容量准入及正反向路由分开。 | N1–N10；原生默认启用及真实适配；逐个加入节点扩展可达地区、断掉原路径后替代路线实际交付、满载拒收保全已接管证据；停机、重启、非对称接触、乱序和恶意邻居。节点数不等于安全，真实航路另证。 |
-| I9 可独立判断的付款状态 | 身份发现、候选路由、接触观测、运输收件、账本导入、成熟可花、出口终局及源获知回执分别呈现；收款人用当地节点和签名校验。 | 钱包/节点一致显示精确身份、金额、依赖、等待与未知冲突状态；过期显示数据不作为签名前资格；伪造回执不能记账。 |
-| I10 长期存储与恢复 | 有界活动历史/归档、可验证快照或证明、永久去重承诺、终局及签名锁防回滚、多份独立档案和可量化恢复成本。 | 超过首个 20 万块发行时代及声明容量的实际恢复；损坏/缺档、旧备份、快照伪造、去重遗失及磁盘满载均不能创造可花资产。 |
-| I11 长期密码与撤销 | 认证并版本化算法/参数套件、规范编码、用途域、密钥角色/时代及有限验证期限；独立审查后量子授权与运输迁移，防降级、双签过渡/退役、历史续证、信任锚恢复及在途出口策略。 | 在旧授权仍可信时迁移余额和通道；双签策略必须同时验证同一意图，旧或新任一可通过仍保留弱路径。测试迟到撤销、失联、旧备份、丢钥/丢档和冲突升级；在旧签名/hash 失效前续证，必要时重新哈希原始对象，事后补签不能修复真实性。保留守恒、终局、调用者锁及永久导入去重。超期限证据保留但停止新接受；当前实现未满足此项，不宣称百万年或一亿年密码保证。 |
-| I12 独立资格与持续服务 | 独立运营/密钥保管和外部安全复核；默认中继的存储/带宽、准入/保留及费用预算，启动节点不自动获得奖励或发币权；地区矿工、终局、中继、档案的资源与费用预算；普通用户支付/恢复体验与精确发布采用。 | 独立实测报告、负载/攻击及恢复记录、未解决出口与亏空、跨设备钱包恢复、防回滚；物理路线能力/寿命只按其实际验证范围宣传。 |
-
-## 5. 目标协议的数据与状态机
-
-每个地区采用包必须绑定货币根、地区创世、规则与实现承诺、当地终局协议/验证者时代、准入授权及升级历史；能从本地已信任根和携带证据验证，不依赖常在线中央目录。目录与中继最多提供候选资料，错误资料可被任何完整验证者拒绝。
-
-每个目标出口必须绑定版本与域、货币根、源/目的创世、源规则及终局时代、输入及其起源/依赖、当地扣除、输出金额/收款人、费用/找零规则和不可碰撞唯一 ID。证明包含或可重建有效源历史、出口归属与终局；接收方在自己的已采用信任范围内验证全部依赖。不完整、未知时代或矛盾证据只进入待验证/隔离区。具体编码、谱系压缩和接触更新安装须先形成版本化规格与可执行反例检查，再改变共识。
-
-```text
-当地可花资产
-  → 所有者签署出口 → 本地扣除 → 当地终局覆盖输入与扣除
-  → 异步运输历史/证明 → 指定目的完整验证 → 唯一导入
-  → 当地成熟可花 → 当地付款，或新的当地扣除与终局出口
-  → 下一个地区；返回起点也执行一次新的出口/导入
-```
-
-源出口终局尚未形成时，目的不得导入。导入后仅达到六块概率成熟时，可按当地规则支付，但对外出口需要认可的当地终局保护依赖历史；不能用目的普通确认把源保护资产转成可回滚的对外新资产。已认可终局必须持久约束选链、恢复与后继终局，签名锁同样持久。
-
-**禁止超时退款。** 出口被源扣除后，失去收件/账本回执、队列到期或永久断联都不解锁。取消不是本目标的必要功能，默认禁用；若未来加入，必须先有目的区永久消耗出口 ID、排除已有和未来导入的已认可终局，再由源区验证并采用。查询未导入、旧的不包含证明、重发或运营者承诺均不足。
-
-终局故障不能靠“停止所有星系”修复。发现有效矛盾时保留证据，按来源依赖范围隔离已有本地余额及支付、找零、费用、通道、拆分/合并的全部后代，禁止它们新的本地支出/进口/再出口并传播；已经断联的地区可能尚未知情，已有支出不能保证追回。事故处置须披露敞口、隔离范围和补偿依据，不得偷偷增发。协议需明确何种证据允许恢复及谁有授权。
-
-
-
-**必须落地的关键规则：** §6 整数 era 预算、商/余数分配与末期1 runlai；§7 强制挑战储备、c+W截止和同序号冲突；S2 事前签明每种authority/quorum/scope/conflict/failclosed；S7 根化有限因果DAG（拒自证环并界定解压、depth/fanout、重复祖先、签名/CPU/RAM/disk/恢复索引）；S8/S9 混合输出全污染隔离；S11 存活独立单调新鲜度见证，缺证据旧备份只读拒签/拒支出；S13 接纳期限/合法副本回收与owner/archive货币证据保留分开；§11–12旧算法历史重放与新授权分开并在真实性丧失前迁移/续证；S17两独立验证实现、崩溃原子性及供应链审查。A–G/N1–N10以冻结白皮书§20内定义为准，外部研究计划不得改变其义务。详见逐条实施验收映射。
-
-## 6. 实施顺序与退出条件
-
-1. **冻结规格。** 发布上述身份、守恒、终局、任意地区价值状态机与升级规则，建立多金额/多所有者的可执行模型，验证循环、分叉与延迟撤销反例。退出条件：I1/I3–I7 的规则没有未定义状态，独立审查能重现反例与结论。
-2. **实现通用地区账本。** 多来源验证、目的区本地终局/再出口、价值返程与离线启动；接触更新验证/安装和冲突依赖隔离；每次恢复重算状态与永久去重。退出条件：三个实际原生账本完成第七节，无远程新鲜度替代自治。
-3. **原生节点与钱包集成。** 渐进邻居发现、可替换真实接触承载、持久队列自动向验证器提交候选；钱包从当地证据显示支付阶段。退出条件：I8/I9 与 N1–N10 全部通过集成及资源拒绝测试。
-4. **长期与密码资格。** 活动/归档分层、独立恢复、防回滚、版本化算法/参数和用途域、后量子授权与运输迁移、双签/退役、历史证据失效前续认证、信任锚恢复及时代轮换；量化可支持期限、容量、验证时间与资金预算。退出条件：I10/I11 的声明范围有实测与独立复核，超范围安全失败。
-5. **独立运营与新主网采用。** 精确新签名零发行创世、公开源码和可复现包；独立节点/密钥保管与钱包持续支付、资源攻击和事故恢复验收。退出条件：当前版本达到 A–G 与 I1–I12 的地面协议资格；再按实际物理路线逐条开展运行资格。
-
-各地区的块间隔、成熟和挑战窗口按当地传播、验证、持久化与攻击模型选定并版本化签署；不得把跨恒星光时、加速逻辑时间或单次地面收据时延直接作为全地区承诺。当地通道的参与者/监护需在当地挑战窗口内可接触账本，不能把短通道争议期用于多年星际运输。
-
-## 7. 最低端到端验收矩阵
-
-| 场景 | 实际操作与通过标准 |
-| --- | --- |
-| 三地区无地球中心 | 三个独立原生地区账本、至少两个所有者，仅配置相邻接触。远端从公开授权包启动；撤去地球目录与在线批准后发现、中继和已验证当地付款继续。 |
-| 多年逻辑断联 | 完全停止远程源/地球服务；完整 CLI 启动、实际本地出块、成熟余额收付和重启一致；固定证据覆盖的新进口可处理，未覆盖的保持待验证。加速逻辑时间不冒充多年物理老化。 |
-| 再出口与真正返程 | 地球→比邻星→仙女座→地球；地球断联时当地付款和前两段向前流转继续，返回地球的第三段等待接触；地球恢复后精确一次导入新出口，初始扣除永不重新解锁。 |
-| 多输入/金额/来源 | 金额拆分、合并、找零、费用、通道、多个源和多条循环；逐步守恒，错货币根/收款人/目的地区/依赖或重复祖先不制造余额。 |
-| 重组与终局故障 | 导入前/后、成熟后/再出口前的重组；无终局出口拒绝；深分叉不得越过锁；认证冲突、少数故障、时代更替、旧锁恢复与缺签有明确安全/停顿结果。 |
-| 运输与永久隔离 | 正反向接触非对称、短接触、满载、重复/乱序、掉电/损坏、恶意邻居与永不返回回执；容量拒绝可恢复，所有失败均不退款或增发。 |
-| 长期密钥/历史 | 在途轮换、撤销延迟、验证期限外证据、密码降级、旧钱包备份和永久去重遗失；独立档案恢复相同根，未知或损坏证据不能通过。 |
-| 独立运行与真实范围 | 分属独立控制者的节点与终局保管；声明规模下持续负载、外部复核、跨设备用户恢复和成本预算；真实承载/航路的接触、延迟、容量、故障、期限单独记录。 |
-
-报告须列出具体创世/规则/源码、硬件、所有者、联系轨迹、负载、故障、持续时间和失败样本；分别报告当地可花时间与源获知到账时间，记录未解决出口数量/年龄和已经支付敞口。通过有限测试不构成所有执行的数学安全证明。
-
-## 8. A–G 与最终完成判定
-
-| 地面基础阶段 | 保留的必需验收 |
-| --- | --- |
-| A 授权与身份 | 创世、签名规则、零初始发行、货币根与源码承诺一致；测试资产和密钥不能获得正式价值或授权。 |
-| B 工作与金额 | 跨平台重算采用共识下的实际出块/终局资格（PoW时核算实际工作）、精确整数发行、费用、成熟、普通付款、防双花、重组和恢复。 |
-| C 节点与参与者 | 可复现公开节点包、持久同步、重启一致、受限 API 与参与者实际运行；控制者如实披露。 |
-| D 发布切换 | 精确签名源码/工件、密钥与锁独立恢复、公开哈希、服务/钱包身份核对；不复用旧授权。 |
-| E 区域内支付 | 当地成熟币及已注资通道、单方退出/挑战、实际结算、断网/重组/恢复、普通用户持续收付；速度指标只适用声明当地环境。 |
-| F 跨区异步结算 | 源扣除终局、完整证明、唯一导入及成熟、双向重放与状态区分；断联、乱序、锁恢复和冲突处置不制造资产。 |
-| G 开放与长期运行 | 独立运营/保管、外部审查、容量/归档/资源攻击和长期恢复；物理路线的证据与地面协议资格分开。 |
-
-**文档目标对齐（DOC_ALIGNED）：** 主计划与白皮书完整包含同一组 I1–I12，不把强制能力写为任选研究，验收及限制无冲突。
-
-**协议资格（PROTOCOL_QUALIFIED）：** 某个精确版本通过 A–G 与全部 I1–I12 的适用地面/独立验收，并发布其故障假设、容量、密码/归档期限和剩余风险。仅一跳进口、抽象模型、原型运输或同控制者测试不能达标。
-
-**地球正式发布（EARTH_RELEASE_AUTHORIZED）：** 精确签名零初始发行创世与发布采用可独立核验，且实际服务与钱包核验通过。文档不能替代规则采用或密钥授权。
-
-**真实路线资格（PHYSICAL_ROUTE_QUALIFIED）：** 每条所宣传航路有真实承载、接触、控制者、容量、故障和运行期限证据。地面协议资格可以先取得，但不可据此称跨星际服务已上线；任意未来航路和无限年代的可用性不能从有限资格外推。
-
-最终目标始终是持续、守恒、当地自治、任意已授权地区之间可再次转移的支付网络。某版本与某真实路线可在其公开资格范围内达到该目标；无限空间、无限时间和未知未来密码不能以勾选清单宣称已经证明。
-
-**用户授权的正文编辑修订（2026-10-04）：** 白皮书写需要实现的能力，开发和发布状态移至独立记录；全部 I/S/R/A–G/N/P 验收要求保持。此次编辑不授予协议、物理路线或主网资格，不因正文编辑重跑已有有效证据或打断当前故障范围。旧冻结记录由官网 Git 前驱及新记录内 predecessor 哈希保留。
+Independent security review, a second independently written validator, cross-device
+custody, long-history resources, cryptographic horizons, funded maintenance and
+actual physical routes remain distinct requirements. Mainnet needs separate
+monetary adoption and a fresh authenticated zero-allocation genesis. No test money
+or fixture key migrates. Supply remains 100 billion RLD with zero initial allocation
+and the exact C08 reserve-era schedule.
