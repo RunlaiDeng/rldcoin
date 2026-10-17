@@ -31,6 +31,21 @@ impl Store {
         if n > 65536 || size > 64 * 1024 * 1024 {
             return Err("RESOURCE_WAIT pool budget".into());
         }
+        let mut stmt = self
+            .db
+            .prepare("SELECT operation,raw FROM submissions")
+            .map_err(err)?;
+        let mut rows = stmt.query([]).map_err(err)?;
+        while let Some(r) = rows.next().map_err(err)? {
+            let id: Vec<u8> = r.get(0).map_err(err)?;
+            if id.len() != 32 || id == [0; 32] {
+                return Err("INVALID_ENCODING submission operation".into());
+            }
+            decode_tx(
+                &r.get::<_, Vec<u8>>(1).map_err(err)?,
+                self.ledger().chain_id(),
+            )?;
+        }
         Ok(())
     }
     pub fn submit_transaction(&mut self, operation: Hash, raw: &[u8], now: u64) -> Result<Hash> {
@@ -58,13 +73,15 @@ impl Store {
         if conflict {
             return Err("OPERATION_ID_CONFLICT".into());
         }
+        let commit = self.db.unchecked_transaction().map_err(err)?;
         self.pool_insert(raw)?;
-        self.db
+        commit
             .execute(
                 "INSERT INTO submissions VALUES(?1,?2)",
                 params![operation.as_slice(), raw],
             )
             .map_err(err)?;
+        commit.commit().map_err(err)?;
         Ok(t.id)
     }
     pub(crate) fn pool_insert(&self, raw: &[u8]) -> Result<()> {
@@ -102,6 +119,13 @@ impl Store {
         Ok(())
     }
     pub fn template_transactions(&self) -> Result<Vec<Vec<u8>>> {
+        if let Err(e) = self.reoffer_pending() {
+            if !e.starts_with("RESOURCE_WAIT") {
+                return Err(e);
+            }
+            // Pool pressure leaves the durable reoffer cursor in place. It must
+            // not disable mining an otherwise valid empty/ready block.
+        }
         let mut stmt = self.db.prepare("SELECT raw FROM pool").map_err(err)?;
         let rows = stmt
             .query_map([], |r| r.get::<_, Vec<u8>>(0))

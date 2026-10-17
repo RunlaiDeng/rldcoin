@@ -14,7 +14,7 @@ use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Write},
     net::{SocketAddr, TcpListener},
-    path::Path,
+    path::{Path, PathBuf},
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         mpsc::{self, Receiver, SyncSender},
@@ -75,11 +75,14 @@ struct Outgoing {
     packet: Hash,
     receipt: Result<Option<Frame>>,
 }
+pub(crate) type BackupMaterial = (Zeroizing<Vec<u8>>, Zeroizing<Vec<u8>>, Vec<u8>);
 pub struct Network {
+    root: PathBuf,
+    config: Vec<u8>,
     chain: Hash,
     key: SigningKey,
     material: Arc<Material>,
-    carriage: Carriage,
+    pub(crate) carriage: Carriage,
     neighbors: Vec<Neighbor>,
     listener: SocketAddr,
     incoming: Receiver<Incoming>,
@@ -247,6 +250,8 @@ impl Network {
         });
         let (outbox, outgoing) = mpsc::sync_channel(32);
         Ok(Self {
+            root: root.to_path_buf(),
+            config: serde_json::to_vec(&cfg).map_err(err)?,
             chain,
             key,
             material,
@@ -304,6 +309,11 @@ impl Network {
                         3 => {
                             if let Ok(raw) = store.get_block(id) {
                                 self.queue(destination, 3, &raw)?;
+                            }
+                        }
+                        2 => {
+                            if let Ok(raw) = store.get_transaction(id) {
+                                self.queue(destination, 2, &raw)?;
                             }
                         }
                         _ => {}
@@ -472,5 +482,15 @@ impl Network {
             self.queue(peer, 2, raw)?;
         }
         Ok(())
+    }
+    pub fn transaction_observation(&self, raw: &[u8]) -> Result<Value> {
+        self.carriage.transaction_observation(raw)
+    }
+    pub(crate) fn backup_material(&self) -> Result<BackupMaterial> {
+        Ok((
+            read(&self.root.join("contact.secret"), 32)?,
+            read(&self.root.join("tls.secret"), 16384)?,
+            self.config.clone(),
+        ))
     }
 }

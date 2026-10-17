@@ -48,7 +48,7 @@ impl Default for Budget {
     }
 }
 pub struct Carriage {
-    db: Connection,
+    pub(crate) db: Connection,
     _lease: File,
     chain: Hash,
     identity: Hash,
@@ -576,5 +576,44 @@ impl Carriage {
             )
             .map_err(err)?;
         Ok(())
+    }
+}
+
+impl Carriage {
+    pub fn transaction_observation(&self, raw: &[u8]) -> Result<serde_json::Value> {
+        let tx = crate::kernel::decode_tx(raw, self.chain)?;
+        let mut stmt = self
+            .db
+            .prepare("SELECT raw FROM packets WHERE kind=2 ORDER BY id")
+            .map_err(err)?;
+        let mut rows = stmt.query([]).map_err(err)?;
+        let mut observations = Vec::new();
+        let mut level = 0;
+        while let Some(row) = rows.next().map_err(err)? {
+            let p = Packet::decode(&row.get::<_, Vec<u8>>(0).map_err(err)?, self.chain)?;
+            if crate::kernel::decode_tx(&p.payload, self.chain)?.id != tx.id {
+                continue;
+            }
+            level = level.max(1);
+            observations.push(serde_json::json!({"packet_id":hex::encode(p.id),"destination":hex::encode(p.destination),"state":"QUEUED"}));
+            let mut receipts=self.db.prepare("SELECT raw FROM receipts WHERE packet=?1 UNION SELECT raw FROM hop_receipts WHERE packet=?1").map_err(err)?;
+            let rs = receipts
+                .query_map([p.id.as_slice()], |r| r.get::<_, Vec<u8>>(0))
+                .map_err(err)?;
+            for r in rs {
+                let f = Frame::decode(&r.map_err(err)?, self.chain)?;
+                let state = if f.discharges(&p) {
+                    level = 3;
+                    "DESTINATION_CUSTODY"
+                } else {
+                    level = level.max(2);
+                    "HOP_CUSTODY"
+                };
+                observations.push(serde_json::json!({"packet_id":hex::encode(p.id),"peer":hex::encode(peer_id(f.sender)),"state":state,"challenge":hex::encode(f.challenge),"delivery_nonce":hex::encode(f.nonce)}));
+            }
+        }
+        Ok(
+            serde_json::json!({"state":(["NOT_QUEUED","QUEUED","HOP_CUSTODY","DESTINATION_CUSTODY"][level]),"observations":observations,"ledger_authority":false}),
+        )
     }
 }

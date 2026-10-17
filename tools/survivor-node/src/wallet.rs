@@ -156,6 +156,7 @@ impl Store {
         if let Some(x) = existing {
             return Ok(x);
         }
+        ensure(self.freshness()? != "FRESHNESS_UNKNOWN", "FRESHNESS_UNKNOWN signing requires intent reconciliation and explicit risk acknowledgment")?;
         ensure(!waived, "CONFLICT waived review")?;
         self.ledger().validate_unsigned(&u)?;
         let signature = key.sign(&[tag("TRANSFER"), u.clone()].concat());

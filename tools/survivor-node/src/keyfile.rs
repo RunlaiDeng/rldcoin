@@ -31,7 +31,7 @@ fn prefix() -> Vec<u8> {
     ]
     .concat()
 }
-fn derived(p: &[u8], salt: &[u8]) -> Result<Zeroizing<[u8; 32]>> {
+pub(crate) fn derived(p: &[u8], salt: &[u8]) -> Result<Zeroizing<[u8; 32]>> {
     password(p)?;
     let mut out = Zeroizing::new([0; 32]);
     scrypt(

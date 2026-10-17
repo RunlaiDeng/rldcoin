@@ -69,9 +69,13 @@ fn write_private(path: &Path, raw: &[u8]) -> Result<()> {
     f.write_all(raw)
         .and_then(|_| f.sync_all())
         .map_err(|_| "RESOURCE_WAIT key persistence")?;
-    std::fs::File::open(path.parent().unwrap_or(Path::new(".")))
-        .and_then(|d| d.sync_all())
-        .map_err(|_| "RESOURCE_WAIT directory persistence".into())
+    std::fs::File::open(
+        path.parent()
+            .filter(|p| !p.as_os_str().is_empty())
+            .unwrap_or(Path::new(".")),
+    )
+    .and_then(|d| d.sync_all())
+    .map_err(|_| "RESOURCE_WAIT directory persistence".into())
 }
 fn operation() -> Result<Hash> {
     let mut id = [0; 32];
@@ -82,7 +86,7 @@ fn operation() -> Result<Hash> {
     Ok(id)
 }
 fn response(s: &Store, result: Value, clock: Option<u64>, diagnostic: Option<&str>) -> Value {
-    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"confidence":"CONDITIONAL","diagnostic":diagnostic,"result":result})
+    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"clock_state":if clock.is_some(){"OBSERVED"}else{"CLOCK_WAIT"},"confidence":"CONDITIONAL","diagnostic":diagnostic,"result":result})
 }
 fn command(
     s: &mut Store,
@@ -94,15 +98,18 @@ fn command(
 ) -> Result<Value> {
     match field(v, "method")? {
         "node_status" => Ok(
-            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"mining":miner.is_some(),"relay":network.as_ref().map(|n|n.status()),"transport_error":network_error,"mainnet":false}),
+            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"freshness":s.freshness()?,"mining":miner.is_some(),"relay":network.as_ref().map(|n|n.status()),"transport_error":network_error,"mainnet":false}),
         ),
         "get_object" => {
             let kind = field(v, "kind")?;
             let id = hash(v, "id")?;
-            if kind != "3" {
-                return Err("UNSUPPORTED_VERSION object kind".into());
-            }
-            Ok(json!({"bytes":hex::encode(s.get_block(id)?)}))
+            let raw = match kind {
+                "1" if id == s.ledger().chain_id() => s.genesis_bytes().to_vec(),
+                "2" => s.get_transaction(id)?,
+                "3" => s.get_block(id)?,
+                _ => return Err("UNSUPPORTED_VERSION object kind".into()),
+            };
+            Ok(json!({"bytes":hex::encode(raw)}))
         }
         "accept_block" => {
             let o = s.accept(hash(v, "operation_id")?, &bytes(v, "block_hex")?, time)?;
@@ -140,8 +147,17 @@ fn command(
         }
         "operation_status" => {
             let id = hash(v, "operation_id")?;
-            if let Some(x) = s.signed_operation(id)? {
-                Ok(json!({"transaction_hex":hex::encode(x),"local_intent":"SIGNED"}))
+            if let Some(mut observation) = s.payment_operation(id)? {
+                if let Some(raw) = observation["transaction_hex"].as_str() {
+                    let raw =
+                        hex::decode(raw).map_err(|_| "INVALID_ENCODING retained transaction")?;
+                    observation["transport"] = if let Some(n) = network.as_ref() {
+                        n.transaction_observation(&raw)?
+                    } else {
+                        json!({"state":"NOT_QUEUED","diagnostic":network_error})
+                    };
+                }
+                Ok(observation)
             } else if let Some(o) = s.operation(id)? {
                 Ok(
                     json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
@@ -165,12 +181,7 @@ fn command(
             )?;
             Ok(json!({"local_intent":"WITHDRAWN","signature_revoked":false}))
         }
-        "changes_since" => {
-            if integer(v, "revision")? != s.revision() {
-                return Err("RESYNC_REQUIRED".into());
-            }
-            Ok(json!({"changes":[]}))
-        }
+        "changes_since" => s.changes_since(integer(v, "revision")?),
         "set_mining" => {
             s.clock(time)?;
             let enabled = v["enabled"].as_bool().ok_or("INVALID_ENCODING enabled")?;
@@ -199,12 +210,53 @@ fn command(
                 json!({"owner":hex::encode(key.verifying_key().to_bytes()),"backup_scope":"KEY_ONLY"}),
             )
         }
+        "state_head" => {
+            let n = network
+                .as_ref()
+                .ok_or("RESOURCE_WAIT contact state unavailable")?;
+            Ok(
+                json!({"state_head":hex::encode(rld_survivor_node::backup::state_head(s,n)?),"intent_head":hex::encode(s.intent_head()?),"freshness":s.freshness()?}),
+            )
+        }
+        "create_backup" => {
+            let n = network
+                .as_ref()
+                .ok_or("RESOURCE_WAIT contact state unavailable")?;
+            let p = Zeroizing::new(field(v, "password")?.as_bytes().to_vec());
+            let paths = v["wallet_key_files"]
+                .as_array()
+                .ok_or("INVALID_ENCODING wallet key inventory")?
+                .iter()
+                .map(|x| {
+                    x.as_str()
+                        .map(std::path::PathBuf::from)
+                        .ok_or_else(|| "INVALID_ENCODING wallet key path".to_string())
+                })
+                .collect::<Result<Vec<_>>>()?;
+            let head = rld_survivor_node::backup::create(
+                s,
+                n,
+                Path::new(field(v, "destination")?),
+                &p,
+                &paths,
+            )?;
+            Ok(
+                json!({"state_head":hex::encode(head),"scope":"WHOLE_NODE_WITH_LISTED_ENCRYPTED_KEYS","independent_freshness":false}),
+            )
+        }
+        "acknowledge_restore_risk" => {
+            s.acknowledge_restore_risk(
+                hash(v, "intent_head")?,
+                v["acknowledge_conflicting_signatures"].as_bool() == Some(true),
+            )?;
+            Ok(json!({"freshness":s.freshness()?,"independent_freshness":false}))
+        }
         _ => Err("UNSUPPORTED_VERSION method".into()),
     }
 }
 fn run() -> Result<()> {
     let a: Vec<_> = std::env::args().collect();
-    if !(5..=6).contains(&a.len()) || a[1] != "serve" {
+    if !(5..=6).contains(&a.len()) || !matches!(a[1].as_str(), "serve" | "restore") {
         return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG]; bounded local JSON lines on stdin; test networks only".into());
     }
     let g = read(Path::new(&a[3]), 85)?;
@@ -212,8 +264,54 @@ fn run() -> Result<()> {
         .map_err(|_| "INVALID_ENCODING pin")?
         .try_into()
         .map_err(|_| "INVALID_ENCODING pin")?;
+    if a[1] == "restore" {
+        if a.len() != 6 {
+            return Err("INVALID_ENCODING restore requires fresh target, genesis, pin, backup source; password on native stdin".into());
+        }
+        let mut input = Zeroizing::new(Vec::new());
+        io::stdin()
+            .lock()
+            .take(65537)
+            .read_until(b'\n', &mut input)
+            .map_err(|_| "RESOURCE_WAIT restore input")?;
+        if input.len() > 65536 {
+            return Err("INVALID_ENCODING restore input bound".into());
+        }
+        let mut v: Value =
+            serde_json::from_slice(&input).map_err(|_| "INVALID_ENCODING restore request")?;
+        let password = Zeroizing::new(field(&v, "password")?.as_bytes().to_vec());
+        if let Some(Value::String(p)) = v.get_mut("password") {
+            use zeroize::Zeroize;
+            p.zeroize();
+        }
+        let latest = if v["latest_state_head"].is_null() {
+            None
+        } else {
+            Some(hash(&v, "latest_state_head")?)
+        };
+        let head = rld_survivor_node::backup::restore(
+            Path::new(&a[5]),
+            Path::new(&a[2]),
+            &g,
+            pin,
+            &password,
+            latest,
+        )?;
+        println!(
+            "{}",
+            json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(pin),"state_head":hex::encode(head),"freshness":if latest.is_some(){"MATCHES_PROVIDED_HEAD"}else{"FRESHNESS_UNKNOWN"},"independent_freshness":false})
+        );
+        return Ok(());
+    }
     let mut s = Store::open(Path::new(&a[2]), &g, pin, Limits::default())?;
-    let config = a.get(5).map(|p| read(Path::new(p), 65536)).transpose()?;
+    let retained_config = Path::new(&a[2]).join("contact/config.json");
+    let config = if let Some(p) = a.get(5) {
+        Some(read(Path::new(p), 65536)?)
+    } else if retained_config.exists() {
+        Some(read(&retained_config, 65536)?)
+    } else {
+        None
+    };
     let (mut network, mut network_error) = match rld_survivor_node::network::Network::open(
         &Path::new(&a[2]).join("contact"),
         pin,
@@ -252,6 +350,7 @@ fn run() -> Result<()> {
         match rx.recv_timeout(Duration::from_millis(100)) {
             Ok(request) => {
                 let clock = now().ok();
+                let observed_clock = clock.filter(|t| s.clock(*t).is_ok());
                 let r = match (request, clock) {
                     (Ok(mut v), Some(t)) => {
                         let r = command(&mut s, &v, &mut miner, &mut network, &network_error, t);
@@ -265,8 +364,8 @@ fn run() -> Result<()> {
                     _ => Err("CLOCK_WAIT".into()),
                 };
                 let out = match r {
-                    Ok(v) => response(&s, v, clock, None),
-                    Err(e) => response(&s, Value::Null, clock, Some(&e)),
+                    Ok(v) => response(&s, v, observed_clock, None),
+                    Err(e) => response(&s, Value::Null, observed_clock, Some(&e)),
                 };
                 println!("{out}");
                 io::stdout().flush().map_err(|_| "RESOURCE_WAIT output")?;

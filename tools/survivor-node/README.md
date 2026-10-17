@@ -105,8 +105,42 @@ in this candidate; exhaustion refuses new custody without deleting obligations.
 Ground certificates expire after 90 days and need explicit independently pinned
 renewal. This is not a qualified physical interstellar adapter.
 
-This stage does **not** yet satisfy the complete operations contract: complete inclusion/reorg
-status history, detached-transaction reoffering, whole-wallet backup/restore with
-freshness policy, fault injection at every publication boundary, consumer packaging
-and independent/physical qualification remain required. `ACTIVE_GROUND_ADAPTER`
+Selected changes commit exact attached/detached block and transaction IDs together
+with changed output observations. Cold replay checks those notifications against
+native execution. `changes_since` returns at most 128 revisions/1 MiB; larger gaps
+explicitly require a fresh snapshot. Wallet operation status distinguishes inclusion,
+detachment, conflict, readiness and historical transport receipts. Detached original
+signatures have persistent reoffer references; pool pressure cannot disable mining.
+The local storage format is now `RLD-SURVIVOR-STORE-2`; earlier candidate stores
+refuse, with no automatic migration or test-value continuity.
+
+`state_head` exports an exact local ledger/intent/custody commitment to retain
+independently. `create_backup` takes a fresh destination, native-input password and
+explicit `wallet_key_files` inventory. It copies complete SQLite snapshots through
+the database backup API and encrypts each record, including contact/TLS secrets.
+Unlisted wallet key files are not magically included. Keys retain their separate
+O13 encryption. Backup staging is private; interrupted builds retain `BUILDING` and
+residue. A complete snapshot uses local format `RLD-SURVIVOR-BACKUP-1`: each sealed
+record binds magic `RLDSBKP1`, chain[32], random bundle[32], record-kind u16, salt[32],
+nonce[12] and plaintext-length u64 as AEAD associated data, all integers big-endian.
+Fixed scrypt N=32768/r=8/p=1 derives AES-256-GCM with a full 16-byte tag. Record kinds
+1..5 are ledger, custody, contact key, TLS material and admitted configuration;
+100..163 are explicitly listed encrypted wallet keys; kind 0 is the authenticated
+complete inventory/genesis/head manifest. There are no archive-controlled paths.
+Each record is at most 256 MiB; allow 1 GiB transient backup/restore working memory,
+additional private staging disk and the encrypted image's full size.
+
+`rld-survivor-node restore FRESH_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID BACKUP_DIRECTORY`
+reads one bounded native JSON request with `password` and optional independently
+retained `latest_state_head`. It verifies encrypted records and full native replay
+before clearing RESTORING. Existing/interrupted destinations never overwrite or
+resume. Without a matching supplied head the restored wallet reports
+FRESHNESS_UNKNOWN and refuses first signing, while exact signed recovery and mining
+remain possible. `acknowledge_restore_risk` requires the current `intent_head` and
+explicit acknowledgment of possible conflicting signatures. This records accepted
+risk; it does not establish independent freshness. Restore policy is separate from
+consensus and never creates a mandatory witness for an intact surviving node.
+
+Fault injection at every publication boundary, consumer packaging and complete
+independent/physical qualification remain required. `ACTIVE_GROUND_ADAPTER`
 reports local adapter operation, never an assertion of an interstellar connection.

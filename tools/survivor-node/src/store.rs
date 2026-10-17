@@ -71,9 +71,26 @@ impl Store {
     /// `genesis` and `pin` are supplied independently of the database. No peer or
     /// existing database chooses a currency. The directory is private local state.
     pub fn open(root: &Path, genesis: &[u8], pin: Hash, limits: Limits) -> Result<Self> {
+        Self::open_internal(root, genesis, pin, limits, false)
+    }
+    pub(crate) fn open_restoring(
+        root: &Path,
+        genesis: &[u8],
+        pin: Hash,
+        limits: Limits,
+    ) -> Result<Self> {
+        Self::open_internal(root, genesis, pin, limits, true)
+    }
+    fn open_internal(
+        root: &Path,
+        genesis: &[u8],
+        pin: Hash,
+        limits: Limits,
+        restoring: bool,
+    ) -> Result<Self> {
         let initial = Ledger::from_genesis(genesis, pin, limits.coins)?;
         ensure(
-            !root.join("RESTORING").exists(),
+            restoring || !root.join("RESTORING").exists(),
             "FRESHNESS_UNKNOWN interrupted restore",
         )?;
         if !root.exists() {
@@ -143,7 +160,7 @@ impl Store {
             .map_err(err)?;
         let (tip, revision) = if let Some((format, g, t, r)) = binding {
             ensure(
-                format == "RLD-SURVIVOR-STORE-1" && g == genesis,
+                format == "RLD-SURVIVOR-STORE-2" && g == genesis,
                 "INVALID store binding",
             )?;
             (hash32(t)?, number(r)?)
@@ -160,7 +177,7 @@ impl Store {
             tx.execute(
                 "INSERT INTO binding VALUES(1,?1,?2,?3,?4)",
                 params![
-                    "RLD-SURVIVOR-STORE-1",
+                    "RLD-SURVIVOR-STORE-2",
                     genesis,
                     pin.as_slice(),
                     0u128.to_be_bytes().as_slice()
@@ -182,6 +199,8 @@ impl Store {
             poisoned: false,
             last_clock: None,
         };
+        s.observations_open()?;
+        s.db.execute_batch("CREATE TABLE IF NOT EXISTS restore_policy (one INTEGER PRIMARY KEY CHECK(one=1),state TEXT NOT NULL,ack_head BLOB); INSERT OR IGNORE INTO restore_policy VALUES(1,'INTACT',NULL);").map_err(err)?;
         // Verify the complete ordered selected-transition chain and each retained
         // operation's exact block/result. Uncommitted intent never selects state.
         let mut previous = pin;
@@ -236,6 +255,16 @@ impl Store {
             )?;
             if committed && selected {
                 ensure(pr == rev && prior == previous, "INVALID revision chain")?;
+                let stored: String =
+                    s.db.query_row(
+                        "SELECT body FROM changes WHERE revision=?1",
+                        [r.to_be_bytes().as_slice()],
+                        |row| row.get(0),
+                    )
+                    .map_err(err)?;
+                let expected = s.branch_change_from(&old, pr, &candidate, &raw)?.0;
+                let expected_body = serde_json::to_string(&expected).map_err(err)?;
+                ensure(stored == expected_body, "INVALID_ENCODING retained change")?;
                 rev = r;
                 previous = nt;
                 heads.insert(rev, nt);
@@ -376,6 +405,11 @@ impl Store {
             .revision
             .checked_add(u128::from(selected))
             .ok_or("RESOURCE_WAIT revision exhausted")?;
+        let change = if selected {
+            Some(self.branch_change(&candidate, raw)?)
+        } else {
+            None
+        };
         if existing.is_some() {
             let prior: (Vec<u8>, Vec<u8>) = self
                 .db
@@ -442,6 +476,38 @@ impl Store {
                     params![next.id().as_slice(), revision.to_be_bytes().as_slice()],
                 )
                 .map_err(err)?;
+                let (event, detached) =
+                    change.as_ref().ok_or("INVALID_CONSENSUS missing change")?;
+                tx.execute(
+                    "INSERT INTO changes VALUES(?1,?2)",
+                    params![revision.to_be_bytes().as_slice(), event.to_string()],
+                )
+                .map_err(err)?;
+                for b in detached {
+                    for (n, _) in crate::observations::transactions(b)?.iter().enumerate() {
+                        tx.execute(
+                            "INSERT OR IGNORE INTO reoffer VALUES(?1,?2,?3)",
+                            params![block_id(b)?.as_slice(), n as u16, &b[68..84]],
+                        )
+                        .map_err(err)?;
+                    }
+                }
+                // Included bytes remain in blocks and wallet/submission journals.
+                // Removing this pool copy creates room for detached originals.
+                for entry in event["attached"]
+                    .as_array()
+                    .ok_or("INVALID_ENCODING attached changes")?
+                {
+                    for id in entry["transactions"]
+                        .as_array()
+                        .ok_or("INVALID_ENCODING attached transactions")?
+                    {
+                        let id = hex::decode(id.as_str().ok_or("INVALID_ENCODING transaction id")?)
+                            .map_err(err)?;
+                        tx.execute("DELETE FROM pool WHERE id=?1", [id])
+                            .map_err(err)?;
+                    }
+                }
             }
             tx.commit().map_err(err)?;
             Ok(())
@@ -468,8 +534,11 @@ impl Store {
     }
     /// Selected IDs ordered genesis to tip, reconstructed from retained objects.
     pub fn selected_ids(&self) -> Result<Vec<Hash>> {
+        self.ancestry_ids(self.ledger.tip().id())
+    }
+    pub(crate) fn ancestry_ids(&self, tip: Hash) -> Result<Vec<Hash>> {
         let mut ids = Vec::new();
-        let mut id = self.ledger.tip().id();
+        let mut id = tip;
         while id != self.ledger.chain_id() {
             ids.push(id);
             let raw = self.get_block(id)?;

@@ -88,6 +88,7 @@ fn interrupted_intent_recovers_only_prior_and_exact_retry() {
     // Reconstruct the exact durable INTENT boundary, not a claimed process/power cut.
     let db = rusqlite::Connection::open(path.join("ledger.sqlite3")).unwrap();
     db.execute("UPDATE operations SET committed=0", []).unwrap();
+    db.execute("DELETE FROM changes", []).unwrap();
     db.execute(
         "UPDATE binding SET tip=?1,revision=?2",
         rusqlite::params![pin.as_slice(), 0u128.to_be_bytes().as_slice()],
