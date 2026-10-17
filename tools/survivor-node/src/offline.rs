@@ -111,8 +111,9 @@ impl Carriage {
         }
         Ok(())
     }
-    pub(crate) fn discover(&self, p: &Packet) -> Result<()> {
+    pub(crate) fn discover(&self, p: &Packet) -> Result<bool> {
         ensure(p.kind() == 8, "INVALID_ENCODING discovery packet")?;
+        let mut changed = false;
         for key in p.payload()[2..].as_chunks::<32>().0 {
             let count: i64 = self
                 .db
@@ -122,14 +123,16 @@ impl Carriage {
                 break;
             }
             self.capacity(64, 0)?;
-            self.db
+            changed |= self
+                .db
                 .execute(
                     "INSERT OR IGNORE INTO candidates VALUES(?1,?2)",
                     params![key.as_slice(), p.id().as_slice()],
                 )
-                .map_err(err)?;
+                .map_err(err)?
+                > 0;
         }
-        Ok(())
+        Ok(changed)
     }
     pub fn candidate_identities(&self) -> Result<Vec<Hash>> {
         let mut stmt = self

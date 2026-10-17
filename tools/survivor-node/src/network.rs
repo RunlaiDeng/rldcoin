@@ -120,9 +120,13 @@ impl Network {
                 use std::os::unix::fs::PermissionsExt;
                 fs::set_permissions(root, fs::Permissions::from_mode(0o700)).map_err(err)?;
             }
-            File::open(root.parent().ok_or("INVALID_ENCODING network parent")?)
-                .and_then(|f| f.sync_all())
-                .map_err(err)?;
+            File::open(
+                root.parent()
+                    .filter(|p| !p.as_os_str().is_empty())
+                    .unwrap_or(Path::new(".")),
+            )
+            .and_then(|f| f.sync_all())
+            .map_err(err)?;
         }
         let keypath = root.join("contact.secret");
         if !keypath.exists() {
@@ -307,7 +311,21 @@ impl Network {
         let destination = peer_id(p.origin);
         match p.kind {
             1 | 9 => {}
-            8 => self.carriage.discover(p)?,
+            8 => {
+                if self.carriage.discover(p)? {
+                    let peers: BTreeSet<_> = self
+                        .neighbors
+                        .iter()
+                        .map(|n| peer_id(n.key))
+                        .chain(self.offline_peers.iter().map(|k| peer_id(*k)))
+                        .collect();
+                    for peer in peers {
+                        if peer != peer_id(p.origin) {
+                            self.queue(peer, 8, p.payload())?;
+                        }
+                    }
+                }
+            }
             2 => {
                 store.submit_transaction(p.id, &p.payload, now)?;
             }
@@ -366,7 +384,10 @@ impl Network {
         Ok(())
     }
     pub fn tick(&mut self, store: &mut Store, now: u64) -> Result<()> {
-        while let Ok(i) = self.incoming.try_recv() {
+        for _ in 0..8 {
+            let Ok(i) = self.incoming.try_recv() else {
+                break;
+            };
             let result = self
                 .carriage
                 .receive(&i.raw, i.sender, i.challenge, false, &self.key);
@@ -384,7 +405,10 @@ impl Network {
                 }
             }
         }
-        while let Ok(o) = self.outgoing.try_recv() {
+        for _ in 0..32 {
+            let Ok(o) = self.outgoing.try_recv() else {
+                break;
+            };
             match o.receipt {
                 Ok(Some(f)) => {
                     if f.result == Some(1) {
@@ -424,11 +448,31 @@ impl Network {
                 .chain(self.offline_peers.iter().map(|k| peer_id(*k)))
                 .collect();
             let mut head = store.ledger().tip().id().to_vec();
+            for raw in store.template_transactions()? {
+                self.queue_transaction(&raw)?;
+            }
             head.extend(store.ledger().tip().height().to_be_bytes());
             head.extend(store.ledger().tip().work_bytes());
+            let introductions: BTreeSet<_> = self
+                .neighbors
+                .iter()
+                .map(|n| n.key)
+                .chain(self.offline_peers.iter().copied())
+                .chain([self.key.verifying_key().to_bytes()])
+                .collect();
+            let introductions: Vec<_> = introductions.into_iter().collect();
             for peer in peers {
                 self.queue(peer, 4, &head)?;
                 self.queue(peer, 6, &store.locator()?)?;
+                if self.last_tip.is_none() {
+                    for group in introductions.chunks(64) {
+                        let mut payload = (group.len() as u16).to_be_bytes().to_vec();
+                        for k in group {
+                            payload.extend(k);
+                        }
+                        self.queue(peer, 8, &payload)?;
+                    }
+                }
             }
             self.last_tip = Some(store.ledger().tip().id());
             self.last_announce = Instant::now();
@@ -584,5 +628,8 @@ impl Network {
         Ok(
             json!({"identities":self.carriage.candidate_identities()?.iter().map(hex::encode).collect::<Vec<_>>(),"endpoint_authority":false}),
         )
+    }
+    pub fn withdraw_transport(&mut self, id: Hash, acknowledge: bool) -> Result<()> {
+        self.carriage.withdraw(id, acknowledge)
     }
 }

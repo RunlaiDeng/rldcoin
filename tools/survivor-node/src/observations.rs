@@ -85,7 +85,34 @@ impl Store {
                 (attached, detached)
             };
         let entries = |blocks: &[Vec<u8>]| -> Result<Vec<Value>> {
-            blocks.iter().map(|b| Ok(json!({"block_id":hex::encode(block_id(b)?),"height":u128::from_be_bytes(b[68..84].try_into().unwrap()).to_string(),"transactions":transactions(b)?.iter().map(|x|decode_tx(x,self.ledger().chain_id()).map(|t|hex::encode(t.id))).collect::<Result<Vec<_>>>()?}))).collect()
+            let mut result = Vec::new();
+            for b in blocks {
+                let height = u128::from_be_bytes(b[68..84].try_into().unwrap());
+                let txs = transactions(b)?
+                    .iter()
+                    .map(|x| decode_tx(x, self.ledger().chain_id()))
+                    .collect::<Result<Vec<_>>>()?;
+                let amount = txs
+                    .iter()
+                    .try_fold(crate::kernel::issuance(height).0, |n, t| {
+                        n.checked_add(t.fee).ok_or("INVALID_CONSENSUS reward sum")
+                    })?;
+                let reward = crate::kernel::hash(
+                    "REWARD",
+                    &[
+                        &b[4..36],
+                        &b[36..68],
+                        &b[68..84],
+                        &b[156..188],
+                        &b[188..220],
+                    ]
+                    .concat(),
+                );
+                let mut outpoint = reward.to_vec();
+                outpoint.extend(0u16.to_be_bytes());
+                result.push(json!({"block_id":hex::encode(block_id(b)?),"height":height.to_string(),"transactions":txs.iter().map(|t|hex::encode(t.id)).collect::<Vec<_>>(),"reward":if amount>0{json!({"outpoint":hex::encode(outpoint),"amount":amount.to_string(),"maturity_height":(height+100).to_string()})}else{Value::Null}}));
+            }
+            Ok(result)
         };
         let keys: BTreeSet<_> = before.coins().keys().chain(next.coins().keys()).collect();
         let mut changed = Vec::new();
@@ -207,7 +234,9 @@ impl Store {
                 }
             }
         }
-        let reason = if self.ledger().tip().height() + 1 > t.expiry {
+        let reason = if inclusion.is_some() {
+            None
+        } else if self.ledger().tip().height() + 1 > t.expiry {
             Some("EXPIRED")
         } else if t.inputs.iter().any(|i| spent.contains(i)) && inclusion.is_none() {
             Some("CONFLICTED")
@@ -328,5 +357,21 @@ impl Store {
             Ok(v)
         })
         .transpose()
+    }
+}
+
+impl Store {
+    pub fn pending_operation(&self, id: Hash) -> Result<Option<Value>> {
+        type Pending = (Vec<u8>, Vec<u8>, Vec<u8>);
+        let row: Option<Pending> = self
+            .db
+            .query_row(
+                "SELECT prior_tip,prior_revision,raw FROM operations WHERE id=?1 AND committed=0",
+                [id.as_slice()],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+            )
+            .optional()
+            .map_err(err)?;
+        row.map(|(tip,revision,raw)|{let r=u128::from_be_bytes(revision.try_into().map_err(|_|"INVALID_ENCODING pending revision")?);Ok(json!({"state":"INTENT","prior_tip":hex::encode(&tip),"prior_revision":r.to_string(),"block_hex":hex::encode(raw),"prior_still_selected":tip==self.ledger().tip().id() && r==self.revision(),"first_signing":false}))}).transpose()
     }
 }

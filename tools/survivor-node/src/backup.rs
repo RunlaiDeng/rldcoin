@@ -91,6 +91,9 @@ const CONTACT_TABLES: &[(&str, &str)] = &[
     ("equivocation", "origin,sequence"),
     ("offline_out", "peer,packet"),
     ("candidates", "key"),
+    ("withdrawals", "packet"),
+    ("peer_schedule", "peer"),
+    ("peer_positions", "peer,class"),
 ];
 pub fn state_head(store: &Store, network: &Network) -> Result<Hash> {
     combined(

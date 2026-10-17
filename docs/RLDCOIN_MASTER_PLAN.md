@@ -20,6 +20,14 @@ authentic history, keys when spending, a working clock, computation and sufficie
 storage. Remote receipt requires physical communication. Payments, rewards and
 descendants can be removed by a valid winning history.
 
+The isolated executable is [tools/survivor-node](../tools/survivor-node/README.md).
+It intentionally accepts only no-value genesis manifests. Its native stdin API,
+encrypted wallet/whole-node backup, pinned TLS and separately admitted offline
+carriage form the candidate engineering surface. Distribution packages contain
+only the executable, public contract, license and byte inventory. Monetary adoption
+and consumer qualification require the separate gates below; a downloadable test
+binary does not change them.
+
 ## Implementation boundaries
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,

@@ -17,7 +17,7 @@ use std::{
     io::{self, Read, Write},
     net::{SocketAddr, TcpStream},
     sync::Arc,
-    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant},
 };
 use x509_parser::prelude::*;
 use zeroize::Zeroizing;
@@ -66,11 +66,10 @@ impl Material {
         chain: Hash,
         identity: Hash,
     ) -> Result<Self> {
-        let n = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map_err(err)?
-            .as_secs();
-        check(&cert, chain, identity, n)?;
+        // Retained ground credentials may be expired while an independently
+        // admitted file adapter remains usable. Every live TLS peer still checks
+        // certificate validity below; loading never renews or replaces a pin.
+        check(&cert, chain, identity, None)?;
         let key = PrivateKeyDer::try_from(key.to_vec()).map_err(err)?;
         Ok(Self {
             cert: CertificateDer::from(cert),
@@ -87,16 +86,18 @@ impl Material {
         }
     }
 }
-fn check(cert: &[u8], chain: Hash, identity: Hash, now: u64) -> Result<()> {
+fn check(cert: &[u8], chain: Hash, identity: Hash, now: Option<u64>) -> Result<()> {
     ensure(cert.len() <= 8192, "INVALID_ENCODING TLS certificate size")?;
     let (rest, c) =
         X509Certificate::from_der(cert).map_err(|_| "INVALID_CRYPTO TLS certificate")?;
     ensure(rest.is_empty(), "INVALID_ENCODING TLS certificate trailing")?;
-    let now = i64::try_from(now).map_err(|_| "CLOCK_WAIT TLS time")?;
-    ensure(
-        c.validity().not_before.timestamp() <= now && now <= c.validity().not_after.timestamp(),
-        "CLOCK_WAIT TLS validity",
-    )?;
+    if let Some(now) = now {
+        let now = i64::try_from(now).map_err(|_| "CLOCK_WAIT TLS time")?;
+        ensure(
+            c.validity().not_before.timestamp() <= now && now <= c.validity().not_after.timestamp(),
+            "CLOCK_WAIT TLS validity",
+        )?;
+    }
     let names = c
         .subject()
         .iter_common_name()
@@ -137,7 +138,7 @@ impl Pins {
             .iter()
             .find(|n| n.certificate_sha256 == digest)
             .ok_or_else(|| rustls::Error::General("certificate pin mismatch".into()))?;
-        check(cert, self.chain, peer.key, now.as_secs()).map_err(rustls::Error::General)
+        check(cert, self.chain, peer.key, Some(now.as_secs())).map_err(rustls::Error::General)
     }
 }
 fn signature(

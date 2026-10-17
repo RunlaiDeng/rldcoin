@@ -200,3 +200,101 @@ fn repeated_outstanding_offer_preserves_one_exact_origin_packet() {
         .unwrap();
     assert_ne!(other.id(), first.id());
 }
+
+#[test]
+fn every_neighbor_receives_every_ready_class_without_cursor_phase_lock() {
+    use rld_survivor_node::contact::Packet;
+    let v: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../docs/protocol/survivor-v1/vectors.json"
+    ))
+    .unwrap();
+    let g = hex::decode(v["genesis"]["manifest_hex"].as_str().unwrap()).unwrap();
+    let chain = rld_survivor_node::kernel::genesis_id(&g);
+    let a = identity(40);
+    let b = identity(41);
+    let foreign = identity(42);
+    let peers: Vec<_> = (50..55)
+        .map(|n| identity(n).verifying_key().to_bytes())
+        .collect();
+    let mut s = Carriage::open(
+        &root(),
+        chain,
+        a.verifying_key().to_bytes(),
+        Budget::default(),
+    )
+    .unwrap();
+    s.originate(&a, [0; 32], 4, &head()).unwrap();
+    s.originate(
+        &a,
+        [0; 32],
+        3,
+        &hex::decode(v["main_branch"][0]["block_hex"].as_str().unwrap()).unwrap(),
+    )
+    .unwrap();
+    s.originate(
+        &a,
+        [0; 32],
+        2,
+        &hex::decode(v["payment"]["transaction_hex"].as_str().unwrap()).unwrap(),
+    )
+    .unwrap();
+    let original = Packet::sign(
+        chain,
+        &foreign,
+        peer_id(b.verifying_key().to_bytes()),
+        1,
+        4,
+        &head(),
+    )
+    .unwrap();
+    let delivery = Frame::delivery(
+        chain,
+        &foreign,
+        peer_id(b.verifying_key().to_bytes()),
+        [0; 32],
+        [1; 32],
+        &original,
+    )
+    .unwrap();
+    let receipt = Frame::receipt(chain, &b, &delivery, 1).unwrap();
+    s.originate(
+        &a,
+        peer_id(foreign.verifying_key().to_bytes()),
+        9,
+        receipt.raw(),
+    )
+    .unwrap();
+    let mut intro = 1u16.to_be_bytes().to_vec();
+    intro.extend(foreign.verifying_key().to_bytes());
+    s.originate(&a, [0; 32], 8, &intro).unwrap();
+    let mut seen = std::collections::BTreeMap::<[u8; 32], BTreeSet<u8>>::new();
+    for _ in 0..50 {
+        let (peer, packets) = s.prepare(&peers, &BTreeSet::new()).unwrap().unwrap();
+        for p in packets {
+            seen.entry(peer).or_default().insert(p.kind());
+        }
+    }
+    for peer in peers {
+        assert_eq!(seen.get(&peer).unwrap(), &BTreeSet::from([2, 3, 4, 8, 9]));
+    }
+}
+#[test]
+fn owner_withdrawal_requires_explicit_ack_and_never_reacknowledges_abandoned_bytes() {
+    let chain = [39; 32];
+    let a = identity(61);
+    let b = identity(62);
+    let ka = a.verifying_key().to_bytes();
+    let kb = b.verifying_key().to_bytes();
+    let rb = root();
+    let mut sa = Carriage::open(&root(), chain, ka, Budget::default()).unwrap();
+    let mut sb = Carriage::open(&rb, chain, kb, Budget::default()).unwrap();
+    let p = sa.originate(&a, [0; 32], 4, &head()).unwrap();
+    let f = Frame::delivery(chain, &a, peer_id(kb), [0; 32], [1; 32], &p).unwrap();
+    sb.receive(f.raw(), ka, [0; 32], true, &b).unwrap();
+    assert!(sb.withdraw(p.id(), false).is_err());
+    sb.withdraw(p.id(), true).unwrap();
+    assert!(sb.receive(f.raw(), ka, [0; 32], true, &b).is_err());
+    drop(sb);
+    let mut sb = Carriage::open(&rb, chain, kb, Budget::default()).unwrap();
+    assert!(sb.receive(f.raw(), ka, [0; 32], true, &b).is_err());
+}

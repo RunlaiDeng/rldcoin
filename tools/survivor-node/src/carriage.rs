@@ -122,9 +122,13 @@ impl Carriage {
             .map_err(err)?;
         }
         File::open(root).and_then(|f| f.sync_all()).map_err(err)?;
-        File::open(root.parent().ok_or("INVALID_ENCODING custody parent")?)
-            .and_then(|f| f.sync_all())
-            .map_err(err)?;
+        File::open(
+            root.parent()
+                .filter(|p| !p.as_os_str().is_empty())
+                .unwrap_or(Path::new(".")),
+        )
+        .and_then(|f| f.sync_all())
+        .map_err(err)?;
         let s = Self {
             db,
             _lease: lease,
@@ -133,6 +137,8 @@ impl Carriage {
             budget,
         };
         s.offline_open()?;
+        s.db.execute_batch("CREATE TABLE IF NOT EXISTS withdrawals (packet BLOB PRIMARY KEY,acknowledged INTEGER NOT NULL CHECK(acknowledged=1));").map_err(err)?;
+        s.db.execute_batch("CREATE TABLE IF NOT EXISTS peer_schedule (peer BLOB PRIMARY KEY,next_class INTEGER NOT NULL CHECK(next_class>=0 AND next_class<5)); CREATE TABLE IF NOT EXISTS peer_positions (peer BLOB NOT NULL,class INTEGER NOT NULL CHECK(class>=0 AND class<5),id BLOB NOT NULL,PRIMARY KEY(peer,class));").map_err(err)?;
         let mut stmt =
             s.db.prepare("SELECT id,origin,sequence,raw,kind FROM packets")
                 .map_err(err)?;
@@ -191,12 +197,19 @@ impl Carriage {
         }
         drop(rows);
         drop(stmt);
-        let unjustified:i64=s.db.query_row("SELECT count(*) FROM packets WHERE done<>0 AND NOT EXISTS(SELECT 1 FROM receipts WHERE packet=packets.id)",[],|r|r.get(0)).map_err(err)?;
+        let unjustified:i64=s.db.query_row("SELECT count(*) FROM packets WHERE done<>0 AND NOT EXISTS(SELECT 1 FROM receipts WHERE packet=packets.id) AND NOT EXISTS(SELECT 1 FROM withdrawals WHERE packet=packets.id)",[],|r|r.get(0)).map_err(err)?;
         ensure(
             unjustified == 0,
             "INVALID_CRYPTO suppression without destination receipt",
         )?;
         s.capacity(0, 0)?;
+        let integrity: String =
+            s.db.query_row("PRAGMA quick_check", [], |r| r.get(0))
+                .map_err(err)?;
+        ensure(
+            integrity == "ok",
+            "INVALID_ENCODING custody database integrity",
+        )?;
         s.candidate_identities()?;
         Ok(s)
     }
@@ -225,7 +238,7 @@ impl Carriage {
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )
             .map_err(err)?;
-        let other:i64=self.db.query_row("SELECT coalesce((SELECT sum(length(raw)+64) FROM receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM hop_receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM offline_out),0)+(SELECT count(*)*64 FROM candidates)+(SELECT count(*)*128 FROM equivocation)+(SELECT count(*)*64 FROM cursors)+256",[],|r|r.get(0)).map_err(err)?;
+        let other:i64=self.db.query_row("SELECT coalesce((SELECT sum(length(raw)+64) FROM receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM hop_receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM offline_out),0)+(SELECT count(*)*64 FROM peer_schedule)+(SELECT count(*)*96 FROM peer_positions)+(SELECT count(*)*40 FROM withdrawals)+(SELECT count(*)*64 FROM candidates)+(SELECT count(*)*128 FROM equivocation)+(SELECT count(*)*64 FROM cursors)+256",[],|r|r.get(0)).map_err(err)?;
         ensure(
             n >= 0
                 && size >= 0
@@ -315,6 +328,10 @@ impl Carriage {
         )?;
         let f = Frame::decode(raw, self.chain)?;
         let p = f.authenticate_delivery(sender, peer_id(self.identity), challenge, offline)?;
+        ensure(
+            !self.withdrawn(p.id)?,
+            "RESOURCE_WAIT owner withdrew this packet obligation",
+        )?;
         self.compact_completed()?;
         if p.kind == 9 {
             let r = Frame::decode(&p.payload, self.chain)?;
@@ -375,7 +392,12 @@ impl Carriage {
                     .map_err(err)?;
                 return Err("INVALID_CRYPTO origin sequence equivocation".into());
             }
-            if self.capacity(p.raw.len() + 160, 1).is_err() {
+            let receipt_space = if p.destination == peer_id(self.identity) {
+                Frame::receipt(self.chain, key, &f, 1)?.raw.len() + 64
+            } else {
+                0
+            };
+            if self.capacity(p.raw.len() + 160 + receipt_space, 1).is_err() {
                 return Ok(Some(Frame::receipt(self.chain, key, &f, 2)?));
             }
             self.db
@@ -452,12 +474,12 @@ impl Carriage {
         let mut keys = neighbors.to_vec();
         keys.sort_unstable();
         keys.dedup();
-        let (last, start): (Option<Vec<u8>>, u8) = self
+        let last: Option<Vec<u8>> = self
             .db
             .query_row(
-                "SELECT neighbor_cursor,class_cursor FROM identity WHERE one=1",
+                "SELECT neighbor_cursor FROM identity WHERE one=1",
                 [],
-                |r| Ok((r.get(0)?, r.get(1)?)),
+                |r| r.get(0),
             )
             .map_err(err)?;
         let last = last.map(h).transpose()?;
@@ -466,13 +488,28 @@ impl Carriage {
             .find(|k| last.is_none_or(|x| **k > x))
             .copied()
             .unwrap_or(keys[0]);
+        let start: u8 = self
+            .db
+            .query_row(
+                "SELECT next_class FROM peer_schedule WHERE peer=?1",
+                [peer.as_slice()],
+                |r| r.get(0),
+            )
+            .optional()
+            .map_err(err)?
+            .unwrap_or(0);
+        ensure(start < 5, "INVALID_ENCODING class cursor")?;
         let mut result = Vec::new();
         let mut chosen = start;
         for delta in 0..5 {
             let c = (start + delta) % 5;
             let cursor: Option<Vec<u8>> = self
                 .db
-                .query_row("SELECT id FROM cursors WHERE class=?1", [c], |r| r.get(0))
+                .query_row(
+                    "SELECT id FROM peer_positions WHERE peer=?1 AND class=?2",
+                    params![peer.as_slice(), c],
+                    |r| r.get(0),
+                )
                 .optional()
                 .map_err(err)?;
             let cursor = cursor.map(h).transpose()?.unwrap_or([0; 32]);
@@ -517,10 +554,15 @@ impl Carriage {
             params![peer.as_slice(), (chosen + 1) % 5],
         )
         .map_err(err)?;
+        tx.execute(
+            "INSERT OR REPLACE INTO peer_schedule VALUES(?1,?2)",
+            params![peer.as_slice(), (chosen + 1) % 5],
+        )
+        .map_err(err)?;
         if let Some(p) = result.last() {
             tx.execute(
-                "INSERT OR REPLACE INTO cursors VALUES(?1,?2)",
-                params![chosen, p.id.as_slice()],
+                "INSERT OR REPLACE INTO peer_positions VALUES(?1,?2,?3)",
+                params![peer.as_slice(), chosen, p.id.as_slice()],
             )
             .map_err(err)?;
         }
@@ -621,7 +663,7 @@ impl Carriage {
             }
         }
         Ok(
-            serde_json::json!({"state":(["NOT_QUEUED","QUEUED","HOP_CUSTODY","DESTINATION_CUSTODY"][level]),"observations":observations,"ledger_authority":false}),
+            serde_json::json!({"state":(["NOT_QUEUED","QUEUED","HOP_CUSTODY","DESTINATION_CUSTODY"][level]),"observations":observations,"history_complete":false,"ledger_authority":false}),
         )
     }
 }
@@ -649,7 +691,7 @@ impl Carriage {
         let mut ids = Vec::new();
         for raw in rows {
             let p = Packet::decode(&raw.map_err(err)?, self.chain)?;
-            if p.kind != 9 {
+            if p.kind != 9 && !self.withdrawn(p.id)? {
                 let receipt: Vec<u8> = self
                     .db
                     .query_row(
@@ -725,5 +767,40 @@ impl Carriage {
             ids.insert(crate::kernel::block_id(p.payload())?);
         }
         Ok(ids)
+    }
+}
+impl Carriage {
+    fn withdrawn(&self, id: Hash) -> Result<bool> {
+        self.db
+            .query_row(
+                "SELECT EXISTS(SELECT 1 FROM withdrawals WHERE packet=?1)",
+                [id.as_slice()],
+                |r| r.get(0),
+            )
+            .map_err(err)
+    }
+    pub fn withdraw(&mut self, id: Hash, acknowledge_undelivered_loss: bool) -> Result<()> {
+        ensure(
+            acknowledge_undelivered_loss,
+            "CONFLICT explicit loss-of-delivery acknowledgment required",
+        )?;
+        if self.withdrawn(id)? {
+            return Ok(());
+        }
+        ensure(
+            self.packet(id)?.is_some(),
+            "MISSING_HISTORY transport packet",
+        )?;
+        self.capacity(40, 0)?;
+        let tx = self.db.transaction().map_err(err)?;
+        tx.execute("INSERT INTO withdrawals VALUES(?1,1)", [id.as_slice()])
+            .map_err(err)?;
+        tx.execute(
+            "UPDATE packets SET done=1,processed=1 WHERE id=?1",
+            [id.as_slice()],
+        )
+        .map_err(err)?;
+        tx.commit().map_err(err)?;
+        Ok(())
     }
 }

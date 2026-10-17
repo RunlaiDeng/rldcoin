@@ -102,17 +102,8 @@ fn payment(
         .expect("mature available input");
     let amount = coin["amount"].as_str().unwrap().parse::<u128>().unwrap();
     assert!(amount > 2);
-    let mut u = 1u16.to_be_bytes().to_vec();
-    u.extend(chain);
-    u.extend(owner);
-    u.extend(1u16.to_be_bytes());
-    u.extend(hex::decode(coin["outpoint"].as_str().unwrap()).unwrap());
-    u.extend(1u16.to_be_bytes());
-    u.extend(to);
-    u.extend((amount - 1).to_be_bytes());
-    u.extend(1u128.to_be_bytes());
-    u.extend(u128::MAX.to_be_bytes());
-    let review=n.request(json!({"method":"review_transfer","operation_id":hex::encode([operation;32]),"unsigned_hex":hex::encode(u)}));
+    let review=n.request(json!({"method":"propose_transfer","operation_id":hex::encode([operation;32]),"owner":hex::encode(owner),"inputs":[coin["outpoint"]],"outputs":[{"owner":hex::encode(to),"amount":(amount-1).to_string()}],"fee":"1"}));
+    assert_eq!(review["chain_id"], hex::encode(chain));
     let signed=n.request(json!({"method":"sign_review","operation_id":hex::encode([operation;32]),"review_digest":review["result"]["review_digest"],"key_file":file,"password":"public no-value process passphrase"}));
     n.request(json!({"method":"submit_transaction","operation_id":hex::encode([operation+1;32]),"transaction_hex":signed["result"]["transaction_hex"]}));
     hex::encode([operation; 32])

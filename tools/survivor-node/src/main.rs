@@ -86,7 +86,43 @@ fn operation() -> Result<Hash> {
     Ok(id)
 }
 fn response(s: &Store, result: Value, clock: Option<u64>, diagnostic: Option<&str>) -> Value {
-    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"clock_state":if clock.is_some(){"OBSERVED"}else{"CLOCK_WAIT"},"confidence":"CONDITIONAL","diagnostic":diagnostic,"result":result})
+    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"clock_state":if clock.is_some(){"OBSERVED"}else{"CLOCK_WAIT"},"confidence":"CONDITIONAL","diagnostic":diagnostic,"error_code":diagnostic.map(error_code),"result":result})
+}
+fn error_code(e: &str) -> &'static str {
+    for category in [
+        "INVALID_ENCODING",
+        "WRONG_CHAIN",
+        "UNSUPPORTED_VERSION",
+        "INVALID_CRYPTO",
+        "INVALID_CONSENSUS",
+        "OPERATION_ID_CONFLICT",
+        "MISSING_HISTORY",
+        "CONFLICT",
+        "IMMATURE",
+        "EXPIRED",
+        "CLOCK_WAIT",
+        "RESOURCE_WAIT",
+        "REORG_WAIT",
+        "FRESHNESS_UNKNOWN",
+        "RESYNC_REQUIRED",
+    ] {
+        if e.starts_with(category) {
+            return category;
+        }
+    }
+    if e.contains("WAITING_FOR_HISTORY") || e.contains("WAITING_FOR_INPUT") {
+        "MISSING_HISTORY"
+    } else if e.contains("WAITING_FOR_MATURITY") {
+        "IMMATURE"
+    } else if e.contains("UNSUPPORTED") {
+        "UNSUPPORTED_VERSION"
+    } else if e.contains("signature") || e.contains("public key") {
+        "INVALID_CRYPTO"
+    } else if e.contains("chain") {
+        "WRONG_CHAIN"
+    } else {
+        "INVALID_CONSENSUS"
+    }
 }
 fn command(
     s: &mut Store,
@@ -133,6 +169,47 @@ fn command(
                 s.review_transfer(hash(v, "operation_id")?, &bytes(v, "unsigned_hex")?, time)?;
             Ok(json!({"review_digest":hex::encode(digest),"local_intent":"REVIEWED"}))
         }
+        "propose_transfer" => {
+            let owner = hash(v, "owner")?;
+            let inputs = v["inputs"].as_array().ok_or("INVALID_ENCODING inputs")?;
+            let outputs = v["outputs"].as_array().ok_or("INVALID_ENCODING outputs")?;
+            if !(1..=32).contains(&inputs.len()) || !(1..=8).contains(&outputs.len()) {
+                return Err("INVALID_ENCODING transfer count".into());
+            }
+            let mut ids = Vec::new();
+            for id in inputs {
+                let b = bytes(&json!({"id":id}), "id")?;
+                if b.len() != 34 {
+                    return Err("INVALID_ENCODING outpoint".into());
+                }
+                ids.push(b);
+            }
+            ids.sort();
+            let mut u = 1u16.to_be_bytes().to_vec();
+            u.extend(s.ledger().chain_id());
+            u.extend(owner);
+            u.extend((ids.len() as u16).to_be_bytes());
+            for id in &ids {
+                u.extend(id);
+            }
+            u.extend((outputs.len() as u16).to_be_bytes());
+            for output in outputs {
+                u.extend(hash(output, "owner")?);
+                u.extend(integer(output, "amount")?.to_be_bytes());
+            }
+            let fee = integer(v, "fee")?;
+            let expiry = if v.get("expiry").is_some() {
+                integer(v, "expiry")?
+            } else {
+                u128::MAX
+            };
+            u.extend(fee.to_be_bytes());
+            u.extend(expiry.to_be_bytes());
+            let digest = s.review_transfer(hash(v, "operation_id")?, &u, time)?;
+            Ok(
+                json!({"review_digest":hex::encode(digest),"unsigned_hex":hex::encode(u),"local_intent":"REVIEWED","review":{"owner":hex::encode(owner),"inputs":ids.iter().map(hex::encode).collect::<Vec<_>>(),"outputs":outputs,"fee":fee.to_string(),"expiry":expiry.to_string()}}),
+            )
+        }
         "sign_review" => {
             let p = Zeroizing::new(field(v, "password")?.as_bytes().to_vec());
             let raw = read(Path::new(field(v, "key_file")?), 187)?;
@@ -163,7 +240,7 @@ fn command(
                     json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
                 )
             } else {
-                Ok(json!({"result":null}))
+                Ok(s.pending_operation(id)?.unwrap_or(json!({"result":null})))
             }
         }
         "wallet_state" => {
@@ -235,6 +312,18 @@ fn command(
                 json!({"receipt":n.offline_import(hash(v,"peer_key")?,&raw)?.map(hex::encode),"ledger_acceptance":false}),
             )
         }
+        "withdraw_transport" => {
+            let n = network
+                .as_mut()
+                .ok_or("RESOURCE_WAIT contact state unavailable")?;
+            n.withdraw_transport(
+                hash(v, "packet_id")?,
+                v["acknowledge_undelivered_loss"].as_bool() == Some(true),
+            )?;
+            Ok(
+                json!({"transport_obligation":"OWNER_WITHDRAWN","delivery_guarantee_abandoned":true,"signature_revoked":false}),
+            )
+        }
         "discovery_candidates" => network
             .as_ref()
             .ok_or("RESOURCE_WAIT contact state unavailable")?
@@ -277,6 +366,24 @@ fn command(
 }
 fn run() -> Result<()> {
     let a: Vec<_> = std::env::args().collect();
+    if a.len() == 3 && a[1] == "new-test-genesis" {
+        let mut g = b"RLDSGEN1".to_vec();
+        g.extend(1u16.to_be_bytes());
+        g.extend(1u16.to_be_bytes());
+        g.push(0);
+        g.extend(operation()?);
+        g.extend(now()?.to_be_bytes());
+        g.push(0);
+        g.extend([255; 31]);
+        let pin = rld_survivor_node::kernel::genesis_id(&g);
+        rld_survivor_node::kernel::Ledger::from_genesis(&g, pin, Limits::default().coins)?;
+        write_private(Path::new(&a[2]), &g)?;
+        println!(
+            "{}",
+            json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(pin),"genesis_file":a[2],"initial_allocation":"0","network_kind":"NO_VALUE_ONLY"})
+        );
+        return Ok(());
+    }
     if !(5..=6).contains(&a.len()) || !matches!(a[1].as_str(), "serve" | "restore") {
         return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG]; bounded local JSON lines on stdin; test networks only".into());
     }

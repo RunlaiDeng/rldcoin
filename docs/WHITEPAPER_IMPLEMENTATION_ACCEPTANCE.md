@@ -19,6 +19,28 @@ Their BFT results do not qualify this incompatible PoW profile.
 
 ## Mandatory distinctions
 
+The isolated [native candidate](../tools/survivor-node/README.md) supplies the
+implementation entry points below. These are auditable source locations and
+required checks, not completion certificates for the campaigns above.
+
+| Scope | Native source | Discriminating executable checks |
+|---|---|---|
+| Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
+| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs` |
+| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `pool.rs`, `backup.rs` |
+| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
+| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
+
+Source paths are relative to `tools/survivor-node/src`; checks are relative to
+`tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet
+review/signing, authenticated synchronization and recipient-authorized onward
+payment after the source process exits. The crash check interrupts real processes
+at ledger persistence boundaries; it does not simulate a storage controller losing
+power. The archive check extracts the allowlisted distribution with the host tar
+reader and starts its native executable. Local or CI execution of these checks
+cannot satisfy the independent-validator, consumer, physical-route or sustained
+history obligations by itself.
+
 - Specification/vector consistency is design evidence, not a complete runtime.
 - Native execution, durable node behavior, wallet custody and contact delivery
   require separate checks and composition through ordinary product flows.

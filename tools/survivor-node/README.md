@@ -51,13 +51,22 @@ strings and byte fields are lowercase hex. Do not put passwords in shell argumen
 command history, environment variables or logs; only secure local stdin integration
 may supply the password field. Key files are encrypted and created at fresh paths.
 
-The entry exposes `node_status`, `get_object` (blocks), `accept_block`,
+The entry exposes `node_status`, `get_object` (genesis, transfers and blocks), `accept_block`,
 `submit_transaction`, `review_transfer` (exact `unsigned_hex`), `sign_review`,
 `operation_status`, `wallet_state`, `waive_reservation`, `changes_since`,
 `set_mining` and `create_key`. Start with mining disabled; explicitly enable it with
 a valid public reward key. Optional mining uses actual local time and the normal
 validator with no peer-count prerequisite. Unknown revision cursors require resync.
 The stdin control stream must remain open while the process runs.
+
+The native executable also provides `new-test-genesis FRESH_FILE`. It creates a
+randomly distinguished zero-allocation **no-value** genesis and prints its chain
+pin. Share that exact public file/pin explicitly with participants; creating a
+different file creates a different network. `propose_transfer` accepts an owner,
+explicit input outpoints, ordered owner/amount outputs, fee and optional height
+expiry, all amounts as decimal strings. It returns a readable exact review and
+digest; `sign_review` remains a separate explicit operation. This convenience
+entry never silently changes or signs a transfer.
 
 The store uses an exclusive OS writer lease and SQLite rollback journaling with
 `synchronous=EXTRA` and macOS `fullfsync=ON`. Complete object/intent commit precedes
@@ -109,6 +118,8 @@ not evidence that delivery did not occur. Live obligations are never collected;
 exhaustion refuses new custody.
 Ground certificates expire after 90 days and need explicit independently pinned
 renewal. This is not a qualified physical interstellar adapter.
+Expired retained ground credentials do not disable independently admitted file
+carriage. Live TLS still rejects expired certificates, even with a matching pin.
 
 An optional `offline_peers` list independently admits public keys for one-way file
 carriage. `offline_export(peer_key)` returns bounded exact frame bytes after durable
@@ -119,6 +130,15 @@ delivery/nonces must match. Normal TLS never accepts an offline zero challenge.
 `discovery_candidates` exposes signed peer introductions without granting endpoint
 or certificate authority. Complete pending block bytes suppress redundant fetches
 but cannot advance the ledger before native ancestor/state execution.
+Each neighbor has its own durable class and object cursors, avoiding synchronized
+neighbor/class cycles. For a finite admitted eligible workload of P packets in a
+class and N available neighbors, each neighbor visits the class within at most
+5*N scheduling turns and offers its packets within at most 5*N*ceil(P/16) turns,
+excluding explicit suppression until the next probe. Local verification and
+physical contact time are separate costs; sustained overload has no delivery bound.
+`withdraw_transport` requires explicit acknowledgment that undelivered data may be
+lost. It durably abandons only the named carriage obligation, cannot revoke a
+signature or undo a ledger entry, and cannot reacknowledge the abandoned packet.
 
 Selected changes commit exact attached/detached block and transaction IDs together
 with changed output observations. Cold replay checks those notifications against
@@ -126,7 +146,7 @@ native execution. `changes_since` returns at most 128 revisions/1 MiB; larger ga
 explicitly require a fresh snapshot. Wallet operation status distinguishes inclusion,
 detachment, conflict, readiness and historical transport receipts. Detached original
 signatures have persistent reoffer references; pool pressure cannot disable mining.
-The local storage format is now `RLD-SURVIVOR-STORE-2`; earlier candidate stores
+The local storage format is now `RLD-SURVIVOR-STORE-3`; earlier candidate stores
 refuse, with no automatic migration or test-value continuity.
 
 `state_head` exports an exact local ledger/intent/custody commitment to retain
@@ -156,6 +176,16 @@ explicit acknowledgment of possible conflicting signatures. This records accepte
 risk; it does not establish independent freshness. Restore policy is separate from
 consensus and never creates a mandatory witness for an intact surviving node.
 
-Fault injection at every publication boundary, consumer packaging and complete
-independent/physical qualification remain required. `ACTIVE_GROUND_ADAPTER`
+The allowlisted Rust packager creates a deterministic tar container with the native
+executable, protocol documents, license and SHA-256 inventory. CI builds separate
+Linux/macOS artifacts after checks. Hashes detect byte changes; they are not an
+owner-signed monetary release or evidence of independently reproducible binaries.
+No keys, databases, live configurations or generated genesis are packaged.
+
+Process interruption probes cover validation, durable intent and durable committed
+ledger boundaries, including response-loss recovery. Independent power-loss,
+all-state rollback/cross-device custody, sustained ordinary history beyond an
+issuance era, independent security/validator review, complete consumer qualification
+and physical interstellar adapters remain distinct unqualified gates.
+`ACTIVE_GROUND_ADAPTER`
 reports local adapter operation, never an assertion of an interstellar connection.

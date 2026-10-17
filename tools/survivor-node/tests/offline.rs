@@ -36,6 +36,24 @@ fn admitted_file_adapter_syncs_complete_history_without_a_tcp_neighbor() {
         serde_json::to_vec(&json!({"listen":"127.0.0.1:0","neighbors":[],"offline_peers":[peer]}))
             .unwrap()
     };
+    // An expired ground certificate must not disable independently admitted files.
+    let mut parameters = rcgen::CertificateParams::new(Vec::<String>::new()).unwrap();
+    parameters.not_before = rcgen::date_time_ymd(2000, 1, 1);
+    parameters.not_after = rcgen::date_time_ymd(2001, 1, 1);
+    parameters.distinguished_name = rcgen::DistinguishedName::new();
+    parameters
+        .distinguished_name
+        .push(rcgen::DnType::CommonName, ka.clone());
+    parameters
+        .distinguished_name
+        .push(rcgen::DnType::OrganizationalUnitName, hex::encode(pin));
+    parameters.is_ca = rcgen::IsCa::ExplicitNoCa;
+    let tlskey = rcgen::KeyPair::generate_for(&rcgen::PKCS_ED25519).unwrap();
+    let cert = parameters.self_signed(&tlskey).unwrap();
+    let mut material = (cert.der().len() as u32).to_be_bytes().to_vec();
+    material.extend(cert.der().iter());
+    material.extend(tlskey.serialize_der());
+    std::fs::write(root.join("a/contact/tls.secret"), material).unwrap();
     let mut na = Network::open(&root.join("a/contact"), pin, Some(&cfg(&kb))).unwrap();
     let mut nb = Network::open(&root.join("b/contact"), pin, Some(&cfg(&ka))).unwrap();
     let ka = hex::decode(ka).unwrap().try_into().unwrap();

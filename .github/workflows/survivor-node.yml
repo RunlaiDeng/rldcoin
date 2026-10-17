@@ -15,7 +15,11 @@ permissions:
   contents: read
 jobs:
   native:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.98.0
@@ -24,3 +28,14 @@ jobs:
       - run: cargo fmt --manifest-path tools/survivor-node/Cargo.toml -- --check
       - run: cargo clippy --locked --manifest-path tools/survivor-node/Cargo.toml --all-targets -- -D warnings
       - run: cargo test --locked --manifest-path tools/survivor-node/Cargo.toml
+      - run: cargo build --locked --release --manifest-path tools/survivor-node/Cargo.toml --bins
+        env:
+          RUSTFLAGS: --remap-path-prefix=${{ github.workspace }}=/source
+      - run: tools/survivor-node/target/release/rld-survivor-package . tools/survivor-node/target/release/rld-survivor-node survivor-novalue.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Survivor-NOVALUE-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            survivor-novalue.tar
+            survivor-novalue.tar.sha256
+          if-no-files-found: error

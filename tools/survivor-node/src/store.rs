@@ -39,6 +39,12 @@ pub struct Outcome {
     pub revision: u128,
     pub selected: bool,
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CommitBoundary {
+    Validated,
+    IntentDurable,
+    CommittedDurable,
+}
 fn err(e: impl std::fmt::Display) -> String {
     format!("RESOURCE_WAIT {e}")
 }
@@ -100,10 +106,14 @@ impl Store {
                 use std::os::unix::fs::PermissionsExt;
                 fs::set_permissions(root, fs::Permissions::from_mode(0o700)).map_err(err)?;
             }
-            File::open(root.parent().ok_or("INVALID store parent")?)
-                .map_err(err)?
-                .sync_all()
-                .map_err(err)?;
+            File::open(
+                root.parent()
+                    .filter(|p| !p.as_os_str().is_empty())
+                    .unwrap_or(Path::new(".")),
+            )
+            .map_err(err)?
+            .sync_all()
+            .map_err(err)?;
         }
         ensure(
             fs::symlink_metadata(root).map_err(err)?.is_dir(),
@@ -160,7 +170,7 @@ impl Store {
             .map_err(err)?;
         let (tip, revision) = if let Some((format, g, t, r)) = binding {
             ensure(
-                format == "RLD-SURVIVOR-STORE-2" && g == genesis,
+                format == "RLD-SURVIVOR-STORE-3" && g == genesis,
                 "INVALID store binding",
             )?;
             (hash32(t)?, number(r)?)
@@ -177,7 +187,7 @@ impl Store {
             tx.execute(
                 "INSERT INTO binding VALUES(1,?1,?2,?3,?4)",
                 params![
-                    "RLD-SURVIVOR-STORE-2",
+                    "RLD-SURVIVOR-STORE-3",
                     genesis,
                     pin.as_slice(),
                     0u128.to_be_bytes().as_slice()
@@ -359,6 +369,17 @@ impl Store {
     /// Retains a fully validated object, then commits selection and exact operation
     /// result. Losing valid branches remain available, never merged into balances.
     pub fn accept(&mut self, operation: Hash, raw: &[u8], now: u64) -> Result<Outcome> {
+        self.accept_observed(operation, raw, now, |_| {})
+    }
+    /// Instrumentation observes durable boundaries; it has no validation bypass.
+    /// A panicking observer leaves mutation poisoned until full cold replay.
+    pub fn accept_observed(
+        &mut self,
+        operation: Hash,
+        raw: &[u8],
+        now: u64,
+        mut observe: impl FnMut(CommitBoundary),
+    ) -> Result<Outcome> {
         self.clock(now)?;
         ensure(operation != [0; 32], "INVALID operation ID")?;
         let wallet_exists: bool = self
@@ -410,6 +431,9 @@ impl Store {
         } else {
             None
         };
+        self.poisoned = true;
+        observe(CommitBoundary::Validated);
+        self.poisoned = false;
         if existing.is_some() {
             let prior: (Vec<u8>, Vec<u8>) = self
                 .db
@@ -463,6 +487,9 @@ impl Store {
                 return Err(e);
             }
         }
+        self.poisoned = true;
+        observe(CommitBoundary::IntentDurable);
+        self.poisoned = false;
         let commit = (|| -> Result<()> {
             let tx = self.db.transaction().map_err(err)?;
             tx.execute(
@@ -520,6 +547,9 @@ impl Store {
             self.ledger = candidate;
             self.revision = revision;
         }
+        self.poisoned = true;
+        observe(CommitBoundary::CommittedDurable);
+        self.poisoned = false;
         Ok(Outcome {
             tip: next.id(),
             revision,
