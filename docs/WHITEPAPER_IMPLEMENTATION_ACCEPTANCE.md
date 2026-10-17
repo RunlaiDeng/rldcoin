@@ -26,7 +26,7 @@ required checks, not completion certificates for the campaigns above.
 | Scope | Native source | Discriminating executable checks |
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
-| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `cold_groups.rs` |
+| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs` |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
@@ -52,6 +52,12 @@ through mature reward spends and actual next-block onward authorization. It keep
 101 UTXOs while signed/spent history grows, so its result cannot replace the
 growing-UTXO campaign. Fixture-direct signatures do not establish wallet custody;
 full cold replay and recount of retained transfers remain required for that scope.
+The optional history `with-backup` scope adds native pending review/signature,
+reservation, explicitly encrypted fixture key and complete ledger/contact snapshot.
+Its original total budget includes creation, fresh native restore and ordinary
+cold reopening. Complete state, pool, pending-signature, balance and head equality
+are required; same-host provided heads cannot establish independent custody or
+power-loss durability. Small composition checks do not close the large-history gate.
 Cold group notification reconstruction must retain exact native predecessor/member
 execution and complete original event comparison. Tests alter attached order,
 detached entries, reward/output observations and non-tail block bodies; verified

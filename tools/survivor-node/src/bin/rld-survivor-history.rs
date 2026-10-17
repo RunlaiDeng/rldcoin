@@ -2,7 +2,10 @@
 //! logical chain time and actual nonce search/storage are reported separately.
 use ed25519_dalek::{Signer, SigningKey};
 use rld_survivor_node::{
+    backup,
     kernel::{genesis_id, Hash, Ledger, Result},
+    keyfile,
+    network::Network,
     store::{CommitBoundary, Limits, Store},
 };
 use serde_json::json;
@@ -147,10 +150,127 @@ fn private_file(path: &Path, raw: &[u8]) -> Result<()> {
         .and_then(|_| f.sync_all())
         .map_err(|e| e.to_string())
 }
+/// This fixture passphrase protects only private NO-VALUE test artifacts. It
+/// must never be used for operator custody, and no generated image/key is public.
+const FIXTURE_PASSWORD: &[u8] = b"PUBLIC NO-VALUE HISTORY BACKUP FIXTURE";
+fn backup_roundtrip(
+    mut store: Store,
+    root: &Path,
+    owners: &[SigningKey],
+    now: u64,
+    check: &impl Fn() -> Result<()>,
+) -> Result<(Store, serde_json::Value)> {
+    check()?;
+    let tip = store.ledger().tip().clone();
+    let revision = store.revision();
+    let issued = store.ledger().issued();
+    let chain = store.ledger().chain_id();
+    let genesis = store.genesis_bytes().to_vec();
+    let (input, coin) = store
+        .ledger()
+        .coins()
+        .iter()
+        .find(|(_, c)| c.maturity <= tip.height() + 1 && c.amount > 1)
+        .ok_or("INVALID workload backup needs a mature input")?;
+    let key = owners
+        .iter()
+        .find(|k| k.verifying_key().to_bytes() == coin.owner)
+        .ok_or("INVALID workload backup owner")?;
+    let mut unsigned = 1u16.to_be_bytes().to_vec();
+    unsigned.extend(chain);
+    unsigned.extend(coin.owner);
+    unsigned.extend(1u16.to_be_bytes());
+    unsigned.extend(input);
+    unsigned.extend(1u16.to_be_bytes());
+    unsigned.extend(owners[0].verifying_key().to_bytes());
+    unsigned.extend((coin.amount - 1).to_be_bytes());
+    unsigned.extend(1u128.to_be_bytes());
+    unsigned.extend(u128::MAX.to_be_bytes());
+    let owner = key.verifying_key().to_bytes();
+    let key_path = root.join("fixture-wallet.key");
+    private_file(&key_path, &keyfile::encrypt(key, chain, FIXTURE_PASSWORD)?)?;
+    let digest = store.review_transfer([186; 32], &unsigned, now)?;
+    let signed = store.sign_review([186; 32], digest, key, now)?;
+    store.submit_transaction([187; 32], &signed, now)?;
+    let balance = store.wallet_state(owner)?;
+    if balance.reserved == 0 {
+        return Err("INVALID workload missing pending reservation".into());
+    }
+    check()?;
+    let network = Network::open(&root.join("node/contact"), chain, None)?;
+    let at = Instant::now();
+    let head = backup::create(
+        &store,
+        &network,
+        &root.join("backup"),
+        FIXTURE_PASSWORD,
+        &[key_path],
+    )?;
+    let create = at.elapsed();
+    emit(json!({"event":"BACKUP_CREATED","phase_ms":create.as_millis().to_string()}))?;
+    private_file(&root.join("backup.latest-head"), &head)?;
+    File::open(root)
+        .and_then(|f| f.sync_all())
+        .map_err(|e| e.to_string())?;
+    check()?;
+    drop(network);
+    drop(store);
+    let retained: Hash = fs::read(root.join("backup.latest-head"))
+        .map_err(|e| e.to_string())?
+        .try_into()
+        .map_err(|_| "INVALID retained backup head")?;
+    let at = Instant::now();
+    let restored_head = backup::restore(
+        &root.join("backup"),
+        &root.join("restored-node"),
+        &genesis,
+        chain,
+        FIXTURE_PASSWORD,
+        Some(retained),
+    )?;
+    let restore = at.elapsed();
+    emit(json!({"event":"RESTORE_VALIDATED","phase_ms":restore.as_millis().to_string()}))?;
+    check()?;
+    let at = Instant::now();
+    let restored = Store::open(
+        &root.join("restored-node"),
+        &genesis,
+        chain,
+        Limits::default(),
+    )?;
+    let reopen = at.elapsed();
+    emit(json!({"event":"RESTORED_NODE_REOPENED","phase_ms":reopen.as_millis().to_string()}))?;
+    check()?;
+    let restored_key = keyfile::decrypt(
+        &fs::read(root.join("restored-node/keys/wallet-0.key")).map_err(|e| e.to_string())?,
+        chain,
+        FIXTURE_PASSWORD,
+    )?;
+    let restored_network = Network::open(&root.join("restored-node/contact"), chain, None)?;
+    if restored_head != head
+        || backup::state_head(&restored, &restored_network)? != head
+        || restored.ledger().tip() != &tip
+        || restored.revision() != revision
+        || restored.ledger().issued() != issued
+        || restored.wallet_state(owner)? != balance
+        || restored.signed_operation([186; 32])?.as_ref() != Some(&signed)
+        || restored.template_transactions()? != vec![signed]
+        || restored_key.verifying_key().to_bytes() != owner
+        || restored.freshness()? != "MATCHES_PROVIDED_HEAD"
+    {
+        return Err("INVALID restored history/wallet/custody composition".into());
+    }
+    drop(restored_network);
+    check()?;
+    Ok((
+        restored,
+        json!({"status":"COMPLETE","create_ms":create.as_millis().to_string(),"native_restore_ms":restore.as_millis().to_string(),"ordinary_reopen_ms":reopen.as_millis().to_string(),"pending_signature_recovered":true,"reservation_preserved":true,"encrypted_key_restored":true,"state_head_match":true,"freshness":"MATCHES_PROVIDED_HEAD","head_custody":"SAME_HOST_PROVIDED_HEAD","independent_custody_qualification":false,"physical_power_loss_qualification":false}),
+    ))
+}
 fn run() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
-    if !(4..=6).contains(&args.len()) {
-        return Err("Usage: rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE_1_TO_32] [growing-rewards|consolidating-payments]".into());
+    if !(4..=7).contains(&args.len()) {
+        return Err("Usage: rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE_1_TO_32] [growing-rewards|consolidating-payments] [with-backup]".into());
     }
     let target: u64 = args[2].parse().map_err(|_| "INVALID block count")?;
     let seconds: u64 = args[3].parse().map_err(|_| "INVALID budget")?;
@@ -167,6 +287,11 @@ fn run() -> Result<()> {
     if !matches!(workload, "growing-rewards" | "consolidating-payments") {
         return Err("INVALID workload".into());
     }
+    let with_backup = match args.get(6).map(String::as_str) {
+        None => false,
+        Some("with-backup") if target >= 100 => true,
+        _ => return Err("INVALID backup mode or fewer than 100 blocks".into()),
+    };
     let mut payments = (workload == "consolidating-payments").then(Consolidation::default);
     let started = Instant::now();
     let budget = Duration::from_secs(seconds);
@@ -214,7 +339,7 @@ fn run() -> Result<()> {
     let mut store = Store::open(&root.join("node"), &genesis, pin, Limits::default())?;
     let owners = public_owners();
     emit(
-        json!({"event":"BEGIN","profile":"RLD-SURVIVOR-1","chain_id":hex::encode(pin),"target_blocks":target.to_string(),"budget_seconds":seconds.to_string(),"group_size":group.to_string(),"clock_model":"LOGICAL_600_SECOND_BLOCKS","nonce_search":"ACTUAL","storage":"ORDINARY_STORE","owners":"256","workload":workload,"signing_model":if payments.is_some(){"PUBLIC_FIXTURE_DIRECT"}else{"NONE"},"wallet_custody_qualification":false,"network_kind":"NO_VALUE_ONLY","limits":{"database_bytes":Limits::default().database_bytes.to_string(),"coins":Limits::default().coins.to_string()}}),
+        json!({"event":"BEGIN","profile":"RLD-SURVIVOR-1","chain_id":hex::encode(pin),"target_blocks":target.to_string(),"budget_seconds":seconds.to_string(),"group_size":group.to_string(),"clock_model":"LOGICAL_600_SECOND_BLOCKS","nonce_search":"ACTUAL","storage":"ORDINARY_STORE","owners":"256","workload":workload,"signing_model":if payments.is_some(){"PUBLIC_FIXTURE_DIRECT"}else{"NONE"},"backup_mode":with_backup,"wallet_custody_qualification":false,"network_kind":"NO_VALUE_ONLY","limits":{"database_bytes":Limits::default().database_bytes.to_string(),"coins":Limits::default().coins.to_string()}}),
     )?;
     let mut phases = [Duration::ZERO; 7];
     let mut height = 0;
@@ -296,7 +421,7 @@ fn run() -> Result<()> {
         json!({"event":"COLD_REPLAY_BEGIN","elapsed_ms":started.elapsed().as_millis().to_string()}),
     )?;
     let at = Instant::now();
-    let store = Store::open(&root.join("node"), &genesis, pin, Limits::default())?;
+    let mut store = Store::open(&root.join("node"), &genesis, pin, Limits::default())?;
     let replay = at.elapsed();
     check()?;
     let at = Instant::now();
@@ -326,8 +451,20 @@ fn run() -> Result<()> {
         return Err("INVALID cold replay or conservation".into());
     }
     check()?;
+    let backup = if with_backup {
+        emit(
+            json!({"event":"BACKUP_ROUNDTRIP_BEGIN","elapsed_ms":started.elapsed().as_millis().to_string()}),
+        )?;
+        let (restored, observation) =
+            backup_roundtrip(store, root, &owners, start + target * 600, &check)?;
+        store = restored;
+        Some(observation)
+    } else {
+        None
+    };
+    check()?;
     emit(
-        json!({"event":"COMPLETE","height":tip.height().to_string(),"selected_tip":hex::encode(tip.id()),"state_root":hex::encode(tip.root()),"issued":issued.to_string(),"utxos":store.ledger().coins().len().to_string(),"signed_transactions":signed_transactions,"cold_replay_ms":replay.as_millis().to_string(),"cold_inventory_ms":inventory.as_millis().to_string(),"elapsed_ms":started.elapsed().as_millis().to_string(),"independent_qualification":false,"wallet_custody_qualification":false,"physical_route_qualification":false}),
+        json!({"event":"COMPLETE","height":tip.height().to_string(),"selected_tip":hex::encode(tip.id()),"state_root":hex::encode(tip.root()),"issued":issued.to_string(),"utxos":store.ledger().coins().len().to_string(),"signed_transactions":signed_transactions,"cold_replay_ms":replay.as_millis().to_string(),"cold_inventory_ms":inventory.as_millis().to_string(),"backup":backup,"elapsed_ms":started.elapsed().as_millis().to_string(),"independent_qualification":false,"wallet_custody_qualification":false,"physical_route_qualification":false}),
     )
 }
 fn main() {

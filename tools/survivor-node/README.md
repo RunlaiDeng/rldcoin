@@ -212,7 +212,7 @@ the existing 2-MiB native request limit remains in force. Exact retry must retai
 the same complete member list. Pending operation status exposes member IDs and the
 recovery method; `get_object` retrieves the retained complete block bytes.
 
-The separate `rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE] [WORKLOAD]`
+The separate `rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE] [WORKLOAD] [with-backup]`
 measurement tool exercises actual nonce search, ordinary storage and full cold
 replay at unchanged default limits. Group size is explicitly 1..32; its bounded
 observation budget is 1..3600 seconds. It uses logical 600-second chain timestamps
@@ -228,6 +228,20 @@ unspent outputs while complete signed/spent history grows; it does not replace
 the growing-UTXO workload. Cold replay checks the complete selected history and
 counts the retained transfers again. Fixture-direct signing does not qualify
 wallet intent, independent key custody or ordinary consumer use.
+
+Optional `with-backup` requires at least 100 blocks and includes the complete
+encrypted-backup lifecycle in that same declared observation budget. After initial
+cold replay it reviews, reserves, signs and submits one exact pending fixture
+transfer through the native wallet; encrypts its explicitly listed fixture key;
+creates a whole-node image; closes the source; restores to a fresh directory; and
+opens the restored ordinary store. It compares complete selected state, pending
+signature, reservation/balance, encrypted key, local pool and ledger/contact head.
+Creation, native restore and ordinary reopen costs are measured separately. The
+retained provided head is on the same host, never an independent freshness witness.
+This mode uses a deliberately public NO-VALUE fixture passphrase. Generated keys,
+images and node/contact state remain private test artifacts and must never be
+published, even encrypted. No physical power-loss or independent custody claim
+follows. An earlier history-only result cannot qualify this additional lifecycle.
 
 `state_head` exports an exact local ledger/intent/custody commitment to retain
 independently. `create_backup` takes a fresh destination, native-input password and
