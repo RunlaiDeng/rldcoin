@@ -3,6 +3,7 @@
 use rld_survivor_node::{
     kernel::{Hash, MiningJob, Result},
     keyfile,
+    operating_policy::OperatingPolicy,
     store::{Limits, Store},
 };
 use serde_json::{json, Value};
@@ -389,8 +390,21 @@ fn command(
     }
 }
 fn run() -> Result<()> {
-    let a: Vec<_> = std::env::args().collect();
+    let mut a: Vec<_> = std::env::args().collect();
+    let policy_file = if a.len() >= 3 && a[a.len() - 2] == "--operating-policy" {
+        let path = a.pop().unwrap();
+        a.pop();
+        Some(path)
+    } else {
+        None
+    };
+    if a.iter().any(|v| v == "--operating-policy") {
+        return Err("INVALID_ENCODING operating policy argument position".into());
+    }
     if a.len() == 3 && a[1] == "new-test-genesis" {
+        if policy_file.is_some() {
+            return Err("INVALID_ENCODING genesis does not accept operating policy".into());
+        }
         let mut g = b"RLDSGEN1".to_vec();
         g.extend(1u16.to_be_bytes());
         g.extend(1u16.to_be_bytes());
@@ -409,13 +423,25 @@ fn run() -> Result<()> {
         return Ok(());
     }
     if !(5..=6).contains(&a.len()) || !matches!(a[1].as_str(), "serve" | "restore") {
-        return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG]; bounded local JSON lines on stdin; test networks only".into());
+        return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG] [--operating-policy LOCAL_FILE]; bounded local JSON lines on stdin; test networks only".into());
     }
     let g = read(Path::new(&a[3]), 85)?;
     let pin: Hash = hex::decode(&a[4])
         .map_err(|_| "INVALID_ENCODING pin")?
         .try_into()
         .map_err(|_| "INVALID_ENCODING pin")?;
+    let policy = if let Some(path) = &policy_file {
+        if !std::fs::symlink_metadata(path)
+            .map_err(|_| "MISSING_HISTORY operating policy")?
+            .file_type()
+            .is_file()
+        {
+            return Err("INVALID_ENCODING operating policy regular file".into());
+        }
+        OperatingPolicy::decode(&read(Path::new(path), 16384)?, pin)?
+    } else {
+        OperatingPolicy::default()
+    };
     if a[1] == "restore" {
         if a.len() != 6 {
             return Err("INVALID_ENCODING restore requires fresh target, genesis, pin, backup source; password on native stdin".into());
@@ -441,13 +467,14 @@ fn run() -> Result<()> {
         } else {
             Some(hash(&v, "latest_state_head")?)
         };
-        let head = rld_survivor_node::backup::restore(
+        let head = rld_survivor_node::backup::restore_with_policy(
             Path::new(&a[5]),
             Path::new(&a[2]),
             &g,
             pin,
             &password,
             latest,
+            policy,
         )?;
         println!(
             "{}",
@@ -455,7 +482,7 @@ fn run() -> Result<()> {
         );
         return Ok(());
     }
-    let mut s = Store::open(Path::new(&a[2]), &g, pin, Limits::default())?;
+    let mut s = Store::open(Path::new(&a[2]), &g, pin, policy.ledger())?;
     let retained_config = Path::new(&a[2]).join("contact/config.json");
     let config = if let Some(p) = a.get(5) {
         Some(read(Path::new(p), 65536)?)
@@ -464,14 +491,16 @@ fn run() -> Result<()> {
     } else {
         None
     };
-    let (mut network, mut network_error) = match rld_survivor_node::network::Network::open(
-        &Path::new(&a[2]).join("contact"),
-        pin,
-        config.as_deref(),
-    ) {
-        Ok(n) => (Some(n), None),
-        Err(e) => (None, Some(e)),
-    };
+    let (mut network, mut network_error) =
+        match rld_survivor_node::network::Network::open_with_budget(
+            &Path::new(&a[2]).join("contact"),
+            pin,
+            config.as_deref(),
+            policy.carriage(),
+        ) {
+            Ok(n) => (Some(n), None),
+            Err(e) => (None, Some(e)),
+        };
     let (tx, rx) = mpsc::sync_channel(8);
     std::thread::spawn(move || {
         let mut stdin = io::stdin().lock();
@@ -498,6 +527,7 @@ fn run() -> Result<()> {
     });
     let mut miner = None;
     let mut job: Option<(Hash, u64, Hash, MiningJob)> = None;
+    let mut hash_attempts = Some(0u128);
     loop {
         match rx.recv_timeout(Duration::from_millis(100)) {
             Ok(request) => {
@@ -508,8 +538,22 @@ fn run() -> Result<()> {
                 });
                 let r = match request {
                     Ok(mut v) => {
+                        let status = v["method"] == "node_status";
                         let r =
-                            command(&mut s, &v, &mut miner, &mut network, &network_error, clock);
+                            command(&mut s, &v, &mut miner, &mut network, &network_error, clock)
+                                .map(|mut result| {
+                                    if status {
+                                        result["operating_policy"] = policy.status(pin);
+                                    result["mining_work_observation"] = json!({"scope":"CURRENT_PROCESS_HEADER_HASH_CALLS","calls":hash_attempts.map(|n| n.to_string()),"count_exact":hash_attempts.is_some(),"distinctness":"PER_JOB_NONCE_ONLY","serialized":false});
+                                        result["operating_policy_source"] =
+                                            json!(if policy_file.is_some() {
+                                                "EXPLICIT_LOCAL_FILE"
+                                            } else {
+                                                "DEFAULT"
+                                            });
+                                    }
+                                    result
+                                });
                         if let Some(Value::String(p)) = v.get_mut("password") {
                             use zeroize::Zeroize;
                             p.zeroize()
@@ -569,7 +613,13 @@ fn run() -> Result<()> {
                     }
                 }
             }
-            if let Some(raw) = job.as_mut().and_then(|(_, _, _, j)| j.attempt(4096)) {
+            let (raw, tried) = job.as_mut().map_or((None, 0), |(_, _, _, j)| {
+                j.attempt_counted(policy.mining_trials())
+            });
+            // Optional process telemetry cannot halt mining or grant work/value.
+            // An exhausted counter becomes explicitly unknown, never zero.
+            hash_attempts = hash_attempts.and_then(|n| n.checked_add(u128::from(tried)));
+            if let Some(raw) = raw {
                 let old = s.revision();
                 match s.accept(operation()?, &raw, t) {
                     Ok(_) => println!(

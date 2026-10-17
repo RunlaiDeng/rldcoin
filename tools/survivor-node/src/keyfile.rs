@@ -75,10 +75,15 @@ pub fn encrypt(key: &SigningKey, chain: Hash, p: &[u8]) -> Result<Vec<u8>> {
     header.extend(sealed);
     Ok(header)
 }
+/// Shape only: chain/owner and inner ciphertext authentication still require the
+/// wallet password during native decryption. A backup does not infer ownership.
+pub(crate) fn check_format(raw: &[u8]) -> Result<()> {
+    ensure(raw.len() == HEADER + 113)?;
+    ensure(raw[..26] == prefix() && raw[70..74] == 113u32.to_be_bytes())
+}
 pub fn decrypt(raw: &[u8], chain: Hash, p: &[u8]) -> Result<SigningKey> {
     password(p)?;
-    ensure(raw.len() == HEADER + 113)?;
-    ensure(raw[..26] == prefix() && raw[70..74] == 113u32.to_be_bytes())?;
+    check_format(raw)?;
     let derived = derived(p, &raw[26..58])?;
     let cipher =
         Aes256Gcm::new_from_slice(derived.as_ref()).map_err(|_| "INVALID encrypted key")?;

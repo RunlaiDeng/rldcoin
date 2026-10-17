@@ -347,6 +347,9 @@ impl Store {
         s.pool_open()?;
         Ok(s)
     }
+    pub fn resource_limits(&self) -> Limits {
+        self.limits
+    }
     pub fn ledger(&self) -> &Ledger {
         &self.ledger
     }

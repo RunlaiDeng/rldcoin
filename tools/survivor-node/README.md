@@ -52,7 +52,8 @@ signing material to protect assets.
 ## Durable native entry
 
 `cargo run --locked --manifest-path tools/survivor-node/Cargo.toml -- serve
-PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG]` opens one private no-value store.
+PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG] [--operating-policy LOCAL_FILE]`
+opens one private no-value store.
 Supply the exact 85-byte test genesis and its independently chosen pin. No genesis
 is obtained from a directory service. Control requests are bounded JSON lines on
 native stdin and responses are JSON on stdout. This is an engineering CLI, not a
@@ -76,6 +77,30 @@ null without inventing a time. Read-only status/recovery and disabling mining
 remain available without a trusted clock. Enabling mining and new monetary
 authorization still require the normal clock and storage checks. `mining_enabled`
 records the operator choice separately from current clock/storage eligibility.
+
+Optional `--operating-policy LOCAL_FILE` selects a bounded, strictly typed local
+`RLD-SURVIVOR-OPERATING-POLICY-1` document. Its fields are `format`, exact lowercase
+`chain_id`, and canonical decimal strings `ledger_database_bytes`, `ledger_coins`,
+`carriage_database_bytes`, `carriage_packets` and `mining_trials_per_tick`. Unknown,
+duplicate, wrong-chain, malformed and unsupported values refuse before creating
+node state or keys. Ledger/custody database budgets are 128 KiB through
+17,592,186,036,224 bytes; positive counts must fit the current machine; trial budget
+is 1 through 1,000,000 per main-loop iteration. Actual SQLite, CPU, RAM, disk and
+replay requirements still need provisioning and qualification. Defaults remain
+256 MiB/1,000,000 coins, 256 MiB/4,096 custody packets and 4,096 trials.
+
+Budgets are chosen at each local startup. Reuse the intended policy file for
+`serve` and `restore`; omitting the option selects these published defaults. A
+packet, peer advertisement or backup manifest cannot increase them. After capacity
+refusal, stop the node and explicitly provision a larger budget, then reopen the
+same intact store. Full native replay and exact pending-operation recovery remain
+mandatory; expansion never deletes history, changes genesis or mints value.
+`node_status` reports the effective policy and its local source. Its optional
+process-only mining observation counts actual header-hash calls, including an
+early successful trial. Nonces are distinct within one job; recreating a job can
+repeat inputs, so the counter is not a global distinct-work or income claim.
+Overflow reports an unknown count without stopping mining. Trial budget is not a
+hash-rate or completion-time guarantee, and no counter is serialized as authority.
 
 The native executable also provides `new-test-genesis FRESH_FILE`. It creates a
 randomly distinguished zero-allocation **no-value** genesis and prints its chain
@@ -312,39 +337,52 @@ images and node/contact state remain private test artifacts and must never be
 published, even encrypted. No physical power-loss or independent custody claim
 follows. An earlier history-only result cannot qualify this additional lifecycle.
 
-`state_head` exports an exact local ledger/intent/custody commitment to retain
-independently. `create_backup` takes a fresh destination, native-input password and
-explicit `wallet_key_files` inventory. It copies complete SQLite snapshots through
-the database backup API and encrypts each record, including contact/TLS secrets.
-Unlisted wallet key files are not magically included. Keys retain their separate
-O13 encryption. Backup staging is private; interrupted builds retain `BUILDING` and
-residue. A complete snapshot uses local format `RLD-SURVIVOR-BACKUP-1`: each sealed
-record binds magic `RLDSBKP1`, chain[32], random bundle[32], record-kind u16, salt[32],
-nonce[12] and plaintext-length u64 as AEAD associated data, all integers big-endian.
-Fixed scrypt N=32768/r=8/p=1 derives AES-256-GCM with a full 16-byte tag. Record kinds
-1..5 are ledger, custody, contact key, TLS material and admitted configuration;
-100..163 are explicitly listed encrypted wallet keys; kind 0 is the authenticated
-complete inventory/genesis/head manifest. There are no archive-controlled paths.
-Each record is at most 256 MiB; allow 1 GiB transient backup/restore working memory,
-additional private staging disk and the encrypted image's full size.
-Sealing reserves the exact complete record once and encrypts its body in place,
-then appends the detached full authentication tag. The temporary record is
-zeroized on failure before ciphertext publication. Header bytes, OS entropy,
-KDF/AAD/nonce/tag rules and the existing decoder remain unchanged; the previous
-copying and in-place record methods must interoperate. This removes a transient
-ciphertext copy, not native replay or the need to measure complete working-memory
-costs for each declared history/backup cohort.
+`state_head` exports an exact local ledger/intent/custody and communication-material
+commitment to retain independently. `BACKUP-HEAD-2` binds the ledger and custody
+heads plus purpose-separated hashes of the exact contact key, TLS material and
+admitted configuration. Changed retained contact/TLS files refuse source backup;
+no key or pin is silently regenerated. A backup head alone never authorizes money.
 
-`rld-survivor-node restore FRESH_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID BACKUP_DIRECTORY`
-reads one bounded native JSON request with `password` and optional independently
-retained `latest_state_head`. It verifies encrypted records and full native replay
-before clearing RESTORING. Existing/interrupted destinations never overwrite or
-resume. Without a matching supplied head the restored wallet reports
-FRESHNESS_UNKNOWN and refuses first signing, while exact signed recovery and mining
-remain possible. `acknowledge_restore_risk` requires the current `intent_head` and
-explicit acknowledgment of possible conflicting signatures. This records accepted
-risk; it does not establish independent freshness. Restore policy is separate from
-consensus and never creates a mandatory witness for an intact surviving node.
+`create_backup` takes a fresh destination, native-input password and explicit
+`wallet_key_files` inventory. It snapshots complete SQLite databases through the
+native backup API. Staging stays private; interrupted builds retain `BUILDING` and
+residue. Explicitly listed keys retain separate O13 encryption. Their fixed format
+is checked; their inner chain, owner and authentication still require the wallet
+password during native decryption. Unlisted keys are not implicitly included.
+
+Local format `RLD-SURVIVOR-BACKUP-2` uses bounded encrypted chunks. Its 126-byte
+record header is magic `RLDSBKP2`, chain[32], random bundle[32], kind:u16,
+plaintext-length:u64, fixed chunk-size:u32=1048576, salt[32] and nonce-prefix[8].
+All integers are big-endian. Fixed scrypt N=32768/r=8/p=1 derives AES-256-GCM.
+Each chunk is ciphertext followed by its full 16-byte tag. Its nonce is the
+record's nonce-prefix followed by its u32 index; associated data is the complete
+header, that index and the chunk's plaintext length:u32. At most 2^32 chunks are
+possible, and an empty file still authenticates one empty chunk. Exact length,
+order, role and bundle are mandatory; extra, omitted or substituted bytes refuse.
+The buffer is fixed at one chunk plus tag and is zeroized on all exits.
+
+Kinds 1..5 are ledger, custody, contact key, TLS material and admitted configuration;
+100..163 are the listed encrypted keys, and 0 is the bounded inventory/genesis/head
+manifest. Paths and chunk sizes are never archive-selected. Database image totals
+must fit the locally provisioned budgets, 256 MiB each by default; metadata/key
+bounds remain separate. The record format does not load a complete image into a
+plaintext/ciphertext Vec. KDF, SQLite, full native state/replay, staging disk and
+whole-node resources remain separate costs. Historical V1 images refuse unchanged;
+there is no automatic conversion or monetary migration.
+
+`rld-survivor-node restore FRESH_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID BACKUP_DIRECTORY
+[--operating-policy LOCAL_FILE]` reads one bounded native JSON request with
+`password` and optional independently retained `latest_state_head`. Only the
+caller's local policy admits image sizes; an image cannot enlarge it. Every chunk,
+complete inventory, full native ledger/custody state, contact/TLS key binding and
+admitted configuration are verified before clearing RESTORING. Validation opens
+no sockets and generates no replacement keys. Existing/interrupted destinations
+never overwrite or resume. With no supplied head the restored wallet
+reports FRESHNESS_UNKNOWN and refuses first signing, while exact signed recovery
+and mining remain possible. `acknowledge_restore_risk` requires the current
+`intent_head` and explicit acknowledgment of possible conflicting signatures.
+This records accepted risk, not independent freshness. Restore policy never creates
+a mandatory witness for an intact surviving node.
 
 The allowlisted Rust packager creates a deterministic tar container with the native
 executable, protocol documents, license and SHA-256 inventory. CI builds separate

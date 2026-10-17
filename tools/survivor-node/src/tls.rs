@@ -76,6 +76,16 @@ impl Material {
             key,
         })
     }
+    pub(crate) fn matches_retained_record(&self, raw: &[u8]) -> bool {
+        if raw.len() < 4 {
+            return false;
+        }
+        let n = u32::from_be_bytes(raw[..4].try_into().unwrap()) as usize;
+        n <= 8192
+            && 4 + n < raw.len()
+            && &raw[4..4 + n] == self.cert.as_ref()
+            && &raw[4 + n..] == self.key.secret_der()
+    }
     pub fn fingerprint(&self) -> Hash {
         Sha256::digest(&self.cert).into()
     }

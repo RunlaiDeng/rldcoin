@@ -21,3 +21,5 @@ pub mod backup;
 mod observation_cache;
 pub mod observations;
 pub mod offline;
+
+pub mod operating_policy;

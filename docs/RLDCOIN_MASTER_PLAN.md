@@ -39,6 +39,7 @@ old passing tests do not qualify changed rules or new binaries.
 |---|---|---|
 | Consensus kernel | C01-C11: strict bytes/crypto, genesis, transfers, issuance, recovery, work, roots, branch selection | T01-T05, T08-T10 |
 | Durable node | O01-O04: ordinary lifecycle, pinned genesis, exclusive writer, atomic intent/commit/replay, deep reorganization and revisions | T06-T12, T18 |
+| Local provisioning and recovery | O02-O03/O09: explicit local budgets, intact capacity recovery, bounded authenticated backup chunks and complete native/material verification on fresh-target restore | T11-T13, T18, T22 |
 | Wallet | O05-O06/O11/O13: bounded pool, exact review in its original selected context, durable intent/reservation, recover-only retries, encrypted keys, conditional balances | T03-T04, T11-T13, T17, T22 |
 | Contact protocol | O07-O09: canonical packets/frames, origin/link authentication, offline carriage, receipt return, quotas and fair retry | T14-T16 |
 | Node integration | O01/O10: default neighbor synchronization and forwarding, independent recipient verification, actual onward payment | T06-T10, T14-T17, T22 |
@@ -57,6 +58,13 @@ old passing tests do not qualify changed rules or new binaries.
    restart and capacity refusal without granting money from receipts.
 5. Package ordinary commands and consumer flows. Independently test full history,
    resource limits, custody and sustained use. Publish only scoped claims.
+
+Local resource provisioning is separate from consensus. Every startup selects
+published defaults or an explicit chain-pinned local policy. Expansion must preserve
+retained history, intents and custody obligations, while backup/restore admits total
+images only under caller-provisioned limits. Bounded ciphertext processing cannot
+replace full native replay, correct communication material or the declared freshness
+policy. Default limits and every historical failed scope retain their exact meaning.
 
 A milestone completes only when its behavior and discriminating checks are
 implemented. The vector oracle is not a node. A disk hash is not ledger validation.

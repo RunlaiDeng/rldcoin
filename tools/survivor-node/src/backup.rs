@@ -1,18 +1,19 @@
 //! Local encrypted whole-node snapshots. This format is not a consensus object.
 //! Restore never overwrites a directory or treats a backup as its own freshness witness.
 use crate::{
-    carriage::{Budget, Carriage},
+    carriage::Carriage,
     kernel::{Hash, Result},
     network::Network,
-    store::{Limits, Store},
+    store::Store,
 };
+#[cfg(test)]
 use aes_gcm::{
     aead::{Aead, KeyInit, Payload},
     AeadInPlace, Aes256Gcm, Nonce,
 };
 use ed25519_dalek::SigningKey;
 use rusqlite::{types::ValueRef, Connection};
-use serde_json::{json, Value};
+use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, OpenOptions},
@@ -20,7 +21,10 @@ use std::{
     path::{Path, PathBuf},
 };
 use zeroize::Zeroizing;
+mod stream;
+#[cfg(test)]
 const MAX_FILE: usize = 256 * 1024 * 1024;
+#[cfg(test)]
 const HEADER: usize = 126;
 fn err(e: impl std::fmt::Display) -> String {
     format!("RESOURCE_WAIT backup {e}")
@@ -100,12 +104,22 @@ pub fn state_head(store: &Store, network: &Network) -> Result<Hash> {
     combined(
         db_head(&store.db, LEDGER_TABLES)?,
         db_head(&network.carriage.db, CONTACT_TABLES)?,
+        &network.backup_material()?,
     )
 }
-fn combined(a: Hash, b: Hash) -> Result<Hash> {
+fn combined(a: Hash, b: Hash, material: &crate::network::BackupMaterial) -> Result<Hash> {
+    let material = crate::kernel::hash(
+        "BACKUP-MATERIAL-2",
+        &[
+            crate::kernel::hash("BACKUP-CONTACT-2", &material.0).as_slice(),
+            crate::kernel::hash("BACKUP-TLS-2", &material.1).as_slice(),
+            crate::kernel::hash("BACKUP-CONFIG-2", &material.2).as_slice(),
+        ]
+        .concat(),
+    );
     Ok(crate::kernel::hash(
-        "BACKUP-HEAD",
-        &[a.as_slice(), b.as_slice()].concat(),
+        "BACKUP-HEAD-2",
+        &[a.as_slice(), b.as_slice(), material.as_slice()].concat(),
     ))
 }
 fn sync(path: &Path) -> Result<()> {
@@ -153,6 +167,7 @@ fn read(path: &Path, max: usize) -> Result<Zeroizing<Vec<u8>>> {
     ensure(b.len() <= max, "RESOURCE_WAIT backup file bound")?;
     Ok(b)
 }
+#[cfg(test)]
 fn seal(raw: &[u8], chain: Hash, bundle: Hash, kind: u16, password: &[u8]) -> Result<Vec<u8>> {
     ensure(raw.len() <= MAX_FILE, "RESOURCE_WAIT backup record size")?;
     let mut random = [0; 44];
@@ -182,6 +197,7 @@ fn seal(raw: &[u8], chain: Hash, bundle: Hash, kind: u16, password: &[u8]) -> Re
     record.extend(tag);
     Ok(std::mem::take(&mut *record))
 }
+#[cfg(test)]
 fn unseal(
     raw: &[u8],
     chain: Hash,
@@ -232,8 +248,68 @@ fn destination(kind: u16) -> Result<PathBuf> {
         _ => return Err("UNSUPPORTED_VERSION backup record kind".into()),
     })
 }
-/// Caller runs this between native main-loop transitions. Workers can time out;
-/// they cannot acknowledge a packet while its custody commit is absent.
+fn seal_record(
+    path: &Path,
+    input: impl Read,
+    length: u64,
+    chain: Hash,
+    bundle: Hash,
+    kind: u16,
+    password: &[u8],
+) -> Result<()> {
+    let mut options = OpenOptions::new();
+    options.create_new(true).write(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    let mut output = options.open(path).map_err(err)?;
+    stream::seal(input, &mut output, length, chain, bundle, kind, password)?;
+    output.sync_all().map_err(err)?;
+    sync(path.parent().ok_or("INVALID_ENCODING backup parent")?)
+}
+fn source(path: &Path) -> Result<File> {
+    ensure(
+        fs::symlink_metadata(path)
+            .map_err(err)?
+            .file_type()
+            .is_file(),
+        "INVALID_ENCODING backup regular file",
+    )?;
+    File::open(path).map_err(err)
+}
+fn restore_record(
+    path: &Path,
+    target: &Path,
+    cap: u64,
+    chain: Hash,
+    bundle: Hash,
+    kind: u16,
+    password: &[u8],
+) -> Result<()> {
+    let mut options = OpenOptions::new();
+    options.create_new(true).write(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    let mut output = options.open(target).map_err(err)?;
+    stream::open(
+        source(path)?,
+        &mut output,
+        cap,
+        chain,
+        bundle,
+        kind,
+        password,
+    )?;
+    output.sync_all().map_err(err)?;
+    sync(target.parent().ok_or("INVALID_ENCODING restored parent")?)
+}
+/// Caller runs between native transitions. Streamed chunks do not authorize a
+/// snapshot; full native replay and the applicable freshness policy remain required.
 pub fn create(
     store: &Store,
     network: &Network,
@@ -243,7 +319,7 @@ pub fn create(
 ) -> Result<Hash> {
     ensure(wallet_keys.len() <= 64, "RESOURCE_WAIT backup key count")?;
     mkdir(target)?;
-    write(&target.join("BUILDING"), b"RLD-SURVIVOR-BACKUP-1")?;
+    write(&target.join("BUILDING"), b"RLD-SURVIVOR-BACKUP-2")?;
     let mut bundle = [0; 32];
     getrandom::getrandom(&mut bundle).map_err(err)?;
     let head = state_head(store, network)?;
@@ -253,56 +329,88 @@ pub fn create(
     let (contact, tls, config) = network.backup_material()?;
     let mut kinds = Vec::new();
     for kind in 1u16..=5 {
-        let raw = match kind {
-            1 | 2 => {
-                let p = staging.join(format!("{kind}.sqlite3"));
-                write(&p, &[])?;
-                let db = if kind == 1 {
-                    &store.db
-                } else {
-                    &network.carriage.db
-                };
-                db.backup(rusqlite::MAIN_DB, &p, None).map_err(err)?;
-                sync(&p)?;
-                read(&p, MAX_FILE)?
-            }
-            3 => contact.clone(),
-            4 => tls.clone(),
-            5 => Zeroizing::new(config.clone()),
-            _ => unreachable!(),
-        };
-        write(
-            &target.join(format!("{kind}.sealed")),
-            &seal(&raw, chain, bundle, kind, password)?,
-        )?;
+        let target = target.join(format!("{kind}.sealed"));
+        if kind <= 2 {
+            let p = staging.join(format!("{kind}.sqlite3"));
+            write(&p, &[])?;
+            let db = if kind == 1 {
+                &store.db
+            } else {
+                &network.carriage.db
+            };
+            db.backup(rusqlite::MAIN_DB, &p, None).map_err(err)?;
+            sync(&p)?;
+            let length = fs::metadata(&p).map_err(err)?.len();
+            let cap = if kind == 1 {
+                store.resource_limits().database_bytes
+            } else {
+                network.resource_budget().bytes as u64
+            };
+            ensure(
+                length <= cap,
+                "RESOURCE_WAIT backup provisioned image bound",
+            )?;
+            seal_record(&target, source(&p)?, length, chain, bundle, kind, password)?;
+        } else {
+            let raw: &[u8] = match kind {
+                3 => &contact,
+                4 => &tls,
+                5 => &config,
+                _ => unreachable!(),
+            };
+            seal_record(
+                &target,
+                raw,
+                raw.len() as u64,
+                chain,
+                bundle,
+                kind,
+                password,
+            )?;
+        }
         kinds.push(kind);
     }
     for (i, path) in wallet_keys.iter().enumerate() {
         let raw = read(path, 187)?;
-        ensure(
-            raw.len() == 187 && &raw[..8] == b"RLDSKEY1",
-            "INVALID_ENCODING encrypted wallet key",
-        )?;
+        crate::keyfile::check_format(&raw)?;
         let kind = 100 + i as u16;
-        write(
+        seal_record(
             &target.join(format!("{kind}.sealed")),
-            &seal(&raw, chain, bundle, kind, password)?,
+            raw.as_slice(),
+            raw.len() as u64,
+            chain,
+            bundle,
+            kind,
+            password,
         )?;
         kinds.push(kind);
     }
-    let manifest = json!({"format":"RLD-SURVIVOR-BACKUP-1","genesis":hex::encode(store.genesis_bytes()),"state_head":hex::encode(head),"kinds":kinds.iter().map(|n|n.to_string()).collect::<Vec<_>>(),"wallet_key_count":wallet_keys.len().to_string()});
-    write(
+    let manifest = json!({"format":"RLD-SURVIVOR-BACKUP-2","genesis":hex::encode(store.genesis_bytes()),"state_head":hex::encode(head),"kinds":kinds.iter().map(|n|n.to_string()).collect::<Vec<_>>(),"wallet_key_count":wallet_keys.len().to_string()});
+    let raw = manifest.to_string();
+    seal_record(
         &target.join("manifest.sealed"),
-        &seal(manifest.to_string().as_bytes(), chain, bundle, 0, password)?,
+        raw.as_bytes(),
+        raw.len() as u64,
+        chain,
+        bundle,
+        0,
+        password,
     )?;
-    // Only our successful temporary database images are removed. Failed builds keep
-    // their marker and residue and cannot be restored as complete snapshots.
     fs::remove_file(staging.join("1.sqlite3")).map_err(err)?;
     fs::remove_file(staging.join("2.sqlite3")).map_err(err)?;
     fs::remove_dir(&staging).map_err(err)?;
     fs::remove_file(target.join("BUILDING")).map_err(err)?;
     sync(target)?;
     Ok(head)
+}
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Manifest {
+    format: String,
+    genesis: String,
+    state_head: String,
+    kinds: Vec<String>,
+    wallet_key_count: String,
 }
 pub fn restore(
     source: &Path,
@@ -312,79 +420,143 @@ pub fn restore(
     password: &[u8],
     latest: Option<Hash>,
 ) -> Result<Hash> {
+    restore_with_policy(
+        source,
+        target,
+        genesis,
+        pin,
+        password,
+        latest,
+        crate::operating_policy::OperatingPolicy::default(),
+    )
+}
+pub fn restore_with_policy(
+    source_dir: &Path,
+    target: &Path,
+    genesis: &[u8],
+    pin: Hash,
+    password: &[u8],
+    latest: Option<Hash>,
+    policy: crate::operating_policy::OperatingPolicy,
+) -> Result<Hash> {
     ensure(
-        !source.join("BUILDING").exists(),
+        fs::symlink_metadata(source_dir).map_err(err)?.is_dir(),
+        "INVALID_ENCODING backup source directory",
+    )?;
+    ensure(
+        !source_dir.join("BUILDING").exists(),
         "FRESHNESS_UNKNOWN incomplete backup",
     )?;
     mkdir(target)?;
-    write(&target.join("RESTORING"), b"RLD-SURVIVOR-BACKUP-1")?;
-    let sealed = read(&source.join("manifest.sealed"), 65536 + HEADER + 16)?;
-    ensure(
-        sealed.len() >= HEADER + 16,
-        "INVALID_ENCODING backup manifest",
-    )?;
-    let bundle: Hash = sealed[40..72].try_into().unwrap();
-    let plain = unseal(&sealed, pin, bundle, 0, password, 65536)?;
-    let manifest: Value =
+    write(&target.join("RESTORING"), b"RLD-SURVIVOR-BACKUP-2")?;
+    let mut input = source(&source_dir.join("manifest.sealed"))?;
+    let mut header = [0; stream::HEADER];
+    input.read_exact(&mut header).map_err(err)?;
+    let bundle: Hash = header[40..72].try_into().unwrap();
+    std::io::Seek::rewind(&mut input).map_err(err)?;
+    let mut plain = Zeroizing::new(Vec::new());
+    stream::open(input, &mut *plain, 65536, pin, bundle, 0, password)?;
+    let manifest: Manifest =
         serde_json::from_slice(&plain).map_err(|_| "INVALID_ENCODING backup manifest")?;
     ensure(
-        manifest["format"] == "RLD-SURVIVOR-BACKUP-1"
-            && manifest["genesis"] == hex::encode(genesis),
+        manifest.format == "RLD-SURVIVOR-BACKUP-2" && manifest.genesis == hex::encode(genesis),
         "WRONG_CHAIN backup genesis",
     )?;
-    let head: Hash = hex::decode(
-        manifest["state_head"]
-            .as_str()
-            .ok_or("INVALID_ENCODING backup head")?,
-    )
-    .map_err(err)?
-    .try_into()
-    .map_err(|_| "INVALID_ENCODING backup head")?;
+    let head: Hash = hex::decode(&manifest.state_head)
+        .map_err(err)?
+        .try_into()
+        .map_err(|_| "INVALID_ENCODING backup head")?;
+    ensure(
+        manifest.state_head == hex::encode(head),
+        "INVALID_ENCODING backup head",
+    )?;
     if let Some(expected) = latest {
         ensure(expected == head, "FRESHNESS_UNKNOWN stale backup")?;
     }
-    let count: usize = manifest["wallet_key_count"]
-        .as_str()
-        .ok_or("INVALID_ENCODING key count")?
+    let count: usize = manifest
+        .wallet_key_count
         .parse()
-        .map_err(err)?;
+        .map_err(|_| "INVALID_ENCODING key count")?;
     ensure(count <= 64, "RESOURCE_WAIT backup key count")?;
+    ensure(
+        manifest.wallet_key_count == count.to_string(),
+        "INVALID_ENCODING backup key count",
+    )?;
     let kinds: Vec<u16> = (1..=5).chain((0..count).map(|i| 100 + i as u16)).collect();
     ensure(
-        manifest["kinds"] == json!(kinds.iter().map(|n| n.to_string()).collect::<Vec<_>>()),
+        manifest.kinds == kinds.iter().map(|n| n.to_string()).collect::<Vec<_>>(),
         "INVALID_ENCODING backup inventory",
     )?;
+    let mut expected = std::collections::BTreeSet::from(["manifest.sealed".to_string()]);
+    expected.extend(kinds.iter().map(|n| format!("{n}.sealed")));
+    for entry in fs::read_dir(source_dir).map_err(err)? {
+        let entry = entry.map_err(err)?;
+        ensure(
+            entry.file_type().map_err(err)?.is_file(),
+            "INVALID_ENCODING backup inventory file type",
+        )?;
+        let name = entry
+            .file_name()
+            .into_string()
+            .map_err(|_| "INVALID_ENCODING backup filename")?;
+        ensure(
+            expected.remove(&name),
+            "INVALID_ENCODING unexpected backup object",
+        )?;
+    }
+    ensure(expected.is_empty(), "MISSING_HISTORY backup object")?;
     mkdir(&target.join("contact"))?;
     mkdir(&target.join("contact/custody"))?;
     mkdir(&target.join("keys"))?;
     for kind in kinds {
-        let limit = match kind {
-            1 | 2 => MAX_FILE,
+        let cap = match kind {
+            1 => policy.ledger().database_bytes,
+            2 => policy.carriage().bytes as u64,
             3 => 32,
             4 => 16384,
             5 => 65536,
             _ => 187,
         };
-        let sealed = read(&source.join(format!("{kind}.sealed")), limit + HEADER + 16)?;
-        let raw = unseal(&sealed, pin, bundle, kind, password, limit)?;
-        write(&target.join(destination(kind)?), &raw)?;
+        restore_record(
+            &source_dir.join(format!("{kind}.sealed")),
+            &target.join(destination(kind)?),
+            cap,
+            pin,
+            bundle,
+            kind,
+            password,
+        )?;
+        if kind >= 100 {
+            crate::keyfile::check_format(&read(&target.join(destination(kind)?), 187)?)?;
+        }
     }
     let key = read(&target.join("contact/contact.secret"), 32)?;
     let seed = Zeroizing::new(
         <[u8; 32]>::try_from(key.as_slice()).map_err(|_| "INVALID_CRYPTO restored contact key")?,
     );
     let key = SigningKey::from_bytes(&seed);
-    let store = Store::open_restoring(target, genesis, pin, Limits::default())?;
+    let store = Store::open_restoring(target, genesis, pin, policy.ledger())?;
     let custody = Carriage::open(
         &target.join("contact/custody"),
         pin,
         key.verifying_key().to_bytes(),
-        Budget::default(),
+        policy.carriage(),
     )?;
+    crate::network::verify_backup_material(
+        &target.join("contact"),
+        pin,
+        key.verifying_key().to_bytes(),
+    )?;
+    let material = (
+        read(&target.join("contact/contact.secret"), 32)?,
+        read(&target.join("contact/tls.secret"), 16384)?,
+        read(&target.join("contact/config.json"), 65536)?.to_vec(),
+    );
     ensure(
         combined(
             db_head(&store.db, LEDGER_TABLES)?,
             db_head(&custody.db, CONTACT_TABLES)?,
+            &material,
         )? == head,
         "INVALID_CRYPTO restored state head",
     )?;
@@ -579,5 +751,69 @@ mod tests {
             "{}",
             json!({"event":"RECORD_ROUNDTRIP_COMPLETE","bytes":plain.len().to_string(),"capacity":plain.capacity().to_string(),"fixture":"PUBLIC_NO_VALUE_ZERO_PAYLOAD","qualification":false})
         );
+    }
+    fn material_fixture(name: &str) -> (std::path::PathBuf, Vec<u8>, Hash, Store, Network) {
+        let v: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../docs/protocol/survivor-v1/vectors.json"
+        ))
+        .unwrap();
+        let mut g = hex::decode(v["genesis"]["manifest_hex"].as_str().unwrap()).unwrap();
+        getrandom::getrandom(&mut g[13..45]).unwrap();
+        let pin = crate::kernel::genesis_id(&g);
+        let root = std::env::temp_dir().join(format!(
+            "rld-survivor-material-{}-{name}",
+            std::process::id()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let store =
+            Store::open(&root.join("node"), &g, pin, crate::store::Limits::default()).unwrap();
+        let network = Network::open(&root.join("node/contact"), pin, None).unwrap();
+        (root, g, pin, store, network)
+    }
+    #[test]
+    fn source_backup_refuses_replaced_retained_contact_and_tls_material() {
+        for role in ["contact.secret", "tls.secret"] {
+            let (root, _, _, store, network) = material_fixture(role);
+            let path = root.join("node/contact").join(role);
+            let mut raw = fs::read(&path).unwrap();
+            let last = raw.len() - 1;
+            raw[last] ^= 1;
+            fs::write(path, raw).unwrap();
+            assert!(state_head(&store, &network).is_err());
+            let image = root.join("image");
+            assert!(create(&store, &network, &image, PASSWORD, &[]).is_err());
+            assert!(image.join("BUILDING").exists());
+        }
+    }
+    #[test]
+    fn a_valid_replacement_tls_key_cannot_match_the_retained_whole_node_head() {
+        let (root, genesis, pin, store, network) = material_fixture("valid-credential-replacement");
+        let image = root.join("image");
+        let head = create(&store, &network, &image, PASSWORD, &[]).unwrap();
+        let manifest = fs::read(image.join("manifest.sealed")).unwrap();
+        let bundle: Hash = manifest[40..72].try_into().unwrap();
+        let contact = network.backup_material().unwrap().0;
+        let seed = Zeroizing::new(<[u8; 32]>::try_from(contact.as_slice()).unwrap());
+        let identity = SigningKey::from_bytes(&seed).verifying_key().to_bytes();
+        let (cert, key) = crate::tls::Material::generate(pin, identity).unwrap();
+        let mut replacement = Zeroizing::new((cert.len() as u32).to_be_bytes().to_vec());
+        replacement.extend(cert);
+        replacement.extend(key.as_slice());
+        fs::remove_file(image.join("4.sealed")).unwrap();
+        seal_record(
+            &image.join("4.sealed"),
+            replacement.as_slice(),
+            replacement.len() as u64,
+            pin,
+            bundle,
+            4,
+            PASSWORD,
+        )
+        .unwrap();
+        let target = root.join("restored");
+        let error = restore(&image, &target, &genesis, pin, PASSWORD, Some(head)).unwrap_err();
+        assert_eq!(error, "INVALID_CRYPTO restored state head");
+        assert!(target.join("RESTORING").exists());
+        assert!(Store::open(&target, &genesis, pin, crate::store::Limits::default()).is_err());
     }
 }

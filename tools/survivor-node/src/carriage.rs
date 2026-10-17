@@ -55,6 +55,9 @@ pub struct Carriage {
     budget: Budget,
 }
 impl Carriage {
+    pub fn resource_budget(&self) -> Budget {
+        self.budget
+    }
     pub fn open(root: &Path, chain: Hash, identity: Hash, budget: Budget) -> Result<Self> {
         ensure(
             crate::kernel::valid_point(identity),

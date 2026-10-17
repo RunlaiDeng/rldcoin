@@ -27,9 +27,9 @@ required checks, not completion certificates for the campaigns above.
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `store/replay_witness.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
-| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
+| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs`, `backup/stream.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
-| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `distribution.rs` |
+| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet
@@ -88,6 +88,29 @@ members, mismatched revisions and partial signatures refuse; owner, value,
 maturity, expiry and strict signature checks remain mandatory. Historical intents
 must remain recoverable after inclusion or branch replacement. Growing wallet
 journals and independent rollback/custody qualification remain separate obligations.
+
+Explicit local operating policies must be typed, duplicate-free, chain-pinned and
+validated before native state/key creation. Each startup chooses published defaults
+or its explicit local file; no peer, packet or backup increases budgets. A declared
+small-budget capacity refusal must preserve the native prefix and pending operation;
+reopening with a separately predeclared larger policy must fully replay that same
+history, recover the exact request, and perform actual owner-authorized payment and
+onward payment. Resource expansion cannot prune evidence or create a new allocation.
+Mining trial observations count actual hash calls, not inferred work or profit;
+unknown counters never suspend mining. Honest-time collapse remains a distinct gate.
+
+V2 whole-node backups authenticate fixed bounded chunks, exact file lengths,
+index/order, role, chain, bundle and inventory. A full local head also binds exact
+communication keys/material and admitted configuration. Source material changes
+refuse; restore must validate all material, key pairing and native ledger/custody
+state before clearing RESTORING, with no socket activity or key regeneration.
+Changed/reordered/missing/repeated/cross-role chunks, tail data, wrong password,
+unsupported metadata and valid-but-substituted transport keys cannot authorize a
+complete restore. Only caller-provisioned budgets admit larger images; ciphertext
+buffers remain bounded independently of total file size. Native operating-policy,
+stream-record and material unit cases cover these contracts. Whole larger-state,
+power-loss, independent freshness/custody and finite-horizon qualification remain
+separate; the format alone proves none of them.
 
 Bounded history group installation retains complete native execution and atomic
 prior/successor recovery. The separate `bin/rld-survivor-history.rs` measurement

@@ -642,6 +642,7 @@ dependencies = [
  "rustls",
  "rustls-pemfile",
  "scrypt",
+ "serde",
  "serde_json",
  "sha2",
  "x509-parser",

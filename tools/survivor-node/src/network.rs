@@ -64,6 +64,89 @@ fn read(path: &Path, max: u64) -> Result<Zeroizing<Vec<u8>>> {
     ensure(b.len() as u64 <= max, "INVALID_ENCODING material bound")?;
     Ok(b)
 }
+fn admission(cfg: &Value, identity: Hash) -> Result<(SocketAddr, Vec<Neighbor>, Vec<Hash>)> {
+    let listen: SocketAddr = cfg["listen"]
+        .as_str()
+        .ok_or("INVALID_ENCODING listen literal")?
+        .parse()
+        .map_err(err)?;
+    let list = cfg["neighbors"]
+        .as_array()
+        .ok_or("INVALID_ENCODING neighbors")?;
+    ensure(list.len() <= 64, "RESOURCE_WAIT neighbor bound")?;
+    let mut neighbors = Vec::new();
+    let mut identities = BTreeSet::new();
+    let mut certificates = BTreeSet::new();
+    for n in list {
+        let key = bytes32(&n["key"])?;
+        let pin = bytes32(&n["certificate_sha256"])?;
+        ensure(
+            crate::kernel::valid_point(key)
+                && key != identity
+                && identities.insert(key)
+                && certificates.insert(pin),
+            "INVALID_CRYPTO neighbor identities/pins",
+        )?;
+        neighbors.push(Neighbor {
+            key,
+            endpoint: n["endpoint"]
+                .as_str()
+                .ok_or("INVALID_ENCODING endpoint literal")?
+                .parse()
+                .map_err(err)?,
+            certificate_sha256: pin,
+        });
+    }
+    let mut offline_peers = Vec::new();
+    if let Some(peers) = cfg.get("offline_peers") {
+        let peers = peers
+            .as_array()
+            .ok_or("INVALID_ENCODING offline peer list")?;
+        ensure(peers.len() <= 64, "RESOURCE_WAIT offline peer bound")?;
+        for p in peers {
+            let k = bytes32(p)?;
+            ensure(
+                crate::kernel::valid_point(k) && k != identity && !offline_peers.contains(&k),
+                "INVALID_CRYPTO offline peer",
+            )?;
+            offline_peers.push(k);
+        }
+    }
+    Ok((listen, neighbors, offline_peers))
+}
+fn retained_material(root: &Path, chain: Hash, identity: Hash) -> Result<Material> {
+    let bytes = read(&root.join("tls.secret"), 16384)?;
+    ensure(bytes.len() > 4, "INVALID_ENCODING TLS material")?;
+    let n = u32::from_be_bytes(bytes[..4].try_into().unwrap()) as usize;
+    ensure(
+        n <= 8192 && 4 + n < bytes.len(),
+        "INVALID_ENCODING TLS material",
+    )?;
+    Material::from_der(
+        bytes[4..4 + n].to_vec(),
+        Zeroizing::new(bytes[4 + n..].to_vec()),
+        chain,
+        identity,
+    )
+}
+/// Complete nonmutating material/admission verification, with no socket bind,
+/// key generation, renewal, peer discovery or custody acknowledgment.
+pub(crate) fn verify_backup_material(root: &Path, chain: Hash, identity: Hash) -> Result<()> {
+    let seed = read(&root.join("contact.secret"), 32)?;
+    let seed = Zeroizing::new(
+        <[u8; 32]>::try_from(seed.as_slice()).map_err(|_| "INVALID_CRYPTO restored contact key")?,
+    );
+    ensure(
+        SigningKey::from_bytes(&seed).verifying_key().to_bytes() == identity,
+        "INVALID_CRYPTO restored contact identity",
+    )?;
+    let material = retained_material(root, chain, identity)?;
+    let raw = read(&root.join("config.json"), 65536)?;
+    let cfg: Value = serde_json::from_slice(&raw).map_err(err)?;
+    let (_, neighbors, _) = admission(&cfg, identity)?;
+    tls::server(&material, chain, neighbors)?;
+    Ok(())
+}
 struct Incoming {
     raw: Vec<u8>,
     sender: Hash,
@@ -181,7 +264,18 @@ impl Drop for Network {
     }
 }
 impl Network {
+    pub fn resource_budget(&self) -> Budget {
+        self.carriage.resource_budget()
+    }
     pub fn open(root: &Path, chain: Hash, config: Option<&[u8]>) -> Result<Self> {
+        Self::open_with_budget(root, chain, config, Budget::default())
+    }
+    pub fn open_with_budget(
+        root: &Path,
+        chain: Hash,
+        config: Option<&[u8]>,
+        budget: Budget,
+    ) -> Result<Self> {
         if !root.exists() {
             fs::create_dir(root).map_err(err)?;
             #[cfg(unix)]
@@ -220,71 +314,13 @@ impl Network {
             bytes.extend(secret.as_slice());
             fresh(&tls_path, &bytes)?;
         }
-        let bytes = read(&tls_path, 16384)?;
-        ensure(bytes.len() > 4, "INVALID_ENCODING TLS material")?;
-        let n = u32::from_be_bytes(bytes[..4].try_into().unwrap()) as usize;
-        ensure(
-            n <= 8192 && 4 + n < bytes.len(),
-            "INVALID_ENCODING TLS material",
-        )?;
-        let material = Arc::new(Material::from_der(
-            bytes[4..4 + n].to_vec(),
-            Zeroizing::new(bytes[4 + n..].to_vec()),
-            chain,
-            identity,
-        )?);
+        let material = Arc::new(retained_material(root, chain, identity)?);
         let cfg: Value = match config {
             Some(b) => serde_json::from_slice(b).map_err(err)?,
             None => json!({"listen":"127.0.0.1:0","neighbors":[]}),
         };
-        let listen: SocketAddr = cfg["listen"]
-            .as_str()
-            .ok_or("INVALID_ENCODING listen literal")?
-            .parse()
-            .map_err(err)?;
-        let list = cfg["neighbors"]
-            .as_array()
-            .ok_or("INVALID_ENCODING neighbors")?;
-        ensure(list.len() <= 64, "RESOURCE_WAIT neighbor bound")?;
-        let mut neighbors = Vec::new();
-        let mut identities = BTreeSet::new();
-        let mut certificates = BTreeSet::new();
-        for n in list {
-            let key = bytes32(&n["key"])?;
-            let pin = bytes32(&n["certificate_sha256"])?;
-            ensure(
-                crate::kernel::valid_point(key)
-                    && key != identity
-                    && identities.insert(key)
-                    && certificates.insert(pin),
-                "INVALID_CRYPTO neighbor identities/pins",
-            )?;
-            neighbors.push(Neighbor {
-                key,
-                endpoint: n["endpoint"]
-                    .as_str()
-                    .ok_or("INVALID_ENCODING endpoint literal")?
-                    .parse()
-                    .map_err(err)?,
-                certificate_sha256: pin,
-            });
-        }
-        let carriage = Carriage::open(&root.join("custody"), chain, identity, Budget::default())?;
-        let mut offline_peers = Vec::new();
-        if let Some(peers) = cfg.get("offline_peers") {
-            let peers = peers
-                .as_array()
-                .ok_or("INVALID_ENCODING offline peer list")?;
-            ensure(peers.len() <= 64, "RESOURCE_WAIT offline peer bound")?;
-            for p in peers {
-                let k = bytes32(p)?;
-                ensure(
-                    crate::kernel::valid_point(k) && k != identity && !offline_peers.contains(&k),
-                    "INVALID_CRYPTO offline peer",
-                )?;
-                offline_peers.push(k);
-            }
-        }
+        let (listen, neighbors, offline_peers) = admission(&cfg, identity)?;
+        let carriage = Carriage::open(&root.join("custody"), chain, identity, budget)?;
         // Verify retained credentials and pins before constructing the adapter.
         // A socket wait never reconstructs custody or creates another identity.
         let listener_config = tls::server(&material, chain, neighbors.clone())?;
@@ -716,11 +752,17 @@ impl Network {
         self.carriage.transaction_observation(raw)
     }
     pub(crate) fn backup_material(&self) -> Result<BackupMaterial> {
-        Ok((
-            read(&self.root.join("contact.secret"), 32)?,
-            read(&self.root.join("tls.secret"), 16384)?,
-            self.config.clone(),
-        ))
+        let contact = read(&self.root.join("contact.secret"), 32)?;
+        let tls = read(&self.root.join("tls.secret"), 16384)?;
+        ensure(
+            contact.as_slice() == self.key.as_bytes(),
+            "INVALID_CRYPTO retained contact key changed",
+        )?;
+        ensure(
+            self.material.matches_retained_record(&tls),
+            "INVALID_CRYPTO retained TLS material changed",
+        )?;
+        Ok((contact, tls, self.config.clone()))
     }
 }
 

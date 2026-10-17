@@ -678,15 +678,24 @@ impl MiningJob {
     /// At most `attempts` distinct trials. None means budget/nonce exhaustion;
     /// resume the same job to avoid repeating already attempted nonces.
     pub fn attempt(&mut self, attempts: u64) -> Option<Vec<u8>> {
+        self.attempt_counted(attempts).0
+    }
+    /// Actual header-hash calls, including an early success. Distinct nonces
+    /// are guaranteed within this job only; recreated jobs may repeat inputs.
+    pub fn attempt_counted(&mut self, attempts: u64) -> (Option<Vec<u8>>, u64) {
+        let mut tried = 0;
         for _ in 0..attempts {
-            let n = self.next?;
+            let Some(n) = self.next else {
+                break;
+            };
             self.next = n.checked_add(1);
             self.raw[252..268].copy_from_slice(&n.to_be_bytes());
+            tried += 1;
             if Big::from32(&double("HEADER", &self.raw[..268])) <= self.target {
-                return Some(self.raw.clone());
+                return (Some(self.raw.clone()), tried);
             }
         }
-        None
+        (None, tried)
     }
 }
 pub fn genesis_id(raw: &[u8]) -> Hash {
@@ -830,5 +839,47 @@ mod commitment_tests {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod mining_work_tests {
+    use super::*;
+    #[test]
+    fn actual_trial_counts_match_nonce_partition_and_exhaustion() {
+        let v: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../docs/protocol/survivor-v1/vectors.json"
+        ))
+        .unwrap();
+        let g = hex::decode(v["genesis"]["manifest_hex"].as_str().unwrap()).unwrap();
+        let ledger = Ledger::from_genesis(&g, genesis_id(&g), 1_000_000).unwrap();
+        let miner: Hash = hex::decode(v["wallet_public_keys"][0].as_str().unwrap())
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let now = ledger.tip().timestamp() + 600;
+        let mut whole = ledger.mining_job(miner, vec![], now, now).unwrap();
+        let expected = whole.attempt(1_000_000).unwrap();
+        let mut partial = ledger.mining_job(miner, vec![], now, now).unwrap();
+        assert_eq!(partial.attempt_counted(0), (None, 0));
+        let mut total = 0u128;
+        let found = loop {
+            let (raw, calls) = partial.attempt_counted(1);
+            assert_eq!(calls, 1);
+            total += u128::from(calls);
+            assert!(total <= 1_000_000);
+            if let Some(raw) = raw {
+                break raw;
+            }
+        };
+        assert_eq!(found, expected);
+        assert_eq!(
+            total,
+            u128::from_be_bytes(found[252..268].try_into().unwrap()) + 1
+        );
+        let mut exhausted = ledger.mining_job(miner, vec![], now, now).unwrap();
+        exhausted.next = Some(u128::MAX);
+        assert_eq!(exhausted.attempt_counted(10).1, 1);
+        assert_eq!(exhausted.attempt_counted(10), (None, 0));
     }
 }
