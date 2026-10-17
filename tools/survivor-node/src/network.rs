@@ -75,6 +75,68 @@ struct Outgoing {
     packet: Hash,
     receipt: Result<Option<Frame>>,
 }
+const LISTENER_RETRY: Duration = Duration::from_secs(5);
+struct ConnectionSlot(Arc<AtomicUsize>);
+impl Drop for ConnectionSlot {
+    fn drop(&mut self) {
+        self.0.fetch_sub(1, Ordering::Relaxed);
+    }
+}
+struct ListenerTask {
+    config: Arc<rustls::ServerConfig>,
+    chain: Hash,
+    key: SigningKey,
+    peers: Vec<Neighbor>,
+    inbox: SyncSender<Incoming>,
+    stop: Arc<AtomicBool>,
+    active: Arc<AtomicUsize>,
+}
+impl ListenerTask {
+    fn run(self, listener: TcpListener) {
+        while !self.stop.load(Ordering::Relaxed) {
+            match listener.accept() {
+                Ok((socket, _)) => {
+                    if self.active.load(Ordering::Relaxed) >= 2 {
+                        drop(socket);
+                        continue;
+                    }
+                    self.active.fetch_add(1, Ordering::Relaxed);
+                    let slot = ConnectionSlot(self.active.clone());
+                    let config = self.config.clone();
+                    let chain = self.chain;
+                    let key = self.key.clone();
+                    let peers = self.peers.clone();
+                    let tx = self.inbox.clone();
+                    let _ = thread::Builder::new().spawn(move || {
+                        let _slot = slot;
+                        let _ = tls::accept(
+                            socket,
+                            config,
+                            chain,
+                            &key,
+                            &peers,
+                            |raw, sender, challenge| {
+                                let (reply, rx) = mpsc::sync_channel(1);
+                                tx.try_send(Incoming {
+                                    raw: raw.to_vec(),
+                                    sender,
+                                    challenge,
+                                    reply,
+                                })
+                                .map_err(err)?;
+                                rx.recv_timeout(Duration::from_secs(3)).map_err(err)?
+                            },
+                        );
+                    });
+                }
+                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    thread::sleep(Duration::from_millis(10))
+                }
+                Err(_) => break,
+            }
+        }
+    }
+}
 pub(crate) type BackupMaterial = (Zeroizing<Vec<u8>>, Zeroizing<Vec<u8>>, Vec<u8>);
 pub struct Network {
     root: PathBuf,
@@ -85,7 +147,13 @@ pub struct Network {
     pub(crate) carriage: Carriage,
     neighbors: Vec<Neighbor>,
     offline_peers: Vec<Hash>,
-    listener: SocketAddr,
+    configured_listen: SocketAddr,
+    listener: Option<SocketAddr>,
+    listener_config: Arc<rustls::ServerConfig>,
+    listener_retry: Instant,
+    listener_error: Option<String>,
+    active_connections: Arc<AtomicUsize>,
+    inbox: SyncSender<Incoming>,
     incoming: Receiver<Incoming>,
     outgoing: Receiver<Outgoing>,
     outbox: SyncSender<Outgoing>,
@@ -100,6 +168,7 @@ pub struct Network {
     last_scan: Instant,
     diagnostic: Option<String>,
 }
+
 impl Drop for Network {
     fn drop(&mut self) {
         self.stop.store(true, Ordering::Relaxed);
@@ -216,61 +285,13 @@ impl Network {
                 offline_peers.push(k);
             }
         }
-        let listener = TcpListener::bind(listen).map_err(err)?;
-        let bound = listener.local_addr().map_err(err)?;
-        listener.set_nonblocking(true).map_err(err)?;
-        let config = tls::server(&material, chain, neighbors.clone())?;
+        // Verify retained credentials and pins before constructing the adapter.
+        // A socket wait never reconstructs custody or creates another identity.
+        let listener_config = tls::server(&material, chain, neighbors.clone())?;
         let stop = Arc::new(AtomicBool::new(false));
-        let stopping = stop.clone();
         let (tx, incoming) = mpsc::sync_channel::<Incoming>(8);
-        let keycopy = key.clone();
-        let peers = neighbors.clone();
-        let active = Arc::new(AtomicUsize::new(0));
-        let listener_thread = thread::spawn(move || {
-            while !stopping.load(Ordering::Relaxed) {
-                match listener.accept() {
-                    Ok((socket, _)) => {
-                        if active.load(Ordering::Relaxed) >= 2 {
-                            drop(socket);
-                            continue;
-                        }
-                        active.fetch_add(1, Ordering::Relaxed);
-                        let active = active.clone();
-                        let config = config.clone();
-                        let key = keycopy.clone();
-                        let peers = peers.clone();
-                        let tx = tx.clone();
-                        thread::spawn(move || {
-                            let _ = tls::accept(
-                                socket,
-                                config,
-                                chain,
-                                &key,
-                                &peers,
-                                |raw, sender, challenge| {
-                                    let (reply, rx) = mpsc::sync_channel(1);
-                                    tx.try_send(Incoming {
-                                        raw: raw.to_vec(),
-                                        sender,
-                                        challenge,
-                                        reply,
-                                    })
-                                    .map_err(err)?;
-                                    rx.recv_timeout(Duration::from_secs(3)).map_err(err)?
-                                },
-                            );
-                            active.fetch_sub(1, Ordering::Relaxed);
-                        });
-                    }
-                    Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                        thread::sleep(Duration::from_millis(10))
-                    }
-                    Err(_) => break,
-                }
-            }
-        });
         let (outbox, outgoing) = mpsc::sync_channel(32);
-        Ok(Self {
+        let mut adapter = Self {
             root: root.to_path_buf(),
             config: serde_json::to_vec(&cfg).map_err(err)?,
             chain,
@@ -279,12 +300,18 @@ impl Network {
             carriage,
             neighbors,
             offline_peers,
-            listener: bound,
+            configured_listen: listen,
+            listener: None,
+            listener_config,
+            listener_retry: Instant::now(),
+            listener_error: None,
+            active_connections: Arc::new(AtomicUsize::new(0)),
+            inbox: tx,
             incoming,
             outgoing,
             outbox,
             stop,
-            listener_thread: Some(listener_thread),
+            listener_thread: None,
             worker: None,
             suppressed: BTreeSet::new(),
             unavailable_until: BTreeMap::new(),
@@ -293,10 +320,68 @@ impl Network {
             last_announce: Instant::now() - Duration::from_secs(1),
             last_scan: Instant::now() - Duration::from_secs(1),
             diagnostic: None,
-        })
+        };
+        adapter.poll_listener();
+        Ok(adapter)
+    }
+    fn poll_listener(&mut self) {
+        if self
+            .listener_thread
+            .as_ref()
+            .is_some_and(|h| h.is_finished())
+        {
+            if let Some(h) = self.listener_thread.take() {
+                let _ = h.join();
+            }
+            self.listener = None;
+            self.listener_error = Some(err("listener stopped"));
+            self.listener_retry = Instant::now() + LISTENER_RETRY;
+        }
+        if self.listener_thread.is_some() || Instant::now() < self.listener_retry {
+            return;
+        }
+        let attempt = (|| -> Result<(TcpListener, SocketAddr)> {
+            let listener = TcpListener::bind(self.configured_listen).map_err(err)?;
+            listener.set_nonblocking(true).map_err(err)?;
+            let bound = listener.local_addr().map_err(err)?;
+            Ok((listener, bound))
+        })();
+        self.listener_retry = Instant::now() + LISTENER_RETRY;
+        match attempt {
+            Ok((listener, bound)) => {
+                let task = ListenerTask {
+                    config: self.listener_config.clone(),
+                    chain: self.chain,
+                    key: self.key.clone(),
+                    peers: self.neighbors.clone(),
+                    inbox: self.inbox.clone(),
+                    stop: self.stop.clone(),
+                    active: self.active_connections.clone(),
+                };
+                match thread::Builder::new().spawn(move || task.run(listener)) {
+                    Ok(handle) => {
+                        self.listener_thread = Some(handle);
+                        self.listener = Some(bound);
+                        self.listener_error = None;
+                    }
+                    Err(e) => {
+                        self.listener = None;
+                        self.listener_error = Some(err(e));
+                    }
+                }
+            }
+            Err(e) => {
+                self.listener = None;
+                self.listener_error = Some(e);
+            }
+        }
     }
     pub fn status(&self) -> Value {
-        json!({"state":"ACTIVE_GROUND_ADAPTER","identity":hex::encode(self.key.verifying_key().to_bytes()),"peer_id":hex::encode(peer_id(self.key.verifying_key().to_bytes())),"listen":self.listener.to_string(),"certificate_sha256":hex::encode(self.material.fingerprint()),"neighbors":self.neighbors.len().to_string(),"diagnostic":self.diagnostic,"physical_route_qualified":false})
+        let listening = self
+            .listener_thread
+            .as_ref()
+            .is_some_and(|h| !h.is_finished());
+        json!({"state":if listening {"ACTIVE_GROUND_ADAPTER"} else {"LISTEN_WAIT"},"identity":hex::encode(self.key.verifying_key().to_bytes()),"peer_id":hex::encode(peer_id(self.key.verifying_key().to_bytes())),"listen":self.listener.filter(|_|listening).map(|a|a.to_string()),"configured_listen":self.configured_listen.to_string(),"listener_retry_seconds":"5","listener_diagnostic":self.listener_error,"certificate_sha256":hex::encode(self.material.fingerprint()),"neighbors":self.neighbors.len().to_string(),"diagnostic":self.listener_error.as_ref().or(self.diagnostic.as_ref()),"physical_route_qualified":false})
     }
     fn queue(&mut self, destination: Hash, kind: u8, payload: &[u8]) -> Result<()> {
         self.carriage
@@ -421,6 +506,9 @@ impl Network {
         Ok(())
     }
     pub fn tick(&mut self, store: &mut Store, now: u64) -> Result<()> {
+        // Listener availability is independent of outbound/offline custody and
+        // local validation/mining. A bind failure must not skip their scheduling.
+        self.poll_listener();
         for _ in 0..8 {
             let Ok(i) = self.incoming.try_recv() else {
                 break;
@@ -682,5 +770,99 @@ impl Network {
     }
     pub fn withdraw_transport(&mut self, id: Hash, acknowledge: bool) -> Result<()> {
         self.carriage.withdraw(id, acknowledge)
+    }
+}
+
+#[cfg(test)]
+mod listener_tests {
+    use super::*;
+    use std::sync::atomic::AtomicU64;
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    fn root() -> PathBuf {
+        let root = std::env::temp_dir().join(format!(
+            "rld-survivor-listener-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir(&root).unwrap();
+        root
+    }
+    #[test]
+    fn listener_wait_preserves_material_and_offline_custody() {
+        // Public NO-VALUE contact fixture, never ledger or monetary authority.
+        let root = root();
+        let blocker = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = blocker.local_addr().unwrap();
+        let peer = SigningKey::from_bytes(&[41; 32]).verifying_key().to_bytes();
+        let config = serde_json::to_vec(&json!({"listen":address.to_string(),"neighbors":[],"offline_peers":[hex::encode(peer)]})).unwrap();
+        let mut network = Network::open(&root.join("contact"), [77; 32], Some(&config)).unwrap();
+        let before = network.status();
+        assert_eq!(before["state"], "LISTEN_WAIT");
+        assert!(before["listen"].is_null());
+        assert_eq!(before["configured_listen"], address.to_string());
+        assert!(before["listener_diagnostic"]
+            .as_str()
+            .unwrap()
+            .starts_with("RESOURCE_WAIT"));
+        let key = fs::read(root.join("contact/contact.secret")).unwrap();
+        let tls = fs::read(root.join("contact/tls.secret")).unwrap();
+        network.queue(peer_id(peer), 4, &[0; 96]).unwrap();
+        let frames = network.offline_export(peer).unwrap();
+        assert_eq!(frames.len(), 1);
+        drop(blocker);
+        // A controlled supervisor transition only. The ordinary-process check
+        // separately waits for the real five-second retry timer.
+        network.listener_retry = Instant::now();
+        network.poll_listener();
+        let after = network.status();
+        assert_eq!(after["state"], "ACTIVE_GROUND_ADAPTER");
+        assert_eq!(after["listen"], address.to_string());
+        assert!(after["listener_diagnostic"].is_null());
+        assert_eq!(after["identity"], before["identity"]);
+        assert_eq!(after["certificate_sha256"], before["certificate_sha256"]);
+        assert!(fs::read(root.join("contact/contact.secret")).unwrap() == key);
+        assert!(fs::read(root.join("contact/tls.secret")).unwrap() == tls);
+        assert!(network.offline_export(peer).unwrap() == frames);
+    }
+    #[test]
+    fn listener_restart_retains_occupied_connection_slots() {
+        let root = root();
+        let mut network = Network::open(&root.join("contact"), [78; 32], None).unwrap();
+        // Model two still-live old workers with the exact production guards;
+        // restarting the acceptor must not create another connection allowance.
+        network.active_connections.fetch_add(2, Ordering::Relaxed);
+        let first = ConnectionSlot(network.active_connections.clone());
+        let second = ConnectionSlot(network.active_connections.clone());
+        network.stop.store(true, Ordering::Relaxed);
+        network.listener_thread.take().unwrap().join().unwrap();
+        network.stop.store(false, Ordering::Relaxed);
+        network.listener = None;
+        network.listener_retry = Instant::now();
+        network.poll_listener();
+        let mut socket = std::net::TcpStream::connect(network.listener.unwrap()).unwrap();
+        socket
+            .set_read_timeout(Some(Duration::from_secs(1)))
+            .unwrap();
+        let refused = socket.read(&mut [0; 1]);
+        assert!(
+            matches!(refused, Ok(0))
+                || refused.is_err_and(|e| e.kind() == std::io::ErrorKind::ConnectionReset)
+        );
+        assert_eq!(network.active_connections.load(Ordering::Relaxed), 2);
+        drop(first);
+        drop(second);
+        assert_eq!(network.active_connections.load(Ordering::Relaxed), 0);
+    }
+    #[test]
+    fn invalid_pins_do_not_become_a_listener_wait() {
+        let root = root();
+        let blocker = TcpListener::bind("127.0.0.1:0").unwrap();
+        let config = serde_json::to_vec(&json!({"listen":blocker.local_addr().unwrap().to_string(),"neighbors":[{"key":hex::encode([0;32]),"endpoint":"127.0.0.1:1","certificate_sha256":hex::encode([0;32])}]})).unwrap();
+        assert!(
+            Network::open(&root.join("contact"), [79; 32], Some(&config))
+                .err()
+                .unwrap()
+                .starts_with("INVALID_CRYPTO")
+        );
     }
 }

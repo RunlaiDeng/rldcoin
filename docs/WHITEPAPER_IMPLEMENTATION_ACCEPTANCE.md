@@ -29,7 +29,7 @@ required checks, not completion certificates for the campaigns above.
 | Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
-| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `distribution.rs` |
+| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet
@@ -48,6 +48,15 @@ storage under at least 120 seconds of bounded unauthenticated stalled/malformed
 loopback connections. Complete cold head, signature and conservation checks remain
 required. This isolates transport workers from local survivor work; it does not
 qualify arbitrary overload, expensive authenticated traffic or a physical route.
+Listener recovery must retain authenticated adapter state while its configured
+socket is unavailable. Unknown actual listen addresses remain null. Socket-only
+retry cannot replace pins/material, reload configuration or discard custody;
+outgoing/offline work and local mining remain independent. The ordinary-process
+check mines while the port is still occupied, releases it and observes real timer
+recovery plus an actual connection at the same endpoint with unchanged credentials.
+Native unit cases separately check retained offline bytes, invalid-pin refusal and
+the shared two-worker allowance across controlled acceptor restarts. They do not
+establish arbitrary operating-system failure or physical-route qualification.
 The distribution size guard still refuses a 64-MiB-plus-one-byte input before
 creating any archive or checksum. Limited test debug information cannot remove
 runtime assertions/overflow checks, alter that guard or substitute a fake executable

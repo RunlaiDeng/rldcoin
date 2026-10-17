@@ -167,6 +167,16 @@ unauthenticated loopback connections and a sole surviving ordinary process. Loca
 mining/payment and complete cold replay remain separate from transport-worker
 availability; this does not promise delivery under arbitrary sustained overload.
 The original fresh-install/mining fixture remains a separate required check.
+An unavailable listening socket leaves the verified adapter in `LISTEN_WAIT`.
+`listen` stays null; `configured_listen` retains the exact admitted literal address.
+Normal ticks retry only the socket, at least five seconds between attempts, using
+the same cached pins, TLS material, contact identity and durable carriage. They do
+not reload configuration, regenerate keys or clear obligations. Successful binding
+publishes the actual address and `ACTIVE_GROUND_ADAPTER`; scheduling/verification
+time remains separate from the retry interval. Outgoing and admitted offline work
+continue during the wait. The two inbound-worker slots remain shared across
+acceptor lifetimes. Invalid configuration or cryptographic material still refuses;
+it is never treated as a recoverable socket wait.
 Persistent neighbor/class/object rotation and temporary unavailable-neighbor
 backoff allow alternate admitted neighbors. Receipt observations survive restart;
 hop acknowledgment never discharges a destination obligation. Returned destination
