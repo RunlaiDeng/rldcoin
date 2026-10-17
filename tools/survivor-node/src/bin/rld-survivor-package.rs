@@ -41,7 +41,11 @@ fn append(out: &mut File, name: &str, raw: &[u8], executable: bool) -> Result<()
 fn read(path: &Path) -> Result<Vec<u8>, String> {
     let m = fs::symlink_metadata(path).map_err(|e| e.to_string())?;
     if !m.is_file() || m.len() > 64 * 1024 * 1024 {
-        return Err("allowlisted regular-file size bound".into());
+        return Err(format!(
+            "allowlisted regular-file size bound: {} ({} bytes)",
+            path.display(),
+            m.len()
+        ));
     }
     fs::read(path).map_err(|e| e.to_string())
 }

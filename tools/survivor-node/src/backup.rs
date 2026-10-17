@@ -8,7 +8,7 @@ use crate::{
 };
 use aes_gcm::{
     aead::{Aead, KeyInit, Payload},
-    Aes256Gcm, Nonce,
+    AeadInPlace, Aes256Gcm, Nonce,
 };
 use ed25519_dalek::SigningKey;
 use rusqlite::{types::ValueRef, Connection};
@@ -157,27 +157,30 @@ fn seal(raw: &[u8], chain: Hash, bundle: Hash, kind: u16, password: &[u8]) -> Re
     ensure(raw.len() <= MAX_FILE, "RESOURCE_WAIT backup record size")?;
     let mut random = [0; 44];
     getrandom::getrandom(&mut random).map_err(err)?;
-    let mut header = b"RLDSBKP1".to_vec();
-    header.extend(chain);
-    header.extend(bundle);
-    header.extend(kind.to_be_bytes());
-    header.extend(random);
-    header.extend((raw.len() as u64).to_be_bytes());
+    // Allocate the complete exact record once. A separate ciphertext Vec would
+    // otherwise coexist with the plaintext input and this final record. Until
+    // encryption succeeds this buffer may contain plaintext, so zeroize it on
+    // every error path; only authenticated ciphertext is moved out on success.
+    let mut record = Zeroizing::new(Vec::new());
+    record
+        .try_reserve_exact(HEADER + raw.len() + 16)
+        .map_err(err)?;
+    record.extend(b"RLDSBKP1");
+    record.extend(chain);
+    record.extend(bundle);
+    record.extend(kind.to_be_bytes());
+    record.extend(random);
+    record.extend((raw.len() as u64).to_be_bytes());
+    record.extend(raw);
     let k = crate::keyfile::derived(password, &random[..32])?;
     let cipher =
         Aes256Gcm::new_from_slice(k.as_ref()).map_err(|_| "INVALID_CRYPTO backup cipher")?;
-    header.extend(
-        cipher
-            .encrypt(
-                Nonce::from_slice(&random[32..]),
-                Payload {
-                    msg: raw,
-                    aad: &header,
-                },
-            )
-            .map_err(|_| "INVALID_CRYPTO backup encryption")?,
-    );
-    Ok(header)
+    let (header, body) = record.split_at_mut(HEADER);
+    let tag = cipher
+        .encrypt_in_place_detached(Nonce::from_slice(&random[32..]), header, body)
+        .map_err(|_| "INVALID_CRYPTO backup encryption")?;
+    record.extend(tag);
+    Ok(std::mem::take(&mut *record))
 }
 fn unseal(
     raw: &[u8],
@@ -433,5 +436,148 @@ impl Store {
     }
     pub fn intent_head(&self) -> Result<Hash> {
         db_head(&self.db, LEDGER_TABLES)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const PASSWORD: &[u8] = b"PUBLIC NO-VALUE RECORD PROBE";
+
+    #[test]
+    fn legacy_and_detached_record_methods_interoperate() {
+        let payload = b"Deliberately public NO-VALUE record interoperability fixture.";
+        // This fixed salt/nonce is restricted to this public test vector. Native
+        // sealing still obtains fresh OS randomness for every independent record.
+        let mut legacy = b"RLDSBKP1".to_vec();
+        legacy.extend([1; 32]);
+        legacy.extend([2; 32]);
+        legacy.extend(1u16.to_be_bytes());
+        legacy.extend([7; 44]);
+        legacy.extend((payload.len() as u64).to_be_bytes());
+        let key = crate::keyfile::derived(PASSWORD, &legacy[74..106]).unwrap();
+        let cipher = Aes256Gcm::new_from_slice(key.as_ref()).unwrap();
+        legacy.extend(
+            cipher
+                .encrypt(
+                    Nonce::from_slice(&legacy[106..118]),
+                    Payload {
+                        msg: payload,
+                        aad: &legacy,
+                    },
+                )
+                .unwrap(),
+        );
+        assert_eq!(
+            &*unseal(&legacy, [1; 32], [2; 32], 1, PASSWORD, MAX_FILE).unwrap(),
+            payload
+        );
+        let new = seal(payload, [1; 32], [2; 32], 1, PASSWORD).unwrap();
+        let key = crate::keyfile::derived(PASSWORD, &new[74..106]).unwrap();
+        let reference = Aes256Gcm::new_from_slice(key.as_ref())
+            .unwrap()
+            .decrypt(
+                Nonce::from_slice(&new[106..118]),
+                Payload {
+                    msg: &new[HEADER..],
+                    aad: &new[..HEADER],
+                },
+            )
+            .unwrap();
+        assert_eq!(reference, payload);
+        assert_eq!(new.len(), HEADER + payload.len() + 16);
+    }
+
+    #[test]
+    fn changed_role_aad_password_length_or_tag_cannot_release_plaintext() {
+        let raw = seal(
+            b"PUBLIC NO-VALUE AUTHENTICATION INPUT",
+            [1; 32],
+            [2; 32],
+            1,
+            PASSWORD,
+        )
+        .unwrap();
+        for offset in [8usize, 40, 73, 74, 106, HEADER, raw.len() - 1] {
+            let mut changed = raw.clone();
+            changed[offset] ^= 1;
+            // Matching the edited role arguments must still fail the original
+            // authenticated header; this exercises AAD rather than just pin checks.
+            let chain = changed[8..40].try_into().unwrap();
+            let bundle = changed[40..72].try_into().unwrap();
+            let kind = u16::from_be_bytes(changed[72..74].try_into().unwrap());
+            assert!(unseal(&changed, chain, bundle, kind, PASSWORD, MAX_FILE).is_err());
+        }
+        assert!(unseal(
+            &raw,
+            [1; 32],
+            [2; 32],
+            1,
+            b"another public test passphrase",
+            MAX_FILE
+        )
+        .is_err());
+        assert!(unseal(
+            &raw[..raw.len() - 1],
+            [1; 32],
+            [2; 32],
+            1,
+            PASSWORD,
+            MAX_FILE
+        )
+        .is_err());
+        let mut overlong = raw.clone();
+        overlong.push(0);
+        assert!(unseal(&overlong, [1; 32], [2; 32], 1, PASSWORD, MAX_FILE).is_err());
+        assert!(unseal(&raw, [1; 32], [2; 32], 1, PASSWORD, 1).is_err());
+    }
+
+    /// The optional size is public test load, never a credential or monetary
+    /// input. Default CI is small; explicit resource scopes retain their own
+    /// original byte/time/memory bounds and exact executable/source inventory.
+    #[test]
+    fn record_resource_probe() {
+        let bytes: usize = std::env::var("RLD_SURVIVOR_BACKUP_PROBE_BYTES")
+            .ok()
+            .map(|v| v.parse().expect("unsigned public probe size"))
+            .unwrap_or(4097);
+        assert!((1..=MAX_FILE).contains(&bytes));
+        let root =
+            std::env::temp_dir().join(format!("rld-survivor-record-probe-{}", std::process::id()));
+        mkdir(&root).unwrap();
+        let path = root.join("public-zero-payload");
+        write(&path, &[]).unwrap();
+        let file = OpenOptions::new().write(true).open(&path).unwrap();
+        file.set_len(bytes as u64).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        let raw = read(&path, MAX_FILE).unwrap();
+        assert_eq!(raw.len(), bytes);
+        println!(
+            "{}",
+            json!({"event":"RECORD_READ","bytes":bytes.to_string(),"capacity":raw.capacity().to_string()})
+        );
+        let sealed = seal(&raw, [1; 32], [2; 32], 1, PASSWORD).unwrap();
+        println!(
+            "{}",
+            json!({"event":"RECORD_SEALED","bytes":sealed.len().to_string(),"capacity":sealed.capacity().to_string()})
+        );
+        write(&root.join("record.sealed"), &sealed).unwrap();
+        let phase =
+            std::env::var("RLD_SURVIVOR_BACKUP_PROBE_PHASE").unwrap_or_else(|_| "roundtrip".into());
+        assert!(matches!(phase.as_str(), "seal" | "roundtrip"));
+        if phase == "seal" {
+            return;
+        }
+        // Creation and restoration are separate native operations. Do not keep
+        // an artificial extra plaintext copy alive across both measured phases.
+        drop(raw);
+        let plain = unseal(&sealed, [1; 32], [2; 32], 1, PASSWORD, MAX_FILE).unwrap();
+        assert_eq!(plain.len(), bytes);
+        assert!(plain.iter().all(|b| *b == 0));
+        println!(
+            "{}",
+            json!({"event":"RECORD_ROUNDTRIP_COMPLETE","bytes":plain.len().to_string(),"capacity":plain.capacity().to_string(),"fixture":"PUBLIC_NO_VALUE_ZERO_PAYLOAD","qualification":false})
+        );
     }
 }

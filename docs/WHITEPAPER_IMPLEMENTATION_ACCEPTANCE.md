@@ -40,6 +40,10 @@ power. The archive check extracts the allowlisted distribution with the host tar
 reader and starts its native executable. Local or CI execution of these checks
 cannot satisfy the independent-validator, consumer, physical-route or sustained
 history obligations by itself.
+The distribution size guard still refuses a 64-MiB-plus-one-byte input before
+creating any archive or checksum. Limited test debug information cannot remove
+runtime assertions/overflow checks, alter that guard or substitute a fake executable
+for the extracted ordinary-node check.
 
 Bounded history group installation retains complete native execution and atomic
 prior/successor recovery. The separate `bin/rld-survivor-history.rs` measurement
@@ -58,6 +62,13 @@ Its original total budget includes creation, fresh native restore and ordinary
 cold reopening. Complete state, pool, pending-signature, balance and head equality
 are required; same-host provided heads cannot establish independent custody or
 power-loss durability. Small composition checks do not close the large-history gate.
+Native backup record unit cases also require copying/detached-method
+interoperability and refusal of edited role/AAD/password/length/tag inputs before
+plaintext release. The bounded public-payload resource probe isolates record
+allocation; it cannot replace whole-node peak-memory, replay or custody checks.
+In-place sealing must reserve the complete record before processing and zeroize
+plaintext-bearing temporary output on any error. All original record/storage
+limits and cryptographic parameters remain in force.
 Cold group notification reconstruction must retain exact native predecessor/member
 execution and complete original event comparison. Tests alter attached order,
 detached entries, reward/output observations and non-tail block bodies; verified

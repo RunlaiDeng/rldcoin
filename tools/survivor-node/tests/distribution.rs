@@ -1,9 +1,48 @@
 //! Exercise the exact allowlisted archive through the system's independent tar
 //! reader and start its extracted no-value executable from a fresh directory.
 use std::{
+    fs::OpenOptions,
     io::Write,
     process::{Command, Stdio},
 };
+#[test]
+fn overbound_binary_refuses_before_any_archive_is_created() {
+    let root = std::env::temp_dir().join(format!(
+        "rld-survivor-package-overbound-{}",
+        std::process::id()
+    ));
+    std::fs::create_dir(&root).unwrap();
+    let binary = root.join("public-overbound-elf-fixture");
+    let mut file = OpenOptions::new()
+        .create_new(true)
+        .write(true)
+        .open(&binary)
+        .unwrap();
+    file.write_all(b"\x7fELF").unwrap();
+    file.set_len(64 * 1024 * 1024 + 1).unwrap();
+    drop(file);
+    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap();
+    let archive = root.join("refused.tar");
+    let result = Command::new(env!("CARGO_BIN_EXE_rld-survivor-package"))
+        .arg(repo)
+        .arg(&binary)
+        .arg(&archive)
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    let error = String::from_utf8(result.stderr).unwrap();
+    assert!(
+        error.contains("allowlisted regular-file size bound"),
+        "{error}"
+    );
+    assert!(error.contains("67108865 bytes"), "{error}");
+    assert!(!archive.exists());
+    assert!(!archive.with_extension("tar.sha256").exists());
+}
 #[test]
 fn extracted_candidate_creates_zero_allocation_test_genesis_and_starts() {
     let root = std::env::temp_dir().join(format!("rld-survivor-package-{}", std::process::id()));

@@ -278,6 +278,13 @@ Fixed scrypt N=32768/r=8/p=1 derives AES-256-GCM with a full 16-byte tag. Record
 complete inventory/genesis/head manifest. There are no archive-controlled paths.
 Each record is at most 256 MiB; allow 1 GiB transient backup/restore working memory,
 additional private staging disk and the encrypted image's full size.
+Sealing reserves the exact complete record once and encrypts its body in place,
+then appends the detached full authentication tag. The temporary record is
+zeroized on failure before ciphertext publication. Header bytes, OS entropy,
+KDF/AAD/nonce/tag rules and the existing decoder remain unchanged; the previous
+copying and in-place record methods must interoperate. This removes a transient
+ciphertext copy, not native replay or the need to measure complete working-memory
+costs for each declared history/backup cohort.
 
 `rld-survivor-node restore FRESH_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID BACKUP_DIRECTORY`
 reads one bounded native JSON request with `password` and optional independently
@@ -295,6 +302,11 @@ executable, protocol documents, license and SHA-256 inventory. CI builds separat
 Linux/macOS artifacts after checks. Hashes detect byte changes; they are not an
 owner-signed monetary release or evidence of independently reproducible binaries.
 No keys, databases, live configurations or generated genesis are packaged.
+Every allowlisted input remains a regular file of at most 64 MiB; oversized inputs
+refuse before creating an archive. Test builds use debug-information level 1 while
+retaining optimization level 1, debug assertions and overflow checks, so embedded
+development symbols need not consume the package's finite file budget. Distribution
+checks still extract and execute the exact compiled native candidate.
 
 Process interruption probes cover validation, durable intent and durable committed
 ledger boundaries, including response-loss recovery. Independent power-loss,
