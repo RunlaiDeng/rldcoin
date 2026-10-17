@@ -26,7 +26,7 @@ required checks, not completion certificates for the campaigns above.
 | Scope | Native source | Discriminating executable checks |
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
-| Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`; native observation-cache unit cases |
+| Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `distribution.rs` |
@@ -57,6 +57,16 @@ recovery plus an actual connection at the same endpoint with unchanged credentia
 Native unit cases separately check retained offline bytes, invalid-pin refusal and
 the shared two-worker allowance across controlled acceptor restarts. They do not
 establish arbitrary operating-system failure or physical-route qualification.
+The native deep-reorganization fixture crosses the 144-observation timing window
+and 64-block optional status-delta bound. A missing parent must leave the selected
+tip, revision, coins and storage readiness unchanged; exact retry follows actual
+parent arrival. A losing reward payment and its onward descendant become detached
+and unspendable while their exact signatures remain retained. Newly available
+winning funds cannot rebase those old intents. Explicit new owner reviews then
+authorize a winning-chain payment and onward payment; complete cold replay must
+preserve all four signatures, selected state and conservation. This ledger-only
+finite fixture does not qualify arbitrary fork/history resources or transport
+custody during reorganization.
 The distribution size guard still refuses a 64-MiB-plus-one-byte input before
 creating any archive or checksum. Limited test debug information cannot remove
 runtime assertions/overflow checks, alter that guard or substitute a fake executable

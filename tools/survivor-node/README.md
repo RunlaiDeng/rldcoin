@@ -233,6 +233,12 @@ block bytes; a larger valid transition discards the optional observations and st
 uses normal consensus/reorganization execution. It does not impose a history cap.
 Eviction, a missing/stale witness or an older historical query uses the complete
 retained-history path. That path can still be expensive and is separately measured.
+The deep-reorganization fixture exercises that fallback with a missing ancestor,
+losing reward/payment descendants and original wallet contexts. Reoffering retains
+the exact old signatures and input IDs; another available coin cannot silently
+replace a disappeared input. New winning-chain payments require their own explicit
+reviews. Complete cold replay checks the resulting state and original signatures;
+the fixture does not establish arbitrary long-fork throughput or independent custody.
 Each retained observation binds the exact unsigned transaction, selected tip and
 revision. Queries recheck the retained head/inclusion/input-spend proof objects;
 missing or corrupt known evidence suspends mutation. Output state, reservations,
