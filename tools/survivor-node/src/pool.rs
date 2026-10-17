@@ -119,6 +119,9 @@ impl Store {
         Ok(())
     }
     pub fn template_transactions(&self) -> Result<Vec<Vec<u8>>> {
+        if !self.storage_ready() {
+            return Err("RESOURCE_WAIT restart required".into());
+        }
         if let Err(e) = self.reoffer_pending() {
             if !e.starts_with("RESOURCE_WAIT") {
                 return Err(e);
@@ -126,14 +129,41 @@ impl Store {
             // Pool pressure leaves the durable reoffer cursor in place. It must
             // not disable mining an otherwise valid empty/ready block.
         }
-        let mut stmt = self.db.prepare("SELECT raw FROM pool").map_err(err)?;
+        if !self.storage_ready() {
+            return Err("RESOURCE_WAIT restart required".into());
+        }
+        let (ready, _) = self.ready_pool()?;
+        let mut result = Vec::new();
+        let mut size = 270;
+        for raw in ready {
+            if result.len() == 128 {
+                break;
+            }
+            if size + 4 + raw.len() > 262144 {
+                continue;
+            }
+            size += 4 + raw.len();
+            result.push(raw);
+        }
+        Ok(result)
+    }
+    /// The read-only local ready set precedes block count/size selection. Every
+    /// admitted input has at most one ready spender; policy is not consensus.
+    fn ready_pool(&self) -> Result<(Vec<Vec<u8>>, BTreeSet<Hash>)> {
+        let mut stmt = self.db.prepare("SELECT id,raw FROM pool").map_err(err)?;
         let rows = stmt
-            .query_map([], |r| r.get::<_, Vec<u8>>(0))
+            .query_map([], |r| {
+                Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, Vec<u8>>(1)?))
+            })
             .map_err(err)?;
         let mut ready = Vec::new();
         for row in rows {
-            let raw = row.map_err(err)?;
-            let t = decode_tx(&raw, self.ledger().chain_id())?;
+            let (id, raw) = row.map_err(err)?;
+            let t = decode_tx(&raw, self.ledger().chain_id())
+                .map_err(|_| self.storage_fault("retained pool signature"))?;
+            if id != t.id {
+                return Err(self.storage_fault("retained pool identity"));
+            }
             if self.ledger().validate_transfer(&raw).is_ok() {
                 ready.push((t, raw));
             }
@@ -146,18 +176,18 @@ impl Store {
         });
         let mut inputs = BTreeSet::new();
         let mut result = Vec::new();
-        let mut size = 270;
+        let mut conflicts = BTreeSet::new();
         for (t, raw) in ready {
-            if result.len() == 128 {
-                break;
-            }
-            if size + 4 + raw.len() > 262144 || t.inputs.iter().any(|i| inputs.contains(i)) {
+            if t.inputs.iter().any(|i| inputs.contains(i)) {
+                conflicts.insert(t.id);
                 continue;
             }
-            size += 4 + raw.len();
             inputs.extend(t.inputs);
             result.push(raw)
         }
-        Ok(result)
+        Ok((result, conflicts))
+    }
+    pub(crate) fn pool_input_conflict(&self, id: Hash) -> Result<bool> {
+        Ok(self.ready_pool()?.1.contains(&id))
     }
 }

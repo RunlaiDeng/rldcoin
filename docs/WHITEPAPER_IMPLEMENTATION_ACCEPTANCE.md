@@ -27,7 +27,7 @@ required checks, not completion certificates for the campaigns above.
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `cold_groups.rs` |
-| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `backup.rs` |
+| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
 
@@ -67,6 +67,12 @@ objects remain dependency waits. Unknown clock tests preserve read-only observat
 and the ability to disable mining; they cannot enable mining or authorize spending.
 These finite checks do not qualify all-state rollback, independent custody or
 physical power-loss durability.
+
+Local pool checks require one ready spender per input under exact fee/byte and ID
+ordering. Status and templates use that same ready set, and expose local preference
+separately from selected-history conflict. A valid block containing the lower local
+preference must still execute normally. Retained pool identity corruption refuses
+without changing the selected state; read-only status cannot reoffer or sign.
 
 The kernel's bounded transient C09 frontier must agree byte-for-byte with the
 retained recursive reference at binary boundaries and after ordered map edits.

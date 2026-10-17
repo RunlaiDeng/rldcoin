@@ -248,11 +248,16 @@ impl Store {
                 }
             }
         }
+        let selected_conflict = t.inputs.iter().any(|i| spent.contains(i));
+        let local_conflict = inclusion.is_none()
+            && !selected_conflict
+            && self.ledger().validate_transfer(raw).is_ok()
+            && self.pool_input_conflict(t.id)?;
         let reason = if inclusion.is_some() {
             None
         } else if self.ledger().tip().height() + 1 > t.expiry {
             Some("EXPIRED")
-        } else if t.inputs.iter().any(|i| spent.contains(i)) && inclusion.is_none() {
+        } else if selected_conflict || local_conflict {
             Some("CONFLICTED")
         } else if self.ledger().validate_transfer(raw).is_ok() {
             Some("READY")
@@ -292,7 +297,7 @@ impl Store {
             json!({"outpoint":hex::encode(&key),"state":if coin.is_some(){"UNSPENT"}else if inclusion.is_some(){"SPENT"}else{"ABSENT"},"maturity_height":maturity.map(|h|h.to_string()),"eligible_next_height":eligible,"reserved":coin.is_some()&&reserved.contains(&key)})
         }).collect();
         Ok(
-            json!({"transaction_id":hex::encode(t.id),"ledger":state,"readiness":reason,"inclusion":inclusion.map(|(id,h)|json!({"block_id":hex::encode(id),"height":h.to_string(),"confirmations":(self.ledger().tip().height()-h+1).to_string()})),"outputs":outputs,"confidence":"CONDITIONAL"}),
+            json!({"transaction_id":hex::encode(t.id),"ledger":state,"readiness":reason,"conflict_source":if reason==Some("CONFLICTED"){Some(if selected_conflict{"SELECTED_HISTORY"}else{"LOCAL_POOL"})}else{None},"inclusion":inclusion.map(|(id,h)|json!({"block_id":hex::encode(id),"height":h.to_string(),"confirmations":(self.ledger().tip().height()-h+1).to_string()})),"outputs":outputs,"confidence":"CONDITIONAL"}),
         )
     }
     /// A bounded recovery pass. References survive pool pressure; no signature is

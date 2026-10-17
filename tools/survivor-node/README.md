@@ -110,6 +110,14 @@ reserved again unless explicitly waived. O13 key encryption uses fixed scrypt an
 AES-256-GCM with independent OS-generated salt/nonce. Direct-key loss has no reset.
 The bounded pool keeps original signed bytes and selects parent-valid disjoint
 inputs by fee/byte then ID. Submission never changes monetary state.
+Template construction and transaction status use the same local ready set before
+block count/byte limits. Retained intents that lose an input to that policy report
+CONFLICTED with `conflict_source: LOCAL_POOL`; selected-history input spending uses
+SELECTED_HISTORY. Local preference cannot revoke a signature or invalidate a block
+that includes another otherwise valid intent. Fee/byte comparison uses exact cross
+products, with lower transaction ID breaking ties. Status reads do not reoffer,
+sign or mutate the pool. Retained pool identity/signature corruption refuses and
+suspends mutation pending full cold verification.
 
 Wallet signing, recovery, status and reservation paths recompute the exact review
 binding and verify any retained signature against its original unsigned bytes.
