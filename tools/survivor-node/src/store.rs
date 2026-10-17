@@ -158,7 +158,7 @@ impl Store {
             .query_row("PRAGMA quick_check", [], |r| r.get(0))
             .map_err(err)?;
         ensure(integrity == "ok", "INVALID database integrity")?;
-        db.execute_batch("CREATE TABLE IF NOT EXISTS binding (singleton INTEGER PRIMARY KEY CHECK(singleton=1), format TEXT NOT NULL, genesis BLOB NOT NULL, tip BLOB NOT NULL, revision BLOB NOT NULL); CREATE TABLE IF NOT EXISTS blocks (id BLOB PRIMARY KEY, raw BLOB NOT NULL); CREATE TABLE IF NOT EXISTS operations (id BLOB PRIMARY KEY, raw BLOB NOT NULL, prior_tip BLOB NOT NULL, prior_revision BLOB NOT NULL, new_tip BLOB NOT NULL, new_root BLOB NOT NULL, revision BLOB NOT NULL, selected INTEGER NOT NULL, committed INTEGER NOT NULL CHECK(committed IN (0,1))); ").map_err(err)?;
+        db.execute_batch("CREATE TABLE IF NOT EXISTS binding (singleton INTEGER PRIMARY KEY CHECK(singleton=1), format TEXT NOT NULL, genesis BLOB NOT NULL, tip BLOB NOT NULL, revision BLOB NOT NULL); CREATE TABLE IF NOT EXISTS blocks (id BLOB PRIMARY KEY, raw BLOB NOT NULL); CREATE TABLE IF NOT EXISTS operations (id BLOB PRIMARY KEY, raw BLOB NOT NULL, prior_tip BLOB NOT NULL, prior_revision BLOB NOT NULL, new_tip BLOB NOT NULL, new_root BLOB NOT NULL, revision BLOB NOT NULL, selected INTEGER NOT NULL, committed INTEGER NOT NULL CHECK(committed IN (0,1)));").map_err(err)?;
         type BindingRow = (String, Vec<u8>, Vec<u8>, Vec<u8>);
         let binding: Option<BindingRow> = db
             .query_row(
@@ -170,7 +170,7 @@ impl Store {
             .map_err(err)?;
         let (tip, revision) = if let Some((format, g, t, r)) = binding {
             ensure(
-                format == "RLD-SURVIVOR-STORE-3" && g == genesis,
+                format == "RLD-SURVIVOR-STORE-4" && g == genesis,
                 "INVALID store binding",
             )?;
             (hash32(t)?, number(r)?)
@@ -187,7 +187,7 @@ impl Store {
             tx.execute(
                 "INSERT INTO binding VALUES(1,?1,?2,?3,?4)",
                 params![
-                    "RLD-SURVIVOR-STORE-3",
+                    "RLD-SURVIVOR-STORE-4",
                     genesis,
                     pin.as_slice(),
                     0u128.to_be_bytes().as_slice()
@@ -198,6 +198,7 @@ impl Store {
             (pin, 0)
         };
         File::open(root).map_err(err)?.sync_all().map_err(err)?;
+        db.execute_batch("CREATE TABLE IF NOT EXISTS history_batches (operation BLOB PRIMARY KEY REFERENCES operations(id),members BLOB NOT NULL);").map_err(err)?;
         let mut s = Self {
             db,
             _lease: lease,
@@ -210,6 +211,7 @@ impl Store {
             last_clock: None,
         };
         s.observations_open()?;
+        s.check_history_batches()?;
         s.db.execute_batch("CREATE TABLE IF NOT EXISTS restore_policy (one INTEGER PRIMARY KEY CHECK(one=1),state TEXT NOT NULL,ack_head BLOB); INSERT OR IGNORE INTO restore_policy VALUES(1,'INTACT',NULL);").map_err(err)?;
         // Verify the complete ordered selected-transition chain and each retained
         // operation's exact block/result. Uncommitted intent never selects state.
@@ -227,19 +229,42 @@ impl Store {
                 s.get_block(block_id(&raw)?)? == raw,
                 "INVALID operation bytes",
             )?;
+            let prior = hash32(row.get(2).map_err(err)?)?;
+            let pr = number(row.get(3).map_err(err)?)?;
             let parent: Hash = raw[36..68].try_into().unwrap();
-            let mut candidate = if parent == current.tip().id() {
+            let history: Option<Vec<u8>> =
+                s.db.query_row(
+                    "SELECT members FROM history_batches WHERE operation=?1",
+                    [id.as_slice()],
+                    |r| r.get(0),
+                )
+                .optional()
+                .map_err(err)?;
+            let mut candidate = if history.is_some() {
+                if prior == current.tip().id() {
+                    current.clone()
+                } else {
+                    s.replay(prior)?
+                }
+            } else if parent == current.tip().id() {
                 current.clone()
             } else {
                 s.replay(parent)?
             };
-            candidate.execute(&raw)?;
+            if let Some(history) = history {
+                // These bytes only index the exact objects. Every block still
+                // executes from a fully native-replayed predecessor, including
+                // signature, work, ownership, issuance and state-root checks.
+                for id in history[2..].as_chunks::<32>().0 {
+                    candidate.execute(&s.get_block(*id)?)?;
+                }
+            } else {
+                candidate.execute(&raw)?;
+            }
             let nt = hash32(row.get(4).map_err(err)?)?;
             let nr = hash32(row.get(5).map_err(err)?)?;
             let selected: bool = row.get(7).map_err(err)?;
             let committed: bool = row.get(8).map_err(err)?;
-            let prior = hash32(row.get(2).map_err(err)?)?;
-            let pr = number(row.get(3).map_err(err)?)?;
             let r = number(row.get(6).map_err(err)?)?;
             ensure(
                 heads.get(&pr) == Some(&prior),
@@ -378,10 +403,57 @@ impl Store {
         operation: Hash,
         raw: &[u8],
         now: u64,
+        observe: impl FnMut(CommitBoundary),
+    ) -> Result<Outcome> {
+        self.accept_transition(operation, raw, &[], now, observe)
+    }
+    /// One exact local transition installing a bounded consecutive extension.
+    /// No member is acknowledged before all member bytes and the final selection
+    /// are durable. Intermediate states are validated but never separately selected.
+    pub fn accept_history(
+        &mut self,
+        operation: Hash,
+        blocks: &[Vec<u8>],
+        now: u64,
+    ) -> Result<Outcome> {
+        self.accept_history_observed(operation, blocks, now, |_| {})
+    }
+    pub fn accept_history_observed(
+        &mut self,
+        operation: Hash,
+        blocks: &[Vec<u8>],
+        now: u64,
+        observe: impl FnMut(CommitBoundary),
+    ) -> Result<Outcome> {
+        ensure(
+            (1..=32).contains(&blocks.len()),
+            "INVALID_ENCODING history count",
+        )?;
+        self.accept_transition(operation, blocks.last().unwrap(), blocks, now, observe)
+    }
+    fn accept_transition(
+        &mut self,
+        operation: Hash,
+        raw: &[u8],
+        history: &[Vec<u8>],
+        now: u64,
         mut observe: impl FnMut(CommitBoundary),
     ) -> Result<Outcome> {
         self.clock(now)?;
         ensure(operation != [0; 32], "INVALID operation ID")?;
+        let members = if history.is_empty() {
+            None
+        } else {
+            let mut encoded = (history.len() as u16).to_be_bytes().to_vec();
+            for b in history {
+                ensure(
+                    (270..=262144).contains(&b.len()),
+                    "INVALID_ENCODING history block",
+                )?;
+                encoded.extend(block_id(b)?);
+            }
+            Some(encoded)
+        };
         let wallet_exists: bool = self
             .db
             .query_row(
@@ -402,18 +474,46 @@ impl Store {
             .map_err(err)?;
         if let Some(old) = &existing {
             ensure(old == raw, "OPERATION_ID_CONFLICT")?;
+            let retained: Option<Vec<u8>> = self
+                .db
+                .query_row(
+                    "SELECT members FROM history_batches WHERE operation=?1",
+                    [operation.as_slice()],
+                    |r| r.get(0),
+                )
+                .optional()
+                .map_err(err)?;
+            ensure(retained == members, "OPERATION_ID_CONFLICT")?;
+            for block in history {
+                ensure(
+                    self.get_block(block_id(block)?)? == *block,
+                    "OPERATION_ID_CONFLICT",
+                )?;
+            }
             if let Some(o) = self.operation(operation)? {
                 return Ok(o);
             }
         }
-        let id = block_id(raw)?;
+        block_id(raw)?;
         let parent: Hash = raw[36..68].try_into().unwrap();
-        let mut candidate = if parent == self.ledger.tip().id() {
+        let mut candidate = if !history.is_empty() {
+            ensure(
+                history[0][36..68] == self.ledger.tip().id(),
+                "CONFLICT history prior changed",
+            )?;
+            self.ledger.clone()
+        } else if parent == self.ledger.tip().id() {
             self.ledger.clone()
         } else {
             self.replay(parent)?
         };
-        candidate.execute(raw)?;
+        if history.is_empty() {
+            candidate.execute(raw)?;
+        } else {
+            for b in history {
+                candidate.execute(b)?;
+            }
+        }
         ensure(candidate.tip().eligible(now), "CLOCK_WAIT future candidate")?;
         let selected = candidate.tip().preferred_to(self.ledger.tip());
         let next: Tip = if selected {
@@ -427,7 +527,11 @@ impl Store {
             .checked_add(u128::from(selected))
             .ok_or("RESOURCE_WAIT revision exhausted")?;
         let change = if selected {
-            Some(self.branch_change(&candidate, raw)?)
+            Some(if history.is_empty() {
+                self.branch_change(&candidate, raw)?
+            } else {
+                self.branch_change_parts(self.ledger(), self.revision(), &candidate, history, &[])?
+            })
         } else {
             None
         };
@@ -450,20 +554,30 @@ impl Store {
         } else {
             let prep = (|| -> Result<()> {
                 let tx = self.db.transaction().map_err(err)?;
-                let retained: Option<Vec<u8>> = tx
-                    .query_row("SELECT raw FROM blocks WHERE id=?1", [id.as_slice()], |r| {
-                        r.get(0)
-                    })
-                    .optional()
-                    .map_err(err)?;
-                if let Some(old) = retained {
-                    ensure(old == raw, "INVALID object collision")?;
+                let objects: Vec<&[u8]> = if history.is_empty() {
+                    vec![raw]
                 } else {
-                    tx.execute(
-                        "INSERT INTO blocks VALUES(?1,?2)",
-                        params![id.as_slice(), raw],
-                    )
-                    .map_err(err)?;
+                    history.iter().map(Vec::as_slice).collect()
+                };
+                for object in objects {
+                    let object_id = block_id(object)?;
+                    let retained: Option<Vec<u8>> = tx
+                        .query_row(
+                            "SELECT raw FROM blocks WHERE id=?1",
+                            [object_id.as_slice()],
+                            |r| r.get(0),
+                        )
+                        .optional()
+                        .map_err(err)?;
+                    if let Some(old) = retained {
+                        ensure(old == object, "INVALID object collision")?;
+                    } else {
+                        tx.execute(
+                            "INSERT INTO blocks VALUES(?1,?2)",
+                            params![object_id.as_slice(), object],
+                        )
+                        .map_err(err)?;
+                    }
                 }
                 tx.execute(
                     "INSERT INTO operations VALUES(?1,?2,?3,?4,?5,?6,?7,?8,0)",
@@ -479,6 +593,13 @@ impl Store {
                     ],
                 )
                 .map_err(err)?;
+                if let Some(members) = &members {
+                    tx.execute(
+                        "INSERT INTO history_batches VALUES(?1,?2)",
+                        params![operation.as_slice(), members],
+                    )
+                    .map_err(err)?;
+                }
                 tx.commit().map_err(err)?;
                 Ok(())
             })();
@@ -559,6 +680,36 @@ impl Store {
 }
 
 impl Store {
+    fn check_history_batches(&self) -> Result<()> {
+        let mut stmt = self.db.prepare("SELECT h.operation,h.members,o.raw,o.prior_tip,o.selected FROM history_batches h LEFT JOIN operations o ON o.id=h.operation").map_err(err)?;
+        let mut rows = stmt.query([]).map_err(err)?;
+        while let Some(row) = rows.next().map_err(err)? {
+            let operation = hash32(row.get(0).map_err(err)?)?;
+            ensure(operation != [0; 32], "INVALID_ENCODING history operation")?;
+            let members: Vec<u8> = row.get(1).map_err(err)?;
+            ensure(members.len() >= 2, "INVALID_ENCODING history members")?;
+            let count = u16::from_be_bytes(members[..2].try_into().unwrap()) as usize;
+            ensure(
+                (1..=32).contains(&count) && members.len() == 2 + count * 32,
+                "INVALID_ENCODING history members",
+            )?;
+            let raw: Vec<u8> = row.get(2).map_err(err)?;
+            let mut previous = hash32(row.get(3).map_err(err)?)?;
+            let selected: bool = row.get(4).map_err(err)?;
+            ensure(selected, "INVALID_ENCODING history selection")?;
+            for bytes in members[2..].as_chunks::<32>().0 {
+                let id = *bytes;
+                let block = self.get_block(id)?;
+                ensure(
+                    block.len() >= 270 && block[36..68] == previous,
+                    "INVALID_ENCODING history dependency",
+                )?;
+                previous = id;
+            }
+            ensure(previous == block_id(&raw)?, "INVALID_ENCODING history tail")?;
+        }
+        Ok(())
+    }
     pub fn genesis_bytes(&self) -> &[u8] {
         &self.genesis
     }

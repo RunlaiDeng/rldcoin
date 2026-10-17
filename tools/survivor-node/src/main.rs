@@ -153,6 +153,22 @@ fn command(
                 json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
             )
         }
+        "accept_history" => {
+            let items = v["blocks"]
+                .as_array()
+                .ok_or("INVALID_ENCODING history blocks")?;
+            if !(1..=32).contains(&items.len()) {
+                return Err("INVALID_ENCODING history count".into());
+            }
+            let blocks = items
+                .iter()
+                .map(|x| bytes(&json!({"raw":x}), "raw"))
+                .collect::<Result<Vec<_>>>()?;
+            let o = s.accept_history(hash(v, "operation_id")?, &blocks, time)?;
+            Ok(
+                json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
+            )
+        }
         "submit_transaction" => {
             let id = s.submit_transaction(
                 hash(v, "operation_id")?,

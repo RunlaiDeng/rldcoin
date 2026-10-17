@@ -76,6 +76,7 @@ const LEDGER_TABLES: &[(&str, &str)] = &[
     ("binding", "singleton"),
     ("blocks", "id"),
     ("operations", "id"),
+    ("history_batches", "operation"),
     ("wallet", "id"),
     ("submissions", "operation"),
     ("pool", "id"),

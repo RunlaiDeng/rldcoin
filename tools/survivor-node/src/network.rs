@@ -303,6 +303,43 @@ impl Network {
             .originate_unique(&self.key, destination, kind, payload)?;
         Ok(())
     }
+    fn apply_history_group(
+        &mut self,
+        store: &mut Store,
+        pending: &[Packet],
+        now: u64,
+    ) -> Result<BTreeSet<Hash>> {
+        let local = peer_id(self.key.verifying_key().to_bytes());
+        let mut parent = store.ledger().tip().id();
+        let mut blocks = Vec::new();
+        let mut packets = BTreeSet::new();
+        let mut intent = Vec::new();
+        for _ in 0..32 {
+            let Some(p) = pending.iter().find(|p| {
+                p.kind == 3
+                    && (p.destination == [0; 32] || p.destination == local)
+                    && p.payload[36..68] == parent
+                    && !packets.contains(&p.id)
+            }) else {
+                break;
+            };
+            // Header hints only choose work to validate. The ordinary kernel
+            // executes every complete member before either durable commit.
+            parent = crate::kernel::block_id(&p.payload)?;
+            blocks.push(p.payload.clone());
+            packets.insert(p.id);
+            intent.extend(p.id);
+        }
+        if blocks.len() < 2 {
+            return Ok(BTreeSet::new());
+        }
+        let operation = crate::kernel::hash("HISTORY-OP", &intent);
+        store.accept_history(operation, &blocks, now)?;
+        for packet in &packets {
+            self.carriage.processed(*packet)?;
+        }
+        Ok(packets)
+    }
     fn respond(&mut self, store: &mut Store, p: &Packet, now: u64) -> Result<()> {
         if p.destination != [0; 32] && p.destination != peer_id(self.key.verifying_key().to_bytes())
         {
@@ -490,7 +527,21 @@ impl Network {
                     (0, 0)
                 }
             });
+            pending.truncate(32);
+            let installed = match self.apply_history_group(store, &pending, now) {
+                Ok(ids) => ids,
+                Err(e) => {
+                    // An invalid or incomplete group cannot hide other admitted
+                    // packets. Single-object processing retains its normal waits
+                    // and refusals; an ambiguous write has poisoned the store.
+                    self.diagnostic = Some(e);
+                    BTreeSet::new()
+                }
+            };
             for p in pending.into_iter().take(32) {
+                if installed.contains(&p.id) {
+                    continue;
+                }
                 match self.respond(store, &p, now) {
                     Ok(()) => self.carriage.processed(p.id)?,
                     Err(e)

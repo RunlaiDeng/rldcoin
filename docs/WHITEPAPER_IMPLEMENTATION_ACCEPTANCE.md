@@ -26,7 +26,7 @@ required checks, not completion certificates for the campaigns above.
 | Scope | Native source | Discriminating executable checks |
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
-| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs` |
+| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs` |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `pool.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
@@ -40,6 +40,13 @@ power. The archive check extracts the allowlisted distribution with the host tar
 reader and starts its native executable. Local or CI execution of these checks
 cannot satisfy the independent-validator, consumer, physical-route or sustained
 history obligations by itself.
+
+Bounded history group installation retains complete native execution and atomic
+prior/successor recovery. The separate `bin/rld-survivor-history.rs` measurement
+entry records actual storage, hashing and cold replay with an explicitly logical
+chain clock. A finite growing-reward sample is only one T18 workload; sustained
+history beyond an issuance era, spent-state growth, owner activity, malformed
+traffic, backups and declared CPU/RAM/disk horizons remain required.
 
 - Specification/vector consistency is design evidence, not a complete runtime.
 - Native execution, durable node behavior, wallet custody and contact delivery

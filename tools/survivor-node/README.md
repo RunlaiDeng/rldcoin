@@ -52,6 +52,7 @@ command history, environment variables or logs; only secure local stdin integrat
 may supply the password field. Key files are encrypted and created at fresh paths.
 
 The entry exposes `node_status`, `get_object` (genesis, transfers and blocks), `accept_block`,
+`accept_history` (an exact bounded consecutive extension),
 `submit_transaction`, `review_transfer` (exact `unsigned_hex`), `sign_review`,
 `operation_status`, `wallet_state`, `waive_reservation`, `changes_since`,
 `set_mining` and `create_key`. Start with mining disabled; explicitly enable it with
@@ -146,8 +147,32 @@ native execution. `changes_since` returns at most 128 revisions/1 MiB; larger ga
 explicitly require a fresh snapshot. Wallet operation status distinguishes inclusion,
 detachment, conflict, readiness and historical transport receipts. Detached original
 signatures have persistent reoffer references; pool pressure cannot disable mining.
-The local storage format is now `RLD-SURVIVOR-STORE-3`; earlier candidate stores
+The local storage format is now `RLD-SURVIVOR-STORE-4`; earlier candidate stores
 refuse, with no automatic migration or test-value continuity.
+
+Ordinary history synchronization can install up to 32 consecutive blocks as one
+selected transition. It validates every complete block against its own fully
+executed predecessor, durably commits the exact ordered member list and all objects
+with its intent, then atomically commits the final tip and complete change event.
+No intermediate tip or member success is released before that commit. The single
+revision includes every attached block, transaction and reward; wallets observe the
+final selected state. An invalid group installs no partial prefix. Ordinary bounded
+single-object processing remains available for competing, missing or invalid paths.
+Cold startup verifies the group membership and executes every member from native
+genesis/predecessor state. The member index supplies no ledger authority.
+`accept_history` takes `operation_id` and ordered block hex strings in `blocks`;
+the existing 2-MiB native request limit remains in force. Exact retry must retain
+the same complete member list. Pending operation status exposes member IDs and the
+recovery method; `get_object` retrieves the retained complete block bytes.
+
+The separate `rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE]`
+measurement tool exercises actual nonce search, ordinary storage and full cold
+replay at unchanged default limits. Group size is explicitly 1..32; its bounded
+observation budget is 1..3600 seconds. It uses logical 600-second chain timestamps
+and 256 deliberately public no-value reward owners, reporting that clock model
+separately from real elapsed time. It preserves incomplete fixtures, refuses an
+existing target directory and never claims a simulated clock proves real-time
+survivor recovery, sustained adversarial traffic or independent qualification.
 
 `state_head` exports an exact local ledger/intent/custody commitment to retain
 independently. `create_backup` takes a fresh destination, native-input password and

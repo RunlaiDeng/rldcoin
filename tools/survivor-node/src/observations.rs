@@ -84,6 +84,16 @@ impl Store {
                     .collect::<Result<Vec<_>>>()?;
                 (attached, detached)
             };
+        self.branch_change_parts(before, revision, next, &attached, &detached)
+    }
+    pub(crate) fn branch_change_parts(
+        &self,
+        before: &Ledger,
+        revision: u128,
+        next: &Ledger,
+        attached: &[Vec<u8>],
+        detached: &[Vec<u8>],
+    ) -> Result<(Value, Vec<Vec<u8>>)> {
         let entries = |blocks: &[Vec<u8>]| -> Result<Vec<Value>> {
             let mut result = Vec::new();
             for b in blocks {
@@ -128,8 +138,8 @@ impl Store {
             }
         }
         Ok((
-            json!({"previous_tip":hex::encode(before.tip().id()),"selected_tip":hex::encode(next.tip().id()),"previous_revision":revision.to_string(),"revision":(revision+1).to_string(),"state_root":hex::encode(next.tip().root()),"detached":entries(&detached)?,"attached":entries(&attached)?,"changed_outputs":changed,"confidence":"CONDITIONAL"}),
-            detached,
+            json!({"previous_tip":hex::encode(before.tip().id()),"selected_tip":hex::encode(next.tip().id()),"previous_revision":revision.to_string(),"revision":(revision+1).to_string(),"state_root":hex::encode(next.tip().root()),"detached":entries(detached)?,"attached":entries(attached)?,"changed_outputs":changed,"confidence":"CONDITIONAL"}),
+            detached.to_vec(),
         ))
     }
     pub fn changes_since(&self, revision: u128) -> Result<Value> {
@@ -372,6 +382,11 @@ impl Store {
             )
             .optional()
             .map_err(err)?;
-        row.map(|(tip,revision,raw)|{let r=u128::from_be_bytes(revision.try_into().map_err(|_|"INVALID_ENCODING pending revision")?);Ok(json!({"state":"INTENT","prior_tip":hex::encode(&tip),"prior_revision":r.to_string(),"block_hex":hex::encode(raw),"prior_still_selected":tip==self.ledger().tip().id() && r==self.revision(),"first_signing":false}))}).transpose()
+        row.map(|(tip, revision, raw)| {
+            let r = u128::from_be_bytes(revision.try_into().map_err(|_|"INVALID_ENCODING pending revision")?);
+            let members: Option<Vec<u8>>=self.db.query_row("SELECT members FROM history_batches WHERE operation=?1",[id.as_slice()],|r|r.get(0)).optional().map_err(err)?;
+            let history_members=members.as_ref().map(|b|b[2..].as_chunks::<32>().0.iter().map(hex::encode).collect::<Vec<_>>());
+            Ok(json!({"state":"INTENT","prior_tip":hex::encode(&tip),"prior_revision":r.to_string(),"block_hex":hex::encode(raw),"history_members":history_members,"recovery_method":if members.is_some(){"accept_history"}else{"accept_block"},"prior_still_selected":tip==self.ledger().tip().id() && r==self.revision(),"first_signing":false}))
+        }).transpose()
     }
 }
