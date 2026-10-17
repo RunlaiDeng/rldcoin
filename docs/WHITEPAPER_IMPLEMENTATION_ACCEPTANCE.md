@@ -28,7 +28,7 @@ required checks, not completion certificates for the campaigns above.
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
-| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
+| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
@@ -44,6 +44,13 @@ The distribution size guard still refuses a 64-MiB-plus-one-byte input before
 creating any archive or checksum. Limited test debug information cannot remove
 runtime assertions/overflow checks, alter that guard or substitute a fake executable
 for the extracted ordinary-node check.
+
+Return-receipt wrappers retain normal complete packet authentication and the
+retained origin/sequence conflict guard before any receipt state update. The
+native counterexample requires recorded/refused equivocation, unchanged existing
+custody and original bytes, then acceptance of the authentic receipt under a valid
+new wrapper, including out-of-order delivery, exact retry and cold restart. A
+kind-9 control copy grants no new custody promise, signing or ledger rights.
 
 Bounded history group installation retains complete native execution and atomic
 prior/successor recovery. The separate `bin/rld-survivor-history.rs` measurement

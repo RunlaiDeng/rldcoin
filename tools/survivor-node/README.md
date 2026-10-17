@@ -155,8 +155,13 @@ committed by the main loop before acknowledgment; socket workers hold no ledger
 lock. Persistent neighbor/class/object rotation and temporary unavailable-neighbor
 backoff allow alternate admitted neighbors. Receipt observations survive restart;
 hop acknowledgment never discharges a destination obligation. Returned destination
-receipts may traverse a relay that lacks the original packet. The default custody
-budget is 4096 packets/256 MiB including metadata. At most 256 recently completed,
+receipts may traverse a relay that lacks the original packet. The native receive
+path checks exact retained bytes and retained origin/sequence conflicts
+before every packet-kind handler, including RETURN_RECEIPT. A conflicting wrapper
+is recorded/refused before applying its nested receipt; the same authentic receipt
+remains usable under a valid new wrapper. Exact retry and lower, previously unseen
+sequences remain eligible, without receipt-of-receipt promises or ledger authority.
+The default custody budget is 4096 packets/256 MiB including metadata. At most 256 recently completed,
 processed packets remain as transport history; older copies can be collected only
 after rechecking their exact destination receipt. Kind-9 control copies carry no
 new custody promise and share this finite cache. Collection never removes ledger

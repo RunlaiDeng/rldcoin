@@ -333,40 +333,9 @@ impl Carriage {
             "RESOURCE_WAIT owner withdrew this packet obligation",
         )?;
         self.compact_completed()?;
-        if p.kind == 9 {
-            let r = Frame::decode(&p.payload, self.chain)?;
-            if let Some(original) =
-                self.packet(r.packet_id.ok_or("INVALID_ENCODING returned packet")?)?
-            {
-                ensure(
-                    p.destination == peer_id(original.origin),
-                    "INVALID_CRYPTO return destination",
-                )?;
-                self.retain_destination_receipt(&original, &r)?;
-            }
-            // A different return relay need not possess the original packet.
-            // Keep a bounded control copy, without a receipt-of-receipt promise.
-            if p.destination != peer_id(self.identity)
-                && self.packet(p.id)?.is_none()
-                && self.capacity(p.raw.len() + 160, 1).is_ok()
-            {
-                self.db
-                    .execute(
-                        "INSERT OR IGNORE INTO packets VALUES(?1,?2,?3,?4,?5,9,0,0)",
-                        params![
-                            p.id.as_slice(),
-                            p.origin.as_slice(),
-                            p.sequence.to_be_bytes().as_slice(),
-                            p.raw,
-                            sender.as_slice()
-                        ],
-                    )
-                    .map_err(err)?;
-            }
-            return Ok(None);
-        }
-        if let Some(old) = self.packet(p.id)? {
+        let retained = if let Some(old) = self.packet(p.id)? {
             ensure(old.raw == p.raw, "INVALID_ENCODING custody collision")?;
+            true
         } else {
             let same: Option<Vec<u8>> = self
                 .db
@@ -392,6 +361,41 @@ impl Carriage {
                     .map_err(err)?;
                 return Err("INVALID_CRYPTO origin sequence equivocation".into());
             }
+            false
+        };
+        if p.kind == 9 {
+            let r = Frame::decode(&p.payload, self.chain)?;
+            if let Some(original) =
+                self.packet(r.packet_id.ok_or("INVALID_ENCODING returned packet")?)?
+            {
+                ensure(
+                    p.destination == peer_id(original.origin),
+                    "INVALID_CRYPTO return destination",
+                )?;
+                self.retain_destination_receipt(&original, &r)?;
+            }
+            // A different return relay need not possess the original packet.
+            // Keep a bounded control copy, without a receipt-of-receipt promise.
+            if p.destination != peer_id(self.identity)
+                && !retained
+                && self.capacity(p.raw.len() + 160, 1).is_ok()
+            {
+                self.db
+                    .execute(
+                        "INSERT OR IGNORE INTO packets VALUES(?1,?2,?3,?4,?5,9,0,0)",
+                        params![
+                            p.id.as_slice(),
+                            p.origin.as_slice(),
+                            p.sequence.to_be_bytes().as_slice(),
+                            p.raw,
+                            sender.as_slice()
+                        ],
+                    )
+                    .map_err(err)?;
+            }
+            return Ok(None);
+        }
+        if !retained {
             let receipt_space = if p.destination == peer_id(self.identity) {
                 Frame::receipt(self.chain, key, &f, 1)?.raw.len() + 64
             } else {
