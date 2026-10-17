@@ -182,7 +182,7 @@ fn command(
             if let Some(n) = network.as_mut() {
                 n.queue_transaction(&bytes(v, "transaction_hex")?)?;
             }
-            Ok(json!({"transaction_id":hex::encode(id),"ledger":"UNSEEN"}))
+            Ok(json!({"transaction_id":hex::encode(id),"submission":"RETAINED","ledger":null}))
         }
         "review_transfer" => {
             let digest = s.review_transfer(
@@ -715,5 +715,53 @@ mod status_tests {
         .unwrap();
         assert!(miner.is_none());
         assert_eq!(s.ledger().tip(), &tip);
+    }
+    #[test]
+    fn submission_acknowledges_retention_without_inventing_a_ledger_observation() {
+        let v: Value = serde_json::from_str(include_str!(
+            "../../../docs/protocol/survivor-v1/vectors.json"
+        ))
+        .unwrap();
+        let genesis = hex::decode(v["genesis"]["manifest_hex"].as_str().unwrap()).unwrap();
+        let root = std::env::temp_dir().join(format!(
+            "rld-survivor-submission-status-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let mut s = Store::open(
+            &root,
+            &genesis,
+            rld_survivor_node::kernel::genesis_id(&genesis),
+            Limits::default(),
+        )
+        .unwrap();
+        let blocks: Vec<_> = v["main_branch"].as_array().unwrap()[..101]
+            .iter()
+            .map(|b| hex::decode(b["block_hex"].as_str().unwrap()).unwrap())
+            .collect();
+        for (i, group) in blocks.chunks(32).enumerate() {
+            s.accept_history([i as u8 + 1; 32], group, 2_000_000_000)
+                .unwrap();
+        }
+        let tip = s.ledger().tip().clone();
+        let revision = s.revision();
+        let mut miner = None;
+        let mut network = None;
+        let id = hex::encode([66; 32]);
+        let submitted = command(&mut s,&json!({"method":"submit_transaction","operation_id":id,"transaction_hex":v["payment"]["transaction_hex"]}),&mut miner,&mut network,&None,Some(2_000_000_000)).unwrap();
+        assert_eq!(submitted["submission"], "RETAINED");
+        assert!(submitted["ledger"].is_null());
+        let observed = command(
+            &mut s,
+            &json!({"method":"operation_status","operation_id":id}),
+            &mut miner,
+            &mut network,
+            &None,
+            Some(2_000_000_000),
+        )
+        .unwrap();
+        assert_eq!(observed["ledger"], "INCLUDED");
+        assert_eq!(s.ledger().tip(), &tip);
+        assert_eq!(s.revision(), revision);
     }
 }

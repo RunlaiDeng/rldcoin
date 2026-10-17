@@ -26,7 +26,7 @@ required checks, not completion certificates for the campaigns above.
 | Scope | Native source | Discriminating executable checks |
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
-| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs` |
+| Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
@@ -79,6 +79,19 @@ ordering. Status and templates use that same ready set, and expose local prefere
 separately from selected-history conflict. A valid block containing the lower local
 preference must still execute normally. Retained pool identity corruption refuses
 without changing the selected state; read-only status cannot reoffer or sign.
+
+The bounded process-local observation witness must agree with complete-history
+status after extension, branch replacement, stale anchors, eviction and cold
+reconstruction. Failed groups cannot publish candidate observations. Queries must
+refuse altered or missing known inclusion material even before the current tip.
+Native execution and complete cold change verification precede every seeded or
+updated witness; no serialized index initializes authority. The 256-witness/
+8192-input-reference and 64-block/1-MiB delta limits discard optional observations,
+never history, a valid deep reorg or signing checks. Current wallet/pool/output
+projection stays live. Old uncached queries and whole-node replay costs remain
+distinct resource obligations. A submission acknowledgment reports retention with
+an unavailable ledger observation, not an invented UNSEEN state for an already
+included transaction.
 
 The kernel's bounded transient C09 frontier must agree byte-for-byte with the
 retained recursive reference at binary boundaries and after ordered map edits.

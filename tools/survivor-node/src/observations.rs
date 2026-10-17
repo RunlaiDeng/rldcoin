@@ -1,12 +1,13 @@
 //! Revision-bound observations derived from exact native-replayed histories.
 //! This module cannot create ledger authority or prevent a valid reorganization.
 use crate::{
-    kernel::{block_id, decode_tx, Hash, Ledger, Result},
+    kernel::{block_id, decode_tx, Hash, Ledger, Result, Tx},
+    observation_cache::{Anchor, Block, Delta, Witness, DELTA_BYTES},
     store::Store,
 };
 use rusqlite::{params, OptionalExtension};
 use serde_json::{json, Value};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 fn err(e: impl std::fmt::Display) -> String {
     format!("RESOURCE_WAIT observations {e}")
 }
@@ -40,6 +41,79 @@ pub(crate) fn transactions(raw: &[u8]) -> Result<Vec<Vec<u8>>> {
     Ok(result)
 }
 impl Store {
+    /// Only generated, native-executed transition parts may reach this helper.
+    /// Parse all fallible data before committing value; oversized changes simply
+    /// invalidate the optional process-local observation set after that commit.
+    pub(crate) fn observation_delta(
+        &self,
+        before: Anchor,
+        after: Anchor,
+        event: &Value,
+        history: &[Vec<u8>],
+        incoming: &[u8],
+    ) -> Result<Option<Delta>> {
+        let attached = event["attached"]
+            .as_array()
+            .ok_or("INVALID observation attached")?;
+        let detached = event["detached"]
+            .as_array()
+            .ok_or("INVALID observation detached")?;
+        if attached.len() + detached.len() > 64 {
+            return Ok(None);
+        }
+        let mut bytes = 0usize;
+        let mut read = |entries: &[Value]| -> Result<Option<Vec<Block>>> {
+            let mut blocks = Vec::new();
+            for entry in entries {
+                let id: Hash = hex::decode(
+                    entry["block_id"]
+                        .as_str()
+                        .ok_or("INVALID observation block")?,
+                )
+                .map_err(err)?
+                .try_into()
+                .map_err(|_| "INVALID observation ID")?;
+                let raw = if block_id(incoming)? == id {
+                    incoming.to_vec()
+                } else if let Some(raw) = history.iter().find(|b| block_id(b).ok() == Some(id)) {
+                    raw.clone()
+                } else {
+                    self.get_block(id)?
+                };
+                bytes = bytes
+                    .checked_add(raw.len())
+                    .ok_or("RESOURCE_WAIT observation size")?;
+                if bytes > DELTA_BYTES {
+                    return Ok(None);
+                }
+                let transactions = transactions(&raw)?
+                    .into_iter()
+                    .map(|raw| {
+                        let tx = decode_tx(&raw, self.ledger().chain_id())?;
+                        Ok((raw, tx))
+                    })
+                    .collect::<Result<Vec<_>>>()?;
+                blocks.push(Block {
+                    id,
+                    height: u128::from_be_bytes(raw[68..84].try_into().unwrap()),
+                    transactions,
+                });
+            }
+            Ok(Some(blocks))
+        };
+        let Some(detached) = read(detached)? else {
+            return Ok(None);
+        };
+        let Some(attached) = read(attached)? else {
+            return Ok(None);
+        };
+        Ok(Some(Delta {
+            before,
+            after,
+            detached,
+            attached,
+        }))
+    }
     pub(crate) fn observations_open(&self) -> Result<()> {
         self.db.execute_batch("CREATE TABLE IF NOT EXISTS changes (revision BLOB PRIMARY KEY,body TEXT NOT NULL); CREATE TABLE IF NOT EXISTS reoffer (block BLOB NOT NULL,ordinal INTEGER NOT NULL,height BLOB NOT NULL,PRIMARY KEY(block,ordinal));").map_err(err)?;
         // Notification history is checked against native replay, never authority.
@@ -194,13 +268,31 @@ impl Store {
             }
             return Err("INVALID_ENCODING transaction index".into());
         }
+        let location = self
+            .observation_cache
+            .borrow_mut()
+            .location((self.ledger().tip().id(), self.revision()), id);
+        if let Some((block, unsigned)) = location {
+            for raw in transactions(&self.get_retained_block(block)?)? {
+                let tx = decode_tx(&raw, self.ledger().chain_id())?;
+                if tx.id == id && raw[..raw.len() - 64] == unsigned {
+                    return Ok(raw);
+                }
+            }
+            return Err(self.storage_fault("retained transaction observation binding"));
+        }
         let mut stmt = self
             .db
-            .prepare("SELECT raw FROM blocks ORDER BY id")
+            .prepare("SELECT id FROM blocks ORDER BY id")
             .map_err(err)?;
         let mut rows = stmt.query([]).map_err(err)?;
         while let Some(row) = rows.next().map_err(err)? {
-            for x in transactions(&row.get::<_, Vec<u8>>(0).map_err(err)?)? {
+            let block: Hash = row
+                .get::<_, Vec<u8>>(0)
+                .map_err(err)?
+                .try_into()
+                .map_err(|_| "INVALID_ENCODING block index")?;
+            for x in transactions(&self.get_block(block)?)? {
                 if decode_tx(&x, self.ledger().chain_id())?.id == id {
                     return Ok(x);
                 }
@@ -208,11 +300,35 @@ impl Store {
         }
         Err("MISSING_HISTORY transaction".into())
     }
-    pub fn transfer_observation(&self, raw: &[u8]) -> Result<Value> {
-        let t = decode_tx(raw, self.ledger().chain_id())?;
+    fn transfer_witness(&self, raw: &[u8], t: &Tx) -> Result<Witness> {
+        if !self.storage_ready() {
+            return Err("RESOURCE_WAIT restart required".into());
+        }
+        let anchor = (self.ledger().tip().id(), self.revision());
+        let retained =
+            self.observation_cache
+                .borrow_mut()
+                .get(anchor, t.id, &raw[..raw.len() - 64]);
+        if let Some(w) = retained {
+            // Re-read the exact retained proof objects, including the selected
+            // head. A process-local witness cannot hide damage to those bytes.
+            let proof: BTreeSet<_> = w
+                .spends
+                .values()
+                .copied()
+                .chain(w.location)
+                .chain([anchor.0])
+                .collect();
+            for id in proof {
+                if id != self.ledger().chain_id() {
+                    self.get_retained_block(id)?;
+                }
+            }
+            return Ok(w);
+        }
         let selected = self.selected_ids()?;
         let mut inclusion = None;
-        let mut spent = BTreeSet::new();
+        let mut spent = BTreeMap::new();
         for id in selected.iter().skip(1) {
             let b = self.get_block(*id)?;
             for x in transactions(&b)? {
@@ -220,10 +336,15 @@ impl Store {
                 if tx.id == t.id {
                     inclusion = Some((*id, u128::from_be_bytes(b[68..84].try_into().unwrap())));
                 }
-                spent.extend(tx.inputs);
+                for input in tx.inputs {
+                    if t.inputs.contains(&input) {
+                        spent.insert(input, *id);
+                    }
+                }
             }
         }
         let mut detached = false;
+        let mut location = inclusion.map(|(id, _)| id);
         if inclusion.is_none() {
             let mut seen = BTreeSet::new();
             let mut stmt = self
@@ -242,13 +363,32 @@ impl Store {
                     for x in transactions(&b)? {
                         if decode_tx(&x, self.ledger().chain_id())?.id == t.id {
                             detached = true;
+                            location = Some(id);
                         }
                     }
                     id = b[36..68].try_into().unwrap();
                 }
             }
         }
-        let selected_conflict = t.inputs.iter().any(|i| spent.contains(i));
+        let witness = Witness {
+            unsigned: raw[..raw.len() - 64].to_vec(),
+            inputs: t.inputs.clone(),
+            inclusion,
+            spends: spent,
+            ever_included: inclusion.is_some() || detached,
+            location,
+        };
+        self.observation_cache
+            .borrow_mut()
+            .insert(anchor, t.id, witness.clone());
+        Ok(witness)
+    }
+    pub fn transfer_observation(&self, raw: &[u8]) -> Result<Value> {
+        let t = decode_tx(raw, self.ledger().chain_id())?;
+        let witness = self.transfer_witness(raw, &t)?;
+        let inclusion = witness.inclusion;
+        let detached = witness.ever_included && inclusion.is_none();
+        let selected_conflict = !witness.spends.is_empty();
         let local_conflict = inclusion.is_none()
             && !selected_conflict
             && self.ledger().validate_transfer(raw).is_ok()

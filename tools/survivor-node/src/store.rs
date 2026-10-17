@@ -4,7 +4,7 @@ use crate::kernel::{block_id, hash, Hash, Ledger, Result, Tip};
 use fs2::FileExt;
 use rusqlite::{params, Connection, OptionalExtension};
 use std::{
-    cell::Cell,
+    cell::{Cell, RefCell},
     fs::{self, File, OpenOptions},
     path::{Path, PathBuf},
     time::Duration,
@@ -33,6 +33,7 @@ pub struct Store {
     limits: Limits,
     poisoned: Cell<bool>,
     last_clock: Option<u64>,
+    pub(crate) observation_cache: RefCell<crate::observation_cache::Cache>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Outcome {
@@ -210,6 +211,7 @@ impl Store {
             limits,
             poisoned: Cell::new(false),
             last_clock: None,
+            observation_cache: RefCell::new(crate::observation_cache::Cache::new((pin, 0))),
         };
         s.observations_open()?;
         s.check_history_batches()?;
@@ -318,6 +320,11 @@ impl Store {
                 };
                 let expected_body = serde_json::to_string(&expected).map_err(err)?;
                 ensure(stored == expected_body, "INVALID_ENCODING retained change")?;
+                let observation_delta =
+                    s.observation_delta((prior, pr), (nt, r), &expected, &[], &raw)?;
+                s.observation_cache
+                    .borrow_mut()
+                    .committed((nt, r), observation_delta);
                 rev = r;
                 previous = nt;
                 heads.insert(rev, nt);
@@ -386,6 +393,15 @@ impl Store {
             return Err("INVALID_CRYPTO stored block commitment".into());
         }
         Ok(raw)
+    }
+    /// The caller already holds a native-derived reference to retained evidence.
+    /// Missing arbitrary peer objects remain ordinary waits in get_block.
+    pub(crate) fn get_retained_block(&self, id: Hash) -> Result<Vec<u8>> {
+        let result = self.get_block(id);
+        if result.is_err() {
+            self.poisoned.set(true);
+        }
+        result
     }
     pub(crate) fn replay(&self, tip: Hash) -> Result<Ledger> {
         let pin = self.ledger.chain_id();
@@ -576,6 +592,17 @@ impl Store {
         } else {
             None
         };
+        let observation_delta = if let Some((event, _)) = &change {
+            self.observation_delta(
+                (self.ledger.tip().id(), self.revision),
+                (next.id(), revision),
+                event,
+                history,
+                raw,
+            )?
+        } else {
+            None
+        };
         self.poisoned.set(true);
         observe(CommitBoundary::Validated);
         self.poisoned.set(false);
@@ -708,6 +735,9 @@ impl Store {
         if selected {
             self.ledger = candidate;
             self.revision = revision;
+            self.observation_cache
+                .borrow_mut()
+                .committed((next.id(), revision), observation_delta);
         }
         self.poisoned.set(true);
         observe(CommitBoundary::CommittedDurable);

@@ -18,5 +18,6 @@ pub mod tls;
 pub mod network;
 
 pub mod backup;
+mod observation_cache;
 pub mod observations;
 pub mod offline;

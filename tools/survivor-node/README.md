@@ -110,6 +110,10 @@ reserved again unless explicitly waived. O13 key encryption uses fixed scrypt an
 AES-256-GCM with independent OS-generated salt/nonce. Direct-key loss has no reset.
 The bounded pool keeps original signed bytes and selects parent-valid disjoint
 inputs by fee/byte then ID. Submission never changes monetary state.
+The submission acknowledgment reports `submission: RETAINED` and `ledger: null`;
+retaining signed bytes is not itself a selected-history observation. Use
+`operation_status` for actual inclusion/readiness, even when resubmitting a payment
+that is already included.
 Template construction and transaction status use the same local ready set before
 block count/byte limits. Retained intents that lose an input to that policy report
 CONFLICTED with `conflict_source: LOCAL_POOL`; selected-history input spending uses
@@ -189,6 +193,22 @@ native execution. `changes_since` returns at most 128 revisions/1 MiB; larger ga
 explicitly require a fresh snapshot. Wallet operation status distinguishes inclusion,
 detachment, conflict, readiness and historical transport receipts. Detached original
 signatures have persistent reoffer references; pool pressure cannot disable mining.
+Recent transaction observations use at most 256 process-local witnesses and 8192
+input-watch references. Only fully executed, durably selected native changes seed
+or update them. Cold startup still executes complete retained history and compares
+the complete original change events before rebuilding these observations. Nothing
+is serialized or accepted as a ledger initializer, balance, signature or proof from
+a peer. Delta preparation is bounded by 64 changed blocks and 1 MiB of complete
+block bytes; a larger valid transition discards the optional observations and still
+uses normal consensus/reorganization execution. It does not impose a history cap.
+Eviction, a missing/stale witness or an older historical query uses the complete
+retained-history path. That path can still be expensive and is separately measured.
+Each retained observation binds the exact unsigned transaction, selected tip and
+revision. Queries recheck the retained head/inclusion/input-spend proof objects;
+missing or corrupt known evidence suspends mutation. Output state, reservations,
+pool preference, clock and transport observations are read from current native
+state, never cached as a combined payment status. Reorgs remove losing inclusion
+and input-spend effects while preserving the historical meaning of detachment.
 The local storage format is now `RLD-SURVIVOR-STORE-4`; earlier candidate stores
 refuse, with no automatic migration or test-value continuity.
 
