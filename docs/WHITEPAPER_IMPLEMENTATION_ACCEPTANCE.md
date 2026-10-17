@@ -27,7 +27,7 @@ required checks, not completion certificates for the campaigns above.
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `cold_groups.rs` |
-| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `pool.rs`, `backup.rs` |
+| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
 
@@ -57,6 +57,16 @@ execution and complete original event comparison. Tests alter attached order,
 detached entries, reward/output observations and non-tail block bodies; verified
 group membership is never permission to initialize state from metadata or omit a
 signature check.
+
+Consumer projection and custody checks distinguish current reservation, known
+spent-output maturity and external selected inclusion from local signature release.
+Hot journal tests alter a reviewed recipient, substitute recovery bytes and prevent
+the required signature-row update. No such case may release a changed/new X.
+Detected retained-body corruption suspends mutation, while missing arbitrary peer
+objects remain dependency waits. Unknown clock tests preserve read-only observation
+and the ability to disable mining; they cannot enable mining or authorize spending.
+These finite checks do not qualify all-state rollback, independent custody or
+physical power-loss durability.
 
 The kernel's bounded transient C09 frontier must agree byte-for-byte with the
 retained recursive reference at binary boundaries and after ordered map edits.

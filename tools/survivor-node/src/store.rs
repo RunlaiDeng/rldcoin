@@ -1,9 +1,10 @@
 //! Exclusive-writer SQLite persistence. Full genesis replay is the only source
 //! of ledger authority. SQL records and block IDs are storage indexes only.
-use crate::kernel::{block_id, Hash, Ledger, Result, Tip};
+use crate::kernel::{block_id, hash, Hash, Ledger, Result, Tip};
 use fs2::FileExt;
 use rusqlite::{params, Connection, OptionalExtension};
 use std::{
+    cell::Cell,
     fs::{self, File, OpenOptions},
     path::{Path, PathBuf},
     time::Duration,
@@ -30,7 +31,7 @@ pub struct Store {
     ledger: Ledger,
     revision: u128,
     limits: Limits,
-    poisoned: bool,
+    poisoned: Cell<bool>,
     last_clock: Option<u64>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -207,7 +208,7 @@ impl Store {
             ledger: initial,
             revision,
             limits,
-            poisoned: false,
+            poisoned: Cell::new(false),
             last_clock: None,
         };
         s.observations_open()?;
@@ -340,8 +341,18 @@ impl Store {
     pub fn root(&self) -> &Path {
         &self.root
     }
+    pub fn storage_ready(&self) -> bool {
+        !self.poisoned.get()
+    }
+    pub(crate) fn storage_fault(&self, reason: &str) -> String {
+        self.poisoned.set(true);
+        format!("INVALID_CRYPTO {reason}")
+    }
+    pub(crate) fn storage_wait(&self, reason: impl std::fmt::Display) -> String {
+        self.poisoned.set(true);
+        format!("RESOURCE_WAIT {reason}")
+    }
     pub fn clock(&mut self, now: u64) -> Result<()> {
-        ensure(!self.poisoned, "RESOURCE_WAIT restart required")?;
         if self.last_clock.is_some_and(|last| now < last) {
             return Err("CLOCK_WAIT backward clock".into());
         }
@@ -349,18 +360,31 @@ impl Store {
         ensure(
             self.ledger.tip().eligible(now),
             "CLOCK_WAIT future selected tip",
-        )
+        )?;
+        ensure(self.storage_ready(), "RESOURCE_WAIT restart required")
     }
     pub fn get_block(&self, id: Hash) -> Result<Vec<u8>> {
-        let raw: Vec<u8> = self
+        let raw: Option<Vec<u8>> = self
             .db
             .query_row("SELECT raw FROM blocks WHERE id=?1", [id.as_slice()], |r| {
                 r.get(0)
             })
             .optional()
-            .map_err(err)?
-            .ok_or("MISSING_HISTORY")?;
-        ensure(block_id(&raw)? == id, "INVALID object index")?;
+            .map_err(err)?;
+        let Some(raw) = raw else {
+            if id == self.ledger.tip().id() && self.ledger.tip().height() > 0 {
+                self.poisoned.set(true);
+            }
+            return Err("MISSING_HISTORY".into());
+        };
+        // Header identity alone does not authenticate the retained body. This
+        // check supplies byte integrity only; full execution remains mandatory.
+        let valid = block_id(&raw).ok() == Some(id)
+            && hash("TRANSACTIONS", &raw[268..]).as_slice() == &raw[188..220];
+        if !valid {
+            self.poisoned.set(true);
+            return Err("INVALID_CRYPTO stored block commitment".into());
+        }
         Ok(raw)
     }
     pub(crate) fn replay(&self, tip: Hash) -> Result<Ledger> {
@@ -552,9 +576,9 @@ impl Store {
         } else {
             None
         };
-        self.poisoned = true;
+        self.poisoned.set(true);
         observe(CommitBoundary::Validated);
-        self.poisoned = false;
+        self.poisoned.set(false);
         if existing.is_some() {
             let prior: (Vec<u8>, Vec<u8>) = self
                 .db
@@ -621,13 +645,13 @@ impl Store {
                 Ok(())
             })();
             if let Err(e) = prep {
-                self.poisoned = true;
+                self.poisoned.set(true);
                 return Err(e);
             }
         }
-        self.poisoned = true;
+        self.poisoned.set(true);
         observe(CommitBoundary::IntentDurable);
-        self.poisoned = false;
+        self.poisoned.set(false);
         let commit = (|| -> Result<()> {
             let tx = self.db.transaction().map_err(err)?;
             tx.execute(
@@ -678,16 +702,16 @@ impl Store {
             Ok(())
         })();
         if let Err(e) = commit {
-            self.poisoned = true;
+            self.poisoned.set(true);
             return Err(e);
         }
         if selected {
             self.ledger = candidate;
             self.revision = revision;
         }
-        self.poisoned = true;
+        self.poisoned.set(true);
         observe(CommitBoundary::CommittedDurable);
-        self.poisoned = false;
+        self.poisoned.set(false);
         Ok(Outcome {
             tip: next.id(),
             revision,
@@ -732,7 +756,13 @@ impl Store {
     }
     /// Selected IDs ordered genesis to tip, reconstructed from retained objects.
     pub fn selected_ids(&self) -> Result<Vec<Hash>> {
-        self.ancestry_ids(self.ledger.tip().id())
+        let result = self.ancestry_ids(self.ledger.tip().id());
+        if result.is_err() {
+            // A missing requested peer object is ordinary dependency wait. A
+            // missing/unreadable already selected prefix is a storage fault.
+            self.poisoned.set(true);
+        }
+        result
     }
     pub(crate) fn ancestry_ids(&self, tip: Hash) -> Result<Vec<Hash>> {
         let mut ids = Vec::new();

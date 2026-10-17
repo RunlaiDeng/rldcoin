@@ -70,6 +70,13 @@ a valid public reward key. Optional mining uses actual local time and the normal
 validator with no peer-count prerequisite. Unknown revision cursors require resync.
 The stdin control stream must remain open while the process runs.
 
+Responses distinguish clock observation from storage readiness. `storage_state`
+is READY or RESTART_REQUIRED; an unavailable/backward clock keeps `observed_at`
+null without inventing a time. Read-only status/recovery and disabling mining
+remain available without a trusted clock. Enabling mining and new monetary
+authorization still require the normal clock and storage checks. `mining_enabled`
+records the operator choice separately from current clock/storage eligibility.
+
 The native executable also provides `new-test-genesis FRESH_FILE`. It creates a
 randomly distinguished zero-allocation **no-value** genesis and prints its chain
 pin. Share that exact public file/pin explicitly with participants; creating a
@@ -103,6 +110,23 @@ reserved again unless explicitly waived. O13 key encryption uses fixed scrypt an
 AES-256-GCM with independent OS-generated salt/nonce. Direct-key loss has no reset.
 The bounded pool keeps original signed bytes and selects parent-valid disjoint
 inputs by fee/byte then ID. Submission never changes monetary state.
+
+Wallet signing, recovery, status and reservation paths recompute the exact review
+binding and verify any retained signature against its original unsigned bytes.
+Signing also compares the caller's review digest and revalidates current inputs.
+A successful wallet write must affect its exact row and read back the exact retained
+intent/signature before any new signature or review receipt is returned. Corrupt
+bindings, altered recovery bytes or unconfirmed writes suspend mutation until
+full cold verification. Missing arbitrary peer objects do not freeze a healthy
+node; a detected corrupt retained body or missing known selected history does.
+
+Transfer output observations expose current local reservation and retain a known
+selected maturity height after spending. Local intent and observed public inclusion
+remain separate: a reviewed intent may already appear in retained signed public
+bytes, without this wallet having released a signature. `signature_source` states
+LOCAL_WALLET or RETAINED_PUBLIC_BYTES, or null when no signed bytes are observed.
+`reviewed_tip` and `reviewed_revision` retain the original review context. A query
+never converts public observation into local first signing or edits the journal.
 
 Ordinary startup creates a separate contact identity, retained TLS material and
 bounded custody database. Without configuration it listens on an ephemeral loopback

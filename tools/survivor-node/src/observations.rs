@@ -59,7 +59,11 @@ impl Store {
             if raw[36..68] == before.tip().id() && block_id(raw)? == next.tip().id() {
                 (vec![raw.to_vec()], Vec::new())
             } else {
-                let old = self.ancestry_ids(before.tip().id())?;
+                let old = if before.tip().id() == self.ledger().tip().id() {
+                    self.selected_ids()?
+                } else {
+                    self.ancestry_ids(before.tip().id())?
+                };
                 let oldset: BTreeSet<_> = old.iter().copied().collect();
                 let mut attached = Vec::new();
                 let mut id = next.tip().id();
@@ -279,10 +283,13 @@ impl Store {
                 None => "UNSEEN",
             }
         };
+        let reserved = self.reservations()?;
         let outputs:Vec<_>=t.outputs.iter().enumerate().map(|(i,_)|{
             let mut key=t.id.to_vec();key.extend((i as u16).to_be_bytes());
             let coin=self.ledger().coins().get(&key);
-            json!({"outpoint":hex::encode(&key),"state":if coin.is_some(){"UNSPENT"}else if inclusion.is_some(){"SPENT"}else{"ABSENT"},"maturity_height":coin.map(|c|c.maturity.to_string()),"eligible_next_height":coin.map(|c|c.maturity<=self.ledger().tip().height()+1)})
+            let maturity=coin.map(|c|c.maturity).or_else(||inclusion.map(|(_,h)|h));
+            let eligible=coin.map(|c|c.maturity<=self.ledger().tip().height()+1).or_else(||inclusion.map(|_|false));
+            json!({"outpoint":hex::encode(&key),"state":if coin.is_some(){"UNSPENT"}else if inclusion.is_some(){"SPENT"}else{"ABSENT"},"maturity_height":maturity.map(|h|h.to_string()),"eligible_next_height":eligible,"reserved":coin.is_some()&&reserved.contains(&key)})
         }).collect();
         Ok(
             json!({"transaction_id":hex::encode(t.id),"ledger":state,"readiness":reason,"inclusion":inclusion.map(|(id,h)|json!({"block_id":hex::encode(id),"height":h.to_string(),"confirmations":(self.ledger().tip().height()-h+1).to_string()})),"outputs":outputs,"confidence":"CONDITIONAL"}),
@@ -325,21 +332,38 @@ impl Store {
 
 impl Store {
     pub fn payment_operation(&self, id: Hash) -> Result<Option<Value>> {
-        type Row = (Vec<u8>, Option<Vec<u8>>, bool, Vec<u8>);
-        let row: Option<Row> = self
-            .db
-            .query_row(
-                "SELECT unsigned,signed,waived,digest FROM wallet WHERE id=?1",
-                [id.as_slice()],
-                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
-            )
-            .optional()
-            .map_err(err)?;
-        if let Some((u, x, waived, digest)) = row {
-            let mut v = if let Some(x) = &x {
-                self.transfer_observation(x)?
+        if let Some(review) = self.review_record(id)? {
+            let u = review.unsigned;
+            let x = review.signed;
+            let waived = review.waived;
+            let digest = review.digest;
+            let (mut v, signature_source) = if let Some(x) = &x {
+                (self.transfer_observation(x)?, Some("LOCAL_WALLET"))
             } else {
-                json!({"transaction_id":hex::encode(crate::kernel::decode_unsigned(&u,self.ledger().chain_id())?.id),"ledger":"UNSEEN","inclusion":null})
+                let t = crate::kernel::decode_unsigned(&u, self.ledger().chain_id())?;
+                match self.get_transaction(t.id) {
+                    Ok(observed) => {
+                        if observed.len() != u.len() + 64 || observed[..u.len()] != u {
+                            return Err("INVALID_CRYPTO observed intent mismatch".into());
+                        }
+                        (
+                            self.transfer_observation(&observed)?,
+                            Some("RETAINED_PUBLIC_BYTES"),
+                        )
+                    }
+                    Err(e) if e.starts_with("MISSING_HISTORY") => {
+                        self.selected_ids()?;
+                        let outputs:Vec<_>=t.outputs.iter().enumerate().map(|(i,_)|{
+                            let mut id=t.id.to_vec();id.extend((i as u16).to_be_bytes());
+                            json!({"outpoint":hex::encode(id),"state":"ABSENT","maturity_height":null,"eligible_next_height":null,"reserved":false})
+                        }).collect();
+                        (
+                            json!({"transaction_id":hex::encode(t.id),"ledger":"UNSEEN","readiness":null,"inclusion":null,"outputs":outputs,"confidence":"CONDITIONAL"}),
+                            None,
+                        )
+                    }
+                    Err(e) => return Err(e),
+                }
             };
             v["local_intent"] = json!(if waived {
                 "WITHDRAWN"
@@ -349,7 +373,10 @@ impl Store {
                 "REVIEWED"
             });
             v["transaction_hex"] = json!(x.map(hex::encode));
+            v["signature_source"] = json!(signature_source);
             v["review_digest"] = json!(hex::encode(digest));
+            v["reviewed_tip"] = json!(hex::encode(review.reviewed_tip));
+            v["reviewed_revision"] = json!(review.reviewed_revision.to_string());
             return Ok(Some(v));
         }
         let x: Option<Vec<u8>> = self

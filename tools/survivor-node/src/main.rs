@@ -86,7 +86,10 @@ fn operation() -> Result<Hash> {
     Ok(id)
 }
 fn response(s: &Store, result: Value, clock: Option<u64>, diagnostic: Option<&str>) -> Value {
-    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"clock_state":if clock.is_some(){"OBSERVED"}else{"CLOCK_WAIT"},"confidence":"CONDITIONAL","diagnostic":diagnostic,"error_code":diagnostic.map(error_code),"result":result})
+    let diagnostic = diagnostic.or_else(|| {
+        (!s.storage_ready()).then_some("RESOURCE_WAIT storage verification/restart required")
+    });
+    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"clock_state":if clock.is_some(){"OBSERVED"}else{"CLOCK_WAIT"},"storage_state":if s.storage_ready(){"READY"}else{"RESTART_REQUIRED"},"confidence":"CONDITIONAL","diagnostic":diagnostic,"error_code":diagnostic.map(error_code),"result":result})
 }
 fn error_code(e: &str) -> &'static str {
     for category in [
@@ -130,11 +133,12 @@ fn command(
     miner: &mut Option<Hash>,
     network: &mut Option<rld_survivor_node::network::Network>,
     network_error: &Option<String>,
-    time: u64,
+    clock: Option<u64>,
 ) -> Result<Value> {
+    let time = || clock.ok_or_else(|| "CLOCK_WAIT".to_string());
     match field(v, "method")? {
         "node_status" => Ok(
-            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"freshness":s.freshness()?,"mining":miner.is_some(),"relay":network.as_ref().map(|n|n.status()),"transport_error":network_error,"mainnet":false}),
+            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"freshness":s.freshness()?,"mining_enabled":miner.is_some(),"mining":miner.is_some()&&clock.is_some_and(|t|s.clock(t).is_ok()),"relay":network.as_ref().map(|n|n.status()),"transport_error":network_error,"mainnet":false}),
         ),
         "get_object" => {
             let kind = field(v, "kind")?;
@@ -148,7 +152,7 @@ fn command(
             Ok(json!({"bytes":hex::encode(raw)}))
         }
         "accept_block" => {
-            let o = s.accept(hash(v, "operation_id")?, &bytes(v, "block_hex")?, time)?;
+            let o = s.accept(hash(v, "operation_id")?, &bytes(v, "block_hex")?, time()?)?;
             Ok(
                 json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
             )
@@ -164,7 +168,7 @@ fn command(
                 .iter()
                 .map(|x| bytes(&json!({"raw":x}), "raw"))
                 .collect::<Result<Vec<_>>>()?;
-            let o = s.accept_history(hash(v, "operation_id")?, &blocks, time)?;
+            let o = s.accept_history(hash(v, "operation_id")?, &blocks, time()?)?;
             Ok(
                 json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
             )
@@ -173,7 +177,7 @@ fn command(
             let id = s.submit_transaction(
                 hash(v, "operation_id")?,
                 &bytes(v, "transaction_hex")?,
-                time,
+                time()?,
             )?;
             if let Some(n) = network.as_mut() {
                 n.queue_transaction(&bytes(v, "transaction_hex")?)?;
@@ -181,8 +185,11 @@ fn command(
             Ok(json!({"transaction_id":hex::encode(id),"ledger":"UNSEEN"}))
         }
         "review_transfer" => {
-            let digest =
-                s.review_transfer(hash(v, "operation_id")?, &bytes(v, "unsigned_hex")?, time)?;
+            let digest = s.review_transfer(
+                hash(v, "operation_id")?,
+                &bytes(v, "unsigned_hex")?,
+                time()?,
+            )?;
             Ok(json!({"review_digest":hex::encode(digest),"local_intent":"REVIEWED"}))
         }
         "propose_transfer" => {
@@ -221,7 +228,7 @@ fn command(
             };
             u.extend(fee.to_be_bytes());
             u.extend(expiry.to_be_bytes());
-            let digest = s.review_transfer(hash(v, "operation_id")?, &u, time)?;
+            let digest = s.review_transfer(hash(v, "operation_id")?, &u, time()?)?;
             Ok(
                 json!({"review_digest":hex::encode(digest),"unsigned_hex":hex::encode(u),"local_intent":"REVIEWED","review":{"owner":hex::encode(owner),"inputs":ids.iter().map(hex::encode).collect::<Vec<_>>(),"outputs":outputs,"fee":fee.to_string(),"expiry":expiry.to_string()}}),
             )
@@ -234,7 +241,7 @@ fn command(
                 hash(v, "operation_id")?,
                 hash(v, "review_digest")?,
                 &key,
-                time,
+                time()?,
             )?;
             Ok(json!({"transaction_hex":hex::encode(x),"local_intent":"SIGNED"}))
         }
@@ -276,9 +283,10 @@ fn command(
         }
         "changes_since" => s.changes_since(integer(v, "revision")?),
         "set_mining" => {
-            s.clock(time)?;
             let enabled = v["enabled"].as_bool().ok_or("INVALID_ENCODING enabled")?;
             if enabled {
+                let time = time()?;
+                s.clock(time)?;
                 let k = hash(v, "miner")?;
                 let timestamp = time.max(
                     s.ledger()
@@ -494,18 +502,21 @@ fn run() -> Result<()> {
         match rx.recv_timeout(Duration::from_millis(100)) {
             Ok(request) => {
                 let clock = now().ok();
-                let observed_clock = clock.filter(|t| s.clock(*t).is_ok());
-                let r = match (request, clock) {
-                    (Ok(mut v), Some(t)) => {
-                        let r = command(&mut s, &v, &mut miner, &mut network, &network_error, t);
+                let observed_clock = clock.filter(|t| match s.clock(*t) {
+                    Ok(()) => true,
+                    Err(e) => !e.starts_with("CLOCK_WAIT"),
+                });
+                let r = match request {
+                    Ok(mut v) => {
+                        let r =
+                            command(&mut s, &v, &mut miner, &mut network, &network_error, clock);
                         if let Some(Value::String(p)) = v.get_mut("password") {
                             use zeroize::Zeroize;
                             p.zeroize()
                         }
                         r
                     }
-                    (Err(e), _) => Err(e),
-                    _ => Err("CLOCK_WAIT".into()),
+                    Err(e) => Err(e),
                 };
                 let out = match r {
                     Ok(v) => response(&s, v, observed_clock, None),
@@ -523,7 +534,14 @@ fn run() -> Result<()> {
             }
         }
         if let Some(k) = miner {
-            let t = now()?;
+            let t = match now() {
+                Ok(t) => t,
+                Err(e) => {
+                    println!("{}", response(&s, Value::Null, None, Some(&e)));
+                    job = None;
+                    continue;
+                }
+            };
             if let Err(e) = s.clock(t) {
                 println!("{}", response(&s, Value::Null, None, Some(&e)));
                 continue;
@@ -575,5 +593,127 @@ fn main() {
     if let Err(e) = run() {
         eprintln!("{e}");
         std::process::exit(1)
+    }
+}
+
+#[cfg(test)]
+mod status_tests {
+    use super::*;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    fn store() -> Store {
+        let mut g = b"RLDSGEN1".to_vec();
+        g.extend(1u16.to_be_bytes());
+        g.extend(1u16.to_be_bytes());
+        g.push(0);
+        g.extend([77; 32]);
+        g.extend(1_000_000u64.to_be_bytes());
+        g.push(0);
+        g.extend([255; 31]);
+        let root = std::env::temp_dir().join(format!(
+            "rld-survivor-clock-status-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        Store::open(
+            &root,
+            &g,
+            rld_survivor_node::kernel::genesis_id(&g),
+            Limits::default(),
+        )
+        .unwrap()
+    }
+    fn reward_key() -> Hash {
+        // Deliberately public NO-VALUE fixture owner, never production custody.
+        ed25519_dalek::SigningKey::from_bytes(&[11; 32])
+            .verifying_key()
+            .to_bytes()
+    }
+    #[test]
+    fn unknown_clock_allows_observation_and_disabling_but_not_enabling_mining() {
+        let mut s = store();
+        let mut miner = Some(reward_key());
+        let mut network = None;
+        let status = command(
+            &mut s,
+            &json!({"method":"node_status"}),
+            &mut miner,
+            &mut network,
+            &None,
+            None,
+        )
+        .unwrap();
+        assert_eq!(status["mining_enabled"], true);
+        assert_eq!(status["mining"], false);
+        let out = response(&s, status, None, None);
+        assert!(out["observed_at"].is_null());
+        assert_eq!(out["clock_state"], "CLOCK_WAIT");
+        assert_eq!(out["storage_state"], "READY");
+        command(
+            &mut s,
+            &json!({"method":"set_mining","enabled":false}),
+            &mut miner,
+            &mut network,
+            &None,
+            None,
+        )
+        .unwrap();
+        assert!(miner.is_none());
+        let request =
+            json!({"method":"set_mining","enabled":true,"miner":hex::encode(reward_key())});
+        assert_eq!(
+            command(&mut s, &request, &mut miner, &mut network, &None, None).unwrap_err(),
+            "CLOCK_WAIT"
+        );
+        assert!(miner.is_none());
+        assert_eq!(s.revision(), 0);
+    }
+    #[test]
+    fn detected_storage_fault_preserves_clock_and_reports_paused_mining() {
+        let mut s = store();
+        let time = 1_000_600;
+        let mut job = s
+            .ledger()
+            .mining_job(reward_key(), vec![], time, time)
+            .unwrap();
+        let mut raw = job.attempt(1_000_000).unwrap();
+        s.accept([1; 32], &raw, time).unwrap();
+        let tip = s.ledger().tip().clone();
+        let last = raw.len() - 1;
+        raw[last] ^= 1;
+        let db = rusqlite::Connection::open(s.root().join("ledger.sqlite3")).unwrap();
+        db.execute("UPDATE blocks SET raw=?1", [raw]).unwrap();
+        drop(db);
+        assert!(s.get_block(tip.id()).is_err());
+        assert!(!s.storage_ready());
+        let mut miner = Some(reward_key());
+        let mut network = None;
+        let status = command(
+            &mut s,
+            &json!({"method":"node_status"}),
+            &mut miner,
+            &mut network,
+            &None,
+            Some(time),
+        )
+        .unwrap();
+        assert_eq!(status["mining_enabled"], true);
+        assert_eq!(status["mining"], false);
+        let out = response(&s, status, Some(time), None);
+        assert_eq!(out["clock_state"], "OBSERVED");
+        assert_eq!(out["storage_state"], "RESTART_REQUIRED");
+        assert_eq!(out["error_code"], "RESOURCE_WAIT");
+        assert!(s.clock(time - 1).unwrap_err().starts_with("CLOCK_WAIT"));
+        command(
+            &mut s,
+            &json!({"method":"set_mining","enabled":false}),
+            &mut miner,
+            &mut network,
+            &None,
+            Some(time),
+        )
+        .unwrap();
+        assert!(miner.is_none());
+        assert_eq!(s.ledger().tip(), &tip);
     }
 }
