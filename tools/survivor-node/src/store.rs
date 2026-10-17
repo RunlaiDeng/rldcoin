@@ -1,0 +1,463 @@
+//! Exclusive-writer SQLite persistence. Full genesis replay is the only source
+//! of ledger authority. SQL records and block IDs are storage indexes only.
+use crate::kernel::{block_id, Hash, Ledger, Result, Tip};
+use fs2::FileExt;
+use rusqlite::{params, Connection, OptionalExtension};
+use std::{
+    fs::{self, File, OpenOptions},
+    path::{Path, PathBuf},
+    time::Duration,
+};
+
+#[derive(Clone, Copy)]
+pub struct Limits {
+    pub database_bytes: u64,
+    pub coins: usize,
+}
+impl Default for Limits {
+    fn default() -> Self {
+        Self {
+            database_bytes: 256 * 1024 * 1024,
+            coins: 1_000_000,
+        }
+    }
+}
+pub struct Store {
+    pub(crate) db: Connection,
+    _lease: File,
+    root: PathBuf,
+    genesis: Vec<u8>,
+    ledger: Ledger,
+    revision: u128,
+    limits: Limits,
+    poisoned: bool,
+    last_clock: Option<u64>,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Outcome {
+    pub tip: Hash,
+    pub revision: u128,
+    pub selected: bool,
+}
+fn err(e: impl std::fmt::Display) -> String {
+    format!("STORAGE_WAIT {e}")
+}
+fn hash32(x: Vec<u8>) -> Result<Hash> {
+    x.try_into().map_err(|_| "INVALID storage hash".into())
+}
+fn number(x: Vec<u8>) -> Result<u128> {
+    Ok(u128::from_be_bytes(
+        x.try_into().map_err(|_| "INVALID storage number")?,
+    ))
+}
+fn ensure(ok: bool, why: &str) -> Result<()> {
+    if ok {
+        Ok(())
+    } else {
+        Err(why.into())
+    }
+}
+fn open_private(path: &Path) -> Result<File> {
+    let mut o = OpenOptions::new();
+    o.create(true).truncate(false).read(true).write(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        o.mode(0o600);
+    }
+    o.open(path).map_err(err)
+}
+impl Store {
+    /// `genesis` and `pin` are supplied independently of the database. No peer or
+    /// existing database chooses a currency. The directory is private local state.
+    pub fn open(root: &Path, genesis: &[u8], pin: Hash, limits: Limits) -> Result<Self> {
+        let initial = Ledger::from_genesis(genesis, pin, limits.coins)?;
+        ensure(
+            !root.join("RESTORING").exists(),
+            "FRESHNESS_UNKNOWN interrupted restore",
+        )?;
+        if !root.exists() {
+            fs::create_dir(root).map_err(err)?;
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                fs::set_permissions(root, fs::Permissions::from_mode(0o700)).map_err(err)?;
+            }
+            File::open(root.parent().ok_or("INVALID store parent")?)
+                .map_err(err)?
+                .sync_all()
+                .map_err(err)?;
+        }
+        ensure(
+            fs::symlink_metadata(root).map_err(err)?.is_dir(),
+            "INVALID store directory",
+        )?;
+        let lease = open_private(&root.join("writer.lock"))?;
+        lease
+            .try_lock_exclusive()
+            .map_err(|_| "RESOURCE_WAIT writer already active")?;
+        let dbpath = root.join("ledger.sqlite3");
+        if dbpath.exists() {
+            ensure(
+                !fs::symlink_metadata(&dbpath)
+                    .map_err(err)?
+                    .file_type()
+                    .is_symlink(),
+                "INVALID database symlink",
+            )?;
+        }
+        drop(open_private(&dbpath)?);
+        let mut db = Connection::open(&dbpath).map_err(err)?;
+        db.busy_timeout(Duration::from_secs(1)).map_err(err)?;
+        db.execute_batch("PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=DELETE; PRAGMA synchronous=EXTRA; PRAGMA fullfsync=ON;").map_err(err)?;
+        let page: i64 = db
+            .query_row("PRAGMA page_size", [], |r| r.get(0))
+            .map_err(err)?;
+        let page = u64::try_from(page).map_err(|_| "INVALID page size")?;
+        ensure(page > 0, "INVALID page size")?;
+        ensure(
+            limits.database_bytes / page >= 32,
+            "RESOURCE_WAIT database budget",
+        )?;
+        let pages = limits.database_bytes / page;
+        let actual: i64 = db
+            .query_row(&format!("PRAGMA max_page_count={pages}"), [], |r| r.get(0))
+            .map_err(err)?;
+        ensure(
+            actual > 0 && actual as u64 <= pages,
+            "RESOURCE_WAIT existing database exceeds budget",
+        )?;
+        let integrity: String = db
+            .query_row("PRAGMA quick_check", [], |r| r.get(0))
+            .map_err(err)?;
+        ensure(integrity == "ok", "INVALID database integrity")?;
+        db.execute_batch("CREATE TABLE IF NOT EXISTS binding (singleton INTEGER PRIMARY KEY CHECK(singleton=1), format TEXT NOT NULL, genesis BLOB NOT NULL, tip BLOB NOT NULL, revision BLOB NOT NULL); CREATE TABLE IF NOT EXISTS blocks (id BLOB PRIMARY KEY, raw BLOB NOT NULL); CREATE TABLE IF NOT EXISTS operations (id BLOB PRIMARY KEY, raw BLOB NOT NULL, prior_tip BLOB NOT NULL, prior_revision BLOB NOT NULL, new_tip BLOB NOT NULL, new_root BLOB NOT NULL, revision BLOB NOT NULL, selected INTEGER NOT NULL, committed INTEGER NOT NULL CHECK(committed IN (0,1))); ").map_err(err)?;
+        type BindingRow = (String, Vec<u8>, Vec<u8>, Vec<u8>);
+        let binding: Option<BindingRow> = db
+            .query_row(
+                "SELECT format,genesis,tip,revision FROM binding WHERE singleton=1",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+            )
+            .optional()
+            .map_err(err)?;
+        let (tip, revision) = if let Some((format, g, t, r)) = binding {
+            ensure(
+                format == "RLD-SURVIVOR-STORE-1" && g == genesis,
+                "INVALID store binding",
+            )?;
+            (hash32(t)?, number(r)?)
+        } else {
+            let count: i64 = db
+                .query_row(
+                    "SELECT (SELECT count(*) FROM blocks)+(SELECT count(*) FROM operations)",
+                    [],
+                    |r| r.get(0),
+                )
+                .map_err(err)?;
+            ensure(count == 0, "INVALID missing binding")?;
+            let tx = db.transaction().map_err(err)?;
+            tx.execute(
+                "INSERT INTO binding VALUES(1,?1,?2,?3,?4)",
+                params![
+                    "RLD-SURVIVOR-STORE-1",
+                    genesis,
+                    pin.as_slice(),
+                    0u128.to_be_bytes().as_slice()
+                ],
+            )
+            .map_err(err)?;
+            tx.commit().map_err(err)?;
+            (pin, 0)
+        };
+        File::open(root).map_err(err)?.sync_all().map_err(err)?;
+        let mut s = Self {
+            db,
+            _lease: lease,
+            root: root.to_path_buf(),
+            genesis: genesis.to_vec(),
+            ledger: initial,
+            revision,
+            limits,
+            poisoned: false,
+            last_clock: None,
+        };
+        // Verify the complete ordered selected-transition chain and each retained
+        // operation's exact block/result. Uncommitted intent never selects state.
+        let mut previous = pin;
+        let mut rev = 0u128;
+        let mut current = s.ledger.clone();
+        let mut heads = std::collections::BTreeMap::from([(0u128, pin)]);
+        let mut stmt=s.db.prepare("SELECT id,raw,prior_tip,prior_revision,new_tip,new_root,revision,selected,committed FROM operations ORDER BY revision,selected DESC,committed DESC,id").map_err(err)?;
+        let mut rows = stmt.query([]).map_err(err)?;
+        while let Some(row) = rows.next().map_err(err)? {
+            let id = hash32(row.get(0).map_err(err)?)?;
+            ensure(id != [0; 32], "INVALID operation ID")?;
+            let raw: Vec<u8> = row.get(1).map_err(err)?;
+            ensure(
+                s.get_block(block_id(&raw)?)? == raw,
+                "INVALID operation bytes",
+            )?;
+            let parent: Hash = raw[36..68].try_into().unwrap();
+            let mut candidate = if parent == current.tip().id() {
+                current.clone()
+            } else {
+                s.replay(parent)?
+            };
+            candidate.execute(&raw)?;
+            let nt = hash32(row.get(4).map_err(err)?)?;
+            let nr = hash32(row.get(5).map_err(err)?)?;
+            let selected: bool = row.get(7).map_err(err)?;
+            let committed: bool = row.get(8).map_err(err)?;
+            let prior = hash32(row.get(2).map_err(err)?)?;
+            let pr = number(row.get(3).map_err(err)?)?;
+            let r = number(row.get(6).map_err(err)?)?;
+            ensure(
+                heads.get(&pr) == Some(&prior),
+                "INVALID operation prior revision",
+            )?;
+            let old = if prior == current.tip().id() {
+                current.clone()
+            } else {
+                s.replay(prior)?
+            };
+            ensure(
+                selected == candidate.tip().preferred_to(old.tip()),
+                "INVALID retained selection",
+            )?;
+            let result = if selected { candidate.tip() } else { old.tip() };
+            ensure(
+                nt == result.id()
+                    && nr == result.root()
+                    && r == pr
+                        .checked_add(u128::from(selected))
+                        .ok_or("INVALID revision")?,
+                "INVALID retained outcome",
+            )?;
+            if committed && selected {
+                ensure(pr == rev && prior == previous, "INVALID revision chain")?;
+                rev = r;
+                previous = nt;
+                heads.insert(rev, nt);
+                current = candidate;
+            }
+        }
+        drop(rows);
+        drop(stmt);
+        ensure(previous == tip && rev == revision, "INVALID committed head")?;
+        s.ledger = current;
+        s.wallet_open()?;
+        s.pool_open()?;
+        Ok(s)
+    }
+    pub fn ledger(&self) -> &Ledger {
+        &self.ledger
+    }
+    pub fn revision(&self) -> u128 {
+        self.revision
+    }
+    pub fn root(&self) -> &Path {
+        &self.root
+    }
+    pub fn clock(&mut self, now: u64) -> Result<()> {
+        ensure(!self.poisoned, "RESOURCE_WAIT restart required")?;
+        if self.last_clock.is_some_and(|last| now < last) {
+            return Err("CLOCK_WAIT backward clock".into());
+        }
+        self.last_clock = Some(now);
+        ensure(
+            self.ledger.tip().eligible(now),
+            "CLOCK_WAIT future selected tip",
+        )
+    }
+    pub fn get_block(&self, id: Hash) -> Result<Vec<u8>> {
+        let raw: Vec<u8> = self
+            .db
+            .query_row("SELECT raw FROM blocks WHERE id=?1", [id.as_slice()], |r| {
+                r.get(0)
+            })
+            .optional()
+            .map_err(err)?
+            .ok_or("MISSING_HISTORY")?;
+        ensure(block_id(&raw)? == id, "INVALID object index")?;
+        Ok(raw)
+    }
+    pub(crate) fn replay(&self, tip: Hash) -> Result<Ledger> {
+        let pin = self.ledger.chain_id();
+        let mut l = Ledger::from_genesis(&self.genesis, pin, self.limits.coins)?;
+        let mut path = Vec::new();
+        let mut id = tip;
+        let mut expected = None;
+        while id != pin {
+            let raw = self.get_block(id)?;
+            let h = u128::from_be_bytes(raw[68..84].try_into().unwrap());
+            ensure(
+                h > 0 && expected.is_none_or(|n| n == h),
+                "INVALID ancestry height/cycle",
+            )?;
+            expected = Some(h - 1);
+            path.push(id);
+            id = raw[36..68].try_into().unwrap();
+            ensure(
+                path.len() as u64 <= self.limits.database_bytes / 270,
+                "RESOURCE_WAIT replay index",
+            )?;
+        }
+        for id in path.into_iter().rev() {
+            l.execute(&self.get_block(id)?)?;
+        }
+        Ok(l)
+    }
+    pub fn operation(&self, id: Hash) -> Result<Option<Outcome>> {
+        let x: Option<(Vec<u8>, Vec<u8>, bool)> = self
+            .db
+            .query_row(
+                "SELECT new_tip,revision,selected FROM operations WHERE id=?1 AND committed=1",
+                [id.as_slice()],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+            )
+            .optional()
+            .map_err(err)?;
+        x.map(|(t, r, selected)| {
+            Ok(Outcome {
+                tip: hash32(t)?,
+                revision: number(r)?,
+                selected,
+            })
+        })
+        .transpose()
+    }
+    /// Retains a fully validated object, then commits selection and exact operation
+    /// result. Losing valid branches remain available, never merged into balances.
+    pub fn accept(&mut self, operation: Hash, raw: &[u8], now: u64) -> Result<Outcome> {
+        self.clock(now)?;
+        ensure(operation != [0; 32], "INVALID operation ID")?;
+        let wallet_exists: bool = self
+            .db
+            .query_row(
+                "SELECT EXISTS(SELECT 1 FROM wallet WHERE id=?1 UNION ALL SELECT 1 FROM submissions WHERE operation=?1)",
+                [operation.as_slice()],
+                |r| r.get(0),
+            )
+            .map_err(err)?;
+        ensure(!wallet_exists, "OPERATION_ID_CONFLICT")?;
+        let existing: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT raw FROM operations WHERE id=?1",
+                [operation.as_slice()],
+                |r| r.get(0),
+            )
+            .optional()
+            .map_err(err)?;
+        if let Some(old) = &existing {
+            ensure(old == raw, "OPERATION_ID_CONFLICT")?;
+            if let Some(o) = self.operation(operation)? {
+                return Ok(o);
+            }
+        }
+        let id = block_id(raw)?;
+        let parent: Hash = raw[36..68].try_into().unwrap();
+        let mut candidate = if parent == self.ledger.tip().id() {
+            self.ledger.clone()
+        } else {
+            self.replay(parent)?
+        };
+        candidate.execute(raw)?;
+        ensure(candidate.tip().eligible(now), "CLOCK_WAIT future candidate")?;
+        let selected = candidate.tip().preferred_to(self.ledger.tip());
+        let next: Tip = if selected {
+            candidate.tip()
+        } else {
+            self.ledger.tip()
+        }
+        .clone();
+        let revision = self
+            .revision
+            .checked_add(u128::from(selected))
+            .ok_or("RESOURCE_WAIT revision exhausted")?;
+        if existing.is_some() {
+            let prior: (Vec<u8>, Vec<u8>) = self
+                .db
+                .query_row(
+                    "SELECT prior_tip,prior_revision FROM operations WHERE id=?1",
+                    [operation.as_slice()],
+                    |r| Ok((r.get(0)?, r.get(1)?)),
+                )
+                .map_err(err)?;
+            ensure(
+                hash32(prior.0)? == self.ledger.tip().id() && number(prior.1)? == self.revision,
+                "CONFLICT pending prior changed",
+            )?;
+        } else {
+            let prep = (|| -> Result<()> {
+                let tx = self.db.transaction().map_err(err)?;
+                let retained: Option<Vec<u8>> = tx
+                    .query_row("SELECT raw FROM blocks WHERE id=?1", [id.as_slice()], |r| {
+                        r.get(0)
+                    })
+                    .optional()
+                    .map_err(err)?;
+                if let Some(old) = retained {
+                    ensure(old == raw, "INVALID object collision")?;
+                } else {
+                    tx.execute(
+                        "INSERT INTO blocks VALUES(?1,?2)",
+                        params![id.as_slice(), raw],
+                    )
+                    .map_err(err)?;
+                }
+                tx.execute(
+                    "INSERT INTO operations VALUES(?1,?2,?3,?4,?5,?6,?7,?8,0)",
+                    params![
+                        operation.as_slice(),
+                        raw,
+                        self.ledger.tip().id().as_slice(),
+                        self.revision.to_be_bytes().as_slice(),
+                        next.id().as_slice(),
+                        next.root().as_slice(),
+                        revision.to_be_bytes().as_slice(),
+                        selected
+                    ],
+                )
+                .map_err(err)?;
+                tx.commit().map_err(err)?;
+                Ok(())
+            })();
+            if let Err(e) = prep {
+                self.poisoned = true;
+                return Err(e);
+            }
+        }
+        let commit = (|| -> Result<()> {
+            let tx = self.db.transaction().map_err(err)?;
+            tx.execute(
+                "UPDATE operations SET committed=1 WHERE id=?1",
+                [operation.as_slice()],
+            )
+            .map_err(err)?;
+            if selected {
+                tx.execute(
+                    "UPDATE binding SET tip=?1,revision=?2 WHERE singleton=1",
+                    params![next.id().as_slice(), revision.to_be_bytes().as_slice()],
+                )
+                .map_err(err)?;
+            }
+            tx.commit().map_err(err)?;
+            Ok(())
+        })();
+        if let Err(e) = commit {
+            self.poisoned = true;
+            return Err(e);
+        }
+        if selected {
+            self.ledger = candidate;
+            self.revision = revision;
+        }
+        Ok(Outcome {
+            tip: next.id(),
+            revision,
+            selected,
+        })
+    }
+}

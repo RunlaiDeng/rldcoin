@@ -1,0 +1,312 @@
+//! Native no-value node. Control JSON uses bounded local stdin/stdout, never a
+//! public signing socket. Secret material is never copied into responses.
+use rld_survivor_node::{
+    kernel::{Hash, MiningJob, Result},
+    keyfile,
+    store::{Limits, Store},
+};
+use serde_json::{json, Value};
+use std::{
+    io::{self, BufRead, Read, Write},
+    path::Path,
+    sync::mpsc,
+    time::{Duration, SystemTime, UNIX_EPOCH},
+};
+use zeroize::Zeroizing;
+fn now() -> Result<u64> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .map_err(|_| "CLOCK_WAIT".into())
+}
+fn field<'a>(v: &'a Value, k: &str) -> Result<&'a str> {
+    v[k].as_str().ok_or_else(|| format!("INVALID_ENCODING {k}"))
+}
+fn bytes(v: &Value, k: &str) -> Result<Vec<u8>> {
+    let s = field(v, k)?;
+    if s.bytes()
+        .any(|b| !b.is_ascii_digit() && !(b'a'..=b'f').contains(&b))
+    {
+        return Err("INVALID_ENCODING lowercase hex".into());
+    }
+    hex::decode(s).map_err(|_| "INVALID_ENCODING hex".into())
+}
+fn hash(v: &Value, k: &str) -> Result<Hash> {
+    bytes(v, k)?
+        .try_into()
+        .map_err(|_| "INVALID_ENCODING hash".into())
+}
+fn integer(v: &Value, k: &str) -> Result<u128> {
+    let s = field(v, k)?;
+    if s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit()) || (s.len() > 1 && s.starts_with('0'))
+    {
+        return Err("INVALID_ENCODING integer".into());
+    }
+    s.parse().map_err(|_| "INVALID_ENCODING integer".into())
+}
+fn read(path: &Path, max: u64) -> Result<Vec<u8>> {
+    let f = std::fs::File::open(path).map_err(|_| "MISSING_HISTORY local file")?;
+    let mut b = Vec::new();
+    f.take(max + 1)
+        .read_to_end(&mut b)
+        .map_err(|_| "RESOURCE_WAIT file read")?;
+    if b.len() as u64 > max {
+        return Err("INVALID_ENCODING file size".into());
+    }
+    Ok(b)
+}
+fn write_private(path: &Path, raw: &[u8]) -> Result<()> {
+    let mut o = std::fs::OpenOptions::new();
+    o.write(true).create_new(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        o.mode(0o600);
+    }
+    let mut f = o
+        .open(path)
+        .map_err(|_| "RESOURCE_WAIT fresh file required")?;
+    f.write_all(raw)
+        .and_then(|_| f.sync_all())
+        .map_err(|_| "RESOURCE_WAIT key persistence")?;
+    std::fs::File::open(path.parent().unwrap_or(Path::new(".")))
+        .and_then(|d| d.sync_all())
+        .map_err(|_| "RESOURCE_WAIT directory persistence".into())
+}
+fn operation() -> Result<Hash> {
+    let mut id = [0; 32];
+    getrandom::getrandom(&mut id).map_err(|_| "RESOURCE_WAIT entropy")?;
+    if id == [0; 32] {
+        return Err("RESOURCE_WAIT entropy".into());
+    }
+    Ok(id)
+}
+fn response(s: &Store, result: Value, clock: Option<u64>, diagnostic: Option<&str>) -> Value {
+    json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"confidence":"CONDITIONAL","diagnostic":diagnostic,"result":result})
+}
+fn command(s: &mut Store, v: &Value, miner: &mut Option<Hash>, time: u64) -> Result<Value> {
+    match field(v, "method")? {
+        "node_status" => Ok(
+            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"mining":miner.is_some(),"relay":"NOT_IMPLEMENTED","mainnet":false}),
+        ),
+        "get_object" => {
+            let kind = field(v, "kind")?;
+            let id = hash(v, "id")?;
+            if kind != "3" {
+                return Err("UNSUPPORTED_VERSION object kind".into());
+            }
+            Ok(json!({"bytes":hex::encode(s.get_block(id)?)}))
+        }
+        "accept_block" => {
+            let o = s.accept(hash(v, "operation_id")?, &bytes(v, "block_hex")?, time)?;
+            Ok(
+                json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
+            )
+        }
+        "submit_transaction" => {
+            let id = s.submit_transaction(
+                hash(v, "operation_id")?,
+                &bytes(v, "transaction_hex")?,
+                time,
+            )?;
+            Ok(json!({"transaction_id":hex::encode(id),"ledger":"UNSEEN"}))
+        }
+        "review_transfer" => {
+            let digest =
+                s.review_transfer(hash(v, "operation_id")?, &bytes(v, "unsigned_hex")?, time)?;
+            Ok(json!({"review_digest":hex::encode(digest),"local_intent":"REVIEWED"}))
+        }
+        "sign_review" => {
+            let p = Zeroizing::new(field(v, "password")?.as_bytes().to_vec());
+            let raw = read(Path::new(field(v, "key_file")?), 187)?;
+            let key = keyfile::decrypt(&raw, s.ledger().chain_id(), &p)?;
+            let x = s.sign_review(
+                hash(v, "operation_id")?,
+                hash(v, "review_digest")?,
+                &key,
+                time,
+            )?;
+            Ok(json!({"transaction_hex":hex::encode(x),"local_intent":"SIGNED"}))
+        }
+        "operation_status" => {
+            let id = hash(v, "operation_id")?;
+            if let Some(x) = s.signed_operation(id)? {
+                Ok(json!({"transaction_hex":hex::encode(x),"local_intent":"SIGNED"}))
+            } else if let Some(o) = s.operation(id)? {
+                Ok(
+                    json!({"result_tip":hex::encode(o.tip),"result_revision":o.revision.to_string(),"selected":o.selected}),
+                )
+            } else {
+                Ok(json!({"result":null}))
+            }
+        }
+        "wallet_state" => {
+            let owner = hash(v, "owner")?;
+            let b = s.wallet_state(owner)?;
+            let outputs: Vec<_> = s.wallet_outputs(owner)?.into_iter().map(|(id,c,reserved)|json!({"outpoint":hex::encode(id),"amount":c.amount.to_string(),"maturity_height":c.maturity.to_string(),"eligible_next_height": c.maturity<=s.ledger().tip().height()+1,"reserved":reserved})).collect();
+            Ok(
+                json!({"unspent":b.unspent.to_string(),"immature":b.immature.to_string(),"mature":b.mature.to_string(),"reserved":b.reserved.to_string(),"available":b.available.to_string(),"outputs":outputs}),
+            )
+        }
+        "waive_reservation" => {
+            s.waive_reservation(
+                hash(v, "operation_id")?,
+                v["acknowledge_conflicting_branch"].as_bool() == Some(true),
+            )?;
+            Ok(json!({"local_intent":"WITHDRAWN","signature_revoked":false}))
+        }
+        "changes_since" => {
+            if integer(v, "revision")? != s.revision() {
+                return Err("RESYNC_REQUIRED".into());
+            }
+            Ok(json!({"changes":[]}))
+        }
+        "set_mining" => {
+            s.clock(time)?;
+            let enabled = v["enabled"].as_bool().ok_or("INVALID_ENCODING enabled")?;
+            if enabled {
+                let k = hash(v, "miner")?;
+                let timestamp = time.max(
+                    s.ledger()
+                        .tip()
+                        .timestamp()
+                        .checked_add(1)
+                        .ok_or("CLOCK_WAIT timestamp exhausted")?,
+                );
+                s.ledger().mining_job(k, vec![], timestamp, time)?;
+                *miner = Some(k)
+            } else {
+                *miner = None
+            }
+            Ok(json!({"mining":enabled}))
+        }
+        "create_key" => {
+            let p = Zeroizing::new(field(v, "password")?.as_bytes().to_vec());
+            let key = keyfile::generate()?;
+            let raw = keyfile::encrypt(&key, s.ledger().chain_id(), &p)?;
+            write_private(Path::new(field(v, "key_file")?), &raw)?;
+            Ok(
+                json!({"owner":hex::encode(key.verifying_key().to_bytes()),"backup_scope":"KEY_ONLY"}),
+            )
+        }
+        _ => Err("UNSUPPORTED_VERSION method".into()),
+    }
+}
+fn run() -> Result<()> {
+    let a: Vec<_> = std::env::args().collect();
+    if a.len() != 5 || a[1] != "serve" {
+        return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID; bounded local JSON lines on stdin; test networks only".into());
+    }
+    let g = read(Path::new(&a[3]), 85)?;
+    let pin: Hash = hex::decode(&a[4])
+        .map_err(|_| "INVALID_ENCODING pin")?
+        .try_into()
+        .map_err(|_| "INVALID_ENCODING pin")?;
+    let mut s = Store::open(Path::new(&a[2]), &g, pin, Limits::default())?;
+    let (tx, rx) = mpsc::sync_channel(8);
+    std::thread::spawn(move || {
+        let mut stdin = io::stdin().lock();
+        loop {
+            let mut b = Zeroizing::new(Vec::new());
+            let n = (&mut stdin)
+                .take(2 * 1024 * 1024 + 1)
+                .read_until(b'\n', &mut b);
+            match n {
+                Ok(0) | Err(_) => break,
+                Ok(_) => {
+                    if b.len() > 2 * 1024 * 1024 || !b.ends_with(b"\n") {
+                        let _ = tx.send(Err("INVALID_ENCODING request bound".to_string()));
+                        break;
+                    }
+                    let parsed = serde_json::from_slice::<Value>(&b)
+                        .map_err(|_| "INVALID_ENCODING JSON".to_string());
+                    if tx.send(parsed).is_err() {
+                        break;
+                    }
+                }
+            }
+        }
+    });
+    let mut miner = None;
+    let mut job: Option<(Hash, u64, Hash, MiningJob)> = None;
+    loop {
+        match rx.recv_timeout(Duration::from_millis(100)) {
+            Ok(request) => {
+                let clock = now().ok();
+                let r = match (request, clock) {
+                    (Ok(mut v), Some(t)) => {
+                        let r = command(&mut s, &v, &mut miner, t);
+                        if let Some(Value::String(p)) = v.get_mut("password") {
+                            use zeroize::Zeroize;
+                            p.zeroize()
+                        }
+                        r
+                    }
+                    (Err(e), _) => Err(e),
+                    _ => Err("CLOCK_WAIT".into()),
+                };
+                let out = match r {
+                    Ok(v) => response(&s, v, clock, None),
+                    Err(e) => response(&s, Value::Null, clock, Some(&e)),
+                };
+                println!("{out}");
+                io::stdout().flush().map_err(|_| "RESOURCE_WAIT output")?;
+            }
+            Err(mpsc::RecvTimeoutError::Disconnected) => break,
+            Err(mpsc::RecvTimeoutError::Timeout) => {}
+        }
+        if let Some(k) = miner {
+            let t = now()?;
+            if let Err(e) = s.clock(t) {
+                println!("{}", response(&s, Value::Null, None, Some(&e)));
+                continue;
+            }
+            let timestamp = t.max(
+                s.ledger()
+                    .tip()
+                    .timestamp()
+                    .checked_add(1)
+                    .ok_or("CLOCK_WAIT")?,
+            );
+            let tip = s.ledger().tip().id();
+            if job
+                .as_ref()
+                .is_none_or(|(id, time, owner, _)| *id != tip || *time != timestamp || *owner != k)
+            {
+                match s
+                    .ledger()
+                    .mining_job(k, s.template_transactions()?, timestamp, t)
+                {
+                    Ok(j) => job = Some((tip, timestamp, k, j)),
+                    Err(e) => {
+                        println!("{}", response(&s, Value::Null, Some(t), Some(&e)));
+                        continue;
+                    }
+                }
+            }
+            if let Some(raw) = job.as_mut().and_then(|(_, _, _, j)| j.attempt(4096)) {
+                let old = s.revision();
+                match s.accept(operation()?, &raw, t) {
+                    Ok(_) => println!(
+                        "{}",
+                        response(
+                            &s,
+                            json!({"event":"SELECTED_CHANGE","previous_revision":old.to_string()}),
+                            Some(t),
+                            None
+                        )
+                    ),
+                    Err(e) => println!("{}", response(&s, Value::Null, Some(t), Some(&e))),
+                }
+                job = None;
+            }
+        }
+    }
+    Ok(())
+}
+fn main() {
+    if let Err(e) = run() {
+        eprintln!("{e}");
+        std::process::exit(1)
+    }
+}

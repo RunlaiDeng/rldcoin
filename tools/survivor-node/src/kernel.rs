@@ -14,10 +14,10 @@ fn require(ok: bool, why: &str) -> Result<()> {
         Err(why.into())
     }
 }
-fn tag(s: &str) -> Vec<u8> {
+pub(crate) fn tag(s: &str) -> Vec<u8> {
     [b"RLD-SURVIVOR-1/".as_slice(), s.as_bytes(), &[0]].concat()
 }
-fn hash(s: &str, x: &[u8]) -> Hash {
+pub(crate) fn hash(s: &str, x: &[u8]) -> Hash {
     Sha256::digest([tag(s), x.to_vec()].concat()).into()
 }
 fn double(s: &str, x: &[u8]) -> Hash {
@@ -145,12 +145,12 @@ fn emission(h: u128) -> (u128, u128) {
         CAP - reserve + (slot + 1) * q + (slot + 1).min(r),
     )
 }
-fn valid_point(x: Hash) -> bool {
+pub(crate) fn valid_point(x: Hash) -> bool {
     CompressedEdwardsY(x)
         .decompress()
         .is_some_and(|p| p.compress().to_bytes() == x && p.is_torsion_free() && !p.is_identity())
 }
-fn verify(key: Hash, msg: &[u8], sig: &[u8]) -> Result<()> {
+pub(crate) fn verify(key: Hash, msg: &[u8], sig: &[u8]) -> Result<()> {
     require(sig.len() == 64, "signature length")?;
     require(
         valid_point(key) && valid_point(sig[..32].try_into().unwrap()),
@@ -168,7 +168,7 @@ pub struct Coin {
     pub maturity: u128,
 }
 type Coins = BTreeMap<Vec<u8>, Coin>;
-fn outpoint(id: Hash, i: u16) -> Vec<u8> {
+pub(crate) fn outpoint(id: Hash, i: u16) -> Vec<u8> {
     [id.to_vec(), i.to_be_bytes().to_vec()].concat()
 }
 fn tree(records: &[Vec<u8>]) -> Hash {
@@ -250,16 +250,16 @@ impl<'a> Reader<'a> {
     }
 }
 #[derive(Clone)]
-struct Tx {
-    id: Hash,
-    owner: Hash,
-    inputs: Vec<Vec<u8>>,
-    outputs: Vec<(Hash, u128)>,
-    fee: u128,
-    expiry: u128,
+pub(crate) struct Tx {
+    pub(crate) id: Hash,
+    pub(crate) owner: Hash,
+    pub(crate) inputs: Vec<Vec<u8>>,
+    pub(crate) outputs: Vec<(Hash, u128)>,
+    pub(crate) fee: u128,
+    pub(crate) expiry: u128,
 }
-fn decode_tx(raw: &[u8], chain: Hash) -> Result<Tx> {
-    require((248..=1638).contains(&raw.len()), "transaction size")?;
+pub(crate) fn decode_unsigned(raw: &[u8], chain: Hash) -> Result<Tx> {
+    require((184..=1574).contains(&raw.len()), "transaction size")?;
     let mut r = Reader::new(raw);
     require(r.u16()? == 1, "version")?;
     require(r.fixed::<32>()? == chain, "chain")?;
@@ -285,9 +285,7 @@ fn decode_tx(raw: &[u8], chain: Hash) -> Result<Tx> {
     let expiry = r.u128()?;
     require(fee > 0 && fee <= CAP, "fee")?;
     let u = &raw[..r.at];
-    let sig = r.take(64)?;
     r.end()?;
-    verify(owner, &[tag("TRANSFER"), u.to_vec()].concat(), sig)?;
     Ok(Tx {
         id: hash("TXID", u),
         owner,
@@ -297,6 +295,21 @@ fn decode_tx(raw: &[u8], chain: Hash) -> Result<Tx> {
         expiry,
     })
 }
+pub(crate) fn decode_tx(raw: &[u8], chain: Hash) -> Result<Tx> {
+    require(
+        (248..=1638).contains(&raw.len()),
+        "INVALID transaction size",
+    )?;
+    let u = &raw[..raw.len() - 64];
+    let tx = decode_unsigned(u, chain)?;
+    verify(
+        tx.owner,
+        &[tag("TRANSFER"), u.to_vec()].concat(),
+        &raw[raw.len() - 64..],
+    )?;
+    Ok(tx)
+}
+
 fn body(txs: &[Vec<u8>]) -> Vec<u8> {
     let mut b = (txs.len() as u16).to_be_bytes().to_vec();
     for x in txs {
@@ -617,6 +630,13 @@ impl Ledger {
     }
     pub fn validate_transfer(&self, raw: &[u8]) -> Result<Hash> {
         let tx = decode_tx(raw, self.chain)?;
+        self.check_inputs(&tx)
+    }
+    /// Non-authorizing review only; block execution always verifies a signature.
+    pub(crate) fn validate_unsigned(&self, raw: &[u8]) -> Result<Hash> {
+        self.check_inputs(&decode_unsigned(raw, self.chain)?)
+    }
+    fn check_inputs(&self, tx: &Tx) -> Result<Hash> {
         let h = self.tip.height.checked_add(1).ok_or("INVALID height")?;
         require(h <= tx.expiry, "INVALID expiry")?;
         let mut sum = 0u128;
