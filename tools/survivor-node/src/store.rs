@@ -251,7 +251,7 @@ impl Store {
             } else {
                 s.replay(parent)?
             };
-            if let Some(history) = history {
+            if let Some(history) = &history {
                 // These bytes only index the exact objects. Every block still
                 // executes from a fully native-replayed predecessor, including
                 // signature, work, ownership, issuance and state-root checks.
@@ -297,7 +297,24 @@ impl Store {
                         |row| row.get(0),
                     )
                     .map_err(err)?;
-                let expected = s.branch_change_from(&old, pr, &candidate, &raw)?.0;
+                let expected = if let Some(history) = &history {
+                    // check_history_batches authenticated the exact contiguous
+                    // member links and prior binding. Every member above has
+                    // just executed from a fully native-replayed predecessor.
+                    // Rebuild the complete original event from those members;
+                    // a generic fork search would rescan the entire old prefix
+                    // for every batch, without adding an authorization check.
+                    let attached = history[2..]
+                        .as_chunks::<32>()
+                        .0
+                        .iter()
+                        .map(|id| s.get_block(*id))
+                        .collect::<Result<Vec<_>>>()?;
+                    s.branch_change_parts(&old, pr, &candidate, &attached, &[])?
+                        .0
+                } else {
+                    s.branch_change_from(&old, pr, &candidate, &raw)?.0
+                };
                 let expected_body = serde_json::to_string(&expected).map_err(err)?;
                 ensure(stored == expected_body, "INVALID_ENCODING retained change")?;
                 rev = r;

@@ -26,7 +26,7 @@ required checks, not completion certificates for the campaigns above.
 | Scope | Native source | Discriminating executable checks |
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
-| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs` |
+| Durable selection, rollback and restart | `store.rs`, `observations.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `cold_groups.rs` |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `pool.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
@@ -52,6 +52,11 @@ through mature reward spends and actual next-block onward authorization. It keep
 101 UTXOs while signed/spent history grows, so its result cannot replace the
 growing-UTXO campaign. Fixture-direct signatures do not establish wallet custody;
 full cold replay and recount of retained transfers remain required for that scope.
+Cold group notification reconstruction must retain exact native predecessor/member
+execution and complete original event comparison. Tests alter attached order,
+detached entries, reward/output observations and non-tail block bodies; verified
+group membership is never permission to initialize state from metadata or omit a
+signature check.
 
 The kernel's bounded transient C09 frontier must agree byte-for-byte with the
 retained recursive reference at binary boundaries and after ordered map edits.

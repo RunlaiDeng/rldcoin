@@ -170,6 +170,11 @@ final selected state. An invalid group installs no partial prefix. Ordinary boun
 single-object processing remains available for competing, missing or invalid paths.
 Cold startup verifies the group membership and executes every member from native
 genesis/predecessor state. The member index supplies no ledger authority.
+After that execution, cold change reconstruction uses the exact contiguous member
+list and its native predecessor state. It compares the complete attached/reward/
+output event with the retained original instead of repeatedly searching the old
+prefix for an already authenticated extension. Ordinary fork/reorganization
+handling keeps its complete ancestry checks. No block or signature is skipped.
 `accept_history` takes `operation_id` and ordered block hex strings in `blocks`;
 the existing 2-MiB native request limit remains in force. Exact retry must retain
 the same complete member list. Pending operation status exposes member IDs and the
