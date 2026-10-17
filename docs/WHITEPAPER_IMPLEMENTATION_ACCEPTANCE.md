@@ -47,6 +47,11 @@ entry records actual storage, hashing and cold replay with an explicitly logical
 chain clock. A finite growing-reward sample is only one T18 workload; sustained
 history beyond an issuance era, spent-state growth, owner activity, malformed
 traffic, backups and declared CPU/RAM/disk horizons remain required.
+The separate consolidating-payment workload rotates 256 public fixture owners
+through mature reward spends and actual next-block onward authorization. It keeps
+101 UTXOs while signed/spent history grows, so its result cannot replace the
+growing-UTXO campaign. Fixture-direct signatures do not establish wallet custody;
+full cold replay and recount of retained transfers remain required for that scope.
 
 The kernel's bounded transient C09 frontier must agree byte-for-byte with the
 retained recursive reference at binary boundaries and after ordered map edits.

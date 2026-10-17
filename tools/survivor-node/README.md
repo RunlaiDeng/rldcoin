@@ -175,7 +175,7 @@ the existing 2-MiB native request limit remains in force. Exact retry must retai
 the same complete member list. Pending operation status exposes member IDs and the
 recovery method; `get_object` retrieves the retained complete block bytes.
 
-The separate `rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE]`
+The separate `rld-survivor-history FRESH_DIRECTORY BLOCKS BUDGET_SECONDS [GROUP_SIZE] [WORKLOAD]`
 measurement tool exercises actual nonce search, ordinary storage and full cold
 replay at unchanged default limits. Group size is explicitly 1..32; its bounded
 observation budget is 1..3600 seconds. It uses logical 600-second chain timestamps
@@ -183,6 +183,14 @@ and 256 deliberately public no-value reward owners, reporting that clock model
 separately from real elapsed time. It preserves incomplete fixtures, refuses an
 existing target directory and never claims a simulated clock proves real-time
 survivor recovery, sustained adversarial traffic or independent qualification.
+The default `growing-rewards` workload retains unspent rewards. A separate
+`consolidating-payments` workload starts real signed payments at height 101, then
+spends the next mature reward together with the preceding payment output. Its
+256 public fixture owners rotate actual transfer authorization. This keeps 101
+unspent outputs while complete signed/spent history grows; it does not replace
+the growing-UTXO workload. Cold replay checks the complete selected history and
+counts the retained transfers again. Fixture-direct signing does not qualify
+wallet intent, independent key custody or ordinary consumer use.
 
 `state_head` exports an exact local ledger/intent/custody commitment to retain
 independently. `create_backup` takes a fresh destination, native-input password and
