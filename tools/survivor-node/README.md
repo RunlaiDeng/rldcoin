@@ -162,7 +162,12 @@ The native lifecycle exchanges signed HEAD/LOCATOR/inventory and complete blocks
 replays missing dependencies and forwards canonical transactions. TLS 1.3 uses
 mutual pins, fresh application challenges and bounded worker sockets. Custody is
 committed by the main loop before acknowledgment; socket workers hold no ledger
-lock. Persistent neighbor/class/object rotation and temporary unavailable-neighbor
+lock. The connection-pressure fixture uses an intact common history, bounded
+unauthenticated loopback connections and a sole surviving ordinary process. Local
+mining/payment and complete cold replay remain separate from transport-worker
+availability; this does not promise delivery under arbitrary sustained overload.
+The original fresh-install/mining fixture remains a separate required check.
+Persistent neighbor/class/object rotation and temporary unavailable-neighbor
 backoff allow alternate admitted neighbors. Receipt observations survive restart;
 hop acknowledgment never discharges a destination obligation. Returned destination
 receipts may traverse a relay that lacks the original packet. The native receive

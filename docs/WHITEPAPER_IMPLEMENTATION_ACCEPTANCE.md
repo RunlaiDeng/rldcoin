@@ -29,7 +29,7 @@ required checks, not completion certificates for the campaigns above.
 | Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
-| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
+| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet
@@ -40,6 +40,14 @@ power. The archive check extracts the allowlisted distribution with the host tar
 reader and starts its native executable. Local or CI execution of these checks
 cannot satisfy the independent-validator, consumer, physical-route or sustained
 history obligations by itself.
+The separate connection-pressure fixture starts two fresh stores from the same
+fully native-executed common prefix. It retains the original fresh-install/mining
+check as a distinct obligation. After the source exits, the sole recipient signs
+and includes an onward payment, mines 101 additional blocks and retains ready
+storage under at least 120 seconds of bounded unauthenticated stalled/malformed
+loopback connections. Complete cold head, signature and conservation checks remain
+required. This isolates transport workers from local survivor work; it does not
+qualify arbitrary overload, expensive authenticated traffic or a physical route.
 The distribution size guard still refuses a 64-MiB-plus-one-byte input before
 creating any archive or checksum. Limited test debug information cannot remove
 runtime assertions/overflow checks, alter that guard or substitute a fake executable
