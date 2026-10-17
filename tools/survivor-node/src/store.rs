@@ -1,6 +1,7 @@
 //! Exclusive-writer SQLite persistence. Full genesis replay is the only source
 //! of ledger authority. SQL records and block IDs are storage indexes only.
 use crate::kernel::{block_id, hash, Hash, Ledger, Result, Tip};
+mod replay_witness;
 use fs2::FileExt;
 use rusqlite::{params, Connection, OptionalExtension};
 use std::{
@@ -34,6 +35,7 @@ pub struct Store {
     poisoned: Cell<bool>,
     last_clock: Option<u64>,
     pub(crate) observation_cache: RefCell<crate::observation_cache::Cache>,
+    replay_witness: RefCell<Option<replay_witness::Witness>>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Outcome {
@@ -212,6 +214,7 @@ impl Store {
             poisoned: Cell::new(false),
             last_clock: None,
             observation_cache: RefCell::new(crate::observation_cache::Cache::new((pin, 0))),
+            replay_witness: RefCell::new(None),
         };
         s.observations_open()?;
         s.check_history_batches()?;
@@ -224,7 +227,7 @@ impl Store {
         let mut rev = 0u128;
         let mut current = s.ledger.clone();
         let mut heads = std::collections::BTreeMap::from([(0u128, pin)]);
-        let mut stmt=s.db.prepare("SELECT id,raw,prior_tip,prior_revision,new_tip,new_root,revision,selected,committed FROM operations ORDER BY revision,selected DESC,committed DESC,id").map_err(err)?;
+        let mut stmt=s.db.prepare("SELECT id,raw,prior_tip,prior_revision,new_tip,new_root,revision,selected,committed FROM operations ORDER BY revision,selected DESC,committed DESC,substr(raw,69,16),id").map_err(err)?;
         let mut rows = stmt.query([]).map_err(err)?;
         while let Some(row) = rows.next().map_err(err)? {
             let id = hash32(row.get(0).map_err(err)?)?;
@@ -407,32 +410,6 @@ impl Store {
             self.poisoned.set(true);
         }
         result
-    }
-    pub(crate) fn replay(&self, tip: Hash) -> Result<Ledger> {
-        let pin = self.ledger.chain_id();
-        let mut l = Ledger::from_genesis(&self.genesis, pin, self.limits.coins)?;
-        let mut path = Vec::new();
-        let mut id = tip;
-        let mut expected = None;
-        while id != pin {
-            let raw = self.get_block(id)?;
-            let h = u128::from_be_bytes(raw[68..84].try_into().unwrap());
-            ensure(
-                h > 0 && expected.is_none_or(|n| n == h),
-                "INVALID ancestry height/cycle",
-            )?;
-            expected = Some(h - 1);
-            path.push(id);
-            id = raw[36..68].try_into().unwrap();
-            ensure(
-                path.len() as u64 <= self.limits.database_bytes / 270,
-                "RESOURCE_WAIT replay index",
-            )?;
-        }
-        for id in path.into_iter().rev() {
-            l.execute(&self.get_block(id)?)?;
-        }
-        Ok(l)
     }
     pub fn operation(&self, id: Hash) -> Result<Option<Outcome>> {
         let x: Option<(Vec<u8>, Vec<u8>, bool)> = self

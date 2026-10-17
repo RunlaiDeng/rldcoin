@@ -248,6 +248,19 @@ and input-spend effects while preserving the historical meaning of detachment.
 The local storage format is now `RLD-SURVIVOR-STORE-4`; earlier candidate stores
 refuse, with no automatic migration or test-value continuity.
 
+Alternate-branch replay may reuse one process-local prefix that this Store has
+already completely native-executed under its immutable genesis and resource
+binding. Every retained prefix block is read and compared byte-for-byte before
+reuse; missing or changed known material suspends mutation. A different branch
+or a cold start executes from pinned genesis. No witness is serialized. Retention
+is limited to 4 MiB of complete block bytes and 4,096 current coins; exceeding
+these optional bounds discards reuse and still returns the fully executed valid
+ledger. These are not block acceptance, history or reorganization depth limits.
+Cold verification preserves revision/selection/commit ordering, using the canonical
+header height only to schedule nonselecting rows within an otherwise equal group.
+Every operation's actual parent, execution, selected head and exact outcome remain
+independently checked. This reuse does not qualify arbitrary fork costs or T18/T19.
+
 Ordinary history synchronization can install up to 32 consecutive blocks as one
 selected transition. It validates every complete block against its own fully
 executed predecessor, durably commits the exact ordered member list and all objects

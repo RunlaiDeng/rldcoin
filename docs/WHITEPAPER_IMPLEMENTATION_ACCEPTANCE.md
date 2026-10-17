@@ -26,7 +26,7 @@ required checks, not completion certificates for the campaigns above.
 | Scope | Native source | Discriminating executable checks |
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
-| Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
+| Durable selection, rollback and restart | `store.rs`, `store/replay_witness.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `distribution.rs` |
@@ -147,6 +147,18 @@ projection stays live. Old uncached queries and whole-node replay costs remain
 distinct resource obligations. A submission acknowledgment reports retention with
 an unavailable ledger observation, not an invented UNSEEN state for an already
 included transaction.
+
+Alternate-prefix replay reuse is process-local and bound to one Store's immutable
+genesis and resource limits. Full native execution must establish its prefix;
+every retained prefix byte must agree again before reuse. Missing or altered
+known material refuses and suspends mutation, an invalid suffix cannot seed a
+witness, and branch misses/cold starts rebuild from genesis. Retention exceeding
+4 MiB of block bytes or 4,096 current coins discards the optional witness, never
+the valid history or a deep reorganization. Within unchanged revision/selection/
+commit precedence, header-height ordering is a scheduling hint only: every row's
+full native execution, parent, exact result, wallet context and revision checks
+remain mandatory. Native replay-witness unit cases and `deep_reorg.rs` cover these
+contracts; bounded reuse does not qualify arbitrary long-fork resources or T18/T19.
 
 The kernel's bounded transient C09 frontier must agree byte-for-byte with the
 retained recursive reference at binary boundaries and after ordered map edits.
