@@ -218,6 +218,27 @@ fn command(
                 json!({"state_head":hex::encode(rld_survivor_node::backup::state_head(s,n)?),"intent_head":hex::encode(s.intent_head()?),"freshness":s.freshness()?}),
             )
         }
+        "offline_export" => {
+            let n = network
+                .as_mut()
+                .ok_or("RESOURCE_WAIT contact state unavailable")?;
+            Ok(
+                json!({"frames":n.offline_export(hash(v,"peer_key")?)?.iter().map(hex::encode).collect::<Vec<_>>(),"receipt_required":true}),
+            )
+        }
+        "offline_import" => {
+            let n = network
+                .as_mut()
+                .ok_or("RESOURCE_WAIT contact state unavailable")?;
+            let raw = read(Path::new(field(v, "frame_file")?), 1048588)?;
+            Ok(
+                json!({"receipt":n.offline_import(hash(v,"peer_key")?,&raw)?.map(hex::encode),"ledger_acceptance":false}),
+            )
+        }
+        "discovery_candidates" => network
+            .as_ref()
+            .ok_or("RESOURCE_WAIT contact state unavailable")?
+            .discovered_candidates(),
         "create_backup" => {
             let n = network
                 .as_ref()

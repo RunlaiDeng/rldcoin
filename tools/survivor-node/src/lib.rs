@@ -19,3 +19,4 @@ pub mod network;
 
 pub mod backup;
 pub mod observations;
+pub mod offline;

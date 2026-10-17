@@ -128,3 +128,75 @@ fn custody_capacity_duplicate_and_session_refusal() {
     assert!(sb.packet(q.id()).unwrap().is_none());
     assert!(sb.packet(p.id()).unwrap().is_some());
 }
+
+#[test]
+fn offline_delivery_restart_and_completion_collection_preserve_live_obligations() {
+    let chain = [19; 32];
+    let a = identity(21);
+    let b = identity(22);
+    let ka = a.verifying_key().to_bytes();
+    let kb = b.verifying_key().to_bytes();
+    let ra = root();
+    let rb = root();
+    let mut sa = Carriage::open(&ra, chain, ka, Budget::default()).unwrap();
+    let mut sb = Carriage::open(&rb, chain, kb, Budget::default()).unwrap();
+    let live = sa.originate(&a, peer_id(kb), 4, &head()).unwrap();
+    let f = sa.prepare_offline(&a, kb, &live).unwrap();
+    let original = f.raw().to_vec();
+    drop(sa);
+    let mut sa = Carriage::open(&ra, chain, ka, Budget::default()).unwrap();
+    assert_eq!(sa.prepare_offline(&a, kb, &live).unwrap().raw(), original);
+    let mut first = None;
+    for _ in 0..258 {
+        let p = sa.originate(&a, peer_id(kb), 4, &head()).unwrap();
+        if first.is_none() {
+            first = Some(p.id());
+        }
+        let f = sa.prepare_offline(&a, kb, &p).unwrap();
+        let r = sb.receive(f.raw(), ka, [0; 32], true, &b).unwrap().unwrap();
+        sa.offline_receipt(r.raw(), kb).unwrap();
+        sa.processed(p.id()).unwrap();
+        sb.processed(p.id()).unwrap();
+    }
+    sa.compact_completed().unwrap();
+    assert!(sa.packet(first.unwrap()).unwrap().is_none());
+    assert!(sa.packet(live.id()).unwrap().is_some());
+    // A forged nonce cannot discharge even an authentic exact-packet receipt.
+    let other = Frame::delivery(chain, &a, peer_id(kb), [0; 32], [9; 32], &live).unwrap();
+    let r = sb
+        .receive(other.raw(), ka, [0; 32], true, &b)
+        .unwrap()
+        .unwrap();
+    assert!(sa.offline_receipt(r.raw(), kb).is_err());
+    drop(sa);
+    let sa = Carriage::open(&ra, chain, ka, Budget::default()).unwrap();
+    assert!(sa.packet(live.id()).unwrap().is_some());
+}
+#[test]
+fn repeated_outstanding_offer_preserves_one_exact_origin_packet() {
+    let a = identity(23);
+    let b = identity(24);
+    let chain = [29; 32];
+    let mut s = Carriage::open(
+        &root(),
+        chain,
+        a.verifying_key().to_bytes(),
+        Budget::default(),
+    )
+    .unwrap();
+    let first = s
+        .originate_unique(&a, peer_id(b.verifying_key().to_bytes()), 4, &head())
+        .unwrap();
+    for _ in 0..128 {
+        assert_eq!(
+            s.originate_unique(&a, peer_id(b.verifying_key().to_bytes()), 4, &head())
+                .unwrap()
+                .raw(),
+            first.raw()
+        );
+    }
+    let other = s
+        .originate_unique(&a, peer_id(b.verifying_key().to_bytes()), 4, &[1; 96])
+        .unwrap();
+    assert_ne!(other.id(), first.id());
+}

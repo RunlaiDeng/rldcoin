@@ -84,6 +84,7 @@ pub struct Network {
     material: Arc<Material>,
     pub(crate) carriage: Carriage,
     neighbors: Vec<Neighbor>,
+    offline_peers: Vec<Hash>,
     listener: SocketAddr,
     incoming: Receiver<Incoming>,
     outgoing: Receiver<Outgoing>,
@@ -95,6 +96,7 @@ pub struct Network {
     unavailable_until: BTreeMap<Hash, Instant>,
     probe: Instant,
     last_tip: Option<Hash>,
+    last_announce: Instant,
     last_scan: Instant,
     diagnostic: Option<String>,
 }
@@ -195,6 +197,21 @@ impl Network {
             });
         }
         let carriage = Carriage::open(&root.join("custody"), chain, identity, Budget::default())?;
+        let mut offline_peers = Vec::new();
+        if let Some(peers) = cfg.get("offline_peers") {
+            let peers = peers
+                .as_array()
+                .ok_or("INVALID_ENCODING offline peer list")?;
+            ensure(peers.len() <= 64, "RESOURCE_WAIT offline peer bound")?;
+            for p in peers {
+                let k = bytes32(p)?;
+                ensure(
+                    crate::kernel::valid_point(k) && k != identity && !offline_peers.contains(&k),
+                    "INVALID_CRYPTO offline peer",
+                )?;
+                offline_peers.push(k);
+            }
+        }
         let listener = TcpListener::bind(listen).map_err(err)?;
         let bound = listener.local_addr().map_err(err)?;
         listener.set_nonblocking(true).map_err(err)?;
@@ -257,6 +274,7 @@ impl Network {
             material,
             carriage,
             neighbors,
+            offline_peers,
             listener: bound,
             incoming,
             outgoing,
@@ -268,6 +286,7 @@ impl Network {
             unavailable_until: BTreeMap::new(),
             probe: Instant::now(),
             last_tip: None,
+            last_announce: Instant::now() - Duration::from_secs(1),
             last_scan: Instant::now() - Duration::from_secs(1),
             diagnostic: None,
         })
@@ -277,7 +296,7 @@ impl Network {
     }
     fn queue(&mut self, destination: Hash, kind: u8, payload: &[u8]) -> Result<()> {
         self.carriage
-            .originate(&self.key, destination, kind, payload)?;
+            .originate_unique(&self.key, destination, kind, payload)?;
         Ok(())
     }
     fn respond(&mut self, store: &mut Store, p: &Packet, now: u64) -> Result<()> {
@@ -287,7 +306,8 @@ impl Network {
         }
         let destination = peer_id(p.origin);
         match p.kind {
-            1 | 8 | 9 => {}
+            1 | 9 => {}
+            8 => self.carriage.discover(p)?,
             2 => {
                 store.submit_transaction(p.id, &p.payload, now)?;
             }
@@ -326,9 +346,10 @@ impl Network {
             }
             7 => {
                 let mut missing: Vec<u8> = Vec::new();
+                let retained = self.carriage.pending_block_ids()?;
                 for e in p.payload[2..].as_chunks::<33>().0 {
                     let id: Hash = e[1..].try_into().unwrap();
-                    if e[0] == 3 && store.get_block(id).is_err() {
+                    if e[0] == 3 && store.get_block(id).is_err() && !retained.contains(&id) {
                         missing.extend(e)
                     }
                 }
@@ -393,8 +414,15 @@ impl Network {
             self.suppressed.clear();
             self.probe = Instant::now();
         }
-        if self.last_tip != Some(store.ledger().tip().id()) {
-            let peers: Vec<_> = self.neighbors.iter().map(|n| peer_id(n.key)).collect();
+        if self.last_tip != Some(store.ledger().tip().id())
+            && self.last_announce.elapsed() >= Duration::from_secs(1)
+        {
+            let peers: BTreeSet<_> = self
+                .neighbors
+                .iter()
+                .map(|n| peer_id(n.key))
+                .chain(self.offline_peers.iter().map(|k| peer_id(*k)))
+                .collect();
             let mut head = store.ledger().tip().id().to_vec();
             head.extend(store.ledger().tip().height().to_be_bytes());
             head.extend(store.ledger().tip().work_bytes());
@@ -403,9 +431,22 @@ impl Network {
                 self.queue(peer, 6, &store.locator()?)?;
             }
             self.last_tip = Some(store.ledger().tip().id());
+            self.last_announce = Instant::now();
         }
         if self.last_scan.elapsed() >= Duration::from_millis(200) {
-            for p in self.carriage.pending()?.into_iter().take(32) {
+            let mut pending = self.carriage.pending()?;
+            // Keep cursor admission fair; order only this bounded slice by height.
+            pending.sort_by_key(|p| {
+                if p.kind == 3 {
+                    (
+                        1,
+                        u128::from_be_bytes(p.payload[68..84].try_into().unwrap()),
+                    )
+                } else {
+                    (0, 0)
+                }
+            });
+            for p in pending.into_iter().take(32) {
                 match self.respond(store, &p, now) {
                     Ok(()) => self.carriage.processed(p.id)?,
                     Err(e)
@@ -477,7 +518,12 @@ impl Network {
         Ok(())
     }
     pub fn queue_transaction(&mut self, raw: &[u8]) -> Result<()> {
-        let peers: Vec<_> = self.neighbors.iter().map(|n| peer_id(n.key)).collect();
+        let peers: BTreeSet<_> = self
+            .neighbors
+            .iter()
+            .map(|n| peer_id(n.key))
+            .chain(self.offline_peers.iter().map(|k| peer_id(*k)))
+            .collect();
         for peer in peers {
             self.queue(peer, 2, raw)?;
         }
@@ -492,5 +538,51 @@ impl Network {
             read(&self.root.join("tls.secret"), 16384)?,
             self.config.clone(),
         ))
+    }
+}
+
+impl Network {
+    pub fn offline_export(&mut self, peer: Hash) -> Result<Vec<Vec<u8>>> {
+        ensure(
+            self.offline_peers.contains(&peer),
+            "INVALID_CRYPTO offline adapter not admitted",
+        )?;
+        let packets = self
+            .carriage
+            .prepare(&[peer], &BTreeSet::new())?
+            .map(|(_, p)| p)
+            .unwrap_or_default();
+        packets
+            .iter()
+            .map(|p| {
+                self.carriage
+                    .prepare_offline(&self.key, peer, p)
+                    .map(|f| f.raw().to_vec())
+            })
+            .collect()
+    }
+    pub fn offline_import(&mut self, peer: Hash, raw: &[u8]) -> Result<Option<Vec<u8>>> {
+        ensure(
+            self.offline_peers.contains(&peer),
+            "INVALID_CRYPTO offline adapter not admitted",
+        )?;
+        let f = Frame::decode(raw, self.chain)?;
+        if f.kind == 3 {
+            self.carriage.offline_receipt(raw, peer)?;
+            return Ok(None);
+        }
+        let result = self.carriage.receive(raw, peer, [0; 32], true, &self.key)?;
+        if let Some(receipt) = &result {
+            if receipt.result == Some(1) {
+                let original = f.packet.as_ref().ok_or("INVALID_ENCODING offline packet")?;
+                self.queue(peer_id(original.origin), 9, receipt.raw())?;
+            }
+        }
+        Ok(result.map(|f| f.raw().to_vec()))
+    }
+    pub fn discovered_candidates(&self) -> Result<Value> {
+        Ok(
+            json!({"identities":self.carriage.candidate_identities()?.iter().map(hex::encode).collect::<Vec<_>>(),"endpoint_authority":false}),
+        )
     }
 }

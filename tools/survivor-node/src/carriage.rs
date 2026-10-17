@@ -50,8 +50,8 @@ impl Default for Budget {
 pub struct Carriage {
     pub(crate) db: Connection,
     _lease: File,
-    chain: Hash,
-    identity: Hash,
+    pub(crate) chain: Hash,
+    pub(crate) identity: Hash,
     budget: Budget,
 }
 impl Carriage {
@@ -132,6 +132,7 @@ impl Carriage {
             identity,
             budget,
         };
+        s.offline_open()?;
         let mut stmt =
             s.db.prepare("SELECT id,origin,sequence,raw,kind FROM packets")
                 .map_err(err)?;
@@ -196,9 +197,10 @@ impl Carriage {
             "INVALID_CRYPTO suppression without destination receipt",
         )?;
         s.capacity(0, 0)?;
+        s.candidate_identities()?;
         Ok(s)
     }
-    fn capacity(&self, extra: usize, count: usize) -> Result<()> {
+    pub(crate) fn capacity(&self, extra: usize, count: usize) -> Result<()> {
         let pages: i64 = self
             .db
             .query_row("PRAGMA page_count", [], |r| r.get(0))
@@ -223,7 +225,7 @@ impl Carriage {
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )
             .map_err(err)?;
-        let other:i64=self.db.query_row("SELECT coalesce((SELECT sum(length(raw)+64) FROM receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM hop_receipts),0)+(SELECT count(*)*128 FROM equivocation)+(SELECT count(*)*64 FROM cursors)+256",[],|r|r.get(0)).map_err(err)?;
+        let other:i64=self.db.query_row("SELECT coalesce((SELECT sum(length(raw)+64) FROM receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM hop_receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM offline_out),0)+(SELECT count(*)*64 FROM candidates)+(SELECT count(*)*128 FROM equivocation)+(SELECT count(*)*64 FROM cursors)+256",[],|r|r.get(0)).map_err(err)?;
         ensure(
             n >= 0
                 && size >= 0
@@ -257,6 +259,7 @@ impl Carriage {
         kind: u8,
         payload: &[u8],
     ) -> Result<Packet> {
+        self.compact_completed()?;
         ensure(
             key.verifying_key().to_bytes() == self.identity,
             "INVALID_CRYPTO origin key",
@@ -312,6 +315,7 @@ impl Carriage {
         )?;
         let f = Frame::decode(raw, self.chain)?;
         let p = f.authenticate_delivery(sender, peer_id(self.identity), challenge, offline)?;
+        self.compact_completed()?;
         if p.kind == 9 {
             let r = Frame::decode(&p.payload, self.chain)?;
             if let Some(original) =
@@ -393,7 +397,11 @@ impl Carriage {
         } else {
             0
         };
-        Ok(Some(Frame::receipt(self.chain, key, &f, code)?))
+        let receipt = Frame::receipt(self.chain, key, &f, code)?;
+        if code == 1 {
+            self.retain_destination_receipt(p, &receipt)?;
+        }
+        Ok(Some(receipt))
     }
     pub fn retain_destination_receipt(&mut self, p: &Packet, f: &Frame) -> Result<()> {
         let p = Packet::decode(&p.raw, self.chain)?;
@@ -615,5 +623,107 @@ impl Carriage {
         Ok(
             serde_json::json!({"state":(["NOT_QUEUED","QUEUED","HOP_CUSTODY","DESTINATION_CUSTODY"][level]),"observations":observations,"ledger_authority":false}),
         )
+    }
+}
+
+impl Carriage {
+    /// Keep a finite recent completion history. Only already processed packets
+    /// with independently verified destination receipts, or noncustodial kind-9
+    /// control copies, are eligible. Live obligations and ledger/wallet bytes stay.
+    pub fn compact_completed(&mut self) -> Result<()> {
+        let n: i64 = self
+            .db
+            .query_row(
+                "SELECT count(*) FROM packets WHERE processed=1 AND (done=1 OR kind=9)",
+                [],
+                |r| r.get(0),
+            )
+            .map_err(err)?;
+        if n <= 256 {
+            return Ok(());
+        }
+        let mut stmt=self.db.prepare("SELECT raw FROM packets WHERE processed=1 AND (done=1 OR kind=9) ORDER BY rowid LIMIT ?1").map_err(err)?;
+        let rows = stmt
+            .query_map([n - 256], |r| r.get::<_, Vec<u8>>(0))
+            .map_err(err)?;
+        let mut ids = Vec::new();
+        for raw in rows {
+            let p = Packet::decode(&raw.map_err(err)?, self.chain)?;
+            if p.kind != 9 {
+                let receipt: Vec<u8> = self
+                    .db
+                    .query_row(
+                        "SELECT raw FROM receipts WHERE packet=?1",
+                        [p.id.as_slice()],
+                        |r| r.get(0),
+                    )
+                    .map_err(err)?;
+                ensure(
+                    Frame::decode(&receipt, self.chain)?.discharges(&p),
+                    "INVALID_CRYPTO completion collection",
+                )?;
+            }
+            ids.push(p.id);
+        }
+        drop(stmt);
+        let tx = self.db.transaction().map_err(err)?;
+        for id in ids {
+            for query in [
+                "DELETE FROM offline_out WHERE packet=?1",
+                "DELETE FROM candidates WHERE source=?1",
+                "DELETE FROM hop_receipts WHERE packet=?1",
+                "DELETE FROM receipts WHERE packet=?1",
+                "DELETE FROM packets WHERE id=?1",
+            ] {
+                tx.execute(query, [id.as_slice()]).map_err(err)?;
+            }
+        }
+        tx.commit().map_err(err)?;
+        Ok(())
+    }
+}
+
+impl Carriage {
+    /// Coalesce an exact outstanding local offer without changing its signature,
+    /// sequence or acknowledgment state. Explicit new packets still use originate.
+    pub fn originate_unique(
+        &mut self,
+        key: &SigningKey,
+        destination: Hash,
+        kind: u8,
+        payload: &[u8],
+    ) -> Result<Packet> {
+        ensure(
+            key.verifying_key().to_bytes() == self.identity,
+            "INVALID_CRYPTO origin key",
+        )?;
+        if let Some(p) = self.queued_copy(destination, kind, payload)? {
+            return Ok(p);
+        }
+        self.originate(key, destination, kind, payload)
+    }
+    pub(crate) fn queued_copy(
+        &self,
+        destination: Hash,
+        kind: u8,
+        payload: &[u8],
+    ) -> Result<Option<Packet>> {
+        let raw:Option<Vec<u8>>=self.db.query_row("SELECT raw FROM packets WHERE origin=?1 AND kind=?2 AND done=0 AND substr(raw,77,32)=?3 AND substr(raw,130,length(raw)-193)=?4 ORDER BY id LIMIT 1",params![self.identity.as_slice(),kind,destination.as_slice(),payload],|r|r.get(0)).optional().map_err(err)?;
+        raw.map(|raw| Packet::decode(&raw, self.chain)).transpose()
+    }
+    pub(crate) fn pending_block_ids(&self) -> Result<BTreeSet<Hash>> {
+        let mut stmt = self
+            .db
+            .prepare("SELECT raw FROM packets WHERE kind=3 AND processed=0")
+            .map_err(err)?;
+        let rows = stmt
+            .query_map([], |r| r.get::<_, Vec<u8>>(0))
+            .map_err(err)?;
+        let mut ids = BTreeSet::new();
+        for raw in rows {
+            let p = Packet::decode(&raw.map_err(err)?, self.chain)?;
+            ids.insert(crate::kernel::block_id(p.payload())?);
+        }
+        Ok(ids)
     }
 }

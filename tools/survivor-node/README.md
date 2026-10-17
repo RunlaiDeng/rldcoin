@@ -100,10 +100,25 @@ lock. Persistent neighbor/class/object rotation and temporary unavailable-neighb
 backoff allow alternate admitted neighbors. Receipt observations survive restart;
 hop acknowledgment never discharges a destination obligation. Returned destination
 receipts may traverse a relay that lacks the original packet. The default custody
-budget is 4096 packets/256 MiB including metadata. Completed copies remain retained
-in this candidate; exhaustion refuses new custody without deleting obligations.
+budget is 4096 packets/256 MiB including metadata. At most 256 recently completed,
+processed packets remain as transport history; older copies can be collected only
+after rechecking their exact destination receipt. Kind-9 control copies carry no
+new custody promise and share this finite cache. Collection never removes ledger
+or wallet evidence. A missing old observation is unavailable transport history,
+not evidence that delivery did not occur. Live obligations are never collected;
+exhaustion refuses new custody.
 Ground certificates expire after 90 days and need explicit independently pinned
 renewal. This is not a qualified physical interstellar adapter.
+
+An optional `offline_peers` list independently admits public keys for one-way file
+carriage. `offline_export(peer_key)` returns bounded exact frame bytes after durable
+preparation; retries retain the original nonce and packet. `offline_import` reads
+one bounded `frame_file` for that admitted peer and returns its signed receipt.
+The receipt may be imported later at the original sender, where its exact retained
+delivery/nonces must match. Normal TLS never accepts an offline zero challenge.
+`discovery_candidates` exposes signed peer introductions without granting endpoint
+or certificate authority. Complete pending block bytes suppress redundant fetches
+but cannot advance the ledger before native ancestor/state execution.
 
 Selected changes commit exact attached/detached block and transaction IDs together
 with changed output observations. Cold replay checks those notifications against
