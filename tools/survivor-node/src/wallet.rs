@@ -1,6 +1,6 @@
 //! Durable exact user intent. A reservation is local policy, never a chain lock.
 use crate::{
-    kernel::{decode_tx, decode_unsigned, hash, tag, Hash, Result},
+    kernel::{decode_tx, decode_unsigned, hash, tag, Hash, Ledger, Result},
     store::Store,
 };
 use ed25519_dalek::{Signer, SigningKey};
@@ -41,6 +41,73 @@ pub(crate) struct Review {
     pub signing_tip: Option<Hash>,
     pub waived: bool,
 }
+/// Counts are completeness checks only, never ledger authority. Context indexes
+/// locate one row at a time within the existing database budget. Only the cold
+/// store's fully executed selected heads may satisfy these requests.
+pub(crate) struct ColdWallet {
+    reviews: u64,
+    signatures: u64,
+}
+impl ColdWallet {
+    pub(crate) fn selected_head(
+        &mut self,
+        store: &Store,
+        ledger: &Ledger,
+        revision: u128,
+    ) -> Result<()> {
+        if self.reviews == 0 && self.signatures == 0 {
+            return Ok(());
+        }
+        let tip = ledger.tip().id();
+        let mut stmt = store
+            .db
+            .prepare("SELECT id FROM wallet WHERE reviewed_revision=?1 OR signing_tip=?2")
+            .map_err(err)?;
+        let mut rows = stmt
+            .query(params![revision.to_be_bytes().as_slice(), tip.as_slice()])
+            .map_err(err)?;
+        while let Some(row) = rows.next().map_err(err)? {
+            let id = h(row.get(0).map_err(err)?)?;
+            let review = store
+                .review_record(id)?
+                .ok_or("INVALID missing wallet context")?;
+            if review.reviewed_revision == revision {
+                ensure(
+                    review.reviewed_tip == tip,
+                    "INVALID wallet review selected context",
+                )?;
+                ledger.validate_unsigned(&review.unsigned)?;
+                self.reviews = self
+                    .reviews
+                    .checked_sub(1)
+                    .ok_or("INVALID duplicate wallet context")?;
+            }
+            if review.signing_tip == Some(tip) {
+                ensure(
+                    review.reviewed_revision <= revision,
+                    "INVALID wallet signing precedes review",
+                )?;
+                ledger.validate_transfer(
+                    review
+                        .signed
+                        .as_ref()
+                        .ok_or("INVALID partial wallet publication")?,
+                )?;
+                self.signatures = self
+                    .signatures
+                    .checked_sub(1)
+                    .ok_or("INVALID duplicate signing context")?;
+            }
+        }
+        Ok(())
+    }
+    pub(crate) fn finish(self) -> Result<()> {
+        ensure(
+            self.reviews == 0 && self.signatures == 0,
+            "INVALID unresolved wallet selected context",
+        )
+    }
+}
 impl Store {
     fn wallet_write(&self, result: rusqlite::Result<usize>) -> Result<()> {
         match result {
@@ -49,26 +116,20 @@ impl Store {
             Err(e) => Err(self.storage_wait(format!("wallet journal commit: {e}"))),
         }
     }
-    pub(crate) fn wallet_open(&self) -> Result<()> {
-        self.db.execute_batch("CREATE TABLE IF NOT EXISTS wallet (id BLOB PRIMARY KEY, unsigned BLOB NOT NULL, reviewed_tip BLOB NOT NULL, reviewed_revision BLOB NOT NULL, digest BLOB NOT NULL, signed BLOB, signing_tip BLOB, waived INTEGER NOT NULL CHECK(waived IN (0,1))); ").map_err(err)?;
-        let mut stmt = self.db.prepare("SELECT id FROM wallet").map_err(err)?;
-        let mut rows = stmt.query([]).map_err(err)?;
-        while let Some(r) = rows.next().map_err(err)? {
-            let id = h(r.get(0).map_err(err)?)?;
-            let review = self
-                .review_record(id)?
-                .ok_or("INVALID missing wallet record")?;
-            self.replay(review.reviewed_tip)?
-                .validate_unsigned(&review.unsigned)?;
-            match (review.signed, review.signing_tip) {
-                (Some(x), Some(t)) => {
-                    self.replay(t)?.validate_transfer(&x)?;
-                }
-                (None, None) => {}
-                _ => return Err("INVALID partial wallet publication".into()),
-            }
-        }
-        Ok(())
+    pub(crate) fn wallet_prepare_cold(&self) -> Result<ColdWallet> {
+        self.db.execute_batch("CREATE TABLE IF NOT EXISTS wallet (id BLOB PRIMARY KEY, unsigned BLOB NOT NULL, reviewed_tip BLOB NOT NULL, reviewed_revision BLOB NOT NULL, digest BLOB NOT NULL, signed BLOB, signing_tip BLOB, waived INTEGER NOT NULL CHECK(waived IN (0,1))); CREATE INDEX IF NOT EXISTS wallet_review_context ON wallet(reviewed_revision); CREATE INDEX IF NOT EXISTS wallet_signing_context ON wallet(signing_tip);").map_err(err)?;
+        let (reviews, signatures): (i64, i64) = self
+            .db
+            .query_row("SELECT count(*),count(signed) FROM wallet", [], |r| {
+                Ok((r.get(0)?, r.get(1)?))
+            })
+            .map_err(err)?;
+        Ok(ColdWallet {
+            reviews: reviews.try_into().map_err(|_| "INVALID wallet count")?,
+            signatures: signatures
+                .try_into()
+                .map_err(|_| "INVALID signature count")?,
+        })
     }
     /// Every use of a retained intent checks its complete review binding and any
     /// exact signature. This never signs, selects a state or trusts decoded state.

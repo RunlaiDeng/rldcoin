@@ -216,6 +216,8 @@ impl Store {
         s.observations_open()?;
         s.check_history_batches()?;
         s.db.execute_batch("CREATE TABLE IF NOT EXISTS restore_policy (one INTEGER PRIMARY KEY CHECK(one=1),state TEXT NOT NULL,ack_head BLOB); INSERT OR IGNORE INTO restore_policy VALUES(1,'INTACT',NULL);").map_err(err)?;
+        let mut wallet = s.wallet_prepare_cold()?;
+        wallet.selected_head(&s, &s.ledger, 0)?;
         // Verify the complete ordered selected-transition chain and each retained
         // operation's exact block/result. Uncommitted intent never selects state.
         let mut previous = pin;
@@ -325,6 +327,9 @@ impl Store {
                 s.observation_cache
                     .borrow_mut()
                     .committed((nt, r), observation_delta);
+                // No SQL context, claimed root or decoded state supplies this
+                // ledger. Its complete blocks, outcome and change just passed.
+                wallet.selected_head(&s, &candidate, r)?;
                 rev = r;
                 previous = nt;
                 heads.insert(rev, nt);
@@ -335,7 +340,7 @@ impl Store {
         drop(stmt);
         ensure(previous == tip && rev == revision, "INVALID committed head")?;
         s.ledger = current;
-        s.wallet_open()?;
+        wallet.finish()?;
         s.pool_open()?;
         Ok(s)
     }

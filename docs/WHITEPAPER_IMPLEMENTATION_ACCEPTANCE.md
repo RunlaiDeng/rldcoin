@@ -27,7 +27,7 @@ required checks, not completion certificates for the campaigns above.
 |---|---|---|
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`; native observation-cache unit cases |
-| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
+| Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `distribution.rs` |
 
@@ -51,6 +51,16 @@ native counterexample requires recorded/refused equivocation, unchanged existing
 custody and original bytes, then acceptance of the authentic receipt under a valid
 new wrapper, including out-of-order delivery, exact retry and cold restart. A
 kind-9 control copy grants no new custody promise, signing or ledger rights.
+
+Cold wallet verification must bind every original review to the exact native
+selected head and revision, and every retained signature to an actual selected
+head no earlier than its review. Context indexes and completeness counts provide
+no ledger authority. Complete genesis-rooted execution and original outcome/change
+checks must precede each context validation. Unknown heads, intermediate batch
+members, mismatched revisions and partial signatures refuse; owner, value,
+maturity, expiry and strict signature checks remain mandatory. Historical intents
+must remain recoverable after inclusion or branch replacement. Growing wallet
+journals and independent rollback/custody qualification remain separate obligations.
 
 Bounded history group installation retains complete native execution and atomic
 prior/successor recovery. The separate `bin/rld-survivor-history.rs` measurement

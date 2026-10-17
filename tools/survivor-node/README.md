@@ -129,7 +129,17 @@ Signing also compares the caller's review digest and revalidates current inputs.
 A successful wallet write must affect its exact row and read back the exact retained
 intent/signature before any new signature or review receipt is returned. Corrupt
 bindings, altered recovery bytes or unconfirmed writes suspend mutation until
-full cold verification. Missing arbitrary peer objects do not freeze a healthy
+full cold verification. During cold replay, wallet context indexes locate one
+bounded record at a time at its actual selected head. Each original review must
+match both head and revision; each retained signature must validate at a selected
+head no earlier than that review. Complete native block/outcome/change verification
+precedes these checks. Unresolved, intermediate batch or mismatched contexts refuse.
+The indexes remain inside the database budget and never create a ledger or replace
+signature, owner, value, maturity or expiry checks. Historical records remain valid
+in their original contexts after inclusion or branch replacement. This avoids a
+separate genesis replay per wallet record; it does not qualify growing wallet
+journals, independent freshness or restored signing custody.
+Missing arbitrary peer objects do not freeze a healthy
 node; a detected corrupt retained body or missing known selected history does.
 
 Transfer output observations expose current local reservation and retain a known
