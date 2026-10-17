@@ -24,3 +24,20 @@ zeroize = "=1.9.1"
 opt-level = 1
 debug-assertions = true
 overflow-checks = true
+
+[dependencies.rustls]
+version = "=0.23.45"
+default-features = false
+features = ["std", "ring"]
+
+[dependencies.rcgen]
+version = "=0.14.10"
+default-features = false
+features = ["crypto", "ring", "zeroize"]
+
+[dependencies.x509-parser]
+version = "=0.18.1"
+features = ["verify"]
+
+[dependencies.rustls-pemfile]
+version = "=2.2.0"

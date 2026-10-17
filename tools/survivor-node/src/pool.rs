@@ -6,7 +6,7 @@ use crate::{
 use rusqlite::{params, OptionalExtension};
 use std::collections::BTreeSet;
 fn err(e: impl std::fmt::Display) -> String {
-    format!("STORAGE_WAIT {e}")
+    format!("RESOURCE_WAIT {e}")
 }
 impl Store {
     pub(crate) fn pool_open(&self) -> Result<()> {

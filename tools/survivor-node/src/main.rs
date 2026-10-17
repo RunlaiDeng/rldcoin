@@ -84,10 +84,17 @@ fn operation() -> Result<Hash> {
 fn response(s: &Store, result: Value, clock: Option<u64>, diagnostic: Option<&str>) -> Value {
     json!({"profile":"RLD-SURVIVOR-1","chain_id":hex::encode(s.ledger().chain_id()),"selected_tip":hex::encode(s.ledger().tip().id()),"revision":s.revision().to_string(),"observed_at":clock.map(|x|x.to_string()),"confidence":"CONDITIONAL","diagnostic":diagnostic,"result":result})
 }
-fn command(s: &mut Store, v: &Value, miner: &mut Option<Hash>, time: u64) -> Result<Value> {
+fn command(
+    s: &mut Store,
+    v: &Value,
+    miner: &mut Option<Hash>,
+    network: &mut Option<rld_survivor_node::network::Network>,
+    network_error: &Option<String>,
+    time: u64,
+) -> Result<Value> {
     match field(v, "method")? {
         "node_status" => Ok(
-            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"mining":miner.is_some(),"relay":"NOT_IMPLEMENTED","mainnet":false}),
+            json!({"height":s.ledger().tip().height().to_string(),"issued":s.ledger().issued().to_string(),"state_root":hex::encode(s.ledger().tip().root()),"mining":miner.is_some(),"relay":network.as_ref().map(|n|n.status()),"transport_error":network_error,"mainnet":false}),
         ),
         "get_object" => {
             let kind = field(v, "kind")?;
@@ -109,6 +116,9 @@ fn command(s: &mut Store, v: &Value, miner: &mut Option<Hash>, time: u64) -> Res
                 &bytes(v, "transaction_hex")?,
                 time,
             )?;
+            if let Some(n) = network.as_mut() {
+                n.queue_transaction(&bytes(v, "transaction_hex")?)?;
+            }
             Ok(json!({"transaction_id":hex::encode(id),"ledger":"UNSEEN"}))
         }
         "review_transfer" => {
@@ -194,8 +204,8 @@ fn command(s: &mut Store, v: &Value, miner: &mut Option<Hash>, time: u64) -> Res
 }
 fn run() -> Result<()> {
     let a: Vec<_> = std::env::args().collect();
-    if a.len() != 5 || a[1] != "serve" {
-        return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID; bounded local JSON lines on stdin; test networks only".into());
+    if !(5..=6).contains(&a.len()) || a[1] != "serve" {
+        return Err("Usage: rld-survivor-node serve PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG]; bounded local JSON lines on stdin; test networks only".into());
     }
     let g = read(Path::new(&a[3]), 85)?;
     let pin: Hash = hex::decode(&a[4])
@@ -203,6 +213,15 @@ fn run() -> Result<()> {
         .try_into()
         .map_err(|_| "INVALID_ENCODING pin")?;
     let mut s = Store::open(Path::new(&a[2]), &g, pin, Limits::default())?;
+    let config = a.get(5).map(|p| read(Path::new(p), 65536)).transpose()?;
+    let (mut network, mut network_error) = match rld_survivor_node::network::Network::open(
+        &Path::new(&a[2]).join("contact"),
+        pin,
+        config.as_deref(),
+    ) {
+        Ok(n) => (Some(n), None),
+        Err(e) => (None, Some(e)),
+    };
     let (tx, rx) = mpsc::sync_channel(8);
     std::thread::spawn(move || {
         let mut stdin = io::stdin().lock();
@@ -235,7 +254,7 @@ fn run() -> Result<()> {
                 let clock = now().ok();
                 let r = match (request, clock) {
                     (Ok(mut v), Some(t)) => {
-                        let r = command(&mut s, &v, &mut miner, t);
+                        let r = command(&mut s, &v, &mut miner, &mut network, &network_error, t);
                         if let Some(Value::String(p)) = v.get_mut("password") {
                             use zeroize::Zeroize;
                             p.zeroize()
@@ -254,6 +273,11 @@ fn run() -> Result<()> {
             }
             Err(mpsc::RecvTimeoutError::Disconnected) => break,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
+        }
+        if let (Some(n), Ok(t)) = (network.as_mut(), now()) {
+            if let Err(e) = n.tick(&mut s, t) {
+                network_error = Some(e);
+            }
         }
         if let Some(k) = miner {
             let t = now()?;

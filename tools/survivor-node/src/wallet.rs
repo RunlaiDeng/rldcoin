@@ -7,7 +7,7 @@ use ed25519_dalek::{Signer, SigningKey};
 use rusqlite::{params, OptionalExtension};
 use std::collections::BTreeSet;
 fn err(e: impl std::fmt::Display) -> String {
-    format!("STORAGE_WAIT {e}")
+    format!("RESOURCE_WAIT {e}")
 }
 fn ensure(ok: bool, why: &str) -> Result<()> {
     if ok {

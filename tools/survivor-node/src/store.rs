@@ -40,7 +40,7 @@ pub struct Outcome {
     pub selected: bool,
 }
 fn err(e: impl std::fmt::Display) -> String {
-    format!("STORAGE_WAIT {e}")
+    format!("RESOURCE_WAIT {e}")
 }
 fn hash32(x: Vec<u8>) -> Result<Hash> {
     x.try_into().map_err(|_| "INVALID storage hash".into())
@@ -459,5 +459,81 @@ impl Store {
             revision,
             selected,
         })
+    }
+}
+
+impl Store {
+    pub fn genesis_bytes(&self) -> &[u8] {
+        &self.genesis
+    }
+    /// Selected IDs ordered genesis to tip, reconstructed from retained objects.
+    pub fn selected_ids(&self) -> Result<Vec<Hash>> {
+        let mut ids = Vec::new();
+        let mut id = self.ledger.tip().id();
+        while id != self.ledger.chain_id() {
+            ids.push(id);
+            let raw = self.get_block(id)?;
+            id = raw[36..68].try_into().unwrap();
+            ensure(
+                ids.len() as u64 <= self.limits.database_bytes / 270,
+                "RESOURCE_WAIT locator index",
+            )?;
+        }
+        ids.push(id);
+        ids.reverse();
+        Ok(ids)
+    }
+    pub fn locator(&self) -> Result<Vec<u8>> {
+        let ids = self.selected_ids()?;
+        let mut at = ids.len() - 1;
+        let mut chosen = vec![ids[at]];
+        for _ in 0..10 {
+            if at == 0 {
+                break;
+            }
+            at -= 1;
+            chosen.push(ids[at]);
+        }
+        let mut offset = 2usize;
+        while at > 0 && chosen.len() < 127 {
+            at = at.saturating_sub(offset);
+            chosen.push(ids[at]);
+            offset = offset.saturating_mul(2);
+        }
+        if chosen.last() != Some(&ids[0]) {
+            chosen.push(ids[0]);
+        }
+        let mut raw = (chosen.len() as u16).to_be_bytes().to_vec();
+        for id in chosen {
+            raw.extend(id)
+        }
+        Ok(raw)
+    }
+    pub fn successor_inventory(&self, locator: &[u8]) -> Result<Vec<u8>> {
+        ensure(locator.len() >= 2, "INVALID_ENCODING locator")?;
+        let n = u16::from_be_bytes(locator[..2].try_into().unwrap()) as usize;
+        ensure(
+            (1..=128).contains(&n) && locator.len() == 2 + n * 32,
+            "INVALID_ENCODING locator",
+        )?;
+        let ids = self.selected_ids()?;
+        let positions: std::collections::BTreeMap<_, _> =
+            ids.iter().enumerate().map(|(i, h)| (*h, i)).collect();
+        let mut start = 0;
+        for raw in locator[2..].as_chunks::<32>().0 {
+            let id: Hash = *raw;
+            if let Some(i) = positions.get(&id) {
+                start = i + 1;
+                break;
+            }
+        }
+        let mut selected: Vec<_> = ids.into_iter().skip(start).take(128).collect();
+        selected.sort_unstable();
+        let mut raw = (selected.len() as u16).to_be_bytes().to_vec();
+        for id in selected {
+            raw.push(if id == self.ledger.chain_id() { 1 } else { 3 });
+            raw.extend(id);
+        }
+        Ok(raw)
     }
 }

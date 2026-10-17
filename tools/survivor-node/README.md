@@ -24,8 +24,7 @@ The arithmetic and cryptographic codec are adapted from the same-author public
 vector oracle. Differential fixture agreement is useful engineering evidence, not
 an independent validator, security audit, durability or full-node qualification.
 The kernel alone does not supply the full O01-O13 lifecycle. The native storage,
-wallet and control entry below preserve its authority boundary; relay and remaining
-operations require further integration.
+wallet, control and contact entries below preserve its authority boundary.
 Actual interstellar adapters, long-horizon custody and monetary adoption remain
 separate mandatory gates in the acceptance plan.
 
@@ -43,7 +42,7 @@ signing material to protect assets.
 ## Durable native entry
 
 `cargo run --locked --manifest-path tools/survivor-node/Cargo.toml -- serve
-PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID` opens one private no-value store.
+PRIVATE_DIRECTORY GENESIS_FILE PINNED_CHAIN_ID [CONTACT_CONFIG]` opens one private no-value store.
 Supply the exact 85-byte test genesis and its independently chosen pin. No genesis
 is obtained from a directory service. Control requests are bounded JSON lines on
 native stdin and responses are JSON on stdout. This is an engineering CLI, not a
@@ -85,9 +84,29 @@ AES-256-GCM with independent OS-generated salt/nonce. Direct-key loss has no res
 The bounded pool keeps original signed bytes and selects parent-valid disjoint
 inputs by fee/byte then ID. Submission never changes monetary state.
 
-This stage does **not** yet satisfy the complete operations contract: ordinary
-contact synchronization/relay, full transport receipts, complete inclusion/reorg
+Ordinary startup creates a separate contact identity, retained TLS material and
+bounded custody database. Without configuration it listens on an ephemeral loopback
+port and has no neighbors. Optional contact configuration supplies a literal `listen`
+address and `neighbors` entries with exact `key`, literal `endpoint` and
+`certificate_sha256`. Obtain these values from each node's local status and admit
+them independently; advertisements never replace pins. No private contact material
+belongs in a shared configuration or public repository.
+
+The native lifecycle exchanges signed HEAD/LOCATOR/inventory and complete blocks,
+replays missing dependencies and forwards canonical transactions. TLS 1.3 uses
+mutual pins, fresh application challenges and bounded worker sockets. Custody is
+committed by the main loop before acknowledgment; socket workers hold no ledger
+lock. Persistent neighbor/class/object rotation and temporary unavailable-neighbor
+backoff allow alternate admitted neighbors. Receipt observations survive restart;
+hop acknowledgment never discharges a destination obligation. Returned destination
+receipts may traverse a relay that lacks the original packet. The default custody
+budget is 4096 packets/256 MiB including metadata. Completed copies remain retained
+in this candidate; exhaustion refuses new custody without deleting obligations.
+Ground certificates expire after 90 days and need explicit independently pinned
+renewal. This is not a qualified physical interstellar adapter.
+
+This stage does **not** yet satisfy the complete operations contract: complete inclusion/reorg
 status history, detached-transaction reoffering, whole-wallet backup/restore with
 freshness policy, fault injection at every publication boundary, consumer packaging
-and independent/physical qualification remain required. `relay: NOT_IMPLEMENTED`
-is an explicit status, never an assertion of an active interstellar connection.
+and independent/physical qualification remain required. `ACTIVE_GROUND_ADAPTER`
+reports local adapter operation, never an assertion of an interstellar connection.
