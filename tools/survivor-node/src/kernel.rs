@@ -18,7 +18,20 @@ pub(crate) fn tag(s: &str) -> Vec<u8> {
     [b"RLD-SURVIVOR-1/".as_slice(), s.as_bytes(), &[0]].concat()
 }
 pub(crate) fn hash(s: &str, x: &[u8]) -> Hash {
-    Sha256::digest([tag(s), x.to_vec()].concat()).into()
+    digest_parts(domain(s), &[x])
+}
+fn domain(s: &str) -> Sha256 {
+    let mut h = Sha256::new();
+    h.update(b"RLD-SURVIVOR-1/");
+    h.update(s.as_bytes());
+    h.update([0]);
+    h
+}
+fn digest_parts(mut h: Sha256, parts: &[&[u8]]) -> Hash {
+    for part in parts {
+        h.update(part);
+    }
+    h.finalize().into()
 }
 fn double(s: &str, x: &[u8]) -> Hash {
     Sha256::digest(hash(s, x)).into()
@@ -171,48 +184,49 @@ type Coins = BTreeMap<Vec<u8>, Coin>;
 pub(crate) fn outpoint(id: Hash, i: u16) -> Vec<u8> {
     [id.to_vec(), i.to_be_bytes().to_vec()].concat()
 }
-fn tree(records: &[Vec<u8>]) -> Hash {
-    match records.len() {
-        0 => hash("UTXO-EMPTY", &[]),
-        1 => hash("UTXO-LEAF", &records[0]),
-        n => {
-            let mut k = 1;
-            while k * 2 < n {
-                k *= 2
-            }
-            hash(
-                "UTXO-NODE",
-                &[
-                    tree(&records[..k]).as_slice(),
-                    tree(&records[k..]).as_slice(),
-                ]
-                .concat(),
-            )
+fn tree(coins: &Coins) -> Hash {
+    let leaf_domain = domain("UTXO-LEAF");
+    let node_domain = domain("UTXO-NODE");
+    let mut frontier: [Option<Hash>; usize::BITS as usize] = [None; usize::BITS as usize];
+    for (count, (key, coin)) in coins.iter().enumerate() {
+        // Keys can only enter this private map through canonical outpoint().
+        let mut record = [0; 98];
+        record[..34].copy_from_slice(key);
+        record[34..66].copy_from_slice(&coin.owner);
+        record[66..82].copy_from_slice(&coin.amount.to_be_bytes());
+        record[82..].copy_from_slice(&coin.maturity.to_be_bytes());
+        let mut carry = digest_parts(leaf_domain.clone(), &[&record]);
+        let mut occupied = count;
+        let mut level = 0;
+        while occupied & 1 != 0 {
+            let left = frontier[level].take().expect("complete left subtree");
+            carry = digest_parts(node_domain.clone(), &[&left, &carry]);
+            occupied >>= 1;
+            level += 1;
         }
+        frontier[level] = Some(carry);
     }
+    // Smaller right subtrees are folded first. This is exactly the C09 largest
+    // power-of-two split, including non-power-of-two counts; no padded leaves,
+    // persistent witness or cached ledger is introduced.
+    let mut root: Option<Hash> = None;
+    for left in frontier.into_iter().flatten() {
+        root = Some(match root {
+            Some(right) => digest_parts(node_domain.clone(), &[&left, &right]),
+            None => left,
+        });
+    }
+    root.unwrap_or_else(|| hash("UTXO-EMPTY", &[]))
 }
 fn state(chain: Hash, issued: u128, coins: &Coins) -> Hash {
-    let records: Vec<Vec<u8>> = coins
-        .iter()
-        .map(|(k, c)| {
-            [
-                k.clone(),
-                c.owner.to_vec(),
-                c.amount.to_be_bytes().to_vec(),
-                c.maturity.to_be_bytes().to_vec(),
-            ]
-            .concat()
-        })
-        .collect();
-    hash(
-        "STATE",
+    digest_parts(
+        domain("STATE"),
         &[
-            chain.to_vec(),
-            issued.to_be_bytes().to_vec(),
-            (coins.len() as u128).to_be_bytes().to_vec(),
-            tree(&records).to_vec(),
-        ]
-        .concat(),
+            &chain,
+            &issued.to_be_bytes(),
+            &(coins.len() as u128).to_be_bytes(),
+            &tree(coins),
+        ],
     )
 }
 struct Reader<'a> {
@@ -684,4 +698,137 @@ pub fn block_id(raw: &[u8]) -> Result<Hash> {
 }
 pub fn issuance(height: u128) -> (u128, u128) {
     emission(height)
+}
+
+#[cfg(test)]
+mod commitment_tests {
+    use super::*;
+
+    // Retained allocating/recursive reference. It deliberately uses the old
+    // concatenating digest expression, independently of the streaming helper.
+    fn reference_hash(tag: &str, bytes: &[u8]) -> Hash {
+        Sha256::digest([super::tag(tag), bytes.to_vec()].concat()).into()
+    }
+    fn reference_tree(records: &[Vec<u8>]) -> Hash {
+        match records.len() {
+            0 => reference_hash("UTXO-EMPTY", &[]),
+            1 => reference_hash("UTXO-LEAF", &records[0]),
+            n => {
+                let mut k = 1;
+                while k * 2 < n {
+                    k *= 2;
+                }
+                reference_hash(
+                    "UTXO-NODE",
+                    &[reference_tree(&records[..k]), reference_tree(&records[k..])].concat(),
+                )
+            }
+        }
+    }
+    fn reference_state(chain: Hash, issued: u128, coins: &Coins) -> Hash {
+        let records: Vec<Vec<u8>> = coins
+            .iter()
+            .map(|(key, c)| {
+                [
+                    key.clone(),
+                    c.owner.to_vec(),
+                    c.amount.to_be_bytes().to_vec(),
+                    c.maturity.to_be_bytes().to_vec(),
+                ]
+                .concat()
+            })
+            .collect();
+        reference_hash(
+            "STATE",
+            &[
+                chain.to_vec(),
+                issued.to_be_bytes().to_vec(),
+                (coins.len() as u128).to_be_bytes().to_vec(),
+                reference_tree(&records).to_vec(),
+            ]
+            .concat(),
+        )
+    }
+    fn check(coins: &Coins) {
+        let issued = coins.values().map(|c| c.amount).sum();
+        assert_eq!(
+            state([7; 32], issued, coins),
+            reference_state([7; 32], issued, coins)
+        );
+    }
+    #[test]
+    fn streamed_commitments_preserve_binary_boundaries_and_ordered_map_edits() {
+        // Explicit public NO-VALUE owner derivation, never asset custody.
+        let owner = ed25519_dalek::SigningKey::from_bytes(&[11; 32])
+            .verifying_key()
+            .to_bytes();
+        let mut coins = Coins::new();
+        check(&coins);
+        let counts = [
+            1, 2, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64, 65, 127, 128, 129, 255, 256,
+            257, 511, 512, 513, 1023, 1024, 1025, 2047, 2048, 2049, 4095, 4096, 4097, 8191, 8192,
+            8193,
+        ];
+        for i in 0u64..8193 {
+            let id = reference_hash("TEST-OUTPOINT", &i.to_be_bytes());
+            coins.insert(
+                outpoint(id, (i % 8) as u16),
+                Coin {
+                    owner,
+                    amount: i as u128 + 1,
+                    maturity: i as u128,
+                },
+            );
+            if counts.contains(&coins.len()) {
+                check(&coins);
+            }
+        }
+        // Randomized key order, nonappend insertion, deletion, amount and maturity
+        // edits all change ranks; a retained frontier must never be reused.
+        let removed: Vec<_> = coins.keys().step_by(3).cloned().collect();
+        for key in &removed {
+            coins.remove(key);
+        }
+        check(&coins);
+        for key in removed {
+            coins.insert(
+                key,
+                Coin {
+                    owner,
+                    amount: 17,
+                    maturity: 100_000,
+                },
+            );
+        }
+        check(&coins);
+        let coin = coins.values_mut().nth(1024).unwrap();
+        coin.amount += 1;
+        coin.maturity += 7;
+        check(&coins);
+        assert_ne!(state([7; 32], 1, &coins), state([8; 32], 1, &coins));
+        assert_ne!(state([7; 32], 1, &coins), state([7; 32], 2, &coins));
+    }
+    #[test]
+    fn multipart_hashing_preserves_exact_domain_and_message_bytes() {
+        for len in [0, 1, 63, 64, 65, 127, 128, 129, 268, 4096] {
+            let bytes: Vec<_> = (0..len).map(|n| n as u8).collect();
+            for tag in [
+                "HEADER",
+                "STATE",
+                "UTXO-LEAF",
+                "UTXO-NODE",
+                "TRANSACTIONS",
+                "PACKET",
+                "GENESIS",
+            ] {
+                assert_eq!(hash(tag, &bytes), reference_hash(tag, &bytes));
+                for split in [0, len / 2, len] {
+                    assert_eq!(
+                        digest_parts(domain(tag), &[&bytes[..split], &bytes[split..]]),
+                        reference_hash(tag, &bytes)
+                    );
+                }
+            }
+        }
+    }
 }

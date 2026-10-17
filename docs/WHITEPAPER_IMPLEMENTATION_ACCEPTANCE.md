@@ -48,6 +48,12 @@ chain clock. A finite growing-reward sample is only one T18 workload; sustained
 history beyond an issuance era, spent-state growth, owner activity, malformed
 traffic, backups and declared CPU/RAM/disk horizons remain required.
 
+The kernel's bounded transient C09 frontier must agree byte-for-byte with the
+retained recursive reference at binary boundaries and after ordered map edits.
+It changes temporary allocation only: the selected state still requires complete
+native execution and a complete current-map commitment, never a serialized
+frontier or unverified state cache. This optimization does not close T18/T19.
+
 - Specification/vector consistency is design evidence, not a complete runtime.
 - Native execution, durable node behavior, wallet custody and contact delivery
   require separate checks and composition through ordinary product flows.

@@ -15,10 +15,20 @@ on an untrusted/backward clock and durably commit before acknowledging any chang
 
 Supply, ownership, strict signatures, parent-only input execution, reward maturity,
 base-target adjustment, recovery work, ordered state commitments and tip comparison
-follow C01-C11. The local coin budget refuses without changing the tip. This initial
+follow C01-C11. The local coin budget refuses without changing the tip. The
 kernel clones the current UTXO map per candidate and rebuilds its ordered root;
 large-owner throughput and cold-history resources require measurement. There is no
 consensus height checkpoint or history-length cap. Missing history remains a wait.
+
+C09 commitment construction streams exact fixed-width records through a bounded
+binary frontier. Folding smaller right subtrees first preserves the specified
+largest-power-of-two split, including unbalanced counts. The transient frontier
+has at most `usize::BITS` entries; it does not retain an encoded copy of every coin.
+Domain hashing consumes the exact same prefix and message bytes in parts. No hash
+cache, persistent frontier or peer state initializes ledger authority. Every root
+still hashes every current record, and complete cold replay still executes every
+block. The retained recursive test reference checks binary boundaries and ordered
+insert/delete/value edits; public-vector agreement remains same-author evidence.
 
 The arithmetic and cryptographic codec are adapted from the same-author public
 vector oracle. Differential fixture agreement is useful engineering evidence, not
