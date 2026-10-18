@@ -505,11 +505,28 @@ impl Carriage {
         neighbors: &[Hash],
         suppressed: &BTreeSet<(Hash, Hash)>,
     ) -> Result<Option<(Hash, Vec<Packet>)>> {
+        self.prepare_inner(neighbors, suppressed, None)
+    }
+    /// Select one locally admitted offline peer while retaining the complete
+    /// admitted set for direct-destination routing. Selection grants no receipt.
+    pub(crate) fn prepare_for_peer(
+        &mut self,
+        neighbors: &[Hash],
+        peer: Hash,
+    ) -> Result<Option<(Hash, Vec<Packet>)>> {
+        self.prepare_inner(neighbors, &BTreeSet::new(), Some(peer))
+    }
+    fn prepare_inner(
+        &mut self,
+        neighbors: &[Hash],
+        suppressed: &BTreeSet<(Hash, Hash)>,
+        selected: Option<Hash>,
+    ) -> Result<Option<(Hash, Vec<Packet>)>> {
         ensure(
             neighbors.iter().all(|k| crate::kernel::valid_point(*k)),
             "INVALID_CRYPTO configured neighbor",
         )?;
-        if neighbors.is_empty() {
+        if neighbors.is_empty() && selected.is_none() {
             return Ok(None);
         }
         let mut keys = neighbors.to_vec();
@@ -524,11 +541,18 @@ impl Carriage {
             )
             .map_err(err)?;
         let last = last.map(h).transpose()?;
-        let peer = keys
-            .iter()
-            .find(|k| last.is_none_or(|x| **k > x))
-            .copied()
-            .unwrap_or(keys[0]);
+        let peer = if let Some(peer) = selected {
+            ensure(
+                keys.contains(&peer),
+                "INVALID_CRYPTO selected peer not admitted",
+            )?;
+            peer
+        } else {
+            keys.iter()
+                .find(|k| last.is_none_or(|x| **k > x))
+                .copied()
+                .unwrap_or(keys[0])
+        };
         let start: u8 = self
             .db
             .query_row(

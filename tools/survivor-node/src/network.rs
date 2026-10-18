@@ -845,9 +845,15 @@ impl Network {
             self.offline_peers.contains(&peer),
             "INVALID_CRYPTO offline adapter not admitted",
         )?;
+        let admitted: Vec<_> = self
+            .neighbors
+            .iter()
+            .map(|n| n.key)
+            .chain(self.offline_peers.iter().copied())
+            .collect();
         let packets = self
             .carriage
-            .prepare(&[peer], &BTreeSet::new())?
+            .prepare_for_peer(&admitted, peer)?
             .map(|(_, p)| p)
             .unwrap_or_default();
         packets
@@ -901,6 +907,51 @@ mod listener_tests {
         ));
         fs::create_dir(&root).unwrap();
         root
+    }
+    #[test]
+    fn explicit_offline_export_keeps_other_admitted_direct_destinations() {
+        // Public NO-VALUE keys; peer configuration is locally admitted authority.
+        let root = root();
+        let upstream = SigningKey::from_bytes(&[61; 32]).verifying_key().to_bytes();
+        let downstream = SigningKey::from_bytes(&[62; 32]).verifying_key().to_bytes();
+        let unknown = SigningKey::from_bytes(&[63; 32]).verifying_key().to_bytes();
+        let config = serde_json::to_vec(&json!({
+            "listen":"127.0.0.1:0","neighbors":[],
+            "offline_peers":[hex::encode(upstream),hex::encode(downstream)]
+        }))
+        .unwrap();
+        let path = root.join("contact");
+        let mut network = Network::open(&path, [79; 32], Some(&config)).unwrap();
+        network.queue(peer_id(upstream), 4, &[0; 96]).unwrap();
+        assert!(
+            network.offline_export(downstream).unwrap().is_empty(),
+            "an explicitly requested peer must not hide another admitted direct destination"
+        );
+        let direct = network.offline_export(upstream).unwrap();
+        assert_eq!(direct.len(), 1);
+        assert_eq!(
+            Frame::decode(&direct[0], [79; 32])
+                .unwrap()
+                .packet
+                .unwrap()
+                .destination(),
+            peer_id(upstream)
+        );
+        network.queue(peer_id(unknown), 4, &[1; 96]).unwrap();
+        let transit = network.offline_export(downstream).unwrap();
+        assert_eq!(transit.len(), 1);
+        assert_eq!(
+            Frame::decode(&transit[0], [79; 32])
+                .unwrap()
+                .packet
+                .unwrap()
+                .destination(),
+            peer_id(unknown)
+        );
+        drop(network);
+        let mut reopened = Network::open(&path, [79; 32], None).unwrap();
+        assert_eq!(reopened.offline_export(downstream).unwrap(), transit);
+        assert!(reopened.offline_export(unknown).is_err());
     }
     #[test]
     fn listener_wait_preserves_material_and_offline_custody() {

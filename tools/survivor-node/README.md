@@ -107,6 +107,15 @@ Complete native replay checks both original signatures and monetary conservation
 no controller-created ledger or reverse receipt supplies value. Generated fixture
 keys, frame archives and stopped stores remain private. This finite same-host
 check does not qualify a physical route or independent custody/security.
+The separate four-node case requires two successive relays: the source exits
+before the second leg, the first relay exits after downstream native custody,
+and the downstream relay reopens without a configuration argument before final
+delivery. Recipient inclusion, actual onward spending and full cold conservation
+remain mandatory. Selecting an offline export peer preserves the complete locally
+admitted neighbor set for direct routing; traffic for another admitted direct
+destination stays retained for that destination. Unknown destinations can still
+transit through a willing selected peer. This scheduling rule grants no delivery
+receipt and never deletes an unresolved obligation.
 
 Responses distinguish clock observation from storage readiness. `storage_state`
 is READY or RESTART_REQUIRED; an unavailable/backward clock keeps `observed_at`

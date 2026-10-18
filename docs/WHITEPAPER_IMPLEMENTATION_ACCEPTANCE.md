@@ -69,6 +69,17 @@ configuration argument and fully replays both signatures and conserved value.
 No reverse receipt, source restart or controller-injected ledger can satisfy this
 observation. This finite composition is necessary evidence for D-T03, not complete
 G7/G8, independent operations, physical carriage or fast-layer qualification.
+The full two-relay case additionally requires the source to exit before the first
+relay forwards to the second. Stop the first relay after exact downstream native
+custody, restart the second with retained admission, then complete only the final
+forward leg. Both original payment bytes and recipient-authorized onward spending
+must survive cold replay. An export-peer choice cannot hide other admitted direct
+destinations or turn their traffic into unknown-route carriage. Retaining those
+packets for their correct peer is scheduling, not a receipt or custody discharge.
+Receiver-local destination receipts are expected even on a one-way path. Check
+each complete receipt against its original packet and actual local receiver key;
+such self-signed rows do not establish reverse delivery. The source still retains
+zero imported destination/hop receipts, and no controller leg carries reverse bytes.
 
 The isolated [native candidate](../tools/survivor-node/README.md) supplies the
 implementation entry points below. These are auditable source locations and

@@ -687,3 +687,330 @@ fn one_way_relay_payment_survives_both_source_and_relay_exit_and_spends_onward()
 fn hash_from_hex(value: &str) -> Hash {
     hex::decode(value).unwrap().try_into().unwrap()
 }
+
+#[test]
+fn two_relay_forward_only_payment_survives_sender_exit_and_downstream_restart() {
+    let started = Instant::now();
+    let deadline = started + Duration::from_secs(180);
+    let fixture = std::env::temp_dir().join(format!(
+        "rld-survivor-two-relay-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    fs::create_dir(&fixture).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&fixture, fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    eprintln!(
+        "retained private NO-VALUE two-relay fixture: {}",
+        fixture.display()
+    );
+    let phase =
+        |name: &str| {
+            eprintln!("two-relay {name} elapsed={:?}", started.elapsed());
+            retain(&fixture.join(format!("phase-{name}.json")), serde_json::to_vec(&json!({
+            "phase":name,"elapsed_seconds":started.elapsed().as_secs_f64(),"budget_seconds":180
+        })).unwrap().as_slice());
+        };
+    let genesis_file = fixture.join("fresh.genesis");
+    let created = Command::new(env!("CARGO_BIN_EXE_rld-survivor-node"))
+        .args(["new-test-genesis"])
+        .arg(&genesis_file)
+        .output()
+        .unwrap();
+    retain(&fixture.join("genesis.stdout.json"), &created.stdout);
+    retain(&fixture.join("genesis.stderr.log"), &created.stderr);
+    assert!(created.status.success());
+    let manifest: Value = serde_json::from_slice(&created.stdout).unwrap();
+    assert_eq!(manifest["network_kind"], "NO_VALUE_ONLY");
+    assert_eq!(manifest["initial_allocation"], "0");
+    let chain = manifest["chain_id"].as_str().unwrap();
+    let genesis_bytes = fs::read(&genesis_file).unwrap();
+    let pin = hash_from_hex(chain);
+    assert_eq!(genesis_id(&genesis_bytes), pin);
+    let start = |name, run, config| {
+        Node::start(&fixture, name, run, &genesis_file, chain, config, deadline)
+    };
+    let mut source = start("source", "initial", None);
+    let mut first = start("first", "initial", None);
+    let mut second = start("second", "initial", None);
+    let mut recipient = start("recipient", "initial", None);
+    let payer = create_wallet(&mut source, fixture.join("source-wallet.key"));
+    let payee = create_wallet(&mut recipient, fixture.join("recipient-wallet.key"));
+    let initial = [
+        source.status(),
+        first.status(),
+        second.status(),
+        recipient.status(),
+    ];
+    let contacts: Vec<String> = initial
+        .iter()
+        .map(|status| {
+            assert_eq!(status["result"]["height"], "0");
+            assert_eq!(status["result"]["issued"], "0");
+            assert_eq!(status["chain_id"], chain);
+            status["result"]["relay"]["identity"]
+                .as_str()
+                .unwrap()
+                .to_owned()
+        })
+        .collect();
+    source.request(json!({"method":"set_mining","enabled":true,"miner":payer.owner}));
+    wait(deadline, || {
+        source.status()["result"]["height"]
+            .as_str()
+            .unwrap()
+            .parse::<u128>()
+            .unwrap()
+            >= 100
+    });
+    source.request(json!({"method":"set_mining","enabled":false}));
+    let funded = source.wallet(&payer.owner);
+    let reward = funded["result"]["outputs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|coin| coin["eligible_next_height"] == true && coin["reserved"] == false)
+        .unwrap();
+    let reward_input = reward["outpoint"].as_str().unwrap().to_owned();
+    let reward_amount = reward["amount"].as_str().unwrap().parse::<u128>().unwrap();
+    source.stop();
+    first.stop();
+    second.stop();
+    recipient.stop();
+    let mut configs = Vec::new();
+    for (index, name) in ["source", "first", "second", "recipient"]
+        .iter()
+        .enumerate()
+    {
+        let mut peers = Vec::new();
+        if index > 0 {
+            peers.push(&contacts[index - 1]);
+        }
+        if index < 3 {
+            peers.push(&contacts[index + 1]);
+        }
+        let config = fixture.join(format!("{name}.contact.json"));
+        retain(
+            &config,
+            serde_json::to_vec(&json!({
+                "listen":"127.0.0.1:0","neighbors":[],"offline_peers":peers
+            }))
+            .unwrap()
+            .as_slice(),
+        );
+        configs.push(config);
+    }
+    let mut source = start("source", "offline", Some(configs[0].as_path()));
+    let mut first = start("first", "offline", Some(configs[1].as_path()));
+    let mut second = start("second", "offline", Some(configs[2].as_path()));
+    let mut recipient = start("recipient", "offline", Some(configs[3].as_path()));
+    for (node, old) in [
+        (&mut source, &initial[0]),
+        (&mut first, &initial[1]),
+        (&mut second, &initial[2]),
+        (&mut recipient, &initial[3]),
+    ] {
+        let observed = node.status();
+        for field in ["identity", "certificate_sha256"] {
+            assert_eq!(
+                observed["result"]["relay"][field],
+                old["result"]["relay"][field]
+            );
+        }
+    }
+    let payment = pay(
+        &mut source,
+        &payer,
+        &reward_input,
+        reward_amount,
+        &payee.owner,
+        141,
+    );
+    let paid = include(&mut source, &payer, &payment, deadline);
+    let directory = fixture.join("forward-frames");
+    fs::create_dir(&directory).unwrap();
+    let mut sequence = 0;
+    let mut frames = [0usize; 3];
+    let mut unreturned = 0;
+    phase("first-custody-start");
+    wait(deadline, || {
+        let (n, receipts) = forward(
+            &mut source,
+            &mut first,
+            &contacts[0],
+            &contacts[1],
+            &directory,
+            &mut sequence,
+        );
+        frames[0] += n;
+        unreturned += receipts;
+        first.status()["selected_tip"] == paid["selected_tip"]
+    });
+    assert_eq!(second.status()["result"]["height"], "0");
+    assert_eq!(recipient.status()["result"]["height"], "0");
+    let source_pid = source.stop();
+    phase("source-stopped");
+    wait(deadline, || {
+        let (n, receipts) = forward(
+            &mut first,
+            &mut second,
+            &contacts[1],
+            &contacts[2],
+            &directory,
+            &mut sequence,
+        );
+        frames[1] += n;
+        unreturned += receipts;
+        second.status()["selected_tip"] == paid["selected_tip"]
+    });
+    assert_eq!(recipient.status()["result"]["height"], "0");
+    let first_pid = first.stop();
+    let second_old_pid = second.stop();
+    phase("second-custody-stopped");
+    let mut second = start("second", "retained", None);
+    assert_eq!(second.status()["result"]["relay"]["identity"], contacts[2]);
+    wait(deadline, || {
+        let (n, receipts) = forward(
+            &mut second,
+            &mut recipient,
+            &contacts[2],
+            &contacts[3],
+            &directory,
+            &mut sequence,
+        );
+        frames[2] += n;
+        unreturned += receipts;
+        recipient.status()["selected_tip"] == paid["selected_tip"]
+    });
+    let second_pid = second.stop();
+    assert_ne!(second_old_pid, second_pid);
+    assert!(frames.iter().all(|n| *n > 0) && unreturned > 0);
+    assert_eq!(recipient.transaction(&payment.id), payment.signed);
+    let received = recipient.wallet(&payee.owner);
+    assert_eq!(unspent(&received), payment.amount);
+    let onward = pay(
+        &mut recipient,
+        &payee,
+        &payment.outpoint(),
+        payment.amount,
+        &payer.owner,
+        151,
+    );
+    let finished = include(&mut recipient, &payee, &onward, deadline);
+    let payer_balance = recipient.wallet(&payer.owner);
+    let payee_balance = recipient.wallet(&payee.owner);
+    assert_eq!(
+        (unspent(&payer_balance) + unspent(&payee_balance)).to_string(),
+        finished["result"]["issued"]
+    );
+    recipient.stop();
+    phase("onward-stopped");
+    let mut cold = start("recipient", "cold", None);
+    let reopened = cold.status();
+    assert_eq!(reopened["selected_tip"], finished["selected_tip"]);
+    assert_eq!(reopened["revision"], finished["revision"]);
+    for field in ["height", "issued", "state_root"] {
+        assert_eq!(reopened["result"][field], finished["result"][field]);
+    }
+    assert_eq!(cold.transaction(&payment.id), payment.signed);
+    assert_eq!(cold.transaction(&onward.id), onward.signed);
+    assert_eq!(cold.wallet(&payer.owner)["result"], payer_balance["result"]);
+    assert_eq!(cold.wallet(&payee.owner)["result"], payee_balance["result"]);
+    cold.stop();
+    let cold = Store::open(
+        &fixture.join("recipient"),
+        &genesis_bytes,
+        pin,
+        Limits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        cold.ledger()
+            .coins()
+            .values()
+            .map(|c| c.amount)
+            .sum::<u128>(),
+        cold.ledger().issued()
+    );
+    assert_eq!(
+        hex::encode(cold.ledger().tip().id()),
+        finished["selected_tip"]
+    );
+    assert!(!cold
+        .ledger()
+        .coins()
+        .contains_key(&hex::decode(&payment.input).unwrap()));
+    assert!(!cold
+        .ledger()
+        .coins()
+        .contains_key(&hex::decode(payment.outpoint()).unwrap()));
+    assert_eq!(
+        cold.ledger().coins()[&hex::decode(onward.outpoint()).unwrap()].amount,
+        onward.amount
+    );
+    drop(cold);
+    for (index, name) in ["source", "first", "second"].iter().enumerate() {
+        let custody = rusqlite::Connection::open_with_flags(
+            fixture.join(name).join("contact/custody/carriage.sqlite3"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let (destination, hop): (i64, i64) = custody
+            .query_row(
+                "SELECT (SELECT count(*) FROM receipts),(SELECT count(*) FROM hop_receipts)",
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        assert_eq!(hop, 0);
+        if index == 0 {
+            assert_eq!(destination, 0);
+        }
+        // Each receiver creates its own destination receipt. Authenticate every
+        // row rather than confusing local custody with reverse receipt delivery.
+        let mut statement = custody
+            .prepare("SELECT r.raw,p.raw FROM receipts r JOIN packets p ON p.id=r.packet")
+            .unwrap();
+        let rows = statement
+            .query_map([], |row| {
+                Ok((row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?))
+            })
+            .unwrap();
+        let mut checked = 0;
+        for row in rows {
+            let (receipt, packet) = row.unwrap();
+            let receipt = rld_survivor_node::contact::Frame::decode(&receipt, pin).unwrap();
+            let packet = rld_survivor_node::contact::Packet::decode(&packet, pin).unwrap();
+            assert_eq!(receipt.sender(), hash_from_hex(&contacts[index]));
+            assert!(receipt.discharges(&packet));
+            checked += 1;
+        }
+        assert_eq!(checked, destination);
+    }
+    retain(
+        &fixture.join("result.json"),
+        serde_json::to_vec_pretty(&json!({
+            "profile":"RLD-SURVIVOR-1","network_kind":"NO_VALUE_ONLY","chain_id":chain,
+            "selected_tip":finished["selected_tip"],"source_terminal_pid":source_pid,
+            "first_relay_terminal_pid":first_pid,"second_relay_terminal_pid":second_pid,
+            "original_second_relay_terminal_pid":second_old_pid,"relay_hops":2,
+            "sender_stopped_before_second_hop":true,"downstream_restarted_without_config":true,
+            "forward_frames":frames,"reverse_imports":0,"unreturned_receipts":unreturned,
+            "payment_id":payment.id,"onward_id":onward.id,
+            "elapsed_seconds":started.elapsed().as_secs_f64(),"budget_seconds":180,
+            "independent_operation":false,"physical_route_qualified":false
+        }))
+        .unwrap()
+        .as_slice(),
+    );
+    assert!(
+        Instant::now() < deadline,
+        "original whole180 two-relay budget"
+    );
+}
