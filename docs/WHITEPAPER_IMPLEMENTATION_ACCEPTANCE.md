@@ -94,6 +94,7 @@ required checks, not completion certificates for the campaigns above.
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `offline_payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
 | Retained ordinary contact admission | `network.rs`, existing CLI retained-config startup | `retained_configuration.rs`; native admission restart/replacement, interrupted publication, backup mismatch and symlink refusal cases |
 | Exact-intent evidence capsule | `capsule.rs`, native CLI capsule commands | `capsule.rs`, `capsule_process.rs`; canonical public byte vectors, initial invalid-tail refusal, changed reread, unchanged-X refresh, stronger-local-work/clock checks and actual recipient onward payment/cold replay |
+| Prospective fast fee-range component | `fast_fee_claims.rs`; [candidate component rules](protocol/FAST_MINER_FEE_CLAIMS_V1.md), not an adopted funding/payout profile | `fast_fee_claims.rs`; exact public context/certificate bytes, cooperative fee-erasure counterexample, retained monotone ranges, unchanged-state refusal and explicit withheld-claim limitation |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet

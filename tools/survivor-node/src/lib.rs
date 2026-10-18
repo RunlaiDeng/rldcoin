@@ -23,4 +23,5 @@ pub mod observations;
 pub mod offline;
 
 pub mod capsule;
+pub mod fast_fee_claims;
 pub mod operating_policy;

@@ -83,6 +83,16 @@ adoption. Keep G9-G11 open until independently qualified in composition with G1-
 No fast service may become a prerequisite for ordinary CPU mining or one-way
 stellar intent carriage. All unmeasured performance remains unsupported.
 
+The [prospective miner-fee claim component](protocol/FAST_MINER_FEE_CLAIMS_V1.md)
+separates owner-signed fee ranges from principal-state sequence selection and
+retains complete supporting certificates for monotone numerical fee floors.
+It explicitly requires independent timely claim retention; withholding a highest
+claim remains an indistinguishability problem. Its canonical context/certificate
+bytes and public no-value vectors define a verification component only. It does
+not authenticate funding, enforce principal exits, pay miners or qualify F04/G11.
+The next native extension must compose those missing operations and their exact
+custody/inclusion assumptions before any fast-service or capacity claim.
+
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
 remain untouched. Reuse utilities only when exact semantics match this profile;
@@ -103,6 +113,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Local fast usable receipt | F01-F02/F05-F06: funded enforceable durable recipient state, actual onward payment, unilateral recovery and explicit local communication assumptions | F-T01/F-T04-F-T08; G9 with G1-G8 |
 | Daily payment scale | F03/F06: at least 100,000,000 unique completions per continuous day with G9 latency, real authorization/custody/fees, declared peaks/resources and safe mass exit | F-T02/F-T04-F-T08; G10 with G9/G11 |
 | Per-payment miner fees | F04/F06: owner-authorized positive fee, reserved backing, exact completeness/allocation, native settlement, maturity and reorg without diversion or inflation | F-T03-F-T05/F-T07-F-T08; G11 with G3/G5 |
+| Prospective fee-range verifier | FAST_MINER_FEE_CLAIMS_V1: context-bound ordered owner signatures, independent maximal fee ranges and exact bounded numerical accounting; no funded-ledger authority | `fast_fee_claims.rs` and public component vectors; native funding/exit/retainer/settlement and independent F04 qualification remain required |
 
 ## Ordered behavior milestones
 

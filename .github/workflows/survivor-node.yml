@@ -7,6 +7,8 @@ on:
       - 'docs/protocol/survivor-v1/**'
       - 'docs/protocol/PAYMENT_CAPSULE_V1.md'
       - 'docs/protocol/payment-capsule-v1-vectors.json'
+      - 'docs/protocol/FAST_MINER_FEE_CLAIMS_V1.md'
+      - 'docs/protocol/fast-miner-fee-claims-v1-vectors.json'
       - '.github/workflows/survivor-node.yml'
   pull_request:
     paths:
@@ -14,6 +16,8 @@ on:
       - 'docs/protocol/survivor-v1/**'
       - 'docs/protocol/PAYMENT_CAPSULE_V1.md'
       - 'docs/protocol/payment-capsule-v1-vectors.json'
+      - 'docs/protocol/FAST_MINER_FEE_CLAIMS_V1.md'
+      - 'docs/protocol/fast-miner-fee-claims-v1-vectors.json'
       - '.github/workflows/survivor-node.yml'
 permissions:
   contents: read
