@@ -241,6 +241,15 @@ preparation; retries retain the original nonce and packet. `offline_import` read
 one bounded `frame_file` for that admitted peer and returns its signed receipt.
 The receipt may be imported later at the original sender, where its exact retained
 delivery/nonces must match. Normal TLS never accepts an offline zero challenge.
+Every re-emission fully authenticates the retained delivery's sender, receiver,
+offline challenge and nonce, then compares the complete packet bytes with the
+requested durable packet. A valid signature on another packet or frame cannot
+substitute for that exact outgoing record; invalid retained rows refuse unchanged.
+Packet lookup also authenticates the decoded ID, origin, sequence and kind against
+the requested row before returning bytes or reacknowledging duplicate custody.
+Receipt import repeats the retained-delivery and complete packet checks before
+writing any destination or hop observation. A signature on a mismatched outgoing
+record cannot suppress a real obligation, even if a later check would refuse it.
 `discovery_candidates` exposes signed peer introductions without granting endpoint
 or certificate authority. Complete pending block bytes suppress redundant fetches
 but cannot advance the ledger before native ancestor/state execution.

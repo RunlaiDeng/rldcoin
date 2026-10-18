@@ -257,16 +257,28 @@ impl Carriage {
         )
     }
     pub fn packet(&self, id: Hash) -> Result<Option<Packet>> {
-        let b: Option<Vec<u8>> = self
+        type Row = (Vec<u8>, Vec<u8>, Vec<u8>, u8);
+        let b: Option<Row> = self
             .db
             .query_row(
-                "SELECT raw FROM packets WHERE id=?1",
+                "SELECT raw,origin,sequence,kind FROM packets WHERE id=?1",
                 [id.as_slice()],
-                |r| r.get(0),
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
             )
             .optional()
             .map_err(err)?;
-        b.map(|x| Packet::decode(&x, self.chain)).transpose()
+        b.map(|(raw, origin, sequence, kind)| {
+            let packet = Packet::decode(&raw, self.chain)?;
+            ensure(
+                packet.id == id
+                    && packet.origin.as_slice() == origin
+                    && packet.sequence.to_be_bytes().as_slice() == sequence
+                    && packet.kind == kind,
+                "INVALID_ENCODING custody packet index",
+            )?;
+            Ok(packet)
+        })
+        .transpose()
     }
     pub fn originate(
         &mut self,

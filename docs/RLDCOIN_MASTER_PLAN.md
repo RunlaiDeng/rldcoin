@@ -72,11 +72,25 @@ chain under the same executable's fixed validation domain can reuse that result.
 All new packet/frame authentication and parent-dependent native execution remain
 mandatory. This optional process-local witness supplies no ledger, work, custody
 or freshness authority and does not qualify arbitrary authenticated overload.
+Retained offline re-emission also reauthenticates the complete delivery and exact
+packet bytes on each read. Valid signatures from another packet, link role or
+session cannot authorize the selected outgoing row; malformed retained evidence
+refuses without repair or an inferred custody receipt.
+Receipt import authenticates that same retained delivery and exact packet before
+recording either destination custody or a hop observation. A later role error
+cannot leave an earlier acknowledgment committed.
+Indexed packet reads also bind the complete signed packet to the requested ID and
+retained origin, sequence and kind before bytes or duplicate acknowledgments leave
+the store. A valid signature cannot authenticate a mismatched index entry.
 
 A milestone completes only when its behavior and discriminating checks are
 implemented. The vector oracle is not a node. A disk hash is not ledger validation.
 Transport delivery is not inclusion. Software does not establish independent
 security or a qualified physical interstellar route.
+The distribution installation check must use the extracted executable itself to
+create an encrypted wallet, mine with no configured neighbor and reopen the exact
+result by native cold replay. Open admission does not promise mining profitability
+or useful recovery speed after a hard-target collapse.
 
 ## Verification method
 

@@ -64,7 +64,14 @@ impl Carriage {
             .optional()
             .map_err(err)?;
         if let Some(raw) = old {
-            return Frame::decode(&raw, self.chain);
+            let frame = Frame::decode(&raw, self.chain)?;
+            let retained =
+                frame.authenticate_delivery(self.identity, peer_id(peer), [0; 32], true)?;
+            ensure(
+                retained.id() == p.id() && retained.raw() == p.raw(),
+                "INVALID_CRYPTO retained offline delivery",
+            )?;
+            return Ok(frame);
         }
         let mut nonce = [0; 32];
         getrandom::getrandom(&mut nonce).map_err(err)?;
@@ -101,10 +108,16 @@ impl Carriage {
             &original.ok_or("MISSING_HISTORY exact offline delivery")?,
             self.chain,
         )?;
+        let retained =
+            delivery.authenticate_delivery(self.identity, peer_id(peer), [0; 32], true)?;
+        let packet = self.packet(id)?.ok_or("MISSING_HISTORY original packet")?;
+        ensure(
+            retained.id() == id && retained.raw() == packet.raw(),
+            "INVALID_CRYPTO retained offline delivery",
+        )?;
         let result = f.authenticate_receipt(&delivery, peer)?;
         if result == 1 {
-            let p = self.packet(id)?.ok_or("MISSING_HISTORY original packet")?;
-            self.retain_destination_receipt(&p, &f)?;
+            self.retain_destination_receipt(&packet, &f)?;
         }
         if matches!(result, 0 | 1) {
             self.retain_hop_receipt(id, &f)?;

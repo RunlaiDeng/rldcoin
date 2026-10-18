@@ -28,7 +28,7 @@ required checks, not completion certificates for the campaigns above.
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `store/replay_witness.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs`, `backup/stream.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
-| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
+| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `offline_binding.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
@@ -37,7 +37,10 @@ review/signing, authenticated synchronization and recipient-authorized onward
 payment after the source process exits. The crash check interrupts real processes
 at ledger persistence boundaries; it does not simulate a storage controller losing
 power. The archive check extracts the allowlisted distribution with the host tar
-reader and starts its native executable. Local or CI execution of these checks
+reader and uses only its extracted executable to create an encrypted wallet, mine
+actual blocks without neighbors, check exact issuance/reward ownership and restart
+with the same chain, selected head, revision, root and wallet balance. It retains
+the original fresh-genesis zero-allocation check. Local or CI execution of these checks
 cannot satisfy the independent-validator, consumer, physical-route or sustained
 history obligations by itself.
 
@@ -52,6 +55,22 @@ The checks re-mine a changed bad signature, reject a changed chain and new inval
 envelopes, and preserve ledger state after repeated intrinsically valid false-root
 bodies. These finite checks do not qualify arbitrary distinct expensive inputs,
 independent security or sustained whole-system load.
+Retained offline deliveries must reauthenticate their exact local sender,
+configured receiver, zero-challenge adapter and nonzero nonce on every re-emission.
+The entire carried packet must equal the requested durable bytes, including its
+signature. `offline_binding.rs` substitutes independently valid packets and frames,
+including a different valid signature with the same packet ID, and requires warm
+refusal without rewriting data or creating custody. Cold rejection remains
+mandatory; it cannot substitute for checks during the existing process lifetime.
+Packet lookup must bind the decoded signed packet to its requested ID and retained
+origin/sequence/kind fields before returning it or acknowledging duplicate custody.
+The same regression checks valid signed-byte substitutions and altered indexes,
+with unchanged retained bytes, sequence and custody counts after refusal.
+Receipt import must repeat the complete retained-delivery role, adapter, nonce and
+packet-byte checks before either destination or hop custody is written. A correctly
+signed receipt cannot cure a substituted outgoing row. Negative controls include
+another valid signature for the same packet ID, zero nonce and wrong link roles;
+an error must not leave a destination receipt committed before hop validation.
 The separate connection-pressure fixture starts two fresh stores from the same
 fully native-executed common prefix. It retains the original fresh-install/mining
 check as a distinct obligation. After the source exits, the sole recipient signs
