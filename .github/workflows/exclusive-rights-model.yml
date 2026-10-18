@@ -1,0 +1,31 @@
+name: Exclusive-rights research model
+
+on:
+  push:
+    paths:
+      - 'tools/interstellar-rights-model/**'
+      - 'docs/research/INTERSTELLAR_EXCLUSIVE_RIGHTS.md'
+      - '.github/workflows/exclusive-rights-model.yml'
+  pull_request:
+    paths:
+      - 'tools/interstellar-rights-model/**'
+      - 'docs/research/INTERSTELLAR_EXCLUSIVE_RIGHTS.md'
+      - '.github/workflows/exclusive-rights-model.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  finite-model-and-counterexamples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.98.0
+          components: rustfmt, clippy
+      - run: cargo fmt --manifest-path tools/interstellar-rights-model/Cargo.toml --check
+      - run: cargo clippy --locked --manifest-path tools/interstellar-rights-model/Cargo.toml --all-targets -- -D warnings
+      - run: cargo test --locked --manifest-path tools/interstellar-rights-model/Cargo.toml
+      - run: cargo run --locked --manifest-path tools/interstellar-rights-model/Cargo.toml
