@@ -1,0 +1,81 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_RESEARCH_PUBLICATION",
+  "document_date": "2026-10-18",
+  "publication_version_label": null,
+  "title": "Rldcoin: Interstellar Peer-to-Peer Payments",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "b1ec1e3bcbce28736459fe1b99fd6e05ebd4296533df82d03bc4d68a5b47d1bb",
+    "bytes": 50416
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "b61bc2466865ffa422c0992d6cb5c68dacadf0986ae9bff2409435dad91354c4",
+    "bytes": 48752,
+    "pages": 11
+  },
+  "specification": {
+    "profile": "RLD-SURVIVOR-1",
+    "commit": "cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab",
+    "manifest_sha256": "a770c35b52e70c7d8a97ac9c0c04d14417ca322e01249445d3cbfe2fa0686806",
+    "url": "https://github.com/RunlaiDeng/rldcoin/tree/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/protocol/survivor-v1"
+  },
+  "additional_requirements": {
+    "path": "docs/protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md",
+    "sha256": "505bedf20ebab61f6a8c6b9856e41450297e53fa55d3aac02bd541607bddc9f4",
+    "bytes": 15463,
+    "commit": "725a5392135862b94446bbb7767699bde7d2f6c4",
+    "url": "https://github.com/RunlaiDeng/rldcoin/blob/725a5392135862b94446bbb7767699bde7d2f6c4/docs/protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md",
+    "scope": "D01-D06 product requirements and D-T01-D-T08 conformance. No consensus, monetary or implemented capsule-codec change."
+  },
+  "fast_payment_requirements": {
+    "path": "docs/protocol/LOCAL_FAST_PAYMENT_REQUIREMENTS.md",
+    "sha256": "632dc2d0cba226256a30ddd6b6a780fcbc38c4323de007f808e31f8f554804b1",
+    "bytes": 13952,
+    "commit": "fe3e993457a11bbf805dea42d00f5a47418871c1",
+    "url": "https://github.com/RunlaiDeng/rldcoin/blob/fe3e993457a11bbf805dea42d00f5a47418871c1/docs/protocol/LOCAL_FAST_PAYMENT_REQUIREMENTS.md",
+    "scope": "F01-F06, F-T01-F-T08 and mandatory G9-G11. Design and acceptance requirements for a separately versioned noncustodial fast layer; no baseline consensus or issuance change."
+  },
+  "design_targets": {
+    "local_usable_receipt": {
+      "p95_max_seconds": 3,
+      "p99_max_seconds": 5,
+      "scope": "Each predeclared normal local communication/load cohort; original payer authorization/submission through independently verified durable funded recipient state permitting onward payment. No irreversible global or interstellar seconds-finality claim."
+    },
+    "daily_payments": {
+      "minimum_distinct_completed_payments": 100000000,
+      "continuous_wall_clock_seconds": 86400,
+      "composition": "Same campaign must meet local latency with genuine signatures, durable funded states, per-payment miner-fee entitlements and declared resource/exit limits; independent reproduction required."
+    },
+    "miner_fees": {
+      "every_payment": true,
+      "positive_owner_authorized_fee": true,
+      "all_protocol_payment_fees_to_miners": true,
+      "funded_verifiable_entitlement": true,
+      "actual_settlement_and_maturity_required": true,
+      "reward_maturity_blocks": 100
+    },
+    "ordinary_cpu_permissionless_mining_preserved": true,
+    "asynchronous_interstellar_payment_preserved": true
+  },
+  "predecessor": {
+    "receipt": "rldcoin-whitepaper-release-2026-10-18-interstellar.json",
+    "website_commit": "79cbd71f139d5ef8afc15a076b6d4e30363c51ab",
+    "canonical_markdown": {
+      "path": "public/documents/rldcoin-whitepaper.md",
+      "sha256": "ec2e5f3c37453a6eed323f9aa9d1762a9c73798b38196a6ec338d84b5c211958",
+      "bytes": 39161
+    },
+    "pdf": {
+      "path": "public/documents/rldcoin-whitepaper.pdf",
+      "sha256": "9a09ef4288db9756af857dc716397ace874973d1937deb89dcc4c79f5583802c",
+      "bytes": 37995,
+      "pages": 9
+    }
+  },
+  "authorization_scope": "Owner explicitly requested revising the whitepaper to preserve ordinary-user mining and interstellar payment while making local seconds-scale usable receipt, at least one hundred million daily payments and miner-directed protocol fees on every payment explicit design and acceptance targets.",
+  "qualification": "Design and requirements publication only. All G1-G11, T01-T22, D-T01-D-T08 and F-T01-F-T08 apply. No achieved latency/volume, implemented fast escrow or fee proof, independent qualification, mainnet, automatic adoption, value migration or irreversible stellar settlement is established.",
+  "acceptance": "G9 local usable receipt, G10 daily volume and G11 every-payment miner fees compose with G1-G8. Exact versioned ownership, backing conservation, fee completeness/allocation, unilateral exit, mass-exit capacity, interoperability vectors, independent security/custody and physical-route qualification remain mandatory.",
+  "body_revisions_require_explicit_owner_decision": true
+}

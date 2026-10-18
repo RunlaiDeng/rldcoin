@@ -1,10 +1,16 @@
 # Interstellar peer-to-peer payment implementation acceptance
 
 This is the current acceptance contract for [RLD-SURVIVOR-1](protocol/survivor-v1/README.md).
-The [18 October interstellar research receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json) also binds
+The [18 October fast-payment research receipt](WHITEPAPER_RELEASE_2026-10-18_FAST_PAYMENTS.json) binds
 the [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
 D01-D06 add product and qualification obligations without changing v1 consensus.
-All G1-G8 obligations apply; old T01-T22 checks remain mandatory.
+The [local fast-payment requirements](protocol/LOCAL_FAST_PAYMENT_REQUIREMENTS.md)
+add F01-F06, F-T01-F-T08 and G9-G11: local p95 <=3s/p99 <=5s usable receipt,
+at least 100,000,000 unique completions per continuous day, and a funded positive
+protocol fee to miners on every payment. All G1-G11 obligations apply; T01-T22
+and D-T01-D-T08 remain mandatory. These requirements do not implement or adopt
+a fast-layer codec, script or proof; exact versioned rules and independent
+qualification are required before adoption.
 The [specification manifest](protocol/survivor-v1/SPECIFICATION.json) binds exact rules
 and vectors. The [historical mapping](https://github.com/RunlaiDeng/rldcoin/blob/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md)
 and prior publication receipts retain their original failed/unresolved scopes.
@@ -22,15 +28,27 @@ Their BFT results do not qualify this incompatible PoW profile.
 | G6 Authenticated release | C03/O12 and conformance release gates | Reproducible artifacts, operating limits, explicit adoption and fresh signed zero-allocation genesis; independently supported route/consumer claims |
 | G7 Ordinary-user mining | D01/D06; D-T01/D-T07 and G1/G5 | Ordinary ARM64/x86-64 self-template CPU solo mining without accounts, balances, stake, rosters, mandatory pools or hosted credentials; declared work/resource/power envelope, hostile load, hard-history collapse and early reward concentration; all attempts and uncertainty |
 | G8 Causal payment usefulness | D02-D06; D-T02-D-T08 and G2-G5 | Sender-offline directed multi-hop path, complete history beyond one batch, recipient native/cold validation and actual onward payment; exact-signature reconsideration with surviving inputs, explicit orphan reward/conflict/expiry failures, retained reservations and complete route/partition cohorts |
+| G9 Local seconds-scale usability | F01-F02/F05-F06; F-T01/F-T04-F-T08 | Each declared normal cohort p95 <=3s/p99 <=5s from original owner submission through independently verified funded durable recipient state; actual onward payment, unilateral recovery, full failure/pending denominator and honest separate settlement clocks |
+| G10 One hundred million daily payments | F03/F06; F-T02/F-T04-F-T08 | At least 100,000,000 unique real completions in one continuous wall-clock day with G9 latency and G11 fees; declared peaks, distributions, liquidity/resources, actual funding/settlement/mass-exit capacity and independent reproduction |
+| G11 Every-payment miner fees | F04/F06; F-T03-F-T05/F-T07-F-T08 | Positive owner-authorized fee per payment, exact backed entitlement/completeness/allocation, no omitted/duplicate/diverted fees, actual native payout, h+100 maturity, conserved reorg and funded service economics |
 
-G7/G8 are additional gates, not a new certificate of implementation. The exact
+G7-G11 are additional gates, not a new certificate of implementation. The exact
 D-T01-D-T08 procedures in the overlay supplement the baseline. A logical capsule
 needs a separately fixed canonical codec and negative interoperability vectors
 before a capsule implementation claim. An existing transaction/block packet alone
 does not complete that obligation. Full history remains required; no manifest,
 header or receipt supplies ledger authority. Reuse evidence only for the exact
 overlapping source/profile and observation, without upgrading baseline passes to
-unmeasured G7/G8 or independent/physical qualification.
+unmeasured G7-G11 or independent/physical qualification.
+
+The normative F-T01-F-T08 matrix defines the new exact campaign obligations.
+G9-G11 require composition in the same daily campaign, not separate speed, volume
+and fee demonstrations. Unfinished normal-cohort operations count as infinite
+completion latency; all original clocks, failures/refusals and pending ages remain.
+Fast entitlement, selected base inclusion, actual miner settlement and maturity
+are separate observations. Ordinary C04 packets do not implement channels; an
+unchecked operator credit, aggregate hash or unbacked future fee does not qualify.
+No changed extension can borrow baseline or historical fixture qualification.
 
 ## Mandatory distinctions
 
@@ -269,14 +287,17 @@ passes under old rules.
 
 Authorization, conservation, complete evidence, durable intent, bounded resources,
 honest states, independent review and finite-horizon physical/cryptographic
-qualification remain mandatory. Channels, guardians, regional issuers, PQ monetary
-adoption and instant/final stellar settlement are not baseline capabilities.
+qualification remain mandatory. The required fast layer must receive separate
+versioned safety, conservation, fee and adoption qualification; it is not an
+existing Survivor-1 capability. Guardians, regional issuers, PQ monetary adoption
+and instant/final stellar settlement remain outside baseline capabilities.
 Unsupported extensions refuse.
 
 ## Completion rule
 
-All applicable T01-T22 and D-T01-D-T08 obligations require scoped evidence before
-a complete-product claim; G1-G8 and independent release duties all apply.
+All applicable T01-T22, D-T01-D-T08 and F-T01-F-T08 obligations require scoped
+evidence before a complete-product claim; G1-G11 and independent release duties
+all apply. G9-G11 targets are not satisfied by publication of this revision.
 Implemented functions alone do not satisfy independent or physical gates.
 New money is prohibited until G6 is explicitly met; old test balances, abandoned
 archives and fixture keys cannot supply that authority.

@@ -4,12 +4,20 @@
 
 The implementation target is [RLD-SURVIVOR-1](protocol/survivor-v1/README.md),
 bound by its [specification manifest](protocol/survivor-v1/SPECIFICATION.json).
-The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json) binds the
+The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18_FAST_PAYMENTS.json) binds the
 reconciled Markdown/PDF to this exact specification and the additional
 [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
-The latter add product and qualification requirements D01-D06 and D-T01-D-T08;
-they do not change consensus bytes, work, issuance or signed historical networks.
-The [16 October receipt](WHITEPAPER_RELEASE_2026-10-16.json) and
+The latter add product and qualification requirements D01-D06 and D-T01-D-T08.
+The [local fast-payment requirements](protocol/LOCAL_FAST_PAYMENT_REQUIREMENTS.md)
+add F01-F06, F-T01-F-T08 and mandatory G9-G11: normal local usable receipt at
+p95 <=3 seconds / p99 <=5 seconds, at least 100,000,000 completed payments in
+one continuous 86,400-second day, and a positive funded protocol fee to miners
+on every payment. These are required design/acceptance targets, not demonstrated
+performance. Their composition preserves ordinary-user mining and causal stellar
+carriage. The baseline consensus bytes, work and issuance are unchanged; the fast
+layer requires separately versioned, independently reviewed rules and adoption.
+The [interstellar-title receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json),
+[16 October receipt](WHITEPAPER_RELEASE_2026-10-16.json) and
 [earlier 18 October receipt](WHITEPAPER_RELEASE_2026-10-18.json) retain their exact
 historical meanings. The owner selected the title **Rldcoin: Interstellar
 Peer-to-Peer Payments**; open ordinary-user mining remains a core mechanism.
@@ -17,7 +25,9 @@ A research receipt is not a deployment receipt.
 The owner selected reversible payment acceptance and continued operation by any
 capable surviving full node. This replaces mandatory regional quorum finality,
 irreversible regional export/import and the former seconds-scale final-spendability
-target. It does not alter signed historical networks or qualify old experiments.
+target. G9 now requires local conditional fast usability, not that historical
+irreversible finality or an interstellar communication deadline. No signed
+historical network or old experiment is upgraded by this target.
 The [historical plan](https://github.com/RunlaiDeng/rldcoin/blob/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/RLDCOIN_MASTER_PLAN.md)
 and original release receipts retain their meaning.
 
@@ -52,6 +62,16 @@ unequal-work partition envelopes. Neither gate is completed by this revision.
 
 ## Implementation boundaries
 
+The fast-layer design is a separate necessary workstream, specified by F01-F06.
+First resolve noncustodial locked backing, independently verifiable state and
+per-payment miner-fee completeness, unilateral recovery and mass-exit capacity.
+Survivor-1 C04 has no scripted/mixed-owner transfer: names such as channels or
+batch proofs cannot supply missing execution rights. Fix exact extension versions,
+bytes, bounds, data/monitoring assumptions and public vectors before coding or
+adoption. Keep G9-G11 open until independently qualified in composition with G1-G8.
+No fast service may become a prerequisite for ordinary CPU mining or one-way
+stellar intent carriage. All unmeasured performance remains unsupported.
+
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
 remain untouched. Reuse utilities only when exact semantics match this profile;
@@ -68,6 +88,9 @@ old passing tests do not qualify changed rules or new binaries.
 | Maintenance/release | O12: unsupported behavior, authentic artifacts, finite horizons and independent qualification | T18-T21 and adoption gates |
 | Open ordinary participation | D01: account-free CPU solo templates/mining, explicit supported hardware and hostile-load envelope | D-T01, D-T07; G7 |
 | Causal payment composition | D02-D06: exact portable intent, complete dependencies, forward-only custody, original-signature reconsideration, honest risk and bounded route viability | D-T02-D-T08; G8 |
+| Local fast usable receipt | F01-F02/F05-F06: funded enforceable durable recipient state, actual onward payment, unilateral recovery and explicit local communication assumptions | F-T01/F-T04-F-T08; G9 with G1-G8 |
+| Daily payment scale | F03/F06: at least 100,000,000 unique completions per continuous day with G9 latency, real authorization/custody/fees, declared peaks/resources and safe mass exit | F-T02/F-T04-F-T08; G10 with G9/G11 |
+| Per-payment miner fees | F04/F06: owner-authorized positive fee, reserved backing, exact completeness/allocation, native settlement, maturity and reorg without diversion or inflation | F-T03-F-T05/F-T07-F-T08; G11 with G3/G5 |
 
 ## Ordered behavior milestones
 
@@ -87,6 +110,16 @@ old passing tests do not qualify changed rules or new binaries.
    one-way onward payment, exact-signature reconsideration and smaller-branch
    losses. A passing baseline check can be reused only for its exact overlapping
    source and scope; it cannot stand in for unmeasured G7/G8 obligations.
+7. Specify the fast-layer extension and prove its ownership, cross-mode backing
+   conservation, fee completeness, unilateral exit and versioned adoption. Select
+   a concrete construction only after a counterexample-driven safety review;
+   operator credits, final balance hashes and unbacked accrued fees are insufficient.
+8. Qualify F01-F06 with F-T01-F-T08: compose local p95 <=3s/p99 <=5s usability,
+   one continuous day with at least 100,000,000 distinct real completions, actual
+   miner-fee settlement and ordinary-hardware/stellar-mode preservation. Measure
+   funding, hostile exit, liquidity, failed/pending operations and independent
+   reproduction. No short extrapolation or three unrelated demonstrations closes
+   G9-G11. Earlier base-runtime work does not by itself satisfy this new target.
 
 Local resource provisioning is separate from consensus. Every startup selects
 published defaults or an explicit chain-pinned local policy. Expansion must preserve
@@ -156,5 +189,6 @@ actual physical routes remain distinct requirements. Mainnet needs separate
 monetary adoption and a fresh authenticated zero-allocation genesis. No test money
 or fixture key migrates. Supply remains 100 billion RLD with zero initial allocation
 and the exact C08 reserve-era schedule.
-The complete-product target includes G7/G8 as well as G1-G6 and T01-T22. No route
-may claim irreversible independent stellar settlement under global work selection.
+The complete-product target includes G1-G11, T01-T22, D-T01-D-T08 and F-T01-F-T08.
+All local speed, daily scale and per-payment miner-fee claims need composed evidence.
+No route may claim irreversible independent stellar settlement under global work selection.
