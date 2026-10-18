@@ -4,6 +4,7 @@ use crate::kernel::{
 };
 use ed25519_dalek::{Signer, SigningKey};
 use std::collections::BTreeSet;
+mod syntax_witness;
 pub const PACKET_MAX: usize = 1_048_347;
 pub const FRAME_MAX: usize = 1_048_576;
 fn ensure(ok: bool, why: &str) -> Result<()> {
@@ -222,6 +223,14 @@ fn validate_payload(kind: u8, p: &[u8], chain: Hash) -> Result<()> {
 /// Intrinsic bytes/signatures/root/PoW only. Parent timing, state and value still
 /// require full Ledger::execute; this function never returns ledger authority.
 pub fn block_syntax(raw: &[u8], chain: Hash) -> Result<()> {
+    if syntax_witness::matches(raw, chain) {
+        return Ok(());
+    }
+    check_block_syntax(raw, chain)?;
+    syntax_witness::remember(raw, chain);
+    Ok(())
+}
+fn check_block_syntax(raw: &[u8], chain: Hash) -> Result<()> {
     let id = block_id(raw)?;
     let mut r = Read::new(raw);
     ensure(r.u16()? == 1 && r.u16()? == 1, "UNSUPPORTED_VERSION block")?;

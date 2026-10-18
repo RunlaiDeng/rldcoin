@@ -38,6 +38,18 @@ wallet, control and contact entries below preserve its authority boundary.
 Actual interstellar adapters, long-horizon custody and monetary adoption remain
 separate mandatory gates in the acceptance plan.
 
+Contact block-syntax checks may reuse one process-local witness of a completely
+validated intrinsic block. Reuse requires the same chain and identical complete
+bytes under this executable's fixed suite and bounds; at most 262,144 block bytes
+are retained. Allocation/lock failure, different bytes or eviction performs the
+complete check instead. No witness is serialized. Every packet/frame signature,
+connection challenge and role binding remains independently checked. The witness
+does not validate a parent, timing, ownership, maturity, balances or state root;
+ordinary native ledger execution still checks all those conditions. Repeated
+intrinsically well-formed but semantically invalid bodies cannot acquire value
+from custody or reuse. Distinct expensive bodies and sustained adversarial load
+remain separate resource obligations.
+
 ```sh
 cargo test --locked --manifest-path tools/survivor-node/Cargo.toml
 cargo clippy --locked --manifest-path tools/survivor-node/Cargo.toml --all-targets -- -D warnings

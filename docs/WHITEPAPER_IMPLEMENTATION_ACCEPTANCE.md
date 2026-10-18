@@ -28,7 +28,7 @@ required checks, not completion certificates for the campaigns above.
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `store/replay_witness.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs`, `backup/stream.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
-| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
+| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `tls.rs`, `network.rs` |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
@@ -40,6 +40,18 @@ power. The archive check extracts the allowlisted distribution with the host tar
 reader and starts its native executable. Local or CI execution of these checks
 cannot satisfy the independent-validator, consumer, physical-route or sustained
 history obligations by itself.
+
+An intrinsic block-syntax witness retains at most one complete 262,144-byte body
+and its exact chain in this process/executable validation domain. It is recorded
+only after all intrinsic checks, including every transaction signature, succeed.
+Different bytes/chain, eviction, unavailable allocation or lock contention uses
+normal complete validation. Every new packet/frame signature, challenge and role
+still authenticates independently; all parent, timing, ownership, maturity,
+conservation and state-root execution remains native and uncached by this witness.
+The checks re-mine a changed bad signature, reject a changed chain and new invalid
+envelopes, and preserve ledger state after repeated intrinsically valid false-root
+bodies. These finite checks do not qualify arbitrary distinct expensive inputs,
+independent security or sustained whole-system load.
 The separate connection-pressure fixture starts two fresh stores from the same
 fully native-executed common prefix. It retains the original fresh-install/mining
 check as a distinct obligation. After the source exits, the sole recipient signs

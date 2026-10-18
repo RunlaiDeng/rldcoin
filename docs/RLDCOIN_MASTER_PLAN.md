@@ -66,6 +66,13 @@ images only under caller-provisioned limits. Bounded ciphertext processing canno
 replace full native replay, correct communication material or the declared freshness
 policy. Default limits and every historical failed scope retain their exact meaning.
 
+Contact verification may retain one completely checked intrinsic block body,
+bounded by the unchanged 262,144-byte block limit. Only identical full bytes and
+chain under the same executable's fixed validation domain can reuse that result.
+All new packet/frame authentication and parent-dependent native execution remain
+mandatory. This optional process-local witness supplies no ledger, work, custody
+or freshness authority and does not qualify arbitrary authenticated overload.
+
 A milestone completes only when its behavior and discriminating checks are
 implemented. The vector oracle is not a node. A disk hash is not ledger validation.
 Transport delivery is not inclusion. Software does not establish independent
