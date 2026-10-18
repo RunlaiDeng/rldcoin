@@ -95,6 +95,7 @@ required checks, not completion certificates for the campaigns above.
 | Retained ordinary contact admission | `network.rs`, existing CLI retained-config startup | `retained_configuration.rs`; native admission restart/replacement, interrupted publication, backup mismatch and symlink refusal cases |
 | Exact-intent evidence capsule | `capsule.rs`, native CLI capsule commands | `capsule.rs`, `capsule_process.rs`; canonical public byte vectors, initial invalid-tail refusal, changed reread, unchanged-X refresh, stronger-local-work/clock checks and actual recipient onward payment/cold replay |
 | Prospective fast fee-range component | `fast_fee_claims.rs`; [candidate component rules](protocol/FAST_MINER_FEE_CLAIMS_V1.md), not an adopted funding/payout profile | `fast_fee_claims.rs`; exact public context/certificate bytes, cooperative fee-erasure counterexample, retained monotone ranges, unchanged-state refusal and explicit withheld-claim limitation |
+| Native no-value escrow execution | `kernel/fast.rs`, `kernel/fast/codec.rs`, `bin/rld-fast-escrow-candidate.rs`; [separate profile](protocol/NATIVE_FAST_ESCROW_V1.md), not an adopted service | `native_fast_escrow.rs`, native window boundary unit; real nonce search/mature funding, original-input double-spend refusal, immutable windows, old fee proof, exact settlement/maturity, invalid complete block atomicity and full cold process replay |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet

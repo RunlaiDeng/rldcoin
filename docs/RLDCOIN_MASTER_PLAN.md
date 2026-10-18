@@ -92,6 +92,12 @@ bytes and public no-value vectors define a verification component only. It does
 not authenticate funding, enforce principal exits, pay miners or qualify F04/G11.
 The next native extension must compose those missing operations and their exact
 custody/inclusion assumptions before any fast-service or capacity claim.
+The [native no-value escrow candidate](protocol/NATIVE_FAST_ESCROW_V1.md) adds a
+separate genesis/header domain and actual mature-input funding, independent
+principal/fee challenges, fixed height/time windows and one-use miner/refund
+settlement. Its replay-only command derives all value from genesis and complete
+PoW blocks. It supplies no owner custody, retainer delegation/acknowledgment,
+ordinary fast service or adoption; G9-G11 and mass-exit qualification remain open.
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
@@ -114,6 +120,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Daily payment scale | F03/F06: at least 100,000,000 unique completions per continuous day with G9 latency, real authorization/custody/fees, declared peaks/resources and safe mass exit | F-T02/F-T04-F-T08; G10 with G9/G11 |
 | Per-payment miner fees | F04/F06: owner-authorized positive fee, reserved backing, exact completeness/allocation, native settlement, maturity and reorg without diversion or inflation | F-T03-F-T05/F-T07-F-T08; G11 with G3/G5 |
 | Prospective fee-range verifier | FAST_MINER_FEE_CLAIMS_V1: context-bound ordered owner signatures, independent maximal fee ranges and exact bounded numerical accounting; no funded-ledger authority | `fast_fee_claims.rs` and public component vectors; native funding/exit/retainer/settlement and independent F04 qualification remain required |
+| Native no-value escrow executor | NATIVE_FAST_ESCROW_V1: independent pinned genesis/PoW, ordinary transfers and actual funding locks, one-use close/challenge/settlement and h+100 miner payout | `kernel/fast.rs`, `kernel/fast/codec.rs`, replay-only CLI and `native_fast_escrow.rs`; complete custody/retainer/fast-service, mass-exit and independent qualification remain required |
 
 ## Ordered behavior milestones
 

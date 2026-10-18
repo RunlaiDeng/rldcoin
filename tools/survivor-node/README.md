@@ -504,3 +504,26 @@ Native checks separately cover invalid evidence before mutation, changed bytes
 after verification, evidence refresh and ordinary owner-authorized onward payment.
 These engineering checks do not establish independent security/custody, arbitrary
 history resources, fast-layer capacity or monetary adoption.
+
+## Separate native escrow candidate
+
+The [no-value escrow profile](../../docs/protocol/NATIVE_FAST_ESCROW_V1.md) has its
+own113-byte genesis and version2 work-bound blocks. `kernel::fast::Ledger` executes
+actual mature funding inputs, ordinary transfers, separate principal/fee challenges,
+fixed height AND time windows, exact refunds and100-block-mature miner payouts.
+It never initializes value from a fee-component view or a decoded balance table.
+The ordinary Survivor-1 node refuses its genesis/blocks and has no automatic upgrade.
+
+Build its separate read-only archive command with
+`cargo build --locked --manifest-path tools/survivor-node/Cargo.toml --bin rld-fast-escrow-candidate`.
+Invoke `rld-fast-escrow-candidate GENESIS_FILE EXPECTED_CHAIN_HEX BLOCK_ARCHIVE`.
+Every archive record is a big-endian u32 length and a complete native block.
+The command reconstructs the entire branch with actual local future-clock checks;
+it exposes no signing, operator endpoint, live ledger or mainnet activation.
+Its reported tip is that replayed branch, not proof of the strongest unseen work.
+
+This engine does not complete the fast product. Durable owner requests/backups,
+independent fee-retainer delegation and acknowledgment, complete fast payment
+transitions, normal network lifecycle, hostile exit capacity and composed daily
+performance remain required. Logical-time native tests are not an elapsed dispute
+window, power-loss/cross-device custody or independent security qualification.

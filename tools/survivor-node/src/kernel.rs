@@ -4,6 +4,7 @@ use curve25519_dalek::{edwards::CompressedEdwardsY, traits::IsIdentity};
 use ed25519_dalek::{Signature, VerifyingKey};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, VecDeque};
+pub mod fast;
 pub type Hash = [u8; 32];
 pub const CAP: u128 = 10u128.pow(35);
 pub type Result<T> = std::result::Result<T, String>;
