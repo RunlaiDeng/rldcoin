@@ -1,7 +1,7 @@
 # Interstellar peer-to-peer payment implementation acceptance
 
 This is the current acceptance contract for [RLD-SURVIVOR-1](protocol/survivor-v1/README.md).
-The [18 October fast-payment research receipt](WHITEPAPER_RELEASE_2026-10-18_FAST_PAYMENTS.json) binds
+The [mechanism-paper research receipt](WHITEPAPER_RELEASE_2026-10-18_MECHANISM.json) binds
 the [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
 D01-D06 add product and qualification obligations without changing v1 consensus.
 The [local fast-payment requirements](protocol/LOCAL_FAST_PAYMENT_REQUIREMENTS.md)
@@ -16,9 +16,14 @@ and vectors. The [historical mapping](https://github.com/RunlaiDeng/rldcoin/blob
 and prior publication receipts retain their original failed/unresolved scopes.
 Their BFT results do not qualify this incompatible PoW profile.
 
-## Whitepaper-to-implementation matrix
+The paper body explains mechanisms and analysis. The G1-G11 gate identifiers,
+local percentile thresholds, one-day campaign and release checks remain here and
+in the bound requirement contracts. Removing their checklist from the paper
+does not remove any obligation or qualify an unresolved fast-layer construction.
 
-| Paper gate | Exact contract | Required completion evidence |
+## Design-to-implementation acceptance matrix
+
+| Implementation gate | Exact contract | Required completion evidence |
 |---|---|---|
 | G1 Open participation and survivor operation | C03/C06-C08, O01/O06; T06-T07 | Independent ordinary installation; remove founder and all others; preserve history/target; mine, mature, pay and perform actual onward payment; repeat survivors and hard-target collapse |
 | G2 Partition and convergence | C05-C10, O02-O05; T05/T08-T10 | Conflicting spends/rewards, actual-work selection and deterministic ties; deep reorg removes losing effects; missing history waits; claimed work cannot halt capable local mining |

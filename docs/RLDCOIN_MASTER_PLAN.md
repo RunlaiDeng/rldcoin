@@ -4,7 +4,7 @@
 
 The implementation target is [RLD-SURVIVOR-1](protocol/survivor-v1/README.md),
 bound by its [specification manifest](protocol/survivor-v1/SPECIFICATION.json).
-The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18_FAST_PAYMENTS.json) binds the
+The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18_MECHANISM.json) binds the
 reconciled Markdown/PDF to this exact specification and the additional
 [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
 The latter add product and qualification requirements D01-D06 and D-T01-D-T08.
@@ -16,7 +16,13 @@ on every payment. These are required design/acceptance targets, not demonstrated
 performance. Their composition preserves ordinary-user mining and causal stellar
 carriage. The baseline consensus bytes, work and issuance are unchanged; the fast
 layer requires separately versioned, independently reviewed rules and adoption.
-The [interstellar-title receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json),
+The mechanism paper separates scientific exposition from implementation
+acceptance. Its body explains rules, proposed accounting, assumptions and scaling
+analysis; G1-G11, exact percentile thresholds and campaigns remain mandatory in
+this plan and the acceptance contract. This is an editorial separation, not a
+relaxation of any target or a completed fast-layer construction.
+The [fast-payment receipt](WHITEPAPER_RELEASE_2026-10-18_FAST_PAYMENTS.json),
+[interstellar-title receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json),
 [16 October receipt](WHITEPAPER_RELEASE_2026-10-16.json) and
 [earlier 18 October receipt](WHITEPAPER_RELEASE_2026-10-18.json) retain their exact
 historical meanings. The owner selected the title **Rldcoin: Interstellar
