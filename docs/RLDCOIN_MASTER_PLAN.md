@@ -4,8 +4,13 @@
 
 The implementation target is [RLD-SURVIVOR-1](protocol/survivor-v1/README.md),
 bound by its [specification manifest](protocol/survivor-v1/SPECIFICATION.json).
-The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-16.json) binds the
-reconciled Markdown/PDF to this exact specification; it is not a deployment receipt.
+The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18.json) binds the
+reconciled Markdown/PDF to this exact specification and the additional
+[interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
+The latter add product and qualification requirements D01-D06 and D-T01-D-T08;
+they do not change consensus bytes, work, issuance or signed historical networks.
+The [16 October receipt](WHITEPAPER_RELEASE_2026-10-16.json) retains its exact
+historical meaning. A research receipt is not a deployment receipt.
 The owner selected reversible payment acceptance and continued operation by any
 capable surviving full node. This replaces mandatory regional quorum finality,
 irreversible regional export/import and the former seconds-scale final-spendability
@@ -15,6 +20,10 @@ and original release receipts retain their meaning.
 
 The ordinary product must provide a validating node with optional mining, native
 owner-controlled wallet, restart-safe storage and authenticated delayed relay.
+Ordinary participation requires self-constructed templates and CPU solo mining on
+declared ARM64 and x86-64 hardware, without accounts, stake, rosters, mandatory
+pools, remote API credentials or founder service. Permissionless entry cannot be
+advertised as equal reward, profitability or immunity to specialized hardware.
 It operates without the founder or another online participant, provided it retains
 authentic history, keys when spending, a working clock, computation and sufficient
 storage. Remote receipt requires physical communication. Payments, rewards and
@@ -27,6 +36,16 @@ carriage form the candidate engineering surface. Distribution packages contain
 only the executable, public contract, license and byte inventory. Monetary adoption
 and consumer qualification require the separate gates below; a downloadable test
 binary does not change them.
+
+The interstellar product target separates an exact owner-signed intent, refreshed
+complete verification evidence, durable custody and recipient-executed conditional
+state. A logical payment capsule supplies no new accepted wire codec or balance
+authority. Ordinary forwarding must support a sender-offline, forward-only path;
+reorganization must reconsider the original signatures only where exact inputs,
+maturity and expiry remain valid. Orphan rewards and their descendants cannot be
+restored by a receipt or a preserved signature. G7 requires ordinary-hardware
+participation; G8 requires payment usefulness under declared contact, history and
+unequal-work partition envelopes. Neither gate is completed by this revision.
 
 ## Implementation boundaries
 
@@ -44,6 +63,8 @@ old passing tests do not qualify changed rules or new binaries.
 | Contact protocol | O07-O09: canonical packets/frames, origin/link authentication, offline carriage, receipt return, quotas and fair retry | T14-T16 |
 | Node integration | O01/O10: default neighbor synchronization and forwarding, independent recipient verification, actual onward payment | T06-T10, T14-T17, T22 |
 | Maintenance/release | O12: unsupported behavior, authentic artifacts, finite horizons and independent qualification | T18-T21 and adoption gates |
+| Open ordinary participation | D01: account-free CPU solo templates/mining, explicit supported hardware and hostile-load envelope | D-T01, D-T07; G7 |
+| Causal payment composition | D02-D06: exact portable intent, complete dependencies, forward-only custody, original-signature reconsideration, honest risk and bounded route viability | D-T02-D-T08; G8 |
 
 ## Ordered behavior milestones
 
@@ -58,6 +79,11 @@ old passing tests do not qualify changed rules or new binaries.
    restart and capacity refusal without granting money from receipts.
 5. Package ordinary commands and consumer flows. Independently test full history,
    resource limits, custody and sustained use. Publish only scoped claims.
+6. Qualify D01-D06 with the complete predeclared D-T01-D-T08 cohorts. Exercise
+   ordinary CPU participation, retained hard-target collapse, sender-offline
+   one-way onward payment, exact-signature reconsideration and smaller-branch
+   losses. A passing baseline check can be reused only for its exact overlapping
+   source and scope; it cannot stand in for unmeasured G7/G8 obligations.
 
 Local resource provisioning is separate from consensus. Every startup selects
 published defaults or an explicit chain-pinned local policy. Expansion must preserve
@@ -127,3 +153,5 @@ actual physical routes remain distinct requirements. Mainnet needs separate
 monetary adoption and a fresh authenticated zero-allocation genesis. No test money
 or fixture key migrates. Supply remains 100 billion RLD with zero initial allocation
 and the exact C08 reserve-era schedule.
+The complete-product target includes G7/G8 as well as G1-G6 and T01-T22. No route
+may claim irreversible independent stellar settlement under global work selection.

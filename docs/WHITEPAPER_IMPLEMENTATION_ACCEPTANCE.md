@@ -1,6 +1,10 @@
-# Survivor-first whitepaper implementation acceptance
+# Permissionless mining and interstellar payment implementation acceptance
 
 This is the current acceptance contract for [RLD-SURVIVOR-1](protocol/survivor-v1/README.md).
+The [18 October research receipt](WHITEPAPER_RELEASE_2026-10-18.json) also binds
+the [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
+D01-D06 add product and qualification obligations without changing v1 consensus.
+All G1-G8 obligations apply; old T01-T22 checks remain mandatory.
 The [specification manifest](protocol/survivor-v1/SPECIFICATION.json) binds exact rules
 and vectors. The [historical mapping](https://github.com/RunlaiDeng/rldcoin/blob/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/WHITEPAPER_IMPLEMENTATION_ACCEPTANCE.md)
 and prior publication receipts retain their original failed/unresolved scopes.
@@ -16,6 +20,17 @@ Their BFT results do not qualify this incompatible PoW profile.
 | G4 Delayed transport | O07-O10; T14-T16/T21 | Ordinary authenticated multi-hop/offline carriage, complete-history verification, receipt return, durable queues, restart/fault/capacity behavior, no credit or refund from receipts |
 | G5 Independent security and durability | C06, O02-O03/O12; T18-T20 | Independent review and validators, sustained history beyond an issuance era, replay/resources, cross-device/power-loss custody and finite crypto/archive horizons |
 | G6 Authenticated release | C03/O12 and conformance release gates | Reproducible artifacts, operating limits, explicit adoption and fresh signed zero-allocation genesis; independently supported route/consumer claims |
+| G7 Ordinary-user mining | D01/D06; D-T01/D-T07 and G1/G5 | Ordinary ARM64/x86-64 self-template CPU solo mining without accounts, balances, stake, rosters, mandatory pools or hosted credentials; declared work/resource/power envelope, hostile load, hard-history collapse and early reward concentration; all attempts and uncertainty |
+| G8 Causal payment usefulness | D02-D06; D-T02-D-T08 and G2-G5 | Sender-offline directed multi-hop path, complete history beyond one batch, recipient native/cold validation and actual onward payment; exact-signature reconsideration with surviving inputs, explicit orphan reward/conflict/expiry failures, retained reservations and complete route/partition cohorts |
+
+G7/G8 are additional gates, not a new certificate of implementation. The exact
+D-T01-D-T08 procedures in the overlay supplement the baseline. A logical capsule
+needs a separately fixed canonical codec and negative interoperability vectors
+before a capsule implementation claim. An existing transaction/block packet alone
+does not complete that obligation. Full history remains required; no manifest,
+header or receipt supplies ledger authority. Reuse evidence only for the exact
+overlapping source/profile and observation, without upgrading baseline passes to
+unmeasured G7/G8 or independent/physical qualification.
 
 ## Mandatory distinctions
 
@@ -260,7 +275,8 @@ Unsupported extensions refuse.
 
 ## Completion rule
 
-All applicable T01-T22 obligations require scoped evidence before a complete-product
-claim. Implemented functions alone do not satisfy independent or physical gates.
+All applicable T01-T22 and D-T01-D-T08 obligations require scoped evidence before
+a complete-product claim; G1-G8 and independent release duties all apply.
+Implemented functions alone do not satisfy independent or physical gates.
 New money is prohibited until G6 is explicitly met; old test balances, abandoned
 archives and fixture keys cannot supply that authority.

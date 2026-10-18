@@ -1,0 +1,51 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_RESEARCH_PUBLICATION",
+  "document_date": "2026-10-18",
+  "publication_version_label": null,
+  "title": "Rldcoin: Permissionless Mining and Causal Interstellar Payments",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "999fe2b04cefcb61e05fe5f6ae2c62a8deae7fc2684204c85f08510ff21511d0",
+    "bytes": 39181
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "0e59144b3908b4ac6f7e0238d968fb2e443c345751affd1f549cd39d98fa39a5",
+    "bytes": 38048,
+    "pages": 9
+  },
+  "specification": {
+    "profile": "RLD-SURVIVOR-1",
+    "commit": "cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab",
+    "manifest_sha256": "a770c35b52e70c7d8a97ac9c0c04d14417ca322e01249445d3cbfe2fa0686806",
+    "url": "https://github.com/RunlaiDeng/rldcoin/tree/cf37a9e576f2f6ca581bff0201ce21c9c06cc3ab/docs/protocol/survivor-v1"
+  },
+  "additional_requirements": {
+    "path": "docs/protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md",
+    "sha256": "505bedf20ebab61f6a8c6b9856e41450297e53fa55d3aac02bd541607bddc9f4",
+    "bytes": 15463,
+    "commit": "725a5392135862b94446bbb7767699bde7d2f6c4",
+    "url": "https://github.com/RunlaiDeng/rldcoin/blob/725a5392135862b94446bbb7767699bde7d2f6c4/docs/protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md",
+    "scope": "D01-D06 product requirements and D-T01-D-T08 conformance. No consensus, monetary or implemented capsule-codec change."
+  },
+  "predecessor": {
+    "receipt": "rldcoin-whitepaper-release-2026-10-16.json",
+    "website_commit": "ca5cab6f9ed90c7a2193dfa991672a59d3acbd94",
+    "canonical_markdown": {
+      "path": "public/documents/rldcoin-whitepaper.md",
+      "sha256": "777d22f2d7229f4860473702066bd083d2777f2b18de5e9ce0ffa3256a9b5129",
+      "bytes": 23286
+    },
+    "pdf": {
+      "path": "public/documents/rldcoin-whitepaper.pdf",
+      "sha256": "024fe5fce9b0c87ad93da63cf7b2b63063a82e03eb0aed6e258b2436da6fa1df",
+      "bytes": 23644,
+      "pages": 6
+    }
+  },
+  "authorization_scope": "Owner explicitly requested a substantive whitepaper revision for interstellar peer-to-peer payments and ordinary-user permissionless mining. This revision specifies direct CPU solo participation, exact portable owner intent, independently refreshed full evidence, sender-offline one-way custody, safe original-signature reconsideration and measurable payment usefulness. Survivor-1 consensus and exact issuance remain unchanged. Historical artifacts and receipts retain their original meaning.",
+  "qualification": "Design and requirements publication only. G1-G8, T01-T22, D-T01-D-T08, independent security/custody and route qualification remain separate obligations. No mainnet, automatic adoption, test-value migration, profitable ordinary mining or irreversible isolated settlement is established.",
+  "acceptance": "G1-G6 remain mandatory; G7 ordinary hardware and G8 causal payment usefulness add D-T01-D-T08. Supply cap, zero initial allocation, exact issuance, owner authorization, full native replay and independent qualification remain mandatory.",
+  "body_revisions_require_explicit_owner_decision": true
+}
