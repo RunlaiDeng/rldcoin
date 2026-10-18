@@ -87,6 +87,13 @@ A milestone completes only when its behavior and discriminating checks are
 implemented. The vector oracle is not a node. A disk hash is not ledger validation.
 Transport delivery is not inclusion. Software does not establish independent
 security or a qualified physical interstellar route.
+An offline contact cannot assume that requests or receipts can travel back. Its
+ordinary scheduling must proactively retain and offer complete selected-history
+dependencies to explicitly admitted offline peers, in bounded batches. Progress
+cursors select carriage work only; they neither initialize a ledger nor prove a
+recipient has received anything. Unacknowledged history remains a custody
+obligation, including after restart or a selected-history change. A finite spool
+may refuse further offers rather than discard an earlier obligation.
 The distribution installation check must use the extracted executable itself to
 create an encrypted wallet, mine with no configured neighbor and reopen the exact
 result by native cold replay. Open admission does not promise mining profitability

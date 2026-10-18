@@ -1,5 +1,7 @@
 //! Ordinary node contact scheduling. Network workers hold no ledger/custody lock;
 //! the main loop alone commits received bytes and native monetary transitions.
+mod offline_history;
+
 use crate::{
     carriage::{Budget, Carriage},
     contact::{peer_id, Frame, Packet},
@@ -357,6 +359,7 @@ impl Network {
             last_scan: Instant::now() - Duration::from_secs(1),
             diagnostic: None,
         };
+        adapter.open_offline_history()?;
         adapter.poll_listener();
         Ok(adapter)
     }
@@ -637,6 +640,14 @@ impl Network {
             }
             self.last_tip = Some(store.ledger().tip().id());
             self.last_announce = Instant::now();
+        }
+        match self.offer_offline_history(store) {
+            Ok(()) => {}
+            Err(offline_history::OfflineHistoryError::Contact(e)) => {
+                // A full offline queue never disables ordinary native work.
+                self.diagnostic = Some(e);
+            }
+            Err(offline_history::OfflineHistoryError::Native(e)) => return Err(e),
         }
         if self.last_scan.elapsed() >= Duration::from_millis(200) {
             let mut pending = self.carriage.pending()?;

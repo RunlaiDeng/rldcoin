@@ -250,6 +250,18 @@ the requested row before returning bytes or reacknowledging duplicate custody.
 Receipt import repeats the retained-delivery and complete packet checks before
 writing any destination or hop observation. A signature on a mismatched outgoing
 record cannot suppress a real obligation, even if a later check would refuse it.
+Ordinary ticks proactively offer complete selected-history blocks to explicitly
+admitted offline peers, starting at genesis and using the existing BLOCK format.
+Only one peer and at most 16 block offers are scheduled per tick. Each progress
+advance follows durable retention of that exact packet. Restart rechecks scheduling
+hints; a retained former-branch cursor restarts the prefix offer. Missing or
+malformed scheduling targets refuse instead of being treated as remote history.
+The destination still executes every dependency through the normal native kernel.
+No reverse request or receipt is needed to carry the prefix. The sender retains
+all unacknowledged obligations and cannot report destination receipt from a local
+cursor. Capacity exhaustion refuses more work, preserving the earlier packets.
+Walking selected ancestry still costs full-history reads; bounded batches do not
+qualify long-history performance or any physical route.
 `discovery_candidates` exposes signed peer introductions without granting endpoint
 or certificate authority. Complete pending block bytes suppress redundant fetches
 but cannot advance the ledger before native ancestor/state execution.

@@ -241,7 +241,29 @@ impl Carriage {
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )
             .map_err(err)?;
-        let other:i64=self.db.query_row("SELECT coalesce((SELECT sum(length(raw)+64) FROM receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM hop_receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM offline_out),0)+(SELECT count(*)*64 FROM peer_schedule)+(SELECT count(*)*96 FROM peer_positions)+(SELECT count(*)*40 FROM withdrawals)+(SELECT count(*)*64 FROM candidates)+(SELECT count(*)*128 FROM equivocation)+(SELECT count(*)*64 FROM cursors)+256",[],|r|r.get(0)).map_err(err)?;
+        let mut other:i64=self.db.query_row("SELECT coalesce((SELECT sum(length(raw)+64) FROM receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM hop_receipts),0)+coalesce((SELECT sum(length(raw)+96) FROM offline_out),0)+(SELECT count(*)*64 FROM peer_schedule)+(SELECT count(*)*96 FROM peer_positions)+(SELECT count(*)*40 FROM withdrawals)+(SELECT count(*)*64 FROM candidates)+(SELECT count(*)*128 FROM equivocation)+(SELECT count(*)*64 FROM cursors)+256",[],|r|r.get(0)).map_err(err)?;
+        // Offline-only scheduling tables are optional for ordinary carriage.
+        // Fixed table names cannot be supplied by a peer or decoded hint.
+        for (table, bytes) in [("offline_history", 96i64), ("offline_history_rotation", 64)] {
+            let present: i64 = self
+                .db
+                .query_row(
+                    "SELECT count(*) FROM sqlite_schema WHERE type='table' AND name=?1",
+                    [table],
+                    |r| r.get(0),
+                )
+                .map_err(err)?;
+            if present != 0 {
+                let rows: i64 = self
+                    .db
+                    .query_row(&format!("SELECT count(*) FROM {table}"), [], |r| r.get(0))
+                    .map_err(err)?;
+                other = rows
+                    .checked_mul(bytes)
+                    .and_then(|n| other.checked_add(n))
+                    .ok_or("RESOURCE_WAIT custody metadata capacity")?;
+            }
+        }
         ensure(
             n >= 0
                 && size >= 0

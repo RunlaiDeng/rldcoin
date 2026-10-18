@@ -28,7 +28,7 @@ required checks, not completion certificates for the campaigns above.
 | Consensus and work | `kernel.rs` | `consensus.rs`, `recovery_target.rs` |
 | Durable selection, rollback and restart | `store.rs`, `store/replay_witness.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs`, `backup/stream.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
-| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `offline_binding.rs`, `tls.rs`, `network.rs` |
+| Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs`, `network/offline_history.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `offline_binding.rs`, `offline_oneway.rs`, `tls.rs`, `network.rs`; offline-history scheduling unit cases |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
@@ -71,6 +71,16 @@ packet-byte checks before either destination or hop custody is written. A correc
 signed receipt cannot cure a substituted outgoing row. Negative controls include
 another valid signature for the same packet ID, zero nonce and wrong link roles;
 an error must not leave a destination receipt committed before hop validation.
+Forward-only offline history checks must start a recipient behind the sender and
+carry no reverse request, receipt or advertisement. The sender must proactively
+offer the complete prefix through ordinary ticks; one missing block and a prefix
+longer than the 16-block offer batch are separate checks. Adapter restart must keep
+unreceipted exact packets; the recipient must independently execute and cold-replay
+the same complete selected state. Scheduling checks also require reorg reset,
+quota refusal without skipped dependencies and refusal of malformed progress.
+These are finite ground checks. Full ancestry walks, indefinite missing receipts,
+arbitrary history size and route capacity remain explicit resource obligations;
+forward delivery cannot grant the sender an unreturned custody acknowledgment.
 The separate connection-pressure fixture starts two fresh stores from the same
 fully native-executed common prefix. It retains the original fresh-install/mining
 check as a distinct obligation. After the source exits, the sole recipient signs
