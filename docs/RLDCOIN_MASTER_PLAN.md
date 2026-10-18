@@ -4,13 +4,16 @@
 
 The implementation target is [RLD-SURVIVOR-1](protocol/survivor-v1/README.md),
 bound by its [specification manifest](protocol/survivor-v1/SPECIFICATION.json).
-The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18.json) binds the
+The [whitepaper research receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json) binds the
 reconciled Markdown/PDF to this exact specification and the additional
 [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
 The latter add product and qualification requirements D01-D06 and D-T01-D-T08;
 they do not change consensus bytes, work, issuance or signed historical networks.
-The [16 October receipt](WHITEPAPER_RELEASE_2026-10-16.json) retains its exact
-historical meaning. A research receipt is not a deployment receipt.
+The [16 October receipt](WHITEPAPER_RELEASE_2026-10-16.json) and
+[earlier 18 October receipt](WHITEPAPER_RELEASE_2026-10-18.json) retain their exact
+historical meanings. The owner selected the title **Rldcoin: Interstellar
+Peer-to-Peer Payments**; open ordinary-user mining remains a core mechanism.
+A research receipt is not a deployment receipt.
 The owner selected reversible payment acceptance and continued operation by any
 capable surviving full node. This replaces mandatory regional quorum finality,
 irreversible regional export/import and the former seconds-scale final-spendability

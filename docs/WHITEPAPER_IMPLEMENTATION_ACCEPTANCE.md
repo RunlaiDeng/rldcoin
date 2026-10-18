@@ -1,7 +1,7 @@
-# Permissionless mining and interstellar payment implementation acceptance
+# Interstellar peer-to-peer payment implementation acceptance
 
 This is the current acceptance contract for [RLD-SURVIVOR-1](protocol/survivor-v1/README.md).
-The [18 October research receipt](WHITEPAPER_RELEASE_2026-10-18.json) also binds
+The [18 October interstellar research receipt](WHITEPAPER_RELEASE_2026-10-18_INTERSTELLAR.json) also binds
 the [interstellar open-payment requirements](protocol/INTERSTELLAR_OPEN_PAYMENT_REQUIREMENTS.md).
 D01-D06 add product and qualification obligations without changing v1 consensus.
 All G1-G8 obligations apply; old T01-T22 checks remain mandatory.
