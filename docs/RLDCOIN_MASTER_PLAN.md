@@ -58,8 +58,13 @@ binary does not change them.
 
 The interstellar product target separates an exact owner-signed intent, refreshed
 complete verification evidence, durable custody and recipient-executed conditional
-state. A logical payment capsule supplies no new accepted wire codec or balance
-authority. Ordinary forwarding must support a sender-offline, forward-only path;
+state. The [streamed file capsule](protocol/PAYMENT_CAPSULE_V1.md) fixes one
+application-layer codec for exact intent and complete native history, with public
+byte vectors and local export/refresh/verification/import commands. It changes no
+consensus transaction or contact registry and supplies no balance authority from a
+digest. Initial full native replay precedes ordinary local acceptance; weaker
+carried history cannot override stronger local work. Ordinary forwarding must
+support a sender-offline, forward-only path;
 reorganization must reconsider the original signatures only where exact inputs,
 maturity and expiry remain valid. Orphan rewards and their descendants cannot be
 restored by a receipt or a preserved signature. G7 requires ordinary-hardware
@@ -94,6 +99,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Maintenance/release | O12: unsupported behavior, authentic artifacts, finite horizons and independent qualification | T18-T21 and adoption gates |
 | Open ordinary participation | D01: account-free CPU solo templates/mining, explicit supported hardware and hostile-load envelope | D-T01, D-T07; G7 |
 | Causal payment composition | D02-D06: exact portable intent, complete dependencies, forward-only custody, original-signature reconsideration, honest risk and bounded route viability | D-T02-D-T08; G8 |
+| Streamed exact-intent file codec | PAYMENT_CAPSULE_V1: canonical versioned X/history binding, one-record streaming, full genesis replay, unchanged-X refresh and ordinary native import | `capsule.rs`, public capsule byte vectors and `capsule_process.rs`; D-T02/D-T06 plus independent/capacity qualification |
 | Local fast usable receipt | F01-F02/F05-F06: funded enforceable durable recipient state, actual onward payment, unilateral recovery and explicit local communication assumptions | F-T01/F-T04-F-T08; G9 with G1-G8 |
 | Daily payment scale | F03/F06: at least 100,000,000 unique completions per continuous day with G9 latency, real authorization/custody/fees, declared peaks/resources and safe mass exit | F-T02/F-T04-F-T08; G10 with G9/G11 |
 | Per-payment miner fees | F04/F06: owner-authorized positive fee, reserved backing, exact completeness/allocation, native settlement, maturity and reorg without diversion or inflation | F-T03-F-T05/F-T07-F-T08; G11 with G3/G5 |

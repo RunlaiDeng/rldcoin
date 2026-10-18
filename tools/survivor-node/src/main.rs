@@ -152,6 +152,53 @@ fn command(
             };
             Ok(json!({"bytes":hex::encode(raw)}))
         }
+        "capsule_export" => {
+            let intent = bytes(v, "transaction_hex")?;
+            let id = rld_survivor_node::capsule::export(
+                s,
+                &intent,
+                Path::new(field(v, "capsule_file")?),
+            )?;
+            Ok(
+                json!({"capsule_id":hex::encode(id),"transaction_hex":hex::encode(intent),"local_ledger_acceptance":false}),
+            )
+        }
+        "capsule_refresh" => {
+            let id = rld_survivor_node::capsule::refresh(
+                s,
+                Path::new(field(v, "prior_capsule_file")?),
+                Path::new(field(v, "capsule_file")?),
+            )?;
+            Ok(
+                json!({"capsule_id":hex::encode(id),"unchanged_intent":true,"local_ledger_acceptance":false}),
+            )
+        }
+        "capsule_verify" => {
+            let expected = v
+                .get("expected_transaction_hex")
+                .map(|_| bytes(v, "expected_transaction_hex"))
+                .transpose()?;
+            let verified = rld_survivor_node::capsule::verify(
+                Path::new(field(v, "capsule_file")?),
+                s.genesis_bytes(),
+                s.ledger().chain_id(),
+                s.resource_limits(),
+                expected.as_deref(),
+            )?;
+            Ok(verified.observation(clock))
+        }
+        "capsule_import" => {
+            let expected = v
+                .get("expected_transaction_hex")
+                .map(|_| bytes(v, "expected_transaction_hex"))
+                .transpose()?;
+            rld_survivor_node::capsule::import(
+                s,
+                Path::new(field(v, "capsule_file")?),
+                expected.as_deref(),
+                time()?,
+            )
+        }
         "accept_block" => {
             let o = s.accept(hash(v, "operation_id")?, &bytes(v, "block_hex")?, time()?)?;
             Ok(

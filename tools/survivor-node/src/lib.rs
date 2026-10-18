@@ -22,4 +22,5 @@ mod observation_cache;
 pub mod observations;
 pub mod offline;
 
+pub mod capsule;
 pub mod operating_policy;

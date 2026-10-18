@@ -460,3 +460,38 @@ issuance era, independent security/validator review, complete consumer qualifica
 and physical interstellar adapters remain distinct unqualified gates.
 `ACTIVE_GROUND_ADAPTER`
 reports local adapter operation, never an assertion of an interstellar connection.
+
+## Portable signed-intent capsules
+
+The file codec in [PAYMENT_CAPSULE_V1.md](../../docs/protocol/PAYMENT_CAPSULE_V1.md)
+binds exact signed C04 bytes to a complete streamed genesis-rooted history. It
+changes no consensus transaction or contact-packet kind. The native local API adds:
+
+- `capsule_export`: `transaction_hex`, fresh private `capsule_file` output path.
+- `capsule_refresh`: `prior_capsule_file`, fresh `capsule_file`; verifies the prior
+  container and preserves every original transaction/signature byte while exporting
+  the current source history. It never signs or restores an orphaned input.
+- `capsule_verify`: `capsule_file` and optional full `expected_transaction_hex`.
+  It fully executes carried history without changing local head or balances.
+  `carried_tip`, `clock_eligible` and `local_ledger_acceptance:false` are separate
+  from the recipient's actual selected state; freshness remains unknown.
+- `capsule_import`: the same input fields; complete initial verification precedes
+  ordinary native block acceptance and pool retention. The response binds both
+  carried and actual selected tips, original X and the current native transaction
+  observation. `complete_import:true` is not a promise of an included/spendable
+  payment: missing, spent or immature inputs retain their normal meanings.
+
+The file byte budget is the locally chosen ledger database budget. Blocks remain
+bounded at 262,144 bytes and are streamed rather than decoded into a trusted peer
+ledger. The original grouped interface remains limited to 32 blocks. Initial bad
+or incomplete capsules cannot change monetary state; a later I/O/capacity failure
+can retain only individually native-validated prefix transitions, without a complete
+import acknowledgment. Exact retry verifies the whole file again. Export refuses
+existing paths and retains failed partial output. There is no public HTTP file/key
+upload endpoint and no implicit capsule transport registry or physical-route claim.
+
+The published public no-value vectors bind exact encoding, lengths and digest.
+Native checks separately cover invalid evidence before mutation, changed bytes
+after verification, evidence refresh and ordinary owner-authorized onward payment.
+These engineering checks do not establish independent security/custody, arbitrary
+history resources, fast-layer capacity or monetary adoption.

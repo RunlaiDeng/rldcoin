@@ -143,7 +143,7 @@ fn extracted_candidate_creates_wallet_mines_without_peers_and_restarts() {
     let listing = Command::new("tar").arg("-tf").arg(&tar).output().unwrap();
     assert!(listing.status.success());
     let listing = String::from_utf8(listing.stdout).unwrap();
-    assert_eq!(listing.lines().count(), 10);
+    assert_eq!(listing.lines().count(), 12);
     assert!(!listing.contains("secret"));
     assert!(!listing.contains("sqlite"));
     let out = root.join("extracted");
@@ -160,6 +160,16 @@ fn extracted_candidate_creates_wallet_mines_without_peers_and_restarts() {
         std::fs::read(out.join("rld-survivor-node")).unwrap(),
         std::fs::read(env!("CARGO_BIN_EXE_rld-survivor-node")).unwrap()
     );
+    for path in [
+        "docs/protocol/PAYMENT_CAPSULE_V1.md",
+        "docs/protocol/payment-capsule-v1-vectors.json",
+    ] {
+        assert!(listing.lines().any(|entry| entry == path));
+        assert_eq!(
+            std::fs::read(out.join(path)).unwrap(),
+            std::fs::read(repo.join(path)).unwrap()
+        );
+    }
     let result = Command::new(out.join("rld-survivor-node"))
         .current_dir(&out)
         .args(["new-test-genesis", "fresh.genesis"])

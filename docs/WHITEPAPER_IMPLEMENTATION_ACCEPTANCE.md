@@ -40,8 +40,11 @@ does not remove any obligation or qualify an unresolved fast-layer construction.
 G7-G11 are additional gates, not a new certificate of implementation. The exact
 D-T01-D-T08 procedures in the overlay supplement the baseline. A logical capsule
 needs a separately fixed canonical codec and negative interoperability vectors
-before a capsule implementation claim. An existing transaction/block packet alone
-does not complete that obligation. Full history remains required; no manifest,
+before a capsule implementation claim. The [version-1 file codec](protocol/PAYMENT_CAPSULE_V1.md)
+and its public byte vectors define a streamed complete-history container; its
+native API and checks are mapped below. It does not extend the contact payload
+registry or qualify a physical carriage adapter. An existing transaction/block
+packet alone does not complete that obligation. Full history remains required; no manifest,
 header or receipt supplies ledger authority. Reuse evidence only for the exact
 overlapping source/profile and observation, without upgrading baseline passes to
 unmeasured G7-G11 or independent/physical qualification.
@@ -79,6 +82,7 @@ required checks, not completion certificates for the campaigns above.
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs`, `network/offline_history.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `offline_binding.rs`, `offline_oneway.rs`, `tls.rs`, `network.rs`; offline-history scheduling unit cases |
 | Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `offline_payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
 | Retained ordinary contact admission | `network.rs`, existing CLI retained-config startup | `retained_configuration.rs`; native admission restart/replacement, interrupted publication, backup mismatch and symlink refusal cases |
+| Exact-intent evidence capsule | `capsule.rs`, native CLI capsule commands | `capsule.rs`, `capsule_process.rs`; canonical public byte vectors, initial invalid-tail refusal, changed reread, unchanged-X refresh, stronger-local-work/clock checks and actual recipient onward payment/cold replay |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet

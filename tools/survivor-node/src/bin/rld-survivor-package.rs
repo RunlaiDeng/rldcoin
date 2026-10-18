@@ -84,6 +84,12 @@ fn run() -> Result<(), String> {
         let path = format!("docs/protocol/survivor-v1/{name}");
         files.push((path.clone(), read(&root.join(path))?, false));
     }
+    for path in [
+        "docs/protocol/PAYMENT_CAPSULE_V1.md",
+        "docs/protocol/payment-capsule-v1-vectors.json",
+    ] {
+        files.push((path.to_string(), read(&root.join(path))?, false));
+    }
     files.sort_by(|a, b| a.0.cmp(&b.0));
     let checksums = files
         .iter()
