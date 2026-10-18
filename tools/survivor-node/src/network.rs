@@ -66,6 +66,47 @@ fn read(path: &Path, max: u64) -> Result<Zeroizing<Vec<u8>>> {
     ensure(b.len() as u64 <= max, "INVALID_ENCODING material bound")?;
     Ok(b)
 }
+fn retained_config(root: &Path) -> Result<Option<Zeroizing<Vec<u8>>>> {
+    match fs::symlink_metadata(root.join("config.next")) {
+        Ok(_) => return Err("RESOURCE_WAIT interrupted contact configuration".into()),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+        Err(e) => return Err(err(e)),
+    }
+    let path = root.join("config.json");
+    match fs::symlink_metadata(&path) {
+        Ok(metadata) => {
+            ensure(
+                metadata.is_file(),
+                "INVALID_ENCODING contact configuration file",
+            )?;
+            read(&path, 65536).map(Some)
+        }
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(e) => Err(err(e)),
+    }
+}
+fn retain_config(root: &Path, raw: &[u8]) -> Result<()> {
+    ensure(
+        raw.len() <= 65536,
+        "INVALID_ENCODING contact configuration bound",
+    )?;
+    if retained_config(root)?.as_deref().map(Vec::as_slice) == Some(raw) {
+        // Even an exact repeated publication completes file/directory durability.
+        File::open(root.join("config.json"))
+            .and_then(|file| file.sync_all())
+            .and_then(|_| File::open(root)?.sync_all())
+            .map_err(err)?;
+        return Ok(());
+    }
+    let pending = root.join("config.next");
+    fresh(&pending, raw)?;
+    // The exact complete old or new admission is visible after rename. An
+    // interrupted pre-rename write stays retained and blocks silent fallback.
+    fs::rename(&pending, root.join("config.json")).map_err(err)?;
+    File::open(root)
+        .and_then(|directory| directory.sync_all())
+        .map_err(err)
+}
 fn admission(cfg: &Value, identity: Hash) -> Result<(SocketAddr, Vec<Neighbor>, Vec<Hash>)> {
     let listen: SocketAddr = cfg["listen"]
         .as_str()
@@ -317,9 +358,22 @@ impl Network {
             fresh(&tls_path, &bytes)?;
         }
         let material = Arc::new(retained_material(root, chain, identity)?);
-        let cfg: Value = match config {
-            Some(b) => serde_json::from_slice(b).map_err(err)?,
-            None => json!({"listen":"127.0.0.1:0","neighbors":[]}),
+        let retained = retained_config(root)?;
+        let cfg: Value = match config.or_else(|| retained.as_deref().map(Vec::as_slice)) {
+            Some(b) => {
+                ensure(
+                    b.len() <= 65536,
+                    "INVALID_ENCODING contact configuration bound",
+                )?;
+                serde_json::from_slice(b).map_err(err)?
+            }
+            None => {
+                ensure(
+                    !root.join("custody").exists(),
+                    "MISSING_HISTORY retained contact configuration",
+                )?;
+                json!({"listen":"127.0.0.1:0","neighbors":[]})
+            }
         };
         let (listen, neighbors, offline_peers) = admission(&cfg, identity)?;
         let carriage = Carriage::open(&root.join("custody"), chain, identity, budget)?;
@@ -360,6 +414,9 @@ impl Network {
             diagnostic: None,
         };
         adapter.open_offline_history()?;
+        // Publish validated local intent before opening a socket or returning an
+        // adapter. A receipt or discovered route never writes this admission.
+        retain_config(root, &adapter.config)?;
         adapter.poll_listener();
         Ok(adapter)
     }
@@ -773,6 +830,11 @@ impl Network {
             self.material.matches_retained_record(&tls),
             "INVALID_CRYPTO retained TLS material changed",
         )?;
+        ensure(
+            retained_config(&self.root)?.as_deref().map(Vec::as_slice)
+                == Some(self.config.as_slice()),
+            "INVALID_CRYPTO retained contact configuration changed",
+        )?;
         Ok((contact, tls, self.config.clone()))
     }
 }
@@ -917,5 +979,134 @@ mod listener_tests {
                 .unwrap()
                 .starts_with("INVALID_CRYPTO")
         );
+    }
+
+    #[test]
+    fn retained_admission_and_explicit_replacement_survive_library_restart() {
+        // Public NO-VALUE contact identities, never monetary custody.
+        let root = root().join("contact");
+        let peer = SigningKey::from_bytes(&[61; 32]).verifying_key().to_bytes();
+        let other = SigningKey::from_bytes(&[62; 32]).verifying_key().to_bytes();
+        let config = |offline| {
+            serde_json::to_vec(&json!({
+            "listen":"127.0.0.1:0",
+            "neighbors":[{"key":hex::encode(other),"endpoint":"127.0.0.1:9","certificate_sha256":hex::encode([71;32])}],
+            "offline_peers":[hex::encode(offline)]
+        })).unwrap()
+        };
+        let first = Network::open(&root, [81; 32], Some(&config(peer))).unwrap();
+        let identity = first.status()["identity"].clone();
+        let certificate = first.status()["certificate_sha256"].clone();
+        let original = first.config.clone();
+        assert_eq!(fs::read(root.join("config.json")).unwrap(), original);
+        drop(first);
+        let mut resumed = Network::open(&root, [81; 32], None).unwrap();
+        assert_eq!(resumed.config, original);
+        assert_eq!(resumed.status()["identity"], identity);
+        assert_eq!(resumed.status()["certificate_sha256"], certificate);
+        assert_eq!(resumed.neighbors.len(), 1);
+        assert_eq!(resumed.neighbors[0].endpoint.to_string(), "127.0.0.1:9");
+        assert_eq!(resumed.neighbors[0].certificate_sha256, [71; 32]);
+        assert!(resumed.offline_export(peer).is_ok());
+        drop(resumed);
+        let replaced = Network::open(&root, [81; 32], Some(&config(other))).unwrap();
+        assert_ne!(replaced.config, original);
+        let replacement = replaced.config.clone();
+        drop(replaced);
+        let mut resumed = Network::open(&root, [81; 32], None).unwrap();
+        assert_eq!(resumed.config, replacement);
+        assert!(resumed.offline_export(other).is_ok());
+        assert!(resumed.offline_export(peer).is_err());
+        assert!(!root.join("config.next").exists());
+    }
+
+    #[test]
+    fn invalid_replacement_keeps_retained_admission_and_custody_unchanged() {
+        let root = root().join("contact");
+        let peer = SigningKey::from_bytes(&[63; 32]).verifying_key().to_bytes();
+        let config = serde_json::to_vec(&json!({
+            "listen":"127.0.0.1:0","neighbors":[],"offline_peers":[hex::encode(peer)]
+        }))
+        .unwrap();
+        let mut network = Network::open(&root, [82; 32], Some(&config)).unwrap();
+        network.queue(peer_id(peer), 4, &[0; 96]).unwrap();
+        let frames = network.offline_export(peer).unwrap();
+        let retained = fs::read(root.join("config.json")).unwrap();
+        drop(network);
+        let custody = fs::read(root.join("custody/carriage.sqlite3")).unwrap();
+        let bad = serde_json::to_vec(&json!({
+            "listen":"127.0.0.1:0","neighbors":[],"offline_peers":[hex::encode([0;32])]
+        }))
+        .unwrap();
+        assert!(Network::open(&root, [82; 32], Some(&bad)).is_err());
+        assert_eq!(fs::read(root.join("config.json")).unwrap(), retained);
+        assert_eq!(
+            fs::read(root.join("custody/carriage.sqlite3")).unwrap(),
+            custody
+        );
+        assert!(!root.join("config.next").exists());
+        let mut resumed = Network::open(&root, [82; 32], None).unwrap();
+        assert_eq!(resumed.offline_export(peer).unwrap(), frames);
+    }
+
+    #[test]
+    fn interrupted_admission_blocks_open_and_backup_without_repair() {
+        for complete in [false, true] {
+            let root = root().join("contact");
+            let network = Network::open(&root, [83; 32], None).unwrap();
+            let retained = fs::read(root.join("config.json")).unwrap();
+            let pending = if complete {
+                retained.clone()
+            } else {
+                b"{partial".to_vec()
+            };
+            fs::write(root.join("config.next"), &pending).unwrap();
+            assert!(network.backup_material().is_err());
+            drop(network);
+            for explicit in [None, Some(retained.as_slice())] {
+                assert!(Network::open(&root, [83; 32], explicit).is_err());
+                assert_eq!(fs::read(root.join("config.json")).unwrap(), retained);
+                assert_eq!(fs::read(root.join("config.next")).unwrap(), pending);
+            }
+        }
+    }
+
+    #[test]
+    fn missing_or_damaged_admission_cannot_fall_back_or_enter_a_backup() {
+        for replacement in [None, Some(b"{damaged".as_slice()), Some(b"{}".as_slice())] {
+            let root = root().join("contact");
+            let network = Network::open(&root, [84; 32], None).unwrap();
+            if let Some(raw) = replacement {
+                fs::write(root.join("config.json"), raw).unwrap();
+            } else {
+                fs::remove_file(root.join("config.json")).unwrap();
+            }
+            assert!(network.backup_material().is_err());
+            drop(network);
+            assert!(Network::open(&root, [84; 32], None).is_err());
+            assert_eq!(
+                fs::read(root.join("config.json")).ok().as_deref(),
+                replacement
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn admission_symlink_is_not_followed_or_overwritten() {
+        let root = root();
+        let contact = root.join("contact");
+        let network = Network::open(&contact, [85; 32], None).unwrap();
+        let raw = fs::read(contact.join("config.json")).unwrap();
+        drop(network);
+        let other = root.join("other-config");
+        fs::write(&other, &raw).unwrap();
+        fs::remove_file(contact.join("config.json")).unwrap();
+        std::os::unix::fs::symlink(&other, contact.join("config.json")).unwrap();
+        assert!(Network::open(&contact, [85; 32], Some(&raw)).is_err());
+        assert_eq!(fs::read(&other).unwrap(), raw);
+        assert!(fs::symlink_metadata(contact.join("config.json"))
+            .unwrap()
+            .is_symlink());
     }
 }

@@ -83,6 +83,31 @@ a valid public reward key. Optional mining uses actual local time and the normal
 validator with no peer-count prerequisite. Unknown revision cursors require resync.
 The stdin control stream must remain open while the process runs.
 
+Successful contact startup durably retains the complete locally admitted listen
+address, neighbor keys/endpoints/certificate pins and offline peers. Restart may
+omit the optional contact file; both the CLI and library reopen that exact retained
+configuration. An explicit valid local file may replace it after complete adapter
+validation. Advertisements never perform this replacement. Atomic publication
+uses a private synchronized `contact/config.next`, rename and directory sync before
+opening a socket. Interrupted residue, missing retained configuration, malformed
+data and configuration symlinks refuse the adapter instead of selecting defaults.
+Keep damaged/interrupted bytes for diagnosis; no automatic repair is performed.
+Backups refuse changed or interrupted admission rather than exporting stale
+in-memory settings. This local persistence contract is not independent freshness,
+power-loss or physical-link qualification.
+
+The ordinary `offline_payment_process.rs` check uses only forward frame files
+from a source to a relay and then to a fresh recipient. The source mines and
+signs through the ordinary CLI, then exits while the recipient is still at
+genesis. The relay reopens retained native history and admission without a
+configuration argument before carrying the payment onward. After the relay also
+exits, the recipient independently signs and includes a payment spending the
+exact received output, then cold-reopens without repeating its configuration.
+Complete native replay checks both original signatures and monetary conservation;
+no controller-created ledger or reverse receipt supplies value. Generated fixture
+keys, frame archives and stopped stores remain private. This finite same-host
+check does not qualify a physical route or independent custody/security.
+
 Responses distinguish clock observation from storage readiness. `storage_state`
 is READY or RESTART_REQUIRED; an unavailable/backward clock keeps `observed_at`
 null without inventing a time. Read-only status/recovery and disabling mining

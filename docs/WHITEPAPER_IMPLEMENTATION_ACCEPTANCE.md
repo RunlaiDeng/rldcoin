@@ -57,6 +57,16 @@ No changed extension can borrow baseline or historical fixture qualification.
 
 ## Mandatory distinctions
 
+The ordinary three-process offline-payment check requires the recipient to remain
+at genesis until the source exits normally. The relay must then reopen its exact
+retained native history and admitted contacts without a configuration argument,
+deliver only forward frames and exit before the recipient authorizes an actual
+onward spend of that exact output. Recipient cold startup likewise omits the
+configuration argument and fully replays both signatures and conserved value.
+No reverse receipt, source restart or controller-injected ledger can satisfy this
+observation. This finite composition is necessary evidence for D-T03, not complete
+G7/G8, independent operations, physical carriage or fast-layer qualification.
+
 The isolated [native candidate](../tools/survivor-node/README.md) supplies the
 implementation entry points below. These are auditable source locations and
 required checks, not completion certificates for the campaigns above.
@@ -67,7 +77,8 @@ required checks, not completion certificates for the campaigns above.
 | Durable selection, rollback and restart | `store.rs`, `store/replay_witness.rs`, `observations.rs`, `observation_cache.rs` | `storage.rs`, `observations.rs`, `crash.rs`, `history.rs`, `history_backup.rs`, `cold_groups.rs`, `deep_reorg.rs`; native observation-cache unit cases |
 | Wallet, pool and encrypted recovery | `wallet.rs`, `pool.rs`, `keyfile.rs`, `backup.rs`, `backup/stream.rs` | `wallet.rs`, `wallet_binding.rs`, `wallet_history.rs`, `consumer_status.rs`, `pool.rs`, `pool_policy.rs`, `backup.rs` |
 | Authenticated delayed custody and ordinary synchronization | `contact.rs`, `contact/syntax_witness.rs`, `carriage.rs`, `offline.rs`, `tls.rs`, `network.rs`, `network/offline_history.rs` | `contact.rs`, `intrinsic_reuse.rs`, `carriage.rs`, `carriage_sequence.rs`, `offline.rs`, `offline_binding.rs`, `offline_oneway.rs`, `tls.rs`, `network.rs`; offline-history scheduling unit cases |
-| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
+| Ordinary survivor payment and distribution | `main.rs`, `bin/rld-survivor-package.rs` | `process.rs`, `payment_process.rs`, `offline_payment_process.rs`, `contact_pressure.rs`, `listener_recovery.rs`, `operating_policy.rs`, `distribution.rs` |
+| Retained ordinary contact admission | `network.rs`, existing CLI retained-config startup | `retained_configuration.rs`; native admission restart/replacement, interrupted publication, backup mismatch and symlink refusal cases |
 
 Source paths are relative to `tools/survivor-node/src`; checks are relative to
 `tools/survivor-node/tests`. The payment process check uses ordinary mining, wallet
