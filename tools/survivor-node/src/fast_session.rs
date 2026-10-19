@@ -1955,6 +1955,14 @@ fn load_key(
     chain: Hash,
     password: Option<&[u8]>,
 ) -> Result<ed25519_dalek::SigningKey> {
+    load_key_profile(path, chain, password, false)
+}
+fn load_key_profile(
+    path: &Path,
+    chain: Hash,
+    password: Option<&[u8]>,
+    durable: bool,
+) -> Result<ed25519_dalek::SigningKey> {
     let password = password.ok_or("INVALID secure native password input required")?;
     fast_retainer::private(path, true)?;
     let mut file = File::open(path).map_err(|_| "RESOURCE_WAIT key file")?;
@@ -1978,5 +1986,11 @@ fn load_key(
         .read_to_end(&mut raw)
         .map_err(|_| "RESOURCE_WAIT key read")?;
     ensure(raw.len() == 187, "INVALID encrypted key size")?;
-    keyfile::decrypt(&raw, chain, password)
+    let key = keyfile::decrypt(&raw, chain, password)?;
+    if durable {
+        let witness = fast_retainer::PrefixWitness::capture(&file, &raw)?;
+        fast_retainer::sync(&file, path)?;
+        witness.check(path)?;
+    }
+    Ok(key)
 }

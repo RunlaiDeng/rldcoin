@@ -1,8 +1,87 @@
-//! Bounded ordinary-input discovery under actual native and caller heads.
+//! Private encrypted key creation and bounded native wallet observations.
 use super::*;
 use std::collections::BTreeSet;
 
 impl Session {
+    fn wallet_key_path(&self, name: &str) -> Result<PathBuf> {
+        ensure(
+            (1..=64).contains(&name.len())
+                && name.bytes().all(|b| {
+                    b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-' || b == b'_'
+                }),
+            "INVALID wallet key name",
+        )?;
+        Ok(self.root.join("keys").join(format!("{name}.key")))
+    }
+    /// Create a fresh encrypted native key. Existing files are never replaced;
+    /// lost replies are recovered by authenticating that file with key_info.
+    pub fn wallet_create_key(
+        &mut self,
+        expected: Hash,
+        name: &str,
+        password: &[u8],
+        now: u64,
+    ) -> Result<Value> {
+        self.status(expected, now)?;
+        let path = self.wallet_key_path(name)?;
+        Self::paths(&self.root)?;
+        let dir = path.parent().unwrap();
+        let mut create = fs::DirBuilder::new();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::DirBuilderExt;
+            create.mode(0o700);
+        }
+        match create.create(dir) {
+            Ok(()) => sync_dir(&self.root)?,
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {}
+            Err(e) => return Err(fast_retainer::io(e)),
+        }
+        fast_retainer::private(dir, false)?;
+        let mut count = 0;
+        for entry in fs::read_dir(dir).map_err(fast_retainer::io)? {
+            entry.map_err(fast_retainer::io)?;
+            count += 1;
+            ensure(count < 64, "RESOURCE_WAIT wallet key directory capacity")?;
+        }
+        ensure(
+            !path.try_exists().map_err(fast_retainer::io)?,
+            "CONFLICT wallet key already exists",
+        )?;
+        let key = keyfile::generate()?;
+        let owner = Id(key.verifying_key().to_bytes());
+        write_new(&path, &keyfile::encrypt(&key, self.chain, password)?)?;
+        let mut out = self.wallet_key_info(expected, name, password, now)?;
+        ensure(
+            out["owner"] == json!(owner),
+            "INVALID wallet key readback owner",
+        )?;
+        out["key_created"] = true.into();
+        Ok(out)
+    }
+    /// Authenticate the retained encrypted file without signing or creating a key.
+    pub fn wallet_key_info(
+        &mut self,
+        expected: Hash,
+        name: &str,
+        password: &[u8],
+        now: u64,
+    ) -> Result<Value> {
+        let mut out = self.status(expected, now)?;
+        let path = self.wallet_key_path(name)?;
+        fast_retainer::private(path.parent().unwrap(), false)?;
+        let key = load_key_profile(&path, self.chain, Some(password), true)?;
+        out["owner"] = json!(Id(key.verifying_key().to_bytes()));
+        out["key_name"] = name.into();
+        out["key_file"] = path.to_string_lossy().into_owned().into();
+        out["key_created"] = false.into();
+        out["wallet_key_loaded"] = true.into();
+        out["encrypted"] = true.into();
+        out["owner_spend_authorized"] = false.into();
+        out["key_material_returned"] = false.into();
+        self.status(expected, now)?;
+        Ok(out)
+    }
     /// Discover this owner's selected native outputs without loading a key or
     /// granting spending rights. Reservations are local to this exact caller.
     pub fn native_wallet(

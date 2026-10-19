@@ -20,6 +20,24 @@ latest-state assumption is not independent freshness or continuous fee service.
 
 ### Ordinary wallet input discovery
 
+Private `wallet_create_key {head, name, password}` creates a fresh O13 encrypted
+key in the session's private `keys/` directory. Names contain1..64 lowercase ASCII
+letters, digits, hyphens or underscores; the directory holds at most64 entries.
+Native entropy, the existing fixed KDF/AEAD and exact currency binding apply.
+The directory is private0700 and new files0600; existing names never overwrite.
+The native file and parent are synchronized and the saved ciphertext is decrypted
+again before its public owner is returned. No private key or seed is returned.
+
+`wallet_key_info {head, name, password}` authenticates that retained encrypted
+file for this exact currency and returns its public owner and private file path.
+It creates nothing, signs nothing and does not register a payment actor or create
+funds. After an interrupted create or lost reply, this command can authenticate
+an existing complete file; another create cannot replace it. Partial/invalid
+files refuse and remain retained. Both commands use zeroized bounded native
+stdin passwords, never argv, environment or HTTP. Returned key paths can be used
+only through subsequent explicit native reviews and approvals. File custody and
+separately retained latest wallet/caller state remain distinct responsibilities.
+
 The private `native_wallet` command takes the exact current `head`, a valid
 Ed25519 `owner`, optional `after` reference and `limit` from1 through16. Its library
 entry is `Session::native_wallet`. It discovers actual selected-native ordinary

@@ -639,6 +639,14 @@ It owns one native selector plus a bounded key-free caller journal and private
 owner/retainer actor files. Exact requests precede child mutation; verified child
 heads and review digests precede response. Every cold open reexecutes native
 history, authenticates complete actor custody and audits caller-to-child steps.
+`wallet_create_key {head, name, password}` creates a private O13 encrypted key
+using native entropy and returns its public owner address and saved path. Existing
+names refuse; `wallet_key_info` authenticates an existing complete file after
+restart or a lost reply. Names use1..64 lowercase ASCII letters, digits, hyphens
+or underscores; at most64 entries live in the session's private `keys/` directory.
+Passwords use bounded private native stdin. Neither command signs, exports a seed
+or grants funds, and key-file custody does not replace latest wallet-state custody.
+
 The private `native_wallet {head, owner, after, limit}` read lists actual ordinary
 outputs for the owner's public key, up to16 per page. It returns complete-owner
 native, maturity and local-reservation totals, plus input candidates for explicit
