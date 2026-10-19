@@ -390,17 +390,29 @@ impl Fixture {
 
 #[test]
 fn actual_explicit_owner_forward_and_onward_payments_over_automatic_native_peers() {
-    run_flow(25, false, false);
+    run_flow(25, Ending::Active, false);
 }
 #[test]
 fn received_value_is_required_for_onward_and_closed_funding_is_only_historical() {
-    run_flow(450, true, false);
+    run_flow(450, Ending::Closing, false);
 }
 #[test]
 fn exhausted_fee_slots_preserve_principal_but_disable_another_payment() {
-    run_flow(0, false, true);
+    run_flow(0, Ending::Active, true);
 }
-fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
+#[test]
+fn greater_native_work_removes_usable_backing_but_keeps_complete_receipt_evidence() {
+    run_flow(25, Ending::Reorganized, false);
+}
+#[derive(Clone, Copy)]
+enum Ending {
+    Active,
+    Closing,
+    Reorganized,
+}
+fn run_flow(reverse: u128, ending: Ending, exhaust: bool) {
+    let close_after = matches!(ending, Ending::Closing);
+    let inactive = !matches!(ending, Ending::Active);
     let setup = Instant::now();
     let mut t = Fixture::new();
     let setup_seconds = setup.elapsed().as_secs_f64();
@@ -416,7 +428,7 @@ fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
     };
     let count = rounds.len();
     let expected_fee = if exhaust { 12 } else { 5 };
-    writeln!(report,"{}",json!({"cohort":if exhaust{"EXHAUSTED_FEE_SLOTS"}else if close_after{"RECEIVED_VALUE_REQUIRED_THEN_NATIVE_CLOSE"}else{"PREFUNDED_STABLE_NATIVE_LOCAL_APPROVAL_BASELINE"},"planned":count,"reverse_amount":reverse.to_string(),"setup_seconds":setup_seconds,
+    writeln!(report,"{}",json!({"cohort":if exhaust{"EXHAUSTED_FEE_SLOTS"}else if close_after{"RECEIVED_VALUE_REQUIRED_THEN_NATIVE_CLOSE"}else if inactive{"NATIVE_REORGANIZATION_REMOVES_FUNDING"}else{"PREFUNDED_STABLE_NATIVE_LOCAL_APPROVAL_BASELINE"},"planned":count,"reverse_amount":reverse.to_string(),"setup_seconds":setup_seconds,
         "p95_max_seconds":3,"p99_max_seconds":5,"independent":false,"G9_qualified":false})).unwrap();
     report.sync_all().unwrap();
     let mut latencies = vec![];
@@ -589,6 +601,28 @@ fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
         "diagnostic_target_met":max<=3.0,"population_qualification":false,"G9_qualified":false,"daily100M_qualified":false})).unwrap();
     report.sync_all().unwrap();
     drop(report);
+    if matches!(ending, Ending::Reorganized) {
+        let mut alternate = t.funding.before.clone();
+        for _ in 0..2 {
+            let block = support::mine_until(
+                &mut alternate,
+                t.funding.miner.verifying_key().to_bytes(),
+                vec![],
+                now(),
+                t.deadline,
+            );
+            let tip = t.nodes[0].tip;
+            t.nodes[0].execute(
+                Action::Native {
+                    tip,
+                    block: hex::encode(block),
+                },
+                false,
+            );
+        }
+        assert!(alternate.funding_origin(t.funding.channel).is_err());
+        t.funding.ledger = alternate;
+    }
     if close_after {
         let input = support::out(t.funding.channel, 1);
         let change = t.funding.ledger.coins()[&input].amount - 1;
@@ -615,6 +649,8 @@ fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
             },
             false,
         );
+    }
+    if inactive {
         for node in &mut t.nodes {
             loop {
                 node.ok(json!({"command":"runtime_status"}));
@@ -631,7 +667,11 @@ fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
             assert_eq!(v["conditional_onward_state_available"], false);
             assert_eq!(
                 v["native_backing_diagnostic"],
-                "WAITING fast backing closing"
+                if close_after {
+                    "WAITING fast backing closing"
+                } else {
+                    "WAITING_FOR_INPUT fast backing absent"
+                }
             );
             assert!(v["conditional_onward_principal"].is_null());
             assert_eq!(v["retained_principal"], balance.to_string());
@@ -639,6 +679,9 @@ fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
                 v["retained_miner_fee_entitlement"],
                 expected_fee.to_string()
             );
+            let blocked=t.nodes[i].send(json!({"command":"propose","actor":t.actors[i],"payer":i,"amount":"1","invoice":Id([200+i as u8;32])}));
+            assert_eq!(blocked["diagnostic"], v["native_backing_diagnostic"]);
+            assert!(blocked["invoice_hex"].is_null());
         }
     }
     for node in t.nodes.drain(..) {
@@ -669,10 +712,10 @@ fn run_flow(reverse: u128, close_after: bool, exhaust: bool) {
                 v["retained_miner_fee_entitlement"],
                 expected_fee.to_string()
             );
-            assert_eq!(v["native_backing_usable_now"], !close_after);
+            assert_eq!(v["native_backing_usable_now"], !inactive);
             assert_eq!(
                 v["conditional_onward_state_available"],
-                !close_after && !(exhaust && i == 0)
+                !inactive && !(exhaust && i == 0)
             );
             assert_eq!(v["wallet_key_loaded"], false);
         }

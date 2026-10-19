@@ -77,8 +77,12 @@ apply. There is no public signing or balance endpoint.
 
 `tests/fast_live_payment.rs` exercises actual separately approved owner and
 retainer signatures over automatic native/peer carriage, received-value onward
-payment, native closure, exhausted fee slots, original pending metadata,
+payment, native closure and greater-work removal of the actual funding,
+exhausted fee slots, original pending metadata,
 key-unavailable cold reads, stale/unknown requests and damaged owner evidence.
+Removed backing must also refuse a new proposal; complete retained receipts
+remain independently authenticated during full cold session replay without
+restoring their losing funding or granting compensation.
 `fast_owner.rs`, `fast_session.rs` and `fast_native_view.rs` retain their separate
 authorization, full-audit and native integrity obligations. Finite local cases
 do not qualify independent custody, consumer approval UX, hostile geography/load,
