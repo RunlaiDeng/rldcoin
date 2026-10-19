@@ -14,6 +14,7 @@ mod journal;
 pub use control::Boundary as ControlBoundary;
 mod onchain;
 mod opening;
+mod owner_view;
 mod pool;
 mod transfer;
 use crate::{

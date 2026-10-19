@@ -35,6 +35,25 @@ fn record(index: u64, previous: Hash, kind: u8, payload: &[u8]) -> Result<(Vec<u
 struct Pending {
     invoice: Invoice,
     partial: Option<Vec<u8>>,
+    prepared_at: u64,
+    prepared_native: Hash,
+}
+/// Derived only from a completely authenticated retained owner journal.
+pub(crate) struct PendingObservation {
+    pub invoice: Hash,
+    pub logical: Hash,
+    pub amount: u128,
+    pub fee: u128,
+    pub sequence: u64,
+    pub signed: bool,
+    pub prepared_at: u64,
+    pub prepared_native: Hash,
+}
+pub(crate) struct Observation {
+    pub sequence: u64,
+    pub balances: [u128; 2],
+    pub slots: [u64; 2],
+    pub pending: Option<PendingObservation>,
 }
 /// An explicit human/caller review token. No authority follows from displaying it.
 pub struct Review {
@@ -230,13 +249,15 @@ impl Journal {
             )?;
             if kind == 1 {
                 ensure(pending.is_none(), "INVALID owner concurrent prepare")?;
-                p.hash()?;
+                let prepared_native = p.hash()?;
                 let n = p.u16()? as usize;
                 let invoice = Invoice::verify(&funded, p.take(n)?)?;
                 Self::prior(&last, &invoice)?;
                 pending = Some(Pending {
                     invoice,
                     partial: None,
+                    prepared_at: time,
+                    prepared_native,
                 });
             } else if kind == 2 {
                 p.hash()?;
@@ -417,6 +438,35 @@ impl Journal {
     pub fn latest_sequence(&self) -> u64 {
         self.last.as_ref().map_or(0, |(p, _)| p.sequence)
     }
+    pub(crate) fn observation(&mut self, expected: Hash) -> Result<Observation> {
+        self.prefix(expected)?;
+        let (sequence, balances, slots) = if let Some((payment, _)) = &self.last {
+            let claim = self
+                .origin
+                .verify_certificate(payment.after_certificate())?;
+            (claim.sequence, claim.balances, claim.slots)
+        } else {
+            (0, self.origin.initial(), [0; 2])
+        };
+        let pending = self.pending.as_ref().map(|p| PendingObservation {
+            invoice: p.invoice.id(),
+            logical: p.invoice.logical_id(),
+            amount: p.invoice.amount(),
+            fee: p.invoice.fee(),
+            sequence: p.invoice.sequence(),
+            signed: p.partial.is_some(),
+            prepared_at: p.prepared_at,
+            prepared_native: p.prepared_native,
+        });
+        sync(&self.file, &self.path)?;
+        self.prefix(expected)?;
+        Ok(Observation {
+            sequence,
+            balances,
+            slots,
+            pending,
+        })
+    }
     /// Exact last complete exit evidence remains available during a pending
     /// next invoice. Reading never asserts current backing or signs.
     pub fn retained_complete(&mut self, expected: Hash) -> Result<Option<(Vec<u8>, Vec<u8>)>> {
@@ -486,6 +536,8 @@ impl Journal {
         self.pending = Some(Pending {
             invoice,
             partial: None,
+            prepared_at: current.now,
+            prepared_native: current.expected_tip,
         });
         self.review(self.head, current)
     }

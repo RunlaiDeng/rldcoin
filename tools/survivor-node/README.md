@@ -639,6 +639,14 @@ It owns one native selector plus a bounded key-free caller journal and private
 owner/retainer actor files. Exact requests precede child mutation; verified child
 heads and review digests precede response. Every cold open reexecutes native
 history, authenticates complete actor custody and audits caller-to-child steps.
+The private `owner_state` read takes the exact session head and owner actor.
+It separates retained principal and fee evidence, original pending preparation,
+and conditional onward principal under actual selected native backing. Pending
+invoices, closing backing and exhausted fee slots do not display a usable
+principal. Reads load no wallet key, approve no spend, and preserve original
+reservations and clocks. See the [owner-state contract](../../docs/protocol/FAST_OWNER_STATE_VIEW_V1.md)
+for the exact observations and their local trust and availability limits.
+
 Unsigned proposals come from the node's own native/retained owner state. Explicit
 signing requires a persisted exact review reference, approved=true and a private
 O13 encrypted key file; passwords are zeroized bounded native stdin inputs, never

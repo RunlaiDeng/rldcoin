@@ -122,6 +122,13 @@ impl FundingOrigin {
             self.context[at..at + 16].try_into().unwrap(),
         ))
     }
+    pub fn slot_limit(&self, payer: usize) -> Result<u64> {
+        require(payer < 2, "INVALID fast payer")?;
+        let at = if payer == 0 { 180 } else { 204 };
+        Ok(u64::from_be_bytes(
+            self.context[at..at + 8].try_into().unwrap(),
+        ))
+    }
     pub fn verify_certificate(&self, raw: &[u8]) -> Result<crate::fast_fee_claims::Claim> {
         let claim = Contract::decode(&self.context)?.verify(raw)?;
         require(

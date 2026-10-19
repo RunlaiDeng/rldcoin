@@ -18,6 +18,15 @@ latest-state assumption is not independent freshness or continuous fee service.
 
 ## Native view, exact review and keys
 
+The private [owner-state observation](FAST_OWNER_STATE_VIEW_V1.md) separates
+authenticated retained principal/fee evidence from conditional onward usability
+and pending preparation. Actual selected backing, own remaining fee slots and
+pending state determine whether a conditional principal is shown; closing or
+exhausted funding retains historical evidence without displaying usable funds.
+Original preparation metadata survives review, signing and cold replay, while
+the original client submission clock remains a separate obligation. Reads cannot
+approve spending, release reservations or establish native fee payout.
+
 A session exclusively owns one native selector, one caller journal and up to16
 registered actor journals. Actor roles are owner index0/1 or delegated retainer2.
 Different actors/keys/processes do not establish independent operators. Requests
