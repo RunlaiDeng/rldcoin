@@ -603,29 +603,49 @@ impl Session {
             self.native.as_ref().unwrap().head() == native_head,
             "INVALID caller native head",
         )?;
+        let mut prior = self.caller.native_initial;
+        // One bounded full block at a time; all native records must be covered
+        // in their original order under one complete file-prefix audit.
+        let steps = self.caller.ops.iter().filter_map(|op| {
+            if let (Action::Native { tip, block }, Some(done)) = (&op.intent.action, &op.done) {
+                if let Some(next) = done.effect {
+                    let previous = prior;
+                    prior = next.0;
+                    return Some(
+                        bytes(block, 262144).map(|block| fast_store::NativeAuditStep {
+                            prior: previous,
+                            next: next.0,
+                            before_tip: tip.0,
+                            at: op.intent.at,
+                            block,
+                        }),
+                    );
+                }
+            }
+            None
+        });
+        let transitions = self.native.as_mut().unwrap().audit_steps(steps)?;
+        let mut transition = transitions.into_iter();
         let mut before_tip = self.chain;
         let mut before_head = self.caller.native_initial;
         let mut native_context = Vec::new();
         for op in &self.caller.ops {
             native_context.push(before_tip);
             let Some(done) = &op.done else { continue };
-            if let Action::Native { tip, block } = &op.intent.action {
+            if let Action::Native { tip, .. } = &op.intent.action {
                 ensure(done.review.is_none(), "INVALID native review field")?;
                 if let Some(h) = done.effect {
                     ensure(tip.0 == before_tip, "INVALID caller native prior tip")?;
-                    let (t, at) = self.native.as_mut().unwrap().audit_step(
-                        before_head,
-                        h.0,
-                        &bytes(block, 262144)?,
-                    )?;
-                    ensure(at == op.intent.at, "INVALID caller native admission time")?;
+                    let t = transition
+                        .next()
+                        .ok_or("INVALID missing native audit transition")?;
                     before_head = h.0;
                     before_tip = t;
                 }
             }
         }
         ensure(
-            before_head == native_head && before_tip == self.tip(),
+            before_head == native_head && before_tip == self.tip() && transition.next().is_none(),
             "INVALID caller reconstructed selection",
         )?;
         self.audit_onchain(&native_context)?;

@@ -22,6 +22,151 @@ pub struct Limits {
     pub blocks: usize,
     pub coins: usize,
 }
+#[derive(Clone)]
+pub(crate) struct NativeAuditStep {
+    pub prior: Hash,
+    pub next: Hash,
+    pub before_tip: Hash,
+    pub at: u64,
+    pub block: Vec<u8>,
+}
+
+#[cfg(test)]
+mod audit_tests {
+    use super::*;
+    use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+    fn fixture() -> (Store, Vec<NativeAuditStep>, PathBuf) {
+        let deadline = Instant::now() + Duration::from_secs(180);
+        let v: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../docs/protocol/native-fast-escrow-v1-vectors.json"
+        ))
+        .unwrap();
+        let mut genesis = hex::decode(v["genesis_hex"].as_str().unwrap()).unwrap();
+        getrandom::getrandom(&mut genesis[13..45]).unwrap();
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        genesis[45..53].copy_from_slice(&(now - 7200).to_be_bytes());
+        let chain = fast::genesis_id(&genesis);
+        let root = std::env::temp_dir().join(format!(
+            "rld-native-step-audit-{}-{}",
+            std::process::id(),
+            hex::encode(chain)
+        ));
+        fs::create_dir(&root).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+        let path = root.join("native.journal");
+        let mut s = Store::create(&path, &genesis, chain, now, Limits::default()).unwrap();
+        let original = s.ledger().clone();
+        let mut steps = vec![];
+        // Deliberately public NO-VALUE mining fixture identities only.
+        for (i, seed) in [141u8, 141, 142].into_iter().enumerate() {
+            let ledger = if i == 2 { &original } else { s.ledger() };
+            let miner = ed25519_dalek::SigningKey::from_bytes(&[seed; 32])
+                .verifying_key()
+                .to_bytes();
+            let mut job = ledger
+                .mining_job(
+                    miner,
+                    vec![],
+                    ledger.tip().timestamp() + 600 + i as u64,
+                    now,
+                )
+                .unwrap();
+            let block = loop {
+                assert!(
+                    Instant::now() < deadline,
+                    "original180 native audit fixture"
+                );
+                if let (Some(raw), _) = job.search(4096) {
+                    break raw;
+                }
+            };
+            let prior = s.head();
+            let before_tip = s.ledger().tip().id();
+            let outcome = s.accept(&block, prior, before_tip, now).unwrap();
+            steps.push(NativeAuditStep {
+                prior,
+                next: outcome.head,
+                before_tip,
+                at: now,
+                block,
+            });
+        }
+        (s, steps, path)
+    }
+    #[test]
+    fn complete_ordered_audit_covers_selected_and_unselected_native_records() {
+        let (mut s, steps, path) = fixture();
+        let raw = fs::read(&path).unwrap();
+        let selected = s.ledger().tip().id();
+        let tips = s.audit_steps(steps.clone().into_iter().map(Ok)).unwrap();
+        assert_eq!(tips.len(), 3);
+        assert_eq!(tips[1], selected);
+        assert_eq!(tips[2], selected);
+        assert_ne!(fast::block_id(&steps[2].block).unwrap(), selected);
+        let mut cases = vec![
+            steps[..2].to_vec(),
+            vec![steps[1].clone(), steps[0].clone(), steps[2].clone()],
+        ];
+        let mut extra = steps.clone();
+        extra.push(steps[2].clone());
+        cases.push(extra);
+        for kind in 0..5 {
+            let mut bad = steps.clone();
+            match kind {
+                0 => bad[1].prior = [1; 32],
+                1 => bad[1].next = [1; 32],
+                2 => bad[1].before_tip = [1; 32],
+                3 => bad[1].at += 1,
+                _ => {
+                    let n = bad[1].block.len();
+                    bad[1].block[n - 1] ^= 1;
+                }
+            }
+            cases.push(bad);
+        }
+        for bad in cases {
+            assert!(s.audit_steps(bad.into_iter().map(Ok)).is_err());
+            assert_eq!(fs::read(&path).unwrap(), raw);
+        }
+        assert_eq!(s.audit_steps(steps.into_iter().map(Ok)).unwrap(), tips);
+    }
+    #[test]
+    fn complete_native_audit_rechecks_actual_prefix_and_never_repairs_damage() {
+        let (mut s, steps, path) = fixture();
+        let mut raw = fs::read(&path).unwrap();
+        let n = raw.len();
+        raw[n - 1] ^= 1;
+        fs::write(&path, &raw).unwrap();
+        assert!(s.audit_steps(steps.into_iter().map(Ok)).is_err());
+        assert!(!s.storage_ready());
+        assert_eq!(fs::read(path).unwrap(), raw);
+    }
+    #[test]
+    fn complete_native_audit_checks_actual_file_again_after_all_steps() {
+        let (mut s, steps, path) = fixture();
+        let mut damaged = fs::read(&path).unwrap();
+        let n = damaged.len();
+        damaged[n - 1] ^= 1;
+        let mut count = 0;
+        let injected = steps.into_iter().map(|step| {
+            count += 1;
+            if count == 2 {
+                fs::write(&path, &damaged).unwrap();
+            }
+            Ok(step)
+        });
+        assert!(s.audit_steps(injected).is_err());
+        assert!(!s.storage_ready());
+        assert_eq!(fs::read(path).unwrap(), damaged);
+    }
+}
 impl Default for Limits {
     fn default() -> Self {
         Self {
@@ -458,33 +603,64 @@ impl Store {
         }
         Ok(result)
     }
-    pub(crate) fn audit_step(
+    pub(crate) fn audit_steps(
         &mut self,
-        prior: Hash,
-        next: Hash,
-        expected: &[u8],
-    ) -> Result<(Hash, u64)> {
+        steps: impl IntoIterator<Item = Result<NativeAuditStep>>,
+    ) -> Result<Vec<Hash>> {
         self.prefix(self.head)?;
         let mut r = Reader {
             raw: &self.prefix,
             at: 165,
         };
-        while r.at < self.prefix.len() {
+        let mut prior = self.initial_head();
+        let mut selected = self.native.ledger.chain_id();
+        let mut result = Vec::new();
+        for step in steps {
+            let step = step?;
+            ensure(
+                r.at < self.prefix.len(),
+                "INVALID extra caller native transition",
+            )?;
             let n = r.u32()? as usize;
+            ensure(
+                (402..=262276).contains(&n),
+                "INVALID native audit record size",
+            )?;
             let raw = r.take(n)?;
-            if raw[8..40] == prior && raw[n - 32..] == next {
-                let size = u32::from_be_bytes(raw[48..52].try_into().unwrap()) as usize;
-                ensure(
-                    raw[52..52 + size] == *expected,
-                    "INVALID session native step bytes",
-                )?;
-                return Ok((
-                    raw[52 + size..84 + size].try_into().unwrap(),
-                    u64::from_be_bytes(raw[40..48].try_into().unwrap()),
-                ));
-            }
+            let size = u32::from_be_bytes(raw[48..52].try_into().unwrap()) as usize;
+            ensure(
+                (270..=262144).contains(&size) && n == 132 + size,
+                "INVALID native audit block size",
+            )?;
+            ensure(
+                u64::from_be_bytes(raw[..8].try_into().unwrap()) == result.len() as u64 + 1
+                    && raw[8..40] == prior
+                    && step.prior == prior
+                    && raw[n - 32..] == step.next
+                    && hash("RECORD", &raw[..n - 32]) == step.next,
+                "INVALID caller native ordered transition",
+            )?;
+            ensure(
+                raw[52..52 + size] == step.block,
+                "INVALID session native step bytes",
+            )?;
+            ensure(
+                step.before_tip == selected
+                    && step.at == u64::from_be_bytes(raw[40..48].try_into().unwrap()),
+                "INVALID caller native context/time",
+            )?;
+            selected = raw[52 + size..84 + size].try_into().unwrap();
+            prior = step.next;
+            result.push(selected);
         }
-        Err("INVALID session native transition".into())
+        ensure(
+            r.at == self.prefix.len()
+                && prior == self.head
+                && selected == self.native.ledger.tip().id(),
+            "INVALID incomplete caller native coverage",
+        )?;
+        self.prefix(self.head)?;
+        Ok(result)
     }
     pub fn accept(&mut self, raw: &[u8], head: Hash, tip: Hash, now: u64) -> Result<Outcome> {
         self.check(head, tip, now)?;

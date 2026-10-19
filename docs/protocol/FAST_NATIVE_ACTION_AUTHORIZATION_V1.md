@@ -98,6 +98,17 @@ native context. Rehashing a caller record cannot replace the signature, consent,
 review, exact previous request or ownership. Unrelated caller actions cannot carry
 an authorization field. Corrupt/torn/unknown tails refuse unchanged.
 
+Within one audit, the native store holds its exclusive writer lease, compares
+the complete actual file prefix before and after a single ordered pass, and
+matches every caller native effect to every retained native record. Exact full
+block bytes, record index/digest, predecessor/successor heads, original selected
+tip and admission time must agree. Missing, extra or reordered steps refuse,
+including accepted branches that did not change selection. One bounded complete
+block is decoded at a time; returned selected-tip observations remain bounded
+by the unchanged caller/native record limits. This avoids repeated reads of the
+same immutable full file without skipping native execution or trusting a caller
+hash. Cold native opening still executes every retained block from genesis.
+
 Only after complete successful audit and durable caller completion may the
 process retain the length of an already audited immutable on-chain prefix.
 Every use still checks complete retained caller/native bytes, file identity and
