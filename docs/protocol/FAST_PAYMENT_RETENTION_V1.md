@@ -4,8 +4,9 @@ This is a no-value application/custody candidate over
 [RLD-FAST-ESCROW-1](NATIVE_FAST_ESCROW_V1.md). It changes no genesis, block,
 issuance or native escrow operation. A payment receipt and retainer acknowledgment
 are necessary evidence, not monetary adoption, independent monitoring, principal
-finality or a completed G9-G11 campaign. Durable owner signing journals and an
-ordinary continuously monitored fast service remain separate required work.
+finality or a completed G9-G11 campaign. Durable owner partial signing is specified
+separately in [owner authorization V1](FAST_OWNER_AUTHORIZATION_V1.md); the ordinary
+frontend/caller-head service and continuously monitored fast service remain required.
 
 ## Native origin and complete payment
 

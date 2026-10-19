@@ -1,6 +1,7 @@
 //! Full invoice/state authorization over a native-derived historical origin.
 //! Cryptographic validity is separate from current backing, custody and completion.
 use crate::kernel::{fast::FundingOrigin, valid_point, verify, Hash, Result};
+use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 pub(crate) fn ensure(ok: bool, why: &str) -> Result<()> {
     if ok {
@@ -22,22 +23,84 @@ fn amount(raw: &[u8]) -> u128 {
     u128::from_be_bytes(raw.try_into().unwrap())
 }
 
+/// Fully checked unsigned transition. It grants no signature or payment rights.
 #[derive(Clone)]
-pub struct Payment {
-    pub(crate) raw: Vec<u8>,
+pub struct Invoice {
+    raw: Vec<u8>,
     pub(crate) before: Vec<u8>,
-    pub(crate) after: Vec<u8>,
     pub(crate) previous: Hash,
-    pub(crate) id: Hash,
-    pub(crate) logical: Hash,
-    pub(crate) sequence: u64,
-    pub(crate) fee: u128,
+    logical: Hash,
+    sequence: u64,
+    payer: usize,
+    amount: u128,
+    fee: u128,
 }
-impl Payment {
+impl Invoice {
+    /// Construct bytes for explicit owner review. This never signs or reserves.
+    pub fn propose(
+        origin: &FundingOrigin,
+        previous: Option<&Payment>,
+        payer: u8,
+        value: u128,
+        invoice: Hash,
+    ) -> Result<Self> {
+        ensure(payer < 2, "INVALID fast payer")?;
+        let previous = previous
+            .map(|p| Payment::verify(origin, p.bytes()))
+            .transpose()?;
+        let prior = if let Some(p) = &previous {
+            origin.verify_certificate(p.after_certificate())?
+        } else {
+            crate::fast_fee_claims::Claim {
+                sequence: 0,
+                balances: origin.initial(),
+                slots: [0; 2],
+            }
+        };
+        let mut balances = prior.balances;
+        balances[payer as usize] = balances[payer as usize]
+            .checked_sub(value)
+            .ok_or("INVALID fast unfunded payment")?;
+        balances[1 - payer as usize] = balances[1 - payer as usize]
+            .checked_add(value)
+            .ok_or("INVALID fast principal overflow")?;
+        let mut slots = prior.slots;
+        slots[payer as usize] = slots[payer as usize]
+            .checked_add(1)
+            .ok_or("INVALID fast slot overflow")?;
+        let sequence = prior
+            .sequence
+            .checked_add(1)
+            .ok_or("INVALID fast sequence overflow")?;
+        let mut next = origin.context()[..68].to_vec();
+        next.extend(sequence.to_be_bytes());
+        for v in balances {
+            next.extend(v.to_be_bytes());
+        }
+        for v in slots {
+            next.extend(v.to_be_bytes());
+        }
+        let mut raw = vec![0, 1, 0, 1];
+        raw.extend(origin.chain());
+        raw.extend(origin.channel());
+        raw.extend(origin.context_commitment());
+        raw.extend(invoice);
+        raw.extend(previous.as_ref().map_or([0; 32], Payment::id));
+        raw.push(payer);
+        raw.extend(value.to_be_bytes());
+        raw.extend(origin.rate(payer as usize)?.to_be_bytes());
+        let certificate = previous
+            .as_ref()
+            .map_or(&[][..], Payment::after_certificate);
+        raw.extend((certificate.len() as u16).to_be_bytes());
+        raw.extend(certificate);
+        raw.extend(next);
+        Self::verify(origin, &raw)
+    }
     pub fn verify(origin: &FundingOrigin, raw: &[u8]) -> Result<Self> {
         ensure(
-            raw.len() == 579 || raw.len() == 831,
-            "INVALID fast payment size",
+            raw.len() == 323 || raw.len() == 575,
+            "INVALID fast invoice size",
         )?;
         ensure(raw[..4] == [0, 1, 0, 1], "UNSUPPORTED fast payment version")?;
         ensure(
@@ -58,7 +121,7 @@ impl Payment {
         )?;
         let n = u16::from_be_bytes(raw[197..199].try_into().unwrap()) as usize;
         ensure(
-            (n == 0 || n == 252) && raw.len() == 579 + n,
+            (n == 0 || n == 252) && raw.len() == 323 + n,
             "INVALID fast prior certificate size",
         )?;
         let before = raw[199..199 + n].to_vec();
@@ -78,19 +141,19 @@ impl Payment {
             )?;
             claim
         };
-        let end = 323 + n;
-        let mut after = raw[199 + n..end].to_vec();
-        after.extend(&raw[end..end + 128]);
-        let next = origin.verify_certificate(&after)?;
-        ensure(
-            prior.sequence.checked_add(1) == Some(next.sequence),
-            "INVALID fast skipped sequence",
-        )?;
+        let sequence = prior
+            .sequence
+            .checked_add(1)
+            .ok_or("INVALID fast sequence overflow")?;
         let mut slots = prior.slots;
         slots[payer] = slots[payer]
             .checked_add(1)
             .ok_or("INVALID fast slot overflow")?;
-        ensure(next.slots == slots, "INVALID fast payer slot transition")?;
+        let at = if payer == 0 { 180 } else { 204 };
+        ensure(
+            slots[payer] <= u64v(&origin.context()[at..at + 8]),
+            "INVALID fast payer slot bound",
+        )?;
         let mut balances = prior.balances;
         balances[payer] = balances[payer]
             .checked_sub(value)
@@ -98,32 +161,149 @@ impl Payment {
         balances[1 - payer] = balances[1 - payer]
             .checked_add(value)
             .ok_or("INVALID fast balance overflow")?;
+        let mut next = origin.context()[..68].to_vec();
+        next.extend(sequence.to_be_bytes());
+        for balance in balances {
+            next.extend(balance.to_be_bytes());
+        }
+        for slot in slots {
+            next.extend(slot.to_be_bytes());
+        }
         ensure(
-            next.balances == balances,
-            "INVALID fast principal transition",
+            raw[199 + n..] == next,
+            "INVALID fast exact state transition",
         )?;
-        let message = [tag("INVOICE"), raw[..end].to_vec()].concat();
-        let owners = origin.owners();
-        verify(owners[0], &message, &raw[end + 128..end + 192])?;
-        verify(owners[1], &message, &raw[end + 192..])?;
         let logical = hash(
             "PAYMENT-ID",
             &[
                 origin.context()[4..68].to_vec(),
                 vec![payer as u8],
-                next.slots[payer].to_be_bytes().to_vec(),
+                slots[payer].to_be_bytes().to_vec(),
             ]
             .concat(),
         );
         Ok(Self {
             raw: raw.to_vec(),
             before,
-            after,
             previous,
-            id: hash("RECEIPT", raw),
             logical,
-            sequence: next.sequence,
+            sequence,
+            payer,
+            amount: value,
             fee,
+        })
+    }
+    pub fn bytes(&self) -> &[u8] {
+        &self.raw
+    }
+    pub fn id(&self) -> Hash {
+        hash("INVOICE-ID", &self.raw)
+    }
+    pub fn payer(&self) -> usize {
+        self.payer
+    }
+    pub fn amount(&self) -> u128 {
+        self.amount
+    }
+    pub fn fee(&self) -> u128 {
+        self.fee
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn logical_id(&self) -> Hash {
+        self.logical
+    }
+    pub fn unsigned_state(&self) -> &[u8] {
+        &self.raw[self.raw.len() - 124..]
+    }
+    pub fn verify_partial(&self, origin: &FundingOrigin, raw: &[u8]) -> Result<()> {
+        ensure(
+            self.raw[4..36] == origin.chain()
+                && self.raw[36..68] == origin.channel()
+                && self.raw[68..100] == origin.context_commitment(),
+            "INVALID fast partial native context",
+        )?;
+        ensure(
+            raw.len() == 129 && raw[0] < 2,
+            "INVALID fast partial size/role",
+        )?;
+        let owner = origin.owners()[raw[0] as usize];
+        verify(owner, &self.state_message(origin), &raw[1..65])?;
+        verify(
+            owner,
+            &[tag("INVOICE"), self.raw.clone()].concat(),
+            &raw[65..],
+        )
+    }
+    fn state_message(&self, origin: &FundingOrigin) -> Vec<u8> {
+        [
+            b"RLD-FAST-FEE-CLAIM-1/STATE\0".as_slice(),
+            &origin.context_commitment(),
+            self.unsigned_state(),
+        ]
+        .concat()
+    }
+    pub(crate) fn sign(
+        &self,
+        origin: &FundingOrigin,
+        owner: u8,
+        key: &SigningKey,
+    ) -> Result<Vec<u8>> {
+        ensure(
+            owner < 2 && key.verifying_key().to_bytes() == origin.owners()[owner as usize],
+            "INVALID fast signing owner",
+        )?;
+        let mut raw = vec![owner];
+        raw.extend(key.sign(&self.state_message(origin)).to_bytes());
+        raw.extend(
+            key.sign(&[tag("INVOICE"), self.raw.clone()].concat())
+                .to_bytes(),
+        );
+        self.verify_partial(origin, &raw)?;
+        Ok(raw)
+    }
+}
+
+#[derive(Clone)]
+pub struct Payment {
+    pub(crate) raw: Vec<u8>,
+    pub(crate) before: Vec<u8>,
+    pub(crate) after: Vec<u8>,
+    pub(crate) previous: Hash,
+    pub(crate) id: Hash,
+    pub(crate) logical: Hash,
+    pub(crate) sequence: u64,
+    pub(crate) fee: u128,
+}
+impl Payment {
+    pub fn verify(origin: &FundingOrigin, raw: &[u8]) -> Result<Self> {
+        ensure(
+            raw.len() == 579 || raw.len() == 831,
+            "INVALID fast payment size",
+        )?;
+        let end = raw.len() - 256;
+        let invoice = Invoice::verify(origin, &raw[..end])?;
+        let mut after = invoice.unsigned_state().to_vec();
+        after.extend(&raw[end..end + 128]);
+        origin.verify_certificate(&after)?;
+        let message = [tag("INVOICE"), invoice.raw.clone()].concat();
+        for i in 0..2 {
+            verify(
+                origin.owners()[i],
+                &message,
+                &raw[end + 128 + i * 64..end + 192 + i * 64],
+            )?;
+        }
+        Ok(Self {
+            raw: raw.to_vec(),
+            before: invoice.before,
+            after,
+            previous: invoice.previous,
+            id: hash("RECEIPT", raw),
+            logical: invoice.logical,
+            sequence: invoice.sequence,
+            fee: invoice.fee,
         })
     }
     pub fn combine(origin: &FundingOrigin, invoice: &[u8], a: &[u8], b: &[u8]) -> Result<Self> {

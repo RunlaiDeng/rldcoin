@@ -553,3 +553,25 @@ password, appends no new custody record and reports current backing as unknown.
 Independent native monitoring, owner signing journals, operating fee liquidity,
 cross-device/power-loss custody and composed daily performance remain unqualified.
 A retained acknowledgment alone does not establish usable money or fast completion.
+
+The separate [owner authorization journal](../../docs/protocol/FAST_OWNER_AUTHORIZATION_V1.md)
+adds `Invoice::propose` for unsigned exact payment construction and
+`fast_owner::Journal` for each owner's explicit review, durable pre-key reservation,
+own partial signing and complete receipt/retainer proof retention. Key loading
+occurs after native/head/review checks; signatures return only after file/directory
+sync. Pending slots cannot be canceled or released by timeout. Identical already
+signed requests use keyless retrieval; they never load a key or sign again.
+Latest complete exit proof remains readable during a later pending payment.
+Creation/cold startup replay full native funding and authenticate every retained
+invoice, own partial, complete receipt and delegated acknowledgment. Caller latest
+heads, full prefix and Unix file identity remain mandatory. Per-file/prefix limits
+are at most256 MiB; unsupported file-identity platforms refuse.
+
+`rld-fast-owner-recover partial|complete JOURNAL EXPECTED_CHAIN EXPECTED_PRIOR_HEAD INVOICE_OR_RECEIPT_ID`
+recovers only an exact authenticated next tail under the caller's retained prior
+head. It accepts no key/password, signs/appends nothing and reports current
+backing unknown and fast completion false. The owner component is a library and
+historical recovery tool, without a frontend authorization/caller-head service,
+live native selector, network endpoint or independent custody/monitoring. Distinct
+test keys and same-host process interruption do not qualify independent operators,
+copied-key concurrency, common rollback, power-loss or composed daily performance.

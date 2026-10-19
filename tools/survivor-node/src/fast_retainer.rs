@@ -15,15 +15,15 @@ use std::{
     path::{Path, PathBuf},
 };
 const MAX_BYTES: usize = 256 * 1024 * 1024;
-fn io(error: impl std::fmt::Display) -> String {
+pub(crate) fn io(error: impl std::fmt::Display) -> String {
     format!("RESOURCE_WAIT fast retention {error}")
 }
-struct Reader<'a> {
-    raw: &'a [u8],
-    at: usize,
+pub(crate) struct Reader<'a> {
+    pub(crate) raw: &'a [u8],
+    pub(crate) at: usize,
 }
 impl<'a> Reader<'a> {
-    fn take(&mut self, n: usize) -> Result<&'a [u8]> {
+    pub(crate) fn take(&mut self, n: usize) -> Result<&'a [u8]> {
         let end = self.at.checked_add(n).ok_or("INVALID retention length")?;
         ensure(
             end <= self.raw.len(),
@@ -33,16 +33,16 @@ impl<'a> Reader<'a> {
         self.at = end;
         Ok(raw)
     }
-    fn u16(&mut self) -> Result<u16> {
+    pub(crate) fn u16(&mut self) -> Result<u16> {
         Ok(u16::from_be_bytes(self.take(2)?.try_into().unwrap()))
     }
-    fn u32(&mut self) -> Result<u32> {
+    pub(crate) fn u32(&mut self) -> Result<u32> {
         Ok(u32::from_be_bytes(self.take(4)?.try_into().unwrap()))
     }
-    fn u64(&mut self) -> Result<u64> {
+    pub(crate) fn u64(&mut self) -> Result<u64> {
         Ok(u64::from_be_bytes(self.take(8)?.try_into().unwrap()))
     }
-    fn hash(&mut self) -> Result<Hash> {
+    pub(crate) fn hash(&mut self) -> Result<Hash> {
         Ok(self.take(32)?.try_into().unwrap())
     }
 }
@@ -94,7 +94,7 @@ pub struct Journal {
     limit: usize,
     poisoned: bool,
 }
-fn private(path: &Path, file: bool) -> Result<()> {
+pub(crate) fn private(path: &Path, file: bool) -> Result<()> {
     ensure(cfg!(unix), "UNSUPPORTED retention file-identity platform")?;
     let m = fs::symlink_metadata(path).map_err(io)?;
     ensure(
@@ -111,18 +111,18 @@ fn private(path: &Path, file: bool) -> Result<()> {
     }
     Ok(())
 }
-fn parent(path: &Path) -> Result<&Path> {
+pub(crate) fn parent(path: &Path) -> Result<&Path> {
     path.parent()
         .filter(|p| !p.as_os_str().is_empty())
         .ok_or("INVALID retention parent".into())
 }
-fn sync(file: &File, path: &Path) -> Result<()> {
+pub(crate) fn sync(file: &File, path: &Path) -> Result<()> {
     file.sync_all().map_err(io)?;
     File::open(parent(path)?)
         .and_then(|p| p.sync_all())
         .map_err(io)
 }
-fn origin(
+pub(crate) fn origin(
     genesis: &[u8],
     chain: Hash,
     history: &[u8],
