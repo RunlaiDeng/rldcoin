@@ -326,7 +326,7 @@ impl Session {
         }
         Ok(state)
     }
-    fn policy_families(&self, before: usize) -> Result<Vec<(Id, State)>> {
+    pub(super) fn policy_families(&self, before: usize) -> Result<Vec<(Id, State)>> {
         let mut result = vec![];
         for op in &self.caller.ops[..before] {
             if matches!(op.intent.action, Action::FeePolicyApprove { .. })

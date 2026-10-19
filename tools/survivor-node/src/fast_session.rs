@@ -17,6 +17,7 @@ mod opening;
 mod owner_view;
 mod pool;
 mod transfer;
+mod wallet_view;
 use crate::{
     fast_owner,
     fast_payment::{self, ensure, Acknowledgment, Delegation, Invoice, Payment},

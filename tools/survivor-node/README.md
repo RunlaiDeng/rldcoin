@@ -639,6 +639,15 @@ It owns one native selector plus a bounded key-free caller journal and private
 owner/retainer actor files. Exact requests precede child mutation; verified child
 heads and review digests precede response. Every cold open reexecutes native
 history, authenticates complete actor custody and audits caller-to-child steps.
+The private `native_wallet {head, owner, after, limit}` read lists actual ordinary
+outputs for the owner's public key, up to16 per page. It returns complete-owner
+native, maturity and local-reservation totals, plus input candidates for explicit
+transfer/opening review. `after` is null or the previous exclusive reference;
+every page needs the exact current caller head. Local preparation and signed
+fee-policy reservations remain held, including after expiry or reorganization.
+Other wallets' reservations are unknown. The read neither loads keys nor adds
+fast-channel claims to ordinary funds. See the [session interface](../../docs/protocol/FAST_PAYMENT_SESSION_V1.md#ordinary-wallet-input-discovery).
+
 The private `owner_state` read takes the exact session head and owner actor.
 It separates retained principal and fee evidence, original pending preparation,
 and conditional onward principal under actual selected native backing. Pending

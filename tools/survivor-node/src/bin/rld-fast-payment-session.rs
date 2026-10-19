@@ -196,6 +196,12 @@ enum Request {
         head: Id,
         reference: String,
     },
+    NativeWallet {
+        head: Id,
+        owner: Id,
+        after: Option<String>,
+        limit: u16,
+    },
     OwnerState {
         head: Id,
         actor: Id,
@@ -427,6 +433,7 @@ fn run() -> Result<()> {
             ),
             Request::Status { head } => s.status(head.0, clock),
             Request::OwnerState { head, actor } => s.owner_state(head.0,actor,clock),
+            Request::NativeWallet { head, owner, after, limit } => s.native_wallet(head.0, owner, after.as_deref(), limit, clock),
             Request::NativeCoin { head, reference } => {
                 s.native_coin(head.0, &rld_survivor_node::fast_session::bytes(&reference,34)?, clock)
             }

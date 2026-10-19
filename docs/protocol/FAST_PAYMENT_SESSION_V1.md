@@ -18,6 +18,42 @@ latest-state assumption is not independent freshness or continuous fee service.
 
 ## Native view, exact review and keys
 
+### Ordinary wallet input discovery
+
+The private `native_wallet` command takes the exact current `head`, a valid
+Ed25519 `owner`, optional `after` reference and `limit` from1 through16. Its library
+entry is `Session::native_wallet`. It discovers actual selected-native ordinary
+outputs without requiring the caller to supply known coin references or a key.
+The cursor is a canonical lowercase-hex34-byte output reference, exclusive in
+native reference order. `next_cursor` is the last returned reference when more
+matching outputs exist, otherwise null. Every page requires the same exact
+current caller head; a changed head requires a fresh observation.
+
+Amounts are decimal runlai strings. Totals cover all currently selected outputs
+for this owner, independently of pagination: `native_total`,
+`mature_for_next_block_total`, `immature_total`, `locally_reserved_total` and
+`mature_locally_unreserved_total`. The reserved total overlaps maturity totals
+and must not be added to them. Fast-channel claims and locked principal are
+excluded; they have separate owner-state observations.
+
+Each output includes its reference, amount, maturity height, next-block maturity,
+preparation reservation, fee-policy reservation and `manual_input_candidate`.
+Successful retained transfer/own-opening/escrow preparations reserve their exact
+inputs. Signed fee-policy families reserve roots and derived changes even after
+expiry, exhaustion or reorganization; this read releases nothing. References
+reserved by both mechanisms count once. Another caller's private reservations
+are unknown, explicitly reported with `reservation_scope="THIS_CALLER_ONLY"`
+and `other_wallet_reservations_known=false`.
+
+Normal complete native/caller/control checks bracket the observation. Full cold
+replay remains mandatory when opening a session. Rows are candidates for explicit
+review, not spending authorization or guaranteed inclusion: keys remain unloaded,
+signatures are not created, and `independent_freshness` remains false. The query
+does not append records, clear pending intent, renew a policy or change any native
+rule, maturity, caller capacity or monetary-network status.
+
+### Fast owner state and signing
+
 The private [owner-state observation](FAST_OWNER_STATE_VIEW_V1.md) separates
 authenticated retained principal/fee evidence from conditional onward usability
 and pending preparation. Actual selected backing, own remaining fee slots and
