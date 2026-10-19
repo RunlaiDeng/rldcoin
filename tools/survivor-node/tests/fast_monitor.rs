@@ -87,6 +87,12 @@ struct Test {
 }
 impl Test {
     fn new(label: &str) -> Self {
+        Self::profile(label, false)
+    }
+    fn logged(label: &str) -> Self {
+        Self::profile(label, true)
+    }
+    fn profile(label: &str, logged: bool) -> Self {
         let deadline = Instant::now() + Duration::from_secs(180);
         let mut f = support::aged_fixture(2_000_000);
         let chain = f.ledger.chain_id();
@@ -94,8 +100,11 @@ impl Test {
         let node = root.join("node");
         let head = root.join("head");
         let historical = f.ledger.tip().timestamp();
-        let mut s =
-            Session::create_controlled(&node, &f.genesis, chain, &head, historical).unwrap();
+        let mut s = if logged {
+            Session::create_log_controlled(&node, &f.genesis, chain, &head, historical).unwrap()
+        } else {
+            Session::create_controlled(&node, &f.genesis, chain, &head, historical).unwrap()
+        };
         let mut n = 0;
         let mut at = 0;
         while at < f.history.len() {
@@ -463,19 +472,56 @@ struct Cli {
 }
 impl Cli {
     fn open(root: &Path, node: &Path, head: &Path, chain: Hash, deadline: Instant) -> Self {
+        Self::launch(root, node, head, chain, deadline, None)
+    }
+    fn sync(
+        root: &Path,
+        node: &Path,
+        head: &Path,
+        chain: Hash,
+        deadline: Instant,
+        peer: (&Path, &Path),
+    ) -> Self {
+        Self::launch(root, node, head, chain, deadline, Some(peer))
+    }
+    fn launch(
+        root: &Path,
+        node: &Path,
+        head: &Path,
+        chain: Hash,
+        deadline: Instant,
+        peer: Option<(&Path, &Path)>,
+    ) -> Self {
+        let mut token = [0; 8];
+        getrandom::getrandom(&mut token).unwrap();
         let err = fs::OpenOptions::new()
             .create_new(true)
             .write(true)
-            .open(root.join(format!("stderr-{}", now())))
+            .open(root.join(format!("stderr-{}", hex::encode(token))))
             .unwrap();
+        let logged = fs::read(head).unwrap().starts_with(b"RLDFCLG1");
+        let mut args = vec![
+            if logged {
+                "serve-log-control".to_string()
+            } else {
+                "serve-control".to_string()
+            },
+            node.to_str().unwrap().to_string(),
+            root.join("genesis").to_str().unwrap().to_string(),
+            hex::encode(chain),
+            head.to_str().unwrap().to_string(),
+        ];
+        if let Some((r, h)) = peer {
+            args.extend([
+                "--peer-root".to_string(),
+                r.to_str().unwrap().to_string(),
+                "--peer-head-file".to_string(),
+                h.to_str().unwrap().to_string(),
+                "--auto-sync".to_string(),
+            ]);
+        }
         let mut child = Command::new(env!("CARGO_BIN_EXE_rld-fast-payment-session"))
-            .args([
-                "serve-control",
-                node.to_str().unwrap(),
-                root.join("genesis").to_str().unwrap(),
-                &hex::encode(chain),
-                head.to_str().unwrap(),
-            ])
+            .args(args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(err)
@@ -512,12 +558,15 @@ impl Cli {
             .unwrap()
     }
     fn command(&mut self, v: Value) -> Value {
+        let v = self.raw_command(v);
+        assert!(v["diagnostic"].is_null(), "{v}");
+        v
+    }
+    fn raw_command(&mut self, v: Value) -> Value {
         let f = self.input.as_mut().unwrap();
         writeln!(f, "{v}").unwrap();
         f.flush().unwrap();
-        let v = self.read();
-        assert!(v["diagnostic"].is_null(), "{v}");
-        v
+        self.read()
     }
     fn stop(mut self) {
         drop(self.input.take());
@@ -756,4 +805,629 @@ fn bounded_monitor_and_miner_observation_costs() {
         monitor.status()["last_observation"]["phase"],
         "PROTECTED_WAITING_WINDOW"
     );
+}
+
+fn synchronized_peer_pair(root: &Path, chain: Hash) -> [(PathBuf, PathBuf); 2] {
+    use rld_survivor_node::fast_peer::{self, Config, PeerPin};
+    use std::net::TcpListener;
+    let roots = [root.join("transport-a"), root.join("transport-b")];
+    let info = roots
+        .each_ref()
+        .map(|p| fast_peer::provision(p, chain).unwrap());
+    let endpoints = [
+        TcpListener::bind("127.0.0.1:0").unwrap(),
+        TcpListener::bind("127.0.0.1:0").unwrap(),
+    ];
+    let heads = [root.join("transport-a.head"), root.join("transport-b.head")];
+    for i in 0..2 {
+        let j = 1 - i;
+        let config = Config {
+            chain: Id(chain),
+            identity: id(&info[i], "identity"),
+            listen: endpoints[i].local_addr().unwrap(),
+            peers: vec![PeerPin {
+                key: id(&info[j], "identity"),
+                endpoint: endpoints[j].local_addr().unwrap(),
+                certificate_sha256: id(&info[j], "certificate_sha256"),
+            }],
+        };
+        fast_peer::bind_controlled(
+            &roots[i],
+            &serde_json::to_vec(&config).unwrap(),
+            &heads[i],
+            now(),
+        )
+        .unwrap();
+    }
+    [
+        (roots[0].clone(), heads[0].clone()),
+        (roots[1].clone(), heads[1].clone()),
+    ]
+}
+#[test]
+fn synchronized_idle_peers_bootstrap_claim_settle_and_mature_without_manual_carriage() {
+    let t = Test::logged("synchronized-log-cycle");
+    let chain = t.f.ledger.chain_id();
+    let cfg = t.config();
+    let source_head = t.s.head();
+    let closing_tip = t.s.tip();
+    let peers = synchronized_peer_pair(&t.root, chain);
+    let remote = t.root.join("remote-node");
+    let remote_head = t.root.join("remote.head");
+    let blank =
+        Session::create_log_controlled(&remote, &t.f.genesis, chain, &remote_head, now()).unwrap();
+    drop(blank);
+    drop(t.s);
+    let mut a = Cli::sync(
+        &t.root,
+        &t.node,
+        &t.head,
+        chain,
+        t.deadline,
+        (&peers[0].0, &peers[0].1),
+    );
+    a.command(json!({"command":"monitor_start","head":Id(source_head),"config":cfg,"password":std::str::from_utf8(PASSWORD).unwrap()}));
+    let mut b = Cli::sync(
+        &t.root,
+        &remote,
+        &remote_head,
+        chain,
+        t.deadline,
+        (&peers[1].0, &peers[1].1),
+    );
+    let ready = loop {
+        let v = b.command(json!({"command":"runtime_status"}));
+        if v["selected_tip"] == json!(Id(closing_tip)) {
+            break v;
+        }
+        assert!(Instant::now() < t.deadline, "bootstrap: {v}");
+        std::thread::sleep(Duration::from_millis(20));
+    };
+    assert_eq!(ready["actors"], json!([]));
+    assert_eq!(ready["local_runtime"]["fee_monitor"], Value::Null);
+    assert_eq!(ready["local_runtime"]["automatic_peer_carriage"], true);
+    let mut head = ready["session_head"].clone();
+    let mut started = false;
+    for _ in 0..8 {
+        let v=b.raw_command(json!({"command":"mining_start","head":head,"reward":Id(t.f.miner.verifying_key().to_bytes())}));
+        if v["diagnostic"].is_null() {
+            started = true;
+            break;
+        }
+        assert!(v["diagnostic"].as_str().unwrap().contains("head"), "{v}");
+        head = v["session_head"].clone();
+        assert!(Instant::now() < t.deadline);
+    }
+    assert!(started);
+    let log_path = t.root.join("sync-progress.jsonl");
+    write(&log_path, b"");
+    let mut log = fs::OpenOptions::new().append(true).open(log_path).unwrap();
+    let mut protected = false;
+    let settlement = loop {
+        let av = a.command(json!({"command":"runtime_status"}));
+        let bv = b.command(json!({"command":"runtime_status"}));
+        writeln!(
+            log,
+            "{}",
+            json!({"at":now().to_string(),"recipient":av,"miner":bv})
+        )
+        .unwrap();
+        let m = &av["local_runtime"]["fee_monitor"];
+        assert!(m["diagnostic"].is_null(), "{av}");
+        assert!(av["automatic_carriage"]["diagnostic"].is_null(), "{av}");
+        assert!(bv["automatic_carriage"]["diagnostic"].is_null(), "{bv}");
+        if let Some(error) = bv["local_runtime"]["ordinary_miner"]["diagnostic"].as_str() {
+            assert!(error.starts_with("CLOCK_WAIT"), "{bv}");
+        }
+        let row = &m["last_observation"];
+        if row["phase"] == "PROTECTED_WAITING_WINDOW" {
+            protected = true;
+            assert_eq!(row["principal_sequence"], "2");
+            assert_eq!(row["fee_slots"], json!(["1", "1"]));
+        }
+        if row["phase"] == "SETTLED" && row["eligible_for_next_block"] == true {
+            break row.clone();
+        }
+        assert!(
+            Instant::now() < t.deadline,
+            "{}",
+            json!({"recipient":av,"miner":bv})
+        );
+        std::thread::sleep(Duration::from_millis(20));
+    };
+    assert!(protected);
+    assert_eq!(settlement["miner_fee"], "5");
+    let miner = b.command(json!({"command":"mining_stop"}));
+    let stopped = a.command(json!({"command":"monitor_stop"}));
+    assert!(miner["peer"]["retained_packets"].as_u64().unwrap() < 2048);
+    assert!(stopped["peer"]["retained_packets"].as_u64().unwrap() < 2048);
+    b.stop();
+    a.stop();
+    log.sync_all().unwrap();
+    drop(log);
+    let finish_started = Instant::now();
+    let finish_path = t.root.join("cold-completion.jsonl");
+    write(&finish_path, b"");
+    let mut finish_log = fs::OpenOptions::new()
+        .append(true)
+        .open(finish_path)
+        .unwrap();
+    let mut phase = |name: &str| {
+        writeln!(
+            finish_log,
+            "{}",
+            json!({"phase":name,"elapsed":finish_started.elapsed().as_secs_f64()})
+        )
+        .unwrap();
+        finish_log.sync_all().unwrap();
+    };
+    phase("stopped");
+    let mut node =
+        Session::open_log_controlled(&t.node, &t.f.genesis, chain, &t.head, now()).unwrap();
+    phase("cold_session_before_spend");
+    assert_eq!(
+        node.fee_policy_status(node.head(), t.policy, now())
+            .unwrap()["signed_operations"],
+        2
+    );
+    let operation = id(&settlement, "operation");
+    let fee = support::out(operation.0, 5);
+    let coin = node.native_coin(node.head(), &fee, now()).unwrap();
+    assert_eq!(coin["native_coin"]["amount"], "5");
+    assert_eq!(
+        coin["native_coin"]["owner"],
+        json!(Id(t.f.miner.verifying_key().to_bytes()))
+    );
+    assert_eq!(coin["native_coin"]["mature_for_next_block"], true);
+    for (i, amount) in [555u128, 445].into_iter().enumerate() {
+        let principal = node
+            .native_coin(node.head(), &support::out(operation.0, 1 + i as u16), now())
+            .unwrap();
+        assert_eq!(principal["native_coin"]["amount"], amount.to_string());
+        assert_eq!(
+            principal["native_coin"]["owner"],
+            json!(Id(t.f.owners[i].verifying_key().to_bytes()))
+        );
+    }
+    let (spend, transaction) = support::ordinary(
+        chain,
+        &t.f.miner,
+        &fee,
+        &[(t.f.owners[0].verifying_key().to_bytes(), 4)],
+    );
+    phase("current_native_outputs");
+    let timestamp = coin["selected_timestamp"]
+        .as_str()
+        .unwrap()
+        .parse::<u64>()
+        .unwrap()
+        + 600;
+    let candidate = loop {
+        let v = node
+            .mining_candidate(
+                node.head(),
+                rld_survivor_node::fast_session::MiningRequest {
+                    miner: Id(t.f.miner.verifying_key().to_bytes()),
+                    operations: vec![hex::encode(&spend)],
+                    timestamp: timestamp.to_string(),
+                    attempts: 4096,
+                },
+                now(),
+            )
+            .unwrap();
+        if !v["candidate"].is_null() {
+            break v;
+        }
+        assert!(Instant::now() < t.deadline);
+    };
+    phase("own_native_spend_candidate");
+    let mut request = [0; 32];
+    getrandom::getrandom(&mut request).unwrap();
+    let out = node
+        .execute(
+            Id(request),
+            node.head(),
+            Action::Native {
+                tip: Id(node.tip()),
+                block: candidate["block_hex"].as_str().unwrap().into(),
+            },
+            None,
+            now(),
+        )
+        .unwrap();
+    assert!(out["diagnostic"].is_null(), "{out}");
+    phase("durable_native_spend");
+    drop(node);
+    let mut cold =
+        Session::open_log_controlled(&t.node, &t.f.genesis, chain, &t.head, now()).unwrap();
+    phase("cold_session_after_spend");
+    assert!(cold.native_coin(cold.head(), &fee, now()).unwrap()["native_coin"].is_null());
+    let received = cold
+        .native_coin(cold.head(), &support::out(transaction, 0), now())
+        .unwrap();
+    assert_eq!(received["native_coin"]["amount"], "4");
+    assert_eq!(
+        received["native_coin"]["owner"],
+        json!(Id(t.f.owners[0].verifying_key().to_bytes()))
+    );
+    phase("complete");
+    assert!(Instant::now() < t.deadline);
+}
+
+#[test]
+fn bounded_native_admission_phase_observation() {
+    native_admission_phase(false);
+}
+#[test]
+fn bounded_logged_native_admission_phase_observation() {
+    native_admission_phase(true);
+}
+fn native_admission_phase(logged: bool) {
+    use rld_survivor_node::fast_session::MiningRequest;
+    use std::sync::{Arc, Mutex};
+    let mut t = if logged {
+        Test::logged("native-log-phase-observation")
+    } else {
+        Test::new("native-phase-observation")
+    };
+    let limit = Instant::now() + Duration::from_secs(60);
+    let marks = Arc::new(Mutex::new(Vec::<(String, Instant)>::new()));
+    let control = marks.clone();
+    t.s.set_control_observer(move |b| {
+        control
+            .lock()
+            .unwrap()
+            .push((format!("control_{b:?}"), Instant::now()));
+        Ok(())
+    })
+    .unwrap();
+    let mut totals = std::collections::BTreeMap::<String, Duration>::new();
+    for _ in 0..32 {
+        let start = Instant::now();
+        let candidate = loop {
+            let v =
+                t.s.mining_candidate(
+                    t.s.head(),
+                    MiningRequest {
+                        miner: Id(t.f.miner.verifying_key().to_bytes()),
+                        operations: vec![],
+                        timestamp: (t.f.ledger.tip().timestamp() + 600).to_string(),
+                        attempts: 4096,
+                    },
+                    now(),
+                )
+                .unwrap();
+            if !v["candidate"].is_null() {
+                break v;
+            }
+            assert!(Instant::now() < limit);
+        };
+        *totals.entry("candidate_and_pow".into()).or_default() += start.elapsed();
+        marks.lock().unwrap().clear();
+        let start = Instant::now();
+        marks.lock().unwrap().push(("start".into(), start));
+        let raw = hex::decode(candidate["block_hex"].as_str().unwrap()).unwrap();
+        let a = Action::Native {
+            tip: Id(t.s.tip()),
+            block: candidate["block_hex"].as_str().unwrap().into(),
+        };
+        let mut r = [0; 32];
+        getrandom::getrandom(&mut r).unwrap();
+        let observer = marks.clone();
+        let v =
+            t.s.execute_observed(Id(r), t.s.head(), a, None, now(), move |b| {
+                observer
+                    .lock()
+                    .unwrap()
+                    .push((format!("caller_{b:?}"), Instant::now()))
+            })
+            .unwrap();
+        assert!(v["diagnostic"].is_null(), "{v}");
+        let m = marks.lock().unwrap();
+        for w in m.windows(2) {
+            *totals
+                .entry(format!("{}_to_{}", w[0].0, w[1].0))
+                .or_default() += w[1].1.duration_since(w[0].1);
+        }
+        drop(m);
+        t.f.ledger.execute(&raw, now()).unwrap();
+        assert!(Instant::now() < limit);
+    }
+    eprintln!(
+        "native_admission_phase_totals32={}",
+        serde_json::to_string(
+            &totals
+                .into_iter()
+                .map(|(k, v)| (k, v.as_secs_f64()))
+                .collect::<std::collections::BTreeMap<_, _>>()
+        )
+        .unwrap()
+    );
+    assert_eq!(t.s.tip(), t.f.ledger.tip().id());
+    assert!(Instant::now() < t.deadline);
+}
+
+#[test]
+fn head_log_cut_child() {
+    let Some(config) = std::env::var_os("RLD_FAST_HEAD_LOG_CUT") else {
+        return;
+    };
+    let v: Value = serde_json::from_slice(&fs::read(config).unwrap()).unwrap();
+    let root = PathBuf::from(v["root"].as_str().unwrap());
+    let g = fs::read(root.join("genesis")).unwrap();
+    let chain = fast::genesis_id(&g);
+    let mut s =
+        Session::open_log_controlled(&root.join("node"), &g, chain, &root.join("head"), now())
+            .unwrap();
+    let cut = v["cut"].as_str().unwrap().to_string();
+    let cr = cut.clone();
+    let marker = root.join("marker");
+    let cm = marker.clone();
+    s.set_control_observer(move |b| {
+        let name = match b {
+            rld_survivor_node::fast_session::ControlBoundary::PrepareNextDurable => {
+                "control-prepare"
+            }
+            rld_survivor_node::fast_session::ControlBoundary::Prepared => "control-prepared",
+            rld_survivor_node::fast_session::ControlBoundary::CommitNextDurable => "control-commit",
+            rld_survivor_node::fast_session::ControlBoundary::Committed => "control-committed",
+        };
+        if name == cr {
+            write(&cm, name.as_bytes());
+            loop {
+                std::thread::sleep(Duration::from_millis(10));
+            }
+        }
+        Ok(())
+    })
+    .unwrap();
+    let action: Action = serde_json::from_value(v["action"].clone()).unwrap();
+    let r = id(&v, "request");
+    s.execute_observed(r, s.head(), action, Some(PASSWORD), now(), move |b| {
+        let name = match b {
+            rld_survivor_node::fast_session::Boundary::IntentDurable => "intent",
+            rld_survivor_node::fast_session::Boundary::ChildDurable => "child",
+            rld_survivor_node::fast_session::Boundary::NativeActionEvaluated => "evaluated",
+            rld_survivor_node::fast_session::Boundary::ReplyDurable => "reply",
+        };
+        if name == cut {
+            write(&marker, name.as_bytes());
+            loop {
+                std::thread::sleep(Duration::from_millis(10));
+            }
+        }
+    })
+    .unwrap();
+    panic!("missing requested actual head-log boundary");
+}
+struct CutProcess(Child);
+impl Drop for CutProcess {
+    fn drop(&mut self) {
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+#[test]
+fn head_log_actual_process_cuts_recover_only_exact_native_or_retained_fee_signatures() {
+    let deadline = Instant::now() + Duration::from_secs(180);
+    for mode in ["native", "fee"] {
+        for cut in [
+            "control-prepare",
+            "control-prepared",
+            "intent",
+            if mode == "native" {
+                "child"
+            } else {
+                "evaluated"
+            },
+            "reply",
+            "control-commit",
+            "control-committed",
+        ] {
+            let mut t = Test::logged(&format!("head-log-cut-{mode}-{cut}"));
+            let before_height = t.f.ledger.tip().height();
+            let action = if mode == "native" {
+                let candidate = loop {
+                    let v =
+                        t.s.mining_candidate(
+                            t.s.head(),
+                            rld_survivor_node::fast_session::MiningRequest {
+                                miner: Id(t.f.miner.verifying_key().to_bytes()),
+                                operations: vec![],
+                                timestamp: (t.f.ledger.tip().timestamp() + 600).to_string(),
+                                attempts: 4096,
+                            },
+                            now(),
+                        )
+                        .unwrap();
+                    if !v["candidate"].is_null() {
+                        break v;
+                    }
+                    assert!(Instant::now() < deadline);
+                };
+                Action::Native {
+                    tip: Id(t.s.tip()),
+                    block: candidate["block_hex"].as_str().unwrap().into(),
+                }
+            } else {
+                let plan = OnchainRequest {
+                    kind: 3,
+                    channel: Id(t.f.channel),
+                    actor: t.terms.owner,
+                    inputs: t.terms.inputs.clone(),
+                    fee: "1".into(),
+                    expiry: t.terms.expiry_height.clone(),
+                    nonce: Id([193; 32]),
+                    certificate: hex::encode(&t.proof),
+                    timestamp: (t.f.ledger.tip().timestamp() + 600).to_string(),
+                };
+                let a = Action::FeePolicyPrepare {
+                    tip: Id(t.s.tip()),
+                    policy_request: t.policy,
+                    plan,
+                };
+                let (prepared, v) = execute(&mut t.s, &mut t.n, a, None, now());
+                Action::FeePolicySign {
+                    tip: Id(t.s.tip()),
+                    policy_request: t.policy,
+                    prepare_request: prepared,
+                    review: id(&v, "review_digest"),
+                    key_file: t.key.to_string_lossy().into(),
+                }
+            };
+            let mut token = [0; 32];
+            getrandom::getrandom(&mut token).unwrap();
+            let request = Id(token);
+            let prior = t.s.head();
+            drop(t.s);
+            let config = t.root.join("cut.json");
+            write(
+                &config,
+                json!({"root":t.root,"action":action,"cut":cut,"request":request})
+                    .to_string()
+                    .as_bytes(),
+            );
+            let mut child = CutProcess(
+                Command::new(std::env::current_exe().unwrap())
+                    .args(["--exact", "head_log_cut_child", "--nocapture"])
+                    .env("RLD_FAST_HEAD_LOG_CUT", &config)
+                    .stdin(Stdio::null())
+                    .stdout(fs::File::create(t.root.join("cut.stdout")).unwrap())
+                    .stderr(fs::File::create(t.root.join("cut.stderr")).unwrap())
+                    .spawn()
+                    .unwrap(),
+            );
+            while !t.root.join("marker").exists() {
+                assert!(child.0.try_wait().unwrap().is_none(), "{mode}/{cut}");
+                assert!(Instant::now() < deadline);
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            child.0.kill().unwrap();
+            let status = child.0.wait().unwrap();
+            #[cfg(unix)]
+            {
+                use std::os::unix::process::ExitStatusExt;
+                assert_eq!(status.signal(), Some(9));
+            }
+            fs::rename(&t.key, t.root.join("unavailable.key")).unwrap();
+            let native = fs::read(t.node.join("native.journal")).unwrap();
+            let (mut s, out) = Session::recover_log_controlled(
+                &t.node,
+                &t.f.genesis,
+                t.f.ledger.chain_id(),
+                &t.head,
+                now(),
+            )
+            .unwrap();
+            assert_eq!(out["recovery_first_execution"], false);
+            assert_eq!(out["recovery_key_loaded"], false);
+            assert_eq!(fs::read(t.node.join("native.journal")).unwrap(), native);
+            let complete = matches!(cut, "reply" | "control-commit" | "control-committed");
+            assert_eq!(
+                out["operation_hex"].is_string(),
+                mode == "fee" && complete,
+                "{mode}/{cut}: {out}"
+            );
+            if mode == "native" {
+                let included = matches!(
+                    cut,
+                    "child" | "reply" | "control-commit" | "control-committed"
+                );
+                assert_eq!(
+                    out["height"],
+                    (before_height + u128::from(included)).to_string()
+                );
+            }
+            let scope = s.fee_policy_status(s.head(), t.policy, now()).unwrap();
+            assert_eq!(
+                scope["signed_operations"],
+                if mode == "fee" && complete { 1 } else { 0 }
+            );
+            if cut.starts_with("control-p") {
+                assert_eq!(s.head(), prior);
+                assert_eq!(out["request_body_retained"], false);
+            }
+            assert!(Instant::now() < deadline);
+            let recovered = s.head();
+            drop(s);
+            let mut reopened = Session::open_log_controlled(
+                &t.node,
+                &t.f.genesis,
+                t.f.ledger.chain_id(),
+                &t.head,
+                now(),
+            )
+            .unwrap();
+            assert_eq!(reopened.head(), recovered);
+            assert_eq!(
+                reopened.status(recovered, now()).unwrap()["caller_head_storage"],
+                "APPEND_ONLY"
+            );
+        }
+    }
+}
+#[test]
+fn unused_head_log_prepare_cannot_adopt_an_extra_unprepared_native_child() {
+    let mut t = Test::logged("head-log-unprepared-child");
+    let before = t.s.native_head();
+    let tip = t.s.tip();
+    let candidate = loop {
+        let v =
+            t.s.mining_candidate(
+                t.s.head(),
+                rld_survivor_node::fast_session::MiningRequest {
+                    miner: Id(t.f.miner.verifying_key().to_bytes()),
+                    operations: vec![],
+                    timestamp: (t.f.ledger.tip().timestamp() + 600).to_string(),
+                    attempts: 4096,
+                },
+                now(),
+            )
+            .unwrap();
+        if !v["candidate"].is_null() {
+            break v;
+        }
+        assert!(Instant::now() < t.deadline);
+    };
+    let raw = hex::decode(candidate["block_hex"].as_str().unwrap()).unwrap();
+    t.s.set_control_observer(|b| {
+        if b == rld_survivor_node::fast_session::ControlBoundary::Prepared {
+            panic!("stop before caller intent");
+        }
+        Ok(())
+    })
+    .unwrap();
+    let a = Action::Native {
+        tip: Id(tip),
+        block: hex::encode(&raw),
+    };
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        t.s.execute(Id([194; 32]), t.s.head(), a, None, now())
+    }));
+    assert!(result.is_err());
+    drop(t.s);
+    let mut native = Store::open(
+        &t.node.join("native.journal"),
+        &t.f.genesis,
+        t.f.ledger.chain_id(),
+        before,
+        now(),
+        Limits::default(),
+    )
+    .unwrap();
+    native.accept(&raw, before, tip, now()).unwrap();
+    drop(native);
+    let header = fs::read(&t.head).unwrap();
+    let caller = fs::read(t.node.join("caller.journal")).unwrap();
+    assert!(Session::recover_log_controlled(
+        &t.node,
+        &t.f.genesis,
+        t.f.ledger.chain_id(),
+        &t.head,
+        now()
+    )
+    .is_err());
+    assert_eq!(fs::read(&t.head).unwrap(), header);
+    assert_eq!(fs::read(t.node.join("caller.journal")).unwrap(), caller);
+    assert!(Instant::now() < t.deadline);
 }

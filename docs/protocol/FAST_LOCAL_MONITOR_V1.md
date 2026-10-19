@@ -105,10 +105,12 @@ strictly newer permitted timestamp. No timestamp advances a protocol window by
 itself, and native work, both fixed window bounds and h+100 fee maturity stay
 unchanged. Stop halts work; a reward destination is never a spend authorization.
 
-The local runtime does not automatically carry its new operations or mined blocks
-to peers. Existing explicit signed-operation/block carriage and optional verified
-block ingress remain available. Autonomous carriage/discovery/multi-hop and
-resource qualification are required next compositions, not inferred delivery.
+Standalone workers do not carry their own operations or mined blocks to peers.
+The separately enabled [automatic data mode](FAST_NATIVE_AUTOMATIC_CARRIAGE_V1.md)
+connects existing signatures, actual native custody and independently verified
+ingress under both trusted head files. Explicit carriage and block-only ingress
+remain available. Complete service, discovery, multi-hop and resource qualification
+are separate compositions, never inferred delivery.
 In particular, the peer box's permanent2048-packet and32-MiB bounds cannot be
 silently raised or pruned to accommodate a long window and reward maturity.
 

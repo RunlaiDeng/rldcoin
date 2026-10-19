@@ -630,6 +630,35 @@ impl Network {
         ensure(item.received, "INVALID peer incoming role")?;
         Ok(item.packet)
     }
+    pub(crate) fn admitted_ids(&self) -> Vec<Hash> {
+        self.config.neighbors().into_iter().map(|p| p.key).collect()
+    }
+    pub(crate) fn local_scope(&self) -> (Hash, Hash) {
+        (self.config.chain.0, self.config.identity.0)
+    }
+    pub(crate) fn check_custody(&mut self) -> Result<()> {
+        self.custody.check()
+    }
+    /// One complete authenticated packet at a time under an unchanged full
+    /// custody prefix. This observation grants no native receipt or value.
+    pub(crate) fn visit_packets_after(
+        &mut self,
+        after: usize,
+        mut visit: impl FnMut(&Packet, bool) -> Result<()>,
+    ) -> Result<usize> {
+        self.custody.check()?;
+        ensure(
+            after <= self.custody.order.len(),
+            "INVALID observed peer custody cursor",
+        )?;
+        for id in &self.custody.order[after..] {
+            let item = &self.custody.items[id];
+            let p = Packet::decode(&item.packet.raw, self.config.chain.0)?;
+            visit(&p, item.received)?;
+        }
+        self.custody.check()?;
+        Ok(self.custody.order.len())
+    }
     pub fn inventory(&mut self) -> Result<Value> {
         self.custody.check()?;
         Ok(json!(self.custody.order.iter().map(|id|{let x=&self.custody.items[id];json!({"id":Id(*id),"kind":x.packet.kind,"source":Id(x.packet.sender),"destination":Id(x.packet.destination),"received":x.received,"queued_at":x.at.to_string(),"destination_transport_custody":x.response.is_some(),"ledger_acceptance_known":false,"fast_completion_authorized":false})}).collect::<Vec<_>>()))

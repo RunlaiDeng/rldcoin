@@ -1128,3 +1128,64 @@ fn rehashed_policy_or_fee_signatures_and_fabricated_boolean_consent_refuse_uncha
         assert_eq!(fs::read(&t.head).unwrap(), control);
     }
 }
+
+#[test]
+fn cold_policy_preparation_still_checks_original_time_against_signed_owner_expiry() {
+    let mut t = Test::new("rehashed-preparation-expiry", 3);
+    let policy = t.approve();
+    let plan = t.plan(4, support::out(t.f.channel, 0), 0, 151);
+    let (prepared, _) = t.prepare(policy, plan);
+    let future = t.terms.expiry_time.parse::<u64>().unwrap() + 1;
+    drop(t.s);
+    let path = t.node.join("caller.journal");
+    let old = fs::read(&path).unwrap();
+    let mut next = old[..229].to_vec();
+    let mut prior = hash("HEADER", &next);
+    let mut at = 229;
+    let mut changed = false;
+    while at < old.len() {
+        let n = u32::from_be_bytes(old[at..at + 4].try_into().unwrap()) as usize;
+        let b = &old[at + 4..at + 4 + n];
+        at += 4 + n;
+        let size = u32::from_be_bytes(b[33..37].try_into().unwrap()) as usize;
+        let mut payload = b[37..37 + size].to_vec();
+        if b[0] == 1 {
+            let mut i: Intent = serde_json::from_slice(&payload).unwrap();
+            if i.id == prepared {
+                i.at = future;
+                payload = serde_json::to_vec(&i).unwrap();
+                changed = true;
+            }
+        }
+        let mut record = vec![b[0]];
+        record.extend(prior);
+        record.extend((payload.len() as u32).to_be_bytes());
+        record.extend(payload);
+        prior = hash("RECORD", &record);
+        record.extend(prior);
+        next.extend((record.len() as u32).to_be_bytes());
+        next.extend(record);
+    }
+    assert!(changed);
+    fs::write(&path, &next).unwrap();
+    let mut control = fs::read(&t.head).unwrap();
+    control[76..108].copy_from_slice(&prior);
+    let n = control.len();
+    let digest = hash("CONTROL", &control[..n - 32]);
+    control[n - 32..].copy_from_slice(&digest);
+    fs::write(&t.head, &control).unwrap();
+    let native = fs::read(t.node.join("native.journal")).unwrap();
+    let e = Session::open_controlled(
+        &t.node,
+        &t.f.genesis,
+        t.f.ledger.chain_id(),
+        &t.head,
+        future,
+    )
+    .err()
+    .expect("expired original policy preparation must refuse");
+    assert!(e.contains("EXPIRED fee policy signing scope"), "{e}");
+    assert_eq!(fs::read(&path).unwrap(), next);
+    assert_eq!(fs::read(&t.head).unwrap(), control);
+    assert_eq!(fs::read(t.node.join("native.journal")).unwrap(), native);
+}

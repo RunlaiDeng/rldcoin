@@ -11,8 +11,8 @@ use std::{
     io::Read,
     path::{Path, PathBuf},
 };
-const PENDING_LIMIT: usize = 1048576 - 69;
-const LIMIT: usize = 144 + PENDING_LIMIT;
+pub(super) const PENDING_LIMIT: usize = 1048576 - 69;
+pub(super) const LIMIT: usize = 144 + PENDING_LIMIT;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Boundary {
     PrepareNextDurable,
@@ -96,7 +96,7 @@ impl Snapshot {
         })
     }
 }
-fn intent(raw: &[u8]) -> Result<Intent> {
+pub(super) fn intent(raw: &[u8]) -> Result<Intent> {
     let i: Intent = serde_json::from_slice(raw).map_err(|_| "INVALID caller control intent")?;
     ensure(
         serde_json::to_vec(&i).map_err(io)? == raw && i.id.0 != [0; 32],
@@ -110,7 +110,7 @@ fn suffix(p: &Path, s: &str) -> PathBuf {
     b.push(s);
     PathBuf::from(b)
 }
-pub(super) struct Control {
+pub(super) struct SnapshotControl {
     path: PathBuf,
     next: PathBuf,
     lock_path: PathBuf,
@@ -118,7 +118,7 @@ pub(super) struct Control {
     snapshot: Snapshot,
     observer: Option<Box<dyn FnMut(Boundary) -> Result<()> + Send>>,
 }
-impl Control {
+impl SnapshotControl {
     pub fn create(path: &Path, binding: Hash, head: Hash) -> Result<Self> {
         private(parent(path)?, false)?;
         let s = Snapshot::make(binding, [0; 32], head, vec![])?;
@@ -245,7 +245,7 @@ impl Session {
         file: &Path,
         now: u64,
     ) -> Result<Self> {
-        Self::create_profile(root, g, chain, now, Some(file))
+        Self::create_profile(root, g, chain, now, Some((file, false)))
     }
     pub fn open_controlled(
         root: &Path,
@@ -254,13 +254,13 @@ impl Session {
         file: &Path,
         now: u64,
     ) -> Result<Self> {
-        let c = Control::open(file, false)?;
+        let c = SnapshotControl::open(file, false)?;
         let mut s = Self::open_profile(root, g, chain, c.snapshot.head, now, 2)?;
         ensure(
             s.caller.binding() == c.snapshot.binding,
             "INVALID caller control header binding",
         )?;
-        s.control = Some(c);
+        s.control = Some(Control::Snapshot(c));
         s.check_control(s.head())?;
         Ok(s)
     }
@@ -271,7 +271,7 @@ impl Session {
         self.control
             .as_mut()
             .ok_or("INVALID uncontrolled caller observer")?
-            .observer = Some(Box::new(observer));
+            .set_observer(Box::new(observer));
         Ok(())
     }
     pub fn controlled(&self) -> bool {
@@ -292,7 +292,7 @@ impl Session {
         file: &Path,
         now: u64,
     ) -> Result<(Self, serde_json::Value)> {
-        let mut c = Control::open(file, true)?;
+        let mut c = SnapshotControl::open(file, true)?;
         let candidate = if c.next.try_exists().map_err(io)? {
             let next = Snapshot::read(&c.next)?;
             ensure(
@@ -334,7 +334,7 @@ impl Session {
             } else {
                 Some(s.output(now)?)
             };
-            s.control = Some(c);
+            s.control = Some(Control::Snapshot(c));
             let mut out = s.status(s.head(), now)?;
             if let Some(serde_json::Value::Object(proof)) = proof {
                 out.as_object_mut().unwrap().extend(proof);
@@ -394,7 +394,7 @@ impl Session {
             c.finish(s.head())?;
         }
         c.check(s.head())?;
-        s.control = Some(c);
+        s.control = Some(Control::Snapshot(c));
         let mut out = s.status(s.head(), now)?;
         if let Some(serde_json::Value::Object(proof)) = proof {
             out.as_object_mut().unwrap().extend(proof);
@@ -403,5 +403,65 @@ impl Session {
         out["recovery_key_loaded"] = false.into();
         out["retained_request"] = serde_json::to_value(i.id).map_err(io)?;
         Ok((s, out))
+    }
+}
+pub(super) enum Control {
+    Snapshot(SnapshotControl),
+    Logged(super::head_log::HeadLog),
+}
+impl Control {
+    pub(super) fn authorize(&mut self, prior: Hash, i: &Intent) -> Result<()> {
+        match self {
+            Self::Snapshot(c) => {
+                c.files()?;
+                ensure(
+                    c.snapshot.head == prior
+                        && c.snapshot.pending == serde_json::to_vec(i).map_err(io)?,
+                    "INVALID snapshot prepared caller binding",
+                )
+            }
+            Self::Logged(c) => c.authorize(prior, i),
+        }
+    }
+    pub(super) fn check(&mut self, head: Hash) -> Result<()> {
+        match self {
+            Self::Snapshot(c) => c.check(head),
+            Self::Logged(c) => c.check(head),
+        }
+    }
+    pub(super) fn begin(&mut self, head: Hash, intent: &Intent) -> Result<()> {
+        match self {
+            Self::Snapshot(c) => c.begin(head, intent),
+            Self::Logged(c) => c.begin(head, intent),
+        }
+    }
+    pub(super) fn finish(&mut self, head: Hash) -> Result<()> {
+        match self {
+            Self::Snapshot(c) => c.finish(head),
+            Self::Logged(c) => c.finish(head),
+        }
+    }
+    pub(super) fn set_observer(&mut self, f: Box<dyn FnMut(Boundary) -> Result<()> + Send>) {
+        match self {
+            Self::Snapshot(c) => c.observer = Some(f),
+            Self::Logged(c) => c.set_observer(f),
+        }
+    }
+    pub(super) fn storage(&self) -> &'static str {
+        match self {
+            Self::Snapshot(_) => "SNAPSHOT",
+            Self::Logged(_) => "APPEND_ONLY",
+        }
+    }
+    pub(super) fn create(path: &Path, binding: Hash, head: Hash, logged: bool) -> Result<Self> {
+        if logged {
+            Ok(Self::Logged(super::head_log::HeadLog::create(
+                path, binding, head,
+            )?))
+        } else {
+            Ok(Self::Snapshot(SnapshotControl::create(
+                path, binding, head,
+            )?))
+        }
     }
 }

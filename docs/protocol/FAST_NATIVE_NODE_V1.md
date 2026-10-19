@@ -31,6 +31,13 @@ already fully verified selected ledger. Other parents are fully replayed from th
 pinned genesis through retained exact blocks; no arbitrary cached ledger starts a
 branch. Cold opening executes the same ordered admissions, validates every stored
 selected-tip/revision result, and must reconstruct the same selected state.
+During one caller audit, one already fully reconstructed historical ledger may
+serve repeated identical-tip checks under a fixed actual Store instance and
+complete source/caller heads. Every use rechecks actual full prefixes/identities;
+context changes release it before another reconstruction. This temporary scope
+never supplies branch initialization, serialized state or a cold-start shortcut.
+Cold storage replay still executes every retained native admission from genesis,
+and per-action signatures, time and value checks remain separate requirements.
 Block IDs locate bytes only. A byte-identical duplicate is synchronized and returns
 already_known without a new record; different bytes with the same header ID refuse.
 No later envelope is authenticated by a body/header deduplication result.

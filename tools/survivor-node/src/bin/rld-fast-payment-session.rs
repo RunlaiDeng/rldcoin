@@ -4,7 +4,7 @@ use rld_survivor_node::{
     fast_peer::{codec::Packet, Network},
     fast_session::{
         Action, BackgroundMiner, FeeMonitor, Id, Ingress, MiningRequest, MonitorConfig,
-        OpeningRequest, OpeningTerms, PoolMiningRequest, Session,
+        OpeningRequest, OpeningTerms, Outbound, PoolMiningRequest, Session,
     },
     kernel::Result,
 };
@@ -192,6 +192,10 @@ enum Request {
     Status {
         head: Id,
     },
+    NativeCoin {
+        head: Id,
+        reference: String,
+    },
     Pending {
         head: Id,
         actor: Id,
@@ -236,18 +240,32 @@ fn emit(v: Value) -> Result<()> {
 fn run() -> Result<()> {
     let a: Vec<_> = std::env::args().collect();
     if a.len() < 5 {
-        return Err("Usage: rld-fast-payment-session create ROOT GENESIS PIN | serve ROOT GENESIS PIN LATEST_SESSION_HEAD | recover ROOT GENESIS PIN PRIOR_SESSION_HEAD REQUEST_ID REQUEST_DIGEST | create-control ROOT GENESIS PIN TRUSTED_HEAD_FILE | serve-control ROOT GENESIS PIN TRUSTED_HEAD_FILE [--peer-root PEER_ROOT --peer-head-file PEER_HEAD_FILE [--auto-import-blocks]] | recover-control ROOT GENESIS PIN TRUSTED_HEAD_FILE".into());
+        return Err("Usage: rld-fast-payment-session create ROOT GENESIS PIN | serve ROOT GENESIS PIN LATEST_SESSION_HEAD | recover ROOT GENESIS PIN PRIOR_SESSION_HEAD REQUEST_ID REQUEST_DIGEST | create-control ROOT GENESIS PIN TRUSTED_HEAD_FILE | serve-control ROOT GENESIS PIN TRUSTED_HEAD_FILE [--peer-root PEER_ROOT --peer-head-file PEER_HEAD_FILE [--auto-import-blocks|--auto-sync]] | recover-control ROOT GENESIS PIN TRUSTED_HEAD_FILE | create-log-control ROOT GENESIS PIN TRUSTED_HEAD_FILE | serve-log-control ROOT GENESIS PIN TRUSTED_HEAD_FILE [--peer-root PEER_ROOT --peer-head-file PEER_HEAD_FILE [--auto-import-blocks|--auto-sync]] | recover-log-control ROOT GENESIS PIN TRUSTED_HEAD_FILE".into());
     }
     let root = Path::new(&a[2]);
     let g = genesis(Path::new(&a[3]))?;
     let chain = id(&a[4])?.0;
     let clock = now()?;
-    let serving = a[1] == "serve" || a[1] == "serve-control";
-    let automatic = a[1] == "serve-control" && a.len() == 11 && a[10] == "--auto-import-blocks";
+    let serving = a[1] == "serve" || a[1] == "serve-control" || a[1] == "serve-log-control";
+    let controlled = a[1] == "serve-control" || a[1] == "serve-log-control";
+    let full_sync = controlled && a.len() == 11 && a[10] == "--auto-sync";
+    let automatic = controlled && a.len() == 11 && (a[10] == "--auto-import-blocks" || full_sync);
     let mut s = match a[1].as_str() {
         "create" if a.len() == 5 => Session::create(root, &g, chain, clock)?,
         "create-control" if a.len() == 6 => {
             Session::create_controlled(root, &g, chain, Path::new(&a[5]), clock)?
+        }
+        "create-log-control" if a.len() == 6 => {
+            Session::create_log_controlled(root, &g, chain, Path::new(&a[5]), clock)?
+        }
+        "serve-log-control" if a.len() == 6 || a.len() == 10 || automatic => {
+            Session::open_log_controlled(root, &g, chain, Path::new(&a[5]), clock)?
+        }
+        "recover-log-control" if a.len() == 6 => {
+            let (_, out) =
+                Session::recover_log_controlled(root, &g, chain, Path::new(&a[5]), clock)?;
+            emit(out)?;
+            return Ok(());
         }
         "serve-control" if a.len() == 6 || a.len() == 10 || automatic => {
             Session::open_controlled(root, &g, chain, Path::new(&a[5]), clock)?
@@ -291,8 +309,18 @@ fn run() -> Result<()> {
     let mut monitor: Option<FeeMonitor> = None;
     let mut miner: Option<BackgroundMiner> = None;
     let mut monitor_clock = None;
-    ready["local_runtime"] = runtime_status(&monitor, &miner);
-    let mut ingress = automatic.then(Ingress::default);
+    ready["local_runtime"] = runtime_status(&monitor, &miner, full_sync);
+    let mut ingress = automatic.then(|| {
+        if full_sync {
+            Ingress::synchronized()
+        } else {
+            Ingress::default()
+        }
+    });
+    let mut outbound = full_sync.then(Outbound::default);
+    if let Some(o) = &outbound {
+        ready["automatic_carriage"] = o.status();
+    }
     if let Some(i) = &ingress {
         ready["automatic_native_import"] = i.status();
     }
@@ -345,11 +373,16 @@ fn run() -> Result<()> {
         if let Some(m) = &mut miner {
             let _ = m.tick(&mut s, clock);
         }
-        let request = match rx.recv_timeout(std::time::Duration::from_millis(if miner.is_some() {
-            1
-        } else {
-            100
-        })) {
+        if let (Some(o), Some(n)) = (&mut outbound, &mut peer) {
+            let _ = o.tick(&mut s, n, now()?);
+        }
+        let request = match rx.recv_timeout(std::time::Duration::from_millis(
+            if miner.is_some() || ingress.as_ref().is_some_and(Ingress::work_pending) {
+                1
+            } else {
+                100
+            },
+        )) {
             Ok(r) => r,
             Err(mpsc::RecvTimeoutError::Timeout) => continue,
             Err(_) => break,
@@ -389,6 +422,9 @@ fn run() -> Result<()> {
                 clock,
             ),
             Request::Status { head } => s.status(head.0, clock),
+            Request::NativeCoin { head, reference } => {
+                s.native_coin(head.0, &rld_survivor_node::fast_session::bytes(&reference,34)?, clock)
+            }
             Request::FeePolicyStatus{head,policy_request}=>s.fee_policy_status(head.0,policy_request,clock),
             Request::Pending {
                 head,
@@ -444,7 +480,10 @@ fn run() -> Result<()> {
         });
         match out {
             Ok(mut v) => {
-                v["local_runtime"] = runtime_status(&monitor, &miner);
+                if let Some(o) = &outbound {
+                    v["automatic_carriage"] = o.status();
+                }
+                v["local_runtime"] = runtime_status(&monitor, &miner, full_sync);
                 v["session_head"] =
                     serde_json::to_value(Id(s.head())).map_err(|_| "INVALID control head")?;
                 if let Some(n) = &peer {
@@ -457,7 +496,10 @@ fn run() -> Result<()> {
             }
             Err(e) => {
                 let mut v = json!({"session_head":Id(s.head()),"diagnostic":e,"fast_completion_authorized":false,"mainnet":false});
-                v["local_runtime"] = runtime_status(&monitor, &miner);
+                v["local_runtime"] = runtime_status(&monitor, &miner, full_sync);
+                if let Some(o) = &outbound {
+                    v["automatic_carriage"] = o.status();
+                }
                 if let Some(n) = &peer {
                     v["peer"] = n.status();
                 }
@@ -470,8 +512,12 @@ fn run() -> Result<()> {
     }
     Ok(())
 }
-fn runtime_status(monitor: &Option<FeeMonitor>, miner: &Option<BackgroundMiner>) -> Value {
-    json!({"fee_monitor":monitor.as_ref().map(FeeMonitor::status),"ordinary_miner":miner.as_ref().map(BackgroundMiner::status),"unlocks_persisted":false,"automatic_peer_carriage":false})
+fn runtime_status(
+    monitor: &Option<FeeMonitor>,
+    miner: &Option<BackgroundMiner>,
+    automatic: bool,
+) -> Value {
+    json!({"fee_monitor":monitor.as_ref().map(FeeMonitor::status),"ordinary_miner":miner.as_ref().map(BackgroundMiner::status),"unlocks_persisted":false,"automatic_peer_carriage":automatic})
 }
 fn main() {
     if let Err(e) = run() {

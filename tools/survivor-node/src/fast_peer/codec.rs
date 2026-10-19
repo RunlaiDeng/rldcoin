@@ -6,6 +6,72 @@ use crate::{
 use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 pub const MAX_PACKET: usize = 262345;
+pub const MAX_BLOCK_BATCH: usize = 32;
+pub const BATCH_HEADER: usize = 54;
+/// Sender journal ordinals are custody coordinates only. Every complete block
+/// still requires recipient-native execution from independently pinned genesis.
+pub fn block_batch(chain: Hash, first: u64, blocks: &[Vec<u8>]) -> Result<Vec<u8>> {
+    let mut raw = b"RLDFBLK1".to_vec();
+    raw.extend([0, 1, 0, 1]);
+    raw.extend(chain);
+    raw.extend(first.to_be_bytes());
+    ensure(
+        (1..=MAX_BLOCK_BATCH).contains(&blocks.len()),
+        "INVALID native batch count",
+    )?;
+    raw.extend((blocks.len() as u16).to_be_bytes());
+    for block in blocks {
+        ensure(
+            raw.len()
+                .checked_add(4 + block.len())
+                .is_some_and(|n| n <= 262144),
+            "RESOURCE_WAIT native batch payload",
+        )?;
+        raw.extend((block.len() as u32).to_be_bytes());
+        raw.extend(block);
+    }
+    decode_block_batch(&raw, chain)?;
+    Ok(raw)
+}
+pub fn decode_block_batch(raw: &[u8], chain: Hash) -> Result<(u64, Vec<&[u8]>)> {
+    ensure(
+        (328..=262144).contains(&raw.len())
+            && &raw[..8] == b"RLDFBLK1"
+            && raw[8..12] == [0, 1, 0, 1]
+            && raw[12..44] == chain,
+        "INVALID native batch header",
+    )?;
+    let first = u64::from_be_bytes(raw[44..52].try_into().unwrap());
+    let count = u16::from_be_bytes(raw[52..54].try_into().unwrap()) as usize;
+    ensure(
+        first > 0
+            && (1..=MAX_BLOCK_BATCH).contains(&count)
+            && first.checked_add(count as u64 - 1).is_some(),
+        "INVALID native batch ordinal/count",
+    )?;
+    let mut reader = crate::fast_retainer::Reader {
+        raw,
+        at: BATCH_HEADER,
+    };
+    let mut blocks = vec![];
+    let mut ids = std::collections::BTreeSet::new();
+    for _ in 0..count {
+        let n = reader.u32()? as usize;
+        ensure(
+            (270..=262144).contains(&n),
+            "INVALID native batch block size",
+        )?;
+        let block = reader.take(n)?;
+        let id = kernel::fast::block_id(block)?;
+        ensure(
+            block[4..36] == chain && ids.insert(id),
+            "INVALID native batch block scope/duplicate",
+        )?;
+        blocks.push(block);
+    }
+    ensure(reader.at == raw.len(), "INVALID native batch tail")?;
+    Ok((first, blocks))
+}
 pub fn tag(s: &str) -> Vec<u8> {
     [b"RLD-FAST-PEER-1/".as_slice(), s.as_bytes(), &[0]].concat()
 }
@@ -89,6 +155,9 @@ pub fn payload(kind: u8, raw: &[u8], chain: Hash) -> Result<()> {
         }
         8 => {
             opening_frame(raw, chain, true)?;
+        }
+        9 => {
+            decode_block_batch(raw, chain)?;
         }
         _ => return Err("UNSUPPORTED peer payload kind".into()),
     }

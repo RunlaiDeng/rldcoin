@@ -257,7 +257,7 @@ impl Session {
             "native_inclusion_known":false,"independent_freshness":false,"automatic_monitoring":false}),
         )
     }
-    fn policy(&self, before: usize, request: Id) -> Result<(usize, FeePolicy)> {
+    pub(super) fn policy(&self, before: usize, request: Id) -> Result<(usize, FeePolicy)> {
         ensure(
             self.caller.controlled(),
             "UNSUPPORTED fee policy requires controlled caller",
@@ -473,7 +473,12 @@ impl Session {
             _ => Err("INVALID fee policy signing method".into()),
         }
     }
-    pub(super) fn audit_fee_step(&mut self, index: usize, context: Hash) -> Result<bool> {
+    pub(super) fn audit_fee_step(
+        &mut self,
+        index: usize,
+        context: Hash,
+        historical: &mut onchain::HistoricalAudit,
+    ) -> Result<bool> {
         let op = self.caller.ops[index].clone();
         let Some(done) = op.done else {
             return Ok(false);
@@ -506,8 +511,8 @@ impl Session {
                         "INVALID changed fee policy consent",
                     )?;
                     p.scope(self.caller.binding(), self.chain)?;
-                    let native = self.native.as_mut().unwrap().historical(context)?;
-                    p.initial(&native, op.intent.at)?;
+                    let native = self.audit_ledger(historical, context)?;
+                    p.initial(native, op.intent.at)?;
                 }
                 Ok(true)
             }
@@ -528,7 +533,7 @@ impl Session {
                         self.policy_preparation(index, *policy_request, *prepare_request, *review)?;
                     ensure(original == tip.0, "INVALID fee policy original selection")?;
                     let mut state = self.policy_state(index, *policy_request)?;
-                    let ledger = self.native.as_mut().unwrap().historical(context)?;
+                    let ledger = self.audit_ledger(historical, context)?;
                     let native = ledger.plan_action(context, &plan.request()?, op.intent.at)?;
                     ensure(
                         native.review() == review.0,
@@ -543,19 +548,9 @@ impl Session {
                 }
                 Ok(true)
             }
-            Action::FeePolicyPrepare {
-                tip,
-                policy_request,
-                ..
-            } => {
-                if done.review.is_some() {
-                    let (_, p) = self.policy(index, *policy_request)?;
-                    let ledger = self.native.as_mut().unwrap().historical(context)?;
-                    ensure(tip.0 == context, "INVALID fee policy preparation selection")?;
-                    p.time(ledger.tip().height(), op.intent.at)?;
-                }
-                Ok(false)
-            }
+            // The generic preparation audit reconstructs the complete native
+            // ledger and checks both policy time and value against that ledger.
+            Action::FeePolicyPrepare { .. } => Ok(false),
             _ => Ok(false),
         }
     }

@@ -30,6 +30,11 @@ pub(crate) struct NativeAuditStep {
     pub at: u64,
     pub block: Vec<u8>,
 }
+pub(crate) struct Carriage {
+    pub first: u64,
+    pub blocks: Vec<Vec<u8>>,
+    pub closed: bool,
+}
 
 #[cfg(test)]
 mod audit_tests {
@@ -193,11 +198,13 @@ struct Block {
     raw: Vec<u8>,
     tip: Tip,
     observed: u64,
+    ordinal: u64,
 }
 struct Branches {
     genesis: Vec<u8>,
     ledger: Ledger,
     blocks: BTreeMap<Hash, Block>,
+    order: Vec<Hash>,
     revision: u128,
     coins: usize,
 }
@@ -207,6 +214,7 @@ impl Branches {
             genesis: genesis.to_vec(),
             ledger: Ledger::from_genesis(genesis, chain, coins)?,
             blocks: BTreeMap::new(),
+            order: Vec::new(),
             revision: 0,
             coins,
         })
@@ -267,8 +275,10 @@ impl Branches {
                 raw: raw.to_vec(),
                 tip: candidate.tip().clone(),
                 observed,
+                ordinal: self.order.len() as u64 + 1,
             },
         );
+        self.order.push(candidate.tip().id());
         if selected {
             self.ledger = candidate;
         }
@@ -553,6 +563,70 @@ impl Store {
     pub fn known_blocks(&self) -> usize {
         self.native.blocks.len()
     }
+    /// Complete journal-order bytes only, never a remote/native authorization.
+    pub(crate) fn carriage_after(&mut self, after: u64) -> Result<Option<Carriage>> {
+        self.prefix(self.head)?;
+        let start = usize::try_from(after).map_err(|_| "INVALID native carriage ordinal")?;
+        ensure(
+            start <= self.native.order.len(),
+            "INVALID native carriage source tail",
+        )?;
+        let mut blocks = vec![];
+        let mut size = crate::fast_peer::codec::BATCH_HEADER;
+        let mut closed = false;
+        for id in self.native.order[start..]
+            .iter()
+            .take(crate::fast_peer::codec::MAX_BLOCK_BATCH)
+        {
+            let raw = &self.native.blocks[id].raw;
+            if size + 4 + raw.len() > 262144 {
+                if blocks.is_empty() {
+                    blocks.push(raw.clone());
+                }
+                closed = true;
+                break;
+            }
+            size += 4 + raw.len();
+            blocks.push(raw.clone());
+        }
+        closed |= blocks.len() == crate::fast_peer::codec::MAX_BLOCK_BATCH;
+        Ok((!blocks.is_empty()).then_some(Carriage {
+            first: after + 1,
+            blocks,
+            closed,
+        }))
+    }
+    pub(crate) fn carriage_span(&mut self, first: u64, blocks: &[&[u8]]) -> Result<bool> {
+        self.prefix(self.head)?;
+        ensure(
+            first > 0 && (1..=32).contains(&blocks.len()),
+            "INVALID native carriage coverage",
+        )?;
+        for (i, raw) in blocks.iter().enumerate() {
+            let index = first
+                .checked_sub(1)
+                .and_then(|n| n.checked_add(i as u64))
+                .and_then(|n| usize::try_from(n).ok())
+                .ok_or("INVALID native carriage index")?;
+            let Some(id) = self.native.order.get(index) else {
+                return Ok(false);
+            };
+            if self.native.blocks[id].raw != *raw {
+                return Ok(false);
+            }
+        }
+        Ok(true)
+    }
+    pub(crate) fn carriage_ordinal(&mut self, raw: &[u8]) -> Result<Option<u64>> {
+        self.prefix(self.head)?;
+        let id = fast::block_id(raw)?;
+        Ok(self
+            .native
+            .blocks
+            .get(&id)
+            .filter(|b| b.raw == raw)
+            .map(|b| b.ordinal))
+    }
     pub fn storage_ready(&self) -> bool {
         !self.poisoned
     }
@@ -566,6 +640,9 @@ impl Store {
     pub(crate) fn historical(&mut self, tip: Hash) -> Result<Ledger> {
         self.prefix(self.head)?;
         self.native.replay(tip)
+    }
+    pub(crate) fn check_history_source(&mut self, head: Hash) -> Result<()> {
+        self.prefix(head)
     }
     pub(crate) fn funding_history(
         &mut self,

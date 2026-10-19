@@ -20,6 +20,13 @@ pub(super) struct PoolMining {
     view: Value,
 }
 impl Session {
+    pub(super) fn carriage_pool(&self) -> Result<Vec<(Hash, Vec<u8>)>> {
+        Ok(self
+            .pool_entries()?
+            .into_iter()
+            .map(|e| (e.id, e.raw))
+            .collect())
+    }
     pub(super) fn pool_binding(&self) -> Result<Hash> {
         Ok(hash(
             "POOL-CONTENTS",

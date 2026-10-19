@@ -5,6 +5,160 @@ use super::*;
 use crate::kernel::fast::planning::{Plan, Request};
 use std::collections::BTreeSet;
 
+/// One immutable, fully reconstructed context during one caller audit only.
+/// Never serialized, supplied by a peer or used to initialize a native store.
+pub(super) struct HistoricalAudit {
+    caller: Hash,
+    caller_head: Hash,
+    native_head: Hash,
+    source: usize,
+    last: Option<(Hash, fast::Ledger)>,
+    #[cfg(test)]
+    replays: usize,
+}
+
+#[cfg(test)]
+mod historical_tests {
+    // PUBLIC NO-VALUE unit fixture keys only; never monetary custody.
+    use super::*;
+    use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+    fn fixture() -> (Session, Vec<Vec<u8>>, PathBuf, u64) {
+        let deadline = Instant::now() + Duration::from_secs(30);
+        let v: Value = serde_json::from_str(include_str!(
+            "../../../../docs/protocol/native-fast-escrow-v1-vectors.json"
+        ))
+        .unwrap();
+        let mut g = hex::decode(v["genesis_hex"].as_str().unwrap()).unwrap();
+        getrandom::getrandom(&mut g[13..45]).unwrap();
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        g[45..53].copy_from_slice(&(now - 7200).to_be_bytes());
+        let chain = fast::genesis_id(&g);
+        let root = std::env::temp_dir().join(format!(
+            "rld-historical-audit-{}-{}",
+            std::process::id(),
+            hex::encode(chain)
+        ));
+        fs::create_dir(&root).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+        let mut s = Session::create(&root.join("node"), &g, chain, now).unwrap();
+        let mut ledger = fast::Ledger::from_genesis(&g, chain, 100000).unwrap();
+        let miner = ed25519_dalek::SigningKey::from_bytes(&[141; 32])
+            .verifying_key()
+            .to_bytes();
+        let mut blocks = vec![];
+        for n in 1..=2 {
+            let mut job = ledger
+                .mining_job(miner, vec![], ledger.tip().timestamp() + 600, now)
+                .unwrap();
+            let raw = loop {
+                assert!(Instant::now() < deadline);
+                if let (Some(raw), _) = job.search(4096) {
+                    break raw;
+                }
+            };
+            ledger.execute(&raw, now).unwrap();
+            let out = s
+                .execute(
+                    Id([n; 32]),
+                    s.head(),
+                    Action::Native {
+                        tip: Id(s.tip()),
+                        block: hex::encode(&raw),
+                    },
+                    None,
+                    now,
+                )
+                .unwrap();
+            assert!(out["diagnostic"].is_null());
+            blocks.push(raw);
+        }
+        (s, blocks, root, now)
+    }
+    #[test]
+    fn audit_local_context_replays_each_exact_tip_and_cold_audits_start_empty() {
+        let (mut s, blocks, root, now) = fixture();
+        let first = fast::block_id(&blocks[0]).unwrap();
+        let mut audit = s.historical_audit();
+        assert!(audit.last.is_none());
+        assert_eq!(s.audit_ledger(&mut audit, first).unwrap().tip().height(), 1);
+        assert_eq!(audit.replays, 1);
+        assert_eq!(s.audit_ledger(&mut audit, first).unwrap().tip().id(), first);
+        assert_eq!(
+            audit.replays, 1,
+            "reuse still requires the actual source prefix checks"
+        );
+        let selected = s.tip();
+        assert_eq!(
+            s.audit_ledger(&mut audit, selected).unwrap().tip().height(),
+            2
+        );
+        assert_eq!(audit.replays, 2);
+        assert_eq!(s.audit_ledger(&mut audit, first).unwrap().tip().height(), 1);
+        assert_eq!(audit.replays, 3, "only one context may remain retained");
+        let head = s.head();
+        let genesis = s.genesis.clone();
+        let chain = s.chain;
+        drop(s);
+        drop(audit);
+        let mut cold = Session::open(&root.join("node"), &genesis, chain, head, now).unwrap();
+        let mut fresh = cold.historical_audit();
+        assert!(fresh.last.is_none());
+        assert_eq!(fresh.replays, 0);
+        assert_eq!(
+            cold.audit_ledger(&mut fresh, first).unwrap().tip().height(),
+            1
+        );
+        assert_eq!(fresh.replays, 1);
+    }
+    #[test]
+    fn audit_local_context_rejects_another_live_store_and_changed_actual_bytes() {
+        let (mut s, blocks, root, now) = fixture();
+        let first = fast::block_id(&blocks[0]).unwrap();
+        let mut audit = s.historical_audit();
+        s.audit_ledger(&mut audit, first).unwrap();
+        let mut foreign = Session::create(&root.join("foreign"), &s.genesis, s.chain, now).unwrap();
+        for (n, raw) in blocks.iter().enumerate() {
+            let out = foreign
+                .execute(
+                    Id([n as u8 + 1; 32]),
+                    foreign.head(),
+                    Action::Native {
+                        tip: Id(foreign.tip()),
+                        block: hex::encode(raw),
+                    },
+                    None,
+                    now,
+                )
+                .unwrap();
+            assert!(out["diagnostic"].is_null());
+        }
+        assert_eq!(s.caller.binding(), foreign.caller.binding());
+        assert_eq!(s.head(), foreign.head());
+        assert_eq!(s.native_head(), foreign.native_head());
+        assert!(foreign
+            .audit_ledger(&mut audit, first)
+            .err()
+            .unwrap()
+            .contains("source instance"));
+        let path = root.join("node/native.journal");
+        let mut raw = fs::read(&path).unwrap();
+        let last = raw.len() - 1;
+        raw[last] ^= 1;
+        fs::write(&path, &raw).unwrap();
+        assert!(s.audit_ledger(&mut audit, first).is_err());
+        assert!(!s.native.as_ref().unwrap().storage_ready());
+        assert_eq!(fs::read(&path).unwrap(), raw);
+        assert_eq!(audit.replays, 1);
+    }
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OnchainRequest {
@@ -279,6 +433,50 @@ impl Session {
         }
         Ok(())
     }
+    fn historical_audit(&self) -> HistoricalAudit {
+        let native = self.native.as_ref().unwrap();
+        HistoricalAudit {
+            caller: self.caller.binding(),
+            caller_head: self.caller.head,
+            native_head: native.head(),
+            source: std::ptr::from_ref(native) as usize,
+            last: None,
+            #[cfg(test)]
+            replays: 0,
+        }
+    }
+    pub(super) fn audit_ledger<'a>(
+        &mut self,
+        audit: &'a mut HistoricalAudit,
+        tip: Hash,
+    ) -> Result<&'a fast::Ledger> {
+        ensure(
+            audit.caller == self.caller.binding(),
+            "INVALID historical audit caller binding",
+        )?;
+        self.caller.check(audit.caller_head)?;
+        let native = self
+            .native
+            .as_mut()
+            .ok_or("RESOURCE_WAIT historical native restart")?;
+        ensure(
+            audit.source == std::ptr::from_ref(native) as usize,
+            "INVALID historical audit source instance",
+        )?;
+        native.check_history_source(audit.native_head)?;
+        if audit.last.as_ref().is_none_or(|(old, _)| *old != tip) {
+            // Release the old context before reconstructing another: at most
+            // one temporary historical ledger, under the original native caps.
+            audit.last = None;
+            let ledger = native.historical(tip)?;
+            audit.last = Some((tip, ledger));
+            #[cfg(test)]
+            {
+                audit.replays += 1;
+            }
+        }
+        Ok(&audit.last.as_ref().unwrap().1)
+    }
     pub(super) fn audit_onchain(&mut self, contexts: &[Hash]) -> Result<()> {
         ensure(
             contexts.len() == self.caller.ops.len(),
@@ -286,6 +484,7 @@ impl Session {
         )?;
         let mut reserved = BTreeMap::new();
         let mut signatures = BTreeMap::<Id, String>::new();
+        let mut historical = self.historical_audit();
         for (index, context) in contexts.iter().enumerate() {
             let op = self.caller.ops[index].clone();
             let Some(done) = &op.done else { continue };
@@ -311,7 +510,7 @@ impl Session {
                 }
                 continue;
             }
-            if self.audit_fee_step(index, *context)? {
+            if self.audit_fee_step(index, *context, &mut historical)? {
                 continue;
             }
             if let Some((tip, plan)) = op.intent.action.preparation() {
@@ -321,8 +520,14 @@ impl Session {
                 )?;
                 if let Some(review) = done.review {
                     ensure(tip == *context, "INVALID prepared native selection")?;
-                    let ledger = self.native.as_mut().unwrap().historical(tip)?;
-                    let native = plan.evaluate(&ledger, tip, op.intent.at)?;
+                    let ledger = self.audit_ledger(&mut historical, tip)?;
+                    // Use this same complete native reconstruction for policy
+                    // time and value review. Neither condition may be omitted.
+                    if let Action::FeePolicyPrepare { policy_request, .. } = &op.intent.action {
+                        let (_, policy) = self.policy(index, *policy_request)?;
+                        policy.time(ledger.tip().height(), op.intent.at)?;
+                    }
+                    let native = plan.evaluate(ledger, tip, op.intent.at)?;
                     ensure(
                         native.review() == review.0,
                         "INVALID native preparation review",
@@ -341,6 +546,9 @@ impl Session {
             }
             match &op.intent.action {
                 Action::OpenCombine { tip, .. } => {
+                    // This separate complete closure verifier owns its own
+                    // historical reconstruction; retain no second context.
+                    historical.last = None;
                     ensure(
                         done.effect.is_none() && done.authorization.is_none(),
                         "INVALID opening combination effect",
@@ -374,8 +582,8 @@ impl Session {
                         let (_, plan, original) =
                             self.prepared(index, *prepare_request, *review)?;
                         ensure(original == tip.0, "INVALID native signature original tip")?;
-                        let ledger = self.native.as_mut().unwrap().historical(tip.0)?;
-                        let native = plan.evaluate(&ledger, tip.0, op.intent.at)?;
+                        let ledger = self.audit_ledger(&mut historical, tip.0)?;
+                        let native = plan.evaluate(ledger, tip.0, op.intent.at)?;
                         ensure(
                             native.review() == review.0,
                             "INVALID native signature stale review",

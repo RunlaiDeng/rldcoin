@@ -1,5 +1,26 @@
 # Survivor native candidate
 
+The explicit [append-only caller-head profile](../../docs/protocol/FAST_SESSION_HEAD_LOG_V1.md)
+uses `create-log-control`, `serve-log-control` and `recover-log-control` with
+`ROOT GENESIS PIN TRUSTED_HEAD_FILE`. It retains exact canonical request digests
+before caller/child work and complete audited responses before advancing the
+trusted head. File and directory synchronization, full prefix/identity checks
+and the original1048651-byte control-file bound remain mandatory. Both records
+are reserved before a request, limiting a fresh log to2896 complete requests.
+It refuses torn/full/mixed state without repair, migration or automatic rotation.
+Snapshot controls retain their original entries and refuse this format.
+The local latest-head file is trusted; independent freshness/custody and scalable
+archival remain separate obligations. Both explicit profiles can select the
+[automatic native/signature carriage](../../docs/protocol/FAST_NATIVE_AUTOMATIC_CARRIAGE_V1.md)
+mode with pinned peer/head arguments and `--auto-sync`.
+
+The private `native_coin` observation accepts the current session head and one
+34-byte output reference. It reads only the actual authenticated selected native
+ledger and returns owner/value/maturity or absence, with its exact tip/time.
+It does not append requests, authorize spending or resolve wallet reservations.
+Cold session startup retains full native/caller/actor replay, allowing a wallet
+to inspect that same validated session before ordinary own-template spending.
+
 This isolated Rust library implements the exact `RLD-SURVIVOR-1` consensus
 contract in `docs/protocol/survivor-v1`. It accepts only explicitly pinned no-value
 genesis manifests. It cannot activate monetary networks, import legacy stores or
@@ -718,6 +739,18 @@ those spends. fee_policy_status {head, policy_request} distinguishes retained
 signature liabilities from native inclusion/spendability. Existing proof can be
 reproduced without its key and without another quota debit. Losing branches do
 not refund an allowance. Policy approval starts no automatic signing or service.
+
+The separately enabled [automatic carriage mode](../../docs/protocol/FAST_NATIVE_AUTOMATIC_CARRIAGE_V1.md)
+uses `serve-control ROOT GENESIS PIN CALLER_HEAD_FILE --peer-root PEER_ROOT
+--peer-head-file PEER_HEAD_FILE --auto-sync`. It carries exact already-verified
+native history in bounded complete-block batches and existing signed pool data,
+then independently prevalidates/adopts incoming blocks and queues signatures.
+Sender-specific complete-byte knowledge avoids redundant new return carriage;
+it does not acknowledge an outstanding packet or grant ledger/value rights. All
+existing permanent capacities and clocks remain. `automatic_carriage` and
+`automatic_native_import` status distinguish data coverage and deferred work;
+complete finite service/hostile-load, independent, resource and G1-G11 qualification
+remain separate. Existing `--auto-import-blocks` stays block-only.
 
 The explicitly activated [local monitor](../../docs/protocol/FAST_LOCAL_MONITOR_V1.md)
 uses `monitor_start {head, config, password}` with config `{policy_request,

@@ -25,6 +25,19 @@ come through private local native stdin. No HTTP/browser, raw key, caller ledger
 serialized balance, clock override, founder API or base signer roster is accepted.
 The currency is a separately supplied113-byte no-value genesis and pinned chain.
 
+The private native_coin command takes an exact current head and a canonical
+34-byte output reference. It returns that selected native ledger's owner,
+amount, maturity height and next-block native maturity, or null when absent.
+The response binds the current native head, selected tip and its actual timestamp.
+The library exposes the same observation as Session::native_coin. Normal control,
+caller and complete native prefix/identity checks precede every read; cold
+startup still replays native, caller and registered actor histories from genesis.
+No decoded balance or observation initializes a ledger. The command does not
+append a caller request, load a key, approve spending or release a reservation.
+Native maturity alone does not establish current owner consent, route/liquidity,
+reservation availability, independent freshness or irreversible finality. Wallets
+still require the ordinary exact preparation and authorization for a spend.
+
 An unsigned proposal comes from this owner's last completely authenticated
 receipt and the selector's current active funding origin. Constructing a proposal
 neither reserves nor signs. Both parties independently submit exact invoice bytes

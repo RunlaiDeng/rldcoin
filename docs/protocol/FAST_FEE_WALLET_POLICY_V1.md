@@ -98,6 +98,27 @@ scope/approval, reconstruct ordinary reservations, every used input/change and
 signature-time allowance. An unkeyed rehash cannot replace the actual fee-owner
 consent, native signature, persisted preparation or current native context.
 
+For each retained successful preparation, one fully reconstructed exact historical
+native ledger supplies both the signed policy's height/time horizon check and the
+complete native value/review evaluation. The original request clock, exact selected
+tip and signed consent remain mandatory. A signing step independently evaluates
+its own exact native context/time and verifies the complete retained signature
+and allowance.
+No historical height, metadata digest or decoded balance can replace that ledger.
+
+Within one caller audit, at most one already fully reconstructed historical
+ledger may serve repeated requests for its identical tip. The scope pins the
+actual live Store instance, complete native source head, caller header and exact
+caller head. Complete actual caller/native prefix and file-identity checks still
+precede every use. A different context releases the old ledger before complete
+reconstruction; an opening-closure verifier likewise releases it before its own
+replay. This keeps one temporary historical context under existing native limits.
+The scope is private, process-local and discarded at audit exit. It is never
+serialized, received from a peer or used to initialize a branch/native store.
+Cold opening reconstructs all retained native history and starts every audit
+scope empty. Policy time, value, owner signatures and allowance remain checked
+for every action against its own original request fields.
+
 Recovery returns only a fully verified existing policy/signature or audited
 absence. It never first-signs, adopts a new policy, resets allowance or releases
 a reservation. Optional process-local audit reuse never serializes authority or

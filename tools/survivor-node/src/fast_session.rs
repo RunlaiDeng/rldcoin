@@ -2,11 +2,14 @@
 //! owner/retainer steps. Full child replay/audits precede signing authority.
 mod control;
 mod fee_policy;
+mod head_log;
 pub use fee_policy::FeePolicy;
 mod monitor;
 pub use monitor::{BackgroundMiner, FeeMonitor, MonitorConfig};
 mod ingress;
 pub use ingress::Ingress;
+mod outbound;
+pub use outbound::Outbound;
 mod journal;
 pub use control::Boundary as ControlBoundary;
 mod onchain;
@@ -557,7 +560,7 @@ impl Session {
         genesis: &[u8],
         chain: Hash,
         now: u64,
-        control_path: Option<&Path>,
+        control_path: Option<(&Path, bool)>,
     ) -> Result<Self> {
         fast::Ledger::from_genesis(genesis, chain, 100000)?;
         fs::create_dir(root).map_err(fast_retainer::io)?;
@@ -592,7 +595,7 @@ impl Session {
             if control_path.is_some() { 2 } else { 1 },
         )?;
         let control = control_path
-            .map(|p| control::Control::create(p, caller.binding(), caller.head))
+            .map(|(p, logged)| control::Control::create(p, caller.binding(), caller.head, logged))
             .transpose()?;
         sync_dir(root)?;
         fs::remove_file(root.join("CREATING")).map_err(fast_retainer::io)?;
@@ -739,8 +742,36 @@ impl Session {
             .ok_or("RESOURCE_WAIT session native restart required")?;
         n.check(n.head(), n.ledger().tip().id(), now)?;
         Ok(
-            json!({"session_head":Id(head),"native_head":Id(n.head()),"selected_tip":Id(n.ledger().tip().id()),"height":n.ledger().tip().height().to_string(),"actors":self.actors.keys().collect::<Vec<_>>(),"caller_head_control":if self.control.is_some(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"fast_completion_authorized":false,"independent_freshness":false,"network_monitoring":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY"}),
+            json!({"session_head":Id(head),"native_head":Id(n.head()),"selected_tip":Id(n.ledger().tip().id()),"height":n.ledger().tip().height().to_string(),"actors":self.actors.keys().collect::<Vec<_>>(),"caller_head_control":if self.control.is_some(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"caller_head_storage":self.control.as_ref().map(control::Control::storage),"fast_completion_authorized":false,"independent_freshness":false,"network_monitoring":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY"}),
         )
+    }
+    /// Observe one output in the actual selected native ledger. This does not
+    /// approve spending, release caller reservations or assert finality.
+    pub fn native_coin(&mut self, head: Hash, reference: &[u8], now: u64) -> Result<Value> {
+        ensure(reference.len() == 34, "INVALID native coin reference size")?;
+        let mut out = self.status(head, now)?;
+        let native = self.native.as_ref().unwrap();
+        let next = native
+            .ledger()
+            .tip()
+            .height()
+            .checked_add(1)
+            .ok_or("RESOURCE_WAIT native next height")?;
+        out["output_reference"] = hex::encode(reference).into();
+        out["selected_timestamp"] = native.ledger().tip().timestamp().to_string().into();
+        out["native_coin"] = native
+            .ledger()
+            .coins()
+            .get(reference)
+            .map(|c| {
+                json!({"owner":Id(c.owner),"amount":c.amount.to_string(),
+                "maturity_height":c.maturity.to_string(),"mature_for_next_block":c.maturity<=next})
+            })
+            .unwrap_or(Value::Null);
+        out["observation_only"] = true.into();
+        out["owner_spend_authorized"] = false.into();
+        out["reservation_review_required"] = true.into();
+        Ok(out)
     }
     fn audit(&mut self, now: u64) -> Result<()> {
         self.caller.check(self.caller.head)?;
@@ -1356,6 +1387,9 @@ impl Session {
         }
         self.caller.begin(id, action.clone(), now)?;
         observe(Boundary::IntentDurable);
+        if let Some(control) = &mut self.control {
+            control.authorize(expected, &self.caller.ops.last().unwrap().intent)?;
+        }
         let result = if action.native_authorization() {
             self.onchain_apply(&action, password, now)
         } else {
