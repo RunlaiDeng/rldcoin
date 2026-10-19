@@ -1,5 +1,71 @@
 # Survivor native candidate
 
+## Interactive native wallet
+
+Build the native executables together and keep `rld-fast-wallet` beside
+`rld-fast-payment-session`. The interactive client uses the existing private
+serialized node; it does not maintain another ledger or signing engine.
+
+```text
+rld-fast-wallet init ROOT GENESIS PIN CALLER_HEAD_FILE
+rld-fast-wallet open ROOT GENESIS PIN CALLER_HEAD_FILE
+rld-fast-wallet open ROOT GENESIS PIN CALLER_HEAD_FILE PEER_ROOT PEER_HEAD_FILE
+rld-fast-wallet recover ROOT GENESIS PIN CALLER_HEAD_FILE
+```
+
+Genesis and its exact pin come from the intended network's authenticated release.
+`init` creates fresh local session state, not a currency or monetary genesis.
+`open` retains exclusive caller/native ownership; optional already-pinned peer
+state enables automatic native/signature carriage. The node continues its normal
+sync/mining work while the menu waits for input. Closing the menu stops this local
+node. Another process must not open these same stores concurrently.
+
+The menu creates/selects encrypted wallets, shows ordinary balances, starts or
+stops public-reward-key mining, prepares ordinary payments, resumes retained
+payments and creates/exports funding-miner receipt-service delegation. Amounts
+use exact decimal RLD with up to24 places. Input selection uses actual mature,
+locally unreserved native output pages and at most32 inputs; change returns to
+the same selected owner. A new transfer expires at observed height+144. The
+complete native review displays ordered recipients, amounts, fee and expiry;
+signing requires the actual selected owner and explicit typed YES before another
+password prompt. Queueing is reported separately from inclusion.
+
+Passwords are read only from `/dev/tty` with terminal echo disabled through the
+native system `stty`, restored on normal completion/error. There is no visible
+password or argv/environment/HTTP fallback. Secret buffers and serialized private
+requests are zeroized. The sibling node receives passwords only through its
+private stdin; raw key material is never displayed or imported by this client.
+
+Resume reads the node's actual retained transfer intent, preserves all original
+terms and expiry and displays its first native preparation time. An existing
+signature is requeued only after explicit confirmation; an unsigned exact intent
+gets a new current native review without releasing its old reservations. A
+transport timeout or broken reply poisons the client stream: it stops rather than
+matching a late signature reply to another request. `recover` uses the normal
+keyless trusted-head recovery and displays retained request/certificate references.
+It cannot first-sign or clear included/reserved value. Expired conflicting intent
+is not silently replaced.
+
+The client bounds private frames to1 MiB and responses to120 seconds. An
+interrupted operation remains pending until normal native recovery; these client
+limits change no protocol clock or ledger capacity. Direct fast-channel proposal,
+owner/retainer payment handling and fee-monitor interfaces remain available in
+the private node; their complete consumer menu flow remains separate work.
+This client and current distribution retain the node's NO_VALUE_ONLY status.
+
+The explicit package option includes the three wallet/peer executables and their
+allowlisted interfaces, with no wallet/key/peer state:
+
+```text
+rld-survivor-package REPOSITORY_ROOT NATIVE_BINARY FRESH_TAR_PATH --wallet-binaries BINARY_DIRECTORY
+```
+
+This produces the normal checksum-bound archive with an explicit no-value wallet
+profile. Default packaging remains the baseline native distribution. Neither
+archive creates a monetary network or establishes runtime qualification.
+
+## Native protocol and service interfaces
+
 The explicit [append-only caller-head profile](../../docs/protocol/FAST_SESSION_HEAD_LOG_V1.md)
 uses `create-log-control`, `serve-log-control` and `recover-log-control` with
 `ROOT GENESIS PIN TRUSTED_HEAD_FILE`. It retains exact canonical request digests
@@ -663,6 +729,14 @@ invoices, closing backing and exhausted fee slots do not display a usable
 principal. Reads load no wallet key, approve no spend, and preserve original
 reservations and clocks. See the [owner-state contract](../../docs/protocol/FAST_OWNER_STATE_VIEW_V1.md)
 for the exact observations and their local trust and availability limits.
+
+Miner receipt-service delegation uses `delegation_prepare {tip, channel,
+retainer}` followed by the normal persisted-review `onchain_sign`. Only the
+funding miner's encrypted key can sign this exact current context. The reply's
+`delegation.delegation_hex` can initialize the normal owner/retainer actors;
+`retained_delegation {head, sign_request}` exports an existing proof after restart
+without a key. Delegation does not sign principal payments or spend fee inputs,
+and cannot be submitted to the native value pool.
 
 Unsigned proposals come from the node's own native/retained owner state. Explicit
 signing requires a persisted exact review reference, approved=true and a private

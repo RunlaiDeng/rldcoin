@@ -83,6 +83,11 @@ pub fn bytes(raw: &str, max: usize) -> Result<Vec<u8>> {
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "method", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Action {
+    DelegationPrepare {
+        tip: Id,
+        channel: Id,
+        retainer: Id,
+    },
     FeePolicyApprove {
         tip: Id,
         terms: FeePolicy,
@@ -198,7 +203,8 @@ impl Action {
     }
     fn tip(&self) -> Hash {
         match self {
-            Self::FeePolicyApprove { tip, .. }
+            Self::DelegationPrepare { tip, .. }
+            | Self::FeePolicyApprove { tip, .. }
             | Self::FeePolicyPrepare { tip, .. }
             | Self::FeePolicySign { tip, .. }
             | Self::PoolSubmit { tip, .. }
@@ -271,6 +277,12 @@ impl Action {
     }
     fn shape(&self) -> Result<()> {
         match self {
+            Self::DelegationPrepare { retainer, .. } => {
+                ensure(
+                    crate::kernel::valid_point(retainer.0),
+                    "INVALID delegation retainer",
+                )?;
+            }
             Self::FeePolicyApprove {
                 terms, key_file, ..
             } => {
@@ -1781,7 +1793,9 @@ impl Session {
         }
         let index = self.caller.ops.len() - 1;
         if done.authorization.is_some() {
-            if let Some(policy) = self.policy_output(&op.intent.action, done)? {
+            if let Some(delegation) = self.delegation_signature(index)? {
+                out["delegation"] = delegation;
+            } else if let Some(policy) = self.policy_output(&op.intent.action, done)? {
                 out["fee_policy"] = policy;
             } else if let Some((request, partial)) =
                 self.opening_signature(index, &op.intent.action)?

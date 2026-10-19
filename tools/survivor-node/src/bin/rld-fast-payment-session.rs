@@ -216,6 +216,14 @@ enum Request {
         head: Id,
         actor: Id,
     },
+    RetainedDelegation {
+        head: Id,
+        sign_request: Id,
+    },
+    TransferDraft {
+        head: Id,
+        owner: Id,
+    },
     Pending {
         head: Id,
         actor: Id,
@@ -443,6 +451,8 @@ fn run() -> Result<()> {
             ),
             Request::Status { head } => s.status(head.0, clock),
             Request::OwnerState { head, actor } => s.owner_state(head.0,actor,clock),
+            Request::RetainedDelegation { head, sign_request } => s.retained_delegation(head.0, sign_request, clock),
+            Request::TransferDraft { head, owner } => s.transfer_draft(head.0, owner, clock),
             Request::NativeWallet { head, owner, after, limit } => s.native_wallet(head.0, owner, after.as_deref(), limit, clock),
             Request::WalletCreateKey { head, name, password } => s.wallet_create_key(head.0, &name, password.0.as_bytes(), clock),
             Request::WalletKeyInfo { head, name, password } => s.wallet_key_info(head.0, &name, password.0.as_bytes(), clock),

@@ -249,6 +249,18 @@ impl Session {
             self.opening_signature(index, &op.intent.action)?.is_none(),
             "INVALID opening partial is not a complete operation",
         )?;
+        if let Action::OnchainSign {
+            prepare_request,
+            review,
+            ..
+        } = &op.intent.action
+        {
+            let (_, plan, _) = self.prepared(index, *prepare_request, *review)?;
+            ensure(
+                !matches!(plan, super::transfer::Preparation::Delegation { .. }),
+                "INVALID delegation is not a native value operation",
+            )?;
+        }
         let raw = bytes(
             op.done
                 .as_ref()

@@ -20,6 +20,16 @@ latest-state assumption is not independent freshness or continuous fee service.
 
 ### Ordinary wallet input discovery
 
+`transfer_draft {head, owner}` returns the latest successful ordinary transfer
+preparation for that owner from the actual authenticated caller history. Its
+key-free plan, latest preparation request, earliest matching successful native
+preparation time and any retained matching signing request support explicit UI
+resumption. Matching uses the existing exact reservation identity, preserving
+outputs, fee, inputs, owner and expiry while permitting only a fresh evaluation
+timestamp. This native preparation time is not the earliest client submission.
+The view neither creates a signature nor releases reservations or evaluates
+current inclusion. An expired original intent cannot be silently rewritten.
+
 Private `wallet_create_key {head, name, password}` creates a fresh O13 encrypted
 key in the session's private `keys/` directory. Names contain1..64 lowercase ASCII
 letters, digits, hyphens or underscores; the directory holds at most64 entries.
@@ -71,6 +81,34 @@ does not append records, clear pending intent, renew a policy or change any nati
 rule, maturity, caller capacity or monetary-network status.
 
 ### Fast owner state and signing
+
+`delegation_prepare` is a private execute action containing the exact selected
+`tip`, funded `channel` and distinct `retainer` public key. It obtains the funding
+origin through native execution and checks current backing before retaining a
+review. The review binds the selected tip and exact existing181-byte unsigned
+delegation under `RLD-FAST-SESSION-1/MINER-DELEGATION-REVIEW` plus zero. It displays
+the actual funding miner, retainer, context and existing7200/3600-second policy.
+There are no ordinary input reservations or new fee-spending rights in this action.
+
+The existing `onchain_sign` action references that durable preparation and review,
+requires approved=true and rechecks the identical current native selection before
+loading the actual funding miner's encrypted key. It signs the unchanged
+RLD-FAST-PAYMENT-1/DELEGATION domain; the245-byte result must pass ordinary native-
+origin delegation verification and retains its exact retainer. The complete
+signature is stored in the caller's existing authorization field before release.
+Full cold audit reconstructs the original native context and verifies the review,
+consent and signature. Controlled recovery can return only an existing retained
+authorization, never first-signing.
+
+The reply contains `delegation {channel, miner, retainer, delegation_id,
+delegation_hex, signature_retained, authorizes_principal, authorizes_fee_inputs}`.
+The last two authority flags are false. `retained_delegation {head, sign_request}`
+exports the same authenticated retained certificate without a key, including when
+its original backing is now historical. It does not assert current usability.
+`submit_authorized` refuses delegations as native value operations. Normal
+owner/retainer registration must still authenticate the complete delegation
+against current native funding. Fee-wallet consent cannot authorize this miner
+signature. Native mining itself still needs only a public reward key.
 
 The private [owner-state observation](FAST_OWNER_STATE_VIEW_V1.md) separates
 authenticated retained principal/fee evidence from conditional onward usability

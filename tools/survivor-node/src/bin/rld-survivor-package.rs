@@ -51,9 +51,9 @@ fn read(path: &Path) -> Result<Vec<u8>, String> {
 }
 fn run() -> Result<(), String> {
     let a: Vec<_> = std::env::args().collect();
-    if a.len() != 4 {
+    if a.len() != 4 && !(a.len() == 6 && a[4] == "--wallet-binaries") {
         return Err(
-            "Usage: rld-survivor-package REPOSITORY_ROOT NATIVE_BINARY FRESH_TAR_PATH".into(),
+            "Usage: rld-survivor-package REPOSITORY_ROOT NATIVE_BINARY FRESH_TAR_PATH [--wallet-binaries DIRECTORY]".into(),
         );
     }
     let root = Path::new(&a[1]);
@@ -89,6 +89,46 @@ fn run() -> Result<(), String> {
         "docs/protocol/payment-capsule-v1-vectors.json",
     ] {
         files.push((path.to_string(), read(&root.join(path))?, false));
+    }
+    if a.len() == 6 {
+        for name in [
+            "rld-fast-wallet",
+            "rld-fast-payment-session",
+            "rld-fast-peer",
+        ] {
+            let raw = read(&Path::new(&a[5]).join(name))?;
+            if !raw.starts_with(b"\x7fELF")
+                && !raw.starts_with(&[0xcf, 0xfa, 0xed, 0xfe])
+                && !raw.starts_with(&[0xfe, 0xed, 0xfa, 0xcf])
+            {
+                return Err("unsupported wallet native binary image".into());
+            }
+            files.push((name.into(), raw, true));
+        }
+        for name in [
+            "NATIVE_FAST_ESCROW_V1",
+            "FAST_NATIVE_NODE_V1",
+            "FAST_PAYMENT_SESSION_V1",
+            "FAST_PAYMENT_RETENTION_V1",
+            "FAST_OWNER_AUTHORIZATION_V1",
+            "FAST_OWNER_STATE_VIEW_V1",
+            "FAST_PEER_NETWORK_V1",
+            "FAST_PEER_HEAD_CONTROL_V1",
+            "FAST_SESSION_HEAD_CONTROL_V1",
+            "FAST_SESSION_HEAD_LOG_V1",
+            "FAST_FEE_WALLET_POLICY_V1",
+            "FAST_LOCAL_MONITOR_V1",
+            "FAST_NATIVE_AUTOMATIC_CARRIAGE_V1",
+            "FAST_NATIVE_TRANSFER_AUTHORIZATION_V1",
+            "FAST_NATIVE_OPENING_AUTHORIZATION_V1",
+            "FAST_NATIVE_ACTION_AUTHORIZATION_V1",
+            "FAST_NATIVE_OPERATION_POOL_V1",
+            "FAST_MINER_FEE_CLAIMS_V1",
+        ] {
+            let path = format!("docs/protocol/{name}.md");
+            files.push((path.clone(), read(&root.join(path))?, false));
+        }
+        files.push(("WALLET-PROFILE.txt".into(),b"NO_VALUE_ONLY native wallet client and private node interfaces. No monetary genesis, seed, key, peer configuration or wallet state is included. Compilation and packaging are not runtime qualification or mainnet activation.\n".to_vec(),false));
     }
     files.sort_by(|a, b| a.0.cmp(&b.0));
     let checksums = files
