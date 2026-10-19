@@ -30,6 +30,8 @@ pub struct Done {
     pub effect: Option<Id>,
     pub review: Option<Id>,
     pub diagnostic: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub authorization: Option<String>,
 }
 #[derive(Clone)]
 pub struct Op {
@@ -306,6 +308,15 @@ impl Journal {
         review: Option<Id>,
         diagnostic: Option<String>,
     ) -> Result<()> {
+        self.finish_authorized(effect, review, diagnostic, None)
+    }
+    pub fn finish_authorized(
+        &mut self,
+        effect: Option<Id>,
+        review: Option<Id>,
+        diagnostic: Option<String>,
+        authorization: Option<String>,
+    ) -> Result<()> {
         let o = self.ops.last().ok_or("MISSING caller pending")?;
         ensure(o.done.is_none(), "CONFLICT caller already complete")?;
         let done = Done {
@@ -314,6 +325,7 @@ impl Journal {
             effect,
             review,
             diagnostic,
+            authorization,
         };
         let raw = serde_json::to_vec(&done).map_err(io)?;
         ensure(

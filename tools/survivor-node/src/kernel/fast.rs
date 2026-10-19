@@ -3,6 +3,7 @@
 use super::*;
 use crate::fast_fee_claims::{Contract, FeeFloors};
 mod codec;
+pub mod planning;
 use codec::{Action, Open, Operation};
 
 const WINDOW_BLOCKS: u64 = 2016;
@@ -412,17 +413,36 @@ impl Ledger {
         miner: Hash,
         ops: &[Vec<u8>],
     ) -> Result<(Coins, Book)> {
+        let decoded = ops
+            .iter()
+            .map(|raw| Ok((raw.clone(), codec::decode(raw, self.chain)?)))
+            .collect::<Result<Vec<_>>>()?;
+        self.apply_decoded(height, time, miner, decoded)
+    }
+    // Private execution kernel shared by normal authenticated operations and
+    // nonmutating unsigned-action review. Only normal decode admits ledger bytes.
+    fn apply_decoded(
+        &self,
+        height: u128,
+        time: u64,
+        miner: Hash,
+        ops: Vec<(Vec<u8>, Operation)>,
+    ) -> Result<(Coins, Book)> {
         require(
             valid_point(miner) && height > 0 && height <= u128::MAX - 100,
             "INVALID fast height/miner",
         )?;
+        let txroot = fh(
+            "TRANSACTIONS",
+            &body(&ops.iter().map(|(raw, _)| raw.clone()).collect::<Vec<_>>()),
+        );
         let mut coins = self.coins.clone();
         let mut book = self.book.clone();
         let mut fees = 0u128;
         let mut touched = std::collections::BTreeSet::new();
-        for raw in ops {
-            let id = operation_id(raw);
-            match codec::decode(raw, self.chain)? {
+        for (raw, operation) in ops {
+            let id = operation_id(&raw);
+            match operation {
                 Operation::Ordinary(tx) => {
                     require(height <= tx.expiry, "INVALID fast ordinary expiry")?;
                     let total = tx.outputs.iter().try_fold(tx.fee, |s, (_, v)| {
@@ -575,7 +595,6 @@ impl Ledger {
                 }
             }
         }
-        let txroot = fh("TRANSACTIONS", &body(ops));
         let reward = fh(
             "REWARD",
             &[

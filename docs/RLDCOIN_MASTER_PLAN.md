@@ -148,6 +148,18 @@ Exact last-record recovery authenticates an existing data head without new signi
 or truncation. Direct ground sockets and explicit local imports do not qualify
 autonomous latest-head coordination, discovery/multi-hop, continuous funded claims,
 independent operations/custody, long history, mass exit or composed G1-G11.
+The [native action authorization](protocol/FAST_NATIVE_ACTION_AUTHORIZATION_V1.md)
+adds explicit ordinary-input review/reservation and encrypted-key signing for
+close, principal challenge, miner-fee claim and settlement. Preparation uses full
+nonmutating native execution; exact approved signatures are retained in the
+caller reply before release. Retained owner/retainer exit certificates remain
+historical proof, never current backing. Bounded own-template CPU candidate
+construction stays separate from actual native admission and peer carriage.
+Fixed challenge windows, exact funding-miner allocation and h+100 maturity are
+unchanged. Cold audit fully checks every authorization; process-local immutable
+prefix reuse is never serialized or initialized from peer state. Independent
+latest-head/key custody, continuous funded claim/challenge monitoring, timely
+inclusion and composed resource/exit qualification remain required.
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
@@ -176,6 +188,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Native fast-node selection | FAST_NATIVE_NODE_V1: durable full known-branch custody, greatest native work, exact current-state lease, bounded local control/mining and keyless tail recovery | `fast_store.rs`, `bin/rld-fast-node.rs`, `tests/fast_store.rs`; peer synchronization, owner/caller sessions, fee-solvent monitoring, independent custody and composed G9-G11 remain required |
 | Serialized native payment session | FAST_PAYMENT_SESSION_V1: exact key-free caller intent, audited native/actor effects, persisted review/approval and keyless cross-journal recovery | `fast_session.rs`, `fast_session/journal.rs`, `bin/rld-fast-payment-session.rs`, `tests/fast_session.rs`; authenticated peers, actual consumer approval/latest-head custody, fee monitoring/claim solvency, scalable archival and composed independent gates remain required |
 | Direct session peer data carriage | FAST_PEER_NETWORK_V1: pinned mutual TLS, fresh signed connection binding, bounded durable queue/receive/response custody, retry and exact data-tail recovery | `fast_peer.rs`, `fast_peer/{codec,store}.rs`, session/peer binaries and `tests/fast_peer.rs`; explicit local native/owner verification, autonomous head coordination, fee monitoring, independent operators and all composed gates remain required |
+| Native escrow action authorization | FAST_NATIVE_ACTION_AUTHORIZATION_V1: exact ordinary fee-input reservation, full native review, explicit encrypted-key signature custody, historical exit evidence and own-template CPU candidates | `kernel/fast/planning.rs`, `fast_session/onchain.rs`, session caller/CLI and `tests/fast_onchain.rs`; continuous solvent monitoring, guaranteed inclusion, independent latest-state/key custody, physical routes and composed G1-G11 remain required |
 
 ## Ordered behavior milestones
 

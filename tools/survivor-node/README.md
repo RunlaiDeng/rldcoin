@@ -675,3 +675,26 @@ independent operators/latest-state protection, physical routes, scalable archiva
 mass exit or actual local latency/daily100M payment campaigns. The base consensus,
 ordinary CPU mining, asynchronous interstellar carriage and all G1-G11 obligations
 remain unchanged; no monetary genesis, migration or mainnet is provided.
+
+The [native escrow action authorization](../../docs/protocol/FAST_NATIVE_ACTION_AUTHORIZATION_V1.md)
+extends the same private session with `onchain_prepare` and `onchain_sign` execute
+actions. Explicit ordered ordinary inputs pay close/challenge/claim/settlement
+operation fees. Full native review computes change, authenticates the certificate
+and checks ownership, maturity and unchanged windows before key loading. A stored
+review reserves those inputs; signing requires that exact review, selected tip,
+approved=true and the spending owner's O13 encrypted key. Miner-retainer delegation
+alone cannot spend ordinary inputs. A complete signed operation is retained in
+the caller response before release; exact keyless recovery cannot first-sign.
+
+`exit_evidence` obtains a retained complete owner/retainer certificate without a
+key, including after native close/reorganization; it grants no current backing.
+`mining_candidate` takes exact current head, miner, complete operation hex strings,
+canonical timestamp and attempts1..4096, builds its own current native template
+and returns a candidate only. Normal native execution and peer carriage remain
+separate explicit steps. All actual inclusion still verifies complete signatures,
+work, state, funding, fixed2016-block/172800-second windows and h+100 miner maturity.
+Cold opening replays all authorization history; process-local reuse of an already
+audited immutable prefix never initializes a ledger or independent latest state.
+No timeout releases pending fee inputs. Continuous funded monitoring, timely
+claims/inclusion, independent custody/approval, archival/mass-exit capacity and
+the original composed performance gates remain required.

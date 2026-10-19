@@ -247,6 +247,16 @@ fn caller_session_composes_exact_owner_review_signatures_retention_and_onward_pa
             );
             assert_eq!(v["receipt_hex"], hex::encode(payment.bytes()));
         }
+        for actor in [a, b, r] {
+            let head = s.head();
+            let evidence = s.exit_evidence(head, actor, f.now).unwrap();
+            assert_eq!(
+                evidence["certificate_hex"],
+                hex::encode(payment.after_certificate())
+            );
+            assert_eq!(evidence["backing_currentness_known"], false);
+            assert_eq!(evidence["wallet_key_loaded"], false);
+        }
         previous = Some(payment);
     }
     let head = s.head();

@@ -2,7 +2,7 @@
 //! argv/env/log/HTTP values; no plaintext signing key is accepted or returned.
 use rld_survivor_node::{
     fast_peer::{codec::Packet, Network},
-    fast_session::{Action, Id, Session},
+    fast_session::{Action, Id, MiningRequest, Session},
     kernel::Result,
 };
 use serde::{Deserialize, Deserializer};
@@ -28,6 +28,17 @@ impl<'de> Deserialize<'de> for Password {
 #[derive(Deserialize)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
+    ExitEvidence {
+        head: Id,
+        actor: Id,
+    },
+    MiningCandidate {
+        head: Id,
+        miner: Id,
+        operations: Vec<String>,
+        timestamp: String,
+        attempts: u32,
+    },
     PeerStatus {
         head: Id,
     },
@@ -251,6 +262,23 @@ fn run() -> Result<()> {
                     clock,
                 )
             }
+            Request::MiningCandidate {
+                head,
+                miner,
+                operations,
+                timestamp,
+                attempts,
+            } => s.mining_candidate(
+                head.0,
+                MiningRequest {
+                    miner,
+                    operations,
+                    timestamp,
+                    attempts,
+                },
+                clock,
+            ),
+            Request::ExitEvidence { head, actor } => s.exit_evidence(head.0, actor, clock),
             other => peer_command(&mut s, &mut peer, other, clock),
         });
         match out {

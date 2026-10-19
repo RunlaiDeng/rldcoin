@@ -1,6 +1,7 @@
 //! Serialized key-free caller intents compose native selection and private
 //! owner/retainer steps. Full child replay/audits precede signing authority.
 mod journal;
+mod onchain;
 use crate::{
     fast_owner,
     fast_payment::{self, ensure, Acknowledgment, Delegation, Invoice, Payment},
@@ -10,6 +11,7 @@ use crate::{
     keyfile,
 };
 use journal::{Done, Journal};
+pub use onchain::{MiningRequest, OnchainRequest};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -62,6 +64,17 @@ pub fn bytes(raw: &str, max: usize) -> Result<Vec<u8>> {
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "method", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Action {
+    OnchainPrepare {
+        tip: Id,
+        plan: OnchainRequest,
+    },
+    OnchainSign {
+        tip: Id,
+        prepare_request: Id,
+        review: Id,
+        key_file: String,
+        approved: bool,
+    },
     Native {
         tip: Id,
         block: String,
@@ -129,7 +142,9 @@ impl Action {
     }
     fn tip(&self) -> Hash {
         match self {
-            Self::Native { tip, .. }
+            Self::OnchainPrepare { tip, .. }
+            | Self::OnchainSign { tip, .. }
+            | Self::Native { tip, .. }
             | Self::OwnerCreate { tip, .. }
             | Self::RetainerCreate { tip, .. }
             | Self::OwnerPrepare { tip, .. }
@@ -193,6 +208,9 @@ impl Action {
     }
     fn shape(&self) -> Result<()> {
         match self {
+            Self::OnchainPrepare { plan, .. } => {
+                plan.request()?;
+            }
             Self::Native { block, .. } => {
                 fast::block_id(&bytes(block, 262144)?)?;
             }
@@ -221,7 +239,9 @@ impl Action {
                     ensure(bytes(ack, 340)?.len() == 340, "INVALID acknowledgment size")?;
                 }
             }
-            Self::OwnerSign { key_file, .. } | Self::RetainerSign { key_file, .. } => {
+            Self::OwnerSign { key_file, .. }
+            | Self::RetainerSign { key_file, .. }
+            | Self::OnchainSign { key_file, .. } => {
                 ensure(
                     !key_file.is_empty() && key_file.len() <= 4096,
                     "INVALID native key path",
@@ -303,6 +323,7 @@ impl Actor {
 pub enum Boundary {
     IntentDurable,
     ChildDurable,
+    NativeActionEvaluated,
     ReplyDurable,
 }
 pub struct Session {
@@ -312,6 +333,17 @@ pub struct Session {
     caller: Journal,
     native: Option<Store>,
     actors: BTreeMap<Id, ActorState>,
+    mining: Option<Mining>,
+    // Process-local proof over an already fully audited immutable caller/native
+    // prefix. Never serialized; advance only after durable caller completion.
+    onchain_audited: usize,
+}
+struct Mining {
+    tip: Hash,
+    miner: Hash,
+    operations: Vec<Vec<u8>>,
+    timestamp: u64,
+    job: fast::MiningJob,
 }
 fn sync_dir(p: &Path) -> Result<()> {
     File::open(p)
@@ -451,6 +483,8 @@ impl Session {
             caller,
             native: Some(native),
             actors: BTreeMap::new(),
+            mining: None,
+            onchain_audited: 0,
         })
     }
     fn structural(c: &Journal, chain: Hash) -> Result<(Hash, BTreeMap<Id, ActorState>)> {
@@ -523,8 +557,11 @@ impl Session {
             caller,
             native: Some(native),
             actors,
+            mining: None,
+            onchain_audited: 0,
         };
         s.audit(now)?;
+        s.onchain_audited = s.caller.ops.len();
         Ok(s)
     }
     fn paths(root: &Path) -> Result<()> {
@@ -591,6 +628,7 @@ impl Session {
             before_head == native_head && before_tip == self.tip(),
             "INVALID caller reconstructed selection",
         )?;
+        self.audit_onchain(&native_context)?;
         // One actor at a time: no unchecked serialized child state and no in-memory
         // prefix for every registered owner. Native/actor memory remains separately bounded.
         let mut verified = BTreeMap::new();
@@ -908,6 +946,7 @@ impl Session {
     }
     fn preflight(&self, action: &Action) -> Result<()> {
         action.shape()?;
+        self.onchain_preflight(action)?;
         if let Some(reg) = action.registration(self.chain)? {
             ensure(
                 self.actors.len() < 16 && !self.actors.contains_key(&reg.id),
@@ -1083,17 +1122,35 @@ impl Session {
         self.preflight(&action)?;
         self.caller.begin(id, action.clone(), now)?;
         observe(Boundary::IntentDurable);
-        let result = self.apply(&action, password, now);
-        let (effect, review, diagnostic) = match result {
-            Ok((e, r)) => {
-                observe(Boundary::ChildDurable);
-                (e, r, None)
+        let result = if matches!(
+            action,
+            Action::OnchainPrepare { .. } | Action::OnchainSign { .. }
+        ) {
+            self.onchain_apply(&action, password, now)
+        } else {
+            self.apply(&action, password, now)
+                .map(|(e, r)| (e, r, None))
+        };
+        let (effect, review, authorization, diagnostic) = match result {
+            Ok((e, r, authorization)) => {
+                observe(
+                    if matches!(
+                        action,
+                        Action::OnchainPrepare { .. } | Action::OnchainSign { .. }
+                    ) {
+                        Boundary::NativeActionEvaluated
+                    } else {
+                        Boundary::ChildDurable
+                    },
+                );
+                (e, r, authorization, None)
             }
             Err(error) => {
                 let (e, r) = self.resolve(now)?;
                 (
                     e,
                     r,
+                    None,
                     Some({
                         let mut message = error;
                         while message.len() > 256 {
@@ -1104,8 +1161,16 @@ impl Session {
                 )
             }
         };
-        self.verify_pending(effect, review, diagnostic.clone(), now)?;
-        self.caller.finish(effect, review, diagnostic)?;
+        self.verify_pending(
+            effect,
+            review,
+            diagnostic.clone(),
+            authorization.clone(),
+            now,
+        )?;
+        self.caller
+            .finish_authorized(effect, review, diagnostic, authorization)?;
+        self.onchain_audited = self.caller.ops.len();
         observe(Boundary::ReplyDurable);
         self.output(now)
     }
@@ -1118,6 +1183,12 @@ impl Session {
             .intent
             .action
             .clone();
+        if matches!(
+            action,
+            Action::OnchainPrepare { .. } | Action::OnchainSign { .. }
+        ) {
+            return Ok((None, None));
+        }
         if let Some(reg) = action.registration(self.chain)? {
             let p = actor_path(&self.root, reg.id);
             if !p.try_exists().map_err(fast_retainer::io)? {
@@ -1271,6 +1342,7 @@ impl Session {
         effect: Option<Id>,
         review: Option<Id>,
         diagnostic: Option<String>,
+        authorization: Option<String>,
         now: u64,
     ) -> Result<()> {
         let i = &self
@@ -1285,6 +1357,7 @@ impl Session {
             effect,
             review,
             diagnostic,
+            authorization,
         };
         self.caller.ops.last_mut().unwrap().done = Some(d);
         let result = self.audit(now);
@@ -1349,6 +1422,8 @@ impl Session {
             caller,
             native: Some(native),
             actors,
+            mining: None,
+            onchain_audited: 0,
         };
         if pending {
             // For a pending native step the retained store may already be one step ahead;
@@ -1368,6 +1443,7 @@ impl Session {
                 e,
                 r,
                 Some("RECOVERED_EXISTING_EFFECT_OR_NO_CHILD_STEP".into()),
+                None,
                 now,
             )?;
             s.caller.finish(
@@ -1378,6 +1454,7 @@ impl Session {
         } else {
             s.audit(now)?;
         }
+        s.onchain_audited = s.caller.ops.len();
         let out = s.output(now)?;
         Ok((s, out))
     }
@@ -1390,6 +1467,15 @@ impl Session {
             .clone();
         let done = op.done.as_ref().ok_or("MISSING caller complete response")?;
         let mut out = json!({"session_head":Id(self.head()),"native_head":Id(self.native_head()),"selected_tip":Id(self.tip()),"request_id":op.intent.id,"request_digest":op.intent.action.digest()?,"review_digest":done.review,"diagnostic":done.diagnostic,"fast_completion_authorized":false,"network_monitoring":false,"independent_freshness":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY","key_loaded_by_recovery":false});
+        if let Some(review) = self.onchain_output(&op.intent.action, done, op.intent.at)? {
+            out["review"] = review;
+        }
+        if let Some(raw) = &done.authorization {
+            out["operation_hex"] = raw.clone().into();
+            out["operation_id"] = serde_json::to_value(Id(fast::operation_id(&bytes(raw, 1589)?)))
+                .map_err(fast_retainer::io)?;
+            out["ledger_admitted"] = false.into();
+        }
         if let Some(reg) = op.intent.action.registration(self.chain)? {
             if done.effect.is_some() {
                 out["actor"] = serde_json::to_value(reg.id).map_err(fast_retainer::io)?;

@@ -122,43 +122,65 @@ pub(super) fn decode(raw: &[u8], chain: Hash) -> Result<Operation> {
             inputs,
         }))
     } else {
-        let channel = r.fixed()?;
-        let actor = r.fixed()?;
-        require(valid_point(actor), "INVALID fast actor")?;
-        let fee = r.u128()?;
-        let change = r.u128()?;
-        let expiry = r.u128()?;
-        require(
-            fee > 0 && fee <= CAP && change <= CAP,
-            "INVALID fast action fee",
-        )?;
-        let inputs = inputs(&mut r)?;
-        let n = r.u16()? as usize;
-        require(
-            match kind {
-                2 => n == 0 || n == 252,
-                3 | 4 => n == 252,
-                5 => n == 0,
-                _ => false,
-            },
-            "INVALID fast certificate length",
-        )?;
-        let certificate = r.take(n)?.to_vec();
-        r.end()?;
+        let action = action_body(&mut r, kind)?;
         verify(
-            actor,
+            action.actor,
             &[ftag("ACTION"), vec![kind], unsigned.to_vec()].concat(),
             signatures,
         )?;
-        Ok(Operation::Action(Action {
-            kind,
-            channel,
-            actor,
-            fee,
-            change,
-            expiry,
-            inputs,
-            certificate,
-        }))
+        Ok(Operation::Action(action))
     }
+}
+// Never a ledger decoder: unsigned actions can only reach the nonmutating
+// planner. The ordinary decoder above still verifies every actor signature.
+pub(super) fn unsigned_action(raw: &[u8], chain: Hash) -> Result<Action> {
+    require(
+        (183..=1525).contains(&raw.len()),
+        "INVALID unsigned action size",
+    )?;
+    let kind = raw[0];
+    require((2..=5).contains(&kind), "INVALID unsigned action kind")?;
+    let mut r = Reader::new(&raw[1..]);
+    require(
+        r.u16()? == 1 && r.u16()? == 1,
+        "UNSUPPORTED action version/suite",
+    )?;
+    require(r.fixed::<32>()? == chain, "INVALID action chain")?;
+    require(r.fixed::<32>()? != [0; 32], "INVALID action nonce")?;
+    action_body(&mut r, kind)
+}
+fn action_body(r: &mut Reader<'_>, kind: u8) -> Result<Action> {
+    let channel = r.fixed()?;
+    let actor = r.fixed()?;
+    require(valid_point(actor), "INVALID fast actor")?;
+    let fee = r.u128()?;
+    let change = r.u128()?;
+    let expiry = r.u128()?;
+    require(
+        fee > 0 && fee <= CAP && change <= CAP,
+        "INVALID fast action fee",
+    )?;
+    let inputs = inputs(r)?;
+    let n = r.u16()? as usize;
+    require(
+        match kind {
+            2 => n == 0 || n == 252,
+            3 | 4 => n == 252,
+            5 => n == 0,
+            _ => false,
+        },
+        "INVALID fast certificate length",
+    )?;
+    let certificate = r.take(n)?.to_vec();
+    r.end()?;
+    Ok(Action {
+        kind,
+        channel,
+        actor,
+        fee,
+        change,
+        expiry,
+        inputs,
+        certificate,
+    })
 }

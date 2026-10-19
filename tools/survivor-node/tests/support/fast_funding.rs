@@ -55,6 +55,9 @@ pub fn mine_until(
     }
 }
 pub fn fixture() -> Fixture {
+    aged_fixture(61200)
+}
+pub fn aged_fixture(genesis_age: u64) -> Fixture {
     let deadline = Instant::now() + Duration::from_secs(180);
     let v: serde_json::Value = serde_json::from_str(include_str!(
         "../../../../docs/protocol/native-fast-escrow-v1-vectors.json"
@@ -66,7 +69,7 @@ pub fn fixture() -> Fixture {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_secs();
-    genesis[45..53].copy_from_slice(&(now - 61200).to_be_bytes());
+    genesis[45..53].copy_from_slice(&(now - genesis_age).to_be_bytes());
     let chain = fast::genesis_id(&genesis);
     let mut ledger = fast::Ledger::from_genesis(&genesis, chain, 100_000).unwrap();
     let mut owners = [
