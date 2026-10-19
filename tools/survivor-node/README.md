@@ -636,3 +636,42 @@ transport, a consumer approval UI, fee-solvent continuous challenge monitoring,
 independent latest-state custody, power-loss/scalable archival or composed G1-G11
 qualification. Every response keeps fast completion false; existing proof alone
 does not establish unseen work, current remote backing or mature miner payout.
+
+The separate [direct peer adapter](../../docs/protocol/FAST_PEER_NETWORK_V1.md)
+adds actual pinned mutual TLS1.3 data transport to that session lifecycle:
+
+```
+rld-fast-peer init PEER_ROOT PINNED_CHAIN
+rld-fast-peer bind PEER_ROOT CONFIG_FILE
+rld-fast-payment-session serve ROOT GENESIS_FILE PINNED_CHAIN LATEST_SESSION_HEAD --peer-root PEER_ROOT --peer-head LATEST_PEER_HEAD
+rld-fast-peer recover PEER_ROOT PINNED_CHAIN PRIOR_PEER_HEAD PACKET_OR_MESSAGE_ID
+```
+
+Provision separate private transport material and explicitly admitted literal
+neighbor endpoints/data keys/certificate pins; never publish generated material,
+configuration or custody state. Network workers carry bounded native blocks,
+invoices, existing partials, complete receipts and retainer proofs. They have no
+wallet key/password or signing/approval command. Fresh signed connection binding
+precedes full packet checks; durable destination custody precedes a scoped data
+response, which the sender retains before suppressing retry. The bounded32-MiB
+box reserves response space, retains all2048 maximum packet identities and never
+prunes pending obligations or resets original queue age.
+
+Local `peer_*` commands import received blocks through full native validation,
+prepare received invoices/receipts, combine existing actual owner partials and
+retain the exact existing retainer proof. Explicit owner/retainer reviews and
+encrypted local signing remain separate. Consult the contract for typed commands
+and public wire vectors. A last missed data head can be reconciled only from its
+exact predecessor and known last packet/message identity, without new signing or
+repair. Normal startup still requires the independently retained current head.
+Multiple unknown transitions and all-state rollback remain unqualified. Nested
+peer status accompanies local responses, including errors after a partial data
+queue; multi-destination queuing is not atomic and deterministic exact retries
+retain already queued bytes. Native/caller and peer heads remain separate.
+
+This direct ground transport does not qualify autonomous native/head coordination,
+discovery or multi-hop routing, consumer consent UI, continuous funded fee claims,
+independent operators/latest-state protection, physical routes, scalable archival,
+mass exit or actual local latency/daily100M payment campaigns. The base consensus,
+ordinary CPU mining, asynchronous interstellar carriage and all G1-G11 obligations
+remain unchanged; no monetary genesis, migration or mainnet is provided.

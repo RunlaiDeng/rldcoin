@@ -277,9 +277,65 @@ fn client(material: &Material, chain: Hash, peer: Neighbor) -> Result<Arc<Client
         .map_err(err)?;
     Ok(Arc::new(c))
 }
-struct Timed {
+pub(crate) struct Timed {
     stream: TcpStream,
     deadline: Instant,
+}
+/// Typed application adapters share pinned TLS and one whole-socket deadline;
+/// application framing/signatures and durable custody remain their responsibility.
+pub(crate) fn connect_stream(
+    material: &Material,
+    chain: Hash,
+    peer: &Neighbor,
+) -> Result<StreamOwned<ClientConnection, Timed>> {
+    let deadline = Instant::now() + Duration::from_secs(3);
+    let socket = TcpStream::connect_timeout(&peer.endpoint, Duration::from_secs(3)).map_err(err)?;
+    let connection = ClientConnection::new(
+        client(material, chain, peer.clone())?,
+        ServerName::try_from("rld-survivor.invalid")
+            .map_err(err)?
+            .to_owned(),
+    )
+    .map_err(err)?;
+    let mut stream = StreamOwned::new(
+        connection,
+        Timed {
+            stream: socket,
+            deadline,
+        },
+    );
+    while stream.conn.is_handshaking() {
+        stream.conn.complete_io(&mut stream.sock).map_err(err)?;
+    }
+    Ok(stream)
+}
+pub(crate) fn accept_stream(
+    socket: TcpStream,
+    config: Arc<ServerConfig>,
+    neighbors: &[Neighbor],
+) -> Result<(Hash, StreamOwned<ServerConnection, Timed>)> {
+    socket.set_nonblocking(false).map_err(err)?;
+    let mut stream = StreamOwned::new(
+        ServerConnection::new(config).map_err(err)?,
+        Timed {
+            stream: socket,
+            deadline: Instant::now() + Duration::from_secs(3),
+        },
+    );
+    while stream.conn.is_handshaking() {
+        stream.conn.complete_io(&mut stream.sock).map_err(err)?;
+    }
+    let cert = stream
+        .conn
+        .peer_certificates()
+        .and_then(|p| p.first())
+        .ok_or("INVALID_CRYPTO client certificate")?;
+    let digest: Hash = Sha256::digest(cert).into();
+    let peer = neighbors
+        .iter()
+        .find(|p| p.certificate_sha256 == digest)
+        .ok_or("INVALID_CRYPTO unknown client")?;
+    Ok((peer.key, stream))
 }
 impl Timed {
     fn remaining(&self) -> io::Result<Duration> {

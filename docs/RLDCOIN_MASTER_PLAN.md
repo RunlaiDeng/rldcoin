@@ -136,6 +136,18 @@ This supplies a local caller/session component, not authenticated peer delivery,
 consumer consent UI, continuous fee-solvent monitoring, independent latest-head
 custody or G1-G11 composition. Its fixed32-MiB caller/actor and16-actor bounds
 require separate archival/scaling/resource qualification before capacity claims.
+The [direct payment peer adapter](protocol/FAST_PEER_NETWORK_V1.md) adds separately
+pinned mutual TLS1.3 data carriage to session startup. It durably queues exact
+native blocks, invoices, retained partials, full receipts and retainer proofs;
+fresh connection challenges and complete envelope signatures precede duplicate
+handling. Destination file/parent custody precedes its scoped data response, and
+local response custody precedes retry suppression. Original queued times survive
+restart. Local explicit native import and owner/retainer review remain mandatory;
+network reception never supplies a ledger, approves a review or loads wallet keys.
+Exact last-record recovery authenticates an existing data head without new signing
+or truncation. Direct ground sockets and explicit local imports do not qualify
+autonomous latest-head coordination, discovery/multi-hop, continuous funded claims,
+independent operations/custody, long history, mass exit or composed G1-G11.
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
@@ -163,6 +175,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Fast owner authorization | FAST_OWNER_AUTHORIZATION_V1: unsigned proposal, separate owner review/reservation/signature, full receipt/ack retention and keyless recovery | `fast_owner.rs`, `bin/rld-fast-owner-recover.rs` and `tests/fast_owner.rs`; no frontend approval/caller-head service, independent custody, live native selection/monitoring or composed G9-G11 qualification |
 | Native fast-node selection | FAST_NATIVE_NODE_V1: durable full known-branch custody, greatest native work, exact current-state lease, bounded local control/mining and keyless tail recovery | `fast_store.rs`, `bin/rld-fast-node.rs`, `tests/fast_store.rs`; peer synchronization, owner/caller sessions, fee-solvent monitoring, independent custody and composed G9-G11 remain required |
 | Serialized native payment session | FAST_PAYMENT_SESSION_V1: exact key-free caller intent, audited native/actor effects, persisted review/approval and keyless cross-journal recovery | `fast_session.rs`, `fast_session/journal.rs`, `bin/rld-fast-payment-session.rs`, `tests/fast_session.rs`; authenticated peers, actual consumer approval/latest-head custody, fee monitoring/claim solvency, scalable archival and composed independent gates remain required |
+| Direct session peer data carriage | FAST_PEER_NETWORK_V1: pinned mutual TLS, fresh signed connection binding, bounded durable queue/receive/response custody, retry and exact data-tail recovery | `fast_peer.rs`, `fast_peer/{codec,store}.rs`, session/peer binaries and `tests/fast_peer.rs`; explicit local native/owner verification, autonomous head coordination, fee monitoring, independent operators and all composed gates remain required |
 
 ## Ordered behavior milestones
 

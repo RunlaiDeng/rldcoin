@@ -378,6 +378,37 @@ fn owner_digest(
     .into()
 }
 impl Session {
+    /// Assemble existing authorizations only; no key or current-backing claim.
+    pub fn combine(
+        &mut self,
+        expected: Hash,
+        actor: Id,
+        invoice: Id,
+        other: &[u8],
+        now: u64,
+    ) -> Result<Vec<u8>> {
+        self.caller.check(expected)?;
+        let state = self.actors.get(&actor).ok_or("MISSING combine owner")?;
+        ensure(state.reg.role < 2, "INVALID combine role")?;
+        let mut j = fast_owner::Journal::open(
+            &actor_path(&self.root, actor),
+            self.chain,
+            state.head,
+            now,
+            CHILD_LIMIT,
+        )?;
+        let p = j.retained_pending(state.head, invoice.0)?;
+        let own = p.partial.ok_or("MISSING retained own signature")?;
+        let origin = j.scope().0;
+        let inv = Invoice::verify(&origin, &p.invoice)?;
+        ensure(inv.id() == invoice.0, "INVALID combine invoice")?;
+        let payment = if state.reg.role == 0 {
+            Payment::combine(&origin, &p.invoice, &own, other)?
+        } else {
+            Payment::combine(&origin, &p.invoice, other, &own)?
+        };
+        Ok(payment.bytes().to_vec())
+    }
     pub fn create(root: &Path, genesis: &[u8], chain: Hash, now: u64) -> Result<Self> {
         fast::Ledger::from_genesis(genesis, chain, 100000)?;
         fs::create_dir(root).map_err(fast_retainer::io)?;
