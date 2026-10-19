@@ -167,6 +167,18 @@ it cannot skip multiple unknown transitions, truncate a tail or repair bad bytes
 Normal opening continues to require the exact current head. This narrow data-only
 reconciliation is not an independent latest-state witness or value recovery.
 
+The separate [trusted-file head-control profile](FAST_PEER_HEAD_CONTROL_V1.md)
+uses fresh local storage version2 with unchanged packet/TLS bytes and bounds.
+The operator explicitly supplies a private trusted head file whose integrity and
+latest-state are local assumptions. Every exact record is durably prepared there
+before journal append, and its completed head is published before data response
+or retry suppression. Cold recovery fully authenticates the original prefix and
+prospective complete record before completing a retained publication. Unknown
+advances, changed bytes, partial tails and mismatched candidates refuse without
+repair. Literal-head version1 and controlled version2 reject each other, without
+conversion or fallback. This covers idle data progress, not caller approvals,
+native import, independent freshness or monetary authorization.
+
 ## Local payment/session integration
 
 A peer-enabled node ticks transport while local stdin is idle. It reports the real
@@ -175,7 +187,8 @@ and diagnostics without fabricating a height, balance or successful connection.
 The nested peer diagnostic retains the last observed transport fault; it is not
 the local control command's error or a claim that a later retry failed. Successful
 data delivery is observed through the exact retained destination response.
-Local callers must retain latest caller/peer heads and their pending request IDs.
+Local callers must retain latest caller heads and pending request IDs. Peer
+custody explicitly selects an exact literal head or the trusted-file profile.
 Nested peer status accompanies local errors as well as successes. Queuing a list
 of destinations is not atomic: preserve any earlier successful queue entries and
 inspect the returned head/inventory. Exact deterministic retry is idempotent.

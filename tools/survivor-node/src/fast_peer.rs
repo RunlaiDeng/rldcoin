@@ -1,6 +1,7 @@
 //! Direct pinned-neighbor payment data carriage. Network workers never access
 //! wallet/retainer keys, caller approvals, ledgers or private signing commands.
 pub mod codec;
+mod head_control;
 mod store;
 use crate::{
     fast_payment::ensure,
@@ -11,6 +12,7 @@ use crate::{
 };
 use codec::Packet;
 use ed25519_dalek::SigningKey;
+pub use head_control::Boundary as HeadBoundary;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -164,6 +166,12 @@ pub fn provision(root: &Path, chain: Hash) -> Result<Value> {
     )
 }
 pub fn bind(root: &Path, raw: &[u8], now: u64) -> Result<Value> {
+    bind_inner(root, raw, None, now)
+}
+pub fn bind_controlled(root: &Path, raw: &[u8], head_file: &Path, now: u64) -> Result<Value> {
+    bind_inner(root, raw, Some(head_file), now)
+}
+fn bind_inner(root: &Path, raw: &[u8], head_file: Option<&Path>, now: u64) -> Result<Value> {
     let config = Config::parse(raw)?;
     let (key, tls) = material(root, config.chain.0)?;
     ensure(
@@ -176,18 +184,50 @@ pub fn bind(root: &Path, raw: &[u8], now: u64) -> Result<Value> {
         &root.join("admission.json"),
         &serde_json::to_vec(&config).map_err(io)?,
     )?;
-    let custody = store::Custody::create(
-        &root.join("custody.journal"),
-        &config,
-        config.identity.0,
-        tls.fingerprint(),
-        now,
-    )?;
+    let custody = if let Some(head_file) = head_file {
+        store::Custody::create_controlled(
+            &root.join("custody.journal"),
+            &config,
+            config.identity.0,
+            tls.fingerprint(),
+            head_file,
+            now,
+        )?
+    } else {
+        store::Custody::create(
+            &root.join("custody.journal"),
+            &config,
+            config.identity.0,
+            tls.fingerprint(),
+            now,
+        )?
+    };
     fs::remove_file(root.join("BINDING")).map_err(io)?;
     File::open(root).and_then(|f| f.sync_all()).map_err(io)?;
     Ok(
         json!({"peer_head":Id(custody.head),"identity":config.identity,"config_digest":Id(config.digest()?),"transport_custody_only":true}),
     )
+}
+/// Reconcile exact retained data only; never start workers or first-sign.
+pub fn recover_controlled(root: &Path, chain: Hash, head_file: &Path, now: u64) -> Result<Value> {
+    let c = Config::parse(&read(&root.join("admission.json"), 65536)?)?;
+    ensure(c.chain.0 == chain, "INVALID peer configured chain")?;
+    let (key, tls) = material(root, chain)?;
+    ensure(
+        key.verifying_key().to_bytes() == c.identity.0,
+        "INVALID peer retained identity",
+    )?;
+    let head = store::Custody::recover_controlled(
+        &root.join("custody.journal"),
+        &c,
+        c.identity.0,
+        tls.fingerprint(),
+        head_file,
+        now,
+    )?;
+    Ok(json!({"peer_head":Id(head),"head_control":"TRUSTED_FILE",
+        "transport_custody_only":true,"wallet_key_loaded":false,"first_sign":false,
+        "native_authority":false,"independent_freshness":false}))
 }
 /// Authenticate and report only the exact retained successor of a caller's
 /// prior data head. No record, signature, network worker or wallet is created.
@@ -334,6 +374,24 @@ pub struct Network {
 }
 impl Network {
     pub fn open(root: &Path, chain: Hash, head: Hash, now: u64) -> Result<Self> {
+        Self::open_inner(root, chain, Some(head), None, now)
+    }
+    pub fn open_controlled(root: &Path, chain: Hash, head_file: &Path, now: u64) -> Result<Self> {
+        Self::open_inner(root, chain, None, Some(head_file), now)
+    }
+    pub fn set_head_observer(
+        &mut self,
+        observer: impl FnMut(HeadBoundary) -> Result<()> + Send + 'static,
+    ) -> Result<()> {
+        self.custody.set_observer(Box::new(observer))
+    }
+    fn open_inner(
+        root: &Path,
+        chain: Hash,
+        head: Option<Hash>,
+        head_file: Option<&Path>,
+        now: u64,
+    ) -> Result<Self> {
         let raw = read(&root.join("admission.json"), 65536)?;
         let c = Config::parse(&raw)?;
         ensure(c.chain.0 == chain, "INVALID peer configured chain")?;
@@ -342,14 +400,25 @@ impl Network {
             key.verifying_key().to_bytes() == c.identity.0,
             "INVALID peer retained identity",
         )?;
-        let custody = store::Custody::open(
-            &root.join("custody.journal"),
-            &c,
-            c.identity.0,
-            material.fingerprint(),
-            head,
-            now,
-        )?;
+        let custody = if let Some(head_file) = head_file {
+            store::Custody::open_controlled(
+                &root.join("custody.journal"),
+                &c,
+                c.identity.0,
+                material.fingerprint(),
+                head_file,
+                now,
+            )?
+        } else {
+            store::Custody::open(
+                &root.join("custody.journal"),
+                &c,
+                c.identity.0,
+                material.fingerprint(),
+                head.ok_or("MISSING explicit peer head")?,
+                now,
+            )?
+        };
         let material = Arc::new(material);
         tls::server(&material, chain, c.neighbors())?;
         let (tx, incoming) = mpsc::sync_channel(8);
@@ -566,7 +635,7 @@ impl Network {
         Ok(json!(self.custody.order.iter().map(|id|{let x=&self.custody.items[id];json!({"id":Id(*id),"kind":x.packet.kind,"source":Id(x.packet.sender),"destination":Id(x.packet.destination),"received":x.received,"queued_at":x.at.to_string(),"destination_transport_custody":x.response.is_some(),"ledger_acceptance_known":false,"fast_completion_authorized":false})}).collect::<Vec<_>>()))
     }
     pub fn status(&self) -> Value {
-        json!({"profile":"RLD-FAST-PEER-1","peer_head":Id(self.head()),"identity":self.config.identity,"listen":self.listen,"admitted_peers":self.config.peers.len(),"retained_packets":self.custody.items.len(),"in_flight":self.in_flight.len(),"custody_ready":self.custody.ready(),"diagnostic":self.diagnostic,"transport_custody_only":true,"native_import":"EXPLICIT_LOCAL_VERIFICATION","fast_completion_authorized":false,"mainnet":false})
+        json!({"profile":"RLD-FAST-PEER-1","custody_version":if self.custody.controlled(){2}else{1},"head_control":if self.custody.controlled(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"independent_freshness":false,"peer_head":Id(self.head()),"identity":self.config.identity,"listen":self.listen,"admitted_peers":self.config.peers.len(),"retained_packets":self.custody.items.len(),"in_flight":self.in_flight.len(),"custody_ready":self.custody.ready(),"diagnostic":self.diagnostic,"transport_custody_only":true,"native_import":"EXPLICIT_LOCAL_VERIFICATION","fast_completion_authorized":false,"mainnet":false})
     }
     pub fn root(&self) -> &Path {
         &self.root

@@ -669,6 +669,25 @@ peer status accompanies local responses, including errors after a partial data
 queue; multi-destination queuing is not atomic and deterministic exact retries
 retain already queued bytes. Native/caller and peer heads remain separate.
 
+For unattended data receipt, explicitly choose a fresh version2 custody store and
+a private trusted head file under the [head-control contract](../../docs/protocol/FAST_PEER_HEAD_CONTROL_V1.md):
+
+```
+rld-fast-peer bind-control PEER_ROOT CONFIG_FILE TRUSTED_HEAD_FILE
+rld-fast-payment-session serve ROOT GENESIS_FILE PINNED_CHAIN LATEST_SESSION_HEAD --peer-root PEER_ROOT --peer-head-file TRUSTED_HEAD_FILE
+rld-fast-peer recover-control PEER_ROOT PINNED_CHAIN TRUSTED_HEAD_FILE
+```
+
+Every queue, receive and response records its exact pending transition before
+journal mutation and its completed head before acknowledgment. Normal startup
+fully replays the journal against that explicitly trusted input. Recovery can
+finish only the already retained, fully authenticated exact transition; it never
+truncates a damaged tail, resets queue age or signs a payment. The head file's
+integrity/latest-state remains an explicit local trust assumption, without
+independent freshness or all-state rollback protection. Legacy literal-head and
+controlled storage refuse each other; no state/value conversion is provided.
+Caller/native heads, approvals and monitored fee service remain separate.
+
 This direct ground transport does not qualify autonomous native/head coordination,
 discovery or multi-hop routing, consumer consent UI, continuous funded fee claims,
 independent operators/latest-state protection, physical routes, scalable archival,

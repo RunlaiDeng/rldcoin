@@ -145,7 +145,13 @@ local response custody precedes retry suppression. Original queued times survive
 restart. Local explicit native import and owner/retainer review remain mandatory;
 network reception never supplies a ledger, approves a review or loads wallet keys.
 Exact last-record recovery authenticates an existing data head without new signing
-or truncation. Direct ground sockets and explicit local imports do not qualify
+or truncation. The separate [trusted-file custody profile](protocol/FAST_PEER_HEAD_CONTROL_V1.md)
+uses fresh version2 data storage and explicitly trusted local head input to retain
+each exact pending record before append and each completed head before response.
+It allows reconciliation of an interrupted prepared data transition after full
+prefix/record authentication; old storage refuses without conversion. Its local
+integrity/latest-state assumption supplies no independent freshness, caller
+approval or native authority. Direct ground sockets and explicit local imports do not qualify
 autonomous latest-head coordination, discovery/multi-hop, continuous funded claims,
 independent operations/custody, long history, mass exit or composed G1-G11.
 The [native action authorization](protocol/FAST_NATIVE_ACTION_AUTHORIZATION_V1.md)
@@ -218,6 +224,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Native fast-node selection | FAST_NATIVE_NODE_V1: durable full known-branch custody, greatest native work, exact current-state lease, bounded local control/mining and keyless tail recovery | `fast_store.rs`, `bin/rld-fast-node.rs`, `tests/fast_store.rs`; peer synchronization, owner/caller sessions, fee-solvent monitoring, independent custody and composed G9-G11 remain required |
 | Serialized native payment session | FAST_PAYMENT_SESSION_V1: exact key-free caller intent, audited native/actor effects, persisted review/approval and keyless cross-journal recovery | `fast_session.rs`, `fast_session/journal.rs`, `bin/rld-fast-payment-session.rs`, `tests/fast_session.rs`; authenticated peers, actual consumer approval/latest-head custody, fee monitoring/claim solvency, scalable archival and composed independent gates remain required |
 | Direct session peer data carriage | FAST_PEER_NETWORK_V1: pinned mutual TLS, fresh signed connection binding, bounded durable queue/receive/response custody, retry and exact data-tail recovery | `fast_peer.rs`, `fast_peer/{codec,store}.rs`, session/peer binaries and `tests/fast_peer.rs`; explicit local native/owner verification, autonomous head coordination, fee monitoring, independent operators and all composed gates remain required |
+| Explicit trusted-file peer head control | FAST_PEER_HEAD_CONTROL_V1: version2 local data custody, exact prepared record and durable committed head, full-authentication recovery without tail repair | `fast_peer/head_control.rs`, shared peer store/session controls and `tests/fast_peer.rs`; local head-file integrity/latest-state is trusted, while native/caller coordination, independent freshness/custody, continuous solvent monitoring and G1-G11 remain required |
 | Native escrow action authorization | FAST_NATIVE_ACTION_AUTHORIZATION_V1: exact ordinary fee-input reservation, full native review, explicit encrypted-key signature custody, historical exit evidence and own-template CPU candidates | `kernel/fast/planning.rs`, `fast_session/onchain.rs`, session caller/CLI and `tests/fast_onchain.rs`; continuous solvent monitoring, guaranteed inclusion, independent latest-state/key custody, physical routes and composed G1-G11 remain required |
 | Signed operation carriage and pool mining | FAST_NATIVE_OPERATION_POOL_V1: bounded existing-signature custody, versioned peer data, normal native own-template selection and explicit candidate admission | `fast_session/pool.rs`, peer codec/session CLI, `fast_store.rs` and `tests/fast_pool.rs`; queue/candidate/inclusion/maturity remain distinct, with all autonomous coordination, monitoring, custody/resource and composed gates still required |
 | Ordinary native funding authorization | FAST_NATIVE_TRANSFER_AUTHORIZATION_V1: exact existing C04 transfer review, cross-operation input reservation and explicit encrypted owner signature custody | `kernel/fast/transfer.rs`, `fast_session/transfer.rs`, shared authorization audit and `tests/fast_transfer.rs`; real retainer funding is distinct from continuous service, joint opening, independent custody and all composed obligations |

@@ -239,10 +239,14 @@ fn run() -> Result<()> {
         _ => return Err("INVALID payment session entry".into()),
     };
     let mut peer = if a[1] == "serve" && a.len() == 10 {
-        if a[6] != "--peer-root" || a[8] != "--peer-head" {
+        if a[6] != "--peer-root" || (a[8] != "--peer-head" && a[8] != "--peer-head-file") {
             return Err("INVALID peer startup flags".into());
         }
-        Some(Network::open(Path::new(&a[7]), chain, id(&a[9])?.0, clock)?)
+        Some(if a[8] == "--peer-head-file" {
+            Network::open_controlled(Path::new(&a[7]), chain, Path::new(&a[9]), clock)?
+        } else {
+            Network::open(Path::new(&a[7]), chain, id(&a[9])?.0, clock)?
+        })
     } else {
         None
     };

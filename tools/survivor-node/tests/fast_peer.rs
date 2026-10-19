@@ -68,6 +68,9 @@ struct Pair {
     bh: Hash,
 }
 fn pair(root: &Path, chain: Hash, wrong_pin: bool) -> Pair {
+    pair_mode(root, chain, wrong_pin, false)
+}
+fn pair_mode(root: &Path, chain: Hash, wrong_pin: bool, controlled: bool) -> Pair {
     let a = root.join("a");
     let b = root.join("b");
     let ai = fast_peer::provision(&a, chain).unwrap();
@@ -98,14 +101,19 @@ fn pair(root: &Path, chain: Hash, wrong_pin: bool) -> Pair {
             certificate_sha256: Id(hv(&ai, "certificate_sha256")),
         }],
     };
-    let ah = hv(
-        &fast_peer::bind(&a, &serde_json::to_vec(&ca).unwrap(), now()).unwrap(),
-        "peer_head",
-    );
-    let bh = hv(
-        &fast_peer::bind(&b, &serde_json::to_vec(&cb).unwrap(), now()).unwrap(),
-        "peer_head",
-    );
+    let bind = |path: &Path, config: &Config, name: &str| {
+        let raw = serde_json::to_vec(config).unwrap();
+        hv(
+            &if controlled {
+                fast_peer::bind_controlled(path, &raw, &root.join(name), now()).unwrap()
+            } else {
+                fast_peer::bind(path, &raw, now()).unwrap()
+            },
+            "peer_head",
+        )
+    };
+    let ah = bind(&a, &ca, "a.head");
+    let bh = bind(&b, &cb, "b.head");
     drop(la);
     drop(lb);
     Pair {
@@ -640,6 +648,566 @@ fn args(
 }
 fn vid(v: &Value, k: &str) -> Id {
     Id(hv(v, k))
+}
+fn controlled_args(
+    root: &Path,
+    genesis: &Path,
+    chain: Hash,
+    head: Id,
+    peer: &Path,
+    file: &Path,
+) -> Vec<std::ffi::OsString> {
+    let mut v = args("serve", root, genesis, chain, Some(head), None);
+    v.extend([
+        "--peer-root".into(),
+        peer.as_os_str().into(),
+        "--peer-head-file".into(),
+        file.as_os_str().into(),
+    ]);
+    v
+}
+#[test]
+fn controlled_idle_multiple_receipts_survive_actual_sigkill_without_rebasing_client_head() {
+    use rld_survivor_node::fast_session::Session;
+    let deadline = Instant::now() + Duration::from_secs(180);
+    let f = fixture();
+    let chain = f.ledger.chain_id();
+    let root = directory(chain, "controlled-idle");
+    let p = pair_mode(&root, chain, false, true);
+    let g = root.join("genesis");
+    write(&g, &f.genesis);
+    let ar = root.join("sender");
+    let br = root.join("receiver");
+    let a = Session::create(&ar, &f.genesis, chain, f.now).unwrap();
+    let ah = Id(a.head());
+    drop(a);
+    let b = Session::create(&br, &f.genesis, chain, f.now).unwrap();
+    let bh = Id(b.head());
+    drop(b);
+    let mut a = Node::start(
+        &root,
+        "sender",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        controlled_args(&ar, &g, chain, ah, &p.a, &root.join("a.head")),
+        deadline,
+    );
+    let mut b = Node::start(
+        &root,
+        "receiver",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        controlled_args(&br, &g, chain, bh, &p.b, &root.join("b.head")),
+        deadline,
+    );
+    assert_eq!(b.initial["peer"]["head_control"], "TRUSTED_FILE");
+    let native = fs::read(br.join("native.journal")).unwrap();
+    let mut packets = vec![];
+    for nonce in [81u8, 82] {
+        let invoice = Invoice::propose(
+            &f.ledger.funding_origin(f.channel).unwrap(),
+            None,
+            0,
+            7,
+            [nonce; 32],
+        )
+        .unwrap();
+        let v = a.ok(json!({"command":"peer_queue","destination":p.cb.identity,"kind":2,"payload":hex::encode(invoice.bytes())}));
+        packets.push(vid(&v, "packet"));
+    }
+    a.drain();
+    // The idle receiver's local client has never observed the two new heads.
+    assert_eq!(b.peer.0, p.bh);
+    let child = b.child.as_mut().unwrap();
+    child.kill().unwrap();
+    let status = child.wait().unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::ExitStatusExt;
+        assert_eq!(status.signal(), Some(9));
+    }
+    b.child.take();
+    b.input.take();
+    let retained = fs::read(p.b.join("custody.journal")).unwrap();
+    assert!(Network::open(&p.b, chain, p.bh, now()).is_err());
+    let mut b = Node::start(
+        &root,
+        "receiver-restart",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        controlled_args(&br, &g, chain, bh, &p.b, &root.join("b.head")),
+        deadline,
+    );
+    assert_ne!(b.peer.0, p.bh);
+    for id in packets {
+        b.ok(json!({"command":"peer_data","packet":id}));
+    }
+    let inventory = b.ok(json!({"command":"peer_inventory"}));
+    assert_eq!(inventory["packets"].as_array().unwrap().len(), 2);
+    assert!(inventory["packets"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .all(|v| v["ledger_acceptance_known"] == false));
+    assert_eq!(fs::read(p.b.join("custody.journal")).unwrap(), retained);
+    assert_eq!(fs::read(br.join("native.journal")).unwrap(), native);
+    b.finish();
+    a.finish();
+    assert!(Instant::now() < deadline);
+}
+#[test]
+fn peer_control_crash_child() {
+    use rld_survivor_node::fast_peer::HeadBoundary::*;
+    let Some(path) = std::env::var_os("RLD_PEER_CONTROL_CUT") else {
+        return;
+    };
+    let v: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let root = PathBuf::from(v["root"].as_str().unwrap());
+    let chain = hv(&v, "chain");
+    let at = v["boundary"].as_u64().unwrap() as usize;
+    let head_file = root.join("a.head");
+    let mut n = Network::open_controlled(&root.join("a"), chain, &head_file, now()).unwrap();
+    let marker = root.join("cut.marker");
+    n.set_head_observer(move |boundary| {
+        if boundary
+            == [
+                PrepareNextDurable,
+                Prepared,
+                PeerDurable,
+                CommitNextDurable,
+                Committed,
+            ][at]
+        {
+            write(&marker, format!("{boundary:?}").as_bytes());
+            let deadline = Instant::now() + Duration::from_secs(180);
+            loop {
+                assert!(Instant::now() < deadline);
+                std::thread::sleep(Duration::from_millis(10));
+            }
+        }
+        Ok(())
+    })
+    .unwrap();
+    n.queue(hv(&v, "destination"), 2, &raw(&v, "payload"), now())
+        .unwrap();
+    panic!("missing requested data-control cut");
+}
+#[test]
+fn controlled_recovery_refuses_rehashed_invalid_packets_tails_clocks_and_head_candidates_unchanged()
+{
+    use rld_survivor_node::fast_peer::HeadBoundary;
+    for damage in 0..7 {
+        let f = fixture();
+        let chain = f.ledger.chain_id();
+        let root = directory(chain, &format!("head-damage-{damage}"));
+        let p = pair_mode(&root, chain, false, true);
+        let h = root.join("a.head");
+        let journal = p.a.join("custody.journal");
+        let mut a = Network::open_controlled(&p.a, chain, &h, now()).unwrap();
+        let invoice = Invoice::propose(
+            &f.ledger.funding_origin(f.channel).unwrap(),
+            None,
+            0,
+            7,
+            [92; 32],
+        )
+        .unwrap();
+        a.set_head_observer(|b| {
+            if b == HeadBoundary::Prepared {
+                Err("RESOURCE_WAIT injected interruption".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap();
+        assert!(a.queue(p.cb.identity.0, 2, invoice.bytes(), now()).is_err());
+        assert!(!a.status()["custody_ready"].as_bool().unwrap());
+        drop(a);
+        let mut snapshot = fs::read(&h).unwrap();
+        let mut record = snapshot[112..snapshot.len() - 32].to_vec();
+        match damage {
+            0 => {
+                let n = snapshot.len();
+                snapshot[n - 1] ^= 1;
+            }
+            1 => {
+                // Preserve both unkeyed checksums after changing a real packet
+                // signature; only complete authentication can reject it.
+                let n = record.len();
+                record[n - 33] ^= 1;
+                let digest = codec::hash("BOX-RECORD", &record[4..n - 32]);
+                record[n - 32..].copy_from_slice(&digest);
+                let n = snapshot.len();
+                snapshot[112..n - 32].copy_from_slice(&record);
+                let digest = codec::hash("CONTROL-HEAD", &snapshot[..n - 32]);
+                snapshot[n - 32..].copy_from_slice(&digest);
+            }
+            2 => {
+                record[12] ^= 1;
+                let n = record.len();
+                let digest = codec::hash("BOX-RECORD", &record[4..n - 32]);
+                record[n - 32..].copy_from_slice(&digest);
+                let n = snapshot.len();
+                snapshot[112..n - 32].copy_from_slice(&record);
+                let digest = codec::hash("CONTROL-HEAD", &snapshot[..n - 32]);
+                snapshot[n - 32..].copy_from_slice(&digest);
+            }
+            3 => {
+                let mut candidate = snapshot[..112].to_vec();
+                candidate[44..76].fill(17); // Wrong exact publication predecessor.
+                candidate[76..108].copy_from_slice(&record[record.len() - 32..]);
+                candidate[108..112].fill(0);
+                candidate.extend(codec::hash("CONTROL-HEAD", &candidate));
+                write(&root.join("a.head.next"), &candidate);
+            }
+            4 => {
+                let mut bytes = fs::read(&journal).unwrap();
+                bytes.push(0);
+                fs::write(&journal, bytes).unwrap();
+            }
+            5 => {
+                record[44..52].copy_from_slice(&(now() + 7201).to_be_bytes());
+                let n = record.len();
+                let digest = codec::hash("BOX-RECORD", &record[4..n - 32]);
+                record[n - 32..].copy_from_slice(&digest);
+                let n = snapshot.len();
+                snapshot[112..n - 32].copy_from_slice(&record);
+                let digest = codec::hash("CONTROL-HEAD", &snapshot[..n - 32]);
+                snapshot[n - 32..].copy_from_slice(&digest);
+            }
+            6 => {
+                fs::write(root.join("a.head.lock"), [19; 32]).unwrap();
+            }
+            _ => unreachable!(),
+        }
+        fs::write(&h, &snapshot).unwrap();
+        let before = fs::read(&journal).unwrap();
+        let candidate = fs::read(root.join("a.head.next")).ok();
+        assert!(
+            fast_peer::recover_controlled(&p.a, chain, &h, now()).is_err(),
+            "damage{damage}"
+        );
+        assert_eq!(fs::read(&h).unwrap(), snapshot);
+        assert_eq!(fs::read(&journal).unwrap(), before);
+        assert_eq!(fs::read(root.join("a.head.next")).ok(), candidate);
+    }
+}
+#[test]
+fn controlled_lease_and_storage_version_boundaries_refuse_without_value_conversion() {
+    let f = fixture();
+    let chain = f.ledger.chain_id();
+    let root = directory(chain, "head-lease");
+    let p = pair_mode(&root, chain, false, true);
+    let h = root.join("a.head");
+    let mut a = Network::open_controlled(&p.a, chain, &h, now()).unwrap();
+    assert!(Network::open_controlled(&p.a, chain, &h, now()).is_err());
+    assert!(fast_peer::recover_controlled(&p.a, chain, &h, now()).is_err());
+    assert!(Network::open(&p.a, chain, p.ah, now()).is_err());
+    let binding = fs::read(root.join("a.head.lock")).unwrap();
+    fs::rename(root.join("a.head.lock"), root.join("old.lock")).unwrap();
+    write(&root.join("a.head.lock"), &binding);
+    assert!(a.inventory().is_err());
+    drop(a);
+    let legacy_root = directory(chain, "head-legacy");
+    let legacy = pair(&legacy_root, chain, false);
+    let bytes = fs::read(legacy.a.join("custody.journal")).unwrap();
+    assert!(Network::open_controlled(&legacy.a, chain, &h, now()).is_err());
+    assert_eq!(fs::read(legacy.a.join("custody.journal")).unwrap(), bytes);
+}
+#[test]
+fn controlled_receive_and_signed_response_reconcile_without_acknowledging_failed_control() {
+    use rld_survivor_node::fast_peer::HeadBoundary;
+    let deadline = Instant::now() + Duration::from_secs(180);
+    let f = fixture();
+    let chain = f.ledger.chain_id();
+    let root = directory(chain, "head-receive-response");
+    let p = pair_mode(&root, chain, false, true);
+    let ah = root.join("a.head");
+    let bh = root.join("b.head");
+    let mut a = Network::open_controlled(&p.a, chain, &ah, now()).unwrap();
+    let mut b = Network::open_controlled(&p.b, chain, &bh, now()).unwrap();
+    let invoice = Invoice::propose(
+        &f.ledger.funding_origin(f.channel).unwrap(),
+        None,
+        0,
+        7,
+        [93; 32],
+    )
+    .unwrap();
+    let packet = a.queue(p.cb.identity.0, 2, invoice.bytes(), now()).unwrap();
+    let age = a.inventory().unwrap()[0]["queued_at"].clone();
+    b.set_head_observer(|boundary| {
+        if boundary == HeadBoundary::PeerDurable {
+            Err("RESOURCE_WAIT injected receiver head interruption".into())
+        } else {
+            Ok(())
+        }
+    })
+    .unwrap();
+    loop {
+        a.tick(now()).unwrap();
+        b.tick(now()).unwrap();
+        if b.status()["custody_ready"] == false {
+            break;
+        }
+        assert!(Instant::now() < deadline);
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(
+        a.inventory().unwrap()[0]["destination_transport_custody"],
+        false
+    );
+    drop(a);
+    drop(b);
+    let received = fast_peer::recover_controlled(&p.b, chain, &bh, now()).unwrap();
+    assert_eq!(received["first_sign"], false);
+    let mut a = Network::open_controlled(&p.a, chain, &ah, now()).unwrap();
+    let mut b = Network::open_controlled(&p.b, chain, &bh, now()).unwrap();
+    assert_eq!(b.received(packet).unwrap().payload, invoice.bytes());
+    let retained = fs::read(p.b.join("custody.journal")).unwrap();
+    a.set_head_observer(|boundary| {
+        if boundary == HeadBoundary::PeerDurable {
+            Err("RESOURCE_WAIT injected response head interruption".into())
+        } else {
+            Ok(())
+        }
+    })
+    .unwrap();
+    loop {
+        b.tick(now()).unwrap();
+        let result = a.tick(now());
+        if let Err(error) = result {
+            assert!(error.contains("injected response head interruption"));
+            break;
+        }
+        assert!(Instant::now() < deadline);
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(a.status()["custody_ready"], false);
+    drop(a);
+    drop(b);
+    let recovered = fast_peer::recover_controlled(&p.a, chain, &ah, now()).unwrap();
+    assert_eq!(recovered["wallet_key_loaded"], false);
+    let mut a = Network::open_controlled(&p.a, chain, &ah, now()).unwrap();
+    assert_eq!(
+        a.inventory().unwrap()[0]["destination_transport_custody"],
+        true
+    );
+    assert_eq!(a.inventory().unwrap()[0]["queued_at"], age);
+    assert_eq!(fs::read(p.b.join("custody.journal")).unwrap(), retained);
+}
+#[test]
+fn controlled_five_actual_process_cuts_recover_exact_record_clock_and_reserved_response() {
+    use std::process::{Command, Stdio};
+    let deadline = Instant::now() + Duration::from_secs(180);
+    for boundary in 0..5 {
+        let f = fixture();
+        let chain = f.ledger.chain_id();
+        let root = directory(chain, &format!("head-cut-{boundary}"));
+        let p = pair_mode(&root, chain, false, true);
+        let invoice = Invoice::propose(
+            &f.ledger.funding_origin(f.channel).unwrap(),
+            None,
+            0,
+            7,
+            [91; 32],
+        )
+        .unwrap();
+        let config = root.join("cut.json");
+        write(&config, json!({"root":root,"chain":Id(chain),"boundary":boundary,"destination":p.cb.identity,"payload":hex::encode(invoice.bytes())}).to_string().as_bytes());
+        let child = Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "peer_control_crash_child", "--nocapture"])
+            .env("RLD_PEER_CONTROL_CUT", &config)
+            .stdin(Stdio::null())
+            .stdout(fs::File::create(root.join("child.stdout.log")).unwrap())
+            .stderr(fs::File::create(root.join("child.stderr.log")).unwrap())
+            .spawn()
+            .unwrap();
+        // Node's drop guard owns only this child and cannot leave it running on failure.
+        let mut guard = Node {
+            child: Some(child),
+            input: None,
+            rx: std::sync::mpsc::channel().1,
+            head: Id([0; 32]),
+            tip: Id([0; 32]),
+            peer: Id([0; 32]),
+            count: 0,
+            deadline,
+            root: root.clone(),
+            label: "cut".into(),
+            initial: Value::Null,
+        };
+        while !root.join("cut.marker").exists() {
+            assert!(Instant::now() < deadline, "original180 head-control cuts");
+            assert!(
+                guard.child.as_mut().unwrap().try_wait().unwrap().is_none(),
+                "cut child exited"
+            );
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        let child = guard.child.as_mut().unwrap();
+        child.kill().unwrap();
+        let status = child.wait().unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::process::ExitStatusExt;
+            assert_eq!(status.signal(), Some(9));
+        }
+        guard.child.take();
+        let journal = p.a.join("custody.journal");
+        let before = fs::read(&journal).unwrap();
+        if boundary < 4 {
+            assert!(Network::open_controlled(&p.a, chain, &root.join("a.head"), now()).is_err());
+        }
+        let result = Command::new(env!("CARGO_BIN_EXE_rld-fast-peer"))
+            .arg("recover-control")
+            .arg(&p.a)
+            .arg(hex::encode(chain))
+            .arg(root.join("a.head"))
+            .output()
+            .unwrap();
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        let recovered: Value = serde_json::from_slice(&result.stdout).unwrap();
+        assert_eq!(recovered["first_sign"], false);
+        assert_eq!(recovered["wallet_key_loaded"], false);
+        let complete = fs::read(&journal).unwrap();
+        assert!(complete.starts_with(&before));
+        let mut a = Network::open_controlled(&p.a, chain, &root.join("a.head"), now()).unwrap();
+        assert_eq!(a.head(), hv(&recovered, "peer_head"));
+        let inv = a.inventory().unwrap();
+        assert_eq!(inv.as_array().unwrap().len(), 1);
+        let original = inv[0]["queued_at"].clone();
+        let packet = a.queue(p.cb.identity.0, 2, invoice.bytes(), now()).unwrap();
+        assert_eq!(a.inventory().unwrap()[0]["queued_at"], original);
+        assert_eq!(fs::read(&journal).unwrap(), complete);
+        let mut b = Network::open_controlled(&p.b, chain, &root.join("b.head"), now()).unwrap();
+        loop {
+            a.tick(now()).unwrap();
+            b.tick(now()).unwrap();
+            if a.inventory().unwrap()[0]["destination_transport_custody"] == true {
+                break;
+            }
+            assert!(Instant::now() < deadline);
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        assert_eq!(b.received(packet).unwrap().payload, invoice.bytes());
+        let ah = a.head();
+        drop(a);
+        drop(b);
+        let mut a = Network::open_controlled(&p.a, chain, &root.join("a.head"), now()).unwrap();
+        assert_eq!(a.head(), ah);
+        assert_eq!(
+            a.inventory().unwrap()[0]["destination_transport_custody"],
+            true
+        );
+        assert_eq!(a.inventory().unwrap()[0]["queued_at"], original);
+    }
+}
+#[test]
+fn idle_multiple_receipts_refuse_unpinned_recovery_after_actual_sigkill() {
+    use rld_survivor_node::fast_session::Session;
+    let deadline = Instant::now() + Duration::from_secs(180);
+    let f = fixture();
+    let chain = f.ledger.chain_id();
+    let root = directory(chain, "idle-head-gap");
+    let p = pair(&root, chain, false);
+    let genesis = root.join("genesis");
+    write(&genesis, &f.genesis);
+    let a_root = root.join("sender");
+    let b_root = root.join("receiver");
+    let a = Session::create(&a_root, &f.genesis, chain, f.now).unwrap();
+    let ah = Id(a.head());
+    drop(a);
+    let b = Session::create(&b_root, &f.genesis, chain, f.now).unwrap();
+    let bh = Id(b.head());
+    drop(b);
+    let mut a = Node::start(
+        &root,
+        "sender",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        args(
+            "serve",
+            &a_root,
+            &genesis,
+            chain,
+            Some(ah),
+            Some((&p.a, Id(p.ah))),
+        ),
+        deadline,
+    );
+    let mut b = Node::start(
+        &root,
+        "receiver",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        args(
+            "serve",
+            &b_root,
+            &genesis,
+            chain,
+            Some(bh),
+            Some((&p.b, Id(p.bh))),
+        ),
+        deadline,
+    );
+    let initial = b.peer;
+    assert_eq!(initial.0, p.bh);
+    let native_before = fs::read(b_root.join("native.journal")).unwrap();
+    let mut packets = vec![];
+    for nonce in [71u8, 72] {
+        let invoice = Invoice::propose(
+            &f.ledger.funding_origin(f.channel).unwrap(),
+            None,
+            0,
+            7,
+            [nonce; 32],
+        )
+        .unwrap();
+        let v=a.ok(json!({"command":"peer_queue","destination":p.cb.identity,"kind":2,"payload":hex::encode(invoice.bytes())}));
+        packets.push(vid(&v, "packet"));
+    }
+    a.drain();
+    let inventory = a.ok(json!({"command":"peer_inventory"}));
+    assert!(inventory["packets"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .all(|row| row["destination_transport_custody"] == true));
+    // No receiver control command occurs between initial head retention and kill.
+    let child = b.child.as_mut().unwrap();
+    let pid = child.id();
+    child.kill().unwrap();
+    let status = child.wait().unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::ExitStatusExt;
+        assert_eq!(status.signal(), Some(9));
+    }
+    b.child.take();
+    b.input.take();
+    write(
+        &root.join("receiver.terminal.json"),
+        json!({"pid":pid,"intentional_sigkill":true,"status":format!("{status:?}")})
+            .to_string()
+            .as_bytes(),
+    );
+    let path = p.b.join("custody.journal");
+    let retained = fs::read(&path).unwrap();
+    let error = fast_peer::recover(&p.b, chain, initial.0, packets[1].0, now())
+        .expect_err("multiple unknown advances must not be inferred as one last transition");
+    assert!(error.contains("recovery"), "{error}");
+    assert_eq!(fs::read(&path).unwrap(), retained);
+    assert_eq!(
+        fs::read(b_root.join("native.journal")).unwrap(),
+        native_before
+    );
+    assert!(Network::open(&p.b, chain, initial.0, now()).is_err());
+    assert_eq!(fs::read(path).unwrap(), retained);
+    a.finish();
+    assert!(
+        Instant::now() < deadline,
+        "original180 idle peer head observation"
+    );
 }
 #[test]
 fn three_peer_enabled_processes_move_native_funding_and_actual_onward_authorization() {

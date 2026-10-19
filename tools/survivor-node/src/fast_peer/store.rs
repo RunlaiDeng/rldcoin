@@ -1,5 +1,6 @@
 //! Append-only data custody, never ledger/signing authority. Queue capacity
 //! reserves exact returned-response space until local durable acknowledgment.
+use super::head_control::{self, Boundary, Control};
 use super::{
     codec::{self, Packet},
     Config,
@@ -19,11 +20,23 @@ use std::{
 const LIMIT: usize = 32 * 1024 * 1024;
 const ACK_SPACE: usize = 414;
 enum Target {
+    Controlled {
+        first: Hash,
+        second: Hash,
+    },
     Head(Hash),
     Last {
         prior: Hash,
         packet_or_message: Hash,
     },
+}
+struct Decoded {
+    head: Hash,
+    clock: u64,
+    index: u64,
+    items: BTreeMap<Hash, Item>,
+    order: Vec<Hash>,
+    reserved: usize,
 }
 #[derive(Clone)]
 pub struct Item {
@@ -45,6 +58,9 @@ pub struct Custody {
     pub order: Vec<Hash>,
     reserved: usize,
     poisoned: bool,
+    version: u8,
+    control: Option<Control>,
+    observer: Option<Box<dyn FnMut(Boundary) -> Result<()> + Send>>,
 }
 fn head(raw: &[u8]) -> Hash {
     codec::hash("BOX-HEADER", raw)
@@ -71,6 +87,16 @@ impl Custody {
         material: Hash,
         now: u64,
     ) -> Result<Self> {
+        Self::create_version(path, config, local, material, now, 1)
+    }
+    fn create_version(
+        path: &Path,
+        config: &Config,
+        local: Hash,
+        material: Hash,
+        now: u64,
+        version: u8,
+    ) -> Result<Self> {
         private(parent(path)?, false)?;
         let mut options = OpenOptions::new();
         options.read(true).write(true).create_new(true);
@@ -82,7 +108,7 @@ impl Custody {
         let mut f = options.open(path).map_err(io)?;
         FileExt::try_lock_exclusive(&f).map_err(|_| "RESOURCE_WAIT peer custody writer")?;
         let mut h = b"RLDFPEER".to_vec();
-        h.extend([0, 1, 0, 1]);
+        h.extend([0, version, 0, 1]);
         h.extend(config.chain.0);
         h.extend(local);
         h.extend(material);
@@ -97,7 +123,14 @@ impl Custody {
             config,
             local,
             material,
-            Target::Head(expected),
+            if version == 1 {
+                Target::Head(expected)
+            } else {
+                Target::Controlled {
+                    first: expected,
+                    second: expected,
+                }
+            },
             now,
         )
     }
@@ -118,6 +151,172 @@ impl Custody {
             Target::Head(expected),
             now,
         )
+    }
+    pub fn create_controlled(
+        path: &Path,
+        c: &Config,
+        local: Hash,
+        material: Hash,
+        control_path: &Path,
+        now: u64,
+    ) -> Result<Self> {
+        let mut s = Self::create_version(path, c, local, material, now, 2)?;
+        s.control = Some(Control::create(
+            control_path,
+            head(&s.prefix[..148]),
+            s.head,
+        )?);
+        s.check()?;
+        Ok(s)
+    }
+    pub fn open_controlled(
+        path: &Path,
+        c: &Config,
+        local: Hash,
+        material: Hash,
+        control_path: &Path,
+        now: u64,
+    ) -> Result<Self> {
+        let control = Control::open(control_path, false)?;
+        let expected = control.snapshot.head;
+        let mut s = Self::load(
+            path,
+            file(path)?,
+            c,
+            local,
+            material,
+            Target::Controlled {
+                first: expected,
+                second: expected,
+            },
+            now,
+        )?;
+        ensure(
+            head(&s.prefix[..148]) == control.snapshot.binding,
+            "INVALID control header binding",
+        )?;
+        s.control = Some(control);
+        s.check()?;
+        Ok(s)
+    }
+    pub fn controlled(&self) -> bool {
+        self.version == 2
+    }
+    pub fn set_observer(
+        &mut self,
+        observer: Box<dyn FnMut(Boundary) -> Result<()> + Send>,
+    ) -> Result<()> {
+        ensure(self.control.is_some(), "INVALID uncontrolled head observer")?;
+        self.observer = Some(observer);
+        Ok(())
+    }
+    pub fn recover_controlled(
+        path: &Path,
+        c: &Config,
+        local: Hash,
+        material: Hash,
+        control_path: &Path,
+        now: u64,
+    ) -> Result<Hash> {
+        let mut control = Control::open(control_path, true)?;
+        let candidate = control.candidate()?;
+        let raw = if !control.snapshot.pending.is_empty() {
+            control.snapshot.pending.clone()
+        } else {
+            candidate
+                .as_ref()
+                .map(|s| s.pending.clone())
+                .unwrap_or_default()
+        };
+        let prior = control.snapshot.head;
+        let next = if raw.is_empty() {
+            prior
+        } else {
+            head_control::record_heads(&raw)?.1
+        };
+        let mut s = Self::load(
+            path,
+            file(path)?,
+            c,
+            local,
+            material,
+            Target::Controlled {
+                first: prior,
+                second: next,
+            },
+            now,
+        )?;
+        ensure(
+            head(&s.prefix[..148]) == control.snapshot.binding,
+            "INVALID control header binding",
+        )?;
+        let prospective = if !raw.is_empty() && s.head == prior {
+            ensure(
+                s.prefix
+                    .len()
+                    .checked_add(raw.len())
+                    .is_some_and(|n| n <= LIMIT),
+                "RESOURCE_WAIT controlled recovery size",
+            )?;
+            let mut prefix = s.prefix.clone();
+            prefix.extend(&raw);
+            let decoded = Self::decode(
+                &prefix,
+                c,
+                local,
+                material,
+                Target::Controlled {
+                    first: next,
+                    second: next,
+                },
+                now,
+            )?;
+            Some((prefix, decoded))
+        } else {
+            ensure(
+                raw.is_empty() || s.prefix.ends_with(&raw),
+                "INVALID controlled recovery exact tail",
+            )?;
+            None
+        };
+        // Authenticate the whole prefix and prospective complete record before
+        // either journal or trusted control publication may change.
+        s.check()?;
+        if control.snapshot.pending.is_empty() {
+            if let Some(prepared) = candidate.clone() {
+                control.publish_candidate(prepared)?;
+            }
+        }
+        if let Some((prefix, d)) = prospective {
+            s.poisoned = true;
+            s.file
+                .seek(SeekFrom::End(0))
+                .and_then(|_| s.file.write_all(&raw))
+                .map_err(io)?;
+            sync(&s.file, path)?;
+            s.prefix = prefix;
+            s.head = d.head;
+            s.clock = d.clock;
+            s.index = d.index;
+            s.items = d.items;
+            s.order = d.order;
+            s.reserved = d.reserved;
+            s.poisoned = false;
+        } else {
+            sync(&s.file, path)?;
+        }
+        s.check()?;
+        if !control.snapshot.pending.is_empty() {
+            if let Some(committed) = candidate.filter(|s| s.pending.is_empty()) {
+                control.publish_candidate(committed)?;
+            } else {
+                control.finish(s.head, &mut |_| Ok(()))?;
+            }
+        }
+        control.check(s.head)?;
+        s.control = Some(control);
+        s.check()?;
+        Ok(s.head)
     }
     pub fn recover(
         path: &Path,
@@ -165,12 +364,50 @@ impl Custody {
             .read_to_end(&mut prefix)
             .map_err(io)?;
         ensure(prefix.len() <= LIMIT, "RESOURCE_WAIT peer custody grew")?;
-        let mut r = Reader {
-            raw: &prefix,
-            at: 0,
+        let version = if matches!(target, Target::Controlled { .. }) {
+            2
+        } else {
+            1
         };
+        let d = Self::decode(&prefix, c, local, material, target, now)?;
+        Ok(Self {
+            path: path.to_path_buf(),
+            file,
+            prefix,
+            chain: c.chain.0,
+            local,
+            head: d.head,
+            clock: d.clock,
+            index: d.index,
+            items: d.items,
+            order: d.order,
+            reserved: d.reserved,
+            poisoned: false,
+            version,
+            control: None,
+            observer: None,
+        })
+    }
+    fn decode(
+        prefix: &[u8],
+        c: &Config,
+        local: Hash,
+        material: Hash,
+        target: Target,
+        now: u64,
+    ) -> Result<Decoded> {
         ensure(
-            r.take(8)? == b"RLDFPEER" && r.take(4)? == [0, 1, 0, 1],
+            prefix.len() <= LIMIT,
+            "RESOURCE_WAIT peer custody prospective bytes",
+        )?;
+        let version = if matches!(target, Target::Controlled { .. }) {
+            2
+        } else {
+            1
+        };
+        let mut r = Reader { raw: prefix, at: 0 };
+        ensure(
+            r.take(8)? == b"RLDFPEER" && r.take(4)? == [0, version, 0, 1],
             "UNSUPPORTED peer custody",
         )?;
         ensure(
@@ -275,6 +512,10 @@ impl Custody {
             clock = time;
         }
         match target {
+            Target::Controlled { first, second } => ensure(
+                h == first || h == second,
+                "INVALID controlled peer custody head",
+            )?,
             Target::Head(expected) => ensure(
                 h == expected,
                 "INVALID independently pinned peer custody head",
@@ -289,19 +530,13 @@ impl Custody {
                 "INVALID exact last peer custody recovery binding",
             )?,
         }
-        Ok(Self {
-            path: path.to_path_buf(),
-            file,
-            prefix,
-            chain: c.chain.0,
-            local,
+        Ok(Decoded {
             head: h,
             clock,
             index,
             items,
             order,
             reserved,
-            poisoned: false,
         })
     }
     fn admission(c: &Config, local: Hash, p: &Packet, received: bool) -> Result<()> {
@@ -345,6 +580,9 @@ impl Custody {
                 "INVALID peer custody changed prefix",
             )?;
         }
+        if let Some(control) = &mut self.control {
+            control.check(self.head)?;
+        }
         self.poisoned = false;
         Ok(())
     }
@@ -368,6 +606,17 @@ impl Custody {
             "RESOURCE_WAIT peer custody response reservation",
         )?;
         self.poisoned = true;
+        let mut observer = self.observer.take();
+        let mut observe = |b| {
+            if let Some(f) = &mut observer {
+                f(b)
+            } else {
+                Ok(())
+            }
+        };
+        if let Some(control) = &mut self.control {
+            control.begin(&raw, self.head, &mut observe)?;
+        }
         self.file
             .seek(SeekFrom::End(0))
             .and_then(|_| self.file.write_all(&raw))
@@ -378,6 +627,11 @@ impl Custody {
         self.index += 1;
         self.clock = now;
         self.reserved = reserved_after;
+        if let Some(control) = &mut self.control {
+            observe(Boundary::PeerDurable)?;
+            control.finish(self.head, &mut observe)?;
+        }
+        self.observer = observer;
         self.poisoned = false;
         self.check()
     }
