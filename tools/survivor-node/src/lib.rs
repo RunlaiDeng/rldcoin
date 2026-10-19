@@ -27,4 +27,5 @@ pub mod fast_fee_claims;
 pub mod fast_owner;
 pub mod fast_payment;
 pub mod fast_retainer;
+pub mod fast_store;
 pub mod operating_policy;

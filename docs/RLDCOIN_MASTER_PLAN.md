@@ -112,6 +112,16 @@ timeouts never release a pending slot. Latest complete exit evidence remains
 available during a subsequent pending invoice. A frontend/caller-head service,
 one continuously updated native selector, operational fee liquidity, independent
 custody and monitoring remain required before fast completion.
+The [native fast-node selector](protocol/FAST_NATIVE_NODE_V1.md) provides a
+separate bounded exclusive-writer journal and local stdin executable. It retains
+every accepted full branch, chooses greatest native work with the existing
+smaller-ID tie rule, and cold-reconstructs selection through full genesis replay.
+Explicit latest storage/selected heads precede admission, mining and current-state
+borrows. A stronger branch removes old funding from owner/retainer pre-key checks;
+exact keyless tail recovery preserves that knowledge across process restart.
+The local node supplies actual bounded self-constructed CPU mining and funding
+inspection, not a peer transport, live monitored payment/caller-head service,
+independent freshness, mass-exit or composed daily qualification.
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
@@ -137,6 +147,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Native no-value escrow executor | NATIVE_FAST_ESCROW_V1: independent pinned genesis/PoW, ordinary transfers and actual funding locks, one-use close/challenge/settlement and h+100 miner payout | `kernel/fast.rs`, `kernel/fast/codec.rs`, replay-only CLI and `native_fast_escrow.rs`; complete custody/retainer/fast-service, mass-exit and independent qualification remain required |
 | Funded invoice and delegated retention | FAST_PAYMENT_RETENTION_V1: native-origin full payment transition, ordered state/invoice signatures, miner-delegated bounded durable prepare/ack and keyless recovery | `fast_payment.rs`, `fast_retainer.rs`, public codec vectors and native invoice-to-settlement checks; owner custody, continuous monitoring, operational liquidity and composed G9-G11 remain required |
 | Fast owner authorization | FAST_OWNER_AUTHORIZATION_V1: unsigned proposal, separate owner review/reservation/signature, full receipt/ack retention and keyless recovery | `fast_owner.rs`, `bin/rld-fast-owner-recover.rs` and `tests/fast_owner.rs`; no frontend approval/caller-head service, independent custody, live native selection/monitoring or composed G9-G11 qualification |
+| Native fast-node selection | FAST_NATIVE_NODE_V1: durable full known-branch custody, greatest native work, exact current-state lease, bounded local control/mining and keyless tail recovery | `fast_store.rs`, `bin/rld-fast-node.rs`, `tests/fast_store.rs`; peer synchronization, owner/caller sessions, fee-solvent monitoring, independent custody and composed G9-G11 remain required |
 
 ## Ordered behavior milestones
 

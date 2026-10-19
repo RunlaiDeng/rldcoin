@@ -21,6 +21,15 @@ fn fh(s: &str, raw: &[u8]) -> Hash {
 fn header_id(raw: &[u8]) -> Hash {
     Sha256::digest(fh("HEADER", &raw[..268])).into()
 }
+/// Untrusted lookup identity only. The complete block still needs native replay;
+/// another body with this header ID cannot replace the exact retained block.
+pub fn block_id(raw: &[u8]) -> Result<Hash> {
+    require(
+        (270..=262144).contains(&raw.len()) && raw[..4] == [0, 2, 0, 1],
+        "INVALID fast block identity encoding",
+    )?;
+    Ok(header_id(raw))
+}
 pub fn genesis_id(raw: &[u8]) -> Hash {
     fh("GENESIS", raw)
 }

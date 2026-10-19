@@ -575,3 +575,32 @@ historical recovery tool, without a frontend authorization/caller-head service,
 live native selector, network endpoint or independent custody/monitoring. Distinct
 test keys and same-host process interruption do not qualify independent operators,
 copied-key concurrency, common rollback, power-loss or composed daily performance.
+
+The [native fast-node selector](../../docs/protocol/FAST_NATIVE_NODE_V1.md) adds
+`fast_store::Store` and separate `rld-fast-node` local control. It stores every
+accepted complete branch in an exclusive private bounded journal, chooses the
+greatest native work/smaller-ID tip, and reexecutes all admitted branches from the
+independently pinned genesis on every cold open. Explicit expected storage and
+selected heads precede admission/current-view borrows. `Store::current` supplies
+the serialized selected native view for owner/retainer library checks; a historical
+funding origin cannot survive a stronger branch merely through an old receipt.
+
+```
+rld-fast-node create JOURNAL GENESIS_FILE PINNED_CHAIN
+rld-fast-node serve JOURNAL GENESIS_FILE PINNED_CHAIN EXPECTED_LATEST_HEAD
+rld-fast-node recover JOURNAL GENESIS_FILE PINNED_CHAIN PRIOR_HEAD BLOCK_ID
+```
+
+The parent directory must already be private. Create refuses an existing path;
+serve requires an independently retained latest head; keyless recovery admits no
+new block and requires the exact immediate predecessor/last block. Local typed
+JSON lines are bounded by2 MiB. `status`, `accept_block`, `funding_origin` and `mine`
+each require `head`/`tip`; see the contract for exact fields. Mining builds its
+own native template, performs at most4096 header hashes per request and retains
+only an exact template-bound nonce cursor. No key/password, injected ledger or
+clock override is accepted. Journal/prefix is at most256 MiB, block count262144,
+default native coin limit100000 (local maximum1000000), with separate index/ledger
+memory costs. Unknown/corrupt/torn data refuse unchanged; no repair/pruning or
+value migration is provided. This is local native operation, not live peer
+synchronization, owner/caller session control, continuous fee-solvent monitoring,
+independent latest-state custody, ordinary-hardware or composed fast qualification.
