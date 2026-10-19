@@ -72,6 +72,15 @@ The signing key must equal the actual ordinary input owner. A miner's retainer
 delegation is insufficient. Any valid actor may fund a native claim or settlement
 operation; doing so grants no principal or fee-beneficiary authority.
 
+The separate [bounded fee-wallet policy](FAST_FEE_WALLET_POLICY_V1.md) adds an
+explicit signed input-owner consent, not a retainer-delegation exception. Fresh
+controlled callers may use policy-specific prepare/sign requests for kinds3/4/5
+within fixed input lineage, channel, fee, count and expiry limits. Ordinary
+onchain_sign cannot sign a policy preparation. Signature-time liabilities and
+input use persist across reorganization; no approval, reservation, native rule
+or independent qualification is waived. A policy certificate is not a native
+operation and does not itself start or qualify a continuous service.
+
 The signed operation is stored in the caller's completed response before any
 response releases it. The optional authorization field is omitted when absent;
 existing canonical caller records are unchanged. The fixed4096-byte reply budget

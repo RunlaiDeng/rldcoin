@@ -239,7 +239,10 @@ impl Session {
             return Ok(raw);
         }
         ensure(
-            matches!(op.intent.action, Action::OnchainSign { .. }),
+            matches!(
+                op.intent.action,
+                Action::OnchainSign { .. } | Action::FeePolicySign { .. }
+            ),
             "INVALID native signing request type",
         )?;
         ensure(

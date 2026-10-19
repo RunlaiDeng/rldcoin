@@ -31,6 +31,10 @@ impl<'de> Deserialize<'de> for Password {
 #[derive(Deserialize)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
+    FeePolicyStatus {
+        head: Id,
+        policy_request: Id,
+    },
     OpeningProposal {
         head: Id,
         terms: OpeningTerms,
@@ -334,6 +338,7 @@ fn run() -> Result<()> {
                 clock,
             ),
             Request::Status { head } => s.status(head.0, clock),
+            Request::FeePolicyStatus{head,policy_request}=>s.fee_policy_status(head.0,policy_request,clock),
             Request::Pending {
                 head,
                 actor,

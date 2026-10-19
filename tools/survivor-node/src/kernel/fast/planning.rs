@@ -3,6 +3,36 @@
 use super::*;
 use ed25519_dalek::{Signer, SigningKey};
 
+/// Authenticated operation fields only; current ownership/value/window execution
+/// remains mandatory before admission. This never initializes a ledger.
+pub struct SignedAction {
+    pub kind: u8,
+    pub channel: Hash,
+    pub actor: Hash,
+    pub nonce: Hash,
+    pub inputs: Vec<Vec<u8>>,
+    pub fee: u128,
+    pub change: u128,
+    pub expiry: u128,
+    pub certificate: Vec<u8>,
+}
+pub fn signed_action(raw: &[u8], chain: Hash) -> Result<SignedAction> {
+    let Operation::Action(a) = codec::decode(raw, chain)? else {
+        return Err("INVALID expected native escrow action".into());
+    };
+    Ok(SignedAction {
+        kind: a.kind,
+        channel: a.channel,
+        actor: a.actor,
+        nonce: raw[37..69].try_into().unwrap(),
+        inputs: a.inputs,
+        fee: a.fee,
+        change: a.change,
+        expiry: a.expiry,
+        certificate: a.certificate,
+    })
+}
+
 pub struct Request {
     pub kind: u8,
     pub channel: Hash,

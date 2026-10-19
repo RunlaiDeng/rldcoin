@@ -201,7 +201,16 @@ impl Session {
         password: Option<&[u8]>,
         now: u64,
     ) -> Result<(Option<Id>, Option<Id>, Option<String>)> {
+        if matches!(
+            action,
+            Action::FeePolicyApprove { .. } | Action::FeePolicySign { .. }
+        ) {
+            return Ok((None, None, self.fee_apply(action, password, now)?));
+        }
         if let Some((tip, plan)) = action.preparation() {
+            if let Action::FeePolicyPrepare { policy_request, .. } = action {
+                self.fee_prepare_time(*policy_request, tip, now)?;
+            }
             let n = self.native.as_mut().unwrap();
             let current = n.current(n.head(), tip, now)?;
             let prepared = plan.evaluate(current.ledger, tip, now)?;
@@ -300,6 +309,9 @@ impl Session {
                         signatures.insert(*prepare_request, raw.clone());
                     }
                 }
+                continue;
+            }
+            if self.audit_fee_step(index, *context)? {
                 continue;
             }
             if let Some((tip, plan)) = op.intent.action.preparation() {

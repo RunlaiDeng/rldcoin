@@ -161,6 +161,13 @@ admission during local client inactivity. Exact controlled recovery never first-
 executes, signs or rebases an approval; existing proofs remain available without
 keys. Local trusted head integrity/latest-state is not independent protection.
 Continuous solvent fee/challenge service and composed product gates remain required.
+The [bounded fee-wallet policy](protocol/FAST_FEE_WALLET_POLICY_V1.md) supplies a
+separate actual-input-owner signature for fixed channel/input lineage, fee budget,
+count and expiry. Policy-specific current native preparations/signatures preserve
+signature-time liabilities across losing branches, manual conflicts and restart.
+No retainer receipt, hash or approval boolean replaces that owner certificate.
+This authorization dependency does not itself select proofs, unlock a key,
+maintain solvency, submit claims or qualify continuous monitored operation.
 The [native action authorization](protocol/FAST_NATIVE_ACTION_AUTHORIZATION_V1.md)
 adds explicit ordinary-input review/reservation and encrypted-key signing for
 close, principal challenge, miner-fee claim and settlement. Preparation uses full
@@ -233,6 +240,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Direct session peer data carriage | FAST_PEER_NETWORK_V1: pinned mutual TLS, fresh signed connection binding, bounded durable queue/receive/response custody, retry and exact data-tail recovery | `fast_peer.rs`, `fast_peer/{codec,store}.rs`, session/peer binaries and `tests/fast_peer.rs`; explicit local native/owner verification, autonomous head coordination, fee monitoring, independent operators and all composed gates remain required |
 | Explicit trusted-file peer head control | FAST_PEER_HEAD_CONTROL_V1: version2 local data custody, exact prepared record and durable committed head, full-authentication recovery without tail repair | `fast_peer/head_control.rs`, shared peer store/session controls and `tests/fast_peer.rs`; local head-file integrity/latest-state is trusted, while native/caller coordination, independent freshness/custody, continuous solvent monitoring and G1-G11 remain required |
 | Trusted caller control and native ingress | FAST_SESSION_HEAD_CONTROL_V1: version2 caller state, exact key-free preparation, audited recovery and optional block-only background import | `fast_session/{control,ingress,journal}.rs`, native prevalidation and session/peer controls; `tests/fast_control.rs` and `tests/fast_peer.rs`; owner approval, independent custody, continuous solvent claims, scalable resources and all composed gates remain required |
+| Bounded fee-wallet authority | FAST_FEE_WALLET_POLICY_V1: signed actual-input-owner scope, fixed budgets and exact native policy preparations/signatures | `fast_session/fee_policy.rs`, shared caller/native audits and `tests/fast_fee_policy.rs`; no principal signing, close or ordinary-transfer authority, automatic monitoring, independent custody or composed qualification |
 | Native escrow action authorization | FAST_NATIVE_ACTION_AUTHORIZATION_V1: exact ordinary fee-input reservation, full native review, explicit encrypted-key signature custody, historical exit evidence and own-template CPU candidates | `kernel/fast/planning.rs`, `fast_session/onchain.rs`, session caller/CLI and `tests/fast_onchain.rs`; continuous solvent monitoring, guaranteed inclusion, independent latest-state/key custody, physical routes and composed G1-G11 remain required |
 | Signed operation carriage and pool mining | FAST_NATIVE_OPERATION_POOL_V1: bounded existing-signature custody, versioned peer data, normal native own-template selection and explicit candidate admission | `fast_session/pool.rs`, peer codec/session CLI, `fast_store.rs` and `tests/fast_pool.rs`; queue/candidate/inclusion/maturity remain distinct, with all autonomous coordination, monitoring, custody/resource and composed gates still required |
 | Ordinary native funding authorization | FAST_NATIVE_TRANSFER_AUTHORIZATION_V1: exact existing C04 transfer review, cross-operation input reservation and explicit encrypted owner signature custody | `kernel/fast/transfer.rs`, `fast_session/transfer.rs`, shared authorization audit and `tests/fast_transfer.rs`; real retainer funding is distinct from continuous service, joint opening, independent custody and all composed obligations |

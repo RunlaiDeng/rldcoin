@@ -147,6 +147,9 @@ impl Action {
         match self {
             Self::OpenPrepare { tip, plan } => Some((tip.0, Preparation::Opening(plan.clone()))),
             Self::OnchainPrepare { tip, plan } => Some((tip.0, Preparation::Escrow(plan.clone()))),
+            Self::FeePolicyPrepare { tip, plan, .. } => {
+                Some((tip.0, Preparation::Escrow(plan.clone())))
+            }
             Self::TransferPrepare { tip, plan } => {
                 Some((tip.0, Preparation::Transfer(plan.clone())))
             }
@@ -156,7 +159,10 @@ impl Action {
     pub(super) fn native_authorization(&self) -> bool {
         matches!(
             self,
-            Self::OpenPrepare { .. }
+            Self::FeePolicyApprove { .. }
+                | Self::FeePolicyPrepare { .. }
+                | Self::FeePolicySign { .. }
+                | Self::OpenPrepare { .. }
                 | Self::OpenCombine { .. }
                 | Self::TransferPrepare { .. }
                 | Self::OnchainPrepare { .. }

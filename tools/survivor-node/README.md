@@ -707,6 +707,18 @@ later rounds. Other packet kinds cannot approve or sign a payment. Native change
 can invalidate pending reviews, which must never be rebased. No legacy store is
 converted, and this mode supplies no independent freshness or funded fee monitor.
 
+The [bounded fee-wallet policy](../../docs/protocol/FAST_FEE_WALLET_POLICY_V1.md)
+adds explicit consent from the actual ordinary-input owner for kinds3/4/5.
+fee_policy_approve retains a separate signed policy; fee_policy_prepare and
+fee_policy_sign still require exact current native reviews and preserve existing
+signatures, quotas and input reservations. Only named initial inputs and actual
+policy-authorized change can pay fees; policy/caller/currency/channel, per-signature
+and total fees, count and expiry are fixed. A retainer receipt cannot authorize
+those spends. fee_policy_status {head, policy_request} distinguishes retained
+signature liabilities from native inclusion/spendability. Existing proof can be
+reproduced without its key and without another quota debit. Losing branches do
+not refund an allowance. Policy approval starts no automatic signing or service.
+
 This direct ground transport does not qualify autonomous native/head coordination,
 discovery or multi-hop routing, consumer consent UI, continuous funded fee claims,
 independent operators/latest-state protection, physical routes, scalable archival,

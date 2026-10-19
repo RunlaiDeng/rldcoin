@@ -121,6 +121,9 @@ impl Journal {
     pub fn binding(&self) -> Hash {
         self.binding
     }
+    pub fn controlled(&self) -> bool {
+        self.prefix[8..12] == [0, 2, 0, 1]
+    }
     fn read(
         path: &Path,
         mut file: File,

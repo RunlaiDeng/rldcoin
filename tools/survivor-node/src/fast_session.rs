@@ -1,6 +1,8 @@
 //! Serialized key-free caller intents compose native selection and private
 //! owner/retainer steps. Full child replay/audits precede signing authority.
 mod control;
+mod fee_policy;
+pub use fee_policy::FeePolicy;
 mod ingress;
 pub use ingress::Ingress;
 mod journal;
@@ -74,6 +76,24 @@ pub fn bytes(raw: &str, max: usize) -> Result<Vec<u8>> {
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "method", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Action {
+    FeePolicyApprove {
+        tip: Id,
+        terms: FeePolicy,
+        key_file: String,
+        approved: bool,
+    },
+    FeePolicyPrepare {
+        tip: Id,
+        policy_request: Id,
+        plan: OnchainRequest,
+    },
+    FeePolicySign {
+        tip: Id,
+        policy_request: Id,
+        prepare_request: Id,
+        review: Id,
+        key_file: String,
+    },
     OpenPrepare {
         tip: Id,
         plan: OpeningRequest,
@@ -171,7 +191,10 @@ impl Action {
     }
     fn tip(&self) -> Hash {
         match self {
-            Self::PoolSubmit { tip, .. }
+            Self::FeePolicyApprove { tip, .. }
+            | Self::FeePolicyPrepare { tip, .. }
+            | Self::FeePolicySign { tip, .. }
+            | Self::PoolSubmit { tip, .. }
             | Self::OpenPrepare { tip, .. }
             | Self::OpenCombine { tip, .. }
             | Self::TransferPrepare { tip, .. }
@@ -241,6 +264,24 @@ impl Action {
     }
     fn shape(&self) -> Result<()> {
         match self {
+            Self::FeePolicyApprove {
+                terms, key_file, ..
+            } => {
+                terms.shape()?;
+                ensure(
+                    !key_file.is_empty() && key_file.len() <= 4096,
+                    "INVALID policy key path",
+                )?;
+            }
+            Self::FeePolicyPrepare { plan, .. } => {
+                plan.request()?;
+            }
+            Self::FeePolicySign { key_file, .. } => {
+                ensure(
+                    !key_file.is_empty() && key_file.len() <= 4096,
+                    "INVALID policy key path",
+                )?;
+            }
             Self::OpenPrepare { plan, .. } => {
                 plan.parts()?;
             }
@@ -668,6 +709,10 @@ impl Session {
     pub fn chain_id(&self) -> Hash {
         self.chain
     }
+    /// Local header identity only, never independent freshness or value.
+    pub fn caller_binding(&self) -> Hash {
+        self.caller.binding()
+    }
     pub fn native_head(&self) -> Hash {
         self.native.as_ref().unwrap().head()
     }
@@ -1063,6 +1108,7 @@ impl Session {
         action.shape()?;
         self.pool_preflight(action)?;
         self.onchain_preflight(action)?;
+        self.fee_preflight(action)?;
         if let Some(reg) = action.registration(self.chain)? {
             ensure(
                 self.actors.len() < 16 && !self.actors.contains_key(&reg.id),
@@ -1643,7 +1689,11 @@ impl Session {
         }
         let index = self.caller.ops.len() - 1;
         if done.authorization.is_some() {
-            if let Some((request, partial)) = self.opening_signature(index, &op.intent.action)? {
+            if let Some(policy) = self.policy_output(&op.intent.action, done)? {
+                out["fee_policy"] = policy;
+            } else if let Some((request, partial)) =
+                self.opening_signature(index, &op.intent.action)?
+            {
                 let (proposal, _) = request.parts()?;
                 out["opening_partial_hex"] = hex::encode(partial).into();
                 out["opening_proposal"] =
