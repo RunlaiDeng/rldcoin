@@ -64,63 +64,11 @@ pub(super) fn decode(raw: &[u8], chain: Hash) -> Result<Operation> {
     require(r.fixed::<32>()? == chain, "INVALID fast operation chain")?;
     require(r.fixed::<32>()? != [0; 32], "INVALID fast operation nonce")?;
     if kind == 1 {
-        let owners = [r.fixed()?, r.fixed()?];
-        require(
-            owners[0] < owners[1] && owners.iter().copied().all(valid_point),
-            "INVALID fast owners",
-        )?;
-        let principal = [r.u128()?, r.u128()?];
-        let p = principal[0]
-            .checked_add(principal[1])
-            .ok_or("INVALID fast principal overflow")?;
-        require(p > 0 && p <= CAP, "INVALID fast principal")?;
-        let (na, fa, nb, fb) = (r.u64()?, r.u128()?, r.u64()?, r.u128()?);
-        let limits = [na, nb];
-        let rates = [fa, fb];
-        require(
-            limits.iter().all(|n| (1..=MAX_SLOTS).contains(n))
-                && rates.iter().all(|f| *f > 0 && *f <= CAP),
-            "INVALID fast fee terms",
-        )?;
-        let fees = [r.u128()?, r.u128()?];
-        let change = [r.u128()?, r.u128()?];
-        let expiry = r.u128()?;
-        let inputs = [inputs(&mut r)?, inputs(&mut r)?];
-        r.end()?;
-        require(
-            !inputs[0].iter().any(|x| inputs[1].contains(x)),
-            "INVALID fast overlapping inputs",
-        )?;
-        let budget = na as u128 + nb as u128 + 2;
-        require(
-            fees.iter().all(|f| *f > 0 && *f <= CAP)
-                && change.iter().all(|v| *v >= budget && *v <= CAP),
-            "INVALID fast operation fee/exit budget",
-        )?;
-        let mut total = p;
-        for i in 0..2 {
-            total = total
-                .checked_add(
-                    rates[i]
-                        .checked_mul(limits[i] as u128)
-                        .ok_or("INVALID fast reserve overflow")?,
-                )
-                .ok_or("INVALID fast reserve overflow")?;
-        }
-        require(total <= CAP, "INVALID fast reserve cap")?;
+        let terms = open_body(&mut r)?;
         let message = [ftag("OPEN"), unsigned.to_vec()].concat();
-        verify(owners[0], &message, &signatures[..64])?;
-        verify(owners[1], &message, &signatures[64..])?;
-        Ok(Operation::Open(Open {
-            owners,
-            principal,
-            limits,
-            rates,
-            fees,
-            change,
-            expiry,
-            inputs,
-        }))
+        verify(terms.owners[0], &message, &signatures[..64])?;
+        verify(terms.owners[1], &message, &signatures[64..])?;
+        Ok(Operation::Open(terms))
     } else {
         let action = action_body(&mut r, kind)?;
         verify(
@@ -130,6 +78,78 @@ pub(super) fn decode(raw: &[u8], chain: Hash) -> Result<Operation> {
         )?;
         Ok(Operation::Action(action))
     }
+}
+// Only nonmutating review consumes this unsigned form. Normal decode above
+// always authenticates both complete owner signatures before ledger execution.
+pub(super) fn unsigned_open(raw: &[u8], chain: Hash) -> Result<Open> {
+    require(
+        (365..=2473).contains(&raw.len()) && raw[0] == 1,
+        "INVALID unsigned opening size/kind",
+    )?;
+    let mut r = Reader::new(&raw[1..]);
+    require(
+        r.u16()? == 1 && r.u16()? == 1,
+        "UNSUPPORTED opening version/suite",
+    )?;
+    require(r.fixed::<32>()? == chain, "INVALID opening chain")?;
+    require(r.fixed::<32>()? != [0; 32], "INVALID opening nonce")?;
+    open_body(&mut r)
+}
+fn open_body(r: &mut Reader<'_>) -> Result<Open> {
+    let owners = [r.fixed()?, r.fixed()?];
+    require(
+        owners[0] < owners[1] && owners.iter().copied().all(valid_point),
+        "INVALID fast owners",
+    )?;
+    let principal = [r.u128()?, r.u128()?];
+    let p = principal[0]
+        .checked_add(principal[1])
+        .ok_or("INVALID fast principal overflow")?;
+    require(p > 0 && p <= CAP, "INVALID fast principal")?;
+    let (na, fa, nb, fb) = (r.u64()?, r.u128()?, r.u64()?, r.u128()?);
+    let limits = [na, nb];
+    let rates = [fa, fb];
+    require(
+        limits.iter().all(|n| (1..=MAX_SLOTS).contains(n))
+            && rates.iter().all(|f| *f > 0 && *f <= CAP),
+        "INVALID fast fee terms",
+    )?;
+    let fees = [r.u128()?, r.u128()?];
+    let change = [r.u128()?, r.u128()?];
+    let expiry = r.u128()?;
+    let inputs = [inputs(r)?, inputs(r)?];
+    r.end()?;
+    require(
+        !inputs[0].iter().any(|x| inputs[1].contains(x)),
+        "INVALID fast overlapping inputs",
+    )?;
+    let budget = na as u128 + nb as u128 + 2;
+    require(
+        fees.iter().all(|f| *f > 0 && *f <= CAP)
+            && change.iter().all(|v| *v >= budget && *v <= CAP),
+        "INVALID fast operation fee/exit budget",
+    )?;
+    let mut total = p;
+    for i in 0..2 {
+        total = total
+            .checked_add(
+                rates[i]
+                    .checked_mul(limits[i] as u128)
+                    .ok_or("INVALID fast reserve overflow")?,
+            )
+            .ok_or("INVALID fast reserve overflow")?;
+    }
+    require(total <= CAP, "INVALID fast reserve cap")?;
+    Ok(Open {
+        owners,
+        principal,
+        limits,
+        rates,
+        fees,
+        change,
+        expiry,
+        inputs,
+    })
 }
 // Never a ledger decoder: unsigned actions can only reach the nonmutating
 // planner. The ordinary decoder above still verifies every actor signature.

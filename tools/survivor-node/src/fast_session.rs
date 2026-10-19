@@ -2,6 +2,7 @@
 //! owner/retainer steps. Full child replay/audits precede signing authority.
 mod journal;
 mod onchain;
+mod opening;
 mod pool;
 mod transfer;
 use crate::{
@@ -14,6 +15,7 @@ use crate::{
 };
 use journal::{Done, Journal};
 pub use onchain::{MiningRequest, OnchainRequest};
+pub use opening::{OpeningRequest, OpeningTerms};
 pub use pool::PoolMiningRequest;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::{json, Value};
@@ -68,6 +70,17 @@ pub fn bytes(raw: &str, max: usize) -> Result<Vec<u8>> {
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "method", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Action {
+    OpenPrepare {
+        tip: Id,
+        plan: OpeningRequest,
+    },
+    OpenCombine {
+        tip: Id,
+        prepare_request: Id,
+        sign_request: Id,
+        review: Id,
+        counterparty_partial: String,
+    },
     TransferPrepare {
         tip: Id,
         plan: TransferRequest,
@@ -155,6 +168,8 @@ impl Action {
     fn tip(&self) -> Hash {
         match self {
             Self::PoolSubmit { tip, .. }
+            | Self::OpenPrepare { tip, .. }
+            | Self::OpenCombine { tip, .. }
             | Self::TransferPrepare { tip, .. }
             | Self::OnchainPrepare { tip, .. }
             | Self::OnchainSign { tip, .. }
@@ -222,6 +237,18 @@ impl Action {
     }
     fn shape(&self) -> Result<()> {
         match self {
+            Self::OpenPrepare { plan, .. } => {
+                plan.parts()?;
+            }
+            Self::OpenCombine {
+                counterparty_partial,
+                ..
+            } => {
+                ensure(
+                    bytes(counterparty_partial, 65)?.len() == 65,
+                    "INVALID counterparty opening partial",
+                )?;
+            }
             Self::TransferPrepare { plan, .. } => {
                 plan.request()?;
             }
@@ -1486,7 +1513,7 @@ impl Session {
         if pending {
             // For a pending native step the retained store may already be one step ahead;
             // resolve uses the independently tracked pre-request head, not that observation.
-            let (e, r) = if let Action::Native { block, .. } = &action {
+            let (e, mut r) = if let Action::Native { block, .. } = &action {
                 let n = s.native.as_ref().unwrap();
                 if n.head() == native_head {
                     (None, None)
@@ -1504,6 +1531,16 @@ impl Session {
                     s.pool_preflight(&action)?;
                     let n = s.native.as_mut().unwrap();
                     n.check(n.head(), tip.0, now)?;
+                    None
+                }
+            } else if let Action::OpenCombine { tip, .. } = &action {
+                if tip.0 != s.tip() {
+                    Some("RECOVERED_OPENING_REJECTED_STALE_SELECTION".into())
+                } else {
+                    let index = s.caller.ops.len() - 1;
+                    let at = s.caller.ops[index].intent.at;
+                    let raw = s.combine_opening(index, &action, at, true)?;
+                    r = Some(Id(fast::operation_id(&raw)));
                     None
                 }
             } else {
@@ -1538,10 +1575,28 @@ impl Session {
         if let Some(review) = self.onchain_output(&op.intent.action, done, op.intent.at)? {
             out["review"] = review;
         }
-        if let Some(raw) = &done.authorization {
-            out["operation_hex"] = raw.clone().into();
-            out["operation_id"] = serde_json::to_value(Id(fast::operation_id(&bytes(raw, 4096)?)))
-                .map_err(fast_retainer::io)?;
+        let index = self.caller.ops.len() - 1;
+        if done.authorization.is_some() {
+            if let Some((request, partial)) = self.opening_signature(index, &op.intent.action)? {
+                let (proposal, _) = request.parts()?;
+                out["opening_partial_hex"] = hex::encode(partial).into();
+                out["opening_proposal"] =
+                    serde_json::to_value(Id(fast::opening::proposal_id(&proposal, self.chain)?))
+                        .map_err(fast_retainer::io)?;
+                out["partial_only"] = true.into();
+            } else {
+                let raw = self.retained_authorization(index)?;
+                out["operation_hex"] = hex::encode(&raw).into();
+                out["operation_id"] = serde_json::to_value(Id(fast::operation_id(&raw)))
+                    .map_err(fast_retainer::io)?;
+            }
+            out["ledger_admitted"] = false.into();
+        }
+        if matches!(op.intent.action, Action::OpenCombine { .. }) && done.review.is_some() {
+            let raw = self.retained_authorization(index)?;
+            out["operation_hex"] = hex::encode(&raw).into();
+            out["operation_id"] =
+                serde_json::to_value(Id(fast::operation_id(&raw))).map_err(fast_retainer::io)?;
             out["ledger_admitted"] = false.into();
         }
         if let Some(reg) = op.intent.action.registration(self.chain)? {

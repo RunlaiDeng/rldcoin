@@ -84,9 +84,50 @@ pub fn payload(kind: u8, raw: &[u8], chain: Hash) -> Result<()> {
         6 => {
             operation(raw, chain)?;
         }
+        7 => {
+            opening_frame(raw, chain, false)?;
+        }
+        8 => {
+            opening_frame(raw, chain, true)?;
+        }
         _ => return Err("UNSUPPORTED peer payload kind".into()),
     }
     Ok(())
+}
+pub fn opening_payload(chain: Hash, proposal: &[u8], partial: Option<&[u8]>) -> Result<Vec<u8>> {
+    kernel::fast::opening::proposal_id(proposal, chain)?;
+    if let Some(partial) = partial {
+        kernel::fast::opening::verify_partial(proposal, partial, chain)?;
+    }
+    let mut raw = vec![0, 1, 0, 1];
+    raw.extend(chain);
+    raw.extend((proposal.len() as u16).to_be_bytes());
+    raw.extend(proposal);
+    if let Some(partial) = partial {
+        raw.extend(partial);
+    }
+    Ok(raw)
+}
+pub fn opening_frame(raw: &[u8], chain: Hash, partial: bool) -> Result<(&[u8], Option<&[u8]>)> {
+    let tail = if partial { 65 } else { 0 };
+    ensure(
+        (403 + tail..=2511 + tail).contains(&raw.len())
+            && raw[..4] == [0, 1, 0, 1]
+            && raw[4..36] == chain,
+        "INVALID opening carriage header",
+    )?;
+    let n = u16::from_be_bytes(raw[36..38].try_into().unwrap()) as usize;
+    ensure(
+        (365..=2473).contains(&n) && raw.len() == 38 + n + tail,
+        "INVALID opening carriage length",
+    )?;
+    let proposal = &raw[38..38 + n];
+    kernel::fast::opening::proposal_id(proposal, chain)?;
+    let own = partial.then_some(&raw[38 + n..]);
+    if let Some(partial) = own {
+        kernel::fast::opening::verify_partial(proposal, partial, chain)?;
+    }
+    Ok((proposal, own))
 }
 impl Packet {
     pub fn create(

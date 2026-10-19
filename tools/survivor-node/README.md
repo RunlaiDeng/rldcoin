@@ -732,3 +732,28 @@ recovery cannot first-sign. A genuine ordinary transfer can fund a retainer's ow
 claim fees, which still require its own spending authorization; delegation alone
 cannot spend user/miner funds. This does not provide joint funding, continuous
 solvent monitoring, independent custody/operations or composed capacity claims.
+
+The [joint opening controls](../../docs/protocol/FAST_NATIVE_OPENING_AUTHORIZATION_V1.md)
+construct the existing kind1 escrow from ordinary native funds. `opening_proposal`
+uses typed owners, amounts, rates/slots, fees, expiry and actual input references.
+It computes change and returns exact unsigned bytes without signing/reserving.
+Each party separately executes `open_prepare` with its own index and timestamp,
+reviews both sides and reserves only its own inputs. Normal explicit
+`onchain_sign` retains its65-byte partial before release; neither party supplies
+the other's key. Ordinary transfer and escrow reservations still exclude reuse.
+
+`peer_opening` carries the retained proposal/partial as versioned data.
+`peer_open_prepare` is an explicit local review, and `peer_open_combine` requires
+the received proposal to match the local one before combining existing signatures.
+Equivalent private `open_combine` execution is key-free. A short durable reply
+binds its complete retained proposal/signature closure, so a maximum64-input
+opening needs no larger caller reply. `submit_authorized` accepts that verified
+complete closure and refuses a single partial. Normal pool mining and native
+admission still authenticate both owners and all current value rules.
+
+Exact recovery cannot first-sign or free inputs. Cold startup replays native and
+caller histories and checks every own/partner signature. A completed historical
+opening is data, while current backing remains conditional on selected history.
+These interfaces supply no continuous solvent monitor, autonomous latest-head
+custody, consumer consent UI, independent operations/security, scalable archival/
+mass exit or composed local-latency/daily100M qualification.

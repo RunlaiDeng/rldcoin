@@ -173,3 +173,11 @@ fees; a custody delegation still grants no spending rights or automatic budget.
 Existing escrow action bytes, signature domains, windows and maturity remain
 unchanged. The original caller reply reservation also accommodates the complete
 maximum1639-byte signed ordinary operation without increasing its limit.
+
+The separate [joint opening authorization](FAST_NATIVE_OPENING_AUTHORIZATION_V1.md)
+uses `onchain_sign` only to retain the corresponding owner's65-byte partial.
+Its response uses `opening_partial_hex`; a lone partial cannot be submitted as a
+complete operation. Both actual signatures, their exact retained proposal and a
+verified combine are necessary. No owner key is shared or loaded by combination.
+All opening/ordinary/escrow preparations compose own-input reservations, while
+complete native decoding still authenticates both opening owners on admission.

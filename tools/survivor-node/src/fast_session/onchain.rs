@@ -171,7 +171,12 @@ impl Session {
             )
         }
     }
-    fn prepared(&self, before: usize, id: Id, review: Id) -> Result<(usize, Preparation, Hash)> {
+    pub(super) fn prepared(
+        &self,
+        before: usize,
+        id: Id,
+        review: Id,
+    ) -> Result<(usize, Preparation, Hash)> {
         let index = self.caller.ops[..before]
             .iter()
             .position(|o| o.intent.id == id)
@@ -203,6 +208,10 @@ impl Session {
             return Ok((None, Some(Id(prepared.review())), None));
         }
         match action {
+            Action::OpenCombine { .. } => {
+                let raw = self.combine_opening(self.caller.ops.len() - 1, action, now, true)?;
+                Ok((None, Some(Id(fast::operation_id(&raw))), None))
+            }
             Action::OnchainSign {
                 tip,
                 prepare_request,
@@ -319,6 +328,21 @@ impl Session {
                 continue;
             }
             match &op.intent.action {
+                Action::OpenCombine { tip, .. } => {
+                    ensure(
+                        done.effect.is_none() && done.authorization.is_none(),
+                        "INVALID opening combination effect",
+                    )?;
+                    if let Some(expected) = done.review {
+                        ensure(tip.0 == *context, "INVALID opening combination selection")?;
+                        let raw =
+                            self.combine_opening(index, &op.intent.action, op.intent.at, false)?;
+                        ensure(
+                            fast::operation_id(&raw) == expected.0,
+                            "INVALID opening combination commitment",
+                        )?;
+                    }
+                }
                 Action::OnchainSign {
                     tip,
                     prepare_request,

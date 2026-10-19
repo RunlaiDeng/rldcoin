@@ -2,7 +2,9 @@
 //! argv/env/log/HTTP values; no plaintext signing key is accepted or returned.
 use rld_survivor_node::{
     fast_peer::{codec::Packet, Network},
-    fast_session::{Action, Id, MiningRequest, PoolMiningRequest, Session},
+    fast_session::{
+        Action, Id, MiningRequest, OpeningRequest, OpeningTerms, PoolMiningRequest, Session,
+    },
     kernel::Result,
 };
 use serde::{Deserialize, Deserializer};
@@ -28,6 +30,31 @@ impl<'de> Deserialize<'de> for Password {
 #[derive(Deserialize)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
+    OpeningProposal {
+        head: Id,
+        terms: OpeningTerms,
+        timestamp: String,
+    },
+    PeerOpening {
+        head: Id,
+        source_request: Id,
+        destination: Id,
+    },
+    PeerOpenPrepare {
+        head: Id,
+        packet: Id,
+        request_id: Id,
+        owner: u8,
+        timestamp: String,
+    },
+    PeerOpenCombine {
+        head: Id,
+        packet: Id,
+        request_id: Id,
+        prepare_request: Id,
+        sign_request: Id,
+        review: Id,
+    },
     PoolStatus {
         head: Id,
     },
@@ -319,6 +346,7 @@ fn run() -> Result<()> {
                 clock,
             ),
             Request::ExitEvidence { head, actor } => s.exit_evidence(head.0, actor, clock),
+            Request::OpeningProposal{head,terms,timestamp}=>s.opening_proposal(head.0,terms,timestamp,clock),
             Request::PoolStatus{head}=>s.pool_status(head.0,clock),
             Request::PoolOperation{head,operation}=>Ok(json!({"operation":operation,"operation_hex":hex::encode(s.pool_operation(head.0,operation,clock)?),"pool_custody_only":true})),
             Request::SubmitAuthorized{head,request_id,sign_request}=>s.submit_authorized(head.0,request_id,sign_request,clock),
@@ -378,7 +406,10 @@ fn peer_command(
 ) -> Result<Value> {
     use rld_survivor_node::fast_session::bytes;
     let head = match &r {
-        Request::PeerPoolSubmit { head, .. }
+        Request::PeerOpening { head, .. }
+        | Request::PeerOpenPrepare { head, .. }
+        | Request::PeerOpenCombine { head, .. }
+        | Request::PeerPoolSubmit { head, .. }
         | Request::PeerOperation { head, .. }
         | Request::PeerBlock { head, .. }
         | Request::PeerStatus { head }
@@ -396,6 +427,82 @@ fn peer_command(
     };
     s.status(head, clock)?;
     match r {
+        Request::PeerOpening {
+            source_request,
+            destination,
+            ..
+        } => {
+            let (proposal, partial) = s.opening_data(head, source_request, clock)?;
+            let payload = rld_survivor_node::fast_peer::codec::opening_payload(
+                s.chain_id(),
+                &proposal,
+                partial.as_deref(),
+            )?;
+            queued(
+                require_peer(peer)?,
+                destination,
+                if partial.is_some() { 8 } else { 7 },
+                &payload,
+                clock,
+            )
+        }
+        Request::PeerOpenPrepare {
+            packet,
+            request_id,
+            owner,
+            timestamp,
+            ..
+        } => {
+            let p = incoming(peer, packet, 7)?;
+            let (proposal, _) = rld_survivor_node::fast_peer::codec::opening_frame(
+                &p.payload,
+                s.chain_id(),
+                false,
+            )?;
+            s.execute(
+                request_id,
+                head,
+                Action::OpenPrepare {
+                    tip: Id(s.tip()),
+                    plan: OpeningRequest {
+                        proposal: hex::encode(proposal),
+                        owner,
+                        timestamp,
+                    },
+                },
+                None,
+                clock,
+            )
+        }
+        Request::PeerOpenCombine {
+            packet,
+            request_id,
+            prepare_request,
+            sign_request,
+            review,
+            ..
+        } => {
+            let p = incoming(peer, packet, 8)?;
+            let (proposal, partial) =
+                rld_survivor_node::fast_peer::codec::opening_frame(&p.payload, s.chain_id(), true)?;
+            let (original, _) = s.opening_data(head, prepare_request, clock)?;
+            if proposal != original {
+                return Err("INVALID changed counterparty opening proposal".into());
+            }
+            s.execute(
+                request_id,
+                head,
+                Action::OpenCombine {
+                    tip: Id(s.tip()),
+                    prepare_request,
+                    sign_request,
+                    review,
+                    counterparty_partial: hex::encode(partial.unwrap()),
+                },
+                None,
+                clock,
+            )
+        }
         Request::PeerPoolSubmit {
             packet, request_id, ..
         } => {

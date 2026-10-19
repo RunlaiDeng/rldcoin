@@ -104,7 +104,8 @@ infers maturity from a pool row.
 Every command supplies the exact latest session `head`:
 
 - `submit_authorized(request_id, sign_request)` retains an existing complete
-  `onchain_sign` result; it never loads a key or first-signs.
+  `onchain_sign` result or verified `open_combine` closure; it never loads a key
+  or first-signs. An individual opening partial is refused.
 - `pool_status` observes retained operations and exact selected inclusions.
 - `pool_operation(operation)` returns exact retained signed bytes.
 - `mine_pool(miner, timestamp, attempts, scan_limit, refresh)` searches locally.

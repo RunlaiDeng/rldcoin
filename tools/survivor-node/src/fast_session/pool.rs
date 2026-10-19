@@ -104,28 +104,20 @@ impl Session {
         now: u64,
     ) -> Result<Value> {
         self.caller.check(head)?;
-        let op = self
+        let index = self
             .caller
             .ops
             .iter()
-            .find(|op| op.intent.id == sign_request)
+            .position(|op| op.intent.id == sign_request)
             .ok_or("MISSING retained signing request")?;
-        ensure(
-            matches!(op.intent.action, Action::OnchainSign { .. }),
-            "INVALID native signing request type",
-        )?;
-        let raw = op
-            .done
-            .as_ref()
-            .and_then(|d| d.authorization.clone())
-            .ok_or("MISSING retained native authorization")?;
-        let id = fast::operation_id(&bytes(&raw, 4096)?);
+        let raw = self.retained_authorization(index)?;
+        let id = fast::operation_id(&raw);
         let mut v = self.execute(
             request,
             head,
             Action::PoolSubmit {
                 tip: Id(self.tip()),
-                operation: raw,
+                operation: hex::encode(raw),
             },
             None,
             now,

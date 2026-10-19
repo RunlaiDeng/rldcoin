@@ -170,6 +170,17 @@ receive real ordinary funds and pay its own claim inputs under its own explicit
 approval; receipt delegation is never spending authority. This supplies a funding
 path, not continuous solvent monitoring, joint opening, independent custody or
 composed performance/adoption qualification.
+The [joint opening authorization](protocol/FAST_NATIVE_OPENING_AUTHORIZATION_V1.md)
+adds native proposal construction, separate own-input review/reservation and
+encrypted-key owner partials for the existing two-owner opening. Exact retained
+caller closure combines both real signatures without new signing; its short
+reply preserves existing bounds for64 total inputs. Versioned peer data carries
+proposals/partials before explicit local review and normal native pool admission.
+Neither a partial, caller hash nor transport receipt supplies backing. Ordinary
+funding, real payment/onward authorization and native principal/fee challenges
+remain distinct steps. Continuous monitoring, trusted latest-head coordination,
+consumer operation, independent custody/resource qualification and G1-G11 remain
+required.
 The [signed native operation pool](protocol/FAST_NATIVE_OPERATION_POOL_V1.md)
 retains already signed complete operations in the caller history, carries them
 as versioned peer data and builds bounded ordinary-node templates through normal
@@ -210,6 +221,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Native escrow action authorization | FAST_NATIVE_ACTION_AUTHORIZATION_V1: exact ordinary fee-input reservation, full native review, explicit encrypted-key signature custody, historical exit evidence and own-template CPU candidates | `kernel/fast/planning.rs`, `fast_session/onchain.rs`, session caller/CLI and `tests/fast_onchain.rs`; continuous solvent monitoring, guaranteed inclusion, independent latest-state/key custody, physical routes and composed G1-G11 remain required |
 | Signed operation carriage and pool mining | FAST_NATIVE_OPERATION_POOL_V1: bounded existing-signature custody, versioned peer data, normal native own-template selection and explicit candidate admission | `fast_session/pool.rs`, peer codec/session CLI, `fast_store.rs` and `tests/fast_pool.rs`; queue/candidate/inclusion/maturity remain distinct, with all autonomous coordination, monitoring, custody/resource and composed gates still required |
 | Ordinary native funding authorization | FAST_NATIVE_TRANSFER_AUTHORIZATION_V1: exact existing C04 transfer review, cross-operation input reservation and explicit encrypted owner signature custody | `kernel/fast/transfer.rs`, `fast_session/transfer.rs`, shared authorization audit and `tests/fast_transfer.rs`; real retainer funding is distinct from continuous service, joint opening, independent custody and all composed obligations |
+| Joint native opening authorization | FAST_NATIVE_OPENING_AUTHORIZATION_V1: exact proposal, independent own-input reservations/partial signatures and fully verified retained closure within original limits | `kernel/fast/{codec,opening}.rs`, `fast_session/opening.rs`, shared authorization/peer controls and `tests/fast_opening.rs`; proposals/partials/combine/inclusion remain distinct, while continuous monitoring, latest-state custody, independent resources and composed gates stay required |
 
 ## Ordered behavior milestones
 

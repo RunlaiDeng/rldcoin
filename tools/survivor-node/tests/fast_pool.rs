@@ -712,7 +712,7 @@ fn operation_carriage_is_versioned_exact_and_requires_native_actor_signatures() 
     trailing.push(0);
     assert!(codec::operation(&trailing, chain).is_err());
     assert!(codec::operation(&data, [1; 32]).is_err());
-    assert!(codec::Packet::create(chain, &sender, destination, 7, &data).is_err());
+    assert!(codec::Packet::create(chain, &sender, destination, 9, &data).is_err());
 }
 
 #[test]

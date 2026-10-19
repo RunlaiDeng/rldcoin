@@ -77,6 +77,8 @@ hash(PACKET-ID, complete_packet). New connection freshness comes separately belo
 |4|579/831-byte existing complete receipt, matching version/chain|Complete bytes; both owner/state/invoice signatures and backing still require local checks|
 |5|340-byte existing retainer acknowledgment, matching version/chain|Complete bytes; exact native origin/delegation/receipt verification still required|
 |6|39..4134-byte versioned signed native-operation frame|Signed data only; explicit local pool retention and full native template/admission checks remain required|
+|7|403..2511-byte versioned unsigned native opening proposal frame|Proposal data; independent local native review and own approval remain mandatory|
+|8|468..2576-byte proposal frame plus65-byte verified opening partial|One actual owner signature only; both owners and full native admission remain mandatory|
 
 No alternative/trailing encoding or other kind is accepted. The separately
 assembled [public transport byte vectors](fast-peer-v1-vectors.json) use labeled
@@ -85,6 +87,11 @@ partial. They prove codec interoperability only, not a funded origin or payment.
 Kind6 has its own version/suite/chain/length frame and separate
 [operation-pool contract and public vector](FAST_NATIVE_OPERATION_POOL_V1.md).
 Older peers refuse this unknown kind without fallback; kinds1..5 are unchanged.
+Kinds7/8 have the separate [opening authorization and frame contract](FAST_NATIVE_OPENING_AUTHORIZATION_V1.md)
+and [public no-value byte vectors](fast-native-opening-v1-vectors.json). Their
+owner signatures never substitute for current native ownership/maturity checks.
+Peers lacking these kinds refuse them explicitly; existing data versions and
+limits are unchanged and no old state or value is converted.
 
 After pinned mutual TLS authenticates the exact configured remote certificate,
 server sends164 bytes: `v/suite4 || chain32 || server_data_key32 || fresh_S32 ||
@@ -201,6 +208,14 @@ Additional local commands, always with current session `head`:
 - peer_pool_submit(packet, request_id): explicit local retention of kind6 signed
   data; no ledger effect. Pool mining/admission remain separate local commands.
 - peer_block(block, destination): queue exact retained native block bytes as kind1.
+- peer_opening(source_request, destination): carry an exact retained opening
+  proposal or an already retained own partial, without loading a wallet key.
+- peer_open_prepare(packet, request_id, owner, timestamp): explicitly review
+  received kind7 against current native state and reserve only the local index's
+  inputs. No network command approves or signs that review.
+- peer_open_combine(packet, request_id, prepare_request, sign_request, review):
+  require kind8's exact proposal to match the retained local review and combine
+  distinct existing owner proofs; full native execution remains separate.
 
 Local execute owner_sign/retainer_sign remains the only corresponding key-loading
 path and still requires exact persisted review, approved=true and secure native
