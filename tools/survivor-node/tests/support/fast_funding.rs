@@ -57,8 +57,8 @@ pub fn mine_until(
 pub fn fixture() -> Fixture {
     aged_fixture(61200)
 }
-pub fn aged_fixture(genesis_age: u64) -> Fixture {
-    let deadline = Instant::now() + Duration::from_secs(180);
+/// Only empty native PoW blocks: no transfer, opening or fast payment signature.
+pub fn mined_fixture(genesis_age: u64, deadline: Instant) -> Fixture {
     let v: serde_json::Value = serde_json::from_str(include_str!(
         "../../../../docs/protocol/native-fast-escrow-v1-vectors.json"
     ))
@@ -80,7 +80,6 @@ pub fn aged_fixture(genesis_age: u64) -> Fixture {
     let miner = SigningKey::from_bytes(&[103; 32]);
     let retainer = SigningKey::from_bytes(&[104; 32]);
     let a = owners[0].verifying_key().to_bytes();
-    let b = owners[1].verifying_key().to_bytes();
     let mut history = Vec::new();
     let mut append = |raw: Vec<u8>| {
         history.extend((raw.len() as u32).to_be_bytes());
@@ -89,6 +88,38 @@ pub fn aged_fixture(genesis_age: u64) -> Fixture {
     for _ in 0..100 {
         append(mine_until(&mut ledger, a, vec![], now, deadline));
     }
+    let before = ledger.clone();
+    Fixture {
+        genesis,
+        history,
+        ledger,
+        channel: [0; 32],
+        owners,
+        miner,
+        retainer,
+        now,
+        before,
+    }
+}
+pub fn aged_fixture(genesis_age: u64) -> Fixture {
+    let deadline = Instant::now() + Duration::from_secs(180);
+    let Fixture {
+        genesis,
+        mut history,
+        mut ledger,
+        owners,
+        miner,
+        retainer,
+        now,
+        ..
+    } = mined_fixture(genesis_age, deadline);
+    let chain = ledger.chain_id();
+    let a = owners[0].verifying_key().to_bytes();
+    let b = owners[1].verifying_key().to_bytes();
+    let mut append = |raw: Vec<u8>| {
+        history.extend((raw.len() as u32).to_be_bytes());
+        history.extend(raw);
+    };
     let (input, coin) = ledger
         .coins()
         .iter()

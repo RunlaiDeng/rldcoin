@@ -73,3 +73,30 @@ the network. `peer_open_combine(packet,request_id,prepare_request,sign_request,r
 requires kind8's exact U to equal the retained local proposal, then combines under
 normal full native and signature checks. Data receipt never advances a caller
 head, reserves funds or signs by itself.
+
+## First-use composition
+
+A first-use path must start with independently native-verified ordinary inputs,
+not an already-open fast channel or an operator's account credit. If one owner
+needs funding, its preceding ordinary transfer requires the actual spending
+owner's exact review, explicit approval and retained native signature. Normal
+pool custody, own-template proof of work, native execution and peer import must
+precede selection of those outputs for the opening. Reward maturity remains
+h+100; an aged logical fixture does not demonstrate physical-time mining.
+
+Each opening owner independently reviews and signs its own inputs. Received
+proposal/partial packets supply data only. A lone retained partial cannot be
+submitted as a complete opening; the exact other owner's signature and normal
+native admission remain mandatory. Only the resulting selected native funding
+can initialize owner/retainer actors and authorize subsequent fast reviews.
+
+`tests/fast_live_payment.rs` composes ordinary-input funding, carried joint
+opening, actual pool-template mining, automatic native import, separately
+approved fast payments and key-unavailable complete cold replay. The recipient's
+onward amount must require the preceding receipt where that property is claimed.
+Original first-use setup and native inclusion clocks stay separate from each
+funded fast payment's original submission clock. Setup cannot be relabeled as
+seconds-fast service or silently removed from a first-use cohort. Retained miner
+fee evidence does not prove settlement or mature payout. Same-host scripted
+approvals do not establish consumer UI, independent custody, population latency,
+daily capacity, unilateral/mass exit or physical interstellar qualification.

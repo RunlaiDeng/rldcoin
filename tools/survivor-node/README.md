@@ -862,3 +862,13 @@ opening is data, while current backing remains conditional on selected history.
 These interfaces supply no continuous solvent monitor, autonomous latest-head
 custody, consumer consent UI, independent operations/security, scalable archival/
 mass exit or composed local-latency/daily100M qualification.
+
+The [first-use composition](../../docs/protocol/FAST_NATIVE_OPENING_AUTHORIZATION_V1.md#first-use-composition)
+connects these interfaces from mature ordinary inputs through actual funding
+transfer consent, independently signed joint opening, own-template native mining
+and automatic peer import, then owner/retainer registration and fast forward/
+onward payment. The live-payment reproducer starts its first-use case with empty
+PoW blocks only; funding/opening signatures are produced through the private CLI.
+Initial setup and native inclusion have separate clocks from funded fast use.
+Scripted no-value consent and logical mining history do not qualify consumer UX,
+physical-time maturity, independent operation or full payment/fee service.

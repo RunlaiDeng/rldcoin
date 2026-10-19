@@ -6,7 +6,9 @@ mod support;
 use rld_survivor_node::{
     fast_payment::Payment,
     fast_peer::{self, Config, PeerPin},
-    fast_session::{Action, Id, Session},
+    fast_session::{
+        Action, Id, OpeningRequest, OpeningTerms, Session, TransferOutput, TransferRequest,
+    },
     kernel::Hash,
     keyfile,
 };
@@ -148,6 +150,28 @@ impl Client {
             "password":if password{Some(std::str::from_utf8(PASSWORD).unwrap())}else{None}}));
         (r, v)
     }
+    fn mine(&mut self, miner: Id, timestamp: u64, operation: Id) -> Vec<u8> {
+        let mut refresh = true;
+        loop {
+            let v=self.ok(json!({"command":"mine_pool","miner":miner,"timestamp":timestamp.to_string(),"attempts":4096,"scan_limit":128,"refresh":refresh}));
+            refresh = false;
+            assert!(v["pool_template"]["selected_operations"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(operation)));
+            if v["candidate"].is_string() {
+                let candidate = id(&v, "candidate");
+                let raw = hex::decode(v["block_hex"].as_str().unwrap()).unwrap();
+                let request = self.request();
+                let v = self.ok(
+                    json!({"command":"admit_candidate","request_id":request,"candidate":candidate}),
+                );
+                assert_eq!(v["candidate_selected"], true);
+                return raw;
+            }
+            assert!(Instant::now() < self.deadline);
+        }
+    }
     fn wait(&mut self, packet: Id) {
         loop {
             let v = self.send(json!({"command":"peer_data","packet":packet}));
@@ -241,8 +265,15 @@ impl Drop for Attempt<'_> {
 }
 impl Fixture {
     fn new() -> Self {
+        Self::new_profile(false)
+    }
+    fn new_profile(first_use: bool) -> Self {
         let deadline = Instant::now() + Duration::from_secs(180);
-        let funding = support::fixture();
+        let funding = if first_use {
+            support::mined_fixture(61200, deadline)
+        } else {
+            support::fixture()
+        };
         let chain = funding.ledger.chain_id();
         let root = std::env::temp_dir().join(format!(
             "rld-live-owner-{}-{}",
@@ -339,26 +370,8 @@ impl Fixture {
                 std::thread::sleep(Duration::from_millis(10));
             }
         }
-        let delegation = hex::encode(support::delegation(&funding));
-        let mut actors = vec![];
         let mut keys = vec![];
-        for (i, node) in nodes.iter_mut().enumerate() {
-            let a = if i < 2 {
-                Action::OwnerCreate {
-                    tip: node.tip,
-                    channel: Id(funding.channel),
-                    owner: i as u8,
-                    delegation: delegation.clone(),
-                }
-            } else {
-                Action::RetainerCreate {
-                    tip: node.tip,
-                    channel: Id(funding.channel),
-                    delegation: delegation.clone(),
-                }
-            };
-            let (_, v) = node.execute(a, false);
-            actors.push(id(&v, "actor"));
+        for i in 0..nodes.len() {
             let key = root.join(format!("wallet-{i}.key"));
             write(
                 &key,
@@ -376,15 +389,216 @@ impl Fixture {
             keys.push(key);
         }
         assert!(Instant::now() < deadline);
-        Self {
+        let mut fixture = Self {
             funding,
             root,
             nodes,
-            actors,
+            actors: vec![],
             keys,
             peers,
             deadline,
+        };
+        if first_use {
+            fixture.fund_and_open();
         }
+        fixture.register_actors();
+        fixture
+    }
+    fn register_actors(&mut self) {
+        let delegation = hex::encode(support::delegation(&self.funding));
+        for (i, node) in self.nodes.iter_mut().enumerate() {
+            let action = if i < 2 {
+                Action::OwnerCreate {
+                    tip: node.tip,
+                    channel: Id(self.funding.channel),
+                    owner: i as u8,
+                    delegation: delegation.clone(),
+                }
+            } else {
+                Action::RetainerCreate {
+                    tip: node.tip,
+                    channel: Id(self.funding.channel),
+                    delegation: delegation.clone(),
+                }
+            };
+            let (_, v) = node.execute(action, false);
+            self.actors.push(id(&v, "actor"));
+        }
+        assert!(Instant::now() < self.deadline);
+    }
+    fn native_sign(&mut self, owner: usize, prepare: Id, review: Id) -> (Id, Value) {
+        let tip = self.nodes[owner].tip;
+        self.nodes[owner].execute(
+            Action::OnchainSign {
+                tip,
+                prepare_request: prepare,
+                review,
+                key_file: self.keys[owner].to_string_lossy().into(),
+                approved: true,
+            },
+            true,
+        )
+    }
+    fn include(&mut self, operation: Id) {
+        let timestamp = self.funding.ledger.tip().timestamp() + 600;
+        let raw = self.nodes[0].mine(
+            Id(self.funding.miner.verifying_key().to_bytes()),
+            timestamp,
+            operation,
+        );
+        self.funding.ledger.execute(&raw, now()).unwrap();
+        self.funding
+            .history
+            .extend((raw.len() as u32).to_be_bytes());
+        self.funding.history.extend(&raw);
+        for node in &mut self.nodes {
+            loop {
+                let v = node.ok(json!({"command":"runtime_status"}));
+                if node.tip.0 == self.funding.ledger.tip().id() {
+                    break;
+                }
+                assert!(v["automatic_carriage"]["diagnostic"].is_null());
+                assert!(Instant::now() < self.deadline);
+                std::thread::sleep(Duration::from_millis(5));
+            }
+        }
+    }
+    fn fund_and_open(&mut self) {
+        assert_eq!(self.funding.ledger.active_channels(), 0);
+        let owners = self
+            .funding
+            .owners
+            .each_ref()
+            .map(|k| Id(k.verifying_key().to_bytes()));
+        assert!(self
+            .funding
+            .ledger
+            .coins()
+            .values()
+            .all(|c| c.owner != owners[1].0));
+        let mut report = fs::OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(self.root.join("native-first-use.jsonl"))
+            .unwrap();
+        let start = Instant::now();
+        let (input, coin) = self
+            .funding
+            .ledger
+            .coins()
+            .iter()
+            .find(|(_, c)| c.owner == owners[0].0 && c.maturity <= 101)
+            .unwrap();
+        let tip = self.nodes[0].tip;
+        let plan = TransferRequest {
+            owner: owners[0],
+            inputs: vec![hex::encode(input)],
+            outputs: [
+                (owners[0], 2000),
+                (owners[1], 2000),
+                (owners[0], coin.amount - 4001),
+            ]
+            .into_iter()
+            .map(|(owner, amount)| TransferOutput {
+                owner,
+                amount: amount.to_string(),
+            })
+            .collect(),
+            fee: "1".into(),
+            expiry: u128::MAX.to_string(),
+            timestamp: (self.funding.ledger.tip().timestamp() + 600).to_string(),
+        };
+        writeln!(report,"{}",json!({"phase":"original_native_transfer_submission","elapsed_seconds":start.elapsed().as_secs_f64()})).unwrap();
+        report.sync_all().unwrap();
+        let (prepared, v) = self.nodes[0].execute(Action::TransferPrepare { tip, plan }, false);
+        let (signed, v) = self.native_sign(0, prepared, id(&v, "review_digest"));
+        let operation = id(&v, "operation_id");
+        let request = self.nodes[0].request();
+        let queued = self.nodes[0]
+            .ok(json!({"command":"submit_authorized","request_id":request,"sign_request":signed}));
+        assert_eq!(id(&queued, "pool_operation"), operation);
+        self.include(operation);
+        self.funding.before = self.funding.ledger.clone();
+        writeln!(report,"{}",json!({"phase":"ordinary_transfer_admitted_all_peers","elapsed_seconds":start.elapsed().as_secs_f64(),"operation":operation})).unwrap();
+        report.sync_all().unwrap();
+        let inputs = owners.map(|owner| {
+            vec![hex::encode(
+                self.funding
+                    .ledger
+                    .coins()
+                    .iter()
+                    .find(|(_, c)| c.owner == owner.0 && c.amount == 2000)
+                    .unwrap()
+                    .0,
+            )]
+        });
+        let timestamp = self.funding.ledger.tip().timestamp() + 600;
+        let terms = OpeningTerms {
+            nonce: Id([19; 32]),
+            owners,
+            principal: ["600".into(), "400".into()],
+            limits: ["6".into(), "5".into()],
+            rates: ["2".into(), "3".into()],
+            fees: ["1".into(), "1".into()],
+            expiry: u128::MAX.to_string(),
+            inputs,
+        };
+        let proposal = self.nodes[0].ok(
+            json!({"command":"opening_proposal","terms":terms,"timestamp":timestamp.to_string()}),
+        );
+        assert_eq!(proposal["owner_signature_created"], false);
+        assert_eq!(proposal["change"], json!(["1387", "1584"]));
+        let tip = self.nodes[0].tip;
+        let (ap, av) = self.nodes[0].execute(
+            Action::OpenPrepare {
+                tip,
+                plan: OpeningRequest {
+                    proposal: proposal["proposal_hex"].as_str().unwrap().into(),
+                    owner: 0,
+                    timestamp: timestamp.to_string(),
+                },
+            },
+            false,
+        );
+        let ar = id(&av, "review_digest");
+        let sent = self.nodes[0]
+            .ok(json!({"command":"peer_opening","source_request":ap,"destination":self.peers[1]}));
+        let packet = id(&sent, "packet");
+        self.nodes[1].wait(packet);
+        let bp = self.nodes[1].request();
+        let bv=self.nodes[1].ok(json!({"command":"peer_open_prepare","packet":packet,"request_id":bp,"owner":1,"timestamp":timestamp.to_string()}));
+        assert_eq!(av["review"]["own_index"], 0);
+        assert_eq!(bv["review"]["own_index"], 1);
+        assert_eq!(av["review"]["principal"], json!(["600", "400"]));
+        assert_eq!(bv["review"]["principal"], av["review"]["principal"]);
+        let br = id(&bv, "review_digest");
+        let (asign, av) = self.native_sign(0, ap, ar);
+        let (bsign, bv) = self.native_sign(1, bp, br);
+        assert!(av["operation_hex"].is_null());
+        assert!(bv["operation_hex"].is_null());
+        let sent = self.nodes[1].ok(
+            json!({"command":"peer_opening","source_request":bsign,"destination":self.peers[0]}),
+        );
+        let partial = id(&sent, "packet");
+        self.nodes[0].wait(partial);
+        let combined = self.nodes[0].request();
+        let v=self.nodes[0].ok(json!({"command":"peer_open_combine","packet":partial,"request_id":combined,"prepare_request":ap,"sign_request":asign,"review":ar}));
+        self.funding.channel = id(&v, "operation_id").0;
+        let request = self.nodes[0].request();
+        let queued = self.nodes[0].ok(
+            json!({"command":"submit_authorized","request_id":request,"sign_request":combined}),
+        );
+        assert_eq!(id(&queued, "pool_operation").0, self.funding.channel);
+        self.include(Id(self.funding.channel));
+        assert_eq!(self.funding.ledger.active_channels(), 1);
+        let origin = self
+            .funding
+            .ledger
+            .funding_origin(self.funding.channel)
+            .unwrap();
+        assert_eq!(origin.initial(), [600, 400]);
+        writeln!(report,"{}",json!({"phase":"joint_opening_admitted_all_peers","elapsed_seconds":start.elapsed().as_secs_f64(),"channel":Id(self.funding.channel),"settlement_or_fast_payment_claim":false})).unwrap();
+        report.sync_all().unwrap();
     }
 }
 
@@ -404,6 +618,10 @@ fn exhausted_fee_slots_preserve_principal_but_disable_another_payment() {
 fn greater_native_work_removes_usable_backing_but_keeps_complete_receipt_evidence() {
     run_flow(25, Ending::Reorganized, false);
 }
+#[test]
+fn first_use_native_transfer_joint_opening_and_received_value_onward_payment() {
+    run_flow_setup(450, Ending::Active, false, true);
+}
 #[derive(Clone, Copy)]
 enum Ending {
     Active,
@@ -411,10 +629,13 @@ enum Ending {
     Reorganized,
 }
 fn run_flow(reverse: u128, ending: Ending, exhaust: bool) {
+    run_flow_setup(reverse, ending, exhaust, false);
+}
+fn run_flow_setup(reverse: u128, ending: Ending, exhaust: bool, first_use: bool) {
     let close_after = matches!(ending, Ending::Closing);
     let inactive = !matches!(ending, Ending::Active);
     let setup = Instant::now();
-    let mut t = Fixture::new();
+    let mut t = Fixture::new_profile(first_use);
     let setup_seconds = setup.elapsed().as_secs_f64();
     let mut report = fs::OpenOptions::new()
         .create_new(true)
@@ -428,7 +649,7 @@ fn run_flow(reverse: u128, ending: Ending, exhaust: bool) {
     };
     let count = rounds.len();
     let expected_fee = if exhaust { 12 } else { 5 };
-    writeln!(report,"{}",json!({"cohort":if exhaust{"EXHAUSTED_FEE_SLOTS"}else if close_after{"RECEIVED_VALUE_REQUIRED_THEN_NATIVE_CLOSE"}else if inactive{"NATIVE_REORGANIZATION_REMOVES_FUNDING"}else{"PREFUNDED_STABLE_NATIVE_LOCAL_APPROVAL_BASELINE"},"planned":count,"reverse_amount":reverse.to_string(),"setup_seconds":setup_seconds,
+    writeln!(report,"{}",json!({"cohort":if first_use{"ACTUAL_NATIVE_FIRST_USE_THEN_FAST_PAYMENTS"}else if exhaust{"EXHAUSTED_FEE_SLOTS"}else if close_after{"RECEIVED_VALUE_REQUIRED_THEN_NATIVE_CLOSE"}else if inactive{"NATIVE_REORGANIZATION_REMOVES_FUNDING"}else{"PREFUNDED_STABLE_NATIVE_LOCAL_APPROVAL_BASELINE"},"planned":count,"reverse_amount":reverse.to_string(),"setup_seconds":setup_seconds,
         "p95_max_seconds":3,"p99_max_seconds":5,"independent":false,"G9_qualified":false})).unwrap();
     report.sync_all().unwrap();
     let mut latencies = vec![];
@@ -443,7 +664,7 @@ fn run_flow(reverse: u128, ending: Ending, exhaust: bool) {
         assert_eq!(v["complete_receipt_retained"], false);
         assert_eq!(v["owner_spend_authorized"], false);
     }
-    if close_after {
+    if close_after || first_use {
         let v=t.nodes[1].send(json!({"command":"propose","actor":t.actors[1],"payer":1,"amount":reverse.to_string(),"invoice":Id([110;32])}));
         assert_eq!(v["diagnostic"], "INVALID fast unfunded payment");
         assert!(v["invoice_hex"].is_null());
