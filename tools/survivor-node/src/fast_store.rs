@@ -662,6 +662,56 @@ impl Store {
         self.prefix(self.head)?;
         Ok(result)
     }
+    /// Selected-history observation from this store's complete native-executed
+    /// immutable blocks, never a peer/cache-supplied inclusion assertion.
+    pub(crate) fn pool_inclusions(
+        &mut self,
+        wanted: &BTreeMap<Hash, Vec<u8>>,
+        now: u64,
+    ) -> Result<BTreeMap<Hash, (Hash, u128)>> {
+        self.check(self.head, self.native.ledger.tip().id(), now)?;
+        let mut result = BTreeMap::new();
+        let mut cursor = self.native.ledger.tip().id();
+        let mut seen = 0;
+        while cursor != self.native.ledger.chain_id() {
+            let block = self
+                .native
+                .blocks
+                .get(&cursor)
+                .ok_or("WAITING_FOR_HISTORY pool observation")?;
+            seen += 1;
+            ensure(
+                seen <= self.limits.blocks,
+                "RESOURCE_WAIT pool history route",
+            )?;
+            let mut r = Reader {
+                raw: &block.raw,
+                at: 268,
+            };
+            let count = r.u16()?;
+            ensure(count <= 128, "INVALID retained pool block count")?;
+            for _ in 0..count {
+                let size = r.u32()? as usize;
+                ensure(
+                    (1..=4096).contains(&size),
+                    "INVALID retained pool operation size",
+                )?;
+                let raw = r.take(size)?;
+                let id = fast::operation_id(raw);
+                if let Some(expected) = wanted.get(&id) {
+                    ensure(raw == *expected, "INVALID selected pool operation bytes")?;
+                    ensure(
+                        result.insert(id, (cursor, block.tip.height())).is_none(),
+                        "INVALID repeated selected pool operation",
+                    )?;
+                }
+            }
+            ensure(r.at == block.raw.len(), "INVALID retained pool block tail")?;
+            cursor = block.raw[36..68].try_into().unwrap();
+        }
+        self.prefix(self.head)?;
+        Ok(result)
+    }
     pub fn accept(&mut self, raw: &[u8], head: Hash, tip: Hash, now: u64) -> Result<Outcome> {
         self.check(head, tip, now)?;
         let id = fast::block_id(raw)?;

@@ -33,6 +33,28 @@ pub struct Packet {
     pub kind: u8,
     pub payload: Vec<u8>,
 }
+/// Versioned carriage only; a complete actor signature is not native inclusion.
+pub fn operation_payload(chain: Hash, operation: &[u8]) -> Result<Vec<u8>> {
+    kernel::fast::validate_operation(operation, chain)?;
+    let mut raw = vec![0, 1, 0, 1];
+    raw.extend(chain);
+    raw.extend((operation.len() as u16).to_be_bytes());
+    raw.extend(operation);
+    Ok(raw)
+}
+pub fn operation(raw: &[u8], chain: Hash) -> Result<&[u8]> {
+    ensure(
+        (39..=4134).contains(&raw.len()) && raw[..4] == [0, 1, 0, 1] && raw[4..36] == chain,
+        "INVALID native operation carriage header",
+    )?;
+    let n = u16::from_be_bytes(raw[36..38].try_into().unwrap()) as usize;
+    ensure(
+        (1..=4096).contains(&n) && raw.len() == 38 + n,
+        "INVALID native operation carriage size",
+    )?;
+    kernel::fast::validate_operation(&raw[38..], chain)?;
+    Ok(&raw[38..])
+}
 pub fn payload(kind: u8, raw: &[u8], chain: Hash) -> Result<()> {
     match kind {
         1 => {
@@ -59,6 +81,9 @@ pub fn payload(kind: u8, raw: &[u8], chain: Hash) -> Result<()> {
             raw.len() == 340 && raw[..4] == [0, 1, 0, 1] && raw[4..36] == chain,
             "INVALID peer acknowledgment shape",
         )?,
+        6 => {
+            operation(raw, chain)?;
+        }
         _ => return Err("UNSUPPORTED peer payload kind".into()),
     }
     Ok(())

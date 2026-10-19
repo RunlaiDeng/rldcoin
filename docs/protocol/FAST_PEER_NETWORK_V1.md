@@ -76,11 +76,15 @@ hash(PACKET-ID, complete_packet). New connection freshness comes separately belo
 |3|invoice_ID32 plus129-byte existing ordered own partial|Carrier-authenticated bytes; native-context wallet verification still required|
 |4|579/831-byte existing complete receipt, matching version/chain|Complete bytes; both owner/state/invoice signatures and backing still require local checks|
 |5|340-byte existing retainer acknowledgment, matching version/chain|Complete bytes; exact native origin/delegation/receipt verification still required|
+|6|39..4134-byte versioned signed native-operation frame|Signed data only; explicit local pool retention and full native template/admission checks remain required|
 
 No alternative/trailing encoding or other kind is accepted. The separately
 assembled [public transport byte vectors](fast-peer-v1-vectors.json) use labeled
 public no-value data keys and deliberately invalid zero wallet signatures in their
 partial. They prove codec interoperability only, not a funded origin or payment.
+Kind6 has its own version/suite/chain/length frame and separate
+[operation-pool contract and public vector](FAST_NATIVE_OPERATION_POOL_V1.md).
+Older peers refuse this unknown kind without fallback; kinds1..5 are unchanged.
 
 After pinned mutual TLS authenticates the exact configured remote certificate,
 server sends164 bytes: `v/suite4 || chain32 || server_data_key32 || fresh_S32 ||
@@ -192,6 +196,11 @@ Additional local commands, always with current session `head`:
   dual authorization and exact received retainer proof, then retain via the normal
   caller/owner journal. Historical retention does not restore orphan backing.
 - peer_import(packet, request_id): full normal native admission for received kind1.
+- peer_operation(operation, destination): carry existing retained signed native
+  operations as kind6; no first signing or inclusion promise.
+- peer_pool_submit(packet, request_id): explicit local retention of kind6 signed
+  data; no ledger effect. Pool mining/admission remain separate local commands.
+- peer_block(block, destination): queue exact retained native block bytes as kind1.
 
 Local execute owner_sign/retainer_sign remains the only corresponding key-loading
 path and still requires exact persisted review, approved=true and secure native

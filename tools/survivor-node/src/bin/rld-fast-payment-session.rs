@@ -2,7 +2,7 @@
 //! argv/env/log/HTTP values; no plaintext signing key is accepted or returned.
 use rld_survivor_node::{
     fast_peer::{codec::Packet, Network},
-    fast_session::{Action, Id, MiningRequest, Session},
+    fast_session::{Action, Id, MiningRequest, PoolMiningRequest, Session},
     kernel::Result,
 };
 use serde::{Deserialize, Deserializer};
@@ -28,6 +28,46 @@ impl<'de> Deserialize<'de> for Password {
 #[derive(Deserialize)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
+    PoolStatus {
+        head: Id,
+    },
+    PoolOperation {
+        head: Id,
+        operation: Id,
+    },
+    SubmitAuthorized {
+        head: Id,
+        request_id: Id,
+        sign_request: Id,
+    },
+    MinePool {
+        head: Id,
+        miner: Id,
+        timestamp: String,
+        attempts: u32,
+        scan_limit: u16,
+        refresh: bool,
+    },
+    AdmitCandidate {
+        head: Id,
+        request_id: Id,
+        candidate: Id,
+    },
+    PeerPoolSubmit {
+        head: Id,
+        packet: Id,
+        request_id: Id,
+    },
+    PeerOperation {
+        head: Id,
+        operation: Id,
+        destination: Id,
+    },
+    PeerBlock {
+        head: Id,
+        block: Id,
+        destination: Id,
+    },
     ExitEvidence {
         head: Id,
         actor: Id,
@@ -279,6 +319,11 @@ fn run() -> Result<()> {
                 clock,
             ),
             Request::ExitEvidence { head, actor } => s.exit_evidence(head.0, actor, clock),
+            Request::PoolStatus{head}=>s.pool_status(head.0,clock),
+            Request::PoolOperation{head,operation}=>Ok(json!({"operation":operation,"operation_hex":hex::encode(s.pool_operation(head.0,operation,clock)?),"pool_custody_only":true})),
+            Request::SubmitAuthorized{head,request_id,sign_request}=>s.submit_authorized(head.0,request_id,sign_request,clock),
+            Request::MinePool{head,miner,timestamp,attempts,scan_limit,refresh}=>s.mine_pool(head.0,PoolMiningRequest{miner,timestamp,attempts,scan_limit,refresh},clock),
+            Request::AdmitCandidate{head,request_id,candidate}=>s.admit_candidate(head.0,request_id,candidate,clock),
             other => peer_command(&mut s, &mut peer, other, clock),
         });
         match out {
@@ -333,7 +378,10 @@ fn peer_command(
 ) -> Result<Value> {
     use rld_survivor_node::fast_session::bytes;
     let head = match &r {
-        Request::PeerStatus { head }
+        Request::PeerPoolSubmit { head, .. }
+        | Request::PeerOperation { head, .. }
+        | Request::PeerBlock { head, .. }
+        | Request::PeerStatus { head }
         | Request::PeerInventory { head }
         | Request::PeerData { head, .. }
         | Request::PeerQueue { head, .. }
@@ -348,6 +396,37 @@ fn peer_command(
     };
     s.status(head, clock)?;
     match r {
+        Request::PeerPoolSubmit {
+            packet, request_id, ..
+        } => {
+            let p = incoming(peer, packet, 6)?;
+            let raw = rld_survivor_node::fast_peer::codec::operation(&p.payload, s.chain_id())?;
+            s.execute(
+                request_id,
+                head,
+                Action::PoolSubmit {
+                    tip: Id(s.tip()),
+                    operation: hex::encode(raw),
+                },
+                None,
+                clock,
+            )
+        }
+        Request::PeerOperation {
+            operation,
+            destination,
+            ..
+        } => {
+            let raw = s.pool_operation(head, operation, clock)?;
+            let data = rld_survivor_node::fast_peer::codec::operation_payload(s.chain_id(), &raw)?;
+            queued(require_peer(peer)?, destination, 6, &data, clock)
+        }
+        Request::PeerBlock {
+            block, destination, ..
+        } => {
+            let raw = s.retained_block(head, block, clock)?;
+            queued(require_peer(peer)?, destination, 1, &raw, clock)
+        }
         Request::PeerStatus { .. } => {
             let n = require_peer(peer)?;
             Ok(json!({"peer_head":Id(n.head()),"transport_custody_only":true}))

@@ -698,3 +698,21 @@ audited immutable prefix never initializes a ledger or independent latest state.
 No timeout releases pending fee inputs. Continuous funded monitoring, timely
 claims/inclusion, independent custody/approval, archival/mass-exit capacity and
 the original composed performance gates remain required.
+
+The [signed native operation pool](../../docs/protocol/FAST_NATIVE_OPERATION_POOL_V1.md)
+adds private `submit_authorized`, `pool_status`, `pool_operation`, `mine_pool` and
+`admit_candidate` commands. Existing complete signatures are retained within a
+permanent512-operation/2-MiB pool inside the caller journal. `peer_operation`
+carries them as explicitly versioned kind6 data; `peer_pool_submit` is a separate
+local retention decision, and `peer_block` sends exact retained native evidence.
+Peers cannot approve owners or choose a trusted caller head.
+
+Own-template mining checks complete native rules for each selected operation.
+Missing dependencies/conflicts are deferred without deleting data or resetting
+local age. A candidate is not admission; its exact digest supports ordinary
+native-request recovery after a lost response. Selected inclusion is conditional
+and can disappear on reorganization. Restart fully checks native/caller history;
+pending pool recovery only retains existing signatures and never loads keys.
+All current journal/capacity/window/maturity bounds and composed qualification
+requirements remain unchanged. This is no-value component functionality, not an
+automatic monitored payment service or an achieved throughput/latency claim.

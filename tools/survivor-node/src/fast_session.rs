@@ -2,6 +2,7 @@
 //! owner/retainer steps. Full child replay/audits precede signing authority.
 mod journal;
 mod onchain;
+mod pool;
 use crate::{
     fast_owner,
     fast_payment::{self, ensure, Acknowledgment, Delegation, Invoice, Payment},
@@ -12,6 +13,7 @@ use crate::{
 };
 use journal::{Done, Journal};
 pub use onchain::{MiningRequest, OnchainRequest};
+pub use pool::PoolMiningRequest;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -64,6 +66,10 @@ pub fn bytes(raw: &str, max: usize) -> Result<Vec<u8>> {
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "method", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Action {
+    PoolSubmit {
+        tip: Id,
+        operation: String,
+    },
     OnchainPrepare {
         tip: Id,
         plan: OnchainRequest,
@@ -142,7 +148,8 @@ impl Action {
     }
     fn tip(&self) -> Hash {
         match self {
-            Self::OnchainPrepare { tip, .. }
+            Self::PoolSubmit { tip, .. }
+            | Self::OnchainPrepare { tip, .. }
             | Self::OnchainSign { tip, .. }
             | Self::Native { tip, .. }
             | Self::OwnerCreate { tip, .. }
@@ -208,6 +215,12 @@ impl Action {
     }
     fn shape(&self) -> Result<()> {
         match self {
+            Self::PoolSubmit { operation, .. } => {
+                ensure(
+                    !bytes(operation, 4096)?.is_empty(),
+                    "INVALID empty pool operation",
+                )?;
+            }
             Self::OnchainPrepare { plan, .. } => {
                 plan.request()?;
             }
@@ -337,6 +350,9 @@ pub struct Session {
     // Process-local proof over an already fully audited immutable caller/native
     // prefix. Never serialized; advance only after durable caller completion.
     onchain_audited: usize,
+    pool_mining: Option<pool::PoolMining>,
+    pool_cursor: usize,
+    candidate: Option<Vec<u8>>,
 }
 struct Mining {
     tip: Hash,
@@ -485,6 +501,9 @@ impl Session {
             actors: BTreeMap::new(),
             mining: None,
             onchain_audited: 0,
+            pool_mining: None,
+            pool_cursor: 0,
+            candidate: None,
         })
     }
     fn structural(c: &Journal, chain: Hash) -> Result<(Hash, BTreeMap<Id, ActorState>)> {
@@ -559,6 +578,9 @@ impl Session {
             actors,
             mining: None,
             onchain_audited: 0,
+            pool_mining: None,
+            pool_cursor: 0,
+            candidate: None,
         };
         s.audit(now)?;
         s.onchain_audited = s.caller.ops.len();
@@ -574,6 +596,9 @@ impl Session {
     }
     pub fn head(&self) -> Hash {
         self.caller.head
+    }
+    pub fn chain_id(&self) -> Hash {
+        self.chain
     }
     pub fn native_head(&self) -> Hash {
         self.native.as_ref().unwrap().head()
@@ -649,6 +674,7 @@ impl Session {
             "INVALID caller reconstructed selection",
         )?;
         self.audit_onchain(&native_context)?;
+        self.audit_pool(&native_context)?;
         // One actor at a time: no unchecked serialized child state and no in-memory
         // prefix for every registered owner. Native/actor memory remains separately bounded.
         let mut verified = BTreeMap::new();
@@ -966,6 +992,7 @@ impl Session {
     }
     fn preflight(&self, action: &Action) -> Result<()> {
         action.shape()?;
+        self.pool_preflight(action)?;
         self.onchain_preflight(action)?;
         if let Some(reg) = action.registration(self.chain)? {
             ensure(
@@ -992,6 +1019,12 @@ impl Session {
         password: Option<&[u8]>,
         now: u64,
     ) -> Result<(Option<Id>, Option<Id>)> {
+        if let Action::PoolSubmit { tip, operation } = action {
+            let n = self.native.as_mut().unwrap();
+            n.check(n.head(), tip.0, now)?;
+            fast::validate_operation(&bytes(operation, 4096)?, self.chain)?;
+            return Ok((None, None));
+        }
         if let Some(reg) = action.registration(self.chain)? {
             let n = self.native.as_mut().unwrap();
             let history = n.funding_history(n.head(), reg.tip, reg.channel, now)?;
@@ -1156,7 +1189,9 @@ impl Session {
                 observe(
                     if matches!(
                         action,
-                        Action::OnchainPrepare { .. } | Action::OnchainSign { .. }
+                        Action::OnchainPrepare { .. }
+                            | Action::OnchainSign { .. }
+                            | Action::PoolSubmit { .. }
                     ) {
                         Boundary::NativeActionEvaluated
                     } else {
@@ -1205,7 +1240,7 @@ impl Session {
             .clone();
         if matches!(
             action,
-            Action::OnchainPrepare { .. } | Action::OnchainSign { .. }
+            Action::OnchainPrepare { .. } | Action::OnchainSign { .. } | Action::PoolSubmit { .. }
         ) {
             return Ok((None, None));
         }
@@ -1444,6 +1479,9 @@ impl Session {
             actors,
             mining: None,
             onchain_audited: 0,
+            pool_mining: None,
+            pool_cursor: 0,
+            candidate: None,
         };
         if pending {
             // For a pending native step the retained store may already be one step ahead;
@@ -1459,18 +1497,20 @@ impl Session {
             } else {
                 s.resolve(now)?
             };
-            s.verify_pending(
-                e,
-                r,
-                Some("RECOVERED_EXISTING_EFFECT_OR_NO_CHILD_STEP".into()),
-                None,
-                now,
-            )?;
-            s.caller.finish(
-                e,
-                r,
-                Some("RECOVERED_EXISTING_EFFECT_OR_NO_CHILD_STEP".into()),
-            )?;
+            let diagnostic = if let Action::PoolSubmit { tip, .. } = &action {
+                if tip.0 != s.tip() {
+                    Some("RECOVERED_POOL_REJECTED_STALE_SELECTION".into())
+                } else {
+                    s.pool_preflight(&action)?;
+                    let n = s.native.as_mut().unwrap();
+                    n.check(n.head(), tip.0, now)?;
+                    None
+                }
+            } else {
+                Some("RECOVERED_EXISTING_EFFECT_OR_NO_CHILD_STEP".into())
+            };
+            s.verify_pending(e, r, diagnostic.clone(), None, now)?;
+            s.caller.finish(e, r, diagnostic)?;
         } else {
             s.audit(now)?;
         }
@@ -1487,6 +1527,14 @@ impl Session {
             .clone();
         let done = op.done.as_ref().ok_or("MISSING caller complete response")?;
         let mut out = json!({"session_head":Id(self.head()),"native_head":Id(self.native_head()),"selected_tip":Id(self.tip()),"request_id":op.intent.id,"request_digest":op.intent.action.digest()?,"review_digest":done.review,"diagnostic":done.diagnostic,"fast_completion_authorized":false,"network_monitoring":false,"independent_freshness":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY","key_loaded_by_recovery":false});
+        if let Action::PoolSubmit { operation, .. } = &op.intent.action {
+            if done.diagnostic.is_none() {
+                let id = fast::operation_id(&bytes(operation, 4096)?);
+                out["pool_operation"] = serde_json::to_value(Id(id)).map_err(fast_retainer::io)?;
+                out["pool_retained"] = true.into();
+                out["native_inclusion_known"] = false.into();
+            }
+        }
         if let Some(review) = self.onchain_output(&op.intent.action, done, op.intent.at)? {
             out["review"] = review;
         }

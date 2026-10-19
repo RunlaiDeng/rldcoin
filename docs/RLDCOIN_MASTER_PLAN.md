@@ -161,6 +161,16 @@ prefix reuse is never serialized or initialized from peer state. Independent
 latest-head/key custody, continuous funded claim/challenge monitoring, timely
 inclusion and composed resource/exit qualification remain required.
 
+The [signed native operation pool](protocol/FAST_NATIVE_OPERATION_POOL_V1.md)
+retains already signed complete operations in the caller history, carries them
+as versioned peer data and builds bounded ordinary-node templates through normal
+native execution. Missing dependencies/conflicts remain retained with their first
+local queue time. Candidate discovery, explicit native admission and conditional
+selected-history inclusion are separate. Cold replay, exact keyless request
+recovery and reorganization preserve those distinctions. This supplies no
+continuous solvent monitor, automatic trusted caller-head coordination,
+independent operation/custody, scalable archival/mass exit or composed G1-G11.
+
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
 remain untouched. Reuse utilities only when exact semantics match this profile;
@@ -189,6 +199,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Serialized native payment session | FAST_PAYMENT_SESSION_V1: exact key-free caller intent, audited native/actor effects, persisted review/approval and keyless cross-journal recovery | `fast_session.rs`, `fast_session/journal.rs`, `bin/rld-fast-payment-session.rs`, `tests/fast_session.rs`; authenticated peers, actual consumer approval/latest-head custody, fee monitoring/claim solvency, scalable archival and composed independent gates remain required |
 | Direct session peer data carriage | FAST_PEER_NETWORK_V1: pinned mutual TLS, fresh signed connection binding, bounded durable queue/receive/response custody, retry and exact data-tail recovery | `fast_peer.rs`, `fast_peer/{codec,store}.rs`, session/peer binaries and `tests/fast_peer.rs`; explicit local native/owner verification, autonomous head coordination, fee monitoring, independent operators and all composed gates remain required |
 | Native escrow action authorization | FAST_NATIVE_ACTION_AUTHORIZATION_V1: exact ordinary fee-input reservation, full native review, explicit encrypted-key signature custody, historical exit evidence and own-template CPU candidates | `kernel/fast/planning.rs`, `fast_session/onchain.rs`, session caller/CLI and `tests/fast_onchain.rs`; continuous solvent monitoring, guaranteed inclusion, independent latest-state/key custody, physical routes and composed G1-G11 remain required |
+| Signed operation carriage and pool mining | FAST_NATIVE_OPERATION_POOL_V1: bounded existing-signature custody, versioned peer data, normal native own-template selection and explicit candidate admission | `fast_session/pool.rs`, peer codec/session CLI, `fast_store.rs` and `tests/fast_pool.rs`; queue/candidate/inclusion/maturity remain distinct, with all autonomous coordination, monitoring, custody/resource and composed gates still required |
 
 ## Ordered behavior milestones
 

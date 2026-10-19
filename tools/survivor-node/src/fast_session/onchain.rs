@@ -17,7 +17,7 @@ pub struct OnchainRequest {
     pub certificate: String,
     pub timestamp: String,
 }
-fn integer(s: &str) -> Result<u128> {
+pub(super) fn integer(s: &str) -> Result<u128> {
     ensure(
         !s.is_empty()
             && (s.len() == 1 || !s.starts_with('0'))
@@ -163,9 +163,7 @@ impl Session {
             .search(request.attempts as u64);
         if let Some(raw) = block {
             self.mining = None;
-            Ok(
-                json!({"block_hex":hex::encode(raw),"hash_calls":calls.to_string(),"candidate_only":true,"ledger_admitted":false}),
-            )
+            self.candidate_output(raw, calls)
         } else {
             Ok(
                 json!({"hash_calls":calls.to_string(),"candidate_only":true,"state":"SEARCH_PENDING","ledger_admitted":false}),
