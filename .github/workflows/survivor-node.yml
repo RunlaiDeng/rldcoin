@@ -14,6 +14,7 @@ on:
       - 'docs/protocol/FAST_PAYMENT_RETENTION_V1.md'
       - 'docs/protocol/FAST_OWNER_AUTHORIZATION_V1.md'
       - 'docs/protocol/FAST_NATIVE_NODE_V1.md'
+      - 'docs/protocol/FAST_PAYMENT_SESSION_V1.md'
       - 'docs/protocol/fast-payment-retention-v1-vectors.json'
       - '.github/workflows/survivor-node.yml'
   pull_request:
@@ -29,6 +30,7 @@ on:
       - 'docs/protocol/FAST_PAYMENT_RETENTION_V1.md'
       - 'docs/protocol/FAST_OWNER_AUTHORIZATION_V1.md'
       - 'docs/protocol/FAST_NATIVE_NODE_V1.md'
+      - 'docs/protocol/FAST_PAYMENT_SESSION_V1.md'
       - 'docs/protocol/fast-payment-retention-v1-vectors.json'
       - '.github/workflows/survivor-node.yml'
 permissions:

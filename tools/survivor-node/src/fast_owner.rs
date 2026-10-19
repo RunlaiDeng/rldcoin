@@ -399,6 +399,18 @@ impl Journal {
     pub fn head(&self) -> Hash {
         self.head
     }
+    pub(crate) fn scope(&self) -> (FundingOrigin, Delegation, u8) {
+        (self.origin.clone(), self.delegation.clone(), self.owner)
+    }
+    pub(crate) fn initial_head(&self) -> Hash {
+        let n = u64::from_be_bytes(self.prefix[189..197].try_into().unwrap()) as usize;
+        hash("HEADER", &self.prefix[..443 + n])
+    }
+    pub(crate) fn audit_step(&mut self, prior: Hash, next: Hash) -> Result<(u8, Vec<u8>)> {
+        self.prefix(self.head)?;
+        let n = u64::from_be_bytes(self.prefix[189..197].try_into().unwrap()) as usize;
+        crate::fast_retainer::retained_step(&self.prefix, 443 + n, prior, next)
+    }
     pub fn owner(&self) -> Hash {
         self.origin.owners()[self.owner as usize]
     }

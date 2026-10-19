@@ -604,3 +604,35 @@ memory costs. Unknown/corrupt/torn data refuse unchanged; no repair/pruning or
 value migration is provided. This is local native operation, not live peer
 synchronization, owner/caller session control, continuous fee-solvent monitoring,
 independent latest-state custody, ordinary-hardware or composed fast qualification.
+
+The [serialized payment session](../../docs/protocol/FAST_PAYMENT_SESSION_V1.md)
+adds `fast_session::Session` and a separate local executable:
+
+```
+rld-fast-payment-session create ROOT GENESIS_FILE PINNED_CHAIN
+rld-fast-payment-session serve ROOT GENESIS_FILE PINNED_CHAIN LATEST_SESSION_HEAD
+rld-fast-payment-session recover ROOT GENESIS_FILE PINNED_CHAIN PRIOR_SESSION_HEAD REQUEST_ID REQUEST_DIGEST
+```
+
+It owns one native selector plus a bounded key-free caller journal and private
+owner/retainer actor files. Exact requests precede child mutation; verified child
+heads and review digests precede response. Every cold open reexecutes native
+history, authenticates complete actor custody and audits caller-to-child steps.
+Unsigned proposals come from the node's own native/retained owner state. Explicit
+signing requires a persisted exact review reference, approved=true and a private
+O13 encrypted key file; passwords are zeroized bounded native stdin inputs, never
+argv/environment/HTTP/journal/log material. No raw key or serialized ledger input
+is accepted. Signatures are retained before release, and keyless recovery never
+first-signs or releases an owner reservation. A recovered native step retains its
+actual selected branch. Caller/actor files are at most32 MiB, at most16 actors and
+65536 requests; native limits remain separate. Interrupted initialization is kept
+under CREATING; corrupt/torn/unknown tails refuse without repair or migration.
+
+Control commands are `status`, `pending`, `propose` and typed `execute`; the contract
+fixes their exact fields and canonical key-free action/digest bytes. The caller
+must independently retain latest session heads and pending request/digest bindings.
+This is local control and scoped process composition, without authenticated peer
+transport, a consumer approval UI, fee-solvent continuous challenge monitoring,
+independent latest-state custody, power-loss/scalable archival or composed G1-G11
+qualification. Every response keeps fast completion false; existing proof alone
+does not establish unseen work, current remote backing or mature miner payout.

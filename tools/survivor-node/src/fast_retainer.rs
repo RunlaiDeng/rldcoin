@@ -122,6 +122,28 @@ pub(crate) fn sync(file: &File, path: &Path) -> Result<()> {
         .and_then(|p| p.sync_all())
         .map_err(io)
 }
+/// Lookup inside an already completely replayed private journal prefix. Callers
+/// still check the actual file prefix; this is not a parser granting authority.
+pub(crate) fn retained_step(
+    prefix: &[u8],
+    first: usize,
+    prior: Hash,
+    next: Hash,
+) -> Result<(u8, Vec<u8>)> {
+    let mut r = Reader {
+        raw: prefix,
+        at: first,
+    };
+    while r.at < prefix.len() {
+        let n = r.u32()? as usize;
+        ensure((73..=2048).contains(&n), "INVALID custody step bound")?;
+        let raw = r.take(n)?;
+        if raw[8..40] == prior && raw[n - 32..] == next {
+            return Ok((raw[40], raw[41..n - 32].to_vec()));
+        }
+    }
+    Err("INVALID custody exact retained transition".into())
+}
 pub(crate) fn origin(
     genesis: &[u8],
     chain: Hash,
@@ -464,6 +486,18 @@ impl Journal {
     }
     pub fn head(&self) -> Hash {
         self.head
+    }
+    pub(crate) fn scope(&self) -> (FundingOrigin, Delegation) {
+        (self.origin.clone(), self.delegation.clone())
+    }
+    pub(crate) fn initial_head(&self) -> Hash {
+        let n = u64::from_be_bytes(self.prefix[189..197].try_into().unwrap()) as usize;
+        hash("JOURNAL-HEADER", &self.prefix[..442 + n])
+    }
+    pub(crate) fn audit_step(&mut self, prior: Hash, next: Hash) -> Result<(u8, Vec<u8>)> {
+        self.check_prefix()?;
+        let n = u64::from_be_bytes(self.prefix[189..197].try_into().unwrap()) as usize;
+        retained_step(&self.prefix, 442 + n, prior, next)
     }
     pub fn latest_sequence(&self) -> u64 {
         self.last.as_ref().map_or(0, |last| last.payment.sequence)

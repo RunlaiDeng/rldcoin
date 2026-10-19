@@ -109,9 +109,10 @@ unsigned proposal construction, exact owner review, pre-key durable reservation,
 own partial persistence, complete counterparty/retainer proof retention and keyless
 recovery. Each owner has a separate private journal and external latest head;
 timeouts never release a pending slot. Latest complete exit evidence remains
-available during a subsequent pending invoice. A frontend/caller-head service,
-one continuously updated native selector, operational fee liquidity, independent
-custody and monitoring remain required before fast completion.
+available during a subsequent pending invoice. Consumer approval/latest-head
+custody, authenticated native updates, operational fee liquidity and continuous
+independent monitoring remain required before fast completion; the native and
+local caller components below compose these journals without waiving those gates.
 The [native fast-node selector](protocol/FAST_NATIVE_NODE_V1.md) provides a
 separate bounded exclusive-writer journal and local stdin executable. It retains
 every accepted full branch, chooses greatest native work with the existing
@@ -122,6 +123,19 @@ exact keyless tail recovery preserves that knowledge across process restart.
 The local node supplies actual bounded self-constructed CPU mining and funding
 inspection, not a peer transport, live monitored payment/caller-head service,
 independent freshness, mass-exit or composed daily qualification.
+The [serialized payment session](protocol/FAST_PAYMENT_SESSION_V1.md) composes
+that selector with per-owner authorization and delegated custody. Its key-free
+caller journal persists exact requests before child work and verified head/review
+effects before response. Cold opening authenticates all native/actor histories
+and each caller-to-child transition; record hashes or status fields never create
+money/signing authority. Explicit recovery can reproduce an existing partial,
+ack or native selection, never first-sign or free a pending owner slot. The local
+stdin interface builds unsigned proposals from retained native/owner state and
+requires exact persisted review plus explicit approval before encrypted-key use.
+This supplies a local caller/session component, not authenticated peer delivery,
+consumer consent UI, continuous fee-solvent monitoring, independent latest-head
+custody or G1-G11 composition. Its fixed32-MiB caller/actor and16-actor bounds
+require separate archival/scaling/resource qualification before capacity claims.
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
@@ -148,6 +162,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Funded invoice and delegated retention | FAST_PAYMENT_RETENTION_V1: native-origin full payment transition, ordered state/invoice signatures, miner-delegated bounded durable prepare/ack and keyless recovery | `fast_payment.rs`, `fast_retainer.rs`, public codec vectors and native invoice-to-settlement checks; owner custody, continuous monitoring, operational liquidity and composed G9-G11 remain required |
 | Fast owner authorization | FAST_OWNER_AUTHORIZATION_V1: unsigned proposal, separate owner review/reservation/signature, full receipt/ack retention and keyless recovery | `fast_owner.rs`, `bin/rld-fast-owner-recover.rs` and `tests/fast_owner.rs`; no frontend approval/caller-head service, independent custody, live native selection/monitoring or composed G9-G11 qualification |
 | Native fast-node selection | FAST_NATIVE_NODE_V1: durable full known-branch custody, greatest native work, exact current-state lease, bounded local control/mining and keyless tail recovery | `fast_store.rs`, `bin/rld-fast-node.rs`, `tests/fast_store.rs`; peer synchronization, owner/caller sessions, fee-solvent monitoring, independent custody and composed G9-G11 remain required |
+| Serialized native payment session | FAST_PAYMENT_SESSION_V1: exact key-free caller intent, audited native/actor effects, persisted review/approval and keyless cross-journal recovery | `fast_session.rs`, `fast_session/journal.rs`, `bin/rld-fast-payment-session.rs`, `tests/fast_session.rs`; authenticated peers, actual consumer approval/latest-head custody, fee monitoring/claim solvency, scalable archival and composed independent gates remain required |
 
 ## Ordered behavior milestones
 

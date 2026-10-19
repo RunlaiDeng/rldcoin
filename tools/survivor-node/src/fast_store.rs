@@ -399,6 +399,9 @@ impl Store {
     pub fn head(&self) -> Hash {
         self.head
     }
+    pub(crate) fn initial_head(&self) -> Hash {
+        hash("HEADER", &self.prefix[..165])
+    }
     pub fn revision(&self) -> u128 {
         self.native.revision
     }
@@ -414,6 +417,74 @@ impl Store {
             .get(&id)
             .map(|b| b.raw.as_slice())
             .ok_or("WAITING_FOR_HISTORY native block".into())
+    }
+    pub(crate) fn historical(&mut self, tip: Hash) -> Result<Ledger> {
+        self.prefix(self.head)?;
+        self.native.replay(tip)
+    }
+    pub(crate) fn funding_history(
+        &mut self,
+        head: Hash,
+        tip: Hash,
+        channel: Hash,
+        now: u64,
+    ) -> Result<Vec<u8>> {
+        self.check(head, tip, now)?;
+        let origin = self.native.ledger.funding_origin(channel)?;
+        origin.check_current(&self.native.ledger, tip, now)?;
+        self.history_to_height(tip, origin.birth_height())
+    }
+    pub(crate) fn history_to_height(&self, mut tip: Hash, height: u128) -> Result<Vec<u8>> {
+        let mut route = Vec::new();
+        while tip != self.native.ledger.chain_id() {
+            let b = self
+                .native
+                .blocks
+                .get(&tip)
+                .ok_or("WAITING_FOR_HISTORY funding history")?;
+            if b.tip.height() <= height {
+                route.push(b);
+            }
+            ensure(
+                route.len() <= self.limits.blocks,
+                "RESOURCE_WAIT funding history route",
+            )?;
+            tip = b.raw[36..68].try_into().unwrap();
+        }
+        let mut result = Vec::new();
+        for b in route.into_iter().rev() {
+            result.extend((b.raw.len() as u32).to_be_bytes());
+            result.extend(&b.raw);
+        }
+        Ok(result)
+    }
+    pub(crate) fn audit_step(
+        &mut self,
+        prior: Hash,
+        next: Hash,
+        expected: &[u8],
+    ) -> Result<(Hash, u64)> {
+        self.prefix(self.head)?;
+        let mut r = Reader {
+            raw: &self.prefix,
+            at: 165,
+        };
+        while r.at < self.prefix.len() {
+            let n = r.u32()? as usize;
+            let raw = r.take(n)?;
+            if raw[8..40] == prior && raw[n - 32..] == next {
+                let size = u32::from_be_bytes(raw[48..52].try_into().unwrap()) as usize;
+                ensure(
+                    raw[52..52 + size] == *expected,
+                    "INVALID session native step bytes",
+                )?;
+                return Ok((
+                    raw[52 + size..84 + size].try_into().unwrap(),
+                    u64::from_be_bytes(raw[40..48].try_into().unwrap()),
+                ));
+            }
+        }
+        Err("INVALID session native transition".into())
     }
     pub fn accept(&mut self, raw: &[u8], head: Hash, tip: Hash, now: u64) -> Result<Outcome> {
         self.check(head, tip, now)?;
