@@ -51,7 +51,104 @@ struct Escrow {
     closing: Option<Closing>,
 }
 type Book = BTreeMap<Hash, Escrow>;
+
+/// Historical funding authority derived only from native execution. This is
+/// neither independently fresh nor a claim that its escrow is currently active.
+#[derive(Clone)]
+pub struct FundingOrigin {
+    chain: Hash,
+    channel: Hash,
+    context: Vec<u8>,
+    initial: [u128; 2],
+    height: u128,
+}
+impl FundingOrigin {
+    pub fn chain(&self) -> Hash {
+        self.chain
+    }
+    pub fn channel(&self) -> Hash {
+        self.channel
+    }
+    pub fn context(&self) -> &[u8] {
+        &self.context
+    }
+    pub fn initial(&self) -> [u128; 2] {
+        self.initial
+    }
+    pub fn birth_height(&self) -> u128 {
+        self.height
+    }
+    pub fn context_commitment(&self) -> Hash {
+        Sha256::digest([b"RLD-FAST-FEE-CLAIM-1/CONTEXT\0".as_slice(), &self.context].concat())
+            .into()
+    }
+    pub fn owners(&self) -> [Hash; 2] {
+        [
+            self.context[68..100].try_into().unwrap(),
+            self.context[100..132].try_into().unwrap(),
+        ]
+    }
+    pub fn miner(&self) -> Hash {
+        self.context[132..164].try_into().unwrap()
+    }
+    pub fn rate(&self, payer: usize) -> Result<u128> {
+        require(payer < 2, "INVALID fast payer")?;
+        let at = if payer == 0 { 188 } else { 212 };
+        Ok(u128::from_be_bytes(
+            self.context[at..at + 16].try_into().unwrap(),
+        ))
+    }
+    pub fn verify_certificate(&self, raw: &[u8]) -> Result<crate::fast_fee_claims::Claim> {
+        let claim = Contract::decode(&self.context)?.verify(raw)?;
+        require(
+            claim.slots[0].checked_add(claim.slots[1]) == Some(claim.sequence),
+            "INVALID fast state sequence",
+        )?;
+        require(
+            claim.sequence != 0 || claim.balances == self.initial,
+            "INVALID fast initial allocation",
+        )?;
+        Ok(claim)
+    }
+    pub fn initial_unsigned(&self) -> Vec<u8> {
+        let mut raw = self.context[..68].to_vec();
+        raw.extend(0u64.to_be_bytes());
+        for v in self.initial {
+            raw.extend(v.to_be_bytes());
+        }
+        raw.extend([0; 16]);
+        raw
+    }
+    pub fn check_current(&self, ledger: &Ledger, expected_tip: Hash, now: u64) -> Result<()> {
+        require(
+            ledger.chain == self.chain && ledger.tip.id == expected_tip,
+            "INVALID fast current native head",
+        )?;
+        require(
+            ledger.tip.eligible(now) && now.saturating_sub(ledger.tip.time) <= 7200,
+            "CLOCK_WAIT fast current head age",
+        )?;
+        let escrow = ledger
+            .book
+            .get(&self.channel)
+            .ok_or("WAITING_FOR_INPUT fast backing absent")?;
+        require(escrow.closing.is_none(), "WAITING fast backing closing")?;
+        require(
+            escrow.context(self.chain, self.channel) == self.context,
+            "INVALID fast backing reorganization",
+        )
+    }
+}
 impl Escrow {
+    fn origin(&self, chain: Hash, id: Hash) -> FundingOrigin {
+        FundingOrigin {
+            chain,
+            channel: id,
+            context: self.context(chain, id),
+            initial: self.terms.principal,
+            height: self.height,
+        }
+    }
     fn locked(&self) -> u128 {
         self.terms.principal.iter().sum::<u128>()
             + (0..2)
@@ -83,16 +180,7 @@ impl Escrow {
         id: Hash,
         raw: &[u8],
     ) -> Result<crate::fast_fee_claims::Claim> {
-        let claim = Contract::decode(&self.context(chain, id))?.verify(raw)?;
-        require(
-            claim.slots[0].checked_add(claim.slots[1]) == Some(claim.sequence),
-            "INVALID fast state sequence",
-        )?;
-        require(
-            claim.sequence != 0 || claim.balances == self.terms.principal,
-            "INVALID fast initial allocation",
-        )?;
-        Ok(claim)
+        self.origin(chain, id).verify_certificate(raw)
     }
     fn floors(&self, chain: Hash, id: Hash) -> Result<FeeFloors> {
         let mut floors = FeeFloors::new(Contract::decode(&self.context(chain, id))?);
@@ -277,6 +365,13 @@ impl Ledger {
             .get(&id)
             .ok_or("MISSING fast escrow")?
             .context(self.chain, id))
+    }
+    pub fn funding_origin(&self, id: Hash) -> Result<FundingOrigin> {
+        Ok(self
+            .book
+            .get(&id)
+            .ok_or("MISSING fast escrow")?
+            .origin(self.chain, id))
     }
     fn timing(&self, time: u64) -> Result<(Big, Big)> {
         let mut times: Vec<_> = self.recent.iter().rev().take(11).map(|t| t.time).collect();

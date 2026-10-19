@@ -527,3 +527,29 @@ independent fee-retainer delegation and acknowledgment, complete fast payment
 transitions, normal network lifecycle, hostile exit capacity and composed daily
 performance remain required. Logical-time native tests are not an elapsed dispute
 window, power-loss/cross-device custody or independent security qualification.
+
+## Funded invoice and fee-retainer custody components
+
+[FAST_PAYMENT_RETENTION_V1](../../docs/protocol/FAST_PAYMENT_RETENTION_V1.md)
+specifies the complete invoice, amount, fee and exact old/new state authorization.
+`fast_payment::Payment` verifies both owners' state and invoice signatures against
+an opaque native-derived funding origin. Its partial assembler combines existing
+signatures only. A supplied context or hash cannot initialize that native origin.
+
+`fast_retainer::Journal` is a Unix private-file component with explicit miner
+delegation, full native funding-prefix replay, exclusive lock, separate caller
+latest-head/native-head inputs and bounded complete receipt retention. Preparing
+a receipt never signs; acknowledgment loads its delegated key only after complete
+review/current-view checks and releases the signature only after durable retention.
+Explicit recovery returns an existing signature or an unsigned pending receipt;
+it never loads a key or first-signs. Capacity reservation includes both records.
+Cold startup verifies every receipt/signature; warm writes compare the complete
+authenticated retained prefix and actual file identity. No failed tail is repaired.
+
+These are library interfaces, not a live fast-payment endpoint or owner wallet.
+The separate `rld-fast-retainer-recover JOURNAL EXPECTED_CHAIN EXPECTED_PRIOR_HEAD RECEIPT_ID`
+command performs only native keyless historical recovery. It accepts no key or
+password, appends no new custody record and reports current backing as unknown.
+Independent native monitoring, owner signing journals, operating fee liquidity,
+cross-device/power-loss custody and composed daily performance remain unqualified.
+A retained acknowledgment alone does not establish usable money or fast completion.

@@ -98,6 +98,14 @@ principal/fee challenges, fixed height/time windows and one-use miner/refund
 settlement. Its replay-only command derives all value from genesis and complete
 PoW blocks. It supplies no owner custody, retainer delegation/acknowledgment,
 ordinary fast service or adoption; G9-G11 and mass-exit qualification remain open.
+The [funded invoice/retention component](protocol/FAST_PAYMENT_RETENTION_V1.md)
+binds complete old/new states, invoice, amount and exact positive payer fee to
+both owners' state and invoice signatures. A native-origin miner delegation
+authorizes a separate fee-retainer key; complete receipt preparation and exact
+acknowledgment have distinct durable journal records and keyless recovery.
+Native origin is obtained by full funding-prefix replay, not a context assertion.
+Owner signing custody, one continuously updated native selector, operational fee
+liquidity and independent monitoring remain required before fast completion.
 
 Use separate binaries and fresh no-value directories. No legacy BFT store, wallet,
 genesis or test balance is converted. Unrelated source changes and running services
@@ -121,6 +129,7 @@ old passing tests do not qualify changed rules or new binaries.
 | Per-payment miner fees | F04/F06: owner-authorized positive fee, reserved backing, exact completeness/allocation, native settlement, maturity and reorg without diversion or inflation | F-T03-F-T05/F-T07-F-T08; G11 with G3/G5 |
 | Prospective fee-range verifier | FAST_MINER_FEE_CLAIMS_V1: context-bound ordered owner signatures, independent maximal fee ranges and exact bounded numerical accounting; no funded-ledger authority | `fast_fee_claims.rs` and public component vectors; native funding/exit/retainer/settlement and independent F04 qualification remain required |
 | Native no-value escrow executor | NATIVE_FAST_ESCROW_V1: independent pinned genesis/PoW, ordinary transfers and actual funding locks, one-use close/challenge/settlement and h+100 miner payout | `kernel/fast.rs`, `kernel/fast/codec.rs`, replay-only CLI and `native_fast_escrow.rs`; complete custody/retainer/fast-service, mass-exit and independent qualification remain required |
+| Funded invoice and delegated retention | FAST_PAYMENT_RETENTION_V1: native-origin full payment transition, ordered state/invoice signatures, miner-delegated bounded durable prepare/ack and keyless recovery | `fast_payment.rs`, `fast_retainer.rs`, public codec vectors and native invoice-to-settlement checks; owner custody, continuous monitoring, operational liquidity and composed G9-G11 remain required |
 
 ## Ordered behavior milestones
 
