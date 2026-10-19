@@ -163,3 +163,13 @@ consumer consent UI, scalable archival/hostile-load mass exit or G1-G11 campaign
 Ordinary permissionless CPU mining and causal interstellar carriage remain
 required. No local check proves seconds-scale service, daily100M payments,
 independent operators or a physical interstellar route.
+
+The separate [ordinary transfer authorization](FAST_NATIVE_TRANSFER_AUTHORIZATION_V1.md)
+adds `transfer_prepare` for existing kind0 value transfers. Its exact persisted
+review can use the same `onchain_sign` control, under the actual spending owner's
+approval and encrypted key. Transfer and escrow preparations reserve ordinary
+inputs against each other. This can explicitly fund a retainer's own operation
+fees; a custody delegation still grants no spending rights or automatic budget.
+Existing escrow action bytes, signature domains, windows and maturity remain
+unchanged. The original caller reply reservation also accommodates the complete
+maximum1639-byte signed ordinary operation without increasing its limit.

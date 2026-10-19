@@ -4,6 +4,7 @@ use super::*;
 use crate::fast_fee_claims::{Contract, FeeFloors};
 mod codec;
 pub mod planning;
+pub mod transfer;
 use codec::{Action, Open, Operation};
 
 const WINDOW_BLOCKS: u64 = 2016;

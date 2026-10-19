@@ -3,6 +3,7 @@
 mod journal;
 mod onchain;
 mod pool;
+mod transfer;
 use crate::{
     fast_owner,
     fast_payment::{self, ensure, Acknowledgment, Delegation, Invoice, Payment},
@@ -23,6 +24,7 @@ use std::{
     io::{Read, Write},
     path::{Path, PathBuf},
 };
+pub use transfer::{TransferOutput, TransferRequest};
 const CHILD_LIMIT: usize = 32 * 1024 * 1024;
 pub(crate) fn hash(label: &str, raw: &[u8]) -> Hash {
     Sha256::digest(
@@ -66,6 +68,10 @@ pub fn bytes(raw: &str, max: usize) -> Result<Vec<u8>> {
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "method", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Action {
+    TransferPrepare {
+        tip: Id,
+        plan: TransferRequest,
+    },
     PoolSubmit {
         tip: Id,
         operation: String,
@@ -149,6 +155,7 @@ impl Action {
     fn tip(&self) -> Hash {
         match self {
             Self::PoolSubmit { tip, .. }
+            | Self::TransferPrepare { tip, .. }
             | Self::OnchainPrepare { tip, .. }
             | Self::OnchainSign { tip, .. }
             | Self::Native { tip, .. }
@@ -215,6 +222,9 @@ impl Action {
     }
     fn shape(&self) -> Result<()> {
         match self {
+            Self::TransferPrepare { plan, .. } => {
+                plan.request()?;
+            }
             Self::PoolSubmit { operation, .. } => {
                 ensure(
                     !bytes(operation, 4096)?.is_empty(),
@@ -1175,10 +1185,7 @@ impl Session {
         self.preflight(&action)?;
         self.caller.begin(id, action.clone(), now)?;
         observe(Boundary::IntentDurable);
-        let result = if matches!(
-            action,
-            Action::OnchainPrepare { .. } | Action::OnchainSign { .. }
-        ) {
+        let result = if action.native_authorization() {
             self.onchain_apply(&action, password, now)
         } else {
             self.apply(&action, password, now)
@@ -1187,12 +1194,8 @@ impl Session {
         let (effect, review, authorization, diagnostic) = match result {
             Ok((e, r, authorization)) => {
                 observe(
-                    if matches!(
-                        action,
-                        Action::OnchainPrepare { .. }
-                            | Action::OnchainSign { .. }
-                            | Action::PoolSubmit { .. }
-                    ) {
+                    if action.native_authorization() || matches!(action, Action::PoolSubmit { .. })
+                    {
                         Boundary::NativeActionEvaluated
                     } else {
                         Boundary::ChildDurable
@@ -1238,10 +1241,7 @@ impl Session {
             .intent
             .action
             .clone();
-        if matches!(
-            action,
-            Action::OnchainPrepare { .. } | Action::OnchainSign { .. } | Action::PoolSubmit { .. }
-        ) {
+        if action.native_authorization() || matches!(action, Action::PoolSubmit { .. }) {
             return Ok((None, None));
         }
         if let Some(reg) = action.registration(self.chain)? {
@@ -1540,7 +1540,7 @@ impl Session {
         }
         if let Some(raw) = &done.authorization {
             out["operation_hex"] = raw.clone().into();
-            out["operation_id"] = serde_json::to_value(Id(fast::operation_id(&bytes(raw, 1589)?)))
+            out["operation_id"] = serde_json::to_value(Id(fast::operation_id(&bytes(raw, 4096)?)))
                 .map_err(fast_retainer::io)?;
             out["ledger_admitted"] = false.into();
         }

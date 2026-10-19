@@ -716,3 +716,19 @@ pending pool recovery only retains existing signatures and never loads keys.
 All current journal/capacity/window/maturity bounds and composed qualification
 requirements remain unchanged. This is no-value component functionality, not an
 automatic monitored payment service or an achieved throughput/latency claim.
+
+The [ordinary native transfer control](../../docs/protocol/FAST_NATIVE_TRANSFER_AUTHORIZATION_V1.md)
+adds a typed `transfer_prepare` execute action with exact selected tip, owner,
+ordered inputs and outputs, fee, expiry and evaluation timestamp. It fully checks
+the actual native ledger before returning a review; outputs include explicit
+change. Normal `onchain_sign` then requires that persisted review, approved=true
+and the spending owner's encrypted key. C04 bytes and signature domains remain
+unchanged. `submit_authorized` can retain the existing signature for pool mining
+and peer carriage. These steps never bypass native admission.
+
+Transfer and escrow preparations reserve the same ordinary inputs against each
+other, including across failed approval, restart and reorganization. Keyless
+recovery cannot first-sign. A genuine ordinary transfer can fund a retainer's own
+claim fees, which still require its own spending authorization; delegation alone
+cannot spend user/miner funds. This does not provide joint funding, continuous
+solvent monitoring, independent custody/operations or composed capacity claims.

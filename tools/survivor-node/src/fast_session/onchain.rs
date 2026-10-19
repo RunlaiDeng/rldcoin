@@ -1,5 +1,6 @@
 //! Native operation-fee inputs are reserved by persisted, fully native-reviewed
 //! caller preparations. Delegated payment custody never authorizes these spends.
+use super::transfer::Preparation;
 use super::*;
 use crate::kernel::fast::planning::{Plan, Request};
 use std::collections::BTreeSet;
@@ -28,7 +29,7 @@ pub(super) fn integer(s: &str) -> Result<u128> {
         .map_err(|_| "INVALID action integer overflow".into())
 }
 impl OnchainRequest {
-    fn reservation(&self) -> Result<Hash> {
+    pub(super) fn reservation(&self) -> Result<Hash> {
         let mut exact = self.clone();
         exact.timestamp.clear();
         Ok(hash(
@@ -63,7 +64,7 @@ impl OnchainRequest {
                 .map_err(|_| "INVALID action timestamp")?,
         })
     }
-    fn review(&self, p: &Plan, tip: Hash) -> Value {
+    pub(super) fn review(&self, p: &Plan, tip: Hash) -> Value {
         json!({"chain_selected_tip":Id(tip),"kind":self.kind,"channel":self.channel,"spending_owner":self.actor,
             "inputs":self.inputs,"input_value":p.input_value.to_string(),"operation_fee":self.fee,"owner_change":p.change.to_string(),
             "expiry_height":self.expiry,"evaluation_timestamp":self.timestamp,"unsigned_operation_hex":hex::encode(p.unsigned()),
@@ -170,22 +171,24 @@ impl Session {
             )
         }
     }
-    fn prepared(&self, before: usize, id: Id, review: Id) -> Result<(usize, OnchainRequest, Hash)> {
+    fn prepared(&self, before: usize, id: Id, review: Id) -> Result<(usize, Preparation, Hash)> {
         let index = self.caller.ops[..before]
             .iter()
             .position(|o| o.intent.id == id)
             .ok_or("MISSING persisted native action review")?;
         let op = &self.caller.ops[index];
-        let Action::OnchainPrepare { tip, plan } = &op.intent.action else {
-            return Err("INVALID native action review type".into());
-        };
+        let (tip, plan) = op
+            .intent
+            .action
+            .preparation()
+            .ok_or("INVALID native action review type")?;
         ensure(
             op.done.as_ref().is_some_and(|d| {
                 d.review == Some(review) && d.effect.is_none() && d.authorization.is_none()
             }),
             "INVALID persisted native action review",
         )?;
-        Ok((index, plan.clone(), tip.0))
+        Ok((index, plan, tip))
     }
     pub(super) fn onchain_apply(
         &mut self,
@@ -193,13 +196,13 @@ impl Session {
         password: Option<&[u8]>,
         now: u64,
     ) -> Result<(Option<Id>, Option<Id>, Option<String>)> {
+        if let Some((tip, plan)) = action.preparation() {
+            let n = self.native.as_mut().unwrap();
+            let current = n.current(n.head(), tip, now)?;
+            let prepared = plan.evaluate(current.ledger, tip, now)?;
+            return Ok((None, Some(Id(prepared.review())), None));
+        }
         match action {
-            Action::OnchainPrepare { tip, plan } => {
-                let n = self.native.as_mut().unwrap();
-                let current = n.current(n.head(), tip.0, now)?;
-                let prepared = current.ledger.plan_action(tip.0, &plan.request()?, now)?;
-                Ok((None, Some(Id(prepared.review())), None))
-            }
             Action::OnchainSign {
                 tip,
                 prepare_request,
@@ -219,7 +222,7 @@ impl Session {
                 )?;
                 let n = self.native.as_mut().unwrap();
                 let current = n.current(n.head(), tip.0, now)?;
-                let prepared = current.ledger.plan_action(tip.0, &plan.request()?, now)?;
+                let prepared = plan.evaluate(current.ledger, tip.0, now)?;
                 ensure(
                     prepared.review() == review.0,
                     "INVALID stale native action review",
@@ -229,7 +232,7 @@ impl Session {
                     if matches!(&op.intent.action,Action::OnchainSign{prepare_request:p,..} if p==prepare_request)
                     {
                         if let Some(raw) = op.done.as_ref().and_then(|d| d.authorization.as_ref()) {
-                            prepared.verify_signed(&bytes(raw, 1589)?)?;
+                            prepared.verify_signed(&bytes(raw, 4096)?)?;
                             return Ok((None, None, Some(raw.clone())));
                         }
                     }
@@ -242,16 +245,13 @@ impl Session {
         }
     }
     pub(super) fn onchain_preflight(&self, action: &Action) -> Result<()> {
-        if let Action::OnchainPrepare { plan, .. } = action {
-            let inputs = plan.request()?.inputs.into_iter().collect::<BTreeSet<_>>();
+        if let Some((_, plan)) = action.preparation() {
+            let inputs = plan.inputs()?.into_iter().collect::<BTreeSet<_>>();
             for op in &self.caller.ops {
-                if let Action::OnchainPrepare { plan: old, .. } = &op.intent.action {
+                if let Some((_, old)) = op.intent.action.preparation() {
                     if op.done.as_ref().is_some_and(|d| d.review.is_some()) {
                         ensure(
-                            !old.request()?
-                                .inputs
-                                .iter()
-                                .any(|input| inputs.contains(input))
+                            !old.inputs()?.iter().any(|input| inputs.contains(input))
                                 || old.reservation()? == plan.reservation()?,
                             "CONFLICT native action input already reserved",
                         )?;
@@ -275,50 +275,50 @@ impl Session {
                 // Caller/native file identity and complete retained bytes were
                 // rechecked by audit before reaching this private witness. Cold
                 // opening always starts at zero and performs full native replay.
-                match &op.intent.action {
-                    Action::OnchainPrepare { plan, .. } if done.review.is_some() => {
+                if let Some((_, plan)) = op.intent.action.preparation() {
+                    if done.review.is_some() {
                         let binding = plan.reservation()?;
-                        for input in plan.request()?.inputs {
+                        for input in plan.inputs()? {
                             reserved.insert(input, binding);
                         }
                     }
-                    Action::OnchainSign {
-                        prepare_request, ..
-                    } => {
-                        if let Some(raw) = &done.authorization {
-                            signatures.insert(*prepare_request, raw.clone());
+                }
+                if let Action::OnchainSign {
+                    prepare_request, ..
+                } = &op.intent.action
+                {
+                    if let Some(raw) = &done.authorization {
+                        signatures.insert(*prepare_request, raw.clone());
+                    }
+                }
+                continue;
+            }
+            if let Some((tip, plan)) = op.intent.action.preparation() {
+                ensure(
+                    done.effect.is_none() && done.authorization.is_none(),
+                    "INVALID native preparation effect",
+                )?;
+                if let Some(review) = done.review {
+                    ensure(tip == *context, "INVALID prepared native selection")?;
+                    let ledger = self.native.as_mut().unwrap().historical(tip)?;
+                    let native = plan.evaluate(&ledger, tip, op.intent.at)?;
+                    ensure(
+                        native.review() == review.0,
+                        "INVALID native preparation review",
+                    )?;
+                    let binding = plan.reservation()?;
+                    for input in plan.inputs()? {
+                        if let Some(old) = reserved.insert(input, binding) {
+                            ensure(
+                                old == binding,
+                                "INVALID overlapping native action reservation",
+                            )?;
                         }
                     }
-                    _ => {}
                 }
                 continue;
             }
             match &op.intent.action {
-                Action::OnchainPrepare { tip, plan } => {
-                    ensure(
-                        done.effect.is_none() && done.authorization.is_none(),
-                        "INVALID native preparation effect",
-                    )?;
-                    if let Some(review) = done.review {
-                        ensure(tip.0 == *context, "INVALID prepared native selection")?;
-                        let request = plan.request()?;
-                        let ledger = self.native.as_mut().unwrap().historical(tip.0)?;
-                        let native = ledger.plan_action(tip.0, &request, op.intent.at)?;
-                        ensure(
-                            native.review() == review.0,
-                            "INVALID native preparation review",
-                        )?;
-                        let binding = plan.reservation()?;
-                        for input in request.inputs {
-                            if let Some(old) = reserved.insert(input, binding) {
-                                ensure(
-                                    old == binding,
-                                    "INVALID overlapping native action reservation",
-                                )?;
-                            }
-                        }
-                    }
-                }
                 Action::OnchainSign {
                     tip,
                     prepare_request,
@@ -339,12 +339,12 @@ impl Session {
                             self.prepared(index, *prepare_request, *review)?;
                         ensure(original == tip.0, "INVALID native signature original tip")?;
                         let ledger = self.native.as_mut().unwrap().historical(tip.0)?;
-                        let native = ledger.plan_action(tip.0, &plan.request()?, op.intent.at)?;
+                        let native = plan.evaluate(&ledger, tip.0, op.intent.at)?;
                         ensure(
                             native.review() == review.0,
                             "INVALID native signature stale review",
                         )?;
-                        native.verify_signed(&bytes(raw, 1589)?)?;
+                        native.verify_signed(&bytes(raw, 4096)?)?;
                         if let Some(old) = signatures.insert(*prepare_request, raw.clone()) {
                             ensure(old == *raw, "INVALID replaced native authorization")?;
                         }
@@ -364,11 +364,11 @@ impl Session {
         done: &Done,
         at: u64,
     ) -> Result<Option<Value>> {
-        if let Action::OnchainPrepare { tip, plan } = action {
+        if let Some((tip, plan)) = action.preparation() {
             if done.review.is_some() {
-                let ledger = self.native.as_mut().unwrap().historical(tip.0)?;
-                let native = ledger.plan_action(tip.0, &plan.request()?, at)?;
-                return Ok(Some(plan.review(&native, tip.0)));
+                let ledger = self.native.as_mut().unwrap().historical(tip)?;
+                let native = plan.evaluate(&ledger, tip, at)?;
+                return Ok(Some(plan.review_json(&native, tip)?));
             }
         }
         Ok(None)
