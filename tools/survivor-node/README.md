@@ -719,6 +719,20 @@ signature liabilities from native inclusion/spendability. Existing proof can be
 reproduced without its key and without another quota debit. Losing branches do
 not refund an allowance. Policy approval starts no automatic signing or service.
 
+The explicitly activated [local monitor](../../docs/protocol/FAST_LOCAL_MONITOR_V1.md)
+uses `monitor_start {head, config, password}` with config `{policy_request,
+key_file, operation_fee}`. A missing password selects locked observation and
+keyless handling of retained eligible signatures. It protects acknowledged and
+pending complete joint certificates through actual native policy preparation,
+signing and pool submission. `monitor_stop {}` drops its memory-only unlock without
+freeing any liability. `mining_start {head, reward}` independently enables ordinary
+own-template CPU mining without actors, balances, fee policy or spending keys;
+`mining_stop {}` halts it. `runtime_status {}` observes the controlled caller's
+current head and both runtime states. Both services start disabled after restart;
+recovery never first-signs. Local service claims/settlement remain conditional on
+native inclusion and history. Automatic new-operation/block carriage, physical-
+time continuity, hostile load, independent custody and composed gates remain open.
+
 This direct ground transport does not qualify autonomous native/head coordination,
 discovery or multi-hop routing, consumer consent UI, continuous funded fee claims,
 independent operators/latest-state protection, physical routes, scalable archival,

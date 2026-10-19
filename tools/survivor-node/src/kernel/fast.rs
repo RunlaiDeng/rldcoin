@@ -64,6 +64,18 @@ struct Escrow {
 }
 type Book = BTreeMap<Hash, Escrow>;
 
+/// Observation of this fully executed native selection only. It supplies no
+/// authority to initialize a ledger or bypass action execution.
+pub struct FeeWatch {
+    pub closing: bool,
+    pub principal_sequence: u64,
+    pub principal_balances: [u128; 2],
+    pub slots: [u64; 2],
+    pub deadline_height: Option<u128>,
+    pub deadline_time: Option<u64>,
+    pub settlement_eligible: bool,
+}
+
 /// Historical funding authority derived only from native execution. This is
 /// neither independently fresh nor a claim that its escrow is currently active.
 #[derive(Clone)]
@@ -384,6 +396,42 @@ impl Ledger {
             .get(&id)
             .ok_or("MISSING fast escrow")?
             .origin(self.chain, id))
+    }
+    pub fn fee_watch(&self, id: Hash, timestamp: u64, now: u64) -> Result<FeeWatch> {
+        require(
+            self.tip.eligible(now) && timestamp <= now.saturating_add(7200),
+            "CLOCK_WAIT native fee observation",
+        )?;
+        self.timing(timestamp)?;
+        let escrow = self.book.get(&id).ok_or("MISSING fast escrow")?;
+        let Some(c) = &escrow.closing else {
+            return Ok(FeeWatch {
+                closing: false,
+                principal_sequence: 0,
+                principal_balances: escrow.terms.principal,
+                slots: [0; 2],
+                deadline_height: None,
+                deadline_time: None,
+                settlement_eligible: false,
+            });
+        };
+        Ok(FeeWatch {
+            closing: true,
+            principal_sequence: if c.principal.is_empty() {
+                0
+            } else {
+                escrow.certificate(self.chain, id, &c.principal)?.sequence
+            },
+            principal_balances: if c.principal.is_empty() {
+                escrow.terms.principal
+            } else {
+                escrow.certificate(self.chain, id, &c.principal)?.balances
+            },
+            slots: c.slots,
+            deadline_height: Some(c.height + WINDOW_BLOCKS as u128),
+            deadline_time: Some(c.time + WINDOW_SECONDS),
+            settlement_eligible: window_passed(c.height, c.time, self.tip.height + 1, timestamp),
+        })
     }
     fn timing(&self, time: u64) -> Result<(Big, Big)> {
         let mut times: Vec<_> = self.recent.iter().rev().take(11).map(|t| t.time).collect();

@@ -9,12 +9,95 @@ use crate::{
 };
 use ed25519_dalek::{Signer, SigningKey};
 use fs2::FileExt;
+use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
 };
 const MAX_BYTES: usize = 256 * 1024 * 1024;
+/// Process-local immutable-byte witness created only after complete journal
+/// authentication. Never serialized or used to initialize native value state.
+pub(crate) struct PrefixWitness {
+    length: usize,
+    digest: Hash,
+    #[cfg(unix)]
+    identity: (u64, u64),
+}
+impl PrefixWitness {
+    pub(crate) fn capture(file: &File, verified: &[u8]) -> Result<Self> {
+        let m = file.metadata().map_err(io)?;
+        ensure(
+            m.len() == verified.len() as u64,
+            "INVALID verified custody length",
+        )?;
+        Ok(Self {
+            length: verified.len(),
+            digest: Sha256::digest(verified).into(),
+            #[cfg(unix)]
+            identity: {
+                use std::os::unix::fs::MetadataExt;
+                (m.dev(), m.ino())
+            },
+        })
+    }
+    pub(crate) fn check(&self, path: &Path) -> Result<()> {
+        private(parent(path)?, false)?;
+        private(path, true)?;
+        let mut f = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(path)
+            .map_err(io)?;
+        FileExt::try_lock_exclusive(&f).map_err(|_| "RESOURCE_WAIT custody witness writer")?;
+        let check_identity = || -> Result<()> {
+            let a = fs::symlink_metadata(path).map_err(io)?;
+            let b = f.metadata().map_err(io)?;
+            ensure(
+                a.is_file() && a.len() == self.length as u64 && b.len() == a.len(),
+                "INVALID custody witness changed length",
+            )?;
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::MetadataExt;
+                ensure(
+                    (a.dev(), a.ino()) == self.identity && (b.dev(), b.ino()) == self.identity,
+                    "INVALID custody witness replaced file",
+                )?;
+            }
+            Ok(())
+        };
+        check_identity()?;
+        let mut hasher = Sha256::new();
+        let mut buffer = [0; 65536];
+        let mut left = self.length;
+        while left > 0 {
+            let n = left.min(buffer.len());
+            f.read_exact(&mut buffer[..n]).map_err(io)?;
+            hasher.update(&buffer[..n]);
+            left -= n;
+        }
+        ensure(
+            Hash::from(hasher.finalize()) == self.digest,
+            "INVALID custody witness changed prefix",
+        )?;
+        let a = fs::symlink_metadata(path).map_err(io)?;
+        let b = f.metadata().map_err(io)?;
+        ensure(
+            a.len() == self.length as u64 && b.len() == a.len(),
+            "INVALID custody witness changed tail",
+        )?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::MetadataExt;
+            ensure(
+                (a.dev(), a.ino()) == self.identity && (b.dev(), b.ino()) == self.identity,
+                "INVALID custody witness replaced tail",
+            )?;
+        }
+        Ok(())
+    }
+}
 pub(crate) fn io(error: impl std::fmt::Display) -> String {
     format!("RESOURCE_WAIT fast retention {error}")
 }
@@ -504,6 +587,38 @@ impl Journal {
     }
     pub fn latest_certificate(&self) -> Option<&[u8]> {
         self.last.as_ref().map(|last| last.payment.after.as_slice())
+    }
+    /// Complete joint authorizations already in durable custody, including the
+    /// pending payment before its acknowledgment. This is historical evidence,
+    /// never a claim that backing is current or a first acknowledgment.
+    pub fn protected_certificates(&mut self, expected: Hash) -> Result<Vec<Vec<u8>>> {
+        self.check_prefix()?;
+        ensure(
+            expected == self.head,
+            "INVALID retention caller latest head",
+        )?;
+        let mut result = vec![];
+        for payment in self
+            .last
+            .as_ref()
+            .map(|v| &v.payment)
+            .into_iter()
+            .chain(self.pending.as_ref().map(|v| &v.payment))
+        {
+            let p = Payment::verify(&self.origin, payment.bytes())?;
+            result.push(p.after_certificate().to_vec());
+        }
+        sync(&self.file, &self.path)?;
+        self.check_prefix()?;
+        Ok(result)
+    }
+    pub(crate) fn authenticated_prefix(&mut self, expected: Hash) -> Result<PrefixWitness> {
+        self.check_prefix()?;
+        ensure(
+            expected == self.head,
+            "INVALID retention caller latest head",
+        )?;
+        PrefixWitness::capture(&self.file, &self.prefix)
     }
     pub fn retained_ack(&mut self, expected: Hash, receipt: Hash) -> Result<Vec<u8>> {
         self.check_prefix()?;

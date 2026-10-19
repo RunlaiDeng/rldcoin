@@ -20,6 +20,16 @@ pub(super) struct PoolMining {
     view: Value,
 }
 impl Session {
+    pub(super) fn pool_binding(&self) -> Result<Hash> {
+        Ok(hash(
+            "POOL-CONTENTS",
+            &self
+                .pool_entries()?
+                .into_iter()
+                .flat_map(|e| e.id)
+                .collect::<Vec<_>>(),
+        ))
+    }
     fn pool_entries(&self) -> Result<Vec<Entry>> {
         let mut result = Vec::<Entry>::new();
         let mut ids = BTreeMap::<Hash, usize>::new();

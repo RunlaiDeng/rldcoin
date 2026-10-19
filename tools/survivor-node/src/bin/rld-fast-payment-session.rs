@@ -3,8 +3,8 @@
 use rld_survivor_node::{
     fast_peer::{codec::Packet, Network},
     fast_session::{
-        Action, Id, Ingress, MiningRequest, OpeningRequest, OpeningTerms, PoolMiningRequest,
-        Session,
+        Action, BackgroundMiner, FeeMonitor, Id, Ingress, MiningRequest, MonitorConfig,
+        OpeningRequest, OpeningTerms, PoolMiningRequest, Session,
     },
     kernel::Result,
 };
@@ -31,6 +31,18 @@ impl<'de> Deserialize<'de> for Password {
 #[derive(Deserialize)]
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
+    MonitorStart {
+        head: Id,
+        config: MonitorConfig,
+        password: Option<Password>,
+    },
+    MonitorStop {},
+    MiningStart {
+        head: Id,
+        reward: Id,
+    },
+    MiningStop {},
+    RuntimeStatus {},
     FeePolicyStatus {
         head: Id,
         policy_request: Id,
@@ -276,6 +288,10 @@ fn run() -> Result<()> {
         return Err("INVALID automatic ingress requires trusted peer control".into());
     }
     let mut ready = s.status(s.head(), clock)?;
+    let mut monitor: Option<FeeMonitor> = None;
+    let mut miner: Option<BackgroundMiner> = None;
+    let mut monitor_clock = None;
+    ready["local_runtime"] = runtime_status(&monitor, &miner);
     let mut ingress = automatic.then(Ingress::default);
     if let Some(i) = &ingress {
         ready["automatic_native_import"] = i.status();
@@ -318,13 +334,48 @@ fn run() -> Result<()> {
                 let _ = i.tick(&mut s, n, now()?);
             }
         }
-        let request = match rx.recv_timeout(std::time::Duration::from_millis(100)) {
+        let clock = now()?;
+        let observed = (s.head(), clock);
+        if monitor_clock != Some(observed) {
+            if let Some(m) = &mut monitor {
+                let _ = m.tick(&mut s, clock);
+            }
+            monitor_clock = Some((s.head(), clock));
+        }
+        if let Some(m) = &mut miner {
+            let _ = m.tick(&mut s, clock);
+        }
+        let request = match rx.recv_timeout(std::time::Duration::from_millis(if miner.is_some() {
+            1
+        } else {
+            100
+        })) {
             Ok(r) => r,
             Err(mpsc::RecvTimeoutError::Timeout) => continue,
             Err(_) => break,
         };
         let clock = now()?;
         let out = request.and_then(|r| match r {
+            Request::MonitorStart { head, config, password } => {
+                monitor = Some(FeeMonitor::start(&mut s, head.0, config, password.as_ref().map(|p|p.0.as_bytes()), clock)?);
+                monitor_clock = None;
+                Ok(json!({"monitor_activated":true}))
+            },
+            Request::MonitorStop {} => {
+                s.status(s.head(),clock)?;
+                monitor = None;
+                Ok(json!({"monitor_activated":false,"retained_liabilities_released":false}))
+            },
+            Request::MiningStart { head, reward } => {
+                miner = Some(BackgroundMiner::start(&mut s, head.0, reward, clock)?);
+                Ok(json!({"mining_activated":true}))
+            },
+            Request::MiningStop {} => {
+                s.status(s.head(),clock)?;
+                miner = None;
+                Ok(json!({"mining_activated":false}))
+            },
+            Request::RuntimeStatus {} => s.status(s.head(),clock),
             Request::Execute {
                 head,
                 request_id,
@@ -393,6 +444,7 @@ fn run() -> Result<()> {
         });
         match out {
             Ok(mut v) => {
+                v["local_runtime"] = runtime_status(&monitor, &miner);
                 v["session_head"] =
                     serde_json::to_value(Id(s.head())).map_err(|_| "INVALID control head")?;
                 if let Some(n) = &peer {
@@ -405,6 +457,7 @@ fn run() -> Result<()> {
             }
             Err(e) => {
                 let mut v = json!({"session_head":Id(s.head()),"diagnostic":e,"fast_completion_authorized":false,"mainnet":false});
+                v["local_runtime"] = runtime_status(&monitor, &miner);
                 if let Some(n) = &peer {
                     v["peer"] = n.status();
                 }
@@ -416,6 +469,9 @@ fn run() -> Result<()> {
         }
     }
     Ok(())
+}
+fn runtime_status(monitor: &Option<FeeMonitor>, miner: &Option<BackgroundMiner>) -> Value {
+    json!({"fee_monitor":monitor.as_ref().map(FeeMonitor::status),"ordinary_miner":miner.as_ref().map(BackgroundMiner::status),"unlocks_persisted":false,"automatic_peer_carriage":false})
 }
 fn main() {
     if let Err(e) = run() {

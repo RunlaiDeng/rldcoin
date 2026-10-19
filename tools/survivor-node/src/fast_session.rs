@@ -3,6 +3,8 @@
 mod control;
 mod fee_policy;
 pub use fee_policy::FeePolicy;
+mod monitor;
+pub use monitor::{BackgroundMiner, FeeMonitor, MonitorConfig};
 mod ingress;
 pub use ingress::Ingress;
 mod journal;
@@ -428,6 +430,7 @@ pub struct Session {
     caller: Journal,
     native: Option<Store>,
     actors: BTreeMap<Id, ActorState>,
+    actor_audits: BTreeMap<Id, ActorAudit>,
     mining: Option<Mining>,
     // Process-local proof over an already fully audited immutable caller/native
     // prefix. Never serialized; advance only after durable caller completion.
@@ -436,6 +439,12 @@ pub struct Session {
     pool_cursor: usize,
     candidate: Option<Vec<u8>>,
     control: Option<control::Control>,
+}
+struct ActorAudit {
+    head: Hash,
+    prefix: fast_retainer::PrefixWitness,
+    origin: fast::FundingOrigin,
+    proofs: Vec<Vec<u8>>,
 }
 struct Mining {
     tip: Hash,
@@ -595,6 +604,7 @@ impl Session {
             caller,
             native: Some(native),
             actors: BTreeMap::new(),
+            actor_audits: BTreeMap::new(),
             mining: None,
             onchain_audited: 0,
             pool_mining: None,
@@ -684,6 +694,7 @@ impl Session {
             caller,
             native: Some(native),
             actors,
+            actor_audits: BTreeMap::new(),
             mining: None,
             onchain_audited: 0,
             pool_mining: None,
@@ -793,6 +804,27 @@ impl Session {
         // prefix for every registered owner. Native/actor memory remains separately bounded.
         let mut verified = BTreeMap::new();
         for (id, mut state) in actors {
+            let unchanged = self.caller.ops[self.onchain_audited..].iter().all(|op| {
+                op.intent.action.actor() != Some(id)
+                    && op
+                        .intent
+                        .action
+                        .registration(self.chain)
+                        .is_ok_and(|r| r.is_none_or(|r| r.id != id))
+            });
+            if unchanged {
+                if let Some(w) = self.actor_audits.get(&id).filter(|w| w.head == state.head) {
+                    w.prefix.check(&actor_path(&self.root, id))?;
+                    state.pending = self
+                        .actors
+                        .get(&id)
+                        .ok_or("INVALID missing audited actor")?
+                        .pending
+                        .clone();
+                    verified.insert(id, state);
+                    continue;
+                }
+            }
             let mut child = Actor::open(
                 &actor_path(&self.root, id),
                 self.chain,
@@ -1055,6 +1087,29 @@ impl Session {
                 "INVALID caller actor transition coverage",
             )?;
             state.pending = pending;
+            let proofs = match &mut child {
+                Actor::Owner(j) => j
+                    .retained_complete(state.head)?
+                    .map(|(raw, _)| {
+                        Payment::verify(&origin, &raw).map(|p| vec![p.after_certificate().to_vec()])
+                    })
+                    .transpose()?
+                    .unwrap_or_default(),
+                Actor::Retainer(j) => j.protected_certificates(state.head)?,
+            };
+            let prefix = match &mut child {
+                Actor::Owner(j) => j.authenticated_prefix(state.head)?,
+                Actor::Retainer(j) => j.authenticated_prefix(state.head)?,
+            };
+            self.actor_audits.insert(
+                id,
+                ActorAudit {
+                    head: state.head,
+                    prefix,
+                    origin,
+                    proofs,
+                },
+            );
             verified.insert(id, state);
         }
         // An effect or review for an unknown target cannot disappear from an audit.
@@ -1615,6 +1670,7 @@ impl Session {
             caller,
             native: Some(native),
             actors,
+            actor_audits: BTreeMap::new(),
             mining: None,
             onchain_audited: 0,
             pool_mining: None,

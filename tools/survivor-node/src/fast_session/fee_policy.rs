@@ -64,7 +64,7 @@ impl FeePolicy {
             "INVALID fee policy caller/currency binding",
         )
     }
-    fn time(&self, height: u128, at: u64) -> Result<()> {
+    pub(super) fn time(&self, height: u128, at: u64) -> Result<()> {
         ensure(
             height
                 .checked_add(1)
@@ -156,10 +156,10 @@ impl FeePolicy {
         Ok(p)
     }
 }
-struct State {
-    terms: FeePolicy,
-    family: BTreeSet<Vec<u8>>,
-    used: BTreeSet<Vec<u8>>,
+pub(super) struct State {
+    pub(super) terms: FeePolicy,
+    pub(super) family: BTreeSet<Vec<u8>>,
+    pub(super) used: BTreeSet<Vec<u8>>,
     fees: u128,
     operations: u16,
     signed: BTreeMap<Hash, Vec<u8>>,
@@ -180,7 +180,7 @@ impl State {
             signed: BTreeMap::new(),
         })
     }
-    fn allowed(&self, p: &OnchainRequest) -> Result<()> {
+    pub(super) fn allowed(&self, p: &OnchainRequest) -> Result<()> {
         let p = p.request()?;
         ensure(
             (3..=5).contains(&p.kind)
@@ -304,7 +304,7 @@ impl Session {
         };
         Ok((plan, tip))
     }
-    fn policy_state(&self, before: usize, request: Id) -> Result<State> {
+    pub(super) fn policy_state(&self, before: usize, request: Id) -> Result<State> {
         let (start, p) = self.policy(before, request)?;
         let mut state = State::new(p)?;
         for (index, op) in self.caller.ops[..before].iter().enumerate().skip(start + 1) {

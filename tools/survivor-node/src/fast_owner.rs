@@ -429,6 +429,13 @@ impl Journal {
         self.prefix(expected)?;
         Ok(result)
     }
+    pub(crate) fn authenticated_prefix(
+        &mut self,
+        expected: Hash,
+    ) -> Result<crate::fast_retainer::PrefixWitness> {
+        self.prefix(expected)?;
+        crate::fast_retainer::PrefixWitness::capture(&self.file, &self.prefix)
+    }
     pub fn retained_pending(&mut self, expected: Hash, invoice_id: Hash) -> Result<Recovery> {
         self.prefix(expected)?;
         let p = self
