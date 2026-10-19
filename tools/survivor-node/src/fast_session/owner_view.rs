@@ -50,6 +50,7 @@ impl Session {
         out["actor_head"] = json!(Id(state.head));
         out["channel"] = json!(Id(origin.channel()));
         out["owner"] = json!(Id(origin.owners()[own]));
+        out["own_index"] = owner.into();
         out["funding_miner"] = json!(Id(origin.miner()));
         out["delegated_retainer"] = json!(Id(delegation.retainer()));
         out["retained_state_sequence"] = view.sequence.to_string().into();

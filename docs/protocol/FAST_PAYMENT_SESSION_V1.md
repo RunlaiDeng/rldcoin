@@ -20,6 +20,18 @@ latest-state assumption is not independent freshness or continuous fee service.
 
 ### Ordinary wallet input discovery
 
+`native_preparation {head, prepare_request}` reads one actual successful manual
+opening, ordinary transfer, escrow action or delegation preparation. It fully
+reconstructs the historical native context and review at the retained time,
+returns the exact typed action, original review digest and any already retained
+matching signature request. It changes no clock, reservation or authorization;
+its review is explicitly historical. A frontend may construct another current
+review with identical reservation terms and a new evaluation timestamp, never
+silently change expiry, inputs, nonce, outputs, fees or certificate. Existing
+complete native signatures can be submitted only through ordinary current pool
+checks. An opening partial remains incomplete. Delegation export grants no value.
+Neither this view nor interrupted recovery can first-sign.
+
 `transfer_draft {head, owner}` returns the latest successful ordinary transfer
 preparation for that owner from the actual authenticated caller history. Its
 key-free plan, latest preparation request, earliest matching successful native
@@ -81,6 +93,16 @@ does not append records, clear pending intent, renew a policy or change any nati
 rule, maturity, caller capacity or monetary-network status.
 
 ### Fast owner state and signing
+
+Private status additionally returns actual chain/caller bindings, selected native
+timestamp and actor scopes (local actor, channel, registered role and pending
+presence). Existing actor IDs remain unchanged. These bounded scope rows derive
+from the authenticated caller history; they do not expose keys, current balances,
+approval or independent freshness. `owner_state` also returns its native
+`own_index` alongside the actual public owner. Private `peer_status` lists only
+configured neighbor identities, never destinations learned from received packets.
+The interactive wallet uses these observations to select roles and public data,
+then invokes the existing complete native preparation and signing checks.
 
 `delegation_prepare` is a private execute action containing the exact selected
 `tip`, funded `channel` and distinct `retainer` public key. It obtains the funding

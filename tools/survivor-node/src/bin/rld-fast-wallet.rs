@@ -14,6 +14,8 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use zeroize::Zeroizing;
+#[path = "fast_wallet/menu.rs"]
+mod fast_menu;
 const UNIT: u128 = 1_000_000_000_000_000_000_000_000;
 const FRAME: usize = 1024 * 1024;
 fn fail(e: impl std::fmt::Display) -> String {
@@ -483,8 +485,17 @@ impl Wallet {
         let (prepared, v) = self.node.execute(action, None)?;
         let review = &v["review"];
         let required = match review["operation"].as_str() {
-            Some("TRANSFER") => field_id(review, "spending_owner")?,
+            Some("TRANSFER" | "CLOSE" | "PRINCIPAL_CHALLENGE" | "MINER_FEE_CLAIM" | "SETTLE") => {
+                field_id(review, "spending_owner")?
+            }
             Some("MINER_DELEGATION") => field_id(review, "miner")?,
+            Some("OPEN") => {
+                let own = review["own_index"]
+                    .as_u64()
+                    .filter(|i| *i < 2)
+                    .ok_or("Missing opening owner index")? as usize;
+                serde_json::from_value(review["owners"][own].clone()).map_err(fail)?
+            }
             _ => return Err("Unsupported native wallet review type".into()),
         };
         if required != a.owner {
@@ -497,6 +508,11 @@ impl Wallet {
             review["operation"].as_str().unwrap_or("UNKNOWN")
         );
         println!("Selected native tip: {}", review["chain_selected_tip"]);
+        println!("Retained preparation: {}", hex::encode(prepared.0));
+        println!(
+            "Review identifier: {}",
+            hex::encode(field_id(&v, "review_digest")?.0)
+        );
         if review["operation"] == "TRANSFER" {
             for output in review["outputs"]
                 .as_array()
@@ -513,12 +529,14 @@ impl Wallet {
                 display_amount(number(&review["operation_fee"])?)
             );
             println!("Expiry height: {}", review["expiry_height"]);
-        } else {
+        } else if review["operation"] == "MINER_DELEGATION" {
             println!(
                 "Funding channel: {}\nReceipt service: {}",
                 review["channel"], review["retainer"]
             );
             println!("Delegation grants no principal or fee-input spending rights.");
+        } else {
+            println!("{}", serde_json::to_string_pretty(review).map_err(fail)?);
         }
         if !approve()? {
             println!("Review retained without a signature.");
@@ -536,6 +554,7 @@ impl Wallet {
             Some(&password),
         )?;
         let request = field_id(&signed, "request_id")?;
+        println!("Retained signing request: {}", hex::encode(request.0));
         Ok(Some((request, signed)))
     }
     fn transfer(&mut self) -> Result<()> {
@@ -688,7 +707,7 @@ impl Wallet {
                     .map_or("no wallet selected", |a| a.name.as_str()),
                 if self.node.peer { "enabled" } else { "offline" }
             );
-            println!("1 Create wallet\n2 Select wallet\n3 Balance\n4 Start mining\n5 Stop mining\n6 Send ordinary payment\n7 Resume retained payment\n8 Authorize receipt service (funding miner)\n9 Export retained delegation\n0 Close wallet and local node");
+            println!("1 Create wallet\n2 Select wallet\n3 Balance\n4 Start mining\n5 Stop mining\n6 Send ordinary payment\n7 Resume retained payment\n8 Authorize receipt service (funding miner)\n9 Export retained delegation\n10 Fast payments and channel settlement\n0 Close wallet and local node");
             let choice = text("Choose")?;
             if choice == "0" {
                 return self.node.finish();
@@ -712,6 +731,7 @@ impl Wallet {
                 "6" => self.transfer(),
                 "7" => self.resume(),
                 "8" => self.delegation(),
+                "10" => self.fast_menu(),
                 "9" => (|| {
                     let request = parse_id(&text("Retained signing request")?)?;
                     self.node.refresh()?;

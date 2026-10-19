@@ -630,7 +630,9 @@ impl Network {
         ensure(item.received, "INVALID peer incoming role")?;
         Ok(item.packet)
     }
-    pub(crate) fn admitted_ids(&self) -> Vec<Hash> {
+    /// Configured public neighbor identities, never learned from peer data.
+    /// Membership grants data-carriage eligibility only.
+    pub fn admitted_ids(&self) -> Vec<Hash> {
         self.config.neighbors().into_iter().map(|p| p.key).collect()
     }
     pub(crate) fn local_scope(&self) -> (Hash, Hash) {

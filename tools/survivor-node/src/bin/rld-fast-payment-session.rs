@@ -224,6 +224,10 @@ enum Request {
         head: Id,
         owner: Id,
     },
+    NativePreparation {
+        head: Id,
+        prepare_request: Id,
+    },
     Pending {
         head: Id,
         actor: Id,
@@ -453,6 +457,7 @@ fn run() -> Result<()> {
             Request::OwnerState { head, actor } => s.owner_state(head.0,actor,clock),
             Request::RetainedDelegation { head, sign_request } => s.retained_delegation(head.0, sign_request, clock),
             Request::TransferDraft { head, owner } => s.transfer_draft(head.0, owner, clock),
+            Request::NativePreparation { head, prepare_request } => s.native_preparation(head.0, prepare_request, clock),
             Request::NativeWallet { head, owner, after, limit } => s.native_wallet(head.0, owner, after.as_deref(), limit, clock),
             Request::WalletCreateKey { head, name, password } => s.wallet_create_key(head.0, &name, password.0.as_bytes(), clock),
             Request::WalletKeyInfo { head, name, password } => s.wallet_key_info(head.0, &name, password.0.as_bytes(), clock),
@@ -715,7 +720,9 @@ fn peer_command(
         }
         Request::PeerStatus { .. } => {
             let n = require_peer(peer)?;
-            Ok(json!({"peer_head":Id(n.head()),"transport_custody_only":true}))
+            Ok(
+                json!({"peer_head":Id(n.head()),"neighbors":n.admitted_ids().into_iter().map(Id).collect::<Vec<_>>(),"transport_custody_only":true}),
+            )
         }
         Request::PeerInventory { .. } => {
             Ok(json!({"packets":require_peer(peer)?.inventory()?,"transport_custody_only":true}))

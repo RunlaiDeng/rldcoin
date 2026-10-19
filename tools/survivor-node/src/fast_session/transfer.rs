@@ -231,6 +231,77 @@ impl Action {
 }
 
 impl Session {
+    /// Retrieve an actual successful manual preparation without refreshing its
+    /// authorization, evaluation clock, input reservation or expiry.
+    pub fn native_preparation(&mut self, head: Hash, request: Id, now: u64) -> Result<Value> {
+        let mut out = self.status(head, now)?;
+        let index = self
+            .caller
+            .ops
+            .iter()
+            .position(|op| op.intent.id == request)
+            .ok_or("MISSING native preparation")?;
+        let op = self.caller.ops[index].clone();
+        ensure(
+            matches!(
+                op.intent.action,
+                Action::OpenPrepare { .. }
+                    | Action::TransferPrepare { .. }
+                    | Action::OnchainPrepare { .. }
+                    | Action::DelegationPrepare { .. }
+            ),
+            "INVALID manual native preparation type",
+        )?;
+        let (tip, plan) = op
+            .intent
+            .action
+            .preparation()
+            .ok_or("INVALID native preparation")?;
+        let digest = op
+            .done
+            .as_ref()
+            .and_then(|d| d.review)
+            .ok_or("MISSING successful native preparation")?;
+        let ledger = self.native.as_mut().unwrap().historical(tip)?;
+        let evaluated = plan.evaluate(&ledger, tip, op.intent.at)?;
+        ensure(
+            evaluated.review() == digest.0,
+            "INVALID retained native preparation review",
+        )?;
+        let review = plan.review_json(&evaluated, tip)?;
+        let binding = plan.reservation()?;
+        let mut signature = None;
+        for (before, signed) in self.caller.ops.iter().enumerate() {
+            if let Action::OnchainSign {
+                prepare_request,
+                review,
+                ..
+            } = &signed.intent.action
+            {
+                if signed
+                    .done
+                    .as_ref()
+                    .is_some_and(|d| d.authorization.is_some())
+                {
+                    let (_, prior, _) = self.prepared(before, *prepare_request, *review)?;
+                    if prior.reservation()? == binding {
+                        signature = Some(signed.intent.id);
+                    }
+                }
+            }
+        }
+        out["prepare_request"] = json!(request);
+        out["preparation"] = serde_json::to_value(op.intent.action).map_err(fast_retainer::io)?;
+        out["original_prepared_at"] = op.intent.at.to_string().into();
+        out["review"] = review;
+        out["review_digest"] = json!(digest);
+        out["retained_sign_request"] = json!(signature);
+        out["historical_review_only"] = true.into();
+        out["wallet_key_loaded"] = false.into();
+        out["reservation_released"] = false.into();
+        self.status(head, now)?;
+        Ok(out)
+    }
     /// Recover the latest retained ordinary intent without replacing its terms
     /// or releasing any original reservation.
     pub fn transfer_draft(&mut self, head: Hash, owner: Id, now: u64) -> Result<Value> {

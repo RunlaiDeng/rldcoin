@@ -756,7 +756,7 @@ impl Session {
             .ok_or("RESOURCE_WAIT session native restart required")?;
         n.check(n.head(), n.ledger().tip().id(), now)?;
         Ok(
-            json!({"session_head":Id(head),"native_head":Id(n.head()),"selected_tip":Id(n.ledger().tip().id()),"height":n.ledger().tip().height().to_string(),"actors":self.actors.keys().collect::<Vec<_>>(),"caller_head_control":if self.control.is_some(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"caller_head_storage":self.control.as_ref().map(control::Control::storage),"fast_completion_authorized":false,"independent_freshness":false,"network_monitoring":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY"}),
+            json!({"session_head":Id(head),"native_head":Id(n.head()),"selected_tip":Id(n.ledger().tip().id()),"height":n.ledger().tip().height().to_string(),"selected_timestamp":n.ledger().tip().timestamp().to_string(),"chain":Id(self.chain),"caller_binding":Id(self.caller.binding()),"actors":self.actors.keys().collect::<Vec<_>>(),"actor_scopes":self.actors.iter().map(|(id,a)|json!({"actor":id,"channel":Id(a.reg.channel),"role":a.reg.role,"pending":a.pending.is_some()})).collect::<Vec<_>>(),"caller_head_control":if self.control.is_some(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"caller_head_storage":self.control.as_ref().map(control::Control::storage),"fast_completion_authorized":false,"independent_freshness":false,"network_monitoring":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY"}),
         )
     }
     /// Observe one output in the actual selected native ledger. This does not

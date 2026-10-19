@@ -48,9 +48,10 @@ is not silently replaced.
 
 The client bounds private frames to1 MiB and responses to120 seconds. An
 interrupted operation remains pending until normal native recovery; these client
-limits change no protocol clock or ledger capacity. Direct fast-channel proposal,
-owner/retainer payment handling and fee-monitor interfaces remain available in
-the private node; their complete consumer menu flow remains separate work.
+limits change no protocol clock or ledger capacity. The fast-channel submenu
+exposes explicit owner/retainer payment, joint opening, native exit and bounded
+fee-monitor workflows described below. The current operator menu still requires
+manual coordination and selection of retained public requests and packets.
 This client and current distribution retain the node's NO_VALUE_ONLY status.
 
 The explicit package option includes the three wallet/peer executables and their
@@ -63,6 +64,70 @@ rld-survivor-package REPOSITORY_ROOT NATIVE_BINARY FRESH_TAR_PATH --wallet-binar
 This produces the normal checksum-bound archive with an explicit no-value wallet
 profile. Default packaging remains the baseline native distribution. Neither
 archive creates a monetary network or establishes runtime qualification.
+
+## Interactive fast-channel workflow
+
+The fast-payment submenu uses the same private native backend. It lists only
+locally registered channel roles, configured neighbor identities and received
+packets of the required protocol kind. These lists supply data selection, not
+signing authority. The selected encrypted wallet must equal the actual owner or
+retainer in the native review before its key can be loaded. A changed native
+selection refuses the old approval; the menu never automatically retries signing.
+
+1. Agree both ordered owners, exact native inputs, principal, payment-slot limits,
+   positive per-payment rates and opening fees. Create a joint opening proposal.
+   Native execution computes own change and checks all input owners and sums.
+   Each owner independently prepares, reviews and signs its own inputs. Send the
+   retained proposal/partial to the configured other node, combine its exact
+   received partial and queue the complete native operation. Queueing remains
+   distinct from own-template mining and recipient native admission.
+2. After actual selected native inclusion, obtain the funding miner's explicit
+   receipt-service delegation. Register the separate owner/retainer roles using
+   that exact certificate. Mining itself still needs only a public reward key.
+3. The payer creates a positive fast-payment proposal and explicitly approves its
+   native review. Send the retained invoice to the other owner. That owner chooses
+   the received invoice, independently reviews and signs, then both exchange their
+   retained partials. A local partial or transport receipt cannot complete payment.
+4. Combine the two exact owner signatures and send the complete receipt to the
+   delegated receipt service. Its actual key independently approves durable full
+   receipt custody. Send its retained acknowledgment separately to both owners.
+5. Each owner selects the counterparty partial and delegated acknowledgment and
+   retains the complete proofs. Inspect the actual owner state: historical balance,
+   original pending age, native backing, fee-slot use and conditional onward
+   usability remain distinct. A missing acknowledgment or unavailable backing
+   cannot be relabeled as completed usable funds. Pending reviews and already
+   retained own signatures can be resumed without changing their original clock.
+
+The menu also exposes native close, principal challenge, independent miner-fee
+claim and settlement using actual retained complete evidence. An explicitly chosen
+initial close uses no later certificate; settlement does not pretend an unused
+channel already has a complete payment. Fee-paying ordinary inputs are selected
+from the actual mature, locally unreserved wallet and get a fresh native review
+and explicit input-owner signature. Fixed native windows, consensus, actual fee
+beneficiary and reward maturity remain unchanged; a queued action is not payout.
+
+A separate fee-wallet consent menu displays exact root inputs, caller/currency,
+channel, operation/total fee ceilings, count and absolute height/time expiry before
+explicit approval. Only that actual input owner's key signs the bounded policy.
+Local monitoring can then unlock that exact policy; it cannot approve channel
+principal or replace the miner delegation. Stop/restart drops the in-memory unlock
+and requires explicit reactivation of the existing retained policy. Runtime status
+reports actual monitor/native/carriage observations and diagnostics.
+
+Save the displayed preparation, review and own signing request identifiers for
+manual opening coordination. The native-preparation resumption entry reads the
+actual authenticated retained request and displays its historical terms and time.
+An existing complete native authorization is requeued only after confirmation;
+existing delegation certificates are exported keylessly. Re-review of an opening
+or unsigned native action preserves all original inputs, outputs, fees, nonce and
+expiry, changing only the prospective evaluation time and selected native tip.
+It creates a new persisted review and still requires explicit actual-owner consent.
+No expired or conflicting reservation is silently released or allocated anew.
+
+These interfaces implement operator steps. Automatic peer provisioning, routine
+payment choreography, long-running storage lifecycle and monetary activation
+remain separate product work. Source availability and compilation do not establish
+local latency, daily payment volume, uninterrupted monitoring or runtime outcomes.
 
 ## Native protocol and service interfaces
 
