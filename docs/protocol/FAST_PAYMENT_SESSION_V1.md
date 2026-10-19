@@ -7,6 +7,15 @@ native genesis, work, transaction, invoice, partial, delegation or acknowledgmen
 bytes. It is not monetary adoption, a public signing endpoint, independent custody,
 a continuously monitored service or a composed G9-G11 campaign.
 
+The separate [trusted caller-control profile](FAST_SESSION_HEAD_CONTROL_V1.md)
+uses fresh local caller version2, an explicitly selected private head file and
+one exact pre-retained key-free request. Legacy literal-head interfaces refuse
+that format. Controlled recovery authenticates the complete histories and returns
+only an existing proof or audited absence, never first-executing or first-signing.
+Its optional block-only ingress can run while the local client is idle; current
+native selection still invalidates stale owner reviews. This local integrity/
+latest-state assumption is not independent freshness or continuous fee service.
+
 ## Native view, exact review and keys
 
 A session exclusively owns one native selector, one caller journal and up to16

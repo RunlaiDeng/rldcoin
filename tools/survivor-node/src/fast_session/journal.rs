@@ -48,6 +48,7 @@ pub struct Journal {
     pub created: u64,
     pub ops: Vec<Op>,
     poisoned: bool,
+    binding: Hash,
 }
 fn record(kind: u8, prior: Hash, payload: &[u8]) -> Vec<u8> {
     let mut b = vec![kind];
@@ -76,6 +77,7 @@ impl Journal {
         chain: Hash,
         native: Hash,
         now: u64,
+        version: u8,
     ) -> Result<Self> {
         ensure(genesis.len() == 113, "INVALID caller genesis")?;
         private(parent(path)?, false)?;
@@ -89,18 +91,35 @@ impl Journal {
         let mut f = options.open(path).map_err(io)?;
         FileExt::try_lock_exclusive(&f).map_err(|_| "RESOURCE_WAIT caller writer")?;
         let mut h = b"RLDFSES1".to_vec();
-        h.extend([0, 1, 0, 1]);
+        h.extend([0, version, 0, 1]);
         h.extend(chain);
         h.extend(genesis);
         h.extend(native);
         h.extend(now.to_be_bytes());
+        if version == 2 {
+            let mut instance = [0; 32];
+            getrandom::getrandom(&mut instance)
+                .map_err(|_| "RESOURCE_WAIT caller instance entropy")?;
+            ensure(instance != [0; 32], "RESOURCE_WAIT caller instance zero")?;
+            h.extend(instance);
+        }
         f.write_all(&h).map_err(io)?;
         sync(&f, path)?;
         let head = hash("HEADER", &h);
-        Self::read(path, f, genesis, chain, Some(head), now)
+        Self::read(path, f, genesis, chain, Some(head), now, version)
     }
-    pub fn open(path: &Path, g: &[u8], c: Hash, expected: Option<Hash>, now: u64) -> Result<Self> {
-        Self::read(path, file(path)?, g, c, expected, now)
+    pub fn open(
+        path: &Path,
+        g: &[u8],
+        c: Hash,
+        expected: Option<Hash>,
+        now: u64,
+        version: u8,
+    ) -> Result<Self> {
+        Self::read(path, file(path)?, g, c, expected, now, version)
+    }
+    pub fn binding(&self) -> Hash {
+        self.binding
     }
     fn read(
         path: &Path,
@@ -109,6 +128,7 @@ impl Journal {
         chain: Hash,
         expected: Option<Hash>,
         now: u64,
+        version: u8,
     ) -> Result<Self> {
         ensure(
             file.metadata().map_err(io)?.len() <= LIMIT as u64,
@@ -126,7 +146,7 @@ impl Journal {
             at: 0,
         };
         ensure(
-            r.take(8)? == b"RLDFSES1" && r.take(4)? == [0, 1, 0, 1],
+            r.take(8)? == b"RLDFSES1" && r.take(4)? == [0, version, 0, 1],
             "UNSUPPORTED caller journal",
         )?;
         ensure(
@@ -136,7 +156,11 @@ impl Journal {
         let native_initial = r.hash()?;
         let created = r.u64()?;
         ensure(created <= now, "CLOCK_WAIT caller creation")?;
+        if version == 2 {
+            ensure(r.hash()? != [0; 32], "INVALID caller control instance")?;
+        }
         let mut head = hash("HEADER", &prefix[..r.at]);
+        let binding = head;
         let mut ops: Vec<Op> = vec![];
         let mut clock = created;
         while r.at < prefix.len() {
@@ -216,6 +240,7 @@ impl Journal {
             created,
             ops,
             poisoned: false,
+            binding,
         })
     }
     pub fn check(&mut self, head: Hash) -> Result<()> {

@@ -688,6 +688,25 @@ independent freshness or all-state rollback protection. Legacy literal-head and
 controlled storage refuse each other; no state/value conversion is provided.
 Caller/native heads, approvals and monitored fee service remain separate.
 
+The [trusted caller-control profile](../../docs/protocol/FAST_SESSION_HEAD_CONTROL_V1.md)
+additionally supports fresh version2 caller state and explicitly selected
+block-only background import:
+
+```
+rld-fast-payment-session create-control ROOT GENESIS_FILE PINNED_CHAIN CALLER_HEAD_FILE
+rld-fast-payment-session serve-control ROOT GENESIS_FILE PINNED_CHAIN CALLER_HEAD_FILE --peer-root PEER_ROOT --peer-head-file PEER_HEAD_FILE --auto-import-blocks
+rld-fast-payment-session recover-control ROOT GENESIS_FILE PINNED_CHAIN CALLER_HEAD_FILE
+```
+
+Both files are private, explicitly trusted local inputs. Exact key-free intent
+preparation precedes every caller/child action, and durable audited completion
+precedes response. Recovery can return a retained original signature without its
+key, or resolve absence without first-executing. Incoming blocks undergo complete
+native prevalidation and independent normal admission; missing parents remain for
+later rounds. Other packet kinds cannot approve or sign a payment. Native changes
+can invalidate pending reviews, which must never be rebased. No legacy store is
+converted, and this mode supplies no independent freshness or funded fee monitor.
+
 This direct ground transport does not qualify autonomous native/head coordination,
 discovery or multi-hop routing, consumer consent UI, continuous funded fee claims,
 independent operators/latest-state protection, physical routes, scalable archival,

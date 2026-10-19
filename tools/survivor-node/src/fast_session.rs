@@ -1,6 +1,10 @@
 //! Serialized key-free caller intents compose native selection and private
 //! owner/retainer steps. Full child replay/audits precede signing authority.
+mod control;
+mod ingress;
+pub use ingress::Ingress;
 mod journal;
+pub use control::Boundary as ControlBoundary;
 mod onchain;
 mod opening;
 mod pool;
@@ -390,6 +394,7 @@ pub struct Session {
     pool_mining: Option<pool::PoolMining>,
     pool_cursor: usize,
     candidate: Option<Vec<u8>>,
+    control: Option<control::Control>,
 }
 struct Mining {
     tip: Hash,
@@ -495,6 +500,15 @@ impl Session {
         Ok(payment.bytes().to_vec())
     }
     pub fn create(root: &Path, genesis: &[u8], chain: Hash, now: u64) -> Result<Self> {
+        Self::create_profile(root, genesis, chain, now, None)
+    }
+    fn create_profile(
+        root: &Path,
+        genesis: &[u8],
+        chain: Hash,
+        now: u64,
+        control_path: Option<&Path>,
+    ) -> Result<Self> {
         fast::Ledger::from_genesis(genesis, chain, 100000)?;
         fs::create_dir(root).map_err(fast_retainer::io)?;
         #[cfg(unix)]
@@ -525,7 +539,11 @@ impl Session {
             chain,
             native.head(),
             now,
+            if control_path.is_some() { 2 } else { 1 },
         )?;
+        let control = control_path
+            .map(|p| control::Control::create(p, caller.binding(), caller.head))
+            .transpose()?;
         sync_dir(root)?;
         fs::remove_file(root.join("CREATING")).map_err(fast_retainer::io)?;
         sync_dir(root)?;
@@ -541,6 +559,7 @@ impl Session {
             pool_mining: None,
             pool_cursor: 0,
             candidate: None,
+            control,
         })
     }
     fn structural(c: &Journal, chain: Hash) -> Result<(Hash, BTreeMap<Id, ActorState>)> {
@@ -585,6 +604,16 @@ impl Session {
         expected: Hash,
         now: u64,
     ) -> Result<Self> {
+        Self::open_profile(root, genesis, chain, expected, now, 1)
+    }
+    fn open_profile(
+        root: &Path,
+        genesis: &[u8],
+        chain: Hash,
+        expected: Hash,
+        now: u64,
+        version: u8,
+    ) -> Result<Self> {
         Self::paths(root)?;
         let caller = Journal::open(
             &root.join("caller.journal"),
@@ -592,6 +621,7 @@ impl Session {
             chain,
             Some(expected),
             now,
+            version,
         )?;
         ensure(
             caller.ops.last().is_none_or(|o| o.done.is_some()),
@@ -618,6 +648,7 @@ impl Session {
             pool_mining: None,
             pool_cursor: 0,
             candidate: None,
+            control: None,
         };
         s.audit(now)?;
         s.onchain_audited = s.caller.ops.len();
@@ -644,6 +675,7 @@ impl Session {
         self.native.as_ref().unwrap().ledger().tip().id()
     }
     pub fn status(&mut self, head: Hash, now: u64) -> Result<Value> {
+        self.check_control(head)?;
         self.caller.check(head)?;
         let n = self
             .native
@@ -651,7 +683,7 @@ impl Session {
             .ok_or("RESOURCE_WAIT session native restart required")?;
         n.check(n.head(), n.ledger().tip().id(), now)?;
         Ok(
-            json!({"session_head":Id(head),"native_head":Id(n.head()),"selected_tip":Id(n.ledger().tip().id()),"height":n.ledger().tip().height().to_string(),"actors":self.actors.keys().collect::<Vec<_>>(),"fast_completion_authorized":false,"independent_freshness":false,"network_monitoring":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY"}),
+            json!({"session_head":Id(head),"native_head":Id(n.head()),"selected_tip":Id(n.ledger().tip().id()),"height":n.ledger().tip().height().to_string(),"actors":self.actors.keys().collect::<Vec<_>>(),"caller_head_control":if self.control.is_some(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"fast_completion_authorized":false,"independent_freshness":false,"network_monitoring":false,"mainnet":false,"network_kind":"NO_VALUE_ONLY"}),
         )
     }
     fn audit(&mut self, now: u64) -> Result<()> {
@@ -1204,12 +1236,23 @@ impl Session {
         now: u64,
         mut observe: impl FnMut(Boundary),
     ) -> Result<Value> {
+        self.check_control(expected)?;
         self.caller.check(expected)?;
         ensure(
             self.native.is_some(),
             "RESOURCE_WAIT session native restart required",
         )?;
         self.preflight(&action)?;
+        if let Some(control) = &mut self.control {
+            control.begin(
+                expected,
+                &journal::Intent {
+                    id,
+                    action: action.clone(),
+                    at: now,
+                },
+            )?;
+        }
         self.caller.begin(id, action.clone(), now)?;
         observe(Boundary::IntentDurable);
         let result = if action.native_authorization() {
@@ -1257,6 +1300,9 @@ impl Session {
             .finish_authorized(effect, review, diagnostic, authorization)?;
         self.onchain_audited = self.caller.ops.len();
         observe(Boundary::ReplyDurable);
+        if let Some(control) = &mut self.control {
+            control.finish(self.caller.head)?;
+        }
         self.output(now)
     }
     fn resolve(&mut self, now: u64) -> Result<(Option<Id>, Option<Id>)> {
@@ -1455,8 +1501,27 @@ impl Session {
         request: Id,
         now: u64,
     ) -> Result<(Self, Value)> {
+        Self::recover_profile(root, genesis, chain, prior, (id, request), now, 1)
+    }
+    fn recover_profile(
+        root: &Path,
+        genesis: &[u8],
+        chain: Hash,
+        prior: Hash,
+        binding: (Id, Id),
+        now: u64,
+        version: u8,
+    ) -> Result<(Self, Value)> {
+        let (id, request) = binding;
         Self::paths(root)?;
-        let caller = Journal::open(&root.join("caller.journal"), genesis, chain, None, now)?;
+        let caller = Journal::open(
+            &root.join("caller.journal"),
+            genesis,
+            chain,
+            None,
+            now,
+            version,
+        )?;
         let last = caller
             .ops
             .last()
@@ -1509,6 +1574,7 @@ impl Session {
             pool_mining: None,
             pool_cursor: 0,
             candidate: None,
+            control: None,
         };
         if pending {
             // For a pending native step the retained store may already be one step ahead;

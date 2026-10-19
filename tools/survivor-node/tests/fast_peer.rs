@@ -753,6 +753,147 @@ fn controlled_idle_multiple_receipts_survive_actual_sigkill_without_rebasing_cli
     assert!(Instant::now() < deadline);
 }
 #[test]
+fn idle_controlled_process_imports_out_of_order_native_blocks_and_restarts_without_client_heads() {
+    use rld_survivor_node::fast_session::{Action, Session};
+    let deadline = Instant::now() + Duration::from_secs(180);
+    let f = fixture();
+    let chain = f.ledger.chain_id();
+    let root = directory(chain, "automatic-native");
+    let p = pair_mode(&root, chain, false, true);
+    let genesis = root.join("genesis");
+    write(&genesis, &f.genesis);
+    let ar = root.join("sender");
+    let br = root.join("receiver");
+    let ac = root.join("sender.head");
+    let bc = root.join("receiver.head");
+    let mut source = Session::create_controlled(&ar, &f.genesis, chain, &ac, now()).unwrap();
+    let mut blocks = vec![];
+    let mut at = 0;
+    for i in 0..4 {
+        let n = u32::from_be_bytes(f.history[at..at + 4].try_into().unwrap()) as usize;
+        let b = f.history[at + 4..at + 4 + n].to_vec();
+        at += 4 + n;
+        source
+            .execute(
+                Id([i + 1; 32]),
+                source.head(),
+                Action::Native {
+                    tip: Id(source.tip()),
+                    block: hex::encode(&b),
+                },
+                None,
+                now(),
+            )
+            .unwrap();
+        blocks.push(b);
+    }
+    let tip = source.tip();
+    let ah = Id(source.head());
+    drop(source);
+    let receiver = Session::create_controlled(&br, &f.genesis, chain, &bc, now()).unwrap();
+    let bh = Id(receiver.head());
+    drop(receiver);
+    let make_args =
+        |node: &Path, control: &Path, peer: &Path, peer_head: &Path, automatic: bool| {
+            let mut a = controlled_args(node, &genesis, chain, Id([0; 32]), peer, peer_head);
+            a[0] = "serve-control".into();
+            a[4] = control.as_os_str().into();
+            if automatic {
+                a.push("--auto-import-blocks".into());
+            }
+            a
+        };
+    let mut a = Node::start(
+        &root,
+        "sender",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        make_args(&ar, &ac, &p.a, &root.join("a.head"), false),
+        deadline,
+    );
+    assert_eq!(a.head, ah);
+    let mut b = Node::start(
+        &root,
+        "receiver",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        make_args(&br, &bc, &p.b, &root.join("b.head"), true),
+        deadline,
+    );
+    assert_eq!(b.initial["height"], "0");
+    assert_eq!(b.head, bh);
+    let mut invalid = blocks[3].clone();
+    let end = invalid.len() - 1;
+    invalid[end] = 255;
+    let bad=a.ok(json!({"command":"peer_queue","destination":p.cb.identity,"kind":1,"payload":hex::encode(&invalid)}));
+    let bad = vid(&bad, "packet");
+    for index in [2usize, 0, 3, 1] {
+        a.ok(json!({"command":"peer_queue","destination":p.cb.identity,"kind":1,"payload":hex::encode(&blocks[index])}));
+    }
+    let invoice = Invoice::propose(
+        &f.ledger.funding_origin(f.channel).unwrap(),
+        None,
+        0,
+        7,
+        [94; 32],
+    )
+    .unwrap();
+    a.ok(json!({"command":"peer_queue","destination":p.cb.identity,"kind":2,"payload":hex::encode(invoice.bytes())}));
+    a.drain();
+    // Raw bytes are an observation trigger only. The actual height/selection is
+    // established by complete cold replay after the owned process is stopped.
+    loop {
+        let native = fs::read(br.join("native.journal")).unwrap();
+        let control = fs::read(&bc).unwrap();
+        if native.windows(blocks[3].len()).any(|raw| raw == blocks[3])
+            && control[108..112] == [0; 4]
+        {
+            break;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "original180 unattended native import"
+        );
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(
+        b.head, bh,
+        "receiver client stays idle throughout automatic progress"
+    );
+    let child = b.child.as_mut().unwrap();
+    child.kill().unwrap();
+    let status = child.wait().unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::ExitStatusExt;
+        assert_eq!(status.signal(), Some(9));
+    }
+    b.child.take();
+    b.input.take();
+    let retained = fs::read(br.join("native.journal")).unwrap();
+    let mut b = Node::start(
+        &root,
+        "receiver-restart",
+        env!("CARGO_BIN_EXE_rld-fast-payment-session"),
+        make_args(&br, &bc, &p.b, &root.join("b.head"), true),
+        deadline,
+    );
+    assert_eq!(b.initial["height"], "4");
+    assert_eq!(b.tip.0, tip);
+    assert_ne!(b.head, bh);
+    assert_eq!(
+        b.initial["automatic_native_import"]["scope"],
+        "NATIVE_BLOCKS_ONLY"
+    );
+    assert_eq!(fs::read_dir(br.join("actors")).unwrap().count(), 0);
+    assert_eq!(fs::read(br.join("native.journal")).unwrap(), retained);
+    let request = b.request_id();
+    let out = b.send(json!({"command":"peer_import","packet":bad,"request_id":request}));
+    assert!(out["diagnostic"].as_str().is_some());
+    assert_eq!(fs::read(br.join("native.journal")).unwrap(), retained);
+    b.finish();
+    a.finish();
+    assert!(Instant::now() < deadline);
+}
+#[test]
 fn peer_control_crash_child() {
     use rld_survivor_node::fast_peer::HeadBoundary::*;
     let Some(path) = std::env::var_os("RLD_PEER_CONTROL_CUT") else {

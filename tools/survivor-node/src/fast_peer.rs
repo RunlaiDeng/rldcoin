@@ -634,6 +634,19 @@ impl Network {
         self.custody.check()?;
         Ok(json!(self.custody.order.iter().map(|id|{let x=&self.custody.items[id];json!({"id":Id(*id),"kind":x.packet.kind,"source":Id(x.packet.sender),"destination":Id(x.packet.destination),"received":x.received,"queued_at":x.at.to_string(),"destination_transport_custody":x.response.is_some(),"ledger_acceptance_known":false,"fast_completion_authorized":false})}).collect::<Vec<_>>()))
     }
+    pub fn received_ids(&mut self, kind: u8) -> Result<Vec<Hash>> {
+        self.custody.check()?;
+        Ok(self
+            .custody
+            .order
+            .iter()
+            .filter(|id| {
+                let i = &self.custody.items[*id];
+                i.received && i.packet.kind == kind
+            })
+            .copied()
+            .collect())
+    }
     pub fn status(&self) -> Value {
         json!({"profile":"RLD-FAST-PEER-1","custody_version":if self.custody.controlled(){2}else{1},"head_control":if self.custody.controlled(){"TRUSTED_FILE"}else{"EXTERNAL_EXACT_HEAD"},"independent_freshness":false,"peer_head":Id(self.head()),"identity":self.config.identity,"listen":self.listen,"admitted_peers":self.config.peers.len(),"retained_packets":self.custody.items.len(),"in_flight":self.in_flight.len(),"custody_ready":self.custody.ready(),"diagnostic":self.diagnostic,"transport_custody_only":true,"native_import":"EXPLICIT_LOCAL_VERIFICATION","fast_completion_authorized":false,"mainnet":false})
     }

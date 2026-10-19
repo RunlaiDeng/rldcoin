@@ -712,6 +712,29 @@ impl Store {
         self.prefix(self.head)?;
         Ok(result)
     }
+    /// Fully authenticate a prospective native block without retaining it.
+    /// Admission still independently repeats all checks before mutation.
+    pub(crate) fn precheck(&mut self, raw: &[u8], head: Hash, tip: Hash, now: u64) -> Result<bool> {
+        self.check(head, tip, now)?;
+        let id = fast::block_id(raw)?;
+        if let Some(known) = self.native.blocks.get(&id) {
+            ensure(known.raw == raw, "INVALID native changed duplicate bytes")?;
+            return Ok(true);
+        }
+        ensure(
+            self.native.blocks.len() < self.limits.blocks,
+            "RESOURCE_WAIT native block count",
+        )?;
+        self.native.candidate(raw, now)?;
+        ensure(
+            self.prefix
+                .len()
+                .checked_add(raw.len() + 136)
+                .is_some_and(|n| n <= self.limits.bytes),
+            "RESOURCE_WAIT native byte capacity",
+        )?;
+        Ok(false)
+    }
     pub fn accept(&mut self, raw: &[u8], head: Hash, tip: Hash, now: u64) -> Result<Outcome> {
         self.check(head, tip, now)?;
         let id = fast::block_id(raw)?;

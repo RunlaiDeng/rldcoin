@@ -192,11 +192,15 @@ custody explicitly selects an exact literal head or the trusted-file profile.
 Nested peer status accompanies local errors as well as successes. Queuing a list
 of destinations is not atomic: preserve any earlier successful queue entries and
 inspect the returned head/inventory. Exact deterministic retry is idempotent.
-For now native import is an explicit local private-control operation using actual
+By default native import is an explicit local private-control operation using actual
 received full bytes. This preserves the session's independently supplied caller
 head, pending-operation recovery and local selection checks; a peer cannot choose
-a ledger head or silently rebase an approval. Autonomous external-head coordination
-and continuous native/payment monitoring remain full-product work.
+a ledger head or silently rebase an approval. The separately selected
+[controlled caller mode](FAST_SESSION_HEAD_CONTROL_V1.md) permits bounded block-only
+background native import under explicit trusted local caller/peer head files.
+It revalidates the whole native candidate and cannot process payment approvals,
+signing or fee claims. Independent latest-state custody and continuous solvent
+native/payment monitoring remain full-product work.
 
 Additional local commands, always with current session `head`:
 

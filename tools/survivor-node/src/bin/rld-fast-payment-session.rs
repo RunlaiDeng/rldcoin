@@ -3,7 +3,8 @@
 use rld_survivor_node::{
     fast_peer::{codec::Packet, Network},
     fast_session::{
-        Action, Id, MiningRequest, OpeningRequest, OpeningTerms, PoolMiningRequest, Session,
+        Action, Id, Ingress, MiningRequest, OpeningRequest, OpeningTerms, PoolMiningRequest,
+        Session,
     },
     kernel::Result,
 };
@@ -219,14 +220,27 @@ fn emit(v: Value) -> Result<()> {
 fn run() -> Result<()> {
     let a: Vec<_> = std::env::args().collect();
     if a.len() < 5 {
-        return Err("Usage: rld-fast-payment-session create ROOT GENESIS PIN | serve ROOT GENESIS PIN LATEST_SESSION_HEAD | recover ROOT GENESIS PIN PRIOR_SESSION_HEAD REQUEST_ID REQUEST_DIGEST".into());
+        return Err("Usage: rld-fast-payment-session create ROOT GENESIS PIN | serve ROOT GENESIS PIN LATEST_SESSION_HEAD | recover ROOT GENESIS PIN PRIOR_SESSION_HEAD REQUEST_ID REQUEST_DIGEST | create-control ROOT GENESIS PIN TRUSTED_HEAD_FILE | serve-control ROOT GENESIS PIN TRUSTED_HEAD_FILE [--peer-root PEER_ROOT --peer-head-file PEER_HEAD_FILE [--auto-import-blocks]] | recover-control ROOT GENESIS PIN TRUSTED_HEAD_FILE".into());
     }
     let root = Path::new(&a[2]);
     let g = genesis(Path::new(&a[3]))?;
     let chain = id(&a[4])?.0;
     let clock = now()?;
+    let serving = a[1] == "serve" || a[1] == "serve-control";
+    let automatic = a[1] == "serve-control" && a.len() == 11 && a[10] == "--auto-import-blocks";
     let mut s = match a[1].as_str() {
         "create" if a.len() == 5 => Session::create(root, &g, chain, clock)?,
+        "create-control" if a.len() == 6 => {
+            Session::create_controlled(root, &g, chain, Path::new(&a[5]), clock)?
+        }
+        "serve-control" if a.len() == 6 || a.len() == 10 || automatic => {
+            Session::open_controlled(root, &g, chain, Path::new(&a[5]), clock)?
+        }
+        "recover-control" if a.len() == 6 => {
+            let (_, out) = Session::recover_controlled(root, &g, chain, Path::new(&a[5]), clock)?;
+            emit(out)?;
+            return Ok(());
+        }
         "serve" if a.len() == 6 || a.len() == 10 => {
             Session::open(root, &g, chain, id(&a[5])?.0, clock)?
         }
@@ -238,7 +252,7 @@ fn run() -> Result<()> {
         }
         _ => return Err("INVALID payment session entry".into()),
     };
-    let mut peer = if a[1] == "serve" && a.len() == 10 {
+    let mut peer = if serving && (a.len() == 10 || automatic) {
         if a[6] != "--peer-root" || (a[8] != "--peer-head" && a[8] != "--peer-head-file") {
             return Err("INVALID peer startup flags".into());
         }
@@ -250,12 +264,23 @@ fn run() -> Result<()> {
     } else {
         None
     };
+    if automatic
+        && peer
+            .as_ref()
+            .is_none_or(|n| n.status()["head_control"] != "TRUSTED_FILE")
+    {
+        return Err("INVALID automatic ingress requires trusted peer control".into());
+    }
     let mut ready = s.status(s.head(), clock)?;
+    let mut ingress = automatic.then(Ingress::default);
+    if let Some(i) = &ingress {
+        ready["automatic_native_import"] = i.status();
+    }
     if let Some(n) = &peer {
         ready["peer"] = n.status();
     }
     emit(ready)?;
-    if a[1] != "serve" {
+    if !serving {
         return Ok(());
     }
     let (tx, rx) = mpsc::sync_channel(8);
@@ -285,6 +310,9 @@ fn run() -> Result<()> {
     loop {
         if let Some(n) = peer.as_mut() {
             let _ = n.tick(now()?);
+            if let Some(i) = &mut ingress {
+                let _ = i.tick(&mut s, n, now()?);
+            }
         }
         let request = match rx.recv_timeout(std::time::Duration::from_millis(100)) {
             Ok(r) => r,
@@ -365,12 +393,18 @@ fn run() -> Result<()> {
                 if let Some(n) = &peer {
                     v["peer"] = n.status();
                 }
+                if let Some(i) = &ingress {
+                    v["automatic_native_import"] = i.status();
+                }
                 emit(v)?;
             }
             Err(e) => {
                 let mut v = json!({"session_head":Id(s.head()),"diagnostic":e,"fast_completion_authorized":false,"mainnet":false});
                 if let Some(n) = &peer {
                     v["peer"] = n.status();
+                }
+                if let Some(i) = &ingress {
+                    v["automatic_native_import"] = i.status();
                 }
                 emit(v)?;
             }
