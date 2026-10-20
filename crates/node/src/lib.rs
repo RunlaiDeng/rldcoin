@@ -24,3 +24,5 @@ pub fn executable_source_digest() -> &'static str {
 
 mod applied_store;
 mod object_store;
+
+pub mod receipts;

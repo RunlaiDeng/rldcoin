@@ -64,7 +64,7 @@ required release evidence. The existing CI compiles the committed binding.
   authentication, succession and recursive verification relations.
 - `crates/node`: durable replay, encrypted local signing custody, PBFT,
   signed and pinned-TLS contact carriage, bounded fragments, offline bundles,
-  public signed-operation API, disk-resident verified native-history index and independently
+  public signed-operation API, disk-resident verified native-history and execution-receipt indexes, independently
   scheduled bounded proving lanes, disk state material and certified historical
   membership/absence queries. Native state uses shared immutable value and
   commitment paths. The permanent operation map executes through a private disk

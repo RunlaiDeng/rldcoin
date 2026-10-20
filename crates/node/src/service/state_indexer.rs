@@ -39,8 +39,8 @@ pub(super) async fn worker(shared: SharedState) {
                 if view.state.sequence > 0 {
                     targets.insert(view.state.sequence);
                 }
-                if let Some(p) = view.proofs.last() {
-                    targets.insert(p.header.sequence);
+                if let Some(sequence) = view.proofs.last_sequence() {
+                    targets.insert(sequence);
                 }
                 if let Err(error) = index.writable() {
                     index.note(&error);

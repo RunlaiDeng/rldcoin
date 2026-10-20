@@ -121,7 +121,7 @@ async fn job<T: Send + 'static>(
 }
 
 async fn status(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
-    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last().map(|p|p.header.sequence),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"applied_storage":match s.node.core.applied_storage.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"native_history":match s.node.core.history.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
+    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last_sequence(),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"applied_storage":match s.node.core.applied_storage.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"receipt_storage":match s.node.core.proofs.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"native_history":match s.node.core.history.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
 }
 async fn routes(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| Ok(wire(&s.advertisements))).await
@@ -198,19 +198,16 @@ async fn snapshot(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
 }
 
 async fn certified(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
-    job(s, |s| {
-        let p = s
-            .node
-            .core
-            .proofs
-            .iter()
-            .find(|p| p.header.sequence == s.node.core.state.sequence)
-            .context(
-                "current execution receipt pending; no independently verified balance response",
-            )?;
-        Ok(wire(p))
+    let permit = state_read_permit()?;
+    let view = job(s, |s| Ok(s.node.core.proof_context())).await?;
+    Ok(tokio::task::spawn_blocking(move || -> Result<Response> {
+        let _permit = permit;
+        let p = view.proofs.get(view.state.sequence)?.context(
+            "current execution receipt pending; no independently verified balance response",
+        )?;
+        Ok(wire(p.as_ref()))
     })
-    .await
+    .await??)
 }
 #[derive(Deserialize)]
 struct StateProofRequest {
@@ -238,19 +235,17 @@ async fn state_proof(
     }
     let key = Id::parse(&request.key)?;
     let permit = state_read_permit()?;
-    let (view, source) = job(shared, move |s| {
-        let at = request.at.unwrap_or(s.node.core.state.sequence);
-        let proofs = &s.node.core.proofs;
-        let position = proofs
-            .binary_search_by_key(&at, |p| p.header.sequence)
-            .map_err(|_| anyhow::anyhow!("exact execution receipt pending"))?;
-        let source = proofs[position].clone();
-        Ok((s.node.core.proof_context(), source))
-    })
-    .await?;
+    let view = job(shared, |s| Ok(s.node.core.proof_context())).await?;
     let result =
         tokio::task::spawn_blocking(move || -> Result<crate::state_index::CertifiedQuery> {
             let _permit = permit;
+            let at = request.at.unwrap_or(view.state.sequence);
+            let source = view
+                .proofs
+                .get(at)?
+                .context("exact execution receipt pending")?
+                .as_ref()
+                .clone();
             let query = view.query_at(source.header.sequence, &request.collection, key)?;
             Ok(crate::state_index::CertifiedQuery { source, query })
         })

@@ -1375,9 +1375,9 @@ async fn main() -> Result<()> {
                 let source = node
                     .core
                     .proofs
-                    .iter()
-                    .find(|p| p.header.sequence == at)
+                    .get(at)?
                     .context("exact closure execution receipt not ready")?
+                    .as_ref()
                     .clone();
                 save(
                     &output,
@@ -1453,9 +1453,9 @@ async fn main() -> Result<()> {
                 let source = node
                     .core
                     .proofs
-                    .iter()
-                    .find(|p| p.header.sequence == at)
+                    .get(at)?
                     .context("exact execution receipt not ready")?
+                    .as_ref()
                     .clone();
                 save(
                     &output,
@@ -1502,9 +1502,9 @@ async fn main() -> Result<()> {
                 let certified = node
                     .core
                     .proofs
-                    .iter()
-                    .find(|p| p.header.sequence == at)
+                    .get(at)?
                     .context("exact family receipt not ready")?
+                    .as_ref()
                     .clone();
                 let evidence = CouponEvidence {
                     coupon,

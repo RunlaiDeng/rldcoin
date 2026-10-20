@@ -308,6 +308,28 @@ Physical object/page retention still grows; finite quotas, archival packing and
 paid replicated custody remain real operational obligations. No runtime,
 crash/power-loss, memory-use or throughput result follows from compilation.
 
+## Disk-resident execution receipts
+
+Verified execution receipts now use an immutable private prefix index over their
+native sequence. Core/proof observations retain a root and a shared raw cache
+(4,096 objects / 16 MiB), rather than every decoded Certified record. Inserts
+copy the affected disk path, not a complete resident receipt vector. Exact birth
+and CLI evidence, strict predecessor proof recursion and inclusive successor
+rejection recovery retain their original selection rules. Receipt reads verify
+complete canonical object bytes and exact retained summaries; I/O/corruption is
+an error, never proof absence. Scheduler target selection queries relevant heights
+outside the node mutex rather than enumerating all historical certificates.
+
+Only real receipt/QC verification plus exact local native history binding can
+publish an indexed receipt. Cold open starts at an empty observation and replays
+the independently anchored event journal; a disk root is never adopted. Complete
+object/path publication precedes authoritative event append and staged Core
+installation. Partial/orphan versions remain and count toward the finite disk
+budget. Current-certified and state-proof HTTP reads use immutable observations
+outside the node mutex with bounded reader admission. See
+[the receipt analysis](engineering/DISK_RECEIPTS.md). This does not implement
+packing/rotation or establish measured resource/performance/custody behavior.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
@@ -317,8 +339,7 @@ The following are real completion boundaries, not fulfilled by source edits:
    map hash. Current collections other than the operation map remain resident; native history
    records and the applied map now live on disk;
    full invariant scans of other tables, canonical snapshot construction and
-   complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, while receipt
-   append still copies its current collection. Disk snapshots and witness pages
+   complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
@@ -335,7 +356,7 @@ The following are real completion boundaries, not fulfilled by source edits:
    head, and replays all native events. Explicit recovery finishes only a fully
    retained, verified seal; damaged originals/residue remain unchanged. This
    reduces loose files; the new disk history removes full-record history residency,
-   while other current collections, receipts and other Core material remain in memory.
+   while other current collections and other Core material remain in memory.
    Contact spools deliberately refuse at finite object/byte limits. A continuously
    operating archival rotation, independently replicated paid custody lifecycle,
    witness availability, disaster recovery and long-history operator product are

@@ -61,7 +61,7 @@ pub struct ProofContext {
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub(crate) state: Arc<State>,
     pub(crate) history: crate::history::History,
-    pub(crate) proofs: Arc<Vec<Certified>>,
+    pub(crate) proofs: crate::receipts::Receipts,
 }
 impl ProofContext {
     pub fn cancel_draft(&self, id: Id) -> Result<(Controller, Cancellation)> {
@@ -238,13 +238,7 @@ impl ProofContext {
             sequence > 0 && sequence <= self.state.sequence,
             "proof target"
         );
-        let position = self
-            .proofs
-            .partition_point(|p| p.header.sequence < sequence);
-        let predecessor = position
-            .checked_sub(1)
-            .and_then(|i| self.proofs.get(i))
-            .cloned();
+        let predecessor = self.proofs.before(sequence)?.map(|p| p.as_ref().clone());
         let base = predecessor.as_ref().map_or(0, |p| p.header.sequence);
         ensure!(
             sequence.checked_sub(base).is_some_and(|n| n <= 4096),
@@ -381,11 +375,12 @@ impl ProofContext {
             .iter()
             .find(|b| b.controller == id)
             .context("birth")?;
-        let position = self
+        let certified = self
             .proofs
-            .binary_search_by_key(&birth.sequence, |p| p.header.sequence)
-            .map_err(|_| anyhow::anyhow!("historical creation proof is not ready"))?;
-        let certified = self.proofs[position].clone();
+            .get(birth.sequence)?
+            .context("historical creation proof is not ready")?
+            .as_ref()
+            .clone();
         Ok(Creation {
             delegation: self.witness_at(birth.sequence, "controllers", id)?,
             coupon_use: self.witness_at(birth.sequence, "coupon_uses", controller.ticket.coupon)?,

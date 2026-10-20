@@ -381,3 +381,33 @@ Other collections, receipts and queues retain separate memory costs. Physical
 object amplification and archive funding/packing still need implementation and
 operational evidence. No measured memory, throughput, proof latency, independent
 freshness, crash/power-loss custody or mainnet qualification is claimed here.
+
+## Disk-resident verified receipt index
+
+Normal nodes maintain a private `receipt-index/` using
+`RLD-VERIFIED-RECEIPT-INDEX-1`, bound to currency/domain/genesis. Opening it does
+not load a head. Full authoritative event replay reconstructs receipt observations
+only after actual receipt/QC and exact local-history verification. It cannot
+replace a missing journal, currency descriptor or independently retained head.
+
+The index retains complete Certified objects (at most the unchanged 16-MiB object
+bound) and 4-KiB immutable sequence pages. Its shared raw cache is bounded by
+4,096 objects / 16 MiB; decoded responses/proof inputs and other node collections
+are separate memory costs. `/v1/status.receipt_storage` exposes accounted usage,
+cache use and the 1-TiB / 4,194,304-file admission limits. Failed reservations can
+overcount until verified reopen. No published version is deleted on quota or
+I/O failure. Unsupported receipt publication refuses without refunding money or
+changing a native checkpoint; ordinary settlement still has its separate resources.
+
+Missing or corrupted receipt/page bytes fail lookup, scheduling or reconstruction;
+they are never treated as an ungenerated proof. Stop the node and all reader/proof
+workers before retaining the whole damaged receipt-index directory under another
+private name. Rebuild only this derived receipt index by cold opening the unchanged
+valid authoritative journal with its separately retained latest head. Do not merge
+old/new roots, change currency/keys/balances or rewrite native history. This is
+source-compatible derived-data reconstruction, not a monetary migration.
+
+No native/proof source or actual proof image changes in this host-only stage.
+The final full build still compares the actual host and prover profiles. No
+runtime memory, long-history throughput, crash/power-loss, paid archive packing
+or independent security result is established by that compilation.

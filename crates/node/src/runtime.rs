@@ -80,7 +80,7 @@ pub struct Core {
     pub engines: Vec<Engine>,
     pub pending: Vec<Operation>,
     pub terminals: Vec<TerminalRecord>,
-    pub proofs: Arc<Vec<Certified>>,
+    pub proofs: crate::receipts::Receipts,
     pub outbox: Vec<(Id, Dispatch)>,
     pub candidates: Vec<Payload>,
     pub delivered: Vec<Id>,
@@ -155,6 +155,7 @@ impl Core {
         )?);
         state.applied = state.applied.on_empty_storage(applied_storage.clone())?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
+        let proofs = crate::receipts::Receipts::open(&root.join("receipt-index"), &initial)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
         Ok(Self {
             initial,
@@ -166,7 +167,7 @@ impl Core {
             engines: vec![],
             pending: vec![],
             terminals: vec![],
-            proofs: Arc::new(vec![]),
+            proofs,
             outbox: vec![],
             candidates: vec![],
             delivered: vec![],
@@ -648,11 +649,7 @@ impl Core {
                     old.qc.votes[0].statement == p.qc.votes[0].statement,
                     "certificate statement"
                 );
-                if !self.proofs.iter().any(|v| v.header == p.header) {
-                    let proofs = Arc::make_mut(&mut self.proofs);
-                    proofs.push(p.clone());
-                    proofs.sort_by_key(|p| p.header.sequence);
-                }
+                self.proofs.insert_verified(p)?;
             }
         }
         Ok(actions)
@@ -753,13 +750,7 @@ impl Node {
             .collect();
         for (id, sequence) in pending {
             self.rejection_cursor = Some(id);
-            let Some(certified) = self
-                .core
-                .proofs
-                .iter()
-                .find(|p| p.header.sequence >= sequence)
-                .cloned()
-            else {
+            let Some(certified) = self.core.proofs.at_or_after(sequence)? else {
                 continue;
             };
             let record = self
@@ -781,7 +772,7 @@ impl Node {
             let c = &release.creation.controller;
             let evidence = Rejected {
                 release: release.clone(),
-                destination: certified,
+                destination: certified.as_ref().clone(),
                 decision: context.witness_at(at, "decisions", c.id)?,
                 leaf_decision: context.witness_at(at, "coupon_uses", c.ticket.coupon)?,
             };

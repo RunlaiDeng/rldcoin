@@ -226,8 +226,7 @@ struct Snapshot {
     queued: BTreeSet<Id>,
 }
 impl Snapshot {
-    fn targets(&self, lane: Lane) -> BTreeSet<Target> {
-        let ready: BTreeSet<_> = self.view.proofs.iter().map(|p| p.header.sequence).collect();
+    fn targets(&self, lane: Lane) -> Result<BTreeSet<Target>> {
         let closed: BTreeSet<_> = self
             .view
             .state
@@ -236,36 +235,45 @@ impl Snapshot {
             .map(|r| r.object)
             .chain(self.terminal.iter().copied())
             .collect();
+        let mut targets = BTreeSet::new();
         match lane {
-            Lane::Birth => self
-                .view
-                .state
-                .births
-                .iter()
-                .filter(|b| !closed.contains(&b.controller) && !ready.contains(&b.sequence))
-                .map(|b| Target::Native(b.sequence))
-                .collect(),
             Lane::Native => {
                 let n = self.view.state.sequence;
-                if n > 0 && !ready.contains(&n) {
-                    [Target::Native(n)].into()
-                } else {
-                    BTreeSet::new()
+                if n > 0 && !self.view.proofs.contains(n)? {
+                    targets.insert(Target::Native(n));
                 }
             }
-            Lane::Controller => self
-                .view
-                .state
-                .births
-                .iter()
-                .filter(|b| {
-                    ready.contains(&b.sequence)
-                        && !closed.contains(&b.controller)
-                        && !self.queued.contains(&b.controller)
-                })
-                .map(|b| Target::Controller(b.controller))
-                .collect(),
+            Lane::Birth | Lane::Controller => {
+                // Read only relevant birth heights; do not collect every historical
+                // certificate or silently turn an I/O failure into proof absence.
+                let mut ready = BTreeMap::new();
+                for birth in self.view.state.births.iter() {
+                    if closed.contains(&birth.controller) {
+                        continue;
+                    }
+                    if matches!(lane, Lane::Controller) && self.queued.contains(&birth.controller) {
+                        continue;
+                    }
+                    let available = if let Some(value) = ready.get(&birth.sequence) {
+                        *value
+                    } else {
+                        let value = self.view.proofs.contains(birth.sequence)?;
+                        ready.insert(birth.sequence, value);
+                        value
+                    };
+                    match lane {
+                        Lane::Birth if !available => {
+                            targets.insert(Target::Native(birth.sequence));
+                        }
+                        Lane::Controller if available => {
+                            targets.insert(Target::Controller(birth.controller));
+                        }
+                        _ => {}
+                    }
+                }
+            }
         }
+        Ok(targets)
     }
     fn prepare(self, target: Target) -> Result<Job> {
         let currency = self.view.initial.currency.clone();
@@ -274,11 +282,8 @@ impl Snapshot {
                 let base = self
                     .view
                     .proofs
-                    .iter()
-                    .filter(|p| p.header.sequence < sequence)
-                    .map(|p| p.header.sequence)
-                    .max()
-                    .unwrap_or(0);
+                    .before(sequence)?
+                    .map_or(0, |p| p.header.sequence);
                 sequence = sequence.min(
                     base.checked_add(4096)
                         .context("proof sequence exhaustion")?,
@@ -460,7 +465,11 @@ async fn run_lane(
                 .await
                 .context("proof scheduling stopped")?;
             let snapshot = observe(shared.clone()).await?;
-            let targets = snapshot.targets(lane);
+            let (snapshot, targets) = tokio::task::spawn_blocking(move || -> Result<_> {
+                let targets = snapshot.targets(lane)?;
+                Ok((snapshot, targets))
+            })
+            .await??;
             failures.retain(|target, _| targets.contains(target));
             let eligible = |t: &&Target| {
                 failures
