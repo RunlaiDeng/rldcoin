@@ -503,6 +503,36 @@ cover may require large temporary memory; this is not a bounded-RAM or performan
 claim. See [the source analysis](engineering/DEFINITION_ACCESS_EXECUTION.md).
 No fixture, suite, actual proof or payment campaign was run in this stage.
 
+## Mutable service/coupon and permanent family execution
+
+Services and coupon-use records now use a separate insert/replace interface;
+receiving families use append-only Permanent. Their canonical complete wire
+arrays and monetary leaf/root algorithms are unchanged. Every replacement proves
+the actual old member under the current root and derives the new root with the
+same key, count and topology. Only the native renewal, service payout and coupon
+closure relations authorize those updates. There is no removal or replacement
+API on permanent families or prior decision maps.
+
+Normal nodes rebuild these three typed paths under private service-index. Native
+reads, retained closure/funding queries and family checks are fallible exact point
+lookups. Sorted constructors and same-key replacement/duplicate-refusing insert
+replace the redundant all-key scans. State material V8 omits thirteen map arrays;
+History V7 stores observation V5 with all fourteen roots (including the auxiliary
+Mint root). The fixed typed codec shares only identical currency/home/genesis and
+known map context, reconstructs exact original storage observations, and retains
+the unchanged 4-KiB bound. Every restored root still passes its normal storage
+checks and the complete native checkpoint root; shared metadata is no authority.
+
+Actual NativeInput tag 8 and default capture include service/coupon/family access
+sets alongside prior definition/UTXO/permanent/applied paths, optionally certified
+Mint. Initial root/count openings and all supplied steps verify. Captured full-host
+insert/replacement roots are compared with compact derivations; replayed headers
+must equal verified history before disk sealing. Only typed compact-capacity
+refusal selects previous bounded paths; authentication/I/O errors propagate.
+The original guest/input, per-value, working, cache and retained bounds remain.
+See [the source analysis](engineering/MUTABLE_SERVICE_EXECUTION.md). Compilation
+and source review do not establish runtime behavior or proof feasibility.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
@@ -510,13 +540,13 @@ The following are real completion boundaries, not fulfilled by source edits:
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
    map hash. Other native collections remain resident; native history, UTXOs, Mint facts, the applied map and
-   five permanent decision/birth/funding maps, acceptance covers and historical fee policies now live on disk;
+   five permanent decision/birth/funding maps, acceptance covers, historical fee policies, service/coupon state and receiving families now live on disk;
    full invariant scans of the remaining tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
-   collections remain needed. The ten-map access path alone does not
+   collections remain needed. The thirteen-map access path alone does not
    complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one

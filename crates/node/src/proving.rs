@@ -459,6 +459,18 @@ impl ProofContext {
             );
         }
         let certificate = mint_certificate.as_ref().map(|c| (**c).clone());
+        match self.indexed_service(witness.clone(), sequence, certificate.clone()) {
+            Ok(w) => return Ok(proof::NativeInput::IndexedService(w)),
+            Err(e) if compact_capacity(&e) => {}
+            Err(e) => return Err(e),
+        }
+        if certificate.is_some() {
+            match self.indexed_service(witness.clone(), sequence, None) {
+                Ok(w) => return Ok(proof::NativeInput::IndexedService(w)),
+                Err(e) if compact_capacity(&e) => {}
+                Err(e) => return Err(e),
+            }
+        }
         match self.indexed_definitions(witness.clone(), sequence, certificate.clone()) {
             Ok(w) => return Ok(proof::NativeInput::IndexedDefinitions(w)),
             Err(e) if compact_capacity(&e) => {}
@@ -512,7 +524,8 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedUtxoWitness> {
-        let (native, outputs, _, _) = self.indexed_maps(n, sequence, true, None, false)?;
+        let (native, outputs, _, _, _) =
+            self.indexed_maps(n, sequence, true, None, false, false)?;
         Ok(proof::IndexedUtxoWitness {
             native,
             outputs: outputs.context("UTXO capture missing")?,
@@ -523,7 +536,7 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedPermanentWitness> {
-        Ok(self.indexed_maps(n, sequence, false, None, false)?.0)
+        Ok(self.indexed_maps(n, sequence, false, None, false, false)?.0)
     }
     fn indexed_mint(
         &self,
@@ -531,8 +544,8 @@ impl ProofContext {
         sequence: u64,
         certificate: rld_protocol::mints::index::Certificate,
     ) -> Result<proof::IndexedMintWitness> {
-        let (native, outputs, mints, _) =
-            self.indexed_maps(n, sequence, true, Some(certificate), false)?;
+        let (native, outputs, mints, _, _) =
+            self.indexed_maps(n, sequence, true, Some(certificate), false, false)?;
         Ok(proof::IndexedMintWitness {
             native: proof::IndexedUtxoWitness {
                 native,
@@ -547,8 +560,8 @@ impl ProofContext {
         sequence: u64,
         certificate: Option<rld_protocol::mints::index::Certificate>,
     ) -> Result<proof::IndexedDefinitionWitness> {
-        let (native, outputs, mints, definitions) =
-            self.indexed_maps(n, sequence, true, certificate, true)?;
+        let (native, outputs, mints, definitions, _) =
+            self.indexed_maps(n, sequence, true, certificate, true, false)?;
         Ok(proof::IndexedDefinitionWitness {
             native: proof::IndexedUtxoWitness {
                 native,
@@ -558,6 +571,26 @@ impl ProofContext {
             definitions: definitions.context("definition capture missing")?,
         })
     }
+    fn indexed_service(
+        &self,
+        n: proof::NativeWitness,
+        sequence: u64,
+        certificate: Option<rld_protocol::mints::index::Certificate>,
+    ) -> Result<proof::IndexedServiceWitness> {
+        let (native, outputs, mints, definitions, service) =
+            self.indexed_maps(n, sequence, true, certificate, true, true)?;
+        Ok(proof::IndexedServiceWitness {
+            native: proof::IndexedDefinitionWitness {
+                native: proof::IndexedUtxoWitness {
+                    native,
+                    outputs: outputs.context("service UTXO capture")?,
+                },
+                mints,
+                definitions: definitions.context("service definition capture")?,
+            },
+            service: service.context("service capture missing")?,
+        })
+    }
     fn indexed_maps(
         &self,
         mut native: proof::NativeWitness,
@@ -565,13 +598,19 @@ impl ProofContext {
         include_outputs: bool,
         mint_certificate: Option<rld_protocol::mints::index::Certificate>,
         include_definitions: bool,
+        include_service: bool,
     ) -> Result<(
         proof::IndexedPermanentWitness,
         Option<rld_protocol::permanent::access::Access<Output>>,
         Option<rld_protocol::mints::IndexedAccess>,
         Option<proof::DefinitionAccess>,
+        Option<proof::ServiceAccess>,
     )> {
         use rld_protocol::permanent::capture::Budget;
+        ensure!(
+            !include_service || (include_definitions && include_outputs),
+            "service input composition"
+        );
         let budget = Budget::new(MAX_RECORD, 128)?;
         let mut state = native.state.clone();
         let c = state.currency;
@@ -642,6 +681,35 @@ impl ProofContext {
             crate::state_storage::Backings::clear_definition_material(&mut native.state);
             budget.charge(&(&cover_trace.metadata(), &policy_trace.metadata()))?;
             Some((cover_trace, policy_trace))
+        } else {
+            None
+        };
+        let service = if include_service {
+            let (map, services) =
+                state
+                    .services
+                    .clone()
+                    .capture(c, &format!("{d}/services"), budget.clone())?;
+            state.services = map;
+            let (map, coupons) = state.coupon_uses.clone().capture(
+                c,
+                &format!("{d}/coupon_uses"),
+                budget.clone(),
+            )?;
+            state.coupon_uses = map;
+            let (map, families) =
+                state
+                    .families
+                    .clone()
+                    .capture(c, &format!("{d}/families"), budget.clone())?;
+            state.families = map;
+            crate::state_storage::Backings::clear_service_material(&mut native.state);
+            budget.charge(&(
+                &services.metadata(),
+                &coupons.metadata(),
+                &families.metadata(),
+            ))?;
+            Some((services, coupons, families))
         } else {
             None
         };
@@ -735,6 +803,15 @@ impl ProofContext {
                 })
             })
             .transpose()?;
+        let service = service
+            .map(|(services, coupon_uses, families)| -> Result<_> {
+                Ok(proof::ServiceAccess {
+                    services: services.finish()?,
+                    coupon_uses: coupon_uses.finish()?,
+                    families: families.finish()?,
+                })
+            })
+            .transpose()?;
         let mints = match (mints, mint_certificate) {
             (Some(trace), Some(certificate)) => Some(trace.finish(certificate)?),
             (None, None) => None,
@@ -754,6 +831,7 @@ impl ProofContext {
             outputs,
             mints,
             definitions,
+            service,
         ))
     }
     fn indexed_native(

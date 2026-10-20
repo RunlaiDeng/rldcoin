@@ -1,9 +1,9 @@
 {
   "format": "RLD-EXECUTABLE-PROFILE-1",
-  "source_digest": "3798a0772249b46a36b88645038037a16ebb05a15b792c39e4cdc77daf86f43f",
+  "source_digest": "c7df885bcff16cd5875b2c79f6bf13b0ff57ae5dfdf1e7804c2143611e7afa71",
   "proof_profile": {
-    "native_image": "d94efe7bff970ee14b9448bab6fe9891a01dcdad65210e4777b7e3a7db648fea",
-    "controller_image": "3d5c1d9300f79c7c9775c6d3a0ff7a236f73f08d40494a78077d22bec707c9c0",
+    "native_image": "68537426d71580eb2cf8345655c800f9153746ed257fccd0f60f0dccd9796e82",
+    "controller_image": "4fa3d16b74e317a0efc7a27b380f7a49a6ad6a82ef2348ef3d5ee9001aebcf4e",
     "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
     "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
     "backend": "risc0-zkvm-3.0.6-succinct"
@@ -39,15 +39,15 @@
     },
     {
       "path": "crates/protocol/src/lib.rs",
-      "sha256": "b14add138632cc3336f83ba4b967a0c5afb82e057c9dbc10a51249d29f4ef82c"
+      "sha256": "a9f61e77bb3b03f43b109155ba68aabf130ed7c0c6ed7529d2d5c75b76687008"
     },
     {
       "path": "crates/protocol/src/merkle.rs",
-      "sha256": "9eeb2aa9bb94c4fa87e5797ad362036dbfe8bc92353cca3004662c3f8da7f05a"
+      "sha256": "33d1e8fd7076809f6684a6227663747a750dd1fe208e447f619fe08e1175e0e2"
     },
     {
       "path": "crates/protocol/src/merkle/insertion.rs",
-      "sha256": "6006f201594f49c59b44cdde9491721a248734f167434d7e5482c8719e7649cb"
+      "sha256": "7e1cf9ee526b515197983f31712134f30c8c0dce3fd259e37bef13d02fea63d0"
     },
     {
       "path": "crates/protocol/src/mints.rs",
@@ -66,12 +66,20 @@
       "sha256": "e066a34668766a807a4dcc565482d4df195bf65fd00e1774db33d26a495446ee"
     },
     {
+      "path": "crates/protocol/src/mutable.rs",
+      "sha256": "3c0f13c5a699dd46f51b3629208fbc88dc03213ac663e89fc09b1d7b202994f3"
+    },
+    {
+      "path": "crates/protocol/src/mutable/capture.rs",
+      "sha256": "e1e6e5dd9cd4a2d85816fee624701c16319b1a24e1ea6c76d102d66dc2b6897b"
+    },
+    {
       "path": "crates/protocol/src/permanent.rs",
       "sha256": "c57372a23c1ddead44912df2b09808877567b80de7693457a21386771f0d7de1"
     },
     {
       "path": "crates/protocol/src/permanent/access.rs",
-      "sha256": "072619feda1f505d275b70f11817344965ed05bcf435f25f9e0a210e79bcfe35"
+      "sha256": "016bcdc4c215e140dbf2901740c939af566313f82591051ffe6c4ac34f067c24"
     },
     {
       "path": "crates/protocol/src/permanent/capture.rs",
@@ -79,11 +87,11 @@
     },
     {
       "path": "crates/protocol/src/proof.rs",
-      "sha256": "e3111dcfacc8ce0bb005c28b5d43e925a98d1868c8fc7abd69da4ea72ad08889"
+      "sha256": "115973dc956a7e41944e003f070677801e31f1bab37b8c5f31eee0c223f0c32a"
     },
     {
       "path": "crates/protocol/src/state.rs",
-      "sha256": "d1cbb27100606a924c71ff85a1d2e86c9d8eb7e064fcd0d67d5c45384585078b"
+      "sha256": "904ab87f028b2024516bb13379fd2e9ff8350560318b0f3b6f5044670db336ab"
     },
     {
       "path": "crates/protocol/src/state/wire.rs",
@@ -127,7 +135,7 @@
     },
     {
       "path": "methods/guest/src/bin/native.rs",
-      "sha256": "8997790e07c30679a52cb238d8cfebc6b0793d0d0c804d4c1219e03ab912d1aa"
+      "sha256": "ed22aaf0306089518179390648e431f717cd4b8ae7fb40c3a5983b41b13a88ec"
     },
     {
       "path": "methods/src/lib.rs",

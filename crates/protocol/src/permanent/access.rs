@@ -206,6 +206,29 @@ impl<T: Record + 'static> Tape<T> {
         self.count = count;
         Ok(())
     }
+    pub(crate) fn replace(&mut self, value: T) -> Result<()> {
+        let e = value.entry(self.currency);
+        ensure!(
+            value.key(self.currency) == Key::Id(e.key),
+            "mutable tape direct replacement key"
+        );
+        ensure!(
+            self.get(e.key)?.is_some(),
+            "mutable tape replacement missing"
+        );
+        let (_, step) = self.step(e.key)?;
+        let root = crate::merkle::replace_member(
+            self.currency,
+            &self.tag,
+            self.root,
+            &e,
+            step.member
+                .as_ref()
+                .context("mutable tape replacement member")?,
+        )?;
+        self.root = root;
+        Ok(())
+    }
     pub(crate) fn finish(&self) -> Result<()> {
         #[cfg(not(target_os = "zkvm"))]
         let used = self

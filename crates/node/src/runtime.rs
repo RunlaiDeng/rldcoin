@@ -84,6 +84,7 @@ pub struct Core {
     pub(crate) utxo_storage: Arc<crate::utxo_store::Utxos>,
     pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
     pub(crate) definition_storage: Arc<crate::object_store::Objects>,
+    pub(crate) service_storage: Arc<crate::object_store::Objects>,
     pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub state: Arc<State>,
@@ -183,6 +184,7 @@ impl Core {
             crate::mint_certificates::Certificates::open(&root.join("mint-proof-index"), &initial)?;
         let (permanent_storage, definition_storage) =
             crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
+        let service_storage = crate::mutable_store::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
         let proofs = crate::receipts::Receipts::open(&root.join("receipt-index"), &initial)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
@@ -191,6 +193,7 @@ impl Core {
             applied_storage,
             permanent_storage,
             definition_storage,
+            service_storage,
             utxo_storage,
             mint_storage,
             mint_certificates,

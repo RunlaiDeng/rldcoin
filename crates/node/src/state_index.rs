@@ -21,7 +21,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-7";
+const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-8";
 const CHUNK: usize = 1024 * 1024;
 const LEAF: usize = 128;
 const MANIFEST_LIMIT: usize = 256 * 1024;

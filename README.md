@@ -67,9 +67,9 @@ required release evidence. The existing CI compiles the committed binding.
   public signed-operation API, disk-resident verified native-history and execution-receipt indexes, independently
   scheduled bounded proving lanes (including recursive Mint index correspondence), disk state material and certified historical
   membership/absence queries. Native state uses shared immutable value and
-  commitment paths. Mint facts, acceptance covers, historical fee policies, the UTXO map, operation map and five permanent decision/birth/funding maps execute
+  commitment paths. Mint facts, acceptance covers, historical fee policies, receiving families, service contracts, coupon uses, the UTXO map, operation map and five permanent decision/birth/funding maps execute
   through private disk adapters; indexed guest inputs authenticate UTXO, operation-log and five permanent-map accesses,
-  plus acceptance/fee definition accesses and Mint event/slot reads and appends when the exact correspondence certificate is available;
+  plus service/coupon replacement and family/acceptance/fee accesses, with Mint event/slot reads and appends when the exact correspondence certificate is available;
   other state collections still require complete execution material.
 - `crates/cli`: wallet signatures and balances, ordinary CPU mining, placement
   work, payment/service/family drafts, evidence extraction, operator tools,

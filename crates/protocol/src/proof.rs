@@ -466,6 +466,8 @@ record!(IndexedUtxoWitness {native:IndexedPermanentWitness => 0,outputs:crate::p
 record!(IndexedMintWitness {native:IndexedUtxoWitness => 0,mints:crate::mints::IndexedAccess => 1});
 record!(DefinitionAccess {covers:crate::permanent::access::Access<Cover> => 0,fee_policies:crate::permanent::access::Access<FeePolicy> => 1});
 record!(IndexedDefinitionWitness {native:IndexedUtxoWitness => 0,mints:Option<crate::mints::IndexedAccess> => 1,definitions:DefinitionAccess => 2});
+record!(ServiceAccess {services:crate::permanent::access::Access<Service> => 0,coupon_uses:crate::permanent::access::Access<Delegation> => 1,families:crate::permanent::access::Access<Family> => 2});
+record!(IndexedServiceWitness {native:IndexedDefinitionWitness => 0,service:ServiceAccess => 1});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
@@ -598,8 +600,13 @@ pub fn execute_indexed_mint(w: &IndexedMintWitness) -> Result<Checkpoint> {
 }
 
 pub fn execute_indexed_definitions(w: &IndexedDefinitionWitness) -> Result<Checkpoint> {
+    Ok(execute_definition_state(w, w.native.native.native.state.clone())?.0)
+}
+fn execute_definition_state(
+    w: &IndexedDefinitionWitness,
+    mut state: crate::state::State,
+) -> Result<(Checkpoint, crate::state::State)> {
     let n = &w.native.native.native;
-    let mut state = n.state.clone();
     ensure!(
         state.covers.is_complete()
             && state.covers.is_empty()
@@ -627,6 +634,34 @@ pub fn execute_indexed_definitions(w: &IndexedDefinitionWitness) -> Result<Check
     state.covers.finish_access()?;
     state.fee_policies.finish_access()?;
     state.mints.finish_access()?;
+    Ok((header, state))
+}
+pub fn execute_indexed_service(w: &IndexedServiceWitness) -> Result<Checkpoint> {
+    let mut state = w.native.native.native.native.state.clone();
+    ensure!(
+        state.services.is_complete()
+            && state.services.is_empty()
+            && state.coupon_uses.is_complete()
+            && state.coupon_uses.is_empty()
+            && state.families.is_complete()
+            && state.families.is_empty(),
+        "indexed service maps require empty complete placeholders"
+    );
+    let c = state.currency;
+    let d = state.domain;
+    state.services =
+        crate::mutable::Mutable::from_access(c, &format!("{d}/services"), &w.service.services)?;
+    state.coupon_uses = crate::mutable::Mutable::from_access(
+        c,
+        &format!("{d}/coupon_uses"),
+        &w.service.coupon_uses,
+    )?;
+    state.families =
+        crate::permanent::Permanent::from_access(c, &format!("{d}/families"), &w.service.families)?;
+    let (header, state) = execute_definition_state(&w.native, state)?;
+    state.services.finish_access()?;
+    state.coupon_uses.finish_access()?;
+    state.families.finish_access()?;
     Ok(header)
 }
 
@@ -815,4 +850,6 @@ pub enum NativeInput {
     IndexedMint(#[n(0)] IndexedMintWitness),
     #[n(7)]
     IndexedDefinitions(#[n(0)] IndexedDefinitionWitness),
+    #[n(8)]
+    IndexedService(#[n(0)] IndexedServiceWitness),
 }

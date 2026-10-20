@@ -140,3 +140,32 @@ pub fn remove_member(c: Id, tag: &str, expected: Id, member: &Membership) -> Res
     ensure!(n == count, "removal total count");
     Ok(root_hash(c, tag, count, tree))
 }
+
+/// Same-key value replacement preserves every path, count and height. The old
+/// membership is authenticated first; callers cannot propose a successor root.
+pub fn replace_member(
+    c: Id,
+    tag: &str,
+    expected: Id,
+    entry: &Entry,
+    member: &Membership,
+) -> Result<Id> {
+    verify(c, tag, expected, member)?;
+    ensure!(entry.key == member.entry.key, "replacement key changed");
+    let p = &member.path;
+    let (mut tree, mut n) = (leaf_hash(c, tag, entry), 1u64);
+    for i in (0..p.depths.len()).rev() {
+        (tree, n) = fold(
+            c,
+            tag,
+            entry.key,
+            tree,
+            n,
+            p.depths[i],
+            p.siblings[i],
+            p.counts[i],
+        )?;
+    }
+    ensure!(n == p.count, "replacement cardinality");
+    Ok(root_hash(c, tag, n, tree))
+}

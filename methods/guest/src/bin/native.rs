@@ -24,6 +24,9 @@ fn main() {
         rld_protocol::proof::NativeInput::IndexedDefinitions(w)=>rld_protocol::proof::native_journal(
             &rld_protocol::proof::execute_indexed_definitions(&w).expect("complete indexed definition execution"),
         ),
+        rld_protocol::proof::NativeInput::IndexedService(w)=>rld_protocol::proof::native_journal(
+            &rld_protocol::proof::execute_indexed_service(&w).expect("complete indexed service execution"),
+        ),
         rld_protocol::proof::NativeInput::MintIndex(w)=>rld_protocol::mints::index::journal(
             &rld_protocol::mints::index::execute(&w).expect("complete Mint index correspondence"),
         ),

@@ -1,3 +1,4 @@
+use crate::mutable::Mutable;
 use crate::permanent::Permanent;
 use crate::table::{Key, Table};
 use crate::{
@@ -55,15 +56,15 @@ pub struct State {
     #[n(8)]
     pub births: Permanent<Birth>,
     #[n(9)]
-    pub coupon_uses: Table<Delegation>,
+    pub coupon_uses: Mutable<Delegation>,
     #[n(10)]
-    pub families: Table<Family>,
+    pub families: Permanent<Family>,
     #[n(11)]
     pub decisions: Permanent<Decision>,
     #[n(12)]
     pub redemptions: Permanent<Redemption>,
     #[n(13)]
-    pub services: Table<Service>,
+    pub services: Mutable<Service>,
     #[n(14)]
     pub covers: Permanent<Cover>,
     #[n(15)]
@@ -99,15 +100,15 @@ impl State {
             segments: Table::from_sorted(c, &format!("{domain}/segments"), w.segments)?,
             controllers: Table::from_sorted(c, &format!("{domain}/controllers"), w.controllers)?,
             births: Permanent::from_sorted(c, &format!("{domain}/births"), w.births)?,
-            coupon_uses: Table::from_sorted(c, &format!("{domain}/coupon_uses"), w.coupon_uses)?,
-            families: Table::from_sorted(c, &format!("{domain}/families"), w.families)?,
+            coupon_uses: Mutable::from_sorted(c, &format!("{domain}/coupon_uses"), w.coupon_uses)?,
+            families: Permanent::from_sorted(c, &format!("{domain}/families"), w.families)?,
             decisions: Permanent::from_sorted(c, &format!("{domain}/decisions"), w.decisions)?,
             redemptions: Permanent::from_sorted(
                 c,
                 &format!("{domain}/redemptions"),
                 w.redemptions,
             )?,
-            services: Table::from_sorted(c, &format!("{domain}/services"), w.services)?,
+            services: Mutable::from_sorted(c, &format!("{domain}/services"), w.services)?,
             covers: Permanent::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
             mints: crate::mints::Mints::from_sorted(c, domain, w.mints)?,
             applied: crate::applied::AppliedIndex::from_sorted(
@@ -254,11 +255,11 @@ impl State {
             segments: Table::new(c, &format!("{}/segments", config.domain)),
             controllers: Table::new(c, &format!("{}/controllers", config.domain)),
             births: Permanent::new(c, &format!("{}/births", config.domain)),
-            coupon_uses: Table::new(c, &format!("{}/coupon_uses", config.domain)),
-            families: Table::new(c, &format!("{}/families", config.domain)),
+            coupon_uses: Mutable::new(c, &format!("{}/coupon_uses", config.domain)),
+            families: Permanent::new(c, &format!("{}/families", config.domain)),
             decisions: Permanent::new(c, &format!("{}/decisions", config.domain)),
             redemptions: Permanent::new(c, &format!("{}/redemptions", config.domain)),
-            services: Table::new(c, &format!("{}/services", config.domain)),
+            services: Mutable::new(c, &format!("{}/services", config.domain)),
             covers: Permanent::new(c, &format!("{}/covers", config.domain)),
             mints: crate::mints::Mints::new(c, config.domain),
             applied: crate::applied::AppliedIndex::new(c, &format!("{}/applied", config.domain)),
@@ -364,9 +365,6 @@ impl State {
         for keys in [
             self.grants.iter().map(|v| v.id).collect::<Vec<_>>(),
             self.controllers.iter().map(|v| v.id).collect(),
-            self.coupon_uses.iter().map(|v| v.coupon).collect(),
-            self.families.iter().map(|v| v.id).collect(),
-            self.services.iter().map(|v| v.id).collect(),
         ] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
         }
@@ -412,11 +410,11 @@ impl State {
             "segments" => self.segments.entries(),
             "controllers" => self.controllers.entries(),
             "births" => self.births.entries(c)?,
-            "coupon_uses" => self.coupon_uses.entries(),
-            "families" => self.families.entries(),
+            "coupon_uses" => self.coupon_uses.entries(c)?,
+            "families" => self.families.entries(c)?,
             "decisions" => self.decisions.entries(c)?,
             "redemptions" => self.redemptions.entries(c)?,
-            "services" => self.services.entries(),
+            "services" => self.services.entries(c)?,
             "covers" => self.covers.entries(c)?,
             "mints" => self.mints.entries()?,
             "applied" => self.applied.entries()?,
@@ -774,7 +772,7 @@ impl State {
             }
             if let Some(reserve) = &f.reserve {
                 ensure!(
-                    self.services.get(reserve.id).is_none(),
+                    self.services.get(reserve.id)?.is_none(),
                     "reserve ID already used"
                 );
                 self.services.insert(reserve.clone())?;
@@ -961,7 +959,9 @@ impl State {
                 let cfg = &closure.source.configuration;
                 ensure!(
                     coupon.destination == self.domain
-                        && self.families.contains(&closure.coupon.family)
+                        && self
+                            .families
+                            .contains(&closure.coupon.family, self.currency)?
                         && closure.source.header.domain == coupon.source
                         && cfg.domain == coupon.source
                         && cfg.initial_anchor == coupon.source_family.anchor
@@ -976,7 +976,7 @@ impl State {
                 ensure!(
                     closure.delegation.coupon == id
                         && closure.delegation.closed
-                        && self.coupon_uses.get(id).is_none(),
+                        && self.coupon_uses.get(id)?.is_none(),
                     "closure already consumed or source still delegated"
                 );
                 verifier.witness(
@@ -992,7 +992,7 @@ impl State {
                 verifier.coupon(e)?;
                 ensure!(
                     e.coupon.source == self.domain
-                        && self.coupon_uses.get(e.coupon.id(self.currency)).is_none(),
+                        && self.coupon_uses.get(e.coupon.id(self.currency))?.is_none(),
                     "coupon already used"
                 );
                 crypto::authorize_use(
@@ -1109,7 +1109,7 @@ impl State {
                             self.currency,
                             &(self.domain, op.nonce, &service.owner)
                         )
-                        && self.services.get(service.id).is_none()
+                        && self.services.get(service.id)?.is_none()
                         && service.capacity > 0
                         && service.reserved == service.capacity
                         && service.family != Id::ZERO
@@ -1153,7 +1153,7 @@ impl State {
             } => {
                 let mut service = self
                     .services
-                    .get(*service_id)
+                    .get(*service_id)?
                     .ok_or_else(|| anyhow::anyhow!("service not found"))?
                     .clone();
                 crypto::authorize(
@@ -1294,7 +1294,7 @@ impl State {
                         && fam.count > 0
                         && fam.count <= 4096
                         && fam.units >= fam.count as u64
-                        && self.families.get(fam.id).is_none()
+                        && self.families.get(fam.id)?.is_none()
                         && !self.used_funding.contains(&fam.funding, self.currency)?,
                     "new capability family"
                 );
@@ -1384,7 +1384,7 @@ impl State {
             } => {
                 let mut contract = self
                     .services
-                    .get(*service)
+                    .get(*service)?
                     .ok_or_else(|| anyhow::anyhow!("service contract absent"))?
                     .clone();
                 crypto::authorize(
@@ -1535,7 +1535,7 @@ impl State {
             "prepared signed terms"
         );
         ensure!(
-            self.coupon_uses.get(p).is_none()
+            self.coupon_uses.get(p)?.is_none()
                 && self.controllers.get(t.id).is_none()
                 && self.pool_next < crate::KEY_COUNT,
             "used coupon/controller/pool"
@@ -1554,7 +1554,7 @@ impl State {
         );
         let sponsor = self
             .services
-            .get(coupon.source_sponsor)
+            .get(coupon.source_sponsor)?
             .ok_or_else(|| anyhow::anyhow!("source sponsor not retained"))?;
         ensure!(
             sponsor.family == coupon.family
@@ -1837,7 +1837,7 @@ impl State {
         })?;
         let mut d = self
             .coupon_uses
-            .get(c.ticket.coupon)
+            .get(c.ticket.coupon)?
             .ok_or_else(|| anyhow::anyhow!("coupon use missing"))?
             .clone();
         d.closed = true;
@@ -1947,7 +1947,7 @@ impl State {
         );
         let family = self
             .families
-            .get(c.coupon.family)
+            .get(c.coupon.family)?
             .ok_or_else(|| anyhow::anyhow!("receiving family absent"))?;
         ensure!(
             family.source == c.source && c.coupon.index < family.count,
@@ -1963,7 +1963,7 @@ impl State {
             return Ok(());
         }
         ensure!(
-            self.coupon_uses.get(c.ticket.coupon).is_none(),
+            self.coupon_uses.get(c.ticket.coupon)?.is_none(),
             "destination coupon already consumed"
         );
         for cover in &r.covers {

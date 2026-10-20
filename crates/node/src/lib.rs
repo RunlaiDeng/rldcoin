@@ -38,3 +38,7 @@ mod typed_paths;
 mod mint_certificates;
 
 mod definitions_store;
+
+mod mutable_store;
+
+mod storage_observation;

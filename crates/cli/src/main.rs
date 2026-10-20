@@ -1391,8 +1391,8 @@ async fn main() -> Result<()> {
                 let id = coupon.coupon.id(state.currency);
                 let delegation = state
                     .coupon_uses
-                    .iter()
-                    .find(|v| v.coupon == id && v.closed)
+                    .get(id)?
+                    .filter(|v| v.closed)
                     .context("source closure is not committed")?
                     .clone();
                 let source = node
@@ -1467,12 +1467,7 @@ async fn main() -> Result<()> {
                 let node = open_node(&store)?;
                 let state = node.core.state_at(at)?;
                 let id = Id::parse(&service)?;
-                let service = state
-                    .services
-                    .iter()
-                    .find(|s| s.id == id)
-                    .context("service")?
-                    .clone();
+                let service = state.services.get(id)?.context("service")?.clone();
                 let source = node
                     .core
                     .proofs
@@ -1500,7 +1495,7 @@ async fn main() -> Result<()> {
                 let state = node.core.state_at(at)?;
                 let f: FamilyFunding = json(&family)?;
                 ensure!(
-                    state.families.contains(&f.family),
+                    state.families.contains(&f.family, state.currency)?,
                     "family not present at exact checkpoint"
                 );
                 let coupon = f

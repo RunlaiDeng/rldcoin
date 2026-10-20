@@ -65,6 +65,45 @@ impl Value for rld_protocol::model::FeePolicy {
     }
 }
 
+impl Value for rld_protocol::model::Service {
+    const FORMAT: &'static str = "RLD-SERVICE-PATH-1";
+    const NAME: &'static str = "services";
+    fn validate(&self, _: Id) -> Result<()> {
+        self.owner.validate()?;
+        self.renewal_payer.validate()?;
+        self.custodians.validate()?;
+        ensure!(
+            self.balance.len() <= 64
+                && self.balance.windows(2).all(|w| w[0].cover < w[1].cover)
+                && self.balance.iter().all(|p| p.amount.0 > 0),
+            "stored service balance"
+        );
+        rld_protocol::state::sum(&self.balance)?;
+        Ok(())
+    }
+}
+impl Value for rld_protocol::model::Delegation {
+    const FORMAT: &'static str = "RLD-COUPON-USE-PATH-1";
+    const NAME: &'static str = "coupon_uses";
+    fn validate(&self, _: Id) -> Result<()> {
+        Ok(())
+    }
+}
+impl Value for rld_protocol::model::Family {
+    const FORMAT: &'static str = "RLD-FAMILY-PATH-1";
+    const NAME: &'static str = "families";
+    fn validate(&self, home: Id) -> Result<()> {
+        self.issuer.validate()?;
+        ensure!(
+            self.destination == home
+                && self.count > 0
+                && self.count <= 4096
+                && self.units >= u64::from(self.count),
+            "stored receiving family"
+        );
+        Ok(())
+    }
+}
 const PAGE: usize = 512;
 const WORK_OBJECTS: u64 = 600_000;
 const WORK_BYTES: u64 = 512 * 1024 * 1024;
@@ -358,6 +397,21 @@ impl<T: Value> Paths<T> {
             self.branch(self.insert_at(&Some(l), value)?, r)
         }
     }
+    fn replace_at(&self, t: &Tree, value: T) -> Result<Tree> {
+        let read = self.read(t)?;
+        let key = value.entry(self.currency()).key;
+        if let Some(entry) = read.node.entry {
+            ensure!(entry.key == key, "typed replacement key");
+            return self.leaf(value);
+        }
+        let l = read.left.context("typed replacement left")?;
+        let r = read.right.context("typed replacement right")?;
+        if merkle::bit(key, u8::try_from(t.link.depth)?) {
+            self.branch(l, self.replace_at(&r, value)?)
+        } else {
+            self.branch(self.replace_at(&l, value)?, r)
+        }
+    }
     fn remove_at(&self, t: &Tree, key: Id) -> Result<Option<Tree>> {
         let read = self.read(t)?;
         if let Some(e) = read.node.entry {
@@ -513,6 +567,31 @@ impl<T: Value> Paths<T> {
             root: Some(root),
             marker: std::marker::PhantomData,
         }))
+    }
+    pub(crate) fn replace_path(&self, value: T) -> Result<Arc<Self>> {
+        let entry = value.entry(self.currency());
+        let member = self
+            .access(entry.key)?
+            .0
+            .context("typed replacement missing")?;
+        let expected = merkle::replace_member(
+            self.currency(),
+            &self.owner.tag,
+            self.root(),
+            &entry,
+            &member,
+        )?;
+        let root = self.replace_at(self.root.as_ref().context("typed replacement root")?, value)?;
+        let next = Self {
+            owner: self.owner.clone(),
+            root: Some(root),
+            marker: std::marker::PhantomData,
+        };
+        ensure!(
+            next.root() == expected && next.count() == self.count(),
+            "typed complete/compact replacement root/count"
+        );
+        Ok(Arc::new(next))
     }
     pub(crate) fn spend_path(&self, key: Id) -> Result<(Arc<Self>, Option<T>)> {
         let Some(value) = self.get(key)? else {

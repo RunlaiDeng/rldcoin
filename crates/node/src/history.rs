@@ -19,7 +19,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const FORMAT: &str = "RLD-VERIFIED-HISTORY-INDEX-6";
+const FORMAT: &str = "RLD-VERIFIED-HISTORY-INDEX-7";
 const WIDTH: usize = 32;
 const PAGE_BYTES: usize = 16 * 1024;
 const CACHE_BYTES: usize = 32 * 1024 * 1024;
