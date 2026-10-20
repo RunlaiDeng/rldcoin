@@ -345,11 +345,32 @@ The five maps share a separate 16-MiB / 4,096-object raw cache. History V3 retai
 six-map sealed observations (including the existing applied map); state material
 V4 omits those arrays and reconstructs them only from verified history before
 whole-checkpoint validation. Direct historical queries and membership construction
-do not enumerate complete maps. Full native guest inputs still stream all five
-complete record sets: their compact authenticated execution witnesses remain open.
+do not enumerate complete maps. Default native proof input now uses exact root-bound accesses for those five
+record sets when a certified predecessor exists, with bounded complete fallback.
 Scheduling/indexing scans run outside the global mutex. See
 [the source analysis](engineering/PERMANENT_MAPS.md). This stage changes actual
 program bindings and preserves incompatible old state without migration.
+
+## Indexed permanent-map execution witnesses
+
+NativeInput tag 3 now combines applied accesses with typed birth, destination
+decision, redemption, source resolution and consumed-funding accesses. A real
+certified predecessor binds all six roots. Empty/nonempty native count openings
+are checked even for unread maps; every accessed value or absence is verified at
+the current exact root/count/key, and each append computes its successor root.
+All supplied accesses must be used. Partial maps refuse complete export or
+arbitrary proof issuance. The same native executor still checks monetary rules,
+owner/work/fees, issuance, controller exclusion, headers and required QCs.
+
+Ordinary proof input construction records actual five-map accesses during complete
+native replay, compares whole headers to verified history and shares one bounded
+canonical byte budget with all other input material. It prefers this profile when
+a certified predecessor exists; typed material/capture-capacity insufficiency
+selects the prior applied-only/full paths under unchanged limits. Other errors
+propagate. The real prover and guest execute this input and retain the same native
+journal. [The source analysis](engineering/INDEXED_PERMANENT_WITNESS.md) documents
+cloned-state tracking and authentication. Proving cost, memory and runtime behavior
+remain unmeasured; other collections still need work.
 
 ## Material unfinished and unqualified work
 
@@ -364,7 +385,7 @@ The following are real completion boundaries, not fulfilled by source edits:
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
-   collections remain needed. The new operation-log access path alone does not
+   collections remain needed. The six-map access path alone does not
    complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one

@@ -12,6 +12,9 @@ fn main() {
         rld_protocol::proof::NativeInput::IndexedExecution(w)=>rld_protocol::proof::native_journal(
             &rld_protocol::proof::execute_indexed_native(&w).expect("complete indexed native execution"),
         ),
+        rld_protocol::proof::NativeInput::IndexedPermanent(w)=>rld_protocol::proof::native_journal(
+            &rld_protocol::proof::execute_indexed_permanent(&w).expect("complete indexed permanent execution"),
+        ),
         rld_protocol::proof::NativeInput::Admission(w) => {
             rld_protocol::proof::execute_admission(&w)
                 .expect("complete public key inventory admission")

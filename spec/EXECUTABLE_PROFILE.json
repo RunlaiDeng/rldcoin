@@ -1,9 +1,9 @@
 {
   "format": "RLD-EXECUTABLE-PROFILE-1",
-  "source_digest": "51f26d54321ddeea74869238aeb948b40501f9cbd486a5a993880af7a6b31029",
+  "source_digest": "451925b002eb30383f471582b87ffadf785131e528f499d43b7bb0a8fd6bd83f",
   "proof_profile": {
-    "native_image": "e43852a259f002cb6c1e79c50bb69214249ecccfb40c82d8d7b2b560744cd82e",
-    "controller_image": "6ee661892783bedfa1adf7962305706de895f63b763b06136336ef03cce6b4e3",
+    "native_image": "048313acaa0e141782c5027f178e44939202bd7759a9a2e56a99ce6d54613f91",
+    "controller_image": "62d3894b72282b21fa4a5feed4d793c9511de9fdef95bbb4cc39618f17cde58a",
     "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
     "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
     "backend": "risc0-zkvm-3.0.6-succinct"
@@ -55,11 +55,19 @@
     },
     {
       "path": "crates/protocol/src/permanent.rs",
-      "sha256": "dc915b6fd71832759c4dec2bb827d2f4c949e5978835b242f6738e761b1bb8f4"
+      "sha256": "c57372a23c1ddead44912df2b09808877567b80de7693457a21386771f0d7de1"
+    },
+    {
+      "path": "crates/protocol/src/permanent/access.rs",
+      "sha256": "c087ca4bdd32b8d7f78428398dd0152bed1269aa14225ebe4009cdee693c8e55"
+    },
+    {
+      "path": "crates/protocol/src/permanent/capture.rs",
+      "sha256": "33427bb1afb5ce9324b44f703f6dd102da251c7d98c9929172e930109208a3eb"
     },
     {
       "path": "crates/protocol/src/proof.rs",
-      "sha256": "ecc39d401e75146be065daecc85426d840c9f4f04c342106afb5a3661fe1b064"
+      "sha256": "93fd5e60a4af0795b934a6c881296f7b7443e44786dfccd9bccf975e3485296f"
     },
     {
       "path": "crates/protocol/src/state.rs",
@@ -99,7 +107,7 @@
     },
     {
       "path": "methods/guest/src/bin/native.rs",
-      "sha256": "787e2688336206c91e70780d5eb3f798c6d6992faf21a3d6852ccc447158b97f"
+      "sha256": "48e909cfccec01ee5faab907dbf8269ff508607af845600189924deda39b1115"
     },
     {
       "path": "methods/src/lib.rs",

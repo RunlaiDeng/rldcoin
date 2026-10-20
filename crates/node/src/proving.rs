@@ -279,6 +279,12 @@ impl ProofContext {
                 self.native_witness(sequence)?,
             ));
         }
+        match self.indexed_permanent(witness.clone(),sequence){
+            Ok(w)=>return Ok(proof::NativeInput::IndexedPermanent(w)),
+            Err(e) if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>().is_some()
+                || e.downcast_ref::<rld_protocol::permanent::capture::CaptureBudgetExceeded>().is_some()=>{},
+            Err(e)=>return Err(e),
+        }
         match self.indexed_native(witness, sequence) {
             Ok(w) => Ok(proof::NativeInput::IndexedExecution(w)),
             Err(e)
@@ -292,6 +298,134 @@ impl ProofContext {
             }
             Err(e) => Err(e),
         }
+    }
+    fn indexed_permanent(
+        &self,
+        mut native: proof::NativeWitness,
+        sequence: u64,
+    ) -> Result<proof::IndexedPermanentWitness> {
+        use rld_protocol::permanent::capture::Budget;
+        let budget = Budget::new(MAX_RECORD, 128)?;
+        let mut state = native.state.clone();
+        let c = state.currency;
+        let d = state.domain;
+        let (map, births) =
+            state
+                .births
+                .clone()
+                .capture(c, &format!("{d}/births"), budget.clone())?;
+        state.births = map;
+        let (map, decisions) =
+            state
+                .decisions
+                .clone()
+                .capture(c, &format!("{d}/decisions"), budget.clone())?;
+        state.decisions = map;
+        let (map, redemptions) =
+            state
+                .redemptions
+                .clone()
+                .capture(c, &format!("{d}/redemptions"), budget.clone())?;
+        state.redemptions = map;
+        let (map, resolutions) =
+            state
+                .resolutions
+                .clone()
+                .capture(c, &format!("{d}/resolutions"), budget.clone())?;
+        state.resolutions = map;
+        let (map, funding) =
+            state
+                .used_funding
+                .clone()
+                .capture(c, &format!("{d}/funding"), budget.clone())?;
+        state.used_funding = map;
+        let base = state.sequence;
+        let mut head = native
+            .predecessor
+            .as_ref()
+            .context("indexed maps predecessor")?
+            .header
+            .id();
+        let mut complete = state.applied.clone();
+        let tag = format!("{d}/applied");
+        let mut applied = complete.full_access(c, &tag)?;
+        crate::state_storage::Backings::clear_material(&mut native.state);
+        budget.charge(&(
+            &native,
+            &applied,
+            &births.metadata(),
+            &decisions.metadata(),
+            &redemptions.metadata(),
+            &resolutions.metadata(),
+            &funding.metadata(),
+        ))?;
+        for record in self.history.range(base, sequence) {
+            let record = record?;
+            budget.charge(&(&record.batch, &record.header, &record.qc))?;
+            for op in &record.batch.operations {
+                let id = op.id();
+                let digest = Id::digest(&rld_protocol::codec::encode(op));
+                let step = complete.access_step(id)?;
+                budget.charge(&step)?;
+                if let Some(old) = complete.get(id)? {
+                    ensure!(old.digest == digest, "changed indexed maps operation");
+                } else {
+                    let root = rld_protocol::merkle::insert_absent(
+                        c,
+                        &tag,
+                        complete.commitment(c, &tag)?,
+                        &rld_protocol::merkle::Entry {
+                            key: id,
+                            value: digest,
+                        },
+                        step.absence
+                            .as_ref()
+                            .context("indexed maps operation absence")?,
+                    )?;
+                    complete.insert(Applied { id, digest })?;
+                    ensure!(
+                        complete.commitment(c, &tag)? == root,
+                        "indexed maps operation root"
+                    );
+                }
+                applied.steps.push(step);
+            }
+            let (mut next, header) = state.execute_batch(&native.currency, head, &record.batch)?;
+            ensure!(
+                header == record.header
+                    && next.applied.commitment(c, &tag)? == complete.commitment(c, &tag)?,
+                "captured native replay differs from verified history"
+            );
+            crate::state_storage::Backings::seal(&mut next)?;
+            complete.seal_storage()?;
+            head = header.id();
+            state = next;
+            native.steps.push(proof::NativeStep {
+                batch: record.batch.clone(),
+                header: record.header.clone(),
+                qc: record.qc.clone(),
+            });
+        }
+        // Capture extraction requires every execution observation to be gone.
+        // Read-tracking is shared across clones; monetary roots remain per clone.
+        drop(state);
+        let permanent = proof::PermanentAccess {
+            births: births.finish()?,
+            decisions: decisions.finish()?,
+            redemptions: redemptions.finish()?,
+            resolutions: resolutions.finish()?,
+            funding: funding.finish()?,
+        };
+        Ok(proof::IndexedPermanentWitness {
+            native: proof::IndexedNativeWitness {
+                currency: native.currency,
+                predecessor: native.predecessor.context("indexed maps predecessor")?,
+                state: native.state,
+                steps: native.steps,
+                applied,
+            },
+            permanent,
+        })
     }
     fn indexed_native(
         &self,

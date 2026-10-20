@@ -433,8 +433,8 @@ payment, deletes a decision or authorizes a refund.
 History V3 now binds a complete six-map storage observation (at most 4 KiB).
 State material V4 stores empty placeholders for those six maps and requires the
 separate verified-history observations plus exact full native root before use.
-Those caches are not standalone ledger snapshots. Full guest input still carries
-the five complete record arrays; this is not a new compact proof suite for them.
+Those caches are not standalone ledger snapshots. Default indexed guest input now carries exact accesses for these five maps;
+complete input remains the bounded fallback described below.
 
 Old executable/derived bindings refuse unchanged. Do not rewrite currency,
 keys, balances or old private stores. If reconstructing damaged derived material
@@ -449,3 +449,29 @@ ledger. This does not migrate an old program's currency to new programs.
 No runtime, memory, latency, daily-capacity or crash/power-loss result is claimed.
 Other maps, queues, archive packing/paid replicas and cryptographic succession
 remain separate implementation and qualification obligations.
+
+## Indexed proof input for permanent maps
+
+`rld node witness` and ordinary proving now prefer NativeInput tag 3,
+`IndexedPermanent`, from a certified predecessor. It carries exact typed native
+accesses for the five permanent maps plus applied accesses. Initial count openings
+and every current root/count/key/value or absence are checked in the actual guest.
+The complete native execution, real receipt verification, QC and journal bindings
+remain unchanged; these access objects are not certificates or signing authority.
+
+The builder records actual native replay and enforces one shared 1-GiB canonical
+input budget, including base/steps/applied/permanent evidence and framing. Each
+permanent map admits at most 2,000,000 unique (root,key) accesses. Those are input
+admission bounds, not maximum-RAM/proving-cost assurances. Only typed compact
+height-evidence or capture-capacity insufficiency selects the previous
+applied-only/full inputs under their original limits. Changed data, context,
+read/encoding and replay errors propagate. A full input that cannot fit refuses.
+Genesis remains complete execution. Partial execution maps cannot be serialized
+as complete snapshots or used for arbitrary membership queries.
+
+Use the final source-bound executable profile; this stage changes actual native
+and controller image IDs. Preserve old descriptors/stores under their matching
+historical release, and do not rewrite currency or migrate money/keys. No runtime
+proof campaign, throughput/latency, memory or independent security result is
+established by compilation. Other collections, archive retention and future
+cryptographic transitions remain unfinished.

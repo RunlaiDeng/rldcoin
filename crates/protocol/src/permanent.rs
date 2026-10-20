@@ -25,10 +25,14 @@ pub trait Storage<T: Record>: std::fmt::Debug + Send + Sync {
     fn historical(&self, bytes: &[u8]) -> Result<Arc<dyn Storage<T>>>;
     fn empty(&self) -> Arc<dyn Storage<T>>;
 }
+pub mod access;
+#[cfg(not(target_os = "zkvm"))]
+pub mod capture;
 pub struct Permanent<T: Record> {
     backing: Backing<T>,
 }
 enum Backing<T: Record> {
+    Tape(access::Tape<T>),
     Full(Table<T>),
     #[cfg(not(target_os = "zkvm"))]
     Stored(Arc<dyn Storage<T>>),
@@ -38,6 +42,7 @@ impl<T: Record> Clone for Permanent<T> {
         Self {
             backing: match &self.backing {
                 Backing::Full(t) => Backing::Full(t.clone()),
+                Backing::Tape(t) => Backing::Tape(t.clone()),
                 #[cfg(not(target_os = "zkvm"))]
                 Backing::Stored(s) => Backing::Stored(s.clone()),
             },
@@ -51,10 +56,12 @@ impl<T: Record + 'static> std::fmt::Debug for Permanent<T> {
             .finish()
     }
 }
-impl<T: Record> PartialEq for Permanent<T> {
+impl<T: Record + 'static> PartialEq for Permanent<T> {
     fn eq(&self, other: &Self) -> bool {
         match (&self.backing, &other.backing) {
             (Backing::Full(a), Backing::Full(b)) => a == b,
+            (Backing::Tape(a), Backing::Tape(b)) => a.same(b),
+            (Backing::Tape(_), _) | (_, Backing::Tape(_)) => false,
             #[cfg(not(target_os = "zkvm"))]
             (Backing::Stored(a), Backing::Stored(b)) => {
                 a.currency() == b.currency()
@@ -70,8 +77,22 @@ impl<T: Record> PartialEq for Permanent<T> {
         }
     }
 }
-impl<T: Record + Eq> Eq for Permanent<T> {}
+impl<T: Record + Eq + 'static> Eq for Permanent<T> {}
 impl<T: Record + 'static> Permanent<T> {
+    pub fn is_complete(&self) -> bool {
+        !matches!(self.backing, Backing::Tape(_))
+    }
+    pub(crate) fn from_access(c: Id, tag: &str, a: &access::Access<T>) -> Result<Self> {
+        Ok(Self {
+            backing: Backing::Tape(access::Tape::new(c, tag, a)?),
+        })
+    }
+    pub(crate) fn finish_access(&self) -> Result<()> {
+        if let Backing::Tape(t) = &self.backing {
+            t.finish()?;
+        }
+        Ok(())
+    }
     pub fn new(c: Id, tag: &str) -> Self {
         Self {
             backing: Backing::Full(Table::new(c, tag)),
@@ -89,6 +110,7 @@ impl<T: Record + 'static> Permanent<T> {
     pub fn len(&self) -> u64 {
         match &self.backing {
             Backing::Full(t) => t.len() as u64,
+            Backing::Tape(t) => t.count(),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.count(),
         }
@@ -99,6 +121,10 @@ impl<T: Record + 'static> Permanent<T> {
     pub fn commitment(&self, c: Id, tag: &str) -> Result<Id> {
         match &self.backing {
             Backing::Full(t) => t.commitment(c, tag),
+            Backing::Tape(t) => {
+                ensure!(t.matches(c, tag), "permanent access context");
+                Ok(t.root())
+            }
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => {
                 ensure!(
@@ -112,6 +138,7 @@ impl<T: Record + 'static> Permanent<T> {
     pub fn get(&self, id: Id) -> Result<Option<T>> {
         match &self.backing {
             Backing::Full(t) => Ok(t.get(id).cloned()),
+            Backing::Tape(t) => t.get(id),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.get(id),
         }
@@ -121,6 +148,7 @@ impl<T: Record + 'static> Permanent<T> {
     }
     pub fn insert(&mut self, value: T) -> Result<()> {
         match &mut self.backing {
+            Backing::Tape(t) => t.insert(value),
             Backing::Full(t) => {
                 ensure!(
                     value.key(t.currency()) == Key::Id(value.entry(t.currency()).key),
@@ -139,6 +167,9 @@ impl<T: Record + 'static> Permanent<T> {
     pub fn records(&self) -> Box<dyn Iterator<Item = Result<T>> + '_> {
         match &self.backing {
             Backing::Full(t) => Box::new(t.iter().cloned().map(Ok)),
+            Backing::Tape(_) => Box::new(std::iter::once(Err(anyhow::anyhow!(
+                "partial permanent map cannot export complete records"
+            )))),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.records(),
         }
@@ -149,6 +180,9 @@ impl<T: Record + 'static> Permanent<T> {
     pub fn witness(&self, key: Id) -> Result<Membership> {
         match &self.backing {
             Backing::Full(t) => t.witness(key),
+            Backing::Tape(_) => {
+                anyhow::bail!("partial permanent map cannot issue arbitrary membership")
+            }
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.access(key)?.0.context("permanent key absent"),
         }
@@ -157,13 +191,15 @@ impl<T: Record + 'static> Permanent<T> {
     pub fn access(&self, key: Id) -> Result<(Option<Membership>, Option<crate::merkle::Absence>)> {
         match &self.backing {
             Backing::Full(t) => t.query(key),
+            Backing::Tape(_) => anyhow::bail!("complete permanent map required"),
             Backing::Stored(s) => s.access(key),
         }
     }
     #[cfg(not(target_os = "zkvm"))]
     pub fn on_empty_storage(self, s: Arc<dyn Storage<T>>) -> Result<Self> {
         ensure!(
-            self.is_empty()
+            self.is_complete()
+                && self.is_empty()
                 && s.count() == 0
                 && self.commitment(s.currency(), s.tag())? == s.root()
                 && s.root() == crate::merkle::root(s.currency(), s.tag(), &[])?,

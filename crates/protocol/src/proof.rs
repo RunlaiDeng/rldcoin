@@ -460,6 +460,8 @@ pub fn validate_terminal(c: &Controller, birth: Id, t: &Terminal, decision: u8) 
 record!(NativeStep {batch:Batch  =>  0,header:Checkpoint  =>  1,qc:Quorum  =>  2});
 record!(NativeWitness {currency:Currency  =>  0,genesis:Option<DomainGenesis>  =>  1,predecessor:Option<Certified>  =>  2,state:crate::state::State  =>  3,steps:Vec<NativeStep>  =>  4});
 record!(IndexedNativeWitness {currency:Currency => 0,predecessor:Certified => 1,state:crate::state::State => 2,steps:Vec<NativeStep> => 3,applied:crate::applied::AppliedAccess => 4});
+record!(PermanentAccess {births:crate::permanent::access::Access<Birth> => 0,decisions:crate::permanent::access::Access<Decision> => 1,redemptions:crate::permanent::access::Access<Redemption> => 2,resolutions:crate::permanent::access::Access<Decision> => 3,funding:crate::permanent::access::Access<Id> => 4});
+record!(IndexedPermanentWitness {native:IndexedNativeWitness => 0,permanent:PermanentAccess => 1});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
@@ -495,6 +497,64 @@ pub fn execute_indexed_native(w: &IndexedNativeWitness) -> Result<Checkpoint> {
         state,
     )?;
     state.applied.finish()?;
+    Ok(header)
+}
+pub fn execute_indexed_permanent(w: &IndexedPermanentWitness) -> Result<Checkpoint> {
+    let n = &w.native;
+    let mut state = n.state.clone();
+    ensure!(
+        state.applied.is_complete()
+            && state.applied.is_empty()
+            && state.births.is_complete()
+            && state.births.is_empty()
+            && state.decisions.is_complete()
+            && state.decisions.is_empty()
+            && state.redemptions.is_complete()
+            && state.redemptions.is_empty()
+            && state.resolutions.is_complete()
+            && state.resolutions.is_empty()
+            && state.used_funding.is_complete()
+            && state.used_funding.is_empty(),
+        "indexed maps require empty complete placeholders"
+    );
+    let c = state.currency;
+    let d = state.domain;
+    state.applied =
+        crate::applied::AppliedIndex::from_access(c, &format!("{d}/applied"), &n.applied)?;
+    state.births =
+        crate::permanent::Permanent::from_access(c, &format!("{d}/births"), &w.permanent.births)?;
+    state.decisions = crate::permanent::Permanent::from_access(
+        c,
+        &format!("{d}/decisions"),
+        &w.permanent.decisions,
+    )?;
+    state.redemptions = crate::permanent::Permanent::from_access(
+        c,
+        &format!("{d}/redemptions"),
+        &w.permanent.redemptions,
+    )?;
+    state.resolutions = crate::permanent::Permanent::from_access(
+        c,
+        &format!("{d}/resolutions"),
+        &w.permanent.resolutions,
+    )?;
+    state.used_funding =
+        crate::permanent::Permanent::from_access(c, &format!("{d}/funding"), &w.permanent.funding)?;
+    let (header, state) = execute_native_state(
+        NativeExecution {
+            currency: &n.currency,
+            genesis: None,
+            predecessor: Some(&n.predecessor),
+            steps: &n.steps,
+        },
+        state,
+    )?;
+    state.applied.finish()?;
+    state.births.finish_access()?;
+    state.decisions.finish_access()?;
+    state.redemptions.finish_access()?;
+    state.resolutions.finish_access()?;
+    state.used_funding.finish_access()?;
     Ok(header)
 }
 struct NativeExecution<'a> {
@@ -672,4 +732,6 @@ pub enum NativeInput {
     Admission(#[n(0)] AdmissionWitness),
     #[n(2)]
     IndexedExecution(#[n(0)] IndexedNativeWitness),
+    #[n(3)]
+    IndexedPermanent(#[n(0)] IndexedPermanentWitness),
 }
