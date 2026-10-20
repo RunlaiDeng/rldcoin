@@ -463,6 +463,7 @@ record!(IndexedNativeWitness {currency:Currency => 0,predecessor:Certified => 1,
 record!(PermanentAccess {births:crate::permanent::access::Access<Birth> => 0,decisions:crate::permanent::access::Access<Decision> => 1,redemptions:crate::permanent::access::Access<Redemption> => 2,resolutions:crate::permanent::access::Access<Decision> => 3,funding:crate::permanent::access::Access<Id> => 4});
 record!(IndexedPermanentWitness {native:IndexedNativeWitness => 0,permanent:PermanentAccess => 1});
 record!(IndexedUtxoWitness {native:IndexedPermanentWitness => 0,outputs:crate::permanent::access::Access<Output> => 1});
+record!(IndexedMintWitness {native:IndexedUtxoWitness => 0,mints:crate::mints::IndexedAccess => 1});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
@@ -564,7 +565,12 @@ fn execute_permanent_state(
     Ok((header, state))
 }
 pub fn execute_indexed_utxo(w: &IndexedUtxoWitness) -> Result<Checkpoint> {
-    let mut state = w.native.native.state.clone();
+    Ok(execute_utxo_state(w, w.native.native.state.clone())?.0)
+}
+fn execute_utxo_state(
+    w: &IndexedUtxoWitness,
+    mut state: crate::state::State,
+) -> Result<(Checkpoint, crate::state::State)> {
     ensure!(
         state.outputs.is_complete() && state.outputs.is_empty(),
         "indexed UTXO requires empty complete placeholder"
@@ -572,6 +578,20 @@ pub fn execute_indexed_utxo(w: &IndexedUtxoWitness) -> Result<Checkpoint> {
     state.outputs = crate::utxo::Outputs::from_access(state.currency, state.domain, &w.outputs)?;
     let (header, state) = execute_permanent_state(&w.native, state)?;
     state.outputs.finish_access()?;
+    Ok((header, state))
+}
+pub fn execute_indexed_mint(w: &IndexedMintWitness) -> Result<Checkpoint> {
+    let n = &w.native.native.native;
+    let mut state = n.state.clone();
+    ensure!(
+        state.mints.is_complete() && state.mints.is_empty(),
+        "indexed Mint requires empty complete placeholder"
+    );
+    state.mints = crate::mints::Mints::from_access(&n.currency, state.domain, &w.mints)?;
+    // The shared native executor verifies the actual predecessor receipt and
+    // complete monetary state root, including the certified event-map root.
+    let (header, state) = execute_utxo_state(&w.native, state)?;
+    state.mints.finish_access()?;
     Ok(header)
 }
 
@@ -756,4 +776,6 @@ pub enum NativeInput {
     IndexedUtxo(#[n(0)] IndexedUtxoWitness),
     #[n(5)]
     MintIndex(#[n(0)] crate::mints::index::Witness),
+    #[n(6)]
+    IndexedMint(#[n(0)] IndexedMintWitness),
 }

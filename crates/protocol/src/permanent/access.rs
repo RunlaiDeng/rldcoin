@@ -169,6 +169,17 @@ impl<T: Record + 'static> Tape<T> {
             .insert(i);
         Ok(s.value.clone())
     }
+    /// Authenticate the requested key first. Absence carries adjacent ranks,
+    /// so its left endpoint is the exact predecessor, not an arbitrary member.
+    pub(crate) fn before_or_at(&self, key: Id) -> Result<Option<crate::merkle::Entry>> {
+        self.get(key)?;
+        let (_, step) = self.step(key)?;
+        Ok(step.member.as_ref().map(|m| m.entry.clone()).or_else(|| {
+            step.absence
+                .as_ref()
+                .and_then(|a| a.left.as_ref().map(|m| m.entry.clone()))
+        }))
+    }
     pub(crate) fn insert(&mut self, value: T) -> Result<()> {
         let e = value.entry(self.currency);
         ensure!(

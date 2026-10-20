@@ -440,6 +440,20 @@ impl ProofContext {
                 self.native_witness(sequence)?,
             ));
         }
+        let claim = witness.state.mints.index_claim()?;
+        if let Some(certificate) = self.mint_certificates.get(claim.events)? {
+            rld_protocol::mints::index::verify(&witness.currency, &certificate)?;
+            ensure!(
+                certificate.claim == claim,
+                "native Mint correspondence differs from predecessor"
+            );
+            match self.indexed_mint(witness.clone(), sequence, (*certificate).clone()) {
+                Ok(w) => return Ok(proof::NativeInput::IndexedMint(w)),
+                Err(e) if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>().is_some()
+                    || e.downcast_ref::<rld_protocol::permanent::capture::CaptureBudgetExceeded>().is_some() => {},
+                Err(e) => return Err(e),
+            }
+        }
         match self.indexed_utxo(witness.clone(),sequence){
             Ok(w)=>return Ok(proof::NativeInput::IndexedUtxo(w)),
             Err(e) if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>().is_some()
@@ -471,7 +485,7 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedUtxoWitness> {
-        let (native, outputs) = self.indexed_maps(n, sequence, true)?;
+        let (native, outputs, _) = self.indexed_maps(n, sequence, true, None)?;
         Ok(proof::IndexedUtxoWitness {
             native,
             outputs: outputs.context("UTXO capture missing")?,
@@ -482,16 +496,33 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedPermanentWitness> {
-        Ok(self.indexed_maps(n, sequence, false)?.0)
+        Ok(self.indexed_maps(n, sequence, false, None)?.0)
+    }
+    fn indexed_mint(
+        &self,
+        n: proof::NativeWitness,
+        sequence: u64,
+        certificate: rld_protocol::mints::index::Certificate,
+    ) -> Result<proof::IndexedMintWitness> {
+        let (native, outputs, mints) = self.indexed_maps(n, sequence, true, Some(certificate))?;
+        Ok(proof::IndexedMintWitness {
+            native: proof::IndexedUtxoWitness {
+                native,
+                outputs: outputs.context("Mint UTXO capture missing")?,
+            },
+            mints: mints.context("Mint capture missing")?,
+        })
     }
     fn indexed_maps(
         &self,
         mut native: proof::NativeWitness,
         sequence: u64,
         include_outputs: bool,
+        mint_certificate: Option<rld_protocol::mints::index::Certificate>,
     ) -> Result<(
         proof::IndexedPermanentWitness,
         Option<rld_protocol::permanent::access::Access<Output>>,
+        Option<rld_protocol::mints::IndexedAccess>,
     )> {
         use rld_protocol::permanent::capture::Budget;
         let budget = Budget::new(MAX_RECORD, 128)?;
@@ -531,6 +562,19 @@ impl ProofContext {
         let outputs = if include_outputs {
             let (map, trace) = state.outputs.clone().capture(budget.clone())?;
             state.outputs = map;
+            Some(trace)
+        } else {
+            None
+        };
+        let mints = if let Some(certificate) = &mint_certificate {
+            ensure!(
+                certificate.claim == state.mints.index_claim()?,
+                "capture Mint correspondence base"
+            );
+            let (map, trace) = state.mints.clone().capture(budget.clone())?;
+            state.mints = map;
+            native.state.mints = rld_protocol::mints::Mints::new(c, d);
+            budget.charge(&trace.metadata(certificate.clone()))?;
             Some(trace)
         } else {
             None
@@ -617,6 +661,11 @@ impl ProofContext {
             funding: funding.finish()?,
         };
         let outputs = outputs.map(|trace| trace.finish()).transpose()?;
+        let mints = match (mints, mint_certificate) {
+            (Some(trace), Some(certificate)) => Some(trace.finish(certificate)?),
+            (None, None) => None,
+            _ => anyhow::bail!("Mint capture/certificate mismatch"),
+        };
         Ok((
             proof::IndexedPermanentWitness {
                 native: proof::IndexedNativeWitness {
@@ -629,6 +678,7 @@ impl ProofContext {
                 permanent,
             },
             outputs,
+            mints,
         ))
     }
     fn indexed_native(

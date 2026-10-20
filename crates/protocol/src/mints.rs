@@ -1,10 +1,12 @@
 //! Exact mint-event facts with a private, completely reconstructed slot index.
 //! Only the event-map root is native monetary commitment; the slot index is not
-//! accepted as an independent proof and never arrives in wire State.
+//! accepted alone. Sparse native execution requires a real correspondence
+//! certificate bound to the monetary predecessor event root.
 use crate::{
     codec::Id,
     merkle::{Absence, Entry, Membership},
-    model::MintRecord,
+    model::{Currency, MintRecord},
+    permanent::access::{Access, Tape},
     record,
     table::{Key, Record, Table},
 };
@@ -16,6 +18,22 @@ pub fn slot_key(root: u32, slot: u32) -> Id {
     let mut b = [0; 32];
     b[24..].copy_from_slice(&((u64::from(root) << 32) | u64::from(slot)).to_be_bytes());
     Id(b)
+}
+impl Slot {
+    pub(crate) fn from_entry(entry: &Entry) -> Result<Self> {
+        ensure!(entry.key.0[..24] == [0; 24], "Mint slot key prefix");
+        let root = u32::from_be_bytes(entry.key.0[24..28].try_into()?);
+        let slot = u32::from_be_bytes(entry.key.0[28..32].try_into()?);
+        ensure!(
+            root < crate::ROOTS && slot < crate::SLOTS,
+            "Mint slot entry range"
+        );
+        Ok(Self {
+            root,
+            slot,
+            event: entry.value,
+        })
+    }
 }
 impl Record for Slot {
     fn key(&self, _: Id) -> Key {
@@ -48,6 +66,10 @@ pub trait Storage: std::fmt::Debug + Send + Sync {
 }
 #[derive(Clone)]
 enum Backing {
+    Tape {
+        events: Tape<MintRecord>,
+        slots: Tape<Slot>,
+    },
     Full {
         events: Table<MintRecord>,
         slots: Table<Slot>,
@@ -72,6 +94,17 @@ impl PartialEq for Mints {
             && self.home == o.home
             && match (&self.backing, &o.backing) {
                 (Backing::Full { events: a, .. }, Backing::Full { events: b, .. }) => a == b,
+                (
+                    Backing::Tape {
+                        events: a,
+                        slots: sa,
+                    },
+                    Backing::Tape {
+                        events: b,
+                        slots: sb,
+                    },
+                ) => a.same(b) && sa.same(sb),
+                (Backing::Tape { .. }, _) | (_, Backing::Tape { .. }) => false,
                 #[cfg(not(target_os = "zkvm"))]
                 (Backing::Stored(a), Backing::Stored(b)) => {
                     a.root() == b.root() && a.count() == b.count()
@@ -130,12 +163,45 @@ impl Mints {
     pub fn len(&self) -> u64 {
         match &self.backing {
             Backing::Full { events, .. } => events.len() as u64,
+            Backing::Tape { events, .. } => events.count(),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.count(),
         }
     }
     pub fn is_empty(&self) -> bool {
         self.len() == 0
+    }
+    pub fn is_complete(&self) -> bool {
+        !matches!(self.backing, Backing::Tape { .. })
+    }
+    pub(crate) fn from_access(currency: &Currency, home: Id, a: &IndexedAccess) -> Result<Self> {
+        index::verify(currency, &a.certificate)?;
+        let claim = &a.certificate.claim;
+        let c = currency.id();
+        ensure!(
+            claim.home == home
+                && a.events.root == claim.events
+                && a.slots.root == claim.slots
+                && a.events.count == claim.count
+                && a.slots.count == claim.count,
+            "Mint access correspondence binding"
+        );
+        Ok(Self {
+            currency: c,
+            home,
+            backing: Backing::Tape {
+                events: Tape::new(c, &format!("{home}/mints"), &a.events)?,
+                slots: Tape::new(c, &format!("{home}/mint-slots-aux"), &a.slots)?,
+            },
+        })
+    }
+    pub(crate) fn finish_access(&self) -> Result<()> {
+        if let Backing::Tape { events, slots } = &self.backing {
+            events.finish()?;
+            slots.finish()?;
+            ensure!(events.count() == slots.count(), "Mint tape final counts");
+        }
+        Ok(())
     }
     pub fn commitment(&self, c: Id, tag: &str) -> Result<Id> {
         ensure!(
@@ -147,6 +213,15 @@ impl Mints {
                 ensure!(events.len() == slots.len(), "Mint index count");
                 events.commitment(c, tag)
             }
+            Backing::Tape { events, slots } => {
+                ensure!(
+                    events.matches(c, tag)
+                        && slots.matches(c, &format!("{}/mint-slots-aux", self.home))
+                        && events.count() == slots.count(),
+                    "Mint tape context/count"
+                );
+                Ok(events.root())
+            }
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => Ok(s.root()),
         }
@@ -157,6 +232,7 @@ impl Mints {
             Backing::Full { slots, .. } => {
                 slots.commitment(self.currency, &format!("{}/mint-slots-aux", self.home))?
             }
+            Backing::Tape { slots, .. } => slots.root(),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.slot_root(),
         };
@@ -172,12 +248,14 @@ impl Mints {
     pub fn slot_access(&self, key: Id) -> Result<(Option<Membership>, Option<Absence>)> {
         match &self.backing {
             Backing::Full { slots, .. } => slots.query(key),
+            Backing::Tape { .. } => anyhow::bail!("partial Mint cannot issue slot access"),
             Backing::Stored(s) => s.slot_access(key),
         }
     }
     pub fn get(&self, event: Id) -> Result<Option<MintRecord>> {
         let v = match &self.backing {
             Backing::Full { events, .. } => events.get(event).cloned(),
+            Backing::Tape { events, .. } => events.get(event)?,
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.get(event)?,
         };
@@ -199,6 +277,20 @@ impl Mints {
                         .get(s.event)
                         .cloned()
                         .context("Mint slot has no event")
+                })
+                .transpose()?,
+            Backing::Tape { events, slots } => slots
+                .before_or_at(key)?
+                .map(|entry| {
+                    let slot = Slot::from_entry(&entry)?;
+                    let v = events
+                        .get(slot.event)?
+                        .context("Mint slot has no authenticated event")?;
+                    ensure!(
+                        v.root == slot.root && v.slot == slot.slot && v.event == slot.event,
+                        "Mint slot/event correspondence"
+                    );
+                    Ok(v)
                 })
                 .transpose()?,
             #[cfg(not(target_os = "zkvm"))]
@@ -248,6 +340,20 @@ impl Mints {
                 *slots = s;
                 Ok(())
             }
+            Backing::Tape { events, slots } => {
+                let mut e = events.clone();
+                let mut s = slots.clone();
+                s.insert(Slot {
+                    root: value.root,
+                    slot: value.slot,
+                    event: value.event,
+                })?;
+                e.insert(value)?;
+                ensure!(e.count() == s.count(), "Mint insertion counts");
+                *events = e;
+                *slots = s;
+                Ok(())
+            }
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => {
                 let n = s.insert(value)?;
@@ -259,6 +365,9 @@ impl Mints {
     pub fn records(&self) -> Box<dyn Iterator<Item = Result<MintRecord>> + '_> {
         let iter: Box<dyn Iterator<Item = Result<MintRecord>> + '_> = match &self.backing {
             Backing::Full { events, .. } => Box::new(events.iter().cloned().map(Ok)),
+            Backing::Tape { .. } => Box::new(std::iter::once(Err(anyhow::anyhow!(
+                "partial Mint cannot export complete records"
+            )))),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.records(),
         };
@@ -276,6 +385,7 @@ impl Mints {
     pub fn witness(&self, key: Id) -> Result<Membership> {
         match &self.backing {
             Backing::Full { events, .. } => events.witness(key),
+            Backing::Tape { .. } => anyhow::bail!("partial Mint cannot issue arbitrary membership"),
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => s.access(key)?.0.context("Mint event absent"),
         }
@@ -284,13 +394,15 @@ impl Mints {
     pub fn access(&self, key: Id) -> Result<(Option<Membership>, Option<Absence>)> {
         match &self.backing {
             Backing::Full { events, .. } => events.query(key),
+            Backing::Tape { .. } => anyhow::bail!("partial Mint cannot issue event access"),
             Backing::Stored(s) => s.access(key),
         }
     }
     #[cfg(not(target_os = "zkvm"))]
     pub fn on_empty_storage(self, s: Arc<dyn Storage>) -> Result<Self> {
         ensure!(
-            self.is_empty()
+            self.is_complete()
+                && self.is_empty()
                 && s.count() == 0
                 && s.currency() == self.currency
                 && s.home() == self.home
@@ -338,6 +450,11 @@ impl Mints {
 impl serde::Serialize for Mints {
     fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
         use serde::ser::SerializeSeq;
+        if !self.is_complete() {
+            return Err(serde::ser::Error::custom(
+                "partial Mint cannot serialize complete records",
+            ));
+        }
         let mut seq = s.serialize_seq(Some(
             usize::try_from(self.len()).map_err(serde::ser::Error::custom)?,
         ))?;
@@ -353,6 +470,11 @@ impl<C> minicbor::Encode<C> for Mints {
         e: &mut minicbor::Encoder<W>,
         c: &mut C,
     ) -> std::result::Result<(), minicbor::encode::Error<W::Error>> {
+        if !self.is_complete() {
+            return Err(minicbor::encode::Error::message(
+                "partial Mint cannot serialize complete records",
+            ));
+        }
         e.array(self.len())?;
         for v in self.records() {
             v.map_err(|_| minicbor::encode::Error::message("Mint storage read failed"))?
@@ -363,3 +485,6 @@ impl<C> minicbor::Encode<C> for Mints {
 }
 
 pub mod index;
+record!(IndexedAccess {certificate:index::Certificate => 0,events:Access<MintRecord> => 1,slots:Access<Slot> => 2});
+#[cfg(not(target_os = "zkvm"))]
+mod capture;

@@ -416,9 +416,10 @@ History V5 binds eight-map observation V3; material V6 restores those observatio
 before full native checkpoint validation. The shared typed path engine preserves
 the UTXO storage format and its prior admission bounds.
 
-Real guest inputs still stream every canonical Mint record and rebuild the private
-slot index themselves. The host auxiliary root is not monetary evidence. Compact
-Mint/slot guest witnesses and maximum-input proving feasibility remain open.
+The original bounded full-Mint guest path reconstructs the slot index itself.
+The newer certified access path below can omit complete Mint material; a host
+auxiliary root alone is still not monetary evidence. Maximum-input proving
+feasibility remains open.
 [The source analysis](engineering/MINT_FACT_INDEX.md) gives the range-equivalence
 and uniqueness arguments. No local test/runtime/performance qualification follows
 from this stage's source review and compilation.
@@ -439,9 +440,35 @@ anchored native events. Each publication rechecks actual receipt and exact local
 historical Mint pair before authoritative append/Core installation. Claim/ref
 bytes are checked on read and all failed residue remains. See
 [the relation and integration analysis](engineering/MINT_INDEX_CORRESPONDENCE.md).
-Compact Mint monetary execution still needs to consume the certified relation
-and actual accesses; current native money inputs continue to carry complete Mint
-records. No proof run or runtime/performance qualification is claimed.
+The following execution stage consumes the certified relation and actual accesses.
+No proof run or runtime/performance qualification is claimed.
+
+## Certified Mint access execution
+
+NativeInput tag 6 adds the real Mint correspondence certificate and two typed
+access sets to the UTXO/permanent/applied input. It verifies the exact native-image
+correspondence receipt, currency/home, both roots and common count. Both initial
+root/count openings are checked, even for a map not read in this execution. The
+ordinary native relation then binds the event root to the full predecessor state
+and real native checkpoint receipt. The auxiliary slot root never stands alone.
+
+Each event read authenticates the exact typed record. A slot query authenticates
+the requested key: an exact member, or absence with adjacent ordered members or
+endpoints. Only that authenticated left endpoint can be its predecessor. The
+selected slot must resolve to an authenticated event with identical root/slot/event;
+active-range emptiness uses the same predecessor semantics as complete execution.
+Every append stages both current absence-derived roots and checked counts before
+installing either. Complete export, arbitrary membership and historical adoption
+from partial maps refuse. All supplied access steps must be used and checked.
+
+Default input construction prefers this path when the exact predecessor Mint root
+has a retained correspondence. Capture records both maps under the shared existing
+1-GiB input budget and compares every replayed native header with verified history.
+Only already committed native boundaries seal underlying disk roots. A missing
+certificate or typed compact-capacity refusal keeps the bounded full-Mint fallback;
+authentication, changed-data and I/O errors propagate. See
+[the source analysis](engineering/MINT_ACCESS_EXECUTION.md). This stage supplies no
+new runtime, proof-cost, throughput, latency or independent security result.
 
 ## Material unfinished and unqualified work
 
@@ -456,7 +483,7 @@ The following are real completion boundaries, not fulfilled by source edits:
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
-   collections remain needed. The seven-map access path alone does not
+   collections remain needed. The eight-map access path alone does not
    complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one

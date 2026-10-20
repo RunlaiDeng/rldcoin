@@ -538,9 +538,10 @@ together, then cold replay the unchanged valid journal and separately retained
 latest head. Never mix old physical observations with new owners, rewrite heads,
 change currency or migrate money/keys to a new program binding.
 
-Actual guest input still carries every complete Mint event and reconstructs the
-slot index inside the real program. There is no compact Mint/slot proof authority
-or relaxed work/cap/fee rule. This stage changes native/controller image/source
+The bounded full-Mint guest path reconstructs the slot index itself. The later
+certified access path below can omit that full array when exact correspondence
+evidence is retained. No host-only auxiliary root or relaxed work/cap/fee rule
+is accepted. This stage changes native/controller image/source
 bindings; preserve incompatible old stores with their matching release. No runtime
 proof/payment, maximum-size feasibility, memory/throughput/latency, independent
 security or paid archival result is established by compilation.
@@ -552,8 +553,8 @@ controller lanes. The configured concurrency/default three permits and byte/file
 limits are unchanged. The first job establishes empty correspondence, followed
 by changed local Mint checkpoints. These proofs use the actual native program
 with a separate journal purpose; they do not issue coins, authorize work, replace
-native QC or prove a payment. Current native money inputs still carry full Mint
-records; compact consumption of this relation remains unfinished.
+native QC or prove a payment. Native execution consumes the retained relation
+through the separate certified access path described below.
 
 For explicit operation, use node mint-index-witness with --store, --latest-head, --at and fresh --output. Feed that input to rld-prover native --input ...
 --output ... . Then node mint-index-certificate uses the same --store/--latest-head, --at,
@@ -577,3 +578,33 @@ bound. Other errors propagate. Maximum witness/proof feasibility is unmeasured.
 Actual program bindings change and old descriptors refuse; this is not an
 in-place cryptographic/value upgrade. No runtime proof/payment, capacity or
 independent security result is established by compilation.
+
+
+## Certified Mint native inputs
+
+The ordinary native proving lane prefers tag-6 IndexedMint input if its actual
+certified predecessor event root has a retained verified correspondence. No new
+operator switch, extra lane or permit is needed. The existing Mint-index lane may
+produce that prerequisite asynchronously. While it is absent, native work keeps
+the prior bounded complete-Mint path; settlement is not held for the index lane.
+A corrupt catalogue object, invalid receipt or changed claim is an error, not an
+unavailable-certificate fallback.
+
+The input carries both root/count openings, typed event and slot access sets,
+and the exact real correspondence certificate. The actual native guest and real
+prover precheck authenticate every used access and reject unused supplied steps.
+The complete State's Mint placeholder is empty; partial maps cannot serialize as
+complete state, issue arbitrary membership, export all records or become history
+storage. The real native predecessor still authenticates the monetary event root.
+
+The existing 1-GiB counting budget includes the certificate, both metadata sets,
+all other maps/material and actual trace steps. Only typed compact insertion-height
+or capture-capacity insufficiency selects the prior bounded full-Mint input. A
+fallback that cannot fit refuses; no height/byte limit or fee/work/cap rule changes.
+
+Actual program/source bindings change; incompatible descriptors/private stores
+remain unchanged and require their historical matching release. No monetary state,
+key or balance migration occurs. Compilation does not establish successful proof
+production, end-to-end payments, capacity, cost, independently protected custody
+or mainnet readiness. Remaining collections and permanent archival obligations
+still require work.

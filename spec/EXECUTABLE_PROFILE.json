@@ -1,9 +1,9 @@
 {
   "format": "RLD-EXECUTABLE-PROFILE-1",
-  "source_digest": "77617e1675427dd618cc7cb688529169b7c840fc7ee81df57c19bdfee0862403",
+  "source_digest": "b55965e36bf4983918684169381a32d6040148d01d4da9cbd6b8f0c95fd5fbc5",
   "proof_profile": {
-    "native_image": "be00c97a85b6aff18fec705c784306a63b4d308e4d9e215d8fe293996e14fd3e",
-    "controller_image": "e3f12cd4ab3e8abe1b216c44fc0287eae17684d287d5206f705ea97fa8b457a5",
+    "native_image": "cad7441011ecacadf5a9bf696bb62b13e340339e2c2b50061ae32fc46385d314",
+    "controller_image": "77f48fd7e23dfbc7e4f3fe832c632768eedf98f62758d1dfe52244e2e7e9f901",
     "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
     "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
     "backend": "risc0-zkvm-3.0.6-succinct"
@@ -51,7 +51,11 @@
     },
     {
       "path": "crates/protocol/src/mints.rs",
-      "sha256": "41561b553b09641f98802d1c5c4bf815b17ff5c78db8f20bd0dbd1a0d922d764"
+      "sha256": "e09ffcc68e8ec74e80470b618670ff54913657ca790048e012c729f8cfdfa758"
+    },
+    {
+      "path": "crates/protocol/src/mints/capture.rs",
+      "sha256": "aeb7377b2c3d8bbc3b9be23208599b3cf23f56c8f3ee70ef810067da78d3546c"
     },
     {
       "path": "crates/protocol/src/mints/index.rs",
@@ -67,7 +71,7 @@
     },
     {
       "path": "crates/protocol/src/permanent/access.rs",
-      "sha256": "3a6e28e0fc98735ce21cf62ad9e3716fac5bda93492fa8427f0b6f1dd5266f3d"
+      "sha256": "072619feda1f505d275b70f11817344965ed05bcf435f25f9e0a210e79bcfe35"
     },
     {
       "path": "crates/protocol/src/permanent/capture.rs",
@@ -75,7 +79,7 @@
     },
     {
       "path": "crates/protocol/src/proof.rs",
-      "sha256": "4e56438878ec2fc8f27891d753d4dc0751adf821ff5cd7285919ae9fee078049"
+      "sha256": "6617494d38e520d98e97b4fc6655c342968ba10268833cdc05974210a8fcd642"
     },
     {
       "path": "crates/protocol/src/state.rs",
@@ -123,7 +127,7 @@
     },
     {
       "path": "methods/guest/src/bin/native.rs",
-      "sha256": "ff8cc399a9ba527775b626094bc0358cde1733a60c1892257076768bc75059d0"
+      "sha256": "7d9122bd65b20d97b7502aade98defad88d3f49a7236f249a4f30a31219155a0"
     },
     {
       "path": "methods/src/lib.rs",
