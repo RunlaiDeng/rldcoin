@@ -221,7 +221,7 @@ impl Configuration {
             "validator roster"
         );
         ensure!(
-            self.signature_profile == Id::digest(b"RLD-ED25519-HEIGHT-POOL-1")
+            self.signature_profile == Id::digest(b"RLD-ED25519-HEIGHT-POOL-PBFT-SUMMARY-2")
                 && self.succession == Id::digest(b"RLD-HANDOFF-1"),
             "unsupported executable consensus/signature profile"
         );

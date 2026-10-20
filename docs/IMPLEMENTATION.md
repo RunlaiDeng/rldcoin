@@ -71,6 +71,16 @@ selected monetary statement. Sending one's own view change stops new old-view
 prepare/commit signatures. Independent checked exponential timers prevent native
 activity from resetting a controller's timeout forever.
 
+The incompatible prelaunch signature profile is now
+`RLD-ED25519-HEIGHT-POOL-PBFT-SUMMARY-2`. View-change votes commit the exact
+preprepare vote and prepare quorum. New-view certificates carry those signed
+ordering summaries without repeating each monetary payload. The new primary
+must recover the selected statement's complete retained material and revalidate
+it before proposing; otherwise it waits. Every actual proposal and finality
+message still carries and verifies its complete material. A summary grants no
+execution authority. Quorum thresholds and the 16-MiB transport bound are
+unchanged. Old-profile descriptors are refused; there is no monetary migration.
+
 Authenticated conflicting complete certificates are retained and stop local
 signing, including across restart. Individual invalid or stale messages cannot
 create a conflict incident. Every historical envelope is authenticated before
@@ -133,10 +143,24 @@ The following are real completion boundaries, not fulfilled by source edits:
 
 1. The current native implementation keeps ordered collections and replayed
    history in memory, clones state for atomic execution, and rebuilds map roots.
+   Read-only consensus events share immutable state/history/proof allocations;
+   native execution and history append still incur their respective copying.
    It is not an implementation of 100 million completed daily payments or a
    demonstrated seconds-scale receipt pipeline. Disk-backed authenticated indexes,
    incremental roots and resource-accounted historical witnesses remain needed.
-2. Contact spools deliberately refuse at finite object/byte limits. A continuously
+2. Native event history now has immutable 64-event/256-MiB maximum storage
+   segments and a 128-event hot window. Every 64 append operations can seal one
+   eligible segment; a large record may cause fewer than 64 to fit, so this is
+   not a strict hot-file count bound under all workloads. Complete frame bytes
+   larger than a segment remain loose and block further contiguous sealing;
+   maintenance neither skips them nor halts valid native append for that reason.
+   Complete frame bytes
+   and the same exact journal commitment remain retained. Cold startup streams
+   every segment, checks its source observation and separately retained latest
+   head, and replays all native events. Explicit recovery finishes only a fully
+   retained, verified seal; damaged originals/residue remain unchanged. This
+   reduces loose files but does not remove the in-memory Core/history limitation.
+   Contact spools deliberately refuse at finite object/byte limits. A continuously
    operating archival rotation, independently replicated paid custody lifecycle,
    witness availability, disaster recovery and long-history operator product are
    not complete. Evidence is retained on refusal; no timeout drops an obligation.
@@ -162,3 +186,11 @@ The following are real completion boundaries, not fulfilled by source edits:
 The whitepaper remains a conditional scientific construction. This implementation
 must not be advertised as a complete, independently qualified interstellar
 payment network or as having demonstrated world-changing adoption.
+
+## Owner deployment direction, 20 October 2026
+
+After implementation completion, mainnet deployment to
+`galaxy@35.200.194.179` is authorized. Current completion boundaries remain open.
+Read-only preflight and isolated deployment templates are recorded in
+[the mainnet deployment plan](operations/MAINNET_DEPLOYMENT.md). No monetary
+genesis, monetary key generation or mainnet start occurred in this stage.

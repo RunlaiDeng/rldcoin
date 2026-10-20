@@ -338,6 +338,7 @@ enum NodeCommand {
     },
     Recover(StoreArgs),
     Inspect(StoreArgs),
+    Archive(StoreArgs),
     RecoveryDraft {
         #[command(flatten)]
         store: StoreArgs,
@@ -1106,7 +1107,7 @@ async fn main() -> Result<()> {
                     validators,
                     initial_anchor: Id::ZERO,
                     succession: Id::digest(b"RLD-HANDOFF-1"),
-                    signature_profile: Id::digest(b"RLD-ED25519-HEIGHT-POOL-1"),
+                    signature_profile: Id::digest(b"RLD-ED25519-HEIGHT-POOL-PBFT-SUMMARY-2"),
                     custody_profile: Id::digest(b"RLD-SOFTWARE-CUSTODY-UNQUALIFIED-1"),
                     limits: Limits::default(),
                     fee_policy: if let Some(path) = fee_policy {
@@ -1274,6 +1275,17 @@ async fn main() -> Result<()> {
             NodeCommand::Recover(store) => {
                 let node = Node::open(&store.store, &store.latest_head, true)?;
                 println!("{}", node.journal_tip());
+            }
+            NodeCommand::Archive(store) => {
+                let mut node = open_node(&store)?;
+                let mut count = 0u64;
+                while node.archive_history()? {
+                    count = count.checked_add(1).context("archive count exhaustion")?;
+                }
+                println!(
+                    "{}",
+                    serde_json::json!({"sealed_segments":count,"journal_head":node.journal_tip(),"monetary_state_unchanged":true})
+                );
             }
             NodeCommand::Inspect(store) => {
                 let node = open_node(&store)?;

@@ -149,3 +149,22 @@ height, money, coupons or import identities.
 Do not restore copied signing vaults to concurrent machines, replace an unavailable
 authority by copying balances, discard unresolved evidence on timeout, publish
 private state, or interpret a transport receipt as recipient spendability.
+
+## Complete event segments
+
+The journal seals eligible old immutable event frames into bounded complete
+segments, retaining its exact hash chain and latest-head binding. `rld node
+archive` performs the same maintenance on an exclusively opened stopped node.
+There is no monetary state migration, pruning of unresolved monetary evidence
+or new signing authority. Node cold replay checks segment bounds, every frame,
+whole segment hashes and source-head observations before completing interrupted
+seals. It then re-executes all protocol events. A sealed segment is storage, not
+a proof or a trusted serialized ledger. Damaged packs and unexplained residues
+refuse without overwrite. This does not provide an independent off-machine
+archive service or solve large-state memory use.
+
+The prelaunch PBFT profile `RLD-ED25519-HEIGHT-POOL-PBFT-SUMMARY-2` refuses old
+descriptor profiles. New-view summaries bind ordering evidence; selected complete
+payment material remains required before the primary can propose or validators
+can prepare/commit. Keep original material available through view changes. A
+signed ordering summary is never a replacement execution proof.

@@ -17,6 +17,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, VecDeque},
     path::Path,
+    sync::Arc,
     time::{Duration, Instant},
 };
 
@@ -71,13 +72,13 @@ pub enum Event {
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
-    pub state: State,
+    pub state: Arc<State>,
     pub head: Id,
-    pub history: Vec<Committed>,
+    pub history: Arc<Vec<Committed>>,
     pub engines: Vec<Engine>,
     pub pending: Vec<Operation>,
     pub terminals: Vec<TerminalRecord>,
-    pub proofs: Vec<Certified>,
+    pub proofs: Arc<Vec<Certified>>,
     pub outbox: Vec<(Id, Dispatch)>,
     pub candidates: Vec<Payload>,
     pub delivered: Vec<Id>,
@@ -139,13 +140,13 @@ impl Core {
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
         Ok(Self {
             initial,
-            state,
+            state: Arc::new(state),
             head,
-            history: vec![],
+            history: Arc::new(vec![]),
             engines: vec![],
             pending: vec![],
             terminals: vec![],
-            proofs: vec![],
+            proofs: Arc::new(vec![]),
             outbox: vec![],
             candidates: vec![],
             delivered: vec![],
@@ -340,13 +341,17 @@ impl Core {
             }
             Message::ViewChange(v) => {
                 if let Some(p) = &v.prepared {
-                    self.authenticate_proposal_material(&p.proposal)?;
+                    if !p.proposal.body.0.is_empty() {
+                        self.authenticate_proposal_material(&p.proposal)?;
+                    }
                 }
             }
             Message::NewView(n) => {
                 for v in &n.changes {
                     if let Some(p) = &v.prepared {
-                        self.authenticate_proposal_material(&p.proposal)?;
+                        if !p.proposal.body.0.is_empty() {
+                            self.authenticate_proposal_material(&p.proposal)?;
+                        }
                     }
                 }
             }
@@ -491,8 +496,8 @@ impl Core {
                 crypto::verify_quorum(&c.configuration, self.state.domain, None, &c.qc, 3, h.id())?;
                 ensure!(c.qc.votes[0].sequence == h.sequence, "commit position");
                 self.head = h.id();
-                self.state = next;
-                self.history.push(c.clone());
+                self.state = Arc::new(next);
+                Arc::make_mut(&mut self.history).push(c.clone());
                 for op in &c.batch.operations {
                     let terminal = match &op.command {
                         Command::ObserveExport(r) => {
@@ -615,8 +620,9 @@ impl Core {
                     "certificate statement"
                 );
                 if !self.proofs.iter().any(|v| v.header == p.header) {
-                    self.proofs.push(p.clone());
-                    self.proofs.sort_by_key(|p| p.header.sequence);
+                    let proofs = Arc::make_mut(&mut self.proofs);
+                    proofs.push(p.clone());
+                    proofs.sort_by_key(|p| p.header.sequence);
                 }
             }
         }
@@ -1351,7 +1357,29 @@ impl Node {
             .map(|nv| e.verify_new_view(nv))
             .transpose()?
             .flatten();
-        let payload = if let Some(p) = selected {
+        let payload = if let Some(mut p) = selected {
+            if p.body.0.is_empty() {
+                let statement = p.preprepare.statement;
+                let retained = e
+                    .prepared
+                    .iter()
+                    .map(|p| &p.proposal)
+                    .chain(
+                        e.changes
+                            .iter()
+                            .filter_map(|v| v.prepared.as_ref().map(|p| &p.proposal)),
+                    )
+                    .find(|p| p.preprepare.statement == statement && !p.body.0.is_empty());
+                if let Some(retained) = retained {
+                    p.body = retained.body.clone();
+                } else if let Some(candidate) =
+                    candidate.as_ref().filter(|v| v.statement() == statement)
+                {
+                    p.body = Blob(encode(candidate));
+                } else {
+                    return Ok(false);
+                }
+            }
             consensus::payload(&p)?
         } else if let Some(p) = candidate {
             p
@@ -1408,7 +1436,7 @@ impl Node {
     }
     fn reconcile_custody(&mut self) -> Result<()> {
         for signer in &mut self.signers {
-            for committed in &self.core.history {
+            for committed in self.core.history.iter() {
                 if committed
                     .configuration
                     .validators
@@ -1614,6 +1642,11 @@ impl Node {
                     continue;
                 }
                 changes.truncate(quorum);
+                for change in &mut changes {
+                    if let Some(prepared) = &mut change.prepared {
+                        prepared.proposal.body.0.clear();
+                    }
+                }
                 let Ok(signer) = self.signer(&e.configuration) else {
                     continue;
                 };
@@ -1651,6 +1684,13 @@ impl Node {
             }
         }
         Ok(())
+    }
+    pub fn archive_history(&mut self) -> Result<bool> {
+        ensure!(
+            !self.halted,
+            "halted node cannot publish archive maintenance"
+        );
+        self.store.archive_completed()
     }
     pub fn journal_tip(&self) -> Id {
         self.store.tip.head

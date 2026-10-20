@@ -311,10 +311,17 @@ impl Engine {
         Ok(actions)
     }
     pub fn change_digest(&self, vc: &ViewChange) -> Id {
+        // Ordering evidence binds the exact preprepare vote and prepare QC.
+        // Monetary material is committed by that statement and is reverified
+        // in full before the next proposal can receive prepare/commit votes.
+        let prepared = vc
+            .prepared
+            .as_ref()
+            .map(|p| (&p.proposal.preprepare, &p.qc));
         hash(
-            "RLD-PBFT-VIEW-CHANGE",
+            "RLD-PBFT-VIEW-CHANGE-SUMMARY-2",
             self.configuration.currency,
-            &(vc.namespace, vc.sequence, vc.next_view, &vc.prepared),
+            &(vc.namespace, vc.sequence, vc.next_view, prepared),
         )
     }
     pub fn verify_change(&self, vc: &ViewChange) -> Result<()> {
@@ -336,7 +343,9 @@ impl Engine {
                     && p.proposal.preprepare.view < vc.next_view,
                 "prepared primary/view"
             );
-            payload(&p.proposal)?;
+            if !p.proposal.body.0.is_empty() {
+                payload(&p.proposal)?;
+            }
             crypto::verify_quorum(
                 &self.configuration,
                 self.namespace,
@@ -377,6 +386,12 @@ impl Engine {
         );
         let mut highest: Option<&Prepared> = None;
         for vc in &nv.changes {
+            ensure!(
+                vc.prepared
+                    .as_ref()
+                    .is_none_or(|p| p.proposal.body.0.is_empty()),
+                "new-view summaries must not repeat monetary payloads"
+            );
             self.verify_change(vc)?;
             ensure!(vc.next_view == nv.leader.view, "mixed new views");
             if let Some(p) = &vc.prepared {

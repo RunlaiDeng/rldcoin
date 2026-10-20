@@ -149,10 +149,10 @@ async fn blocks(
 async fn snapshot(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| {
         ensure!(
-            encode(&s.node.core.state).len() <= rld_protocol::MAX_CAPSULE,
+            encode(s.node.core.state.as_ref()).len() <= rld_protocol::MAX_CAPSULE,
             "current state requires paged access; use local full node"
         );
-        Ok(wire(&s.node.core.state))
+        Ok(wire(s.node.core.state.as_ref()))
     })
     .await
 }

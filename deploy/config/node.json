@@ -1,0 +1,10 @@
+{
+  "listen": "0.0.0.0:18443",
+  "tls_certificate": "/etc/rldcoin/tls/node.pem",
+  "tls_key": "/etc/rldcoin/tls/node.key",
+  "peers": [],
+  "spool": "/var/lib/rldcoin/contact",
+  "spool_bytes": 268435456,
+  "proof_executable": null,
+  "proof_work": "/var/lib/rldcoin/proofs"
+}

@@ -24,6 +24,8 @@ pub struct Store {
     _lock: File,
     pub tip: Tip,
     recovering: Option<Pending>,
+    archive: crate::archive::Archive,
+    frame_heads: std::collections::BTreeMap<u64, Id>,
 }
 
 pub fn read_bounded(path: &Path, limit: usize) -> Result<Vec<u8>> {
@@ -95,12 +97,15 @@ impl Store {
         private_create(&anchor, &encode(&tip))?;
         sync_dir(&root)?;
         sync_dir(anchor.parent().context("anchor parent")?)?;
+        let archive = crate::archive::Archive::open(&root, &tip, false)?;
         let mut store = Self {
             root,
             anchor,
             _lock: lock,
             tip,
             recovering: None,
+            archive,
+            frame_heads: Default::default(),
         };
         store.append(initial)?;
         Ok(store)
@@ -172,6 +177,7 @@ impl Store {
                 });
             }
         }
+        let archive = crate::archive::Archive::open(&root, &tip, recover)?;
         let expected_count = tip.generation;
         for entry in fs::read_dir(root.join("events"))? {
             let entry = entry?;
@@ -193,24 +199,49 @@ impl Store {
             _lock: lock,
             tip,
             recovering,
+            archive,
+            frame_heads: Default::default(),
         })
     }
     fn event_path(&self, n: u64) -> PathBuf {
         self.root.join("events").join(format!("{n:020}.cbor"))
     }
-    pub fn walk(&self, mut apply: impl FnMut(u64, &[u8]) -> Result<()>) -> Result<()> {
+    pub fn walk(&mut self, mut apply: impl FnMut(u64, &[u8]) -> Result<()>) -> Result<()> {
         let mut previous = Id::ZERO;
-        for n in 1..=self.tip.generation {
-            let bytes = read_bounded(&self.event_path(n), MAX_RECORD)?;
-            let frame: Frame = decode(&bytes, MAX_RECORD)?;
+        let mut verified_heads = std::collections::BTreeMap::new();
+        let archived = self.archive.archived_last();
+        let mut count = 0u64;
+        let mut replay = |n: u64, bytes: &[u8]| -> Result<()> {
+            let frame: Frame = decode(bytes, MAX_RECORD)?;
             ensure!(
-                frame.generation == n && frame.previous == previous,
+                frame.generation == n
+                    && frame.previous == previous
+                    && n == count
+                        .checked_add(1)
+                        .context("journal position exhaustion")?,
                 "event chain mismatch"
             );
             apply(n, &frame.payload.0)?;
-            previous = Id::digest(&bytes);
+            previous = Id::digest(bytes);
+            self.archive.check_source_observation(n, previous)?;
+            if n > archived {
+                verified_heads.insert(n, previous);
+            }
+            count = n;
+            Ok(())
+        };
+        self.archive.walk(&mut replay)?;
+        for n in self
+            .archive
+            .archived_last()
+            .checked_add(1)
+            .context("archive position exhaustion")?..=self.tip.generation
+        {
+            let bytes = read_bounded(&self.event_path(n), MAX_RECORD)?;
+            replay(n, &bytes)?;
         }
         ensure!(previous == self.tip.head, "journal/latest head mismatch");
+        self.frame_heads = verified_heads;
         Ok(())
     }
     pub fn finish_recovery(&mut self) -> Result<()> {
@@ -237,7 +268,17 @@ impl Store {
             sync_dir(&self.root)?;
             self.recovering = None;
         }
+        self.archive.finish_recovery()?;
         Ok(())
+    }
+    pub fn archive_completed(&mut self) -> Result<bool> {
+        ensure!(self.recovering.is_none(), "unreconciled journal");
+        let head: Tip = decode(&read_bounded(&self.anchor, 128)?, 128)?;
+        ensure!(head == self.tip, "archive latest head mismatch");
+        let rotated = self.archive.rotate(&self.tip, &self.frame_heads)?;
+        let archived = self.archive.archived_last();
+        self.frame_heads.retain(|n, _| *n > archived);
+        Ok(rotated)
     }
     pub fn append(&mut self, payload: &[u8]) -> Result<Id> {
         ensure!(
@@ -286,6 +327,10 @@ impl Store {
         fs::remove_file(self.root.join("PENDING"))?;
         sync_dir(&self.root)?;
         self.tip = new;
+        self.frame_heads.insert(generation, digest);
+        if generation % 64 == 0 {
+            self.archive_completed()?;
+        }
         Ok(digest)
     }
     pub fn root_path(&self) -> &Path {

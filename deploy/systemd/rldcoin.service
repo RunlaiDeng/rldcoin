@@ -1,0 +1,48 @@
+[Unit]
+Description=Rldcoin monetary node
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/rldcoin/currency.json
+ConditionPathExists=/var/lib/rldcoin/node/MANIFEST
+ConditionPathExists=/var/lib/rldcoin/heads/node.cbor
+
+[Service]
+Type=simple
+User=rldcoin
+Group=rldcoin
+WorkingDirectory=/var/lib/rldcoin
+UMask=0077
+LoadCredentialEncrypted=vault-password:/etc/credstore.encrypted/rldcoin-vault-password
+StandardInput=file:%d/vault-password
+ExecStartPre=/opt/rldcoin/current/rld currency inspect --input /etc/rldcoin/currency.json
+ExecStart=/opt/rldcoin/current/rld node serve --store /var/lib/rldcoin/node --latest-head /var/lib/rldcoin/heads/node.cbor --config /etc/rldcoin/node.json --signer /var/lib/rldcoin/keys/validator.wallet --signer-head /var/lib/rldcoin/heads/validator.cbor --transport-key /var/lib/rldcoin/keys/transport.wallet --transport-head /var/lib/rldcoin/heads/transport.cbor --password-stdin
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=120
+KillSignal=SIGTERM
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/rldcoin
+MemoryHigh=768M
+MemoryMax=1G
+CPUQuota=50%
+Nice=10
+IOWeight=50
+TasksMax=64
+LimitNOFILE=8192
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
