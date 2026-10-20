@@ -691,7 +691,12 @@ fn add_signature(op: &mut Operation, policy: Owner, key: &Vault) -> Result<()> {
 fn controller_witness(node: &Node, id: Id) -> Result<proof::ControllerWitness> {
     let creation = node.core.creation(id)?;
     let c = &creation.controller;
-    let birth = node.core.state.births.get(id).context("controller birth")?;
+    let birth = node
+        .core
+        .state
+        .births
+        .get(id)?
+        .context("controller birth")?;
     let record = node
         .core
         .history

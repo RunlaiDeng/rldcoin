@@ -8,7 +8,7 @@ pub(super) async fn worker(shared: SharedState) {
     loop {
         let handle = shared.clone();
         let result = tokio::task::spawn_blocking(move || -> Result<u64> {
-            let (view, index, mut targets) = {
+            let (view, index, closed) = {
                 let s = handle
                     .lock()
                     .map_err(|_| anyhow::anyhow!("node unavailable"))?;
@@ -29,25 +29,25 @@ pub(super) async fn worker(shared: SharedState) {
                         _ => None,
                     })
                     .collect();
-                let mut targets: BTreeSet<_> = view
-                    .state
-                    .births
-                    .iter()
-                    .filter(|b| !closed.contains(&b.controller))
-                    .map(|b| b.sequence)
-                    .collect();
-                if view.state.sequence > 0 {
-                    targets.insert(view.state.sequence);
-                }
-                if let Some(sequence) = view.proofs.last_sequence() {
-                    targets.insert(sequence);
-                }
-                if let Err(error) = index.writable() {
-                    index.note(&error);
-                    return Ok(cursor);
-                }
-                (view, index, targets)
+                (view, index, closed)
             };
+            let mut targets = BTreeSet::new();
+            for birth in view.state.births.records() {
+                let birth = birth?;
+                if !closed.contains(&birth.controller) {
+                    targets.insert(birth.sequence);
+                }
+            }
+            if view.state.sequence > 0 {
+                targets.insert(view.state.sequence);
+            }
+            if let Some(sequence) = view.proofs.last_sequence() {
+                targets.insert(sequence);
+            }
+            if let Err(error) = index.writable() {
+                index.note(&error);
+                return Ok(cursor);
+            }
             let latest = view.state.sequence;
             let mut ordered: Vec<_> = targets
                 .range((

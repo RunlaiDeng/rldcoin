@@ -293,14 +293,15 @@ changes before authoritative event append/Core installation. A failure retains
 all durably published residue; no failed root grants money or loses an old key.
 Historical replay/proof construction seal only already verified native steps.
 
-Verified history format V2 retains each committed record with its exact sealed
-applied snapshot. Derived state material V3 stores other collections and the
-applied commitment, then reconstructs historical state using that independently
-verified history observation and checks the whole native checkpoint root. Applied
-queries use native disk paths; neither snapshot publication nor indexed proof
-input needs to materialize the whole operation map. Complete snapshot/fallback
-encoding streams records and fails under existing byte bounds on I/O/capacity.
-See [the disk-map analysis](engineering/APPLIED_DISK.md). Native program/source
+Verified history format V3 retains each committed record with all six exact sealed
+disk-map snapshots. Derived state material V4 stores the remaining collections and
+those six commitments, then reconstructs historical state using independently
+verified history observations and checks the whole native checkpoint root.
+Queries use native disk paths; snapshot publication omits these complete arrays.
+Complete snapshot/fallback encoding streams records and fails under existing byte
+bounds on I/O/capacity. See [the operation-map analysis](engineering/APPLIED_DISK.md)
+for its original stage and the permanent-map section below for current formats.
+Native program/source
 bindings were rebuilt; old descriptors/derived formats refuse unchanged.
 
 This completes the disk-backed operation-map path, not every native collection.
@@ -330,15 +331,35 @@ outside the node mutex with bounded reader admission. See
 [the receipt analysis](engineering/DISK_RECEIPTS.md). This does not implement
 packing/rotation or establish measured resource/performance/custody behavior.
 
+## Five permanent native maps on disk
+
+Births, destination decisions, redemptions, source resolutions and consumed funding
+now use a generic private append-only native interface and shared immutable disk
+paths. Candidate execution retains bounded working changes; post-native/QC sealing
+precedes verified-history publication and authoritative append/Core installation.
+Every record lookup propagates storage failure; duplicate refusal and canonical
+wire construction preserve order/uniqueness without re-enumerating these five
+permanent key sets in each batch. Roots and monetary predicates remain unchanged.
+
+The five maps share a separate 16-MiB / 4,096-object raw cache. History V3 retains
+six-map sealed observations (including the existing applied map); state material
+V4 omits those arrays and reconstructs them only from verified history before
+whole-checkpoint validation. Direct historical queries and membership construction
+do not enumerate complete maps. Full native guest inputs still stream all five
+complete record sets: their compact authenticated execution witnesses remain open.
+Scheduling/indexing scans run outside the global mutex. See
+[the source analysis](engineering/PERMANENT_MAPS.md). This stage changes actual
+program bindings and preserves incompatible old state without migration.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
 
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
-   map hash. Current collections other than the operation map remain resident; native history
-   records and the applied map now live on disk;
-   full invariant scans of other tables, canonical snapshot construction and
+   map hash. Other native collections remain resident; native history, the applied map and
+   five permanent decision/birth/funding maps now live on disk;
+   full invariant scans of the remaining tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk

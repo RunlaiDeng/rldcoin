@@ -121,7 +121,7 @@ async fn job<T: Send + 'static>(
 }
 
 async fn status(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
-    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last_sequence(),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"applied_storage":match s.node.core.applied_storage.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"receipt_storage":match s.node.core.proofs.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"native_history":match s.node.core.history.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
+    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last_sequence(),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"permanent_storage":match s.node.core.permanent_storage.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"applied_storage":match s.node.core.applied_storage.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"receipt_storage":match s.node.core.proofs.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"native_history":match s.node.core.history.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
 }
 async fn routes(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| Ok(wire(&s.advertisements))).await
@@ -408,37 +408,35 @@ async fn controller(
     AxumPath(id): AxumPath<String>,
 ) -> ApiResult<Response> {
     let id = Id::parse(&id)?;
-    job(s, move |s| {
-        let c = s
+    let permit = state_read_permit()?;
+    let (controller, births, terminal) = job(s, move |s| {
+        let controller = s
             .node
             .core
             .state
             .controllers
+            .get(id)
+            .context("controller not found")?
+            .clone();
+        let terminal = s
+            .node
+            .core
+            .terminals
             .iter()
-            .find(|c| c.id == id)
-            .context("controller not found")?;
-        Ok(wire(&(
-            c.clone(),
-            s.node
-                .core
-                .state
-                .births
-                .iter()
-                .find(|b| b.controller == id)
-                .cloned(),
-            s.node
-                .core
-                .terminals
-                .iter()
-                .find(|r| match &r.payload {
-                    rld_protocol::consensus::Payload::Export(r) => r.terminal.controller == id,
-                    rld_protocol::consensus::Payload::Cancel(r) => r.controller == id,
-                    _ => false,
-                })
-                .cloned(),
-        )))
+            .find(|r| match &r.payload {
+                rld_protocol::consensus::Payload::Export(r) => r.terminal.controller == id,
+                rld_protocol::consensus::Payload::Cancel(r) => r.controller == id,
+                _ => false,
+            })
+            .cloned();
+        Ok((controller, s.node.core.state.births.clone(), terminal))
     })
-    .await
+    .await?;
+    Ok(tokio::task::spawn_blocking(move || -> Result<Response> {
+        let _permit = permit;
+        Ok(wire(&(controller, births.get(id)?, terminal)))
+    })
+    .await??)
 }
 
 #[derive(Debug)]

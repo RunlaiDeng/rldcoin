@@ -227,14 +227,6 @@ struct Snapshot {
 }
 impl Snapshot {
     fn targets(&self, lane: Lane) -> Result<BTreeSet<Target>> {
-        let closed: BTreeSet<_> = self
-            .view
-            .state
-            .resolutions
-            .iter()
-            .map(|r| r.object)
-            .chain(self.terminal.iter().copied())
-            .collect();
         let mut targets = BTreeSet::new();
         match lane {
             Lane::Native => {
@@ -247,8 +239,11 @@ impl Snapshot {
                 // Read only relevant birth heights; do not collect every historical
                 // certificate or silently turn an I/O failure into proof absence.
                 let mut ready = BTreeMap::new();
-                for birth in self.view.state.births.iter() {
-                    if closed.contains(&birth.controller) {
+                for birth in self.view.state.births.records() {
+                    let birth = birth?;
+                    if self.terminal.contains(&birth.controller)
+                        || self.view.state.resolutions.get(birth.controller)?.is_some()
+                    {
                         continue;
                     }
                     if matches!(lane, Lane::Controller) && self.queued.contains(&birth.controller) {

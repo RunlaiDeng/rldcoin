@@ -1,9 +1,9 @@
 {
   "format": "RLD-EXECUTABLE-PROFILE-1",
-  "source_digest": "476eb0c80b1dd1da653a5b6aceefc089941218039af1a77be332cba449316aec",
+  "source_digest": "51f26d54321ddeea74869238aeb948b40501f9cbd486a5a993880af7a6b31029",
   "proof_profile": {
-    "native_image": "a3066b97fc2db642323ed4c1c1f6ceb95a0bdebce3bab83bee2fbadaab10909c",
-    "controller_image": "fe930f88bb1c5a93be5bb405d7b593758f08fa9cafa35a8ddc3019a14d7dee39",
+    "native_image": "e43852a259f002cb6c1e79c50bb69214249ecccfb40c82d8d7b2b560744cd82e",
+    "controller_image": "6ee661892783bedfa1adf7962305706de895f63b763b06136336ef03cce6b4e3",
     "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
     "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
     "backend": "risc0-zkvm-3.0.6-succinct"
@@ -31,7 +31,7 @@
     },
     {
       "path": "crates/protocol/src/consensus.rs",
-      "sha256": "7bca9398f6c4eff932ed43cef58118f29716b25a1e2c7f08801e56f31b5564f4"
+      "sha256": "d943071311beb1e37790cf674a82186d880a9a8bef9d09b7cd47245d43b6fe16"
     },
     {
       "path": "crates/protocol/src/crypto.rs",
@@ -39,7 +39,7 @@
     },
     {
       "path": "crates/protocol/src/lib.rs",
-      "sha256": "52794162cf3fc46b56cb68cffd1a0d0e2b5b7b691a342b4a52c18db8a6f289e5"
+      "sha256": "45b0d5873f115bdae6d06522d2143d0b6635ab3a48fba5a5b55f80edcbbebdfe"
     },
     {
       "path": "crates/protocol/src/merkle.rs",
@@ -54,12 +54,16 @@
       "sha256": "e066a34668766a807a4dcc565482d4df195bf65fd00e1774db33d26a495446ee"
     },
     {
+      "path": "crates/protocol/src/permanent.rs",
+      "sha256": "dc915b6fd71832759c4dec2bb827d2f4c949e5978835b242f6738e761b1bb8f4"
+    },
+    {
       "path": "crates/protocol/src/proof.rs",
       "sha256": "ecc39d401e75146be065daecc85426d840c9f4f04c342106afb5a3661fe1b064"
     },
     {
       "path": "crates/protocol/src/state.rs",
-      "sha256": "f03afd36bd23a28277bdce59f759d93276a992eba1983fa9ec25f9aa247f714e"
+      "sha256": "d35fa636a71f8cabcf28b33fcb897d9fab462e05edd8e69948c9594825055859"
     },
     {
       "path": "crates/protocol/src/state/wire.rs",
@@ -67,7 +71,7 @@
     },
     {
       "path": "crates/protocol/src/table.rs",
-      "sha256": "54fdba7a3c575a628917513bcb7935d41fcb9848dbfeb7f299e0bf53312ace82"
+      "sha256": "96664bedc96f7506e710037f04927afa7f8ca679aa0be5b63c68dcf800634997"
     },
     {
       "path": "crates/protocol/src/work.rs",

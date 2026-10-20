@@ -258,6 +258,9 @@ impl<T: Record> Table<T> {
             map: Map::new(currency, tag),
         }
     }
+    pub(crate) fn currency(&self) -> Id {
+        self.currency
+    }
     pub fn commitment(&self, currency: Id, tag: &str) -> Result<Id> {
         ensure!(
             self.map.matches(currency, tag) && self.map.count() == u64::try_from(self.len())?,

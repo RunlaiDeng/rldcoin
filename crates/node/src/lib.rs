@@ -26,3 +26,6 @@ mod applied_store;
 mod object_store;
 
 pub mod receipts;
+
+mod permanent_store;
+mod state_storage;

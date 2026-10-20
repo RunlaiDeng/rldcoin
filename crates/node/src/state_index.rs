@@ -21,7 +21,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-3";
+const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-4";
 const CHUNK: usize = 1024 * 1024;
 const LEAF: usize = 128;
 const MANIFEST_LIMIT: usize = 256 * 1024;
@@ -380,7 +380,7 @@ impl StateIndex {
         );
         let mut top = Vec::new();
         for t in tables {
-            if t.name != "applied" {
+            if !crate::state_storage::DISK_MAPS.contains(&t.name.as_str()) {
                 ensure!(
                     map_root(
                         self.currency,
@@ -462,10 +462,7 @@ impl StateIndex {
             "snapshot does not match authenticated native checkpoint"
         );
         let mut material = state.clone();
-        material.applied = rld_protocol::applied::AppliedIndex::new(
-            self.currency,
-            &format!("{}/applied", self.domain),
-        );
+        crate::state_storage::Backings::clear_material(&mut material);
         let bytes = rld_protocol::codec::encode_bounded(&material, MAX_RECORD)?;
         ensure!(
             bytes.len() <= MAX_RECORD,
@@ -480,7 +477,7 @@ impl StateIndex {
         for &name in COLLECTIONS {
             tables.push(Table {
                 name: name.into(),
-                root: if name == "applied" {
+                root: if crate::state_storage::DISK_MAPS.contains(&name) {
                     None
                 } else {
                     self.build(name, &state.collection(name)?)?
@@ -515,7 +512,7 @@ impl StateIndex {
     pub(crate) fn load(
         &self,
         h: &Checkpoint,
-        applied: rld_protocol::applied::AppliedIndex,
+        backings: crate::state_storage::Backings,
     ) -> Result<Option<State>> {
         let Some(m) = self.manifest(h)? else {
             return Ok(None);
@@ -529,18 +526,7 @@ impl StateIndex {
             "derived complete state digest"
         );
         let mut state: State = decode(&bytes, MAX_RECORD)?;
-        ensure!(
-            state.applied.is_empty()
-                && applied.is_complete()
-                && applied.commitment(self.currency, &format!("{}/applied", self.domain))?
-                    == m.tables
-                        .iter()
-                        .find(|t| t.name == "applied")
-                        .context("applied collection")?
-                        .commitment,
-            "snapshot applied material binding"
-        );
-        state.applied = applied;
+        backings.attach(&mut state)?;
         state.invariants()?;
         ensure!(
             state.currency == h.currency
@@ -692,7 +678,7 @@ impl StateIndex {
         collection: &str,
         key: Id,
     ) -> Result<Option<StateQuery>> {
-        if collection == "applied" {
+        if crate::state_storage::DISK_MAPS.contains(&collection) {
             return Ok(None);
         }
         let Some(m) = self.manifest(h)? else {

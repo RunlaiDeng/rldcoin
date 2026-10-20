@@ -72,12 +72,7 @@ impl ProofContext {
             .find(|c| c.id == id)
             .context("controller")?
             .clone();
-        let birth = self
-            .state
-            .births
-            .iter()
-            .find(|b| b.controller == id)
-            .context("birth")?;
+        let birth = self.state.births.get(id)?.context("birth")?;
         let h = self.history.at(birth.sequence)?.context("birth header")?;
         let context = self;
         let terminal = Terminal {
@@ -142,49 +137,49 @@ impl ProofContext {
             top_position,
         )?;
         let tag = format!("{}/{}", state.domain, collection);
-        let (member, absence) = if collection == "applied" {
-            let step = state.applied.access_step(key)?;
-            (step.member, step.absence)
-        } else {
-            let entries = state.collection(collection)?;
-            match entries.binary_search_by_key(&key, |e| e.key) {
-                Ok(i) => (
-                    Some(rld_protocol::merkle::prove(
-                        state.currency,
-                        &tag,
-                        &entries,
-                        i,
-                    )?),
-                    None,
-                ),
-                Err(i) => (
-                    None,
-                    Some(rld_protocol::merkle::Absence {
-                        left: if i > 0 {
-                            Some(rld_protocol::merkle::prove(
-                                state.currency,
-                                &tag,
-                                &entries,
-                                i - 1,
-                            )?)
-                        } else {
-                            None
-                        },
-                        right: if i < entries.len() {
-                            Some(rld_protocol::merkle::prove(
-                                state.currency,
-                                &tag,
-                                &entries,
-                                i,
-                            )?)
-                        } else {
-                            None
-                        },
-                        count: entries.len() as u64,
-                    }),
-                ),
-            }
-        };
+        let (member, absence) =
+            if let Some(query) = crate::state_storage::Backings::query(&state, collection, key)? {
+                query
+            } else {
+                let entries = state.collection(collection)?;
+                match entries.binary_search_by_key(&key, |e| e.key) {
+                    Ok(i) => (
+                        Some(rld_protocol::merkle::prove(
+                            state.currency,
+                            &tag,
+                            &entries,
+                            i,
+                        )?),
+                        None,
+                    ),
+                    Err(i) => (
+                        None,
+                        Some(rld_protocol::merkle::Absence {
+                            left: if i > 0 {
+                                Some(rld_protocol::merkle::prove(
+                                    state.currency,
+                                    &tag,
+                                    &entries,
+                                    i - 1,
+                                )?)
+                            } else {
+                                None
+                            },
+                            right: if i < entries.len() {
+                                Some(rld_protocol::merkle::prove(
+                                    state.currency,
+                                    &tag,
+                                    &entries,
+                                    i,
+                                )?)
+                            } else {
+                                None
+                            },
+                            count: entries.len() as u64,
+                        }),
+                    ),
+                }
+            };
         let query = crate::state_index::StateQuery {
             collection: collection.into(),
             top,
@@ -208,11 +203,9 @@ impl ProofContext {
         if let (Some(index), Some((record, snapshot))) =
             (&self.state_index, self.history.material(sequence)?)
         {
-            match self
-                .state
-                .applied
-                .historical_storage(&snapshot)
-                .and_then(|applied| index.load(&record.header, applied))
+            match crate::state_storage::Backings::capture(&self.state)
+                .historical(&snapshot)
+                .and_then(|backings| index.load(&record.header, backings))
             {
                 Ok(Some(state)) => return Ok(state),
                 Ok(None) => {}
@@ -220,13 +213,15 @@ impl ProofContext {
             }
         }
         let mut s = State::genesis(&self.initial.currency, &self.initial.genesis)?;
-        s.applied = self.state.applied.empty_storage()?;
+        crate::state_storage::Backings::capture(&self.state)
+            .empty()?
+            .attach(&mut s)?;
         let mut head = rld_protocol::state::genesis_id(s.currency, &self.initial.genesis);
         for c in self.history.range(0, sequence) {
             let c = c?;
             let (mut next, h) = s.execute_batch(&self.initial.currency, head, &c.batch)?;
             ensure!(h == c.header, "retained history replay");
-            next.applied.seal_storage()?;
+            crate::state_storage::Backings::seal(&mut next)?;
             head = h.id();
             s = next;
         }
@@ -369,12 +364,7 @@ impl ProofContext {
             .find(|c| c.id == id)
             .context("controller")?
             .clone();
-        let birth = self
-            .state
-            .births
-            .iter()
-            .find(|b| b.controller == id)
-            .context("birth")?;
+        let birth = self.state.births.get(id)?.context("birth")?;
         let certified = self
             .proofs
             .get(birth.sequence)?
@@ -391,12 +381,7 @@ impl ProofContext {
     pub fn controller_witness(&self, id: Id) -> Result<proof::ControllerWitness> {
         let creation = self.creation(id)?;
         let c = &creation.controller;
-        let birth = self
-            .state
-            .births
-            .iter()
-            .find(|b| b.controller == id)
-            .context("controller birth")?;
+        let birth = self.state.births.get(id)?.context("controller birth")?;
         let born = self
             .history
             .at(birth.sequence)?

@@ -1,3 +1,4 @@
+use crate::permanent::Permanent;
 use crate::table::{Key, Table};
 use crate::{
     codec::{Amount, Blob, Id, encode, hash, sorted_unique, tagged},
@@ -52,15 +53,15 @@ pub struct State {
     #[n(7)]
     pub controllers: Table<Controller>,
     #[n(8)]
-    pub births: Table<Birth>,
+    pub births: Permanent<Birth>,
     #[n(9)]
     pub coupon_uses: Table<Delegation>,
     #[n(10)]
     pub families: Table<Family>,
     #[n(11)]
-    pub decisions: Table<Decision>,
+    pub decisions: Permanent<Decision>,
     #[n(12)]
-    pub redemptions: Table<Redemption>,
+    pub redemptions: Permanent<Redemption>,
     #[n(13)]
     pub services: Table<Service>,
     #[n(14)]
@@ -78,9 +79,9 @@ pub struct State {
     #[n(20)]
     pub retired: Amount,
     #[n(21)]
-    pub used_funding: Table<Id>,
+    pub used_funding: Permanent<Id>,
     #[n(22)]
-    pub resolutions: Table<Decision>,
+    pub resolutions: Permanent<Decision>,
     #[n(23)]
     pub fee_policies: Table<FeePolicy>,
 }
@@ -97,11 +98,15 @@ impl State {
             grants: Table::from_sorted(c, &format!("{domain}/grants"), w.grants)?,
             segments: Table::from_sorted(c, &format!("{domain}/segments"), w.segments)?,
             controllers: Table::from_sorted(c, &format!("{domain}/controllers"), w.controllers)?,
-            births: Table::from_sorted(c, &format!("{domain}/births"), w.births)?,
+            births: Permanent::from_sorted(c, &format!("{domain}/births"), w.births)?,
             coupon_uses: Table::from_sorted(c, &format!("{domain}/coupon_uses"), w.coupon_uses)?,
             families: Table::from_sorted(c, &format!("{domain}/families"), w.families)?,
-            decisions: Table::from_sorted(c, &format!("{domain}/decisions"), w.decisions)?,
-            redemptions: Table::from_sorted(c, &format!("{domain}/redemptions"), w.redemptions)?,
+            decisions: Permanent::from_sorted(c, &format!("{domain}/decisions"), w.decisions)?,
+            redemptions: Permanent::from_sorted(
+                c,
+                &format!("{domain}/redemptions"),
+                w.redemptions,
+            )?,
             services: Table::from_sorted(c, &format!("{domain}/services"), w.services)?,
             covers: Table::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
             mints: Table::from_sorted(c, &format!("{domain}/mints"), w.mints)?,
@@ -114,8 +119,12 @@ impl State {
             pool_next: w.pool_next,
             minted: w.minted,
             retired: w.retired,
-            used_funding: Table::from_sorted(c, &format!("{domain}/funding"), w.used_funding)?,
-            resolutions: Table::from_sorted(c, &format!("{domain}/resolutions"), w.resolutions)?,
+            used_funding: Permanent::from_sorted(c, &format!("{domain}/funding"), w.used_funding)?,
+            resolutions: Permanent::from_sorted(
+                c,
+                &format!("{domain}/resolutions"),
+                w.resolutions,
+            )?,
             fee_policies: Table::from_sorted(c, &format!("{domain}/fee_policies"), w.fee_policies)?,
         })
     }
@@ -240,11 +249,11 @@ impl State {
             grants: Table::new(c, &format!("{}/grants", config.domain)),
             segments: Table::new(c, &format!("{}/segments", config.domain)),
             controllers: Table::new(c, &format!("{}/controllers", config.domain)),
-            births: Table::new(c, &format!("{}/births", config.domain)),
+            births: Permanent::new(c, &format!("{}/births", config.domain)),
             coupon_uses: Table::new(c, &format!("{}/coupon_uses", config.domain)),
             families: Table::new(c, &format!("{}/families", config.domain)),
-            decisions: Table::new(c, &format!("{}/decisions", config.domain)),
-            redemptions: Table::new(c, &format!("{}/redemptions", config.domain)),
+            decisions: Permanent::new(c, &format!("{}/decisions", config.domain)),
+            redemptions: Permanent::new(c, &format!("{}/redemptions", config.domain)),
             services: Table::new(c, &format!("{}/services", config.domain)),
             covers: Table::new(c, &format!("{}/covers", config.domain)),
             mints: Table::new(c, &format!("{}/mints", config.domain)),
@@ -253,8 +262,8 @@ impl State {
             pool_next: 0,
             minted: Amount(0),
             retired: Amount(0),
-            used_funding: Table::new(c, &format!("{}/funding", config.domain)),
-            resolutions: Table::new(c, &format!("{}/resolutions", config.domain)),
+            used_funding: Permanent::new(c, &format!("{}/funding", config.domain)),
+            resolutions: Permanent::new(c, &format!("{}/resolutions", config.domain)),
         };
         if state.domain == currency.bootstrap {
             let cover = Cover {
@@ -344,23 +353,19 @@ impl State {
             .commitment(self.currency, &format!("{}/resolutions", self.domain))?;
         self.fee_policies
             .commitment(self.currency, &format!("{}/fee_policies", self.domain))?;
-        // Applied-key order/uniqueness is enforced by its private complete-table
-        // constructors or exact root-bound append/duplicate proofs, rather than
-        // materializing every permanent operation ID for this check.
+        // Applied and Permanent keys are unique/ordered by their private sorted
+        // constructors and duplicate-refusing append paths. No replacement or
+        // removal API exists. Do not enumerate those permanent keys again here;
+        // complete guest wire decoding still reconstructs every native record.
         for keys in [
             self.outputs.iter().map(|v| v.id).collect::<Vec<_>>(),
             self.grants.iter().map(|v| v.id).collect(),
             self.controllers.iter().map(|v| v.id).collect(),
-            self.births.iter().map(|v| v.controller).collect(),
             self.coupon_uses.iter().map(|v| v.coupon).collect(),
             self.families.iter().map(|v| v.id).collect(),
-            self.decisions.iter().map(|v| v.object).collect(),
-            self.redemptions.iter().map(|v| v.controller).collect(),
             self.services.iter().map(|v| v.id).collect(),
             self.covers.iter().map(|v| v.id(self.currency)).collect(),
             self.mints.iter().map(|v| v.event).collect(),
-            self.used_funding.iter().copied().collect(),
-            self.resolutions.iter().map(|v| v.object).collect(),
         ] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
         }
@@ -415,18 +420,18 @@ impl State {
             "grants" => self.grants.entries(),
             "segments" => self.segments.entries(),
             "controllers" => self.controllers.entries(),
-            "births" => self.births.entries(),
+            "births" => self.births.entries(c)?,
             "coupon_uses" => self.coupon_uses.entries(),
             "families" => self.families.entries(),
-            "decisions" => self.decisions.entries(),
-            "redemptions" => self.redemptions.entries(),
+            "decisions" => self.decisions.entries(c)?,
+            "redemptions" => self.redemptions.entries(c)?,
             "services" => self.services.entries(),
             "covers" => self.covers.entries(),
             "mints" => self.mints.entries(),
             "applied" => self.applied.entries()?,
             "incidents" => self.incidents.entries(),
-            "funding" => self.used_funding.entries(),
-            "resolutions" => self.resolutions.entries(),
+            "funding" => self.used_funding.entries(c)?,
+            "resolutions" => self.resolutions.entries(c)?,
             "fee_policies" => self.fee_policies.entries(),
             "counters" => vec![Entry {
                 key: Id::ZERO,
@@ -1041,7 +1046,7 @@ impl State {
                 ensure!(
                     x.source == self.domain
                         && self.controllers.iter().any(|c| c == x)
-                        && self.redemptions.get(x.id).is_none(),
+                        && self.redemptions.get(x.id)?.is_none(),
                     "recovery source/redemption"
                 );
                 verifier.native(&rejected.destination)?;
@@ -1306,7 +1311,7 @@ impl State {
                         && fam.count <= 4096
                         && fam.units >= fam.count as u64
                         && self.families.get(fam.id).is_none()
-                        && !self.used_funding.contains(&fam.funding),
+                        && !self.used_funding.contains(&fam.funding, self.currency)?,
                     "new capability family"
                 );
                 crypto::authorize(&fam.issuer, &op.authorizations, &op.signing_bytes())?;
@@ -1463,13 +1468,10 @@ impl State {
                 ensure!(
                     c.source == self.domain
                         && self.controllers.iter().any(|x| x == c)
-                        && !self
-                            .redemptions
-                            .iter()
-                            .any(|r| r.controller == c.id && r.kind == 1),
+                        && !self.redemptions.get(c.id)?.is_some_and(|r| r.kind == 1),
                     "export observation"
                 );
-                if self.resolutions.get(c.id).is_none() {
+                if self.resolutions.get(c.id)?.is_none() {
                     self.resolutions.insert(Decision {
                         object: c.id,
                         coupon: c.ticket.coupon,
@@ -1551,13 +1553,14 @@ impl State {
                 && self.pool_next < crate::KEY_COUNT,
             "used coupon/controller/pool"
         );
-        let outstanding = self
-            .controllers
-            .iter()
-            .filter(|x| {
-                self.resolutions.get(x.id).is_none() && self.redemptions.get(x.id).is_none()
-            })
-            .count();
+        let mut outstanding = 0usize;
+        for x in self.controllers.iter() {
+            if self.resolutions.get(x.id)?.is_none() && self.redemptions.get(x.id)?.is_none() {
+                outstanding = outstanding
+                    .checked_add(1)
+                    .context("controller count exhaustion")?;
+            }
+        }
         ensure!(
             outstanding < self.configuration.limits.controllers as usize,
             "outstanding-controller capacity"
@@ -1769,14 +1772,11 @@ impl State {
             .clone();
         let birth = self
             .births
-            .get(c.id)
+            .get(c.id)?
             .ok_or_else(|| anyhow::anyhow!("missing birth"))?;
         ensure!(
-            self.redemptions.get(c.id).is_none()
-                && !self
-                    .resolutions
-                    .iter()
-                    .any(|r| r.object == c.id && r.outcome == 1)
+            self.redemptions.get(c.id)?.is_none()
+                && !self.resolutions.get(c.id)?.is_some_and(|r| r.outcome == 1)
                 && p.source_header.domain == self.domain
                 && p.source_header.sequence == birth.sequence
                 && p.source_header.configuration == c.configuration.id(),
@@ -1964,7 +1964,7 @@ impl State {
             family.source == c.source && c.coupon.index < family.count,
             "reserved coupon"
         );
-        if let Some(old) = self.decisions.get(c.id) {
+        if let Some(old) = self.decisions.get(c.id)? {
             ensure!(
                 old.coupon == c.ticket.coupon
                     && old.digest == c.ticket.digest(self.currency)

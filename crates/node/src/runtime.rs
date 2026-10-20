@@ -72,6 +72,7 @@ pub enum Event {
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
+    pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
     pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub state: Arc<State>,
@@ -154,12 +155,15 @@ impl Core {
             &initial,
         )?);
         state.applied = state.applied.on_empty_storage(applied_storage.clone())?;
+        let permanent_storage =
+            crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
         let proofs = crate::receipts::Receipts::open(&root.join("receipt-index"), &initial)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
         Ok(Self {
             initial,
             applied_storage,
+            permanent_storage,
             state_index: None,
             state: Arc::new(state),
             head,
@@ -207,7 +211,7 @@ impl Core {
             ensure!(
                 sequence == 0
                     && self.terminal_statement(namespace).is_none()
-                    && !self.state.resolutions.iter().any(|r| r.object == namespace),
+                    && !self.state.resolutions.get(namespace)?.is_some(),
                 "controller terminal"
             );
             (c.configuration.clone(), Some(c.pool_index))
@@ -513,15 +517,12 @@ impl Core {
                 ensure!(h == c.header, "committed native body");
                 crypto::verify_quorum(&c.configuration, self.state.domain, None, &c.qc, 3, h.id())?;
                 ensure!(c.qc.votes[0].sequence == h.sequence, "commit position");
-                next.applied.seal_storage()?;
+                crate::state_storage::Backings::seal(&mut next)?;
                 self.head = h.id();
                 self.state = Arc::new(next);
                 self.history.push(
                     c.clone(),
-                    self.state
-                        .applied
-                        .storage_snapshot()?
-                        .context("native applied snapshot")?,
+                    crate::state_storage::Backings::snapshot(&self.state)?,
                 )?;
                 for op in &c.batch.operations {
                     if let Command::Reject(r) = &op.command {
@@ -709,21 +710,15 @@ impl Node {
                         .core
                         .state
                         .resolutions
-                        .iter()
-                        .any(|d| d.object == r.creation.controller.id)
+                        .get(r.creation.controller.id)?
+                        .is_some()
                     {
                         self.internal(Command::ObserveExport(r), "observe-export")?;
                     }
                 }
                 Payload::Cancel(mut c) => {
                     c.qc = record.qc;
-                    if !self
-                        .core
-                        .state
-                        .redemptions
-                        .iter()
-                        .any(|d| d.controller == c.controller)
-                    {
+                    if !self.core.state.redemptions.get(c.controller)?.is_some() {
                         self.internal(Command::RedeemCancel(c), "redeem-cancel")?;
                     }
                 }
@@ -809,12 +804,7 @@ impl Node {
             if (v.namespace == self.core.state.domain && v.sequence > self.core.state.sequence)
                 || (v.namespace != self.core.state.domain
                     && self.core.terminal_statement(v.namespace).is_none()
-                    && !self
-                        .core
-                        .state
-                        .resolutions
-                        .iter()
-                        .any(|r| r.object == v.namespace))
+                    && !self.core.state.resolutions.get(v.namespace)?.is_some())
             {
                 let _ = self.core.engine(v.namespace, v.sequence);
             }
@@ -1016,15 +1006,15 @@ impl Node {
                 .core
                 .state
                 .decisions
-                .get(r.creation.controller.id)
+                .get(r.creation.controller.id)?
                 .is_some(),
             Command::ObserveExport(r) => self
                 .core
                 .state
                 .resolutions
-                .get(r.creation.controller.id)
+                .get(r.creation.controller.id)?
                 .is_some(),
-            Command::RedeemCancel(c) => self.core.state.redemptions.get(c.controller).is_some(),
+            Command::RedeemCancel(c) => self.core.state.redemptions.get(c.controller)?.is_some(),
             _ => false,
         };
         if retained {
@@ -1229,21 +1219,15 @@ impl Node {
                                         .core
                                         .state
                                         .resolutions
-                                        .iter()
-                                        .any(|d| d.object == r.creation.controller.id)
+                                        .get(r.creation.controller.id)?
+                                        .is_some()
                                     {
                                         self.internal(Command::ObserveExport(r), "observe-export")?;
                                     }
                                 }
                                 Payload::Cancel(mut c) => {
                                     c.qc = qc;
-                                    if !self
-                                        .core
-                                        .state
-                                        .redemptions
-                                        .iter()
-                                        .any(|d| d.controller == c.controller)
-                                    {
+                                    if !self.core.state.redemptions.get(c.controller)?.is_some() {
                                         self.internal(Command::RedeemCancel(c), "redeem-cancel")?;
                                     }
                                 }
@@ -1302,8 +1286,8 @@ impl Node {
                     .core
                     .state
                     .decisions
-                    .iter()
-                    .any(|d| d.object == r.creation.controller.id)
+                    .get(r.creation.controller.id)?
+                    .is_some()
                 {
                     self.internal(Command::Import(r), "import")?;
                 }

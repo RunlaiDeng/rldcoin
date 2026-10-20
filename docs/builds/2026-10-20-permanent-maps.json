@@ -1,0 +1,483 @@
+{
+  "format": "RLD-COMPILE-STAGE-RECEIPT-1",
+  "recorded_at_utc": "2026-10-20T11:43:35.566937+00:00",
+  "stage": "five_native_permanent_maps_disk_execution",
+  "parent_commit": "f890e5c91ddeb500342fffef62468ba3521f3951",
+  "project_complete": false,
+  "paper_sha256": "30ad8bfeca1a5da98ebd92f5f1acda56348f6d9686508d3da6180c873d4487e8",
+  "paper_or_map_root_algorithm_changed": false,
+  "source_inventory_sha256": "270ac735c47c0bc65fde4e7430ede0a8822a44fe917b6d54209cadd749870028",
+  "source_files": [
+    {
+      "path": ".github/workflows/build.yml",
+      "sha256": "7eb97c568f555ae6e53d410aed1d60b44a618fe3122b7c55b4108f0de8bfea74",
+      "bytes": 932
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "b5c6d08b6c12f2d9ef6a1ec434cac51eb64998c1a393fa53eb23ce1abcc048df",
+      "bytes": 85
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "ca0537810764cf03c067b103402ca94f42262c9e95d13b95a8bcff38e9b162ee",
+      "bytes": 127779
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "1bebe75fb10e58e9f5e58bdee82e29b7e507e5ec394825b368a6580af4ef196b",
+      "bytes": 1261
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "path": "README.md",
+      "sha256": "3016d1a45ed7f002840ff655836a46f539bc444c6d4c3635ef37ae16873a4bd0",
+      "bytes": 5151
+    },
+    {
+      "path": "crates/cli/Cargo.toml",
+      "sha256": "096708c68ee7fc77a37b5e57f853fee86d72fb4b8771bc68f8eeda5dde2b0f2c",
+      "bytes": 488
+    },
+    {
+      "path": "crates/cli/src/builder.rs",
+      "sha256": "3c1405389fd131ef9fad275f91ca4f923e69019557567a519049799b2623151d",
+      "bytes": 16860
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "sha256": "f6a427c0cd7d997f04993deec82b18efbeb93acd7ec6b3dda4e7dd479d7e47a3",
+      "bytes": 66836
+    },
+    {
+      "path": "crates/node/Cargo.toml",
+      "sha256": "71f3f0b0acd427d3eb18fd57e73611239cdeeeb437f7136135aa02297b043dea",
+      "bytes": 832
+    },
+    {
+      "path": "crates/node/build.rs",
+      "sha256": "44bcf26ebd94d5c37663a2e8d09415bb5922f4a75956fc8441e747a8c565a454",
+      "bytes": 2992
+    },
+    {
+      "path": "crates/node/src/applied_store.rs",
+      "sha256": "1b940d685c4b848cb6ef330cd4e67730db5e8bc5f442fef20eabfd8cd22a2b9c",
+      "bytes": 18503
+    },
+    {
+      "path": "crates/node/src/archive.rs",
+      "sha256": "a8a57a1e175e7ca6127c811947dde2b986efab6db57a18ea0c5398363cc1b51d",
+      "bytes": 13190
+    },
+    {
+      "path": "crates/node/src/custody.rs",
+      "sha256": "95075c7e2e2f465f87214a7e0fbb47f8a5eafe290b04c5da4940bca4209c5684",
+      "bytes": 24939
+    },
+    {
+      "path": "crates/node/src/history.rs",
+      "sha256": "70a4bb9d2aea54702a109e9ab3db14c36f6c82922988b70220318fb15fd70495",
+      "bytes": 21115
+    },
+    {
+      "path": "crates/node/src/lib.rs",
+      "sha256": "81dcb4ee04e29c10fb959a56d8958d5582c97ee2f7e4f57bece11ccbc6892a59",
+      "bytes": 642
+    },
+    {
+      "path": "crates/node/src/object_store.rs",
+      "sha256": "084468f0cba56ae3cde463203a85c89aa524fcd87c5cf7f5d53e8e58a9761245",
+      "bytes": 10217
+    },
+    {
+      "path": "crates/node/src/offline.rs",
+      "sha256": "56e7144ae57a7ef345d5701d2c717fe5e4c9c4f0b9f62774a48e782b776a859e",
+      "bytes": 3219
+    },
+    {
+      "path": "crates/node/src/permanent_store.rs",
+      "sha256": "622b09f7dff8f1e843818dd9071a2d78e4f879813d4cf8cbf0eb57ac71c8b752",
+      "bytes": 19847
+    },
+    {
+      "path": "crates/node/src/proving.rs",
+      "sha256": "ca546cff0b83e4b0ceaf4bd9a72ed16b03e1075863059a7299ff6d99517a9801",
+      "bytes": 16079
+    },
+    {
+      "path": "crates/node/src/receipts.rs",
+      "sha256": "c79d907376b425e7063ed6e2970cade1f8d30fdb47ed41cd41397ea691d1126a",
+      "bytes": 10535
+    },
+    {
+      "path": "crates/node/src/runtime.rs",
+      "sha256": "57b66078c9fa5256143cd2bbadb7ac03c056da2bf1280d077e73e9896f373977",
+      "bytes": 64961
+    },
+    {
+      "path": "crates/node/src/service.rs",
+      "sha256": "f067287b1fff8586c62ec1a5bf5df7c9f08e4ad0e641ebfce42087ee5aac3bb0",
+      "bytes": 28981
+    },
+    {
+      "path": "crates/node/src/service/proofs.rs",
+      "sha256": "3999c845b6671b93bfc1779d7e3bac26ade38c1d04b09b6b97af0a07a81d60c8",
+      "bytes": 22913
+    },
+    {
+      "path": "crates/node/src/service/state_indexer.rs",
+      "sha256": "b962fda5928b45daef308e197e2492556ff62e9d73241d045c2e2cd53cd54d1a",
+      "bytes": 4253
+    },
+    {
+      "path": "crates/node/src/state_index.rs",
+      "sha256": "2569bbef1d7643fa9c76621cc4f9fa4af24f896a4a78f251547ff97f15f4a651",
+      "bytes": 27344
+    },
+    {
+      "path": "crates/node/src/state_storage.rs",
+      "sha256": "c1741eb17c51f4cc9abc8b018eb45ed84a54488f741d2878476e886b955a039c",
+      "bytes": 7075
+    },
+    {
+      "path": "crates/node/src/store.rs",
+      "sha256": "195524204f199fe577301c86a8ad8bb7d8b66fe484491d46e4171aa33c87525d",
+      "bytes": 12574
+    },
+    {
+      "path": "crates/node/src/transport.rs",
+      "sha256": "5c7a378f236e9872ee8a47ce863506c7595b681f31d85e6ba000408ea2dbfbca",
+      "bytes": 11522
+    },
+    {
+      "path": "crates/node/src/transport/fragments.rs",
+      "sha256": "6d81a68ec563ebfc74e4f257803a2302f01d21d77bc252b3f0551bfcd23311de",
+      "bytes": 9763
+    },
+    {
+      "path": "crates/protocol/Cargo.toml",
+      "sha256": "d5c0d4c8c685d885f2c92ecbd01ec95f32a633b0e2b5e071fabff33bd6716875",
+      "bytes": 424
+    },
+    {
+      "path": "crates/protocol/src/applied.rs",
+      "sha256": "65600750a4c3ef48310389118ff96345c8b309248d1b693b8f0f277bb0624037",
+      "bytes": 13564
+    },
+    {
+      "path": "crates/protocol/src/codec.rs",
+      "sha256": "27a4bb4418e243e1c60b8e02800b776bb0c964eaa7170e2c806012e9631bce95",
+      "bytes": 10724
+    },
+    {
+      "path": "crates/protocol/src/consensus.rs",
+      "sha256": "d943071311beb1e37790cf674a82186d880a9a8bef9d09b7cd47245d43b6fe16",
+      "bytes": 18681
+    },
+    {
+      "path": "crates/protocol/src/crypto.rs",
+      "sha256": "bde7e8d6685cce5dbb9b292c8c681eda959960d0d5a185ca1ff52d20b65cb26e",
+      "bytes": 6401
+    },
+    {
+      "path": "crates/protocol/src/lib.rs",
+      "sha256": "45b0d5873f115bdae6d06522d2143d0b6635ab3a48fba5a5b55f80edcbbebdfe",
+      "bytes": 716
+    },
+    {
+      "path": "crates/protocol/src/merkle.rs",
+      "sha256": "98db5c0377ea1c9aebe9068ec8ab7d64647bd97086c16e2e38b6e1b7cf8fcd86",
+      "bytes": 15524
+    },
+    {
+      "path": "crates/protocol/src/merkle/insertion.rs",
+      "sha256": "e86fe13046a4b31635d68c40d3f14c940e4e0f5dc6301d97980bdbff4b32fdd2",
+      "bytes": 3761
+    },
+    {
+      "path": "crates/protocol/src/model.rs",
+      "sha256": "e066a34668766a807a4dcc565482d4df195bf65fd00e1774db33d26a495446ee",
+      "bytes": 19821
+    },
+    {
+      "path": "crates/protocol/src/permanent.rs",
+      "sha256": "dc915b6fd71832759c4dec2bb827d2f4c949e5978835b242f6738e761b1bb8f4",
+      "bytes": 8329
+    },
+    {
+      "path": "crates/protocol/src/proof.rs",
+      "sha256": "ecc39d401e75146be065daecc85426d840c9f4f04c342106afb5a3661fe1b064",
+      "bytes": 23038
+    },
+    {
+      "path": "crates/protocol/src/state.rs",
+      "sha256": "d35fa636a71f8cabcf28b33fcb897d9fab462e05edd8e69948c9594825055859",
+      "bytes": 81992
+    },
+    {
+      "path": "crates/protocol/src/state/wire.rs",
+      "sha256": "201751efbce79d4b162deb06b3b07d2f51111b720003709b52bd83453b1d1365",
+      "bytes": 733
+    },
+    {
+      "path": "crates/protocol/src/table.rs",
+      "sha256": "96664bedc96f7506e710037f04927afa7f8ca679aa0be5b63c68dcf800634997",
+      "bytes": 14896
+    },
+    {
+      "path": "crates/protocol/src/work.rs",
+      "sha256": "db9f03e35d2718ef6771ff0272fbf637be8d19937ccfc430c0279420f87248b1",
+      "bytes": 2508
+    },
+    {
+      "path": "crates/prover/Cargo.toml",
+      "sha256": "967ea0fa5d00792a0d01d27daba3c4f1ac40ea79652af17a50092db093024027",
+      "bytes": 431
+    },
+    {
+      "path": "crates/prover/src/main.rs",
+      "sha256": "a4174f42f7dd420348087ac27252436cdfaa9f26b6a709d373a095c28b877868",
+      "bytes": 6552
+    },
+    {
+      "path": "deploy/config/node.json",
+      "sha256": "3e5a3e844e871cbb47b26a008c60fdb25068caa3ba368bafe4e69bb90bf511ce",
+      "bytes": 365
+    },
+    {
+      "path": "deploy/systemd/rldcoin.service",
+      "sha256": "866b8f6234abd7542b47f2b69c125dced711c5555121c6959e02bd874540b269",
+      "bytes": 1526
+    },
+    {
+      "path": "docs/BUILD.json",
+      "sha256": "2b40f86cb5191d5fa717fb014f572b5ae7dba51df41a67ef38af483102fc7764",
+      "bytes": 9180
+    },
+    {
+      "path": "docs/IMPLEMENTATION.md",
+      "sha256": "6552ed6b266650cc68611b89c7add8dbf42c41ca0c52735689fca972ef0d3ece",
+      "bytes": 27428
+    },
+    {
+      "path": "docs/OPERATIONS.md",
+      "sha256": "2426c9d6e9d01852e5e6edd998fec4c8c3b7615297127ea95b92055375ceae27",
+      "bytes": 29351
+    },
+    {
+      "path": "docs/engineering/APPLIED_DISK.md",
+      "sha256": "e8bce3a71ce7982f45496342a90b1df9557dd5d69cd7fc6259a1fb0d4aae4dc2",
+      "bytes": 7820
+    },
+    {
+      "path": "docs/engineering/DISK_HISTORY.md",
+      "sha256": "7bb074ad6758f4364c9046b89e63a9db38a6963f7f10ba105598d2f857fea0d3",
+      "bytes": 6842
+    },
+    {
+      "path": "docs/engineering/DISK_RECEIPTS.md",
+      "sha256": "682ce3d3b8ecce174535235c714f268b16dfec3ea3855494940fee535b630927",
+      "bytes": 5967
+    },
+    {
+      "path": "docs/engineering/INCREMENTAL_STATE.md",
+      "sha256": "3f0d9568277453a7cb9348b852a2ae97a47f20a4b2f22b7997d653c19489589a",
+      "bytes": 4718
+    },
+    {
+      "path": "docs/engineering/INDEXED_NATIVE_WITNESS.md",
+      "sha256": "98321a877e842d798379a3bbef95180f8e19eed53b5a9ec0728c9fb23c3bc49a",
+      "bytes": 7629
+    },
+    {
+      "path": "docs/engineering/PERMANENT_MAPS.md",
+      "sha256": "a62ae89cc034c29e5d5f0454f497dce9a6fa8f98664ed658c154c37bf2236914",
+      "bytes": 6879
+    },
+    {
+      "path": "docs/engineering/PROOF_SCHEDULING.md",
+      "sha256": "0bf56ff62500052e2915bb6b35a5d69470e7417e40b43793328acb7c12ed8720",
+      "bytes": 6486
+    },
+    {
+      "path": "docs/engineering/STATE_INDEX.md",
+      "sha256": "ccdae70174748a1a2a37afe6e702fbe05e2c6bcd8643de2a8fbb2a0d42e92b9b",
+      "bytes": 9128
+    },
+    {
+      "path": "docs/operations/MAINNET_DEPLOYMENT.md",
+      "sha256": "d4ef26872d394ba15466fa7bf7c29affbd25c347250010e854a05916f889b657",
+      "bytes": 5067
+    },
+    {
+      "path": "docs/proposals/INCREMENTAL_MAP_ROOT_AMENDMENT.md",
+      "sha256": "5a04a08bc1481ed0f4ee35be10ca1f4794e35705c44dc481d43c8af4ed0201ad",
+      "bytes": 5409
+    },
+    {
+      "path": "methods/Cargo.toml",
+      "sha256": "4a230522c523ca2168509284d866706193abeb9ceb121dd715c8984ba496da29",
+      "bytes": 216
+    },
+    {
+      "path": "methods/build.rs",
+      "sha256": "d3d0aa4add6d6294b4cd9199c9b7162187b7383980cda986051fe94497334f75",
+      "bytes": 48
+    },
+    {
+      "path": "methods/guest/Cargo.lock",
+      "sha256": "9c4942dd1f2398e495a85b7246f21784172e2d78043613047627bf9ca1d982c8",
+      "bytes": 42453
+    },
+    {
+      "path": "methods/guest/Cargo.toml",
+      "sha256": "e17882bbe7899ee4090ad9d7c03a67c6e55a5a5cbdd0567567951d7abc658e92",
+      "bytes": 413
+    },
+    {
+      "path": "methods/guest/src/bin/controller.rs",
+      "sha256": "2d01bceb0fda64f6d2e0633e80cc66b0c8196fdf442b1caf0f4ff1fc57e4801d",
+      "bytes": 504
+    },
+    {
+      "path": "methods/guest/src/bin/native.rs",
+      "sha256": "787e2688336206c91e70780d5eb3f798c6d6992faf21a3d6852ccc447158b97f",
+      "bytes": 981
+    },
+    {
+      "path": "methods/src/lib.rs",
+      "sha256": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255",
+      "bytes": 51
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "07487db9d6b45de2f308f9fb578c9c46041381c3ee44ef782eca64150a394772",
+      "bytes": 66
+    },
+    {
+      "path": "spec/EXECUTABLE_PROFILE.json",
+      "sha256": "ae2fe645de99b8c04a0a3118a61c907e50a0c9a4ae729acd8735cc08453d44ec",
+      "bytes": 4084
+    },
+    {
+      "path": "spec/WHITEPAPER.md",
+      "sha256": "30ad8bfeca1a5da98ebd92f5f1acda56348f6d9686508d3da6180c873d4487e8",
+      "bytes": 83163
+    },
+    {
+      "path": "spec/WHITEPAPER_RELEASE.json",
+      "sha256": "c07f65b87ad8a1869775fba24db2d1aa32e5dac74863b580214d9954e6fa75bb",
+      "bytes": 10077
+    },
+    {
+      "path": "spec/WHITEPAPER_RELEASE_2026-10-20_PREFIX.json",
+      "sha256": "7fb0f2d38edcd032bda28f31413970fd944c6887f84a3d455bb5bca83b9ed111",
+      "bytes": 4225
+    },
+    {
+      "path": "tools/build-macos.sh",
+      "sha256": "197da3ccbc48a604f07c2dfc8941bcc3458cb846eea13109bc00ae9cc0b58d10",
+      "bytes": 242
+    },
+    {
+      "path": "tools/macos-toolchain/xcrun",
+      "sha256": "3159e30e6c310e6121308edb28c215663ae100406299894f64d80cfb0f820cf9",
+      "bytes": 401
+    },
+    {
+      "path": "tools/pin-executable-profile.py",
+      "sha256": "decec0ca006673e3caae325b9b1af4f76325cb5c344f4bb6e18a921a33466b99",
+      "bytes": 1675
+    }
+  ],
+  "proof_profile": {
+    "native_image": "e43852a259f002cb6c1e79c50bb69214249ecccfb40c82d8d7b2b560744cd82e",
+    "controller_image": "6ee661892783bedfa1adf7962305706de895f63b763b06136336ef03cce6b4e3",
+    "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "backend": "risc0-zkvm-3.0.6-succinct"
+  },
+  "executable_native_proof_source_digest": "51f26d54321ddeea74869238aeb948b40501f9cbd486a5a993880af7a6b31029",
+  "actual_prover_profile_matches_embedded_host_profile": true,
+  "proof_programs_unchanged_from_parent": false,
+  "binaries": [
+    {
+      "path": "target/release/rld",
+      "sha256": "2fe01ce714588e04cd1b8b5de7cbb9571c6891a97d95fe2cf185964374787bf8",
+      "bytes": 19864416
+    },
+    {
+      "path": "target/release/rld-prover",
+      "sha256": "c7e9925c48c22e059cb518da2358efedcc3a0e10b1e7197cfea82ff87e99ca3f",
+      "bytes": 97614544
+    }
+  ],
+  "checks": {
+    "protocol_check": "passed",
+    "host_cli_check": "passed",
+    "real_guest_and_prover_bootstrap_build": "passed; final source rebuilt and pinned",
+    "release_workspace_build": "passed; observed exit 0",
+    "format": "passed",
+    "source_inventory_unchanged_through_final_build": true,
+    "actual_profile_comparison": "passed",
+    "source_review": "performed including permanent-key induction, point-lookup predicates, candidate publication and historical root binding; not independent security review",
+    "local_test_suites": "not run by owner direction",
+    "fixtures": "none created",
+    "runtime_or_payment_campaign": "not run",
+    "root_update_runtime_comparison": "not run",
+    "crash_or_power_loss": "not run",
+    "memory_throughput_latency": "not measured",
+    "proof_generation_cost": "not measured"
+  },
+  "storage": {
+    "maps": [
+      "births",
+      "decisions",
+      "redemptions",
+      "resolutions",
+      "funding"
+    ],
+    "format": "RLD-PERMANENT-DISK-1",
+    "history": "RLD-VERIFIED-HISTORY-INDEX-3",
+    "material": "RLD-STATE-WITNESS-INDEX-4",
+    "observation": "RLD-NATIVE-DISK-OBSERVATION-1",
+    "observation_bytes": 4096,
+    "page_bytes": 4096,
+    "shared_raw_cache_objects": 4096,
+    "shared_raw_cache_bytes": 16777216,
+    "working_overlay_nodes_per_map": 8192,
+    "working_overlay_bytes_per_map": 33554432,
+    "five_map_maximum_working_bytes": 167772160,
+    "object_admission_bytes": 1099511627776,
+    "object_admission_files": 4194304,
+    "native_wire": "Same complete sorted arrays at unchanged State positions/tags; actual guest reconstructs full five maps. No filesystem variant in guest.",
+    "uniqueness": "Private sorted/direct-key constructors and duplicate-refusing append paths; no replacement/remove. No repeated whole-key vectors for these maps.",
+    "authority": "Checked empty genesis then complete native/QC event replay; no disk root adopts live ledger.",
+    "publication": "Candidate working bytes only. Post-native/header/QC seal all six disk maps; bind verified history then authoritative append and install staged Core. All published residue retained.",
+    "historical_queries": "Exact verified-history observations plus empty split material placeholders, complete invariants and exact native checkpoint root; native paths for membership/absence.",
+    "errors": "Fallible owned lookup/record streams; absence verified through exact native neighbor proofs. Never default failed decision/funding/redemption reads to absence.",
+    "remaining": "Compact guest witnesses for these five maps remain unimplemented. Other native maps/queues/scans, object amplification, archive packing/rotation/funding, custody and operational qualification remain open."
+  },
+  "previous_stage_ci": {
+    "commit": "f890e5c91ddeb500342fffef62468ba3521f3951",
+    "run": 39415882131,
+    "observed_status": "completed",
+    "observed_conclusion": "success",
+    "host": "success",
+    "guest_and_prover": "success"
+  },
+  "warnings": [
+    "upstream block 0.1.6 future-incompatibility warning"
+  ],
+  "network_keys_created": false,
+  "network_started": false,
+  "monetary_genesis_created": false,
+  "legacy_value_or_keys_migrated": false,
+  "old_program_profile_handling": "Old descriptors/derived bindings refuse unchanged; no in-place suite/value/key migration.",
+  "implementation_analysis": "docs/engineering/PERMANENT_MAPS.md",
+  "completion_boundaries": "docs/IMPLEMENTATION.md"
+}

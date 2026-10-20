@@ -453,8 +453,7 @@ pub fn validate_cancel_candidate(
         .ok_or_else(|| anyhow::anyhow!("local controller absent"))?;
     let birth = state
         .births
-        .iter()
-        .find(|b| b.controller == c.id)
+        .get(c.id)?
         .ok_or_else(|| anyhow::anyhow!("controller birth absent"))?;
     ensure!(
         birth.sequence == cancel.source_header.sequence

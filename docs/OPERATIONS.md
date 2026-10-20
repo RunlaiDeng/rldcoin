@@ -217,7 +217,8 @@ Every normally served node runs a background derived-state indexer even when its
 local prover is disabled. It indexes current state, outstanding controller births
 and the latest certified proof base using retained native checkpoints. The private
 `state-index/` directory inside the node store contains a network/genesis binding,
-complete canonical state chunks, bounded Merkle pages and checkpoint manifests.
+split canonical state chunks, bounded Merkle pages for resident collections and
+checkpoint manifests. Six disk map observations are bound through verified history.
 Its immutable objects are shared by exact content. All admitted files, including
 partial writes, count toward the fixed 2-GiB / 65,536-file derived cache budget.
 Full cache capacity stops cache growth; it does not expire money or delete native
@@ -270,7 +271,7 @@ succession preserving an already running RLD identity is still unfinished.
 
 The 20 October owner-approved amendment changes native map roots and carried
 membership/absence paths. The derived index binding is now
-`RLD-STATE-WITNESS-INDEX-3`. Old executable descriptors and old cache bindings
+`RLD-STATE-WITNESS-INDEX-4`. Old executable descriptors and old cache bindings
 refuse unchanged; do not rewrite their identities or reuse monetary state/keys.
 Use the exact rebuilt `rld profile` and real `rld-prover profile` binding. This
 prelaunch source revision creates no network or monetary genesis.
@@ -284,7 +285,7 @@ establish freshness or spendability. A capacity refusal never refunds exports.
 ## Disk-resident verified native history
 
 Every local node now maintains a private `history-index/` under its store. Its
-`RLD-VERIFIED-HISTORY-INDEX-2` binding fixes currency, domain and genesis. Complete
+`RLD-VERIFIED-HISTORY-INDEX-3` binding fixes currency, domain and genesis. Complete
 native committed records and immutable 32-way pages are content-addressed in
 256 digest shards. Only the process's verified root/length is adopted. Node open
 still validates every authoritative event from the separately retained latest
@@ -333,8 +334,8 @@ the builder selects full native execution under the original bounds. Indexed
 byte-budget exhaustion also selects full input, since path overhead can exceed
 a short complete map. A full
 input that cannot fit still refuses; no larger bound, guessed height or weaker
-proof mode is enabled. Genesis execution always uses complete state. The host operation map now uses private disk storage; other collections remain
-resident. Proving cost, worst-case fallback availability and
+proof mode is enabled. Genesis execution always uses complete state. The host operation map and five permanent decision/birth/funding maps now use
+private disk storage; other collections remain resident. Proving cost, worst-case fallback availability and
 remaining collection scale are not qualified by source compilation.
 
 This changes actual native/controller image IDs. Use only the final rebuilt
@@ -359,11 +360,11 @@ objects are checked/synced; failed partials/orphans and all published old versio
 remain. Storage failure/exhaustion refuses unsupported publication, never refunds
 an export, deletes an operation ID, resets a counter or substitutes a root.
 
-Verified history V2 carries the sealed applied snapshot for each native record.
-State-material V3 omits the operation array in its private serialized material,
-retains its commitment, and must combine it with the exact snapshot from verified
-history before whole-checkpoint validation. That partial file is not standalone
-State or monetary evidence. Historical applied membership/absence uses native
+Verified history V3 carries all six sealed disk-map snapshots for each native
+record. State-material V4 omits their arrays in private serialized material,
+retains their commitments, and combines them with the exact observations from
+verified history before whole-checkpoint validation. That partial file is not
+standalone State or monetary evidence. Historical membership/absence uses native
 paths directly; complete public snapshots and full-witness fallback still stream
 all records under their original size bounds and propagate storage errors.
 
@@ -371,13 +372,13 @@ Old history/state-index bindings refuse unchanged. Preserve their directories
 and use their matching historical release or a fresh correctly bound private
 cache; never rewrite a currency, journal/head, monetary keys or balances. A damaged
 applied store must be retained. Stop the node and every proof/read worker, retain
-`applied-index/`, `history-index/` and `state-index/` under distinct private names,
-then cold-rebuild all three from the unchanged valid event journal and separately
-retained latest head. The applied store and history observations reference exact
-physical objects, so do not combine a new applied directory with old split roots.
+`permanent-index/`, `applied-index/`, `history-index/` and `state-index/` under
+distinct private names, then cold-rebuild all four from the unchanged valid event journal and separately
+retained latest head. The disk map and history observations reference exact physical objects, so do not
+combine new disk-map directories with old split roots.
 This is derived-data reconstruction, not a monetary genesis or value migration.
 
-Other collections, receipts and queues retain separate memory costs. Physical
+Other collections, decoded receipts and queues retain separate memory costs. Physical
 object amplification and archive funding/packing still need implementation and
 operational evidence. No measured memory, throughput, proof latency, independent
 freshness, crash/power-loss custody or mainnet qualification is claimed here.
@@ -411,3 +412,40 @@ No native/proof source or actual proof image changes in this host-only stage.
 The final full build still compares the actual host and prover profiles. No
 runtime memory, long-history throughput, crash/power-loss, paid archive packing
 or independent security result is established by that compilation.
+
+## Permanent native decision maps
+
+Normal nodes also open private `permanent-index/` with
+`RLD-PERMANENT-DISK-1`, bound to the exact currency/domain/genesis. Births,
+destination decisions, redemptions, source resolutions and consumed funding share
+its immutable objects and raw 4,096-object / 16-MiB cache. Each map binds its
+collection tag independently. `/v1/status.permanent_storage` exposes shared
+accounted usage and the existing 1-TiB / 4,194,304-file admission limits.
+
+Each map's unconfirmed working overlay is bounded by 8,192 nodes / 32 MiB; the
+five maps together permit up to 160 MiB of these working bytes, independently
+of the applied map and other memory. No tentative node is written before full
+native execution and exact QC validation. Sealing, verified-history publication
+and authoritative event append retain every published old/partial/orphan object.
+Capacity/corruption refuses, never recreates an unused funding ID or unresolved
+payment, deletes a decision or authorizes a refund.
+
+History V3 now binds a complete six-map storage observation (at most 4 KiB).
+State material V4 stores empty placeholders for those six maps and requires the
+separate verified-history observations plus exact full native root before use.
+Those caches are not standalone ledger snapshots. Full guest input still carries
+the five complete record arrays; this is not a new compact proof suite for them.
+
+Old executable/derived bindings refuse unchanged. Do not rewrite currency,
+keys, balances or old private stores. If reconstructing damaged derived material
+for the same compatible source, stop the node and every proof/read worker;
+privately retain all `permanent-index/`, `applied-index/`, `history-index/` and
+`state-index/` directories together, then cold replay the unchanged valid journal
+with its independently retained latest head into fresh derived directories.
+Do not combine new object owners with old physical observations. Receipt-index
+has independent complete certificate objects; no receipt root can initialize a
+ledger. This does not migrate an old program's currency to new programs.
+
+No runtime, memory, latency, daily-capacity or crash/power-loss result is claimed.
+Other maps, queues, archive packing/paid replicas and cryptographic succession
+remain separate implementation and qualification obligations.
