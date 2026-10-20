@@ -1,0 +1,270 @@
+{
+  "format": "RLD-CLEAN-REBUILD-COMPILE-RECEIPT-1",
+  "recorded_at_utc": "2026-10-20T00:05:35.310813+00:00",
+  "status": "compiled_experimental_implementation",
+  "project_complete": false,
+  "paper_sha256": "252a280044856a599c4a7fb1e7913d08776aa79f172db64275339be760662639",
+  "source_inventory_sha256": "b7f8fa6decaa6e8240087e1607a7b3b8fb374e16a2bc074772e607b12f109f71",
+  "source_files": [
+    {
+      "path": ".github/workflows/build.yml",
+      "sha256": "7eb97c568f555ae6e53d410aed1d60b44a618fe3122b7c55b4108f0de8bfea74",
+      "bytes": 932
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "b5c6d08b6c12f2d9ef6a1ec434cac51eb64998c1a393fa53eb23ce1abcc048df",
+      "bytes": 85
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "84191ec357ff4c8dd47e7cc94fcebc0f23f317f00ceddd9bc59a80ec202cd405",
+      "bytes": 127770
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "1bebe75fb10e58e9f5e58bdee82e29b7e507e5ec394825b368a6580af4ef196b",
+      "bytes": 1261
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "path": "README.md",
+      "sha256": "21661f7b09f8f870890f0005e5e017f2977828a773fac4cce692c65f8c8c8583",
+      "bytes": 3485
+    },
+    {
+      "path": "crates/cli/Cargo.toml",
+      "sha256": "096708c68ee7fc77a37b5e57f853fee86d72fb4b8771bc68f8eeda5dde2b0f2c",
+      "bytes": 488
+    },
+    {
+      "path": "crates/cli/src/builder.rs",
+      "sha256": "3c1405389fd131ef9fad275f91ca4f923e69019557567a519049799b2623151d",
+      "bytes": 16860
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "sha256": "a45cae4f27a1313e1620a0a45bb19ba6b95d3bf84ac293626124b733a7aeea4f",
+      "bytes": 64001
+    },
+    {
+      "path": "crates/node/Cargo.toml",
+      "sha256": "7f2059da4374e0f982fcffbad48a039943af4545ce6465f1daba6e2e2a048cf9",
+      "bytes": 747
+    },
+    {
+      "path": "crates/node/src/custody.rs",
+      "sha256": "95075c7e2e2f465f87214a7e0fbb47f8a5eafe290b04c5da4940bca4209c5684",
+      "bytes": 24939
+    },
+    {
+      "path": "crates/node/src/lib.rs",
+      "sha256": "0f36478820447258eb5e7b8d45d56be0b1863a63e1772e6262980939da34ffe7",
+      "bytes": 103
+    },
+    {
+      "path": "crates/node/src/offline.rs",
+      "sha256": "56e7144ae57a7ef345d5701d2c717fe5e4c9c4f0b9f62774a48e782b776a859e",
+      "bytes": 3219
+    },
+    {
+      "path": "crates/node/src/runtime.rs",
+      "sha256": "655c9b1048d46551954c26592870003e4462c9a11dd55622749c1e0ef45458a0",
+      "bytes": 62479
+    },
+    {
+      "path": "crates/node/src/service.rs",
+      "sha256": "0a8a3ccd722765baff6894f2dc2dbabf4c4f7c7933e0424d8695ad8fd6811bae",
+      "bytes": 33124
+    },
+    {
+      "path": "crates/node/src/store.rs",
+      "sha256": "c04933084d1f9d04aa01d109faa45d439a8938f2f310aa54849f16ee0a116f28",
+      "bytes": 10701
+    },
+    {
+      "path": "crates/node/src/transport/fragments.rs",
+      "sha256": "6d81a68ec563ebfc74e4f257803a2302f01d21d77bc252b3f0551bfcd23311de",
+      "bytes": 9763
+    },
+    {
+      "path": "crates/node/src/transport.rs",
+      "sha256": "5c7a378f236e9872ee8a47ce863506c7595b681f31d85e6ba000408ea2dbfbca",
+      "bytes": 11522
+    },
+    {
+      "path": "crates/protocol/Cargo.toml",
+      "sha256": "d5c0d4c8c685d885f2c92ecbd01ec95f32a633b0e2b5e071fabff33bd6716875",
+      "bytes": 424
+    },
+    {
+      "path": "crates/protocol/src/codec.rs",
+      "sha256": "0d7659eb9ae9d1ca0e0aae2ea5095bc93c7903a12ec8ec282fb04ba860432d93",
+      "bytes": 9709
+    },
+    {
+      "path": "crates/protocol/src/consensus.rs",
+      "sha256": "aad3666462d0fb81e3cef1a7c6be69fcb707cce3e55dcd729ce1cc88bb64607e",
+      "bytes": 18056
+    },
+    {
+      "path": "crates/protocol/src/crypto.rs",
+      "sha256": "bde7e8d6685cce5dbb9b292c8c681eda959960d0d5a185ca1ff52d20b65cb26e",
+      "bytes": 6401
+    },
+    {
+      "path": "crates/protocol/src/lib.rs",
+      "sha256": "a0f1515847e7a0024bb96f9ea1af45221701dcb99cb037b330100f748bc19aa0",
+      "bytes": 663
+    },
+    {
+      "path": "crates/protocol/src/merkle.rs",
+      "sha256": "e1febeab18bf8eb2b244432a007b83a0f9ebebd7e0b21ab305755acaf7fc46c1",
+      "bytes": 4603
+    },
+    {
+      "path": "crates/protocol/src/model.rs",
+      "sha256": "1317de9ab80e3cbdd8a043c4393b177972467bf4dbb25e50b1634a8c822c9b5b",
+      "bytes": 19808
+    },
+    {
+      "path": "crates/protocol/src/proof.rs",
+      "sha256": "243f22b97611a7542b6966955435ff32244a42e8fea384ceeeaf2f4198fc8d98",
+      "bytes": 21501
+    },
+    {
+      "path": "crates/protocol/src/state.rs",
+      "sha256": "5961ae28cbef93bf6e445fe5673e477d1f176866a82d89d94dbecc495a31194d",
+      "bytes": 77832
+    },
+    {
+      "path": "crates/protocol/src/work.rs",
+      "sha256": "db9f03e35d2718ef6771ff0272fbf637be8d19937ccfc430c0279420f87248b1",
+      "bytes": 2508
+    },
+    {
+      "path": "crates/prover/Cargo.toml",
+      "sha256": "967ea0fa5d00792a0d01d27daba3c4f1ac40ea79652af17a50092db093024027",
+      "bytes": 431
+    },
+    {
+      "path": "crates/prover/src/main.rs",
+      "sha256": "17957d2f8d20e451c7c20ac7dc5935bb5d75784b25965b7173d0d8d954c399ed",
+      "bytes": 6361
+    },
+    {
+      "path": "docs/IMPLEMENTATION.md",
+      "sha256": "163c06e9f94e249197317abdbe2494f70c8caa20c5de3142b253ac26082e353e",
+      "bytes": 10598
+    },
+    {
+      "path": "docs/OPERATIONS.md",
+      "sha256": "bf42a9d96df7a65f43d9b92cf3c4b445f3a591d9b29549d5c887c709ea7a7946",
+      "bytes": 9750
+    },
+    {
+      "path": "methods/Cargo.toml",
+      "sha256": "4a230522c523ca2168509284d866706193abeb9ceb121dd715c8984ba496da29",
+      "bytes": 216
+    },
+    {
+      "path": "methods/build.rs",
+      "sha256": "d3d0aa4add6d6294b4cd9199c9b7162187b7383980cda986051fe94497334f75",
+      "bytes": 48
+    },
+    {
+      "path": "methods/guest/Cargo.lock",
+      "sha256": "9c4942dd1f2398e495a85b7246f21784172e2d78043613047627bf9ca1d982c8",
+      "bytes": 42453
+    },
+    {
+      "path": "methods/guest/Cargo.toml",
+      "sha256": "e17882bbe7899ee4090ad9d7c03a67c6e55a5a5cbdd0567567951d7abc658e92",
+      "bytes": 413
+    },
+    {
+      "path": "methods/guest/src/bin/controller.rs",
+      "sha256": "2d01bceb0fda64f6d2e0633e80cc66b0c8196fdf442b1caf0f4ff1fc57e4801d",
+      "bytes": 504
+    },
+    {
+      "path": "methods/guest/src/bin/native.rs",
+      "sha256": "b5015019e9c45071d74d160554ebbb801b20bff59d969147767d680017186f1c",
+      "bytes": 764
+    },
+    {
+      "path": "methods/src/lib.rs",
+      "sha256": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255",
+      "bytes": 51
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "07487db9d6b45de2f308f9fb578c9c46041381c3ee44ef782eca64150a394772",
+      "bytes": 66
+    },
+    {
+      "path": "spec/WHITEPAPER.md",
+      "sha256": "252a280044856a599c4a7fb1e7913d08776aa79f172db64275339be760662639",
+      "bytes": 81945
+    },
+    {
+      "path": "spec/WHITEPAPER_RELEASE.json",
+      "sha256": "c07f65b87ad8a1869775fba24db2d1aa32e5dac74863b580214d9954e6fa75bb",
+      "bytes": 10077
+    },
+    {
+      "path": "tools/build-macos.sh",
+      "sha256": "197da3ccbc48a604f07c2dfc8941bcc3458cb846eea13109bc00ae9cc0b58d10",
+      "bytes": 242
+    },
+    {
+      "path": "tools/macos-toolchain/xcrun",
+      "sha256": "3159e30e6c310e6121308edb28c215663ae100406299894f64d80cfb0f820cf9",
+      "bytes": 401
+    }
+  ],
+  "compiled_source_unchanged_during_final_build": true,
+  "compiler": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: aarch64-apple-darwin\nrelease: 1.98.0\nLLVM version: 22.1.8",
+  "guest_compiler": "official RISC Zero rust 1.88.0",
+  "proof_sdk": "risc0-zkvm 3.0.6",
+  "metal_language": "3.1 via tools/build-macos.sh; no skipped kernels",
+  "proof_profile": {
+    "native_image": "286378b30f6ea226545e0ba91134a442d2416e6a8f4c59f760117f5d3b089bce",
+    "controller_image": "4e0ba93c0348af087e058cffc2c9687cb57bb422e566e47a6f0199f39cf67138",
+    "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "backend": "risc0-zkvm-3.0.6-succinct"
+  },
+  "binaries": [
+    {
+      "path": "target/release/rld",
+      "sha256": "6f805bcda9948df19fb1eeabd09b9508f6b8680fca254b00b1ca04ed0519a230",
+      "bytes": 17771872
+    },
+    {
+      "path": "target/release/rld-prover",
+      "sha256": "93ee9398b8c451593311226e2f7b0d5cdedf1b2541b00ce9b1484ea40dddb8fb",
+      "bytes": 96843024
+    }
+  ],
+  "checks": {
+    "release_workspace_build": "passed",
+    "format": "passed",
+    "cli_help_and_profile": "passed",
+    "local_test_suites": "not run by owner direction",
+    "runtime_payment_campaign": "not run",
+    "security_audit": "not performed",
+    "proof_generation_cost": "not measured",
+    "throughput_latency": "not measured"
+  },
+  "build_warning": "upstream block 0.1.6 future-incompatibility warning",
+  "network_keys_created": false,
+  "network_started": false,
+  "monetary_genesis_created": false,
+  "legacy_value_or_keys_migrated": false,
+  "completion_boundaries": "docs/IMPLEMENTATION.md"
+}

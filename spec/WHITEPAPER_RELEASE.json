@@ -1,0 +1,188 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_CONTROLLER_MECHANISM_RESEARCH_PUBLICATION",
+  "document_date": "2026-10-19",
+  "publication_version_label": null,
+  "title": "Rldcoin: Interstellar Peer-to-Peer Payments",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "sha256": "252a280044856a599c4a7fb1e7913d08776aa79f172db64275339be760662639",
+    "bytes": 81945
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "sha256": "2bc2d3158d0ca5fc4ea6ab00c6683b25d79a0b2ca59d1d0babcf33ae6dcaa720",
+    "bytes": 79762,
+    "pages": 20
+  },
+  "figures": [
+    {
+      "path": "public/diagrams/authority-transfer.svg",
+      "sha256": "e728e296442ae468fb5d3021fd9da1a083a64b07fa449f31add05fef35584bc8",
+      "bytes": 11101
+    },
+    {
+      "path": "public/diagrams/issuance-strands.svg",
+      "sha256": "4e793fff4ee622282ad0ece014d51dc65831ff616f597d01750c5d990da4ca27",
+      "bytes": 6257
+    }
+  ],
+  "authorization_scope": "Owner goal: complete the whitepaper; carry forward authorized PDF and official website synchronization. Define the remaining mechanisms, conditional arguments, finite encoding/resource and failure rules. No runtime or launch.",
+  "native_currency": {
+    "name": "runlai",
+    "ticker": "RLD",
+    "atomic_units_per_RLD": "1000000000000000000000000",
+    "only_native_payment_currency": true,
+    "all_protocol_fees_in_RLD": true,
+    "currency_identity": "C_RLD binds one common authenticated genesis and monetary policy."
+  },
+  "issuance": {
+    "cap_RLD": "21000000",
+    "cap_atomic": "21000000000000000000000000000000",
+    "atomic_units_per_RLD": "1000000000000000000000000",
+    "budget_roots": 4096,
+    "slots_per_root": 1000000,
+    "reward_RLD": "0.005126953125",
+    "reward_atomic": "5126953125000000000000",
+    "total_slots": 4096000000,
+    "genesis_spendable_RLD": "0",
+    "all_preallocations_RLD": "0",
+    "all_Mint_rewards_to_work_author": true,
+    "placement": "Public proportional-work ClaimRange selects 1..256 unconsumed slots under stable grant G. Splits preserve G and existing Mint frontiers in unrelated source residuals. Prepared ranges enter independent controllers; installation or certified return gives only those slots a new grant. No parent-wide work invalidation or budget copying.",
+    "single_home_per_interval": true,
+    "split_preserves_unique_root_slot_identity": true,
+    "claim_issues_RLD": false,
+    "merge_operation": false,
+    "bootstrap": "D_0 is an explicitly accepted initial quorum and availability dependency; no claim of Sybil-free equal distribution or trust-free consensus.",
+    "retarget": false,
+    "halving": false,
+    "tail_emission": false,
+    "lost_or_retired_reissue": false,
+    "calendar_completion_guarantee": false
+  },
+  "work_profile": {
+    "algorithm": "Argon2id",
+    "version": 19,
+    "memory_KiB": 65536,
+    "passes": 3,
+    "lanes": 1,
+    "output_bytes": 32,
+    "base_target": "2^240 - 1",
+    "Mint_weight": 1,
+    "ClaimRange_weight": "number of detached slots",
+    "target": "floor(base_target / weight)",
+    "purpose": "Public issuance/distribution only; not validator votes or global monetary history selection. Claim work earns no RLD and does not replace Mint.",
+    "benchmarked_or_economically_optimal": false
+  },
+  "payment_fees": {
+    "currency": "RLD",
+    "positive_service_fee": true,
+    "positive_prior_work_author_share": true,
+    "minimum_work_author_share_atomic": "1",
+    "source": "Exact owner-authorized existing balances and verified prior Mint payout policy. No subsidy or new issuance. Preparation charges remain paid after cancellation."
+  },
+  "mechanisms": [
+    "Stable grant-bound placement work survives unrelated splits; mutable segment boundaries are not work identity.",
+    "Finite source-bound capabilities leave future inputs unspecified and require certified funded reservations.",
+    "Native Prepare commits exact escrow and Delegated(x); historical creation proving continues under native extension.",
+    "Independent one-decision PBFT controller: Exported with ready receipt/material OR Canceled with direct bounded authorization execution. Canceled needs no recursive receipt before QC.",
+    "One native cancellation redemption closes the coupon; after Exported only certified permanent destination rejection permits recovery.",
+    "Immutable acceptance covers verify all actual ancestry recursively. Same-cover continuation avoids per-epoch vectors; signed inclusion-proved broadening and evidence-requiring narrowing are distinct.",
+    "Original controller keys and locks persist across native handoff; separate validated public key pools and one-use indices.",
+    "Typed deterministic CBOR, checked integers/roots/counts, exact ownership, full checkpoint commitments and noncircular creation/terminal identities.",
+    "Funded queues/custody/renewal with retained service-deficit obligations; no insolvency or time-based refund.",
+    "Normal bounded neighbor discovery and store-carry-forward scheduling; route identity/custody remains distinct from monetary authority."
+  ],
+  "proof_reference": {
+    "backend": "RISC Zero zkVM 3.0.6 SuccinctReceipt (recursive STARK)",
+    "required_monetary_binding": "Exact trusted verifier/control root, hash/parameters, guest image IDs, successful unconditional claim, full journal codec and resource limits must be authenticated by the monetary descriptor.",
+    "RLD_guest_implemented_by_this_publication": false,
+    "RLD_guest_image_IDs": null,
+    "RLD_proof_generated_or_benchmarked": false,
+    "independent_security_qualified": false,
+    "must_reject": [
+      "fake/development receipts",
+      "unknown program or control root",
+      "unsupported verifier/hash parameters",
+      "unsuccessful execution",
+      "unresolved composition assumptions",
+      "unbound/pruned journal",
+      "missing current data",
+      "known incompatible certified execution"
+    ],
+    "primary_references": [
+      "https://docs.rs/risc0-zkvm/3.0.6/risc0_zkvm/struct.SuccinctReceipt.html",
+      "https://dev.risczero.com/api/zkvm/composition"
+    ],
+    "relations": [
+      "RLD-NATIVE-RELATION-1",
+      "RLD-CONTROLLER-RELATION-1"
+    ],
+    "protocol_id": "RLD-PAYMENT-CTRL-1",
+    "encoding_id": "RLD-CBOR-1"
+  },
+  "reference_limits": {
+    "owner_keys": 16,
+    "validators": 127,
+    "inputs": 64,
+    "outputs": 64,
+    "components_per_output": 64,
+    "families_per_cover": 4096,
+    "unresolved_controllers_per_source": 4096,
+    "execution_receipt_bytes": 1048576,
+    "current_capsule_bytes": 16777216,
+    "nesting_depth": 32,
+    "carried_objects": 4096,
+    "native_height_keys_per_epoch": 65536,
+    "controller_keys_per_pool_epoch_per_validator": 65536,
+    "amount_bits": 128
+  },
+  "conservation": {
+    "equations": [
+      "U + F = I - Z",
+      "I + B + Q = C",
+      "U + F + B + Q + Z = C"
+    ],
+    "conditions": "Valid native/controller execution, sound resolved recursive receipts, exclusive PBFT histories, available current data, original controller custody and permanent redemption/terminal maps. U includes preparation escrow; Q includes prepared unissued slots. Covers do not alter amounts."
+  },
+  "predecessor": {
+    "receipt": "rldcoin-whitepaper-release-2026-10-19-capabilities.json",
+    "receipt_sha256": "69c25e6c244289c6e4137abb2656fcc3a22e07c53eb81ecc2e54cfb7e43556e2",
+    "website_commit": "6c11cb7944e20e74ad5ce2e2287305d1e2b6ab89",
+    "canonical_markdown": {
+      "path": "public/documents/rldcoin-whitepaper.md",
+      "sha256": "15755afbfca8512c662826c8efa95555dc1f5da14139931c3fc299e197b003b9",
+      "bytes": 70243
+    },
+    "pdf": {
+      "path": "public/documents/rldcoin-whitepaper.pdf",
+      "sha256": "b2b4662b8852cd7e4fd83d1fd24fbb76f63d1c307d515b79f66aa2845cc12641",
+      "bytes": 69442,
+      "pages": 17
+    }
+  },
+  "mechanism_review": {
+    "path": "docs/WHITEPAPER_CONTROLLERS_REVIEW.md",
+    "sha256": "a0d0956427e9826501671be103f7450b076dd061038d992553abd6204d831bc2",
+    "bytes": 8634,
+    "scope": "Completed author source/counterexample and manuscript review, not an executed protocol proof or independent security audit."
+  },
+  "scope_completion": {
+    "manuscript_and_conditional_mechanism_specification": "completed after author source review",
+    "runtime_implementation": "not part of this publication",
+    "independent_security_qualification": "not claimed",
+    "measured_latency_volume_proving_cost": "not claimed"
+  },
+  "claims": "Completed manuscript defining conditional construction, canonical objects, transitions and safety/progress arguments. No completed monetary implementation, qualified guest, measured performance, mainnet or guaranteed impact.",
+  "limitations": [
+    "PBFT threshold compromise can certify unseen separately valid forks; proof validity is not global ordering.",
+    "RLD guests, concrete verifier/program commitments, correctness and proving costs require implementation and independent analysis before monetary use.",
+    "Controllers consume finite resources and retain their original quorum; unavailable control can strand prepared escrow.",
+    "Broad covers deliberately trade exact attribution for bounded current acceptance and may quarantine all covered value. Narrowing needs further evidence; arbitrary new families are not automatically accepted.",
+    "Current state, permanent maps and audit custody retain costs; finite reserves do not finance infinite service.",
+    "Unknown source/coupon depletion requires setup. Physical contacts and finite cryptographic horizons remain prerequisites.",
+    "Public work is hardware-weighted, fairly bounded admission is assumed, and no calendar issuance date or CPU profit is guaranteed."
+  ],
+  "implementation_boundary": "No protocol/node source, live network, monetary genesis, keys, asset balances, test-value migration or adoption policy is changed. Prior receipts and implementation obligations retain their original scope.",
+  "body_revisions_require_explicit_owner_decision": true
+}

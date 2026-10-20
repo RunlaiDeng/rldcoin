@@ -1,0 +1,16 @@
+[package]
+name = "rld-prover"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rld-protocol = { path = "../protocol" }
+rld-methods = { path = "../../methods" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+hex.workspace = true
+bincode.workspace = true
+clap.workspace = true
+risc0-zkvm = { workspace = true, features = ["client", "prove", "disable-dev-mode"] }

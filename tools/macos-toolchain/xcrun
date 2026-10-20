@@ -1,0 +1,10 @@
+#!/bin/sh
+# RISC Zero 3.0.6 kernels use Metal 3 syntax. Metal 4 defaults introduce
+# ambiguous address-space assignment overloads. Select the language version;
+# keep the vendor sources, arithmetic and all proof verification unchanged.
+if [ "$1" = '--sdk' ] && [ "$3" = 'metal' ]; then
+    sdk="$2"
+    shift 3
+    exec /usr/bin/xcrun --sdk "$sdk" metal -std=metal3.1 "$@"
+fi
+exec /usr/bin/xcrun "$@"

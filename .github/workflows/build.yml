@@ -1,0 +1,32 @@
+name: Compile
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  host:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.98.0
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+      - run: cargo check -p rld --locked
+  guest-and-prover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.98.0
+      - run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - name: Install official guest compiler
+        run: |
+          curl --fail --show-error --location https://risczero.com/install -o /tmp/rzup-install.sh
+          bash /tmp/rzup-install.sh
+          "$HOME/.risc0/bin/rzup" install rust 1.88.0
+      - run: cargo build --workspace --locked

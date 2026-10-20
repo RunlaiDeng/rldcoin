@@ -1,0 +1,28 @@
+[package]
+name = "rld-node"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rld-protocol = { path = "../protocol" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+minicbor.workspace = true
+sha2.workspace = true
+hex.workspace = true
+ed25519-dalek.workspace = true
+argon2.workspace = true
+hkdf.workspace = true
+zeroize.workspace = true
+rand.workspace = true
+chacha20poly1305.workspace = true
+fs2.workspace = true
+tokio.workspace = true
+axum.workspace = true
+reqwest.workspace = true
+tracing.workspace = true
+axum-server = { version = "0.7.3", features = ["tls-rustls"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
+rustls-pemfile = "2.2"

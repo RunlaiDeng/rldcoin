@@ -1,0 +1,151 @@
+# Operator and wallet workflow
+
+No command in this guide was used to create keys or launch a network during the
+rebuild. The commands describe future operation of an explicitly approved fresh
+network. Read `rld <command> --help` for exact options. Files containing keys,
+passwords, custody state, node state or generated proofs belong outside Git.
+
+## Descriptor and key order
+
+1. Build both guest programs and the local prover. Save `rld-prover profile`
+   output as the proof profile for the intended build.
+2. Each operator creates a fresh encrypted wallet/identity using `rld key create`.
+   The password is prompted locally. Retain its independent latest-head file.
+3. `rld domain identity` binds the domain identity key and a fresh nonce. Its
+   digest is the domain ID. These identity files contain public data only.
+4. `rld currency draft` binds the bootstrap identity, exact bootstrap validator
+   identities and compiled proof profile. `--network research` is the default;
+   choosing another purpose does not authorize a monetary launch.
+5. Each validator uses `rld key validator` with its own identity vault and exact
+   currency/domain/epoch binding. Native/controller seeds remain encrypted in
+   that validator's vault. Distribute only the public inventory.
+6. `rld domain draft` constructs public roots, limits, fee policy and initial
+   anchor. Each operator reviews the exact descriptor. Pass `--fee-policy` when drafting
+   if the generated one-atom default is unsuitable; changing it requires
+   recomputing the initial anchor before admission/attestation;
+   defaults are not evidence of economic sustainability.
+7. `rld domain admission` produces the private public-inventory proving witness.
+   `rld-prover native --input ... --output ...` creates its real admission receipt.
+   This may be costly; no fake receipt or skipped inventory is accepted.
+8. Both the domain identity owner and the required validator quorum run
+   `rld domain attest` over the identical identity and configuration. The
+   encrypted identity vault durably refuses a conflicting initial approval for
+   the same currency/domain scope.
+9. `rld domain assemble` requires the identity owner's signature, validator
+   attestations and real inventory admission receipt. `rld node init` then
+   initializes a fresh store and a latest-head file outside that store. It
+   verifies a zero-issued state. No seed, balance or ledger is migrated.
+
+Each node runs `rld node serve --store ... --latest-head ... --config ...`.
+A validator supplies matching `--signer` and `--signer-head` pairs; an observer
+omits them. All nodes use a separate encrypted transport identity. HTTPS listener
+certificate/key and configured peer pins are operator inputs, not autoprovisioned
+trust. Plain HTTP is permitted only on loopback. Peer service configuration is the
+typed `rld_node::service::Config`; an empty peer list provides no physical route.
+The optional proof executable is the absolute path to the built `rld-prover`.
+No global Earth directory is required. Actual contacts are required for delivery.
+
+## Ordinary mining
+
+A user creates their own encrypted wallet, obtains the authenticated intended
+currency descriptor and configures a node endpoint (plus its certificate and pin
+for HTTPS). `rld mine` requests active grant frontiers and searches Argon2id work
+with a bounded number of CPU workers. Each worker requires at least the work
+profile's 64 MiB working memory plus process overhead. A found solution is signed
+by that user's payout key and submitted. "Queued" is not an earned reward;
+certified native inclusion consumes the slot and creates the fixed reward.
+Competing or stale frontiers can lose. CPU eligibility does not promise profit,
+a fair per-person share or ASIC resistance. Mining does not require an RLD fee.
+
+`rld claim-work` searches proportional work for an explicit placement template.
+Its single-key search command signs only the found solution. The core supports
+threshold claimant policies through separately combined exact authorizations.
+A claim still needs an authenticated source-bound receiving coupon, funded
+sponsorship and native inclusion; work alone moves no slots.
+
+## Payments and resources
+
+`rld draft` operates on an exclusively opened, fully replayed local store and a
+JSON construction request. `crates/cli/src/builder.rs` defines the strict request
+schema. Friendly builders support local payment, prepared payment, prepared
+claim, service funding and funded family construction. The simple payment
+builder conserves one exact cover; an explicit `native_command` request supports
+the full mixed-cover/signed-lift protocol. Amounts are decimal atomic strings.
+Drafting never signs or reserves inputs. Do not rebase a reviewed ticket's nonce,
+fees, recipient, range or expiry context while collecting owner signatures.
+
+`rld wallet sign` appends one actual owner's authorization to the exact operation.
+For threshold/group inputs, each owner reviews and signs independently; the node
+requires every actual input owner's policy. `rld node submit` submits the signed
+operation. `rld wallet balance` reads a local verified node; `remote-balance`
+requires a matching real current execution receipt and quorum. It refuses if the
+proving pipeline has not reached that exact state. Displayed storage heads are
+not independent freshness proofs.
+
+Before creating a coupon family, derive its ID with `rld family-id`. Sponsors
+fund source/controller and destination service contracts binding that ID and
+finite capacities. `rld node funding` extracts exact certified contract evidence.
+The family builder computes the committed leaf root. `rld node coupon` extracts
+a coupon's membership/reservation evidence from an already committed family.
+The complete `FamilyFunding` object can be extracted from the family operation's
+`command.CreateFamily` field. Neither a Merkle leaf nor a source name replaces
+these certificates.
+
+The proof worker separately proves fixed historical controller births and the
+prospective Exported relation, then queues a terminal PBFT candidate. Other native
+operations continue. A finalized release is carried to the destination, whose
+native executor verifies it and permanently imports or rejects it.
+
+For cancellation while the source stays online, `controller cancel-fetch` checks
+the direct native birth certificate and inclusions against the retained original
+preparation operation; it does not wait for an execution receipt. Local operators
+can also use `cancel-draft`. Then `cancel-sign` and `cancel-submit`
+construct and authorize the original return statement. It competes with Exported
+in that same immutable controller. A finalized Canceled QC authorizes one source
+redemption directly; a local timer cannot. After Exported, use a destination
+Reject command. Once a covering native receipt exists, the node carries both
+its decision and coupon-use witnesses back to the source. `rld node recovery-draft`
+constructs the source operation from that retained evidence; the original recovery
+owner must sign it. Submit RedeemRejected with the exact release and destination
+certificate. Recovery
+changes neither the original fees nor the accepted covers.
+
+Unused coupon closure is source-native and use-policy authorized. After that
+closure, or after canceled source redemption, `rld node closure` extracts the
+source's certified closed delegation. Submit `CloseDestinationCapacity` at the
+named destination to record closure there. Reused, delegated or destination-used
+coupons refuse. Historical closure evidence remains retained.
+
+## Disconnection, recovery and succession
+
+`rld relay export` packages bounded exact spool objects into a signed one-way
+bundle. `rld relay import --pinned-sender ...` verifies its separately configured
+sender pin, retains complete bytes and emits a signed custody receipt. Stop the
+service before opening its spool with the offline CLI; the exclusive spool lock
+refuses a concurrent writer. A new encounter still needs an operator-approved
+pin and actual physical carriage. Restarting the node performs ordinary native
+verification of retained incoming objects.
+
+Node transactions write immutable event bytes, a pending marker, the manifest
+and the independent head before acknowledging. An interrupted node refuses
+ordinary operation. `rld node recover` cold-replays exact retained events and can
+finish an already prepared publication, including a complete event written before
+its pending marker. Corruption or unexplained residue refuses without rewriting
+it. Recovery does not invent missing consensus votes or rerun an owner payment.
+`rld key recover` reconciles an interrupted encrypted publication against its
+separate head; it creates no signature. Keep damaged originals for investigation.
+
+`rld handoff draft`, `attest` (with `--new` for the incoming quorum) and
+`assemble` construct the exact succession operation. `rld domain admission`
+proves the drafted next configuration's public inventories. Handoff uses
+an explicitly drafted next configuration, fresh public inventories,
+real inventory admission and exact old/new identity acknowledgments. The old
+quorum authorizes the exact committed prestate under `RLD-HANDOFF-AUTHORIZATION`;
+the new quorum acknowledges it under `RLD-HANDOFF-ACK`. Supply these through the
+typed Handoff native command. Old controller vaults must remain available for
+unresolved controllers. Native key exhaustion stops signing; it does not reset
+height, money, coupons or import identities.
+
+Do not restore copied signing vaults to concurrent machines, replace an unavailable
+authority by copying balances, discard unresolved evidence on timeout, publish
+private state, or interpret a transport receipt as recipient spendability.

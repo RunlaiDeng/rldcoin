@@ -1,0 +1,22 @@
+[package]
+name = "rld-guests"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+rld-protocol = { path = "../../crates/protocol" }
+risc0-zkvm = { version = "=3.0.6", default-features = false, features = ["std", "disable-dev-mode"] }
+
+[[bin]]
+name = "native"
+path = "src/bin/native.rs"
+
+[[bin]]
+name = "controller"
+path = "src/bin/controller.rs"
+
+[profile.release]
+overflow-checks = true
+lto = "thin"
