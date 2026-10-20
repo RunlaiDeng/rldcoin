@@ -69,11 +69,11 @@ pub(super) async fn worker(shared: SharedState) {
             let mut last = cursor;
             for sequence in ordered {
                 last = sequence;
-                let header = &view
+                let record = view
                     .history
-                    .at(sequence)
-                    .context("snapshot native checkpoint")?
-                    .header;
+                    .at(sequence)?
+                    .context("snapshot native checkpoint")?;
+                let header = &record.header;
                 match index.contains(header) {
                     Ok(true) => continue,
                     Ok(false) => {}

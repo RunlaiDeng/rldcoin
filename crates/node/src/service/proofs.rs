@@ -285,7 +285,7 @@ impl Snapshot {
                         .context("proof sequence exhaustion")?,
                 );
                 let input = NativeInput::Execution(self.view.native_witness(sequence)?);
-                let record = self.view.history.at(sequence).context("proof history")?;
+                let record = self.view.history.at(sequence)?.context("proof history")?;
                 let certificate = Certified {
                     header: record.header.clone(),
                     qc: record.qc.clone(),

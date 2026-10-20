@@ -218,15 +218,42 @@ controller exclusion and permanent decision checks remain. See
 [the source analysis](engineering/INCREMENTAL_STATE.md). No local fixture, test
 suite, payment campaign or measured scalability result is claimed.
 
+## Disk-resident verified native history
+
+Native history records now reside in a private immutable content-addressed index.
+The live History retains only its exact root/length/head observation and a shared
+bounded byte cache (128 objects / 32 MiB). Full records and 32-way pages are read
+on demand. Each append copies the affected disk page path; old observations keep
+their exact old roots. The index is built only after ordinary native execution/QC
+validation. No persisted index root is loaded as authority: cold startup fully
+replays the separately anchored event journal and rebuilds the root.
+
+Proof input replay, controller material, historical certificate checking and API
+block paging use checked disk reads. Missing/damaged records are errors, not
+absent heights. API block reads run outside the global node mutex. Ordinary new
+payments do not scan old commands for wrapper deduplication. Pending rejection
+pointers come from journal-verified Reject/Sent events; bounded rotating recovery
+rereads exact records. Process-only signer cursors advance only after ordinary
+custody reconciliation and reset on restart. They confer no signing permission.
+
+The derived index retains incomplete/orphan objects and refuses new publication
+at 1 TiB or 4,194,304 files; these are local storage admission limits, not ledger
+truncation. Publication happens before authoritative event append and private root
+installation. Failed preparation leaves unadopted objects; an authoritative append
+failure retains the old live Core and halts signing. Status exposes conservative
+accounted storage and cache use. [The storage analysis](engineering/DISK_HISTORY.md)
+records authority, failure behavior and remaining limits. No runtime campaign or
+measured memory/latency result is claimed.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
 
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
-   map hash. Complete current State and replayed history still reside in memory;
+   map hash. Complete current State remains resident; native history records now live on disk;
    full invariant scans, canonical snapshot construction and full guest input
-   decoding remain. Native history uses a persistent 32-way index, while receipt
+   decoding remain. Native history uses an immutable disk-resident 32-way index, while receipt
    append still copies its current collection. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
@@ -242,7 +269,8 @@ The following are real completion boundaries, not fulfilled by source edits:
    every segment, checks its source observation and separately retained latest
    head, and replays all native events. Explicit recovery finishes only a fully
    retained, verified seal; damaged originals/residue remain unchanged. This
-   reduces loose files but does not remove the in-memory Core/history limitation.
+   reduces loose files; the new disk history removes full-record history residency,
+   while complete current State, receipts and other Core collections remain in memory.
    Contact spools deliberately refuse at finite object/byte limits. A continuously
    operating archival rotation, independently replicated paid custody lifecycle,
    witness availability, disaster recovery and long-history operator product are

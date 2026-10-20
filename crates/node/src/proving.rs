@@ -1,7 +1,7 @@
 //! Immutable authenticated host observations for building proof witnesses.
 //! These carry no signing authority. Publication still rechecks the exact real
 //! receipt and its retained local checkpoint in the live native executor.
-use crate::runtime::Initial;
+use crate::{runtime::Initial, store::MAX_RECORD};
 use anyhow::{Context, Result, ensure};
 use rld_protocol::{
     codec::{Id, decode, hash},
@@ -10,6 +10,35 @@ use rld_protocol::{
     state::State,
 };
 use std::sync::Arc;
+
+// Count canonical bytes without allocating a complete encoded State. The guest
+// already refuses inputs above MAX_RECORD; enforce that while constructing the
+// host witness, before retaining an oversized step vector.
+struct WitnessBudget {
+    bytes: usize,
+}
+impl minicbor::encode::Write for WitnessBudget {
+    type Error = std::io::Error;
+    fn write_all(&mut self, bytes: &[u8]) -> std::io::Result<()> {
+        self.bytes = self
+            .bytes
+            .checked_add(bytes.len())
+            .filter(|n| *n <= MAX_RECORD)
+            .ok_or_else(|| {
+                std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "native witness exceeds guest input byte bound",
+                )
+            })?;
+        Ok(())
+    }
+}
+impl WitnessBudget {
+    fn charge<T: minicbor::Encode<()>>(&mut self, value: &T) -> Result<()> {
+        value.encode(&mut minicbor::Encoder::new(self), &mut ())?;
+        Ok(())
+    }
+}
 
 #[derive(Clone)]
 pub struct ProofContext {
@@ -34,7 +63,7 @@ impl ProofContext {
             .iter()
             .find(|b| b.controller == id)
             .context("birth")?;
-        let h = self.history.at(birth.sequence).context("birth header")?;
+        let h = self.history.at(birth.sequence)?.context("birth header")?;
         let context = self;
         let terminal = Terminal {
             currency: self.state.currency,
@@ -68,7 +97,7 @@ impl ProofContext {
     ) -> Result<crate::state_index::StateQuery> {
         let record = self
             .history
-            .at(sequence)
+            .at(sequence)?
             .context("query requires a retained native checkpoint")?;
         if let Some(index) = &self.state_index {
             match index.query(&record.header, collection, key) {
@@ -156,7 +185,7 @@ impl ProofContext {
         if sequence == self.state.sequence {
             return Ok(self.state.as_ref().clone());
         }
-        if let (Some(index), Some(record)) = (&self.state_index, self.history.at(sequence)) {
+        if let (Some(index), Some(record)) = (&self.state_index, self.history.at(sequence)?) {
             match index.load(&record.header) {
                 Ok(Some(state)) => return Ok(state),
                 Ok(None) => {}
@@ -165,11 +194,8 @@ impl ProofContext {
         }
         let mut s = State::genesis(&self.initial.currency, &self.initial.genesis)?;
         let mut head = rld_protocol::state::genesis_id(s.currency, &self.initial.genesis);
-        for c in self
-            .history
-            .iter()
-            .take_while(|c| c.header.sequence <= sequence)
-        {
+        for c in self.history.range(0, sequence) {
+            let c = c?;
             let (next, h) = s.execute_batch(&self.initial.currency, head, &c.batch)?;
             ensure!(h == c.header, "retained history replay");
             head = h.id();
@@ -191,18 +217,12 @@ impl ProofContext {
             .and_then(|i| self.proofs.get(i))
             .cloned();
         let base = predecessor.as_ref().map_or(0, |p| p.header.sequence);
+        ensure!(
+            sequence.checked_sub(base).is_some_and(|n| n <= 4096),
+            "native proof span exceeds guest step bound; certify an intermediate checkpoint first"
+        );
         let state = self.state_at(base)?;
-        let steps = self
-            .history
-            .after(base)
-            .take_while(|c| c.header.sequence <= sequence)
-            .map(|c| proof::NativeStep {
-                batch: c.batch.clone(),
-                header: c.header.clone(),
-                qc: c.qc.clone(),
-            })
-            .collect();
-        Ok(proof::NativeWitness {
+        let mut witness = proof::NativeWitness {
             currency: self.initial.currency.clone(),
             genesis: if predecessor.is_none() {
                 Some(self.initial.genesis.clone())
@@ -211,8 +231,21 @@ impl ProofContext {
             },
             predecessor,
             state,
-            steps,
-        })
+            steps: vec![],
+        };
+        // Reserve a conservative fixed allowance for NativeInput/array framing.
+        let mut budget = WitnessBudget { bytes: 128 };
+        budget.charge(&witness)?;
+        for c in self.history.range(base, sequence) {
+            let c = c?;
+            budget.charge(&(&c.batch, &c.header, &c.qc))?;
+            witness.steps.push(proof::NativeStep {
+                batch: c.batch.clone(),
+                header: c.header.clone(),
+                qc: c.qc.clone(),
+            });
+        }
+        Ok(witness)
     }
     pub fn creation(&self, id: Id) -> Result<Creation> {
         let controller = self
@@ -251,7 +284,7 @@ impl ProofContext {
             .context("controller birth")?;
         let born = self
             .history
-            .at(birth.sequence)
+            .at(birth.sequence)?
             .and_then(|record| {
                 record
                     .batch

@@ -691,20 +691,24 @@ fn add_signature(op: &mut Operation, policy: Owner, key: &Vault) -> Result<()> {
 fn controller_witness(node: &Node, id: Id) -> Result<proof::ControllerWitness> {
     let creation = node.core.creation(id)?;
     let c = &creation.controller;
-    let material = node
+    let birth = node.core.state.births.get(id).context("controller birth")?;
+    let record = node
         .core
         .history
+        .at(birth.sequence)?
+        .context("preparation record")?;
+    let material = record
+        .batch
+        .operations
         .iter()
-        .find_map(|h| {
-            h.batch.operations.iter().find_map(|op| match &op.command {
-                CommandProtocol::PreparePayment {
-                    ticket, material, ..
-                }
-                | CommandProtocol::PrepareClaim {
-                    ticket, material, ..
-                } if ticket.id == id => Some(material.clone()),
-                _ => None,
-            })
+        .find_map(|op| match &op.command {
+            CommandProtocol::PreparePayment {
+                ticket, material, ..
+            }
+            | CommandProtocol::PrepareClaim {
+                ticket, material, ..
+            } if ticket.id == id => Some(material.clone()),
+            _ => None,
         })
         .context("preparation material")?;
     let m: Material = decode(&material.0, rld_protocol::MAX_CAPSULE)?;
@@ -1534,12 +1538,7 @@ async fn main() -> Result<()> {
                 output,
             } => {
                 let mut node = open_node(&store)?;
-                let h = node
-                    .core
-                    .history
-                    .iter()
-                    .find(|h| h.header.sequence == at)
-                    .context("height not retained")?;
+                let h = node.core.history.at(at)?.context("height not retained")?;
                 let p = Certified {
                     header: h.header.clone(),
                     qc: h.qc.clone(),

@@ -87,6 +87,7 @@ pub struct Core {
     pub faults: Vec<Blob>,
     pub rejections: Vec<Rejected>,
     sent_rejections: Vec<Id>,
+    pending_rejections: BTreeMap<Id, u64>,
 }
 pub struct Node {
     pub core: Core,
@@ -94,6 +95,9 @@ pub struct Node {
     signers: Vec<Vault>,
     timers: BTreeMap<(Id, u64), (u64, Instant)>,
     halted: bool,
+    native_reconciled: BTreeMap<Id, u64>,
+    terminal_reconciled: BTreeMap<Id, usize>,
+    rejection_cursor: Option<Id>,
     pub last_error: Option<String>,
 }
 fn payload_namespace(p: &Payload) -> Id {
@@ -136,19 +140,22 @@ fn empty_vote() -> Vote {
     }
 }
 impl Core {
-    fn new(initial: Initial) -> Result<Self> {
+    fn initial_state(initial: &Initial) -> Result<State> {
         ensure!(
             initial.currency.proof == crate::executable_profile()?,
             "currency proof programs differ from this source-bound host executable; preserve old state and use its matching release"
         );
-        let state = State::genesis(&initial.currency, &initial.genesis)?;
+        State::genesis(&initial.currency, &initial.genesis)
+    }
+    fn new(initial: Initial, state: State, root: &Path) -> Result<Self> {
+        let history = crate::history::History::open(&root.join("history-index"), &initial)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
         Ok(Self {
             initial,
             state_index: None,
             state: Arc::new(state),
             head,
-            history: crate::history::History::default(),
+            history,
             engines: vec![],
             pending: vec![],
             terminals: vec![],
@@ -160,6 +167,7 @@ impl Core {
             faults: vec![],
             rejections: vec![],
             sent_rejections: vec![],
+            pending_rejections: BTreeMap::new(),
         })
     }
     fn engine(&mut self, namespace: Id, sequence: u64) -> Result<usize> {
@@ -262,7 +270,7 @@ impl Core {
                         && header.batch == hash("RLD-BATCH", self.state.currency, batch),
                     "native complete envelope binding"
                 );
-                if let Some(old) = self.history.at(header.sequence) {
+                if let Some(old) = self.history.at(header.sequence)? {
                     if old.header.id() == header.id() {
                         ensure!(old.batch == *batch, "changed historical native body");
                     }
@@ -277,7 +285,7 @@ impl Core {
     fn authentication(&self, m: &Message) -> Result<(Option<Id>, Id)> {
         let (ns, seq) = message_position(m);
         let (cfg, pool, known) = if ns == self.state.domain {
-            if let Some(old) = self.history.at(seq) {
+            if let Some(old) = self.history.at(seq)? {
                 (old.configuration.clone(), None, Some(old.header.id()))
             } else {
                 ensure!(
@@ -406,7 +414,7 @@ impl Core {
             Event::ConflictingBlock(c) => {
                 let old = self
                     .history
-                    .at(c.header.sequence)
+                    .at(c.header.sequence)?
                     .context("conflict position")?;
                 ensure!(
                     old.configuration == c.configuration && old.header.id() != c.header.id(),
@@ -465,6 +473,7 @@ impl Core {
             Event::Sent(dispatch) => {
                 if let Application::Rejection(r) = &dispatch.message {
                     let id = r.release.creation.controller.id;
+                    self.pending_rejections.remove(&id);
                     if !self.sent_rejections.contains(&id) {
                         self.sent_rejections.push(id);
                     }
@@ -500,6 +509,14 @@ impl Core {
                 self.state = Arc::new(next);
                 self.history.push(c.clone())?;
                 for op in &c.batch.operations {
+                    if let Command::Reject(r) = &op.command {
+                        let id = r.creation.controller.id;
+                        if !self.sent_rejections.contains(&id) {
+                            self.pending_rejections
+                                .entry(id)
+                                .or_insert(c.header.sequence);
+                        }
+                    }
                     let terminal = match &op.command {
                         Command::ObserveExport(r) => {
                             let mut r = r.clone();
@@ -613,7 +630,7 @@ impl Core {
                 .native(p)?;
                 let old = self
                     .history
-                    .at(p.header.sequence)
+                    .at(p.header.sequence)?
                     .filter(|v| v.header == p.header && v.configuration == p.configuration)
                     .context("certificate does not name retained local checkpoint")?;
                 ensure!(
@@ -705,28 +722,23 @@ impl Node {
         Ok(())
     }
     fn recover_rejection_effects(&mut self) -> Result<()> {
-        let rejected: Vec<_> = self
+        // The journal-derived pending index retains only unsent obligations,
+        // not every historical rejection payload. Every payload is reread under
+        // the immutable verified history root before proof construction.
+        let cursor = self.rejection_cursor.unwrap_or(Id::ZERO);
+        let pending: Vec<_> = self
             .core
-            .history
-            .iter()
-            .flat_map(|c| {
-                c.batch
-                    .operations
-                    .iter()
-                    .filter_map(|op| match &op.command {
-                        Command::Reject(r)
-                            if !self
-                                .core
-                                .sent_rejections
-                                .contains(&r.creation.controller.id) =>
-                        {
-                            Some((c.header.sequence, r.clone()))
-                        }
-                        _ => None,
-                    })
-            })
+            .pending_rejections
+            .range((
+                std::ops::Bound::Excluded(cursor),
+                std::ops::Bound::Unbounded,
+            ))
+            .chain(self.core.pending_rejections.range(..=cursor))
+            .take(16)
+            .map(|(id, sequence)| (*id, *sequence))
             .collect();
-        for (sequence, release) in rejected {
+        for (id, sequence) in pending {
+            self.rejection_cursor = Some(id);
             let Some(certified) = self
                 .core
                 .proofs
@@ -736,6 +748,20 @@ impl Node {
             else {
                 continue;
             };
+            let record = self
+                .core
+                .history
+                .at(sequence)?
+                .context("pending rejection record")?;
+            let release = record
+                .batch
+                .operations
+                .iter()
+                .find_map(|op| match &op.command {
+                    Command::Reject(r) if r.creation.controller.id == id => Some(r),
+                    _ => None,
+                })
+                .context("pending rejection native command")?;
             let context = self.core.proof_context();
             let at = certified.header.sequence;
             let c = &release.creation.controller;
@@ -859,13 +885,17 @@ impl Node {
         Ok(())
     }
     pub fn initialize(path: &Path, head: &Path, initial: Initial) -> Result<Self> {
-        let core = Core::new(initial.clone())?;
-        let store = Store::create(path, head, &encode(&Event::Initial(initial)))?;
+        let state = Core::initial_state(&initial)?;
+        let store = Store::create(path, head, &encode(&Event::Initial(initial.clone())))?;
+        let core = Core::new(initial, state, store.root_path())?;
         let mut node = Self {
             core,
             store,
             signers: vec![],
             timers: BTreeMap::new(),
+            native_reconciled: BTreeMap::new(),
+            terminal_reconciled: BTreeMap::new(),
+            rejection_cursor: None,
             halted: false,
             last_error: None,
         };
@@ -875,13 +905,15 @@ impl Node {
     pub fn open(path: &Path, head: &Path, recover: bool) -> Result<Self> {
         let mut store = Store::open(path, head, recover)?;
         let mut core: Option<Core> = None;
+        let root = store.root_path().to_owned();
         store.walk(|n, bytes| {
             let event: Event = decode(bytes, MAX_RECORD)?;
             if n == 1 {
                 let Event::Initial(initial) = event else {
                     bail!("initial record required")
                 };
-                core = Some(Core::new(initial)?);
+                let state = Core::initial_state(&initial)?;
+                core = Some(Core::new(initial, state, &root)?);
             } else {
                 core.as_mut().context("initial record")?.apply(&event)?;
             }
@@ -894,6 +926,9 @@ impl Node {
             store,
             signers: vec![],
             timers: BTreeMap::new(),
+            native_reconciled: BTreeMap::new(),
+            terminal_reconciled: BTreeMap::new(),
+            rejection_cursor: None,
             last_error: None,
         };
         node.attach_state_index();
@@ -968,23 +1003,50 @@ impl Node {
             ensure!(old == &op, "changed pending operation bytes");
             return Ok(id);
         }
-        let previous = self
-            .core
-            .history
-            .iter()
-            .flat_map(|h| &h.batch.operations)
-            .find(|old| match (&old.command, &op.command) {
-                (Command::Import(a), Command::Import(b))
-                | (Command::Reject(a), Command::Reject(b))
-                | (Command::ObserveExport(a), Command::ObserveExport(b)) => {
-                    a.terminal == b.terminal && a.creation.controller == b.creation.controller
+        // Ordinary new payments must not scan permanent history. Only the four
+        // wrapper-retransmission kinds need the historical semantic comparison.
+        let mut previous = None;
+        let retained = match &op.command {
+            Command::Import(r) | Command::Reject(r) => self
+                .core
+                .state
+                .decisions
+                .get(r.creation.controller.id)
+                .is_some(),
+            Command::ObserveExport(r) => self
+                .core
+                .state
+                .resolutions
+                .get(r.creation.controller.id)
+                .is_some(),
+            Command::RedeemCancel(c) => self.core.state.redemptions.get(c.controller).is_some(),
+            _ => false,
+        };
+        if retained {
+            for h in self.core.history.iter() {
+                let h = h?;
+                if let Some(old) =
+                    h.batch
+                        .operations
+                        .iter()
+                        .find(|old| match (&old.command, &op.command) {
+                            (Command::Import(a), Command::Import(b))
+                            | (Command::Reject(a), Command::Reject(b))
+                            | (Command::ObserveExport(a), Command::ObserveExport(b)) => {
+                                a.terminal == b.terminal
+                                    && a.creation.controller == b.creation.controller
+                            }
+                            (Command::RedeemCancel(a), Command::RedeemCancel(b)) => {
+                                a.terminal == b.terminal && a.controller == b.controller
+                            }
+                            _ => false,
+                        })
+                {
+                    previous = Some(old.clone());
+                    break;
                 }
-                (Command::RedeemCancel(a), Command::RedeemCancel(b)) => {
-                    a.terminal == b.terminal && a.controller == b.controller
-                }
-                _ => false,
-            })
-            .cloned();
+            }
+        }
         if let Some(old) = previous {
             match &op.command {
                 Command::Import(r) | Command::Reject(r) | Command::ObserveExport(r) => Verifier {
@@ -1046,7 +1108,7 @@ impl Node {
             let old = self
                 .core
                 .history
-                .at(c.header.sequence)
+                .at(c.header.sequence)?
                 .context("history position")?;
             ensure!(
                 old.configuration == c.configuration,
@@ -1354,7 +1416,14 @@ impl Node {
     }
     fn reconcile_custody(&mut self) -> Result<()> {
         for signer in &mut self.signers {
-            for committed in self.core.history.iter() {
+            let binding = hash(
+                "RLD-LOCAL-CUSTODY-CURSOR",
+                self.core.state.currency,
+                signer.binding(),
+            );
+            let after = self.native_reconciled.get(&binding).copied().unwrap_or(0);
+            for committed in self.core.history.after(after) {
+                let committed = committed?;
                 if committed
                     .configuration
                     .validators
@@ -1369,8 +1438,11 @@ impl Node {
                         committed.header.id(),
                     )?;
                 }
+                self.native_reconciled
+                    .insert(binding, committed.header.sequence);
             }
-            for record in &self.core.terminals {
+            let terminal_after = self.terminal_reconciled.get(&binding).copied().unwrap_or(0);
+            for (index, record) in self.core.terminals.iter().enumerate().skip(terminal_after) {
                 let id = match &record.payload {
                     Payload::Export(r) => r.creation.controller.id,
                     Payload::Cancel(c) => c.controller,
@@ -1398,6 +1470,7 @@ impl Node {
                         record.payload.statement(),
                     )?;
                 }
+                self.terminal_reconciled.insert(binding, index + 1);
             }
         }
         Ok(())

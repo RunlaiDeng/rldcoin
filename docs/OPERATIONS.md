@@ -280,3 +280,39 @@ rebuild private lookup/commitment nodes on decode. Native mutation refuses a map
 whose proof depth would exceed 64 branches. Node state queries authenticate
 historical records against the caller's exact certified checkpoint; they do not
 establish freshness or spendability. A capacity refusal never refunds exports.
+
+## Disk-resident verified native history
+
+Every local node now maintains a private `history-index/` under its store. Its
+`RLD-VERIFIED-HISTORY-INDEX-1` binding fixes currency, domain and genesis. Complete
+native committed records and immutable 32-way pages are content-addressed in
+256 digest shards. Only the process's verified root/length is adopted. Node open
+still validates every authoritative event from the separately retained latest
+journal head; it does not resume a ledger from this derived directory.
+
+The shared raw-byte cache retains at most 128 objects / 32 MiB. A complete current
+State, decoded records, proof inputs, receipts and other live queues are separate
+memory costs. Object publication preserves the existing 1-GiB per-record envelope;
+pages are at most 16 KiB. The index admits at most 1 TiB and 4,194,304 retained or
+reserved files. `/v1/status.native_history` exposes accounted bytes/files, cache
+use and these limits; failed-write reservations can conservatively overcount until
+verified reopen. Exhaustion/disk failures refuse unsupported publication without
+deleting old records, resetting height or refunding monetary rights.
+
+A missing or corrupted indexed record fails the request/reconciliation; it is
+never silently treated as a future or unknown height. Preserve the failed object
+and authoritative journal. To rebuild derived material, stop the entire node and
+all proof/read workers, retain the whole private `history-index/` directory under
+a different private name, then cold-open the unchanged journal with its separately
+retained latest head. Never copy a root from the old directory or rewrite the
+journal/head, keys, currency or balances. This rebuild path creates no monetary
+genesis and does not qualify disaster recovery, independent latest-head custody,
+power-loss behavior or long-term archival succession.
+
+Immutable history observations let proof/read workers finish against a fixed
+prefix while normal commits append a later prefix. API block pages read outside
+the node-wide lock. Proof input construction refuses a span exceeding the guest's
+existing 4,096-step bound before collecting it; certify an intermediate checkpoint
+first. A counting CBOR writer checks the guest's existing 1-GiB input bound
+before retaining an oversized step vector, reserving 128 framing bytes. Complete
+State and exact subordinate receipts are still required.
