@@ -8,7 +8,9 @@ passwords, custody state, node state or generated proofs belong outside Git.
 ## Descriptor and key order
 
 1. Build both guest programs and the local prover. Save `rld-prover profile`
-   output as the proof profile for the intended build.
+   output as the proof profile for the intended build. Compare it to the pinned
+   `rld profile` output; different programs must not initialize or open monetary
+   state. The source-bound profile update workflow is described in README.
 2. Each operator creates a fresh encrypted wallet/identity using `rld key create`.
    The password is prompted locally. Retain its independent latest-head file.
 3. `rld domain identity` binds the domain identity key and a fresh nonce. Its
@@ -208,3 +210,58 @@ space. Retain the saturated directory and its evidence; provision a new dedicate
 workspace after stopping the supervisor if more space is needed. Do not delete
 unresolved evidence to make room. This remains operator-managed retention, not
 an independently replicated or paid archival lifecycle.
+
+## Exact-checkpoint state queries and derived disk material
+
+Every normally served node runs a background derived-state indexer even when its
+local prover is disabled. It indexes current state, outstanding controller births
+and the latest certified proof base using retained native checkpoints. The private
+`state-index/` directory inside the node store contains a network/genesis binding,
+complete canonical state chunks, bounded Merkle pages and checkpoint manifests.
+Its immutable objects are shared by exact content. All admitted files, including
+partial writes, count toward the fixed 2-GiB / 65,536-file derived cache budget.
+Full cache capacity stops cache growth; it does not expire money or delete native
+history. A snapshot may lag behind the current head. Status reports a retained
+`state_index_error` if index construction or reads fail.
+
+The authoritative journal and independently retained latest head are unchanged.
+On every cold open the node fully replays the journal before using this cache.
+A historical proof input loaded from disk still reconstructs complete native
+State, checks invariants and the exact caller-retained checkpoint root. Direct
+page queries verify native membership or adjacent-neighbor absence. Missing or
+bad query pages fall back to complete verified State. Missing/bad complete State
+falls back to native journal replay; bad bytes remain for investigation. They never become balances or signing authority.
+
+`rld node state-witness` uses indexed membership when available and keeps the
+existing native fallback. For a running node, `rld node state-proof` accepts the
+same pinned endpoint/TLS options as other API reads and additionally requires
+`--currency`, `--checkpoint`, `--at`, `--collection`, `--key` and `--output`.
+Its target checkpoint must be independently retained. The node must already have
+an exact execution receipt for that checkpoint. The client verifies the pinned
+currency's real execution receipt, finality QC, exact checkpoint/collection/key
+and membership or absence before saving. A valid old result gives no assurance
+that an output is currently spendable or that a wallet total is complete.
+
+A malformed index is not overwritten or used to recover a ledger. If a derived
+index needs rebuilding, stop the node/indexer and retain the entire old
+`state-index/` directory under another private name before using a fresh derived
+directory. Keep native events, archive segments, manifest, independent heads,
+keys and unresolved monetary evidence intact. Rebuilding a derived index creates
+no monetary genesis and copies no balances to another currency. No automatic
+pruning or independent archival custody service is supplied by this mechanism.
+
+## Source-bound executable profile
+
+The current host embeds `spec/EXECUTABLE_PROFILE.json`. Its build script hashes
+length-prefixed ordered native/proof source paths and complete bytes, dependency
+locks and toolchain manifests, and refuses a stale recorded source digest.
+`rld profile` reports the compiled binding and expected real proof profile.
+This guards against an accidental host/VM mismatch; it does not prove an arbitrary
+producer's claimed image or replace independent build/security verification.
+
+`rld currency draft`, currency reads for current monetary commands, node genesis
+initialization and the initial event of every cold open require that exact profile.
+Mismatch refuses before reference execution or recovery publication; old stores,
+keys and heads are not rewritten. A source revision with new image IDs cannot
+silently adopt the old descriptor or migrate value. General cryptographic suite
+succession preserving an already running RLD identity is still unfinished.

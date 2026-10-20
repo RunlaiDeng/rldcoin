@@ -9,6 +9,27 @@ use crate::{
 use anyhow::{Result, bail, ensure};
 use std::collections::{BTreeMap, BTreeSet};
 
+pub const COLLECTIONS: &[&str] = &[
+    "fee_policies",
+    "outputs",
+    "grants",
+    "segments",
+    "controllers",
+    "births",
+    "coupon_uses",
+    "families",
+    "decisions",
+    "redemptions",
+    "services",
+    "covers",
+    "mints",
+    "applied",
+    "incidents",
+    "funding",
+    "resolutions",
+    "counters",
+];
+
 record!(State {
  currency:Id => 0,domain:Id => 1,sequence:u64 => 2,configuration:Configuration => 3,
  outputs:Vec<Output> => 4,grants:Vec<Grant> => 5,segments:Vec<Segment> => 6,
@@ -270,7 +291,7 @@ impl State {
         }
         Ok(())
     }
-    fn collection(&self, name: &str) -> Result<Vec<Entry>> {
+    pub fn collection(&self, name: &str) -> Result<Vec<Entry>> {
         let c = self.currency;
         let mut out = match name {
             "outputs" => self
@@ -425,28 +446,9 @@ impl State {
         out.sort_by_key(|v| v.key);
         Ok(out)
     }
-    fn top(&self) -> Result<Vec<Entry>> {
+    pub fn top(&self) -> Result<Vec<Entry>> {
         let mut out = Vec::new();
-        for name in [
-            "fee_policies",
-            "outputs",
-            "grants",
-            "segments",
-            "controllers",
-            "births",
-            "coupon_uses",
-            "families",
-            "decisions",
-            "redemptions",
-            "services",
-            "covers",
-            "mints",
-            "applied",
-            "incidents",
-            "funding",
-            "resolutions",
-            "counters",
-        ] {
+        for &name in COLLECTIONS {
             out.push(Entry {
                 key: hash("RLD-COLLECTION", self.currency, &(self.domain, name)),
                 value: merkle::root(

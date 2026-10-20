@@ -159,6 +159,42 @@ pauses proving, not independent native settlement or cancellation. No automatic
 proof-history deletion, paid archival qualification or remote prover trust is
 introduced. See [the implementation analysis](engineering/PROOF_SCHEDULING.md).
 
+## Disk state material and authenticated queries
+
+A background worker now publishes complete canonical state snapshots plus native
+ordered-map witness pages for exact retained checkpoints. State chunks are at most
+1 MiB, map leaves at most 128 entries, and manifests at most 256 KiB. Each derived
+index is bound to its currency/domain/genesis, shares immutable exact objects and
+uses a 2-GiB / 65,536-file local admission budget. Those are cache limits, not
+currency history limits or paid archive qualification.
+
+Historical proof input construction can load complete checkpoint state from disk
+without replaying the entire prefix again. Controller birth/cancellation,
+returned rejection witnesses and the local state-witness command can use direct
+Merkle paths from disk. Every read checks native root/path binding against its
+caller-retained checkpoint. Missing or damaged query pages fall back to complete
+verified State; missing or damaged complete State falls back to native journal
+replay. Damaged data is retained and the issue is exposed in status.
+Cold node startup still fully replays the authoritative journal before opening
+any derived cache. No serialized state snapshot can initialize or advance a ledger.
+
+`/v1/state-proof` returns a real certified exact-checkpoint inclusion or adjacent
+neighbor absence. `rld node state-proof` requires the intended currency descriptor,
+checkpoint ID, collection and key, verifies the real receipt/QC and path, and saves
+the result. This establishes a historical record, not freshness, an entire wallet
+balance, current spendability or permission to import. Query/cancellation witness
+construction uses immutable observations outside the global mutex with bounded
+concurrent readers. [Storage and proof analysis](engineering/STATE_INDEX.md)
+describes the complete-byte and failure paths.
+
+The current executable pins its real native/controller profile to a reviewed
+native/proof source fingerprint in `spec/EXECUTABLE_PROFILE.json`. A stale source
+binding refuses compilation. Current monetary descriptor reads, drafting and
+node initialization/cold replay refuse different program IDs before adopting
+state. `rld profile` and actual `rld-prover profile` must match in release evidence.
+This revision changes compiled program IDs; no old currency/store/key migration
+is authorized. It does not implement general in-place cryptographic upgrades.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
@@ -171,9 +207,13 @@ The following are real completion boundaries, not fulfilled by source edits:
    seeking no longer scan the entire prefix. Full state execution still copies
    state, receipt-vector append still copies its current collection, and complete
    historical records/receipts remain resident in memory.
-   It is not an implementation of 100 million completed daily payments or a
-   demonstrated seconds-scale receipt pipeline. Disk-backed authenticated indexes,
-   incremental roots and resource-accounted historical witnesses remain needed.
+   Disk snapshots and authenticated witness pages now serve historical state
+   material and proofs, but native execution still materializes and clones complete
+   State, rebuilds roots and keeps current collections in memory. Snapshot creation
+   also materializes complete state and rebuilds its pages. A persistent native
+   state execution index, incremental authenticated updates and compact executable
+   transition witnesses remain needed. This is not an implementation of 100 million
+   completed daily payments or a demonstrated seconds-scale receipt pipeline.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one
    eligible segment; a large record may cause fewer than 64 to fit, so this is

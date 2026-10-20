@@ -35,6 +35,7 @@ struct Cli {
 }
 #[derive(Subcommand)]
 enum Command {
+    Profile,
     Key {
         #[command(subcommand)]
         command: KeyCommand,
@@ -369,6 +370,22 @@ enum NodeCommand {
         #[arg(long)]
         output: PathBuf,
     },
+    StateProof {
+        #[command(flatten)]
+        api: Api,
+        #[arg(long)]
+        currency: PathBuf,
+        #[arg(long)]
+        checkpoint: String,
+        #[arg(long)]
+        at: u64,
+        #[arg(long)]
+        collection: String,
+        #[arg(long)]
+        key: String,
+        #[arg(long)]
+        output: PathBuf,
+    },
     Funding {
         #[command(flatten)]
         store: StoreArgs,
@@ -556,6 +573,10 @@ fn open_node(args: &StoreArgs) -> Result<Node> {
 fn read_currency(path: &Path) -> Result<Currency> {
     let c: Currency = json(path)?;
     c.validate()?;
+    ensure!(
+        c.proof == rld_node::executable_profile()?,
+        "currency program binding differs from this executable; retain old currency/state and use its matching release"
+    );
     Ok(c)
 }
 fn client(api: &Api) -> Result<reqwest::Client> {
@@ -714,6 +735,12 @@ async fn main() -> Result<()> {
         .init();
     let args = Cli::parse();
     match args.command {
+        Command::Profile => println!(
+            "{}",
+            serde_json::to_string_pretty(
+                &serde_json::json!({"source_digest":rld_node::executable_source_digest(),"proof_profile":rld_node::executable_profile()?})
+            )?
+        ),
         Command::Handoff { action } => match action {
             HandoffAction::Draft {
                 store,
@@ -1052,6 +1079,10 @@ async fn main() -> Result<()> {
                     network,
                 };
                 currency.validate()?;
+                ensure!(
+                    currency.proof == rld_node::executable_profile()?,
+                    "draft must use this source-bound executable's real compiled proof profile"
+                );
                 save(&output, &currency)?;
                 println!("{}", currency.id());
             }
@@ -1366,9 +1397,39 @@ async fn main() -> Result<()> {
                     &output,
                     &node
                         .core
-                        .state_at(at)?
-                        .witness(&collection, Id::parse(&key)?)?,
+                        .proof_context()
+                        .witness_at(at, &collection, Id::parse(&key)?)?,
                 )?;
+            }
+            NodeCommand::StateProof {
+                api,
+                currency,
+                checkpoint,
+                at,
+                collection,
+                key,
+                output,
+            } => {
+                let currency = read_currency(&currency)?;
+                ensure!(
+                    rld_protocol::state::COLLECTIONS.contains(&collection.as_str()),
+                    "state collection"
+                );
+                let key = Id::parse(&key)?;
+                let checkpoint = Id::parse(&checkpoint)?;
+                let bytes = get(
+                    &api,
+                    &format!("/v1/state-proof?at={at}&collection={collection}&key={key}"),
+                )
+                .await?;
+                let proof: rld_node::state_index::CertifiedQuery =
+                    decode(&bytes, rld_protocol::MAX_CAPSULE)?;
+                proof.verify(&currency, checkpoint, &collection, key)?;
+                ensure!(
+                    proof.query.collection == collection && proof.source.header.sequence == at,
+                    "query collection/position differs from request"
+                );
+                save(&output, &proof)?;
             }
             NodeCommand::Funding {
                 store,

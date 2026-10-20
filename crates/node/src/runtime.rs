@@ -72,6 +72,7 @@ pub enum Event {
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
+    pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub state: Arc<State>,
     pub head: Id,
     pub history: crate::history::History,
@@ -136,10 +137,15 @@ fn empty_vote() -> Vote {
 }
 impl Core {
     fn new(initial: Initial) -> Result<Self> {
+        ensure!(
+            initial.currency.proof == crate::executable_profile()?,
+            "currency proof programs differ from this source-bound host executable; preserve old state and use its matching release"
+        );
         let state = State::genesis(&initial.currency, &initial.genesis)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
         Ok(Self {
             initial,
+            state_index: None,
             state: Arc::new(state),
             head,
             history: crate::history::History::default(),
@@ -626,6 +632,7 @@ impl Core {
     pub fn proof_context(&self) -> crate::proving::ProofContext {
         crate::proving::ProofContext {
             initial: self.initial.clone(),
+            state_index: self.state_index.clone(),
             state: self.state.clone(),
             history: self.history.clone(),
             proofs: self.proofs.clone(),
@@ -635,44 +642,7 @@ impl Core {
         self.proof_context().state_at(sequence)
     }
     pub fn cancel_draft(&self, id: Id) -> Result<(Controller, Cancellation)> {
-        let c = self
-            .state
-            .controllers
-            .iter()
-            .find(|c| c.id == id)
-            .context("controller")?
-            .clone();
-        let birth = self
-            .state
-            .births
-            .iter()
-            .find(|b| b.controller == id)
-            .context("birth")?;
-        let h = self.history.at(birth.sequence).context("birth header")?;
-        let state = self.state_at(birth.sequence)?;
-        let terminal = Terminal {
-            currency: self.state.currency,
-            controller: id,
-            initial: hash("RLD-CONTROLLER", self.state.currency, &c),
-            source_checkpoint: h.header.id(),
-            decision: 2,
-            ticket_or_return: proof::cancellation_digest(&c),
-            material_root: Id::ZERO,
-        };
-        let cancel = Cancellation {
-            controller: id,
-            terminal,
-            qc: Quorum { votes: vec![] },
-            authorization: Authorization {
-                owner: c.ticket.cancel_policy.clone(),
-                signatures: vec![],
-            },
-            source_header: h.header.clone(),
-            source_qc: h.qc.clone(),
-            delegation: state.witness("controllers", id)?,
-            coupon_use: state.witness("coupon_uses", c.ticket.coupon)?,
-        };
-        Ok((c, cancel))
+        self.proof_context().cancel_draft(id)
     }
     pub fn native_witness(&self, sequence: u64) -> Result<proof::NativeWitness> {
         self.proof_context().native_witness(sequence)
@@ -766,13 +736,14 @@ impl Node {
             else {
                 continue;
             };
-            let state = self.core.state_at(certified.header.sequence)?;
+            let context = self.core.proof_context();
+            let at = certified.header.sequence;
             let c = &release.creation.controller;
             let evidence = Rejected {
                 release: release.clone(),
                 destination: certified,
-                decision: state.witness("decisions", c.id)?,
-                leaf_decision: state.witness("coupon_uses", c.ticket.coupon)?,
+                decision: context.witness_at(at, "decisions", c.id)?,
+                leaf_decision: context.witness_at(at, "coupon_uses", c.ticket.coupon)?,
             };
             Verifier {
                 currency: &self.core.initial.currency,
@@ -890,14 +861,16 @@ impl Node {
     pub fn initialize(path: &Path, head: &Path, initial: Initial) -> Result<Self> {
         let core = Core::new(initial.clone())?;
         let store = Store::create(path, head, &encode(&Event::Initial(initial)))?;
-        Ok(Self {
+        let mut node = Self {
             core,
             store,
             signers: vec![],
             timers: BTreeMap::new(),
             halted: false,
             last_error: None,
-        })
+        };
+        node.attach_state_index();
+        Ok(node)
     }
     pub fn open(path: &Path, head: &Path, recover: bool) -> Result<Self> {
         let mut store = Store::open(path, head, recover)?;
@@ -915,14 +888,32 @@ impl Node {
             Ok(())
         })?;
         store.finish_recovery()?;
-        Ok(Self {
+        let mut node = Self {
             halted: core.as_ref().is_some_and(|c| !c.faults.is_empty()),
             core: core.context("empty journal")?,
             store,
             signers: vec![],
             timers: BTreeMap::new(),
             last_error: None,
-        })
+        };
+        node.attach_state_index();
+        Ok(node)
+    }
+    fn attach_state_index(&mut self) {
+        match crate::state_index::StateIndex::open(
+            &self.store.root_path().join("state-index"),
+            &self.core.initial,
+        ) {
+            Ok(index) => self.core.state_index = Some(index),
+            Err(error) => {
+                self.last_error = Some(format!(
+                    "derived state index unavailable; full native replay retained: {error}"
+                ))
+            }
+        }
+    }
+    pub fn state_index_error(&self) -> Option<String> {
+        self.core.state_index.as_ref().and_then(|i| i.issue())
     }
     pub fn add_signer(&mut self, signer: Vault) -> Result<()> {
         ensure!(

@@ -1,5 +1,6 @@
 //! Public signed-operation API and bounded pinned-TLS neighbor exchanges.
 mod proofs;
+mod state_indexer;
 use crate::{
     custody::Vault,
     runtime::{Committed, Node},
@@ -120,7 +121,7 @@ async fn job<T: Send + 'static>(
 }
 
 async fn status(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
-    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last().map(|p|p.header.sequence),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
+    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last().map(|p|p.header.sequence),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
 }
 async fn routes(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| Ok(wire(&s.advertisements))).await
@@ -178,6 +179,51 @@ async fn certified(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> 
         Ok(wire(p))
     })
     .await
+}
+#[derive(Deserialize)]
+struct StateProofRequest {
+    at: Option<u64>,
+    collection: String,
+    key: String,
+}
+fn state_read_permit() -> Result<tokio::sync::OwnedSemaphorePermit> {
+    static READS: std::sync::LazyLock<Arc<tokio::sync::Semaphore>> =
+        std::sync::LazyLock::new(|| Arc::new(tokio::sync::Semaphore::new(2)));
+    Ok(READS
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| anyhow::anyhow!("state proof readers busy"))?)
+}
+async fn state_proof(
+    AxumState(shared): AxumState<SharedState>,
+    Query(request): Query<StateProofRequest>,
+) -> ApiResult<Response> {
+    if request.collection.len() > 32
+        || request.key.len() != 64
+        || !rld_protocol::state::COLLECTIONS.contains(&request.collection.as_str())
+    {
+        return Err(anyhow::anyhow!("state proof request bound").into());
+    }
+    let key = Id::parse(&request.key)?;
+    let permit = state_read_permit()?;
+    let (view, source) = job(shared, move |s| {
+        let at = request.at.unwrap_or(s.node.core.state.sequence);
+        let proofs = &s.node.core.proofs;
+        let position = proofs
+            .binary_search_by_key(&at, |p| p.header.sequence)
+            .map_err(|_| anyhow::anyhow!("exact execution receipt pending"))?;
+        let source = proofs[position].clone();
+        Ok((s.node.core.proof_context(), source))
+    })
+    .await?;
+    let result =
+        tokio::task::spawn_blocking(move || -> Result<crate::state_index::CertifiedQuery> {
+            let _permit = permit;
+            let query = view.query_at(source.header.sequence, &request.collection, key)?;
+            Ok(crate::state_index::CertifiedQuery { source, query })
+        })
+        .await??;
+    Ok(wire(&result))
 }
 async fn work(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| {
@@ -321,7 +367,14 @@ async fn cancel_draft(
     AxumPath(id): AxumPath<String>,
 ) -> ApiResult<Response> {
     let id = Id::parse(&id)?;
-    job(s, move |s| Ok(wire(&s.node.core.cancel_draft(id)?))).await
+    let permit = state_read_permit()?;
+    let context = job(s, |s| Ok(s.node.core.proof_context())).await?;
+    let draft = tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        context.cancel_draft(id)
+    })
+    .await??;
+    Ok(wire(&draft))
 }
 async fn controller(
     AxumState(s): AxumState<SharedState>,
@@ -668,6 +721,7 @@ pub async fn serve(node: Node, transport: Vault, config: Config) -> Result<()> {
         .route("/v1/blocks", get(blocks))
         .route("/v1/state", get(snapshot))
         .route("/v1/certified", get(certified))
+        .route("/v1/state-proof", get(state_proof))
         .route("/v1/work", get(work))
         .route("/v1/submit", post(submit))
         .route("/v1/candidate", post(candidate))
@@ -680,6 +734,9 @@ pub async fn serve(node: Node, transport: Vault, config: Config) -> Result<()> {
         .with_state(shared.clone());
     // Abort workers on every return path, including TLS/listener setup errors.
     let mut tasks = ServiceTasks(vec![tokio::spawn(background(shared.clone()))]);
+    tasks
+        .0
+        .push(tokio::spawn(state_indexer::worker(shared.clone())));
     for (peer, client) in clients {
         tasks
             .0

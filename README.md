@@ -41,6 +41,22 @@ and controller receipts are real succinct receipts; development/fake receipts
 and unresolved assumptions are refused. Changing the guest relation changes its
 image ID and requires a distinct explicitly approved currency descriptor.
 
+The host pins the reviewed real proof profile in
+`spec/EXECUTABLE_PROFILE.json`. `rld profile` reports its native/proof source
+binding and expected programs. Node initialization, cold opening, descriptor
+construction and monetary CLI currency reads refuse a different program profile.
+A mismatching old store remains unchanged and needs its matching historical
+release; this is not a monetary upgrade/migration command.
+
+For an authorized native/proof source revision, first build the real prover from
+that source (`cargo build --release -p rld-prover --locked`, using the macOS helper
+where needed), then run `python3 tools/pin-executable-profile.py`. Review that
+public binding, build the complete workspace and compare `rld profile` with the
+actual `rld-prover profile`. The node build script rejects stale native/proof
+source fingerprints. Pinning alone is not verification that a stale prover was
+rebuilt or that a Linux build reproduces the same image; those comparisons remain
+required release evidence. The existing CI compiles the committed binding.
+
 ## Components
 
 - `crates/protocol`: canonical CBOR, monetary types, ordered-map proofs,
@@ -49,7 +65,8 @@ image ID and requires a distinct explicitly approved currency descriptor.
 - `crates/node`: durable replay, encrypted local signing custody, PBFT,
   signed and pinned-TLS contact carriage, bounded fragments, offline bundles,
   public signed-operation API, persistent native-history index and independently
-  scheduled bounded proving lanes.
+  scheduled bounded proving lanes, disk state material and certified historical
+  membership/absence queries.
 - `crates/cli`: wallet signatures and balances, ordinary CPU mining, placement
   work, payment/service/family drafts, evidence extraction, operator tools,
   cancellation and disconnected carriage.
