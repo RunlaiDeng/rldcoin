@@ -195,25 +195,43 @@ state. `rld profile` and actual `rld-prover profile` must match in release evide
 This revision changes compiled program IDs; no old currency/store/key migration
 is authorized. It does not implement general in-place cryptographic upgrades.
 
+## Incremental counted prefix roots
+
+The owner approved the 20 October map-root amendment. Native collections now use
+persistent ordered value tables plus immutable counted compressed prefix nodes.
+Cloning shares the existing nodes; insert/replace/remove copy the affected paths
+and stage both value and commitment roots before publication. Collection tags bind
+currency, home and map name. Canonical wire State still carries complete ordered
+records; decoding reconstructs both indexes rather than trusting serialized caches.
+
+State.root reads the cached roots of all permanent maps and reconstructs only the
+small collection/counter tree. Membership uses the retained key path; absence
+still authenticates neighboring ranks or endpoints. Receiving-family commitments
+use the same map primitive. Native admission refuses a resulting tree deeper than
+64 branches. Derived disk witness pages now split at the same first differing key
+bit; native verification checks their complete reconstructed paths and counts.
+Old index bindings and old executable descriptors refuse without migration.
+
+This changes root computation and shared in-memory mutation, not the complete
+execution witness model. Full monetary invariants, owner/work/fees, issuance slots,
+controller exclusion and permanent decision checks remain. See
+[the source analysis](engineering/INCREMENTAL_STATE.md). No local fixture, test
+suite, payment campaign or measured scalability result is claimed.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
 
-1. The current native implementation keeps ordered collections and replayed
-   history in memory, clones state for atomic execution, and rebuilds map roots.
-   Read-only consensus events share immutable state and proof allocations.
-   Native history uses a persistent 32-way index with shared complete records;
-   appending copies only the changed branch path. Exact height lookup and page
-   seeking no longer scan the entire prefix. Full state execution still copies
-   state, receipt-vector append still copies its current collection, and complete
-   historical records/receipts remain resident in memory.
-   Disk snapshots and authenticated witness pages now serve historical state
-   material and proofs, but native execution still materializes and clones complete
-   State, rebuilds roots and keeps current collections in memory. Snapshot creation
-   also materializes complete state and rebuilds its pages. A persistent native
-   state execution index, incremental authenticated updates and compact executable
-   transition witnesses remain needed. This is not an implementation of 100 million
-   completed daily payments or a demonstrated seconds-scale receipt pipeline.
+1. Native execution now shares immutable ordered records and cached counted
+   prefix roots, so a single update need not clone every record or rebuild every
+   map hash. Complete current State and replayed history still reside in memory;
+   full invariant scans, canonical snapshot construction and full guest input
+   decoding remain. Native history uses a persistent 32-way index, while receipt
+   append still copies its current collection. Disk snapshots and witness pages
+   serve historical complete material and queries, but snapshot publication still
+   materializes complete records and rebuilds pages. A bounded-memory disk
+   executor and compact authenticated executable transition witnesses remain
+   needed. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one
    eligible segment; a large record may cause fewer than 64 to fit, so this is

@@ -1,0 +1,76 @@
+{
+  "format": "RLDCOIN-WHITEPAPER-RESEARCH-REVISION-RECORD",
+  "status": "OWNER_AUTHORIZED_PREFIX_ROOT_AMENDMENT",
+  "document_date": "2026-10-20",
+  "publication_version_label": null,
+  "title": "Rldcoin: Interstellar Peer-to-Peer Payments",
+  "canonical_markdown": {
+    "path": "public/documents/rldcoin-whitepaper.md",
+    "bytes": 83163,
+    "sha256": "30ad8bfeca1a5da98ebd92f5f1acda56348f6d9686508d3da6180c873d4487e8"
+  },
+  "pdf": {
+    "path": "public/documents/rldcoin-whitepaper.pdf",
+    "bytes": 80370,
+    "sha256": "257d57fce20795fbdca7aec56906eafb54ccd616ef3afe50aad4d8038e0e5236",
+    "pages": 20
+  },
+  "figures": [
+    {
+      "path": "public/diagrams/authority-transfer.svg",
+      "bytes": 11101,
+      "sha256": "e728e296442ae468fb5d3021fd9da1a083a64b07fa449f31add05fef35584bc8"
+    },
+    {
+      "path": "public/diagrams/issuance-strands.svg",
+      "bytes": 6257,
+      "sha256": "4e793fff4ee622282ad0ece014d51dc65831ff616f597d01750c5d990da4ca27"
+    }
+  ],
+  "authorization_scope": "Owner explicitly approved the incremental map-root amendment and its implementation, with corresponding canonical paper/PDF/official website synchronization. No monetary genesis, old-value/key migration or mainnet is created by this publication.",
+  "predecessor": {
+    "receipt": "rldcoin-whitepaper-release-2026-10-19-controllers.json",
+    "sha256": "c07f65b87ad8a1869775fba24db2d1aa32e5dac74863b580214d9954e6fa75bb",
+    "canonical_markdown_sha256": "252a280044856a599c4a7fb1e7913d08776aa79f172db64275339be760662639",
+    "pdf_sha256": "2bc2d3158d0ca5fc4ea6ab00c6683b25d79a0b2ca59d1d0babcf33ae6dcaa720",
+    "historical_artifacts": "archive/whitepaper-history/documents; outside served tree"
+  },
+  "amendment": {
+    "replaces": "Appendix A positional largest-power-of-two ordered map paragraph",
+    "construction": "Counted compressed binary prefix tree with 32-byte keys; first differing split bit; exact common prefix; ordered child hashes and checked counts; no unary branch; root binds total count.",
+    "proof": "Exact leaf, rank/count and increasing split positions with sibling hash/count; absence by authenticated ordered adjacency/endpoints.",
+    "maximum_carried_branch_siblings": 64,
+    "native_over_capacity": "Refuse mutation before unsupported state publication; no bound increase, evidence deletion, namespace reset or refund.",
+    "native_storage": "Immutable sharing reconstructed from complete records or authenticated access material; cache metadata is not execution authority.",
+    "owner_approved_proposal": {
+      "path": "docs/proposals/INCREMENTAL_MAP_ROOT_AMENDMENT.md",
+      "bytes": 5409,
+      "sha256": "5a04a08bc1481ed0f4ee35be10ca1f4794e35705c44dc481d43c8af4ed0201ad"
+    },
+    "corresponding_scope": "Native tables, current and proving states, receiving-family maps and disk witnesses; separate source-bound compile evidence."
+  },
+  "monetary_rules": {
+    "sole_currency": "runlai (RLD)",
+    "all_protocol_fees_in_RLD": true,
+    "lifetime_cap_RLD": "21000000",
+    "atomic_units_per_RLD": "1000000000000000000000000",
+    "initial_issued_RLD": "0",
+    "all_preallocations_RLD": "0",
+    "issuance_work_and_slot_budget": "unchanged",
+    "positive_owner_authorized_work_author_payment_fee": "unchanged"
+  },
+  "review": {
+    "author_source_and_mechanism_review": "completed",
+    "independent_security_review": "not established",
+    "pdf": "20 A4 pages; complete page overview and amended page visually inspected",
+    "local_protocol_fixtures_or_test_suites": "not run by owner direction",
+    "publication_establishes_runtime_throughput_or_proof_economics": false
+  },
+  "limits": [
+    "Full current data, permanent decisions, monetary invariants and funded archival custody remain required.",
+    "Incremental root updates do not implement compact executable transition witnesses or a bounded-memory disk executor.",
+    "No measured latency, sustained daily payment volume, proof cost, independently qualified custody or physical stellar route is claimed.",
+    "Conditional mainnet authorization still requires actual functional completion and a separate fresh zero-initial-issuance genesis."
+  ],
+  "body_revisions_require_explicit_owner_decision": true
+}

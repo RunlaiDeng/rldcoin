@@ -1,9 +1,9 @@
 {
   "format": "RLD-EXECUTABLE-PROFILE-1",
-  "source_digest": "17131afac38d48d6488d631aabb1a73fd4e1d4dc920f4a1169784777ddb8e204",
+  "source_digest": "301cb41146577f48110ed0dfa861f90c9e5daecf4ca0f8d4e43fec230955f44f",
   "proof_profile": {
-    "native_image": "aca53f3aaba11edf1c6e100f86ce94fc8c632cccb98a8ef285092db949e361bf",
-    "controller_image": "60ebda02debe58a6b51262801893f6de2f70b30ca94bcfd563201730c4535093",
+    "native_image": "53b15dd55b8d4188caf66adb6f988603e68604e4de2bf7205b886ed9f26488ce",
+    "controller_image": "6827f7e0c70bcd4781d6e47f0c6bfa24696f232ce3647eb416e5b5b82d4c30fa",
     "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
     "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
     "backend": "risc0-zkvm-3.0.6-succinct"
@@ -35,11 +35,11 @@
     },
     {
       "path": "crates/protocol/src/lib.rs",
-      "sha256": "a0f1515847e7a0024bb96f9ea1af45221701dcb99cb037b330100f748bc19aa0"
+      "sha256": "216561835999587ad50eeaf197557047810af3325473f1cac4ad976622717ea8"
     },
     {
       "path": "crates/protocol/src/merkle.rs",
-      "sha256": "e1febeab18bf8eb2b244432a007b83a0f9ebebd7e0b21ab305755acaf7fc46c1"
+      "sha256": "3c38987431cd7d498ff3aacc5b9b718f7ef65fe5218253348ca63df3de08500c"
     },
     {
       "path": "crates/protocol/src/model.rs",
@@ -51,7 +51,15 @@
     },
     {
       "path": "crates/protocol/src/state.rs",
-      "sha256": "14b40c69c8e0e80729c94994fa37f654d8552c4799683d36dee676f8bf5058a4"
+      "sha256": "41895a2e63b24cc9e9ddff089136d5161c93f4f66eb376b8fe524a7765e4e3b4"
+    },
+    {
+      "path": "crates/protocol/src/state/wire.rs",
+      "sha256": "201751efbce79d4b162deb06b3b07d2f51111b720003709b52bd83453b1d1365"
+    },
+    {
+      "path": "crates/protocol/src/table.rs",
+      "sha256": "02c3b5c502dda8fa0ce623bab274d9108e7fc0d99972f53e9d74d1522ba79b26"
     },
     {
       "path": "crates/protocol/src/work.rs",

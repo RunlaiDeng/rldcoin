@@ -1,13 +1,14 @@
+use crate::table::{Key, Table};
 use crate::{
     codec::{Amount, Blob, Id, encode, hash, sorted_unique, tagged},
     crypto,
     merkle::{self, Entry},
     model::*,
     proof::{self, Verifier},
-    record,
 };
-use anyhow::{Result, bail, ensure};
+use anyhow::{Context, Result, bail, ensure};
 use std::collections::{BTreeMap, BTreeSet};
+mod wire;
 
 pub const COLLECTIONS: &[&str] = &[
     "fee_policies",
@@ -30,15 +31,107 @@ pub const COLLECTIONS: &[&str] = &[
     "counters",
 ];
 
-record!(State {
- currency:Id => 0,domain:Id => 1,sequence:u64 => 2,configuration:Configuration => 3,
- outputs:Vec<Output> => 4,grants:Vec<Grant> => 5,segments:Vec<Segment> => 6,
- controllers:Vec<Controller> => 7,births:Vec<Birth> => 8,coupon_uses:Vec<Delegation> => 9,
- families:Vec<Family> => 10,decisions:Vec<Decision> => 11,redemptions:Vec<Redemption> => 12,
- services:Vec<Service> => 13,covers:Vec<Cover> => 14,mints:Vec<MintRecord> => 15,
- applied:Vec<Applied> => 16,incidents:Vec<Incident> => 17,pool_next:u32 => 18,
- minted:Amount => 19,retired:Amount => 20,used_funding:Vec<Id> => 21,resolutions:Vec<Decision> => 22,fee_policies:Vec<FeePolicy> => 23
-});
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, minicbor::Encode)]
+#[serde(deny_unknown_fields)]
+#[cbor(array)]
+pub struct State {
+    #[n(0)]
+    pub currency: Id,
+    #[n(1)]
+    pub domain: Id,
+    #[n(2)]
+    pub sequence: u64,
+    #[n(3)]
+    pub configuration: Configuration,
+    #[n(4)]
+    pub outputs: Table<Output>,
+    #[n(5)]
+    pub grants: Table<Grant>,
+    #[n(6)]
+    pub segments: Table<Segment>,
+    #[n(7)]
+    pub controllers: Table<Controller>,
+    #[n(8)]
+    pub births: Table<Birth>,
+    #[n(9)]
+    pub coupon_uses: Table<Delegation>,
+    #[n(10)]
+    pub families: Table<Family>,
+    #[n(11)]
+    pub decisions: Table<Decision>,
+    #[n(12)]
+    pub redemptions: Table<Redemption>,
+    #[n(13)]
+    pub services: Table<Service>,
+    #[n(14)]
+    pub covers: Table<Cover>,
+    #[n(15)]
+    pub mints: Table<MintRecord>,
+    #[n(16)]
+    pub applied: Table<Applied>,
+    #[n(17)]
+    pub incidents: Table<Incident>,
+    #[n(18)]
+    pub pool_next: u32,
+    #[n(19)]
+    pub minted: Amount,
+    #[n(20)]
+    pub retired: Amount,
+    #[n(21)]
+    pub used_funding: Table<Id>,
+    #[n(22)]
+    pub resolutions: Table<Decision>,
+    #[n(23)]
+    pub fee_policies: Table<FeePolicy>,
+}
+impl State {
+    fn from_wire(w: wire::StateWire) -> Result<Self> {
+        let c = w.currency;
+        let domain = w.domain;
+        Ok(Self {
+            currency: w.currency,
+            domain: w.domain,
+            sequence: w.sequence,
+            configuration: w.configuration,
+            outputs: Table::from_sorted(c, &format!("{domain}/outputs"), w.outputs)?,
+            grants: Table::from_sorted(c, &format!("{domain}/grants"), w.grants)?,
+            segments: Table::from_sorted(c, &format!("{domain}/segments"), w.segments)?,
+            controllers: Table::from_sorted(c, &format!("{domain}/controllers"), w.controllers)?,
+            births: Table::from_sorted(c, &format!("{domain}/births"), w.births)?,
+            coupon_uses: Table::from_sorted(c, &format!("{domain}/coupon_uses"), w.coupon_uses)?,
+            families: Table::from_sorted(c, &format!("{domain}/families"), w.families)?,
+            decisions: Table::from_sorted(c, &format!("{domain}/decisions"), w.decisions)?,
+            redemptions: Table::from_sorted(c, &format!("{domain}/redemptions"), w.redemptions)?,
+            services: Table::from_sorted(c, &format!("{domain}/services"), w.services)?,
+            covers: Table::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
+            mints: Table::from_sorted(c, &format!("{domain}/mints"), w.mints)?,
+            applied: Table::from_sorted(c, &format!("{domain}/applied"), w.applied)?,
+            incidents: Table::from_sorted(c, &format!("{domain}/incidents"), w.incidents)?,
+            pool_next: w.pool_next,
+            minted: w.minted,
+            retired: w.retired,
+            used_funding: Table::from_sorted(c, &format!("{domain}/funding"), w.used_funding)?,
+            resolutions: Table::from_sorted(c, &format!("{domain}/resolutions"), w.resolutions)?,
+            fee_policies: Table::from_sorted(c, &format!("{domain}/fee_policies"), w.fee_policies)?,
+        })
+    }
+}
+impl<'b, C> minicbor::Decode<'b, C> for State {
+    fn decode(
+        d: &mut minicbor::Decoder<'b>,
+        c: &mut C,
+    ) -> std::result::Result<Self, minicbor::decode::Error> {
+        Self::from_wire(<wire::StateWire as minicbor::Decode<C>>::decode(d, c)?)
+            .map_err(|_| minicbor::decode::Error::message("native table order/duplicate"))
+    }
+}
+impl<'de> serde::Deserialize<'de> for State {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
+        Self::from_wire(<wire::StateWire as serde::Deserialize>::deserialize(d)?)
+            .map_err(serde::de::Error::custom)
+    }
+}
+
 pub fn genesis_id(c: Id, g: &DomainGenesis) -> Id {
     hash("RLD-DOMAIN-GENESIS", c, &(&g.identity, &g.configuration))
 }
@@ -134,26 +227,30 @@ impl State {
             domain: config.domain,
             sequence: 0,
             configuration: config.clone(),
-            fee_policies: vec![config.fee_policy.clone()],
-            outputs: vec![],
-            grants: vec![],
-            segments: vec![],
-            controllers: vec![],
-            births: vec![],
-            coupon_uses: vec![],
-            families: vec![],
-            decisions: vec![],
-            redemptions: vec![],
-            services: vec![],
-            covers: vec![],
-            mints: vec![],
-            applied: vec![],
-            incidents: vec![],
+            fee_policies: Table::from_sorted(
+                c,
+                &format!("{}/fee_policies", config.domain),
+                vec![config.fee_policy.clone()],
+            )?,
+            outputs: Table::new(c, &format!("{}/outputs", config.domain)),
+            grants: Table::new(c, &format!("{}/grants", config.domain)),
+            segments: Table::new(c, &format!("{}/segments", config.domain)),
+            controllers: Table::new(c, &format!("{}/controllers", config.domain)),
+            births: Table::new(c, &format!("{}/births", config.domain)),
+            coupon_uses: Table::new(c, &format!("{}/coupon_uses", config.domain)),
+            families: Table::new(c, &format!("{}/families", config.domain)),
+            decisions: Table::new(c, &format!("{}/decisions", config.domain)),
+            redemptions: Table::new(c, &format!("{}/redemptions", config.domain)),
+            services: Table::new(c, &format!("{}/services", config.domain)),
+            covers: Table::new(c, &format!("{}/covers", config.domain)),
+            mints: Table::new(c, &format!("{}/mints", config.domain)),
+            applied: Table::new(c, &format!("{}/applied", config.domain)),
+            incidents: Table::new(c, &format!("{}/incidents", config.domain)),
             pool_next: 0,
             minted: Amount(0),
             retired: Amount(0),
-            used_funding: vec![],
-            resolutions: vec![],
+            used_funding: Table::new(c, &format!("{}/funding", config.domain)),
+            resolutions: Table::new(c, &format!("{}/resolutions", config.domain)),
         };
         if state.domain == currency.bootstrap {
             let cover = Cover {
@@ -173,7 +270,7 @@ impl State {
             cover.proof_suites.dedup();
             cover.validate()?;
             let cover_id = cover.id(c);
-            state.covers.push(cover);
+            state.covers.insert(cover)?;
             for root in 0..crate::ROOTS {
                 let creation = hash("RLD-ROOT-GRANT-CREATION", c, &(state.domain, root));
                 let id = hash(
@@ -181,7 +278,7 @@ impl State {
                     c,
                     &(root, 0u32, crate::SLOTS, state.domain, creation, cover_id),
                 );
-                state.grants.push(Grant {
+                state.grants.insert(Grant {
                     id,
                     root,
                     lo: 0,
@@ -189,39 +286,18 @@ impl State {
                     home: state.domain,
                     creation,
                     cover: cover_id,
-                });
-                state.segments.push(Segment {
+                })?;
+                state.segments.insert(Segment {
                     grant: id,
                     lo: 0,
                     hi: crate::SLOTS,
                     cursor: 0,
                     mint_anchor: hash("RLD-SEGMENT-OPEN", c, &(id, 0u32, creation, "genesis")),
-                });
+                })?;
             }
         }
-        state.normalize();
         state.invariants()?;
         Ok(state)
-    }
-    fn normalize(&mut self) {
-        self.outputs.sort_by_key(|v| v.id);
-        self.grants.sort_by_key(|v| v.id);
-        self.segments.sort_by_key(|v| (v.grant, v.cursor));
-        self.controllers.sort_by_key(|v| v.id);
-        self.births.sort_by_key(|v| v.controller);
-        self.coupon_uses.sort_by_key(|v| v.coupon);
-        self.families.sort_by_key(|v| v.id);
-        self.decisions.sort_by_key(|v| v.object);
-        self.redemptions.sort_by_key(|v| v.controller);
-        self.services.sort_by_key(|v| v.id);
-        let c = self.currency;
-        self.covers.sort_by_key(|v| v.id(c));
-        self.mints.sort_by_key(|v| v.event);
-        self.applied.sort_by_key(|v| v.id);
-        self.incidents.sort_by_key(|v| (v.family, v.anchor));
-        self.used_funding.sort();
-        self.fee_policies.sort_by_key(|p| p.id(self.currency));
-        self.resolutions.sort_by_key(|v| v.object);
     }
     pub fn invariants(&self) -> Result<()> {
         ensure!(
@@ -230,6 +306,40 @@ impl State {
                 && self.pool_next <= crate::KEY_COUNT,
             "state identity/counter"
         );
+        self.outputs
+            .commitment(self.currency, &format!("{}/outputs", self.domain))?;
+        self.grants
+            .commitment(self.currency, &format!("{}/grants", self.domain))?;
+        self.segments
+            .commitment(self.currency, &format!("{}/segments", self.domain))?;
+        self.controllers
+            .commitment(self.currency, &format!("{}/controllers", self.domain))?;
+        self.births
+            .commitment(self.currency, &format!("{}/births", self.domain))?;
+        self.coupon_uses
+            .commitment(self.currency, &format!("{}/coupon_uses", self.domain))?;
+        self.families
+            .commitment(self.currency, &format!("{}/families", self.domain))?;
+        self.decisions
+            .commitment(self.currency, &format!("{}/decisions", self.domain))?;
+        self.redemptions
+            .commitment(self.currency, &format!("{}/redemptions", self.domain))?;
+        self.services
+            .commitment(self.currency, &format!("{}/services", self.domain))?;
+        self.covers
+            .commitment(self.currency, &format!("{}/covers", self.domain))?;
+        self.mints
+            .commitment(self.currency, &format!("{}/mints", self.domain))?;
+        self.applied
+            .commitment(self.currency, &format!("{}/applied", self.domain))?;
+        self.incidents
+            .commitment(self.currency, &format!("{}/incidents", self.domain))?;
+        self.used_funding
+            .commitment(self.currency, &format!("{}/funding", self.domain))?;
+        self.resolutions
+            .commitment(self.currency, &format!("{}/resolutions", self.domain))?;
+        self.fee_policies
+            .commitment(self.currency, &format!("{}/fee_policies", self.domain))?;
         for keys in [
             self.outputs.iter().map(|v| v.id).collect::<Vec<_>>(),
             self.grants.iter().map(|v| v.id).collect(),
@@ -243,7 +353,7 @@ impl State {
             self.covers.iter().map(|v| v.id(self.currency)).collect(),
             self.mints.iter().map(|v| v.event).collect(),
             self.applied.iter().map(|v| v.id).collect(),
-            self.used_funding.clone(),
+            self.used_funding.iter().copied().collect(),
             self.resolutions.iter().map(|v| v.object).collect(),
         ] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
@@ -257,8 +367,7 @@ impl State {
         for s in &self.segments {
             let g = self
                 .grants
-                .iter()
-                .find(|g| g.id == s.grant)
+                .get(s.grant)
                 .ok_or_else(|| anyhow::anyhow!("segment grant"))?;
             ensure!(
                 g.home == self.domain
@@ -282,10 +391,12 @@ impl State {
         let mut minted = BTreeSet::new();
         for m in &self.mints {
             ensure!(minted.insert((m.root, m.slot)), "duplicate root slot Mint");
+            let position = slots.partition_point(|s| (s.0, s.1) <= (m.root, m.slot));
             ensure!(
-                !slots
-                    .iter()
-                    .any(|s| s.0 == m.root && s.1 <= m.slot && m.slot < s.2),
+                position == 0 || {
+                    let s = slots[position - 1];
+                    s.0 != m.root || m.slot < s.1 || m.slot >= s.2
+                },
                 "consumed active slot"
             );
         }
@@ -294,139 +405,23 @@ impl State {
     pub fn collection(&self, name: &str) -> Result<Vec<Entry>> {
         let c = self.currency;
         let mut out = match name {
-            "outputs" => self
-                .outputs
-                .iter()
-                .map(|v| Entry {
-                    key: v.id,
-                    value: hash("RLD-OUTPUT", c, v),
-                })
-                .collect(),
-            "grants" => self
-                .grants
-                .iter()
-                .map(|v| Entry {
-                    key: v.id,
-                    value: hash("RLD-GRANT", c, v),
-                })
-                .collect(),
-            "segments" => self
-                .segments
-                .iter()
-                .map(|v| Entry {
-                    key: hash("RLD-SEGMENT-KEY", c, &(v.grant, v.cursor)),
-                    value: hash("RLD-SEGMENT", c, v),
-                })
-                .collect(),
-            "controllers" => self
-                .controllers
-                .iter()
-                .map(|v| Entry {
-                    key: v.id,
-                    value: hash("RLD-CONTROLLER", c, v),
-                })
-                .collect(),
-            "births" => self
-                .births
-                .iter()
-                .map(|v| Entry {
-                    key: v.controller,
-                    value: hash("RLD-BIRTH", c, v),
-                })
-                .collect(),
-            "coupon_uses" => self
-                .coupon_uses
-                .iter()
-                .map(|v| Entry {
-                    key: v.coupon,
-                    value: hash("RLD-DELEGATION", c, v),
-                })
-                .collect(),
-            "families" => self
-                .families
-                .iter()
-                .map(|v| Entry {
-                    key: v.id,
-                    value: hash("RLD-FAMILY", c, v),
-                })
-                .collect(),
-            "decisions" => self
-                .decisions
-                .iter()
-                .map(|v| Entry {
-                    key: v.object,
-                    value: hash("RLD-DECISION", c, v),
-                })
-                .collect(),
-            "redemptions" => self
-                .redemptions
-                .iter()
-                .map(|v| Entry {
-                    key: v.controller,
-                    value: hash("RLD-REDEMPTION", c, v),
-                })
-                .collect(),
-            "services" => self
-                .services
-                .iter()
-                .map(|v| Entry {
-                    key: v.id,
-                    value: hash("RLD-SERVICE", c, v),
-                })
-                .collect(),
-            "covers" => self
-                .covers
-                .iter()
-                .map(|v| Entry {
-                    key: v.id(c),
-                    value: hash("RLD-COVER", c, v),
-                })
-                .collect(),
-            "mints" => self
-                .mints
-                .iter()
-                .map(|v| Entry {
-                    key: v.event,
-                    value: hash("RLD-MINT-RECORD", c, v),
-                })
-                .collect(),
-            "applied" => self
-                .applied
-                .iter()
-                .map(|v| Entry {
-                    key: v.id,
-                    value: v.digest,
-                })
-                .collect(),
-            "incidents" => self
-                .incidents
-                .iter()
-                .map(|v| Entry {
-                    key: hash("RLD-INCIDENT-KEY", c, &(v.family, v.anchor)),
-                    value: hash("RLD-INCIDENT", c, v),
-                })
-                .collect(),
-            "resolutions" => self
-                .resolutions
-                .iter()
-                .map(|v| Entry {
-                    key: v.object,
-                    value: hash("RLD-DECISION", c, v),
-                })
-                .collect(),
-            "fee_policies" => self
-                .fee_policies
-                .iter()
-                .map(|p| Entry {
-                    key: p.id(c),
-                    value: p.id(c),
-                })
-                .collect(),
-            "funding" => self
-                .used_funding
-                .iter()
-                .map(|v| Entry { key: *v, value: *v })
-                .collect(),
+            "outputs" => self.outputs.entries(),
+            "grants" => self.grants.entries(),
+            "segments" => self.segments.entries(),
+            "controllers" => self.controllers.entries(),
+            "births" => self.births.entries(),
+            "coupon_uses" => self.coupon_uses.entries(),
+            "families" => self.families.entries(),
+            "decisions" => self.decisions.entries(),
+            "redemptions" => self.redemptions.entries(),
+            "services" => self.services.entries(),
+            "covers" => self.covers.entries(),
+            "mints" => self.mints.entries(),
+            "applied" => self.applied.entries(),
+            "incidents" => self.incidents.entries(),
+            "funding" => self.used_funding.entries(),
+            "resolutions" => self.resolutions.entries(),
+            "fee_policies" => self.fee_policies.entries(),
             "counters" => vec![Entry {
                 key: Id::ZERO,
                 value: hash(
@@ -446,16 +441,71 @@ impl State {
         out.sort_by_key(|v| v.key);
         Ok(out)
     }
+    fn table_root(&self, name: &str) -> Result<Id> {
+        let tag = format!("{}/{name}", self.domain);
+        match name {
+            "outputs" => self.outputs.commitment(self.currency, &tag),
+            "grants" => self.grants.commitment(self.currency, &tag),
+            "segments" => self.segments.commitment(self.currency, &tag),
+            "controllers" => self.controllers.commitment(self.currency, &tag),
+            "births" => self.births.commitment(self.currency, &tag),
+            "coupon_uses" => self.coupon_uses.commitment(self.currency, &tag),
+            "families" => self.families.commitment(self.currency, &tag),
+            "decisions" => self.decisions.commitment(self.currency, &tag),
+            "redemptions" => self.redemptions.commitment(self.currency, &tag),
+            "services" => self.services.commitment(self.currency, &tag),
+            "covers" => self.covers.commitment(self.currency, &tag),
+            "mints" => self.mints.commitment(self.currency, &tag),
+            "applied" => self.applied.commitment(self.currency, &tag),
+            "incidents" => self.incidents.commitment(self.currency, &tag),
+            "funding" => self.used_funding.commitment(self.currency, &tag),
+            "resolutions" => self.resolutions.commitment(self.currency, &tag),
+            "fee_policies" => self.fee_policies.commitment(self.currency, &tag),
+            "counters" => merkle::root(self.currency, &tag, &self.collection(name)?),
+            _ => bail!("unknown state collection"),
+        }
+    }
+    fn table_witness(&self, name: &str, key: Id) -> Result<merkle::Membership> {
+        self.table_root(name)?;
+        match name {
+            "outputs" => self.outputs.witness(key),
+            "grants" => self.grants.witness(key),
+            "segments" => self.segments.witness(key),
+            "controllers" => self.controllers.witness(key),
+            "births" => self.births.witness(key),
+            "coupon_uses" => self.coupon_uses.witness(key),
+            "families" => self.families.witness(key),
+            "decisions" => self.decisions.witness(key),
+            "redemptions" => self.redemptions.witness(key),
+            "services" => self.services.witness(key),
+            "covers" => self.covers.witness(key),
+            "mints" => self.mints.witness(key),
+            "applied" => self.applied.witness(key),
+            "incidents" => self.incidents.witness(key),
+            "funding" => self.used_funding.witness(key),
+            "resolutions" => self.resolutions.witness(key),
+            "fee_policies" => self.fee_policies.witness(key),
+            "counters" => {
+                let entries = self.collection(name)?;
+                let i = entries
+                    .binary_search_by_key(&key, |e| e.key)
+                    .map_err(|_| anyhow::anyhow!("missing state key"))?;
+                merkle::prove(
+                    self.currency,
+                    &format!("{}/{name}", self.domain),
+                    &entries,
+                    i,
+                )
+            }
+            _ => bail!("unknown state collection"),
+        }
+    }
     pub fn top(&self) -> Result<Vec<Entry>> {
         let mut out = Vec::new();
         for &name in COLLECTIONS {
             out.push(Entry {
                 key: hash("RLD-COLLECTION", self.currency, &(self.domain, name)),
-                value: merkle::root(
-                    self.currency,
-                    &format!("{}/{name}", self.domain),
-                    &self.collection(name)?,
-                )?,
+                value: self.table_root(name)?,
             });
         }
         out.sort_by_key(|e| e.key);
@@ -469,10 +519,7 @@ impl State {
         )
     }
     pub fn witness(&self, collection: &str, key: Id) -> Result<StateWitness> {
-        let entries = self.collection(collection)?;
-        let i = entries
-            .binary_search_by_key(&key, |v| v.key)
-            .map_err(|_| anyhow::anyhow!("missing state key"))?;
+        let entry = self.table_witness(collection, key)?;
         let tops = self.top()?;
         let topkey = hash("RLD-COLLECTION", self.currency, &(self.domain, collection));
         let j = tops
@@ -480,12 +527,7 @@ impl State {
             .expect("collection");
         Ok(StateWitness {
             collection: collection.into(),
-            entry: merkle::prove(
-                self.currency,
-                &format!("{}/{collection}", self.domain),
-                &entries,
-                i,
-            )?,
+            entry,
             top: merkle::prove(self.currency, &format!("{}/state", self.domain), &tops, j)?,
         })
     }
@@ -516,7 +558,6 @@ impl State {
             );
             next.apply(currency, op, old)?;
         }
-        next.normalize();
         next.invariants()?;
         let header = Checkpoint {
             profile: "RLD-NATIVE-RELATION-1".into(),
@@ -542,8 +583,7 @@ impl State {
     }
     fn cover(&self, id: Id) -> Result<&Cover> {
         self.covers
-            .iter()
-            .find(|v| v.id(self.currency) == id)
+            .get(id)
             .ok_or_else(|| anyhow::anyhow!("missing cover definition"))
     }
     fn usable(&self, components: &[Component]) -> Result<()> {
@@ -554,8 +594,8 @@ impl State {
             ensure!(
                 !cover.families.iter().any(|f| self
                     .incidents
-                    .iter()
-                    .any(|i| i.family == f.family && i.anchor == f.anchor)),
+                    .get_key(Key::Incident(f.family, f.anchor))
+                    .is_some()),
                 "quarantined cover"
             );
         }
@@ -574,8 +614,7 @@ impl State {
         for id in ids {
             let o = self
                 .outputs
-                .iter()
-                .find(|v| v.id == *id)
+                .get(*id)
                 .ok_or_else(|| anyhow::anyhow!("input missing/spent"))?;
             self.usable(&o.components)?;
             crypto::authorize(&o.owner, &op.authorizations, &op.signing_bytes())?;
@@ -621,23 +660,23 @@ impl State {
         self.allocation(a)?;
         ensure!(*index < 64, "output count");
         let key = hash("RLD-OUTPUT-ID", self.currency, &(id, *index));
-        ensure!(
-            !self.outputs.iter().any(|v| v.id == key),
-            "output ID collision"
-        );
-        self.outputs.push(Output {
+        ensure!(self.outputs.get(key).is_none(), "output ID collision");
+        self.outputs.insert(Output {
             id: key,
             owner: a.owner.clone(),
             home: self.domain,
             components: a.components.clone(),
-        });
+        })?;
         *index = index
             .checked_add(1)
             .ok_or_else(|| anyhow::anyhow!("output index"))?;
         Ok(())
     }
-    fn remove_inputs(&mut self, ids: &[Id]) {
-        self.outputs.retain(|v| !ids.contains(&v.id));
+    fn remove_inputs(&mut self, ids: &[Id]) -> Result<()> {
+        for id in ids {
+            self.outputs.remove(*id)?.context("input already removed")?;
+        }
+        Ok(())
     }
     fn fees(&self, currency: &Currency, fees: &[Fee], policy: &FeePolicy) -> Result<()> {
         policy.validate()?;
@@ -733,10 +772,10 @@ impl State {
             }
             if let Some(reserve) = &f.reserve {
                 ensure!(
-                    !self.services.iter().any(|s| s.id == reserve.id),
+                    self.services.get(reserve.id).is_none(),
                     "reserve ID already used"
                 );
-                self.services.push(reserve.clone());
+                self.services.insert(reserve.clone())?;
             } else {
                 self.output(id, index, &f.payout)?;
             }
@@ -748,7 +787,7 @@ impl State {
             record.root < crate::ROOTS && record.slot < crate::SLOTS,
             "Mint fact range"
         );
-        if let Some(old) = self.mints.iter().find(|m| m.event == record.event) {
+        if let Some(old) = self.mints.get(record.event) {
             ensure!(old == record, "changed Mint event");
             return Ok(());
         }
@@ -759,7 +798,7 @@ impl State {
                 .any(|m| m.root == record.root && m.slot == record.slot),
             "conflicting Mint facts for one global slot"
         );
-        self.mints.push(record.clone());
+        self.mints.insert(record.clone())?;
         Ok(())
     }
     fn apply(&mut self, currency: &Currency, op: &Operation, committed_prestate: Id) -> Result<()> {
@@ -769,7 +808,7 @@ impl State {
         );
         let id = op.id();
         let digest = Id::digest(&encode(op));
-        if let Some(old) = self.applied.iter().find(|v| v.id == id) {
+        if let Some(old) = self.applied.get(id) {
             ensure!(old.digest == digest, "changed bytes for retained operation");
             return Ok(());
         }
@@ -785,10 +824,10 @@ impl State {
         for cover in &op.covers {
             cover.validate()?;
             let key = cover.id(self.currency);
-            if let Some(old) = self.covers.iter().find(|v| v.id(self.currency) == key) {
+            if let Some(old) = self.covers.get(key) {
                 ensure!(old == cover, "cover collision")
             } else {
-                self.covers.push(cover.clone());
+                self.covers.insert(cover.clone())?;
             }
         }
         let verifier = Verifier { currency };
@@ -815,7 +854,7 @@ impl State {
                     .chain(fees.iter().map(|f| f.payout.components.clone()))
                     .collect();
                 self.conserve(&values, &out, lifts)?;
-                self.remove_inputs(inputs);
+                self.remove_inputs(inputs)?;
                 for a in outputs {
                     self.output(id, &mut index, a)?;
                 }
@@ -823,19 +862,16 @@ impl State {
             }
             Command::Mint(work) => {
                 ensure!(work.home == self.domain, "Mint home");
-                let i = self
-                    .segments
-                    .iter()
-                    .position(|s| {
-                        s.grant == work.grant
-                            && s.cursor == work.slot
-                            && s.mint_anchor == work.anchor
-                    })
-                    .ok_or_else(|| anyhow::anyhow!("stale Mint frontier"))?;
+                let segment_key = Key::Segment(work.grant, work.slot);
+                ensure!(
+                    self.segments
+                        .get_key(segment_key)
+                        .is_some_and(|s| s.mint_anchor == work.anchor),
+                    "stale Mint frontier"
+                );
                 let g = self
                     .grants
-                    .iter()
-                    .find(|g| g.id == work.grant)
+                    .get(work.grant)
                     .ok_or_else(|| anyhow::anyhow!("Mint grant"))?
                     .clone();
                 ensure!(
@@ -850,13 +886,13 @@ impl State {
                 self.configuration.accepts(self.cover(work.cover)?)?;
                 crate::work::verify_mint(self.currency, work)?;
                 self.minted = self.minted.add(Amount(crate::REWARD))?;
-                self.mints.push(MintRecord {
+                self.mints.insert(MintRecord {
                     event: id,
                     grant: g.id,
                     root: g.root,
                     slot: work.slot,
                     owner: work.payout.clone(),
-                });
+                })?;
                 self.output(
                     id,
                     &mut index,
@@ -868,14 +904,18 @@ impl State {
                         }],
                     },
                 )?;
-                let s = &mut self.segments[i];
+                let mut s = self
+                    .segments
+                    .remove_key(segment_key)?
+                    .context("Mint segment absent")?;
                 s.cursor = s
                     .cursor
                     .checked_add(1)
                     .ok_or_else(|| anyhow::anyhow!("Mint cursor"))?;
                 s.mint_anchor = hash("RLD-MINT-NEXT", self.currency, &(s.grant, work.slot, id));
-                if s.cursor == s.hi {
-                    self.segments.remove(i);
+                ensure!(s.cursor <= s.hi, "Mint cursor outside segment");
+                if s.cursor < s.hi {
+                    self.segments.insert(s)?;
                 }
             }
             Command::PreparePayment {
@@ -940,7 +980,7 @@ impl State {
                 ensure!(
                     closure.delegation.coupon == id
                         && closure.delegation.closed
-                        && !self.coupon_uses.iter().any(|d| d.coupon == id),
+                        && self.coupon_uses.get(id).is_none(),
                     "closure already consumed or source still delegated"
                 );
                 verifier.witness(
@@ -950,16 +990,13 @@ impl State {
                     hash("RLD-DELEGATION", self.currency, &closure.delegation),
                     &closure.inclusion,
                 )?;
-                self.coupon_uses.push(closure.delegation.clone());
+                self.coupon_uses.insert(closure.delegation.clone())?;
             }
             Command::CloseUnusedCoupon(e) => {
                 verifier.coupon(e)?;
                 ensure!(
                     e.coupon.source == self.domain
-                        && !self
-                            .coupon_uses
-                            .iter()
-                            .any(|v| v.coupon == e.coupon.id(self.currency)),
+                        && self.coupon_uses.get(e.coupon.id(self.currency)).is_none(),
                     "coupon already used"
                 );
                 crypto::authorize_use(
@@ -972,11 +1009,11 @@ impl State {
                     &op.authorizations,
                     &op.signing_bytes(),
                 )?;
-                self.coupon_uses.push(Delegation {
+                self.coupon_uses.insert(Delegation {
                     coupon: e.coupon.id(self.currency),
                     controller: None,
                     closed: true,
-                });
+                })?;
             }
             Command::RedeemCancel(cancel) => {
                 self.redeem_cancel(currency, op, cancel, &mut index)?;
@@ -997,7 +1034,7 @@ impl State {
                 ensure!(
                     x.source == self.domain
                         && self.controllers.iter().any(|c| c == x)
-                        && !self.redemptions.iter().any(|v| v.controller == x.id),
+                        && self.redemptions.get(x.id).is_none(),
                     "recovery source/redemption"
                 );
                 verifier.native(&rejected.destination)?;
@@ -1058,11 +1095,11 @@ impl State {
                     id,
                     &mut index,
                 )?;
-                self.redemptions.push(Redemption {
+                self.redemptions.insert(Redemption {
                     controller: x.id,
                     kind: 2,
                     operation: id,
-                });
+                })?;
             }
             Command::FundService {
                 inputs,
@@ -1076,7 +1113,7 @@ impl State {
                             self.currency,
                             &(self.domain, op.nonce, &service.owner)
                         )
-                        && !self.services.iter().any(|s| s.id == service.id)
+                        && self.services.get(service.id).is_none()
                         && service.capacity > 0
                         && service.reserved == service.capacity
                         && service.family != Id::ZERO
@@ -1105,11 +1142,11 @@ impl State {
                     .chain(std::iter::once(service.balance.clone()))
                     .collect();
                 self.conserve(&values, &out, &[])?;
-                self.remove_inputs(inputs);
+                self.remove_inputs(inputs)?;
                 for a in change {
                     self.output(id, &mut index, a)?;
                 }
-                self.services.push(service.clone());
+                self.services.insert(service.clone())?;
             }
             Command::RenewService {
                 id: service_id,
@@ -1118,12 +1155,11 @@ impl State {
                 added,
                 horizon,
             } => {
-                let pos = self
+                let mut service = self
                     .services
-                    .iter()
-                    .position(|s| s.id == *service_id)
-                    .ok_or_else(|| anyhow::anyhow!("service not found"))?;
-                let service = self.services[pos].clone();
+                    .get(*service_id)
+                    .ok_or_else(|| anyhow::anyhow!("service not found"))?
+                    .clone();
                 crypto::authorize(
                     &service.renewal_payer,
                     &op.authorizations,
@@ -1140,15 +1176,16 @@ impl State {
                 self.conserve(&values, &out, &[])?;
                 let merged = totals([service.balance.as_slice(), added.as_slice()])?;
                 ensure!(merged.len() <= 64, "service components");
-                self.remove_inputs(inputs);
+                self.remove_inputs(inputs)?;
                 for a in change {
                     self.output(id, &mut index, a)?;
                 }
-                self.services[pos].balance = merged
+                service.balance = merged
                     .into_iter()
                     .map(|(cover, amount)| Component { cover, amount })
                     .collect();
-                self.services[pos].horizon = *horizon;
+                service.horizon = *horizon;
+                self.services.replace(service)?;
             }
             Command::CreateFamily(f) => {
                 ensure!(
@@ -1159,7 +1196,7 @@ impl State {
                     cover.validate()?;
                     self.configuration.accepts(cover)?;
                     if !self.covers.contains(cover) {
-                        self.covers.push(cover.clone());
+                        self.covers.insert(cover.clone())?;
                     }
                 }
                 verifier.native(&f.source_funding.source)?;
@@ -1261,7 +1298,7 @@ impl State {
                         && fam.count > 0
                         && fam.count <= 4096
                         && fam.units >= fam.count as u64
-                        && !self.families.iter().any(|v| v.id == fam.id)
+                        && self.families.get(fam.id).is_none()
                         && !self.used_funding.contains(&fam.funding),
                     "new capability family"
                 );
@@ -1285,8 +1322,8 @@ impl State {
                         && sum(&service.balance)?.0 > 0,
                     "unfunded reservation"
                 );
-                self.used_funding.push(fam.funding);
-                self.families.push(fam.clone());
+                self.used_funding.insert(fam.funding)?;
+                self.families.insert(fam.clone())?;
             }
             Command::Handoff(h) => {
                 crypto::identity_attestations(
@@ -1336,7 +1373,7 @@ impl State {
                 )?;
                 Verifier { currency }.admission(next, &h.admission)?;
                 if !self.fee_policies.contains(&next.fee_policy) {
-                    self.fee_policies.push(next.fee_policy.clone());
+                    self.fee_policies.insert(next.fee_policy.clone())?;
                 }
                 self.configuration = next.clone();
                 self.pool_next = 0;
@@ -1346,12 +1383,11 @@ impl State {
                 payouts,
                 fees,
             } => {
-                let position = self
+                let mut contract = self
                     .services
-                    .iter()
-                    .position(|s| s.id == *service)
-                    .ok_or_else(|| anyhow::anyhow!("service contract absent"))?;
-                let contract = self.services[position].clone();
+                    .get(*service)
+                    .ok_or_else(|| anyhow::anyhow!("service contract absent"))?
+                    .clone();
                 crypto::authorize(
                     &contract.custodians,
                     &op.authorizations,
@@ -1385,10 +1421,11 @@ impl State {
                         balance.insert(cover, rest);
                     }
                 }
-                self.services[position].balance = balance
+                contract.balance = balance
                     .into_iter()
                     .map(|(cover, amount)| Component { cover, amount })
                     .collect();
+                self.services.replace(contract)?;
                 for a in payouts {
                     self.output(id, &mut index, a)?;
                 }
@@ -1408,7 +1445,7 @@ impl State {
                     .collect();
                 self.conserve(&values, &out, &[])?;
                 self.retired = self.retired.add(sum(retired)?)?;
-                self.remove_inputs(inputs);
+                self.remove_inputs(inputs)?;
                 for a in change {
                     self.output(id, &mut index, a)?;
                 }
@@ -1425,13 +1462,13 @@ impl State {
                             .any(|r| r.controller == c.id && r.kind == 1),
                     "export observation"
                 );
-                if !self.resolutions.iter().any(|d| d.object == c.id) {
-                    self.resolutions.push(Decision {
+                if self.resolutions.get(c.id).is_none() {
+                    self.resolutions.insert(Decision {
                         object: c.id,
                         coupon: c.ticket.coupon,
                         outcome: 1,
                         digest: c.ticket.digest(self.currency),
-                    });
+                    })?;
                 }
             }
             Command::ReportIncident { first, second } => {
@@ -1448,16 +1485,16 @@ impl State {
                     i.family == first.header.domain
                         && i.anchor == first.configuration.initial_anchor
                 }) {
-                    self.incidents.push(Incident {
+                    self.incidents.insert(Incident {
                         family: first.header.domain,
                         anchor: first.configuration.initial_anchor,
                         first: Blob(encode(first)),
                         second: Blob(encode(second)),
-                    });
+                    })?;
                 }
             }
         }
-        self.applied.push(Applied { id, digest });
+        self.applied.insert(Applied { id, digest })?;
         Ok(())
     }
     fn prepare(
@@ -1502,8 +1539,8 @@ impl State {
             "prepared signed terms"
         );
         ensure!(
-            !self.coupon_uses.iter().any(|v| v.coupon == p)
-                && !self.controllers.iter().any(|v| v.id == t.id)
+            self.coupon_uses.get(p).is_none()
+                && self.controllers.get(t.id).is_none()
                 && self.pool_next < crate::KEY_COUNT,
             "used coupon/controller/pool"
         );
@@ -1511,8 +1548,7 @@ impl State {
             .controllers
             .iter()
             .filter(|x| {
-                !self.resolutions.iter().any(|r| r.object == x.id)
-                    && !self.redemptions.iter().any(|r| r.controller == x.id)
+                self.resolutions.get(x.id).is_none() && self.redemptions.get(x.id).is_none()
             })
             .count();
         ensure!(
@@ -1521,8 +1557,7 @@ impl State {
         );
         let sponsor = self
             .services
-            .iter()
-            .find(|s| s.id == coupon.source_sponsor)
+            .get(coupon.source_sponsor)
             .ok_or_else(|| anyhow::anyhow!("source sponsor not retained"))?;
         ensure!(
             sponsor.family == coupon.family
@@ -1587,8 +1622,7 @@ impl State {
             );
             let grant = self
                 .grants
-                .iter()
-                .find(|g| g.id == range.grant)
+                .get(range.grant)
                 .ok_or_else(|| anyhow::anyhow!("placement grant"))?
                 .clone();
             ensure!(
@@ -1597,20 +1631,23 @@ impl State {
             );
             self.cover(grant.cover)?
                 .subset_of(self.cover(range.cover)?)?;
-            let pos = self
+            let old = self
                 .segments
-                .iter()
-                .position(|s| s.grant == range.grant && s.cursor <= range.lo && range.hi <= s.hi)
-                .ok_or_else(|| anyhow::anyhow!("selected slots consumed/delegated"))?;
-            let old = self.segments.remove(pos);
+                .before_or_at(Key::Segment(range.grant, range.lo))
+                .filter(|s| s.grant == range.grant && s.cursor <= range.lo && range.hi <= s.hi)
+                .ok_or_else(|| anyhow::anyhow!("selected slots consumed/delegated"))?
+                .clone();
+            self.segments
+                .remove_key(Key::Segment(old.grant, old.cursor))?
+                .context("placement segment absent")?;
             if old.cursor < range.lo {
-                self.segments.push(Segment {
+                self.segments.insert(Segment {
                     hi: range.lo,
                     ..old.clone()
-                });
+                })?;
             }
             if range.hi < old.hi {
-                self.segments.push(Segment {
+                self.segments.insert(Segment {
                     grant: old.grant,
                     lo: range.hi,
                     hi: old.hi,
@@ -1620,7 +1657,7 @@ impl State {
                         self.currency,
                         &(old.grant, range.hi, op.id(), "split-right"),
                     ),
-                });
+                })?;
             }
             Vec::new()
         } else {
@@ -1672,7 +1709,7 @@ impl State {
                 t.destination_fee.components.as_slice(),
             ])?;
             ensure!(esc.len() <= 64, "escrow components");
-            self.remove_inputs(&t.inputs);
+            self.remove_inputs(&t.inputs)?;
             for a in &t.change {
                 self.output(op.id(), index, a)?;
             }
@@ -1699,16 +1736,16 @@ impl State {
             .pool_next
             .checked_add(1)
             .ok_or_else(|| anyhow::anyhow!("pool exhaustion"))?;
-        self.controllers.push(controller);
-        self.births.push(Birth {
+        self.controllers.insert(controller)?;
+        self.births.insert(Birth {
             controller: t.id,
             sequence: self.sequence,
-        });
-        self.coupon_uses.push(Delegation {
+        })?;
+        self.coupon_uses.insert(Delegation {
             coupon: p,
             controller: Some(t.id),
             closed: false,
-        });
+        })?;
         Ok(())
     }
     fn redeem_cancel(
@@ -1720,17 +1757,15 @@ impl State {
     ) -> Result<()> {
         let c = self
             .controllers
-            .iter()
-            .find(|x| x.id == p.controller)
+            .get(p.controller)
             .ok_or_else(|| anyhow::anyhow!("unknown preparation"))?
             .clone();
         let birth = self
             .births
-            .iter()
-            .find(|b| b.controller == c.id)
+            .get(c.id)
             .ok_or_else(|| anyhow::anyhow!("missing birth"))?;
         ensure!(
-            !self.redemptions.iter().any(|r| r.controller == c.id)
+            self.redemptions.get(c.id).is_none()
                 && !self
                     .resolutions
                     .iter()
@@ -1793,23 +1828,24 @@ impl State {
             op.id(),
             index,
         )?;
-        self.redemptions.push(Redemption {
+        self.redemptions.insert(Redemption {
             controller: c.id,
             kind: 1,
             operation: op.id(),
-        });
-        self.resolutions.push(Decision {
+        })?;
+        self.resolutions.insert(Decision {
             object: c.id,
             coupon: c.ticket.coupon,
             outcome: 2,
             digest: c.ticket.digest(self.currency),
-        });
-        let d = self
+        })?;
+        let mut d = self
             .coupon_uses
-            .iter_mut()
-            .find(|d| d.coupon == c.ticket.coupon)
-            .ok_or_else(|| anyhow::anyhow!("coupon use missing"))?;
+            .get(c.ticket.coupon)
+            .ok_or_else(|| anyhow::anyhow!("coupon use missing"))?
+            .clone();
         d.closed = true;
+        self.coupon_uses.replace(d)?;
         Ok(())
     }
     fn return_object(
@@ -1873,10 +1909,10 @@ impl State {
             &(r.root, r.lo, r.hi, self.domain, creation, r.cover),
         );
         ensure!(
-            !self.grants.iter().any(|g| g.id == id),
+            self.grants.get(id).is_none(),
             "duplicate grant installation"
         );
-        self.grants.push(Grant {
+        self.grants.insert(Grant {
             id,
             root: r.root,
             lo: r.lo,
@@ -1884,8 +1920,8 @@ impl State {
             home: self.domain,
             creation,
             cover: r.cover,
-        });
-        self.segments.push(Segment {
+        })?;
+        self.segments.insert(Segment {
             grant: id,
             lo: r.lo,
             hi: r.hi,
@@ -1895,7 +1931,7 @@ impl State {
                 self.currency,
                 &(id, r.lo, creation, "installed"),
             ),
-        });
+        })?;
         Ok(())
     }
     fn destination(
@@ -1915,14 +1951,13 @@ impl State {
         );
         let family = self
             .families
-            .iter()
-            .find(|f| f.id == c.coupon.family)
+            .get(c.coupon.family)
             .ok_or_else(|| anyhow::anyhow!("receiving family absent"))?;
         ensure!(
             family.source == c.source && c.coupon.index < family.count,
             "reserved coupon"
         );
-        if let Some(old) = self.decisions.iter().find(|d| d.object == c.id) {
+        if let Some(old) = self.decisions.get(c.id) {
             ensure!(
                 old.coupon == c.ticket.coupon
                     && old.digest == c.ticket.digest(self.currency)
@@ -1932,12 +1967,12 @@ impl State {
             return Ok(());
         }
         ensure!(
-            !self.coupon_uses.iter().any(|d| d.coupon == c.ticket.coupon),
+            self.coupon_uses.get(c.ticket.coupon).is_none(),
             "destination coupon already consumed"
         );
         for cover in &r.covers {
             if !self.covers.contains(cover) {
-                self.covers.push(cover.clone());
+                self.covers.insert(cover.clone())?;
             }
         }
         validate_ticket_covers(c, &r.covers)?;
@@ -1980,17 +2015,17 @@ impl State {
             self.output(op.id(), index, &c.ticket.recipient)?;
             self.output(op.id(), index, &c.ticket.destination_fee)?;
         }
-        self.decisions.push(Decision {
+        self.decisions.insert(Decision {
             object: c.id,
             coupon: c.ticket.coupon,
             outcome: if reject { 2 } else { 1 },
             digest: c.ticket.digest(self.currency),
-        });
-        self.coupon_uses.push(Delegation {
+        })?;
+        self.coupon_uses.insert(Delegation {
             coupon: c.ticket.coupon,
             controller: Some(c.id),
             closed: true,
-        });
+        })?;
         Ok(())
     }
 }

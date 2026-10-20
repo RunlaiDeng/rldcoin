@@ -28,7 +28,15 @@ fn inputs(root: &Path) -> Vec<PathBuf> {
     for path in ["crates/protocol/src", "methods/src", "methods/guest/src"] {
         walk(&root.join(path), &mut files);
     }
-    files.sort_by_key(|p| p.strip_prefix(root).expect("source path").to_owned());
+    // Match the pinning tool's canonical UTF-8 slash-delimited path order,
+    // including files beside same-named subdirectories (state.rs/state/).
+    files.sort_by_key(|p| {
+        p.strip_prefix(root)
+            .expect("source path")
+            .to_str()
+            .expect("source UTF8")
+            .replace('\\', "/")
+    });
     files
 }
 fn main() {

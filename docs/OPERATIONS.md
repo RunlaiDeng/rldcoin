@@ -265,3 +265,18 @@ Mismatch refuses before reference execution or recovery publication; old stores,
 keys and heads are not rewritten. A source revision with new image IDs cannot
 silently adopt the old descriptor or migrate value. General cryptographic suite
 succession preserving an already running RLD identity is still unfinished.
+
+## Counted prefix-root executable revision
+
+The 20 October owner-approved amendment changes native map roots and carried
+membership/absence paths. The derived index binding is now
+`RLD-STATE-WITNESS-INDEX-2`. Old executable descriptors and old cache bindings
+refuse unchanged; do not rewrite their identities or reuse monetary state/keys.
+Use the exact rebuilt `rld profile` and real `rld-prover profile` binding. This
+prelaunch source revision creates no network or monetary genesis.
+
+Current State wire arrays remain complete sorted records. The host and guest
+rebuild private lookup/commitment nodes on decode. Native mutation refuses a map
+whose proof depth would exceed 64 branches. Node state queries authenticate
+historical records against the caller's exact certified checkpoint; they do not
+establish freshness or spendability. A capacity refusal never refunds exports.

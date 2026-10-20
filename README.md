@@ -2,8 +2,8 @@
 
 A clean Rust implementation of **Rldcoin: Interstellar Peer-to-Peer Payments**.
 The canonical mechanism paper is [spec/WHITEPAPER.md](spec/WHITEPAPER.md), bound by
-[its publication receipt](spec/WHITEPAPER_RELEASE.json). The paper's SHA-256 is
-`252a280044856a599c4a7fb1e7913d08776aa79f172db64275339be760662639`.
+[its publication receipt](spec/WHITEPAPER_RELEASE_2026-10-20_PREFIX.json). The paper's SHA-256 is
+`30ad8bfeca1a5da98ebd92f5f1acda56348f6d9686508d3da6180c873d4487e8`.
 
 RLD is the only native payment and fee currency. The lifetime issuance budget is
 **21,000,000 RLD**, with **10^24 atomic units per RLD** and **zero initial allocation**.
@@ -59,14 +59,15 @@ required release evidence. The existing CI compiles the committed binding.
 
 ## Components
 
-- `crates/protocol`: canonical CBOR, monetary types, ordered-map proofs,
+- `crates/protocol`: canonical CBOR, monetary types, counted prefix-map proofs,
   exact issuance work, native transitions, independent terminal controllers,
   authentication, succession and recursive verification relations.
 - `crates/node`: durable replay, encrypted local signing custody, PBFT,
   signed and pinned-TLS contact carriage, bounded fragments, offline bundles,
   public signed-operation API, persistent native-history index and independently
   scheduled bounded proving lanes, disk state material and certified historical
-  membership/absence queries.
+  membership/absence queries. Native state uses shared immutable value and
+  commitment paths; complete execution witnesses still remain.
 - `crates/cli`: wallet signatures and balances, ordinary CPU mining, placement
   work, payment/service/family drafts, evidence extraction, operator tools,
   cancellation and disconnected carriage.

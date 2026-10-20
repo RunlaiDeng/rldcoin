@@ -21,7 +21,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-1";
+const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-2";
 const CHUNK: usize = 1024 * 1024;
 const LEAF: usize = 128;
 const MANIFEST_LIMIT: usize = 256 * 1024;
@@ -114,30 +114,18 @@ pub struct StateIndex {
     issue: Mutex<Option<String>>,
     _lock: File,
 }
-fn split(n: usize) -> usize {
-    1usize << ((usize::BITS - 1) - (n - 1).leading_zeros())
+fn split(entries: &[Entry]) -> Result<usize> {
+    let depth = merkle::branch_depth(entries[0].key, entries[entries.len() - 1].key)?;
+    let m = entries.partition_point(|e| !merkle::bit(e.key, depth));
+    ensure!(m > 0 && m < entries.len(), "derived prefix partition");
+    Ok(m)
 }
-fn native_tree(c: Id, tag: &str, entries: &[Entry]) -> Id {
-    match entries.len() {
-        0 => hash("RLD-MAP-EMPTY", c, &tag),
-        1 => hash("RLD-MAP-LEAF", c, &(tag, &entries[0])),
-        n => {
-            let m = split(n);
-            hash(
-                "RLD-MAP-NODE",
-                c,
-                &(
-                    tag,
-                    native_tree(c, tag, &entries[..m]),
-                    native_tree(c, tag, &entries[m..]),
-                ),
-            )
-        }
-    }
+fn native_tree(c: Id, tag: &str, entries: &[Entry]) -> Result<Id> {
+    Ok(merkle::Map::from_entries(c, tag, entries)?.tree_hash())
 }
 fn map_root(c: Id, tag: &str, root: Option<&Link>) -> Id {
-    let (count, tree) = root.map_or((0, native_tree(c, tag, &[])), |r| (r.count, r.tree));
-    hash("RLD-MAP-ROOT", c, &(tag, count, tree))
+    let (count, tree) = root.map_or_else(|| (0, merkle::empty_hash(c, tag)), |r| (r.count, r.tree));
+    merkle::root_hash(c, tag, count, tree)
 }
 impl StateIndex {
     pub(crate) fn open(root: &Path, initial: &Initial) -> Result<Arc<Self>> {
@@ -342,20 +330,26 @@ impl StateIndex {
                 None,
                 None,
                 entries.to_vec(),
-                native_tree(self.currency, &tag, entries),
+                native_tree(self.currency, &tag, entries)?,
             )
         } else {
-            let m = split(entries.len());
+            let m = split(entries)?;
             let left = self
                 .build(collection, &entries[..m])?
                 .context("left subtree")?;
             let right = self
                 .build(collection, &entries[m..])?
                 .context("right subtree")?;
-            let tree = hash(
-                "RLD-MAP-NODE",
+            let depth = merkle::branch_depth(entries[0].key, entries[entries.len() - 1].key)?;
+            let tree = merkle::branch_hash(
                 self.currency,
-                &(tag.as_str(), left.tree, right.tree),
+                &tag,
+                depth,
+                entries[0].key,
+                left.tree,
+                left.count,
+                right.tree,
+                right.count,
             );
             (Some(left), Some(right), vec![], tree)
         };
@@ -539,26 +533,37 @@ impl StateIndex {
                         && p.entries.windows(2).all(|w| w[0].key < w[1].key)
                         && p.entries[0].key == r.first
                         && p.entries[p.entries.len() - 1].key == r.last
-                        && native_tree(self.currency, &tag, &p.entries) == r.tree,
+                        && native_tree(self.currency, &tag, &p.entries)? == r.tree,
                     "derived leaf authentication"
                 );
             }
             (Some(l), Some(right)) => {
-                let n = usize::try_from(r.count)?;
+                let depth = merkle::branch_depth(r.first, r.last)?;
                 ensure!(
-                    n > LEAF
+                    r.count > LEAF as u64
                         && p.entries.is_empty()
-                        && l.count == split(n) as u64
-                        && right.count == r.count - l.count
+                        && l.count > 0
+                        && right.count > 0
+                        && l.count.checked_add(right.count) == Some(r.count)
                         && l.first == r.first
                         && right.last == r.last
                         && l.first <= l.last
                         && l.last < right.first
                         && right.first <= right.last
-                        && hash(
-                            "RLD-MAP-NODE",
+                        && !merkle::bit(l.first, depth)
+                        && !merkle::bit(l.last, depth)
+                        && merkle::bit(right.first, depth)
+                        && merkle::bit(right.last, depth)
+                        && merkle::prefix(l.first, depth) == merkle::prefix(right.last, depth)
+                        && merkle::branch_hash(
                             self.currency,
-                            &(tag.as_str(), l.tree, right.tree)
+                            &tag,
+                            depth,
+                            r.first,
+                            l.tree,
+                            l.count,
+                            right.tree,
+                            right.count
                         ) == r.tree,
                     "derived branch authentication"
                 );
@@ -569,18 +574,26 @@ impl StateIndex {
     }
     fn at(&self, collection: &str, root: &Link, index: u64) -> Result<Membership> {
         ensure!(index < root.count, "derived rank bound");
-        fn walk(s: &StateIndex, c: &str, r: &Link, i: u64) -> Result<Membership> {
+        fn walk(s: &StateIndex, c: &str, r: &Link, i: u64, visited: usize) -> Result<Membership> {
+            ensure!(visited <= merkle::MAX_PATH, "derived path bound");
             let p = s.page(c, r)?;
             if let (Some(l), Some(right)) = (&p.left, &p.right) {
                 let mut member = if i < l.count {
-                    walk(s, c, l, i)?
+                    walk(s, c, l, i, visited + 1)?
                 } else {
-                    walk(s, c, right, i - l.count)?
+                    walk(s, c, right, i - l.count, visited + 1)?
                 };
+                let sibling = if i < l.count { right } else { l };
+                member.path.siblings.insert(0, sibling.tree);
                 member
                     .path
-                    .siblings
-                    .push(if i < l.count { right.tree } else { l.tree });
+                    .depths
+                    .insert(0, merkle::branch_depth(r.first, r.last)?);
+                member.path.counts.insert(0, sibling.count);
+                ensure!(
+                    member.path.siblings.len() <= merkle::MAX_PATH,
+                    "derived complete path bound"
+                );
                 Ok(member)
             } else {
                 merkle::prove(
@@ -591,7 +604,7 @@ impl StateIndex {
                 )
             }
         }
-        let mut member = walk(self, collection, root, index)?;
+        let mut member = walk(self, collection, root, index, 0)?;
         member.path.index = index;
         member.path.count = root.count;
         merkle::verify(
@@ -609,7 +622,10 @@ impl StateIndex {
     fn rank(&self, collection: &str, root: &Link, key: Id) -> Result<(u64, bool)> {
         let mut r = root.clone();
         let mut base = 0u64;
+        let mut visited = 0usize;
         loop {
+            ensure!(visited <= merkle::MAX_PATH, "derived rank path bound");
+            visited += 1;
             let p = self.page(collection, &r)?;
             if let (Some(left), Some(right)) = (p.left, p.right) {
                 if key <= left.last {
