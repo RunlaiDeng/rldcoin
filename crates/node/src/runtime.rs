@@ -72,6 +72,7 @@ pub enum Event {
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
+    pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub state: Arc<State>,
     pub head: Id,
@@ -147,11 +148,17 @@ impl Core {
         );
         State::genesis(&initial.currency, &initial.genesis)
     }
-    fn new(initial: Initial, state: State, root: &Path) -> Result<Self> {
+    fn new(initial: Initial, mut state: State, root: &Path) -> Result<Self> {
+        let applied_storage = Arc::new(crate::applied_store::AppliedStore::open(
+            &root.join("applied-index"),
+            &initial,
+        )?);
+        state.applied = state.applied.on_empty_storage(applied_storage.clone())?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
         Ok(Self {
             initial,
+            applied_storage,
             state_index: None,
             state: Arc::new(state),
             head,
@@ -499,15 +506,22 @@ impl Core {
                     c.configuration == self.state.configuration,
                     "committing configuration"
                 );
-                let (next, h) =
+                let (mut next, h) =
                     self.state
                         .execute_batch(&self.initial.currency, self.head, &c.batch)?;
                 ensure!(h == c.header, "committed native body");
                 crypto::verify_quorum(&c.configuration, self.state.domain, None, &c.qc, 3, h.id())?;
                 ensure!(c.qc.votes[0].sequence == h.sequence, "commit position");
+                next.applied.seal_storage()?;
                 self.head = h.id();
                 self.state = Arc::new(next);
-                self.history.push(c.clone())?;
+                self.history.push(
+                    c.clone(),
+                    self.state
+                        .applied
+                        .storage_snapshot()?
+                        .context("native applied snapshot")?,
+                )?;
                 for op in &c.batch.operations {
                     if let Command::Reject(r) = &op.command {
                         let id = r.creation.controller.id;

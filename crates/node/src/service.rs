@@ -121,7 +121,7 @@ async fn job<T: Send + 'static>(
 }
 
 async fn status(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
-    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last().map(|p|p.header.sequence),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"native_history":match s.node.core.history.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
+    job(s,|s|Ok(axum::Json(serde_json::json!({"protocol":rld_protocol::PROTOCOL,"currency":s.node.core.state.currency,"domain":s.node.core.state.domain,"height":s.node.core.state.sequence,"checkpoint":s.node.core.head,"journal_head":s.node.journal_tip(),"queued":s.node.core.pending.len(),"latest_execution_receipt":s.node.core.proofs.last().map(|p|p.header.sequence),"unresolved_controllers":s.node.core.state.controllers.iter().filter(|c|s.node.core.terminal_statement(c.id).is_none()).count(),"last_error":s.node.last_error,"last_contact_error":s.last_contact_error,"state_index_error":s.node.state_index_error(),"applied_storage":match s.node.core.applied_storage.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"native_history":match s.node.core.history.status(){Ok(status)=>serde_json::to_value(status)?,Err(error)=>serde_json::json!({"observation_available":false,"error":error.to_string()})},"executable_source_digest":crate::executable_source_digest(),"runtime_security_qualified":false,"physical_stellar_route_qualified":false})).into_response())).await
 }
 async fn routes(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| Ok(wire(&s.advertisements))).await
@@ -173,15 +173,30 @@ async fn blocks(
 }
 
 async fn snapshot(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
-    job(s, |s| {
-        ensure!(
-            encode(s.node.core.state.as_ref()).len() <= rld_protocol::MAX_CAPSULE,
-            "current state requires paged access; use local full node"
-        );
-        Ok(wire(s.node.core.state.as_ref()))
+    static READERS: std::sync::LazyLock<Arc<tokio::sync::Semaphore>> =
+        std::sync::LazyLock::new(|| Arc::new(tokio::sync::Semaphore::new(2)));
+    let permit = READERS
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| anyhow::anyhow!("snapshot query capacity exhausted"))?;
+    Ok(tokio::task::spawn_blocking(move || -> Result<Response> {
+        let _permit = permit;
+        let state = {
+            let guard = s
+                .lock()
+                .map_err(|_| anyhow::anyhow!("node state unavailable"))?;
+            guard.node.core.state.clone()
+        };
+        let bytes = rld_protocol::codec::encode_bounded(state.as_ref(), rld_protocol::MAX_CAPSULE)?;
+        Ok((
+            [(axum::http::header::CONTENT_TYPE, "application/cbor")],
+            bytes,
+        )
+            .into_response())
     })
-    .await
+    .await??)
 }
+
 async fn certified(AxumState(s): AxumState<SharedState>) -> ApiResult<Response> {
     job(s, |s| {
         let p = s

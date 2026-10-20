@@ -292,7 +292,7 @@ impl Snapshot {
                     receipt: Blob(vec![]),
                 };
                 (
-                    encode(&input),
+                    rld_protocol::codec::encode_bounded(&input, crate::store::MAX_RECORD)?,
                     Product::Native(certificate),
                     currency.proof.native_image,
                     proof::native_journal(&record.header),

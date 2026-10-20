@@ -270,7 +270,7 @@ succession preserving an already running RLD identity is still unfinished.
 
 The 20 October owner-approved amendment changes native map roots and carried
 membership/absence paths. The derived index binding is now
-`RLD-STATE-WITNESS-INDEX-2`. Old executable descriptors and old cache bindings
+`RLD-STATE-WITNESS-INDEX-3`. Old executable descriptors and old cache bindings
 refuse unchanged; do not rewrite their identities or reuse monetary state/keys.
 Use the exact rebuilt `rld profile` and real `rld-prover profile` binding. This
 prelaunch source revision creates no network or monetary genesis.
@@ -284,7 +284,7 @@ establish freshness or spendability. A capacity refusal never refunds exports.
 ## Disk-resident verified native history
 
 Every local node now maintains a private `history-index/` under its store. Its
-`RLD-VERIFIED-HISTORY-INDEX-1` binding fixes currency, domain and genesis. Complete
+`RLD-VERIFIED-HISTORY-INDEX-2` binding fixes currency, domain and genesis. Complete
 native committed records and immutable 32-way pages are content-addressed in
 256 digest shards. Only the process's verified root/length is adopted. Node open
 still validates every authoritative event from the separately retained latest
@@ -333,11 +333,51 @@ the builder selects full native execution under the original bounds. Indexed
 byte-budget exhaustion also selects full input, since path overhead can exceed
 a short complete map. A full
 input that cannot fit still refuses; no larger bound, guessed height or weaker
-proof mode is enabled. Genesis execution always uses complete state. The current
-host map remains resident, and proving cost, worst-case fallback availability and
+proof mode is enabled. Genesis execution always uses complete state. The host operation map now uses private disk storage; other collections remain
+resident. Proving cost, worst-case fallback availability and
 remaining collection scale are not qualified by source compilation.
 
 This changes actual native/controller image IDs. Use only the final rebuilt
 `rld profile` / `rld-prover profile` binding from this stage. Preserve incompatible
 old stores/descriptors and use their matching old release; do not rewrite a
 currency, copy old value/keys or treat this as an in-place monetary upgrade.
+
+## Private disk operation map and split state material
+
+`applied-index/` uses `RLD-APPLIED-DISK-1`, bound to the exact currency, home and
+authenticated genesis. It starts empty on every cold replay; no serialized root
+initializes a ledger. Committed inserts reconstruct exact native prefix roots.
+The private object store admits 1 TiB / 4,194,304 accounted files and caches at most
+4,096 raw objects / 16 MiB. Status exposes those limits and conservative accounting
+under `applied_storage`; failed-write reservations can overcount until reopen.
+
+Candidate state uses at most 8,192 tentative nodes / 32 MiB. These unpublished
+working bytes may be discarded; they are not signed evidence or native decisions.
+Queue/proposal validation never flushes them. After native execution and QC checks,
+reachable changes are synced before journal/Core publication. Existing exact
+objects are checked/synced; failed partials/orphans and all published old versions
+remain. Storage failure/exhaustion refuses unsupported publication, never refunds
+an export, deletes an operation ID, resets a counter or substitutes a root.
+
+Verified history V2 carries the sealed applied snapshot for each native record.
+State-material V3 omits the operation array in its private serialized material,
+retains its commitment, and must combine it with the exact snapshot from verified
+history before whole-checkpoint validation. That partial file is not standalone
+State or monetary evidence. Historical applied membership/absence uses native
+paths directly; complete public snapshots and full-witness fallback still stream
+all records under their original size bounds and propagate storage errors.
+
+Old history/state-index bindings refuse unchanged. Preserve their directories
+and use their matching historical release or a fresh correctly bound private
+cache; never rewrite a currency, journal/head, monetary keys or balances. A damaged
+applied store must be retained. Stop the node and every proof/read worker, retain
+`applied-index/`, `history-index/` and `state-index/` under distinct private names,
+then cold-rebuild all three from the unchanged valid event journal and separately
+retained latest head. The applied store and history observations reference exact
+physical objects, so do not combine a new applied directory with old split roots.
+This is derived-data reconstruction, not a monetary genesis or value migration.
+
+Other collections, receipts and queues retain separate memory costs. Physical
+object amplification and archive funding/packing still need implementation and
+operational evidence. No measured memory, throughput, proof latency, independent
+freshness, crash/power-loss custody or mainnet qualification is claimed here.

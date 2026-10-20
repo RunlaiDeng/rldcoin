@@ -161,14 +161,14 @@ introduced. See [the implementation analysis](engineering/PROOF_SCHEDULING.md).
 
 ## Disk state material and authenticated queries
 
-A background worker now publishes complete canonical state snapshots plus native
+A background worker now publishes checkpoint state material plus native
 ordered-map witness pages for exact retained checkpoints. State chunks are at most
 1 MiB, map leaves at most 128 entries, and manifests at most 256 KiB. Each derived
 index is bound to its currency/domain/genesis, shares immutable exact objects and
 uses a 2-GiB / 65,536-file local admission budget. Those are cache limits, not
 currency history limits or paid archive qualification.
 
-Historical proof input construction can load complete checkpoint state from disk
+Historical proof input construction can reconstruct complete checkpoint state from disk
 without replaying the entire prefix again. Controller birth/cancellation,
 returned rejection witnesses and the local state-witness command can use direct
 Merkle paths from disk. Every read checks native root/path binding against its
@@ -268,12 +268,45 @@ CLI witness export select the indexed variant for certified predecessors when
 supported. Partial internal state cannot serialize or be issued as complete state.
 
 This removes whole-operation-log materialization from those guest inputs; the
-host still retains the complete map and other collections. Exact keys/decisions
+host now retains the complete operation map through its disk adapter; other
+collections remain resident. Exact keys/decisions
 are not deleted, root algorithms and monetary rules are unchanged, and no achieved
 memory/latency result is claimed. [The relation analysis](engineering/INDEXED_NATIVE_WITNESS.md)
 records the induction and finite full-witness fallback. The changed actual program
 IDs require the new source-bound profile; old descriptors/stores refuse without
 migration. No test fixtures, monetary genesis or network were created.
+
+## Disk execution of the permanent operation map
+
+Normal nodes now initialize the applied-operation map on an empty private
+`RLD-APPLIED-DISK-1` store after authenticating genesis. Live updates use the exact
+native counted prefix hashes and immutable physical objects; a bounded shared
+16-MiB / 4,096-object raw cache replaces the resident full table. Every lookup or
+access proof checks stored bytes/metadata and exact native membership or absence.
+Native roots, child counts and auxiliary physical range/height bindings remain
+separate. No root is adopted from a filesystem manifest.
+
+Candidate execution stays in an immutable bounded working layer (8,192 objects /
+32 MiB). Queueing, speculative proposals and rejected batches publish no applied
+objects. Only complete native execution plus matching QC can seal its reachable
+changes before authoritative event append/Core installation. A failure retains
+all durably published residue; no failed root grants money or loses an old key.
+Historical replay/proof construction seal only already verified native steps.
+
+Verified history format V2 retains each committed record with its exact sealed
+applied snapshot. Derived state material V3 stores other collections and the
+applied commitment, then reconstructs historical state using that independently
+verified history observation and checks the whole native checkpoint root. Applied
+queries use native disk paths; neither snapshot publication nor indexed proof
+input needs to materialize the whole operation map. Complete snapshot/fallback
+encoding streams records and fails under existing byte bounds on I/O/capacity.
+See [the disk-map analysis](engineering/APPLIED_DISK.md). Native program/source
+bindings were rebuilt; old descriptors/derived formats refuse unchanged.
+
+This completes the disk-backed operation-map path, not every native collection.
+Physical object/page retention still grows; finite quotas, archival packing and
+paid replicated custody remain real operational obligations. No runtime,
+crash/power-loss, memory-use or throughput result follows from compilation.
 
 ## Material unfinished and unqualified work
 
@@ -281,7 +314,8 @@ The following are real completion boundaries, not fulfilled by source edits:
 
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
-   map hash. Complete current State remains resident; native history records now live on disk;
+   map hash. Current collections other than the operation map remain resident; native history
+   records and the applied map now live on disk;
    full invariant scans of other tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, while receipt
    append still copies its current collection. Disk snapshots and witness pages
@@ -301,7 +335,7 @@ The following are real completion boundaries, not fulfilled by source edits:
    head, and replays all native events. Explicit recovery finishes only a fully
    retained, verified seal; damaged originals/residue remain unchanged. This
    reduces loose files; the new disk history removes full-record history residency,
-   while complete current State, receipts and other Core collections remain in memory.
+   while other current collections, receipts and other Core material remain in memory.
    Contact spools deliberately refuse at finite object/byte limits. A continuously
    operating archival rotation, independently replicated paid custody lifecycle,
    witness availability, disaster recovery and long-history operator product are

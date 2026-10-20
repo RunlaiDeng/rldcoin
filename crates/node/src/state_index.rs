@@ -21,7 +21,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-2";
+const FORMAT: &str = "RLD-STATE-WITNESS-INDEX-3";
 const CHUNK: usize = 1024 * 1024;
 const LEAF: usize = 128;
 const MANIFEST_LIMIT: usize = 256 * 1024;
@@ -30,7 +30,7 @@ const BYTE_LIMIT: u64 = 2 * 1024 * 1024 * 1024;
 record!(Object {digest:Id => 0, bytes:u64 => 1});
 record!(Link {object:Object => 0,count:u64 => 1,tree:Id => 2,first:Id => 3,last:Id => 4});
 record!(Page {format:String => 0,currency:Id => 1,domain:Id => 2,collection:String => 3,count:u64 => 4,entries:Vec<Entry> => 5,left:Option<Link> => 6,right:Option<Link> => 7});
-record!(Table {name:String => 0,root:Option<Link> => 1});
+record!(Table {name:String => 0,root:Option<Link> => 1,commitment:Id => 2});
 record!(Manifest {format:String => 0,header:Checkpoint => 1,tables:Vec<Table> => 2,chunks:Vec<Object> => 3,state_bytes:u64 => 4,state_digest:Id => 5});
 record!(StateQuery {collection:String => 0,top:Membership => 1,member:Option<Membership> => 2,absence:Option<Absence> => 3});
 record!(CertifiedQuery {source:Certified => 0,query:StateQuery => 1});
@@ -378,21 +378,32 @@ impl StateIndex {
                 && tables.iter().zip(COLLECTIONS).all(|(t, n)| t.name == *n),
             "derived collection inventory"
         );
-        let mut top: Vec<_> = tables
-            .iter()
-            .map(|t| Entry {
+        let mut top = Vec::new();
+        for t in tables {
+            if t.name != "applied" {
+                ensure!(
+                    map_root(
+                        self.currency,
+                        &format!("{}/{}", self.domain, t.name),
+                        t.root.as_ref()
+                    ) == t.commitment,
+                    "derived table commitment"
+                );
+            } else {
+                ensure!(
+                    t.root.is_none(),
+                    "applied map uses authenticated live storage"
+                );
+            }
+            top.push(Entry {
                 key: hash(
                     "RLD-COLLECTION",
                     self.currency,
                     &(self.domain, t.name.as_str()),
                 ),
-                value: map_root(
-                    self.currency,
-                    &format!("{}/{}", self.domain, t.name),
-                    t.root.as_ref(),
-                ),
-            })
-            .collect();
+                value: t.commitment,
+            });
+        }
         top.sort_by_key(|e| e.key);
         Ok(top)
     }
@@ -450,7 +461,12 @@ impl StateIndex {
                 && state.root()? == h.new_root,
             "snapshot does not match authenticated native checkpoint"
         );
-        let bytes = encode(state);
+        let mut material = state.clone();
+        material.applied = rld_protocol::applied::AppliedIndex::new(
+            self.currency,
+            &format!("{}/applied", self.domain),
+        );
+        let bytes = rld_protocol::codec::encode_bounded(&material, MAX_RECORD)?;
         ensure!(
             bytes.len() <= MAX_RECORD,
             "snapshot exceeds native witness byte bound"
@@ -460,10 +476,20 @@ impl StateIndex {
             chunks.push(self.put(chunk)?);
         }
         let mut tables = vec![];
+        let native_top = state.top()?;
         for &name in COLLECTIONS {
             tables.push(Table {
                 name: name.into(),
-                root: self.build(name, &state.collection(name)?)?,
+                root: if name == "applied" {
+                    None
+                } else {
+                    self.build(name, &state.collection(name)?)?
+                },
+                commitment: native_top
+                    .iter()
+                    .find(|e| e.key == hash("RLD-COLLECTION", self.currency, &(self.domain, name)))
+                    .context("native collection root")?
+                    .value,
             });
         }
         ensure!(
@@ -486,7 +512,11 @@ impl StateIndex {
         ensure!(encoded.len() <= MANIFEST_LIMIT, "derived manifest bound");
         self.write("checkpoints", &format!("{}.cbor", h.id()), &encoded)
     }
-    pub(crate) fn load(&self, h: &Checkpoint) -> Result<Option<State>> {
+    pub(crate) fn load(
+        &self,
+        h: &Checkpoint,
+        applied: rld_protocol::applied::AppliedIndex,
+    ) -> Result<Option<State>> {
         let Some(m) = self.manifest(h)? else {
             return Ok(None);
         };
@@ -498,7 +528,19 @@ impl StateIndex {
             Id::digest(&bytes) == m.state_digest,
             "derived complete state digest"
         );
-        let state: State = decode(&bytes, MAX_RECORD)?;
+        let mut state: State = decode(&bytes, MAX_RECORD)?;
+        ensure!(
+            state.applied.is_empty()
+                && applied.is_complete()
+                && applied.commitment(self.currency, &format!("{}/applied", self.domain))?
+                    == m.tables
+                        .iter()
+                        .find(|t| t.name == "applied")
+                        .context("applied collection")?
+                        .commitment,
+            "snapshot applied material binding"
+        );
+        state.applied = applied;
         state.invariants()?;
         ensure!(
             state.currency == h.currency
@@ -650,6 +692,9 @@ impl StateIndex {
         collection: &str,
         key: Id,
     ) -> Result<Option<StateQuery>> {
+        if collection == "applied" {
+            return Ok(None);
+        }
         let Some(m) = self.manifest(h)? else {
             return Ok(None);
         };

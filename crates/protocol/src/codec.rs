@@ -183,6 +183,38 @@ macro_rules! record {
 pub fn encode<T: Encode<()>>(value: &T) -> Vec<u8> {
     minicbor::to_vec(value).expect("Vec encoding cannot fail")
 }
+/// Fallible bounded encoding for complete host state backed by private storage.
+#[cfg(not(target_os = "zkvm"))]
+pub fn encode_bounded<T: Encode<()>>(value: &T, limit: usize) -> Result<Vec<u8>> {
+    struct Sink {
+        bytes: Vec<u8>,
+        limit: usize,
+    }
+    impl minicbor::encode::Write for Sink {
+        type Error = std::io::Error;
+        fn write_all(&mut self, bytes: &[u8]) -> std::io::Result<()> {
+            if self
+                .bytes
+                .len()
+                .checked_add(bytes.len())
+                .is_none_or(|n| n > self.limit)
+            {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "bounded encoding capacity exceeded",
+                ));
+            }
+            self.bytes.extend_from_slice(bytes);
+            Ok(())
+        }
+    }
+    let mut sink = Sink {
+        bytes: vec![],
+        limit,
+    };
+    value.encode(&mut Encoder::new(&mut sink), &mut ())?;
+    Ok(sink.bytes)
+}
 pub fn tagged<T: Encode<()>>(tag: &str, currency: Id, value: &T) -> Vec<u8> {
     let body = encode(value);
     let mut d = Decoder::new(&body);

@@ -1526,7 +1526,13 @@ async fn main() -> Result<()> {
             }
             NodeCommand::Witness { store, at, output } => {
                 let node = open_node(&store)?;
-                private_create(&output, &encode(&node.core.native_input(at)?))?;
+                private_create(
+                    &output,
+                    &rld_protocol::codec::encode_bounded(
+                        &node.core.native_input(at)?,
+                        rld_node::store::MAX_RECORD,
+                    )?,
+                )?;
             }
             NodeCommand::Certificate {
                 store,

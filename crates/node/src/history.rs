@@ -9,7 +9,7 @@ use anyhow::{Context, Result, ensure};
 use fs2::FileExt;
 use rand::{RngCore, rngs::OsRng};
 use rld_protocol::{
-    codec::{Id, decode, encode, hash},
+    codec::{Blob, Id, decode, encode, hash},
     record,
 };
 use std::{
@@ -19,7 +19,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const FORMAT: &str = "RLD-VERIFIED-HISTORY-INDEX-1";
+const FORMAT: &str = "RLD-VERIFIED-HISTORY-INDEX-2";
 const WIDTH: usize = 32;
 const PAGE_BYTES: usize = 16 * 1024;
 const CACHE_BYTES: usize = 32 * 1024 * 1024;
@@ -31,6 +31,7 @@ record!(Object {digest:Id => 0,bytes:u64 => 1});
 record!(Link {object:Object => 0,first:u64 => 1,last:u64 => 2,height:u8 => 3});
 record!(Page {format:String => 0,currency:Id => 1,domain:Id => 2,height:u8 => 3,children:Vec<Link> => 4});
 record!(HistoryStatus {format:String => 0,records:u64 => 1,accounted_bytes:u64 => 2,accounted_files:u64 => 3,byte_limit:u64 => 4,file_limit:u64 => 5,cache_bytes:u64 => 6,cache_objects:u64 => 7,cache_byte_limit:u64 => 8,cache_object_limit:u64 => 9});
+record!(StoredRecord{record:Committed => 0,applied_snapshot:Blob => 1});
 struct Cache {
     objects: VecDeque<(Object, Arc<Vec<u8>>)>,
     bytes: usize,
@@ -458,7 +459,7 @@ impl History {
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
-    pub(crate) fn push(&mut self, value: Committed) -> Result<()> {
+    pub(crate) fn push(&mut self, value: Committed, applied_snapshot: Vec<u8>) -> Result<()> {
         let next = self
             .len
             .checked_add(1)
@@ -470,9 +471,16 @@ impl History {
                 && value.header.predecessor == self.head,
             "verified history append identity/predecessor"
         );
+        ensure!(
+            !applied_snapshot.is_empty() && applied_snapshot.len() <= 4096,
+            "verified history applied snapshot bound"
+        );
         let head = value.header.id();
         let record = Link {
-            object: self.disk.put(encode(&value))?,
+            object: self.disk.put(encode(&StoredRecord {
+                record: value,
+                applied_snapshot: Blob(applied_snapshot),
+            }))?,
             first: next,
             last: next,
             height: 0,
@@ -497,6 +505,9 @@ impl History {
         Ok(())
     }
     pub fn at(&self, sequence: u64) -> Result<Option<Arc<Committed>>> {
+        Ok(self.material(sequence)?.map(|(record, _)| record))
+    }
+    pub(crate) fn material(&self, sequence: u64) -> Result<Option<(Arc<Committed>, Vec<u8>)>> {
         if sequence == 0 || sequence > self.len {
             return Ok(None);
         }
@@ -514,7 +525,12 @@ impl History {
             "history record exact range"
         );
         let bytes = self.disk.read(&link.object, MAX_RECORD)?;
-        let record: Committed = decode(bytes.as_slice(), MAX_RECORD)?;
+        let stored: StoredRecord = decode(bytes.as_slice(), MAX_RECORD)?;
+        ensure!(
+            !stored.applied_snapshot.0.is_empty() && stored.applied_snapshot.0.len() <= 4096,
+            "historical applied snapshot bound"
+        );
+        let record = stored.record;
         ensure!(
             record.header.currency == self.disk.currency
                 && record.header.domain == self.disk.domain
@@ -523,7 +539,7 @@ impl History {
                 && hash("RLD-BATCH", self.disk.currency, &record.batch) == record.header.batch,
             "history record native identity"
         );
-        Ok(Some(Arc::new(record)))
+        Ok(Some((Arc::new(record), stored.applied_snapshot.0)))
     }
     pub fn iter(&self) -> Iter {
         self.range(0, self.len)

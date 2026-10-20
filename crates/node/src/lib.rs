@@ -21,3 +21,6 @@ pub fn executable_profile() -> anyhow::Result<rld_protocol::model::ProofProfile>
 pub fn executable_source_digest() -> &'static str {
     env!("RLD_EXECUTABLE_SOURCE_DIGEST")
 }
+
+mod applied_store;
+mod object_store;

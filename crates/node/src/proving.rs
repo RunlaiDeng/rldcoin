@@ -126,7 +126,6 @@ impl ProofContext {
             state.root()? == record.header.new_root,
             "query native replay root"
         );
-        let entries = state.collection(collection)?;
         let top = state.top()?;
         let top_key = hash(
             "RLD-COLLECTION",
@@ -143,42 +142,48 @@ impl ProofContext {
             top_position,
         )?;
         let tag = format!("{}/{}", state.domain, collection);
-        let (member, absence) = match entries.binary_search_by_key(&key, |e| e.key) {
-            Ok(i) => (
-                Some(rld_protocol::merkle::prove(
-                    state.currency,
-                    &tag,
-                    &entries,
-                    i,
-                )?),
-                None,
-            ),
-            Err(i) => (
-                None,
-                Some(rld_protocol::merkle::Absence {
-                    left: if i > 0 {
-                        Some(rld_protocol::merkle::prove(
-                            state.currency,
-                            &tag,
-                            &entries,
-                            i - 1,
-                        )?)
-                    } else {
-                        None
-                    },
-                    right: if i < entries.len() {
-                        Some(rld_protocol::merkle::prove(
-                            state.currency,
-                            &tag,
-                            &entries,
-                            i,
-                        )?)
-                    } else {
-                        None
-                    },
-                    count: entries.len() as u64,
-                }),
-            ),
+        let (member, absence) = if collection == "applied" {
+            let step = state.applied.access_step(key)?;
+            (step.member, step.absence)
+        } else {
+            let entries = state.collection(collection)?;
+            match entries.binary_search_by_key(&key, |e| e.key) {
+                Ok(i) => (
+                    Some(rld_protocol::merkle::prove(
+                        state.currency,
+                        &tag,
+                        &entries,
+                        i,
+                    )?),
+                    None,
+                ),
+                Err(i) => (
+                    None,
+                    Some(rld_protocol::merkle::Absence {
+                        left: if i > 0 {
+                            Some(rld_protocol::merkle::prove(
+                                state.currency,
+                                &tag,
+                                &entries,
+                                i - 1,
+                            )?)
+                        } else {
+                            None
+                        },
+                        right: if i < entries.len() {
+                            Some(rld_protocol::merkle::prove(
+                                state.currency,
+                                &tag,
+                                &entries,
+                                i,
+                            )?)
+                        } else {
+                            None
+                        },
+                        count: entries.len() as u64,
+                    }),
+                ),
+            }
         };
         let query = crate::state_index::StateQuery {
             collection: collection.into(),
@@ -200,19 +205,28 @@ impl ProofContext {
         if sequence == self.state.sequence {
             return Ok(self.state.as_ref().clone());
         }
-        if let (Some(index), Some(record)) = (&self.state_index, self.history.at(sequence)?) {
-            match index.load(&record.header) {
+        if let (Some(index), Some((record, snapshot))) =
+            (&self.state_index, self.history.material(sequence)?)
+        {
+            match self
+                .state
+                .applied
+                .historical_storage(&snapshot)
+                .and_then(|applied| index.load(&record.header, applied))
+            {
                 Ok(Some(state)) => return Ok(state),
                 Ok(None) => {}
                 Err(error) => index.note(&error),
             }
         }
         let mut s = State::genesis(&self.initial.currency, &self.initial.genesis)?;
+        s.applied = self.state.applied.empty_storage()?;
         let mut head = rld_protocol::state::genesis_id(s.currency, &self.initial.genesis);
         for c in self.history.range(0, sequence) {
             let c = c?;
-            let (next, h) = s.execute_batch(&self.initial.currency, head, &c.batch)?;
+            let (mut next, h) = s.execute_batch(&self.initial.currency, head, &c.batch)?;
             ensure!(h == c.header, "retained history replay");
+            next.applied.seal_storage()?;
             head = h.id();
             s = next;
         }
@@ -338,6 +352,7 @@ impl ProofContext {
                 }
                 access.steps.push(step);
             }
+            complete.seal_storage()?;
             native.steps.push(proof::NativeStep {
                 batch: record.batch.clone(),
                 header: record.header.clone(),
