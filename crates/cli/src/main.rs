@@ -1845,20 +1845,22 @@ fn print_balance(state: &rld_protocol::state::State, key: Id) -> Result<()> {
             continue;
         }
         let n = rld_protocol::state::sum(&out.components)?;
-        let blocked = out.components.iter().any(|p| {
-            state
+        let mut blocked = false;
+        for component in &out.components {
+            let cover = state
                 .covers
-                .iter()
-                .find(|c| c.id(state.currency) == p.cover)
-                .is_some_and(|cover| {
-                    cover.families.iter().any(|f| {
-                        state
-                            .incidents
-                            .iter()
-                            .any(|i| i.family == f.family && i.anchor == f.anchor)
-                    })
-                })
-        });
+                .get(component.cover)?
+                .context("wallet cover missing")?;
+            if cover.families.iter().any(|f| {
+                state
+                    .incidents
+                    .iter()
+                    .any(|i| i.family == f.family && i.anchor == f.anchor)
+            }) {
+                blocked = true;
+                break;
+            }
+        }
         if blocked {
             quarantined = quarantined.add(n)?;
         } else if out.owner.threshold == 1 {

@@ -470,6 +470,39 @@ authentication, changed-data and I/O errors propagate. See
 [the source analysis](engineering/MINT_ACCESS_EXECUTION.md). This stage supplies no
 new runtime, proof-cost, throughput, latency or independent security result.
 
+## Immutable acceptance and fee definitions
+
+Covers and historical fee policies now use append-only Permanent maps with exact
+native content IDs. Complete wire arrays, leaf/root algorithms and acceptance,
+fee, work, cap and ownership rules are unchanged. Native lookups, mining work
+responses, wallet construction and balance display use checked point reads;
+missing/corrupt definitions refuse instead of appearing absent or spendable.
+The redundant all-cover key scan is removed because sorted constructors and
+append-only duplicate refusal enforce the same uniqueness invariant.
+
+Normal nodes reconstruct both typed immutable paths under private definition-index.
+The validated nonempty genesis definitions are copied into empty backings and
+compared by exact count/root before sealing; historical fallback replay performs
+the same genesis seeding. There is no adoption of a persisted root. History V6
+binds ten-map observation V4 under the unchanged 4-KiB bound; material V7 omits
+all ten arrays and restores them only from verified historical observations.
+
+Actual native guest/prover input tag 7 authenticates typed cover and fee-policy
+accesses against the complete real predecessor state. It optionally includes the
+certified Mint path, so absent Mint correspondence does not force full historical
+definitions. Initial root/count openings and every supplied used step verify.
+Duplicate/replacement/removal and unused access evidence refuse. Default capture
+shares the existing 1-GiB input budget, compares replayed headers with verified
+history and seals only committed native boundaries. Typed compact-capacity refusal
+can choose the prior bounded material paths; other errors propagate.
+
+Cover records retain the existing complete input ceiling rather than inheriting
+an unrelated 8-KiB coin-record limit. Original types and fee policies keep 8 KiB;
+all path working, total disk and cache admission bounds remain. A large single
+cover may require large temporary memory; this is not a bounded-RAM or performance
+claim. See [the source analysis](engineering/DEFINITION_ACCESS_EXECUTION.md).
+No fixture, suite, actual proof or payment campaign was run in this stage.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
@@ -477,13 +510,13 @@ The following are real completion boundaries, not fulfilled by source edits:
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
    map hash. Other native collections remain resident; native history, UTXOs, Mint facts, the applied map and
-   five permanent decision/birth/funding maps now live on disk;
+   five permanent decision/birth/funding maps, acceptance covers and historical fee policies now live on disk;
    full invariant scans of the remaining tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
-   collections remain needed. The eight-map access path alone does not
+   collections remain needed. The ten-map access path alone does not
    complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one

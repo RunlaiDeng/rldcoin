@@ -65,7 +65,7 @@ pub struct State {
     #[n(13)]
     pub services: Table<Service>,
     #[n(14)]
-    pub covers: Table<Cover>,
+    pub covers: Permanent<Cover>,
     #[n(15)]
     pub mints: crate::mints::Mints,
     #[n(16)]
@@ -83,7 +83,7 @@ pub struct State {
     #[n(22)]
     pub resolutions: Permanent<Decision>,
     #[n(23)]
-    pub fee_policies: Table<FeePolicy>,
+    pub fee_policies: Permanent<FeePolicy>,
 }
 impl State {
     fn from_wire(w: wire::StateWire) -> Result<Self> {
@@ -108,7 +108,7 @@ impl State {
                 w.redemptions,
             )?,
             services: Table::from_sorted(c, &format!("{domain}/services"), w.services)?,
-            covers: Table::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
+            covers: Permanent::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
             mints: crate::mints::Mints::from_sorted(c, domain, w.mints)?,
             applied: crate::applied::AppliedIndex::from_sorted(
                 c,
@@ -125,7 +125,11 @@ impl State {
                 &format!("{domain}/resolutions"),
                 w.resolutions,
             )?,
-            fee_policies: Table::from_sorted(c, &format!("{domain}/fee_policies"), w.fee_policies)?,
+            fee_policies: Permanent::from_sorted(
+                c,
+                &format!("{domain}/fee_policies"),
+                w.fee_policies,
+            )?,
         })
     }
 }
@@ -240,7 +244,7 @@ impl State {
             domain: config.domain,
             sequence: 0,
             configuration: config.clone(),
-            fee_policies: Table::from_sorted(
+            fee_policies: Permanent::from_sorted(
                 c,
                 &format!("{}/fee_policies", config.domain),
                 vec![config.fee_policy.clone()],
@@ -255,7 +259,7 @@ impl State {
             decisions: Permanent::new(c, &format!("{}/decisions", config.domain)),
             redemptions: Permanent::new(c, &format!("{}/redemptions", config.domain)),
             services: Table::new(c, &format!("{}/services", config.domain)),
-            covers: Table::new(c, &format!("{}/covers", config.domain)),
+            covers: Permanent::new(c, &format!("{}/covers", config.domain)),
             mints: crate::mints::Mints::new(c, config.domain),
             applied: crate::applied::AppliedIndex::new(c, &format!("{}/applied", config.domain)),
             incidents: Table::new(c, &format!("{}/incidents", config.domain)),
@@ -363,7 +367,6 @@ impl State {
             self.coupon_uses.iter().map(|v| v.coupon).collect(),
             self.families.iter().map(|v| v.id).collect(),
             self.services.iter().map(|v| v.id).collect(),
-            self.covers.iter().map(|v| v.id(self.currency)).collect(),
         ] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
         }
@@ -414,13 +417,13 @@ impl State {
             "decisions" => self.decisions.entries(c)?,
             "redemptions" => self.redemptions.entries(c)?,
             "services" => self.services.entries(),
-            "covers" => self.covers.entries(),
+            "covers" => self.covers.entries(c)?,
             "mints" => self.mints.entries()?,
             "applied" => self.applied.entries()?,
             "incidents" => self.incidents.entries(),
             "funding" => self.used_funding.entries(c)?,
             "resolutions" => self.resolutions.entries(c)?,
-            "fee_policies" => self.fee_policies.entries(),
+            "fee_policies" => self.fee_policies.entries(c)?,
             "counters" => vec![Entry {
                 key: Id::ZERO,
                 value: hash(
@@ -580,16 +583,16 @@ impl State {
         };
         Ok((next, header))
     }
-    fn cover(&self, id: Id) -> Result<&Cover> {
+    fn cover(&self, id: Id) -> Result<Cover> {
         self.covers
-            .get(id)
+            .get(id)?
             .ok_or_else(|| anyhow::anyhow!("missing cover definition"))
     }
     fn usable(&self, components: &[Component]) -> Result<()> {
         parts(components)?;
         for p in components {
             let cover = self.cover(p.cover)?;
-            self.configuration.accepts(cover)?;
+            self.configuration.accepts(&cover)?;
             ensure!(
                 !cover.families.iter().any(|f| self
                     .incidents
@@ -634,7 +637,7 @@ impl State {
         );
         for lift in lifts {
             ensure!(lift.from != lift.to, "identity lift");
-            self.cover(lift.from)?.subset_of(self.cover(lift.to)?)?;
+            self.cover(lift.from)?.subset_of(&self.cover(lift.to)?)?;
             ensure!(lift.amount.0 > 0, "zero lift");
             let n = a
                 .get(&lift.from)
@@ -680,7 +683,7 @@ impl State {
     fn fees(&self, currency: &Currency, fees: &[Fee], policy: &FeePolicy) -> Result<()> {
         policy.validate()?;
         ensure!(
-            self.fee_policies.contains(policy),
+            self.fee_policies.contains(policy, self.currency)?,
             "fee policy was never authenticated locally"
         );
         ensure!(fees.len() <= 32, "fee count");
@@ -821,8 +824,8 @@ impl State {
         for cover in &op.covers {
             cover.validate()?;
             let key = cover.id(self.currency);
-            if let Some(old) = self.covers.get(key) {
-                ensure!(old == cover, "cover collision")
+            if let Some(old) = self.covers.get(key)? {
+                ensure!(&old == cover, "cover collision")
             } else {
                 self.covers.insert(cover.clone())?;
             }
@@ -875,8 +878,8 @@ impl State {
                     g.home == self.domain && self.mints.get_slot(g.root, work.slot)?.is_none(),
                     "consumed Mint slot"
                 );
-                self.cover(g.cover)?.subset_of(self.cover(work.cover)?)?;
-                self.configuration.accepts(self.cover(work.cover)?)?;
+                self.cover(g.cover)?.subset_of(&self.cover(work.cover)?)?;
+                self.configuration.accepts(&self.cover(work.cover)?)?;
                 crate::work::verify_mint(self.currency, work)?;
                 self.minted = self.minted.add(Amount(crate::REWARD))?;
                 self.mints.insert(MintRecord {
@@ -1039,13 +1042,13 @@ impl State {
                     rejected
                         .destination
                         .configuration
-                        .accepts(self.cover(component.cover)?)?;
+                        .accepts(&self.cover(component.cover)?)?;
                 }
                 if let Some(range) = &x.ticket.range {
                     rejected
                         .destination
                         .configuration
-                        .accepts(self.cover(range.cover)?)?;
+                        .accepts(&self.cover(range.cover)?)?;
                 }
                 let decision = Decision {
                     object: x.id,
@@ -1187,8 +1190,8 @@ impl State {
                 );
                 for cover in &f.covers {
                     cover.validate()?;
-                    self.configuration.accepts(cover)?;
-                    if !self.covers.contains(cover) {
+                    self.configuration.accepts(&cover)?;
+                    if !self.covers.contains(cover, self.currency)? {
                         self.covers.insert(cover.clone())?;
                     }
                 }
@@ -1262,7 +1265,7 @@ impl State {
                             .iter()
                             .find(|v| v.id(self.currency) == *cover_id)
                             .ok_or_else(|| anyhow::anyhow!("family missing accepted cover"))?;
-                        self.configuration.accepts(cover)?;
+                        self.configuration.accepts(&cover)?;
                         ensure!(
                             cover.families.iter().any(|r| r == &coupon.source_family),
                             "source family differs from cover"
@@ -1365,7 +1368,10 @@ impl State {
                     ),
                 )?;
                 Verifier { currency }.admission(next, &h.admission)?;
-                if !self.fee_policies.contains(&next.fee_policy) {
+                if !self
+                    .fee_policies
+                    .contains(&next.fee_policy, self.currency)?
+                {
                     self.fee_policies.insert(next.fee_policy.clone())?;
                 }
                 self.configuration = next.clone();
@@ -1554,7 +1560,9 @@ impl State {
             sponsor.family == coupon.family
                 && sponsor.beneficiary == self.domain
                 && sponsor.fee_policy == coupon.source_fee_policy.id(self.currency)
-                && self.fee_policies.contains(&coupon.source_fee_policy)
+                && self
+                    .fee_policies
+                    .contains(&coupon.source_fee_policy, self.currency)?
                 && sponsor.capacity >= e.family.count as u64
                 && sponsor.reserved >= e.family.count as u64
                 && sum(&sponsor.balance)?.0 > 0,
@@ -1580,7 +1588,7 @@ impl State {
         );
         for cover in &m.covers {
             ensure!(
-                self.cover(cover.id(self.currency))? == cover,
+                &self.cover(cover.id(self.currency))? == cover,
                 "material cover definition"
             );
         }
@@ -1621,7 +1629,7 @@ impl State {
                 "placement source"
             );
             self.cover(grant.cover)?
-                .subset_of(self.cover(range.cover)?)?;
+                .subset_of(&self.cover(range.cover)?)?;
             let old = self
                 .segments
                 .before_or_at(Key::Segment(range.grant, range.lo))
@@ -1959,7 +1967,7 @@ impl State {
             "destination coupon already consumed"
         );
         for cover in &r.covers {
-            if !self.covers.contains(cover) {
+            if !self.covers.contains(cover, self.currency)? {
                 self.covers.insert(cover.clone())?;
             }
         }
@@ -1973,7 +1981,7 @@ impl State {
             .map(|p| p.cover)
             .chain(c.ticket.range.iter().map(|r| r.cover))
         {
-            self.configuration.accepts(self.cover(cover_id)?)?;
+            self.configuration.accepts(&self.cover(cover_id)?)?;
         }
         if !reject {
             for fee in &c.ticket.fees {
@@ -1997,7 +2005,7 @@ impl State {
                 crypto::authorize(&c.coupon.recipient, &op.authorizations, &op.signing_bytes())
             })?;
         } else if let Some(range) = &c.ticket.range {
-            self.configuration.accepts(self.cover(range.cover)?)?;
+            self.configuration.accepts(&self.cover(range.cover)?)?;
             self.install(range, op.id())?;
         } else {
             self.output(op.id(), index, &c.ticket.recipient)?;

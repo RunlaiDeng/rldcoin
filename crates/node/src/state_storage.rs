@@ -9,9 +9,11 @@ use rld_protocol::{
     state::State,
 };
 use std::path::Path;
-record!(Snapshot{format:String => 0,applied:Blob => 1,births:Blob => 2,decisions:Blob => 3,redemptions:Blob => 4,resolutions:Blob => 5,funding:Blob => 6,outputs:Blob => 7,mints:Blob => 8});
-const FORMAT: &str = "RLD-NATIVE-DISK-OBSERVATION-3";
+record!(Snapshot{format:String => 0,applied:Blob => 1,births:Blob => 2,decisions:Blob => 3,redemptions:Blob => 4,resolutions:Blob => 5,funding:Blob => 6,outputs:Blob => 7,mints:Blob => 8,covers:Blob => 9,fee_policies:Blob => 10});
+const FORMAT: &str = "RLD-NATIVE-DISK-OBSERVATION-4";
 pub(crate) const DISK_MAPS: &[&str] = &[
+    "covers",
+    "fee_policies",
     "mints",
     "outputs",
     "applied",
@@ -23,6 +25,8 @@ pub(crate) const DISK_MAPS: &[&str] = &[
 ];
 #[derive(Clone)]
 pub(crate) struct Backings {
+    covers: Permanent<Cover>,
+    fee_policies: Permanent<FeePolicy>,
     mints: rld_protocol::mints::Mints,
     outputs: rld_protocol::utxo::Outputs,
     applied: rld_protocol::applied::AppliedIndex,
@@ -37,7 +41,7 @@ impl Backings {
         root: &Path,
         initial: &Initial,
         state: &mut State,
-    ) -> Result<std::sync::Arc<Objects>> {
+    ) -> Result<(std::sync::Arc<Objects>, std::sync::Arc<Objects>)> {
         let c = initial.currency.id();
         let d = initial.genesis.configuration.domain;
         let g = rld_protocol::state::genesis_id(c, &initial.genesis);
@@ -86,13 +90,16 @@ impl Backings {
                 initial,
                 "funding",
             )?))?;
-        Ok(objects)
+        let definitions = crate::definitions_store::initialize(root, initial, state)?;
+        Ok((objects, definitions))
     }
     pub(crate) fn mint_claim(&self) -> Result<rld_protocol::mints::index::Claim> {
         self.mints.index_claim()
     }
     pub(crate) fn capture(s: &State) -> Self {
         Self {
+            covers: s.covers.clone(),
+            fee_policies: s.fee_policies.clone(),
             mints: s.mints.clone(),
             outputs: s.outputs.clone(),
             applied: s.applied.clone(),
@@ -104,6 +111,8 @@ impl Backings {
         }
     }
     pub(crate) fn seal(s: &mut State) -> Result<()> {
+        s.covers.seal()?;
+        s.fee_policies.seal()?;
         s.mints.seal()?;
         s.outputs.seal()?;
         s.applied.seal_storage()?;
@@ -129,6 +138,8 @@ impl Backings {
             funding: Blob(s.used_funding.snapshot()?),
             outputs: Blob(s.outputs.snapshot()?),
             mints: Blob(s.mints.snapshot()?),
+            covers: Blob(s.covers.snapshot()?),
+            fee_policies: Blob(s.fee_policies.snapshot()?),
         });
         ensure!(bytes.len() <= 4096, "native disk observation bound");
         Ok(bytes)
@@ -137,6 +148,8 @@ impl Backings {
         let s: Snapshot = decode(b, 4096)?;
         ensure!(s.format == FORMAT, "native disk observation format");
         Ok(Self {
+            covers: self.covers.historical(&s.covers.0)?,
+            fee_policies: self.fee_policies.historical(&s.fee_policies.0)?,
             mints: self.mints.historical(&s.mints.0)?,
             outputs: self.outputs.historical(&s.outputs.0)?,
             applied: self.applied.historical_storage(&s.applied.0)?,
@@ -149,6 +162,8 @@ impl Backings {
     }
     pub(crate) fn empty(&self) -> Result<Self> {
         Ok(Self {
+            covers: self.covers.empty_storage()?,
+            fee_policies: self.fee_policies.empty_storage()?,
             mints: self.mints.empty_storage()?,
             outputs: self.outputs.empty_storage()?,
             applied: self.applied.empty_storage()?,
@@ -170,6 +185,8 @@ impl Backings {
         )>,
     > {
         Ok(Some(match name {
+            "covers" => s.covers.access(key)?,
+            "fee_policies" => s.fee_policies.access(key)?,
             "mints" => s.mints.access(key)?,
             "outputs" => s.outputs.access(key)?,
             "applied" => {
@@ -186,8 +203,21 @@ impl Backings {
     }
     pub(crate) fn clear_material(s: &mut State) {
         Self::clear_permanent_material(s);
+        Self::clear_definition_material(s);
         s.outputs = rld_protocol::utxo::Outputs::new(s.currency, s.domain);
         s.mints = rld_protocol::mints::Mints::new(s.currency, s.domain);
+    }
+    pub(crate) fn clear_definition_material(s: &mut State) {
+        s.covers = Permanent::new(s.currency, &format!("{}/covers", s.domain));
+        s.fee_policies = Permanent::new(s.currency, &format!("{}/fee_policies", s.domain));
+    }
+    pub(crate) fn attach_genesis(mut self, s: &mut State) -> Result<()> {
+        let (covers, policies) =
+            crate::definitions_store::seed_genesis(s, self.covers, self.fee_policies)?;
+        self.covers = covers;
+        self.fee_policies = policies;
+        Self::clear_definition_material(s);
+        self.attach(s)
     }
     pub(crate) fn clear_permanent_material(s: &mut State) {
         let c = s.currency;
@@ -201,7 +231,12 @@ impl Backings {
     }
     pub(crate) fn attach(&self, s: &mut State) -> Result<()> {
         ensure!(
-            s.mints.is_empty()
+            s.covers.is_complete()
+                && s.covers.is_empty()
+                && s.fee_policies.is_complete()
+                && s.fee_policies.is_empty()
+                && s.mints.is_complete()
+                && s.mints.is_empty()
                 && s.outputs.is_complete()
                 && s.outputs.is_empty()
                 && s.applied.is_empty()
@@ -212,6 +247,8 @@ impl Backings {
                 && s.used_funding.is_empty(),
             "disk material placeholders must be empty"
         );
+        s.covers = self.covers.clone();
+        s.fee_policies = self.fee_policies.clone();
         s.mints = self.mints.clone();
         s.outputs = self.outputs.clone();
         s.applied = self.applied.clone();

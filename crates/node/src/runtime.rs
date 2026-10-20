@@ -83,6 +83,7 @@ pub struct Core {
     pub(crate) mint_storage: Arc<crate::mint_store::MintStore>,
     pub(crate) utxo_storage: Arc<crate::utxo_store::Utxos>,
     pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
+    pub(crate) definition_storage: Arc<crate::object_store::Objects>,
     pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub state: Arc<State>,
@@ -180,7 +181,7 @@ impl Core {
         state.mints = state.mints.clone().on_empty_storage(mint_storage.clone())?;
         let mint_certificates =
             crate::mint_certificates::Certificates::open(&root.join("mint-proof-index"), &initial)?;
-        let permanent_storage =
+        let (permanent_storage, definition_storage) =
             crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
         let proofs = crate::receipts::Receipts::open(&root.join("receipt-index"), &initial)?;
@@ -189,6 +190,7 @@ impl Core {
             initial,
             applied_storage,
             permanent_storage,
+            definition_storage,
             utxo_storage,
             mint_storage,
             mint_certificates,

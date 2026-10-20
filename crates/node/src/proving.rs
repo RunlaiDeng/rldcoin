@@ -55,6 +55,15 @@ impl WitnessBudget {
     }
 }
 
+fn compact_capacity(error: &anyhow::Error) -> bool {
+    error
+        .downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>()
+        .is_some()
+        || error
+            .downcast_ref::<rld_protocol::permanent::capture::CaptureBudgetExceeded>()
+            .is_some()
+}
+
 #[derive(Clone)]
 pub struct ProofContext {
     pub(crate) initial: Initial,
@@ -376,7 +385,7 @@ impl ProofContext {
         let mut s = State::genesis(&self.initial.currency, &self.initial.genesis)?;
         crate::state_storage::Backings::capture(&self.state)
             .empty()?
-            .attach(&mut s)?;
+            .attach_genesis(&mut s)?;
         let mut head = rld_protocol::state::genesis_id(s.currency, &self.initial.genesis);
         for c in self.history.range(0, sequence) {
             let c = c?;
@@ -441,12 +450,30 @@ impl ProofContext {
             ));
         }
         let claim = witness.state.mints.index_claim()?;
-        if let Some(certificate) = self.mint_certificates.get(claim.events)? {
-            rld_protocol::mints::index::verify(&witness.currency, &certificate)?;
+        let mint_certificate = self.mint_certificates.get(claim.events)?;
+        if let Some(certificate) = &mint_certificate {
+            rld_protocol::mints::index::verify(&witness.currency, certificate)?;
             ensure!(
                 certificate.claim == claim,
-                "native Mint correspondence differs from predecessor"
+                "definition Mint correspondence differs from predecessor"
             );
+        }
+        let certificate = mint_certificate.as_ref().map(|c| (**c).clone());
+        match self.indexed_definitions(witness.clone(), sequence, certificate.clone()) {
+            Ok(w) => return Ok(proof::NativeInput::IndexedDefinitions(w)),
+            Err(e) if compact_capacity(&e) => {}
+            Err(e) => return Err(e),
+        }
+        if certificate.is_some() {
+            // A Mint-only compact-height refusal must not force complete
+            // historical definitions when their own access path still fits.
+            match self.indexed_definitions(witness.clone(), sequence, None) {
+                Ok(w) => return Ok(proof::NativeInput::IndexedDefinitions(w)),
+                Err(e) if compact_capacity(&e) => {}
+                Err(e) => return Err(e),
+            }
+        }
+        if let Some(certificate) = mint_certificate {
             match self.indexed_mint(witness.clone(), sequence, (*certificate).clone()) {
                 Ok(w) => return Ok(proof::NativeInput::IndexedMint(w)),
                 Err(e) if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>().is_some()
@@ -485,7 +512,7 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedUtxoWitness> {
-        let (native, outputs, _) = self.indexed_maps(n, sequence, true, None)?;
+        let (native, outputs, _, _) = self.indexed_maps(n, sequence, true, None, false)?;
         Ok(proof::IndexedUtxoWitness {
             native,
             outputs: outputs.context("UTXO capture missing")?,
@@ -496,7 +523,7 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedPermanentWitness> {
-        Ok(self.indexed_maps(n, sequence, false, None)?.0)
+        Ok(self.indexed_maps(n, sequence, false, None, false)?.0)
     }
     fn indexed_mint(
         &self,
@@ -504,7 +531,8 @@ impl ProofContext {
         sequence: u64,
         certificate: rld_protocol::mints::index::Certificate,
     ) -> Result<proof::IndexedMintWitness> {
-        let (native, outputs, mints) = self.indexed_maps(n, sequence, true, Some(certificate))?;
+        let (native, outputs, mints, _) =
+            self.indexed_maps(n, sequence, true, Some(certificate), false)?;
         Ok(proof::IndexedMintWitness {
             native: proof::IndexedUtxoWitness {
                 native,
@@ -513,16 +541,35 @@ impl ProofContext {
             mints: mints.context("Mint capture missing")?,
         })
     }
+    fn indexed_definitions(
+        &self,
+        n: proof::NativeWitness,
+        sequence: u64,
+        certificate: Option<rld_protocol::mints::index::Certificate>,
+    ) -> Result<proof::IndexedDefinitionWitness> {
+        let (native, outputs, mints, definitions) =
+            self.indexed_maps(n, sequence, true, certificate, true)?;
+        Ok(proof::IndexedDefinitionWitness {
+            native: proof::IndexedUtxoWitness {
+                native,
+                outputs: outputs.context("definition UTXO capture missing")?,
+            },
+            mints,
+            definitions: definitions.context("definition capture missing")?,
+        })
+    }
     fn indexed_maps(
         &self,
         mut native: proof::NativeWitness,
         sequence: u64,
         include_outputs: bool,
         mint_certificate: Option<rld_protocol::mints::index::Certificate>,
+        include_definitions: bool,
     ) -> Result<(
         proof::IndexedPermanentWitness,
         Option<rld_protocol::permanent::access::Access<Output>>,
         Option<rld_protocol::mints::IndexedAccess>,
+        Option<proof::DefinitionAccess>,
     )> {
         use rld_protocol::permanent::capture::Budget;
         let budget = Budget::new(MAX_RECORD, 128)?;
@@ -576,6 +623,25 @@ impl ProofContext {
             native.state.mints = rld_protocol::mints::Mints::new(c, d);
             budget.charge(&trace.metadata(certificate.clone()))?;
             Some(trace)
+        } else {
+            None
+        };
+        let definitions = if include_definitions {
+            let (covers, cover_trace) =
+                state
+                    .covers
+                    .clone()
+                    .capture(c, &format!("{d}/covers"), budget.clone())?;
+            let (policies, policy_trace) = state.fee_policies.clone().capture(
+                c,
+                &format!("{d}/fee_policies"),
+                budget.clone(),
+            )?;
+            state.covers = covers;
+            state.fee_policies = policies;
+            crate::state_storage::Backings::clear_definition_material(&mut native.state);
+            budget.charge(&(&cover_trace.metadata(), &policy_trace.metadata()))?;
+            Some((cover_trace, policy_trace))
         } else {
             None
         };
@@ -661,6 +727,14 @@ impl ProofContext {
             funding: funding.finish()?,
         };
         let outputs = outputs.map(|trace| trace.finish()).transpose()?;
+        let definitions = definitions
+            .map(|(covers, fee_policies)| -> Result<_> {
+                Ok(proof::DefinitionAccess {
+                    covers: covers.finish()?,
+                    fee_policies: fee_policies.finish()?,
+                })
+            })
+            .transpose()?;
         let mints = match (mints, mint_certificate) {
             (Some(trace), Some(certificate)) => Some(trace.finish(certificate)?),
             (None, None) => None,
@@ -679,6 +753,7 @@ impl ProofContext {
             },
             outputs,
             mints,
+            definitions,
         ))
     }
     fn indexed_native(

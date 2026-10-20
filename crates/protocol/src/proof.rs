@@ -464,6 +464,8 @@ record!(PermanentAccess {births:crate::permanent::access::Access<Birth> => 0,dec
 record!(IndexedPermanentWitness {native:IndexedNativeWitness => 0,permanent:PermanentAccess => 1});
 record!(IndexedUtxoWitness {native:IndexedPermanentWitness => 0,outputs:crate::permanent::access::Access<Output> => 1});
 record!(IndexedMintWitness {native:IndexedUtxoWitness => 0,mints:crate::mints::IndexedAccess => 1});
+record!(DefinitionAccess {covers:crate::permanent::access::Access<Cover> => 0,fee_policies:crate::permanent::access::Access<FeePolicy> => 1});
+record!(IndexedDefinitionWitness {native:IndexedUtxoWitness => 0,mints:Option<crate::mints::IndexedAccess> => 1,definitions:DefinitionAccess => 2});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
@@ -591,6 +593,39 @@ pub fn execute_indexed_mint(w: &IndexedMintWitness) -> Result<Checkpoint> {
     // The shared native executor verifies the actual predecessor receipt and
     // complete monetary state root, including the certified event-map root.
     let (header, state) = execute_utxo_state(&w.native, state)?;
+    state.mints.finish_access()?;
+    Ok(header)
+}
+
+pub fn execute_indexed_definitions(w: &IndexedDefinitionWitness) -> Result<Checkpoint> {
+    let n = &w.native.native.native;
+    let mut state = n.state.clone();
+    ensure!(
+        state.covers.is_complete()
+            && state.covers.is_empty()
+            && state.fee_policies.is_complete()
+            && state.fee_policies.is_empty(),
+        "indexed definitions require empty complete placeholders"
+    );
+    let c = state.currency;
+    let d = state.domain;
+    state.covers =
+        crate::permanent::Permanent::from_access(c, &format!("{d}/covers"), &w.definitions.covers)?;
+    state.fee_policies = crate::permanent::Permanent::from_access(
+        c,
+        &format!("{d}/fee_policies"),
+        &w.definitions.fee_policies,
+    )?;
+    if let Some(mints) = &w.mints {
+        ensure!(
+            state.mints.is_complete() && state.mints.is_empty(),
+            "indexed definition Mint placeholder"
+        );
+        state.mints = crate::mints::Mints::from_access(&n.currency, d, mints)?;
+    }
+    let (header, state) = execute_utxo_state(&w.native, state)?;
+    state.covers.finish_access()?;
+    state.fee_policies.finish_access()?;
     state.mints.finish_access()?;
     Ok(header)
 }
@@ -778,4 +813,6 @@ pub enum NativeInput {
     MintIndex(#[n(0)] crate::mints::index::Witness),
     #[n(6)]
     IndexedMint(#[n(0)] IndexedMintWitness),
+    #[n(7)]
+    IndexedDefinitions(#[n(0)] IndexedDefinitionWitness),
 }

@@ -295,12 +295,7 @@ pub fn build(s: &State, nonce: Id, request: Request) -> Result<Operation> {
                 recovery_fee_payout,
             };
             ticket.id = ticket.identity(s.currency);
-            let definition = s
-                .covers
-                .iter()
-                .find(|c| c.id(s.currency) == cover)
-                .context("cover definition")?
-                .clone();
+            let definition = s.covers.get(cover)?.context("cover definition")?;
             covers.push(definition.clone());
             let material = Material {
                 outputs: vec![ticket.recipient.clone(), ticket.destination_fee.clone()],
@@ -352,10 +347,8 @@ pub fn build(s: &State, nonce: Id, request: Request) -> Result<Operation> {
             ticket.id = ticket.identity(s.currency);
             let definition = s
                 .covers
-                .iter()
-                .find(|c| c.id(s.currency) == work.range.cover)
-                .context("cover definition")?
-                .clone();
+                .get(work.range.cover)?
+                .context("cover definition")?;
             covers.push(definition.clone());
             let material = Material {
                 ticket: ticket.clone(),

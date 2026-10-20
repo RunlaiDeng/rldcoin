@@ -360,8 +360,8 @@ objects are checked/synced; failed partials/orphans and all published old versio
 remain. Storage failure/exhaustion refuses unsupported publication, never refunds
 an export, deletes an operation ID, resets a counter or substitutes a root.
 
-Verified history V5 carries all eight sealed disk-map snapshots for each native
-record. State-material V6 omits their arrays in private serialized material,
+Verified history V6 carries all ten sealed disk-map snapshots for each native
+record. State-material V7 omits their arrays in private serialized material,
 retains their commitments, and combines them with the exact observations from
 verified history before whole-checkpoint validation. That partial file is not
 standalone State or monetary evidence. Historical membership/absence uses native
@@ -372,7 +372,7 @@ Old history/state-index bindings refuse unchanged. Preserve their directories
 and use their matching historical release or a fresh correctly bound private
 cache; never rewrite a currency, journal/head, monetary keys or balances. A damaged
 applied store must be retained. Stop the node and every proof/read worker, retain
-`utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
+`definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
 `state-index/` under distinct private names, then cold-rebuild all five from the unchanged valid event journal and separately
 retained latest head. The disk map and history observations reference exact physical objects, so do not
 combine new disk-map directories with old split roots.
@@ -430,8 +430,8 @@ and authoritative event append retain every published old/partial/orphan object.
 Capacity/corruption refuses, never recreates an unused funding ID or unresolved
 payment, deletes a decision or authorizes a refund.
 
-History V5 now binds a complete eight-map storage observation (at most 4 KiB).
-State material V6 stores empty placeholders for those eight maps and requires the
+History V6 now binds a complete ten-map storage observation (at most 4 KiB).
+State material V7 stores empty placeholders for those ten maps and requires the
 separate verified-history observations plus exact full native root before use.
 Those caches are not standalone ledger snapshots. Default indexed guest input now carries exact accesses for these five maps;
 complete input remains the bounded fallback described below.
@@ -439,7 +439,7 @@ complete input remains the bounded fallback described below.
 Old executable/derived bindings refuse unchanged. Do not rewrite currency,
 keys, balances or old private stores. If reconstructing damaged derived material
 for the same compatible source, stop the node and every proof/read worker;
-privately retain all `permanent-index/`, `applied-index/`, `history-index/` and
+privately retain all `definition-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
 `state-index/` directories together, then cold replay the unchanged valid journal
 with its independently retained latest head into fresh derived directories.
 Do not combine new object owners with old physical observations. Receipt-index
@@ -492,10 +492,10 @@ change to the other maps' existing limits or a maximum-RSS/throughput claim.
 Native/QC validation precedes sealing, history and authoritative publication.
 Missing/corrupt bytes refuse, never become a spent/missing input or empty balance.
 
-History V5 binds eight-map observation V3; state material V6 omits eight arrays
+History V6 binds ten-map observation V4; state material V7 omits ten arrays
 and requires verified history plus exact complete native checkpoint root. If
 rebuilding compatible derived material, stop every node/proof/read worker and
-privately retain `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/`
+privately retain `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/`
 and `state-index/` together before cold replaying the unchanged valid journal
 with its independently retained latest head. Do not combine old physical roots
 with new owners or rewrite monetary descriptors, keys, balances or journal heads.
@@ -530,10 +530,10 @@ Each root uses the prior 600,000 reachable-object /512-MiB encoded working budge
 two Mint roots and other memory/worker allocations add separate costs. Sealing
 follows native/header/QC validation; all published old/partial/orphan objects remain.
 
-History V5 binds eight-map observation V3; state material V6 restores the separate
+History V6 binds ten-map observation V4; state material V7 restores the separate
 verified-history roots and checks the whole native checkpoint. To rebuild compatible
 derived data, stop all node/proof/read workers, privately retain `mint-index/`,
-`utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and `state-index/`
+`definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and `state-index/`
 together, then cold replay the unchanged valid journal and separately retained
 latest head. Never mix old physical observations with new owners, rewrite heads,
 change currency or migrate money/keys to a new program binding.
@@ -608,3 +608,46 @@ key or balance migration occurs. Compilation does not establish successful proof
 production, end-to-end payments, capacity, cost, independently protected custody
 or mainnet readiness. Remaining collections and permanent archival obligations
 still require work.
+
+
+## Append-only acceptance and fee definitions
+
+Normal nodes now open definition-index with RLD-DEFINITION-DISK-1 and exact
+currency/home/genesis binding. Cover and fee-policy path types have distinct
+RLD-COVER-PATH-1 and RLD-FEE-POLICY-PATH-1 node domains. Both start at empty
+observations; complete native-validated genesis definitions seed their exact roots.
+Cold replay and historical genesis fallback repeat that reconstruction. No root
+from a directory, peer or serialized cache grants native authority.
+
+These two paths share a 4,096-object /16-MiB raw cache and 1-TiB /4,194,304-file
+admission. Status reports definition_storage with actual accounted usage or an
+explicit observation error. Original small path value types and fee policies
+retain 8-KiB per-value admission. Covers use the existing 1-GiB complete input
+ceiling; the 512-MiB encoded reachable working-tree limit remains and may refuse
+sooner. Large records bypass the smaller retained cache and can need substantial
+temporary memory. No new wire, capsule, working, total disk or cache limit is raised.
+
+History V6 stores ten-map observation V4 (still at most 4 KiB); material V7 omits
+all ten map arrays. Incompatible old derived formats refuse without rewriting.
+For compatible derived reconstruction stop all node/read/proof workers and
+privately retain definition-index, mint-index, utxo-index, permanent-index,
+applied-index, history-index and state-index together before replaying the exact
+valid anchored journal into fresh derived directories. Preserve mint-proof-index
+and receipt-index under their existing recovery rules. Do not change the currency,
+program binding, money, keys or separately retained latest head.
+
+Default native input tag 7 captures covers/fee policies alongside UTXO/applied/
+permanent paths; it can use either certified Mint accesses or complete Mint
+material. This mode needs no extra permission, lane or setting. Actual guest and
+prover precheck authenticate both initial root/count openings and all touched
+records and append absences under the real monetary predecessor. All supplied
+steps must be used. These maps expose no replacement/removal API. Auth/read errors
+propagate; only typed compact-height/capture-capacity refusals select prior
+bounded material paths. The shared 1-GiB input limit remains.
+
+Mining work fetches only covers required by its bounded selected grants. Wallet
+payment/claim construction and balance display use checked cover lookup; a missing
+definition is an error, not permission to spend. Native acceptance cover, historical
+fee authorization and positive owner-authorized miner fee rules remain unchanged.
+A compile pass does not establish maximum-input proof feasibility, payment
+composition, capacity, independently protected custody or mainnet completion.

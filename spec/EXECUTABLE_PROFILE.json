@@ -1,9 +1,9 @@
 {
   "format": "RLD-EXECUTABLE-PROFILE-1",
-  "source_digest": "b55965e36bf4983918684169381a32d6040148d01d4da9cbd6b8f0c95fd5fbc5",
+  "source_digest": "3798a0772249b46a36b88645038037a16ebb05a15b792c39e4cdc77daf86f43f",
   "proof_profile": {
-    "native_image": "cad7441011ecacadf5a9bf696bb62b13e340339e2c2b50061ae32fc46385d314",
-    "controller_image": "77f48fd7e23dfbc7e4f3fe832c632768eedf98f62758d1dfe52244e2e7e9f901",
+    "native_image": "d94efe7bff970ee14b9448bab6fe9891a01dcdad65210e4777b7e3a7db648fea",
+    "controller_image": "3d5c1d9300f79c7c9775c6d3a0ff7a236f73f08d40494a78077d22bec707c9c0",
     "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
     "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
     "backend": "risc0-zkvm-3.0.6-succinct"
@@ -79,11 +79,11 @@
     },
     {
       "path": "crates/protocol/src/proof.rs",
-      "sha256": "6617494d38e520d98e97b4fc6655c342968ba10268833cdc05974210a8fcd642"
+      "sha256": "e3111dcfacc8ce0bb005c28b5d43e925a98d1868c8fc7abd69da4ea72ad08889"
     },
     {
       "path": "crates/protocol/src/state.rs",
-      "sha256": "27be292f31849f754280b0627f95d420b5c6a15ac867ee08971a1c398f3585c3"
+      "sha256": "d1cbb27100606a924c71ff85a1d2e86c9d8eb7e064fcd0d67d5c45384585078b"
     },
     {
       "path": "crates/protocol/src/state/wire.rs",
@@ -127,7 +127,7 @@
     },
     {
       "path": "methods/guest/src/bin/native.rs",
-      "sha256": "7d9122bd65b20d97b7502aade98defad88d3f49a7236f249a4f30a31219155a0"
+      "sha256": "8997790e07c30679a52cb238d8cfebc6b0793d0d0c804d4c1219e03ab912d1aa"
     },
     {
       "path": "methods/src/lib.rs",

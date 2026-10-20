@@ -18,6 +18,7 @@ pub(crate) trait Value:
 {
     const FORMAT: &'static str;
     const NAME: &'static str;
+    const MAX_BYTES: usize = 8192;
     fn validate(&self, home: Id) -> Result<()>;
 }
 impl Value for Output {
@@ -46,8 +47,25 @@ impl Value for rld_protocol::mints::Slot {
     }
 }
 
+impl Value for rld_protocol::model::Cover {
+    const FORMAT: &'static str = "RLD-COVER-PATH-1";
+    const NAME: &'static str = "covers";
+    // A cover is not an 8-KiB coin. Keep the existing complete-state input cap;
+    // reachable working bytes, disk/cache admission and outer framing still bind.
+    const MAX_BYTES: usize = crate::store::MAX_RECORD;
+    fn validate(&self, _: Id) -> Result<()> {
+        self.validate()
+    }
+}
+impl Value for rld_protocol::model::FeePolicy {
+    const FORMAT: &'static str = "RLD-FEE-POLICY-PATH-1";
+    const NAME: &'static str = "fee_policies";
+    fn validate(&self, _: Id) -> Result<()> {
+        self.validate()
+    }
+}
+
 const PAGE: usize = 512;
-const VALUE: usize = 8192;
 const WORK_OBJECTS: u64 = 600_000;
 const WORK_BYTES: u64 = 512 * 1024 * 1024;
 record!(Link{object:Object => 0,native:Id => 1,count:u64 => 2,first:Id => 3,last:Id => 4,height:u8 => 5,depth:u16 => 6});
@@ -125,6 +143,9 @@ impl<T: Value> Paths<T> {
             marker: std::marker::PhantomData,
         })
     }
+    pub(crate) fn native_tag(&self) -> &str {
+        &self.owner.tag
+    }
     pub(crate) fn at_or_before(&self, key: Id) -> Result<Option<T>> {
         let (rank, found) = self.rank(key)?;
         let index = if found {
@@ -145,7 +166,7 @@ impl<T: Value> Paths<T> {
         match (&n.entry, &n.value, &n.left, &n.right) {
             (Some(e), Some(v), None, None) => {
                 ensure!(
-                    v.bytes > 0 && v.bytes <= VALUE as u64,
+                    v.bytes > 0 && v.bytes <= T::MAX_BYTES as u64,
                     "typed path value size"
                 );
                 Ok(Link {
@@ -307,7 +328,7 @@ impl<T: Value> Paths<T> {
     fn leaf(&self, value: T) -> Result<Tree> {
         value.validate(self.home())?;
         let e = value.entry(self.currency());
-        let bytes = Arc::new(rld_protocol::codec::encode_bounded(&value, VALUE)?);
+        let bytes = Arc::new(rld_protocol::codec::encode_bounded(&value, T::MAX_BYTES)?);
         self.make(Some(e), Some(bytes), None, None)
     }
     fn branch(&self, l: Tree, r: Tree) -> Result<Tree> {
@@ -362,13 +383,13 @@ impl<T: Value> Paths<T> {
         let bytes = if let Some(b) = read.value {
             b
         } else {
-            self.owner.objects.read(&object, VALUE)?
+            self.owner.objects.read(&object, T::MAX_BYTES)?
         };
         ensure!(
             bytes.len() as u64 == object.bytes && Id::digest(bytes.as_slice()) == object.digest,
             "typed path value identity"
         );
-        let value: T = decode(bytes.as_slice(), VALUE)?;
+        let value: T = decode(bytes.as_slice(), T::MAX_BYTES)?;
         value.validate(self.home())?;
         ensure!(
             Some(value.entry(self.currency())) == read.node.entry,
@@ -549,7 +570,10 @@ impl<T: Value> Paths<T> {
             if let Some(value) = &w.value {
                 let object = read.node.value.context("typed path seal value")?;
                 ensure!(
-                    self.owner.objects.put(value.as_ref().clone(), VALUE)? == object,
+                    self.owner
+                        .objects
+                        .put(value.as_ref().clone(), T::MAX_BYTES)?
+                        == object,
                     "typed path sealed value identity"
                 );
             }
