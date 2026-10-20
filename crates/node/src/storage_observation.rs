@@ -6,10 +6,10 @@ use rld_protocol::{
     codec::{Blob, Id, decode, encode},
     record,
 };
-const FORMAT: &str = "RLD-NATIVE-DISK-OBSERVATION-5";
+const FORMAT: &str = "RLD-NATIVE-DISK-OBSERVATION-6";
 // Fixed order: applied, five permanent maps, outputs, both Mint indexes,
 // definitions, services, coupon uses and receiving families.
-const KINDS: [(&str, Option<&str>); 14] = [
+const KINDS: [(&str, Option<&str>); 16] = [
     ("RLD-APPLIED-DISK-1", None),
     ("RLD-PERMANENT-DISK-1", Some("births")),
     ("RLD-PERMANENT-DISK-1", Some("decisions")),
@@ -24,6 +24,8 @@ const KINDS: [(&str, Option<&str>); 14] = [
     ("RLD-SERVICE-PATH-1", None),
     ("RLD-COUPON-USE-PATH-1", None),
     ("RLD-FAMILY-PATH-1", None),
+    ("RLD-CONTROLLER-PATH-1", None),
+    ("RLD-INCIDENT-PATH-1", None),
 ];
 record!(Link{object:Object => 0,native:Id => 1,count:u64 => 2,first:Id => 3,last:Id => 4,height:u8 => 5,depth:u16 => 6});
 record!(Plain{format:String => 0,currency:Id => 1,domain:Id => 2,genesis:Id => 3,root:Option<Link> => 4});
@@ -46,7 +48,7 @@ pub(crate) fn join_mints(events: Vec<u8>, slots: Vec<u8>) -> Vec<u8> {
         slots: Blob(slots),
     })
 }
-pub(crate) fn pack(snapshots: [Vec<u8>; 14]) -> Result<Vec<u8>> {
+pub(crate) fn pack(snapshots: [Vec<u8>; 16]) -> Result<Vec<u8>> {
     let mut context = None;
     let mut roots = Vec::with_capacity(KINDS.len());
     for ((format, name), bytes) in KINDS.iter().zip(snapshots) {
@@ -86,7 +88,7 @@ pub(crate) fn pack(snapshots: [Vec<u8>; 14]) -> Result<Vec<u8>> {
     ensure!(bytes.len() <= 4096, "native disk observation bound");
     Ok(bytes)
 }
-pub(crate) fn unpack(bytes: &[u8]) -> Result<[Vec<u8>; 14]> {
+pub(crate) fn unpack(bytes: &[u8]) -> Result<[Vec<u8>; 16]> {
     let p: Packed = decode(bytes, 4096)?;
     ensure!(
         p.format == FORMAT && p.roots.len() == KINDS.len(),

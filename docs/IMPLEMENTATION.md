@@ -533,6 +533,44 @@ The original guest/input, per-value, working, cache and retained bounds remain.
 See [the source analysis](engineering/MUTABLE_SERVICE_EXECUTION.md). Compilation
 and source review do not establish runtime behavior or proof feasibility.
 
+## Controller and conflict-record execution
+
+Controllers now use append-only Permanent with exact keyed reads; conflict records
+use a wrapper retaining the original (family,anchor) canonical wire order and
+hashed native key/value. Normal nodes reconstruct both immutable typed paths under
+private controller-index. Query, cancellation, creation, rejection and quarantine
+paths propagate missing/corrupt data as errors; they do not scan every controller
+or incident. Controller definition/proof data keep the existing complete input
+ceiling rather than an unrelated small-record limit. All working/cache/disk and
+outer limits remain unchanged.
+
+Every redemption now records its already authenticated source terminal through one
+idempotent exact resolution helper. Previously rejected-export recovery marked the
+redemption without its known Exported resolution. Starting with empty genesis,
+all resolution keys are controller keys and every redemption key is a resolution
+key. Hence the previous unresolved predicate has exact cardinality controllers
+minus resolutions. The count openings and full predecessor root authenticate both
+counts in partial execution. Necessary cardinality guards complement this prefix
+induction; counts alone never validate an arbitrary caller's state. This adds the
+missing resolution record on recovery, changes those resulting native roots and
+requires the new executable profile, without changing returned money or owner/
+terminal/fee checks. No historical state is rewritten.
+
+NativeInput tag 9 and default capture authenticate controller/conflict reads and
+appends alongside prior access maps. Initial counts and every supplied used step
+verify; only typed compact-capacity refusals select prior bounded material paths.
+History V8 binds fifteen-map observation V6 with sixteen root descriptors, still
+within 4 KiB. Material V9 omits those arrays and restores them from verified
+history before whole-state validation. Complete incident fallback/export may still
+materialize a byte-bounded tuple-sorted array; normal execution does not.
+
+A replay-derived local terminal-ID/statement index replaces repeated terminal
+searches and computes the API's unchanged local-terminal observation count. This
+is distinct from native funded capacity and grants no monetary authority. Full
+terminal records and other Core collections still remain resident. See
+[the source analysis](engineering/CONTROLLER_INCIDENT_EXECUTION.md). Source review
+and compilation do not establish runtime composition, proof cost or capacity.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
@@ -540,13 +578,13 @@ The following are real completion boundaries, not fulfilled by source edits:
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
    map hash. Other native collections remain resident; native history, UTXOs, Mint facts, the applied map and
-   five permanent decision/birth/funding maps, acceptance covers, historical fee policies, service/coupon state and receiving families now live on disk;
+   five permanent decision/birth/funding maps, acceptance covers, historical fee policies, service/coupon state, receiving families, controllers and conflict records now live on disk;
    full invariant scans of the remaining tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
-   collections remain needed. The thirteen-map access path alone does not
+   collections remain needed. The fifteen-map access path alone does not
    complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one

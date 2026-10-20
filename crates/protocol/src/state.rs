@@ -52,7 +52,7 @@ pub struct State {
     #[n(6)]
     pub segments: Table<Segment>,
     #[n(7)]
-    pub controllers: Table<Controller>,
+    pub controllers: Permanent<Controller>,
     #[n(8)]
     pub births: Permanent<Birth>,
     #[n(9)]
@@ -72,7 +72,7 @@ pub struct State {
     #[n(16)]
     pub applied: crate::applied::AppliedIndex,
     #[n(17)]
-    pub incidents: Table<Incident>,
+    pub incidents: crate::incidents::Incidents,
     #[n(18)]
     pub pool_next: u32,
     #[n(19)]
@@ -98,7 +98,11 @@ impl State {
             outputs: crate::utxo::Outputs::from_sorted(c, domain, w.outputs)?,
             grants: Table::from_sorted(c, &format!("{domain}/grants"), w.grants)?,
             segments: Table::from_sorted(c, &format!("{domain}/segments"), w.segments)?,
-            controllers: Table::from_sorted(c, &format!("{domain}/controllers"), w.controllers)?,
+            controllers: Permanent::from_sorted(
+                c,
+                &format!("{domain}/controllers"),
+                w.controllers,
+            )?,
             births: Permanent::from_sorted(c, &format!("{domain}/births"), w.births)?,
             coupon_uses: Mutable::from_sorted(c, &format!("{domain}/coupon_uses"), w.coupon_uses)?,
             families: Permanent::from_sorted(c, &format!("{domain}/families"), w.families)?,
@@ -116,7 +120,7 @@ impl State {
                 &format!("{domain}/applied"),
                 w.applied,
             )?,
-            incidents: Table::from_sorted(c, &format!("{domain}/incidents"), w.incidents)?,
+            incidents: crate::incidents::Incidents::from_sorted(c, domain, w.incidents)?,
             pool_next: w.pool_next,
             minted: w.minted,
             retired: w.retired,
@@ -253,7 +257,7 @@ impl State {
             outputs: crate::utxo::Outputs::new(c, config.domain),
             grants: Table::new(c, &format!("{}/grants", config.domain)),
             segments: Table::new(c, &format!("{}/segments", config.domain)),
-            controllers: Table::new(c, &format!("{}/controllers", config.domain)),
+            controllers: Permanent::new(c, &format!("{}/controllers", config.domain)),
             births: Permanent::new(c, &format!("{}/births", config.domain)),
             coupon_uses: Mutable::new(c, &format!("{}/coupon_uses", config.domain)),
             families: Permanent::new(c, &format!("{}/families", config.domain)),
@@ -263,7 +267,7 @@ impl State {
             covers: Permanent::new(c, &format!("{}/covers", config.domain)),
             mints: crate::mints::Mints::new(c, config.domain),
             applied: crate::applied::AppliedIndex::new(c, &format!("{}/applied", config.domain)),
-            incidents: Table::new(c, &format!("{}/incidents", config.domain)),
+            incidents: crate::incidents::Incidents::new(c, config.domain),
             pool_next: 0,
             minted: Amount(0),
             retired: Amount(0),
@@ -358,14 +362,16 @@ impl State {
             .commitment(self.currency, &format!("{}/resolutions", self.domain))?;
         self.fee_policies
             .commitment(self.currency, &format!("{}/fee_policies", self.domain))?;
+        ensure!(
+            self.redemptions.len() <= self.resolutions.len()
+                && self.resolutions.len() <= self.controllers.len(),
+            "controller terminal cardinalities"
+        );
         // Applied and Permanent keys are unique/ordered by their private sorted
         // constructors and duplicate-refusing append paths. No replacement or
         // removal API exists. Do not enumerate those permanent keys again here;
         // complete guest wire decoding still reconstructs every native record.
-        for keys in [
-            self.grants.iter().map(|v| v.id).collect::<Vec<_>>(),
-            self.controllers.iter().map(|v| v.id).collect(),
-        ] {
+        for keys in [self.grants.iter().map(|v| v.id).collect::<Vec<_>>()] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
         }
         let mut slots = Vec::new();
@@ -408,7 +414,7 @@ impl State {
             "outputs" => self.outputs.entries()?,
             "grants" => self.grants.entries(),
             "segments" => self.segments.entries(),
-            "controllers" => self.controllers.entries(),
+            "controllers" => self.controllers.entries(c)?,
             "births" => self.births.entries(c)?,
             "coupon_uses" => self.coupon_uses.entries(c)?,
             "families" => self.families.entries(c)?,
@@ -418,7 +424,7 @@ impl State {
             "covers" => self.covers.entries(c)?,
             "mints" => self.mints.entries()?,
             "applied" => self.applied.entries()?,
-            "incidents" => self.incidents.entries(),
+            "incidents" => self.incidents.entries()?,
             "funding" => self.used_funding.entries(c)?,
             "resolutions" => self.resolutions.entries(c)?,
             "fee_policies" => self.fee_policies.entries(c)?,
@@ -581,6 +587,30 @@ impl State {
         };
         Ok((next, header))
     }
+    // Every resolution names an actual retained controller; both redemption
+    // paths also resolve it. Starting at empty genesis therefore gives
+    // redemption keys subset resolution keys subset controller keys.
+    fn resolve_controller(&mut self, c: &Controller, outcome: u8) -> Result<()> {
+        ensure!(
+            (outcome == 1 || outcome == 2) && self.controllers.contains(c, self.currency)?,
+            "local controller resolution"
+        );
+        let decision = Decision {
+            object: c.id,
+            coupon: c.ticket.coupon,
+            outcome,
+            digest: c.ticket.digest(self.currency),
+        };
+        if let Some(old) = self.resolutions.get(c.id)? {
+            ensure!(
+                old == decision,
+                "conflicting retained controller resolution"
+            );
+        } else {
+            self.resolutions.insert(decision)?;
+        }
+        Ok(())
+    }
     fn cover(&self, id: Id) -> Result<Cover> {
         self.covers
             .get(id)?
@@ -591,13 +621,12 @@ impl State {
         for p in components {
             let cover = self.cover(p.cover)?;
             self.configuration.accepts(&cover)?;
-            ensure!(
-                !cover.families.iter().any(|f| self
-                    .incidents
-                    .get_key(Key::Incident(f.family, f.anchor))
-                    .is_some()),
-                "quarantined cover"
-            );
+            for family in &cover.families {
+                ensure!(
+                    !self.incidents.known(family.family, family.anchor)?,
+                    "quarantined cover"
+                );
+            }
         }
         Ok(())
     }
@@ -1029,7 +1058,7 @@ impl State {
                 let x = &r.creation.controller;
                 ensure!(
                     x.source == self.domain
-                        && self.controllers.iter().any(|c| c == x)
+                        && self.controllers.contains(x, self.currency)?
                         && self.redemptions.get(x.id)?.is_none(),
                     "recovery source/redemption"
                 );
@@ -1091,6 +1120,7 @@ impl State {
                     id,
                     &mut index,
                 )?;
+                self.resolve_controller(x, 1)?;
                 self.redemptions.insert(Redemption {
                     controller: x.id,
                     kind: 2,
@@ -1454,18 +1484,11 @@ impl State {
                 let c = &release.creation.controller;
                 ensure!(
                     c.source == self.domain
-                        && self.controllers.iter().any(|x| x == c)
+                        && self.controllers.contains(c, self.currency)?
                         && !self.redemptions.get(c.id)?.is_some_and(|r| r.kind == 1),
                     "export observation"
                 );
-                if self.resolutions.get(c.id)?.is_none() {
-                    self.resolutions.insert(Decision {
-                        object: c.id,
-                        coupon: c.ticket.coupon,
-                        outcome: 1,
-                        digest: c.ticket.digest(self.currency),
-                    })?;
-                }
+                self.resolve_controller(c, 1)?;
             }
             Command::ReportIncident { first, second } => {
                 verifier.native(first)?;
@@ -1477,10 +1500,10 @@ impl State {
                         && first.header.id() != second.header.id(),
                     "not conflicting certificates"
                 );
-                if !self.incidents.iter().any(|i| {
-                    i.family == first.header.domain
-                        && i.anchor == first.configuration.initial_anchor
-                }) {
+                if !self
+                    .incidents
+                    .known(first.header.domain, first.configuration.initial_anchor)?
+                {
                     self.incidents.insert(Incident {
                         family: first.header.domain,
                         anchor: first.configuration.initial_anchor,
@@ -1536,20 +1559,17 @@ impl State {
         );
         ensure!(
             self.coupon_uses.get(p)?.is_none()
-                && self.controllers.get(t.id).is_none()
+                && self.controllers.get(t.id)?.is_none()
                 && self.pool_next < crate::KEY_COUNT,
             "used coupon/controller/pool"
         );
-        let mut outstanding = 0usize;
-        for x in self.controllers.iter() {
-            if self.resolutions.get(x.id)?.is_none() && self.redemptions.get(x.id)?.is_none() {
-                outstanding = outstanding
-                    .checked_add(1)
-                    .context("controller count exhaustion")?;
-            }
-        }
+        let outstanding = self
+            .controllers
+            .len()
+            .checked_sub(self.resolutions.len())
+            .context("controller resolution count exceeds creation count")?;
         ensure!(
-            outstanding < self.configuration.limits.controllers as usize,
+            outstanding < u64::from(self.configuration.limits.controllers),
             "outstanding-controller capacity"
         );
         let sponsor = self
@@ -1756,7 +1776,7 @@ impl State {
     ) -> Result<()> {
         let c = self
             .controllers
-            .get(p.controller)
+            .get(p.controller)?
             .ok_or_else(|| anyhow::anyhow!("unknown preparation"))?
             .clone();
         let birth = self
@@ -1829,12 +1849,7 @@ impl State {
             kind: 1,
             operation: op.id(),
         })?;
-        self.resolutions.insert(Decision {
-            object: c.id,
-            coupon: c.ticket.coupon,
-            outcome: 2,
-            digest: c.ticket.digest(self.currency),
-        })?;
+        self.resolve_controller(&c, 2)?;
         let mut d = self
             .coupon_uses
             .get(c.ticket.coupon)?

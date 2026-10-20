@@ -104,6 +104,28 @@ impl Value for rld_protocol::model::Family {
         Ok(())
     }
 }
+impl Value for rld_protocol::model::Controller {
+    const FORMAT: &'static str = "RLD-CONTROLLER-PATH-1";
+    const NAME: &'static str = "controllers";
+    const MAX_BYTES: usize = crate::store::MAX_RECORD;
+    fn validate(&self, home: Id) -> Result<()> {
+        ensure!(self.source == home, "stored controller home");
+        rld_protocol::proof::validate_controller(self)
+    }
+}
+impl Value for rld_protocol::incidents::Value {
+    const FORMAT: &'static str = "RLD-INCIDENT-PATH-1";
+    const NAME: &'static str = "incidents";
+    const MAX_BYTES: usize = crate::store::MAX_RECORD;
+    fn validate(&self, _: Id) -> Result<()> {
+        ensure!(
+            !self.incident.first.0.is_empty() && !self.incident.second.0.is_empty(),
+            "empty retained conflict proof"
+        );
+        Ok(())
+    }
+}
+
 const PAGE: usize = 512;
 const WORK_OBJECTS: u64 = 600_000;
 const WORK_BYTES: u64 = 512 * 1024 * 1024;

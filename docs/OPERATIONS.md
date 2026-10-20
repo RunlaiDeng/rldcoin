@@ -360,8 +360,8 @@ objects are checked/synced; failed partials/orphans and all published old versio
 remain. Storage failure/exhaustion refuses unsupported publication, never refunds
 an export, deletes an operation ID, resets a counter or substitutes a root.
 
-Verified history V7 carries all thirteen sealed disk-map snapshots for each native
-record. State-material V8 omits their arrays in private serialized material,
+Verified history V8 carries all fifteen sealed disk-map snapshots for each native
+record. State-material V9 omits their arrays in private serialized material,
 retains their commitments, and combines them with the exact observations from
 verified history before whole-checkpoint validation. That partial file is not
 standalone State or monetary evidence. Historical membership/absence uses native
@@ -372,7 +372,7 @@ Old history/state-index bindings refuse unchanged. Preserve their directories
 and use their matching historical release or a fresh correctly bound private
 cache; never rewrite a currency, journal/head, monetary keys or balances. A damaged
 applied store must be retained. Stop the node and every proof/read worker, retain
-`service-index/`, `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
+`controller-index/`, `service-index/`, `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
 `state-index/` under distinct private names, then cold-rebuild all five from the unchanged valid event journal and separately
 retained latest head. The disk map and history observations reference exact physical objects, so do not
 combine new disk-map directories with old split roots.
@@ -430,8 +430,8 @@ and authoritative event append retain every published old/partial/orphan object.
 Capacity/corruption refuses, never recreates an unused funding ID or unresolved
 payment, deletes a decision or authorizes a refund.
 
-History V7 now binds a complete thirteen-map storage observation (at most 4 KiB).
-State material V8 stores empty placeholders for those thirteen maps and requires the
+History V8 now binds a complete fifteen-map storage observation (at most 4 KiB).
+State material V9 stores empty placeholders for those fifteen maps and requires the
 separate verified-history observations plus exact full native root before use.
 Those caches are not standalone ledger snapshots. Default indexed guest input now carries exact accesses for these five maps;
 complete input remains the bounded fallback described below.
@@ -439,7 +439,7 @@ complete input remains the bounded fallback described below.
 Old executable/derived bindings refuse unchanged. Do not rewrite currency,
 keys, balances or old private stores. If reconstructing damaged derived material
 for the same compatible source, stop the node and every proof/read worker;
-privately retain all `service-index/`, `definition-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
+privately retain all `controller-index/`, `service-index/`, `definition-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
 `state-index/` directories together, then cold replay the unchanged valid journal
 with its independently retained latest head into fresh derived directories.
 Do not combine new object owners with old physical observations. Receipt-index
@@ -492,10 +492,10 @@ change to the other maps' existing limits or a maximum-RSS/throughput claim.
 Native/QC validation precedes sealing, history and authoritative publication.
 Missing/corrupt bytes refuse, never become a spent/missing input or empty balance.
 
-History V7 binds thirteen-map observation V5; state material V8 omits thirteen arrays
+History V8 binds fifteen-map observation V6; state material V9 omits fifteen arrays
 and requires verified history plus exact complete native checkpoint root. If
 rebuilding compatible derived material, stop every node/proof/read worker and
-privately retain `service-index/`, `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/`
+privately retain `controller-index/`, `service-index/`, `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/`
 and `state-index/` together before cold replaying the unchanged valid journal
 with its independently retained latest head. Do not combine old physical roots
 with new owners or rewrite monetary descriptors, keys, balances or journal heads.
@@ -530,10 +530,10 @@ Each root uses the prior 600,000 reachable-object /512-MiB encoded working budge
 two Mint roots and other memory/worker allocations add separate costs. Sealing
 follows native/header/QC validation; all published old/partial/orphan objects remain.
 
-History V7 binds thirteen-map observation V5; state material V8 restores the separate
+History V8 binds fifteen-map observation V6; state material V9 restores the separate
 verified-history roots and checks the whole native checkpoint. To rebuild compatible
 derived data, stop all node/proof/read workers, privately retain `mint-index/`,
-`service-index/`, `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and `state-index/`
+`controller-index/`, `service-index/`, `definition-index/`, `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and `state-index/`
 together, then cold replay the unchanged valid journal and separately retained
 latest head. Never mix old physical observations with new owners, rewrite heads,
 change currency or migrate money/keys to a new program binding.
@@ -627,8 +627,8 @@ ceiling; the 512-MiB encoded reachable working-tree limit remains and may refuse
 sooner. Large records bypass the smaller retained cache and can need substantial
 temporary memory. No new wire, capsule, working, total disk or cache limit is raised.
 
-History V7 stores thirteen-map observation V5 (still at most 4 KiB); material V8 omits
-all thirteen map arrays. Incompatible old derived formats refuse without rewriting.
+History V8 stores fifteen-map observation V6 (still at most 4 KiB); material V9 omits
+all fifteen map arrays. Incompatible old derived formats refuse without rewriting.
 For compatible derived reconstruction stop all node/read/proof workers and
 privately retain definition-index, mint-index, utxo-index, permanent-index,
 applied-index, history-index and state-index together before replaying the exact
@@ -672,8 +672,8 @@ terminal rules still decide whether any update is legal. Family/decision maps
 remain append-only. CLI closure and funding evidence use exact keyed records and
 retain their existing real receipt/checkpoint requirements.
 
-History V7 binds thirteen-map observation V5; material V8 omits those arrays. The
-observation stores fourteen complete root descriptors, including both Mint roots,
+History V8 binds fifteen-map observation V6; material V9 omits those arrays. The
+observation stores sixteen complete root descriptors, including both Mint roots,
 with one checked currency/home/genesis context and fixed role inventory. It fully
 reconstructs the original typed snapshots before normal historical validation.
 There are no external dictionary/peer-cache references or dropped fields; the
@@ -693,3 +693,45 @@ changed claims and I/O errors refuse. Only typed compact-capacity insufficiency
 selects prior bounded material paths. Actual guest/prover compilation does not
 establish successful proof production, payment composition, latency/volume,
 protected custody, archival succession or functional completion for mainnet.
+
+
+## Controller and conflict records
+
+Normal startup opens controller-index with RLD-CONTROLLER-STATE-DISK-1 and exact
+currency/home/genesis. RLD-CONTROLLER-PATH-1 and RLD-INCIDENT-PATH-1 distinguish the
+immutable typed paths. Both start empty and rebuild by complete native/QC replay,
+never by adopting an on-disk head. Status controller_storage reports actual shared
+Objects accounting or an unavailable observation. They retain the same 16-MiB /
+4,096-object cache, 1-TiB /4,194,304-file admission and per-path reachable working
+limits. Large controller/certificate records use the existing 1-GiB complete input
+ceiling; working admission can refuse earlier and temporary memory is unmeasured.
+
+Native preparation capacity now uses exact committed creation minus known-terminal
+cardinality. Every authenticated cancellation/rejected-export redemption records
+its matching resolution, and every resolution verifies the exact local controller.
+Identical repeats retain the first record; conflicting outcomes/content refuse.
+This fixes missing resolution bookkeeping on rejected recovery; returned amounts,
+fees and owner/terminal proofs remain unchanged. Source descriptors/programs and
+those resulting roots change; old state refuses unchanged and is never rewritten.
+The API unresolved_controllers field still means absence of a locally journaled
+controller-terminal QC. Its replay-derived ID index is a different observation
+from native funded-capacity resolution, and neither is a signer permission.
+
+Conflict lookups authenticate the original hashed (family,anchor) key and full
+record. Complete wire export/fallback preserves tuple ordering and may materialize
+that byte-bounded array. Partial maps cannot export complete records or issue
+arbitrary membership. Missing/damaged records refuse, never mean no quarantine.
+
+Default NativeInput tag 9 includes controller/conflict accesses plus the prior
+composition; Mint access is certified or bounded full material. Initial root/count
+openings and every supplied step verify under the real native predecessor. Only
+typed compact-height/capture-capacity errors choose prior bounded material paths;
+authentication, tuple mismatch, changed evidence and I/O errors propagate.
+History V8 binds fifteen-map observation V6 (sixteen roots including auxiliary
+Mint); material V9 omits these arrays. The observation remains at most 4 KiB.
+Retain controller-index together with all other derived owners before stopped
+compatible reconstruction from the unchanged valid anchored journal/head.
+
+Full terminal records, other Core arrays, grant/segment execution, archive
+succession, maximum proof feasibility, custody and runtime qualification remain
+unfinished. No monetary genesis/keys, migration or mainnet is created here.

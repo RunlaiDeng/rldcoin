@@ -9,6 +9,8 @@ use rld_protocol::{
 };
 use std::path::Path;
 pub(crate) const DISK_MAPS: &[&str] = &[
+    "controllers",
+    "incidents",
     "services",
     "coupon_uses",
     "families",
@@ -25,6 +27,8 @@ pub(crate) const DISK_MAPS: &[&str] = &[
 ];
 #[derive(Clone)]
 pub(crate) struct Backings {
+    controllers: Permanent<Controller>,
+    incidents: rld_protocol::incidents::Incidents,
     services: rld_protocol::mutable::Mutable<Service>,
     coupon_uses: rld_protocol::mutable::Mutable<Delegation>,
     families: Permanent<Family>,
@@ -101,6 +105,8 @@ impl Backings {
     }
     pub(crate) fn capture(s: &State) -> Self {
         Self {
+            controllers: s.controllers.clone(),
+            incidents: s.incidents.clone(),
             services: s.services.clone(),
             coupon_uses: s.coupon_uses.clone(),
             families: s.families.clone(),
@@ -117,6 +123,8 @@ impl Backings {
         }
     }
     pub(crate) fn seal(s: &mut State) -> Result<()> {
+        s.controllers.seal()?;
+        s.incidents.seal()?;
         s.services.seal()?;
         s.coupon_uses.seal()?;
         s.families.seal()?;
@@ -151,6 +159,8 @@ impl Backings {
             s.services.snapshot()?,
             s.coupon_uses.snapshot()?,
             s.families.snapshot()?,
+            s.controllers.snapshot()?,
+            s.incidents.snapshot()?,
         ])
     }
     pub(crate) fn historical(&self, bytes: &[u8]) -> Result<Self> {
@@ -169,8 +179,12 @@ impl Backings {
             services,
             coupon_uses,
             families,
+            controllers,
+            incidents,
         ] = crate::storage_observation::unpack(bytes)?;
         Ok(Self {
+            controllers: self.controllers.historical(&controllers)?,
+            incidents: self.incidents.historical(&incidents)?,
             services: self.services.historical(&services)?,
             coupon_uses: self.coupon_uses.historical(&coupon_uses)?,
             families: self.families.historical(&families)?,
@@ -190,6 +204,8 @@ impl Backings {
     }
     pub(crate) fn empty(&self) -> Result<Self> {
         Ok(Self {
+            controllers: self.controllers.empty_storage()?,
+            incidents: self.incidents.empty_storage()?,
             services: self.services.empty_storage()?,
             coupon_uses: self.coupon_uses.empty_storage()?,
             families: self.families.empty_storage()?,
@@ -216,6 +232,8 @@ impl Backings {
         )>,
     > {
         Ok(Some(match name {
+            "controllers" => s.controllers.access(key)?,
+            "incidents" => s.incidents.access(key)?,
             "services" => s.services.access(key)?,
             "coupon_uses" => s.coupon_uses.access(key)?,
             "families" => s.families.access(key)?,
@@ -239,8 +257,13 @@ impl Backings {
         Self::clear_permanent_material(s);
         Self::clear_definition_material(s);
         Self::clear_service_material(s);
+        Self::clear_controller_material(s);
         s.outputs = rld_protocol::utxo::Outputs::new(s.currency, s.domain);
         s.mints = rld_protocol::mints::Mints::new(s.currency, s.domain);
+    }
+    pub(crate) fn clear_controller_material(s: &mut State) {
+        s.controllers = Permanent::new(s.currency, &format!("{}/controllers", s.domain));
+        s.incidents = rld_protocol::incidents::Incidents::new(s.currency, s.domain);
     }
     pub(crate) fn clear_service_material(s: &mut State) {
         s.services =
@@ -273,7 +296,11 @@ impl Backings {
     }
     pub(crate) fn attach(&self, s: &mut State) -> Result<()> {
         ensure!(
-            s.services.is_complete()
+            s.controllers.is_complete()
+                && s.controllers.is_empty()
+                && s.incidents.is_complete()
+                && s.incidents.is_empty()
+                && s.services.is_complete()
                 && s.services.is_empty()
                 && s.coupon_uses.is_complete()
                 && s.coupon_uses.is_empty()
@@ -295,6 +322,8 @@ impl Backings {
                 && s.used_funding.is_empty(),
             "disk material placeholders must be empty"
         );
+        s.controllers = self.controllers.clone();
+        s.incidents = self.incidents.clone();
         s.services = self.services.clone();
         s.coupon_uses = self.coupon_uses.clone();
         s.families = self.families.clone();

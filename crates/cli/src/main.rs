@@ -1846,13 +1846,13 @@ fn print_balance(state: &rld_protocol::state::State, key: Id) -> Result<()> {
                 .covers
                 .get(component.cover)?
                 .context("wallet cover missing")?;
-            if cover.families.iter().any(|f| {
-                state
-                    .incidents
-                    .iter()
-                    .any(|i| i.family == f.family && i.anchor == f.anchor)
-            }) {
-                blocked = true;
+            for family in &cover.families {
+                if state.incidents.known(family.family, family.anchor)? {
+                    blocked = true;
+                    break;
+                }
+            }
+            if blocked {
                 break;
             }
         }

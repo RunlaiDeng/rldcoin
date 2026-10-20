@@ -42,3 +42,5 @@ mod definitions_store;
 mod mutable_store;
 
 mod storage_observation;
+
+mod controller_store;

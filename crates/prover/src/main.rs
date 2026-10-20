@@ -175,6 +175,10 @@ fn main() -> Result<()> {
                     &w.native.native.native.native.currency.proof,
                     proof::native_journal(&proof::execute_indexed_service(w)?),
                 ),
+                NativeInput::IndexedControllers(w) => (
+                    &w.native.native.native.native.native.currency.proof,
+                    proof::native_journal(&proof::execute_indexed_controllers(w)?),
+                ),
                 NativeInput::MintIndex(w) => (
                     &w.currency.proof,
                     rld_protocol::mints::index::journal(&rld_protocol::mints::index::execute(w)?),

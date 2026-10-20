@@ -448,8 +448,7 @@ pub fn validate_cancel_candidate(
 ) -> Result<()> {
     let c = state
         .controllers
-        .iter()
-        .find(|c| c.id == cancel.controller)
+        .get(cancel.controller)?
         .ok_or_else(|| anyhow::anyhow!("local controller absent"))?;
     let birth = state
         .births
@@ -478,7 +477,7 @@ pub fn validate_cancel_candidate(
         &cancel.source_header,
         "controllers",
         c.id,
-        hash("RLD-CONTROLLER", state.currency, c),
+        hash("RLD-CONTROLLER", state.currency, &c),
         &cancel.delegation,
     )?;
     let d = Delegation {
@@ -493,11 +492,11 @@ pub fn validate_cancel_candidate(
         hash("RLD-DELEGATION", state.currency, &d),
         &cancel.coupon_use,
     )?;
-    crate::proof::validate_terminal(c, cancel.source_header.id(), &cancel.terminal, 2)?;
+    crate::proof::validate_terminal(&c, cancel.source_header.id(), &cancel.terminal, 2)?;
     crypto::authorize(
         &c.ticket.cancel_policy,
         std::slice::from_ref(&cancel.authorization),
-        &crate::proof::cancellation_bytes(c),
+        &crate::proof::cancellation_bytes(&c),
     )?;
     ensure!(
         cancel.qc.votes.is_empty(),

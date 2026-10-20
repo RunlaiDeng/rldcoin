@@ -468,6 +468,8 @@ record!(DefinitionAccess {covers:crate::permanent::access::Access<Cover> => 0,fe
 record!(IndexedDefinitionWitness {native:IndexedUtxoWitness => 0,mints:Option<crate::mints::IndexedAccess> => 1,definitions:DefinitionAccess => 2});
 record!(ServiceAccess {services:crate::permanent::access::Access<Service> => 0,coupon_uses:crate::permanent::access::Access<Delegation> => 1,families:crate::permanent::access::Access<Family> => 2});
 record!(IndexedServiceWitness {native:IndexedDefinitionWitness => 0,service:ServiceAccess => 1});
+record!(ControllerAccess {controllers:crate::permanent::access::Access<Controller> => 0,incidents:crate::permanent::access::Access<crate::incidents::Value> => 1});
+record!(IndexedControllerWitness {native:IndexedServiceWitness => 0,controllers:ControllerAccess => 1});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
@@ -637,7 +639,12 @@ fn execute_definition_state(
     Ok((header, state))
 }
 pub fn execute_indexed_service(w: &IndexedServiceWitness) -> Result<Checkpoint> {
-    let mut state = w.native.native.native.native.state.clone();
+    Ok(execute_service_state(w, w.native.native.native.native.state.clone())?.0)
+}
+fn execute_service_state(
+    w: &IndexedServiceWitness,
+    mut state: crate::state::State,
+) -> Result<(Checkpoint, crate::state::State)> {
     ensure!(
         state.services.is_complete()
             && state.services.is_empty()
@@ -662,6 +669,28 @@ pub fn execute_indexed_service(w: &IndexedServiceWitness) -> Result<Checkpoint> 
     state.services.finish_access()?;
     state.coupon_uses.finish_access()?;
     state.families.finish_access()?;
+    Ok((header, state))
+}
+pub fn execute_indexed_controllers(w: &IndexedControllerWitness) -> Result<Checkpoint> {
+    let mut state = w.native.native.native.native.native.state.clone();
+    ensure!(
+        state.controllers.is_complete()
+            && state.controllers.is_empty()
+            && state.incidents.is_complete()
+            && state.incidents.is_empty(),
+        "controller input placeholders"
+    );
+    let c = state.currency;
+    let d = state.domain;
+    state.controllers = crate::permanent::Permanent::from_access(
+        c,
+        &format!("{d}/controllers"),
+        &w.controllers.controllers,
+    )?;
+    state.incidents = crate::incidents::Incidents::from_access(c, d, &w.controllers.incidents)?;
+    let (header, state) = execute_service_state(&w.native, state)?;
+    state.controllers.finish_access()?;
+    state.incidents.finish_access()?;
     Ok(header)
 }
 
@@ -852,4 +881,6 @@ pub enum NativeInput {
     IndexedDefinitions(#[n(0)] IndexedDefinitionWitness),
     #[n(8)]
     IndexedService(#[n(0)] IndexedServiceWitness),
+    #[n(9)]
+    IndexedControllers(#[n(0)] IndexedControllerWitness),
 }

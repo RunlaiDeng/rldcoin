@@ -85,6 +85,7 @@ pub struct Core {
     pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
     pub(crate) definition_storage: Arc<crate::object_store::Objects>,
     pub(crate) service_storage: Arc<crate::object_store::Objects>,
+    pub(crate) controller_storage: Arc<crate::object_store::Objects>,
     pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
     pub state: Arc<State>,
@@ -93,6 +94,7 @@ pub struct Core {
     pub engines: Vec<Engine>,
     pub pending: Vec<Operation>,
     pub terminals: Vec<TerminalRecord>,
+    terminal_statements: BTreeMap<Id, Id>,
     pub proofs: crate::receipts::Receipts,
     pub outbox: Vec<(Id, Dispatch)>,
     pub candidates: Vec<Payload>,
@@ -185,6 +187,7 @@ impl Core {
         let (permanent_storage, definition_storage) =
             crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
         let service_storage = crate::mutable_store::initialize(root, &initial, &mut state)?;
+        let controller_storage = crate::controller_store::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
         let proofs = crate::receipts::Receipts::open(&root.join("receipt-index"), &initial)?;
         let head = rld_protocol::state::genesis_id(initial.currency.id(), &initial.genesis);
@@ -194,6 +197,7 @@ impl Core {
             permanent_storage,
             definition_storage,
             service_storage,
+            controller_storage,
             utxo_storage,
             mint_storage,
             mint_certificates,
@@ -204,6 +208,7 @@ impl Core {
             engines: vec![],
             pending: vec![],
             terminals: vec![],
+            terminal_statements: BTreeMap::new(),
             proofs,
             outbox: vec![],
             candidates: vec![],
@@ -238,8 +243,7 @@ impl Core {
             let c = self
                 .state
                 .controllers
-                .iter()
-                .find(|c| c.id == namespace)
+                .get(namespace)?
                 .context("unknown local controller")?;
             ensure!(
                 sequence == 0
@@ -258,11 +262,14 @@ impl Core {
         Ok(self.engines.len() - 1)
     }
     pub fn terminal_statement(&self, id: Id) -> Option<Id> {
-        self.terminals.iter().find_map(|r| match &r.payload {
-            Payload::Export(v) if v.terminal.controller == id => Some(v.terminal.id()),
-            Payload::Cancel(v) if v.controller == id => Some(v.terminal.id()),
-            _ => None,
-        })
+        self.terminal_statements.get(&id).copied()
+    }
+    pub fn unresolved_controller_count(&self) -> Result<u64> {
+        self.state
+            .controllers
+            .len()
+            .checked_sub(u64::try_from(self.terminal_statements.len())?)
+            .context("local terminal count exceeds controller count")
     }
     fn validate_payload(&self, p: &Payload) -> Result<()> {
         match p {
@@ -276,7 +283,10 @@ impl Core {
                 ensure!(
                     r.qc.votes.is_empty()
                         && r.creation.controller.source == self.state.domain
-                        && self.state.controllers.contains(&r.creation.controller),
+                        && self
+                            .state
+                            .controllers
+                            .contains(&r.creation.controller, self.state.currency)?,
                     "prospective release"
                 );
                 let w = proof::ControllerWitness {
@@ -347,8 +357,7 @@ impl Core {
             let c = self
                 .state
                 .controllers
-                .iter()
-                .find(|c| c.id == ns)
+                .get(ns)?
                 .context("unknown controller")?;
             ensure!(seq == 0, "controller position");
             (
@@ -435,7 +444,7 @@ impl Core {
                         && self
                             .state
                             .controllers
-                            .contains(&r.release.creation.controller),
+                            .contains(&r.release.creation.controller, self.state.currency)?,
                     "foreign rejection receipt"
                 );
                 let id = r.release.creation.controller.id;
@@ -636,22 +645,21 @@ impl Core {
                 let (id, config, index) = match &record.payload {
                     Payload::Export(r) => (
                         r.creation.controller.id,
-                        &r.creation.controller.configuration,
+                        r.creation.controller.configuration.clone(),
                         r.creation.controller.pool_index,
                     ),
                     Payload::Cancel(r) => {
                         let c = self
                             .state
                             .controllers
-                            .iter()
-                            .find(|c| c.id == r.controller)
+                            .get(r.controller)?
                             .context("controller")?;
-                        (c.id, &c.configuration, c.pool_index)
+                        (c.id, c.configuration.clone(), c.pool_index)
                     }
                     _ => bail!("native controller outcome"),
                 };
                 crypto::verify_quorum(
-                    config,
+                    &config,
                     id,
                     Some(index),
                     &record.qc,
@@ -664,6 +672,8 @@ impl Core {
                         "conflicting terminal result"
                     );
                 } else {
+                    self.terminal_statements
+                        .insert(id, record.payload.statement());
                     self.terminals.push(record.clone());
                 }
                 self.engines.retain(|e| e.namespace != id);
@@ -1108,8 +1118,7 @@ impl Node {
                         .core
                         .state
                         .controllers
-                        .iter()
-                        .find(|v| v.id == c.controller)
+                        .get(c.controller)?
                         .context("controller")?;
                     crypto::verify_quorum(
                         &controller.configuration,
@@ -1502,8 +1511,7 @@ impl Node {
                     .core
                     .state
                     .controllers
-                    .iter()
-                    .find(|c| c.id == id)
+                    .get(id)?
                     .context("terminal creation")?;
                 if c.configuration
                     .validators

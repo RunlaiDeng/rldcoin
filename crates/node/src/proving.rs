@@ -238,8 +238,7 @@ impl ProofContext {
         let c = self
             .state
             .controllers
-            .iter()
-            .find(|c| c.id == id)
+            .get(id)?
             .context("controller")?
             .clone();
         let birth = self.state.births.get(id)?.context("birth")?;
@@ -459,6 +458,18 @@ impl ProofContext {
             );
         }
         let certificate = mint_certificate.as_ref().map(|c| (**c).clone());
+        match self.indexed_controllers(witness.clone(), sequence, certificate.clone()) {
+            Ok(w) => return Ok(proof::NativeInput::IndexedControllers(w)),
+            Err(e) if compact_capacity(&e) => {}
+            Err(e) => return Err(e),
+        }
+        if certificate.is_some() {
+            match self.indexed_controllers(witness.clone(), sequence, None) {
+                Ok(w) => return Ok(proof::NativeInput::IndexedControllers(w)),
+                Err(e) if compact_capacity(&e) => {}
+                Err(e) => return Err(e),
+            }
+        }
         match self.indexed_service(witness.clone(), sequence, certificate.clone()) {
             Ok(w) => return Ok(proof::NativeInput::IndexedService(w)),
             Err(e) if compact_capacity(&e) => {}
@@ -524,8 +535,8 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedUtxoWitness> {
-        let (native, outputs, _, _, _) =
-            self.indexed_maps(n, sequence, true, None, false, false)?;
+        let (native, outputs, _, _, _, _) =
+            self.indexed_maps(n, sequence, true, None, false, false, false)?;
         Ok(proof::IndexedUtxoWitness {
             native,
             outputs: outputs.context("UTXO capture missing")?,
@@ -536,7 +547,9 @@ impl ProofContext {
         n: proof::NativeWitness,
         sequence: u64,
     ) -> Result<proof::IndexedPermanentWitness> {
-        Ok(self.indexed_maps(n, sequence, false, None, false, false)?.0)
+        Ok(self
+            .indexed_maps(n, sequence, false, None, false, false, false)?
+            .0)
     }
     fn indexed_mint(
         &self,
@@ -544,8 +557,8 @@ impl ProofContext {
         sequence: u64,
         certificate: rld_protocol::mints::index::Certificate,
     ) -> Result<proof::IndexedMintWitness> {
-        let (native, outputs, mints, _, _) =
-            self.indexed_maps(n, sequence, true, Some(certificate), false, false)?;
+        let (native, outputs, mints, _, _, _) =
+            self.indexed_maps(n, sequence, true, Some(certificate), false, false, false)?;
         Ok(proof::IndexedMintWitness {
             native: proof::IndexedUtxoWitness {
                 native,
@@ -560,8 +573,8 @@ impl ProofContext {
         sequence: u64,
         certificate: Option<rld_protocol::mints::index::Certificate>,
     ) -> Result<proof::IndexedDefinitionWitness> {
-        let (native, outputs, mints, definitions, _) =
-            self.indexed_maps(n, sequence, true, certificate, true, false)?;
+        let (native, outputs, mints, definitions, _, _) =
+            self.indexed_maps(n, sequence, true, certificate, true, false, false)?;
         Ok(proof::IndexedDefinitionWitness {
             native: proof::IndexedUtxoWitness {
                 native,
@@ -577,8 +590,8 @@ impl ProofContext {
         sequence: u64,
         certificate: Option<rld_protocol::mints::index::Certificate>,
     ) -> Result<proof::IndexedServiceWitness> {
-        let (native, outputs, mints, definitions, service) =
-            self.indexed_maps(n, sequence, true, certificate, true, true)?;
+        let (native, outputs, mints, definitions, service, _) =
+            self.indexed_maps(n, sequence, true, certificate, true, true, false)?;
         Ok(proof::IndexedServiceWitness {
             native: proof::IndexedDefinitionWitness {
                 native: proof::IndexedUtxoWitness {
@@ -591,6 +604,29 @@ impl ProofContext {
             service: service.context("service capture missing")?,
         })
     }
+    fn indexed_controllers(
+        &self,
+        n: proof::NativeWitness,
+        sequence: u64,
+        certificate: Option<rld_protocol::mints::index::Certificate>,
+    ) -> Result<proof::IndexedControllerWitness> {
+        let (native, outputs, mints, definitions, service, controllers) =
+            self.indexed_maps(n, sequence, true, certificate, true, true, true)?;
+        Ok(proof::IndexedControllerWitness {
+            native: proof::IndexedServiceWitness {
+                native: proof::IndexedDefinitionWitness {
+                    native: proof::IndexedUtxoWitness {
+                        native,
+                        outputs: outputs.context("controller UTXO capture")?,
+                    },
+                    mints,
+                    definitions: definitions.context("controller definition capture")?,
+                },
+                service: service.context("controller service capture")?,
+            },
+            controllers: controllers.context("controller capture missing")?,
+        })
+    }
     fn indexed_maps(
         &self,
         mut native: proof::NativeWitness,
@@ -599,17 +635,23 @@ impl ProofContext {
         mint_certificate: Option<rld_protocol::mints::index::Certificate>,
         include_definitions: bool,
         include_service: bool,
+        include_controllers: bool,
     ) -> Result<(
         proof::IndexedPermanentWitness,
         Option<rld_protocol::permanent::access::Access<Output>>,
         Option<rld_protocol::mints::IndexedAccess>,
         Option<proof::DefinitionAccess>,
         Option<proof::ServiceAccess>,
+        Option<proof::ControllerAccess>,
     )> {
         use rld_protocol::permanent::capture::Budget;
         ensure!(
             !include_service || (include_definitions && include_outputs),
             "service input composition"
+        );
+        ensure!(
+            !include_controllers || include_service,
+            "controller input composition"
         );
         let budget = Budget::new(MAX_RECORD, 128)?;
         let mut state = native.state.clone();
@@ -713,6 +755,21 @@ impl ProofContext {
         } else {
             None
         };
+        let controllers = if include_controllers {
+            let (map, controllers) = state.controllers.clone().capture(
+                c,
+                &format!("{d}/controllers"),
+                budget.clone(),
+            )?;
+            state.controllers = map;
+            let (map, incidents) = state.incidents.clone().capture(budget.clone())?;
+            state.incidents = map;
+            crate::state_storage::Backings::clear_controller_material(&mut native.state);
+            budget.charge(&(&controllers.metadata(), &incidents.metadata()))?;
+            Some((controllers, incidents))
+        } else {
+            None
+        };
         let base = state.sequence;
         let mut head = native
             .predecessor
@@ -812,6 +869,14 @@ impl ProofContext {
                 })
             })
             .transpose()?;
+        let controllers = controllers
+            .map(|(controllers, incidents)| -> Result<_> {
+                Ok(proof::ControllerAccess {
+                    controllers: controllers.finish()?,
+                    incidents: incidents.finish()?,
+                })
+            })
+            .transpose()?;
         let mints = match (mints, mint_certificate) {
             (Some(trace), Some(certificate)) => Some(trace.finish(certificate)?),
             (None, None) => None,
@@ -832,6 +897,7 @@ impl ProofContext {
             mints,
             definitions,
             service,
+            controllers,
         ))
     }
     fn indexed_native(
@@ -901,8 +967,7 @@ impl ProofContext {
         let controller = self
             .state
             .controllers
-            .iter()
-            .find(|c| c.id == id)
+            .get(id)?
             .context("controller")?
             .clone();
         let birth = self.state.births.get(id)?.context("birth")?;
