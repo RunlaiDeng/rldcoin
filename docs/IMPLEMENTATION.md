@@ -245,6 +245,36 @@ accounted storage and cache use. [The storage analysis](engineering/DISK_HISTORY
 records authority, failure behavior and remaining limits. No runtime campaign or
 measured memory/latency result is claimed.
 
+## Indexed operation-log execution witnesses
+
+The actual native guest/prover now supports `NativeInput::IndexedExecution` with
+`RLD-NATIVE-APPLIED-ACCESS-1`. A certified predecessor binds all state roots, while
+an explicit ordered access sequence replaces the complete permanent `applied`
+map in the guest input. Each encountered operation verifies exact membership or
+absence against the rolling root. Exact retained duplicates advance the access
+cursor without executing again; new keys derive their actual successor root from
+verified neighbor paths and the actual operation digest. An unused suffix, missing
+access, changed digest, stale/mixed root, incorrect count or unsupported path fails.
+All other monetary execution and existing invariants remain in the same executor.
+
+An insertion that moves n old leaves below a new fork at path level k is admitted
+compactly only when k+n<=64, a conservative bound on every moved path. Unknown
+subtree height is never taken from the host. When that bound cannot establish
+capacity, the default builder uses the existing full witness under its original
+limits. Indexed byte-budget exhaustion also selects full input, which can be
+smaller for a short history with many new operations. First-genesis execution
+also remains full. Both node proof workers and
+CLI witness export select the indexed variant for certified predecessors when
+supported. Partial internal state cannot serialize or be issued as complete state.
+
+This removes whole-operation-log materialization from those guest inputs; the
+host still retains the complete map and other collections. Exact keys/decisions
+are not deleted, root algorithms and monetary rules are unchanged, and no achieved
+memory/latency result is claimed. [The relation analysis](engineering/INDEXED_NATIVE_WITNESS.md)
+records the induction and finite full-witness fallback. The changed actual program
+IDs require the new source-bound profile; old descriptors/stores refuse without
+migration. No test fixtures, monetary genesis or network were created.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
@@ -252,13 +282,14 @@ The following are real completion boundaries, not fulfilled by source edits:
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
    map hash. Complete current State remains resident; native history records now live on disk;
-   full invariant scans, canonical snapshot construction and full guest input
-   decoding remain. Native history uses an immutable disk-resident 32-way index, while receipt
+   full invariant scans of other tables, canonical snapshot construction and
+   complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, while receipt
    append still copies its current collection. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
-   executor and compact authenticated executable transition witnesses remain
-   needed. No achieved daily capacity or seconds-scale receipt is established.
+   executor and compact authenticated executable witnesses for all remaining
+   collections remain needed. The new operation-log access path alone does not
+   complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one
    eligible segment; a large record may cause fewer than 64 to fit, so this is

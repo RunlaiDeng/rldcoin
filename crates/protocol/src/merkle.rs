@@ -306,6 +306,57 @@ impl Map {
         map.root = build(&map.context, entries)?;
         Ok(map)
     }
+    pub fn query(&self, key: Id) -> Result<(Option<Membership>, Option<Absence>)> {
+        let mut rank = 0u64;
+        let mut current = self.root.as_deref();
+        let mut found = false;
+        while let Some(n) = current {
+            if key < n.first {
+                break;
+            }
+            if key > n.last {
+                rank = rank
+                    .checked_add(n.count)
+                    .context("map query rank overflow")?;
+                break;
+            }
+            match &n.body {
+                Body::Leaf(e) => {
+                    found = e.key == key;
+                    break;
+                }
+                Body::Branch { depth, left, right } => {
+                    if bit(key, *depth) {
+                        rank = rank
+                            .checked_add(left.count)
+                            .context("map query rank overflow")?;
+                        current = Some(right);
+                    } else {
+                        current = Some(left);
+                    }
+                }
+            }
+        }
+        if found {
+            return Ok((Some(self.prove(rank)?), None));
+        }
+        Ok((
+            None,
+            Some(Absence {
+                count: self.count(),
+                left: if rank > 0 {
+                    Some(self.prove(rank - 1)?)
+                } else {
+                    None
+                },
+                right: if rank < self.count() {
+                    Some(self.prove(rank)?)
+                } else {
+                    None
+                },
+            }),
+        ))
+    }
     pub fn prove_key(&self, key: Id) -> Result<Membership> {
         let mut rank = 0u64;
         let mut n = self.root.as_deref().context("missing map key")?;
@@ -447,3 +498,6 @@ pub fn verify_absent(c: Id, tag: &str, expected: Id, key: Id, p: &Absence) -> Re
     }
     Ok(())
 }
+
+mod insertion;
+pub use insertion::{CompleteSubtreeRequired, insert_absent};

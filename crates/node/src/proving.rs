@@ -14,28 +14,43 @@ use std::sync::Arc;
 // Count canonical bytes without allocating a complete encoded State. The guest
 // already refuses inputs above MAX_RECORD; enforce that while constructing the
 // host witness, before retaining an oversized step vector.
+#[derive(Debug)]
+struct WitnessBudgetExceeded;
+impl std::fmt::Display for WitnessBudgetExceeded {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "native witness exceeds guest input byte bound")
+    }
+}
+impl std::error::Error for WitnessBudgetExceeded {}
 struct WitnessBudget {
     bytes: usize,
+    exceeded: bool,
 }
 impl minicbor::encode::Write for WitnessBudget {
     type Error = std::io::Error;
     fn write_all(&mut self, bytes: &[u8]) -> std::io::Result<()> {
-        self.bytes = self
+        let Some(next) = self
             .bytes
             .checked_add(bytes.len())
             .filter(|n| *n <= MAX_RECORD)
-            .ok_or_else(|| {
-                std::io::Error::new(
-                    std::io::ErrorKind::InvalidData,
-                    "native witness exceeds guest input byte bound",
-                )
-            })?;
+        else {
+            self.exceeded = true;
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "native witness exceeds guest input byte bound",
+            ));
+        };
+        self.bytes = next;
         Ok(())
     }
 }
 impl WitnessBudget {
     fn charge<T: minicbor::Encode<()>>(&mut self, value: &T) -> Result<()> {
-        value.encode(&mut minicbor::Encoder::new(self), &mut ())?;
+        let result = value.encode(&mut minicbor::Encoder::new(&mut *self), &mut ());
+        if self.exceeded {
+            return Err(WitnessBudgetExceeded.into());
+        }
+        result?;
         Ok(())
     }
 }
@@ -204,7 +219,7 @@ impl ProofContext {
         ensure!(s.sequence == sequence, "history gap");
         Ok(s)
     }
-    pub fn native_witness(&self, sequence: u64) -> Result<proof::NativeWitness> {
+    fn native_base(&self, sequence: u64) -> Result<proof::NativeWitness> {
         ensure!(
             sequence > 0 && sequence <= self.state.sequence,
             "proof target"
@@ -222,7 +237,7 @@ impl ProofContext {
             "native proof span exceeds guest step bound; certify an intermediate checkpoint first"
         );
         let state = self.state_at(base)?;
-        let mut witness = proof::NativeWitness {
+        Ok(proof::NativeWitness {
             currency: self.initial.currency.clone(),
             genesis: if predecessor.is_none() {
                 Some(self.initial.genesis.clone())
@@ -232,9 +247,16 @@ impl ProofContext {
             predecessor,
             state,
             steps: vec![],
-        };
+        })
+    }
+    pub fn native_witness(&self, sequence: u64) -> Result<proof::NativeWitness> {
+        let mut witness = self.native_base(sequence)?;
+        let base = witness.state.sequence;
         // Reserve a conservative fixed allowance for NativeInput/array framing.
-        let mut budget = WitnessBudget { bytes: 128 };
+        let mut budget = WitnessBudget {
+            bytes: 128,
+            exceeded: false,
+        };
         budget.charge(&witness)?;
         for c in self.history.range(base, sequence) {
             let c = c?;
@@ -246,6 +268,89 @@ impl ProofContext {
             });
         }
         Ok(witness)
+    }
+    pub fn native_input(&self, sequence: u64) -> Result<proof::NativeInput> {
+        let witness = self.native_base(sequence)?;
+        if witness.predecessor.is_none() {
+            return Ok(proof::NativeInput::Execution(
+                self.native_witness(sequence)?,
+            ));
+        }
+        match self.indexed_native(witness, sequence) {
+            Ok(w) => Ok(proof::NativeInput::IndexedExecution(w)),
+            Err(e)
+                if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>()
+                    .is_some()
+                    || e.downcast_ref::<WitnessBudgetExceeded>().is_some() =>
+            {
+                Ok(proof::NativeInput::Execution(
+                    self.native_witness(sequence)?,
+                ))
+            }
+            Err(e) => Err(e),
+        }
+    }
+    fn indexed_native(
+        &self,
+        mut native: proof::NativeWitness,
+        sequence: u64,
+    ) -> Result<proof::IndexedNativeWitness> {
+        let c = native.state.currency;
+        let tag = format!("{}/applied", native.state.domain);
+        let base = native.state.sequence;
+        let mut complete = native.state.applied.clone();
+        let mut access = complete.full_access(c, &tag)?;
+        native.state.applied = rld_protocol::applied::AppliedIndex::new(c, &tag);
+        let mut budget = WitnessBudget {
+            bytes: 128,
+            exceeded: false,
+        };
+        budget.charge(&(&native, &access))?;
+        for record in self.history.range(base, sequence) {
+            let record = record?;
+            budget.charge(&(&record.batch, &record.header, &record.qc))?;
+            for op in &record.batch.operations {
+                let id = op.id();
+                let digest = Id::digest(&rld_protocol::codec::encode(op));
+                let step = complete.access_step(id)?;
+                budget.charge(&step)?;
+                if let Some(old) = complete.get(id)? {
+                    ensure!(
+                        old.digest == digest,
+                        "changed retained operation in proof input"
+                    );
+                } else {
+                    let root = rld_protocol::merkle::insert_absent(
+                        c,
+                        &tag,
+                        complete.commitment(c, &tag)?,
+                        &rld_protocol::merkle::Entry {
+                            key: id,
+                            value: digest,
+                        },
+                        step.absence.as_ref().context("new operation absence")?,
+                    )?;
+                    complete.insert(Applied { id, digest })?;
+                    ensure!(
+                        root == complete.commitment(c, &tag)?,
+                        "indexed and complete applied roots differ"
+                    );
+                }
+                access.steps.push(step);
+            }
+            native.steps.push(proof::NativeStep {
+                batch: record.batch.clone(),
+                header: record.header.clone(),
+                qc: record.qc.clone(),
+            });
+        }
+        Ok(proof::IndexedNativeWitness {
+            currency: native.currency,
+            predecessor: native.predecessor.context("indexed native predecessor")?,
+            state: native.state,
+            steps: native.steps,
+            applied: access,
+        })
     }
     pub fn creation(&self, id: Id) -> Result<Creation> {
         let controller = self

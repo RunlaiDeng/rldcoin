@@ -270,6 +270,9 @@ impl<T: Record> Table<T> {
         entries.sort_by_key(|e| e.key);
         entries
     }
+    pub fn query(&self, key: Id) -> Result<(Option<Membership>, Option<crate::merkle::Absence>)> {
+        self.map.query(key)
+    }
     pub fn witness(&self, key: Id) -> Result<Membership> {
         self.map.prove_key(key)
     }

@@ -444,7 +444,7 @@ impl Core {
             Event::Initial(_) => bail!("duplicate initialization"),
             Event::Queued(op) => {
                 if self.pending.iter().any(|v| v == op)
-                    || self.state.applied.iter().any(|v| v.id == op.id())
+                    || self.state.applied.get(op.id())?.is_some()
                 {
                     return Ok(actions);
                 }
@@ -564,7 +564,7 @@ impl Core {
 
                 let mut still_pending = Vec::new();
                 for op in &self.pending {
-                    if self.state.applied.iter().any(|a| a.id == op.id()) {
+                    if self.state.applied.get(op.id())?.is_some() {
                         continue;
                     }
                     match self.state.execute_batch(
@@ -579,9 +579,6 @@ impl Core {
                     }
                 }
                 self.pending = still_pending;
-                let state = &self.state;
-                self.pending
-                    .retain(|op| !state.applied.iter().any(|a| a.id == op.id()));
                 self.engines
                     .retain(|e| e.namespace != self.state.domain || e.sequence > h.sequence);
             }
@@ -660,6 +657,9 @@ impl Core {
     }
     pub fn cancel_draft(&self, id: Id) -> Result<(Controller, Cancellation)> {
         self.proof_context().cancel_draft(id)
+    }
+    pub fn native_input(&self, sequence: u64) -> Result<proof::NativeInput> {
+        self.proof_context().native_input(sequence)
     }
     pub fn native_witness(&self, sequence: u64) -> Result<proof::NativeWitness> {
         self.proof_context().native_witness(sequence)
@@ -992,7 +992,7 @@ impl Node {
     }
     pub fn submit(&mut self, op: Operation) -> Result<Id> {
         let id = op.id();
-        if let Some(old) = self.core.state.applied.iter().find(|a| a.id == id) {
+        if let Some(old) = self.core.state.applied.get(id)? {
             ensure!(
                 old.digest == Id::digest(&encode(&op)),
                 "changed retained operation bytes"

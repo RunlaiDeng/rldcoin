@@ -4,7 +4,6 @@ use super::*;
 use crate::{proving::ProofContext, store::sync_dir};
 use fs2::FileExt;
 use rand::{RngCore, rngs::OsRng};
-use rld_protocol::proof::NativeInput;
 use std::{collections::BTreeMap, fs::File, time::Instant};
 use tokio::{sync::Semaphore, task::JoinSet};
 
@@ -284,7 +283,7 @@ impl Snapshot {
                     base.checked_add(4096)
                         .context("proof sequence exhaustion")?,
                 );
-                let input = NativeInput::Execution(self.view.native_witness(sequence)?);
+                let input = self.view.native_input(sequence)?;
                 let record = self.view.history.at(sequence)?.context("proof history")?;
                 let certificate = Certified {
                     header: record.header.clone(),

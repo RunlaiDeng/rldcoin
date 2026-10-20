@@ -68,7 +68,7 @@ pub struct State {
     #[n(15)]
     pub mints: Table<MintRecord>,
     #[n(16)]
-    pub applied: Table<Applied>,
+    pub applied: crate::applied::AppliedIndex,
     #[n(17)]
     pub incidents: Table<Incident>,
     #[n(18)]
@@ -105,7 +105,11 @@ impl State {
             services: Table::from_sorted(c, &format!("{domain}/services"), w.services)?,
             covers: Table::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
             mints: Table::from_sorted(c, &format!("{domain}/mints"), w.mints)?,
-            applied: Table::from_sorted(c, &format!("{domain}/applied"), w.applied)?,
+            applied: crate::applied::AppliedIndex::from_sorted(
+                c,
+                &format!("{domain}/applied"),
+                w.applied,
+            )?,
             incidents: Table::from_sorted(c, &format!("{domain}/incidents"), w.incidents)?,
             pool_next: w.pool_next,
             minted: w.minted,
@@ -244,7 +248,7 @@ impl State {
             services: Table::new(c, &format!("{}/services", config.domain)),
             covers: Table::new(c, &format!("{}/covers", config.domain)),
             mints: Table::new(c, &format!("{}/mints", config.domain)),
-            applied: Table::new(c, &format!("{}/applied", config.domain)),
+            applied: crate::applied::AppliedIndex::new(c, &format!("{}/applied", config.domain)),
             incidents: Table::new(c, &format!("{}/incidents", config.domain)),
             pool_next: 0,
             minted: Amount(0),
@@ -340,6 +344,9 @@ impl State {
             .commitment(self.currency, &format!("{}/resolutions", self.domain))?;
         self.fee_policies
             .commitment(self.currency, &format!("{}/fee_policies", self.domain))?;
+        // Applied-key order/uniqueness is enforced by its private complete-table
+        // constructors or exact root-bound append/duplicate proofs, rather than
+        // materializing every permanent operation ID for this check.
         for keys in [
             self.outputs.iter().map(|v| v.id).collect::<Vec<_>>(),
             self.grants.iter().map(|v| v.id).collect(),
@@ -352,7 +359,6 @@ impl State {
             self.services.iter().map(|v| v.id).collect(),
             self.covers.iter().map(|v| v.id(self.currency)).collect(),
             self.mints.iter().map(|v| v.event).collect(),
-            self.applied.iter().map(|v| v.id).collect(),
             self.used_funding.iter().copied().collect(),
             self.resolutions.iter().map(|v| v.object).collect(),
         ] {
@@ -417,7 +423,7 @@ impl State {
             "services" => self.services.entries(),
             "covers" => self.covers.entries(),
             "mints" => self.mints.entries(),
-            "applied" => self.applied.entries(),
+            "applied" => self.applied.entries()?,
             "incidents" => self.incidents.entries(),
             "funding" => self.used_funding.entries(),
             "resolutions" => self.resolutions.entries(),
@@ -808,8 +814,9 @@ impl State {
         );
         let id = op.id();
         let digest = Id::digest(&encode(op));
-        if let Some(old) = self.applied.get(id) {
+        if let Some(old) = self.applied.get(id)? {
             ensure!(old.digest == digest, "changed bytes for retained operation");
+            self.applied.acknowledge_existing(id)?;
             return Ok(());
         }
         ensure!(

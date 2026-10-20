@@ -459,22 +459,66 @@ pub fn validate_terminal(c: &Controller, birth: Id, t: &Terminal, decision: u8) 
 // by the authenticated relation, never by a host boolean.
 record!(NativeStep {batch:Batch  =>  0,header:Checkpoint  =>  1,qc:Quorum  =>  2});
 record!(NativeWitness {currency:Currency  =>  0,genesis:Option<DomainGenesis>  =>  1,predecessor:Option<Certified>  =>  2,state:crate::state::State  =>  3,steps:Vec<NativeStep>  =>  4});
+record!(IndexedNativeWitness {currency:Currency => 0,predecessor:Certified => 1,state:crate::state::State => 2,steps:Vec<NativeStep> => 3,applied:crate::applied::AppliedAccess => 4});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
+    Ok(execute_native_state(
+        NativeExecution {
+            currency: &w.currency,
+            genesis: w.genesis.as_ref(),
+            predecessor: w.predecessor.as_ref(),
+            steps: &w.steps,
+        },
+        w.state.clone(),
+    )?
+    .0)
+}
+pub fn execute_indexed_native(w: &IndexedNativeWitness) -> Result<Checkpoint> {
+    ensure!(
+        w.state.applied.is_complete() && w.state.applied.is_empty(),
+        "indexed native witness requires certified predecessor and empty complete placeholder"
+    );
+    let mut state = w.state.clone();
+    state.applied = crate::applied::AppliedIndex::from_access(
+        state.currency,
+        &format!("{}/applied", state.domain),
+        &w.applied,
+    )?;
+    let (header, state) = execute_native_state(
+        NativeExecution {
+            currency: &w.currency,
+            genesis: None,
+            predecessor: Some(&w.predecessor),
+            steps: &w.steps,
+        },
+        state,
+    )?;
+    state.applied.finish()?;
+    Ok(header)
+}
+struct NativeExecution<'a> {
+    currency: &'a Currency,
+    genesis: Option<&'a DomainGenesis>,
+    predecessor: Option<&'a Certified>,
+    steps: &'a [NativeStep],
+}
+fn execute_native_state(
+    w: NativeExecution<'_>,
+    mut state: crate::state::State,
+) -> Result<(Checkpoint, crate::state::State)> {
     w.currency.validate()?;
     ensure!(
         !w.steps.is_empty() && w.steps.len() <= 4096,
         "native proof step count"
     );
     let v = Verifier {
-        currency: &w.currency,
+        currency: w.currency,
     };
-    let mut state = w.state.clone();
     let mut previous;
-    match (&w.genesis, &w.predecessor) {
+    match (w.genesis, w.predecessor) {
         (Some(g), None) => {
-            let derived = crate::state::State::genesis(&w.currency, g)?;
+            let derived = crate::state::State::genesis(w.currency, g)?;
             ensure!(state == derived, "genesis state");
             previous = crate::state::genesis_id(w.currency.id(), g);
         }
@@ -495,7 +539,7 @@ pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
     }
     let mut last = None;
     for (i, step) in w.steps.iter().enumerate() {
-        let (next, header) = state.execute_batch(&w.currency, previous, &step.batch)?;
+        let (next, header) = state.execute_batch(w.currency, previous, &step.batch)?;
         ensure!(header == step.header, "native transition header");
         if i + 1 < w.steps.len() {
             crypto::verify_quorum(
@@ -515,7 +559,7 @@ pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
         state = next;
         last = Some(header);
     }
-    Ok(last.expect("nonempty"))
+    Ok((last.expect("nonempty"), state))
 }
 pub fn execute_controller(w: &ControllerWitness) -> Result<Terminal> {
     w.currency.validate()?;
@@ -626,4 +670,6 @@ pub enum NativeInput {
     Execution(#[n(0)] NativeWitness),
     #[n(1)]
     Admission(#[n(0)] AdmissionWitness),
+    #[n(2)]
+    IndexedExecution(#[n(0)] IndexedNativeWitness),
 }

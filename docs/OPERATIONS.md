@@ -316,3 +316,28 @@ existing 4,096-step bound before collecting it; certify an intermediate checkpoi
 first. A counting CBOR writer checks the guest's existing 1-GiB input bound
 before retaining an oversized step vector, reserving 128 framing bytes. Complete
 State and exact subordinate receipts are still required.
+
+## Indexed operation-log proof input
+
+`rld node witness` and normal proof workers now select an indexed native input
+when an exact certified predecessor exists. It carries the complete other native
+collections and ordered `RLD-NATIVE-APPLIED-ACCESS-1` membership/absence accesses
+instead of every old applied-operation record. The guest binds the initial map
+root to that predecessor and computes every update from actual operation bytes.
+Input construction continues to enforce the existing 4,096 steps / 1-GiB guest
+bounds. Ordinary canonical State snapshots still carry every complete applied
+record; an internal partial execution state refuses serialization.
+
+If a new insertion cannot prove the 64-branch bound from neighbor paths alone,
+the builder selects full native execution under the original bounds. Indexed
+byte-budget exhaustion also selects full input, since path overhead can exceed
+a short complete map. A full
+input that cannot fit still refuses; no larger bound, guessed height or weaker
+proof mode is enabled. Genesis execution always uses complete state. The current
+host map remains resident, and proving cost, worst-case fallback availability and
+remaining collection scale are not qualified by source compilation.
+
+This changes actual native/controller image IDs. Use only the final rebuilt
+`rld profile` / `rld-prover profile` binding from this stage. Preserve incompatible
+old stores/descriptors and use their matching old release; do not rewrite a
+currency, copy old value/keys or treat this as an in-place monetary upgrade.

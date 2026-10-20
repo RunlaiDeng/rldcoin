@@ -1,0 +1,419 @@
+{
+  "format": "RLD-COMPILE-STAGE-RECEIPT-1",
+  "recorded_at_utc": "2026-10-20T11:03:54.647205+00:00",
+  "stage": "native_indexed_applied_operation_log_execution",
+  "parent_commit": "6228bdc50ebee8cf7846e4f4e8383546411660ed",
+  "project_complete": false,
+  "paper_sha256": "30ad8bfeca1a5da98ebd92f5f1acda56348f6d9686508d3da6180c873d4487e8",
+  "paper_or_map_root_algorithm_changed": false,
+  "source_inventory_sha256": "96dda86e0b2f1240be7c73a0d4f971554f8484360beb67278205ebfd3a64314c",
+  "source_files": [
+    {
+      "path": ".github/workflows/build.yml",
+      "sha256": "7eb97c568f555ae6e53d410aed1d60b44a618fe3122b7c55b4108f0de8bfea74",
+      "bytes": 932
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "b5c6d08b6c12f2d9ef6a1ec434cac51eb64998c1a393fa53eb23ce1abcc048df",
+      "bytes": 85
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "ca0537810764cf03c067b103402ca94f42262c9e95d13b95a8bcff38e9b162ee",
+      "bytes": 127779
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "1bebe75fb10e58e9f5e58bdee82e29b7e507e5ec394825b368a6580af4ef196b",
+      "bytes": 1261
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "path": "README.md",
+      "sha256": "47a14c49cce768ec9eeed0fd7ecef3091a8a92091a4b8e60454e0441409482c4",
+      "bytes": 5024
+    },
+    {
+      "path": "crates/cli/Cargo.toml",
+      "sha256": "096708c68ee7fc77a37b5e57f853fee86d72fb4b8771bc68f8eeda5dde2b0f2c",
+      "bytes": 488
+    },
+    {
+      "path": "crates/cli/src/builder.rs",
+      "sha256": "3c1405389fd131ef9fad275f91ca4f923e69019557567a519049799b2623151d",
+      "bytes": 16860
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "sha256": "2415f6a9f00ff46c29229023202bf30709738cd1cbcc1da655067aa9723190db",
+      "bytes": 66670
+    },
+    {
+      "path": "crates/node/Cargo.toml",
+      "sha256": "71f3f0b0acd427d3eb18fd57e73611239cdeeeb437f7136135aa02297b043dea",
+      "bytes": 832
+    },
+    {
+      "path": "crates/node/build.rs",
+      "sha256": "44bcf26ebd94d5c37663a2e8d09415bb5922f4a75956fc8441e747a8c565a454",
+      "bytes": 2992
+    },
+    {
+      "path": "crates/node/src/archive.rs",
+      "sha256": "a8a57a1e175e7ca6127c811947dde2b986efab6db57a18ea0c5398363cc1b51d",
+      "bytes": 13190
+    },
+    {
+      "path": "crates/node/src/custody.rs",
+      "sha256": "95075c7e2e2f465f87214a7e0fbb47f8a5eafe290b04c5da4940bca4209c5684",
+      "bytes": 24939
+    },
+    {
+      "path": "crates/node/src/history.rs",
+      "sha256": "2cdbd94eb8eb14b2a2a94229588a4219cfc36b97fd416d48e484cdc5b9ad7fe6",
+      "bytes": 20336
+    },
+    {
+      "path": "crates/node/src/lib.rs",
+      "sha256": "4e0ef0dc360bd84fc4f25105530ce51c290355904306d79bb46ece75eabea116",
+      "bytes": 544
+    },
+    {
+      "path": "crates/node/src/offline.rs",
+      "sha256": "56e7144ae57a7ef345d5701d2c717fe5e4c9c4f0b9f62774a48e782b776a859e",
+      "bytes": 3219
+    },
+    {
+      "path": "crates/node/src/proving.rs",
+      "sha256": "7a2b11780bc54f69d83dc5f388fddfd81bee5d1e0fb3c49fce1c6b2ef531d37a",
+      "bytes": 15705
+    },
+    {
+      "path": "crates/node/src/runtime.rs",
+      "sha256": "537e4b54ec09ed1e42f5b6d52dae92bccdd63ada08d8ceacc131acda64a322bd",
+      "bytes": 65058
+    },
+    {
+      "path": "crates/node/src/service.rs",
+      "sha256": "a7bdfef910e05a93b8a6be38f62bfd1106f970c18906f100b9a2b03b9af1b6dc",
+      "bytes": 27813
+    },
+    {
+      "path": "crates/node/src/service/proofs.rs",
+      "sha256": "99c465ce8048e055ff7d57413d352dd6d69a13462e9c674c18e2375b51a4fe8e",
+      "bytes": 22280
+    },
+    {
+      "path": "crates/node/src/service/state_indexer.rs",
+      "sha256": "673fcb0a1fd60dcd1cf844805c4b5a43cee141b5eee4a4d1b1f44267207ee93c",
+      "bytes": 4286
+    },
+    {
+      "path": "crates/node/src/state_index.rs",
+      "sha256": "c9a65d199d6b571e88b51bec320e97dbab9d61586d8181a4a28c667ec1f72150",
+      "bytes": 26108
+    },
+    {
+      "path": "crates/node/src/store.rs",
+      "sha256": "195524204f199fe577301c86a8ad8bb7d8b66fe484491d46e4171aa33c87525d",
+      "bytes": 12574
+    },
+    {
+      "path": "crates/node/src/transport.rs",
+      "sha256": "5c7a378f236e9872ee8a47ce863506c7595b681f31d85e6ba000408ea2dbfbca",
+      "bytes": 11522
+    },
+    {
+      "path": "crates/node/src/transport/fragments.rs",
+      "sha256": "6d81a68ec563ebfc74e4f257803a2302f01d21d77bc252b3f0551bfcd23311de",
+      "bytes": 9763
+    },
+    {
+      "path": "crates/protocol/Cargo.toml",
+      "sha256": "d5c0d4c8c685d885f2c92ecbd01ec95f32a633b0e2b5e071fabff33bd6716875",
+      "bytes": 424
+    },
+    {
+      "path": "crates/protocol/src/applied.rs",
+      "sha256": "fa73a84d0cf0b60e46c2fd50ac57d829db0f56b668016112e6c6107e60cfba0c",
+      "bytes": 7830
+    },
+    {
+      "path": "crates/protocol/src/codec.rs",
+      "sha256": "0d7659eb9ae9d1ca0e0aae2ea5095bc93c7903a12ec8ec282fb04ba860432d93",
+      "bytes": 9709
+    },
+    {
+      "path": "crates/protocol/src/consensus.rs",
+      "sha256": "7bca9398f6c4eff932ed43cef58118f29716b25a1e2c7f08801e56f31b5564f4",
+      "bytes": 18717
+    },
+    {
+      "path": "crates/protocol/src/crypto.rs",
+      "sha256": "bde7e8d6685cce5dbb9b292c8c681eda959960d0d5a185ca1ff52d20b65cb26e",
+      "bytes": 6401
+    },
+    {
+      "path": "crates/protocol/src/lib.rs",
+      "sha256": "52794162cf3fc46b56cb68cffd1a0d0e2b5b7b691a342b4a52c18db8a6f289e5",
+      "bytes": 696
+    },
+    {
+      "path": "crates/protocol/src/merkle.rs",
+      "sha256": "98db5c0377ea1c9aebe9068ec8ab7d64647bd97086c16e2e38b6e1b7cf8fcd86",
+      "bytes": 15524
+    },
+    {
+      "path": "crates/protocol/src/merkle/insertion.rs",
+      "sha256": "e86fe13046a4b31635d68c40d3f14c940e4e0f5dc6301d97980bdbff4b32fdd2",
+      "bytes": 3761
+    },
+    {
+      "path": "crates/protocol/src/model.rs",
+      "sha256": "e066a34668766a807a4dcc565482d4df195bf65fd00e1774db33d26a495446ee",
+      "bytes": 19821
+    },
+    {
+      "path": "crates/protocol/src/proof.rs",
+      "sha256": "ecc39d401e75146be065daecc85426d840c9f4f04c342106afb5a3661fe1b064",
+      "bytes": 23038
+    },
+    {
+      "path": "crates/protocol/src/state.rs",
+      "sha256": "f03afd36bd23a28277bdce59f759d93276a992eba1983fa9ec25f9aa247f714e",
+      "bytes": 82033
+    },
+    {
+      "path": "crates/protocol/src/state/wire.rs",
+      "sha256": "201751efbce79d4b162deb06b3b07d2f51111b720003709b52bd83453b1d1365",
+      "bytes": 733
+    },
+    {
+      "path": "crates/protocol/src/table.rs",
+      "sha256": "54fdba7a3c575a628917513bcb7935d41fcb9848dbfeb7f299e0bf53312ace82",
+      "bytes": 14826
+    },
+    {
+      "path": "crates/protocol/src/work.rs",
+      "sha256": "db9f03e35d2718ef6771ff0272fbf637be8d19937ccfc430c0279420f87248b1",
+      "bytes": 2508
+    },
+    {
+      "path": "crates/prover/Cargo.toml",
+      "sha256": "967ea0fa5d00792a0d01d27daba3c4f1ac40ea79652af17a50092db093024027",
+      "bytes": 431
+    },
+    {
+      "path": "crates/prover/src/main.rs",
+      "sha256": "a4174f42f7dd420348087ac27252436cdfaa9f26b6a709d373a095c28b877868",
+      "bytes": 6552
+    },
+    {
+      "path": "deploy/config/node.json",
+      "sha256": "3e5a3e844e871cbb47b26a008c60fdb25068caa3ba368bafe4e69bb90bf511ce",
+      "bytes": 365
+    },
+    {
+      "path": "deploy/systemd/rldcoin.service",
+      "sha256": "866b8f6234abd7542b47f2b69c125dced711c5555121c6959e02bd874540b269",
+      "bytes": 1526
+    },
+    {
+      "path": "docs/BUILD.json",
+      "sha256": "2b40f86cb5191d5fa717fb014f572b5ae7dba51df41a67ef38af483102fc7764",
+      "bytes": 9180
+    },
+    {
+      "path": "docs/IMPLEMENTATION.md",
+      "sha256": "96e1e569d24a8cff7604588be69f790d68d6a1f178642cdff2cdd81ae304222a",
+      "bytes": 22445
+    },
+    {
+      "path": "docs/OPERATIONS.md",
+      "sha256": "149f4de71646dfcbfafb357dd77846beb820a9c280544e8a74fb018ce64507c8",
+      "bytes": 22178
+    },
+    {
+      "path": "docs/engineering/DISK_HISTORY.md",
+      "sha256": "7bb074ad6758f4364c9046b89e63a9db38a6963f7f10ba105598d2f857fea0d3",
+      "bytes": 6842
+    },
+    {
+      "path": "docs/engineering/INCREMENTAL_STATE.md",
+      "sha256": "3f0d9568277453a7cb9348b852a2ae97a47f20a4b2f22b7997d653c19489589a",
+      "bytes": 4718
+    },
+    {
+      "path": "docs/engineering/INDEXED_NATIVE_WITNESS.md",
+      "sha256": "98321a877e842d798379a3bbef95180f8e19eed53b5a9ec0728c9fb23c3bc49a",
+      "bytes": 7629
+    },
+    {
+      "path": "docs/engineering/PROOF_SCHEDULING.md",
+      "sha256": "0bf56ff62500052e2915bb6b35a5d69470e7417e40b43793328acb7c12ed8720",
+      "bytes": 6486
+    },
+    {
+      "path": "docs/engineering/STATE_INDEX.md",
+      "sha256": "ccdae70174748a1a2a37afe6e702fbe05e2c6bcd8643de2a8fbb2a0d42e92b9b",
+      "bytes": 9128
+    },
+    {
+      "path": "docs/operations/MAINNET_DEPLOYMENT.md",
+      "sha256": "d4ef26872d394ba15466fa7bf7c29affbd25c347250010e854a05916f889b657",
+      "bytes": 5067
+    },
+    {
+      "path": "docs/proposals/INCREMENTAL_MAP_ROOT_AMENDMENT.md",
+      "sha256": "5a04a08bc1481ed0f4ee35be10ca1f4794e35705c44dc481d43c8af4ed0201ad",
+      "bytes": 5409
+    },
+    {
+      "path": "methods/Cargo.toml",
+      "sha256": "4a230522c523ca2168509284d866706193abeb9ceb121dd715c8984ba496da29",
+      "bytes": 216
+    },
+    {
+      "path": "methods/build.rs",
+      "sha256": "d3d0aa4add6d6294b4cd9199c9b7162187b7383980cda986051fe94497334f75",
+      "bytes": 48
+    },
+    {
+      "path": "methods/guest/Cargo.lock",
+      "sha256": "9c4942dd1f2398e495a85b7246f21784172e2d78043613047627bf9ca1d982c8",
+      "bytes": 42453
+    },
+    {
+      "path": "methods/guest/Cargo.toml",
+      "sha256": "e17882bbe7899ee4090ad9d7c03a67c6e55a5a5cbdd0567567951d7abc658e92",
+      "bytes": 413
+    },
+    {
+      "path": "methods/guest/src/bin/controller.rs",
+      "sha256": "2d01bceb0fda64f6d2e0633e80cc66b0c8196fdf442b1caf0f4ff1fc57e4801d",
+      "bytes": 504
+    },
+    {
+      "path": "methods/guest/src/bin/native.rs",
+      "sha256": "787e2688336206c91e70780d5eb3f798c6d6992faf21a3d6852ccc447158b97f",
+      "bytes": 981
+    },
+    {
+      "path": "methods/src/lib.rs",
+      "sha256": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255",
+      "bytes": 51
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "07487db9d6b45de2f308f9fb578c9c46041381c3ee44ef782eca64150a394772",
+      "bytes": 66
+    },
+    {
+      "path": "spec/EXECUTABLE_PROFILE.json",
+      "sha256": "399f8f3f993f29d6b13c177eeac752cdb36ca7e24285a8934041a9b8a8f1c56b",
+      "bytes": 3938
+    },
+    {
+      "path": "spec/WHITEPAPER.md",
+      "sha256": "30ad8bfeca1a5da98ebd92f5f1acda56348f6d9686508d3da6180c873d4487e8",
+      "bytes": 83163
+    },
+    {
+      "path": "spec/WHITEPAPER_RELEASE.json",
+      "sha256": "c07f65b87ad8a1869775fba24db2d1aa32e5dac74863b580214d9954e6fa75bb",
+      "bytes": 10077
+    },
+    {
+      "path": "spec/WHITEPAPER_RELEASE_2026-10-20_PREFIX.json",
+      "sha256": "7fb0f2d38edcd032bda28f31413970fd944c6887f84a3d455bb5bca83b9ed111",
+      "bytes": 4225
+    },
+    {
+      "path": "tools/build-macos.sh",
+      "sha256": "197da3ccbc48a604f07c2dfc8941bcc3458cb846eea13109bc00ae9cc0b58d10",
+      "bytes": 242
+    },
+    {
+      "path": "tools/macos-toolchain/xcrun",
+      "sha256": "3159e30e6c310e6121308edb28c215663ae100406299894f64d80cfb0f820cf9",
+      "bytes": 401
+    },
+    {
+      "path": "tools/pin-executable-profile.py",
+      "sha256": "decec0ca006673e3caae325b9b1af4f76325cb5c344f4bb6e18a921a33466b99",
+      "bytes": 1675
+    }
+  ],
+  "proof_profile": {
+    "native_image": "8b22f82e52532a21c138534b667e39d02944fb90b860bc82da05b54345ebbf9e",
+    "controller_image": "d4994e47084fe93efb09a43c33562cd2b2cca93714a56d012ba3d87593159603",
+    "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "verifier_parameters": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "backend": "risc0-zkvm-3.0.6-succinct"
+  },
+  "executable_native_proof_source_digest": "0d5b63cd884846e35770c0328ef049147cd1214f4acd3a9ad8091e39fb073273",
+  "actual_prover_profile_matches_embedded_host_profile": true,
+  "proof_programs_unchanged_from_parent": false,
+  "binaries": [
+    {
+      "path": "target/release/rld",
+      "sha256": "b9ccc6284aeaa75ad34d714368209d157aa462dfb61e3a9efec7dcc58f0746cd",
+      "bytes": 19232048
+    },
+    {
+      "path": "target/release/rld-prover",
+      "sha256": "d3fd2885e91a71966f5f784864e453ef2f2fe1188d33a011a2b950addd3ef9c6",
+      "bytes": 97606336
+    }
+  ],
+  "checks": {
+    "protocol_check": "passed",
+    "host_cli_check": "passed",
+    "real_guest_and_prover_bootstrap_build": "passed",
+    "release_workspace_build": "passed",
+    "release_workspace_build_attempts": 2,
+    "second_build_reason": "Source review added typed indexed-byte-budget full-witness fallback so path overhead cannot unnecessarily refuse a fitting full input.",
+    "format": "passed",
+    "source_inventory_unchanged_through_final_build": true,
+    "actual_profile_comparison": "passed",
+    "source_review": "performed including counted root insertion derivation and applied-map uniqueness induction; not independent security review",
+    "local_test_suites": "not run by owner direction",
+    "fixtures": "none created",
+    "runtime_or_payment_campaign": "not run",
+    "root_update_runtime_comparison": "not run",
+    "proof_generation_cost": "not measured",
+    "memory_throughput_latency": "not measured",
+    "cross_platform_image_reproducibility": "not established"
+  },
+  "new_input": {
+    "native_input_tag": 2,
+    "name": "IndexedExecution",
+    "access_profile": "RLD-NATIVE-APPLIED-ACCESS-1",
+    "predecessor": "Required certified exact native predecessor; genesis uses full execution.",
+    "authority": "Same native executor and journal; exact per-operation membership/absence against rolling applied root; actual guest computes successor root.",
+    "indexed_map": "applied only; remaining maps are complete",
+    "maximum_steps_unchanged": 4096,
+    "maximum_guest_input_bytes_unchanged": 1073741824,
+    "maximum_path_unchanged": 64,
+    "compact_insertion_guard": "k+n <=64 for k retained ancestors and n old leaves moved under the new fork",
+    "fallback": "Only typed insufficient subtree-height evidence or indexed byte-budget exhaustion chooses full input under its original limits. Other proof/encoding errors propagate.",
+    "unused_or_missing_access": "Refuse",
+    "partial_state_export": "Refuse serialization, complete records or arbitrary membership issuance."
+  },
+  "native_uniqueness_invariant": "Complete private ordered constructors/duplicate-refusing insertions or exact certified-root-bound access/insert transitions; no unchecked partial list replaces the full-key scan.",
+  "warnings": [
+    "upstream block 0.1.6 future-incompatibility warning"
+  ],
+  "network_keys_created": false,
+  "network_started": false,
+  "monetary_genesis_created": false,
+  "legacy_value_or_keys_migrated": false,
+  "old_program_profile_handling": "Old descriptors/stores refuse unchanged; no in-place suite/value/key migration.",
+  "implementation_analysis": "docs/engineering/INDEXED_NATIVE_WITNESS.md",
+  "completion_boundaries": "docs/IMPLEMENTATION.md"
+}
