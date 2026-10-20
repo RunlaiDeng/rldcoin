@@ -754,4 +754,6 @@ pub enum NativeInput {
     IndexedPermanent(#[n(0)] IndexedPermanentWitness),
     #[n(4)]
     IndexedUtxo(#[n(0)] IndexedUtxoWitness),
+    #[n(5)]
+    MintIndex(#[n(0)] crate::mints::index::Witness),
 }

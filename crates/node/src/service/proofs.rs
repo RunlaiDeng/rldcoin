@@ -212,6 +212,7 @@ impl Drop for Attempt {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum Target {
     Native(u64),
+    MintIndex(u64),
     Controller(Id),
 }
 #[derive(Clone, Copy)]
@@ -219,6 +220,7 @@ enum Lane {
     Birth,
     Controller,
     Native,
+    MintIndex,
 }
 struct Snapshot {
     view: ProofContext,
@@ -229,6 +231,11 @@ impl Snapshot {
     fn targets(&self, lane: Lane) -> Result<BTreeSet<Target>> {
         let mut targets = BTreeSet::new();
         match lane {
+            Lane::MintIndex => {
+                if let Some(at) = self.view.next_mint_index_target()? {
+                    targets.insert(Target::MintIndex(at));
+                }
+            }
             Lane::Native => {
                 let n = self.view.state.sequence;
                 if n > 0 && !self.view.proofs.contains(n)? {
@@ -298,6 +305,16 @@ impl Snapshot {
                     proof::native_journal(&record.header),
                 )
             }
+            Target::MintIndex(at) => {
+                let input = self.view.mint_index_input(at)?;
+                let claim = self.view.mint_claim_at(at)?;
+                (
+                    rld_protocol::codec::encode_bounded(&input, crate::store::MAX_RECORD)?,
+                    Product::MintIndex(at, claim.clone()),
+                    currency.proof.native_image,
+                    rld_protocol::mints::index::journal(&claim),
+                )
+            }
             Target::Controller(id) => {
                 let witness = self.view.controller_witness(id)?;
                 let journal = proof::terminal_journal(&witness.terminal);
@@ -334,6 +351,7 @@ impl Snapshot {
 }
 enum Product {
     Native(Certified),
+    MintIndex(u64, rld_protocol::mints::index::Claim),
     Controller(Release),
 }
 struct Job {
@@ -347,7 +365,7 @@ struct Job {
 impl Job {
     fn kind(&self) -> &'static str {
         match self.product {
-            Product::Native(_) => "native",
+            Product::Native(_) | Product::MintIndex(..) => "native",
             Product::Controller(_) => "controller",
         }
     }
@@ -364,6 +382,13 @@ impl Job {
                 c.receipt = receipt;
                 node.certificate(c)
             }
+            Product::MintIndex(at, claim) => node.mint_index_certificate(
+                *at,
+                rld_protocol::mints::index::Certificate {
+                    claim: claim.clone(),
+                    receipt,
+                },
+            ),
             Product::Controller(release) => {
                 let mut r = release.clone();
                 r.receipt = receipt;
@@ -382,7 +407,7 @@ pub(super) async fn worker(
 ) {
     let permits = Arc::new(Semaphore::new(concurrency as usize));
     let mut tasks = JoinSet::new();
-    for lane in [Lane::Birth, Lane::Controller, Lane::Native] {
+    for lane in [Lane::Birth, Lane::Controller, Lane::Native, Lane::MintIndex] {
         tasks.spawn(run_lane(
             shared.clone(),
             exe.clone(),

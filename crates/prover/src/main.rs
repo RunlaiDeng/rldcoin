@@ -163,6 +163,10 @@ fn main() -> Result<()> {
                     &w.native.native.currency.proof,
                     proof::native_journal(&proof::execute_indexed_utxo(w)?),
                 ),
+                NativeInput::MintIndex(w) => (
+                    &w.currency.proof,
+                    rld_protocol::mints::index::journal(&rld_protocol::mints::index::execute(w)?),
+                ),
                 NativeInput::Admission(w) => (&w.currency.proof, proof::execute_admission(w)?),
             };
             ensure!(

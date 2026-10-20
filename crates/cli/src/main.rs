@@ -416,6 +416,24 @@ enum NodeCommand {
         #[arg(long)]
         output: PathBuf,
     },
+    MintIndexWitness {
+        #[command(flatten)]
+        store: StoreArgs,
+        #[arg(long)]
+        at: u64,
+        #[arg(long)]
+        output: PathBuf,
+    },
+    MintIndexCertificate {
+        #[command(flatten)]
+        store: StoreArgs,
+        #[arg(long)]
+        at: u64,
+        #[arg(long)]
+        receipt: PathBuf,
+        #[arg(long)]
+        output: PathBuf,
+    },
     Certificate {
         #[command(flatten)]
         store: StoreArgs,
@@ -1538,6 +1556,33 @@ async fn main() -> Result<()> {
                         rld_node::store::MAX_RECORD,
                     )?,
                 )?;
+            }
+            NodeCommand::MintIndexWitness { store, at, output } => {
+                let node = open_node(&store)?;
+                private_create(
+                    &output,
+                    &rld_protocol::codec::encode_bounded(
+                        &node.core.proof_context().mint_index_input(at)?,
+                        rld_node::store::MAX_RECORD,
+                    )?,
+                )?;
+            }
+            NodeCommand::MintIndexCertificate {
+                store,
+                at,
+                receipt,
+                output,
+            } => {
+                let mut node = open_node(&store)?;
+                let certificate = rld_protocol::mints::index::Certificate {
+                    claim: node.core.proof_context().mint_claim_at(at)?,
+                    receipt: decode(
+                        &read_bounded(&receipt, rld_protocol::MAX_RECEIPT + 128)?,
+                        rld_protocol::MAX_RECEIPT + 128,
+                    )?,
+                };
+                node.mint_index_certificate(at, certificate.clone())?;
+                save(&output, &certificate)?;
             }
             NodeCommand::Certificate {
                 store,

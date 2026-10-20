@@ -68,10 +68,18 @@ pub enum Event {
     ConflictingBlock(#[n(0)] Committed),
     #[n(11)]
     Rejection(#[n(0)] Rejected),
+    #[n(12)]
+    MintIndex {
+        #[n(0)]
+        sequence: u64,
+        #[n(1)]
+        certificate: rld_protocol::mints::index::Certificate,
+    },
 }
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
+    pub(crate) mint_certificates: crate::mint_certificates::Certificates,
     pub(crate) mint_storage: Arc<crate::mint_store::MintStore>,
     pub(crate) utxo_storage: Arc<crate::utxo_store::Utxos>,
     pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
@@ -170,6 +178,8 @@ impl Core {
             &initial,
         )?);
         state.mints = state.mints.clone().on_empty_storage(mint_storage.clone())?;
+        let mint_certificates =
+            crate::mint_certificates::Certificates::open(&root.join("mint-proof-index"), &initial)?;
         let permanent_storage =
             crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
@@ -181,6 +191,7 @@ impl Core {
             permanent_storage,
             utxo_storage,
             mint_storage,
+            mint_certificates,
             state_index: None,
             state: Arc::new(state),
             head,
@@ -653,6 +664,22 @@ impl Core {
                 self.engines.retain(|e| e.namespace != id);
                 self.candidates.retain(|p| payload_namespace(p) != id);
             }
+            Event::MintIndex {
+                sequence,
+                certificate,
+            } => {
+                ensure!(
+                    *sequence <= self.state.sequence,
+                    "future Mint correspondence anchor"
+                );
+                rld_protocol::mints::index::verify(&self.initial.currency, certificate)?;
+                ensure!(
+                    certificate.claim == self.proof_context().mint_claim_at(*sequence)?,
+                    "Mint correspondence differs from verified local history"
+                );
+                self.mint_certificates
+                    .insert_verified(*sequence, certificate)?;
+            }
             Event::Proof(p) => {
                 Verifier {
                     currency: &self.initial.currency,
@@ -679,6 +706,7 @@ impl Core {
             state: self.state.clone(),
             history: self.history.clone(),
             proofs: self.proofs.clone(),
+            mint_certificates: self.mint_certificates.clone(),
         }
     }
     pub fn state_at(&self, sequence: u64) -> Result<State> {
@@ -1108,6 +1136,17 @@ impl Node {
             "unknown outbox item"
         );
         self.persist(Event::Delivered(id))?;
+        Ok(())
+    }
+    pub fn mint_index_certificate(
+        &mut self,
+        sequence: u64,
+        certificate: rld_protocol::mints::index::Certificate,
+    ) -> Result<()> {
+        self.persist(Event::MintIndex {
+            sequence,
+            certificate,
+        })?;
         Ok(())
     }
     pub fn certificate(&mut self, p: Certified) -> Result<()> {

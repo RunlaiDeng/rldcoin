@@ -423,6 +423,26 @@ Mint/slot guest witnesses and maximum-input proving feasibility remain open.
 and uniqueness arguments. No local test/runtime/performance qualification follows
 from this stage's source review and compilation.
 
+## Recursive Mint index correspondence
+
+NativeInput tag 5 and the real native guest/prover now prove an explicitly separate
+currency/home/event-root/slot-root/count correspondence statement. Canonical empty
+or complete reconstruction establishes the relation; real predecessor receipts
+plus checked paired absences and derived append roots preserve it. This is not
+native ordering, work authorization or issuance evidence. The same exact native
+money roots and monetary checks remain unchanged.
+
+An independent fourth proof lane and CLI input/certificate commands construct,
+prove, verify and retain these results under the existing proof concurrency and
+workspace bounds. A private immutable certificate catalogue is rebuilt only from
+anchored native events. Each publication rechecks actual receipt and exact local
+historical Mint pair before authoritative append/Core installation. Claim/ref
+bytes are checked on read and all failed residue remains. See
+[the relation and integration analysis](engineering/MINT_INDEX_CORRESPONDENCE.md).
+Compact Mint monetary execution still needs to consume the certified relation
+and actual accesses; current native money inputs continue to carry complete Mint
+records. No proof run or runtime/performance qualification is claimed.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:

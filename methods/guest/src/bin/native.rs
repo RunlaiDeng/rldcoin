@@ -18,6 +18,9 @@ fn main() {
         rld_protocol::proof::NativeInput::IndexedUtxo(w)=>rld_protocol::proof::native_journal(
             &rld_protocol::proof::execute_indexed_utxo(&w).expect("complete indexed UTXO execution"),
         ),
+        rld_protocol::proof::NativeInput::MintIndex(w)=>rld_protocol::mints::index::journal(
+            &rld_protocol::mints::index::execute(&w).expect("complete Mint index correspondence"),
+        ),
         rld_protocol::proof::NativeInput::Admission(w) => {
             rld_protocol::proof::execute_admission(&w)
                 .expect("complete public key inventory admission")

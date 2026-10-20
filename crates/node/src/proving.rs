@@ -62,8 +62,169 @@ pub struct ProofContext {
     pub(crate) state: Arc<State>,
     pub(crate) history: crate::history::History,
     pub(crate) proofs: crate::receipts::Receipts,
+    pub(crate) mint_certificates: crate::mint_certificates::Certificates,
 }
 impl ProofContext {
+    pub fn mint_claim_at(&self, at: u64) -> Result<rld_protocol::mints::index::Claim> {
+        ensure!(at <= self.state.sequence, "future Mint root");
+        if at == self.state.sequence {
+            return self.state.mints.index_claim();
+        }
+        if at == 0 {
+            return rld_protocol::mints::Mints::new(self.state.currency, self.state.domain)
+                .index_claim();
+        }
+        let (_, snapshot) = self
+            .history
+            .material(at)?
+            .context("Mint native history anchor")?;
+        crate::state_storage::Backings::capture(&self.state)
+            .historical(&snapshot)?
+            .mint_claim()
+    }
+    pub fn next_mint_index_target(&self) -> Result<Option<u64>> {
+        let Some((at, certificate)) = self.mint_certificates.latest()? else {
+            return Ok(Some(0));
+        };
+        let current = self.mint_claim_at(self.state.sequence)?;
+        if current == certificate.claim {
+            return Ok(None);
+        }
+        ensure!(
+            current.count > certificate.claim.count && at < self.state.sequence,
+            "Mint correspondence count/prefix mismatch"
+        );
+        let (mut lo, mut hi) = (
+            at.checked_add(1).context("Mint anchor exhaustion")?,
+            self.state.sequence,
+        );
+        while lo < hi {
+            let mid = lo + (hi - lo) / 2;
+            if self.mint_claim_at(mid)?.count > certificate.claim.count {
+                hi = mid
+            } else {
+                lo = mid + 1
+            }
+        }
+        Ok(Some(lo))
+    }
+    pub fn mint_index_input(&self, at: u64) -> Result<proof::NativeInput> {
+        use rld_protocol::mints::index::{Append, Witness};
+        let expected = self.mint_claim_at(at)?;
+        let target = self.state_at(at)?;
+        let base = self
+            .mint_certificates
+            .latest()?
+            .filter(|(sequence, _)| *sequence <= at);
+        let (mut prior, predecessor) = if let Some((sequence, certificate)) = base {
+            rld_protocol::mints::index::verify(&self.initial.currency, &certificate)?;
+            let state = self.state_at(sequence)?;
+            ensure!(
+                state.mints.index_claim()? == certificate.claim,
+                "Mint correspondence base observation"
+            );
+            (state.mints, Some(certificate.as_ref().clone()))
+        } else {
+            (self.state.mints.empty_storage()?, None)
+        };
+        let mut witness = Witness {
+            currency: self.initial.currency.clone(),
+            home: self.state.domain,
+            predecessor,
+            complete: None,
+            steps: vec![],
+        };
+        let budget = rld_protocol::permanent::capture::Budget::new(MAX_RECORD, 128)?;
+        budget.charge(&witness)?;
+        let result = (|| -> Result<()> {
+            for value in target.mints.records() {
+                let value = value?;
+                if let Some(old) = prior.get(value.event)? {
+                    ensure!(old == value, "changed prior Mint correspondence record");
+                    continue;
+                }
+                if witness.steps.len() >= 4096 {
+                    return Err(rld_protocol::permanent::capture::CaptureBudgetExceeded.into());
+                }
+                let (event, absence) = prior.access(value.event)?;
+                ensure!(event.is_none(), "Mint correspondence event duplicate");
+                let (slot, slot_absence) =
+                    prior.slot_access(rld_protocol::mints::slot_key(value.root, value.slot))?;
+                ensure!(slot.is_none(), "Mint correspondence slot duplicate");
+                let step = Append {
+                    record: value.clone(),
+                    event_absence: absence.context("Mint event absence")?,
+                    slot_absence: slot_absence.context("Mint slot absence")?,
+                };
+                budget.charge(&step)?;
+                let old = prior.index_claim()?;
+                let events = rld_protocol::merkle::insert_absent(
+                    self.state.currency,
+                    &format!("{}/mints", self.state.domain),
+                    old.events,
+                    &rld_protocol::table::Record::entry(&value, self.state.currency),
+                    &step.event_absence,
+                )?;
+                let slot_record = rld_protocol::mints::Slot {
+                    root: value.root,
+                    slot: value.slot,
+                    event: value.event,
+                };
+                let slots = rld_protocol::merkle::insert_absent(
+                    self.state.currency,
+                    &format!("{}/mint-slots-aux", self.state.domain),
+                    old.slots,
+                    &rld_protocol::table::Record::entry(&slot_record, self.state.currency),
+                    &step.slot_absence,
+                )?;
+                prior.insert(value)?;
+                let new = prior.index_claim()?;
+                ensure!(
+                    new.events == events && new.slots == slots,
+                    "Mint correspondence compact/full update differs"
+                );
+                witness.steps.push(step);
+            }
+            ensure!(
+                prior.index_claim()? == expected,
+                "Mint correspondence target differs"
+            );
+            prior.seal()?;
+            Ok(())
+        })();
+        match result {
+            Ok(()) => Ok(proof::NativeInput::MintIndex(witness)),
+            Err(error)
+                if error
+                    .downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>()
+                    .is_some()
+                    || error
+                        .downcast_ref::<rld_protocol::permanent::capture::CaptureBudgetExceeded>()
+                        .is_some() =>
+            {
+                let mut witness = Witness {
+                    currency: self.initial.currency.clone(),
+                    home: self.state.domain,
+                    predecessor: None,
+                    complete: Some(vec![]),
+                    steps: vec![],
+                };
+                let budget = rld_protocol::permanent::capture::Budget::new(MAX_RECORD, 128)?;
+                budget.charge(&witness)?;
+                for value in target.mints.records() {
+                    let value = value?;
+                    budget.charge(&value)?;
+                    witness
+                        .complete
+                        .as_mut()
+                        .context("Mint complete fallback")?
+                        .push(value)
+                }
+                Ok(proof::NativeInput::MintIndex(witness))
+            }
+            Err(error) => Err(error),
+        }
+    }
     pub fn cancel_draft(&self, id: Id) -> Result<(Controller, Cancellation)> {
         let c = self
             .state

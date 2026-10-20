@@ -65,7 +65,7 @@ required release evidence. The existing CI compiles the committed binding.
 - `crates/node`: durable replay, encrypted local signing custody, PBFT,
   signed and pinned-TLS contact carriage, bounded fragments, offline bundles,
   public signed-operation API, disk-resident verified native-history and execution-receipt indexes, independently
-  scheduled bounded proving lanes, disk state material and certified historical
+  scheduled bounded proving lanes (including recursive Mint index correspondence), disk state material and certified historical
   membership/absence queries. Native state uses shared immutable value and
   commitment paths. Mint facts, the UTXO map, operation map and five permanent decision/birth/funding maps execute
   through private disk adapters; indexed guest inputs authenticate UTXO, operation-log and five permanent-map accesses;

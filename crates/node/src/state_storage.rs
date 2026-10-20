@@ -88,6 +88,9 @@ impl Backings {
             )?))?;
         Ok(objects)
     }
+    pub(crate) fn mint_claim(&self) -> Result<rld_protocol::mints::index::Claim> {
+        self.mints.index_claim()
+    }
     pub(crate) fn capture(s: &State) -> Self {
         Self {
             mints: s.mints.clone(),

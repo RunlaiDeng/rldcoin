@@ -34,3 +34,5 @@ mod utxo_store;
 
 mod mint_store;
 mod typed_paths;
+
+mod mint_certificates;

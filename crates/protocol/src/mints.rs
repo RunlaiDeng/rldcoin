@@ -34,6 +34,8 @@ pub trait Storage: std::fmt::Debug + Send + Sync {
     fn home(&self) -> Id;
     fn root(&self) -> Id;
     fn count(&self) -> u64;
+    fn slot_root(&self) -> Id;
+    fn slot_access(&self, key: Id) -> Result<(Option<Membership>, Option<Absence>)>;
     fn get(&self, event: Id) -> Result<Option<MintRecord>>;
     fn slot_before_or_at(&self, key: Id) -> Result<Option<MintRecord>>;
     fn insert(&self, value: MintRecord) -> Result<Arc<dyn Storage>>;
@@ -147,6 +149,30 @@ impl Mints {
             }
             #[cfg(not(target_os = "zkvm"))]
             Backing::Stored(s) => Ok(s.root()),
+        }
+    }
+    pub fn index_claim(&self) -> Result<index::Claim> {
+        let events = self.commitment(self.currency, &self.tag())?;
+        let slots = match &self.backing {
+            Backing::Full { slots, .. } => {
+                slots.commitment(self.currency, &format!("{}/mint-slots-aux", self.home))?
+            }
+            #[cfg(not(target_os = "zkvm"))]
+            Backing::Stored(s) => s.slot_root(),
+        };
+        Ok(index::Claim {
+            currency: self.currency,
+            home: self.home,
+            events,
+            slots,
+            count: self.len(),
+        })
+    }
+    #[cfg(not(target_os = "zkvm"))]
+    pub fn slot_access(&self, key: Id) -> Result<(Option<Membership>, Option<Absence>)> {
+        match &self.backing {
+            Backing::Full { slots, .. } => slots.query(key),
+            Backing::Stored(s) => s.slot_access(key),
         }
     }
     pub fn get(&self, event: Id) -> Result<Option<MintRecord>> {
@@ -335,3 +361,5 @@ impl<C> minicbor::Encode<C> for Mints {
         Ok(())
     }
 }
+
+pub mod index;

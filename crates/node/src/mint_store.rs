@@ -61,6 +61,13 @@ impl Storage for MintStore {
     fn root(&self) -> Id {
         self.events.root()
     }
+    fn slot_root(&self) -> Id {
+        self.slots.root()
+    }
+    fn slot_access(&self, key: Id) -> Result<(Option<Membership>, Option<Absence>)> {
+        self.counts()?;
+        self.slots.access(key)
+    }
     fn count(&self) -> u64 {
         self.events.count()
     }
