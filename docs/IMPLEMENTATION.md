@@ -137,14 +137,40 @@ workers. Historical birth proofs, controller proofs and ordinary native proofs
 receive recurring scheduling turns. Proof inputs/outputs retain stable content
 IDs across interruption; failed diagnostics are bounded and retained.
 
+Proving now uses immutable observations of authenticated host state, persistent
+native history and receipts. Witness replay and receipt verification execute
+outside the live node mutex. Three separately scheduled lanes cover historical
+controller births, controller departure relations and current native execution.
+Each lane rotates eligible targets and backs off failed targets; a configured
+semaphore bounds total concurrent tasks. With fewer than three permits, proving
+lanes deliberately share those resources. Publication rechecks the receipt and
+its exact retained local checkpoint or controller through the normal executor.
+This does not eliminate all publication/follow-up work under the mutex.
+
+The proving workspace has an exclusive process lock and exact currency, domain
+and genesis binding. Retained inputs, attempt markers, diagnostics and outputs
+count toward a configured byte budget and a 16,384-file bound. Concurrent
+attempts reserve output/diagnostic space before launch. Canonical inputs are
+published from complete synced temporary files; each retry has a new output
+path. Only a real exact image/journal receipt becomes a reusable result.
+Failures and interrupted attempts remain retained. A configurable compute
+timeout stops the prover attempt, never monetary rights. Capacity exhaustion
+pauses proving, not independent native settlement or cancellation. No automatic
+proof-history deletion, paid archival qualification or remote prover trust is
+introduced. See [the implementation analysis](engineering/PROOF_SCHEDULING.md).
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
 
 1. The current native implementation keeps ordered collections and replayed
    history in memory, clones state for atomic execution, and rebuilds map roots.
-   Read-only consensus events share immutable state/history/proof allocations;
-   native execution and history append still incur their respective copying.
+   Read-only consensus events share immutable state and proof allocations.
+   Native history uses a persistent 32-way index with shared complete records;
+   appending copies only the changed branch path. Exact height lookup and page
+   seeking no longer scan the entire prefix. Full state execution still copies
+   state, receipt-vector append still copies its current collection, and complete
+   historical records/receipts remain resident in memory.
    It is not an implementation of 100 million completed daily payments or a
    demonstrated seconds-scale receipt pipeline. Disk-backed authenticated indexes,
    incremental roots and resource-accounted historical witnesses remain needed.
@@ -154,8 +180,7 @@ The following are real completion boundaries, not fulfilled by source edits:
    not a strict hot-file count bound under all workloads. Complete frame bytes
    larger than a segment remain loose and block further contiguous sealing;
    maintenance neither skips them nor halts valid native append for that reason.
-   Complete frame bytes
-   and the same exact journal commitment remain retained. Cold startup streams
+   Complete frame bytes and the same exact journal commitment remain retained. Cold startup streams
    every segment, checks its source observation and separately retained latest
    head, and replays all native events. Explicit recovery finishes only a fully
    retained, verified seal; damaged originals/residue remain unchanged. This

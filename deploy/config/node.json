@@ -6,5 +6,8 @@
   "spool": "/var/lib/rldcoin/contact",
   "spool_bytes": 268435456,
   "proof_executable": null,
-  "proof_work": "/var/lib/rldcoin/proofs"
+  "proof_work": "/var/lib/rldcoin/proofs",
+  "proof_bytes": 1073741824,
+  "proof_concurrency": 3,
+  "proof_timeout_seconds": 3600
 }

@@ -7,3 +7,6 @@ pub mod transport;
 pub mod offline;
 
 mod archive;
+
+pub mod history;
+pub mod proving;

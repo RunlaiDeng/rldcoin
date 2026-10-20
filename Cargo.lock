@@ -3700,6 +3700,7 @@ dependencies = [
  "fs2",
  "hex",
  "hkdf",
+ "libc",
  "minicbor",
  "rand 0.8.8",
  "reqwest",

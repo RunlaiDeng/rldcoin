@@ -1,4 +1,5 @@
 //! Public signed-operation API and bounded pinned-TLS neighbor exchanges.
+mod proofs;
 use crate::{
     custody::Vault,
     runtime::{Committed, Node},
@@ -17,7 +18,7 @@ use axum::{
 use rld_protocol::{
     codec::{Blob, Id, decode, encode},
     model::*,
-    proof::{self, NativeInput},
+    proof,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -41,6 +42,12 @@ pub struct Config {
     pub spool_bytes: u64,
     pub proof_executable: Option<PathBuf>,
     pub proof_work: PathBuf,
+    #[serde(default = "proofs::default_bytes")]
+    pub proof_bytes: u64,
+    #[serde(default = "proofs::default_concurrency")]
+    pub proof_concurrency: u8,
+    #[serde(default = "proofs::default_timeout")]
+    pub proof_timeout_seconds: u64,
 }
 struct Shared {
     node: Node,
@@ -54,6 +61,14 @@ struct Shared {
     last_contact_error: Option<String>,
 }
 type SharedState = Arc<Mutex<Shared>>;
+struct ServiceTasks(Vec<tokio::task::JoinHandle<()>>);
+impl Drop for ServiceTasks {
+    fn drop(&mut self) {
+        for task in &self.0 {
+            task.abort();
+        }
+    }
+}
 #[derive(Debug)]
 struct ApiError(anyhow::Error);
 impl<E: Into<anyhow::Error>> From<E> for ApiError {
@@ -127,14 +142,7 @@ async fn blocks(
         let limit = page.limit.unwrap_or(16).min(128);
         let mut out: Vec<Committed> = vec![];
         let mut bytes = 1024;
-        for block in s
-            .node
-            .core
-            .history
-            .iter()
-            .filter(|c| c.header.sequence > after)
-            .take(limit)
-        {
+        for block in s.node.core.history.after(after).take(limit) {
             let n = encode(block).len();
             if bytes + n > rld_protocol::MAX_CAPSULE {
                 break;
@@ -627,6 +635,19 @@ pub async fn serve(node: Node, transport: Vault, config: Config) -> Result<()> {
     for peer in &config.peers {
         clients.push((peer.clone(), peer_client(peer)?));
     }
+    ensure!(
+        (1..=3).contains(&config.proof_concurrency),
+        "proof concurrency must be 1..=3"
+    );
+    ensure!(
+        (1..=604800).contains(&config.proof_timeout_seconds),
+        "proof attempt timeout must be 1..=604800 seconds"
+    );
+    let proof_workspace = config
+        .proof_executable
+        .as_ref()
+        .map(|_| proofs::Workspace::open(&config.proof_work, config.proof_bytes, &node))
+        .transpose()?;
     let currency = node.core.state.currency;
     let spool = Spool::open(&config.spool, currency, config.spool_bytes, 4096)?;
     let shared = Arc::new(Mutex::new(Shared {
@@ -657,15 +678,30 @@ pub async fn serve(node: Node, transport: Vault, config: Config) -> Result<()> {
         .route("/v1/cancel/{id}", get(cancel_draft))
         .layer(DefaultBodyLimit::max(rld_protocol::MAX_CAPSULE))
         .with_state(shared.clone());
-    let background_task = tokio::spawn(background(shared.clone()));
-    let peer_tasks: Vec<_> = clients
-        .into_iter()
-        .map(|(peer, client)| tokio::spawn(peer_worker(shared.clone(), peer, client)))
-        .collect();
-    let proof_task = config
-        .proof_executable
-        .clone()
-        .map(|exe| tokio::spawn(proof_worker(shared.clone(), exe, config.proof_work.clone())));
+    // Abort workers on every return path, including TLS/listener setup errors.
+    let mut tasks = ServiceTasks(vec![tokio::spawn(background(shared.clone()))]);
+    for (peer, client) in clients {
+        tasks
+            .0
+            .push(tokio::spawn(peer_worker(shared.clone(), peer, client)));
+    }
+    let proof_task =
+        config
+            .proof_executable
+            .clone()
+            .zip(proof_workspace)
+            .map(|(exe, workspace)| {
+                tokio::spawn(proofs::worker(
+                    shared.clone(),
+                    exe,
+                    workspace,
+                    config.proof_concurrency,
+                    Duration::from_secs(config.proof_timeout_seconds),
+                ))
+            });
+    if let Some(task) = proof_task {
+        tasks.0.push(task);
+    }
     let result = if let (Some(certificate), Some(key)) = (&config.tls_certificate, &config.tls_key)
     {
         let certs = certificates(certificate)?;
@@ -695,291 +731,5 @@ pub async fn serve(node: Node, transport: Vault, config: Config) -> Result<()> {
             .await
             .map_err(anyhow::Error::from)
     };
-    background_task.abort();
-    for task in peer_tasks {
-        task.abort();
-    }
-    if let Some(task) = proof_task {
-        task.abort();
-    }
     result
-}
-
-async fn proof_worker(shared: SharedState, exe: PathBuf, work: PathBuf) {
-    if let Err(e) = fs::create_dir_all(&work) {
-        if let Ok(mut s) = shared.lock() {
-            s.node.last_error = Some(e.to_string());
-        }
-        return;
-    }
-    let mut serial = 0u64;
-    loop {
-        let result = prove_next(shared.clone(), &exe, &work, serial).await;
-        if let Err(error) = result {
-            if let Ok(mut s) = shared.lock() {
-                s.node.last_error = Some(format!("proof service: {error}"));
-            }
-        }
-        serial = serial.wrapping_add(1);
-        tokio::time::sleep(Duration::from_secs(2)).await;
-    }
-}
-async fn prove_next(shared: SharedState, exe: &Path, work: &Path, serial: u64) -> Result<()> {
-    let target = {
-        let s = shared
-            .lock()
-            .map_err(|_| anyhow::anyhow!("node unavailable"))?;
-        let pending = s
-            .node
-            .core
-            .state
-            .births
-            .iter()
-            .filter(|b| {
-                s.node.core.terminal_statement(b.controller).is_none()
-                    && !s
-                        .node
-                        .core
-                        .state
-                        .resolutions
-                        .iter()
-                        .any(|r| r.object == b.controller)
-            })
-            .filter(|b| {
-                !s.node
-                    .core
-                    .proofs
-                    .iter()
-                    .any(|p| p.header.sequence == b.sequence)
-            })
-            .min_by_key(|b| b.sequence)
-            .map(|b| b.sequence);
-        if serial % 3 == 1 {
-            None
-        } else if serial % 3 == 0 && pending.is_some() {
-            pending
-        } else {
-            (None)
-                .or_else(|| {
-                    let n = s.node.core.state.sequence;
-                    if n > 0 && !s.node.core.proofs.iter().any(|p| p.header.sequence == n) {
-                        Some(n)
-                    } else {
-                        None
-                    }
-                })
-                .or(pending)
-        }
-    };
-    if let Some(mut target) = target {
-        let (input, header, qc, configuration) = {
-            let s = shared
-                .lock()
-                .map_err(|_| anyhow::anyhow!("node unavailable"))?;
-            let base = s
-                .node
-                .core
-                .proofs
-                .iter()
-                .filter(|p| p.header.sequence < target)
-                .map(|p| p.header.sequence)
-                .max()
-                .unwrap_or(0);
-            target = target.min(
-                base.checked_add(4096)
-                    .context("proof position exhaustion")?,
-            );
-            let w = s.node.core.native_witness(target)?;
-            let record = s
-                .node
-                .core
-                .history
-                .iter()
-                .find(|b| b.header.sequence == target)
-                .context("proof history")?;
-            (
-                NativeInput::Execution(w),
-                record.header.clone(),
-                record.qc.clone(),
-                record.configuration.clone(),
-            )
-        };
-        let receipt = run_prover(exe, work, serial, "native", &encode(&input)).await?;
-        let p = Certified {
-            header,
-            receipt,
-            qc,
-            configuration,
-        };
-        shared
-            .lock()
-            .map_err(|_| anyhow::anyhow!("node unavailable"))?
-            .node
-            .certificate(p)?;
-        return Ok(());
-    }
-    let candidate = {
-        let s = shared
-            .lock()
-            .map_err(|_| anyhow::anyhow!("node unavailable"))?;
-        s.node
-            .core
-            .state
-            .controllers
-            .iter()
-            .find(|c| {
-                s.node.core.terminal_statement(c.id).is_none()
-                    && !s
-                        .node
-                        .core
-                        .state
-                        .resolutions
-                        .iter()
-                        .any(|r| r.object == c.id)
-                    && s.node.core.creation(c.id).is_ok()
-                    && !s.node.core.candidates.iter().any(|p| match p {
-                        rld_protocol::consensus::Payload::Export(r) => {
-                            r.creation.controller.id == c.id
-                        }
-                        rld_protocol::consensus::Payload::Cancel(r) => r.controller == c.id,
-                        _ => false,
-                    })
-            })
-            .map(|c| c.id)
-    };
-    if let Some(id) = candidate {
-        let witness = {
-            let s = shared
-                .lock()
-                .map_err(|_| anyhow::anyhow!("node unavailable"))?;
-            let creation = s.node.core.creation(id)?;
-            let c = &creation.controller;
-            let born = s
-                .node
-                .core
-                .history
-                .iter()
-                .find_map(|record| {
-                    record
-                        .batch
-                        .operations
-                        .iter()
-                        .find_map(|op| match &op.command {
-                            Command::PreparePayment {
-                                ticket, material, ..
-                            }
-                            | Command::PrepareClaim {
-                                ticket, material, ..
-                            } if ticket.id == id => Some(material.clone()),
-                            _ => None,
-                        })
-                })
-                .context("retained preparation material")?;
-            let m: Material = decode(&born.0, rld_protocol::MAX_CAPSULE)?;
-            let terminal = Terminal {
-                currency: c.configuration.currency,
-                controller: id,
-                initial: rld_protocol::codec::hash("RLD-CONTROLLER", c.configuration.currency, c),
-                source_checkpoint: creation.source.header.id(),
-                decision: 1,
-                ticket_or_return: c.ticket.digest(c.configuration.currency),
-                material_root: c.material_root,
-            };
-            proof::ControllerWitness {
-                currency: s.node.core.initial.currency.clone(),
-                creation,
-                terminal,
-                material: born,
-                covers: m.covers,
-                cancellation_authorization: None,
-            }
-        };
-        let receipt = run_prover(exe, work, serial, "controller", &encode(&witness)).await?;
-        let release = Release {
-            creation: witness.creation,
-            terminal: witness.terminal,
-            receipt,
-            qc: Quorum { votes: vec![] },
-            covers: witness.covers,
-            material: witness.material,
-        };
-        shared
-            .lock()
-            .map_err(|_| anyhow::anyhow!("node unavailable"))?
-            .node
-            .queue_candidate(rld_protocol::consensus::Payload::Export(release))?;
-    }
-    Ok(())
-}
-async fn run_prover(
-    exe: &Path,
-    work: &Path,
-    _serial: u64,
-    kind: &str,
-    bytes: &[u8],
-) -> Result<Blob> {
-    let id = Id::digest(bytes);
-    let input = work.join(format!("{kind}-{id}.input.cbor"));
-    let output = work.join(format!("{kind}-{id}.receipt.cbor"));
-    if output.exists() {
-        return decode(
-            &read_bounded(&output, rld_protocol::MAX_RECEIPT + 128)?,
-            rld_protocol::MAX_RECEIPT + 128,
-        );
-    }
-    if input.exists() {
-        ensure!(
-            read_bounded(&input, crate::store::MAX_RECORD)? == bytes,
-            "different retained proving input"
-        )
-    } else {
-        private_create(&input, bytes)?;
-    }
-    let mut process = tokio::process::Command::new(exe)
-        .arg(kind)
-        .arg("--input")
-        .arg(&input)
-        .arg("--output")
-        .arg(&output)
-        .env_remove("RISC0_DEV_MODE")
-        .kill_on_drop(true)
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped())
-        .spawn()?;
-    async fn bounded_log(mut input: impl tokio::io::AsyncRead + Unpin) -> Result<Vec<u8>> {
-        use tokio::io::AsyncReadExt;
-        let mut buffer = [0u8; 8192];
-        let mut kept = Vec::new();
-        loop {
-            let n = input.read(&mut buffer).await?;
-            if n == 0 {
-                break;
-            }
-            let take = n.min((64 * 1024usize).saturating_sub(kept.len()));
-            kept.extend_from_slice(&buffer[..take]);
-        }
-        Ok(kept)
-    }
-    let stdout = process.stdout.take().context("prover stdout")?;
-    let stderr = process.stderr.take().context("prover stderr")?;
-    let (status, out, err) = tokio::join!(process.wait(), bounded_log(stdout), bounded_log(stderr));
-    let status = status?;
-    let out = out?;
-    let err = err?;
-    if !status.success() {
-        let path = work.join(format!("{kind}-{id}-failure.log"));
-        if !path.exists() {
-            let mut log = out;
-            log.extend_from_slice(&err);
-            private_create(&path, &log)?;
-        }
-        anyhow::bail!(
-            "prover failed; bounded diagnostic retained at {}",
-            path.display()
-        )
-    }
-    decode(
-        &read_bounded(&output, rld_protocol::MAX_RECEIPT + 128)?,
-        rld_protocol::MAX_RECEIPT + 128,
-    )
 }

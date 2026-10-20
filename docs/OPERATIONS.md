@@ -168,3 +168,43 @@ descriptor profiles. New-view summaries bind ordering evidence; selected complet
 payment material remains required before the primary can propose or validators
 can prepare/commit. Keep original material available through view changes. A
 signed ordering summary is never a replacement execution proof.
+
+## Proving service resources and recovery
+
+When `proof_executable` is configured, `proof_work` must name a dedicated
+workspace. Its `WORKSPACE.cbor` binds the exact currency/domain/genesis and its
+exclusive lock prevents two worker supervisors sharing it. Legacy unbound
+proving directories refuse unchanged; retain them and choose a fresh directory.
+The node's authenticated ledger and keys are not migrated by this choice.
+
+`proof_concurrency` is 1–3 (default 3). Birth, controller and current-native lanes
+each run at most one job. Three permits allow the three classes to progress
+independently when sufficient compute/memory exists; one or two intentionally
+serialize some work. `proof_bytes` defaults to 1 GiB of retained workspace files,
+with a fixed 16,384-file maximum. These are admission limits, not proof-cost
+estimates. They do not bound a prover's RAM or separate SDK scratch space; use
+an independently budgeted process/service environment. The supplied production
+template still disables the prover until suitable resources are arranged.
+
+`proof_timeout_seconds` defaults to 3600 and accepts 1–604800. Measure actual
+intended proving requirements before choosing an operational value. A timeout
+requests termination of the isolated Unix prover process group and waits for the
+direct child; it neither cancels a controller nor refunds value. Failed targets
+back off while other eligible targets rotate. This policy claims no measured
+receipt latency or operating capacity.
+
+Each job retains a canonical `native-<input-hash>.input.cbor` or
+`controller-<input-hash>.input.cbor`. Prover attempts use unique output names.
+Failed/partial attempts and bounded logs remain exact. Only an independently
+verified exact image/journal result is renamed to `<kind>-<hash>.receipt.cbor`.
+A crash after computation can leave an attempt requiring reproof; it cannot
+turn a partial receipt into a cached success. A malformed canonical receipt
+refuses without overwrite. Retain it for investigation; use the ordinary verified
+certificate/candidate submission path for a separately obtained valid result.
+
+Workspace saturation pauses new proving attempts and reports an error. Existing
+settlement and direct-birth-QC cancellation do not depend on proof workspace
+space. Retain the saturated directory and its evidence; provision a new dedicated
+workspace after stopping the supervisor if more space is needed. Do not delete
+unresolved evidence to make room. This remains operator-managed retention, not
+an independently replicated or paid archival lifecycle.

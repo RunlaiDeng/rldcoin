@@ -74,7 +74,7 @@ pub struct Core {
     pub initial: Initial,
     pub state: Arc<State>,
     pub head: Id,
-    pub history: Arc<Vec<Committed>>,
+    pub history: crate::history::History,
     pub engines: Vec<Engine>,
     pub pending: Vec<Operation>,
     pub terminals: Vec<TerminalRecord>,
@@ -142,7 +142,7 @@ impl Core {
             initial,
             state: Arc::new(state),
             head,
-            history: Arc::new(vec![]),
+            history: crate::history::History::default(),
             engines: vec![],
             pending: vec![],
             terminals: vec![],
@@ -256,11 +256,7 @@ impl Core {
                         && header.batch == hash("RLD-BATCH", self.state.currency, batch),
                     "native complete envelope binding"
                 );
-                if let Some(old) = self
-                    .history
-                    .iter()
-                    .find(|c| c.header.sequence == header.sequence)
-                {
+                if let Some(old) = self.history.at(header.sequence) {
                     if old.header.id() == header.id() {
                         ensure!(old.batch == *batch, "changed historical native body");
                     }
@@ -275,7 +271,7 @@ impl Core {
     fn authentication(&self, m: &Message) -> Result<(Option<Id>, Id)> {
         let (ns, seq) = message_position(m);
         let (cfg, pool, known) = if ns == self.state.domain {
-            if let Some(old) = self.history.iter().find(|c| c.header.sequence == seq) {
+            if let Some(old) = self.history.at(seq) {
                 (old.configuration.clone(), None, Some(old.header.id()))
             } else {
                 ensure!(
@@ -404,8 +400,7 @@ impl Core {
             Event::ConflictingBlock(c) => {
                 let old = self
                     .history
-                    .iter()
-                    .find(|v| v.header.sequence == c.header.sequence)
+                    .at(c.header.sequence)
                     .context("conflict position")?;
                 ensure!(
                     old.configuration == c.configuration && old.header.id() != c.header.id(),
@@ -497,7 +492,7 @@ impl Core {
                 ensure!(c.qc.votes[0].sequence == h.sequence, "commit position");
                 self.head = h.id();
                 self.state = Arc::new(next);
-                Arc::make_mut(&mut self.history).push(c.clone());
+                self.history.push(c.clone())?;
                 for op in &c.batch.operations {
                     let terminal = match &op.command {
                         Command::ObserveExport(r) => {
@@ -612,8 +607,8 @@ impl Core {
                 .native(p)?;
                 let old = self
                     .history
-                    .iter()
-                    .find(|v| v.header == p.header && v.configuration == p.configuration)
+                    .at(p.header.sequence)
+                    .filter(|v| v.header == p.header && v.configuration == p.configuration)
                     .context("certificate does not name retained local checkpoint")?;
                 ensure!(
                     old.qc.votes[0].statement == p.qc.votes[0].statement,
@@ -628,22 +623,16 @@ impl Core {
         }
         Ok(actions)
     }
-    pub fn state_at(&self, sequence: u64) -> Result<State> {
-        ensure!(sequence <= self.state.sequence, "future state");
-        let mut s = State::genesis(&self.initial.currency, &self.initial.genesis)?;
-        let mut head = rld_protocol::state::genesis_id(s.currency, &self.initial.genesis);
-        for c in self
-            .history
-            .iter()
-            .take_while(|c| c.header.sequence <= sequence)
-        {
-            let (next, h) = s.execute_batch(&self.initial.currency, head, &c.batch)?;
-            ensure!(h == c.header, "retained history replay");
-            head = h.id();
-            s = next;
+    pub fn proof_context(&self) -> crate::proving::ProofContext {
+        crate::proving::ProofContext {
+            initial: self.initial.clone(),
+            state: self.state.clone(),
+            history: self.history.clone(),
+            proofs: self.proofs.clone(),
         }
-        ensure!(s.sequence == sequence, "history gap");
-        Ok(s)
+    }
+    pub fn state_at(&self, sequence: u64) -> Result<State> {
+        self.proof_context().state_at(sequence)
     }
     pub fn cancel_draft(&self, id: Id) -> Result<(Controller, Cancellation)> {
         let c = self
@@ -659,11 +648,7 @@ impl Core {
             .iter()
             .find(|b| b.controller == id)
             .context("birth")?;
-        let h = self
-            .history
-            .iter()
-            .find(|h| h.header.sequence == birth.sequence)
-            .context("birth header")?;
+        let h = self.history.at(birth.sequence).context("birth header")?;
         let state = self.state_at(birth.sequence)?;
         let terminal = Terminal {
             currency: self.state.currency,
@@ -690,67 +675,10 @@ impl Core {
         Ok((c, cancel))
     }
     pub fn native_witness(&self, sequence: u64) -> Result<proof::NativeWitness> {
-        ensure!(
-            sequence > 0 && sequence <= self.state.sequence,
-            "proof target"
-        );
-        let predecessor = self
-            .proofs
-            .iter()
-            .filter(|p| p.header.sequence < sequence)
-            .max_by_key(|p| p.header.sequence)
-            .cloned();
-        let base = predecessor.as_ref().map_or(0, |p| p.header.sequence);
-        let state = self.state_at(base)?;
-        let steps = self
-            .history
-            .iter()
-            .filter(|c| base < c.header.sequence && c.header.sequence <= sequence)
-            .map(|c| proof::NativeStep {
-                batch: c.batch.clone(),
-                header: c.header.clone(),
-                qc: c.qc.clone(),
-            })
-            .collect();
-        Ok(proof::NativeWitness {
-            currency: self.initial.currency.clone(),
-            genesis: if predecessor.is_none() {
-                Some(self.initial.genesis.clone())
-            } else {
-                None
-            },
-            predecessor,
-            state,
-            steps,
-        })
+        self.proof_context().native_witness(sequence)
     }
     pub fn creation(&self, id: Id) -> Result<Creation> {
-        let controller = self
-            .state
-            .controllers
-            .iter()
-            .find(|c| c.id == id)
-            .context("controller")?
-            .clone();
-        let birth = self
-            .state
-            .births
-            .iter()
-            .find(|b| b.controller == id)
-            .context("birth")?;
-        let certified = self
-            .proofs
-            .iter()
-            .find(|p| p.header.sequence == birth.sequence)
-            .context("historical creation proof is not ready")?
-            .clone();
-        let state = self.state_at(birth.sequence)?;
-        Ok(Creation {
-            delegation: state.witness("controllers", id)?,
-            coupon_use: state.witness("coupon_uses", controller.ticket.coupon)?,
-            controller,
-            source: certified,
-        })
+        self.proof_context().creation(id)
     }
 }
 
@@ -1127,8 +1055,7 @@ impl Node {
             let old = self
                 .core
                 .history
-                .iter()
-                .find(|v| v.header.sequence == c.header.sequence)
+                .at(c.header.sequence)
                 .context("history position")?;
             ensure!(
                 old.configuration == c.configuration,

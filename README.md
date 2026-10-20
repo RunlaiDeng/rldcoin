@@ -48,7 +48,8 @@ image ID and requires a distinct explicitly approved currency descriptor.
   authentication, succession and recursive verification relations.
 - `crates/node`: durable replay, encrypted local signing custody, PBFT,
   signed and pinned-TLS contact carriage, bounded fragments, offline bundles,
-  public signed-operation API and a separate proof worker.
+  public signed-operation API, persistent native-history index and independently
+  scheduled bounded proving lanes.
 - `crates/cli`: wallet signatures and balances, ordinary CPU mining, placement
   work, payment/service/family drafts, evidence extraction, operator tools,
   cancellation and disconnected carriage.
@@ -58,7 +59,8 @@ image ID and requires a distinct explicitly approved currency descriptor.
 
 See [operator instructions](docs/OPERATIONS.md),
 [implementation boundaries](docs/IMPLEMENTATION.md) and the
-[build record](docs/BUILD.json).
+[initial build record](docs/BUILD.json). Later source-bound compile receipts
+live in `docs/builds/`; they do not retroactively qualify earlier source.
 
 ## Current boundary
 
