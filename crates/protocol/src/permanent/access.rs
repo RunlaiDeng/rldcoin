@@ -62,7 +62,7 @@ struct Set<T> {
     used: Usage<BTreeSet<usize>>,
 }
 #[derive(Clone)]
-pub(super) struct Tape<T> {
+pub(crate) struct Tape<T> {
     currency: Id,
     tag: String,
     root: Id,
@@ -70,7 +70,7 @@ pub(super) struct Tape<T> {
     set: Shared<Set<T>>,
 }
 impl<T: Record + 'static> Tape<T> {
-    pub(super) fn new(c: Id, tag: &str, a: &Access<T>) -> Result<Self> {
+    pub(crate) fn new(c: Id, tag: &str, a: &Access<T>) -> Result<Self> {
         ensure!(
             a.format == FORMAT && a.steps.len() <= 2_000_000,
             "permanent access format/count"
@@ -110,16 +110,16 @@ impl<T: Record + 'static> Tape<T> {
             }),
         })
     }
-    pub(super) fn root(&self) -> Id {
+    pub(crate) fn root(&self) -> Id {
         self.root
     }
-    pub(super) fn count(&self) -> u64 {
+    pub(crate) fn count(&self) -> u64 {
         self.count
     }
-    pub(super) fn matches(&self, c: Id, tag: &str) -> bool {
+    pub(crate) fn matches(&self, c: Id, tag: &str) -> bool {
         self.currency == c && self.tag == tag
     }
-    pub(super) fn same(&self, o: &Self) -> bool {
+    pub(crate) fn same(&self, o: &Self) -> bool {
         self.currency == o.currency
             && self.tag == o.tag
             && self.root == o.root
@@ -136,7 +136,7 @@ impl<T: Record + 'static> Tape<T> {
         ensure!(s.count == self.count, "permanent access current count");
         Ok((i, s))
     }
-    pub(super) fn get(&self, key: Id) -> Result<Option<T>> {
+    pub(crate) fn get(&self, key: Id) -> Result<Option<T>> {
         let (i, s) = self.step(key)?;
         match (&s.value, &s.member, &s.absence) {
             (Some(v), Some(m), None) => {
@@ -169,7 +169,7 @@ impl<T: Record + 'static> Tape<T> {
             .insert(i);
         Ok(s.value.clone())
     }
-    pub(super) fn insert(&mut self, value: T) -> Result<()> {
+    pub(crate) fn insert(&mut self, value: T) -> Result<()> {
         let e = value.entry(self.currency);
         ensure!(
             value.key(self.currency) == Key::Id(e.key),
@@ -195,7 +195,7 @@ impl<T: Record + 'static> Tape<T> {
         self.count = count;
         Ok(())
     }
-    pub(super) fn finish(&self) -> Result<()> {
+    pub(crate) fn finish(&self) -> Result<()> {
         #[cfg(not(target_os = "zkvm"))]
         let used = self
             .set
@@ -215,5 +215,24 @@ impl<T: Record + 'static> Tape<T> {
             "unused permanent access evidence"
         );
         Ok(())
+    }
+}
+
+impl Tape<crate::model::Output> {
+    pub(crate) fn remove_output(&mut self, key: Id) -> Result<Option<crate::model::Output>> {
+        let Some(value) = self.get(key)? else {
+            return Ok(None);
+        };
+        let (_, s) = self.step(key)?;
+        let root = crate::merkle::remove_member(
+            self.currency,
+            &self.tag,
+            self.root,
+            s.member.as_ref().context("UTXO removal member")?,
+        )?;
+        let count = self.count.checked_sub(1).context("UTXO removal count")?;
+        self.root = root;
+        self.count = count;
+        Ok(Some(value))
     }
 }

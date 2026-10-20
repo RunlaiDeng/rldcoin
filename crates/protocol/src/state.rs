@@ -45,7 +45,7 @@ pub struct State {
     #[n(3)]
     pub configuration: Configuration,
     #[n(4)]
-    pub outputs: Table<Output>,
+    pub outputs: crate::utxo::Outputs,
     #[n(5)]
     pub grants: Table<Grant>,
     #[n(6)]
@@ -94,7 +94,7 @@ impl State {
             domain: w.domain,
             sequence: w.sequence,
             configuration: w.configuration,
-            outputs: Table::from_sorted(c, &format!("{domain}/outputs"), w.outputs)?,
+            outputs: crate::utxo::Outputs::from_sorted(c, domain, w.outputs)?,
             grants: Table::from_sorted(c, &format!("{domain}/grants"), w.grants)?,
             segments: Table::from_sorted(c, &format!("{domain}/segments"), w.segments)?,
             controllers: Table::from_sorted(c, &format!("{domain}/controllers"), w.controllers)?,
@@ -245,7 +245,7 @@ impl State {
                 &format!("{}/fee_policies", config.domain),
                 vec![config.fee_policy.clone()],
             )?,
-            outputs: Table::new(c, &format!("{}/outputs", config.domain)),
+            outputs: crate::utxo::Outputs::new(c, config.domain),
             grants: Table::new(c, &format!("{}/grants", config.domain)),
             segments: Table::new(c, &format!("{}/segments", config.domain)),
             controllers: Table::new(c, &format!("{}/controllers", config.domain)),
@@ -358,8 +358,7 @@ impl State {
         // removal API exists. Do not enumerate those permanent keys again here;
         // complete guest wire decoding still reconstructs every native record.
         for keys in [
-            self.outputs.iter().map(|v| v.id).collect::<Vec<_>>(),
-            self.grants.iter().map(|v| v.id).collect(),
+            self.grants.iter().map(|v| v.id).collect::<Vec<_>>(),
             self.controllers.iter().map(|v| v.id).collect(),
             self.coupon_uses.iter().map(|v| v.coupon).collect(),
             self.families.iter().map(|v| v.id).collect(),
@@ -368,11 +367,6 @@ impl State {
             self.mints.iter().map(|v| v.event).collect(),
         ] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
-        }
-        for o in &self.outputs {
-            ensure!(o.home == self.domain, "foreign UTXO");
-            o.owner.validate()?;
-            parts(&o.components)?;
         }
         let mut slots = Vec::new();
         for s in &self.segments {
@@ -416,7 +410,7 @@ impl State {
     pub fn collection(&self, name: &str) -> Result<Vec<Entry>> {
         let c = self.currency;
         let mut out = match name {
-            "outputs" => self.outputs.entries(),
+            "outputs" => self.outputs.entries()?,
             "grants" => self.grants.entries(),
             "segments" => self.segments.entries(),
             "controllers" => self.controllers.entries(),
@@ -625,7 +619,7 @@ impl State {
         for id in ids {
             let o = self
                 .outputs
-                .get(*id)
+                .get(*id)?
                 .ok_or_else(|| anyhow::anyhow!("input missing/spent"))?;
             self.usable(&o.components)?;
             crypto::authorize(&o.owner, &op.authorizations, &op.signing_bytes())?;
@@ -671,7 +665,7 @@ impl State {
         self.allocation(a)?;
         ensure!(*index < 64, "output count");
         let key = hash("RLD-OUTPUT-ID", self.currency, &(id, *index));
-        ensure!(self.outputs.get(key).is_none(), "output ID collision");
+        ensure!(self.outputs.get(key)?.is_none(), "output ID collision");
         self.outputs.insert(Output {
             id: key,
             owner: a.owner.clone(),

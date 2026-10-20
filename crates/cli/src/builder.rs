@@ -96,11 +96,7 @@ fn selected(s: &State, ids: &[Id], cover: Id) -> Result<Amount> {
         "ordered unique actual input IDs required"
     );
     ids.iter().try_fold(Amount(0), |total, id| {
-        let out = s
-            .outputs
-            .iter()
-            .find(|o| o.id == *id)
-            .context("input not locally available")?;
+        let out = s.outputs.get(*id)?.context("input not locally available")?;
         ensure!(
             out.components.len() == 1 && out.components[0].cover == cover,
             "builder requires one exact cover; use explicit native command for mixed covers"

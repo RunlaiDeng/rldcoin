@@ -111,3 +111,32 @@ pub fn insert_absent(
     );
     Ok(root_hash(c, tag, count, tree))
 }
+
+/// Removing a verified leaf cannot increase a certified predecessor's height.
+/// Collapse its first now-unary fork, then rebuild the remaining ancestors with
+/// their original depths/prefixes and authenticated sibling hashes/counts.
+pub fn remove_member(c: Id, tag: &str, expected: Id, member: &Membership) -> Result<Id> {
+    verify(c, tag, expected, member)?;
+    let p = &member.path;
+    let count = p.count.checked_sub(1).context("removal cardinality")?;
+    if p.depths.is_empty() {
+        ensure!(count == 0, "singleton removal count");
+        return root(c, tag, &[]);
+    }
+    let last = p.depths.len() - 1;
+    let (mut tree, mut n) = (p.siblings[last], p.counts[last]);
+    for i in (0..last).rev() {
+        (tree, n) = fold(
+            c,
+            tag,
+            member.entry.key,
+            tree,
+            n,
+            p.depths[i],
+            p.siblings[i],
+            p.counts[i],
+        )?;
+    }
+    ensure!(n == count, "removal total count");
+    Ok(root_hash(c, tag, count, tree))
+}

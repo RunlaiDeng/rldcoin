@@ -462,6 +462,7 @@ record!(NativeWitness {currency:Currency  =>  0,genesis:Option<DomainGenesis>  =
 record!(IndexedNativeWitness {currency:Currency => 0,predecessor:Certified => 1,state:crate::state::State => 2,steps:Vec<NativeStep> => 3,applied:crate::applied::AppliedAccess => 4});
 record!(PermanentAccess {births:crate::permanent::access::Access<Birth> => 0,decisions:crate::permanent::access::Access<Decision> => 1,redemptions:crate::permanent::access::Access<Redemption> => 2,resolutions:crate::permanent::access::Access<Decision> => 3,funding:crate::permanent::access::Access<Id> => 4});
 record!(IndexedPermanentWitness {native:IndexedNativeWitness => 0,permanent:PermanentAccess => 1});
+record!(IndexedUtxoWitness {native:IndexedPermanentWitness => 0,outputs:crate::permanent::access::Access<Output> => 1});
 record!(ControllerWitness {currency:Currency  =>  0,creation:Creation  =>  1,terminal:Terminal  =>  2,material:Blob  =>  3,covers:Vec<Cover>  =>  4,cancellation_authorization:Option<Authorization>  =>  5});
 
 pub fn execute_native(w: &NativeWitness) -> Result<Checkpoint> {
@@ -500,8 +501,13 @@ pub fn execute_indexed_native(w: &IndexedNativeWitness) -> Result<Checkpoint> {
     Ok(header)
 }
 pub fn execute_indexed_permanent(w: &IndexedPermanentWitness) -> Result<Checkpoint> {
+    Ok(execute_permanent_state(w, w.native.state.clone())?.0)
+}
+fn execute_permanent_state(
+    w: &IndexedPermanentWitness,
+    mut state: crate::state::State,
+) -> Result<(Checkpoint, crate::state::State)> {
     let n = &w.native;
-    let mut state = n.state.clone();
     ensure!(
         state.applied.is_complete()
             && state.applied.is_empty()
@@ -555,8 +561,20 @@ pub fn execute_indexed_permanent(w: &IndexedPermanentWitness) -> Result<Checkpoi
     state.redemptions.finish_access()?;
     state.resolutions.finish_access()?;
     state.used_funding.finish_access()?;
+    Ok((header, state))
+}
+pub fn execute_indexed_utxo(w: &IndexedUtxoWitness) -> Result<Checkpoint> {
+    let mut state = w.native.native.state.clone();
+    ensure!(
+        state.outputs.is_complete() && state.outputs.is_empty(),
+        "indexed UTXO requires empty complete placeholder"
+    );
+    state.outputs = crate::utxo::Outputs::from_access(state.currency, state.domain, &w.outputs)?;
+    let (header, state) = execute_permanent_state(&w.native, state)?;
+    state.outputs.finish_access()?;
     Ok(header)
 }
+
 struct NativeExecution<'a> {
     currency: &'a Currency,
     genesis: Option<&'a DomainGenesis>,
@@ -734,4 +752,6 @@ pub enum NativeInput {
     IndexedExecution(#[n(0)] IndexedNativeWitness),
     #[n(3)]
     IndexedPermanent(#[n(0)] IndexedPermanentWitness),
+    #[n(4)]
+    IndexedUtxo(#[n(0)] IndexedUtxoWitness),
 }

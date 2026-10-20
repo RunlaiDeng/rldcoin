@@ -29,3 +29,5 @@ pub mod receipts;
 
 mod permanent_store;
 mod state_storage;
+
+mod utxo_store;

@@ -23,3 +23,5 @@ pub const MAX_RECEIPT: usize = 1024 * 1024;
 pub mod table;
 
 pub mod permanent;
+
+pub mod utxo;

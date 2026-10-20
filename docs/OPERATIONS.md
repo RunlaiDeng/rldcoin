@@ -271,7 +271,7 @@ succession preserving an already running RLD identity is still unfinished.
 
 The 20 October owner-approved amendment changes native map roots and carried
 membership/absence paths. The derived index binding is now
-`RLD-STATE-WITNESS-INDEX-4`. Old executable descriptors and old cache bindings
+`RLD-STATE-WITNESS-INDEX-5`. Old executable descriptors and old cache bindings
 refuse unchanged; do not rewrite their identities or reuse monetary state/keys.
 Use the exact rebuilt `rld profile` and real `rld-prover profile` binding. This
 prelaunch source revision creates no network or monetary genesis.
@@ -285,7 +285,7 @@ establish freshness or spendability. A capacity refusal never refunds exports.
 ## Disk-resident verified native history
 
 Every local node now maintains a private `history-index/` under its store. Its
-`RLD-VERIFIED-HISTORY-INDEX-3` binding fixes currency, domain and genesis. Complete
+`RLD-VERIFIED-HISTORY-INDEX-4` binding fixes currency, domain and genesis. Complete
 native committed records and immutable 32-way pages are content-addressed in
 256 digest shards. Only the process's verified root/length is adopted. Node open
 still validates every authoritative event from the separately retained latest
@@ -360,8 +360,8 @@ objects are checked/synced; failed partials/orphans and all published old versio
 remain. Storage failure/exhaustion refuses unsupported publication, never refunds
 an export, deletes an operation ID, resets a counter or substitutes a root.
 
-Verified history V3 carries all six sealed disk-map snapshots for each native
-record. State-material V4 omits their arrays in private serialized material,
+Verified history V4 carries all seven sealed disk-map snapshots for each native
+record. State-material V5 omits their arrays in private serialized material,
 retains their commitments, and combines them with the exact observations from
 verified history before whole-checkpoint validation. That partial file is not
 standalone State or monetary evidence. Historical membership/absence uses native
@@ -372,8 +372,8 @@ Old history/state-index bindings refuse unchanged. Preserve their directories
 and use their matching historical release or a fresh correctly bound private
 cache; never rewrite a currency, journal/head, monetary keys or balances. A damaged
 applied store must be retained. Stop the node and every proof/read worker, retain
-`permanent-index/`, `applied-index/`, `history-index/` and `state-index/` under
-distinct private names, then cold-rebuild all four from the unchanged valid event journal and separately
+`utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and
+`state-index/` under distinct private names, then cold-rebuild all five from the unchanged valid event journal and separately
 retained latest head. The disk map and history observations reference exact physical objects, so do not
 combine new disk-map directories with old split roots.
 This is derived-data reconstruction, not a monetary genesis or value migration.
@@ -430,8 +430,8 @@ and authoritative event append retain every published old/partial/orphan object.
 Capacity/corruption refuses, never recreates an unused funding ID or unresolved
 payment, deletes a decision or authorizes a refund.
 
-History V3 now binds a complete six-map storage observation (at most 4 KiB).
-State material V4 stores empty placeholders for those six maps and requires the
+History V4 now binds a complete seven-map storage observation (at most 4 KiB).
+State material V5 stores empty placeholders for those seven maps and requires the
 separate verified-history observations plus exact full native root before use.
 Those caches are not standalone ledger snapshots. Default indexed guest input now carries exact accesses for these five maps;
 complete input remains the bounded fallback described below.
@@ -475,3 +475,42 @@ historical release, and do not rewrite currency or migrate money/keys. No runtim
 proof campaign, throughput/latency, memory or independent security result is
 established by compilation. Other collections, archive retention and future
 cryptographic transitions remain unfinished.
+
+## Disk UTXOs and indexed spend evidence
+
+Normal nodes now maintain private `utxo-index/`, RLD-UTXO-DISK-1. Opening it starts
+empty; full anchored native event replay derives all later roots. Typed value
+objects (8 KiB maximum) and fixed metadata pages (512 bytes) retain exact native
+hashes plus independently checked physical summaries. The shared raw cache is
+4,096 objects /16 MiB; status exposes its 1-TiB /4,194,304-file admission under
+`utxo_storage`. All old spent objects, partials and orphans remain retained.
+
+Each working UTXO observation bounds reachable encoded objects by 600,000 /512 MiB.
+Discarded unpublished intermediate Arc paths may be released; signed/native
+published evidence is never pruned. This is a separate new UTXO budget, not a
+change to the other maps' existing limits or a maximum-RSS/throughput claim.
+Native/QC validation precedes sealing, history and authoritative publication.
+Missing/corrupt bytes refuse, never become a spent/missing input or empty balance.
+
+History V4 binds seven-map observation V2; state material V5 omits seven arrays
+and requires verified history plus exact complete native checkpoint root. If
+rebuilding compatible derived material, stop every node/proof/read worker and
+privately retain `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/`
+and `state-index/` together before cold replaying the unchanged valid journal
+with its independently retained latest head. Do not combine old physical roots
+with new owners or rewrite monetary descriptors, keys, balances or journal heads.
+
+Default native witness construction prefers NativeInput tag 4, IndexedUtxo,
+from a certified predecessor. It uses typed reads/absence and checked native
+append/spend-root derivation at exact current roots, initial count openings and
+complete access-use checks. The same original 1-GiB input /4,096-step bounds,
+128 framing bytes and per-typed-map 2,000,000 unique accesses apply; applied
+retains its existing 4,096*64 ordered-access bound. Typed compact
+insertion-height/capture-capacity insufficiency can use prior tag 3/2/full paths;
+authentication, replay, I/O and encoding errors propagate. Genesis remains full.
+Other collections still need complete material; proving feasibility is unmeasured.
+
+This revision changes actual proof program/source IDs. Preserve incompatible old
+stores with their matching release. No currency/value/key migration or monetary
+launch is performed. No runtime proof/payment, measured RAM/latency/volume,
+crash/power-loss, paid archival or independent security qualification is claimed.

@@ -1794,7 +1794,8 @@ fn print_balance(state: &rld_protocol::state::State, key: Id) -> Result<()> {
     let mut shared = Amount(0);
     let mut quarantined = Amount(0);
     let mut outputs = Vec::new();
-    for out in &state.outputs {
+    for out in state.outputs.records() {
+        let out = out?;
         if !out.owner.keys.contains(&key) {
             continue;
         }

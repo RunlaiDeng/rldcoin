@@ -159,6 +159,10 @@ fn main() -> Result<()> {
                     &w.native.currency.proof,
                     proof::native_journal(&proof::execute_indexed_permanent(w)?),
                 ),
+                NativeInput::IndexedUtxo(w) => (
+                    &w.native.native.currency.proof,
+                    proof::native_journal(&proof::execute_indexed_utxo(w)?),
+                ),
                 NativeInput::Admission(w) => (&w.currency.proof, proof::execute_admission(w)?),
             };
             ensure!(

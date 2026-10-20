@@ -500,4 +500,4 @@ pub fn verify_absent(c: Id, tag: &str, expected: Id, key: Id, p: &Absence) -> Re
 }
 
 mod insertion;
-pub use insertion::{CompleteSubtreeRequired, insert_absent};
+pub use insertion::{CompleteSubtreeRequired, insert_absent, remove_member};

@@ -67,8 +67,8 @@ required release evidence. The existing CI compiles the committed binding.
   public signed-operation API, disk-resident verified native-history and execution-receipt indexes, independently
   scheduled bounded proving lanes, disk state material and certified historical
   membership/absence queries. Native state uses shared immutable value and
-  commitment paths. The operation map and five permanent decision/birth/funding maps execute
-  through private disk adapters; indexed guest inputs authenticate operation-log and five permanent-map accesses;
+  commitment paths. The UTXO map, operation map and five permanent decision/birth/funding maps execute
+  through private disk adapters; indexed guest inputs authenticate UTXO, operation-log and five permanent-map accesses;
   other state collections still require complete execution material.
 - `crates/cli`: wallet signatures and balances, ordinary CPU mining, placement
   work, payment/service/family drafts, evidence extraction, operator tools,

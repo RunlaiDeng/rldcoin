@@ -293,9 +293,9 @@ changes before authoritative event append/Core installation. A failure retains
 all durably published residue; no failed root grants money or loses an old key.
 Historical replay/proof construction seal only already verified native steps.
 
-Verified history format V3 retains each committed record with all six exact sealed
-disk-map snapshots. Derived state material V4 stores the remaining collections and
-those six commitments, then reconstructs historical state using independently
+Verified history format V4 retains each committed record with all seven exact sealed
+disk-map snapshots. Derived state material V5 stores the remaining collections and
+those seven commitments, then reconstructs historical state using independently
 verified history observations and checks the whole native checkpoint root.
 Queries use native disk paths; snapshot publication omits these complete arrays.
 Complete snapshot/fallback encoding streams records and fails under existing byte
@@ -341,9 +341,9 @@ Every record lookup propagates storage failure; duplicate refusal and canonical
 wire construction preserve order/uniqueness without re-enumerating these five
 permanent key sets in each batch. Roots and monetary predicates remain unchanged.
 
-The five maps share a separate 16-MiB / 4,096-object raw cache. History V3 retains
-six-map sealed observations (including the existing applied map); state material
-V4 omits those arrays and reconstructs them only from verified history before
+The five maps share a separate 16-MiB / 4,096-object raw cache. History V4 retains
+seven-map sealed observations (including applied and UTXO maps); state material
+V5 omits those arrays and reconstructs them only from verified history before
 whole-checkpoint validation. Direct historical queries and membership construction
 do not enumerate complete maps. Default native proof input now uses exact root-bound accesses for those five
 record sets when a certified predecessor exists, with bounded complete fallback.
@@ -372,20 +372,46 @@ journal. [The source analysis](engineering/INDEXED_PERMANENT_WITNESS.md) documen
 cloned-state tracking and authentication. Proving cost, memory and runtime behavior
 remain unmeasured; other collections still need work.
 
+## UTXO disk execution and indexed input
+
+The private Outputs type now validates the same home/owner/component and checked
+sum invariants at complete construction, insertion and checked reads, preserving
+order/uniqueness through private table/path mutation. Spending verifies the exact
+record and derives deletion from authenticated native membership with unary-fork
+collapse; it never accepts a supplied successor root. Full-table UTXO validation
+scans no longer run on every batch. Actual owner, current cover/incident, fee,
+per-cover conservation and complete native/QC checks remain in the same executor.
+
+Normal nodes execute UTXOs through immutable disk paths, retaining bounded reachable
+working nodes without accumulating all discarded intermediate versions. Sealing
+happens only after native/header/QC validation and before verified history and
+authoritative publication. Old spent objects and historical roots remain retained.
+History V4 stores seven-map observations; state material V5 reconstructs them only
+from verified history and checks the whole checkpoint root. Queries use paths;
+full public snapshots and balance enumeration stream records with error propagation.
+
+NativeInput tag 4 now combines typed UTXO read/absence/append/spend evidence with
+previous six-map indexed execution. The default builder captures actual complete
+native replay and keeps the same shared input budget and typed material/capacity
+fallback rules. Real prover/guest execute the same native monetary relation and
+journal. [The source analysis](engineering/UTXO_DISK_AND_WITNESS.md) documents the
+size/induction/deletion arguments; no local test, runtime proof, resource or latency
+measurement is claimed. Other maps, scans and archival/custody work remain open.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
 
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
-   map hash. Other native collections remain resident; native history, the applied map and
+   map hash. Other native collections remain resident; native history, UTXOs, the applied map and
    five permanent decision/birth/funding maps now live on disk;
    full invariant scans of the remaining tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages
    serve historical complete material and queries, but snapshot publication still
    materializes complete records and rebuilds pages. A bounded-memory disk
    executor and compact authenticated executable witnesses for all remaining
-   collections remain needed. The six-map access path alone does not
+   collections remain needed. The seven-map access path alone does not
    complete that executor. No achieved daily capacity or seconds-scale receipt is established.
 2. Native event history now has immutable 64-event/256-MiB maximum storage
    segments and a 128-event hot window. Every 64 append operations can seal one

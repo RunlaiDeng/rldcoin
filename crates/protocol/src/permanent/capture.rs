@@ -72,15 +72,16 @@ impl Budget {
         Ok(())
     }
 }
-struct Log<T> {
-    steps: Vec<AccessStep<T>>,
-    index: BTreeMap<(Id, Id), usize>,
+pub(crate) struct Log<T> {
+    pub(crate) steps: Vec<AccessStep<T>>,
+    pub(crate) index: BTreeMap<(Id, Id), usize>,
 }
+#[derive(Clone)]
 pub struct Capture<T> {
-    root: Id,
-    count: u64,
-    opening: Option<Membership>,
-    log: Arc<Mutex<Log<T>>>,
+    pub(crate) root: Id,
+    pub(crate) count: u64,
+    pub(crate) opening: Option<Membership>,
+    pub(crate) log: Arc<Mutex<Log<T>>>,
 }
 impl<T: Record> Capture<T> {
     pub fn finish(self) -> Result<Access<T>> {

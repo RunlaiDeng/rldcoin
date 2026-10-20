@@ -72,6 +72,7 @@ pub enum Event {
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
+    pub(crate) utxo_storage: Arc<crate::utxo_store::Utxos>,
     pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
     pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
     pub(crate) state_index: Option<Arc<crate::state_index::StateIndex>>,
@@ -155,6 +156,14 @@ impl Core {
             &initial,
         )?);
         state.applied = state.applied.on_empty_storage(applied_storage.clone())?;
+        let utxo_storage = Arc::new(crate::utxo_store::Utxos::open(
+            &root.join("utxo-index"),
+            &initial,
+        )?);
+        state.outputs = state
+            .outputs
+            .clone()
+            .on_empty_storage(utxo_storage.clone())?;
         let permanent_storage =
             crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
@@ -164,6 +173,7 @@ impl Core {
             initial,
             applied_storage,
             permanent_storage,
+            utxo_storage,
             state_index: None,
             state: Arc::new(state),
             head,

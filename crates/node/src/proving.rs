@@ -279,6 +279,12 @@ impl ProofContext {
                 self.native_witness(sequence)?,
             ));
         }
+        match self.indexed_utxo(witness.clone(),sequence){
+            Ok(w)=>return Ok(proof::NativeInput::IndexedUtxo(w)),
+            Err(e) if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>().is_some()
+                || e.downcast_ref::<rld_protocol::permanent::capture::CaptureBudgetExceeded>().is_some()=>{},
+            Err(e)=>return Err(e),
+        }
         match self.indexed_permanent(witness.clone(),sequence){
             Ok(w)=>return Ok(proof::NativeInput::IndexedPermanent(w)),
             Err(e) if e.downcast_ref::<rld_protocol::merkle::CompleteSubtreeRequired>().is_some()
@@ -299,11 +305,33 @@ impl ProofContext {
             Err(e) => Err(e),
         }
     }
+    fn indexed_utxo(
+        &self,
+        n: proof::NativeWitness,
+        sequence: u64,
+    ) -> Result<proof::IndexedUtxoWitness> {
+        let (native, outputs) = self.indexed_maps(n, sequence, true)?;
+        Ok(proof::IndexedUtxoWitness {
+            native,
+            outputs: outputs.context("UTXO capture missing")?,
+        })
+    }
     fn indexed_permanent(
+        &self,
+        n: proof::NativeWitness,
+        sequence: u64,
+    ) -> Result<proof::IndexedPermanentWitness> {
+        Ok(self.indexed_maps(n, sequence, false)?.0)
+    }
+    fn indexed_maps(
         &self,
         mut native: proof::NativeWitness,
         sequence: u64,
-    ) -> Result<proof::IndexedPermanentWitness> {
+        include_outputs: bool,
+    ) -> Result<(
+        proof::IndexedPermanentWitness,
+        Option<rld_protocol::permanent::access::Access<Output>>,
+    )> {
         use rld_protocol::permanent::capture::Budget;
         let budget = Budget::new(MAX_RECORD, 128)?;
         let mut state = native.state.clone();
@@ -339,6 +367,13 @@ impl ProofContext {
                 .clone()
                 .capture(c, &format!("{d}/funding"), budget.clone())?;
         state.used_funding = map;
+        let outputs = if include_outputs {
+            let (map, trace) = state.outputs.clone().capture(budget.clone())?;
+            state.outputs = map;
+            Some(trace)
+        } else {
+            None
+        };
         let base = state.sequence;
         let mut head = native
             .predecessor
@@ -349,7 +384,11 @@ impl ProofContext {
         let mut complete = state.applied.clone();
         let tag = format!("{d}/applied");
         let mut applied = complete.full_access(c, &tag)?;
-        crate::state_storage::Backings::clear_material(&mut native.state);
+        crate::state_storage::Backings::clear_permanent_material(&mut native.state);
+        if let Some(trace) = &outputs {
+            native.state.outputs = rld_protocol::utxo::Outputs::new(c, d);
+            budget.charge(&trace.metadata())?;
+        }
         budget.charge(&(
             &native,
             &applied,
@@ -416,16 +455,20 @@ impl ProofContext {
             resolutions: resolutions.finish()?,
             funding: funding.finish()?,
         };
-        Ok(proof::IndexedPermanentWitness {
-            native: proof::IndexedNativeWitness {
-                currency: native.currency,
-                predecessor: native.predecessor.context("indexed maps predecessor")?,
-                state: native.state,
-                steps: native.steps,
-                applied,
+        let outputs = outputs.map(|trace| trace.finish()).transpose()?;
+        Ok((
+            proof::IndexedPermanentWitness {
+                native: proof::IndexedNativeWitness {
+                    currency: native.currency,
+                    predecessor: native.predecessor.context("indexed maps predecessor")?,
+                    state: native.state,
+                    steps: native.steps,
+                    applied,
+                },
+                permanent,
             },
-            permanent,
-        })
+            outputs,
+        ))
     }
     fn indexed_native(
         &self,
