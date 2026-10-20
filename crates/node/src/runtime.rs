@@ -72,6 +72,7 @@ pub enum Event {
 #[derive(Clone)]
 pub struct Core {
     pub initial: Initial,
+    pub(crate) mint_storage: Arc<crate::mint_store::MintStore>,
     pub(crate) utxo_storage: Arc<crate::utxo_store::Utxos>,
     pub(crate) permanent_storage: Arc<crate::object_store::Objects>,
     pub(crate) applied_storage: Arc<crate::applied_store::AppliedStore>,
@@ -164,6 +165,11 @@ impl Core {
             .outputs
             .clone()
             .on_empty_storage(utxo_storage.clone())?;
+        let mint_storage = Arc::new(crate::mint_store::MintStore::open(
+            &root.join("mint-index"),
+            &initial,
+        )?);
+        state.mints = state.mints.clone().on_empty_storage(mint_storage.clone())?;
         let permanent_storage =
             crate::state_storage::Backings::initialize(root, &initial, &mut state)?;
         let history = crate::history::History::open(&root.join("history-index"), &initial)?;
@@ -174,6 +180,7 @@ impl Core {
             applied_storage,
             permanent_storage,
             utxo_storage,
+            mint_storage,
             state_index: None,
             state: Arc::new(state),
             head,

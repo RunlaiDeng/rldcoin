@@ -293,9 +293,9 @@ changes before authoritative event append/Core installation. A failure retains
 all durably published residue; no failed root grants money or loses an old key.
 Historical replay/proof construction seal only already verified native steps.
 
-Verified history format V4 retains each committed record with all seven exact sealed
-disk-map snapshots. Derived state material V5 stores the remaining collections and
-those seven commitments, then reconstructs historical state using independently
+Verified history format V5 retains each committed record with all eight exact sealed
+disk-map snapshots. Derived state material V6 stores the remaining collections and
+those eight commitments, then reconstructs historical state using independently
 verified history observations and checks the whole native checkpoint root.
 Queries use native disk paths; snapshot publication omits these complete arrays.
 Complete snapshot/fallback encoding streams records and fails under existing byte
@@ -341,9 +341,9 @@ Every record lookup propagates storage failure; duplicate refusal and canonical
 wire construction preserve order/uniqueness without re-enumerating these five
 permanent key sets in each batch. Roots and monetary predicates remain unchanged.
 
-The five maps share a separate 16-MiB / 4,096-object raw cache. History V4 retains
-seven-map sealed observations (including applied and UTXO maps); state material
-V5 omits those arrays and reconstructs them only from verified history before
+The five maps share a separate 16-MiB / 4,096-object raw cache. History V5 retains
+eight-map sealed observations (including applied, UTXO and Mint maps); state material
+V6 omits those arrays and reconstructs them only from verified history before
 whole-checkpoint validation. Direct historical queries and membership construction
 do not enumerate complete maps. Default native proof input now uses exact root-bound accesses for those five
 record sets when a certified predecessor exists, with bounded complete fallback.
@@ -386,7 +386,7 @@ Normal nodes execute UTXOs through immutable disk paths, retaining bounded reach
 working nodes without accumulating all discarded intermediate versions. Sealing
 happens only after native/header/QC validation and before verified history and
 authoritative publication. Old spent objects and historical roots remain retained.
-History V4 stores seven-map observations; state material V5 reconstructs them only
+History V5 stores eight-map observations; state material V6 reconstructs them only
 from verified history and checks the whole checkpoint root. Queries use paths;
 full public snapshots and balance enumeration stream records with error propagation.
 
@@ -398,13 +398,38 @@ journal. [The source analysis](engineering/UTXO_DISK_AND_WITNESS.md) documents t
 size/induction/deletion arguments; no local test, runtime proof, resource or latency
 measurement is claimed. Other maps, scans and archival/custody work remain open.
 
+## Disk Mint facts and exact slot checks
+
+The private Mints representation retains the same native event-map root and wire
+array, but maintains an exact auxiliary (root,slot)->event index reconstructed
+from complete records. Private constructors and atomic append enforce distinct
+event/global-slot keys. Native work and remembered fees use point queries; each
+active segment checks its exact interval with one predecessor-slot lookup instead
+of rebuilding/scanning every Mint fact. Grant/frontier, work, reward/cap counters,
+owner/fees and conservation remain unchanged. Auxiliary results must resolve to
+the same complete primary event and read failures propagate.
+
+Normal nodes store both typed immutable paths under one private owner and rebuild
+them only through complete anchored native/QC replay. Dual working roots are sealed
+after validation and before authoritative publication; partials/orphans remain.
+History V5 binds eight-map observation V3; material V6 restores those observations
+before full native checkpoint validation. The shared typed path engine preserves
+the UTXO storage format and its prior admission bounds.
+
+Real guest inputs still stream every canonical Mint record and rebuild the private
+slot index themselves. The host auxiliary root is not monetary evidence. Compact
+Mint/slot guest witnesses and maximum-input proving feasibility remain open.
+[The source analysis](engineering/MINT_FACT_INDEX.md) gives the range-equivalence
+and uniqueness arguments. No local test/runtime/performance qualification follows
+from this stage's source review and compilation.
+
 ## Material unfinished and unqualified work
 
 The following are real completion boundaries, not fulfilled by source edits:
 
 1. Native execution now shares immutable ordered records and cached counted
    prefix roots, so a single update need not clone every record or rebuild every
-   map hash. Other native collections remain resident; native history, UTXOs, the applied map and
+   map hash. Other native collections remain resident; native history, UTXOs, Mint facts, the applied map and
    five permanent decision/birth/funding maps now live on disk;
    full invariant scans of the remaining tables, canonical snapshot construction and
    complete guest material for the remaining collections still remain. Native history uses an immutable disk-resident 32-way index, and execution receipts use an immutable disk-resident sequence index. Disk snapshots and witness pages

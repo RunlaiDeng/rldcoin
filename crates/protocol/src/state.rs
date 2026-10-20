@@ -8,7 +8,7 @@ use crate::{
     proof::{self, Verifier},
 };
 use anyhow::{Context, Result, bail, ensure};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 mod wire;
 
 pub const COLLECTIONS: &[&str] = &[
@@ -67,7 +67,7 @@ pub struct State {
     #[n(14)]
     pub covers: Table<Cover>,
     #[n(15)]
-    pub mints: Table<MintRecord>,
+    pub mints: crate::mints::Mints,
     #[n(16)]
     pub applied: crate::applied::AppliedIndex,
     #[n(17)]
@@ -109,7 +109,7 @@ impl State {
             )?,
             services: Table::from_sorted(c, &format!("{domain}/services"), w.services)?,
             covers: Table::from_sorted(c, &format!("{domain}/covers"), w.covers)?,
-            mints: Table::from_sorted(c, &format!("{domain}/mints"), w.mints)?,
+            mints: crate::mints::Mints::from_sorted(c, domain, w.mints)?,
             applied: crate::applied::AppliedIndex::from_sorted(
                 c,
                 &format!("{domain}/applied"),
@@ -256,7 +256,7 @@ impl State {
             redemptions: Permanent::new(c, &format!("{}/redemptions", config.domain)),
             services: Table::new(c, &format!("{}/services", config.domain)),
             covers: Table::new(c, &format!("{}/covers", config.domain)),
-            mints: Table::new(c, &format!("{}/mints", config.domain)),
+            mints: crate::mints::Mints::new(c, config.domain),
             applied: crate::applied::AppliedIndex::new(c, &format!("{}/applied", config.domain)),
             incidents: Table::new(c, &format!("{}/incidents", config.domain)),
             pool_next: 0,
@@ -364,7 +364,6 @@ impl State {
             self.families.iter().map(|v| v.id).collect(),
             self.services.iter().map(|v| v.id).collect(),
             self.covers.iter().map(|v| v.id(self.currency)).collect(),
-            self.mints.iter().map(|v| v.event).collect(),
         ] {
             ensure!(sorted_unique(&keys), "state map order/duplicate")
         }
@@ -393,18 +392,13 @@ impl State {
                 .all(|w| w[0].0 != w[1].0 || w[0].2 <= w[1].1),
             "overlapping issuance"
         );
-        let mut minted = BTreeSet::new();
-        for m in &self.mints {
-            ensure!(minted.insert((m.root, m.slot)), "duplicate root slot Mint");
-            let position = slots.partition_point(|s| (s.0, s.1) <= (m.root, m.slot));
+        for (root, lo, hi) in slots {
             ensure!(
-                position == 0 || {
-                    let s = slots[position - 1];
-                    s.0 != m.root || m.slot < s.1 || m.slot >= s.2
-                },
+                self.mints.range_empty(root, lo, hi)?,
                 "consumed active slot"
             );
         }
+
         Ok(())
     }
     pub fn collection(&self, name: &str) -> Result<Vec<Entry>> {
@@ -421,7 +415,7 @@ impl State {
             "redemptions" => self.redemptions.entries(c)?,
             "services" => self.services.entries(),
             "covers" => self.covers.entries(),
-            "mints" => self.mints.entries(),
+            "mints" => self.mints.entries()?,
             "applied" => self.applied.entries()?,
             "incidents" => self.incidents.entries(),
             "funding" => self.used_funding.entries(c)?,
@@ -735,7 +729,7 @@ impl State {
                     m.record.owner == f.payout.owner,
                     "work-author payout changed"
                 );
-                if !self.mints.contains(&m.record) {
+                if !self.mints.contains(&m.record)? {
                     let p = m
                         .certified
                         .as_ref()
@@ -792,15 +786,12 @@ impl State {
             record.root < crate::ROOTS && record.slot < crate::SLOTS,
             "Mint fact range"
         );
-        if let Some(old) = self.mints.get(record.event) {
-            ensure!(old == record, "changed Mint event");
+        if let Some(old) = self.mints.get(record.event)? {
+            ensure!(&old == record, "changed Mint event");
             return Ok(());
         }
         ensure!(
-            !self
-                .mints
-                .iter()
-                .any(|m| m.root == record.root && m.slot == record.slot),
+            self.mints.get_slot(record.root, record.slot)?.is_none(),
             "conflicting Mint facts for one global slot"
         );
         self.mints.insert(record.clone())?;
@@ -881,11 +872,7 @@ impl State {
                     .ok_or_else(|| anyhow::anyhow!("Mint grant"))?
                     .clone();
                 ensure!(
-                    g.home == self.domain
-                        && !self
-                            .mints
-                            .iter()
-                            .any(|m| m.root == g.root && m.slot == work.slot),
+                    g.home == self.domain && self.mints.get_slot(g.root, work.slot)?.is_none(),
                     "consumed Mint slot"
                 );
                 self.cover(g.cover)?.subset_of(self.cover(work.cover)?)?;

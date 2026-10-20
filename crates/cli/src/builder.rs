@@ -114,8 +114,7 @@ fn fees(s: &State, nonce: Id, cover: Id, f: &Fees, p: &FeePolicy) -> Result<Vec<
     );
     let mint = s
         .mints
-        .iter()
-        .find(|m| m.event == f.mint_event)
+        .get(f.mint_event)?
         .context("prior Mint event not retained")?
         .clone();
     let archival = allocation(p.archive_owner.clone(), cover, f.archive);

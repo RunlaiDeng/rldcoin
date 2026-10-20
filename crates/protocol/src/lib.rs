@@ -25,3 +25,5 @@ pub mod table;
 pub mod permanent;
 
 pub mod utxo;
+
+pub mod mints;

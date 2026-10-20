@@ -271,7 +271,7 @@ succession preserving an already running RLD identity is still unfinished.
 
 The 20 October owner-approved amendment changes native map roots and carried
 membership/absence paths. The derived index binding is now
-`RLD-STATE-WITNESS-INDEX-5`. Old executable descriptors and old cache bindings
+`RLD-STATE-WITNESS-INDEX-6`. Old executable descriptors and old cache bindings
 refuse unchanged; do not rewrite their identities or reuse monetary state/keys.
 Use the exact rebuilt `rld profile` and real `rld-prover profile` binding. This
 prelaunch source revision creates no network or monetary genesis.
@@ -285,7 +285,7 @@ establish freshness or spendability. A capacity refusal never refunds exports.
 ## Disk-resident verified native history
 
 Every local node now maintains a private `history-index/` under its store. Its
-`RLD-VERIFIED-HISTORY-INDEX-4` binding fixes currency, domain and genesis. Complete
+`RLD-VERIFIED-HISTORY-INDEX-5` binding fixes currency, domain and genesis. Complete
 native committed records and immutable 32-way pages are content-addressed in
 256 digest shards. Only the process's verified root/length is adopted. Node open
 still validates every authoritative event from the separately retained latest
@@ -360,8 +360,8 @@ objects are checked/synced; failed partials/orphans and all published old versio
 remain. Storage failure/exhaustion refuses unsupported publication, never refunds
 an export, deletes an operation ID, resets a counter or substitutes a root.
 
-Verified history V4 carries all seven sealed disk-map snapshots for each native
-record. State-material V5 omits their arrays in private serialized material,
+Verified history V5 carries all eight sealed disk-map snapshots for each native
+record. State-material V6 omits their arrays in private serialized material,
 retains their commitments, and combines them with the exact observations from
 verified history before whole-checkpoint validation. That partial file is not
 standalone State or monetary evidence. Historical membership/absence uses native
@@ -430,8 +430,8 @@ and authoritative event append retain every published old/partial/orphan object.
 Capacity/corruption refuses, never recreates an unused funding ID or unresolved
 payment, deletes a decision or authorizes a refund.
 
-History V4 now binds a complete seven-map storage observation (at most 4 KiB).
-State material V5 stores empty placeholders for those seven maps and requires the
+History V5 now binds a complete eight-map storage observation (at most 4 KiB).
+State material V6 stores empty placeholders for those eight maps and requires the
 separate verified-history observations plus exact full native root before use.
 Those caches are not standalone ledger snapshots. Default indexed guest input now carries exact accesses for these five maps;
 complete input remains the bounded fallback described below.
@@ -492,7 +492,7 @@ change to the other maps' existing limits or a maximum-RSS/throughput claim.
 Native/QC validation precedes sealing, history and authoritative publication.
 Missing/corrupt bytes refuse, never become a spent/missing input or empty balance.
 
-History V4 binds seven-map observation V2; state material V5 omits seven arrays
+History V5 binds eight-map observation V3; state material V6 omits eight arrays
 and requires verified history plus exact complete native checkpoint root. If
 rebuilding compatible derived material, stop every node/proof/read worker and
 privately retain `utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/`
@@ -514,3 +514,33 @@ This revision changes actual proof program/source IDs. Preserve incompatible old
 stores with their matching release. No currency/value/key migration or monetary
 launch is performed. No runtime proof/payment, measured RAM/latency/volume,
 crash/power-loss, paid archival or independent security qualification is claimed.
+
+## Disk Mint facts and slot indexes
+
+Normal nodes open private `mint-index/`, RLD-MINT-FACTS-DISK-1, with currency,
+home and genesis binding. Both native event and auxiliary slot roots begin empty
+and are rebuilt by complete anchored native/QC event replay. No disk head or peer
+auxiliary root grants issuance rights. Selected slot records must match the exact
+complete event under the native Mint root; read failures refuse, never mean unused.
+
+The roots share a 4,096-object /16-MiB raw cache and 1-TiB /4,194,304-file admission;
+`/v1/status.mint_storage` exposes their shared accounting. Typed event/slot formats
+remain distinct; UTXO storage encoding is preserved by the shared typed path engine.
+Each root uses the prior 600,000 reachable-object /512-MiB encoded working budget;
+two Mint roots and other memory/worker allocations add separate costs. Sealing
+follows native/header/QC validation; all published old/partial/orphan objects remain.
+
+History V5 binds eight-map observation V3; state material V6 restores the separate
+verified-history roots and checks the whole native checkpoint. To rebuild compatible
+derived data, stop all node/proof/read workers, privately retain `mint-index/`,
+`utxo-index/`, `permanent-index/`, `applied-index/`, `history-index/` and `state-index/`
+together, then cold replay the unchanged valid journal and separately retained
+latest head. Never mix old physical observations with new owners, rewrite heads,
+change currency or migrate money/keys to a new program binding.
+
+Actual guest input still carries every complete Mint event and reconstructs the
+slot index inside the real program. There is no compact Mint/slot proof authority
+or relaxed work/cap/fee rule. This stage changes native/controller image/source
+bindings; preserve incompatible old stores with their matching release. No runtime
+proof/payment, maximum-size feasibility, memory/throughput/latency, independent
+security or paid archival result is established by compilation.
